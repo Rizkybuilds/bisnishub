@@ -20,6 +20,7 @@ TeeStock adalah brand apparel Print on Demand (POD) yang berfokus pada variasi s
 - `Logo TeeStock Monokrom.png` — Aset logo resmi siluet tumpukan kaos.
 
 ### 🛠️ Interactive Tools (`tools/`)
+- `teestock-catalog.html` — **(BARU & FITUR LENGKAP)** Katalog interaktif 9 series, live color mockup switcher, tier pricing (Retail, Dropship, Reseller), studio custom order, dan WhatsApp checkout.
 - `teestock-hpp-calculator.html` — **(BRANDED)** Kalkulator HPP & pricing interaktif dengan switcher tema Hitam/Krem dan preset Shopee sweet spot (~Rp 99.000).
 - `teestock-business-plan.html` — **(BRANDED & UPDATED)** Business plan lengkap, simulasi cash flow 12 bulan, P&L, peta kompetitor Shopee, dan scoring matrix.
 

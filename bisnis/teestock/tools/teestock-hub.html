@@ -1,0 +1,2420 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TeeStock — Internal Operations Hub & Production System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* =========================================================
+       TEESTOCK INTERNAL OPERATIONS DESIGN SYSTEM
+       Neutral: Hitam (#141413), Krem (#F2EEE4), Charcoal (#22221F), Abu (#828076)
+       Series & Highlights: Terracotta (#C1673D), Olive (#6B7057), Mustard (#D9A441),
+                            Dusty Teal (#4F7C74), Rust (#A84632), Navy (#33465C)
+       ========================================================= */
+
+    :root[data-theme="dark"] {
+      --bg-base: #121211;
+      --bg-surface: #181816;
+      --bg-card: #20201d;
+      --bg-card-hover: #262622;
+      --bg-elevated: #2c2c27;
+      --border: #33332d;
+      --border-light: #44443c;
+
+      --text: #F2EEE4;
+      --text-dim: #c5c1b6;
+      --text-muted: #828076;
+
+      --accent: #C1673D;          /* Terracotta */
+      --accent-hover: #a8552e;
+      --accent-dim: rgba(193, 103, 61, 0.16);
+
+      --olive: #6B7057;
+      --olive-dim: rgba(107, 112, 87, 0.2);
+      --mustard: #D9A441;
+      --mustard-dim: rgba(217, 164, 65, 0.18);
+      --teal: #4F7C74;
+      --teal-dim: rgba(79, 124, 116, 0.2);
+      --rust: #A84632;
+      --rust-dim: rgba(168, 70, 50, 0.2);
+      --green: #4E9A74;
+      --green-dim: rgba(78, 154, 116, 0.18);
+      --red: #C5533E;
+      --red-dim: rgba(197, 83, 62, 0.18);
+
+      --logo-filter: invert(1) brightness(0.95);
+      --shadow: 0 4px 20px rgba(0,0,0,0.35);
+      --modal-bg: rgba(12, 12, 11, 0.85);
+    }
+
+    :root[data-theme="light"] {
+      --bg-base: #F4F0E6;
+      --bg-surface: #FCFAF5;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #F8F5EC;
+      --bg-elevated: #EDE7D8;
+      --border: #D8D1BF;
+      --border-light: #C5BDA8;
+
+      --text: #1A1A1A;
+      --text-dim: #4A4A47;
+      --text-muted: #8C8880;
+
+      --accent: #C1673D;
+      --accent-hover: #a8552e;
+      --accent-dim: rgba(193, 103, 61, 0.12);
+
+      --olive: #5A6048;
+      --olive-dim: rgba(90, 96, 72, 0.14);
+      --mustard: #B88528;
+      --mustard-dim: rgba(184, 133, 40, 0.15);
+      --teal: #3E6B63;
+      --teal-dim: rgba(62, 107, 99, 0.14);
+      --rust: #9B3B28;
+      --rust-dim: rgba(155, 59, 40, 0.14);
+      --green: #37835B;
+      --green-dim: rgba(55, 131, 91, 0.14);
+      --red: #B23D28;
+      --red-dim: rgba(178, 61, 40, 0.14);
+
+      --logo-filter: none;
+      --shadow: 0 4px 20px rgba(74, 74, 71, 0.08);
+      --modal-bg: rgba(244, 240, 230, 0.85);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-base);
+      color: var(--text);
+      line-height: 1.5;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* Layout Structure: Sidebar + Main Content */
+    .app-sidebar {
+      width: 260px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      z-index: 50;
+      transition: all 0.3s ease;
+    }
+
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      background: var(--bg-base);
+    }
+
+    /* Sidebar Header & Brand */
+    .sidebar-brand {
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      filter: var(--logo-filter);
+    }
+    .brand-meta h1 {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+    .brand-meta h1 span { color: var(--accent); }
+    .brand-meta .badge-ops {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--teal);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* Sidebar Navigation Menu */
+    .sidebar-nav {
+      padding: 16px 12px;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav-category {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      padding: 12px 12px 6px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .nav-item:hover {
+      background: var(--bg-card);
+      color: var(--text);
+    }
+    .nav-item.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-left: 3px solid var(--accent);
+      font-weight: 700;
+    }
+    .nav-icon-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-badge {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: var(--bg-elevated);
+      color: var(--text);
+      font-weight: 700;
+    }
+    .nav-badge.alert { background: var(--red-dim); color: var(--red); }
+    .nav-badge.active-count { background: var(--green-dim); color: var(--green); }
+
+    /* Sidebar Footer / Connection Status */
+    .sidebar-footer {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cloud-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cloud-pill:hover { border-color: var(--accent); }
+
+    /* App Top Bar */
+    .app-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      backdrop-filter: blur(10px);
+    }
+    .page-heading h2 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+    .page-heading p {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Common Button Styles */
+    .btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      white-space: nowrap;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn.primary:hover {
+      background: var(--accent-hover);
+      color: #fff;
+    }
+    .btn.success {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    .btn.btn-sm { padding: 4px 9px; font-size: 11px; border-radius: 6px; }
+
+    /* Content Workspace Container */
+    .app-content {
+      padding: 24px 28px 60px;
+      flex: 1;
+    }
+
+    .tab-view { display: none; }
+    .tab-view.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Global Dashboard Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 1100px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--border);
+    }
+    .stat-card.accent::before { background: var(--accent); }
+    .stat-card.green::before { background: var(--green); }
+    .stat-card.mustard::before { background: var(--mustard); }
+    .stat-card.teal::before { background: var(--teal); }
+    .stat-card.olive::before { background: var(--olive); }
+    .stat-card.red::before { background: var(--red); }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .stat-val {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .stat-sub { font-size: 11px; color: var(--text-dim); }
+
+    /* Dashboard Action Row */
+    .action-banner {
+      background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .action-banner h3 { font-size: 15px; font-weight: 800; }
+    .action-banner p { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+    /* Kanban Production Pipeline */
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      align-items: flex-start;
+      margin-top: 16px;
+    }
+    @media (max-width: 1200px) { .kanban-board { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 768px) { .kanban-board { grid-template-columns: 1fr; } }
+
+    .kanban-col {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+    }
+    .kanban-col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .kanban-badge-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+    }
+    .kanban-cards-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .order-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: transform 0.15s, border-color 0.15s;
+      cursor: grab;
+    }
+    .order-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .order-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .order-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .channel-badge {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .channel-badge.shopee { background: rgba(238, 77, 45, 0.18); color: #EE4D2D; border: 1px solid #EE4D2D; }
+    .channel-badge.tiktok { background: rgba(0, 242, 234, 0.18); color: #00F2EA; border: 1px solid #00F2EA; }
+    .channel-badge.whatsapp { background: rgba(37, 211, 102, 0.18); color: #25D366; border: 1px solid #25D366; }
+    .channel-badge.web { background: rgba(79, 124, 116, 0.2); color: var(--teal); border: 1px solid var(--teal); }
+
+    .order-product-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .order-specs {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .order-spec-tag {
+      background: var(--bg-elevated);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .order-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px dashed var(--border);
+      padding-top: 8px;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    /* Inventory Matrix Table & Filters */
+    .inventory-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .garment-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .garment-tab-btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .garment-tab-btn:hover { color: var(--text); border-color: var(--accent); }
+    .garment-tab-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .matrix-table th {
+      background: var(--bg-elevated);
+      padding: 10px 12px;
+      text-align: center;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .matrix-table th:first-child { text-align: left; }
+    .matrix-table td {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    .matrix-table td:first-child {
+      text-align: left;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .stock-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .stock-chip:hover { transform: scale(1.08); }
+    .stock-chip.safe { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
+    .stock-chip.warning { background: var(--mustard-dim); color: var(--mustard); border: 1px solid var(--mustard); }
+    .stock-chip.danger { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
+
+    /* Modern Table Common Styles */
+    .table-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .data-table th {
+      background: var(--bg-elevated);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+    .data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .data-table tr:hover { background: var(--bg-card-hover); }
+
+    .sku-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      display: inline-block;
+    }
+
+    /* Modal Windows */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--modal-bg);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.active { display: flex; animation: fadeIn 0.2s ease; }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 720px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px 28px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+    .modal-header h2 { font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .modal-close-btn {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close-btn:hover { background: var(--accent); color: white; }
+
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .form-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    @media (max-width: 650px) { .form-grid-2, .form-grid-3, .form-grid-4 { grid-template-columns: 1fr; } }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus { border-color: var(--accent); }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--accent);
+      color: var(--text);
+      padding: 12px 18px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      z-index: 2000;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* SOP Box */
+    .sop-banner {
+      background: rgba(107, 112, 87, 0.15);
+      border: 1px solid var(--olive);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Left Sidebar Navigation -->
+<aside class="app-sidebar">
+  <div class="sidebar-brand">
+    <img src="../brand/Logo TeeStock Monokrom.png" alt="TeeStock" class="brand-logo">
+    <div class="brand-meta">
+      <h1>Tee<span>Stock</span></h1>
+      <div class="badge-ops">Operations Hub v1.0</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-category">Komando Bisnis</div>
+    <a class="nav-item active" onclick="switchTab('dashboard')">
+      <div class="nav-icon-title"><span>📊</span> Dashboard</div>
+    </a>
+
+    <div class="nav-category">Katalog & Stok</div>
+    <a class="nav-item" onclick="switchTab('katalog')">
+      <div class="nav-icon-title"><span>👕</span> Master PIM</div>
+      <span class="nav-badge" id="sideBadgeSku">8</span>
+    </a>
+    <a class="nav-item" onclick="switchTab('inventory')">
+      <div class="nav-icon-title"><span>📦</span> Stok NSA & Bahan</div>
+      <span class="nav-badge alert" id="sideBadgeStockAlert">2 Low</span>
+    </a>
+
+    <div class="nav-category">Produksi & Order</div>
+    <a class="nav-item" onclick="switchTab('kanban')">
+      <div class="nav-icon-title"><span>📋</span> Antrean Produksi</div>
+      <span class="nav-badge active-count" id="sideBadgeOrderActive">4 Active</span>
+    </a>
+    <a class="nav-item" onclick="switchTab('gangsheet')">
+      <div class="nav-icon-title"><span>🖨️</span> Gang Sheet DTF</div>
+    </a>
+
+    <div class="nav-category">Sales & Customer</div>
+    <a class="nav-item" onclick="switchTab('quoter')">
+      <div class="nav-icon-title"><span>💬</span> Custom Quoter</div>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="cloud-pill" onclick="openSupabaseModal()" id="sideSbStatus" title="Status Supabase PostgreSQL Database">
+      <span>☁️ Supabase Cloud</span>
+      <span id="sideSbDot" style="color:var(--green);">● Live</span>
+    </div>
+    <div class="cloud-pill" onclick="openCloudinaryModal()" id="sideCldStatus" title="Status Cloudinary CDN Image">
+      <span>🖼️ Cloudinary CDN</span>
+      <span id="sideCldNameText" style="color:var(--mustard);">z6qhdkde</span>
+    </div>
+    <button class="btn btn-sm" onclick="toggleTheme()" id="sideThemeBtn" style="width:100%; justify-content:center; margin-top:4px;">
+      ☀️ Tema Krem
+    </button>
+  </div>
+</aside>
+
+<!-- Main Operations Viewport -->
+<main class="app-main">
+
+  <!-- Top Bar -->
+  <header class="app-topbar">
+    <div class="page-heading">
+      <h2 id="topbarTitle">Dashboard Ringkasan Bisnis</h2>
+      <p id="topbarSubtitle">Monitoring real-time inventori, antrean press kaos, dan margin penjualan</p>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="btn btn-sm" onclick="openOrderModal('new')">
+        ➕ Input Pesanan Masuk
+      </button>
+      <button class="btn btn-sm" onclick="openRestockModal()">
+        📦 Restock Bahan
+      </button>
+      <button class="btn btn-sm primary" onclick="openProductModal('new')">
+        👕 Tambah Desain Baru
+      </button>
+    </div>
+  </header>
+
+  <div class="app-content">
+
+    <!-- =========================================================
+         TAB 1: DASHBOARD RINGKASAN
+         ========================================================= -->
+    <div class="tab-view active" id="view-dashboard">
+      <!-- 4 Core KPIs -->
+      <div class="stats-grid">
+        <div class="stat-card accent">
+          <div class="stat-label">Total SKU Desain</div>
+          <div class="stat-val" id="dashTotalSku">8</div>
+          <div class="stat-sub">Terdaftar di master PIM Supabase</div>
+        </div>
+
+        <div class="stat-card mustard">
+          <div class="stat-label">Pesanan Sedang Diproses</div>
+          <div class="stat-val" id="dashActiveOrders">4</div>
+          <div class="stat-sub">Menunggu cetak, press, & kirim</div>
+        </div>
+
+        <div class="stat-card olive">
+          <div class="stat-label">Total Kaos Polos NSA</div>
+          <div class="stat-val" id="dashTotalStock">46 Pcs</div>
+          <div class="stat-sub">30s, 24s, Longsleeve, Hoodie</div>
+        </div>
+
+        <div class="stat-card green">
+          <div class="stat-label">Estimasi Profit Retail</div>
+          <div class="stat-val" id="dashAvgMargin">32.4%</div>
+          <div class="stat-sub">Setelah fee marketplace 6.5%</div>
+        </div>
+      </div>
+
+      <!-- Quick Action Banner -->
+      <div class="action-banner">
+        <div>
+          <h3>🔥 Alur Harian Produksi TeeStock</h3>
+          <p>Cek antrean pesanan Shopee & WA hari ini, siapkan roll cetak DTF meteran, lalu eksekusi heat press kaos polos New State Apparel.</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn" onclick="switchTab('kanban')">📋 Buka Papan Kanban</button>
+          <button class="btn" onclick="switchTab('gangsheet')">🖨️ Hitung Gang Sheet</button>
+        </div>
+      </div>
+
+      <!-- Live Production Pipeline Preview -->
+      <div class="table-container" style="margin-bottom:24px;">
+        <div style="padding:14px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="font-size:14px; font-weight:800;">📋 Pesanan Terkini Membutuhkan Tindakan</h3>
+          <button class="btn btn-sm" onclick="switchTab('kanban')">Lihat Semua di Kanban →</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Channel</th>
+              <th>Nama Pemesan</th>
+              <th>Desain & Garment NSA</th>
+              <th>Warna & Ukuran</th>
+              <th>Status Produksi</th>
+              <th>Total Omzet</th>
+            </tr>
+          </thead>
+          <tbody id="dashOrdersTableBody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Low Stock Alerts -->
+      <div class="inventory-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div>
+            <h3 style="font-size:14px; font-weight:800; color:var(--red);">⚠️ Peringatan Stok Kaos Polos NSA Menipis</h3>
+            <p style="font-size:11px; color:var(--text-muted);">Segera restock sebelum menerima pesanan marketplace agar tidak terjadi pembatalan otomatis.</p>
+          </div>
+          <button class="btn btn-sm" onclick="openRestockModal()">📦 Tambah Stok Sekarang</button>
+        </div>
+        <div id="dashLowStockList" style="display:flex; gap:10px; flex-wrap:wrap;">
+          <!-- Low stock chips populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         TAB 2: MASTER KATALOG & PIM (PRODUCT INFORMATION)
+         ========================================================= -->
+    <div class="tab-view" id="view-katalog">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <input type="text" id="katalogSearch" class="form-control" style="width:260px;" placeholder="🔍 Cari SKU, desain, niche..." oninput="renderKatalogTable()">
+          <select id="katalogSeriesFilter" class="form-control" style="width:160px;" onchange="renderKatalogTable()">
+            <option value="all">Semua Series</option>
+            <option value="profesi">Profesi</option>
+            <option value="komunitas">Komunitas</option>
+            <option value="lokal">Lokal</option>
+            <option value="fase">Fase</option>
+            <option value="receh">Receh / Sarkas</option>
+          </select>
+          <select id="katalogGarmentFilter" class="form-control" style="width:170px;" onchange="renderKatalogTable()">
+            <option value="all">Semua Garment NSA</option>
+            <option value="NSA Softstyle 30s">NSA Softstyle 30s</option>
+            <option value="NSA Heavyweight 24s">NSA Heavyweight 24s</option>
+            <option value="NSA Long Sleeve">NSA Long Sleeve</option>
+            <option value="NSA Hoodie">NSA Hoodie</option>
+          </select>
+        </div>
+        <button class="btn primary" onclick="openProductModal('new')">➕ Tambah Desain Baru</button>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Foto & SKU</th>
+              <th>Nama Desain & Niche</th>
+              <th>Series & Template</th>
+              <th>Garment Default</th>
+              <th>HPP Dasar</th>
+              <th>Harga Retail</th>
+              <th>Margin Bersih</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="katalogTableBody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         TAB 3: STOK NSA LENGKAP & BAHAN BAKU (INVENTORY)
+         ========================================================= -->
+    <div class="tab-view" id="view-inventory">
+      <div class="garment-tabs">
+        <button class="garment-tab-btn active" onclick="switchGarmentTab('nsa_softstyle_30s')">👕 NSA Softstyle 30s</button>
+        <button class="garment-tab-btn" onclick="switchGarmentTab('nsa_heavyweight_24s')">🥋 NSA Heavyweight 24s</button>
+        <button class="garment-tab-btn" onclick="switchGarmentTab('nsa_longsleeve')">🧥 NSA Lengan Panjang</button>
+        <button class="garment-tab-btn" onclick="switchGarmentTab('nsa_hoodie')">🧤 NSA Hoodie / Sweater</button>
+        <button class="garment-tab-btn" onclick="switchGarmentTab('nsa_polo')">👔 NSA Polo Shirt</button>
+        <button class="garment-tab-btn" onclick="switchGarmentTab('supplies')">📦 Material Packing & DTF</button>
+      </div>
+
+      <!-- Inventory Matrix Table -->
+      <div class="inventory-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div>
+            <h3 id="invMatrixTitle" style="font-size:15px; font-weight:800;">Matriks Stok: NSA Softstyle Combed 30s</h3>
+            <p style="font-size:11px; color:var(--text-muted);">Klik angka stok untuk menambah atau mengurangi jumlah secara manual</p>
+          </div>
+          <button class="btn btn-sm" onclick="openRestockModal()">➕ Catat Barang Masuk</button>
+        </div>
+
+        <table class="matrix-table" id="invMatrixTable">
+          <!-- Populated dynamically via JS -->
+        </table>
+      </div>
+
+      <!-- Quick Supply Checklist -->
+      <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="stat-card teal">
+          <div class="stat-label">Plastik Ziplock Premium</div>
+          <div class="stat-val" id="supZiplock">120 Pcs</div>
+          <div class="stat-sub">Kemasan standar pengiriman</div>
+        </div>
+        <div class="stat-card mustard">
+          <div class="stat-label">Stiker Logo TeeStock</div>
+          <div class="stat-val" id="supSticker">240 Pcs</div>
+          <div class="stat-sub">Freebies setiap order</div>
+        </div>
+        <div class="stat-card olive">
+          <div class="stat-label">Sisa Roll Film DTF</div>
+          <div class="stat-val" id="supDtfRoll">8.5 Meter</div>
+          <div class="stat-sub">Muat ~28 kaos A3</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Polymailer Tebal</div>
+          <div class="stat-val" id="supPolymailer">95 Pcs</div>
+          <div class="stat-sub">Tahan air untuk ekspedisi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         TAB 4: ANTREAN ORDER & KANBAN PRODUKSI
+         ========================================================= -->
+    <div class="tab-view" id="view-kanban">
+      <!-- SOP Press Info Banner -->
+      <div class="sop-banner">
+        <div>
+          <strong>🔥 SOP Standar Heat Press TeeStock:</strong>
+          <span>Suhu <strong>160°C</strong> • Durasi <strong>15 Detik</strong> (Tekanan Sedang-Tinggi) • Kelupas film saat <strong>Dingin (Cold Peel)</strong> • Press kedua <strong>5 detik</strong> dengan kain teflon.</span>
+        </div>
+        <button class="btn btn-sm" onclick="openOrderModal('new')">➕ Input Order</button>
+      </div>
+
+      <!-- 5 Column Kanban Pipeline -->
+      <div class="kanban-board">
+        <!-- Col 1: Order Masuk -->
+        <div class="kanban-col">
+          <div class="kanban-col-header" style="color:var(--mustard);">
+            <span>📥 Order Masuk</span>
+            <span class="kanban-badge-count" id="count-pending">0</span>
+          </div>
+          <div class="kanban-cards-wrap" id="kanban-pending"></div>
+        </div>
+
+        <!-- Col 2: Antrean DTF -->
+        <div class="kanban-col">
+          <div class="kanban-col-header" style="color:var(--teal);">
+            <span>🖨️ Cetak DTF</span>
+            <span class="kanban-badge-count" id="count-dtf">0</span>
+          </div>
+          <div class="kanban-cards-wrap" id="kanban-dtf"></div>
+        </div>
+
+        <!-- Col 3: Siap Press -->
+        <div class="kanban-col">
+          <div class="kanban-col-header" style="color:var(--accent);">
+            <span>🔥 Siap Press</span>
+            <span class="kanban-badge-count" id="count-press">0</span>
+          </div>
+          <div class="kanban-cards-wrap" id="kanban-press"></div>
+        </div>
+
+        <!-- Col 4: Packing & QC -->
+        <div class="kanban-col">
+          <div class="kanban-col-header" style="color:var(--olive);">
+            <span>📦 Packing & QC</span>
+            <span class="kanban-badge-count" id="count-pack">0</span>
+          </div>
+          <div class="kanban-cards-wrap" id="kanban-pack"></div>
+        </div>
+
+        <!-- Col 5: Selesai / Kirim -->
+        <div class="kanban-col">
+          <div class="kanban-col-header" style="color:var(--green);">
+            <span>🚚 Selesai / Kirim</span>
+            <span class="kanban-badge-count" id="count-shipped">0</span>
+          </div>
+          <div class="kanban-cards-wrap" id="kanban-shipped"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         TAB 5: GANG SHEET DTF PLANNER
+         ========================================================= -->
+    <div class="tab-view" id="view-gangsheet">
+      <div class="inventory-section">
+        <h3 style="font-size:15px; font-weight:800; margin-bottom:6px;">🖨️ Kalkulator Layout Cetak DTF Meteran (Lebar 60 cm)</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">
+          Dalam roll DTF lebar 60 cm, kita bisa meletakkan <strong>2 desain ukuran A3 (30x30 cm)</strong> berdampingan per 30 cm panjang film.
+        </p>
+
+        <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom:20px;">
+          <div class="stat-card accent">
+            <div class="stat-label">Desain Siap Cetak</div>
+            <div class="stat-val" id="gangCount">0 Kaos</div>
+            <div class="stat-sub">Dari antrean order aktif</div>
+          </div>
+          <div class="stat-card mustard">
+            <div class="stat-label">Kebutuhan Roll DTF</div>
+            <div class="stat-val" id="gangMeter">0.0 Meter</div>
+            <div class="stat-sub">Termasuk buffer 10 cm</div>
+          </div>
+          <div class="stat-card olive">
+            <div class="stat-label">Total Biaya Cetak</div>
+            <div class="stat-val" id="gangTotalCost">Rp 0</div>
+            <div class="stat-sub">Rate Rp 85.000 / meter</div>
+          </div>
+          <div class="stat-card teal">
+            <div class="stat-label">HPP Sablon per Kaos</div>
+            <div class="stat-val" id="gangCostPcs">Rp 12.750</div>
+            <div class="stat-sub">Jauh lebih hemat vs satuan</div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:8px; padding:16px; margin-bottom:16px;">
+          <h4 style="font-size:13px; font-weight:800; margin-bottom:8px;">📋 Format Teks Kirim Order ke MultiGraph / Vendor DTF:</h4>
+          <textarea id="gangSheetClipboard" class="form-control" style="height:120px; font-family:'JetBrains Mono', monospace; font-size:11px;" readonly></textarea>
+          <div style="margin-top:10px; text-align:right;">
+            <button class="btn primary" onclick="copyGangSheetText()">📋 Copy Teks ke WhatsApp</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         TAB 6: CUSTOM ORDER QUOTER (WHATSAPP ASSISTANT)
+         ========================================================= -->
+    <div class="tab-view" id="view-quoter">
+      <div class="inventory-section" style="max-width:820px;">
+        <h3 style="font-size:15px; font-weight:800; margin-bottom:6px;">💬 Kalkulator Cepat Penawaran Custom Order</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:18px;">
+          Gunakan saat ada calon pembeli bertanya harga custom via WhatsApp atau DM Instagram. Otomatis menghitung HPP, rekomendasi harga, dan menyusun teks penawaran yang sopan dan profesional.
+        </p>
+
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label>Pilihan Garment New State Apparel</label>
+            <select class="form-control" id="quoteGarment" onchange="calcCustomQuote()">
+              <option value="38000|NSA Softstyle 30s">NSA Softstyle 30s (Combed Standar) — Rp 38rb</option>
+              <option value="48000|NSA Heavyweight 24s">NSA Heavyweight 24s (Streetwear Tebal) — Rp 48rb</option>
+              <option value="46000|NSA Long Sleeve">NSA Long Sleeve (Lengan Panjang) — Rp 46rb</option>
+              <option value="110000|NSA Hoodie 50/50">NSA Hoodie Jumper Fleece — Rp 110rb</option>
+              <option value="58000|NSA Polo Shirt">NSA Polo Pique — Rp 58rb</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Area Cetak Sablon DTF</label>
+            <select class="form-control" id="quotePrint" onchange="calcCustomQuote()">
+              <option value="12750|A3 (30x30 cm)">Depan A3 (Standar Distro) — Rp 12.750</option>
+              <option value="8500|A4 (20x30 cm)">Depan A4 (Sedang) — Rp 8.500</option>
+              <option value="20000|A3 Depan + Belakang">Depan A3 + Belakang Punggung — Rp 20.000</option>
+              <option value="5000|Logo Saku Dada">Logo Kecil Saku Dada (10x10 cm) — Rp 5.000</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Jumlah Pesanan (Qty)</label>
+            <input type="number" class="form-control" id="quoteQty" value="1" min="1" oninput="calcCustomQuote()">
+          </div>
+        </div>
+
+        <!-- Quote Calculation Result Box -->
+        <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:10px; padding:16px; margin:16px 0;">
+          <div class="stats-grid" style="grid-template-columns:repeat(3, 1fr); margin-bottom:12px;">
+            <div>
+              <div class="stat-label">HPP Total per Kaos</div>
+              <div class="stat-val" id="quoteHpp" style="color:var(--text-dim); font-size:18px;">Rp 59.250</div>
+              <div class="stat-sub">Kaos + DTF + Press + Packaging</div>
+            </div>
+            <div>
+              <div class="stat-label">Rekomendasi Harga Jual</div>
+              <div class="stat-val" id="quotePrice" style="color:var(--accent); font-size:18px;">Rp 99.000</div>
+              <div class="stat-sub">Margin Bersih ~Rp 39.750 (40%)</div>
+            </div>
+            <div>
+              <div class="stat-label">Total Pembayaran Customer</div>
+              <div class="stat-val" id="quoteTotalPay" style="color:var(--green); font-size:18px;">Rp 99.000</div>
+              <div class="stat-sub">Untuk 1 pcs kaos custom</div>
+            </div>
+          </div>
+
+          <label style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-dim);">Template Balasan WhatsApp Siap Copy:</label>
+          <textarea id="quoteWhatsAppText" class="form-control" style="height:140px; margin-top:6px; font-size:12px; line-height:1.5;" readonly></textarea>
+          <div style="margin-top:10px; text-align:right;">
+            <button class="btn primary" onclick="copyWhatsAppQuote()">📋 Copy Format Chat WhatsApp</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- =========================================================
+     MODAL: INPUT ORDER BARU (SHOPEE / WA / WEB / CUSTOM)
+     ========================================================= -->
+<div class="modal-backdrop" id="modalOrder">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2><span>➕</span> Input Pesanan Masuk Baru</h2>
+      <button class="modal-close-btn" onclick="closeModal('modalOrder')">✕</button>
+    </div>
+
+    <form onsubmit="saveOrderForm(event)">
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>Nomor Pesanan / Order ID</label>
+          <input type="text" id="orderFormId" class="form-control" required placeholder="Contoh: SHOPEE-2609-01">
+        </div>
+        <div class="form-group">
+          <label>Channel Penjualan</label>
+          <select id="orderFormChannel" class="form-control" onchange="autoFillChannelFee()">
+            <option value="shopee">Shopee Marketplace</option>
+            <option value="tiktok">TikTok Shop</option>
+            <option value="whatsapp">WhatsApp Direct / Chat</option>
+            <option value="web">Website Storefront TeeStock</option>
+            <option value="custom">Custom Order Satuan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status Produksi Awal</label>
+          <select id="orderFormStatus" class="form-control">
+            <option value="pending">📥 Order Masuk</option>
+            <option value="dtf">🖨️ Cetak DTF</option>
+            <option value="press">🔥 Siap Press</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Nama Customer</label>
+          <input type="text" id="orderFormCustomer" class="form-control" required placeholder="Contoh: Budi Santoso">
+        </div>
+        <div class="form-group">
+          <label>No. HP / WhatsApp & Kota</label>
+          <input type="text" id="orderFormPhone" class="form-control" placeholder="Contoh: 0812-xxxx-xxxx (Jakarta Selatan)">
+        </div>
+      </div>
+
+      <!-- Item Specification -->
+      <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:14px;">
+        <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--accent); margin-bottom:10px;">Spesifikasi Kaos yang Dipesan:</div>
+        
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Pilih Desain / SKU</label>
+            <select id="orderFormSku" class="form-control" onchange="autoFillOrderPrice()">
+              <!-- Options populated by JS from catalog -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Model Kaos Polos New State Apparel</label>
+            <select id="orderFormGarment" class="form-control">
+              <option value="NSA Softstyle 30s">NSA Softstyle 30s (Pendek)</option>
+              <option value="NSA Heavyweight 24s">NSA Heavyweight 24s (Tebal)</option>
+              <option value="NSA Long Sleeve">NSA Long Sleeve (Panjang)</option>
+              <option value="NSA Hoodie">NSA Hoodie Jumper</option>
+              <option value="NSA Polo">NSA Polo Pique</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label>Warna Kaos</label>
+            <select id="orderFormColor" class="form-control">
+              <option value="Hitam">Hitam</option>
+              <option value="Krem">Krem</option>
+              <option value="Charcoal">Charcoal</option>
+              <option value="Olive">Olive</option>
+              <option value="Navy">Navy</option>
+              <option value="Terracotta">Terracotta</option>
+              <option value="Putih">Putih</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Ukuran</label>
+            <select id="orderFormSize" class="form-control">
+              <option value="S">S</option>
+              <option value="M">M</option>
+              <option value="L" selected>L</option>
+              <option value="XL">XL</option>
+              <option value="XXL">XXL</option>
+              <option value="3XL">3XL</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Jumlah (Qty)</label>
+            <input type="number" id="orderFormQty" class="form-control" value="1" min="1" oninput="autoFillOrderPrice()">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Harga Jual Total (Rp)</label>
+            <input type="number" id="orderFormPrice" class="form-control" value="99000" required>
+          </div>
+          <div class="form-group">
+            <label>Estimasi Potongan Fee Marketplace (Rp)</label>
+            <input type="number" id="orderFormFee" class="form-control" value="6435">
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" class="btn" onclick="closeModal('modalOrder')">Batal</button>
+        <button type="submit" class="btn primary">💾 Simpan Pesanan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- =========================================================
+     MODAL: RESTOCK STOK NSA
+     ========================================================= -->
+<div class="modal-backdrop" id="modalRestock">
+  <div class="modal-card" style="max-width:560px;">
+    <div class="modal-header">
+      <h2><span>📦</span> Catat Barang Masuk (Restock NSA)</h2>
+      <button class="modal-close-btn" onclick="closeModal('modalRestock')">✕</button>
+    </div>
+
+    <form onsubmit="saveRestockForm(event)">
+      <div class="form-group">
+        <label>Model Produk New State Apparel</label>
+        <select id="restockGarment" class="form-control">
+          <option value="nsa_softstyle_30s">NSA Softstyle 30s</option>
+          <option value="nsa_heavyweight_24s">NSA Heavyweight 24s</option>
+          <option value="nsa_longsleeve">NSA Long Sleeve 30s</option>
+          <option value="nsa_hoodie">NSA Hoodie Fleece</option>
+          <option value="nsa_polo">NSA Polo Pique</option>
+          <option value="supplies">Material Packaging (Ziplock/Stiker/DTF)</option>
+        </select>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Warna</label>
+          <select id="restockColor" class="form-control">
+            <option value="Hitam">Hitam</option>
+            <option value="Krem">Krem</option>
+            <option value="Charcoal">Charcoal</option>
+            <option value="Olive">Olive</option>
+            <option value="Navy">Navy</option>
+            <option value="Terracotta">Terracotta</option>
+            <option value="Putih">Putih</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ukuran</label>
+          <select id="restockSize" class="form-control">
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+            <option value="3XL">3XL</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Jumlah Masuk (Pcs)</label>
+          <input type="number" id="restockQty" class="form-control" value="6" min="1" required>
+        </div>
+        <div class="form-group">
+          <label>Harga Beli per Pcs (Rp)</label>
+          <input type="number" id="restockCost" class="form-control" value="38000" required>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;">
+        <button type="button" class="btn" onclick="closeModal('modalRestock')">Batal</button>
+        <button type="submit" class="btn success">📥 Tambah ke Stok</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- =========================================================
+     MODAL: PRODUK / DESAIN PIM (CRUD)
+     ========================================================= -->
+<div class="modal-backdrop" id="modalProduct">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="modalProductTitle"><span>👕</span> Tambah Desain Baru ke Master PIM</h2>
+      <button class="modal-close-btn" onclick="closeModal('modalProduct')">✕</button>
+    </div>
+
+    <form onsubmit="saveProductForm(event)">
+      <input type="hidden" id="editProductId">
+
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>SKU Desain</label>
+          <input type="text" id="formSku" class="form-control" required placeholder="TS-PRO-003">
+        </div>
+        <div class="form-group">
+          <label>Nama Desain</label>
+          <input type="text" id="formName" class="form-control" required placeholder="Contoh: Coffee First, Code Later">
+        </div>
+        <div class="form-group">
+          <label>Series Desain</label>
+          <select id="formSeries" class="form-control">
+            <option value="profesi">TeeStock Profesi</option>
+            <option value="komunitas">TeeStock Komunitas</option>
+            <option value="lokal">TeeStock Lokal</option>
+            <option value="fase">TeeStock Fase</option>
+            <option value="receh">TeeStock Receh / Sarkas</option>
+            <option value="squad">TeeStock Squad</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Niche Pasar</label>
+          <input type="text" id="formNiche" class="form-control" placeholder="Contoh: Programmer, IT, Developer">
+        </div>
+        <div class="form-group">
+          <label>Pilihan Kaos Default</label>
+          <select id="formGarment" class="form-control">
+            <option value="NSA Softstyle 30s">NSA Softstyle 30s (Combed 30s)</option>
+            <option value="NSA Heavyweight 24s">NSA Heavyweight 24s (Tebal)</option>
+            <option value="NSA Long Sleeve">NSA Long Sleeve (Lengan Panjang)</option>
+            <option value="NSA Hoodie">NSA Hoodie Jumper</option>
+            <option value="NSA Polo">NSA Polo Shirt</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- File & Cloudinary Direct Upload -->
+      <div class="form-group" style="background:var(--bg-surface); padding:12px; border-radius:8px; border:1px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label style="margin-bottom:0;">Foto Mockup & Master Desain</label>
+          <label class="btn btn-sm primary" style="cursor:pointer;">
+            📤 Upload Mockup ke Cloudinary
+            <input type="file" id="hubCldFile" accept="image/*" style="display:none;" onchange="handleHubCloudinaryUpload(event)">
+          </label>
+        </div>
+        <input type="text" id="formFilePath" class="form-control" placeholder="Paste link Cloudinary, Google Drive, atau path file lokal..." oninput="updateHubImgPreview()">
+        <div id="hubImgPreviewWrap" style="margin-top:8px; display:none; align-items:center; gap:10px;">
+          <img id="hubImgPreview" src="" alt="Preview" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid var(--border);">
+          <span style="font-size:11px; color:var(--green); font-weight:700;">✅ Foto Mockup Terhubung</span>
+        </div>
+      </div>
+
+      <!-- Unit Economics Pricing -->
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>Harga Retail Shopee (Rp)</label>
+          <input type="number" id="formPriceRetail" class="form-control" value="99000" oninput="calcHubHpp()">
+        </div>
+        <div class="form-group">
+          <label>HPP Kaos NSA Blank (Rp)</label>
+          <input type="number" id="formCostBlank" class="form-control" value="38000" oninput="calcHubHpp()">
+        </div>
+        <div class="form-group">
+          <label>Biaya Sablon DTF (Rp)</label>
+          <input type="number" id="formCostDtf" class="form-control" value="12750" oninput="calcHubHpp()">
+        </div>
+      </div>
+
+      <div id="hubHppSummary" style="font-size:12px; font-weight:700; color:var(--green); margin-bottom:16px;">
+        <!-- Calculated live -->
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" class="btn" onclick="closeModal('modalProduct')">Batal</button>
+        <button type="submit" class="btn primary">💾 Simpan Produk ke PIM</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- =========================================================
+     MODAL: SUPABASE CONFIG
+     ========================================================= -->
+<div class="modal-backdrop" id="modalSupabase">
+  <div class="modal-card" style="max-width:580px;">
+    <div class="modal-header">
+      <h2><span>☁️</span> Pengaturan Database Supabase Cloud</h2>
+      <button class="modal-close-btn" onclick="closeModal('modalSupabase')">✕</button>
+    </div>
+    <form onsubmit="saveHubSupabase(event)">
+      <div class="form-group">
+        <label>Supabase Project URL</label>
+        <input type="url" id="hubSbUrl" class="form-control" required value="https://tovslowsopqtuxmrogeu.supabase.co">
+      </div>
+      <div class="form-group">
+        <label>Supabase anon / public Key</label>
+        <input type="password" id="hubSbKey" class="form-control" required value="sb_publishable_8iRmZUulGLChIPZhFXn_rg_QuHlmpA4">
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+        <button type="button" class="btn" onclick="closeModal('modalSupabase')">Tutup</button>
+        <button type="submit" class="btn primary">💾 Simpan & Sinkronkan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- =========================================================
+     MODAL: CLOUDINARY CONFIG
+     ========================================================= -->
+<div class="modal-backdrop" id="modalCloudinary">
+  <div class="modal-card" style="max-width:580px;">
+    <div class="modal-header">
+      <h2><span>🖼️</span> Pengaturan Cloudinary Image CDN</h2>
+      <button class="modal-close-btn" onclick="closeModal('modalCloudinary')">✕</button>
+    </div>
+    <form onsubmit="saveHubCloudinary(event)">
+      <div class="form-group">
+        <label>Cloud Name</label>
+        <input type="text" id="hubCldName" class="form-control" required value="z6qhdkde">
+      </div>
+      <div class="form-group">
+        <label>API Key</label>
+        <input type="text" id="hubCldKey" class="form-control" required value="978731328676184">
+      </div>
+      <div class="form-group">
+        <label>Upload Preset (Unsigned)</label>
+        <input type="text" id="hubCldPreset" class="form-control" required value="teestock_preset">
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+        <button type="button" class="btn" onclick="closeModal('modalCloudinary')">Tutup</button>
+        <button type="submit" class="btn primary">💾 Simpan Pengaturan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast Box -->
+<div class="toast" id="toastBox">
+  <span id="toastIcon">✅</span>
+  <span id="toastMsg">Operasi berhasil</span>
+</div>
+
+<script>
+  /* =========================================================
+     TEESTOCK OPERATIONS HUB CORE STATE & CONFIG
+     ========================================================= */
+  const DEFAULT_SB_URL = "https://tovslowsopqtuxmrogeu.supabase.co";
+  const DEFAULT_SB_KEY = "sb_publishable_8iRmZUulGLChIPZhFXn_rg_QuHlmpA4";
+  const DEFAULT_CLD_NAME = "z6qhdkde";
+  const DEFAULT_CLD_KEY = "978731328676184";
+  const DEFAULT_CLD_PRESET = "teestock_preset";
+
+  let sbClient = null;
+  let isConnected = false;
+
+  /* State Data */
+  let catalog = [];
+  let orders = [];
+  let inventoryMatrix = {};
+  let currentGarmentTab = 'nsa_softstyle_30s';
+
+  const GARMENT_TYPES = {
+    nsa_softstyle_30s:   { name: "NSA Softstyle 30s", baseCost: 38000, colors: ["Hitam", "Krem", "Charcoal", "Olive", "Navy", "Terracotta", "Putih"] },
+    nsa_heavyweight_24s: { name: "NSA Heavyweight 24s", baseCost: 48000, colors: ["Hitam", "Krem", "Charcoal", "Olive", "Navy"] },
+    nsa_longsleeve:      { name: "NSA Long Sleeve 30s", baseCost: 46000, colors: ["Hitam", "Putih", "Navy", "Charcoal"] },
+    nsa_hoodie:          { name: "NSA Hoodie Fleece", baseCost: 110000, colors: ["Hitam", "Charcoal", "Navy"] },
+    nsa_polo:            { name: "NSA Polo Pique", baseCost: 58000, colors: ["Hitam", "Navy", "Putih"] },
+    supplies:            { name: "Supplies & Material", baseCost: 0, colors: [] }
+  };
+
+  const SIZES = ["S", "M", "L", "XL", "XXL", "3XL"];
+
+  /* Initial Seed Orders for Demonstration */
+  const SEED_ORDERS = [
+    {
+      id: "SHP-2609-001",
+      customer: "Dimas Arya",
+      phone: "0812-9821-4411 (Jakarta)",
+      channel: "shopee",
+      sku: "TS-PRO-001",
+      productName: "Commit & Pray",
+      garment: "NSA Softstyle 30s",
+      color: "Hitam",
+      size: "L",
+      qty: 1,
+      price: 99000,
+      fee: 6435,
+      status: "pending"
+    },
+    {
+      id: "SHP-2609-002",
+      customer: "Reza Fahlevi",
+      phone: "0857-1122-3344 (Bandung)",
+      channel: "shopee",
+      sku: "TS-KOM-001",
+      productName: "7 Summits 3000 MDPL",
+      garment: "NSA Softstyle 30s",
+      color: "Olive",
+      size: "XL",
+      qty: 1,
+      price: 99000,
+      fee: 6435,
+      status: "dtf"
+    },
+    {
+      id: "WA-2609-003",
+      customer: "Komunitas Kopi Pagi",
+      phone: "0818-4455-6677 (Jogja)",
+      channel: "whatsapp",
+      sku: "TS-REC-001",
+      productName: "Crisis with Iced Coffee",
+      garment: "NSA Heavyweight 24s",
+      color: "Krem",
+      size: "M",
+      qty: 2,
+      price: 210000,
+      fee: 0,
+      status: "press"
+    },
+    {
+      id: "WEB-2609-004",
+      customer: "Andi Wijaya",
+      phone: "0821-8899-0011 (Surabaya)",
+      channel: "web",
+      sku: "TS-LOK-001",
+      productName: "Wong Jowo Ojo Ilang",
+      garment: "NSA Softstyle 30s",
+      color: "Hitam",
+      size: "L",
+      qty: 1,
+      price: 89000,
+      fee: 0,
+      status: "pack"
+    }
+  ];
+
+  /* =========================================================
+     INITIALIZATION & STORAGE
+     ========================================================= */
+  async function initHub() {
+    loadLocalState();
+    initInventoryDefaults();
+    renderAllViews();
+    await initSupabaseConnection();
+    calcCustomQuote();
+  }
+
+  function loadLocalState() {
+    // Orders
+    const savedOrders = localStorage.getItem("teestock_hub_orders");
+    orders = savedOrders ? JSON.parse(savedOrders) : [...SEED_ORDERS];
+
+    // Inventory
+    const savedInv = localStorage.getItem("teestock_hub_inv");
+    if (savedInv) {
+      inventoryMatrix = JSON.parse(savedInv);
+    }
+
+    // Catalog from PIM Master
+    const savedCat = localStorage.getItem("teestock_master_pim");
+    if (savedCat) {
+      try { catalog = JSON.parse(savedCat); } catch(e) {}
+    }
+  }
+
+  function saveLocalState() {
+    localStorage.setItem("teestock_hub_orders", JSON.stringify(orders));
+    localStorage.setItem("teestock_hub_inv", JSON.stringify(inventoryMatrix));
+    updateBadges();
+  }
+
+  function initInventoryDefaults() {
+    Object.keys(GARMENT_TYPES).forEach(gKey => {
+      if (!inventoryMatrix[gKey]) inventoryMatrix[gKey] = {};
+      GARMENT_TYPES[gKey].colors.forEach(col => {
+        if (!inventoryMatrix[gKey][col]) inventoryMatrix[gKey][col] = {};
+        SIZES.forEach(sz => {
+          if (inventoryMatrix[gKey][col][sz] === undefined) {
+            // Seed starting stock
+            inventoryMatrix[gKey][col][sz] = (col === "Hitam" && (sz === "M" || sz === "L")) ? 5 : 2;
+          }
+        });
+      });
+    });
+  }
+
+  /* =========================================================
+     SUPABASE CONNECTION
+     ========================================================= */
+  async function initSupabaseConnection() {
+    const url = localStorage.getItem("teestock_sb_url") || DEFAULT_SB_URL;
+    const key = localStorage.getItem("teestock_sb_key") || DEFAULT_SB_KEY;
+
+    try {
+      if (window.supabase) {
+        sbClient = window.supabase.createClient(url.replace(/\/rest\/v1\/?$/, ""), key);
+        const { data, error } = await sbClient.from("ts_products").select("sku").limit(1);
+        if (!error) {
+          isConnected = true;
+          document.getElementById("sideSbDot").textContent = "● Live Cloud";
+          document.getElementById("sideSbDot").style.color = "var(--green)";
+          pullCloudData();
+          return;
+        }
+      }
+    } catch(err) {
+      console.warn("Supabase init err:", err);
+    }
+    document.getElementById("sideSbDot").textContent = "○ Mode Lokal";
+    document.getElementById("sideSbDot").style.color = "var(--text-muted)";
+  }
+
+  async function pullCloudData() {
+    if (!sbClient) return;
+    try {
+      // 1. Pull Products
+      const { data: prods } = await sbClient.from("ts_products").select("*");
+      const { data: ues } = await sbClient.from("ts_unit_economics").select("*");
+      if (prods && prods.length > 0) {
+        catalog = prods.map(p => {
+          const ue = (ues || []).find(u => u.product_sku === p.sku) || {};
+          return {
+            sku: p.sku,
+            name: p.name,
+            series: p.series,
+            seriesName: p.series_name,
+            seriesColor: p.series_color,
+            niche: p.niche,
+            batch: p.batch,
+            template: p.template,
+            status: p.status,
+            filePath: p.file_path,
+            costBlank: ue.cost_blank || 38000,
+            costDtf: ue.cost_dtf || 12750,
+            priceRetail: ue.price_retail || 99000,
+            colors: p.colors,
+            sizes: p.sizes
+          };
+        });
+        localStorage.setItem("teestock_master_pim", JSON.stringify(catalog));
+        renderKatalogTable();
+        populateOrderSkuDropdown();
+      }
+    } catch (e) {
+      console.warn("Pull error:", e);
+    }
+  }
+
+  /* =========================================================
+     TAB NAVIGATION SYSTEM
+     ========================================================= */
+  const TAB_TITLES = {
+    dashboard: { title: "Dashboard Ringkasan Bisnis", sub: "Monitoring real-time inventori, antrean press kaos, dan omzet penjualan" },
+    katalog:   { title: "Master Katalog & PIM", sub: "Database desain resmi, HPP, tier harga retail/reseller, dan foto mockup CDN" },
+    inventory: { title: "Stok Kaos Polos NSA & Bahan", sub: "Matriks inventori New State Apparel 30s, 24s, Long Sleeve, Hoodie, dan Polo" },
+    kanban:    { title: "Antrean Order & Produksi Kanban", sub: "Lacak status pesanan masuk dari Shopee, TikTok, WA, dan Web sampai siap kirim" },
+    gangsheet: { title: "Gang Sheet DTF Planner", sub: "Kalkulasi layout cetak roll DTF lebar 60 cm untuk dikirim ke MultiGraph / vendor" },
+    quoter:    { title: "Custom Order WhatsApp Quoter", sub: "Hitung HPP dan susun penawaran harga custom secara instan untuk customer WhatsApp" }
+  };
+
+  function switchTab(tabId) {
+    document.querySelectorAll(".tab-view").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+
+    const targetView = document.getElementById(`view-${tabId}`);
+    if (targetView) targetView.classList.add("active");
+
+    // Highlight nav link
+    const navs = document.querySelectorAll(".nav-item");
+    navs.forEach(n => {
+      if (n.getAttribute("onclick")?.includes(tabId)) n.classList.add("active");
+    });
+
+    if (TAB_TITLES[tabId]) {
+      document.getElementById("topbarTitle").textContent = TAB_TITLES[tabId].title;
+      document.getElementById("topbarSubtitle").textContent = TAB_TITLES[tabId].sub;
+    }
+
+    renderAllViews();
+  }
+
+  function renderAllViews() {
+    renderDashboard();
+    renderKatalogTable();
+    renderInventoryMatrix();
+    renderKanban();
+    renderGangSheet();
+    updateBadges();
+  }
+
+  /* =========================================================
+     TAB 1: DASHBOARD RENDERING
+     ========================================================= */
+  function renderDashboard() {
+    document.getElementById("dashTotalSku").textContent = catalog.length;
+    
+    const activeOrders = orders.filter(o => o.status !== "shipped");
+    document.getElementById("dashActiveOrders").textContent = `${activeOrders.length} Pesanan`;
+
+    // Total Blank Garments
+    let totalStock = 0;
+    let lowStockItems = [];
+
+    Object.keys(inventoryMatrix).forEach(gKey => {
+      const gObj = inventoryMatrix[gKey];
+      Object.keys(gObj).forEach(cKey => {
+        Object.keys(gObj[cKey]).forEach(sKey => {
+          const qty = Number(gObj[cKey][sKey]) || 0;
+          totalStock += qty;
+          if (qty <= 2) {
+            lowStockItems.push({
+              name: `${GARMENT_TYPES[gKey]?.name || gKey} ${cKey} (${sKey})`,
+              qty
+            });
+          }
+        });
+      });
+    });
+
+    document.getElementById("dashTotalStock").textContent = `${totalStock} Pcs`;
+
+    // Dashboard Recent Orders Table
+    const tbody = document.getElementById("dashOrdersTableBody");
+    tbody.innerHTML = orders.slice(0, 5).map(o => {
+      let statusColor = "var(--mustard)";
+      let statusLabel = "📥 Order Masuk";
+      if (o.status === "dtf") { statusColor = "var(--teal)"; statusLabel = "🖨️ Cetak DTF"; }
+      if (o.status === "press") { statusColor = "var(--accent)"; statusLabel = "🔥 Siap Press"; }
+      if (o.status === "pack") { statusColor = "var(--olive)"; statusLabel = "📦 Packing"; }
+      if (o.status === "shipped") { statusColor = "var(--green)"; statusLabel = "🚚 Selesai"; }
+
+      return `
+        <tr>
+          <td><span class="sku-pill">${o.id}</span></td>
+          <td><span class="channel-badge ${o.channel}">${o.channel}</span></td>
+          <td><strong>${o.customer}</strong><div style="font-size:10px; color:var(--text-muted);">${o.phone || ''}</div></td>
+          <td>${o.productName}</td>
+          <td>${o.color} (${o.size})</td>
+          <td><span style="color:${statusColor}; font-weight:700;">${statusLabel}</span></td>
+          <td style="font-family:'JetBrains Mono'; font-weight:700;">Rp ${(o.price||0).toLocaleString('id-ID')}</td>
+        </tr>
+      `;
+    }).join("");
+
+    // Low stock chips
+    const lowWrap = document.getElementById("dashLowStockList");
+    if (lowStockItems.length === 0) {
+      lowWrap.innerHTML = `<span style="font-size:12px; color:var(--green); font-weight:700;">✅ Seluruh stok kaos polos aman di atas batas minimal.</span>`;
+    } else {
+      lowWrap.innerHTML = lowStockItems.slice(0, 6).map(item => `
+        <div style="background:var(--red-dim); border:1px solid var(--red); padding:4px 10px; border-radius:6px; font-size:11px; display:inline-flex; align-items:center; gap:6px;">
+          <span>⚠️ <strong>${item.name}</strong></span>
+          <span style="font-family:'JetBrains Mono'; color:var(--red); font-weight:800;">Sisa ${item.qty} pcs</span>
+        </div>
+      `).join("");
+    }
+  }
+
+  /* =========================================================
+     TAB 2: KATALOG PIM RENDERING
+     ========================================================= */
+  function renderKatalogTable() {
+    const q = (document.getElementById("katalogSearch")?.value || "").toLowerCase();
+    const seriesF = document.getElementById("katalogSeriesFilter")?.value || "all";
+
+    const filtered = catalog.filter(p => {
+      const matchQ = !q || p.sku.toLowerCase().includes(q) || p.name.toLowerCase().includes(q) || (p.niche && p.niche.toLowerCase().includes(q));
+      const matchS = seriesF === "all" || p.series === seriesF;
+      return matchQ && matchS;
+    });
+
+    const tbody = document.getElementById("katalogTableBody");
+    if (!tbody) return;
+
+    tbody.innerHTML = filtered.map(p => {
+      const hpp = (p.costBlank || 38000) + (p.costDtf || 12750) + 2000 + 4500 + 2000 + 5000;
+      const retail = p.priceRetail || 99000;
+      const netProfit = (retail * 0.935) - hpp;
+      const margin = (netProfit / retail * 100).toFixed(1);
+
+      // Check preview image
+      let thumbImg = p.name.slice(0, 2).toUpperCase();
+      if (p.filePath && (p.filePath.includes("cloudinary.com") || p.filePath.includes("drive.google.com"))) {
+        let url = p.filePath;
+        if (url.includes("drive.google.com")) {
+          const match = url.match(/id=([a-zA-Z0-9_-]+)/);
+          if (match) url = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w100`;
+        }
+        thumbImg = `<img src="${url}" style="width:100%; height:100%; object-fit:cover; border-radius:4px;" onerror="this.outerHTML='${p.name.slice(0,2).toUpperCase()}';">`;
+      }
+
+      return `
+        <tr>
+          <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:36px; height:36px; border-radius:6px; background:var(--bg-elevated); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; overflow:hidden; font-weight:800; font-size:10px;">
+                ${thumbImg}
+              </div>
+              <span class="sku-pill">${p.sku}</span>
+            </div>
+          </td>
+          <td><strong>${p.name}</strong><div style="font-size:10px; color:var(--text-muted);">${p.niche || '-'}</div></td>
+          <td><span style="font-size:11px; font-weight:700;">${p.seriesName || p.series}</span></td>
+          <td><span style="font-size:11px; color:var(--text-dim);">NSA Softstyle 30s</span></td>
+          <td style="font-family:'JetBrains Mono';">Rp ${hpp.toLocaleString('id-ID')}</td>
+          <td style="font-family:'JetBrains Mono'; font-weight:700; color:var(--accent);">Rp ${retail.toLocaleString('id-ID')}</td>
+          <td><span style="color:var(--green); font-weight:700; font-size:11px;">+${margin}%</span> (Rp ${Math.round(netProfit).toLocaleString('id-ID')})</td>
+          <td>
+            <button class="btn btn-sm" onclick="openProductModal('${p.sku}')">✏️ Edit</button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  /* =========================================================
+     TAB 3: STOK NSA MATRIX RENDERING
+     ========================================================= */
+  function switchGarmentTab(gKey) {
+    currentGarmentTab = gKey;
+    document.querySelectorAll(".garment-tab-btn").forEach(b => b.classList.remove("active"));
+    const btn = Array.from(document.querySelectorAll(".garment-tab-btn")).find(b => b.getAttribute("onclick")?.includes(gKey));
+    if (btn) btn.classList.add("active");
+
+    document.getElementById("invMatrixTitle").textContent = `Matriks Stok: ${GARMENT_TYPES[gKey]?.name || gKey}`;
+    renderInventoryMatrix();
+  }
+
+  function renderInventoryMatrix() {
+    const table = document.getElementById("invMatrixTable");
+    if (!table) return;
+
+    const gInfo = GARMENT_TYPES[currentGarmentTab];
+    if (!gInfo || gInfo.colors.length === 0) {
+      table.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">Pilih jenis kaos di atas untuk melihat rincian ukuran.</td></tr>`;
+      return;
+    }
+
+    let html = `
+      <thead>
+        <tr>
+          <th>Varian Warna NSA</th>
+          ${SIZES.map(s => `<th>${s}</th>`).join("")}
+          <th>Total per Warna</th>
+        </tr>
+      </thead>
+      <tbody>
+    `;
+
+    gInfo.colors.forEach(col => {
+      let rowTotal = 0;
+      let colorBg = "#1A1A1A";
+      if (col === "Krem") colorBg = "#F2EEE4";
+      if (col === "Charcoal") colorBg = "#4A4A47";
+      if (col === "Olive") colorBg = "#6B7057";
+      if (col === "Navy") colorBg = "#33465C";
+      if (col === "Terracotta") colorBg = "#C1673D";
+      if (col === "Putih") colorBg = "#FFFFFF";
+
+      html += `<tr><td><span class="color-swatch" style="background:${colorBg};"></span> ${col}</td>`;
+
+      SIZES.forEach(sz => {
+        const qty = inventoryMatrix[currentGarmentTab]?.[col]?.[sz] || 0;
+        rowTotal += Number(qty);
+
+        let chipClass = "safe";
+        if (qty <= 2) chipClass = "danger";
+        else if (qty <= 4) chipClass = "warning";
+
+        html += `
+          <td>
+            <span class="stock-chip ${chipClass}" onclick="adjustStock('${currentGarmentTab}', '${col}', '${sz}')" title="Klik untuk edit stok">
+              ${qty}
+            </span>
+          </td>
+        `;
+      });
+
+      html += `<td style="font-family:'JetBrains Mono'; font-weight:800;">${rowTotal} pcs</td></tr>`;
+    });
+
+    html += `</tbody>`;
+    table.innerHTML = html;
+  }
+
+  function adjustStock(gKey, col, sz) {
+    const curr = inventoryMatrix[gKey]?.[col]?.[sz] || 0;
+    const input = prompt(`Update stok untuk ${GARMENT_TYPES[gKey]?.name} Warna ${col} Size ${sz}:`, curr);
+    if (input !== null) {
+      const val = parseInt(input, 10);
+      if (!isNaN(val) && val >= 0) {
+        if (!inventoryMatrix[gKey]) inventoryMatrix[gKey] = {};
+        if (!inventoryMatrix[gKey][col]) inventoryMatrix[gKey][col] = {};
+        inventoryMatrix[gKey][col][sz] = val;
+        saveLocalState();
+        renderAllViews();
+        showToast(`✅ Stok ${col} (${sz}) diubah menjadi ${val} pcs`);
+      }
+    }
+  }
+
+  /* =========================================================
+     TAB 4: KANBAN PRODUCTION BOARD
+     ========================================================= */
+  function renderKanban() {
+    const statuses = ["pending", "dtf", "press", "pack", "shipped"];
+
+    statuses.forEach(st => {
+      const colEl = document.getElementById(`kanban-${st}`);
+      const countEl = document.getElementById(`count-${st}`);
+      if (!colEl) return;
+
+      const items = orders.filter(o => o.status === st);
+      if (countEl) countEl.textContent = items.length;
+
+      colEl.innerHTML = items.map(o => `
+        <div class="order-card">
+          <div class="order-card-header">
+            <span class="order-id">${o.id}</span>
+            <span class="channel-badge ${o.channel}">${o.channel}</span>
+          </div>
+          <div class="order-product-name">${o.productName}</div>
+          <div class="order-specs">
+            <span class="order-spec-tag">${o.garment || 'NSA 30s'}</span>
+            <span class="order-spec-tag">${o.color}</span>
+            <span class="order-spec-tag">Size ${o.size}</span>
+            <span class="order-spec-tag">${o.qty}x</span>
+          </div>
+          <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;">
+            👤 ${o.customer}
+          </div>
+          <div class="order-card-footer">
+            <span style="font-family:'JetBrains Mono'; font-weight:700;">Rp ${(o.price||0).toLocaleString('id-ID')}</span>
+            <div style="display:flex; gap:4px;">
+              ${st !== 'pending' ? `<button class="btn btn-sm" onclick="moveOrderStatus('${o.id}', -1)" title="Kembalikan status">◀</button>` : ''}
+              ${st !== 'shipped' ? `<button class="btn btn-sm primary" onclick="moveOrderStatus('${o.id}', 1)" title="Lanjut ke tahap berikutnya">Lanjut ▶</button>` : '✅ Selesai'}
+            </div>
+          </div>
+        </div>
+      `).join("");
+    });
+  }
+
+  function moveOrderStatus(orderId, dir) {
+    const statuses = ["pending", "dtf", "press", "pack", "shipped"];
+    const idx = orders.findIndex(o => o.id === orderId);
+    if (idx === -1) return;
+
+    const currStatusIdx = statuses.indexOf(orders[idx].status);
+    const nextStatusIdx = currStatusIdx + dir;
+
+    if (nextStatusIdx >= 0 && nextStatusIdx < statuses.length) {
+      const oldStatus = orders[idx].status;
+      const newStatus = statuses[nextStatusIdx];
+      orders[idx].status = newStatus;
+
+      // Deduct stock if advancing to press (production)
+      if (oldStatus === "pending" && newStatus === "dtf") {
+        deductGarmentStock(orders[idx]);
+      }
+
+      saveLocalState();
+      renderAllViews();
+      showToast(`🔄 Status pesanan ${orderId} dipindahkan ke [${newStatus.toUpperCase()}]`);
+    }
+  }
+
+  function deductGarmentStock(order) {
+    let gKey = "nsa_softstyle_30s";
+    if (order.garment?.includes("24s")) gKey = "nsa_heavyweight_24s";
+    if (order.garment?.includes("Long")) gKey = "nsa_longsleeve";
+    if (order.garment?.includes("Hoodie")) gKey = "nsa_hoodie";
+
+    const col = order.color || "Hitam";
+    const sz = order.size || "L";
+    const qty = Number(order.qty) || 1;
+
+    if (inventoryMatrix[gKey]?.[col]?.[sz] !== undefined) {
+      const current = inventoryMatrix[gKey][col][sz];
+      inventoryMatrix[gKey][col][sz] = Math.max(0, current - qty);
+      showToast(`📦 Stok ${GARMENT_TYPES[gKey].name} ${col} (${sz}) otomatis dipotong ${qty} pcs`);
+    }
+  }
+
+  /* =========================================================
+     TAB 5: GANG SHEET PLANNER
+     ========================================================= */
+  function renderGangSheet() {
+    const readyItems = orders.filter(o => o.status === "dtf" || o.status === "pending");
+    const totalQty = readyItems.reduce((acc, o) => acc + (Number(o.qty) || 1), 0);
+
+    const lengthMeters = totalQty > 0 ? (Math.ceil(totalQty / 2) * 0.3 + 0.1).toFixed(1) : "0.0";
+    const totalCost = Math.round(parseFloat(lengthMeters) * 85000);
+    const costPerPcs = totalQty > 0 ? Math.round(totalCost / totalQty) : 12750;
+
+    document.getElementById("gangCount").textContent = `${totalQty} Kaos`;
+    document.getElementById("gangMeter").textContent = `${lengthMeters} Meter`;
+    document.getElementById("gangTotalCost").textContent = `Rp ${totalCost.toLocaleString('id-ID')}`;
+    document.getElementById("gangCostPcs").textContent = `Rp ${costPerPcs.toLocaleString('id-ID')}`;
+
+    // Format WhatsApp summary
+    let clipText = `*ORDER CETAK DTF METERAN — TEESTOCK*\n`;
+    clipText += `Tanggal: ${new Date().toLocaleDateString('id-ID')}\n`;
+    clipText += `Lebar Bahan: 60 cm | Total Estimasi: ${lengthMeters} Meter\n`;
+    clipText += `-----------------------------------------\n`;
+    readyItems.forEach((item, i) => {
+      clipText += `${i+1}. [${item.sku}] ${item.productName} — ${item.garment || 'NSA 30s'} (${item.color} ${item.size}) x${item.qty}\n`;
+    });
+    clipText += `-----------------------------------------\n`;
+    clipText += `File siap cetak resolusi 300 DPI sudah di-link di Google Drive / Cloudinary.`;
+
+    document.getElementById("gangSheetClipboard").value = clipText;
+  }
+
+  function copyGangSheetText() {
+    const el = document.getElementById("gangSheetClipboard");
+    el.select();
+    navigator.clipboard.writeText(el.value).then(() => {
+      showToast("📋 Format order DTF berhasil disalin ke clipboard!");
+    });
+  }
+
+  /* =========================================================
+     TAB 6: CUSTOM ORDER QUOTER
+     ========================================================= */
+  function calcCustomQuote() {
+    const gVal = document.getElementById("quoteGarment").value.split("|");
+    const pVal = document.getElementById("quotePrint").value.split("|");
+    const qty = parseInt(document.getElementById("quoteQty").value, 10) || 1;
+
+    const costBlank = parseInt(gVal[0], 10);
+    const garmentName = gVal[1];
+    const costDtf = parseInt(pVal[0], 10);
+    const printDesc = pVal[1];
+
+    const pressCost = 2000;
+    const packCost = 4500;
+    const overhead = 2000;
+    const hppPcs = costBlank + costDtf + pressCost + packCost + overhead;
+
+    // Price formula with healthy margin ~40%
+    const retailPcs = Math.ceil((hppPcs / 0.6) / 5000) * 5000;
+    const totalPayment = retailPcs * qty;
+
+    document.getElementById("quoteHpp").textContent = `Rp ${hppPcs.toLocaleString('id-ID')}`;
+    document.getElementById("quotePrice").textContent = `Rp ${retailPcs.toLocaleString('id-ID')}`;
+    document.getElementById("quoteTotalPay").textContent = `Rp ${totalPayment.toLocaleString('id-ID')}`;
+
+    let waText = `Halo kak! Terima kasih sudah menghubungi *TeeStock Apparel* 😊\n\n`;
+    waText += `Berikut rincian penawaran untuk kaos custom kamu:\n`;
+    waText += `• Kaos: *${garmentName}* (Bahan adem & nyaman 100% Cotton)\n`;
+    waText += `• Sablon: *DTF HD Raster (${printDesc})*\n`;
+    waText += `• Jumlah: *${qty} pcs*\n`;
+    waText += `• Harga Satuan: *Rp ${retailPcs.toLocaleString('id-ID')}*\n`;
+    waText += `• Total Investasi: *Rp ${totalPayment.toLocaleString('id-ID')}*\n\n`;
+    waText += `📦 _Sudah termasuk Packaging Ziplock eksklusif + Stiker TeeStock + Quality Check._\n`;
+    waText += `Bisa kirimkan file desainnya untuk kami buatkan mockup preview-nya kak? 🙏`;
+
+    document.getElementById("quoteWhatsAppText").value = waText;
+  }
+
+  function copyWhatsAppQuote() {
+    const el = document.getElementById("quoteWhatsAppText");
+    el.select();
+    navigator.clipboard.writeText(el.value).then(() => {
+      showToast("📋 Format balasan WhatsApp berhasil disalin!");
+    });
+  }
+
+  /* =========================================================
+     MODAL CONTROLS & FORMS
+     ========================================================= */
+  function openModal(id) {
+    document.getElementById(id)?.classList.add("active");
+  }
+  function closeModal(id) {
+    document.getElementById(id)?.classList.remove("active");
+  }
+
+  function openOrderModal(mode) {
+    populateOrderSkuDropdown();
+    document.getElementById("orderFormId").value = `ORD-${Date.now().toString().slice(-4)}`;
+    openModal("modalOrder");
+  }
+
+  function populateOrderSkuDropdown() {
+    const sel = document.getElementById("orderFormSku");
+    if (!sel) return;
+    sel.innerHTML = catalog.map(p => `
+      <option value="${p.sku}|${p.name}|${p.priceRetail || 99000}">${p.sku} — ${p.name}</option>
+    `).join("") + `<option value="CUSTOM|Custom Request Desain|99000">CUSTOM — Desain Sendiri</option>`;
+  }
+
+  function autoFillOrderPrice() {
+    const val = document.getElementById("orderFormSku").value.split("|");
+    const pricePerPcs = parseInt(val[2], 10) || 99000;
+    const qty = parseInt(document.getElementById("orderFormQty").value, 10) || 1;
+    const channel = document.getElementById("orderFormChannel").value;
+
+    const total = pricePerPcs * qty;
+    document.getElementById("orderFormPrice").value = total;
+
+    const feeRate = channel === "shopee" ? 0.065 : (channel === "tiktok" ? 0.06 : 0);
+    document.getElementById("orderFormFee").value = Math.round(total * feeRate);
+  }
+
+  function autoFillChannelFee() {
+    autoFillOrderPrice();
+  }
+
+  function saveOrderForm(ev) {
+    ev.preventDefault();
+    const id = document.getElementById("orderFormId").value.trim();
+    const channel = document.getElementById("orderFormChannel").value;
+    const status = document.getElementById("orderFormStatus").value;
+    const customer = document.getElementById("orderFormCustomer").value.trim();
+    const phone = document.getElementById("orderFormPhone").value.trim();
+
+    const skuInfo = document.getElementById("orderFormSku").value.split("|");
+    const garment = document.getElementById("orderFormGarment").value;
+    const color = document.getElementById("orderFormColor").value;
+    const size = document.getElementById("orderFormSize").value;
+    const qty = parseInt(document.getElementById("orderFormQty").value, 10) || 1;
+    const price = parseInt(document.getElementById("orderFormPrice").value, 10) || 99000;
+    const fee = parseInt(document.getElementById("orderFormFee").value, 10) || 0;
+
+    const newOrder = {
+      id, channel, status, customer, phone,
+      sku: skuInfo[0], productName: skuInfo[1],
+      garment, color, size, qty, price, fee
+    };
+
+    orders.unshift(newOrder);
+    saveLocalState();
+    closeModal("modalOrder");
+    renderAllViews();
+    showToast(`✅ Pesanan "${id}" berhasil dicatat!`);
+  }
+
+  function openRestockModal() {
+    openModal("modalRestock");
+  }
+
+  function saveRestockForm(ev) {
+    ev.preventDefault();
+    const gKey = document.getElementById("restockGarment").value;
+    const col = document.getElementById("restockColor").value;
+    const sz = document.getElementById("restockSize").value;
+    const qty = parseInt(document.getElementById("restockQty").value, 10) || 0;
+
+    if (!inventoryMatrix[gKey]) inventoryMatrix[gKey] = {};
+    if (!inventoryMatrix[gKey][col]) inventoryMatrix[gKey][col] = {};
+    const curr = inventoryMatrix[gKey][col][sz] || 0;
+    inventoryMatrix[gKey][col][sz] = curr + qty;
+
+    saveLocalState();
+    closeModal("modalRestock");
+    renderAllViews();
+    showToast(`📥 Berhasil menambahkan ${qty} pcs ke stok ${col} (${sz})!`);
+  }
+
+  function openProductModal(skuOrNew) {
+    if (skuOrNew === 'new') {
+      document.getElementById("modalProductTitle").textContent = "Tambah Desain Baru ke Master PIM";
+      document.getElementById("editProductId").value = "";
+      document.getElementById("formSku").value = `TS-PRO-${String(catalog.length + 1).padStart(3, '0')}`;
+      document.getElementById("formName").value = "";
+      document.getElementById("formNiche").value = "";
+      document.getElementById("formFilePath").value = "";
+      document.getElementById("formPriceRetail").value = 99000;
+      document.getElementById("formCostBlank").value = 38000;
+      document.getElementById("formCostDtf").value = 12750;
+    } else {
+      const p = catalog.find(item => item.sku === skuOrNew);
+      if (!p) return;
+      document.getElementById("modalProductTitle").textContent = "Edit Desain Master PIM";
+      document.getElementById("editProductId").value = p.sku;
+      document.getElementById("formSku").value = p.sku;
+      document.getElementById("formName").value = p.name;
+      document.getElementById("formSeries").value = p.series;
+      document.getElementById("formNiche").value = p.niche || "";
+      document.getElementById("formFilePath").value = p.filePath || "";
+      document.getElementById("formPriceRetail").value = p.priceRetail || 99000;
+      document.getElementById("formCostBlank").value = p.costBlank || 38000;
+      document.getElementById("formCostDtf").value = p.costDtf || 12750;
+    }
+    calcHubHpp();
+    updateHubImgPreview();
+    openModal("modalProduct");
+  }
+
+  function calcHubHpp() {
+    const blank = parseInt(document.getElementById("formCostBlank").value, 10) || 38000;
+    const dtf = parseInt(document.getElementById("formCostDtf").value, 10) || 12750;
+    const retail = parseInt(document.getElementById("formPriceRetail").value, 10) || 99000;
+    const hpp = blank + dtf + 2000 + 4500 + 2000 + 5000;
+    const profit = (retail * 0.935) - hpp;
+    const margin = (profit / retail * 100).toFixed(1);
+
+    document.getElementById("hubHppSummary").textContent = `Total COGS: Rp ${hpp.toLocaleString('id-ID')} • Laba Bersih Retail: Rp ${Math.round(profit).toLocaleString('id-ID')} (${margin}%)`;
+  }
+
+  function updateHubImgPreview() {
+    const val = document.getElementById("formFilePath").value.trim();
+    const wrap = document.getElementById("hubImgPreviewWrap");
+    const img = document.getElementById("hubImgPreview");
+
+    let url = val;
+    if (url.includes("drive.google.com")) {
+      const match = url.match(/id=([a-zA-Z0-9_-]+)/);
+      if (match) url = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w100`;
+    }
+
+    if (url.startsWith("http")) {
+      img.src = url;
+      img.onload = () => wrap.style.display = "flex";
+      img.onerror = () => wrap.style.display = "none";
+    } else {
+      wrap.style.display = "none";
+    }
+  }
+
+  function saveProductForm(ev) {
+    ev.preventDefault();
+    const editId = document.getElementById("editProductId").value;
+    const sku = document.getElementById("formSku").value.trim();
+    const name = document.getElementById("formName").value.trim();
+    const series = document.getElementById("formSeries").value;
+    const niche = document.getElementById("formNiche").value.trim();
+    const filePath = document.getElementById("formFilePath").value.trim();
+    const priceRetail = parseInt(document.getElementById("formPriceRetail").value, 10) || 99000;
+    const costBlank = parseInt(document.getElementById("formCostBlank").value, 10) || 38000;
+    const costDtf = parseInt(document.getElementById("formCostDtf").value, 10) || 12750;
+
+    const payload = {
+      sku, name, series, seriesName: `TeeStock ${series.charAt(0).toUpperCase() + series.slice(1)}`,
+      niche, filePath, priceRetail, costBlank, costDtf,
+      status: "active"
+    };
+
+    if (editId) {
+      const idx = catalog.findIndex(item => item.sku === editId);
+      if (idx !== -1) catalog[idx] = { ...catalog[idx], ...payload };
+    } else {
+      catalog.unshift(payload);
+    }
+
+    localStorage.setItem("teestock_master_pim", JSON.stringify(catalog));
+    closeModal("modalProduct");
+    renderAllViews();
+    showToast(`✅ Desain "${sku}" berhasil disimpan ke katalog!`);
+  }
+
+  /* Cloudinary Upload Handler */
+  async function handleHubCloudinaryUpload(ev) {
+    const file = ev.target.files?.[0];
+    if (!file) return;
+
+    const cloudName = localStorage.getItem("teestock_cld_name") || DEFAULT_CLD_NAME;
+    const preset = localStorage.getItem("teestock_cld_preset") || DEFAULT_CLD_PRESET;
+    const apiKey = localStorage.getItem("teestock_cld_key") || DEFAULT_CLD_KEY;
+
+    showToast("⏳ Mengunggah foto ke Cloudinary CDN...");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", preset);
+      formData.append("api_key", apiKey);
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+      if (data.secure_url) {
+        const optimizedUrl = data.secure_url.replace("/upload/", "/upload/f_auto,q_auto/");
+        document.getElementById("formFilePath").value = optimizedUrl;
+        updateHubImgPreview();
+        showToast("✅ Foto sukses diunggah ke Cloudinary CDN!");
+      } else {
+        throw new Error(data.error?.message || "Pastikan Upload Preset diset ke Unsigned");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Gagal upload ke Cloudinary: " + (err.message || err));
+    } finally {
+      ev.target.value = "";
+    }
+  }
+
+  /* Config Modals */
+  function openSupabaseModal() { openModal("modalSupabase"); }
+  function openCloudinaryModal() { openModal("modalCloudinary"); }
+
+  function saveHubSupabase(ev) {
+    ev.preventDefault();
+    const url = document.getElementById("hubSbUrl").value.trim();
+    const key = document.getElementById("hubSbKey").value.trim();
+    localStorage.setItem("teestock_sb_url", url);
+    localStorage.setItem("teestock_sb_key", key);
+    closeModal("modalSupabase");
+    initSupabaseConnection();
+    showToast("✅ Pengaturan Supabase disimpan!");
+  }
+
+  function saveHubCloudinary(ev) {
+    ev.preventDefault();
+    const cName = document.getElementById("hubCldName").value.trim();
+    const cKey = document.getElementById("hubCldKey").value.trim();
+    const cPreset = document.getElementById("hubCldPreset").value.trim();
+    localStorage.setItem("teestock_cld_name", cName);
+    localStorage.setItem("teestock_cld_key", cKey);
+    localStorage.setItem("teestock_cld_preset", cPreset);
+    closeModal("modalCloudinary");
+    document.getElementById("sideCldNameText").textContent = cName;
+    showToast("✅ Pengaturan Cloudinary disimpan!");
+  }
+
+  /* Toast & Badges */
+  function showToast(msg) {
+    const b = document.getElementById("toastBox");
+    document.getElementById("toastMsg").textContent = msg;
+    b.classList.add("show");
+    setTimeout(() => b.classList.remove("show"), 3000);
+  }
+
+  function updateBadges() {
+    document.getElementById("sideBadgeSku").textContent = catalog.length;
+    const active = orders.filter(o => o.status !== "shipped").length;
+    document.getElementById("sideBadgeOrderActive").textContent = `${active} Order`;
+  }
+
+  /* Theme Switcher */
+  function toggleTheme() {
+    const root = document.documentElement;
+    const curr = root.getAttribute("data-theme");
+    const next = curr === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    localStorage.setItem("teestock_theme", next);
+    document.getElementById("sideThemeBtn").textContent = next === "dark" ? "☀️ Tema Krem" : "🌙 Tema Charcoal";
+  }
+
+  const savedTheme = localStorage.getItem("teestock_theme") || "dark";
+  document.documentElement.setAttribute("data-theme", savedTheme);
+  document.getElementById("sideThemeBtn").textContent = savedTheme === "dark" ? "☀️ Tema Krem" : "🌙 Tema Charcoal";
+
+  // Boot
+  initHub();
+</script>
+
+</body>
+</html>

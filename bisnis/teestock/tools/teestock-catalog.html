@@ -1,0 +1,2442 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TeeStock — Internal Catalog Manager & Product Master (PIM)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* =========================================================
+       TEESTOCK INTERNAL BRAND DESIGN SYSTEM
+       Neutral: Hitam (#1A1A1A), Krem (#F2EEE4), Charcoal (#4A4A47), Abu (#8C8880)
+       Series: Terracotta (#C1673D), Olive (#6B7057), Mustard (#D9A441),
+               Rust (#A84632), Dusty Teal (#4F7C74), Navy (#33465C), Dusty Rose (#B08585)
+       ========================================================= */
+
+    :root[data-theme="dark"] {
+      --bg: #141413;
+      --bg-subtle: #191917;
+      --surface: #1e1e1b;
+      --surface2: #262622;
+      --surface3: #32322c;
+      --border: #363630;
+      --border-light: #484840;
+
+      --text: #F2EEE4;
+      --text-dim: #c5c1b6;
+      --text-muted: #828076;
+
+      --brand-black: #1A1A1A;
+      --brand-cream: #F2EEE4;
+      --brand-charcoal: #4A4A47;
+      --brand-gray: #8C8880;
+
+      --accent: #C1673D;        /* Terracotta */
+      --accent-hover: #a8552e;
+      --accent-light: rgba(193, 103, 61, 0.16);
+
+      --olive: #6B7057;
+      --olive-light: rgba(107, 112, 87, 0.2);
+      --mustard: #D9A441;
+      --mustard-light: rgba(217, 164, 65, 0.2);
+      --rust: #A84632;
+      --rust-light: rgba(168, 70, 50, 0.2);
+      --teal: #4F7C74;
+      --teal-light: rgba(79, 124, 116, 0.2);
+      --navy: #33465C;
+      --rose: #B08585;
+
+      --green: #4E9A74;
+      --green-dim: rgba(78, 154, 116, 0.18);
+      --red: #C5533E;
+      --red-dim: rgba(197, 83, 62, 0.18);
+
+      --logo-filter: invert(1) brightness(0.95);
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.35);
+      --modal-bg: rgba(15, 15, 14, 0.85);
+    }
+
+    :root[data-theme="light"] {
+      --bg: #F4F0E6;
+      --bg-subtle: #eae5d7;
+      --surface: #FCFAF5;
+      --surface2: #F0EADB;
+      --surface3: #E4DECB;
+      --border: #D8D1BF;
+      --border-light: #C5BDA8;
+
+      --text: #1A1A1A;
+      --text-dim: #4A4A47;
+      --text-muted: #8C8880;
+
+      --brand-black: #1A1A1A;
+      --brand-cream: #F2EEE4;
+      --brand-charcoal: #4A4A47;
+      --brand-gray: #8C8880;
+
+      --accent: #C1673D;
+      --accent-hover: #a8552e;
+      --accent-light: rgba(193, 103, 61, 0.12);
+
+      --olive: #5A6048;
+      --olive-light: rgba(90, 96, 72, 0.14);
+      --mustard: #B88528;
+      --mustard-light: rgba(184, 133, 40, 0.15);
+      --rust: #9B3B28;
+      --rust-light: rgba(155, 59, 40, 0.14);
+      --teal: #3E6B63;
+      --teal-light: rgba(62, 107, 99, 0.14);
+      --navy: #293B50;
+      --rose: #9A6F6F;
+
+      --green: #37835B;
+      --green-dim: rgba(55, 131, 91, 0.14);
+      --red: #B23D28;
+      --red-dim: rgba(178, 61, 40, 0.14);
+
+      --logo-filter: none;
+      --card-shadow: 0 4px 20px rgba(74, 74, 71, 0.08);
+      --modal-bg: rgba(244, 240, 230, 0.85);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      transition: background 0.3s ease, color 0.3s ease;
+      min-height: 100vh;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .brand-identity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo-img {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+      filter: var(--logo-filter);
+    }
+    .brand-title-wrap h1 {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      line-height: 1.1;
+    }
+    .brand-title-wrap h1 span { color: var(--accent); }
+    .brand-title-wrap .subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface2);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn.primary:hover {
+      background: var(--accent-hover);
+      color: #fff;
+    }
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 11px;
+      border-radius: 6px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 20px 24px 60px;
+    }
+
+    /* Dashboard Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    @media (max-width: 1100px) {
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 680px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--border-light);
+    }
+    .stat-card.accent::before { background: var(--accent); }
+    .stat-card.green::before { background: var(--green); }
+    .stat-card.olive::before { background: var(--olive); }
+    .stat-card.mustard::before { background: var(--mustard); }
+    .stat-card.teal::before { background: var(--teal); }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+    }
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Toolbar / Filters */
+    .toolbar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .toolbar-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 260px;
+    }
+    .search-input-wrap input {
+      width: 100%;
+      padding: 9px 12px 9px 36px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+    }
+    .search-input-wrap input:focus { border-color: var(--accent); }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .select-filter {
+      padding: 9px 30px 9px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238C8880' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+    .select-filter:focus { border-color: var(--accent); }
+
+    /* Series Pills Strip */
+    .series-nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+    .series-nav::-webkit-scrollbar { height: 4px; }
+    .series-pill-btn {
+      padding: 5px 12px;
+      border-radius: 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .series-pill-btn:hover { border-color: var(--accent); color: var(--text); }
+    .series-pill-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .dot-series {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    /* Master Data Table */
+    .table-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 30px;
+    }
+    .table-responsive {
+      overflow-x: auto;
+      width: 100%;
+    }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+    table.data-table th, table.data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    table.data-table th {
+      background: var(--surface2);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    table.data-table tbody tr:hover {
+      background: var(--surface2);
+    }
+
+    .sku-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      color: var(--accent);
+      background: var(--accent-light);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      display: inline-block;
+    }
+
+    .product-thumb-preview {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-weight: 800;
+      font-size: 9px;
+      color: #fff;
+      text-align: center;
+      line-height: 1.1;
+      padding: 2px;
+      flex-shrink: 0;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .status-badge.active { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
+    .status-badge.test { background: var(--mustard-light); color: var(--mustard); border: 1px solid var(--mustard); }
+    .status-badge.draft { background: var(--surface3); color: var(--text-muted); border: 1px solid var(--border); }
+    .status-badge.archived { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
+
+    .price-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+    .margin-pct-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    /* Action buttons in row */
+    .row-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--modal-bg);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.active { display: flex; }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 860px;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      position: relative;
+      padding: 26px 30px;
+      animation: modalFadeIn 0.25s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .modal-header h2 {
+      font-size: 18px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .modal-close-btn:hover { background: var(--accent); color: white; }
+
+    /* Form Grids in Modal */
+    .form-section-title {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--accent);
+      margin: 18px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    .form-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 700px) {
+      .form-grid-2, .form-grid-3, .form-grid-4 { grid-template-columns: 1fr; }
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus { border-color: var(--accent); }
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .calc-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin: 14px 0;
+    }
+
+    /* Copy Drawer */
+    .copy-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      white-space: pre-wrap;
+      word-break: break-all;
+      position: relative;
+      margin-bottom: 14px;
+    }
+    .copy-box-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px 8px;
+      font-size: 10px;
+    }
+
+    /* Production Roll Planner Tab / View */
+    .planner-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 30px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      color: var(--text);
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 2000;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<header class="top-bar">
+  <div class="brand-identity">
+    <img src="../brand/Logo TeeStock Monokrom.png" alt="TeeStock Logo" class="brand-logo-img">
+    <div class="brand-title-wrap">
+      <h1>Tee<span>Stock</span> Product Master</h1>
+      <div class="subtitle">Internal Catalog & PIM Manager • Solo Founder System</div>
+    </div>
+  </div>
+
+  <div class="top-actions">
+    <button class="btn btn-sm" onclick="openSupabaseModal()" id="supabaseStatusBtn" style="border-color:var(--teal); color:var(--teal);">
+      ☁️ Supabase: Terputus (Lokal)
+    </button>
+    <button class="btn btn-sm" onclick="openCloudinaryModal()" id="cldStatusBtn" style="border-color:var(--mustard); color:var(--mustard);">
+      🖼️ Cloudinary CDN
+    </button>
+    <button class="btn btn-sm" onclick="toggleTheme()" id="themeBtn">
+      ☀️ Tema Krem
+    </button>
+    <button class="btn btn-sm" onclick="exportCSV()">
+      📊 Export CSV / Excel
+    </button>
+    <button class="btn btn-sm" onclick="exportJSON()">
+      💾 Backup JSON
+    </button>
+    <button class="btn primary" onclick="openProductModal('new')">
+      ➕ Tambah Desain Baru
+    </button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Dashboard Overview Stats -->
+  <div class="stats-row">
+    <div class="stat-card accent">
+      <div class="stat-label">Total SKU Desain</div>
+      <div class="stat-value" id="statTotalSku">0</div>
+      <div class="stat-sub">Terdaftar di master katalog</div>
+    </div>
+
+    <div class="stat-card green">
+      <div class="stat-label">Live di Marketplace</div>
+      <div class="stat-value" id="statActive">0</div>
+      <div class="stat-sub">Aktif siap terima order</div>
+    </div>
+
+    <div class="stat-card mustard">
+      <div class="stat-label">Batch 1 Prioritas</div>
+      <div class="stat-value" id="statBatch1">6</div>
+      <div class="stat-sub">3 Niche scoring tertinggi</div>
+    </div>
+
+    <div class="stat-card olive">
+      <div class="stat-label">Rata-rata HPP Dasar</div>
+      <div class="stat-value" id="statAvgHpp">Rp 0</div>
+      <div class="stat-sub">COGS NSA + DTF per pcs</div>
+    </div>
+
+    <div class="stat-card teal">
+      <div class="stat-label">Rata-rata Margin Retail</div>
+      <div class="stat-value" id="statAvgMargin">0%</div>
+      <div class="stat-sub">Setelah fee Shopee 6.5%</div>
+    </div>
+  </div>
+
+  <!-- Filter & Search Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-row">
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Cari berdasarkan SKU, nama desain, niche, atau tag..." oninput="applyFilters()">
+      </div>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <select class="select-filter" id="statusFilter" onchange="applyFilters()">
+          <option value="all">Semua Status</option>
+          <option value="active">Active (Live di Shopee)</option>
+          <option value="test">Batch 0 (Test Press)</option>
+          <option value="draft">Draft / Ide Desain</option>
+          <option value="archived">Archived</option>
+        </select>
+
+        <select class="select-filter" id="batchFilter" onchange="applyFilters()">
+          <option value="all">Semua Batch</option>
+          <option value="Batch 1">Batch 1 (Launch)</option>
+          <option value="Batch 2">Batch 2 (Next)</option>
+          <option value="Custom">Custom Order</option>
+        </select>
+
+        <select class="select-filter" id="sortFilter" onchange="applyFilters()">
+          <option value="sku_asc">Urut SKU (A-Z)</option>
+          <option value="name_asc">Nama Desain (A-Z)</option>
+          <option value="price_asc">Harga Terendah</option>
+          <option value="price_desc">Harga Tertinggi</option>
+          <option value="margin_desc">Margin Tertinggi</option>
+        </select>
+
+        <button class="btn btn-sm" onclick="resetFilters()">🔄 Reset Filter</button>
+      </div>
+    </div>
+
+    <!-- 9 Series Filter Strip -->
+    <div class="series-nav" id="seriesPills">
+      <button class="series-pill-btn active" onclick="setSeriesFilter('all')">
+        🌟 Semua Series (<span id="count_all">0</span>)
+      </button>
+      <button class="series-pill-btn" onclick="setSeriesFilter('profesi')">
+        <span class="dot-series" style="background:#4A4A47;"></span> Profesi (<span id="count_profesi">0</span>)
+      </button>
+      <button class="series-pill-btn" onclick="setSeriesFilter('komunitas')">
+        <span class="dot-series" style="background:#6B7057;"></span> Komunitas (<span id="count_komunitas">0</span>)
+      </button>
+      <button class="series-pill-btn" onclick="setSeriesFilter('lokal')">
+        <span class="dot-series" style="background:#D9A441;"></span> Lokal (<span id="count_lokal">0</span>)
+      </button>
+      <button class="series-pill-btn" onclick="setSeriesFilter('fase')">
+        <span class="dot-series" style="background:#4F7C74;"></span> Fase (<span id="count_fase">0</span>)
+      </button>
+      <button class="series-pill-btn" onclick="setSeriesFilter('fandom')">
+        <span class="dot-series" style="background:#A84632;"></span> Fandom (<span id="count_fandom">0</span>)
+      </button>
+      <button class="series-pill-btn" onclick="setSeriesFilter('receh')">
+        <span class="dot-series" style="background:#C1673D;"></span> Receh/Sarkas (<span id="count_receh">0</span>)
+      </button>
+      <button class="series-pill-btn" onclick="setSeriesFilter('squad')">
+        <span class="dot-series" style="background:#B08585;"></span> Squad (<span id="count_squad">0</span>)
+      </button>
+      <button class="series-pill-btn" onclick="setSeriesFilter('kampus')">
+        <span class="dot-series" style="background:#8C8880;"></span> Kampus (<span id="count_kampus">0</span>)
+      </button>
+      <button class="series-pill-btn" onclick="setSeriesFilter('momen')">
+        <span class="dot-series" style="background:#33465C;"></span> Momen (<span id="count_momen">0</span>)
+      </button>
+    </div>
+  </div>
+
+  <!-- Master Data Table -->
+  <div class="table-container">
+    <div class="table-responsive">
+      <table class="data-table" id="masterTable">
+        <thead>
+          <tr>
+            <th>SKU & Preview</th>
+            <th>Nama Desain & Niche</th>
+            <th>Series & Template</th>
+            <th>Status & Batch</th>
+            <th>Unit Economics (HPP)</th>
+            <th>Harga Jual & Margin</th>
+            <th>Varian Warna & Ukuran</th>
+            <th style="text-align:center;">Aksi Internal</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DTF Roll Gang Sheet Production Planner Box -->
+  <div class="planner-section">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+      <div>
+        <h3 style="font-size:16px; font-weight:800; display:flex; align-items:center; gap:8px;">
+          🖨️ DTF Gang Sheet Roll Planner (Efisiensi Cetak Meteran)
+        </h3>
+        <p style="font-size:12px; color:var(--text-muted);">Simulasi penataan cetak file DTF meteran (Lebar 58-60 cm) agar menghemat biaya cetak per pcs.</p>
+      </div>
+      <button class="btn btn-sm" onclick="calcGangSheet()">Hitung Ulang Roll</button>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-bottom:14px;">
+      <div class="stat-card" style="padding:12px;">
+        <div class="stat-label">Total Desain Siap Cetak</div>
+        <div class="stat-value" id="gangTotalQty" style="font-size:18px;">6 Desain</div>
+        <div class="stat-sub">Batch 1 Hero Launch</div>
+      </div>
+      <div class="stat-card" style="padding:12px;">
+        <div class="stat-label">Estimasi Panjang Roll DTF</div>
+        <div class="stat-value" id="gangLength" style="font-size:18px; color:var(--mustard);">1.8 Meter</div>
+        <div class="stat-sub">Ukuran A3 (30x30 cm) jejer 2</div>
+      </div>
+      <div class="stat-card" style="padding:12px;">
+        <div class="stat-label">Biaya Cetak DTF Vendor</div>
+        <div class="stat-value" id="gangCost" style="font-size:18px; color:var(--accent);">Rp 153.000</div>
+        <div class="stat-sub">Rate Rp 85.000 / meter</div>
+      </div>
+      <div class="stat-card" style="padding:12px;">
+        <div class="stat-label">Biaya Cetak per Kaos</div>
+        <div class="stat-value" id="gangCostPerPcs" style="font-size:18px; color:var(--green);">Rp 12.750</div>
+        <div class="stat-sub">Sangat hemat vs DTF satuan</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ================= MODAL: TAMBAH / EDIT PRODUK LENGKAP ================= -->
+<div class="modal-backdrop" id="productModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2><span id="modalModeIcon">➕</span> <span id="modalHeaderTitle">Input Master Data Desain Baru</span></h2>
+      <button class="modal-close-btn" onclick="closeProductModal()">✕</button>
+    </div>
+
+    <form id="productForm" onsubmit="saveProductForm(event)">
+      <input type="hidden" id="editProductId">
+
+      <!-- 1. IDENTITAS PRODUK -->
+      <div class="form-section-title">1. Identitas Desain & Seri</div>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>SKU Produk *</label>
+          <input type="text" class="form-control" id="formSku" required placeholder="Contoh: TS-PRO-001">
+        </div>
+        <div class="form-group">
+          <label>Nama Desain *</label>
+          <input type="text" class="form-control" id="formName" required placeholder="Contoh: Commit & Pray">
+        </div>
+        <div class="form-group">
+          <label>Series TeeStock *</label>
+          <select class="form-control" id="formSeries" required onchange="updateSeriesColorPreview()">
+            <option value="profesi">TeeStock Profesi</option>
+            <option value="komunitas">TeeStock Komunitas</option>
+            <option value="lokal">TeeStock Lokal</option>
+            <option value="fase">TeeStock Fase</option>
+            <option value="fandom">TeeStock Fandom</option>
+            <option value="receh">TeeStock Receh/Sarkas</option>
+            <option value="squad">TeeStock Squad</option>
+            <option value="kampus">TeeStock Kampus</option>
+            <option value="momen">TeeStock Momen</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>Niche Spesifik</label>
+          <input type="text" class="form-control" id="formNiche" placeholder="Contoh: Programmer, IT, Developer">
+        </div>
+        <div class="form-group">
+          <label>Template Desain Brand Guide</label>
+          <select class="form-control" id="formTemplate">
+            <option value="typography">1. Tipografi Bold</option>
+            <option value="badge">2. Badge / Lencana</option>
+            <option value="icon_text">3. Ikon + Teks</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status Desain</label>
+          <select class="form-control" id="formStatus">
+            <option value="active">Active (Live di Shopee)</option>
+            <option value="test">Batch 0 (Test Pressing)</option>
+            <option value="draft">Draft / Tahap Desain</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 2. FILE ASSET & LISENSI -->
+      <div class="form-section-title">2. Aset File & Lisensi Komersial</div>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>Sumber / Lisensi Desain</label>
+          <select class="form-control" id="formLicenseSource">
+            <option value="Etsy (Commercial POD)">Etsy (Commercial POD License)</option>
+            <option value="In-House (Buatan Sendiri)">In-House (Buatan Sendiri)</option>
+            <option value="Kolaborasi Kreator">Kolaborasi Kreator (Royalti)</option>
+            <option value="Creative Fabrica">Creative Fabrica POD</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+            <label style="margin-bottom:0;">Lokasi File Master / Mockup</label>
+            <label class="btn btn-sm" style="padding:2px 8px; font-size:10px; cursor:pointer; border-color:var(--mustard); color:var(--mustard);" title="Upload langsung ke Cloudinary CDN">
+              📤 Upload ke Cloudinary
+              <input type="file" id="cldFileInput" accept="image/*" style="display:none;" onchange="handleCloudinaryUpload(event)">
+            </label>
+          </div>
+          <input type="text" class="form-control" id="formFilePath" placeholder="Paste link Google Drive, Cloudinary, atau path lokal..." oninput="updateModalImagePreview()">
+          <div id="modalImgPreviewWrap" style="margin-top:6px; display:none; align-items:center; gap:8px; background:var(--surface3); padding:6px 10px; border-radius:6px;">
+            <img id="modalImgPreview" src="" alt="Preview" style="width:32px; height:32px; object-fit:cover; border-radius:4px; border:1px solid var(--border);">
+            <div style="font-size:11px;">
+              <span style="color:var(--green); font-weight:700;">✅ Preview Gambar Terdeteksi</span>
+              <div style="color:var(--text-muted); font-size:10px;" id="modalImgPreviewText">Google Drive Image</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Ukuran Area Cetak DTF</label>
+          <select class="form-control" id="formPrintArea" onchange="autoCalcHpp()">
+            <option value="0.09">A3 (30x30 cm) — Standar</option>
+            <option value="0.06">A4 (20x30 cm)</option>
+            <option value="0.12">A3+ (30x40 cm)</option>
+            <option value="0.03">Saku Dada Kiri (10x10 cm)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 3. UNIT ECONOMICS & HARGA -->
+      <div class="form-section-title">3. Unit Economics & Struktur Harga</div>
+      <div class="form-grid-4">
+        <div class="form-group">
+          <label>HPP Blank Kaos (NSA)</label>
+          <input type="number" class="form-control" id="formCostBlank" value="38000" oninput="autoCalcHpp()">
+        </div>
+        <div class="form-group">
+          <label>Biaya Cetak DTF</label>
+          <input type="number" class="form-control" id="formCostDtf" value="12750" oninput="autoCalcHpp()">
+        </div>
+        <div class="form-group">
+          <label>Biaya Pressing & Listrik</label>
+          <input type="number" class="form-control" id="formCostPress" value="2000" oninput="autoCalcHpp()">
+        </div>
+        <div class="form-group">
+          <label>Packing & Label Hangtag</label>
+          <input type="number" class="form-control" id="formCostPack" value="4500" oninput="autoCalcHpp()">
+        </div>
+      </div>
+
+      <div class="calc-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <span style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">TOTAL HPP DASAR (COGS):</span>
+            <div style="font-size:20px; font-weight:800; font-family:'JetBrains Mono', monospace; color:var(--text);" id="formTotalHpp">Rp 64.250</div>
+          </div>
+          <div>
+            <span style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">HARGA RETAIL SHOPEE:</span>
+            <input type="number" class="form-control" id="formPriceRetail" value="99000" style="width:140px; font-weight:800; font-family:'JetBrains Mono', monospace;" oninput="autoCalcHpp()">
+          </div>
+          <div>
+            <span style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">HARGA DROPSHIP (-12%):</span>
+            <input type="number" class="form-control" id="formPriceDrop" value="87000" style="width:140px; font-family:'JetBrains Mono', monospace;">
+          </div>
+          <div>
+            <span style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">HARGA RESELLER (-25%):</span>
+            <input type="number" class="form-control" id="formPriceReseller" value="74000" style="width:140px; font-family:'JetBrains Mono', monospace;">
+          </div>
+        </div>
+        <div style="font-size:11px; color:var(--green); font-weight:700; margin-top:8px;" id="formMarginPreview">
+          ✅ Estimasi Profit Bersih Retail: Rp 28.315 / pcs (Margin 28.6% setelah fee marketplace 6.5%)
+        </div>
+      </div>
+
+      <!-- 4. VARIAN WARNA & UKURAN -->
+      <div class="form-section-title">4. Varian Garmen & Warna Kain</div>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Warna Bahan Kaos Tersedia</label>
+          <input type="text" class="form-control" id="formColors" value="Hitam, Krem, Charcoal" placeholder="Pisahkan dengan koma, cth: Hitam, Krem, Charcoal, Navy">
+        </div>
+        <div class="form-group">
+          <label>Ukuran Tersedia</label>
+          <input type="text" class="form-control" id="formSizes" value="S, M, L, XL, XXL" placeholder="Cth: S, M, L, XL, XXL, 3XL">
+        </div>
+      </div>
+
+      <!-- 5. COPYWRITING LISTING MARKETPLACE -->
+      <div class="form-section-title">5. Copywriting Listing Shopee / Tokopedia</div>
+      <div class="form-group">
+        <label>Judul Listing SEO Marketplace</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" class="form-control" id="formSeoTitle" placeholder="Kaos Programmer IT Pria Wanita Cotton Combed 30s New State Apparel — TeeStock Profesi">
+          <button type="button" class="btn btn-sm" onclick="generateSeoTitle()">⚡ Auto Generate</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Deskripsi Produk Lengkap</label>
+        <textarea class="form-control form-textarea" id="formDescription" placeholder="Tulis rincian cerita desain, spesifikasi kain NSA, dan panduan ukuran..."></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+        <button type="button" class="btn" onclick="closeProductModal()">Batal</button>
+        <button type="submit" class="btn primary">💾 Simpan Data Produk ke Katalog</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL: QUICK COPY MARKETPLACE ASSETS ================= -->
+<div class="modal-backdrop" id="copyModal">
+  <div class="modal-box" style="max-width:650px;">
+    <div class="modal-header">
+      <h2>📋 Quick Copy Marketplace Listing Assets</h2>
+      <button class="modal-close-btn" onclick="closeCopyModal()">✕</button>
+    </div>
+
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
+      Gunakan tombol salin di bawah untuk langsung paste ke form upload produk Shopee, Tokopedia, atau caption Instagram/TikTok.
+    </p>
+
+    <div class="form-group">
+      <label>1. Judul Produk Shopee (SEO Optimized)</label>
+      <div class="copy-box" id="copyBoxTitle">
+        <button class="btn btn-sm copy-box-btn" onclick="copyText('copyBoxTitle')">📋 Copy Judul</button>
+        <span id="copyTextTitle"></span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>2. Deskripsi Lengkap Produk</label>
+      <div class="copy-box" id="copyBoxDesc" style="max-height:160px; overflow-y:auto;">
+        <button class="btn btn-sm copy-box-btn" onclick="copyText('copyBoxDesc')">📋 Copy Deskripsi</button>
+        <span id="copyTextDesc"></span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>3. Hashtags TikTok / Reels</label>
+      <div class="copy-box" id="copyBoxTags">
+        <button class="btn btn-sm copy-box-btn" onclick="copyText('copyBoxTags')">📋 Copy Tags</button>
+        <span id="copyTextTags"></span>
+      </div>
+    </div>
+
+    <div style="text-align:right;">
+      <button class="btn" onclick="closeCopyModal()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- Supabase Cloud Config Modal -->
+<div class="modal-backdrop" id="supabaseModal">
+  <div class="modal-card" style="max-width: 620px;">
+    <div class="modal-header">
+      <h2>☁️ Database Cloud (Supabase Multi-Tenant)</h2>
+      <button class="modal-close-btn" onclick="closeSupabaseModal()">✕</button>
+    </div>
+
+    <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-size: 13px; font-weight: 700;">Status Koneksi Cloud:</span>
+        <span id="sbConnectionBadge" style="font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--surface3); color: var(--text-muted);">
+          🔌 Terputus (Mode Lokal)
+        </span>
+      </div>
+      <p style="font-size: 12px; color: var(--text-dim); line-height: 1.5; margin: 0;">
+        Hubungkan ke proyek Supabase <code>business-hub</code> kamu. Skema menggunakan prefix tabel <code>ts_</code> untuk TeeStock, sehingga 1 akun Supabase bisa dipakai bersama dengan MultiGraph (<code>mg_</code>) dan Titik Buta (<code>tb_</code>) tanpa bentrok.
+      </p>
+    </div>
+
+    <form onsubmit="saveSupabaseConfig(event)">
+      <div class="form-group">
+        <label>Supabase Project URL</label>
+        <input type="url" id="sbProjectUrl" class="form-control" placeholder="https://xyzcompany.supabase.co" required>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Ditemukan di: Supabase Dashboard &gt; Project Settings &gt; API &gt; Project URL</div>
+      </div>
+
+      <div class="form-group">
+        <label>Supabase anon / public API Key</label>
+        <input type="password" id="sbAnonKey" class="form-control" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." required>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Ditemukan di: Supabase Dashboard &gt; Project Settings &gt; API &gt; Project API keys (anon / public)</div>
+      </div>
+
+      <div style="margin: 16px 0; padding: 12px; background: rgba(79, 124, 116, 0.1); border: 1px dashed var(--teal); border-radius: 8px; font-size: 12px;">
+        <strong>💡 Panduan Setup 3 Menit:</strong><br>
+        1. Buat project baru di <a href="https://supabase.com" target="_blank" style="color:var(--accent); text-decoration: underline;">Supabase.com</a> (region Singapore).<br>
+        2. Buka menu <strong>SQL Editor</strong> &gt; Copy &amp; Paste isi file <code>bisnis/teestock/database/schema.sql</code> &gt; Klik <strong>Run</strong>.<br>
+        3. Masukkan URL dan anon Key di atas lalu klik tombol <strong>Simpan &amp; Sambungkan</strong>.
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 20px;">
+        <button type="button" class="btn" onclick="disconnectSupabase()" id="btnDisconnectSb" style="display: none; border-color: var(--red); color: var(--red);">
+          🔌 Putuskan (Kembali ke Lokal)
+        </button>
+        <button type="button" class="btn" onclick="pushToSupabase()" id="btnPushSb" style="display: none; border-color: var(--mustard); color: var(--mustard);">
+          ⬆️ Kirim Data Lokal ke Cloud
+        </button>
+        <button type="button" class="btn" onclick="pullFromSupabase(true)" id="btnPullSb" style="display: none; border-color: var(--teal); color: var(--teal);">
+          ⬇️ Tarik Data Cloud ke Lokal
+        </button>
+        <button type="button" class="btn" onclick="closeSupabaseModal()">Batal</button>
+        <button type="submit" class="btn primary" id="btnSaveSb">💾 Simpan &amp; Sambungkan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Cloudinary CDN Config Modal -->
+<div class="modal-backdrop" id="cloudinaryModal">
+  <div class="modal-card" style="max-width: 580px;">
+    <div class="modal-header">
+      <h2>🖼️ Konfigurasi Cloudinary Image CDN</h2>
+      <button class="modal-close-btn" onclick="closeCloudinaryModal()">✕</button>
+    </div>
+
+    <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-size: 13px; font-weight: 700;">Status CDN:</span>
+        <span id="cldConnectionBadge" style="font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--surface3); color: var(--text-muted);">
+          ⚠️ Belum Diatur
+        </span>
+      </div>
+      <p style="font-size: 12px; color: var(--text-dim); line-height: 1.5; margin: 0;">
+        Cloudinary digunakan untuk upload foto mockup langsung dari laptop ke CDN global dengan auto-format <strong>WebP/AVIF</strong> (loading super ngebut &lt; 0.3s dan hemat kuota pengunjung web).
+      </p>
+    </div>
+
+    <form onsubmit="saveCloudinaryConfig(event)">
+      <div class="form-group">
+        <label>Cloud Name</label>
+        <input type="text" id="cldCloudName" class="form-control" value="z6qhdkde" required>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Akun: <strong>z6qhdkde</strong> (rizkybuilds)</div>
+      </div>
+
+      <div class="form-group">
+        <label>API Key</label>
+        <input type="text" id="cldApiKey" class="form-control" value="978731328676184" required>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Sudah terisi otomatis: <code>978731328676184</code></div>
+      </div>
+
+      <div class="form-group">
+        <label>Upload Preset (Unsigned)</label>
+        <input type="text" id="cldUploadPreset" class="form-control" placeholder="Contoh: teestock_preset" value="teestock_preset" required>
+      </div>
+
+      <div style="margin: 16px 0; padding: 12px; background: rgba(217, 164, 65, 0.1); border: 1px dashed var(--mustard); border-radius: 8px; font-size: 12px; line-height: 1.5;">
+        <strong>💡 Cara Buat Upload Preset Unsigned (30 Detik):</strong><br>
+        1. Buka dashboard <a href="https://console.cloudinary.com/settings/upload" target="_blank" style="color:var(--mustard); font-weight:700; text-decoration:underline;">Cloudinary Settings &gt; Upload</a>.<br>
+        2. Scroll ke bawah ke tabel <strong>Upload presets</strong> &gt; klik <strong>Add upload preset</strong>.<br>
+        3. Beri nama <code>teestock_preset</code> dan ubah <strong>Signing Mode</strong> jadi <strong style="color:var(--green);">Unsigned</strong>.<br>
+        4. Klik <strong>Save</strong> di kanan atas. Selesai!
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+        <button type="button" class="btn" onclick="closeCloudinaryModal()">Tutup</button>
+        <button type="submit" class="btn primary">💾 Simpan Konfigurasi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toastBox">
+  <span id="toastIcon">✅</span>
+  <span id="toastMsg">Notifikasi</span>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  TeeStock Internal PIM System • Built for Solopreneur Apparel Operations • Sept 2026
+</footer>
+
+<script>
+  /* =========================================================
+     TEESTOCK MASTER DATA INITIAL SEED
+     ========================================================= */
+  const DEFAULT_CATALOG = [
+    {
+      sku: "TS-PRO-001",
+      name: "Commit & Pray",
+      series: "profesi",
+      seriesName: "TeeStock Profesi",
+      seriesColor: "#4A4A47",
+      niche: "Programmer, IT, Developer",
+      batch: "Batch 1",
+      template: "typography",
+      status: "active",
+      licenseSource: "In-House (Buatan Sendiri)",
+      filePath: "bisnis/teestock/desain/profesi/commit-pray.png",
+      printArea: "0.09",
+      costBlank: 38000,
+      costDtf: 12750,
+      costPress: 2000,
+      costPack: 4500,
+      costOverhead: 2000,
+      costDesign: 5000,
+      priceRetail: 99000,
+      priceDrop: 87000,
+      priceReseller: 74000,
+      colors: "Hitam, Krem, Charcoal",
+      sizes: "S, M, L, XL, XXL, 3XL",
+      seoTitle: "Kaos Programmer IT Commit and Pray Katun Combed 30s New State Apparel — TeeStock Profesi",
+      description: `TeeStock Profesi Series — "Commit & Pray"
+Kaos wajib bagi para software engineer dan programmer yang sering push ke production di hari Jumat malam. Menggabungkan dedikasi teknis dan kepasrahan batin.
+
+SPESIFIKASI PRODUK RESMI:
+• Blank Garment: New State Apparel (NSA) Softstyle 100% Ring Spun Cotton Combed 30s
+• Sablon: DTF HD Raster Digital (lentur, halus, tahan cuci berkali-kali)
+• Jahitan: Rantai standar distro, leher rib elastis nyaman
+• Packaging: Ziplock tebal + Stiker logo TeeStock + Thank you card
+
+PANDUAN UKURAN (Lebar x Panjang dalam CM):
+S : 47 x 66 cm
+M : 50 x 69 cm
+L : 53 x 72 cm
+XL : 56 x 74 cm
+XXL : 59 x 76 cm`
+    },
+    {
+      sku: "TS-PRO-002",
+      name: "It's Not a Bug, It's an Undocumented Feature",
+      series: "profesi",
+      seriesName: "TeeStock Profesi",
+      seriesColor: "#4A4A47",
+      niche: "Programmer, QA, IT",
+      batch: "Batch 1",
+      template: "icon_text",
+      status: "active",
+      licenseSource: "In-House (Buatan Sendiri)",
+      filePath: "bisnis/teestock/desain/profesi/not-a-bug.png",
+      printArea: "0.09",
+      costBlank: 38000,
+      costDtf: 12750,
+      costPress: 2000,
+      costPack: 4500,
+      costOverhead: 2000,
+      costDesign: 5000,
+      priceRetail: 99000,
+      priceDrop: 87000,
+      priceReseller: 74000,
+      colors: "Hitam, Charcoal, Abu Hangat",
+      sizes: "S, M, L, XL, XXL",
+      seoTitle: "Baju Kaos Coding IT Not a Bug Feature New State Apparel Combed 30s — TeeStock Profesi",
+      description: `TeeStock Profesi Series — "It's Not a Bug, It's an Undocumented Feature"
+Jawaban diplomatis terbaik saat demo produk ke client atau atasan. Dicetak dengan aksen clean minimalis di atas bahan premium NSA Softstyle.`
+    },
+    {
+      sku: "TS-KOM-001",
+      name: "7 Summits Indonesia / Penikmat 3000 MDPL",
+      series: "komunitas",
+      seriesName: "TeeStock Komunitas",
+      seriesColor: "#6B7057",
+      niche: "Pendaki, Outdoor, Hiking",
+      batch: "Batch 1",
+      template: "badge",
+      status: "active",
+      licenseSource: "In-House (Buatan Sendiri)",
+      filePath: "bisnis/teestock/desain/komunitas/3000-mdpl.png",
+      printArea: "0.09",
+      costBlank: 38000,
+      costDtf: 12750,
+      costPress: 2000,
+      costPack: 4500,
+      costOverhead: 2000,
+      costDesign: 5000,
+      priceRetail: 99000,
+      priceDrop: 87000,
+      priceReseller: 74000,
+      colors: "Olive, Hitam, Krem",
+      sizes: "S, M, L, XL, XXL, 3XL",
+      seoTitle: "Kaos Gunung Pendaki 7 Summits Penikmat 3000 MDPL Outdoor Distro — TeeStock Komunitas",
+      description: `TeeStock Komunitas Series — "7 Summits Indonesia / Penikmat 3000 MDPL"
+Lencana grafis pendaki gunung sejati. Bahan sejuk dan nyaman dipakai untuk trekking maupun nongkrong santai.`
+    },
+    {
+      sku: "TS-KOM-002",
+      name: "Born to Hike, Forced to Work",
+      series: "komunitas",
+      seriesName: "TeeStock Komunitas",
+      seriesColor: "#6B7057",
+      niche: "Outdoor, Camp, Pendaki",
+      batch: "Batch 1",
+      template: "badge",
+      status: "active",
+      licenseSource: "Etsy (Commercial POD)",
+      filePath: "bisnis/teestock/desain/komunitas/born-to-hike.png",
+      printArea: "0.09",
+      costBlank: 38000,
+      costDtf: 12750,
+      costPress: 2000,
+      costPack: 4500,
+      costOverhead: 2000,
+      costDesign: 5000,
+      priceRetail: 99000,
+      priceDrop: 87000,
+      priceReseller: 74000,
+      colors: "Hitam, Charcoal, Olive",
+      sizes: "S, M, L, XL, XXL",
+      seoTitle: "Kaos Outdoor Petualang Born to Hike Forced to Work NSA Combed 30s — TeeStock Komunitas",
+      description: `TeeStock Komunitas Series — "Born to Hike, Forced to Work"
+Jeritan hati para pecinta alam yang fisik dan pikirannya masih tertinggal di tenda pos 3, meski raganya sudah duduk di bilik kantor.`
+    },
+    {
+      sku: "TS-LOK-001",
+      name: "Wong Jowo Ojo Ilang Jawane",
+      series: "lokal",
+      seriesName: "TeeStock Lokal",
+      seriesColor: "#D9A441",
+      niche: "Bahasa Daerah, Jawa, Local Pride",
+      batch: "Batch 1",
+      template: "typography",
+      status: "active",
+      licenseSource: "In-House (Buatan Sendiri)",
+      filePath: "bisnis/teestock/desain/lokal/wong-jowo.png",
+      printArea: "0.09",
+      costBlank: 38000,
+      costDtf: 12750,
+      costPress: 2000,
+      costPack: 4500,
+      costOverhead: 2000,
+      costDesign: 5000,
+      priceRetail: 89000,
+      priceDrop: 78000,
+      priceReseller: 67000,
+      colors: "Hitam, Krem, Abu Hangat",
+      sizes: "S, M, L, XL, XXL",
+      seoTitle: "Kaos Kata Jawa Wong Jowo Ojo Ilang Jawane Filosofi Jawa Distro — TeeStock Lokal",
+      description: `TeeStock Lokal Series — "Wong Jowo Ojo Ilang Jawane"
+Pengingat akar budaya dengan sentuhan tipografi streetwear modern. Tetap membumi di mana pun kaki berpijak.`
+    },
+    {
+      sku: "TS-LOK-002",
+      name: "Urang Sunda Asli / Kujang Pride",
+      series: "lokal",
+      seriesName: "TeeStock Lokal",
+      seriesColor: "#D9A441",
+      niche: "Sunda, Jawa Barat, Local Pride",
+      batch: "Batch 1",
+      template: "badge",
+      status: "active",
+      licenseSource: "In-House (Buatan Sendiri)",
+      filePath: "bisnis/teestock/desain/lokal/urang-sunda.png",
+      printArea: "0.09",
+      costBlank: 38000,
+      costDtf: 12750,
+      costPress: 2000,
+      costPack: 4500,
+      costOverhead: 2000,
+      costDesign: 5000,
+      priceRetail: 89000,
+      priceDrop: 78000,
+      priceReseller: 67000,
+      colors: "Hitam, Krem, Navy",
+      sizes: "S, M, L, XL, XXL",
+      seoTitle: "Kaos Urang Sunda Asli Lambang Kujang Jawa Barat Bandung Distro — TeeStock Lokal",
+      description: `TeeStock Lokal Series — "Urang Sunda Asli"
+Lencana siluet Kujang minimalis berpadu tipografi elegan. Simbol kehangatan dan kebanggaan tatar Pasundan.`
+    },
+    {
+      sku: "TS-REC-001",
+      name: "Quarter Life Crisis with Iced Coffee",
+      series: "receh",
+      seriesName: "TeeStock Receh/Sarkas",
+      seriesColor: "#C1673D",
+      niche: "Gen Z, Humor, Kopi",
+      batch: "Batch 2",
+      template: "typography",
+      status: "draft",
+      licenseSource: "In-House (Buatan Sendiri)",
+      filePath: "bisnis/teestock/desain/receh/crisis-coffee.png",
+      printArea: "0.09",
+      costBlank: 38000,
+      costDtf: 12750,
+      costPress: 2000,
+      costPack: 4500,
+      costOverhead: 2000,
+      costDesign: 5000,
+      priceRetail: 89000,
+      priceDrop: 78000,
+      priceReseller: 67000,
+      colors: "Hitam, Krem, Terracotta",
+      sizes: "S, M, L, XL, XXL",
+      seoTitle: "Kaos Kata Lucu Quarter Life Crisis Iced Coffee Sarkas Gen Z — TeeStock Receh",
+      description: `Meratapi masa depan tapi tetap harus ditemani es kopi susu gula aren. Kombinasi kepanikan eksistensial dan asupan kafein.`
+    },
+    {
+      sku: "TS-FAS-001",
+      name: "Anak Kos Survival Mode",
+      series: "fase",
+      seriesName: "TeeStock Fase",
+      seriesColor: "#4F7C74",
+      niche: "Anak Kos, Rantau",
+      batch: "Batch 2",
+      template: "icon_text",
+      status: "test",
+      licenseSource: "In-House (Buatan Sendiri)",
+      filePath: "bisnis/teestock/desain/fase/anak-kos.png",
+      printArea: "0.09",
+      costBlank: 38000,
+      costDtf: 12750,
+      costPress: 2000,
+      costPack: 4500,
+      costOverhead: 2000,
+      costDesign: 5000,
+      priceRetail: 89000,
+      priceDrop: 78000,
+      priceReseller: 67000,
+      colors: "Dusty Teal, Hitam, Krem",
+      sizes: "S, M, L, XL",
+      seoTitle: "Kaos Anak Kos Survival Mode Tanggal Tua Lucu Distro — TeeStock Fase",
+      description: `Kaos seragam resmi pejuang tanggal tua penikmat mie instan kuah bumbu setengah. Relatable dan mengundang senyum.`
+    }
+  ];
+
+  /* State */
+  let catalog = [];
+  let selectedSeriesFilter = "all";
+
+  const SERIES_DATA = {
+    profesi:   { name: "TeeStock Profesi", color: "#4A4A47" },
+    komunitas: { name: "TeeStock Komunitas", color: "#6B7057" },
+    lokal:     { name: "TeeStock Lokal", color: "#D9A441" },
+    fase:      { name: "TeeStock Fase", color: "#4F7C74" },
+    fandom:    { name: "TeeStock Fandom", color: "#A84632" },
+    receh:     { name: "TeeStock Receh/Sarkas", color: "#C1673D" },
+    squad:     { name: "TeeStock Squad", color: "#B08585" },
+    kampus:    { name: "TeeStock Kampus", color: "#8C8880" },
+    momen:     { name: "TeeStock Momen", color: "#33465C" }
+  };
+
+  /* Initialize */
+  async function init() {
+    loadCatalog();
+    renderTable();
+    updateDashboardStats();
+    calcGangSheet();
+    checkCloudinaryConfig();
+    await checkSupabaseConnection(false);
+    if (isSupabaseConnected) {
+      await pullFromSupabase(false);
+    }
+  }
+
+  function loadCatalog() {
+    const saved = localStorage.getItem("teestock_master_pim");
+    if (saved) {
+      try {
+        catalog = JSON.parse(saved);
+      } catch (e) {
+        catalog = [...DEFAULT_CATALOG];
+      }
+    } else {
+      catalog = [...DEFAULT_CATALOG];
+    }
+  }
+
+  function saveCatalog() {
+    localStorage.setItem("teestock_master_pim", JSON.stringify(catalog));
+    updateDashboardStats();
+    calcGangSheet();
+  }
+
+  /* Dashboard Stats */
+  function updateDashboardStats() {
+    const total = catalog.length;
+    const active = catalog.filter(c => c.status === "active").length;
+    const batch1 = catalog.filter(c => c.batch === "Batch 1").length;
+
+    let totalHpp = 0;
+    let totalMargin = 0;
+
+    catalog.forEach(item => {
+      const hpp = (item.costBlank || 0) + (item.costDtf || 0) + (item.costPress || 0) + (item.costPack || 0) + (item.costOverhead || 0) + (item.costDesign || 0);
+      const retail = item.priceRetail || 99000;
+      const netRev = retail * 0.935; // potong 6.5% fee Shopee
+      const profit = netRev - hpp;
+      const margin = retail > 0 ? (profit / retail * 100) : 0;
+      totalHpp += hpp;
+      totalMargin += margin;
+    });
+
+    const avgHpp = total > 0 ? Math.round(totalHpp / total) : 0;
+    const avgMargin = total > 0 ? (totalMargin / total).toFixed(1) : 0;
+
+    document.getElementById("statTotalSku").textContent = `${total} SKU`;
+    document.getElementById("statActive").textContent = `${active} Live`;
+    document.getElementById("statBatch1").textContent = `${batch1} Desain`;
+    document.getElementById("statAvgHpp").textContent = `Rp ${avgHpp.toLocaleString("id-ID")}`;
+    document.getElementById("statAvgMargin").textContent = `${avgMargin}%`;
+
+    // Series Counts in Pills
+    document.getElementById("count_all").textContent = total;
+    Object.keys(SERIES_DATA).forEach(k => {
+      const el = document.getElementById(`count_${k}`);
+      if (el) {
+        el.textContent = catalog.filter(c => c.series === k).length;
+      }
+    });
+  }
+
+  /* Filters */
+  function setSeriesFilter(seriesKey) {
+    selectedSeriesFilter = seriesKey;
+    document.querySelectorAll(".series-pill-btn").forEach(b => b.classList.remove("active"));
+    const btn = Array.from(document.querySelectorAll(".series-pill-btn")).find(b =>
+      seriesKey === "all" ? b.textContent.includes("Semua") : b.textContent.toLowerCase().includes(seriesKey)
+    );
+    if (btn) btn.classList.add("active");
+    renderTable();
+  }
+
+  function applyFilters() {
+    renderTable();
+  }
+
+  function resetFilters() {
+    document.getElementById("searchInput").value = "";
+    document.getElementById("statusFilter").value = "all";
+    document.getElementById("batchFilter").value = "all";
+    document.getElementById("sortFilter").value = "sku_asc";
+    setSeriesFilter("all");
+  }
+
+  /* Table Rendering */
+  function renderTable() {
+    const tbody = document.getElementById("tableBody");
+    const query = document.getElementById("searchInput").value.toLowerCase().trim();
+    const statusVal = document.getElementById("statusFilter").value;
+    const batchVal = document.getElementById("batchFilter").value;
+    const sortVal = document.getElementById("sortFilter").value;
+
+    let filtered = catalog.filter(item => {
+      const matchSeries = (selectedSeriesFilter === "all") || (item.series === selectedSeriesFilter);
+      const matchStatus = (statusVal === "all") || (item.status === statusVal);
+      const matchBatch = (batchVal === "all") || (item.batch === batchVal);
+      const matchQuery = !query ||
+        item.sku.toLowerCase().includes(query) ||
+        item.name.toLowerCase().includes(query) ||
+        (item.niche && item.niche.toLowerCase().includes(query)) ||
+        (item.seoTitle && item.seoTitle.toLowerCase().includes(query));
+      return matchSeries && matchStatus && matchBatch && matchQuery;
+    });
+
+    // Sort
+    if (sortVal === "sku_asc") {
+      filtered.sort((a, b) => a.sku.localeCompare(b.sku));
+    } else if (sortVal === "name_asc") {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortVal === "price_asc") {
+      filtered.sort((a, b) => (a.priceRetail || 0) - (b.priceRetail || 0));
+    } else if (sortVal === "price_desc") {
+      filtered.sort((a, b) => (b.priceRetail || 0) - (a.priceRetail || 0));
+    } else if (sortVal === "margin_desc") {
+      filtered.sort((a, b) => {
+        const hppA = (a.costBlank||0)+(a.costDtf||0)+(a.costPress||0)+(a.costPack||0)+(a.costOverhead||0)+(a.costDesign||0);
+        const hppB = (b.costBlank||0)+(b.costDtf||0)+(b.costPress||0)+(b.costPack||0)+(b.costOverhead||0)+(b.costDesign||0);
+        const marA = (a.priceRetail * 0.935 - hppA) / a.priceRetail;
+        const marB = (b.priceRetail * 0.935 - hppB) / b.priceRetail;
+        return marB - marA;
+      });
+    }
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="8" style="text-align:center; padding:40px; color:var(--text-muted);">
+            Tidak ada produk yang cocok dengan kriteria filter.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(p => {
+      const hpp = (p.costBlank||0) + (p.costDtf||0) + (p.costPress||0) + (p.costPack||0) + (p.costOverhead||0) + (p.costDesign||0);
+      const retail = p.priceRetail || 99000;
+      const fee = retail * 0.065;
+      const profit = (retail - fee) - hpp;
+      const marginPct = (profit / retail * 100).toFixed(1);
+
+      let statusBadgeClass = "draft";
+      let statusLabel = "Draft";
+      if (p.status === "active") { statusBadgeClass = "active"; statusLabel = "Live Shopee"; }
+      else if (p.status === "test") { statusBadgeClass = "test"; statusLabel = "Batch 0 (Test)"; }
+      else if (p.status === "archived") { statusBadgeClass = "archived"; statusLabel = "Archived"; }
+
+      const previewImg = getPreviewImageUrl(p.filePath);
+      const isDrive = p.filePath && p.filePath.includes("drive.google.com");
+      const shortFileDisplay = isDrive
+        ? `<a href="${p.filePath}" target="_blank" style="color:var(--teal); text-decoration:underline;">📁 Buka GDrive</a>`
+        : (p.filePath ? p.filePath.split('/').pop() : 'no-file.png');
+
+      const initials = p.name.split(" ").slice(0, 2).join("<br>").toUpperCase();
+      const thumbContent = previewImg
+        ? `<img src="${previewImg}" alt="${p.sku}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div style="display:none; width:100%; height:100%; align-items:center; justify-content:center; text-align:center;">${initials}</div>`
+        : initials;
+
+      return `
+        <tr>
+          <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div class="product-thumb-preview" style="background:${p.seriesColor || '#1A1A1A'};">
+                ${thumbContent}
+              </div>
+              <div>
+                <span class="sku-code">${p.sku}</span>
+                <div style="font-size:10px; color:var(--text-muted); margin-top:2px;">${shortFileDisplay}</div>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div style="font-weight:700; color:var(--text); font-size:13px;">${p.name}</div>
+            <div style="font-size:11px; color:var(--text-muted);">Niche: ${p.niche || '-'}</div>
+          </td>
+
+          <td>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span class="dot-series" style="background:${p.seriesColor};"></span>
+              <strong style="font-size:12px;">${p.seriesName || p.series}</strong>
+            </div>
+            <div style="font-size:10px; color:var(--text-muted); margin-top:2px; text-transform:capitalize;">Template: ${p.template || 'Standar'}</div>
+          </td>
+
+          <td>
+            <span class="status-badge ${statusBadgeClass}">${statusLabel}</span>
+            <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">${p.batch || 'Batch 1'}</div>
+          </td>
+
+          <td>
+            <div class="price-tag" style="color:var(--text-dim);">Rp ${hpp.toLocaleString("id-ID")}</div>
+            <div style="font-size:10px; color:var(--text-muted);">NSA + DTF A3</div>
+          </td>
+
+          <td>
+            <div class="price-tag" style="color:var(--accent); font-size:13px;">Rp ${retail.toLocaleString("id-ID")}</div>
+            <div class="margin-pct-tag">Margin: +${marginPct}% (Rp ${Math.round(profit).toLocaleString("id-ID")})</div>
+          </td>
+
+          <td>
+            <div style="font-size:11px; color:var(--text-dim); max-width:140px; overflow:hidden; text-overflow:ellipsis;">
+              🎨 ${p.colors || 'Hitam, Krem'}
+            </div>
+            <div style="font-size:10px; color:var(--text-muted);">
+              📏 ${p.sizes || 'S-XXL'}
+            </div>
+          </td>
+
+          <td>
+            <div class="row-actions">
+              <button class="btn btn-sm" onclick="openCopyModal('${p.sku}')" title="Copy Judul & Deskripsi Shopee">📋 Copy Listing</button>
+              <button class="btn btn-sm" onclick="openProductModal('${p.sku}')" title="Edit Data">✏️ Edit</button>
+              <button class="btn btn-sm" style="color:var(--red);" onclick="deleteProduct('${p.sku}')" title="Hapus SKU">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  /* Image & Google Drive Helpers */
+  function getPreviewImageUrl(filePath) {
+    if (!filePath) return null;
+    const str = filePath.trim();
+    const gdriveMatch = str.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([a-zA-Z0-9_-]+)/);
+    if (gdriveMatch) {
+      const fileId = gdriveMatch[1];
+      return `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
+    }
+    if (str.startsWith("http://") || str.startsWith("https://")) {
+      return str;
+    }
+    return null;
+  }
+
+  function updateModalImagePreview() {
+    const input = document.getElementById("formFilePath");
+    if (!input) return;
+    const val = input.value.trim();
+    const previewUrl = getPreviewImageUrl(val);
+    const wrap = document.getElementById("modalImgPreviewWrap");
+    const img = document.getElementById("modalImgPreview");
+    const text = document.getElementById("modalImgPreviewText");
+    if (!wrap || !img) return;
+
+    if (previewUrl) {
+      img.src = previewUrl;
+      img.onload = () => { wrap.style.display = "flex"; };
+      img.onerror = () => { wrap.style.display = "none"; };
+      if (text) {
+        text.textContent = val.includes("drive.google.com") ? "Google Drive CDN Preview" : "Direct Image URL";
+      }
+    } else {
+      wrap.style.display = "none";
+    }
+  }
+
+  /* Modal CRUD */
+  function openProductModal(skuOrMode) {
+    const isNew = (skuOrMode === 'new');
+    document.getElementById("modalHeaderTitle").textContent = isNew ? "Input Master Data Desain Baru" : "Edit Master Data Produk";
+    document.getElementById("modalModeIcon").textContent = isNew ? "➕" : "✏️";
+
+    if (isNew) {
+      document.getElementById("editProductId").value = "";
+      document.getElementById("productForm").reset();
+      const count = catalog.length + 1;
+      document.getElementById("formSku").value = `TS-PRO-${String(count).padStart(3, '0')}`;
+      document.getElementById("formCostBlank").value = 38000;
+      document.getElementById("formCostDtf").value = 12750;
+      document.getElementById("formCostPress").value = 2000;
+      document.getElementById("formCostPack").value = 4500;
+      document.getElementById("formPriceRetail").value = 99000;
+      document.getElementById("formPriceDrop").value = 87000;
+      document.getElementById("formPriceReseller").value = 74000;
+      document.getElementById("formColors").value = "Hitam, Krem, Charcoal";
+      document.getElementById("formSizes").value = "S, M, L, XL, XXL, 3XL";
+    } else {
+      const p = catalog.find(item => item.sku === skuOrMode);
+      if (!p) return;
+
+      document.getElementById("editProductId").value = p.sku;
+      document.getElementById("formSku").value = p.sku;
+      document.getElementById("formName").value = p.name;
+      document.getElementById("formSeries").value = p.series;
+      document.getElementById("formNiche").value = p.niche || "";
+      document.getElementById("formTemplate").value = p.template || "typography";
+      document.getElementById("formStatus").value = p.status || "active";
+      document.getElementById("formLicenseSource").value = p.licenseSource || "In-House (Buatan Sendiri)";
+      document.getElementById("formFilePath").value = p.filePath || "";
+      document.getElementById("formPrintArea").value = p.printArea || "0.09";
+
+      document.getElementById("formCostBlank").value = p.costBlank || 38000;
+      document.getElementById("formCostDtf").value = p.costDtf || 12750;
+      document.getElementById("formCostPress").value = p.costPress || 2000;
+      document.getElementById("formCostPack").value = p.costPack || 4500;
+
+      document.getElementById("formPriceRetail").value = p.priceRetail || 99000;
+      document.getElementById("formPriceDrop").value = p.priceDrop || 87000;
+      document.getElementById("formPriceReseller").value = p.priceReseller || 74000;
+
+      document.getElementById("formColors").value = p.colors || "Hitam, Krem";
+      document.getElementById("formSizes").value = p.sizes || "S, M, L, XL";
+      document.getElementById("formSeoTitle").value = p.seoTitle || "";
+      document.getElementById("formDescription").value = p.description || "";
+    }
+
+    autoCalcHpp();
+    updateModalImagePreview();
+    document.getElementById("productModal").classList.add("active");
+  }
+
+  function closeProductModal() {
+    document.getElementById("productModal").classList.remove("active");
+  }
+
+  function autoCalcHpp() {
+    const blank = parseFloat(document.getElementById("formCostBlank").value) || 0;
+    const dtf = parseFloat(document.getElementById("formCostDtf").value) || 0;
+    const press = parseFloat(document.getElementById("formCostPress").value) || 0;
+    const pack = parseFloat(document.getElementById("formCostPack").value) || 0;
+    const overhead = 2000;
+    const designAmort = 5000;
+
+    const totalHpp = blank + dtf + press + pack + overhead + designAmort;
+    document.getElementById("formTotalHpp").textContent = `Rp ${Math.round(totalHpp).toLocaleString("id-ID")}`;
+
+    const retail = parseFloat(document.getElementById("formPriceRetail").value) || 99000;
+    const fee = retail * 0.065;
+    const profit = (retail - fee) - totalHpp;
+    const margin = retail > 0 ? (profit / retail * 100).toFixed(1) : 0;
+
+    document.getElementById("formMarginPreview").innerHTML = `
+      ✅ Estimasi Profit Bersih Retail: <strong>Rp ${Math.round(profit).toLocaleString("id-ID")}</strong> / pcs (Margin <strong>${margin}%</strong> setelah fee marketplace 6.5%)
+    `;
+  }
+
+  function generateSeoTitle() {
+    const name = document.getElementById("formName").value.trim() || "Desain";
+    const niche = document.getElementById("formNiche").value.trim() || "Apparel";
+    const series = document.getElementById("formSeries").value;
+    const seriesName = SERIES_DATA[series]?.name || "TeeStock";
+
+    const title = `Kaos ${niche} ${name} Katun Combed 30s New State Apparel — ${seriesName}`;
+    document.getElementById("formSeoTitle").value = title;
+  }
+
+  function saveProductForm(ev) {
+    ev.preventDefault();
+
+    const editId = document.getElementById("editProductId").value;
+    const sku = document.getElementById("formSku").value.trim();
+    const name = document.getElementById("formName").value.trim();
+    const seriesKey = document.getElementById("formSeries").value;
+    const niche = document.getElementById("formNiche").value.trim();
+    const template = document.getElementById("formTemplate").value;
+    const status = document.getElementById("formStatus").value;
+    const licenseSource = document.getElementById("formLicenseSource").value;
+    const filePath = document.getElementById("formFilePath").value.trim();
+    const printArea = document.getElementById("formPrintArea").value;
+
+    const costBlank = parseFloat(document.getElementById("formCostBlank").value) || 38000;
+    const costDtf = parseFloat(document.getElementById("formCostDtf").value) || 12750;
+    const costPress = parseFloat(document.getElementById("formCostPress").value) || 2000;
+    const costPack = parseFloat(document.getElementById("formCostPack").value) || 4500;
+
+    const priceRetail = parseFloat(document.getElementById("formPriceRetail").value) || 99000;
+    const priceDrop = parseFloat(document.getElementById("formPriceDrop").value) || 87000;
+    const priceReseller = parseFloat(document.getElementById("formPriceReseller").value) || 74000;
+
+    const colors = document.getElementById("formColors").value.trim();
+    const sizes = document.getElementById("formSizes").value.trim();
+    let seoTitle = document.getElementById("formSeoTitle").value.trim();
+    let description = document.getElementById("formDescription").value.trim();
+
+    if (!seoTitle) {
+      seoTitle = `Kaos ${niche} ${name} Cotton Combed 30s New State Apparel — ${SERIES_DATA[seriesKey]?.name || 'TeeStock'}`;
+    }
+
+    if (!description) {
+      description = `TeeStock ${SERIES_DATA[seriesKey]?.name || 'Apparel'} — "${name}"\nSpesifikasi resmi New State Apparel Softstyle 100% Cotton Combed 30s. Sablon DTF HD Raster lentur dan awet.`;
+    }
+
+    const payload = {
+      sku, name, series: seriesKey,
+      seriesName: SERIES_DATA[seriesKey]?.name || seriesKey,
+      seriesColor: SERIES_DATA[seriesKey]?.color || "#C1673D",
+      niche, template, status,
+      batch: "Batch 1",
+      licenseSource, filePath, printArea,
+      costBlank, costDtf, costPress, costPack,
+      costOverhead: 2000, costDesign: 5000,
+      priceRetail, priceDrop, priceReseller,
+      colors, sizes, seoTitle, description
+    };
+
+    if (editId) {
+      const idx = catalog.findIndex(item => item.sku === editId);
+      if (idx !== -1) {
+        catalog[idx] = payload;
+        showToast(`✏️ Data SKU "${sku}" berhasil diperbarui!`);
+      }
+    } else {
+      // Check duplicate SKU
+      if (catalog.some(item => item.sku === sku)) {
+        alert("SKU sudah ada di database, gunakan SKU yang unik!");
+        return;
+      }
+      catalog.unshift(payload);
+      showToast(`➕ SKU baru "${sku}" berhasil ditambahkan ke katalog!`);
+    }
+
+    saveCatalog();
+    syncSingleProductToSupabase(payload);
+    closeProductModal();
+    renderTable();
+  }
+
+  function deleteProduct(sku) {
+    if (confirm(`Yakin ingin menghapus SKU "${sku}" dari katalog master?`)) {
+      catalog = catalog.filter(item => item.sku !== sku);
+      saveCatalog();
+      deleteProductFromSupabase(sku);
+      renderTable();
+      showToast(`🗑️ SKU "${sku}" telah dihapus.`);
+    }
+  }
+
+  /* Quick Copy Modal */
+  function openCopyModal(sku) {
+    const p = catalog.find(item => item.sku === sku);
+    if (!p) return;
+
+    document.getElementById("copyTextTitle").textContent = p.seoTitle || `${p.name} — TeeStock`;
+    document.getElementById("copyTextDesc").textContent = p.description || p.desc || "Deskripsi produk.";
+    document.getElementById("copyTextTags").textContent = `#TeeStock #${p.series} #kaos${(p.niche||'distro').replace(/[^a-zA-Z0-9]/g, '')} #kaosdistro #newstateapparel #cottoncombed30s #kaosniche`;
+
+    document.getElementById("copyModal").classList.add("active");
+  }
+
+  function closeCopyModal() {
+    document.getElementById("copyModal").classList.remove("active");
+  }
+
+  function copyText(elementId) {
+    const text = document.getElementById(elementId).innerText.replace(/^📋 Copy.*\n/, '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      showToast("📋 Berhasil disalin ke clipboard!");
+    });
+  }
+
+  /* Gang Sheet Planner */
+  function calcGangSheet() {
+    const readyItems = catalog.filter(c => c.status === "active" || c.status === "test");
+    const qty = readyItems.length || 6;
+
+    // In 60cm width, we can fit 2 items of 30cm side-by-side
+    // So 2 items take 30cm of length (0.3m)
+    // Total length in meters = Math.ceil(qty / 2) * 0.3 + 0.1 buffer
+    const rollsCount = Math.ceil(qty / 2);
+    const lengthMeters = (rollsCount * 0.3 + 0.1).toFixed(1);
+    const cost = Math.round(parseFloat(lengthMeters) * 85000);
+    const costPerPcs = qty > 0 ? Math.round(cost / qty) : 0;
+
+    document.getElementById("gangTotalQty").textContent = `${qty} Desain`;
+    document.getElementById("gangLength").textContent = `${lengthMeters} Meter`;
+    document.getElementById("gangCost").textContent = `Rp ${cost.toLocaleString("id-ID")}`;
+    document.getElementById("gangCostPerPcs").textContent = `Rp ${costPerPcs.toLocaleString("id-ID")}`;
+  }
+
+  /* Export / Import */
+  function exportCSV() {
+    let csv = "SKU,Nama Desain,Series,Niche,Status,Batch,HPP Blank,DTF Cost,HPP Total,Harga Retail,Harga Dropship,Harga Reseller,Warna,Ukuran,File Master\n";
+    catalog.forEach(p => {
+      const hpp = (p.costBlank||0)+(p.costDtf||0)+(p.costPress||0)+(p.costPack||0)+(p.costOverhead||0)+(p.costDesign||0);
+      csv += `"${p.sku}","${p.name}","${p.seriesName}","${p.niche||''}","${p.status}","${p.batch}","${p.costBlank}","${p.costDtf}","${hpp}","${p.priceRetail}","${p.priceDrop}","${p.priceReseller}","${p.colors}","${p.sizes}","${p.filePath||''}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `teestock_master_catalog_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    showToast("📊 File CSV berhasil diexport!");
+  }
+
+  function exportJSON() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(catalog, null, 2));
+    const a = document.createElement("a");
+    a.href = dataStr;
+    a.download = `teestock_master_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    showToast("💾 Backup JSON berhasil didownload!");
+  }
+
+  /* Theme Toggle */
+  function toggleTheme() {
+    const root = document.documentElement;
+    const curr = root.getAttribute("data-theme");
+    const next = curr === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    localStorage.setItem("teestock_theme", next);
+    document.getElementById("themeBtn").textContent = next === "dark" ? "☀️ Tema Krem" : "🌙 Tema Charcoal";
+  }
+
+  const savedTheme = localStorage.getItem("teestock_theme") || "dark";
+  document.documentElement.setAttribute("data-theme", savedTheme);
+  document.getElementById("themeBtn").textContent = savedTheme === "dark" ? "☀️ Tema Krem" : "🌙 Tema Charcoal";
+
+  /* Toast Notification */
+  function showToast(msg) {
+    const box = document.getElementById("toastBox");
+    document.getElementById("toastMsg").textContent = msg;
+    box.classList.add("show");
+    setTimeout(() => box.classList.remove("show"), 3000);
+  }
+
+  /* =========================================================
+     SUPABASE CLOUD SYNC INTEGRATION (MULTI-TENANT HUB)
+     ========================================================= */
+  const DEFAULT_SB_URL = "https://tovslowsopqtuxmrogeu.supabase.co";
+  const DEFAULT_SB_KEY = "sb_publishable_8iRmZUulGLChIPZhFXn_rg_QuHlmpA4";
+
+  let sbClient = null;
+  let isSupabaseConnected = false;
+
+  function sanitizeSupabaseUrl(url) {
+    if (!url) return "";
+    return url.trim().replace(/\/rest\/v1\/?$/, "").replace(/\/+$/, "");
+  }
+
+  async function checkSupabaseConnection(notify = false) {
+    const isDisabled = localStorage.getItem("teestock_sb_disabled") === "true";
+    let url = localStorage.getItem("teestock_sb_url");
+    let key = localStorage.getItem("teestock_sb_key");
+
+    if (!url && !isDisabled) {
+      url = DEFAULT_SB_URL;
+      key = DEFAULT_SB_KEY;
+      localStorage.setItem("teestock_sb_url", url);
+      localStorage.setItem("teestock_sb_key", key);
+    }
+
+    url = sanitizeSupabaseUrl(url);
+
+    const statusBtn = document.getElementById("supabaseStatusBtn");
+    const badge = document.getElementById("sbConnectionBadge");
+    const btnDisconnect = document.getElementById("btnDisconnectSb");
+    const btnPush = document.getElementById("btnPushSb");
+    const btnPull = document.getElementById("btnPullSb");
+
+    if (!url || !key || isDisabled) {
+      isSupabaseConnected = false;
+      sbClient = null;
+      if (statusBtn) {
+        statusBtn.textContent = "☁️ Supabase: Terputus (Lokal)";
+        statusBtn.style.borderColor = "var(--teal)";
+        statusBtn.style.color = "var(--teal)";
+      }
+      if (badge) {
+        badge.textContent = "🔌 Terputus (Mode Lokal)";
+        badge.style.background = "var(--surface3)";
+        badge.style.color = "var(--text-muted)";
+      }
+      if (btnDisconnect) btnDisconnect.style.display = "none";
+      if (btnPush) btnPush.style.display = "none";
+      if (btnPull) btnPull.style.display = "none";
+      return false;
+    }
+
+    try {
+      if (window.supabase) {
+        sbClient = window.supabase.createClient(url, key);
+        // Ping ts_products to verify schema exists and credentials work
+        const { data, error } = await sbClient.from("ts_products").select("sku").limit(1);
+        if (error) throw error;
+
+        isSupabaseConnected = true;
+        if (statusBtn) {
+          statusBtn.textContent = "☁️ Supabase: Terhubung (Cloud)";
+          statusBtn.style.borderColor = "var(--green)";
+          statusBtn.style.color = "var(--green)";
+        }
+        if (badge) {
+          badge.textContent = "✅ Terhubung (Cloud Live)";
+          badge.style.background = "var(--green-dim)";
+          badge.style.color = "var(--green)";
+        }
+        if (btnDisconnect) btnDisconnect.style.display = "inline-block";
+        if (btnPush) btnPush.style.display = "inline-block";
+        if (btnPull) btnPull.style.display = "inline-block";
+
+        if (notify) showToast("☁️ Supabase Cloud database berhasil terhubung!");
+        return true;
+      }
+    } catch (err) {
+      console.warn("Supabase connection error:", err);
+      isSupabaseConnected = false;
+      if (statusBtn) {
+        statusBtn.textContent = "⚠️ Supabase: Error Konek (Lokal)";
+        statusBtn.style.borderColor = "var(--mustard)";
+        statusBtn.style.color = "var(--mustard)";
+      }
+      if (badge) {
+        badge.textContent = "⚠️ Gagal Konek (Cek URL/Key/Tabel)";
+        badge.style.background = "var(--red-dim)";
+        badge.style.color = "var(--red)";
+      }
+      if (btnDisconnect) btnDisconnect.style.display = "inline-block";
+      if (btnPush) btnPush.style.display = "none";
+      if (btnPull) btnPull.style.display = "none";
+
+      if (notify) showToast("❌ Gagal terhubung ke Supabase. Periksa URL, Key, dan pastikan schema.sql sudah di-run.");
+      return false;
+    }
+  }
+
+  function openSupabaseModal() {
+    let currUrl = localStorage.getItem("teestock_sb_url") || DEFAULT_SB_URL;
+    let currKey = localStorage.getItem("teestock_sb_key") || DEFAULT_SB_KEY;
+    document.getElementById("sbProjectUrl").value = sanitizeSupabaseUrl(currUrl);
+    document.getElementById("sbAnonKey").value = currKey;
+    checkSupabaseConnection(false);
+    document.getElementById("supabaseModal").classList.add("active");
+  }
+
+  function closeSupabaseModal() {
+    document.getElementById("supabaseModal").classList.remove("active");
+  }
+
+  async function saveSupabaseConfig(ev) {
+    if (ev) ev.preventDefault();
+    let url = document.getElementById("sbProjectUrl").value.trim();
+    const key = document.getElementById("sbAnonKey").value.trim();
+
+    if (!url || !key) {
+      alert("Harap isi URL dan API Key Supabase!");
+      return;
+    }
+
+    url = sanitizeSupabaseUrl(url);
+
+    localStorage.removeItem("teestock_sb_disabled");
+    localStorage.setItem("teestock_sb_url", url);
+    localStorage.setItem("teestock_sb_key", key);
+
+    const ok = await checkSupabaseConnection(true);
+    if (ok) {
+      await pullFromSupabase(false);
+      closeSupabaseModal();
+    }
+  }
+
+  function disconnectSupabase() {
+    if (confirm("Putuskan koneksi Supabase? Data lokal di browser tidak akan dihapus.")) {
+      localStorage.setItem("teestock_sb_disabled", "true");
+      localStorage.removeItem("teestock_sb_url");
+      localStorage.removeItem("teestock_sb_key");
+      checkSupabaseConnection(false);
+      showToast("🔌 Mode Offline (Local Storage) aktif.");
+      closeSupabaseModal();
+    }
+  }
+
+  async function pullFromSupabase(notify = true) {
+    if (!sbClient || !isSupabaseConnected) {
+      if (notify) showToast("⚠️ Supabase belum terhubung!");
+      return;
+    }
+
+    try {
+      if (notify) showToast("⏳ Menarik data dari Supabase...");
+      const { data: prods, error: err1 } = await sbClient.from("ts_products").select("*").order("created_at", { ascending: false });
+      if (err1) throw err1;
+
+      const { data: ues, error: err2 } = await sbClient.from("ts_unit_economics").select("*");
+      if (err2) throw err2;
+
+      if (!prods || prods.length === 0) {
+        if (notify) showToast("ℹ️ Database Supabase masih kosong. Silakan klik 'Kirim Data Lokal ke Cloud'.");
+        return;
+      }
+
+      catalog = prods.map(p => {
+        const ue = (ues || []).find(u => u.product_sku === p.sku) || {};
+        return {
+          sku: p.sku,
+          name: p.name,
+          series: p.series,
+          seriesName: p.series_name || p.series,
+          seriesColor: p.series_color || "#4A4A47",
+          niche: p.niche || "",
+          batch: p.batch || "Batch 1",
+          template: p.template || "typography",
+          status: p.status || "active",
+          licenseSource: p.license_source || "In-House",
+          filePath: p.file_path || "",
+          printArea: ue.print_area || "0.09",
+          costBlank: ue.cost_blank != null ? Number(ue.cost_blank) : 38000,
+          costDtf: ue.cost_dtf != null ? Number(ue.cost_dtf) : 12750,
+          costPress: ue.cost_press != null ? Number(ue.cost_press) : 2000,
+          costPack: ue.cost_pack != null ? Number(ue.cost_pack) : 4500,
+          costOverhead: ue.cost_overhead != null ? Number(ue.cost_overhead) : 2000,
+          costDesign: ue.cost_design != null ? Number(ue.cost_design) : 5000,
+          priceRetail: ue.price_retail != null ? Number(ue.price_retail) : 99000,
+          priceDrop: ue.price_dropship != null ? Number(ue.price_dropship) : 87000,
+          priceReseller: ue.price_reseller != null ? Number(ue.price_reseller) : 74000,
+          colors: p.colors || "Hitam, Krem",
+          sizes: p.sizes || "S, M, L, XL",
+          seoTitle: p.seo_title || "",
+          description: p.description || ""
+        };
+      });
+
+      saveCatalog();
+      renderTable();
+      if (notify) showToast(`✅ Sukses memuat ${catalog.length} SKU dari Supabase Cloud!`);
+    } catch (e) {
+      console.error("Pull error:", e);
+      if (notify) showToast(`❌ Gagal menarik data: ${e.message || e}`);
+    }
+  }
+
+  async function pushToSupabase() {
+    if (!sbClient || !isSupabaseConnected) {
+      showToast("⚠️ Supabase belum terhubung!");
+      return;
+    }
+
+    try {
+      showToast("⏳ Mengunggah data lokal ke Supabase...");
+      const prodRows = catalog.map(p => ({
+        sku: p.sku,
+        name: p.name,
+        series: p.series,
+        series_name: p.seriesName || p.series,
+        series_color: p.seriesColor || "#4A4A47",
+        niche: p.niche,
+        batch: p.batch || "Batch 1",
+        template: p.template || "typography",
+        status: p.status || "active",
+        license_source: p.licenseSource || "In-House",
+        file_path: p.filePath,
+        colors: p.colors,
+        sizes: p.sizes,
+        seo_title: p.seoTitle,
+        description: p.description,
+        updated_at: new Date().toISOString()
+      }));
+
+      const { error: err1 } = await sbClient.from("ts_products").upsert(prodRows, { onConflict: "sku" });
+      if (err1) throw err1;
+
+      const ueRows = catalog.map(p => ({
+        product_sku: p.sku,
+        cost_blank: p.costBlank,
+        cost_dtf: p.costDtf,
+        cost_press: p.costPress,
+        cost_pack: p.costPack,
+        cost_overhead: p.costOverhead,
+        cost_design: p.costDesign,
+        price_retail: p.priceRetail,
+        price_dropship: p.priceDrop,
+        price_reseller: p.priceReseller,
+        print_area: p.printArea,
+        updated_at: new Date().toISOString()
+      }));
+
+      const { error: err2 } = await sbClient.from("ts_unit_economics").upsert(ueRows, { onConflict: "product_sku" });
+      if (err2) throw err2;
+
+      showToast(`✅ Berhasil menyinkronkan ${catalog.length} produk ke Supabase Cloud!`);
+      closeSupabaseModal();
+    } catch (e) {
+      console.error("Push error:", e);
+      showToast(`❌ Gagal upload ke Supabase: ${e.message || e}`);
+    }
+  }
+
+  async function syncSingleProductToSupabase(payload) {
+    if (!sbClient || !isSupabaseConnected) return;
+    try {
+      const prodRow = {
+        sku: payload.sku,
+        name: payload.name,
+        series: payload.series,
+        series_name: payload.seriesName,
+        series_color: payload.seriesColor,
+        niche: payload.niche,
+        batch: payload.batch,
+        template: payload.template,
+        status: payload.status,
+        license_source: payload.licenseSource,
+        file_path: payload.filePath,
+        colors: payload.colors,
+        sizes: payload.sizes,
+        seo_title: payload.seoTitle,
+        description: payload.description,
+        updated_at: new Date().toISOString()
+      };
+      await sbClient.from("ts_products").upsert([prodRow], { onConflict: "sku" });
+
+      const ueRow = {
+        product_sku: payload.sku,
+        cost_blank: payload.costBlank,
+        cost_dtf: payload.costDtf,
+        cost_press: payload.costPress,
+        cost_pack: payload.costPack,
+        cost_overhead: payload.costOverhead,
+        cost_design: payload.costDesign,
+        price_retail: payload.priceRetail,
+        price_dropship: payload.priceDrop,
+        price_reseller: payload.priceReseller,
+        print_area: payload.printArea,
+        updated_at: new Date().toISOString()
+      };
+      await sbClient.from("ts_unit_economics").upsert([ueRow], { onConflict: "product_sku" });
+    } catch (e) {
+      console.warn("Background sync error:", e);
+    }
+  }
+
+  async function deleteProductFromSupabase(sku) {
+    if (!sbClient || !isSupabaseConnected) return;
+    try {
+      await sbClient.from("ts_products").delete().eq("sku", sku);
+    } catch (e) {
+      console.warn("Background delete error:", e);
+    }
+  }
+
+  /* =========================================================
+     CLOUDINARY IMAGE CDN INTEGRATION
+     ========================================================= */
+  const DEFAULT_CLD_NAME = "z6qhdkde";
+  const DEFAULT_CLD_KEY = "978731328676184";
+  const DEFAULT_CLD_PRESET = "teestock_preset";
+
+  function checkCloudinaryConfig() {
+    let cloudName = localStorage.getItem("teestock_cld_name");
+    let apiKey = localStorage.getItem("teestock_cld_key");
+    let preset = localStorage.getItem("teestock_cld_preset");
+
+    if (!cloudName) {
+      cloudName = DEFAULT_CLD_NAME;
+      apiKey = DEFAULT_CLD_KEY;
+      preset = DEFAULT_CLD_PRESET;
+      localStorage.setItem("teestock_cld_name", cloudName);
+      localStorage.setItem("teestock_cld_key", apiKey);
+      localStorage.setItem("teestock_cld_preset", preset);
+    }
+
+    const btn = document.getElementById("cldStatusBtn");
+    const badge = document.getElementById("cldConnectionBadge");
+
+    if (cloudName) {
+      if (btn) {
+        btn.textContent = `🖼️ CDN: ${cloudName}`;
+        btn.style.borderColor = "var(--green)";
+        btn.style.color = "var(--green)";
+      }
+      if (badge) {
+        badge.textContent = `✅ Terhubung (${cloudName})`;
+        badge.style.background = "var(--green-dim)";
+        badge.style.color = "var(--green)";
+      }
+    } else {
+      if (btn) {
+        btn.textContent = "🖼️ Cloudinary: Setup";
+        btn.style.borderColor = "var(--mustard)";
+        btn.style.color = "var(--mustard)";
+      }
+      if (badge) {
+        badge.textContent = "⚠️ Belum Diatur";
+        badge.style.background = "var(--mustard-light)";
+        badge.style.color = "var(--mustard)";
+      }
+    }
+  }
+
+  function openCloudinaryModal() {
+    document.getElementById("cldCloudName").value = localStorage.getItem("teestock_cld_name") || DEFAULT_CLD_NAME;
+    document.getElementById("cldApiKey").value = localStorage.getItem("teestock_cld_key") || DEFAULT_CLD_KEY;
+    document.getElementById("cldUploadPreset").value = localStorage.getItem("teestock_cld_preset") || DEFAULT_CLD_PRESET;
+    checkCloudinaryConfig();
+    document.getElementById("cloudinaryModal").classList.add("active");
+  }
+
+  function closeCloudinaryModal() {
+    document.getElementById("cloudinaryModal").classList.remove("active");
+  }
+
+  function saveCloudinaryConfig(ev) {
+    if (ev) ev.preventDefault();
+    const cloudName = document.getElementById("cldCloudName").value.trim();
+    const apiKey = document.getElementById("cldApiKey").value.trim();
+    const preset = document.getElementById("cldUploadPreset").value.trim();
+
+    if (!cloudName) {
+      alert("Harap masukkan Cloud Name Cloudinary kamu!");
+      return;
+    }
+
+    localStorage.setItem("teestock_cld_name", cloudName);
+    localStorage.setItem("teestock_cld_key", apiKey || DEFAULT_CLD_KEY);
+    localStorage.setItem("teestock_cld_preset", preset || "ml_default");
+
+    checkCloudinaryConfig();
+    closeCloudinaryModal();
+    showToast("✅ Konfigurasi Cloudinary berhasil disimpan!");
+  }
+
+  async function handleCloudinaryUpload(ev) {
+    const file = ev.target.files?.[0];
+    if (!file) return;
+
+    const cloudName = localStorage.getItem("teestock_cld_name");
+    const preset = localStorage.getItem("teestock_cld_preset") || "ml_default";
+    const apiKey = localStorage.getItem("teestock_cld_key") || DEFAULT_CLD_KEY;
+
+    if (!cloudName) {
+      alert("Harap atur Cloud Name Cloudinary terlebih dahulu di tombol 'Cloudinary: Setup' di pojok kanan atas!");
+      openCloudinaryModal();
+      ev.target.value = "";
+      return;
+    }
+
+    showToast("⏳ Mengunggah foto ke Cloudinary CDN...");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", preset);
+      formData.append("api_key", apiKey);
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (data.secure_url) {
+        // Otomatis inject f_auto,q_auto untuk WebP dan kompresi maksimal
+        const optimizedUrl = data.secure_url.replace("/upload/", "/upload/f_auto,q_auto/");
+        document.getElementById("formFilePath").value = optimizedUrl;
+        updateModalImagePreview();
+        showToast("✅ Foto sukses diunggah ke Cloudinary CDN!");
+      } else {
+        throw new Error(data.error?.message || "Upload gagal. Pastikan Upload Preset diset ke Unsigned.");
+      }
+    } catch (err) {
+      console.error("Cloudinary error:", err);
+      alert("Gagal upload ke Cloudinary: " + (err.message || err) + "\n\nTips: Di dashboard Cloudinary > Settings > Upload > Upload presets > pastikan ada preset bertipe 'Unsigned'.");
+    } finally {
+      ev.target.value = "";
+    }
+  }
+
+  init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
+const StoreContext = createContext();
+
+export function StoreProvider({ children }) {
+  const [cart, setCart] = useState(() => {
+    const saved = localStorage.getItem('teestock_cart');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('teestock_cart', JSON.stringify(cart));
+  }, [cart]);
+
+  const addToCart = (product, garment, color, size, qty = 1) => {
+    setCart(prev => {
+      const existingIdx = prev.findIndex(
+        item => item.sku === product.sku && item.garment === garment.name && item.color === color && item.size === size
+      );
+
+      if (existingIdx !== -1) {
+        const updated = [...prev];
+        updated[existingIdx].qty += qty;
+        return updated;
+      }
+
+      return [
+        ...prev,
+        {
+          sku: product.sku,
+          name: product.name,
+          series: product.series,
+          filePath: product.filePath || product.file_path,
+          garment: garment.name,
+          color,
+          size,
+          price: product.priceRetail || product.price_retail || 99000,
+          qty
+        }
+      ];
+    });
+  };
+
+  const removeFromCart = (index) => {
+    setCart(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const updateCartQty = (index, delta) => {
+    setCart(prev => {
+      const updated = [...prev];
+      const newQty = updated[index].qty + delta;
+      if (newQty <= 0) return prev.filter((_, i) => i !== index);
+      updated[index].qty = newQty;
+      return updated;
+    });
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const totalCartItems = cart.reduce((sum, item) => sum + item.qty, 0);
+  const totalCartAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+  return (
+    <StoreContext.Provider
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        updateCartQty,
+        clearCart,
+        totalCartItems,
+        totalCartAmount
+      }}
+    >
+      {children}
+    </StoreContext.Provider>
+  );
+}
+
+export function useStore() {
+  return useContext(StoreContext);
+}
