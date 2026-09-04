@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TeeStock — Kalkulator HPP & Pricing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    /* =========================================================
+       TEESTOCK BRAND DESIGN SYSTEM
+       Neutral: Hitam (#1A1A1A), Krem (#F2EEE4), Charcoal (#4A4A47), Abu (#8C8880)
+       Series Accents: Terracotta (#C1673D), Olive (#6B7057), Mustard (#D9A441),
+                       Rust (#A84632), Dusty Teal (#4F7C74), Navy (#33465C), Dusty Rose (#B08585)
+       ========================================================= */
+
+    :root[data-theme="dark"] {
+      --bg: #141413;
+      --bg-subtle: #1a1a18;
+      --surface: #1e1e1b;
+      --surface2: #272723;
+      --surface3: #32322d;
+      --border: #363630;
+      --border-light: #44443d;
+
+      --text: #F2EEE4;          /* Brand Krem */
+      --text-dim: #c5c1b6;
+      --text-muted: #828076;
+
+      --brand-black: #1A1A1A;
+      --brand-cream: #F2EEE4;
+      --brand-charcoal: #4A4A47;
+      --brand-gray: #8C8880;
+
+      --accent: #C1673D;        /* Terracotta */
+      --accent-hover: #a8552e;
+      --accent-light: rgba(193, 103, 61, 0.18);
+      --accent-glow: rgba(193, 103, 61, 0.35);
+
+      --olive: #6B7057;         /* Komunitas */
+      --olive-light: rgba(107, 112, 87, 0.22);
+      --mustard: #D9A441;       /* Lokal */
+      --mustard-light: rgba(217, 164, 65, 0.22);
+      --rust: #A84632;          /* Fandom */
+      --rust-light: rgba(168, 70, 50, 0.22);
+      --teal: #4F7C74;          /* Fase */
+      --teal-light: rgba(79, 124, 116, 0.22);
+      --navy: #33465C;          /* Momen */
+      --rose: #B08585;          /* Squad */
+
+      --green: #4E9A74;
+      --green-dim: rgba(78, 154, 116, 0.18);
+      --yellow: #D9A441;
+      --yellow-dim: rgba(217, 164, 65, 0.18);
+      --red: #C5533E;
+      --red-dim: rgba(197, 83, 62, 0.18);
+
+      --logo-filter: invert(1) brightness(0.95);
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    :root[data-theme="light"] {
+      --bg: #F4F0E6;          /* Organic Cotton Cream */
+      --bg-subtle: #eae5d7;
+      --surface: #FCFAF5;
+      --surface2: #F0EADb;
+      --surface3: #E4DECb;
+      --border: #D8D1BF;
+      --border-light: #C5BDA8;
+
+      --text: #1A1A1A;          /* Brand Hitam */
+      --text-dim: #4A4A47;      /* Charcoal */
+      --text-muted: #8C8880;    /* Abu Hangat */
+
+      --brand-black: #1A1A1A;
+      --brand-cream: #F2EEE4;
+      --brand-charcoal: #4A4A47;
+      --brand-gray: #8C8880;
+
+      --accent: #C1673D;        /* Terracotta */
+      --accent-hover: #a8552e;
+      --accent-light: rgba(193, 103, 61, 0.12);
+      --accent-glow: rgba(193, 103, 61, 0.25);
+
+      --olive: #5A6048;
+      --olive-light: rgba(90, 96, 72, 0.14);
+      --mustard: #B88528;
+      --mustard-light: rgba(184, 133, 40, 0.15);
+      --rust: #9B3B28;
+      --rust-light: rgba(155, 59, 40, 0.14);
+      --teal: #3E6B63;
+      --teal-light: rgba(62, 107, 99, 0.14);
+      --navy: #293B50;
+      --rose: #9A6F6F;
+
+      --green: #37835B;
+      --green-dim: rgba(55, 131, 91, 0.14);
+      --yellow: #B88528;
+      --yellow-dim: rgba(184, 133, 40, 0.14);
+      --red: #B23D28;
+      --red-dim: rgba(178, 61, 40, 0.14);
+
+      --logo-filter: none;
+      --card-shadow: 0 4px 20px rgba(74, 74, 71, 0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 24px 20px 40px;
+    }
+
+    /* Top Bar & Theme Toggle */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .brand-breadcrumb strong {
+      color: var(--text);
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding: 32px 24px;
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--mustard), var(--olive), var(--teal));
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .brand-logo-img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      filter: var(--logo-filter);
+      transition: filter 0.3s ease;
+    }
+
+    .header h1 {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .header h1 span.brand-name {
+      color: var(--accent);
+    }
+
+    .header p {
+      color: var(--text-dim);
+      font-size: 14px;
+      max-width: 600px;
+      margin: 0 auto 16px;
+    }
+
+    /* Series Color Strip */
+    .series-strip {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .series-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .series-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    /* Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .full-width { grid-column: 1 / -1; }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--border-light);
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title .icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .card-title .icon.terracotta { background: var(--accent-light); color: var(--accent); }
+    .card-title .icon.olive { background: var(--olive-light); color: var(--olive); }
+    .card-title .icon.mustard { background: var(--mustard-light); color: var(--mustard); }
+    .card-title .icon.rust { background: var(--rust-light); color: var(--rust); }
+    .card-title .icon.teal { background: var(--teal-light); color: var(--teal); }
+
+    /* Form Elements */
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field:last-child { margin-bottom: 0; }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .field label .hint {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: stretch;
+    }
+
+    .input-group .prefix,
+    .input-group .suffix {
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    .input-group .prefix {
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+    }
+
+    .input-group .suffix {
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-group input[type="number"] {
+      border-radius: 0;
+    }
+
+    .input-group input:only-child {
+      border-radius: 8px;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-light);
+    }
+
+    input[type="number"]::-webkit-inner-spin-button { opacity: 0.3; }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238C8880' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 18px 0;
+    }
+
+    /* Result Cards */
+    .result-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .result-card:last-child { margin-bottom: 0; }
+
+    .result-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .result-value {
+      font-size: 26px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.5px;
+    }
+
+    .result-value.accent { color: var(--accent); }
+    .result-value.green { color: var(--green); }
+    .result-value.yellow { color: var(--yellow); }
+    .result-value.red { color: var(--red); }
+
+    .result-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Breakdown Table */
+    .breakdown {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .breakdown tr {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .breakdown tr:last-child { border-bottom: none; }
+
+    .breakdown td {
+      padding: 10px 0;
+      font-size: 13px;
+    }
+
+    .breakdown td:first-child {
+      color: var(--text-dim);
+    }
+
+    .breakdown td:last-child {
+      text-align: right;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .breakdown tr.total td {
+      padding-top: 14px;
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--text);
+      border-top: 2px solid var(--accent);
+    }
+
+    /* Tier Pricing */
+    .tier {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .tier:last-child { margin-bottom: 0; }
+
+    .tier-name {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .tier-detail {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .tier-price {
+      text-align: right;
+    }
+
+    .tier-price .price {
+      font-size: 18px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tier-price .margin {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Margin indicator */
+    .margin-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--surface3);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .margin-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease, background 0.4s ease;
+    }
+
+    /* Profit Scenario */
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 620px) {
+      .scenario-grid { grid-template-columns: 1fr; }
+    }
+
+    .scenario-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .scenario-box .title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .scenario-box .qty {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-muted);
+    }
+
+    .scenario-box .revenue {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .scenario-box .profit {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--green);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Alert */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .alert.warning {
+      background: var(--yellow-dim);
+      border: 1px solid var(--mustard);
+      color: var(--yellow);
+    }
+
+    .alert.danger {
+      background: var(--red-dim);
+      border: 1px solid var(--rust);
+      color: var(--red);
+    }
+
+    .alert.success {
+      background: var(--green-dim);
+      border: 1px solid var(--olive);
+      color: var(--green);
+    }
+
+    /* Preset buttons */
+    .presets {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      padding: 7px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-dim);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .preset-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* Market Price Validation Banner */
+    .market-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 8px;
+      background: var(--teal-light);
+      color: var(--teal);
+    }
+
+    /* Actions */
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 11px 24px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface2);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn.primary:hover {
+      background: var(--accent-hover);
+      color: #fff;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 28px 20px 10px;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    @media print {
+      body { background: white !important; color: #1a1a1a !important; }
+      .card, .result-card, .tier, .scenario-box { 
+        background: white !important; 
+        border-color: #ddd !important;
+        color: #1a1a1a !important;
+      }
+      .top-bar, .actions, .presets { display: none !important; }
+      .header { background: none !important; border-color: #ddd !important; }
+      .brand-logo-img { filter: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="brand-breadcrumb">
+      <span>TeeStock Apparel</span> / <strong>HPP & Pricing Calculator</strong>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+      ☀️ Tema Krem
+    </button>
+  </div>
+
+  <!-- Header with Authentic Branding -->
+  <div class="header">
+    <div class="brand-badge">
+      <img src="../brand/Logo TeeStock Monokrom.png" alt="TeeStock Monokrom Logo" class="brand-logo-img" />
+    </div>
+    <h1><span class="brand-name">TeeStock</span> — HPP & Pricing Calculator</h1>
+    <p>Unit economics & penentuan harga jual optimal berbasis riset pasar Shopee per September 2026</p>
+
+    <!-- 9 Series Colors Indicator -->
+    <div class="series-strip">
+      <div class="series-tag"><span class="series-dot" style="background:#4A4A47;"></span> Profesi</div>
+      <div class="series-tag"><span class="series-dot" style="background:#4F7C74;"></span> Fase</div>
+      <div class="series-tag"><span class="series-dot" style="background:#6B7057;"></span> Komunitas</div>
+      <div class="series-tag"><span class="series-dot" style="background:#D9A441;"></span> Lokal</div>
+      <div class="series-tag"><span class="series-dot" style="background:#A84632;"></span> Fandom</div>
+      <div class="series-tag"><span class="series-dot" style="background:#C1673D;"></span> Receh/Sarkas</div>
+      <div class="series-tag"><span class="series-dot" style="background:#33465C;"></span> Momen</div>
+      <div class="series-tag"><span class="series-dot" style="background:#B08585;"></span> Squad</div>
+      <div class="series-tag"><span class="series-dot" style="background:#8C8880;"></span> Kampus</div>
+    </div>
+  </div>
+
+  <!-- Preset Produk -->
+  <div class="card full-width" style="margin-bottom: 20px;">
+    <div class="card-title">
+      <div class="icon terracotta">⚡</div>
+      Preset Kategori Produk
+    </div>
+    <div class="presets" id="presets">
+      <button class="preset-btn active" onclick="applyPreset('kaos_launch')">Kaos Launch (Sweet Spot Shopee ~99rb)</button>
+      <button class="preset-btn" onclick="applyPreset('kaos_premium')">Kaos Premium / Distro (119rb)</button>
+      <button class="preset-btn" onclick="applyPreset('hoodie')">Hoodie / Jaket (NSA)</button>
+      <button class="preset-btn" onclick="applyPreset('polo')">Polo Shirt (NSA)</button>
+      <button class="preset-btn" onclick="applyPreset('totebag')">Tote Bag Kanvas</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT COLUMN: Input -->
+    <div>
+      <!-- 1. Blank Garment -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">
+          <div class="icon olive">👕</div>
+          1. Biaya Blank / Garmen
+        </div>
+        <div class="field">
+          <label>Harga blank dari vendor <span class="hint">(per pcs)</span></label>
+          <div class="input-group">
+            <span class="prefix">Rp</span>
+            <input type="number" id="blankCost" value="38000" min="0" step="1000" oninput="calculate()">
+          </div>
+        </div>
+        <div class="field">
+          <label>Vendor Apparel</label>
+          <select id="vendor" onchange="calculate()">
+            <option value="newsstate" selected>New State Apparel (Softstyle / Heavyweight)</option>
+            <option value="cotton_combed">Cotton Combed 30s Standar</option>
+            <option value="cotton_heavy">Cotton Combed 24s / Heavy 16s</option>
+            <option value="custom">Vendor Custom</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 2. Desain -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">
+          <div class="icon terracotta">🎨</div>
+          2. Biaya Desain (Etsy / In-House / Collab)
+        </div>
+        <div class="field">
+          <label>Sumber desain</label>
+          <select id="designSource" onchange="toggleDesignFields(); calculate()">
+            <option value="etsy">Beli Lisensi Etsy / Marketplace (Amortisasi)</option>
+            <option value="self">Bikin Sendiri (In-House)</option>
+            <option value="collab">Kolaborasi Kreator (Bagi Hasil / Royalti)</option>
+            <option value="free">Aset Gratis / Desain Teramortisasi Lunas</option>
+          </select>
+        </div>
+        <div id="designCostFields">
+          <div class="field">
+            <label>Harga beli lisensi komersial <span class="hint">(per file)</span></label>
+            <div class="input-group">
+              <span class="prefix">Rp</span>
+              <input type="number" id="designCost" value="75000" min="0" step="5000" oninput="calculate()">
+            </div>
+          </div>
+          <div class="field">
+            <label>Estimasi target terjual per desain <span class="hint">(amortisasi biaya)</span></label>
+            <div class="input-group">
+              <input type="number" id="designSalesEst" value="15" min="1" step="1" oninput="calculate()">
+              <span class="suffix">pcs</span>
+            </div>
+          </div>
+        </div>
+        <div id="collabFields" style="display:none;">
+          <div class="field">
+            <label>Persentase bagi hasil ke mitra kreator</label>
+            <div class="input-group">
+              <input type="number" id="collabPercent" value="15" min="0" max="100" step="1" oninput="calculate()">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Printing -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">
+          <div class="icon mustard">🖨️</div>
+          3. Biaya Cetak (DTF Meteran + Press Sendiri)
+        </div>
+        <div class="field">
+          <label>Metode produksi cetak</label>
+          <select id="printMethod" onchange="togglePrintFields(); calculate()">
+            <option value="dtf" selected>DTF Meteran (Press Sendiri di Rumah)</option>
+            <option value="sablon">Sablon Manual (Vendor Outsource)</option>
+            <option value="bordir">Bordir Komputer (Vendor Outsource)</option>
+          </select>
+        </div>
+
+        <!-- DTF Fields -->
+        <div id="dtfFields">
+          <div class="field-row">
+            <div class="field">
+              <label>Harga DTF roll <span class="hint">(per meter)</span></label>
+              <div class="input-group">
+                <span class="prefix">Rp</span>
+                <input type="number" id="dtfPricePerMeter" value="85000" min="0" step="5000" oninput="calculate()">
+              </div>
+            </div>
+            <div class="field">
+              <label>Area desain <span class="hint">(lebar x tinggi)</span></label>
+              <select id="dtfSize" onchange="calculate()">
+                <option value="0.06">A4 (20x30 cm)</option>
+                <option value="0.09" selected>A3 (30x30 cm)</option>
+                <option value="0.12">A3+ (30x40 cm)</option>
+                <option value="0.18">Full Front (30x60 cm)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Biaya operasional press <span class="hint">(listrik, teflon sheet / pcs)</span></label>
+            <div class="input-group">
+              <span class="prefix">Rp</span>
+              <input type="number" id="pressCost" value="2000" min="0" step="500" oninput="calculate()">
+            </div>
+          </div>
+        </div>
+
+        <!-- Sablon Fields -->
+        <div id="sablonFields" style="display:none;">
+          <div class="field">
+            <label>Biaya sablon per pcs <span class="hint">(vendor maklon)</span></label>
+            <div class="input-group">
+              <span class="prefix">Rp</span>
+              <input type="number" id="sablonCost" value="15000" min="0" step="1000" oninput="calculate()">
+            </div>
+          </div>
+        </div>
+
+        <!-- Bordir Fields -->
+        <div id="bordirFields" style="display:none;">
+          <div class="field">
+            <label>Biaya bordir per pcs <span class="hint">(vendor maklon)</span></label>
+            <div class="input-group">
+              <span class="prefix">Rp</span>
+              <input type="number" id="bordirCost" value="25000" min="0" step="1000" oninput="calculate()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Packaging & Operasional -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">
+          <div class="icon rust">📦</div>
+          4. Packaging, Branding & Unboxing
+        </div>
+        <div class="field">
+          <label>Packaging <span class="hint">(ziplock/polymailer, stiker TeeStock, thanks card)</span></label>
+          <div class="input-group">
+            <span class="prefix">Rp</span>
+            <input type="number" id="packagingCost" value="3000" min="0" step="500" oninput="calculate()">
+          </div>
+        </div>
+        <div class="field">
+          <label>Label & Hangtag TeeStock <span class="hint">(woven label / hangtag tebal)</span></label>
+          <div class="input-group">
+            <span class="prefix">Rp</span>
+            <input type="number" id="labelCost" value="1500" min="0" step="500" oninput="calculate()">
+          </div>
+        </div>
+        <div class="field">
+          <label>Overhead operasional <span class="hint">(lakban, tools, wifi amortized / pcs)</span></label>
+          <div class="input-group">
+            <span class="prefix">Rp</span>
+            <input type="number" id="overheadCost" value="2000" min="0" step="500" oninput="calculate()">
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Marketplace Fee -->
+      <div class="card">
+        <div class="card-title">
+          <div class="icon teal">🏪</div>
+          5. Channel Penjualan & Potongan Fee
+        </div>
+        <div class="field">
+          <label>Platform utama</label>
+          <select id="platform" onchange="setPlatformFee(); calculate()">
+            <option value="shopee" selected>Shopee (Non-Star/Star avg ~6.5%)</option>
+            <option value="tokopedia">Tokopedia (5.5%)</option>
+            <option value="tiktok">TikTok Shop (6.0%)</option>
+            <option value="instagram">Instagram / WhatsApp Direct (0% Fee)</option>
+            <option value="website">Website Sendiri (2.9% Payment Gateway)</option>
+            <option value="custom_platform">Custom Fee</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Fee platform yang berlaku</label>
+          <div class="input-group">
+            <input type="number" id="platformFee" value="6.5" min="0" max="100" step="0.5" oninput="calculate()">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Results -->
+    <div>
+      <!-- HPP Breakdown -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">
+          <div class="icon olive">📊</div>
+          Rincian HPP (COGS) per Pcs
+        </div>
+        <table class="breakdown">
+          <tr><td>Blank Garmen (NSA)</td><td id="r_blank">Rp 38.000</td></tr>
+          <tr><td>Desain (Amortisasi)</td><td id="r_design">Rp 5.000</td></tr>
+          <tr><td>Cetak DTF Film</td><td id="r_print">Rp 12.750</td></tr>
+          <tr><td>Pressing di Rumah</td><td id="r_press">Rp 2.000</td></tr>
+          <tr><td>Packaging & Stiker</td><td id="r_pack">Rp 3.000</td></tr>
+          <tr><td>Label & Hangtag</td><td id="r_label">Rp 1.500</td></tr>
+          <tr><td>Overhead Per Pcs</td><td id="r_overhead">Rp 2.000</td></tr>
+          <tr class="total"><td>TOTAL HPP DASAR</td><td id="r_hpp">Rp 64.250</td></tr>
+        </table>
+      </div>
+
+      <!-- Pricing Strategy -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">
+          <div class="icon terracotta">💰</div>
+          Penetapan Harga & Margin
+        </div>
+        <div class="field">
+          <label>Target Margin Retail <span class="hint">(% dari harga jual kotor)</span></label>
+          <div class="input-group">
+            <input type="number" id="targetMargin" value="35" min="5" max="80" step="1" oninput="calculate()">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div id="marginAlert"></div>
+
+        <div class="result-card">
+          <div class="result-label">Rekomendasi Harga Jual Retail</div>
+          <div class="result-value accent" id="r_retailPrice">Rp 99.000</div>
+          <div class="result-sub" id="r_retailSub">Setelah fee marketplace: Rp 92.565</div>
+          <div class="margin-bar">
+            <div class="margin-bar-fill" id="marginBar" style="width: 35%; background: var(--green);"></div>
+          </div>
+          <div class="market-badge" id="marketValidationBadge">
+            🎯 Sesuai Sweet Spot Shopee (Rp 89rb - Rp 99rb)
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-label">Profit Bersih per Kaos</div>
+          <div class="result-value green" id="r_profitPerPcs">Rp 28.315</div>
+          <div class="result-sub" id="r_profitMargin">Margin bersih: 28.6%</div>
+        </div>
+      </div>
+
+      <!-- Tier Pricing -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-title">
+          <div class="icon mustard">👥</div>
+          Tier Harga Reseller & Dropship
+        </div>
+
+        <div class="field-row" style="margin-bottom: 16px;">
+          <div class="field">
+            <label>Diskon Reseller</label>
+            <div class="input-group">
+              <input type="number" id="resellerDisc" value="25" min="0" max="60" step="1" oninput="calculate()">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Diskon Dropship</label>
+            <div class="input-group">
+              <input type="number" id="dropshipDisc" value="12" min="0" max="50" step="1" oninput="calculate()">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tier">
+          <div>
+            <div class="tier-name">🛒 Retail (End Customer)</div>
+            <div class="tier-detail">Via Shopee / Marketplace</div>
+          </div>
+          <div class="tier-price">
+            <div class="price accent" id="t_retail">Rp 99.000</div>
+            <div class="margin" id="t_retail_m">margin ~35%</div>
+          </div>
+        </div>
+        <div class="tier">
+          <div>
+            <div class="tier-name">📦 Dropshipper</div>
+            <div class="tier-detail" id="t_drop_disc">Disc 12% dari retail</div>
+          </div>
+          <div class="tier-price">
+            <div class="price yellow" id="t_dropship">Rp 87.000</div>
+            <div class="margin" id="t_dropship_m">margin kamu 26% · profit Rp 22.750</div>
+          </div>
+        </div>
+        <div class="tier">
+          <div>
+            <div class="tier-name">🏭 Reseller / Mitra Komunitas</div>
+            <div class="tier-detail" id="t_res_disc">Disc 25% dari retail</div>
+          </div>
+          <div class="tier-price">
+            <div class="price" style="color: var(--green);" id="t_reseller">Rp 74.000</div>
+            <div class="margin" id="t_reseller_m">margin kamu 13% · profit Rp 9.750</div>
+          </div>
+        </div>
+
+        <div id="tierAlert" style="margin-top: 12px;"></div>
+      </div>
+
+      <!-- Profit Scenarios -->
+      <div class="card">
+        <div class="card-title">
+          <div class="icon olive">📈</div>
+          Simulasi Profit Bulanan (Solo Founder)
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">
+          Mix realistis: 70% Retail Marketplace, 20% Dropship, 10% Reseller
+        </p>
+
+        <div class="scenario-grid">
+          <div class="scenario-box">
+            <div class="title">🌱 Tahap Validasi</div>
+            <div class="qty">30 pcs / bulan</div>
+            <div class="revenue" id="s1_revenue">Rev: Rp 2.970.000</div>
+            <div class="profit" id="s1_profit">Rp 255.000</div>
+          </div>
+          <div class="scenario-box">
+            <div class="title">🚀 Stabil Konsisten</div>
+            <div class="qty">100 pcs / bulan</div>
+            <div class="revenue" id="s2_revenue">Rev: Rp 9.900.000</div>
+            <div class="profit" id="s2_profit">Rp 2.015.000</div>
+          </div>
+          <div class="scenario-box">
+            <div class="title">💎 Scale Up</div>
+            <div class="qty">300 pcs / bulan</div>
+            <div class="revenue" id="s3_revenue">Rev: Rp 29.700.000</div>
+            <div class="profit" id="s3_profit">Rp 7.050.000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Break Even -->
+  <div class="card full-width" style="margin-top: 20px;">
+    <div class="card-title">
+      <div class="icon rust">🎯</div>
+      Analisis Titik Impas (Break Even Point)
+    </div>
+    <div class="field-row" style="margin-bottom: 16px;">
+      <div class="field">
+        <label>Biaya tetap bulanan <span class="hint">(listrik rumah tangga, kuota, tools)</span></label>
+        <div class="input-group">
+          <span class="prefix">Rp</span>
+          <input type="number" id="fixedCost" value="500000" min="0" step="50000" oninput="calculate()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Investasi awal mesin & starter stock</label>
+        <div class="input-group">
+          <span class="prefix">Rp</span>
+          <input type="number" id="initialInvest" value="3500000" min="0" step="100000" oninput="calculate()">
+        </div>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+      <div class="result-card">
+        <div class="result-label">BEP Bulanan (Fixed Cost)</div>
+        <div class="result-value yellow" id="r_bepMonthly">18 pcs</div>
+        <div class="result-sub">Penjualan minimal per bulan</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">BEP Investasi Awal</div>
+        <div class="result-value accent" id="r_bepInvest">124 pcs</div>
+        <div class="result-sub" id="r_bepInvestSub">± 4 bulan (pace 30 pcs/bln)</div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Target Minimal Harian</div>
+        <div class="result-value green" id="r_minTarget">1 pcs/hari</div>
+        <div class="result-sub">Supaya operasional tidak minus</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn" onclick="resetAll()">🔄 Reset Default</button>
+    <button class="btn" onclick="window.print()">🖨️ Print / Simpan PDF</button>
+    <button class="btn primary" onclick="exportSummary()">📋 Salin Ringkasan</button>
+  </div>
+
+  <div class="footer">
+    TeeStock Apparel • Built with TeeStock Brand Design System • Sept 2026
+  </div>
+</div>
+
+<script>
+  // Presets aligned with Shopee market validation
+  const presets = {
+    kaos_launch: { blank: 38000, design: 75000, designSales: 15, dtfSize: 0.09, pack: 3000, label: 1500, margin: 35 },
+    kaos_premium: { blank: 45000, design: 75000, designSales: 15, dtfSize: 0.09, pack: 4000, label: 2000, margin: 46 },
+    hoodie: { blank: 95000, design: 85000, designSales: 10, dtfSize: 0.12, pack: 5000, label: 2000, margin: 40 },
+    polo: { blank: 55000, design: 60000, designSales: 12, dtfSize: 0.06, pack: 3000, label: 1500, margin: 38 },
+    totebag: { blank: 16000, design: 50000, designSales: 20, dtfSize: 0.06, pack: 2000, label: 1000, margin: 45 }
+  };
+
+  const platformFees = {
+    shopee: 6.5,
+    tokopedia: 5.5,
+    tiktok: 6.0,
+    instagram: 0.0,
+    website: 2.9,
+    custom_platform: null
+  };
+
+  function applyPreset(type) {
+    const p = presets[type];
+    document.getElementById('blankCost').value = p.blank;
+    document.getElementById('designCost').value = p.design;
+    document.getElementById('designSalesEst').value = p.designSales;
+    document.getElementById('dtfSize').value = p.dtfSize;
+    document.getElementById('packagingCost').value = p.pack;
+    document.getElementById('labelCost').value = p.label;
+    document.getElementById('targetMargin').value = p.margin;
+
+    document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+    if (event && event.target) {
+      event.target.classList.add('active');
+    }
+
+    calculate();
+  }
+
+  function setPlatformFee() {
+    const platform = document.getElementById('platform').value;
+    const fee = platformFees[platform];
+    if (fee !== null) {
+      document.getElementById('platformFee').value = fee;
+    }
+  }
+
+  function toggleDesignFields() {
+    const source = document.getElementById('designSource').value;
+    document.getElementById('designCostFields').style.display = (source === 'etsy' || source === 'self') ? 'block' : 'none';
+    document.getElementById('collabFields').style.display = (source === 'collab') ? 'block' : 'none';
+  }
+
+  function togglePrintFields() {
+    const method = document.getElementById('printMethod').value;
+    document.getElementById('dtfFields').style.display = method === 'dtf' ? 'block' : 'none';
+    document.getElementById('sablonFields').style.display = method === 'sablon' ? 'block' : 'none';
+    document.getElementById('bordirFields').style.display = method === 'bordir' ? 'block' : 'none';
+  }
+
+  function fmt(n) {
+    return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+  }
+
+  function fmtShort(n) {
+    if (n >= 1000000) return 'Rp ' + (n / 1000000).toFixed(1).replace('.0', '') + ' jt';
+    if (n >= 1000) return 'Rp ' + (n / 1000).toFixed(0) + 'rb';
+    return fmt(n);
+  }
+
+  function roundPrice(price) {
+    return Math.ceil(price / 1000) * 1000;
+  }
+
+  function calculate() {
+    const blankCost = parseFloat(document.getElementById('blankCost').value) || 0;
+    const designSource = document.getElementById('designSource').value;
+    const designCost = parseFloat(document.getElementById('designCost').value) || 0;
+    const designSalesEst = parseFloat(document.getElementById('designSalesEst').value) || 1;
+    const collabPercent = parseFloat(document.getElementById('collabPercent').value) || 0;
+    const printMethod = document.getElementById('printMethod').value;
+    const dtfPricePerMeter = parseFloat(document.getElementById('dtfPricePerMeter').value) || 0;
+    const dtfSize = parseFloat(document.getElementById('dtfSize').value) || 0.09;
+    const pressCost = parseFloat(document.getElementById('pressCost').value) || 0;
+    const sablonCost = parseFloat(document.getElementById('sablonCost').value) || 0;
+    const bordirCost = parseFloat(document.getElementById('bordirCost').value) || 0;
+    const packagingCost = parseFloat(document.getElementById('packagingCost').value) || 0;
+    const labelCost = parseFloat(document.getElementById('labelCost').value) || 0;
+    const overheadCost = parseFloat(document.getElementById('overheadCost').value) || 0;
+    const platformFee = parseFloat(document.getElementById('platformFee').value) || 0;
+    const targetMargin = parseFloat(document.getElementById('targetMargin').value) || 0;
+    const resellerDisc = parseFloat(document.getElementById('resellerDisc').value) || 0;
+    const dropshipDisc = parseFloat(document.getElementById('dropshipDisc').value) || 0;
+    const fixedCost = parseFloat(document.getElementById('fixedCost').value) || 0;
+    const initialInvest = parseFloat(document.getElementById('initialInvest').value) || 0;
+
+    let designPerPcs = 0;
+    if (designSource === 'etsy' || designSource === 'self') {
+      designPerPcs = designCost / designSalesEst;
+    }
+
+    let printPerPcs = 0;
+    let pressPerPcs = 0;
+    if (printMethod === 'dtf') {
+      const pricePerSqM = dtfPricePerMeter / 0.6;
+      printPerPcs = pricePerSqM * dtfSize;
+      pressPerPcs = pressCost;
+    } else if (printMethod === 'sablon') {
+      printPerPcs = sablonCost;
+    } else if (printMethod === 'bordir') {
+      printPerPcs = bordirCost;
+    }
+
+    const hpp = blankCost + designPerPcs + printPerPcs + pressPerPcs + packagingCost + labelCost + overheadCost;
+
+    const collabAdjust = (designSource === 'collab') ? collabPercent / 100 : 0;
+    const feeRate = platformFee / 100;
+    const marginRate = targetMargin / 100;
+
+    const divisor = 1 - feeRate - collabAdjust - marginRate;
+    let retailPrice = divisor <= 0 ? hpp * 2.5 : hpp / divisor;
+    retailPrice = roundPrice(retailPrice);
+
+    const feeAmount = retailPrice * feeRate;
+    const collabAmount = retailPrice * collabAdjust;
+    const netRevenue = retailPrice - feeAmount - collabAmount;
+    const profitPerPcs = netRevenue - hpp;
+    const actualMargin = (profitPerPcs / retailPrice) * 100;
+
+    if (designSource === 'collab') {
+      designPerPcs = collabAmount;
+    }
+
+    document.getElementById('r_blank').textContent = fmt(blankCost);
+    document.getElementById('r_design').textContent = fmt(designPerPcs);
+    document.getElementById('r_print').textContent = fmt(printPerPcs);
+    document.getElementById('r_press').textContent = printMethod === 'dtf' ? fmt(pressPerPcs) : '-';
+    document.getElementById('r_pack').textContent = fmt(packagingCost);
+    document.getElementById('r_label').textContent = fmt(labelCost);
+    document.getElementById('r_overhead').textContent = fmt(overheadCost);
+    document.getElementById('r_hpp').textContent = fmt(designSource === 'collab' ? hpp + collabAmount : hpp);
+
+    document.getElementById('r_retailPrice').textContent = fmt(retailPrice);
+    document.getElementById('r_retailSub').textContent = `Setelah fee marketplace (${platformFee}%): ${fmt(netRevenue)}`;
+    document.getElementById('r_profitPerPcs').textContent = fmt(profitPerPcs);
+    document.getElementById('r_profitMargin').textContent = `Margin bersih: ${actualMargin.toFixed(1)}%`;
+
+    const marginBar = document.getElementById('marginBar');
+    const marginPct = Math.max(0, Math.min(100, actualMargin));
+    marginBar.style.width = marginPct + '%';
+    if (actualMargin >= 35) marginBar.style.background = 'var(--green)';
+    else if (actualMargin >= 22) marginBar.style.background = 'var(--yellow)';
+    else marginBar.style.background = 'var(--red)';
+
+    const alertDiv = document.getElementById('marginAlert');
+    if (actualMargin < 20) {
+      alertDiv.innerHTML = '<div class="alert danger">⚠️ Margin tipis (&lt;20%). Berisiko tergerus jika ada retur atau promo tanggal kembar.</div>';
+    } else if (actualMargin >= 30 && actualMargin <= 40) {
+      alertDiv.innerHTML = '<div class="alert success">✅ Margin optimal untuk launch (~30-40%). Kompetitif di pasar Shopee tanpa mengorbankan profit.</div>';
+    } else if (actualMargin > 40) {
+      alertDiv.innerHTML = '<div class="alert success">💎 Margin premium (&gt;40%). Bagus untuk Custom Order atau seri kolaborasi!</div>';
+    } else {
+      alertDiv.innerHTML = '';
+    }
+
+    // Market validation badge text
+    const badge = document.getElementById('marketValidationBadge');
+    if (retailPrice <= 99000) {
+      badge.textContent = '🎯 Sweet Spot Launch Shopee (Rp 89rb - Rp 99rb)';
+      badge.style.color = 'var(--teal)';
+      badge.style.background = 'var(--teal-light)';
+    } else if (retailPrice <= 120000) {
+      badge.textContent = '🏷️ Mid-Tier Distro Range (Rp 100rb - Rp 120rb)';
+      badge.style.color = 'var(--mustard)';
+      badge.style.background = 'var(--mustard-light)';
+    } else {
+      badge.textContent = '⭐ Premium / Custom Order Range (> Rp 120rb)';
+      badge.style.color = 'var(--accent)';
+      badge.style.background = 'var(--accent-light)';
+    }
+
+    // Tier pricing
+    const dropshipPrice = roundPrice(retailPrice * (1 - dropshipDisc / 100));
+    const resellerPrice = roundPrice(retailPrice * (1 - resellerDisc / 100));
+
+    const dropProfitPerPcs = dropshipPrice - hpp - (dropshipPrice * collabAdjust);
+    const resProfitPerPcs = resellerPrice - hpp - (resellerPrice * collabAdjust);
+
+    const dropMargin = ((dropProfitPerPcs) / dropshipPrice * 100);
+    const resMargin = ((resProfitPerPcs) / resellerPrice * 100);
+
+    document.getElementById('t_retail').textContent = fmt(retailPrice);
+    document.getElementById('t_retail_m').textContent = `margin ${actualMargin.toFixed(0)}%`;
+    document.getElementById('t_dropship').textContent = fmt(dropshipPrice);
+    document.getElementById('t_dropship_m').textContent = `margin kamu ${dropMargin.toFixed(0)}% · profit ${fmt(dropProfitPerPcs)}`;
+    document.getElementById('t_drop_disc').textContent = `Disc ${dropshipDisc}% dari retail`;
+    document.getElementById('t_reseller').textContent = fmt(resellerPrice);
+    document.getElementById('t_reseller_m').textContent = `margin kamu ${resMargin.toFixed(0)}% · profit ${fmt(resProfitPerPcs)}`;
+    document.getElementById('t_res_disc').textContent = `Disc ${resellerDisc}% dari retail`;
+
+    const tierAlertDiv = document.getElementById('tierAlert');
+    if (resProfitPerPcs <= 0) {
+      tierAlertDiv.innerHTML = '<div class="alert danger">🚫 Harga reseller di bawah HPP! Diskon terlalu besar.</div>';
+    } else {
+      tierAlertDiv.innerHTML = '';
+    }
+
+    // Profit scenarios
+    const scenarios = [30, 100, 300];
+    scenarios.forEach((qty, i) => {
+      const rev = retailPrice * qty;
+      const retailQty = Math.round(qty * 0.7);
+      const dropQty = Math.round(qty * 0.2);
+      const resQty = qty - retailQty - dropQty;
+
+      const totalProfit = (profitPerPcs * retailQty) + (dropProfitPerPcs * dropQty) + (resProfitPerPcs * resQty) - fixedCost;
+
+      document.getElementById(`s${i + 1}_revenue`).textContent = `Rev: ${fmtShort(rev)}`;
+      document.getElementById(`s${i + 1}_profit`).textContent = fmt(Math.max(0, totalProfit));
+      document.getElementById(`s${i + 1}_profit`).style.color = totalProfit < 0 ? 'var(--red)' : 'var(--green)';
+    });
+
+    const bepMonthly = (fixedCost > 0 && profitPerPcs > 0) ? Math.ceil(fixedCost / profitPerPcs) : 0;
+    const bepInvest = (initialInvest > 0 && profitPerPcs > 0) ? Math.ceil(initialInvest / profitPerPcs) : 0;
+    const bepMonths = bepInvest > 0 ? Math.ceil(bepInvest / 30) : 0;
+
+    document.getElementById('r_bepMonthly').textContent = `${bepMonthly} pcs`;
+    document.getElementById('r_bepInvest').textContent = `${bepInvest} pcs`;
+    document.getElementById('r_bepInvestSub').textContent = `± ${bepMonths} bulan (pace 30 pcs/bln)`;
+    document.getElementById('r_minTarget').textContent = `${Math.ceil(bepMonthly / 30)} pcs/hari`;
+
+    window._lastCalc = {
+      hpp, retailPrice, profitPerPcs, actualMargin, dropshipPrice, resellerPrice,
+      dropMargin, resMargin, dropProfitPerPcs, resProfitPerPcs,
+      blankCost, designPerPcs, printPerPcs, pressPerPcs, packagingCost,
+      labelCost, overheadCost, platformFee: feeRate * 100, bepMonthly, bepInvest,
+      printMethod, designSource
+    };
+  }
+
+  function resetAll() {
+    applyPreset('kaos_launch');
+    document.getElementById('designSource').value = 'etsy';
+    document.getElementById('printMethod').value = 'dtf';
+    document.getElementById('platform').value = 'shopee';
+    document.getElementById('platformFee').value = 6.5;
+    document.getElementById('resellerDisc').value = 25;
+    document.getElementById('dropshipDisc').value = 12;
+    document.getElementById('fixedCost').value = 500000;
+    document.getElementById('initialInvest').value = 3500000;
+    document.getElementById('overheadCost').value = 2000;
+    toggleDesignFields();
+    togglePrintFields();
+    calculate();
+  }
+
+  function toggleTheme() {
+    const root = document.documentElement;
+    const currentTheme = root.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', newTheme);
+    localStorage.setItem('teestock_theme', newTheme);
+    document.getElementById('themeBtn').textContent = newTheme === 'dark' ? '☀️ Tema Krem' : '🌙 Tema Charcoal';
+  }
+
+  // Restore saved theme
+  const savedTheme = localStorage.getItem('teestock_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('themeBtn').textContent = savedTheme === 'dark' ? '☀️ Tema Krem' : '🌙 Tema Charcoal';
+
+  function exportSummary() {
+    const c = window._lastCalc;
+    if (!c) return;
+
+    const text = `=== TEESTOCK HPP & PRICING SUMMARY ===
+Brand: TeeStock (Your Design, Your Stock)
+Tanggal: ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
+
+📦 HPP (COGS) PER PCS:
+• Blank Garmen: ${fmt(c.blankCost)}
+• Desain: ${fmt(c.designPerPcs)}
+• Cetak DTF: ${fmt(c.printPerPcs)}
+• Pressing: ${fmt(c.pressPerPcs)}
+• Packaging & Brand: ${fmt(c.packagingCost + c.labelCost)}
+• Overhead: ${fmt(c.overheadCost)}
+─────────────────────────
+TOTAL HPP: ${fmt(c.hpp)}
+
+💰 STRUKTUR HARGA JUAL:
+• Retail: ${fmt(c.retailPrice)} (Margin Bersih: ${c.actualMargin.toFixed(1)}%)
+• Dropship: ${fmt(c.dropshipPrice)} (Margin: ${c.dropMargin.toFixed(1)}%)
+• Reseller: ${fmt(c.resellerPrice)} (Margin: ${c.resMargin.toFixed(1)}%)
+
+📊 PROFIT PER UNIT:
+• Retail: ${fmt(c.profitPerPcs)}
+• Dropship: ${fmt(c.dropProfitPerPcs)}
+• Reseller: ${fmt(c.resProfitPerPcs)}
+
+🎯 TARGET BREAK EVEN:
+• BEP Bulanan: ${c.bepMonthly} pcs/bulan
+• BEP Investasi: ${c.bepInvest} pcs
+`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      alert('✅ Ringkasan HPP & Pricing TeeStock berhasil disalin ke clipboard!');
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert('✅ Ringkasan HPP & Pricing TeeStock berhasil disalin ke clipboard!');
+    });
+  }
+
+  // Init
+  calculate();
+</script>
+
+</body>
+</html>
