@@ -1,17 +1,20 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import { ShoppingBag, Search, ShieldCheck, Sparkles, User } from 'lucide-react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { ShoppingBag, Search, ShieldCheck, Sparkles, User, Package } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export function Navbar() {
   const { totalCartItems } = useStore();
+  const location = useLocation();
+  const isBlankActive = location.pathname === '/katalog' && location.search.includes('series=blank');
+  const isGraphicActive = location.pathname === '/katalog' && !location.search.includes('series=blank');
 
   return (
     <div className="sticky top-0 z-40 bg-ts-hitam/95 backdrop-blur border-b border-ts-border">
       {/* Top Notice Bar */}
       <div className="bg-ts-surface text-[11px] font-semibold text-ts-krem/90 py-1.5 px-4 text-center border-b border-ts-borderDim flex items-center justify-center gap-4">
         <span className="flex items-center gap-1">
-          <ShieldCheck className="w-3.5 h-3.5 text-ts-green" /> 100% Kaos Polos New State Apparel (NSA) Original
+          <ShieldCheck className="w-3.5 h-3.5 text-ts-green" /> 100% Kaos Polos New States Apparel (NSA) Original
         </span>
         <span className="hidden md:inline text-ts-muted">•</span>
         <span className="hidden md:flex items-center gap-1">
@@ -33,7 +36,7 @@ export function Navbar() {
         </Link>
 
         {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-7">
           <NavLink
             to="/"
             end
@@ -47,13 +50,24 @@ export function Navbar() {
           </NavLink>
           <NavLink
             to="/katalog"
-            className={({ isActive }) =>
+            className={() =>
               `text-sm font-semibold transition-colors ${
-                isActive ? 'text-ts-terracotta font-bold' : 'text-ts-krem/80 hover:text-white'
+                isGraphicActive ? 'text-ts-terracotta font-bold' : 'text-ts-krem/80 hover:text-white'
               }`
             }
           >
-            Katalog Series
+            Katalog Desain
+          </NavLink>
+          <NavLink
+            to="/katalog?series=blank"
+            className={() =>
+              `text-sm font-semibold transition-colors flex items-center gap-1.5 ${
+                isBlankActive ? 'text-ts-terracotta font-bold' : 'text-ts-krem/80 hover:text-white'
+              }`
+            }
+          >
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/40">BARU</span>
+            <span>Kaos Polos NSA</span>
           </NavLink>
           <NavLink
             to="/custom-order"

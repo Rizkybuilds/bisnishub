@@ -88,5 +88,15 @@ export const SERIES = [
     hex: "#435070",
     badgeBg: "bg-[#435070]/20 text-[#7184AD] border-[#435070]/40",
     description: "Vibes mahasiswa teknik, kedokteran, hukum, seni, himpunan jurusan, dan masa-masa perjuangan skripsi."
+  },
+  {
+    id: "blank",
+    code: "BLK",
+    name: "NSA Blank Apparel",
+    tagline: "Kaos Polos Original New States Apparel (NSA)",
+    color: "ts-krem",
+    hex: "#EBE3D5",
+    badgeBg: "bg-slate-500/20 text-slate-300 border-slate-500/40",
+    description: "Koleksi kaos polos original New States Apparel (Softstyle 30s, Premium 24s, Heavyweight 20s, Ringer, Raglan, Polo, Hoodie, Crewneck, Dri-Fit & Youth). Bahan katun premium tanpa jahitan samping, ready stock eceran & lusinan."
   }
 ];

@@ -9,14 +9,49 @@ import {
   Check, 
   MessageSquare,
   Layers,
-  Ruler
+  Ruler,
+  Clock,
+  RotateCcw
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useStore } from '../../context/StoreContext';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { Button } from '../../components/ui/Button';
-import { Modal } from '../../components/ui/Modal';
+import { SizeCalculatorModal } from '../../components/store/SizeCalculatorModal';
 import { formatRupiah } from '../../utils/formatters';
+
+const COLOR_HEX_MAP = {
+  "Hitam": "#111111",
+  "Black": "#111111",
+  "Putih": "#F8F8F8",
+  "White": "#F8F8F8",
+  "Charcoal": "#2B2B2B",
+  "Navy": "#1B2A4A",
+  "Maroon": "#5C1D24",
+  "Sport Grey": "#A5A5A5",
+  "Forest Green": "#224A30",
+  "Royal Blue": "#1E40AF",
+  "Red": "#B91C1C",
+  "Merah": "#B91C1C",
+  "Irish Green": "#15803D",
+  "Daisy": "#FBBF24",
+  "Heliconia": "#E11D48",
+  "Sand": "#D4B996",
+  "Orange": "#EA580C",
+  "Mustard": "#D9A441",
+  "Salmon": "#FA8072",
+  "Aqua Sky": "#7AC5CD",
+  "Gold": "#E5A823",
+  "Dark Green": "#1B4D3E",
+  "Neon Green": "#39FF14",
+  "White-Black": "#E5E7EB",
+  "White-Red": "#FCA5A5",
+  "White-Navy": "#93C5FD",
+  "White-Forest Green": "#86EFAC",
+  "White-Gold": "#FDE68A",
+  "Sport Grey-Black": "#9CA3AF",
+  "Sport Grey-Navy": "#94A3B8"
+};
 
 export function ProductDetailPage() {
   const { sku } = useParams();
@@ -26,19 +61,11 @@ export function ProductDetailPage() {
 
   const product = catalog.find(p => p.sku === sku);
 
-  const [selectedGarmentKey, setSelectedGarmentKey] = useState('nsa_softstyle_30s');
-  const selectedGarment = GARMENT_TYPES[selectedGarmentKey] || GARMENT_TYPES.nsa_softstyle_30s;
-  const [selectedColor, setSelectedColor] = useState(selectedGarment.colors[0]?.name || 'Hitam');
-  const [selectedSize, setSelectedSize] = useState('L');
-  const [qty, setQty] = useState(1);
-  const [isAdded, setIsAdded] = useState(false);
-  const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
-
   if (!product) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-20 text-center space-y-4">
         <h2 className="text-xl font-bold text-ts-krem">Produk Tidak Ditemukan</h2>
-        <p className="text-xs text-ts-muted">Desain dengan SKU {sku} tidak terdaftar di katalog kami.</p>
+        <p className="text-xs text-ts-muted">Desain atau produk polos dengan SKU {sku} tidak terdaftar di katalog kami.</p>
         <Link to="/katalog">
           <Button variant="primary">Kembali ke Katalog</Button>
         </Link>
@@ -46,24 +73,61 @@ export function ProductDetailPage() {
     );
   }
 
-  // Price adjustments according to garment type
+  const isBlank = product.series === 'blank';
+
+  const [selectedGarmentKey, setSelectedGarmentKey] = useState('nsa_softstyle_30s');
+  const selectedGarment = GARMENT_TYPES[selectedGarmentKey] || GARMENT_TYPES.nsa_softstyle_30s;
+  
+  // Available colors
+  const colorList = isBlank && product.colors
+    ? product.colors.split(',').map(c => c.trim())
+    : selectedGarment.colors.map(c => c.name);
+
+  const [selectedColor, setSelectedColor] = useState(colorList[0] || 'Hitam');
+
+  // Available sizes
+  const sizeList = isBlank && product.sizes
+    ? product.sizes.split(',').map(s => s.trim())
+    : SIZES;
+
+  const [selectedSize, setSelectedSize] = useState(sizeList[0] || 'L');
+  const [qty, setQty] = useState(1);
+  const [isAdded, setIsAdded] = useState(false);
+  const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
+
+  // Dynamic image state with fallback
+  const defaultImage = product.filePath || product.file_path;
+  const [previewImg, setPreviewImg] = useState(defaultImage);
+
+  // Price adjustments
   const basePrice = product.priceRetail || product.price_retail || 99000;
   let priceDelta = 0;
-  if (selectedGarmentKey === 'nsa_heavyweight_24s') priceDelta = 10000;
-  else if (selectedGarmentKey === 'nsa_longsleeve') priceDelta = 12000;
-  else if (selectedGarmentKey === 'nsa_hoodie') priceDelta = 85000;
-  else if (selectedGarmentKey === 'nsa_polo') priceDelta = 30000;
+  if (!isBlank) {
+    if (selectedGarmentKey === 'nsa_heavyweight_24s') priceDelta = 10000;
+    else if (selectedGarmentKey === 'nsa_longsleeve') priceDelta = 12000;
+    else if (selectedGarmentKey === 'nsa_hoodie') priceDelta = 85000;
+    else if (selectedGarmentKey === 'nsa_polo') priceDelta = 30000;
+  }
+  const currentPrice = isBlank ? basePrice : (basePrice + priceDelta);
 
-  const currentPrice = basePrice + priceDelta;
+  const handleColorChange = (colName) => {
+    setSelectedColor(colName);
+    if (isBlank && product.cititexCatId) {
+      const cititexUrl = `https://cititex.com/api/uploads/category/album/front_side/${product.cititexCatId}-${encodeURIComponent(colName)}.jpg`;
+      setPreviewImg(cititexUrl);
+    }
+  };
 
   const handleAddToCart = () => {
-    addToCart(product, selectedGarment, selectedColor, selectedSize, qty);
+    const garmentObj = isBlank ? { name: product.name } : selectedGarment;
+    addToCart(product, garmentObj, selectedColor, selectedSize, qty, currentPrice);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2500);
   };
 
   const handleBuyNow = () => {
-    addToCart(product, selectedGarment, selectedColor, selectedSize, qty);
+    const garmentObj = isBlank ? { name: product.name } : selectedGarment;
+    addToCart(product, garmentObj, selectedColor, selectedSize, qty, currentPrice);
     navigate('/keranjang');
   };
 
@@ -81,17 +145,24 @@ export function ProductDetailPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-        {/* Left: Product Mockup Image */}
+        {/* Left: Product Mockup / Official Photo Image */}
         <div className="space-y-4">
           <div className="aspect-square bg-ts-surface border border-ts-border rounded-3xl overflow-hidden shadow-2xl relative">
             <img
-              src={product.filePath || product.file_path}
+              src={previewImg}
               alt={product.name}
-              className="w-full h-full object-cover"
+              onError={() => setPreviewImg(defaultImage)}
+              className="w-full h-full object-cover transition-all duration-300"
             />
             <div className="absolute top-4 left-4 px-3 py-1 rounded-lg bg-ts-hitam/80 backdrop-blur border border-ts-border font-mono text-xs font-bold text-ts-terracotta">
               {product.sku}
             </div>
+            {isBlank && (
+              <div className="absolute top-4 right-4 px-2.5 py-1 rounded-lg bg-ts-surface/90 backdrop-blur border border-ts-border text-[11px] font-bold text-ts-krem flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
+                <span>100% Original NSA</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -110,63 +181,106 @@ export function ProductDetailPage() {
           </div>
 
           <p className="text-xs sm:text-sm text-ts-muted leading-relaxed">
-            {product.description || "Kaos print-on-demand premium dengan sablon DTF resolusi tinggi pada kaos katun New State Apparel impor."}
+            {product.description || (isBlank 
+              ? "Kaos polos original New States Apparel (NSA) tanpa jahitan samping (tubular) standar ekspor internasional."
+              : "Kaos print-on-demand premium dengan sablon DTF resolusi tinggi pada kaos katun New States Apparel impor.")}
           </p>
+
+          {/* Shipping Dispatch SLA Badge */}
+          {isBlank ? (
+            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-ts-teal/10 border border-ts-teal/30 text-xs text-ts-teal">
+              <Truck className="w-5 h-5 shrink-0 text-ts-teal" />
+              <div>
+                <strong className="block font-bold text-ts-krem">⚡ Pengiriman Cepat 24 Jam Kerja</strong>
+                <span className="text-[11px] text-ts-muted">Stok Kaos Polos NSA ready di warehouse. Langsung dipacking dan dikirim H+1.</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-ts-mustard/10 border border-ts-mustard/30 text-xs text-ts-mustard">
+              <Clock className="w-5 h-5 shrink-0 text-ts-mustard" />
+              <div>
+                <strong className="block font-bold text-ts-krem">🛠️ Estimasi Cetak &amp; Kirim: 1-2 Hari Kerja</strong>
+                <span className="text-[11px] text-ts-muted">Diproduksi fresh on-demand dengan double heat press presisi suhu 155°C.</span>
+              </div>
+            </div>
+          )}
 
           <hr className="border-ts-borderDim" />
 
-          {/* Model Garment Selector */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-ts-krem flex items-center justify-between">
-              <span>Pilihan Model Bahan Kaos NSA:</span>
-              <span className="text-[11px] font-normal text-ts-muted">{selectedGarment.name}</span>
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {Object.entries(GARMENT_TYPES).filter(([k]) => k !== 'supplies').map(([k, g]) => (
-                <button
-                  key={k}
-                  onClick={() => {
-                    setSelectedGarmentKey(k);
-                    if (g.colors?.[0]) setSelectedColor(g.colors[0].name);
-                  }}
-                  className={`p-2.5 rounded-xl border text-xs font-bold text-left transition-all ${
-                    selectedGarmentKey === k
-                      ? 'bg-ts-terracotta/15 border-ts-terracotta text-white shadow-sm'
-                      : 'bg-ts-surface border-ts-border text-ts-krem/80 hover:bg-ts-surfaceHover'
-                  }`}
-                >
-                  <div>{g.name}</div>
-                  <div className="text-[10px] text-ts-muted font-normal mt-0.5">
-                    {k === 'nsa_softstyle_30s' ? 'Standar' : `+${formatRupiah(k === 'nsa_heavyweight_24s' ? 10000 : k === 'nsa_longsleeve' ? 12000 : k === 'nsa_hoodie' ? 85000 : 30000)}`}
-                  </div>
-                </button>
-              ))}
+          {/* Model Garment Selector (Only for graphic tees; for blanks, show specs) */}
+          {isBlank ? (
+            <div className="p-4 bg-ts-surface/80 border border-ts-border rounded-2xl space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-ts-krem flex items-center gap-1.5">
+                  <Layers className="w-4 h-4 text-ts-mustard" />
+                  Spesifikasi Asli Garmen NSA:
+                </span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-ts-hitam text-ts-terracotta border border-ts-border">
+                  Model #{product.cititexCatId || '3600'}
+                </span>
+              </div>
+              <p className="text-xs text-ts-muted">
+                {product.niche}. 100% Produk Garmen Impor Asli New States Apparel (NSA). Bahan rajutan ring spun cotton halus, adem, dan awet untuk pemakaian harian maupun sablon DTF &amp; bordir.
+              </p>
             </div>
-          </div>
+          ) : (
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-ts-krem flex items-center justify-between">
+                <span>Pilihan Model Bahan Kaos NSA:</span>
+                <span className="text-[11px] font-normal text-ts-muted">{selectedGarment.name}</span>
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {Object.entries(GARMENT_TYPES).filter(([k]) => k !== 'supplies').slice(0, 5).map(([k, g]) => (
+                  <button
+                    key={k}
+                    onClick={() => {
+                      setSelectedGarmentKey(k);
+                      if (g.colors?.[0]) setSelectedColor(g.colors[0].name);
+                    }}
+                    className={`p-2.5 rounded-xl border text-xs font-bold text-left transition-all ${
+                      selectedGarmentKey === k
+                        ? 'bg-ts-terracotta/15 border-ts-terracotta text-white shadow-sm'
+                        : 'bg-ts-surface border-ts-border text-ts-krem/80 hover:bg-ts-surfaceHover'
+                    }`}
+                  >
+                    <div>{g.name}</div>
+                    <div className="text-[10px] text-ts-muted font-normal mt-0.5">
+                      {k === 'nsa_softstyle_30s' ? 'Standar' : `+${formatRupiah(k === 'nsa_heavyweight_24s' ? 10000 : k === 'nsa_longsleeve' ? 12000 : k === 'nsa_hoodie' ? 85000 : 30000)}`}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Color Selector */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-ts-krem flex items-center justify-between">
-              <span>Warna Kaos: <strong className="text-ts-terracotta">{selectedColor}</strong></span>
+              <span>Warna Pilihan: <strong className="text-ts-terracotta">{selectedColor}</strong></span>
+              {isBlank && <span className="text-[10px] text-ts-muted">Klik warna untuk pratinjau foto</span>}
             </label>
-            <div className="flex flex-wrap items-center gap-2">
-              {selectedGarment.colors.map(col => (
-                <button
-                  key={col.name}
-                  onClick={() => setSelectedColor(col.name)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
-                    selectedColor === col.name
-                      ? 'bg-ts-hitam border-ts-terracotta text-white ring-1 ring-ts-terracotta'
-                      : 'bg-ts-surface border-ts-border text-ts-krem/80 hover:bg-ts-surfaceHover'
-                  }`}
-                >
-                  <span
-                    className="w-3 h-3 rounded-full border border-white/20 shrink-0"
-                    style={{ backgroundColor: col.hex }}
-                  />
-                  <span>{col.name}</span>
-                </button>
-              ))}
+            <div className="flex flex-wrap items-center gap-2 max-h-48 overflow-y-auto pr-1">
+              {colorList.map(colName => {
+                const hex = COLOR_HEX_MAP[colName] || '#333333';
+                const isSelected = selectedColor === colName;
+                return (
+                  <button
+                    key={colName}
+                    onClick={() => handleColorChange(colName)}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+                      isSelected
+                        ? 'bg-ts-hitam border-ts-terracotta text-white ring-1 ring-ts-terracotta'
+                        : 'bg-ts-surface border-ts-border text-ts-krem/80 hover:bg-ts-surfaceHover'
+                    }`}
+                  >
+                    <span
+                      className="w-3 h-3 rounded-full border border-white/20 shrink-0"
+                      style={{ backgroundColor: hex }}
+                    />
+                    <span>{colName}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -175,14 +289,15 @@ export function ProductDetailPage() {
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-ts-krem">Ukuran Kaos:</label>
               <button
+                type="button"
                 onClick={() => setIsSizeModalOpen(true)}
-                className="text-[11px] text-ts-terracotta hover:underline font-semibold flex items-center gap-1"
+                className="text-xs text-ts-terracotta hover:underline font-bold flex items-center gap-1.5 bg-ts-surface px-2.5 py-1 rounded-lg border border-ts-border hover:border-ts-terracotta transition-colors"
               >
-                <Ruler className="w-3 h-3" /> Panduan Ukuran NSA
+                <Ruler className="w-3.5 h-3.5" /> Hitung Ukuran (TB/BB)
               </button>
             </div>
-            <div className="flex items-center gap-2">
-              {SIZES.map(sz => (
+            <div className="flex flex-wrap items-center gap-2">
+              {sizeList.map(sz => (
                 <button
                   key={sz}
                   onClick={() => setSelectedSize(sz)}
@@ -236,43 +351,32 @@ export function ProductDetailPage() {
               className="w-full"
               onClick={handleBuyNow}
             >
-              Beli Sekarang & Checkout
+              Beli Sekarang &amp; Checkout
             </Button>
+
+            {/* Guarantees & Trust Badges */}
+            <div className="pt-2 grid grid-cols-2 gap-2 text-[11px] text-ts-muted border-t border-ts-borderDim/50">
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-ts-green shrink-0" />
+                <span>100% Kaos Asli NSA</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <RotateCcw className="w-3.5 h-3.5 text-ts-terracotta shrink-0" />
+                <span>Garansi Retur Jika Cacat</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Size Chart Modal */}
-      <Modal
+      {/* Interactive Size Calculator & Chart Modal */}
+      <SizeCalculatorModal
         isOpen={isSizeModalOpen}
         onClose={() => setIsSizeModalOpen(false)}
-        title="Panduan Ukuran Kaos Polos New State Apparel (NSA)"
-      >
-        <div className="space-y-4 text-xs">
-          <p className="text-ts-muted">
-            Ukuran standar internasional (toleransi &plusmn;1-2 cm). Bahan 100% Ring Spun Cotton tanpa jahitan samping.
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-ts-hitam border-b border-ts-border font-mono text-ts-muted">
-                  <th className="p-2">Size</th>
-                  <th className="p-2">Lebar Dada (cm)</th>
-                  <th className="p-2">Panjang Badan (cm)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-ts-borderDim font-mono">
-                <tr><td className="p-2 font-bold text-ts-terracotta">S</td><td className="p-2">47 cm</td><td className="p-2">66 cm</td></tr>
-                <tr><td className="p-2 font-bold text-ts-terracotta">M</td><td className="p-2">50 cm</td><td className="p-2">69 cm</td></tr>
-                <tr><td className="p-2 font-bold text-ts-terracotta">L</td><td className="p-2">53 cm</td><td className="p-2">72 cm</td></tr>
-                <tr><td className="p-2 font-bold text-ts-terracotta">XL</td><td className="p-2">56 cm</td><td className="p-2">74 cm</td></tr>
-                <tr><td className="p-2 font-bold text-ts-terracotta">XXL</td><td className="p-2">59 cm</td><td className="p-2">76 cm</td></tr>
-                <tr><td className="p-2 font-bold text-ts-terracotta">3XL</td><td className="p-2">62 cm</td><td className="p-2">79 cm</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </Modal>
+        onSelectSize={(sz) => setSelectedSize(sz)}
+        currentSize={selectedSize}
+      />
     </div>
   );
 }
+

@@ -12,7 +12,20 @@ export async function getProducts() {
 
     if (error || !data || data.length === 0) {
       const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
-      return cached ? JSON.parse(cached) : SEED_PRODUCTS;
+      if (!cached) return SEED_PRODUCTS;
+      try {
+        const parsed = JSON.parse(cached);
+        const existingSkus = new Set(parsed.map(p => p.sku));
+        const missing = SEED_PRODUCTS.filter(p => !existingSkus.has(p.sku));
+        if (missing.length > 0) {
+          const merged = [...parsed, ...missing];
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(merged));
+          return merged;
+        }
+        return parsed;
+      } catch (e) {
+        return SEED_PRODUCTS;
+      }
     }
     
     // Cache locally
@@ -20,7 +33,20 @@ export async function getProducts() {
     return data;
   } catch (err) {
     const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return cached ? JSON.parse(cached) : SEED_PRODUCTS;
+    if (!cached) return SEED_PRODUCTS;
+    try {
+      const parsed = JSON.parse(cached);
+      const existingSkus = new Set(parsed.map(p => p.sku));
+      const missing = SEED_PRODUCTS.filter(p => !existingSkus.has(p.sku));
+      if (missing.length > 0) {
+        const merged = [...parsed, ...missing];
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(merged));
+        return merged;
+      }
+      return parsed;
+    } catch (e) {
+      return SEED_PRODUCTS;
+    }
   }
 }
 

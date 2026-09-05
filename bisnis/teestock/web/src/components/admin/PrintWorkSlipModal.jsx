@@ -11,6 +11,10 @@ export function PrintWorkSlipModal({ isOpen, onClose, order }) {
     window.print();
   };
 
+  const isBlankOrder = order.sku?.startsWith('TS-BLK') || 
+    order.productName?.toLowerCase().includes('kaos polos') || 
+    order.productName?.toLowerCase().includes('blank');
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={`Tiket Kerja Produksi — ${order.id}`} maxWidth="max-w-lg">
       <div className="space-y-4">
@@ -70,18 +74,32 @@ export function PrintWorkSlipModal({ isOpen, onClose, order }) {
             </div>
           </div>
 
-          {/* Machine SOP Box */}
-          <div className="bg-amber-50 border border-amber-300 rounded-lg p-3 text-xs text-amber-950 space-y-1">
-            <div className="font-bold flex items-center gap-1 text-[11px] uppercase tracking-wide">
-              🔥 Parameter Heat Press Mandiri:
+          {/* Machine SOP / Blank Inspection Box */}
+          {isBlankOrder ? (
+            <div className="bg-blue-50 border border-blue-300 rounded-lg p-3 text-xs text-blue-950 space-y-1">
+              <div className="font-bold flex items-center gap-1 text-[11px] uppercase tracking-wide">
+                📦 Instruksi Kaos Polos NSA (Tanpa Cetak DTF):
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <div>• Kategori: <strong>Blank Apparel Original Cititex</strong></div>
+                <div>• Quality Check: <strong>Bebas Noda, Serat Rata, Jahitan Rapi</strong></div>
+                <div>• Penanganan: <strong>Langsung Lipat & Masukkan Ziplock</strong></div>
+                <div>• Pelengkap: <strong>Sisipkan Hangtag & Stiker TeeStock</strong></div>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 text-[11px]">
-              <div>• Suhu: <strong>155°C – 160°C</strong></div>
-              <div>• Waktu: <strong>15 Detik</strong> (Medium-Firm)</div>
-              <div>• Pengupasan: <strong>Kupas Dingin (Cold Peel)</strong></div>
-              <div>• Press ke-2: <strong>5 Detik (Lapisi Teflon)</strong></div>
+          ) : (
+            <div className="bg-amber-50 border border-amber-300 rounded-lg p-3 text-xs text-amber-950 space-y-1">
+              <div className="font-bold flex items-center gap-1 text-[11px] uppercase tracking-wide">
+                🔥 Parameter Heat Press Mandiri:
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <div>• Suhu: <strong>155°C – 160°C</strong></div>
+                <div>• Waktu: <strong>15 Detik</strong> (Medium-Firm)</div>
+                <div>• Pengupasan: <strong>Kupas Dingin (Cold Peel)</strong></div>
+                <div>• Press ke-2: <strong>5 Detik (Lapisi Teflon)</strong></div>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* QC Checklist */}
           <div className="space-y-1.5 pt-1 text-xs">
@@ -91,7 +109,7 @@ export function PrintWorkSlipModal({ isOpen, onClose, order }) {
                 <span className="w-3.5 h-3.5 border border-gray-400 rounded inline-block"></span> Cek Jahitan Kaos NSA
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-3.5 h-3.5 border border-gray-400 rounded inline-block"></span> Uji Rekat Sablon DTF
+                <span className="w-3.5 h-3.5 border border-gray-400 rounded inline-block"></span> {isBlankOrder ? 'Cek Kesesuaian Warna & Size' : 'Uji Rekat Sablon DTF'}
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-3.5 h-3.5 border border-gray-400 rounded inline-block"></span> Thank You Card & Stiker

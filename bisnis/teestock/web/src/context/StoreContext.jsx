@@ -32,10 +32,11 @@ export function StoreProvider({ children }) {
     setStoreSettings(prev => ({ ...prev, ...newSettings }));
   };
 
-  const addToCart = (product, garment, color, size, qty = 1) => {
+  const addToCart = (product, garment, color, size, qty = 1, customPrice) => {
     setCart(prev => {
+      const garmentName = garment?.name || product.name;
       const existingIdx = prev.findIndex(
-        item => item.sku === product.sku && item.garment === garment.name && item.color === color && item.size === size
+        item => item.sku === product.sku && item.garment === garmentName && item.color === color && item.size === size
       );
 
       if (existingIdx !== -1) {
@@ -44,6 +45,10 @@ export function StoreProvider({ children }) {
         return updated;
       }
 
+      const effectivePrice = customPrice !== undefined 
+        ? customPrice 
+        : (product.priceRetail || product.price_retail || 99000);
+
       return [
         ...prev,
         {
@@ -51,10 +56,10 @@ export function StoreProvider({ children }) {
           name: product.name,
           series: product.series,
           filePath: product.filePath || product.file_path,
-          garment: garment.name,
+          garment: garmentName,
           color,
           size,
-          price: product.priceRetail || product.price_retail || 99000,
+          price: effectivePrice,
           qty
         }
       ];
