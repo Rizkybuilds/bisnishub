@@ -1,20 +1,41 @@
 import React, { useState } from 'react';
-import { Settings, Cloud, Database, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
+import { 
+  Settings, 
+  Cloud, 
+  Database, 
+  CheckCircle2, 
+  AlertCircle, 
+  RefreshCw,
+  Phone,
+  ShoppingBag,
+  Share2,
+  Save
+} from 'lucide-react';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useAdmin } from '../../context/AdminContext';
+import { useStore } from '../../context/StoreContext';
 import { testSupabaseConnection } from '../../services/supabase';
 
 export function SettingsPage() {
   const { supabaseStatus, showToast } = useAdmin();
+  const { storeSettings, updateStoreSettings } = useStore();
+
+  // Cloud integration states
   const [sbUrl, setSbUrl] = useState(import.meta.env.VITE_SUPABASE_URL || '');
   const [sbKey, setSbKey] = useState(import.meta.env.VITE_SUPABASE_ANON_KEY || '');
   const [cldName, setCldName] = useState(import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || '');
   const [cldKey, setCldKey] = useState(import.meta.env.VITE_CLOUDINARY_API_KEY || '');
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
+
+  // Store contact states
+  const [whatsapp, setWhatsapp] = useState(storeSettings?.storeWhatsapp || '081280000581');
+  const [shopee, setShopee] = useState(storeSettings?.shopeeUrl || 'https://shopee.co.id');
+  const [tiktok, setTiktok] = useState(storeSettings?.tiktokUrl || 'https://tiktok.com');
+  const [instagram, setInstagram] = useState(storeSettings?.instagramUrl || 'https://instagram.com');
 
   const handleTestSupabase = async () => {
     setTesting(true);
@@ -24,14 +45,79 @@ export function SettingsPage() {
     showToast(res.message, res.connected ? 'success' : 'error');
   };
 
+  const handleSaveStoreSettings = (e) => {
+    e.preventDefault();
+    updateStoreSettings({
+      storeWhatsapp: whatsapp.trim(),
+      shopeeUrl: shopee.trim(),
+      tiktokUrl: tiktok.trim(),
+      instagramUrl: instagram.trim()
+    });
+    showToast("✅ Pengaturan profil dan kontak toko berhasil disimpan!");
+  };
+
   return (
     <div>
       <AdminTopbar
-        title="Pengaturan Integrasi Cloud"
-        subtitle="Kelola koneksi database Supabase PostgreSQL dan Cloudinary Image CDN"
+        title="Pengaturan Integrasi & Toko"
+        subtitle="Kelola kontak WhatsApp toko, link marketplace, database Supabase, dan Cloudinary CDN"
       />
 
       <div className="p-8 space-y-6 max-w-4xl mx-auto">
+        {/* Store Profile & Contact Card */}
+        <Card className="space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-ts-borderDim">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#25D366]/20 text-[#4EFA8A] flex items-center justify-center font-bold">
+                <Phone className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-ts-krem">Profil Toko &amp; Saluran Penjualan</h3>
+                <p className="text-xs text-ts-muted">Nomor WhatsApp dan link toko untuk checkout langsung pembeli</p>
+              </div>
+            </div>
+            <span className="text-xs font-mono font-bold text-ts-green bg-ts-green/10 px-2 py-1 rounded">
+              Aktif
+            </span>
+          </div>
+
+          <form onSubmit={handleSaveStoreSettings} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Nomor WhatsApp Resmi Toko (Penerima Order)"
+                placeholder="Contoh: 081280000581"
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(e.target.value)}
+                required
+              />
+              <Input
+                label="Link Toko Shopee"
+                placeholder="https://shopee.co.id/teestock"
+                value={shopee}
+                onChange={(e) => setShopee(e.target.value)}
+              />
+              <Input
+                label="Link Profil TikTok Shop"
+                placeholder="https://tiktok.com/@teestock.id"
+                value={tiktok}
+                onChange={(e) => setTiktok(e.target.value)}
+              />
+              <Input
+                label="Link Profil Instagram"
+                placeholder="https://instagram.com/teestock.id"
+                value={instagram}
+                onChange={(e) => setInstagram(e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-ts-borderDim">
+              <Button type="submit" variant="primary" icon={Save}>
+                Simpan Kontak Toko
+              </Button>
+            </div>
+          </form>
+        </Card>
+
         {/* Supabase Card */}
         <Card className="space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-ts-borderDim">

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Search, Package, Clock, CheckCircle2, Truck, Flame, Printer, AlertCircle } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { Button } from '../../components/ui/Button';
@@ -9,9 +10,26 @@ import { formatRupiah } from '../../utils/formatters';
 
 export function OrderTrackingPage() {
   const { orders } = useAdmin();
+  const [searchParams] = useSearchParams();
   const [query, setQuery] = useState('');
   const [searchResult, setSearchResult] = useState(null);
   const [searched, setSearched] = useState(false);
+
+  // Auto-search from ?order= query param
+  useEffect(() => {
+    const orderParam = searchParams.get('order');
+    if (orderParam && orders.length > 0) {
+      setQuery(orderParam);
+      const trimmed = orderParam.trim().toLowerCase();
+      const found = orders.find(o => 
+        o.id.toLowerCase() === trimmed || 
+        (o.trackingNo && o.trackingNo.toLowerCase() === trimmed) ||
+        (o.phone && o.phone.toLowerCase().includes(trimmed))
+      );
+      setSearchResult(found || null);
+      setSearched(true);
+    }
+  }, [searchParams, orders]);
 
   const handleSearch = (e) => {
     e.preventDefault();

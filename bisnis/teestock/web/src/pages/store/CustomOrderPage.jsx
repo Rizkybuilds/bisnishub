@@ -3,13 +3,16 @@ import { Send, Upload, Sparkles, ShieldCheck, CheckCircle2, MessageSquare } from
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { DTF_PRINT_SIZES } from '../../constants/pricing';
 import { useAdmin } from '../../context/AdminContext';
+import { useStore } from '../../context/StoreContext';
 import { Button } from '../../components/ui/Button';
 import { Input, Select } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
 import { formatRupiah } from '../../utils/formatters';
+import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 
 export function CustomOrderPage() {
   const { addOrder } = useAdmin();
+  const { storeSettings } = useStore();
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -64,7 +67,8 @@ export function CustomOrderPage() {
   };
 
   if (submitted) {
-    const waUrl = `https://wa.me/6281234567890?text=${encodeURIComponent(
+    const targetPhone = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '081280000581');
+    const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(
       `Halo TeeStock! Saya ingin konfirmasi pesanan custom:\nNama: ${name}\nModel: ${selectedGarment.name} (${color} ${size})\nJumlah: ${qty} pcs\nArtwork: ${artworkLink || 'Kirim via WA'}\nCatatan: ${notes}`
     )}`;
 

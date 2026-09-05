@@ -2,15 +2,35 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const StoreContext = createContext();
 
+const DEFAULT_STORE_SETTINGS = {
+  storeWhatsapp: '081280000581',
+  shopeeUrl: 'https://shopee.co.id',
+  tiktokUrl: 'https://tiktok.com',
+  instagramUrl: 'https://instagram.com'
+};
+
 export function StoreProvider({ children }) {
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem('teestock_cart');
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [storeSettings, setStoreSettings] = useState(() => {
+    const saved = localStorage.getItem('teestock_store_settings');
+    return saved ? { ...DEFAULT_STORE_SETTINGS, ...JSON.parse(saved) } : DEFAULT_STORE_SETTINGS;
+  });
+
   useEffect(() => {
     localStorage.setItem('teestock_cart', JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem('teestock_store_settings', JSON.stringify(storeSettings));
+  }, [storeSettings]);
+
+  const updateStoreSettings = (newSettings) => {
+    setStoreSettings(prev => ({ ...prev, ...newSettings }));
+  };
 
   const addToCart = (product, garment, color, size, qty = 1) => {
     setCart(prev => {
@@ -71,7 +91,9 @@ export function StoreProvider({ children }) {
         updateCartQty,
         clearCart,
         totalCartItems,
-        totalCartAmount
+        totalCartAmount,
+        storeSettings,
+        updateStoreSettings
       }}
     >
       {children}

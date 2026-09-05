@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Printer, Copy, Check, ExternalLink, ScrollText } from 'lucide-react';
+import { 
+  Printer, 
+  Copy, 
+  Check, 
+  ExternalLink, 
+  ScrollText, 
+  Package, 
+  Sparkles,
+  Tag,
+  Share2
+} from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
 import { Card } from '../../components/ui/Card';
@@ -10,6 +20,12 @@ import { formatRupiah } from '../../utils/formatters';
 export function GangSheetPage() {
   const { orders, showToast } = useAdmin();
   const [copied, setCopied] = useState(false);
+  const [copiedPackaging, setCopiedPackaging] = useState(false);
+
+  // Packaging request state
+  const [stickerQty, setStickerQty] = useState(100);
+  const [thankYouQty, setThankYouQty] = useState(100);
+  const [hangtagQty, setHangtagQty] = useState(100);
 
   // Orders that need DTF printing
   const dtfOrders = orders.filter(o => o.status === 'dtf' || o.status === 'pending');
@@ -23,14 +39,32 @@ export function GangSheetPage() {
     setTimeout(() => setCopied(false), 2500);
   };
 
+  // MultiGraph Packaging Order Text
+  const packagingText = `Halo MultiGraph! Mau buat pesanan internal percetakan kemasan untuk TeeStock:
+
+📦 *Rincian Kebutuhan Cetak Packaging:*
+1. Stiker Logo Polymailer (Vinyl Matte 5x5 cm Kiss-Cut): *${stickerQty} pcs*
+2. Thank You Card & Care Guide (Art Paper 260gsm A6 2 Sisi): *${thankYouQty} pcs*
+3. Hangtag Pakaian TeeStock (Art Carton 310gsm + Lubang 4x9 cm): *${hangtagQty} pcs*
+4. Cetak Film DTF Roll 60 cm: *${gangSheet.meters} Meter* (${gangSheet.totalQty} Kaos)
+
+Mohon dijadwalkan ke antrean mesin cetak MultiGraph. Terima kasih!`;
+
+  const handleCopyPackagingText = () => {
+    navigator.clipboard.writeText(packagingText);
+    setCopiedPackaging(true);
+    showToast("✅ Format pesanan kemasan MultiGraph disalin!");
+    setTimeout(() => setCopiedPackaging(false), 2500);
+  };
+
   return (
     <div>
       <AdminTopbar
-        title="Gang Sheet DTF Planner"
-        subtitle="Kalkulasi layout cetak roll DTF lebar 60 cm untuk dikirim ke MultiGraph / vendor sablon"
+        title="Gang Sheet DTF &amp; MultiGraph Bridge"
+        subtitle="Kalkulasi layout cetak roll DTF lebar 60 cm dan pengadaan kemasan brand via MultiGraph"
       />
 
-      <div className="p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="p-8 space-y-8 max-w-7xl mx-auto">
         {/* Metric Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <Card className="flex items-center gap-3">
@@ -121,9 +155,9 @@ export function GangSheetPage() {
               <div>
                 <h3 className="text-sm font-bold text-ts-krem flex items-center gap-2">
                   <Printer className="w-4 h-4 text-ts-mustard" />
-                  Format Teks Order Vendor (MultiGraph)
+                  Format Teks Order Vendor DTF Meteran
                 </h3>
-                <p className="text-xs text-ts-muted">Salin pesan ini dan kirimkan langsung via WhatsApp vendor.</p>
+                <p className="text-xs text-ts-muted">Salin pesan ini dan kirimkan langsung via WhatsApp vendor sablon.</p>
               </div>
 
               <Button
@@ -143,6 +177,93 @@ export function GangSheetPage() {
             />
           </Card>
         </div>
+
+        {/* MultiGraph Synergy: Packaging & Brand Assets Procurement */}
+        <Card className="space-y-4 border-ts-mustard/30 bg-gradient-to-r from-ts-surface to-ts-hitam">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-ts-borderDim pb-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-[10px] font-bold text-ts-mustard bg-ts-mustard/15 px-2 py-0.5 rounded uppercase font-mono mb-1">
+                <Sparkles className="w-3 h-3" />
+                <span>Sinergi Bisnis #2 MultiGraph</span>
+              </div>
+              <h3 className="text-base font-bold text-ts-krem flex items-center gap-2">
+                <Package className="w-5 h-5 text-ts-terracotta" />
+                <span>Pengadaan Kemasan &amp; Material Cetak via MultiGraph</span>
+              </h3>
+              <p className="text-xs text-ts-muted mt-0.5">
+                Hemat hingga 40% biaya kemasan dengan mencetak stiker polymailer, hangtag, dan kartu ucapan melalui lini bisnis percetakanmu sendiri.
+              </p>
+            </div>
+
+            <Button
+              size="sm"
+              variant="primary"
+              icon={copiedPackaging ? Check : Copy}
+              onClick={handleCopyPackagingText}
+            >
+              {copiedPackaging ? "Berhasil Disalin!" : "Salin Order ke MultiGraph"}
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div className="p-3 bg-ts-hitam/60 border border-ts-borderDim rounded-xl space-y-2">
+              <div className="flex justify-between items-center">
+                <strong className="text-ts-krem">Stiker Logo Polymailer</strong>
+                <span className="text-[10px] text-ts-muted">Vinyl 5x5 cm</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="50"
+                  step="50"
+                  value={stickerQty}
+                  onChange={(e) => setStickerQty(Number(e.target.value))}
+                  className="w-24 bg-ts-surface border border-ts-border rounded-lg px-2.5 py-1 text-xs font-mono text-ts-krem focus:outline-none"
+                />
+                <span className="text-ts-muted">pcs</span>
+              </div>
+              <p className="text-[10px] text-ts-muted">Ditempel pada plastik kemasan luar pengiriman</p>
+            </div>
+
+            <div className="p-3 bg-ts-hitam/60 border border-ts-borderDim rounded-xl space-y-2">
+              <div className="flex justify-between items-center">
+                <strong className="text-ts-krem">Thank You &amp; Care Card</strong>
+                <span className="text-[10px] text-ts-muted">A6 Art Paper 260g</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="50"
+                  step="50"
+                  value={thankYouQty}
+                  onChange={(e) => setThankYouQty(Number(e.target.value))}
+                  className="w-24 bg-ts-surface border border-ts-border rounded-lg px-2.5 py-1 text-xs font-mono text-ts-krem focus:outline-none"
+                />
+                <span className="text-ts-muted">pcs</span>
+              </div>
+              <p className="text-[10px] text-ts-muted">Petunjuk cara cuci dan kupon diskon repeat order</p>
+            </div>
+
+            <div className="p-3 bg-ts-hitam/60 border border-ts-borderDim rounded-xl space-y-2">
+              <div className="flex justify-between items-center">
+                <strong className="text-ts-krem">Hangtag Pakaian</strong>
+                <span className="text-[10px] text-ts-muted">Art Carton 310g</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="50"
+                  step="50"
+                  value={hangtagQty}
+                  onChange={(e) => setHangtagQty(Number(e.target.value))}
+                  className="w-24 bg-ts-surface border border-ts-border rounded-lg px-2.5 py-1 text-xs font-mono text-ts-krem focus:outline-none"
+                />
+                <span className="text-ts-muted">pcs</span>
+              </div>
+              <p className="text-[10px] text-ts-muted">Label gantung berlogo siluet tumpukan kaos TeeStock</p>
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   );

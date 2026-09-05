@@ -11,7 +11,8 @@ import {
   Printer,
   DollarSign,
   Wallet,
-  Coins
+  Coins,
+  Download
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
@@ -24,6 +25,70 @@ import { SIZES } from '../../constants/garments';
 export function DashboardPage() {
   const { openNewOrderModal } = useOutletContext();
   const { catalog, orders, inventory } = useAdmin();
+
+  // CSV Export Handler
+  const handleExportCsv = () => {
+    if (orders.length === 0) {
+      alert("Belum ada data transaksi untuk diexport");
+      return;
+    }
+
+    const headers = [
+      "No. Order",
+      "Tanggal",
+      "Channel",
+      "Nama Pembeli",
+      "WhatsApp",
+      "No. Resi",
+      "SKU",
+      "Nama Produk",
+      "Model Kaos",
+      "Warna",
+      "Ukuran",
+      "Qty",
+      "Omset Kotor (Rp)",
+      "Fee Platform (Rp)",
+      "HPP Bahan (Rp)",
+      "Laba Bersih (Rp)",
+      "Status"
+    ];
+
+    const rows = orders.map(o => {
+      const isMarketplace = o.channel === 'shopee' || o.channel === 'tiktok';
+      const fee = o.fee !== undefined ? o.fee : (isMarketplace ? Math.round((o.price || 0) * 0.085) : 0);
+      const hpp = (o.hpp || 64250) * (o.qty || 1);
+      const net = (o.price || 0) - fee - hpp;
+
+      return [
+        `"${o.id || ''}"`,
+        `"${o.date || ''}"`,
+        `"${(o.channel || 'DIRECT').toUpperCase()}"`,
+        `"${(o.customer || '').replace(/"/g, '""')}"`,
+        `"${o.phone || ''}"`,
+        `"${o.trackingNo || ''}"`,
+        `"${o.sku || ''}"`,
+        `"${(o.productName || '').replace(/"/g, '""')}"`,
+        `"${o.garment || ''}"`,
+        `"${o.color || ''}"`,
+        `"${o.size || ''}"`,
+        o.qty || 1,
+        o.price || 0,
+        fee,
+        hpp,
+        net,
+        `"${o.status || ''}"`
+      ].join(',');
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + [headers.join(','), ...rows].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Laporan_Transaksi_TeeStock_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const activeOrders = orders.filter(o => o.status !== 'shipped');
   const dtfOrders = orders.filter(o => o.status === 'dtf');
@@ -254,9 +319,14 @@ export function DashboardPage() {
               <h3 className="text-sm font-bold text-ts-krem">Pesanan Terbaru &amp; Margin Bersih</h3>
               <p className="text-xs text-ts-muted">Daftar transaksi multi-channel beserta net fee dan estimasi laba</p>
             </div>
-            <Button size="sm" variant="secondary" onClick={openNewOrderModal}>
-              + Order Manual
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="secondary" icon={Download} onClick={handleExportCsv}>
+                Unduh CSV (.csv)
+              </Button>
+              <Button size="sm" variant="primary" onClick={openNewOrderModal}>
+                + Order Manual
+              </Button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">

@@ -7,9 +7,10 @@ import { Button } from '../../components/ui/Button';
 import { Input, Select } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
 import { formatRupiah } from '../../utils/formatters';
+import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 
 export function CartPage() {
-  const { cart, removeFromCart, updateCartQty, clearCart, totalCartAmount } = useStore();
+  const { cart, removeFromCart, updateCartQty, clearCart, totalCartAmount, storeSettings } = useStore();
   const { addOrder } = useAdmin();
   const navigate = useNavigate();
 
@@ -65,7 +66,8 @@ export function CartPage() {
   };
 
   if (orderComplete) {
-    const waUrl = `https://wa.me/6281234567890?text=${encodeURIComponent(
+    const targetPhone = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '081280000581');
+    const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(
       `Halo TeeStock! Saya sudah melakukan checkout di website:\nNo. Order: ${orderComplete.orderId}\nNama: ${orderComplete.customerName}\nTotal: ${formatRupiah(orderComplete.total)}\nMohon info rekening pembayaran dan nomor resi. Terima kasih!`
     )}`;
 
