@@ -11,7 +11,8 @@ import {
   Layers,
   Ruler,
   Clock,
-  RotateCcw
+  RotateCcw,
+  Tag
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useStore } from '../../context/StoreContext';
@@ -44,13 +45,45 @@ const COLOR_HEX_MAP = {
   "Gold": "#E5A823",
   "Dark Green": "#1B4D3E",
   "Neon Green": "#39FF14",
+  "Carolina Blue": "#7BAFD4",
+  "Lime": "#A3E635",
+  "Light Pink": "#FBCFE8",
+  "Sapphire": "#0284C7",
+  "Purple": "#7E22CE",
+  "Chestnut": "#854D0E",
+  "Military Green": "#4D5645",
+  "Butter": "#FEF08A",
+  "Green Ash": "#A7F3D0",
+  "Lilac": "#C084FC",
+  "Dark Chocolate": "#382216",
+  "Army": "#4B5320",
+  "Black Camo": "#262626",
+  "Forest Camo": "#2F3E2E",
+  "Black Heather": "#2D3748",
+  "Navy Heather": "#2A3A5E",
+  "Red Heather": "#9B2C2C",
+  "Dark Green Heather": "#234E32",
+  "Burgundy Heather": "#6B1D2F",
+  "Light Blue": "#93C5FD",
+  "Black-Forest Camo": "#1A2E1A",
+  "Black-Graphite": "#374151",
+  "Black-White": "#1F2937",
+  "Gold - Grey": "#D97706",
+  "Orange - Charcoal": "#C2410C",
+  "Royal Blue - Charcoal": "#1D4ED8",
+  "White - Grey": "#E2E8F0",
   "White-Black": "#E5E7EB",
   "White-Red": "#FCA5A5",
   "White-Navy": "#93C5FD",
   "White-Forest Green": "#86EFAC",
   "White-Gold": "#FDE68A",
+  "White-Maroon": "#FECDD3",
+  "White-Royal Blue": "#BFDBFE",
+  "White-Charcoal": "#D1D5DB",
   "Sport Grey-Black": "#9CA3AF",
-  "Sport Grey-Navy": "#94A3B8"
+  "Sport Grey-Navy": "#94A3B8",
+  "Sport Grey-Maroon": "#9B7E84",
+  "Sport Grey-Red": "#B87F86"
 };
 
 export function ProductDetailPage() {
@@ -80,14 +113,15 @@ export function ProductDetailPage() {
   
   // Available colors
   const colorList = isBlank && product.colors
-    ? product.colors.split(',').map(c => c.trim())
+    ? product.colors.split(',').map(c => c.trim()).filter(Boolean)
     : selectedGarment.colors.map(c => c.name);
 
-  const [selectedColor, setSelectedColor] = useState(colorList[0] || 'Hitam');
+  const [selectedColor, setSelectedColor] = useState(colorList[0] || 'Black');
+  const [colorSearch, setColorSearch] = useState('');
 
   // Available sizes
   const sizeList = isBlank && product.sizes
-    ? product.sizes.split(',').map(s => s.trim())
+    ? product.sizes.split(',').map(s => s.trim()).filter(Boolean)
     : SIZES;
 
   const [selectedSize, setSelectedSize] = useState(sizeList[0] || 'L');
@@ -98,6 +132,23 @@ export function ProductDetailPage() {
   // Dynamic image state with fallback
   const defaultImage = product.filePath || product.file_path;
   const [previewImg, setPreviewImg] = useState(defaultImage);
+
+  // Sync state whenever sku changes
+  React.useEffect(() => {
+    if (colorList.length > 0) {
+      const initialColor = colorList[0];
+      setSelectedColor(initialColor);
+      if (isBlank && product.cititexCatId) {
+        const initialUrl = `https://cititex.com/api/uploads/category/album/front_side/${product.cititexCatId}-${encodeURIComponent(initialColor)}.jpg`;
+        setPreviewImg(initialUrl);
+      } else {
+        setPreviewImg(defaultImage);
+      }
+    }
+    if (sizeList.length > 0) {
+      setSelectedSize(sizeList[0]);
+    }
+  }, [product.sku]);
 
   // Price adjustments
   const basePrice = product.priceRetail || product.price_retail || 99000;
@@ -147,12 +198,12 @@ export function ProductDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         {/* Left: Product Mockup / Official Photo Image */}
         <div className="space-y-4">
-          <div className="aspect-square bg-ts-surface border border-ts-border rounded-3xl overflow-hidden shadow-2xl relative">
+          <div className="aspect-square bg-ts-surface border border-ts-border rounded-3xl overflow-hidden shadow-2xl relative group">
             <img
               src={previewImg}
-              alt={product.name}
+              alt={`${product.name} - ${selectedColor}`}
               onError={() => setPreviewImg(defaultImage)}
-              className="w-full h-full object-cover transition-all duration-300"
+              className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
             />
             <div className="absolute top-4 left-4 px-3 py-1 rounded-lg bg-ts-hitam/80 backdrop-blur border border-ts-border font-mono text-xs font-bold text-ts-terracotta">
               {product.sku}
@@ -163,7 +214,38 @@ export function ProductDetailPage() {
                 <span>100% Original NSA</span>
               </div>
             )}
+
+            {/* Active Color Name Pill on Bottom-Left */}
+            <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-xl bg-ts-hitam/85 backdrop-blur border border-ts-border text-xs font-semibold text-ts-krem flex items-center gap-2 shadow-lg">
+              <span
+                className="w-3 h-3 rounded-full border border-white/40 shrink-0"
+                style={{ backgroundColor: COLOR_HEX_MAP[selectedColor] || '#333333' }}
+              />
+              <span>Warna: <strong className="text-white">{selectedColor}</strong></span>
+            </div>
           </div>
+
+          {/* Wholesale Lusinan Price Promo Card for Blanks */}
+          {isBlank && (
+            <div className="p-4 bg-gradient-to-r from-ts-teal/15 via-ts-surface to-ts-surface border border-ts-teal/30 rounded-2xl flex items-center justify-between text-xs">
+              <div className="space-y-0.5">
+                <div className="font-extrabold text-ts-krem flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5 text-ts-teal" />
+                  <span>Harga Grosir Lusinan (&ge;12 pcs)</span>
+                </div>
+                <p className="text-[11px] text-ts-muted">
+                  Beli 12 pcs atau lebih (bisa campur warna &amp; size) otomatis dapat harga grosir reseller.
+                </p>
+              </div>
+              <div className="text-right font-mono shrink-0 pl-3">
+                <div className="text-[10px] text-ts-muted">Hanya</div>
+                <div className="font-black text-sm text-ts-green">
+                  {formatRupiah(product.priceReseller || (currentPrice - 7000))}
+                  <span className="text-[10px] font-normal text-ts-muted">/pcs</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right: Spec & Purchasing Options */}
@@ -254,34 +336,93 @@ export function ProductDetailPage() {
           )}
 
           {/* Color Selector */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-ts-krem flex items-center justify-between">
-              <span>Warna Pilihan: <strong className="text-ts-terracotta">{selectedColor}</strong></span>
-              {isBlank && <span className="text-[10px] text-ts-muted">Klik warna untuk pratinjau foto</span>}
-            </label>
-            <div className="flex flex-wrap items-center gap-2 max-h-48 overflow-y-auto pr-1">
-              {colorList.map(colName => {
-                const hex = COLOR_HEX_MAP[colName] || '#333333';
-                const isSelected = selectedColor === colName;
-                return (
-                  <button
-                    key={colName}
-                    onClick={() => handleColorChange(colName)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
-                      isSelected
-                        ? 'bg-ts-hitam border-ts-terracotta text-white ring-1 ring-ts-terracotta'
-                        : 'bg-ts-surface border-ts-border text-ts-krem/80 hover:bg-ts-surfaceHover'
-                    }`}
-                  >
-                    <span
-                      className="w-3 h-3 rounded-full border border-white/20 shrink-0"
-                      style={{ backgroundColor: hex }}
-                    />
-                    <span>{colName}</span>
-                  </button>
-                );
-              })}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-ts-krem flex items-center gap-2">
+                <span>Pilihan Warna:</span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-ts-hitam border border-ts-border font-bold text-white text-[11px]">
+                  <span
+                    className="w-2.5 h-2.5 rounded-full border border-white/40"
+                    style={{ backgroundColor: COLOR_HEX_MAP[selectedColor] || '#333333' }}
+                  />
+                  {selectedColor}
+                </span>
+              </label>
+              <span className="text-[11px] text-ts-muted font-medium">
+                {colorList.length} Pilihan Warna Resmi
+              </span>
             </div>
+
+            {isBlank ? (
+              /* Cititex-style Circular Swatches Grid with Real Fabric Photos & Tooltips */
+              <div className="p-3.5 bg-ts-surface/90 border border-ts-border rounded-2xl space-y-2">
+                <div className="flex flex-wrap items-center gap-2 max-h-56 overflow-y-auto pr-1">
+                  {colorList.map(colName => {
+                    const hex = COLOR_HEX_MAP[colName] || '#333333';
+                    const isSelected = selectedColor === colName;
+                    const swatchUrl = product.cititexCatId 
+                      ? `https://cititex.com/api/uploads/category/album/color/${product.cititexCatId}-${encodeURIComponent(colName)}.jpg`
+                      : null;
+
+                    return (
+                      <button
+                        key={colName}
+                        type="button"
+                        onClick={() => handleColorChange(colName)}
+                        title={colName}
+                        className={`group relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden transition-all duration-150 shrink-0 ${
+                          isSelected
+                            ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-hitam scale-110 z-10 shadow-lg'
+                            : 'ring-1 ring-ts-border hover:ring-ts-krem/70 hover:scale-105 opacity-90 hover:opacity-100'
+                        }`}
+                        style={{ backgroundColor: hex }}
+                      >
+                        {swatchUrl && (
+                          <img
+                            src={swatchUrl}
+                            alt={colName}
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                        )}
+                        {/* Hover mini tooltip */}
+                        <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block z-30 px-2 py-0.5 rounded-md bg-ts-hitam text-[10px] font-bold text-ts-krem border border-ts-border whitespace-nowrap shadow-xl">
+                          {colName}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-[10px] text-ts-muted italic pt-1">
+                  * Klik lingkaran warna di atas untuk mengubah foto variasi secara langsung.
+                </p>
+              </div>
+            ) : (
+              /* Graphic Tee Garment Colors */
+              <div className="flex flex-wrap items-center gap-2 max-h-48 overflow-y-auto pr-1">
+                {colorList.map(colName => {
+                  const hex = COLOR_HEX_MAP[colName] || '#333333';
+                  const isSelected = selectedColor === colName;
+                  return (
+                    <button
+                      key={colName}
+                      onClick={() => handleColorChange(colName)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+                        isSelected
+                          ? 'bg-ts-hitam border-ts-terracotta text-white ring-1 ring-ts-terracotta'
+                          : 'bg-ts-surface border-ts-border text-ts-krem/80 hover:bg-ts-surfaceHover'
+                      }`}
+                    >
+                      <span
+                        className="w-3 h-3 rounded-full border border-white/20 shrink-0"
+                        style={{ backgroundColor: hex }}
+                      />
+                      <span>{colName}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Size Selector */}

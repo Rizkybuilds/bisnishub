@@ -7,7 +7,7 @@ export function FloatingWhatsapp() {
   const { storeSettings } = useStore();
   const [showTooltip, setShowTooltip] = useState(true);
 
-  const rawPhone = storeSettings?.storeWhatsapp || '081280000581';
+  const rawPhone = storeSettings?.storeWhatsapp || '085220274968';
   const cleanPhone = sanitizePhoneNumber(rawPhone);
   const defaultMessage = "Halo TeeStock! Mau tanya info kaos polos New States Apparel (NSA) & konsultasi pemesanan.";
   const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(defaultMessage)}`;

@@ -32,7 +32,7 @@ export function SettingsPage() {
   const [testResult, setTestResult] = useState(null);
 
   // Store contact states
-  const [whatsapp, setWhatsapp] = useState(storeSettings?.storeWhatsapp || '081280000581');
+  const [whatsapp, setWhatsapp] = useState(storeSettings?.storeWhatsapp || '085220274968');
   const [shopee, setShopee] = useState(storeSettings?.shopeeUrl || 'https://shopee.co.id');
   const [tiktok, setTiktok] = useState(storeSettings?.tiktokUrl || 'https://tiktok.com');
   const [instagram, setInstagram] = useState(storeSettings?.instagramUrl || 'https://instagram.com');
@@ -85,7 +85,7 @@ export function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Nomor WhatsApp Resmi Toko (Penerima Order)"
-                placeholder="Contoh: 081280000581"
+                placeholder="Contoh: 085220274968"
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
                 required

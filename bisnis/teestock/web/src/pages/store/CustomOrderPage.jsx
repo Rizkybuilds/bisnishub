@@ -67,7 +67,7 @@ export function CustomOrderPage() {
   };
 
   if (submitted) {
-    const targetPhone = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '081280000581');
+    const targetPhone = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
     const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(
       `Halo TeeStock! Saya ingin konfirmasi pesanan custom:\nNama: ${name}\nModel: ${selectedGarment.name} (${color} ${size})\nJumlah: ${qty} pcs\nArtwork: ${artworkLink || 'Kirim via WA'}\nCatatan: ${notes}`
     )}`;

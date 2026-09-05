@@ -15,14 +15,29 @@ export async function getProducts() {
       if (!cached) return SEED_PRODUCTS;
       try {
         const parsed = JSON.parse(cached);
-        const existingSkus = new Set(parsed.map(p => p.sku));
+        const seedMap = new Map(SEED_PRODUCTS.map(p => [p.sku, p]));
+        const updated = parsed.map(p => {
+          const seed = seedMap.get(p.sku);
+          if (seed && seed.series === 'blank') {
+            return {
+              ...p,
+              colors: seed.colors,
+              sizes: seed.sizes,
+              filePath: seed.filePath,
+              cititexCatId: seed.cititexCatId,
+              priceRetail: seed.priceRetail,
+              priceReseller: seed.priceReseller,
+              costBlank: seed.costBlank,
+              description: seed.description
+            };
+          }
+          return p;
+        });
+        const existingSkus = new Set(updated.map(p => p.sku));
         const missing = SEED_PRODUCTS.filter(p => !existingSkus.has(p.sku));
-        if (missing.length > 0) {
-          const merged = [...parsed, ...missing];
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(merged));
-          return merged;
-        }
-        return parsed;
+        const finalProducts = [...updated, ...missing];
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(finalProducts));
+        return finalProducts;
       } catch (e) {
         return SEED_PRODUCTS;
       }
@@ -36,14 +51,29 @@ export async function getProducts() {
     if (!cached) return SEED_PRODUCTS;
     try {
       const parsed = JSON.parse(cached);
-      const existingSkus = new Set(parsed.map(p => p.sku));
+      const seedMap = new Map(SEED_PRODUCTS.map(p => [p.sku, p]));
+      const updated = parsed.map(p => {
+        const seed = seedMap.get(p.sku);
+        if (seed && seed.series === 'blank') {
+          return {
+            ...p,
+            colors: seed.colors,
+            sizes: seed.sizes,
+            filePath: seed.filePath,
+            cititexCatId: seed.cititexCatId,
+            priceRetail: seed.priceRetail,
+            priceReseller: seed.priceReseller,
+            costBlank: seed.costBlank,
+            description: seed.description
+          };
+        }
+        return p;
+      });
+      const existingSkus = new Set(updated.map(p => p.sku));
       const missing = SEED_PRODUCTS.filter(p => !existingSkus.has(p.sku));
-      if (missing.length > 0) {
-        const merged = [...parsed, ...missing];
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(merged));
-        return merged;
-      }
-      return parsed;
+      const finalProducts = [...updated, ...missing];
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(finalProducts));
+      return finalProducts;
     } catch (e) {
       return SEED_PRODUCTS;
     }

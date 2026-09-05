@@ -30,7 +30,7 @@ export function HomePage() {
   const featured = catalog.filter(p => (p.featured || p.status === 'active') && p.series !== 'blank').slice(0, 4);
   const blankProducts = catalog.filter(p => p.series === 'blank').slice(0, 4);
 
-  const cleanWhatsapp = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '081280000581');
+  const cleanWhatsapp = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
   const shopeeUrl = storeSettings?.shopeeUrl || 'https://shopee.co.id';
 
   // Batch 1 Trilogy Products from catalog

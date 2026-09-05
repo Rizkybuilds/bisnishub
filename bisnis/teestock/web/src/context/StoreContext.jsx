@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const StoreContext = createContext();
 
 const DEFAULT_STORE_SETTINGS = {
-  storeWhatsapp: '081280000581',
+  storeWhatsapp: '085220274968',
   shopeeUrl: 'https://shopee.co.id',
   tiktokUrl: 'https://tiktok.com',
   instagramUrl: 'https://instagram.com'
@@ -17,7 +17,18 @@ export function StoreProvider({ children }) {
 
   const [storeSettings, setStoreSettings] = useState(() => {
     const saved = localStorage.getItem('teestock_store_settings');
-    return saved ? { ...DEFAULT_STORE_SETTINGS, ...JSON.parse(saved) } : DEFAULT_STORE_SETTINGS;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.storeWhatsapp === '081280000581' || !parsed.storeWhatsapp) {
+          parsed.storeWhatsapp = '085220274968';
+        }
+        return { ...DEFAULT_STORE_SETTINGS, ...parsed };
+      } catch (e) {
+        return DEFAULT_STORE_SETTINGS;
+      }
+    }
+    return DEFAULT_STORE_SETTINGS;
   });
 
   useEffect(() => {
