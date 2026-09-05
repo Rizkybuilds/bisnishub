@@ -1,6 +1,13 @@
-const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'z6qhdkde';
-const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'teestock_preset';
-const API_KEY = import.meta.env.VITE_CLOUDINARY_API_KEY || '978731328676184';
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const API_KEY = import.meta.env.VITE_CLOUDINARY_API_KEY;
+
+if (!CLOUD_NAME || !UPLOAD_PRESET) {
+  console.warn(
+    '[TeeStock] Cloudinary belum dikonfigurasi. Upload foto tidak akan berfungsi.\n' +
+    'Isi VITE_CLOUDINARY_* di .env.local untuk mengaktifkan fitur upload.'
+  );
+}
 
 /**
  * Upload a file directly from browser to Cloudinary CDN

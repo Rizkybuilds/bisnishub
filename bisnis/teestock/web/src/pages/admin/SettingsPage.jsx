@@ -9,10 +9,10 @@ import { testSupabaseConnection } from '../../services/supabase';
 
 export function SettingsPage() {
   const { supabaseStatus, showToast } = useAdmin();
-  const [sbUrl, setSbUrl] = useState(import.meta.env.VITE_SUPABASE_URL || 'https://tovslowsopqtuxmrogeu.supabase.co');
-  const [sbKey, setSbKey] = useState(import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_8iRmZUulGLChIPZhFXn_rg_QuHlmpA4');
-  const [cldName, setCldName] = useState(import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'z6qhdkde');
-  const [cldKey, setCldKey] = useState(import.meta.env.VITE_CLOUDINARY_API_KEY || '978731328676184');
+  const [sbUrl, setSbUrl] = useState(import.meta.env.VITE_SUPABASE_URL || '');
+  const [sbKey, setSbKey] = useState(import.meta.env.VITE_SUPABASE_ANON_KEY || '');
+  const [cldName, setCldName] = useState(import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || '');
+  const [cldKey, setCldKey] = useState(import.meta.env.VITE_CLOUDINARY_API_KEY || '');
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
 

@@ -5,6 +5,10 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { StoreLayout } from './layouts/StoreLayout';
 import { AdminLayout } from './layouts/AdminLayout';
 
+// Auth
+import { AuthGuard } from './components/admin/AuthGuard';
+import { LoginPage } from './pages/admin/LoginPage';
+
 // Store Pages
 import { HomePage } from './pages/store/HomePage';
 import { CatalogPage as StoreCatalogPage } from './pages/store/CatalogPage';
@@ -37,10 +41,20 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Admin Internal Hub Routes
+  // Admin Login (publik — di luar AuthGuard)
+  {
+    path: '/admin/login',
+    element: <LoginPage />,
+  },
+
+  // Admin Internal Hub Routes (dilindungi AuthGuard)
   {
     path: '/admin',
-    element: <AdminLayout />,
+    element: (
+      <AuthGuard>
+        <AdminLayout />
+      </AuthGuard>
+    ),
     children: [
       { index: true, element: <DashboardPage /> },
       { path: 'katalog', element: <AdminCatalogPage /> },
@@ -58,3 +72,4 @@ export const router = createBrowserRouter([
     element: <Navigate to="/" replace />
   }
 ]);
+

@@ -126,8 +126,9 @@ LEFT JOIN ts_unit_economics u ON p.sku = u.product_sku;
 
 -- ====================================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
--- Supabase secara default mewajibkan RLS untuk keamanan API.
--- Kita buka akses read/write penuh untuk key 'anon' internal kamu.
+-- Supabase mewajibkan RLS untuk keamanan API.
+-- Publik (anon) hanya boleh READ katalog dan unit economics (storefront).
+-- Operasi tulis dan data sensitif (orders, inventory) hanya untuk authenticated (admin).
 -- ====================================================================
 ALTER TABLE ts_products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ts_unit_economics ENABLE ROW LEVEL SECURITY;
@@ -135,26 +136,35 @@ ALTER TABLE ts_inventory ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ts_orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ts_order_items ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Allow public read ts_products" ON ts_products FOR SELECT USING (true);
-CREATE POLICY "Allow public insert ts_products" ON ts_products FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update ts_products" ON ts_products FOR UPDATE USING (true);
-CREATE POLICY "Allow public delete ts_products" ON ts_products FOR DELETE USING (true);
+-- ts_products (Katalog publik baca, admin tulis)
+CREATE POLICY "anon_read_products" ON ts_products FOR SELECT USING (true);
+CREATE POLICY "auth_insert_products" ON ts_products FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "auth_update_products" ON ts_products FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "auth_delete_products" ON ts_products FOR DELETE TO authenticated USING (true);
 
-CREATE POLICY "Allow public read ts_unit_economics" ON ts_unit_economics FOR SELECT USING (true);
-CREATE POLICY "Allow public insert ts_unit_economics" ON ts_unit_economics FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update ts_unit_economics" ON ts_unit_economics FOR UPDATE USING (true);
-CREATE POLICY "Allow public delete ts_unit_economics" ON ts_unit_economics FOR DELETE USING (true);
+-- ts_unit_economics (Harga publik baca, admin tulis)
+CREATE POLICY "anon_read_unit_economics" ON ts_unit_economics FOR SELECT USING (true);
+CREATE POLICY "auth_insert_unit_economics" ON ts_unit_economics FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "auth_update_unit_economics" ON ts_unit_economics FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "auth_delete_unit_economics" ON ts_unit_economics FOR DELETE TO authenticated USING (true);
 
-CREATE POLICY "Allow public read ts_inventory" ON ts_inventory FOR SELECT USING (true);
-CREATE POLICY "Allow public insert ts_inventory" ON ts_inventory FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update ts_inventory" ON ts_inventory FOR UPDATE USING (true);
+-- ts_inventory (Stok — hanya admin)
+CREATE POLICY "auth_read_inventory" ON ts_inventory FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_insert_inventory" ON ts_inventory FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "auth_update_inventory" ON ts_inventory FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "auth_delete_inventory" ON ts_inventory FOR DELETE TO authenticated USING (true);
 
-CREATE POLICY "Allow public read ts_orders" ON ts_orders FOR SELECT USING (true);
-CREATE POLICY "Allow public insert ts_orders" ON ts_orders FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update ts_orders" ON ts_orders FOR UPDATE USING (true);
+-- ts_orders (Pesanan & Data Pelanggan — hanya admin)
+CREATE POLICY "auth_read_orders" ON ts_orders FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_insert_orders" ON ts_orders FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "auth_update_orders" ON ts_orders FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "auth_delete_orders" ON ts_orders FOR DELETE TO authenticated USING (true);
 
-CREATE POLICY "Allow public read ts_order_items" ON ts_order_items FOR SELECT USING (true);
-CREATE POLICY "Allow public insert ts_order_items" ON ts_order_items FOR INSERT WITH CHECK (true);
+-- ts_order_items (Detail Item Pesanan — hanya admin)
+CREATE POLICY "auth_read_order_items" ON ts_order_items FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_insert_order_items" ON ts_order_items FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "auth_update_order_items" ON ts_order_items FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "auth_delete_order_items" ON ts_order_items FOR DELETE TO authenticated USING (true);
 
 -- ====================================================================
 -- SEED DATA AWAL: BATCH 1 HERO DESIGNS & INVENTORY

@@ -10,12 +10,16 @@ import {
   Settings, 
   ExternalLink,
   Cloud,
-  CheckCircle2
+  CheckCircle2,
+  LogOut,
+  User
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { useAuth } from '../../context/AuthContext';
 
 export function AdminSidebar() {
   const { orders, catalog, supabaseStatus } = useAdmin();
+  const { user, signOut } = useAuth();
   const activeOrdersCount = orders.filter(o => o.status !== 'shipped').length;
 
   const navItems = [
@@ -98,13 +102,37 @@ export function AdminSidebar() {
         </Link>
       </nav>
 
+      {/* Admin User Profile & Sign Out */}
+      <div className="p-3 border-t border-ts-borderDim bg-ts-surfaceHover/50">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-7 h-7 rounded-full bg-ts-mustard/20 text-ts-mustard flex items-center justify-center text-xs shrink-0">
+              <User className="w-3.5 h-3.5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-medium text-ts-krem truncate">
+                {user?.email || 'Admin'}
+              </p>
+              <p className="text-[10px] text-ts-muted">Authenticated</p>
+            </div>
+          </div>
+          <button
+            onClick={() => signOut()}
+            title="Keluar (Logout)"
+            className="p-1.5 rounded-lg text-ts-muted hover:text-ts-red hover:bg-ts-red/10 transition-colors shrink-0"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+
       {/* Cloud Status Footer */}
-      <div className="p-4 border-t border-ts-borderDim bg-ts-hitam/40 space-y-2">
+      <div className="p-3 border-t border-ts-borderDim bg-ts-hitam/40 space-y-1.5">
         <div className="flex items-center justify-between text-[11px]">
           <span className="text-ts-muted flex items-center gap-1.5">
             <Cloud className="w-3.5 h-3.5 text-ts-teal" /> Supabase:
           </span>
-          <span className="text-ts-green font-mono font-bold flex items-center gap-1">
+          <span className="text-ts-green font-mono font-bold flex items-center gap-1 text-[10px]">
             <CheckCircle2 className="w-3 h-3" /> Live
           </span>
         </div>
@@ -112,7 +140,9 @@ export function AdminSidebar() {
           <span className="text-ts-muted flex items-center gap-1.5">
             <Cloud className="w-3.5 h-3.5 text-ts-mustard" /> Cloudinary:
           </span>
-          <span className="text-ts-krem/80 font-mono text-[10px]">z6qhdkde</span>
+          <span className="text-ts-krem/80 font-mono text-[10px]">
+            {import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'Active'}
+          </span>
         </div>
       </div>
     </aside>

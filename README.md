@@ -1,6 +1,48 @@
 # 🚀 AI Mentor Bisnis — Command Center
 
 > Workspace utama untuk 3 bisnis yang sedang dirintis oleh solo founder.
+> Dilengkapi **Virtual C-Suite Team** — 5 peran AI yang siap jadi thinking partner.
+
+---
+
+## 🤖 Virtual C-Suite Team
+
+| Peran | Kode | Fokus |
+|-------|------|-------|
+| 🧠 **Mentor Bisnis** | `mentor` | Thinking partner & strategi bisnis keseluruhan |
+| 🔧 **CTO** | `cto` | Teknologi, arsitektur produk, development roadmap |
+| ⚙️ **COO** | `coo` | Operasional, SOP, supply chain, eksekusi |
+| 💰 **CFO** | `cfo` | Keuangan, pricing, budgeting, profitability |
+| 📢 **CMO** | `cmo` | Marketing, branding, growth, customer acquisition |
+
+### Cara Pakai
+
+```bash
+python main.py
+```
+
+1. Pilih peran yang ingin diajak bicara
+2. Pilih konteks bisnis (opsional)
+3. Mulai berdiskusi!
+
+### Perintah yang Tersedia
+
+| Perintah | Fungsi |
+|----------|--------|
+| `/team` | Lihat semua peran yang tersedia |
+| `/switch <role>` | Ganti peran (contoh: `/switch cto`) |
+| `/bisnis` | Pilih/ganti konteks bisnis |
+| `/consult` | Konsultasi ke peran lain tanpa ganti peran |
+| `/profile` | Tampilkan business profile |
+| `/save` | Simpan sesi |
+| `/exit` | Keluar & simpan sesi |
+| `/help` | Daftar perintah |
+
+### Fitur Cross-Role Consultation
+
+Peran-peran C-suite bisa saling berkonsultasi! Gunakan `/consult` untuk
+mengirim pertanyaan ke peran lain dan mendapat jawaban tanpa harus berpindah
+peran. Contoh: CTO bisa konsultasi ke CFO soal budget teknologi.
 
 ---
 
@@ -10,10 +52,15 @@
 ai-mentor-bisnis/
 │
 ├── 🤖 AI Mentor (root)
-│   ├── agent.py              # AI mentor bisnis agent
-│   ├── main.py               # Entry point
-│   ├── prompts/              # Persona & system prompts
-│   ├── memory/               # Business profile & session history
+│   ├── agent.py              # AI multi-role agent
+│   ├── main.py               # Entry point + CLI menu
+│   ├── prompts/              # Persona per peran
+│   │   ├── mentor_persona.md
+│   │   ├── cto_persona.md
+│   │   ├── coo_persona.md
+│   │   ├── cfo_persona.md
+│   │   └── cmo_persona.md
+│   ├── memory/               # Business profile & session history (per-role)
 │   └── requirements.txt
 │
 └── bisnis/                   # ← SEMUA BISNIS DI SINI
