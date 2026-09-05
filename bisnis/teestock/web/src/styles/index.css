@@ -9,9 +9,39 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #141413;
-  color: #F2EEE4;
+  background-color: #0E0D0C;
+  color: #F5F2EB;
   font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+  selection-background-color: #C1673D;
+  selection-color: #FFFFFF;
+}
+
+/* 21st.dev Ambient Backgrounds & Patterns */
+.bg-dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-radial-gradient {
+  background: radial-gradient(circle at 50% 0%, rgba(193, 103, 61, 0.12) 0%, transparent 60%);
+}
+
+.glass-panel {
+  background: rgba(23, 22, 21, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(30, 28, 27, 0.85);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Custom Scrollbar */
@@ -20,10 +50,10 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #141413;
+  background: #0E0D0C;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2E2C29;
+  background: #262422;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {

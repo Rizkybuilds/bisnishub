@@ -11,81 +11,101 @@ export function MobileBottomNav() {
   const isCatalogActive = location.pathname === '/katalog' && !location.search.includes('series=blank');
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-ts-surface/95 backdrop-blur-md border-t border-ts-border md:hidden safe-area-pb">
-      <div className="grid grid-cols-5 h-16 items-center px-1">
-        {/* Beranda */}
-        <NavLink
-          to="/"
-          end
-          className={({ isActive }) =>
-            `flex flex-col items-center justify-center py-1 gap-1 text-[10px] font-semibold transition-colors ${
-              isActive ? 'text-ts-terracotta font-bold' : 'text-ts-muted hover:text-ts-krem'
-            }`
-          }
-        >
-          <Home className="w-5 h-5" />
-          <span>Beranda</span>
-        </NavLink>
-
-        {/* Kaos Polos NSA */}
-        <NavLink
-          to="/katalog?series=blank"
-          className={() =>
-            `flex flex-col items-center justify-center py-1 gap-1 text-[10px] font-semibold transition-colors ${
-              isBlankActive ? 'text-ts-terracotta font-bold' : 'text-ts-muted hover:text-ts-krem'
-            }`
-          }
-        >
-          <Package className="w-5 h-5" />
-          <span>Kaos Polos</span>
-        </NavLink>
-
-        {/* Desain Grafis */}
-        <NavLink
-          to="/katalog"
-          className={() =>
-            `flex flex-col items-center justify-center py-1 gap-1 text-[10px] font-semibold transition-colors ${
-              isCatalogActive ? 'text-ts-terracotta font-bold' : 'text-ts-muted hover:text-ts-krem'
-            }`
-          }
-        >
-          <Sparkles className="w-5 h-5" />
-          <span>Desain</span>
-        </NavLink>
-
-        {/* Lacak Pesanan */}
-        <NavLink
-          to="/tracking"
-          className={({ isActive }) =>
-            `flex flex-col items-center justify-center py-1 gap-1 text-[10px] font-semibold transition-colors ${
-              isActive ? 'text-ts-terracotta font-bold' : 'text-ts-muted hover:text-ts-krem'
-            }`
-          }
-        >
-          <Truck className="w-5 h-5" />
-          <span>Lacak</span>
-        </NavLink>
-
-        {/* Keranjang Belanja */}
-        <NavLink
-          to="/keranjang"
-          className={({ isActive }) =>
-            `relative flex flex-col items-center justify-center py-1 gap-1 text-[10px] font-semibold transition-colors ${
-              isActive ? 'text-ts-terracotta font-bold' : 'text-ts-muted hover:text-ts-krem'
-            }`
-          }
-        >
-          <div className="relative">
-            <ShoppingBag className="w-5 h-5" />
-            {totalCartItems > 0 && (
-              <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-ts-terracotta text-white text-[9px] font-bold font-mono flex items-center justify-center">
-                {totalCartItems}
-              </span>
+    <div className="fixed bottom-3 left-3 right-3 z-40 md:hidden pointer-events-none">
+      <nav className="pointer-events-auto max-w-md mx-auto bg-ts-surface/90 backdrop-blur-2xl border border-white/[0.12] rounded-2xl shadow-glass-card shadow-glass-inset px-2 py-1.5">
+        <div className="grid grid-cols-5 items-center">
+          {/* Beranda */}
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              `relative flex flex-col items-center justify-center py-1.5 gap-0.5 text-[10px] font-semibold transition-all ${
+                isActive ? 'text-white' : 'text-ts-muted hover:text-ts-krem'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <Home className={`w-4.5 h-4.5 transition-transform ${isActive ? 'scale-110 text-ts-terracotta' : ''}`} />
+                <span>Beranda</span>
+                {isActive && <div className="w-1 h-1 rounded-full bg-ts-terracotta mt-0.5 shadow-glow-terracotta" />}
+              </>
             )}
-          </div>
-          <span>Keranjang</span>
-        </NavLink>
-      </div>
-    </nav>
+          </NavLink>
+
+          {/* Kaos Polos NSA */}
+          <NavLink
+            to="/katalog?series=blank"
+            className={() =>
+              `relative flex flex-col items-center justify-center py-1.5 gap-0.5 text-[10px] font-semibold transition-all ${
+                isBlankActive ? 'text-white' : 'text-ts-muted hover:text-ts-krem'
+              }`
+            }
+          >
+            <Package className={`w-4.5 h-4.5 transition-transform ${isBlankActive ? 'scale-110 text-ts-teal' : ''}`} />
+            <span>Polos NSA</span>
+            {isBlankActive && <div className="w-1 h-1 rounded-full bg-ts-teal mt-0.5 shadow-glow-teal" />}
+          </NavLink>
+
+          {/* Desain Grafis */}
+          <NavLink
+            to="/katalog"
+            className={() =>
+              `relative flex flex-col items-center justify-center py-1.5 gap-0.5 text-[10px] font-semibold transition-all ${
+                isCatalogActive ? 'text-white' : 'text-ts-muted hover:text-ts-krem'
+              }`
+            }
+          >
+            <Sparkles className={`w-4.5 h-4.5 transition-transform ${isCatalogActive ? 'scale-110 text-ts-mustard' : ''}`} />
+            <span>Katalog</span>
+            {isCatalogActive && <div className="w-1 h-1 rounded-full bg-ts-mustard mt-0.5 shadow-glow-mustard" />}
+          </NavLink>
+
+          {/* Lacak Pesanan */}
+          <NavLink
+            to="/tracking"
+            className={({ isActive }) =>
+              `relative flex flex-col items-center justify-center py-1.5 gap-0.5 text-[10px] font-semibold transition-all ${
+                isActive ? 'text-white' : 'text-ts-muted hover:text-ts-krem'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <Truck className={`w-4.5 h-4.5 transition-transform ${isActive ? 'scale-110 text-ts-terracotta' : ''}`} />
+                <span>Lacak</span>
+                {isActive && <div className="w-1 h-1 rounded-full bg-ts-terracotta mt-0.5 shadow-glow-terracotta" />}
+              </>
+            )}
+          </NavLink>
+
+          {/* Keranjang Belanja */}
+          <NavLink
+            to="/keranjang"
+            className={({ isActive }) =>
+              `relative flex flex-col items-center justify-center py-1.5 gap-0.5 text-[10px] font-semibold transition-all ${
+                isActive ? 'text-white' : 'text-ts-muted hover:text-ts-krem'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <div className="relative">
+                  <ShoppingBag className={`w-4.5 h-4.5 transition-transform ${isActive ? 'scale-110 text-ts-terracotta' : ''}`} />
+                  {totalCartItems > 0 && (
+                    <span className="absolute -top-1.5 -right-2 min-w-[15px] h-[15px] px-0.5 rounded-full bg-ts-terracotta text-white text-[9px] font-bold font-mono flex items-center justify-center border border-white/20">
+                      {totalCartItems}
+                    </span>
+                  )}
+                </div>
+                <span>Troli</span>
+                {isActive && <div className="w-1 h-1 rounded-full bg-ts-terracotta mt-0.5 shadow-glow-terracotta" />}
+              </>
+            )}
+          </NavLink>
+        </div>
+      </nav>
+    </div>
   );
 }
+

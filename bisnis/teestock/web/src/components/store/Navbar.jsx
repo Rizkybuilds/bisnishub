@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { ShoppingBag, Search, ShieldCheck, Sparkles, User, Package } from 'lucide-react';
+import { ShoppingBag, Search, ShieldCheck, Sparkles, User, Package, Zap } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 export function Navbar() {
@@ -10,119 +10,147 @@ export function Navbar() {
   const isGraphicActive = location.pathname === '/katalog' && !location.search.includes('series=blank');
 
   return (
-    <div className="sticky top-0 z-40 bg-ts-hitam/95 backdrop-blur border-b border-ts-border">
-      {/* Top Notice Bar */}
-      <div className="bg-ts-surface text-[11px] font-semibold text-ts-krem/90 py-1.5 px-4 text-center border-b border-ts-borderDim flex items-center justify-center gap-4">
-        <span className="flex items-center gap-1">
-          <ShieldCheck className="w-3.5 h-3.5 text-ts-green" /> 100% Kaos Polos New States Apparel (NSA) Original
+    <header className="sticky top-0 z-40 w-full transition-all">
+      {/* Top Ticker Notice Bar */}
+      <div className="bg-[#121110]/90 backdrop-blur-md text-[11px] font-medium text-ts-kremMuted py-1.5 px-4 text-center border-b border-white/[0.06] flex items-center justify-center gap-3 sm:gap-6 overflow-hidden">
+        <span className="flex items-center gap-1.5 text-ts-krem">
+          <ShieldCheck className="w-3.5 h-3.5 text-ts-green animate-pulse" />
+          <span>100% Garmen Asli New States Apparel (NSA) Softstyle 30s</span>
         </span>
-        <span className="hidden md:inline text-ts-muted">•</span>
-        <span className="hidden md:flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5 text-ts-mustard" /> Sablon DTF HD Raster Tahan Cuci
+        <span className="hidden sm:inline text-white/20">•</span>
+        <span className="hidden sm:flex items-center gap-1.5 text-ts-kremMuted">
+          <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
+          <span>Sablon DTF HD Raster Suhu 155°C Anti-Pecah</span>
+        </span>
+        <span className="hidden md:inline text-white/20">•</span>
+        <span className="hidden md:flex items-center gap-1.5 text-ts-kremMuted">
+          <Zap className="w-3.5 h-3.5 text-ts-terracotta" />
+          <span>Produksi &amp; Kirim Cepat H+1</span>
         </span>
       </div>
 
-      {/* Main Navbar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-ts-terracotta flex items-center justify-center font-bold text-white tracking-wider text-base shadow-lg shadow-ts-terracotta/20">
-            TS
-          </div>
-          <div>
-            <span className="text-xl font-extrabold tracking-tight text-ts-krem">TeeStock</span>
-            <span className="text-[10px] block -mt-1 font-semibold text-ts-terracotta tracking-widest uppercase">Apparel</span>
-          </div>
-        </Link>
-
-        {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-7">
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) =>
-              `text-sm font-semibold transition-colors ${
-                isActive ? 'text-ts-terracotta font-bold' : 'text-ts-krem/80 hover:text-white'
-              }`
-            }
-          >
-            Beranda
-          </NavLink>
-          <NavLink
-            to="/katalog"
-            className={() =>
-              `text-sm font-semibold transition-colors ${
-                isGraphicActive ? 'text-ts-terracotta font-bold' : 'text-ts-krem/80 hover:text-white'
-              }`
-            }
-          >
-            Katalog Desain
-          </NavLink>
-          <NavLink
-            to="/katalog?series=blank"
-            className={() =>
-              `text-sm font-semibold transition-colors flex items-center gap-1.5 ${
-                isBlankActive ? 'text-ts-terracotta font-bold' : 'text-ts-krem/80 hover:text-white'
-              }`
-            }
-          >
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/40">BARU</span>
-            <span>Kaos Polos NSA</span>
-          </NavLink>
-          <NavLink
-            to="/custom-order"
-            className={({ isActive }) =>
-              `text-sm font-semibold transition-colors ${
-                isActive ? 'text-ts-terracotta font-bold' : 'text-ts-krem/80 hover:text-white'
-              }`
-            }
-          >
-            Custom Sablon
-          </NavLink>
-          <NavLink
-            to="/tracking"
-            className={({ isActive }) =>
-              `text-sm font-semibold transition-colors ${
-                isActive ? 'text-ts-terracotta font-bold' : 'text-ts-krem/80 hover:text-white'
-              }`
-            }
-          >
-            Lacak Pesanan
-          </NavLink>
-        </nav>
-
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-          <Link
-            to="/katalog"
-            className="p-2 rounded-lg text-ts-krem/80 hover:text-white hover:bg-ts-surface transition-colors"
-            title="Cari Desain"
-          >
-            <Search className="w-5 h-5" />
-          </Link>
-
-          <Link
-            to="/keranjang"
-            className="relative p-2 rounded-lg text-ts-krem/80 hover:text-white hover:bg-ts-surface transition-colors"
-            title="Keranjang Belanja"
-          >
-            <ShoppingBag className="w-5 h-5" />
-            {totalCartItems > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-ts-terracotta text-white text-[10px] font-bold flex items-center justify-center font-mono animate-in zoom-in">
-                {totalCartItems}
+      {/* Main Floating Navbar Container */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5">
+        <div className="h-14 sm:h-16 px-3 sm:px-5 rounded-2xl bg-ts-surface/80 backdrop-blur-xl border border-white/[0.09] shadow-glass-card shadow-glass-inset flex items-center justify-between">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group">
+            <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-ts-terracotta to-[#9E4620] flex items-center justify-center font-extrabold text-white tracking-wider text-sm sm:text-base shadow-glow-terracotta border border-white/25 transition-transform group-hover:scale-105">
+              <span>TS</span>
+              <div className="absolute -inset-0.5 rounded-xl bg-ts-terracotta/30 blur-sm -z-10 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div>
+              <span className="text-base sm:text-lg font-extrabold tracking-tight text-ts-krem group-hover:text-white transition-colors">
+                TeeStock
               </span>
-            )}
+              <span className="text-[9px] sm:text-[10px] block -mt-1 font-bold text-ts-terracotta tracking-widest uppercase font-mono">
+                Apparel
+              </span>
+            </div>
           </Link>
 
-          <Link
-            to="/admin"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-ts-surface border border-ts-border hover:border-ts-terracotta text-ts-krem/90 transition-all"
-          >
-            <User className="w-3.5 h-3.5 text-ts-terracotta" />
-            <span>Portal Internal</span>
-          </Link>
+          {/* Navigation Links (Desktop) */}
+          <nav className="hidden md:flex items-center gap-1 bg-white/[0.03] p-1 rounded-xl border border-white/[0.06]">
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) =>
+                `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  isActive
+                    ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
+                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                }`
+              }
+            >
+              Beranda
+            </NavLink>
+            <NavLink
+              to="/katalog"
+              className={() =>
+                `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  isGraphicActive
+                    ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
+                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                }`
+              }
+            >
+              Katalog Grafis
+            </NavLink>
+            <NavLink
+              to="/katalog?series=blank"
+              className={() =>
+                `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  isBlankActive
+                    ? 'bg-ts-teal/20 text-white shadow-sm border border-ts-teal/30'
+                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                }`
+              }
+            >
+              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-ts-teal/30 text-teal-300 border border-ts-teal/40">
+                NSA
+              </span>
+              <span>Kaos Polos</span>
+            </NavLink>
+            <NavLink
+              to="/custom-order"
+              className={({ isActive }) =>
+                `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  isActive
+                    ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
+                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                }`
+              }
+            >
+              Custom Sablon
+            </NavLink>
+            <NavLink
+              to="/tracking"
+              className={({ isActive }) =>
+                `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  isActive
+                    ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
+                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                }`
+              }
+            >
+              Lacak Pesanan
+            </NavLink>
+          </nav>
+
+          {/* Right Action Buttons */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <Link
+              to="/katalog"
+              className="p-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] transition-all"
+              title="Cari Desain / Polos"
+            >
+              <Search className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+            </Link>
+
+            <Link
+              to="/keranjang"
+              className="relative p-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] transition-all"
+              title="Keranjang Belanja"
+            >
+              <ShoppingBag className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+              {totalCartItems > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-ts-terracotta text-white text-[10px] font-bold font-mono flex items-center justify-center shadow-glow-terracotta animate-in zoom-in border border-white/20">
+                  {totalCartItems}
+                </span>
+              )}
+            </Link>
+
+            <Link
+              to="/admin"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-white/[0.16] text-ts-krem transition-all shadow-glass-inset"
+            >
+              <User className="w-3.5 h-3.5 text-ts-terracotta" />
+              <span>Admin Hub</span>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
+
+

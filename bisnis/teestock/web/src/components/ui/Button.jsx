@@ -9,31 +9,34 @@ export function Button({
   disabled = false,
   ...props
 }) {
-  const baseStyles = "inline-flex items-center justify-center font-semibold rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ts-hitam active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100";
+  const baseStyles = "relative inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ts-hitam active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 cursor-pointer overflow-hidden";
 
   const sizeStyles = {
     sm: "px-3 py-1.5 text-xs gap-1.5",
-    md: "px-4 py-2 text-sm gap-2",
-    lg: "px-5 py-2.5 text-base gap-2.5",
+    md: "px-4.5 py-2 text-sm gap-2",
+    lg: "px-6 py-3 text-base gap-2.5",
   };
 
   const variantStyles = {
-    primary: "bg-ts-terracotta hover:bg-ts-terracotta/90 text-white focus:ring-ts-terracotta shadow-sm",
-    secondary: "bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem border border-ts-border focus:ring-ts-border",
-    cream: "bg-ts-krem hover:bg-white text-ts-hitam focus:ring-ts-krem font-bold",
-    outline: "bg-transparent hover:bg-ts-surface text-ts-krem border border-ts-border hover:border-ts-muted",
-    danger: "bg-ts-red hover:bg-ts-red/90 text-white focus:ring-ts-red",
-    ghost: "bg-transparent hover:bg-ts-surface text-ts-krem/80 hover:text-white",
+    primary: "bg-ts-terracotta hover:bg-[#D47244] text-white shadow-glow-terracotta border border-white/20 shadow-glass-inset focus:ring-ts-terracotta",
+    secondary: "bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem border border-white/10 hover:border-white/20 shadow-glass-inset focus:ring-white/20",
+    cream: "bg-ts-krem hover:bg-white text-ts-hitam focus:ring-ts-krem font-bold shadow-md",
+    outline: "bg-transparent hover:bg-white/[0.04] text-ts-krem border border-white/10 hover:border-white/30 focus:ring-white/20",
+    glow: "bg-gradient-to-r from-ts-terracotta via-[#E2885E] to-ts-mustard text-white font-bold shadow-glow-terracotta hover:opacity-95 border border-white/25 shadow-glass-inset",
+    shopee: "bg-[#EE4D2D] hover:bg-[#EE4D2D]/90 text-white font-bold shadow-md border border-white/20 shadow-glass-inset",
+    whatsapp: "bg-[#25D366] hover:bg-[#22bf5b] text-zinc-950 font-bold shadow-md border border-white/20 shadow-glass-inset",
+    danger: "bg-ts-red hover:bg-ts-red/90 text-white focus:ring-ts-red shadow-sm",
+    ghost: "bg-transparent hover:bg-white/[0.05] text-ts-krem/80 hover:text-white",
   };
 
   return (
     <button
-      className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
+      className={`${baseStyles} ${sizeStyles[size] || sizeStyles.md} ${variantStyles[variant] || variantStyles.primary} ${className}`}
       disabled={disabled}
       {...props}
     >
-      {Icon && <Icon className="w-4 h-4 shrink-0" />}
-      {children}
+      {Icon && <Icon className="w-4 h-4 shrink-0 transition-transform group-hover:scale-110" />}
+      <span>{children}</span>
     </button>
   );
 }

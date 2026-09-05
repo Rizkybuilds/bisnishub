@@ -46,11 +46,11 @@ export function OrderTrackingPage() {
   };
 
   const steps = [
-    { id: 'pending', label: 'Order Diterima', desc: 'Pesanan masuk ke sistem antrean' },
-    { id: 'dtf', label: 'Cetak Film DTF', desc: 'Artwork dipersiapkan di mesin cetak' },
-    { id: 'press', label: 'Proses Heat Press', desc: 'Di-press suhu 160°C pada kaos NSA' },
-    { id: 'pack', label: 'QC & Packing', desc: 'Pengecekan kualitas & kemasan polymailer' },
-    { id: 'shipped', label: 'Terkirim', desc: 'Paket diserahkan ke pihak ekspedisi' }
+    { id: 'pending', label: 'Order Diterima', desc: 'Pesanan masuk ke sistem antrean workshop' },
+    { id: 'dtf', label: 'Cetak Film DTF', desc: 'Artwork diproses di mesin cetak DTF HD Raster' },
+    { id: 'press', label: 'Proses Heat Press', desc: 'Di-press suhu 155°C pada kaos garmen NSA' },
+    { id: 'pack', label: 'QC & Kemasan Polymailer', desc: 'Pengecekan kualitas sablon & stiker hologram' },
+    { id: 'shipped', label: 'Terkirim / Di Kurir', desc: 'Paket diserahkan ke kurir ekspedisi' }
   ];
 
   const getStepIndex = (status) => {
@@ -58,10 +58,10 @@ export function OrderTrackingPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-8">
       <div className="text-center max-w-xl mx-auto space-y-2">
-        <h1 className="text-3xl font-extrabold text-ts-krem tracking-tight">Lacak Status Pesanan</h1>
-        <p className="text-xs sm:text-sm text-ts-muted">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Lacak Status Pesanan</h1>
+        <p className="text-xs sm:text-sm text-ts-kremMuted">
           Ketahui posisi pesanan kaos kamu secara transparan mulai dari antrean cetak sampai pengiriman.
         </p>
       </div>
@@ -69,30 +69,30 @@ export function OrderTrackingPage() {
       {/* Search Bar */}
       <form onSubmit={handleSearch} className="flex gap-2 max-w-lg mx-auto">
         <Input
-          placeholder="Masukkan No. Pesanan (cth: SHP-2609-001) atau No. HP..."
+          placeholder="Masukkan No. Pesanan (cth: WEB-123456) atau No. HP..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="flex-1"
           required
         />
-        <Button type="submit" variant="primary" icon={Search}>
+        <Button type="submit" variant="glow" icon={Search} className="px-5">
           Lacak
         </Button>
       </form>
 
       {/* Results */}
       {searched && (
-        <div>
+        <div className="animate-in fade-in duration-300">
           {searchResult ? (
-            <Card className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-ts-borderDim">
+            <div className="bg-ts-surface/80 backdrop-blur-xl border border-white/[0.1] rounded-3xl p-6 sm:p-8 space-y-6 shadow-glass-card shadow-glass-inset">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.08]">
                 <div>
                   <div className="text-[11px] text-ts-muted">Nomor Pesanan:</div>
                   <div className="font-mono text-lg font-bold text-ts-terracotta">{searchResult.id}</div>
                 </div>
                 <div className="text-right">
                   <div className="text-[11px] text-ts-muted">Penerima:</div>
-                  <div className="font-bold text-ts-krem text-sm">{searchResult.customer}</div>
+                  <div className="font-bold text-white text-sm">{searchResult.customer}</div>
                 </div>
               </div>
 
@@ -109,17 +109,17 @@ export function OrderTrackingPage() {
                       {idx < steps.length - 1 && (
                         <div
                           className={`absolute left-4 top-8 w-0.5 h-10 -ml-[1px] ${
-                            idx < currentIdx ? 'bg-ts-green' : 'bg-ts-border'
+                            idx < currentIdx ? 'bg-ts-green shadow-glow-teal' : 'bg-white/[0.08]'
                           }`}
                         />
                       )}
 
                       {/* Step Circle Icon */}
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold font-mono transition-colors z-10 ${
+                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold font-mono transition-all z-10 ${
                           isDone
-                            ? 'bg-ts-green text-ts-hitam shadow-lg shadow-ts-green/20'
-                            : 'bg-ts-surface border border-ts-border text-ts-muted'
+                            ? 'bg-ts-green text-zinc-950 shadow-glow-teal'
+                            : 'bg-white/[0.04] border border-white/[0.1] text-ts-muted'
                         }`}
                       >
                         {isDone ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
@@ -128,16 +128,16 @@ export function OrderTrackingPage() {
                       {/* Step Details */}
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
-                          <h4 className={`text-sm font-bold ${isCurrent ? 'text-ts-terracotta' : isDone ? 'text-ts-krem' : 'text-ts-muted'}`}>
+                          <h4 className={`text-sm font-bold ${isCurrent ? 'text-ts-terracotta' : isDone ? 'text-white' : 'text-ts-muted'}`}>
                             {step.label}
                           </h4>
                           {isCurrent && (
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/30 animate-pulse">
-                              Sedang Dikerjakan
+                            <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-ts-terracotta/20 text-[#E2885E] border border-ts-terracotta/40 animate-pulse">
+                              Sedang Diproses
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-ts-muted mt-0.5">{step.desc}</p>
+                        <p className="text-xs text-ts-kremMuted mt-0.5 leading-relaxed">{step.desc}</p>
                       </div>
                     </div>
                   );
@@ -145,25 +145,25 @@ export function OrderTrackingPage() {
               </div>
 
               {/* Order Items Recap */}
-              <div className="p-4 bg-ts-hitam/60 border border-ts-borderDim rounded-xl text-xs space-y-2">
-                <div className="font-bold text-ts-krem">Rincian Produk:</div>
-                <div className="flex justify-between text-ts-muted">
+              <div className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-2xl text-xs space-y-2 shadow-glass-inset">
+                <div className="font-bold text-white">Rincian Produk:</div>
+                <div className="flex justify-between text-ts-kremMuted">
                   <span>{searchResult.productName || searchResult.sku}</span>
-                  <span className="text-ts-krem font-mono font-bold">
+                  <span className="text-white font-mono font-bold">
                     {searchResult.garment} ({searchResult.color} {searchResult.size}) x{searchResult.qty}
                   </span>
                 </div>
-                <div className="flex justify-between text-ts-green font-bold pt-2 border-t border-ts-borderDim">
+                <div className="flex justify-between text-ts-green font-bold pt-2 border-t border-white/[0.06]">
                   <span>Total Tagihan:</span>
                   <span className="font-mono">{formatRupiah(searchResult.price)}</span>
                 </div>
               </div>
-            </Card>
+            </div>
           ) : (
-            <div className="py-12 text-center space-y-2 bg-ts-surface border border-ts-border rounded-2xl">
+            <div className="py-12 text-center space-y-2 bg-ts-surface/60 border border-white/[0.08] rounded-3xl backdrop-blur-md">
               <AlertCircle className="w-8 h-8 text-ts-muted mx-auto" />
-              <p className="text-sm font-bold text-ts-krem">Pesanan Tidak Ditemukan</p>
-              <p className="text-xs text-ts-muted">Pastikan nomor pesanan atau nomor telepon yang kamu masukkan sudah benar.</p>
+              <p className="text-sm font-bold text-white">Pesanan Tidak Ditemukan</p>
+              <p className="text-xs text-ts-kremMuted">Pastikan nomor pesanan atau nomor telepon yang kamu masukkan sudah benar.</p>
             </div>
           )}
         </div>

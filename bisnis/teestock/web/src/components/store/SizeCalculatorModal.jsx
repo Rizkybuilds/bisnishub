@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal } from '../ui/Modal';
-import { Ruler, Sparkles, Check, Table } from 'lucide-react';
+import { Ruler, Sparkles, Check, Table, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 const NSA_SIZE_SPECS = {
@@ -77,29 +77,31 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Kalkulator Ukuran &amp; Panduan NSA"
+      title="Panduan Ukuran &amp; Fitting NSA"
       maxWidth="max-w-lg"
     >
       <div className="space-y-6 text-ts-krem">
         {/* Tab Selection */}
-        <div className="flex rounded-xl bg-ts-hitam p-1 border border-ts-border">
+        <div className="flex rounded-xl bg-white/[0.04] p-1 border border-white/[0.08]">
           <button
+            type="button"
             onClick={() => setActiveTab('calculator')}
-            className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'calculator'
-                ? 'bg-ts-surface text-ts-krem shadow'
-                : 'text-ts-muted hover:text-ts-krem'
+                ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
+                : 'text-ts-muted hover:text-white'
             }`}
           >
             <Ruler className="w-3.5 h-3.5 text-ts-terracotta" />
             <span>Kalkulator TB / BB</span>
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('chart')}
-            className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'chart'
-                ? 'bg-ts-surface text-ts-krem shadow'
-                : 'text-ts-muted hover:text-ts-krem'
+                ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
+                : 'text-ts-muted hover:text-white'
             }`}
           >
             <Table className="w-3.5 h-3.5 text-ts-teal" />
@@ -109,62 +111,56 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
 
         {activeTab === 'calculator' ? (
           <div className="space-y-5">
-            {/* Inputs */}
+            {/* Inputs with Sliders */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-ts-muted">Tinggi Badan (cm):</label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    min="130"
-                    max="220"
-                    value={height}
-                    onChange={(e) => setHeight(e.target.value)}
-                    className="w-full bg-ts-hitam border border-ts-border rounded-xl px-3 py-2 text-sm font-mono text-ts-krem focus:border-ts-terracotta outline-none"
-                    placeholder="170"
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ts-muted font-mono">
-                    cm
-                  </span>
+              <div className="space-y-2 bg-white/[0.03] p-3.5 rounded-2xl border border-white/[0.08]">
+                <div className="flex justify-between items-center text-xs">
+                  <label className="font-bold text-ts-kremMuted">Tinggi Badan</label>
+                  <span className="font-mono font-black text-white text-sm">{height} cm</span>
                 </div>
+                <input
+                  type="range"
+                  min="145"
+                  max="205"
+                  value={height}
+                  onChange={(e) => setHeight(e.target.value)}
+                  className="w-full accent-ts-terracotta cursor-pointer"
+                />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-ts-muted">Berat Badan (kg):</label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    min="35"
-                    max="160"
-                    value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
-                    className="w-full bg-ts-hitam border border-ts-border rounded-xl px-3 py-2 text-sm font-mono text-ts-krem focus:border-ts-terracotta outline-none"
-                    placeholder="65"
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ts-muted font-mono">
-                    kg
-                  </span>
+              <div className="space-y-2 bg-white/[0.03] p-3.5 rounded-2xl border border-white/[0.08]">
+                <div className="flex justify-between items-center text-xs">
+                  <label className="font-bold text-ts-kremMuted">Berat Badan</label>
+                  <span className="font-mono font-black text-white text-sm">{weight} kg</span>
                 </div>
+                <input
+                  type="range"
+                  min="40"
+                  max="130"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  className="w-full accent-ts-terracotta cursor-pointer"
+                />
               </div>
             </div>
 
             {/* Fit Preference */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-ts-muted">Gaya Pakaian (Fitting):</label>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-ts-kremMuted">Gaya Fitting Pilihan:</label>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { id: 'slim', label: 'Slim Fit', sub: 'Pas Badan' },
-                  { id: 'regular', label: 'Regular Fit', sub: 'Standar Kasual' },
-                  { id: 'oversize', label: 'Oversized', sub: 'Longgar / Santai' },
+                  { id: 'slim', label: 'Slim Fit', sub: 'Pas Tubuh' },
+                  { id: 'regular', label: 'Regular', sub: 'Standar Distro' },
+                  { id: 'oversize', label: 'Oversized', sub: 'Longgar / Boxy' },
                 ].map((f) => (
                   <button
                     key={f.id}
                     type="button"
                     onClick={() => setFitPref(f.id)}
-                    className={`p-2 rounded-xl border text-left transition-all ${
+                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                       fitPref === f.id
-                        ? 'bg-ts-terracotta/20 border-ts-terracotta text-ts-krem ring-1 ring-ts-terracotta'
-                        : 'bg-ts-hitam border-ts-border text-ts-muted hover:border-ts-borderDim'
+                        ? 'bg-ts-terracotta/20 border-ts-terracotta text-white shadow-glow-terracotta ring-1 ring-ts-terracotta'
+                        : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:bg-white/[0.06]'
                     }`}
                   >
                     <div className="text-xs font-bold">{f.label}</div>
@@ -174,28 +170,28 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
               </div>
             </div>
 
-            {/* Result Box */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-ts-terracotta/15 via-ts-surface to-ts-mustard/10 border border-ts-terracotta/40 flex items-center justify-between">
-              <div className="space-y-1">
-                <div className="inline-flex items-center gap-1 text-[11px] font-bold text-ts-mustard">
+            {/* Result Box (21st.dev style card) */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-terracotta/20 via-ts-surface to-[#ECC369]/10 border border-ts-terracotta/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-glass-inset">
+              <div className="space-y-1 text-center sm:text-left w-full sm:w-auto">
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-ts-mustard">
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>Rekomendasi Terbaik Untukmu:</span>
+                  <span>Ukuran Paling Pas Buat Kamu:</span>
                 </div>
-                <div className="text-2xl font-black font-mono text-ts-krem flex items-baseline gap-2">
+                <div className="text-3xl font-black font-mono text-white flex items-baseline justify-center sm:justify-start gap-2">
                   <span>Size {recommendedSize}</span>
-                  <span className="text-xs font-normal text-ts-muted">
-                    ({fitPref === 'oversize' ? 'Longgar/Boxy' : fitPref === 'slim' ? 'Fit' : 'Nyaman'})
+                  <span className="text-xs font-normal text-ts-muted font-sans">
+                    ({fitPref === 'oversize' ? 'Boxy/Oversize' : fitPref === 'slim' ? 'Fit' : 'Regular Kasual'})
                   </span>
                 </div>
-                <div className="text-xs text-ts-muted font-mono">{spec.desc}</div>
+                <div className="text-xs text-ts-kremMuted font-mono">{spec.desc}</div>
               </div>
 
               <Button
                 variant="primary"
-                size="sm"
+                size="md"
                 icon={Check}
                 onClick={handleApply}
-                className="shrink-0"
+                className="shrink-0 w-full sm:w-auto shadow-glow-terracotta"
               >
                 Pilih Size {recommendedSize}
               </Button>
@@ -204,25 +200,25 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
         ) : (
           /* Full NSA Size Chart Table */
           <div className="space-y-3">
-            <p className="text-xs text-ts-muted">
+            <p className="text-xs text-ts-muted leading-relaxed">
               Standar garmen ekspor New States Apparel (NSA) tubular built-up tanpa jahitan samping. Toleransi penjahitan pabrik &plusmn;1-2 cm.
             </p>
-            <div className="overflow-x-auto rounded-xl border border-ts-border">
+            <div className="overflow-x-auto rounded-xl border border-white/[0.08]">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-ts-hitam font-mono text-ts-muted border-b border-ts-border">
+                  <tr className="bg-white/[0.04] font-mono text-ts-muted border-b border-white/[0.08]">
                     <th className="p-2.5">Size</th>
                     <th className="p-2.5">Lebar Dada</th>
                     <th className="p-2.5">Panjang Badan</th>
                     <th className="p-2.5 text-right">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-ts-borderDim font-mono">
+                <tbody className="divide-y divide-white/[0.05] font-mono">
                   {Object.entries(NSA_SIZE_SPECS).map(([sz, s]) => (
                     <tr
                       key={sz}
-                      className={`hover:bg-ts-surfaceHover transition-colors ${
-                        currentSize === sz ? 'bg-ts-terracotta/10 text-white font-bold' : ''
+                      className={`hover:bg-white/[0.04] transition-colors ${
+                        currentSize === sz ? 'bg-ts-terracotta/15 text-white font-bold' : ''
                       }`}
                     >
                       <td className="p-2.5 font-bold text-ts-terracotta">{sz}</td>
@@ -230,11 +226,12 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
                       <td className="p-2.5">{s.length} cm</td>
                       <td className="p-2.5 text-right">
                         <button
+                          type="button"
                           onClick={() => {
                             if (onSelectSize) onSelectSize(sz);
                             onClose();
                           }}
-                          className="px-2 py-1 rounded text-[10px] font-bold bg-ts-surface border border-ts-border hover:border-ts-terracotta text-ts-krem"
+                          className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white/[0.06] border border-white/10 hover:border-ts-terracotta text-white transition-colors cursor-pointer"
                         >
                           Pilih {sz}
                         </button>

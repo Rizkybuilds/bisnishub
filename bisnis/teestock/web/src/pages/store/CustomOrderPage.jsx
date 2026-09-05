@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, Upload, Sparkles, ShieldCheck, CheckCircle2, MessageSquare } from 'lucide-react';
+import { Send, Upload, Sparkles, ShieldCheck, CheckCircle2, MessageSquare, ArrowRight, ArrowLeft, Check, Layers, Printer, User } from 'lucide-react';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { DTF_PRINT_SIZES } from '../../constants/pricing';
 import { useAdmin } from '../../context/AdminContext';
@@ -14,6 +14,7 @@ export function CustomOrderPage() {
   const { addOrder } = useAdmin();
   const { storeSettings } = useStore();
 
+  const [currentStep, setCurrentStep] = useState(1);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
@@ -29,7 +30,7 @@ export function CustomOrderPage() {
   const selectedGarment = GARMENT_TYPES[garmentKey] || GARMENT_TYPES.nsa_softstyle_30s;
   const selectedPrint = DTF_PRINT_SIZES.find(p => p.id === printSizeId) || DTF_PRINT_SIZES[2];
 
-  // Price Calculation
+  // Dynamic Price Calculation
   const baseCost = selectedGarment.baseCost + selectedPrint.cost + 8500;
   let multiplier = 1.65;
   if (qty >= 12) multiplier = 1.45;
@@ -40,7 +41,7 @@ export function CustomOrderPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name.trim() || !phone.trim()) {
-      alert("Mohon isi nama dan nomor WhatsApp kamu");
+      alert("Mohon lengkapi nama dan nomor WhatsApp Anda");
       return;
     }
 
@@ -69,34 +70,35 @@ export function CustomOrderPage() {
   if (submitted) {
     const targetPhone = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
     const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(
-      `Halo TeeStock! Saya ingin konfirmasi pesanan custom:\nNama: ${name}\nModel: ${selectedGarment.name} (${color} ${size})\nJumlah: ${qty} pcs\nArtwork: ${artworkLink || 'Kirim via WA'}\nCatatan: ${notes}`
+      `Halo TeeStock! Saya ingin konfirmasi pesanan custom:\nNo. Order: CST-${Date.now().toString().slice(-6)}\nNama: ${name}\nModel: ${selectedGarment.name} (${color} - Size ${size})\nJumlah: ${qty} pcs\nUkuran Sablon: ${selectedPrint.name}\nArtwork: ${artworkLink || 'Kirim file via WA'}\nCatatan: ${notes}\nTotal Estimasi: ${formatRupiah(estTotal)}`
     )}`;
 
     return (
-      <div className="max-w-2xl mx-auto px-4 py-20 text-center space-y-6">
-        <div className="w-16 h-16 rounded-full bg-ts-green/20 text-ts-green flex items-center justify-center mx-auto">
+      <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-6">
+        <div className="w-16 h-16 rounded-3xl bg-ts-green/20 text-ts-green flex items-center justify-center mx-auto border border-ts-green/30 shadow-glow-teal">
           <CheckCircle2 className="w-8 h-8" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-2xl font-extrabold text-ts-krem">Permintaan Custom Diterima!</h2>
-          <p className="text-xs sm:text-sm text-ts-muted">
-            Pesanan kamu telah masuk ke sistem antrean kami. Tim kami akan segera meninjau artwork dan mengirimkan mockup preview digital.
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Permintaan Custom Diterima!</h2>
+          <p className="text-xs sm:text-sm text-ts-kremMuted max-w-md mx-auto leading-relaxed">
+            Pesanan Anda telah dicatat di antrean workshop. Tim kami akan segera meninjau artwork dan mengirimkan mockup digital sebelum cetak.
           </p>
         </div>
 
-        <div className="p-6 bg-ts-surface border border-ts-border rounded-2xl text-left space-y-2 text-xs">
-          <div className="flex justify-between"><span className="text-ts-muted">Nama:</span> <strong className="text-ts-krem">{name}</strong></div>
-          <div className="flex justify-between"><span className="text-ts-muted">Model & Ukuran:</span> <strong className="text-ts-krem">{selectedGarment.name} • {color} ({size})</strong></div>
-          <div className="flex justify-between"><span className="text-ts-muted">Jumlah:</span> <strong className="text-ts-krem">{qty} pcs</strong></div>
-          <div className="flex justify-between text-ts-green font-bold text-sm pt-2 border-t border-ts-borderDim">
-            <span>Estimasi Biaya:</span> <span>{formatRupiah(estTotal)}</span>
+        <div className="p-6 bg-ts-surface/80 backdrop-blur-xl border border-white/[0.1] rounded-3xl text-left space-y-2.5 text-xs shadow-glass-card shadow-glass-inset">
+          <div className="flex justify-between"><span className="text-ts-muted">Pemesan:</span> <strong className="text-white">{name}</strong></div>
+          <div className="flex justify-between"><span className="text-ts-muted">Model &amp; Varian:</span> <strong className="text-white">{selectedGarment.name} • {color} ({size})</strong></div>
+          <div className="flex justify-between"><span className="text-ts-muted">Area Sablon:</span> <strong className="text-white">{selectedPrint.name}</strong></div>
+          <div className="flex justify-between"><span className="text-ts-muted">Jumlah:</span> <strong className="text-white">{qty} pcs</strong></div>
+          <div className="flex justify-between text-ts-green font-bold text-sm pt-3 border-t border-white/[0.08]">
+            <span>Estimasi Biaya:</span> <span className="font-mono text-base">{formatRupiah(estTotal)}</span>
           </div>
         </div>
 
-        <div className="pt-2">
+        <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
           <a href={waUrl} target="_blank" rel="noreferrer">
-            <Button size="lg" variant="primary" icon={MessageSquare}>
-              Lanjutkan Chat WhatsApp dengan Tim Desain
+            <Button size="lg" variant="whatsapp" icon={MessageSquare} className="w-full sm:w-auto">
+              Lanjutkan Konfirmasi ke WhatsApp Tim Desain
             </Button>
           </a>
         </div>
@@ -105,162 +107,313 @@ export function CustomOrderPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+      {/* Header */}
       <div className="text-center max-w-2xl mx-auto space-y-2">
-        <h1 className="text-3xl font-extrabold text-ts-krem tracking-tight">
-          Pesan Sablon Kaos Custom
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-semibold text-ts-krem">
+          <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
+          <span>CUSTOM PRINT STUDIO • 0% MINIMUM ORDER</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          Konfigurator Sablon Kaos Custom
         </h1>
-        <p className="text-xs sm:text-sm text-ts-muted">
-          Punya desain sendiri untuk komunitas, event, atau brand distro kamu? Kami cetak dengan kualitas sablon DTF terbaik di atas bahan kaos New State Apparel impor.
+        <p className="text-xs sm:text-sm text-ts-kremMuted">
+          Cetak desain brand, komunitas, atau merchandise kamu dengan sablon DTF HD di atas bahan garmen New States Apparel original.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Form Column */}
-        <form onSubmit={handleSubmit} className="lg:col-span-2 bg-ts-surface border border-ts-border rounded-3xl p-6 sm:p-8 space-y-5 shadow-xl">
-          <h3 className="text-sm font-bold text-ts-krem pb-3 border-b border-ts-borderDim">
-            1. Data Pemesan
-          </h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="Nama Lengkap"
-              placeholder="Contoh: Budi Santoso"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <Input
-              label="Nomor WhatsApp"
-              placeholder="0812-xxxx-xxxx"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
-          </div>
-
-          <Input
-            label="Kota / Kecamatan Pengiriman"
-            placeholder="Contoh: Jakarta Selatan / Bandung"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-          />
-
-          <h3 className="text-sm font-bold text-ts-krem pt-4 pb-3 border-b border-ts-borderDim">
-            2. Spesifikasi Kaos & Sablon
-          </h3>
-
-          <Select
-            label="Pilih Model Bahan Kaos NSA"
-            value={garmentKey}
-            onChange={(e) => {
-              setGarmentKey(e.target.value);
-              const g = GARMENT_TYPES[e.target.value];
-              if (g?.colors?.[0]) setColor(g.colors[0].name);
-            }}
-          >
-            {Object.entries(GARMENT_TYPES).filter(([k]) => k !== 'supplies').map(([k, g]) => (
-              <option key={k} value={k}>{g.name}</option>
-            ))}
-          </Select>
-
-          <div className="grid grid-cols-3 gap-3">
-            <Select
-              label="Warna"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
+      {/* 3-Step Wizard Indicator */}
+      <div className="flex items-center justify-center gap-2 sm:gap-4 max-w-md mx-auto">
+        {[
+          { step: 1, label: 'Kaos NSA' },
+          { step: 2, label: 'Area Sablon' },
+          { step: 3, label: 'Artwork & Data' },
+        ].map((s) => (
+          <div key={s.step} className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(s.step)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                currentStep === s.step
+                  ? 'bg-ts-terracotta text-white shadow-glow-terracotta border border-white/20'
+                  : currentStep > s.step
+                  ? 'bg-white/[0.1] text-white border border-white/10'
+                  : 'bg-white/[0.03] text-ts-muted border border-white/[0.06]'
+              }`}
             >
-              {selectedGarment.colors.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
-            </Select>
-
-            <Select
-              label="Ukuran Dominan"
-              value={size}
-              onChange={(e) => setSize(e.target.value)}
-            >
-              {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
-            </Select>
-
-            <Input
-              label="Jumlah (Pcs)"
-              type="number"
-              min="1"
-              value={qty}
-              onChange={(e) => setQty(Math.max(1, parseInt(e.target.value, 10) || 1))}
-            />
+              <span className="w-4 h-4 rounded-full bg-white/20 text-[10px] flex items-center justify-center font-mono">
+                {currentStep > s.step ? '✓' : s.step}
+              </span>
+              <span>{s.label}</span>
+            </button>
+            {s.step < 3 && <div className="w-4 h-[1px] bg-white/20 hidden sm:block" />}
           </div>
+        ))}
+      </div>
 
-          <Select
-            label="Ukuran Area Sablon DTF"
-            value={printSizeId}
-            onChange={(e) => setPrintSizeId(e.target.value)}
-          >
-            {DTF_PRINT_SIZES.map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </Select>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Step Configuration Form (7 Cols) */}
+        <form onSubmit={handleSubmit} className="lg:col-span-7 bg-ts-surface/80 backdrop-blur-xl border border-white/[0.09] rounded-3xl p-6 sm:p-8 space-y-6 shadow-glass-card shadow-glass-inset">
+          
+          {/* STEP 1: KAOS & WARNA */}
+          {currentStep === 1 && (
+            <div className="space-y-5 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-ts-terracotta" />
+                  <span>1. Pilih Model Garmen Kaos NSA</span>
+                </h3>
+                <span className="text-xs text-ts-muted">Langkah 1 dari 3</span>
+              </div>
 
-          <Input
-            label="Link File Artwork Desain (Google Drive / Dropbox / Cloud)"
-            placeholder="https://drive.google.com/... (atau bisa dikirim via WA)"
-            value={artworkLink}
-            onChange={(e) => setArtworkLink(e.target.value)}
-          />
+              {/* Garment Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {Object.entries(GARMENT_TYPES).filter(([k]) => k !== 'supplies').slice(0, 4).map(([k, g]) => (
+                  <button
+                    key={k}
+                    type="button"
+                    onClick={() => {
+                      setGarmentKey(k);
+                      if (g.colors?.[0]) setColor(g.colors[0].name);
+                    }}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                      garmentKey === k
+                        ? 'bg-ts-terracotta/20 border-ts-terracotta text-white shadow-glow-terracotta ring-1 ring-ts-terracotta'
+                        : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:bg-white/[0.06]'
+                    }`}
+                  >
+                    <div className="font-bold text-xs text-white">{g.name}</div>
+                    <div className="text-[11px] text-ts-muted mt-0.5">{g.desc || 'Ring spun katun adem'}</div>
+                  </button>
+                ))}
+              </div>
 
-          <div className="space-y-1">
-            <label className="block text-xs font-bold text-ts-krem/90">Catatan Khusus</label>
-            <textarea
-              placeholder="Contoh: Rincian ukuran bila pesan banyak (M: 4, L: 6, XL: 2), posisi sablon di dada kiri atau punggung belakang..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-ts-hitam border border-ts-border rounded-xl p-3 text-xs text-ts-krem focus:outline-none focus:border-ts-terracotta h-24"
-            />
-          </div>
+              {/* Color & Size Selector */}
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <Select
+                  label="Warna Kaos"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                >
+                  {selectedGarment.colors.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                </Select>
 
-          <Button type="submit" variant="primary" size="lg" className="w-full" icon={Send}>
-            Kirim Permintaan Custom Sablon
-          </Button>
+                <Select
+                  label="Ukuran Dominan"
+                  value={size}
+                  onChange={(e) => setSize(e.target.value)}
+                >
+                  {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
+                </Select>
+              </div>
+
+              {/* Quantity */}
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-white">Jumlah Pesanan (Pcs):</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    min="1"
+                    value={qty}
+                    onChange={(e) => setQty(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                    className="w-24 bg-ts-hitam/80 border border-white/[0.1] rounded-xl px-3 py-2 text-sm font-mono font-bold text-white focus:outline-none focus:border-ts-terracotta"
+                  />
+                  <span className="text-xs text-ts-kremMuted">
+                    {qty >= 12 ? '🔥 Diskon grosir lusinan aktif!' : 'Beli &ge;12 pcs untuk dapat harga lusinan'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-3 flex justify-end">
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  icon={ArrowRight}
+                  onClick={() => setCurrentStep(2)}
+                >
+                  Lanjut ke Area Sablon
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2: AREA SABLON DTF */}
+          {currentStep === 2 && (
+            <div className="space-y-5 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Printer className="w-4 h-4 text-ts-mustard" />
+                  <span>2. Pilih Ukuran Bidang Sablon DTF</span>
+                </h3>
+                <span className="text-xs text-ts-muted">Langkah 2 dari 3</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {DTF_PRINT_SIZES.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setPrintSizeId(p.id)}
+                    className={`p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                      printSizeId === p.id
+                        ? 'bg-ts-mustard/20 border-ts-mustard text-white shadow-glow-mustard ring-1 ring-ts-mustard'
+                        : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:bg-white/[0.06]'
+                    }`}
+                  >
+                    <div className="font-extrabold text-sm text-white">{p.name}</div>
+                    <div className="text-xs text-ts-muted mt-0.5">{p.desc || 'Bidang sablon standar'}</div>
+                    <div className="text-xs font-mono font-bold text-ts-mustard mt-2">
+                      Estimasi Sablon: {formatRupiah(p.cost)}
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              <div className="pt-3 flex items-center justify-between">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="md"
+                  icon={ArrowLeft}
+                  onClick={() => setCurrentStep(1)}
+                >
+                  Kembali
+                </Button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  icon={ArrowRight}
+                  onClick={() => setCurrentStep(3)}
+                >
+                  Lanjut ke Data &amp; Artwork
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: DATA PEMESAN & ARTWORK */}
+          {currentStep === 3 && (
+            <div className="space-y-5 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <User className="w-4 h-4 text-ts-teal" />
+                  <span>3. Kontak Pemesan &amp; File Desain</span>
+                </h3>
+                <span className="text-xs text-ts-muted">Langkah 3 dari 3</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <Input
+                  label="Nama Lengkap"
+                  placeholder="Nama pemesan"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+                <Input
+                  label="Nomor WhatsApp"
+                  placeholder="0812-xxxx-xxxx"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                />
+              </div>
+
+              <Input
+                label="Kota / Kabupaten Pengiriman"
+                placeholder="Contoh: Jakarta Selatan, Surabaya, Medan"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+
+              <Input
+                label="Link File Desain (Google Drive / Dropbox / Cloud)"
+                placeholder="https://drive.google.com/... (Bisa juga dikirim nanti via WA)"
+                value={artworkLink}
+                onChange={(e) => setArtworkLink(e.target.value)}
+              />
+
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-white">Catatan Tambahan (Opsional):</label>
+                <textarea
+                  placeholder="Contoh: Rincian ukuran bila pesan banyak (M: 4, L: 6, XL: 2), posisi sablon di dada kiri atau punggung belakang..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="w-full bg-ts-hitam/80 border border-white/[0.1] rounded-xl p-3 text-xs text-white focus:outline-none focus:border-ts-terracotta h-20"
+                />
+              </div>
+
+              <div className="pt-3 flex items-center justify-between">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="md"
+                  icon={ArrowLeft}
+                  onClick={() => setCurrentStep(2)}
+                >
+                  Kembali
+                </Button>
+                <Button
+                  type="submit"
+                  variant="glow"
+                  size="lg"
+                  icon={Send}
+                >
+                  Kirim Pesanan Custom Sablon
+                </Button>
+              </div>
+            </div>
+          )}
         </form>
 
-        {/* Estimation Summary Box */}
-        <div className="space-y-4">
-          <Card className="space-y-4 sticky top-24">
-            <h3 className="text-sm font-bold text-ts-krem flex items-center gap-2">
+        {/* Live Estimation Summary Card (5 Cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="bg-ts-surface/80 backdrop-blur-xl border border-white/[0.1] rounded-3xl p-6 space-y-5 shadow-glass-card shadow-glass-inset sticky top-24">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2 pb-3 border-b border-white/[0.08]">
               <Sparkles className="w-4 h-4 text-ts-mustard" />
-              Estimasi Biaya Transparan
+              <span>Kalkulasi Biaya Transparan</span>
             </h3>
 
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between text-ts-muted">
+            <div className="space-y-3 text-xs">
+              <div className="flex justify-between text-ts-kremMuted">
                 <span>Model Bahan:</span>
-                <span className="text-ts-krem font-medium">{selectedGarment.name}</span>
+                <strong className="text-white">{selectedGarment.name}</strong>
               </div>
-              <div className="flex justify-between text-ts-muted">
+              <div className="flex justify-between text-ts-kremMuted">
+                <span>Varian:</span>
+                <strong className="text-white">{color} • {size}</strong>
+              </div>
+              <div className="flex justify-between text-ts-kremMuted">
                 <span>Area Sablon:</span>
-                <span className="text-ts-krem font-medium">{selectedPrint.name}</span>
+                <strong className="text-white">{selectedPrint.name}</strong>
               </div>
-              <div className="flex justify-between text-ts-muted">
+              <div className="flex justify-between text-ts-kremMuted">
                 <span>Jumlah:</span>
-                <span className="font-mono text-ts-krem font-bold">{qty} pcs</span>
+                <strong className="font-mono text-white font-bold">{qty} pcs</strong>
               </div>
-              <div className="flex justify-between text-ts-muted">
-                <span>Estimasi Harga per Pcs:</span>
-                <span className="font-mono text-ts-terracotta font-bold">{formatRupiah(estPricePerPcs)}</span>
+              <div className="flex justify-between text-ts-kremMuted">
+                <span>Estimasi per Pcs:</span>
+                <strong className="font-mono text-ts-terracotta">{formatRupiah(estPricePerPcs)}</strong>
               </div>
 
-              <div className="pt-3 border-t border-ts-borderDim flex justify-between items-baseline">
-                <span className="font-bold text-ts-krem">Total Estimasi:</span>
-                <span className="font-mono text-lg font-extrabold text-ts-green">{formatRupiah(estTotal)}</span>
+              <div className="pt-4 border-t border-white/[0.08] flex justify-between items-baseline">
+                <span className="font-bold text-white">Total Estimasi:</span>
+                <span className="font-mono text-2xl font-black text-ts-green">{formatRupiah(estTotal)}</span>
               </div>
             </div>
 
-            <div className="p-3 bg-ts-hitam/60 border border-ts-borderDim rounded-xl text-[11px] text-ts-muted space-y-1">
-              <div className="text-ts-krem font-bold">Ketentuan & Garansi:</div>
-              <p>• Estimasi pengerjaan: 2-3 hari kerja.</p>
-              <p>• Minimum order: 1 pcs (tanpa minimum order!).</p>
-              <p>• Gratis pembuatan digital mockup preview sebelum proses cetak.</p>
+            <div className="p-4 bg-white/[0.02] border border-white/[0.06] rounded-2xl text-[11px] text-ts-kremMuted space-y-1.5">
+              <div className="text-white font-bold flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-ts-teal" />
+                <span>Standar Pengerjaan TeeStock:</span>
+              </div>
+              <p>• Pengerjaan cepat 2-3 hari kerja.</p>
+              <p>• Bebas cetak mulai 1 pcs tanpa minimum order.</p>
+              <p>• Digital mockup preview sebelum proses cetak.</p>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </div>

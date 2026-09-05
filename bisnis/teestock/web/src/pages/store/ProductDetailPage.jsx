@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   ShoppingBag, 
@@ -12,14 +12,19 @@ import {
   Ruler,
   Clock,
   RotateCcw,
-  Tag
+  Tag,
+  ExternalLink,
+  ChevronRight
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useStore } from '../../context/StoreContext';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { Button } from '../../components/ui/Button';
+import { Badge } from '../../components/ui/Badge';
 import { SizeCalculatorModal } from '../../components/store/SizeCalculatorModal';
+import { StickyMobileBuyBar } from '../../components/store/StickyMobileBuyBar';
 import { formatRupiah } from '../../utils/formatters';
+import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 
 const COLOR_HEX_MAP = {
   "Hitam": "#111111",
@@ -86,18 +91,24 @@ const COLOR_HEX_MAP = {
   "Sport Grey-Red": "#B87F86"
 };
 
+const COLOR_CATEGORIES = {
+  basic: ["Hitam", "Black", "Putih", "White", "Charcoal", "Sport Grey", "Sport Grey-Black", "White-Black"],
+  earthy: ["Sand", "Army", "Military Green", "Forest Green", "Dark Green", "Navy", "Maroon", "Dark Chocolate", "Chestnut"],
+  vibrant: ["Daisy", "Mustard", "Orange", "Gold", "Royal Blue", "Red", "Merah", "Heliconia", "Sapphire", "Purple", "Lime", "Lilac", "Aqua Sky"]
+};
+
 export function ProductDetailPage() {
   const { sku } = useParams();
   const navigate = useNavigate();
   const { catalog } = useAdmin();
-  const { addToCart } = useStore();
+  const { addToCart, storeSettings } = useStore();
 
   const product = catalog.find(p => p.sku === sku);
 
   if (!product) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-20 text-center space-y-4">
-        <h2 className="text-xl font-bold text-ts-krem">Produk Tidak Ditemukan</h2>
+        <h2 className="text-2xl font-bold text-white">Produk Tidak Ditemukan</h2>
         <p className="text-xs text-ts-muted">Desain atau produk polos dengan SKU {sku} tidak terdaftar di katalog kami.</p>
         <Link to="/katalog">
           <Button variant="primary">Kembali ke Katalog</Button>
@@ -117,7 +128,15 @@ export function ProductDetailPage() {
     : selectedGarment.colors.map(c => c.name);
 
   const [selectedColor, setSelectedColor] = useState(colorList[0] || 'Black');
-  const [colorSearch, setColorSearch] = useState('');
+  const [activeColorTab, setActiveColorTab] = useState('all'); // 'all', 'basic', 'earthy', 'vibrant'
+
+  // Filtered color list based on active tab
+  const filteredColors = useMemo(() => {
+    if (activeColorTab === 'all') return colorList;
+    const catList = COLOR_CATEGORIES[activeColorTab] || [];
+    const matched = colorList.filter(c => catList.some(cat => c.toLowerCase().includes(cat.toLowerCase())));
+    return matched.length > 0 ? matched : colorList;
+  }, [colorList, activeColorTab]);
 
   // Available sizes
   const sizeList = isBlank && product.sizes
@@ -128,13 +147,14 @@ export function ProductDetailPage() {
   const [qty, setQty] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
+  const [showStickyBar, setShowStickyBar] = useState(false);
 
   // Dynamic image state with fallback
   const defaultImage = product.filePath || product.file_path;
   const [previewImg, setPreviewImg] = useState(defaultImage);
 
   // Sync state whenever sku changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (colorList.length > 0) {
       const initialColor = colorList[0];
       setSelectedColor(initialColor);
@@ -149,6 +169,19 @@ export function ProductDetailPage() {
       setSelectedSize(sizeList[0]);
     }
   }, [product.sku]);
+
+  // Handle scroll for sticky mobile action bar
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 420) {
+        setShowStickyBar(true);
+      } else {
+        setShowStickyBar(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Price adjustments
   const basePrice = product.priceRetail || product.price_retail || 99000;
@@ -182,41 +215,58 @@ export function ProductDetailPage() {
     navigate('/keranjang');
   };
 
+  const cleanWhatsapp = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
+  const handleBuyWhatsapp = () => {
+    const waText = encodeURIComponent(
+      `Halo TeeStock! Saya ingin pesan:\nProduk: ${product.name} (${product.sku})\nModel: ${isBlank ? product.name : selectedGarment.name}\nWarna: ${selectedColor}\nUkuran: ${selectedSize}\nJumlah: ${qty} pcs\nTotal: ${formatRupiah(currentPrice * qty)}`
+    );
+    window.open(`https://wa.me/${cleanWhatsapp}?text=${waText}`, '_blank');
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
-      {/* Breadcrumb */}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
+      {/* Breadcrumb Navigation */}
       <div className="flex items-center gap-2 text-xs text-ts-muted">
-        <Link to="/katalog" className="hover:text-ts-terracotta flex items-center gap-1">
+        <Link to="/katalog" className="hover:text-ts-terracotta flex items-center gap-1 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Katalog
         </Link>
         <span>/</span>
-        <span>{product.seriesName || product.series}</span>
+        <span className="text-ts-kremMuted">{product.seriesName || product.series}</span>
         <span>/</span>
-        <span className="text-ts-krem font-bold">{product.name}</span>
+        <span className="text-white font-bold truncate max-w-xs">{product.name}</span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-        {/* Left: Product Mockup / Official Photo Image */}
-        <div className="space-y-4">
-          <div className="aspect-square bg-ts-surface border border-ts-border rounded-3xl overflow-hidden shadow-2xl relative group">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        {/* Left Column: Product Showcase & Image (5 Cols) */}
+        <div className="lg:col-span-6 space-y-5">
+          <div className="aspect-square bg-ts-surface/80 border border-white/[0.09] rounded-3xl overflow-hidden shadow-glass-card shadow-glass-inset relative group">
             <img
               src={previewImg}
               alt={`${product.name} - ${selectedColor}`}
               onError={() => setPreviewImg(defaultImage)}
-              className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+              className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
             />
-            <div className="absolute top-4 left-4 px-3 py-1 rounded-lg bg-ts-hitam/80 backdrop-blur border border-ts-border font-mono text-xs font-bold text-ts-terracotta">
+            
+            {/* Top SKU Chip */}
+            <div className="absolute top-4 left-4 px-3 py-1 rounded-xl bg-ts-hitam/85 backdrop-blur-md border border-white/10 font-mono text-xs font-bold text-ts-terracotta shadow-md">
               {product.sku}
             </div>
-            {isBlank && (
-              <div className="absolute top-4 right-4 px-2.5 py-1 rounded-lg bg-ts-surface/90 backdrop-blur border border-ts-border text-[11px] font-bold text-ts-krem flex items-center gap-1.5">
+
+            {/* Top Right Original NSA Seal */}
+            {isBlank ? (
+              <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 shadow-md">
                 <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
                 <span>100% Original NSA</span>
               </div>
+            ) : (
+              <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 shadow-md">
+                <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
+                <span>DTF HD Raster</span>
+              </div>
             )}
 
-            {/* Active Color Name Pill on Bottom-Left */}
-            <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-xl bg-ts-hitam/85 backdrop-blur border border-ts-border text-xs font-semibold text-ts-krem flex items-center gap-2 shadow-lg">
+            {/* Active Color Name Pill */}
+            <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-xl bg-ts-hitam/85 backdrop-blur-md border border-white/15 text-xs font-semibold text-white flex items-center gap-2 shadow-lg">
               <span
                 className="w-3 h-3 rounded-full border border-white/40 shrink-0"
                 style={{ backgroundColor: COLOR_HEX_MAP[selectedColor] || '#333333' }}
@@ -227,19 +277,19 @@ export function ProductDetailPage() {
 
           {/* Wholesale Lusinan Price Promo Card for Blanks */}
           {isBlank && (
-            <div className="p-4 bg-gradient-to-r from-ts-teal/15 via-ts-surface to-ts-surface border border-ts-teal/30 rounded-2xl flex items-center justify-between text-xs">
-              <div className="space-y-0.5">
-                <div className="font-extrabold text-ts-krem flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5 text-ts-teal" />
+            <div className="p-4 sm:p-5 bg-gradient-to-r from-ts-teal/15 via-ts-surface/90 to-ts-surface/90 border border-ts-teal/30 rounded-2xl flex items-center justify-between text-xs shadow-glass-inset">
+              <div className="space-y-1">
+                <div className="font-extrabold text-white flex items-center gap-1.5 text-sm">
+                  <Tag className="w-4 h-4 text-ts-teal" />
                   <span>Harga Grosir Lusinan (&ge;12 pcs)</span>
                 </div>
-                <p className="text-[11px] text-ts-muted">
+                <p className="text-[11px] text-ts-kremMuted">
                   Beli 12 pcs atau lebih (bisa campur warna &amp; size) otomatis dapat harga grosir reseller.
                 </p>
               </div>
               <div className="text-right font-mono shrink-0 pl-3">
-                <div className="text-[10px] text-ts-muted">Hanya</div>
-                <div className="font-black text-sm text-ts-green">
+                <div className="text-[10px] text-ts-muted">Mulai</div>
+                <div className="font-black text-base sm:text-lg text-ts-green">
                   {formatRupiah(product.priceReseller || (currentPrice - 7000))}
                   <span className="text-[10px] font-normal text-ts-muted">/pcs</span>
                 </div>
@@ -248,86 +298,85 @@ export function ProductDetailPage() {
           )}
         </div>
 
-        {/* Right: Spec & Purchasing Options */}
-        <div className="space-y-6">
-          <div>
-            <div className="text-xs font-bold text-ts-terracotta uppercase tracking-wider">
-              {product.seriesName || product.series} {product.niche ? `• ${product.niche}` : ''}
+        {/* Right Column: Spec & Purchasing Controls (7 Cols) */}
+        <div className="lg:col-span-6 space-y-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-ts-terracotta uppercase tracking-wider font-mono">
+                {product.seriesName || product.series}
+              </span>
+              {product.niche && (
+                <>
+                  <span className="text-white/20">•</span>
+                  <span className="text-xs font-medium text-ts-kremMuted">{product.niche}</span>
+                </>
+              )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-ts-krem mt-1 tracking-tight">
+
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
               {product.name}
             </h1>
-            <div className="font-mono text-2xl font-extrabold text-ts-green mt-3">
-              {formatRupiah(currentPrice)}
+
+            <div className="flex items-baseline gap-3 pt-1">
+              <span className="font-mono text-3xl font-black text-ts-green">
+                {formatRupiah(currentPrice)}
+              </span>
+              <span className="text-xs text-ts-muted font-mono">/ pcs</span>
             </div>
           </div>
 
-          <p className="text-xs sm:text-sm text-ts-muted leading-relaxed">
+          <p className="text-xs sm:text-sm text-ts-kremMuted leading-relaxed">
             {product.description || (isBlank 
               ? "Kaos polos original New States Apparel (NSA) tanpa jahitan samping (tubular) standar ekspor internasional."
               : "Kaos print-on-demand premium dengan sablon DTF resolusi tinggi pada kaos katun New States Apparel impor.")}
           </p>
 
-          {/* Shipping Dispatch SLA Badge */}
+          {/* SLA Badge */}
           {isBlank ? (
-            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-ts-teal/10 border border-ts-teal/30 text-xs text-ts-teal">
+            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-ts-teal/10 border border-ts-teal/30 text-xs">
               <Truck className="w-5 h-5 shrink-0 text-ts-teal" />
               <div>
-                <strong className="block font-bold text-ts-krem">⚡ Pengiriman Cepat 24 Jam Kerja</strong>
-                <span className="text-[11px] text-ts-muted">Stok Kaos Polos NSA ready di warehouse. Langsung dipacking dan dikirim H+1.</span>
+                <strong className="block font-bold text-white">⚡ Ready Stock &amp; Pengiriman H+1</strong>
+                <span className="text-[11px] text-ts-kremMuted">Kaos Polos NSA ready di warehouse. Langsung dipacking dan dikirim besok.</span>
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-ts-mustard/10 border border-ts-mustard/30 text-xs text-ts-mustard">
+            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-ts-mustard/10 border border-ts-mustard/30 text-xs">
               <Clock className="w-5 h-5 shrink-0 text-ts-mustard" />
               <div>
-                <strong className="block font-bold text-ts-krem">🛠️ Estimasi Cetak &amp; Kirim: 1-2 Hari Kerja</strong>
-                <span className="text-[11px] text-ts-muted">Diproduksi fresh on-demand dengan double heat press presisi suhu 155°C.</span>
+                <strong className="block font-bold text-white">🛠️ Fresh POD • Cetak Presisi 155°C</strong>
+                <span className="text-[11px] text-ts-kremMuted">Diproduksi khusus on-demand dengan double heat press suhu 155°C anti-retak.</span>
               </div>
             </div>
           )}
 
-          <hr className="border-ts-borderDim" />
+          <hr className="border-white/[0.06]" />
 
-          {/* Model Garment Selector (Only for graphic tees; for blanks, show specs) */}
-          {isBlank ? (
-            <div className="p-4 bg-ts-surface/80 border border-ts-border rounded-2xl space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-ts-krem flex items-center gap-1.5">
-                  <Layers className="w-4 h-4 text-ts-mustard" />
-                  Spesifikasi Asli Garmen NSA:
-                </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-ts-hitam text-ts-terracotta border border-ts-border">
-                  Model #{product.cititexCatId || '3600'}
-                </span>
-              </div>
-              <p className="text-xs text-ts-muted">
-                {product.niche}. 100% Produk Garmen Impor Asli New States Apparel (NSA). Bahan rajutan ring spun cotton halus, adem, dan awet untuk pemakaian harian maupun sablon DTF &amp; bordir.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-ts-krem flex items-center justify-between">
-                <span>Pilihan Model Bahan Kaos NSA:</span>
-                <span className="text-[11px] font-normal text-ts-muted">{selectedGarment.name}</span>
+          {/* Model Garment Selector (Graphic Tees only) */}
+          {!isBlank && (
+            <div className="space-y-2.5">
+              <label className="text-xs font-bold text-white flex items-center justify-between">
+                <span>Pilih Model Garmen Kaos NSA:</span>
+                <span className="text-[11px] font-mono text-ts-mustard">{selectedGarment.name}</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {Object.entries(GARMENT_TYPES).filter(([k]) => k !== 'supplies').slice(0, 5).map(([k, g]) => (
                   <button
                     key={k}
+                    type="button"
                     onClick={() => {
                       setSelectedGarmentKey(k);
                       if (g.colors?.[0]) setSelectedColor(g.colors[0].name);
                     }}
-                    className={`p-2.5 rounded-xl border text-xs font-bold text-left transition-all ${
+                    className={`p-3 rounded-xl border text-xs font-bold text-left transition-all duration-200 cursor-pointer ${
                       selectedGarmentKey === k
-                        ? 'bg-ts-terracotta/15 border-ts-terracotta text-white shadow-sm'
-                        : 'bg-ts-surface border-ts-border text-ts-krem/80 hover:bg-ts-surfaceHover'
+                        ? 'bg-ts-terracotta/20 border-ts-terracotta text-white shadow-glow-terracotta ring-1 ring-ts-terracotta'
+                        : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:bg-white/[0.06] hover:text-white'
                     }`}
                   >
                     <div>{g.name}</div>
                     <div className="text-[10px] text-ts-muted font-normal mt-0.5">
-                      {k === 'nsa_softstyle_30s' ? 'Standar' : `+${formatRupiah(k === 'nsa_heavyweight_24s' ? 10000 : k === 'nsa_longsleeve' ? 12000 : k === 'nsa_hoodie' ? 85000 : 30000)}`}
+                      {k === 'nsa_softstyle_30s' ? 'Standar Distro' : `+${formatRupiah(k === 'nsa_heavyweight_24s' ? 10000 : k === 'nsa_longsleeve' ? 12000 : k === 'nsa_hoodie' ? 85000 : 30000)}`}
                     </div>
                   </button>
                 ))}
@@ -335,104 +384,95 @@ export function ProductDetailPage() {
             </div>
           )}
 
-          {/* Color Selector */}
+          {/* Color Selector with Category Tabs (21st.dev style) */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-ts-krem flex items-center gap-2">
+              <label className="text-xs font-bold text-white flex items-center gap-2">
                 <span>Pilihan Warna:</span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-ts-hitam border border-ts-border font-bold text-white text-[11px]">
-                  <span
-                    className="w-2.5 h-2.5 rounded-full border border-white/40"
-                    style={{ backgroundColor: COLOR_HEX_MAP[selectedColor] || '#333333' }}
-                  />
-                  {selectedColor}
-                </span>
+                <span className="text-ts-mustard font-bold">{selectedColor}</span>
               </label>
-              <span className="text-[11px] text-ts-muted font-medium">
-                {colorList.length} Pilihan Warna Resmi
+              <span className="text-[11px] text-ts-muted font-mono">
+                {colorList.length} Warna Resmi
               </span>
             </div>
 
-            {isBlank ? (
-              /* Cititex-style Circular Swatches Grid with Real Fabric Photos & Tooltips */
-              <div className="p-3.5 bg-ts-surface/90 border border-ts-border rounded-2xl space-y-2">
-                <div className="flex flex-wrap items-center gap-2 max-h-56 overflow-y-auto pr-1">
-                  {colorList.map(colName => {
-                    const hex = COLOR_HEX_MAP[colName] || '#333333';
-                    const isSelected = selectedColor === colName;
-                    const swatchUrl = product.cititexCatId 
-                      ? `https://cititex.com/api/uploads/category/album/color/${product.cititexCatId}-${encodeURIComponent(colName)}.jpg`
-                      : null;
-
-                    return (
-                      <button
-                        key={colName}
-                        type="button"
-                        onClick={() => handleColorChange(colName)}
-                        title={colName}
-                        className={`group relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden transition-all duration-150 shrink-0 ${
-                          isSelected
-                            ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-hitam scale-110 z-10 shadow-lg'
-                            : 'ring-1 ring-ts-border hover:ring-ts-krem/70 hover:scale-105 opacity-90 hover:opacity-100'
-                        }`}
-                        style={{ backgroundColor: hex }}
-                      >
-                        {swatchUrl && (
-                          <img
-                            src={swatchUrl}
-                            alt={colName}
-                            className="w-full h-full object-cover"
-                            onError={(e) => { e.target.style.display = 'none'; }}
-                          />
-                        )}
-                        {/* Hover mini tooltip */}
-                        <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block z-30 px-2 py-0.5 rounded-md bg-ts-hitam text-[10px] font-bold text-ts-krem border border-ts-border whitespace-nowrap shadow-xl">
-                          {colName}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="text-[10px] text-ts-muted italic pt-1">
-                  * Klik lingkaran warna di atas untuk mengubah foto variasi secara langsung.
-                </p>
+            {/* Category Filter Pills */}
+            {colorList.length > 8 && (
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px]">
+                {[
+                  { id: 'all', label: 'Semua' },
+                  { id: 'basic', label: 'Basic & Netral' },
+                  { id: 'earthy', label: 'Earthy & Deep' },
+                  { id: 'vibrant', label: 'Vibrant' },
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveColorTab(tab.id)}
+                    className={`px-3 py-1 rounded-lg font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                      activeColorTab === tab.id
+                        ? 'bg-white/[0.12] text-white border border-white/20'
+                        : 'text-ts-muted hover:text-white hover:bg-white/[0.04]'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
-            ) : (
-              /* Graphic Tee Garment Colors */
-              <div className="flex flex-wrap items-center gap-2 max-h-48 overflow-y-auto pr-1">
-                {colorList.map(colName => {
+            )}
+
+            {/* Color Swatch Circle Grid */}
+            <div className="p-3.5 bg-white/[0.02] border border-white/[0.08] rounded-2xl space-y-2">
+              <div className="flex flex-wrap items-center gap-2.5 max-h-48 overflow-y-auto pr-1">
+                {filteredColors.map(colName => {
                   const hex = COLOR_HEX_MAP[colName] || '#333333';
                   const isSelected = selectedColor === colName;
+                  const swatchUrl = product.cititexCatId 
+                    ? `https://cititex.com/api/uploads/category/album/color/${product.cititexCatId}-${encodeURIComponent(colName)}.jpg`
+                    : null;
+
                   return (
                     <button
                       key={colName}
+                      type="button"
                       onClick={() => handleColorChange(colName)}
-                      className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+                      title={colName}
+                      className={`group relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden transition-all duration-200 shrink-0 cursor-pointer ${
                         isSelected
-                          ? 'bg-ts-hitam border-ts-terracotta text-white ring-1 ring-ts-terracotta'
-                          : 'bg-ts-surface border-ts-border text-ts-krem/80 hover:bg-ts-surfaceHover'
+                          ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-hitam scale-110 z-10 shadow-glow-terracotta'
+                          : 'ring-1 ring-white/20 hover:ring-white/60 hover:scale-105 opacity-85 hover:opacity-100'
                       }`}
+                      style={{ backgroundColor: hex }}
                     >
-                      <span
-                        className="w-3 h-3 rounded-full border border-white/20 shrink-0"
-                        style={{ backgroundColor: hex }}
-                      />
-                      <span>{colName}</span>
+                      {swatchUrl && (
+                        <img
+                          src={swatchUrl}
+                          alt={colName}
+                          className="w-full h-full object-cover"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                      )}
+                      <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block z-30 px-2 py-0.5 rounded-md bg-ts-hitam text-[10px] font-bold text-white border border-white/20 whitespace-nowrap shadow-xl">
+                        {colName}
+                      </span>
                     </button>
                   );
                 })}
               </div>
-            )}
+              <p className="text-[10px] text-ts-muted italic pt-1">
+                * Klik warna di atas untuk mengganti preview kaos secara langsung.
+              </p>
+            </div>
           </div>
 
           {/* Size Selector */}
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-ts-krem">Ukuran Kaos:</label>
+              <label className="text-xs font-bold text-white">Ukuran Kaos:</label>
               <button
                 type="button"
                 onClick={() => setIsSizeModalOpen(true)}
-                className="text-xs text-ts-terracotta hover:underline font-bold flex items-center gap-1.5 bg-ts-surface px-2.5 py-1 rounded-lg border border-ts-border hover:border-ts-terracotta transition-colors"
+                className="text-xs text-ts-mustard hover:text-white font-bold flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] px-3 py-1 rounded-lg border border-white/[0.1] transition-all cursor-pointer"
               >
                 <Ruler className="w-3.5 h-3.5" /> Hitung Ukuran (TB/BB)
               </button>
@@ -441,11 +481,12 @@ export function ProductDetailPage() {
               {sizeList.map(sz => (
                 <button
                   key={sz}
+                  type="button"
                   onClick={() => setSelectedSize(sz)}
-                  className={`w-11 h-10 rounded-xl border font-mono text-xs font-extrabold transition-all ${
+                  className={`w-12 h-11 rounded-xl border font-mono text-xs font-extrabold transition-all duration-150 cursor-pointer ${
                     selectedSize === sz
-                      ? 'bg-ts-terracotta text-white border-ts-terracotta shadow-md'
-                      : 'bg-ts-surface border-ts-border text-ts-krem/80 hover:bg-ts-surfaceHover'
+                      ? 'bg-ts-terracotta text-white border-ts-terracotta shadow-glow-terracotta'
+                      : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:bg-white/[0.08] hover:text-white'
                   }`}
                 >
                   {sz}
@@ -454,52 +495,68 @@ export function ProductDetailPage() {
             </div>
           </div>
 
-          {/* Quantity & Actions */}
-          <div className="space-y-3 pt-4 border-t border-ts-borderDim">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center border border-ts-border rounded-xl bg-ts-surface p-1">
+          {/* Quantity & High-Conversion Action Buttons */}
+          <div className="space-y-3.5 pt-4 border-t border-white/[0.08]">
+            <div className="flex items-center gap-3">
+              {/* Qty Stepper */}
+              <div className="flex items-center border border-white/[0.1] rounded-xl bg-white/[0.03] p-1 shrink-0">
                 <button
+                  type="button"
                   onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="w-8 h-8 rounded-lg hover:bg-ts-hitam text-ts-krem font-bold text-sm"
+                  className="w-8 h-9 rounded-lg hover:bg-white/[0.1] text-white font-bold text-base cursor-pointer transition-colors"
                 >
                   -
                 </button>
-                <span className="w-10 text-center font-mono font-bold text-sm text-ts-krem">
+                <span className="w-10 text-center font-mono font-bold text-sm text-white">
                   {qty}
                 </span>
                 <button
+                  type="button"
                   onClick={() => setQty(qty + 1)}
-                  className="w-8 h-8 rounded-lg hover:bg-ts-hitam text-ts-krem font-bold text-sm"
+                  className="w-8 h-9 rounded-lg hover:bg-white/[0.1] text-white font-bold text-base cursor-pointer transition-colors"
                 >
                   +
                 </button>
               </div>
 
+              {/* Add to Cart Button */}
               <Button
                 variant="primary"
                 size="lg"
-                className="flex-1"
+                className="flex-1 text-sm sm:text-base py-3 shadow-glow-terracotta"
                 icon={isAdded ? Check : ShoppingBag}
                 onClick={handleAddToCart}
               >
-                {isAdded ? "Ditambahkan ke Keranjang!" : "Tambah ke Keranjang"}
+                {isAdded ? "Berhasil Masuk Troli!" : "Tambah ke Troli"}
               </Button>
             </div>
 
-            <Button
-              variant="cream"
-              size="lg"
-              className="w-full"
-              onClick={handleBuyNow}
-            >
-              Beli Sekarang &amp; Checkout
-            </Button>
+            {/* Dual CTA: Beli Web & Direct WhatsApp */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <Button
+                variant="cream"
+                size="lg"
+                className="w-full text-xs sm:text-sm py-3 font-extrabold"
+                onClick={handleBuyNow}
+              >
+                Checkout Langsung Web
+              </Button>
+              <Button
+                variant="whatsapp"
+                size="lg"
+                className="w-full text-xs sm:text-sm py-3 font-bold"
+                icon={MessageSquare}
+                onClick={handleBuyWhatsapp}
+              >
+                Pesan via WhatsApp (0% Fee)
+              </Button>
+            </div>
 
-            {/* Guarantees & Trust Badges */}
-            <div className="pt-2 grid grid-cols-2 gap-2 text-[11px] text-ts-muted border-t border-ts-borderDim/50">
+            {/* Guarantees */}
+            <div className="pt-2 grid grid-cols-2 gap-2 text-[11px] text-ts-muted border-t border-white/[0.06]">
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-ts-green shrink-0" />
-                <span>100% Kaos Asli NSA</span>
+                <span>100% Produk Asli NSA</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <RotateCcw className="w-3.5 h-3.5 text-ts-terracotta shrink-0" />
@@ -510,14 +567,24 @@ export function ProductDetailPage() {
         </div>
       </div>
 
-      {/* Interactive Size Calculator & Chart Modal */}
+      {/* Interactive Size Calculator Modal */}
       <SizeCalculatorModal
         isOpen={isSizeModalOpen}
         onClose={() => setIsSizeModalOpen(false)}
         onSelectSize={(sz) => setSelectedSize(sz)}
         currentSize={selectedSize}
       />
+
+      {/* Sticky Action Bar on Mobile Viewport */}
+      <StickyMobileBuyBar
+        product={product}
+        selectedColor={selectedColor}
+        selectedSize={selectedSize}
+        price={currentPrice}
+        onAddToCart={handleAddToCart}
+        onBuyWhatsapp={handleBuyWhatsapp}
+        isVisible={showStickyBar}
+      />
     </div>
   );
 }
-
