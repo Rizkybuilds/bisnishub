@@ -1,142 +1,140 @@
-# Brand Guide — TeeStock
+# Brand Guide — TeeStock: Curated Apparel & Merch House
 
-Dokumen acuan identitas brand TeeStock. Dipakai sebagai pegangan setiap kali membuat desain baru, konten sosial media, atau materi promosi — supaya brand tetap konsisten meski katalog terus melebar ke banyak niche.
+Dokumen acuan identitas brand TeeStock. Dipakai sebagai kompas strategis dan operasional untuk perancangan produk, materi promosi, kolaborasi creator, hingga pengalaman pelanggan (*unboxing experience*).
 
 ---
 
-## 1. Brand Story & Positioning
+## 1. Brand Story & Essence
 
-**Nama:** TeeStock (dari "Tee" = kaos, "Stock" = katalog/persediaan luas)
+* **Nama Brand:** TeeStock
+* **Tagline Utama:** *Curated Apparel & Merch House*
+* **Sub-tagline Konsumen:** *"Wear Your Identity, Stock Your Story"*
 
-**Positioning statement:**
-> TeeStock adalah rumah bagi siapa pun yang ingin kaos yang benar-benar "ngerti" mereka — apa pun profesi, hobi, atau circle-nya. Satu brand, ratusan cerita, karena setiap orang layak punya kaos yang terasa personal.
+### Positioning Statement
+> **TeeStock** adalah *creative apparel & merch house* independen yang memadukan kurasi desain berkarakter kuat dengan standar produksi apparel berkualitas tinggi. Kami bukan sekadar toko ritel pakaian, melainkan wadah di mana setiap individu, kreator, dan komunitas dapat mengekspresikan identitas serta merayakan karyanya melalui apparel yang bermakna.
 
-**Kenapa TeeStock berbeda:** kebanyakan brand kaos punya satu identitas visual sempit (streetwear, distro, dsb). TeeStock justru menjadikan keberagaman sebagai kekuatan — banyak pilihan desain lintas niche, tapi tetap terasa satu keluarga brand yang rapi dan konsisten, bukan toko POD generik tanpa identitas.
+### Mengapa TeeStock Berbeda?
+* **Bukan Toserba Sablon Murahan:** Menghindari citra "toko sablon palugada" yang membingungkan. Semua karya ritel dikurasi dengan ketat, rapi, dan memiliki nilai rasa (*perceived value*) tinggi.
+* **Bukan Distro Eksklusif Sempit:** Memiliki fleksibilitas portofolio desain yang luas melalui sistem rilis berkala (*The Drop Model*).
+* **Mitra Terpercaya untuk Creator:** Memiliki lini studio yang memberikan solusi hulu-ke-hilir bagi kreator dan komunitas yang ingin merilis official merchandise tanpa repot urusan produksi dan modal besar.
 
-**Target audiens utama:** anak muda dewasa (18-35 tahun) yang aktif di media sosial, punya afiliasi kuat ke suatu komunitas/profesi/hobi tertentu, dan mencari produk yang mencerminkan identitas personal mereka — bukan kaos polos generik.
+---
 
-## 2. Arsitektur Brand
+## 2. Arsitektur Brand: Dual-Pillar Model
 
-**Struktur:** satu master brand (TeeStock) dengan sistem **series** per kategori niche. Sub-brand terpisah hanya untuk kasus khusus.
+TeeStock beroperasi dengan arsitektur dua sayap yang saling memperkuat reputasi brand:
 
-**Kapan sebuah niche/series layak jadi sub-brand terpisah:**
-- Positioning bentrok dengan konsep "katalog luas" (misal: streetwear eksklusif/hype)
-- Risiko brand safety yang bisa merusak reputasi niche lain (misal: politik/satire)
-- Butuh kelas harga & kualitas bahan yang jauh berbeda dari standar TeeStock
+```
+                  ┌───────────────────────────────┐
+                  │           TEESTOCK            │
+                  │ Curated Apparel & Merch House │
+                  └───────────────┬───────────────┘
+                                  │
+         ┌────────────────────────┴────────────────────────┐
+         ▼                                                 ▼
+┌─────────────────────────────────┐       ┌─────────────────────────────────┐
+│       TEESTOCK ORIGINALS        │       │         TEESTOCK STUDIO         │
+│  (Koleksi Ritel Desain In-House)│       │  (Layanan Kreatif & Kemitraan)  │
+└────────────────┬────────────────┘       └────────────────┬────────────────┘
+                 │                                         │
+        ┌────────┴────────┐                       ┌────────┼────────┐
+        ▼                 ▼                       ▼        ▼        ▼
+   Drop Kapsul       Pustaka Tema              Creator   Custom   Partner /
+   (Rilis Berkala)   (Kurasi Internal)          Merch    Studio   Reseller
+```
 
-Selain kondisi di atas, **semua niche baru masuk sebagai series di bawah TeeStock**, bukan brand baru.
+### 1. TeeStock Originals (Lini Ritel B2C)
+* Sayap produk apparel siap pakai (*ready-to-wear*) yang dirancang sendiri oleh tim internal TeeStock.
+* Dijual langsung ke konsumen akhir melalui marketplace (Shopee, TikTok Shop) dan katalog web resmi.
+* Memiliki margin penuh dan menjadi etalase utama yang membangun citra kualitas TeeStock di mata publik.
 
-## 3. Direktori Series
+### 2. TeeStock Studio (Sayap Kreatif & Kemitraan B2B2C)
+* Sayap layanan produksi dan kolaborasi yang menangani kebutuhan non-retail:
+  1. **Creator Merch Collab:** Kolaborasi resmi dengan kreator konten, seniman visual, atau musisi lokal untuk memproduksi official merchandise dengan sistem bagi hasil (*revenue sharing*).
+  2. **Custom Order Studio:** Melayani pesanan kaos custom (satuan maupun lusinan) untuk komunitas, event, atau perorangan dengan standar bahan New State Apparel.
+  3. **Partner / Reseller Program:** Memberikan peluang usaha bagi reseller dan dropshipper untuk memasarkan produk TeeStock dengan harga grosir dan materi promosi siap pakai.
 
-| Series | Tagline | Warna Aksen | Contoh Niche |
-|---|---|---|---|
-| **TeeStock Profesi** | Kaos yang ngerti keluh kesah kerjaanmu | Charcoal `#4A4A47` | Anak IT, guru, ojol, nakes |
-| **TeeStock Fase** | Buat setiap babak hidup yang lagi kamu jalani | Dusty Teal `#4F7C74` | Anak kos, fresh graduate, calon manten |
-| **TeeStock Komunitas / Aktif** | Satu hobi, satu keluarga | Olive `#6B7057` | Pendaki, pemancing, gym, gamer |
-| **TeeStock Lokal** | Bangga dari kampung halaman | Mustard `#D9A441` | Bahasa daerah, kebanggaan kota asal |
-| **TeeStock Fandom** | Buat yang tahu, langsung ngerti | Rust Red `#A84632` | Anime, K-pop, musik indie |
-| **TeeStock Receh / Sarkas** | Sindiran halus, humor jujur | Terracotta `#C1673D` | Humor Gen Z, sandwich generation |
-| **TeeStock Momen** | Rayakan momennya, pakai kaosnya | Navy `#33465C` | Wisuda, reuni, HUT RI, event komunitas |
-| **TeeStock Squad** | Buat kalian yang selalu bareng | Dusty Rose `#B08585` | Couple, keluarga, sahabat |
-| **TeeStock Kampus / Akademik** | Dari kelas sampai kosan | Warm Gray `#8C8880` | Mahasiswa, jurusan kuliah, organisasi kampus |
+---
 
-*(Referensi lengkap sub-niche di setiap kategori ada di `daftar-niche-teestock.md`.)*
+## 3. Sistem "The Drop Model" (TeeStock Originals)
+
+Sebagai ganti dari memamerkan "9 series" secara kaku di etalase publik yang berisiko membuat toko terlihat seperti toserba, TeeStock menerapkan **The Drop Model** (sistem rilis per edisi/kapsul).
+
+### Mekanisme Drop:
+* Setiap Drop mengusung satu tema spesifik dengan 2–4 desain pilihan yang saling melengkapi.
+* Rilis berkala (misal tiap 1–2 bulan sekali) menciptakan momentum promosi, urgensi bagi pembeli, dan cerita konten yang fokus di media sosial.
+* Desain yang terbukti menjadi *best-seller* dipertahankan sebagai **Core Catalog**, sementara desain musiman dapat diarsipkan (*vaulted*).
+
+### Pustaka Tema Internal (Referensi Perancangan Drop):
+1. **Tech & Dev:** Budaya programmer, engineer, IT support, startup.
+2. **Outdoor & Roam:** Pendaki gunung, camper, petualang alam bebas.
+3. **Culture & Local Pride:** Bahasa daerah, kebanggaan identitas kultural lokal.
+4. **Active & Passion:** Hobi memancing, otomotif, gym/fitness, gaming.
+5. **Life Chapters:** Fase kehidupan (anak kos, fresh graduate, dunia kerja).
+6. **Witty & Satire:** Humor jujur, sindiran ringan kehidupan sehari-hari.
+
+---
 
 ## 4. Identitas Visual
 
 ### 4.1 Logo & Wordmark
+* **Logo Utama:** Ikon line-art monokrom siluet tumpukan kaos (*bold outline*), melambangkan ketersediaan katalog dan fleksibilitas produksi.
+* **Palet Logo:** Selalu monokrom (Hitam `#1A1A1A` di atas latar terang, atau Putih di atas latar gelap). Tidak boleh diwarnai dengan warna-warni cerah agar citra profesional tetap terjaga.
+* **Clear Space:** Jarak aman di sekeliling logo minimal setara dengan lebar kerah kaos pada simbol logo.
 
-**Logo utama:** ikon line-art monokrom siluet kaos, dengan bagian bawah digambar sebagai garis-garis lipatan — merepresentasikan "tumpukan stok kaos" langsung lewat bentuk visualnya, tanpa perlu teks tambahan. Gaya garis tebal (bold outline), bersih, tanpa detail berlebihan.
+### 4.2 Palet Warna Dasar Produk (Blank Apparel)
+Semua produk dasar apparel menggunakan 4 warna netral premium:
 
-**Versi logo yang wajib tersedia:**
-
-| Versi | Kegunaan |
-|---|---|
-| Hitam di atas latar terang (versi utama) | Kemasan, label, konten dengan latar terang/krem |
-| Putih/outline terang di atas latar gelap | Kaos warna gelap, story/feed bertema gelap |
-| Ikon + wordmark "TeeStock" bergandengan | Header website, kop packing list, konteks yang butuh nama brand tertulis jelas |
-| Ikon saja (tanpa wordmark) | Ikon profil media sosial, favicon, watermark kecil |
-
-**Aturan pemakaian logo:**
-- **Clear space minimum** — sisakan area kosong di sekeliling logo minimal setara tinggi kerah kaos pada logo, supaya tidak ketiban elemen lain saat dipasang di kemasan atau postingan
-- **Ukuran minimum** — jangan tampilkan logo ikon di bawah 24x24px; di ukuran sangat kecil pastikan garis lipatan bagian bawah masih terbaca jelas, bukan jadi blok hitam pekat
-- **Jangan mengubah proporsi** — jangan menekan/meregangkan logo secara tidak proporsional; jika perlu menyesuaikan ukuran, skalakan secara merata
-- **Jangan menambah warna lain** — logo tetap monokrom (hitam atau putih) sesuai latar; warna aksen series TIDAK diterapkan ke logo, hanya ke elemen desain produk
-
-### 4.2 Warna
-
-**Warna netral dasar** — dipakai sebagai warna kaos utama di semua series:
-
-| Warna | Kode | Kegunaan |
+| Warna | Hex Code | Karakteristik |
 |---|---|---|
-| Hitam | `#1A1A1A` | Warna kaos utama, kontras tinggi |
-| Krem | `#F2EEE4` | Alternatif warna kaos, kesan hangat/natural |
-| Charcoal | `#4A4A47` | Warna kaos alternatif, netral |
-| Abu hangat | `#8C8880` | Warna kaos alternatif, lembut |
+| **Deep Onyx (Hitam)** | `#1A1A1A` | Elegan, tajam, kontras tinggi, standar streetwear |
+| **Natural Butter (Krem)** | `#F2EEE4` | Hangat, organik, modern aesthetic, latar foto resmi |
+| **Raw Charcoal** | `#4A4A47` | Maskulin, alternatif hitam yang lebih santai |
+| **Warm Smoke (Abu)** | `#8C8880` | Lembut, kasual, cocok untuk tipografi minimalis |
 
-**Warna aksen per series** — dipakai untuk elemen desain (teks, badge, ikon), bukan warna kaos. Lihat tabel Direktori Series di atas untuk pemetaan lengkap.
-
-**Aturan pemakaian warna:**
-- Warna kaos SELALU dari 4 warna netral dasar
-- Warna aksen series dipakai konsisten di semua desain dalam series yang sama
-- Maksimal 1 warna aksen + 1 warna netral per desain — jangan mencampur banyak warna sekaligus, biar tetap terlihat rapi dan gampang diproduksi
-
-### 4.3 Template Layout Desain
-
-Semua desain kaos menggunakan salah satu dari 3 template berikut:
-
-| Template | Kapan dipakai | Ciri khas |
-|---|---|---|
-| **Badge/emblem** | Niche komunitas & hobi | Bentuk badge/lencana, ikon sederhana, kesan "identitas klub" |
-| **Tipografi bold** | Niche humor & profesi | Fokus ke kata-kata/quote pendek, tanpa ilustrasi rumit |
-| **Ikon + teks** | Niche personal/spesifik | Ikon kecil di samping teks singkat, kesan playful tapi simpel |
-
-**Aturan konsistensi:** setiap desain baru harus memakai salah satu dari 3 template ini — jangan membuat template baru per desain, supaya katalog tetap terasa satu sistem meski niche-nya beragam.
+### 4.3 Template Layout Desain Baku
+Setiap desain kaos baru wajib mengikuti salah satu dari 3 formula tata letak berikut:
+1. **Emblem / Badge Layout:** Cocok untuk tema outdoor, komunitas, dan local pride. Bentuk lencana dengan garis tegas.
+2. **Bold Typographic Statement:** Cocok untuk tema tech, sarkas, dan kutipan berwawasan. Fokus pada kekuatan tata huruf dan pesan.
+3. **Minimalist Icon + Caption:** Cocok untuk estetika modern, micro-niche, dan gaya visual bersih.
 
 ### 4.4 Tipografi
-
-- Gunakan maksimal 2 jenis font di seluruh desain: 1 font utama untuk judul/copy utama (bold sans-serif), 1 font sekunder untuk detail/subtext (bisa monospace untuk kesan teknis di series Profesi, atau font reguler untuk series lain)
-- Semua teks di desain menggunakan huruf kecil (sentence case) atau kapital penuh untuk penekanan pendek — hindari campuran huruf besar-kecil yang tidak konsisten dalam satu desain
-
-## 5. Tone of Voice
-
-**Karakter suara brand secara umum:** akrab, jujur, sedikit jenaka — seperti teman yang paham banget situasi kamu, bukan brand korporat yang kaku.
-
-**Penyesuaian tone per series:**
-
-| Series | Tone |
-|---|---|
-| Profesi, Kampus | Relatable, sedikit sarkas tapi tetap sopan |
-| Fase, Squad | Hangat, personal, reflektif |
-| Komunitas/Aktif | Enerjik, bangga, penuh semangat |
-| Lokal | Hangat, membumi, penuh kebanggaan daerah |
-| Fandom | Antusias, penuh referensi khas komunitas |
-| Receh/Sarkas | Jenaka, to the point, tidak terlalu formal |
-| Momen | Meriah, terasa spesial/perayaan |
-
-**Yang dihindari di semua series:** bahasa yang merendahkan kelompok tertentu, humor yang menyinggung isu sensitif tanpa konteks yang jelas, klaim berlebihan soal kualitas produk.
-
-## 6. Panduan Penerapan di Channel
-
-**Format judul produk (konsisten di semua marketplace):**
-```
-[Nama Desain] — TeeStock [Nama Series]
-Contoh: "Commit & Pray" — TeeStock Profesi Series
-```
-
-**Nama akun/toko:** tetap "TeeStock" di semua channel (Shopee, Tokopedia, TikTok Shop, Instagram, website) — jangan gunakan nama berbeda di tiap channel.
-
-**Konten media sosial:** setiap post produk baru mencantumkan nama series-nya (lewat caption atau hashtag, misal #TeeStockProfesi) supaya audiens mulai mengenali struktur series dari waktu ke waktu.
-
-## 7. Checklist Sebelum Desain Baru Dipublikasikan
-
-- [ ] Sudah pakai salah satu dari 3 template layout baku
-- [ ] Warna kaos dari 4 warna netral dasar
-- [ ] Warna aksen sesuai series yang dituju
-- [ ] Tone of voice sesuai karakter series
-- [ ] Judul produk mengikuti format standar
-- [ ] Sudah lolos validasi respons sebelum produksi masal (sesuai sistem rollout bertahap)
+* **Font Utama (Display / Headline):** Sans-serif tebal berkarakter modern (cth: Inter, Montserrat, atau Archivo Black).
+* **Font Sekunder (Technical / Details):** Monospace modern (cth: JetBrains Mono / Space Mono) untuk sentuhan teknis/spesifikasi.
 
 ---
 
-*Dokumen ini bersifat hidup — update setiap kali ada keputusan baru soal series, warna, atau arah brand TeeStock.*
+## 5. Tone of Voice & Komunikasi
+
+| Audiens | Pilar Brand | Karakter Komunikasi | Contoh Pesan |
+|---|---|---|---|
+| **Pembeli Retail** | Originals | Akrab, cerdas, sedikit jenaka, menghargai detail | *"Dibuat untuk kamu yang tahu susahnya debugging di hari Jumat malam. Katun tebal, sablon presisi."* |
+| **Kreator / Seniman** | Studio | Kolaboratif, profesional, suportif, berorientasi eksekusi | *"Fokuslah berkarya. Biarkan TeeStock Studio yang mengurus produksi, cetak DTF, hingga packaging merch resmimu."* |
+| **Reseller / Mitra** | Studio | Terpercaya, transparan, memberi peluang bisnis nyata | *"Mulai bisnis apparel tanpa stok gudang dan tanpa mesin sablon. Katalog siap jual, margin jelas."* |
+
+---
+
+## 6. Standar Penamaan & Listing Produk
+
+### Format Judul Produk Ritel (Marketplace & Web):
+```
+[Nama Desain] T-Shirt — TeeStock Originals (Drop #[Nomor])
+Contoh: "Stack Overflow Certified" T-Shirt — TeeStock Originals (Drop #01)
+```
+
+### Format Kolaborasi Creator (Studio):
+```
+[Nama Desain] Official Merch — [Nama Creator] x TeeStock Studio
+Contoh: "Midnight Explorer" Official Merch — Raka Outdoor x TeeStock Studio
+```
+
+---
+
+## 7. Packaging & Unboxing Experience (Brand Touchpoint)
+
+Untuk menjaga persepsi brand besar dengan biaya operasional lean:
+1. **Polymailer / Ziplock Doff Polos:** Bersih dan higienis.
+2. **Branded Sticker Seal:** Segel kemasan dengan logo monokrom TeeStock.
+3. **Insert Card (Thank You & Care Guide):** Kartu ucapan terima kasih dengan petunjuk pencucian dan QR code katalog web.
+4. **Bonus Stiker Koleksi:** 1 stiker vinil tahan air bertema desain yang dibeli (meningkatkan *delight factor* pembeli).
+5. **Estimasi Biaya Kemasan:** Wajib berada dalam pagu maksimal **Rp 2.000 – Rp 2.500 per paket** (sudah masuk dalam perhitungan HPP).

@@ -54,60 +54,44 @@ Karena mesin heat press sudah dimiliki, alokasi modal yang sebelumnya disiapkan 
 
 ---
 
-## 3. Empat Lini Bisnis TeeStock
+## 3. Arsitektur Operasional: TeeStock Originals & TeeStock Studio
 
-Sesuai keputusan rollout: **Stock + Custom Order jalan dari awal, Kolaborasi & Reseller menyusul.**
+Sesuai pembaruan identitas brand menjadi *Curated Apparel & Merch House*, operasional dibagi menjadi dua sayap terintegrasi:
 
-### Fase 1 (Sekarang): Katalog Stock + Custom Order
+### A. Sayap Ritel: TeeStock Originals (The Drop Model)
+* **Karakter:** Rilis berkala per edisi/kapsul (*The Drop Model*), bukan 9 series statis yang kaku. Dimulai dari Drop #01 "Identity" (6 desain: IT, Outdoor, Local Pride).
+* **Alur Produksi:** Cetak film DTF meteran sekaligus saat pesanan terkonfirmasi (atau pre-press buffer 2-3 pcs per ukuran untuk pesanan cepat).
+* **Penyimpanan Blank:** Buffer kaos polos New State Apparel dalam ukuran populer (M, L, XL) warna Hitam & Krem.
 
-**A. Katalog Desain Sendiri (Stock)**
-Sudah punya sistem lengkap: 9 series, sistem rollout bertahap per batch, desain system (3 template + palet warna). Ini tetap jadi tulang punggung katalog TeeStock.
+### B. Sayap Layanan & Kemitraan: TeeStock Studio
+Sayap ini menangkap peluang non-retail dengan 3 sub-layanan yang diaktifkan bertahap:
 
-**B. Custom Order**
-Pesanan desain sesuai permintaan customer (nama, foto, request khusus).
+1. **Custom Order Studio (Mulai Fase 2):**
+   * Menerima pesanan kaos custom satuan maupun komunitas via WhatsApp / Google Form.
+   * Alur: Konsultasi desain -> Pembayaran DP 50% / Lunas -> Finalisasi preview mock-up (maksimal 2x revisi) -> Heat press & QC -> Kirim.
+   * Sinergi: Desain custom yang terbukti viral dapat dinegosiasikan untuk masuk ke katalog kurasi Originals.
 
-*Alur yang disarankan:*
-1. Customer request via WhatsApp/form website/DM sosial media (sertakan referensi desain/foto jika ada)
-2. Kamu kasih quote harga + estimasi waktu produksi
-3. Customer bayar (DP atau lunas, sesuai kebijakan yang kamu tentukan)
-4. Desain difinalisasi (kirim preview ke customer sebelum cetak, supaya nggak ada revisi setelah produksi)
-5. Press & QC
-6. Kirim
+2. **Creator Merch Collab (Mulai Fase 2):**
+   * Kerja sama merchandise resmi dengan kreator/seniman lokal tanpa modal dari creator.
+   * Model *revenue sharing* dari margin bersih (50/50). Produksi dijalankan secara pre-order atau on-demand.
 
-*Yang perlu ditentukan:*
-- **Harga minimum custom order** — karena ini pesanan satuan, margin per pcs biasanya lebih tipis dari produksi batch. Tentukan harga dasar + biaya tambahan kalau desainnya rumit (banyak warna, ukuran besar)
-- **Batas revisi gratis** — misal maksimal 1-2 kali revisi sebelum cetak, supaya nggak menghabiskan waktu produksi
-- **Estimasi waktu produksi yang realistis** — sesuaikan dengan kapasitas press harian yang sudah dihitung di atas, jangan janji terlalu cepat kalau lagi banyak pesanan Stock juga
-
-**Sinergi Stock + Custom:** desain custom yang ternyata banyak diminati (misal beberapa customer minta desain serupa) bisa "naik kelas" jadi bagian dari katalog Stock reguler — ini cara organik menambah katalog berdasarkan permintaan nyata, bukan tebakan.
-
-### Fase 2 (Menyusul): Kolaborasi & Reseller/Member
-
-**C. Kolaborasi**
-Bekerja sama dengan komunitas, kreator, atau seniman untuk desain co-branded.
-
-*Kenapa ditunda ke fase 2:* butuh reputasi TeeStock yang sudah cukup dikenal supaya partner kolaborasi tertarik, dan butuh kapasitas produksi yang sudah stabil supaya nggak keteteran menangani proyek kolaborasi di atas beban Stock + Custom yang sudah jalan.
-
-*Yang perlu disiapkan nanti:* kesepakatan sederhana soal pembagian hasil (royalti per pcs terjual, atau fee flat di muka), batas jumlah desain per kolaborasi, dan kejelasan siapa yang pegang hak cetak ulang.
-
-**D. Open Reseller/Member**
-Membuka harga khusus untuk reseller yang mau jual ulang produk TeeStock.
-
-*Kenapa ditunda ke fase 2:* program reseller butuh kapasitas produksi yang teruji (reseller akan mengandalkan kamu untuk fulfillment tepat waktu), harga tier yang jelas, dan katalog Stock yang sudah cukup luas supaya menarik buat reseller gabung.
-
-*Yang perlu disiapkan nanti:* struktur harga reseller (misal diskon dari harga retail di volume tertentu), syarat minimum order, dan kejelasan apakah reseller boleh custom branding sendiri atau harus tetap dengan branding TeeStock.
+3. **Partner & Dropship Network (Mulai Fase 3):**
+   * Memberikan harga grosir khusus mitra (Rp 79.000) untuk dijual kembali di harga retail (~Rp 99.000).
+   * Pengiriman dropship menggunakan resi otomatis marketplace atas nama toko mitra (*white-label fulfillment*).
 
 ---
 
-## 4. Roadmap Gabungan
+## 4. Tahapan Pengembangan (Roadmap 4 Fase)
 
-| Fase | Fokus |
+Tahapan eksekusi lengkap, indikator keberhasilan (*exit criteria*), dan pembagian waktu solopreneur telah dirinci dalam dokumen tersendiri:
+👉 [**`roadmap-pengembangan-teestock.md`**](file:///c:/Users/Rizky/ai-mentor-bisnis/bisnis/teestock/operasional/roadmap-pengembangan-teestock.md)
+
+| Fase | Fokus & Sasaran |
 |---|---|
-| **Fase 1a** | Batch 1 Stock (3 niche, 6 desain) jalan + buka Custom Order dengan kapasitas terbatas, sambil menyusun SOP press |
-| **Fase 1b** | Evaluasi kapasitas produksi riil (berapa pcs/hari yang benar-benar bisa ditangani), sesuaikan estimasi waktu Custom Order berdasarkan data nyata |
-| **Fase 1c** | Lanjut Batch 2-3 Stock, Custom Order berjalan reguler |
-| **Fase 2a** | Setelah alur Fase 1 stabil (idealnya sudah beberapa bulan berjalan lancar) — mulai buka Kolaborasi kecil-kecilan dengan 1 komunitas/kreator |
-| **Fase 2b** | Buka program Reseller/Member dengan struktur harga yang sudah matang |
+| **Fase 1 (Bulan 1)** | Proof of Quality & Launch Originals (Drop #01), SOP press, 10 ulasan bintang 5 pertama |
+| **Fase 2 (Bulan 2)** | The Concierge Studio: Pilot 1 kolaborasi creator mikro & SOP custom order |
+| **Fase 3 (Bulan 3–4)** | Partner & Dropship Network: Rekrut 10 dropshipper aktif, reseller media kit |
+| **Fase 4 (Bulan 5+)** | Sinergi MultiGraph: Cetak kemasan in-house, ekspansi totebag & merchandise non-kaos |
 
 ---
 
