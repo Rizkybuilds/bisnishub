@@ -1,0 +1,11 @@
+﻿{
+  name: bisnishub,
+  version: 1.0.0,
+  private: true,
+  description: BisnisHub Monorepo & TeeStock Apparel Platform,
+  scripts: {
+    build: npm --prefix bisnis/teestock/web run build,
+    dev: npm --prefix bisnis/teestock/web run dev,
+    install: npm --prefix bisnis/teestock/web install
+  }
+}
