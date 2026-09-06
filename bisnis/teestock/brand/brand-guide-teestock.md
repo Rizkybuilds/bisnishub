@@ -58,39 +58,38 @@ TeeStock beroperasi dengan arsitektur dua sayap yang saling memperkuat reputasi 
 
 ## 3. Sistem "The Drop Model" (TeeStock Originals)
 
-Sebagai ganti dari memamerkan "9 series" secara kaku di etalase publik yang berisiko membuat toko terlihat seperti toserba, TeeStock menerapkan **The Drop Model** (sistem rilis per edisi/kapsul).
+Sebagai ganti dari memamerkan katalog secara acak yang berisiko membuat toko terlihat seperti toserba atau membingungkan algoritma media sosial, TeeStock menerapkan **The Drop Model** (sistem rilis per edisi/kapsul).
 
-### Mekanisme Drop:
-* Setiap Drop mengusung satu tema spesifik dengan 2–4 desain pilihan yang saling melengkapi.
-* Rilis berkala (misal tiap 1–2 bulan sekali) menciptakan momentum promosi, urgensi bagi pembeli, dan cerita konten yang fokus di media sosial.
-* Desain yang terbukti menjadi *best-seller* dipertahankan sebagai **Core Catalog**, sementara desain musiman dapat diarsipkan (*vaulted*).
-
-### Pustaka Tema Internal (Referensi Perancangan Drop):
-1. **Tech & Dev:** Budaya programmer, engineer, IT support, startup.
-2. **Outdoor & Roam:** Pendaki gunung, camper, petualang alam bebas.
-3. **Culture & Local Pride:** Bahasa daerah, kebanggaan identitas kultural lokal.
-4. **Active & Passion:** Hobi memancing, otomotif, gym/fitness, gaming.
-5. **Life Chapters:** Fase kehidupan (anak kos, fresh graduate, dunia kerja).
-6. **Witty & Satire:** Humor jujur, sindiran ringan kehidupan sehari-hari.
+### Mekanisme Drop & Kurasi Desain:
+* **Prinsip Kurasi Desain:** Desain-desain acak yang sudah dimiliki solopreneur dikurasi ke dalam kelompok kecil (3–4 desain per Drop) yang memiliki kemiripan *vibes* visual (misal: satu Drop bertema *dark typography*, Drop berikutnya bertema *urban illustration*).
+* **Tema Payung Drop:** Setiap Drop diberi nama tema konsep (contoh: **Drop #01: "RAW IDENTITY"** atau **"ORIGINS"**) agar memiliki daya tarik cerita (*storytelling*) yang kuat di konten TikTok & Reels.
+* **Scarcity & Urgensi:** Pembatasan kuota rilis perdana (24 pcs) memicu efek FOMO dan memudahkan pengelolaan stok solopreneur di awal.
+* **Arsip & Core Catalog:** Desain yang terbukti menjadi *best-seller* dipertahankan sebagai **Core Catalog**, sementara desain musiman dapat diarsipkan (*vaulted*).
 
 ---
 
 ## 4. Identitas Visual
 
-### 4.1 Logo & Wordmark
-* **Logo Utama:** Ikon line-art monokrom siluet tumpukan kaos (*bold outline*), melambangkan ketersediaan katalog dan fleksibilitas produksi.
-* **Palet Logo:** Selalu monokrom (Hitam `#1A1A1A` di atas latar terang, atau Putih di atas latar gelap). Tidak boleh diwarnai dengan warna-warni cerah agar citra profesional tetap terjaga.
-* **Clear Space:** Jarak aman di sekeliling logo minimal setara dengan lebar kerah kaos pada simbol logo.
+### 4.1 Logo & Wordmark Resmi
+* **Logo Utama:** Siluet lipatan kaos berkerah crew-neck tegas di atas 3 lipatan bertumpuk (*The Stock*). Melambangkan ketangguhan garmen NSA 24s dan kelincahan suplai produksi distro modern.
+* **Format & Aset:**
+  - **Vector SVG:** [`teestock-logo.svg`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/brand/teestock-logo.svg) & [`web/public/logo-teestock.svg`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/web/public/logo-teestock.svg) untuk render tajam tanpa pecah di seluruh platform digital dan cetak.
+  - **High-Res Master:** [`teestock-logo-master-dark.jpg`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/brand/teestock-logo-master-dark.jpg) & [`teestock-logo-master-light.jpg`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/brand/teestock-logo-master-light.jpg).
+  - **React Component:** `<TeeStockLogo size="md" badge="APPAREL" />` di [`TeeStockLogo.jsx`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/web/src/components/common/TeeStockLogo.jsx).
+* **Palet Logo:**
+  - **Aksen Utama:** Terracotta `#D95D39` (energik, hangat, artisanal craftsmanship).
+  - **Monokrom Utama:** Krem `#F5F2EB` di atas Deep Charcoal `#161513`, atau Hitam pekat di atas latar terang.
 
-### 4.2 Palet Warna Dasar Produk (Blank Apparel)
-Semua produk dasar apparel menggunakan 4 warna netral premium:
+### 4.2 Palet Warna Brand & Produk (Blank Apparel)
+Produk dasar apparel dan sistem UI website menggunakan kombinasi palet estetik:
 
-| Warna | Hex Code | Karakteristik |
+| Warna | Hex Code | Karakteristik & Peran |
 |---|---|---|
-| **Deep Onyx (Hitam)** | `#1A1A1A` | Elegan, tajam, kontras tinggi, standar streetwear |
-| **Natural Butter (Krem)** | `#F2EEE4` | Hangat, organik, modern aesthetic, latar foto resmi |
-| **Raw Charcoal** | `#4A4A47` | Maskulin, alternatif hitam yang lebih santai |
-| **Warm Smoke (Abu)** | `#8C8880` | Lembut, kasual, cocok untuk tipografi minimalis |
+| **Terracotta** | `#D95D39` | Warna aksen brand, badge, CTA glow, dan emblem |
+| **Mustard Gold** | `#D9A441` | Aksen premium, bintang rating, dan highlight promo |
+| **Deep Charcoal** | `#161513` | Background utama UI website & kaos hitam pekat |
+| **Natural Cream** | `#F5F2EB` | Warna teks utama, kaos krem, dan latar foto resmi |
+| **Teal Vintage** | `#2A9D8F` | Aksen sekunder varian kaos polos & status operasional |
 
 ### 4.3 Template Layout Desain Baku
 Setiap desain kaos baru wajib mengikuti salah satu dari 3 formula tata letak berikut:
@@ -99,8 +98,8 @@ Setiap desain kaos baru wajib mengikuti salah satu dari 3 formula tata letak ber
 3. **Minimalist Icon + Caption:** Cocok untuk estetika modern, micro-niche, dan gaya visual bersih.
 
 ### 4.4 Tipografi
-* **Font Utama (Display / Headline):** Sans-serif tebal berkarakter modern (cth: Inter, Montserrat, atau Archivo Black).
-* **Font Sekunder (Technical / Details):** Monospace modern (cth: JetBrains Mono / Space Mono) untuk sentuhan teknis/spesifikasi.
+* **Font Display / Heading:** *Plus Jakarta Sans* (modern, bersih, geometris profesional).
+* **Font Teknis / Monospace:** *JetBrains Mono* (spesifikasi bahan NSA 24s, kode SKU, label operasional).
 
 ---
 

@@ -5,6 +5,7 @@ import { useAdmin } from '../../context/AdminContext';
 import { useAuth } from '../../context/AuthContext';
 import { SERIES } from '../../constants/series';
 import { formatRupiah } from '../../utils/formatters';
+import { SEOHead } from '../../components/common/SEOHead';
 
 export function CatalogPage() {
   const { catalog } = useAdmin();
@@ -99,6 +100,20 @@ export function CatalogPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+      <SEOHead
+        title={
+          activeSegment === 'blank'
+            ? "Jual Kaos Polos NSA Softstyle 30s & Heavyweight 24s Original | TeeStock"
+            : "Katalog Kaos Distro Grafis Curated — Bahan NSA 24s Heavyweight | TeeStock"
+        }
+        description={
+          activeSegment === 'blank'
+            ? "Beli kaos polos New States Apparel (NSA) Softstyle 30s & Heavyweight 24s original impor. 100% katun tubular tanpa jahitan samping, siap kirim ecer & grosir lusinan."
+            : "Koleksi kaos distro grafis curated TeeStock. Dicetak di atas garmen NSA Heavyweight 24s dengan sablon DTF HD suhu 155°C anti-pecah."
+        }
+        keywords={["katalog kaos distro", "kaos polos nsa", "kaos nsa 24s", "kaos nsa 30s", "sablon dtf satuan"]}
+        canonicalPath={activeSegment === 'blank' ? "/katalog?series=blank" : "/katalog"}
+      />
       {/* Title & Search Header */}
       <div className="space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-semibold text-ts-krem">
@@ -316,14 +331,20 @@ export function CatalogPage() {
                           <span className="font-mono text-sm font-black text-ts-green">
                             {formatRupiah(
                               profile?.partner_tier === 'reseller'
-                                ? (product.priceReseller || product.price_reseller || 74000)
-                                : (product.priceDropship || product.price_dropship || 87000)
+                                ? (product.priceReseller || product.price_reseller || 65000)
+                                : (product.priceDropship || product.price_dropship || 75000)
                             )}
                           </span>
                         </div>
                       ) : (
                         <div>
-                          <div className="text-[10px] text-ts-muted">Harga Satuan</div>
+                          {!isBlank && (
+                            <div className="flex items-center gap-1">
+                              <span className="text-[10px] text-ts-muted line-through font-mono">Rp 139.000</span>
+                              <span className="text-[9px] text-ts-terracotta font-bold font-mono">Hemat 28%</span>
+                            </div>
+                          )}
+                          <div className="text-[10px] text-ts-muted">Harga Launching</div>
                           <span className="font-mono text-sm font-extrabold text-ts-green">
                             {formatRupiah(product.priceRetail || product.price_retail || 99000)}
                           </span>

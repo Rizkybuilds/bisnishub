@@ -9,6 +9,7 @@ import { useAdmin } from '../context/AdminContext';
 import { CHANNELS } from '../constants/pricing';
 import { GARMENT_TYPES, SIZES } from '../constants/garments';
 import { formatRupiah } from '../utils/formatters';
+import { SEOHead } from '../components/common/SEOHead';
 
 export function AdminLayout() {
   const { toast, showToast, addOrder, catalog } = useAdmin();
@@ -78,6 +79,10 @@ export function AdminLayout() {
 
   return (
     <div className="flex min-h-screen bg-ts-hitam text-ts-krem">
+      <SEOHead
+        title="TeeStock Operations & Production Hub"
+        noindex={true}
+      />
       <AdminSidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <Outlet context={{ openNewOrderModal: () => setIsOrderModalOpen(true) }} />

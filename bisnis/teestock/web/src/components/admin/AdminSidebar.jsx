@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useAuth } from '../../context/AuthContext';
+import { TeeStockLogo } from '../common/TeeStockLogo';
 
 export function AdminSidebar() {
   const { orders, catalog, supabaseStatus } = useAdmin();
@@ -37,16 +38,14 @@ export function AdminSidebar() {
   return (
     <aside className="w-64 bg-ts-surface border-r border-ts-border flex flex-col shrink-0 h-screen sticky top-0 overflow-y-auto">
       {/* Brand Header */}
-      <div className="p-5 border-b border-ts-borderDim flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-ts-terracotta flex items-center justify-center font-bold text-white tracking-wider text-sm shadow-md">
-          TS
+      <div className="p-4 border-b border-ts-borderDim">
+        <div className="flex items-center justify-between">
+          <TeeStockLogo size="sm" badge="OPERATIONS" />
+          <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/40">
+            HUB
+          </span>
         </div>
-        <div>
-          <div className="font-extrabold text-base tracking-tight text-ts-krem flex items-center gap-1.5">
-            TeeStock <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/40">HUB</span>
-          </div>
-          <div className="text-[11px] text-ts-muted">Operations & Production</div>
-        </div>
+        <div className="text-[10px] text-ts-muted mt-1.5 font-mono">Production &amp; Fulfillment Suite</div>
       </div>
 
       {/* Navigation */}

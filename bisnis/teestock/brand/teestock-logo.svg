@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Crew Neck Collar -->
+  <path d="M 38 25 C 43 32, 57 32, 62 25" />
+  
+  <!-- Outer T-Shirt Silhouette: Shoulders, Sleeves & Torso -->
+  <path d="M 38 25 L 26 29 L 20 44 L 28 48 L 30 38 L 26 56" />
+  <path d="M 62 25 L 74 29 L 80 44 L 72 48 L 70 38 L 74 56" />
+  
+  <!-- Back Neckline -->
+  <path d="M 38 25 C 44 22, 56 22, 62 25" />
+
+  <!-- Stacked Folds (The Stock) -->
+  <!-- Layer 1 -->
+  <path d="M 26 56 C 24 57, 24 62, 27 63 L 73 63 C 76 62, 76 57, 74 56" />
+  
+  <!-- Layer 2 -->
+  <path d="M 27 63 C 24 64, 24 69, 27 70 L 73 70 C 76 69, 76 64, 73 63" />
+  
+  <!-- Layer 3 (Base Fold) -->
+  <path d="M 27 70 C 24 71, 24 77, 28 78 L 72 78 C 76 77, 76 71, 73 70" />
+</svg>

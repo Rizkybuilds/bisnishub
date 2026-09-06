@@ -95,7 +95,7 @@ ai-mentor-bisnis/
 
 | # | Bisnis | Bidang | Status |
 |---|--------|--------|--------|
-| 1 | **TeeStock** | Apparel POD Brand | 🟡 Planning — riset & tools ready |
+| 1 | **TeeStock** | Apparel POD Brand | 🟡 Launching Prep — Web App Ready, In-House Heat Press Active |
 | 2 | **MultiGraph** | Printing | 🔴 Ideation |
 | 3 | **Titik Buta** | TBD | 🔴 Ideation |
 

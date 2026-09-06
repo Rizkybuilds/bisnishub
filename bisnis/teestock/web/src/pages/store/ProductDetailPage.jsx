@@ -26,6 +26,9 @@ import { SizeCalculatorModal } from '../../components/store/SizeCalculatorModal'
 import { StickyMobileBuyBar } from '../../components/store/StickyMobileBuyBar';
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
+import { SEOHead } from '../../components/common/SEOHead';
+import { BUNDLE_DEALS } from '../../constants/pricing';
+import { ProductReviews } from '../../components/store/ProductReviews';
 
 const COLOR_HEX_MAP = {
   "Hitam": "#111111",
@@ -195,8 +198,8 @@ export function ProductDetailPage() {
   if (isPartner && !isBlank) {
     const isReseller = profile?.partner_tier === 'reseller';
     const partnerBase = isReseller
-      ? (product.priceReseller || product.price_reseller || Math.round(baseRetailPrice * 0.75))
-      : (product.priceDropship || product.price_dropship || Math.round(baseRetailPrice * 0.88));
+      ? (product.priceReseller || product.price_reseller || 65000)
+      : (product.priceDropship || product.price_dropship || 75000);
     
     effectiveBasePrice = partnerBase;
     partnerSavings = baseRetailPrice - partnerBase;
@@ -211,6 +214,28 @@ export function ProductDetailPage() {
     else if (selectedGarmentKey === 'nsa_polo') priceDelta = 30000;
   }
   const currentPrice = isBlank ? baseRetailPrice : (effectiveBasePrice + priceDelta);
+
+  const productSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "image": previewImg ? [previewImg] : [],
+    "description": product.description || "Kaos New States Apparel original dengan sablon DTF HD anti-pecah.",
+    "sku": product.sku,
+    "brand": {
+      "@type": "Brand",
+      "name": "TeeStock Apparel"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://teestock.vercel.app/produk/${product.sku}`,
+      "priceCurrency": "IDR",
+      "price": currentPrice,
+      "priceValidUntil": "2027-12-31",
+      "itemCondition": "https://schema.org/NewCondition",
+      "availability": "https://schema.org/InStock"
+    }
+  };
 
   const handleColorChange = (colName) => {
     setSelectedColor(colName);
@@ -243,6 +268,15 @@ export function ProductDetailPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
+      <SEOHead
+        title={`${product.name} — Kaos NSA 24s Heavyweight Sablon DTF HD | TeeStock`}
+        description={`${product.name}. Dicetak dengan sablon DTF HD di atas garmen New States Apparel (NSA) Heavyweight 24s / Softstyle 30s original tanpa jahitan samping.`}
+        keywords={[product.name, product.seriesName || 'kaos distro', 'kaos nsa 24s heavyweight', 'kaos nsa softstyle 30s', 'sablon dtf satuan']}
+        image={previewImg}
+        canonicalPath={`/produk/${product.sku}`}
+        type="product"
+        schema={productSchema}
+      />
       {/* Breadcrumb Navigation */}
       <div className="flex items-center gap-2 text-xs text-ts-muted">
         <Link to="/katalog" className="hover:text-ts-terracotta flex items-center gap-1 transition-colors">
@@ -353,10 +387,20 @@ export function ProductDetailPage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <div className="flex items-baseline gap-3">
+                  <div className="flex items-baseline gap-3 flex-wrap">
                     <span className="font-mono text-3xl font-black text-ts-green">
                       {formatRupiah(currentPrice)}
                     </span>
+                    {!isBlank && (
+                      <span className="text-base text-ts-muted line-through font-mono">
+                        {formatRupiah(139000 + priceDelta)}
+                      </span>
+                    )}
+                    {!isBlank && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/30">
+                        Hemat 28%
+                      </span>
+                    )}
                     <span className="text-xs text-ts-muted font-mono">/ pcs</span>
                   </div>
 
@@ -365,9 +409,9 @@ export function ProductDetailPage() {
                     <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2 text-ts-kremMuted">
                         <span className="text-ts-mustard font-bold">💼 Mau jual kembali?</span>
-                        <span>Harga Mitra mulai <strong className="text-white font-mono">{formatRupiah(product.priceDropship || 87000)}</strong></span>
+                        <span>Harga Mitra mulai <strong className="text-white font-mono">{formatRupiah(65000)}</strong></span>
                       </div>
-                      <Link to="/akun?tab=partner" className="text-ts-terracotta hover:underline font-bold text-[11px] shrink-0 pl-2">
+                      <Link to="/partner" className="text-ts-terracotta hover:underline font-bold text-[11px] shrink-0 pl-2">
                         Info Mitra &rarr;
                       </Link>
                     </div>
@@ -547,6 +591,46 @@ export function ProductDetailPage() {
             </div>
           </div>
 
+          {/* Bundling Promotion Banner (AOV Booster) */}
+          {role !== 'reseller' && role !== 'dropship' && (
+            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-ts-terracotta/15 via-ts-mustard/10 to-transparent border border-ts-terracotta/30 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black text-white flex items-center gap-1.5 uppercase tracking-wide">
+                  <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
+                  Promo Paket Bundling
+                </span>
+                <span className="text-[10px] font-mono font-bold text-ts-terracotta bg-ts-terracotta/20 px-2 py-0.5 rounded border border-ts-terracotta/40">
+                  HEMAT S.D RP 42.000
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {BUNDLE_DEALS.map((deal) => (
+                  <button
+                    key={deal.minQty}
+                    type="button"
+                    onClick={() => setQty(deal.minQty)}
+                    className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer ${
+                      qty === deal.minQty
+                        ? 'bg-ts-terracotta text-white border-ts-terracotta shadow-glow-terracotta'
+                        : 'bg-white/[0.04] border-white/10 hover:bg-white/[0.08] text-ts-krem'
+                    }`}
+                  >
+                    <div className="font-bold text-[11px] leading-tight flex items-center justify-between">
+                      <span>{deal.title}</span>
+                      {qty === deal.minQty && <Check className="w-3.5 h-3.5" />}
+                    </div>
+                    <div className="text-[10px] font-mono font-bold text-ts-mustard mt-1">
+                      {formatRupiah(deal.pricePerItem * deal.minQty)}
+                    </div>
+                    <div className="text-[9px] text-ts-kremMuted mt-0.5">
+                      {deal.badge}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Quantity & High-Conversion Action Buttons */}
           <div className="space-y-3.5 pt-4 border-t border-white/[0.08]">
             <div className="flex items-center gap-3">
@@ -617,6 +701,11 @@ export function ProductDetailPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Social Proof & Customer Reviews Section */}
+      <div className="mt-12 sm:mt-16">
+        <ProductReviews productName={product.name} sku={product.sku} />
       </div>
 
       {/* Interactive Size Calculator Modal */}

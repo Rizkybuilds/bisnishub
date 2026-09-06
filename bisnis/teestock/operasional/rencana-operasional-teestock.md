@@ -4,40 +4,32 @@ Dokumen ini melengkapi analisis bisnis dan brand guide sebelumnya dengan detail 
 
 ---
 
-## 1. Rantai Pasok & Model Produksi
+## 1. Rantai Pasok & Model Produksi (Aktual September 2026)
 
 ### 1.1 Sumber Bahan (Blank Apparel)
 
-**Vendor utama:** New State Apparel — mencakup kaos, jaket, dan polo dalam satu katalog.
+**Vendor utama:** New States Apparel (NSA) via Cititex — varian utama **NSA Heavyweight 24s** (impor premium, tubular tanpa jahitan samping) dan opsi **NSA Softstyle 30s**.
+* **Harga Beli:** Rp 37.000 (grosir min 72 pcs) hingga Rp 42.000 (ritel satuan).
+* **Status Fisik:** Sampel fisik kaos NSA 24s sudah dipegang langsung oleh founder dan lulus verifikasi ketebalan serta fitting garmen.
 
-**Kenapa ini pilihan bagus untuk tahap sekarang:**
-- Satu vendor untuk banyak jenis produk memudahkan manajemen (1 hubungan, 1 sistem pemesanan, kemungkinan harga lebih baik seiring volume naik)
-- Katalog yang luas (kaos, jaket, polo) membuka jalan buat TeeStock memperluas jenis produk di masa depan tanpa harus cari vendor baru dari nol
+**Antisipasi:** Simpan kontak cadangan (Doxa Apparel / Gildan Hammer) jika Cititex mengalami kekosongan ukuran L/XL warna hitam.
 
-**Yang perlu diantisipasi:**
-- **Ketergantungan pada satu vendor** — kalau New State Apparel kehabisan stok warna/ukuran tertentu atau ada gangguan pasokan, seluruh produksi bisa terhambat. Simpan kontak 1-2 vendor kaos polos cadangan (nggak perlu dipakai sekarang, cukup tahu opsinya) untuk jaga-jaga.
-- **Rencana jangka menengah/panjang** — dua arah ekspansi yang sudah kamu pikirkan (tambah vendor kaos polos lain, atau keluarkan brand polosan sendiri) sebaiknya dipertimbangkan setelah volume produksi cukup besar untuk membenarkan investasi tambahan itu, bukan di fase awal.
+### 1.2 Proses Cetak: DTF Roll Meteran + Mesin Heat Press In-House
 
-### 1.2 Proses Cetak: DTF Meteran + Press Sendiri
+* **Cetak Film:** Membeli film DTF roll meteran (Rp 28.000 – Rp 35.000 / meter).
+* **Eksekusi Press:** **Dilakukan sendiri di rumah menggunakan mesin heat press pribadi milik founder**.
+* **Keunggulan Kompetitif:**
+  - **Efisiensi Biaya:** Mengeliminasi biaya ongkos press vendor (menghemat Rp 5.000 – Rp 7.000 per kaos).
+  - **Kontrol Kualitas 100%:** Penentuan suhu (155°C), durasi (15 detik), tekanan presisi, dan finishing teflon dikerjakan mandiri tanpa risiko kecerobohan pihak ketiga.
+  - **SLA Cepat (H+0 / H+1):** Pesanan yang masuk pagi bisa langsung dipress siang hari dan dikirim sore tanpa menunggu antrean vendor sablon.
 
-**Model:** beli film DTF meteran dari vendor cetak, proses press dilakukan sendiri di rumah (mesin heat press sudah dimiliki).
+### 1.3 SOP Heat Press Baku (NSA 24s & DTF)
 
-**Kenapa model ini lebih menguntungkan dibanding full-outsource ke jasa DTF per-piece:**
-- **Biaya per unit lebih murah** — beli meteran biasanya jauh lebih efisien dibanding bayar jasa cetak+press per pcs ke vendor, apalagi kalau satu meter film bisa memuat banyak desain kecil sekaligus (bisa "digabung" dalam satu layout cetak)
-- **Kontrol kualitas penuh** — kamu yang menentukan suhu, tekanan, dan durasi press, jadi hasil akhir lebih konsisten dan bisa langsung dicek sebelum dikirim ke customer
-- **Turnaround lebih cepat** — nggak perlu antre di jadwal produksi vendor, sangat penting untuk mendukung lini **Custom Order** yang butuh respons cepat
-
-**Yang perlu disiapkan supaya proses ini rapi:**
-- **SOP press tertulis** — suhu, tekanan, dan durasi yang konsisten per jenis bahan (katun combed, jaket, polo bisa beda kebutuhan). Ini penting supaya kualitas nggak tergantung mood/ingatan, apalagi kalau nanti ada yang bantu produksi selain kamu sendiri
-- **Estimasi kapasitas produksi harian** — dengan satu mesin heat press dan dikerjakan sendiri, penting untuk tahu realistis berapa pcs per hari yang bisa diproduksi tanpa mengorbankan kualitas. Ini akan menentukan berapa banyak pesanan (stock + custom) yang bisa diterima bersamaan tanpa membuat customer menunggu terlalu lama
-- **Manajemen sisa film DTF** — beli meteran berarti ada perhitungan efisiensi supaya sisa film nggak banyak terbuang; rencanakan layout cetak gabungan (beberapa desain kecil dalam satu lembar meteran) untuk memaksimalkan penggunaan
-
-### 1.3 Dampak ke Struktur Biaya
-
-Karena mesin heat press sudah dimiliki, alokasi modal yang sebelumnya disiapkan untuk peralatan bisa dialihkan ke:
-- Pembelian film DTF meteran dalam jumlah yang cukup untuk beberapa batch desain sekaligus (lebih efisien dibanding beli sedikit-sedikit)
-- Variasi sample blank (kaos, coba juga polo/jaket dalam jumlah kecil) dari New State Apparel untuk tes kualitas bahan & hasil press
-- Buffer untuk mendukung Custom Order yang butuh fleksibilitas bahan/warna sesuai request customer
+1. **Pre-press:** Press kaos polos kosong selama 3–5 detik pada suhu 155°C untuk menghilangkan kelembapan serat katun.
+2. **First Press:** Letakkan film DTF, press dengan tekanan medium-heavy selama 15 detik pada suhu 155°C – 160°C.
+3. **Cooling (Cold Peel):** Diamkan hingga plastik PET film benar-benar dingin sebelum dikupas perlahan dari sudut ke sudut.
+4. **Finishing Press (Curing):** Tutup sablonan dengan kertas teflon / baking paper, press kembali selama 5–7 detik untuk menanamkan tinta ke dalam pori-pori kain dan menghilangkan kilap plastik berlebih.
+5. **Quality Check & Fold:** Periksa kerataan rekat lem pada sudut sablon, lipat rapi, dan masukkan ke polymailer dengan stiker segel TeeStock.
 
 ---
 
@@ -75,9 +67,11 @@ Sayap ini menangkap peluang non-retail dengan 3 sub-layanan yang diaktifkan bert
    * Kerja sama merchandise resmi dengan kreator/seniman lokal tanpa modal dari creator.
    * Model *revenue sharing* dari margin bersih (50/50). Produksi dijalankan secara pre-order atau on-demand.
 
-3. **Partner & Dropship Network (Mulai Fase 3):**
-   * Memberikan harga grosir khusus mitra (Rp 79.000) untuk dijual kembali di harga retail (~Rp 99.000).
-   * Pengiriman dropship menggunakan resi otomatis marketplace atas nama toko mitra (*white-label fulfillment*).
+3. **Partner & Dropship Network (Aktif & Live di Web):**
+   * Memberikan dua tier harga mitra transparan:
+     - **Tier Dropship:** Rp 75.000 (satuan white-label, resi otomatis marketplace atas nama toko mitra).
+     - **Tier Reseller:** Rp 65.000 (min 12 pcs, modal stok distro/komunitas lokal).
+   * Menjaga margin pertumbuhan bisnis solopreneur tetap di atas target minimal 10% dari HPP.
 
 ---
 

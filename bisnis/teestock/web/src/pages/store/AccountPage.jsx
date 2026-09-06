@@ -28,6 +28,7 @@ import { Input } from '../../components/ui/Input';
 import { formatRupiah, formatDate } from '../../utils/formatters';
 import { getActiveVouchers } from '../../services/vouchersApi';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
+import { SEOHead } from '../../components/common/SEOHead';
 
 export function AccountPage() {
   const { user, profile, role, isAdmin, isPartner, isMember, updateProfile, signOut, openAuthModal } = useAuth();
@@ -107,6 +108,11 @@ export function AccountPage() {
   if (!isMember) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 sm:py-24 text-center space-y-6">
+        <SEOHead
+          title="Masuk ke Akun Pelanggan | TeeStock"
+          noindex={true}
+          canonicalPath="/akun"
+        />
         <div className="w-16 h-16 rounded-3xl bg-ts-terracotta/20 text-ts-terracotta flex items-center justify-center mx-auto border border-ts-terracotta/30 shadow-glow-terracotta">
           <User className="w-8 h-8" />
         </div>
@@ -137,6 +143,11 @@ export function AccountPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+      <SEOHead
+        title="Akun Saya & Riwayat Pesanan | TeeStock"
+        noindex={true}
+        canonicalPath="/akun"
+      />
       {/* ─── Profile Header Bar ─────────────────────────────── */}
       <div className="p-6 sm:p-8 rounded-3xl bg-ts-surface/80 backdrop-blur-xl border border-white/[0.1] shadow-glass-card shadow-glass-inset flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div className="flex items-center gap-4">

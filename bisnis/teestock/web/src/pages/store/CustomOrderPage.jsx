@@ -9,6 +9,7 @@ import { Input, Select } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
+import { SEOHead } from '../../components/common/SEOHead';
 
 export function CustomOrderPage() {
   const { addOrder } = useAdmin();
@@ -108,6 +109,12 @@ export function CustomOrderPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+      <SEOHead
+        title="Custom Sablon DTF Satuan & Komunitas — Bahan NSA Original | TeeStock"
+        description="Jasa bikin kaos custom sablon DTF satuan, komunitas, merchandise band, dan event. Menggunakan garmen New States Apparel (NSA) Heavyweight 24s & Softstyle 30s. Dapatkan estimasi harga instan!"
+        keywords={["custom kaos satuan", "sablon dtf satuan", "bikin merch komunitas", "kaos custom nsa 24s", "sablon kaos bandung"]}
+        canonicalPath="/custom-order"
+      />
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-semibold text-ts-krem">

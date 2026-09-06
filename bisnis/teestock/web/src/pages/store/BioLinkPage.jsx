@@ -12,6 +12,8 @@ import {
   Instagram,
 } from 'lucide-react';
 import { NewsletterCapture } from '../../components/store/NewsletterCapture';
+import { SEOHead } from '../../components/common/SEOHead';
+import { TeeStockLogoIcon } from '../../components/common/TeeStockLogo';
 
 // ─── Bio Link Data (hardcoded — evolve to Supabase later) ─────────
 const BIO_LINKS = [
@@ -85,42 +87,15 @@ const SOCIAL_LINKS = [
 
 // ─── Component ────────────────────────────────────────────────────
 export function BioLinkPage() {
-  // Set page-specific meta tags for social sharing
-  useEffect(() => {
-    document.title = 'TeeStock — Curated Apparel & Merch House';
-
-    const metaTags = {
-      'og:title': 'TeeStock — Curated Apparel & Merch House',
-      'og:description': 'Wear Your Identity, Stock Your Story. Kaos desain berkarakter, kaos polos premium NSA, custom merch studio.',
-      'og:url': 'https://teestock.vercel.app/bio',
-      'og:type': 'website',
-      'twitter:card': 'summary_large_image',
-      'twitter:title': 'TeeStock — Curated Apparel & Merch House',
-      'twitter:description': 'Wear Your Identity, Stock Your Story.',
-    };
-
-    const createdTags = [];
-    Object.entries(metaTags).forEach(([property, content]) => {
-      let tag = document.querySelector(`meta[property="${property}"]`)
-             || document.querySelector(`meta[name="${property}"]`);
-      if (!tag) {
-        tag = document.createElement('meta');
-        tag.setAttribute(property.startsWith('og:') ? 'property' : 'name', property);
-        document.head.appendChild(tag);
-        createdTags.push(tag);
-      }
-      tag.setAttribute('content', content);
-    });
-
-    return () => {
-      createdTags.forEach(tag => tag.remove());
-    };
-  }, []);
-
   const visibleLinks = BIO_LINKS.filter(link => !link.hidden);
 
   return (
     <div className="min-h-screen bg-ts-hitam text-ts-krem flex items-start justify-center px-4 py-8 sm:py-12">
+      <SEOHead
+        title="TeeStock Apparel | Link Resmi Bio Instagram & TikTok"
+        description="Wear Your Identity, Stock Your Story. Koleksi eksklusif Drop #01, Official Shopee Store, Jasa Kaos Custom, dan Peluang Kemitraan Dropship TeeStock."
+        canonicalPath="/bio"
+      />
       {/* Ambient glow */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[500px] h-[400px] bg-gradient-to-b from-ts-terracotta/15 via-ts-mustard/8 to-transparent blur-[100px] rounded-full" />
@@ -130,10 +105,10 @@ export function BioLinkPage() {
         {/* ─── Profile Header ─────────────────────────────────── */}
         <header className="text-center space-y-3">
           {/* Logo / Avatar */}
-          <div className="relative mx-auto w-20 h-20 rounded-full bg-white/[0.06] border-2 border-white/[0.12] flex items-center justify-center backdrop-blur-sm">
-            <span className="text-3xl font-extrabold font-mono text-ts-terracotta tracking-tighter">TS</span>
+          <div className="relative mx-auto w-20 h-20 rounded-2xl bg-gradient-to-br from-ts-terracotta/20 to-[#9E3B1B]/15 border-2 border-ts-terracotta/40 flex items-center justify-center backdrop-blur-md shadow-glow-terracotta group">
+            <TeeStockLogoIcon className="w-11 h-11 text-ts-terracotta drop-shadow-md transition-transform duration-300 group-hover:scale-110" />
             {/* Online pulse dot */}
-            <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4">
+            <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ts-green opacity-75" />
               <span className="relative inline-flex rounded-full h-4 w-4 bg-ts-green border-2 border-ts-hitam" />
             </span>

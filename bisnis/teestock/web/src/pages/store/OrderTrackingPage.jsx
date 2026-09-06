@@ -7,6 +7,7 @@ import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { formatRupiah } from '../../utils/formatters';
+import { SEOHead } from '../../components/common/SEOHead';
 
 export function OrderTrackingPage() {
   const { orders } = useAdmin();
@@ -38,6 +39,7 @@ export function OrderTrackingPage() {
     const trimmed = query.trim().toLowerCase();
     const found = orders.find(o => 
       o.id.toLowerCase() === trimmed || 
+      (o.trackingNo && o.trackingNo.toLowerCase() === trimmed) ||
       (o.phone && o.phone.toLowerCase().includes(trimmed))
     );
 
@@ -46,19 +48,24 @@ export function OrderTrackingPage() {
   };
 
   const steps = [
-    { id: 'pending', label: 'Order Diterima', desc: 'Pesanan masuk ke sistem antrean workshop' },
-    { id: 'dtf', label: 'Cetak Film DTF', desc: 'Artwork diproses di mesin cetak DTF HD Raster' },
-    { id: 'press', label: 'Proses Heat Press', desc: 'Di-press suhu 155°C pada kaos garmen NSA' },
-    { id: 'pack', label: 'QC & Kemasan Polymailer', desc: 'Pengecekan kualitas sablon & stiker hologram' },
-    { id: 'shipped', label: 'Terkirim / Di Kurir', desc: 'Paket diserahkan ke kurir ekspedisi' }
+    { id: 'pending', label: 'Order Diterima', icon: Clock, desc: 'Pesanan masuk & verifikasi artwork' },
+    { id: 'dtf', label: 'Cetak Film DTF', icon: Printer, desc: 'Dicetak di roll DTF HD raster' },
+    { id: 'press', label: 'Heat Press 155°C', icon: Flame, desc: 'Proses press garmen NSA & finishing' },
+    { id: 'pack', label: 'Quality Control', icon: Package, desc: 'Pengecekan kualitas & polymailer pack' },
+    { id: 'shipped', label: 'Paket Dikirim', icon: Truck, desc: 'Diserahkan ke kurir & nomor resi aktif' }
   ];
 
-  const getStepIndex = (status) => {
+  const getCurrentStepIndex = (status) => {
     return steps.findIndex(s => s.id === status);
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-8">
+      <SEOHead
+        title="Lacak Status Pesanan & Resi Pengiriman | TeeStock"
+        description="Lacak proses sablon dan pengiriman pesanan kaos TeeStock kamu secara transparan dari antrean DTF hingga kurir."
+        canonicalPath="/tracking"
+      />
       <div className="text-center max-w-xl mx-auto space-y-2">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Lacak Status Pesanan</h1>
         <p className="text-xs sm:text-sm text-ts-kremMuted">

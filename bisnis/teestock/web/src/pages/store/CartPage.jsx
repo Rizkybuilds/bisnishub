@@ -10,6 +10,7 @@ import { Card } from '../../components/ui/Card';
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { validateVoucher } from '../../services/vouchersApi';
+import { calculateBundleDiscount, BUNDLE_DEALS } from '../../constants/pricing';
 
 export function CartPage() {
   const { cart, removeFromCart, updateCartQty, clearCart, totalCartAmount, storeSettings } = useStore();
@@ -41,8 +42,12 @@ export function CartPage() {
     }
   }, [profile]);
 
+  // Bundling calculations
+  const totalCartQty = cart.reduce((acc, item) => acc + (item.qty || 1), 0);
+  const bundleDiscount = calculateBundleDiscount(totalCartQty, role);
+
   const shippingFee = cart.length > 0 ? 15000 : 0;
-  const grandTotal = Math.max(0, totalCartAmount - discountAmount) + shippingFee;
+  const grandTotal = Math.max(0, totalCartAmount - bundleDiscount - discountAmount) + shippingFee;
 
   const handleApplyVoucher = async (codeToApply = null) => {
     const code = codeToApply || voucherInput;
@@ -183,6 +188,42 @@ export function CartPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Cart Items List & Shipping Form (7 Cols) */}
         <div className="lg:col-span-7 space-y-6">
+          {/* Teaser Bundling Promo (Jika 1 item) */}
+          {totalCartQty === 1 && role !== 'reseller' && role !== 'dropship' && (
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-ts-terracotta/20 via-ts-mustard/15 to-transparent border border-ts-terracotta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-sm">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-ts-terracotta/20 flex items-center justify-center shrink-0 text-ts-terracotta">
+                  <Sparkles className="w-4 h-4 text-ts-mustard animate-pulse" />
+                </div>
+                <div>
+                  <span className="font-bold text-white block text-sm">Tambah 1 Kaos Lagi untuk Hemat Rp 18.000!</span>
+                  <span className="text-[11px] text-ts-kremMuted">Aktifkan diskon otomatis Paket Duo (2 pcs @Rp 90.000) bebas pilih desain.</span>
+                </div>
+              </div>
+              <Link to="/katalog" className="px-3.5 py-2 rounded-xl bg-ts-terracotta hover:bg-[#b54625] text-white font-bold text-xs shrink-0 text-center shadow-glow-terracotta transition-all">
+                + Tambah Kaos
+              </Link>
+            </div>
+          )}
+
+          {/* Active Bundle Banner */}
+          {bundleDiscount > 0 && (
+            <div className="p-3.5 rounded-2xl bg-ts-terracotta/15 border border-ts-terracotta/30 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2.5">
+                <Sparkles className="w-4 h-4 text-ts-mustard" />
+                <div>
+                  <span className="font-bold text-white">
+                    {totalCartQty >= 3 ? '🔥 Paket Trio Aktif (Diskon Rp 14.000/pcs)' : '🎉 Paket Duo Aktif (Diskon Rp 18.000)'}
+                  </span>
+                  <span className="text-[11px] text-ts-kremMuted block">Diskon kuantitas langsung memotong total pembayaran Anda.</span>
+                </div>
+              </div>
+              <span className="font-mono font-bold text-ts-mustard text-sm bg-ts-terracotta/20 px-2 py-0.5 rounded border border-ts-terracotta/30">
+                - {formatRupiah(bundleDiscount)}
+              </span>
+            </div>
+          )}
+
           <div className="space-y-3">
             {cart.map((item, idx) => (
               <div
@@ -378,9 +419,16 @@ export function CartPage() {
 
             <div className="space-y-3 text-xs pt-3 border-t border-white/[0.06]">
               <div className="flex justify-between text-ts-kremMuted">
-                <span>Subtotal ({cart.length} item):</span>
+                <span>Subtotal ({totalCartQty} kaos):</span>
                 <span className="font-mono text-white font-bold">{formatRupiah(totalCartAmount)}</span>
               </div>
+
+              {bundleDiscount > 0 && (
+                <div className="flex justify-between text-ts-terracotta font-semibold">
+                  <span>Diskon Paket Bundling ({totalCartQty} pcs):</span>
+                  <span className="font-mono">- {formatRupiah(bundleDiscount)}</span>
+                </div>
+              )}
 
               {discountAmount > 0 && (
                 <div className="flex justify-between text-ts-green font-semibold">

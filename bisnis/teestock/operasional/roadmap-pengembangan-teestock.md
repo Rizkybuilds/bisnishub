@@ -33,32 +33,35 @@ Dokumen ini memetakan tahapan pengembangan TeeStock dari rilis perdana hingga me
 
 ---
 
-## FASE 1: Proof of Quality & Launch TeeStock Originals (Bulan 1)
+## FASE 1: Proof of Quality & Launch TeeStock Originals (Bulan 1 — Sedang Berjalan)
 
-**Fokus Utama:** Membuktikan kualitas produksi fisik sablon mandiri, merilis koleksi perdana, dan mengamankan validasi sosial (*social proof*) pertama di pasar.
+**Fokus Utama:** Membuktikan kualitas fisik sablon mandiri di atas bahan New States Apparel (NSA) 24s, mengurasi 3–4 desain jagoan untuk Drop #01, dan mengamankan 5–10 pembeli pertama via circle terdekat.
 
-### Tindakan Konkret:
-1. **Test Produksi (Batch 0):**
-   * Press 5–10 pcs kaos sampel menggunakan bahan New State Apparel dan film DTF meteran.
-   * Eksperimen dan catat parameter ideal: suhu (°C), durasi press 1 (detik), durasi cold peel, dan durasi press finishing 2.
-   * Lakukan uji cuci ekstrem (cuci 3x + jemur) untuk memastikan sablon tidak retak atau luntur.
-2. **Finalisasi Aset Drop #01: "Identity" (6 Desain):**
-   * *Niche Tech / Programmer:* 2 desain (tipografi bold & sarkas).
-   * *Niche Outdoor / Adventure:* 2 desain (emblem lencana pendaki).
-   * *Niche Local Pride / Culture:* 2 desain (tipografi aksara/identitas daerah).
-   * Format: PNG transparan 300 DPI, siap cetak ke film meteran.
-3. **Setup Storefront & Foto Produk:**
-   * Buka toko resmi di Shopee dan TikTok Shop dengan nama **TeeStock Official**.
-   * Ambil foto produk asli di atas latar netral krem (`#F2EEE4`) dengan pencahayaan alami.
-   * Pasang harga sweet spot peluncuran: **Rp 99.000** (HPP modal ~Rp 64.250).
-4. **Program 10 Ulasan Pertama (Seed Reviews):**
-   * Tawarkan kaos Drop #01 ke circle pertemanan/komunitas terdekat dengan harga tester / diskon khusus.
-   * Wajibkan mereka memberikan ulasan bintang 5 dengan foto dan video asli di Shopee.
+### Status Pencapaian (Update September 2026):
+* `[x]` **Infrastruktur Digital Selesai 100%:** Web Storefront, Katalog 9 Series, Admin HUB, Kanban Batch, Gang Sheet DTF, SEOHead, PWA, dan Logo Vektor resmi.
+* `[x]` **Validasi Bahan Fisik:** Sampel kaos polos NSA 24s Heavyweight sudah dipegang oleh founder dan tervalidasi bagus.
+* `[x]` **Kesiapan Alat In-House:** Mesin heat press pribadi sudah siap aktif di rumah (menghemat ongkos press Rp 5.000 – Rp 7.000 per kaos).
+
+### Tindakan Konkret Saat Ini:
+1. **Uji Coba DTF & Quality Control (Hari Ini):**
+   * Cetak sampel DTF roll meteran (Rp 28.000 – Rp 35.000/meter).
+   * Lakukan heat press in-house (suhu 155°C, 15 detik, cold peel, second press 5 detik).
+   * Jalankan uji cuci 3x dan *stress test* (tarik sablon) untuk memastikan kelenturan dan daya rekat tinta.
+2. **Kurasi Koleksi Drop #01 (3–4 Desain Jagoan):**
+   * *(Catatan: 6 sampel di web adalah prototype)*. Dari kumpulan desain keren yang sudah dimiliki, pilih 3–4 desain yang selaras secara visual.
+   * Tetapkan tema payung (misal: Drop #01: "RAW IDENTITY" atau "ORIGINS").
+3. **Produksi Aset Konten Peluncuran:**
+   * Rekam proses press dan kupas DTF (ASMR peel video) untuk TikTok & Instagram Reels.
+   * Ambil foto produk asli di badan (real fitting) atau flat-lay estetik di atas latar krem netral.
+4. **Scarcity Launch & 5–10 Pembeli Pertama:**
+   * Buka kuota terbatas batch perdana (24 pcs) di harga early bird **Rp 89.000 – Rp 99.000** (Anchor Price Rp 139.000).
+   * Hubungkan channel penjualan melalui link `/bio`, WhatsApp Direct, dan toko Shopee.
 
 > **Exit Criteria Fase 1:**
-> - [ ] SOP press tertulis dan hasil uji cuci 3x lolos tanpa cacat.
-> - [ ] Drop #01 tayang di Shopee dengan minimal 10 ulasan bintang 5 asli.
-> - [ ] Waktu penanganan per kaos (press sampai packing) maksimal 15 menit per pcs.
+> - [x] Infrastruktur web, pricing tiers, dan aset visual logo siap digunakan.
+> - [ ] Uji cuci 3x dan SOP press mandiri lolos tanpa cacat.
+> - [ ] 3–4 desain Drop #01 terpilih dan file cetak siap pakai.
+> - [ ] Minimal 5–10 pcs terjual ke circle pertama dan mengantongi testimoni/foto asli.
 
 ---
 

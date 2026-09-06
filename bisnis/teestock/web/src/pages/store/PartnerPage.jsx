@@ -25,6 +25,7 @@ import { Input } from '../../components/ui/Input';
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { supabase } from '../../services/supabase';
+import { SEOHead } from '../../components/common/SEOHead';
 
 export function PartnerPage() {
   const { user, profile, isPartner, openAuthModal } = useAuth();
@@ -33,10 +34,10 @@ export function PartnerPage() {
 
   // Interactive Margin Calculator States
   const [targetPcs, setTargetPcs] = useState(50);
-  const [sellingPrice, setSellingPrice] = useState(119000);
-  const [partnerTier, setPartnerTier] = useState('dropship'); // 'dropship' (Rp 87k) or 'reseller' (Rp 74k)
+  const [sellingPrice, setSellingPrice] = useState(99000);
+  const [partnerTier, setPartnerTier] = useState('dropship'); // 'dropship' (Rp 75k) or 'reseller' (Rp 65k)
 
-  const costPerPcs = partnerTier === 'reseller' ? 74000 : 87000;
+  const costPerPcs = partnerTier === 'reseller' ? 65000 : 75000;
   const marginPerPcs = Math.max(0, sellingPrice - costPerPcs);
   const monthlyProfit = marginPerPcs * targetPcs;
   const monthlyRevenue = sellingPrice * targetPcs;
@@ -96,6 +97,12 @@ export function PartnerPage() {
 
   return (
     <div className="min-h-screen pb-24 space-y-20 sm:space-y-28">
+      <SEOHead
+        title="Peluang Usaha Dropship & Reseller Kaos Distro White-Label | TeeStock"
+        description="Mulai bisnis brand clothing kamu sendiri tanpa modal stok dan mesin. HPP mulai Rp 65.000/pcs, 100% bahan New States Apparel (NSA) 24s/30s asli, sablon DTF HD, pengiriman white-label atas nama tokomu."
+        keywords={["dropship kaos distro", "reseller kaos distro", "peluang usaha apparel", "supplier kaos nsa", "sablon dtf satuan"]}
+        canonicalPath="/partner"
+      />
       {/* ─── Hero Section ───────────────────────────────────── */}
       <section className="relative pt-12 sm:pt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
         {/* Glow ambient */}
@@ -199,7 +206,7 @@ export function PartnerPage() {
                     }`}
                   >
                     <div className="font-bold text-xs">Mitra Dropshipper</div>
-                    <div className="font-mono text-sm font-black text-ts-mustard mt-0.5">Rp 87.000 / pcs</div>
+                    <div className="font-mono text-sm font-black text-ts-mustard mt-0.5">Rp 75.000 / pcs</div>
                     <div className="text-[10px] text-ts-muted mt-1">Tanpa deposit awal, langsung jualan</div>
                   </button>
 
@@ -213,8 +220,8 @@ export function PartnerPage() {
                     }`}
                   >
                     <div className="font-bold text-xs">Mitra Reseller VIP</div>
-                    <div className="font-mono text-sm font-black text-ts-green mt-0.5">Rp 74.000 / pcs</div>
-                    <div className="text-[10px] text-ts-muted mt-1">Volume &ge; 50 pcs / bulan</div>
+                    <div className="font-mono text-sm font-black text-ts-green mt-0.5">Rp 65.000 / pcs</div>
+                    <div className="text-[10px] text-ts-muted mt-1">Grosir &ge; 12 pcs / bulan</div>
                   </button>
                 </div>
               </div>

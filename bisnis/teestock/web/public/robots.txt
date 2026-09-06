@@ -1,0 +1,24 @@
+# ==========================================
+# TeeStock Apparel — robots.txt
+# Domain: https://teestock.vercel.app
+# ==========================================
+
+User-agent: *
+Allow: /
+Allow: /katalog
+Allow: /katalog?*
+Allow: /produk/*
+Allow: /custom-order
+Allow: /partner
+Allow: /bio
+Allow: /tracking
+
+# Disallow private user & internal admin routes
+Disallow: /admin/
+Disallow: /admin/*
+Disallow: /akun
+Disallow: /akun/*
+Disallow: /keranjang
+
+# Sitemap
+Sitemap: https://teestock.vercel.app/sitemap.xml

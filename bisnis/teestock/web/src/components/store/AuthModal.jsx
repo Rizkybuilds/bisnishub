@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Mail, Sparkles, CheckCircle2, ArrowRight, Loader2, ShieldCheck, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { TeeStockLogoIcon } from '../common/TeeStockLogo';
 
 export function AuthModal() {
   const { isAuthModalOpen, closeAuthModal, signInWithGoogle, signInWithMagicLink, authModalRedirect } = useAuth();
@@ -60,8 +61,8 @@ export function AuthModal() {
 
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-ts-terracotta to-[#9E4620] flex items-center justify-center mx-auto shadow-glow-terracotta border border-white/20">
-            <span className="font-extrabold text-white text-lg">TS</span>
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-ts-terracotta to-[#9E3B1B] flex items-center justify-center mx-auto shadow-glow-terracotta border border-white/20">
+            <TeeStockLogoIcon className="w-7 h-7 text-white drop-shadow-sm" />
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
             Akun Member TeeStock

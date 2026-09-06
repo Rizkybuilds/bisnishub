@@ -4,6 +4,7 @@ import { ShieldCheck, Truck, RefreshCw, MessageSquare, Zap } from 'lucide-react'
 import { useStore } from '../../context/StoreContext';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { NewsletterCapture } from './NewsletterCapture';
+import { TeeStockLogo } from '../common/TeeStockLogo';
 
 export function Footer() {
   const { storeSettings } = useStore();
@@ -76,12 +77,7 @@ export function Footer() {
       {/* Main Footer Info */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="md:col-span-2 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-ts-terracotta to-[#9E4620] flex items-center justify-center font-extrabold text-white text-sm shadow-glow-terracotta border border-white/20">
-              TS
-            </div>
-            <span className="text-lg font-extrabold text-white">TeeStock Apparel</span>
-          </div>
+          <TeeStockLogo size="md" badge="APPAREL HOUSE" />
           <p className="text-xs text-ts-kremMuted max-w-md leading-relaxed">
             Brand distro print-on-demand modern yang mengangkat identitas profesi, hobi, dan fase hidup lewat estetika desain grafis berkelas di atas kaos polos New States Apparel.
           </p>

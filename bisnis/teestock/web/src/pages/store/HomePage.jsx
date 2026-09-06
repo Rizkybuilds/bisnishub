@@ -33,6 +33,7 @@ import { Badge } from '../../components/ui/Badge';
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { NewsletterCapture } from '../../components/store/NewsletterCapture';
+import { SEOHead } from '../../components/common/SEOHead';
 
 export function HomePage() {
   const { catalog } = useAdmin();
@@ -47,6 +48,22 @@ export function HomePage() {
     'TS-KOM-001', 'TS-KOM-002', 
     'TS-LOK-001', 'TS-LOK-002'
   ];
+  
+  const homeSchema = {
+    "@context": "https://schema.org",
+    "@type": "ClothingStore",
+    "name": "TeeStock Apparel",
+    "url": "https://teestock.vercel.app",
+    "logo": "https://teestock.vercel.app/logo-teestock.svg",
+    "description": "Brand apparel kurasi & studio sablon DTF cepat. Garmen New States Apparel (NSA) Heavyweight 24s & Softstyle 30s original tanpa jahitan samping.",
+    "priceRange": "Rp 37.000 - Rp 99.000",
+    "currenciesAccepted": "IDR",
+    "paymentAccepted": "Bank Transfer, QRIS, COD",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "ID"
+    }
+  };
   
   const drop01Products = drop01Skus
     .map(sku => catalog.find(p => p.sku === sku))
@@ -72,6 +89,13 @@ export function HomePage() {
 
   return (
     <div className="relative min-h-screen space-y-20 sm:space-y-28 pb-24 overflow-hidden">
+      <SEOHead
+        title="TeeStock Apparel | Curated Merch & Kaos NSA 24s Heavyweight Original"
+        description="Brand apparel kurasi dan studio sablon DTF cepat. 100% garmen New States Apparel (NSA) Heavyweight 24s & Softstyle 30s original tanpa jahitan samping. Beli ritel, custom satuan, atau kemitraan dropship."
+        keywords={["kaos nsa 24s heavyweight", "kaos nsa softstyle 30s", "sablon dtf satuan", "kaos distro tech programmer", "dropship apparel distro"]}
+        canonicalPath="/"
+        schema={homeSchema}
+      />
       {/* Ambient Lighting Background */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[700px] overflow-hidden pointer-events-none -z-10">
         <div className="absolute top-[-150px] left-1/2 -translate-x-1/2 w-[700px] sm:w-[900px] h-[500px] bg-gradient-to-b from-ts-terracotta/20 via-ts-mustard/10 to-transparent blur-[120px] rounded-full" />

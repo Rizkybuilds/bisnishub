@@ -56,66 +56,55 @@ Berdasarkan riset pasar riil di platform e-commerce utama (Shopee & Tokopedia) p
 
 ---
 
-## 3. Rincian Unit Economics (HPP per Kaos)
+## 3. Rincian Unit Economics Aktual (HPP per Kaos 24s)
 
-Perhitungan berbasis vendor resmi **New State Apparel (NSA Softstyle Cotton Combed)** dan cetak **DTF Roll Meteran**:
+Perhitungan berbasis data riil vendor resmi **New States Apparel (NSA Heavyweight 24s)** via Cititex, film **DTF Roll Meteran (Rp 28.000 – Rp 35.000 / meter)**, dan **mesin heat press in-house milik sendiri**:
 
-| Komponen Biaya | Nominal (Rp) | Keterangan |
+| Komponen Biaya | Nominal Riil (Rp) | Keterangan |
 |---|---|---|
-| Blank Kaos Polos | Rp 38.000 | New State Apparel Softstyle (Cotton Combed 30s) |
-| Cetak DTF Film (A3 30x30cm) | Rp 12.750 | Dihitung dari harga roll meteran Rp 85.000 / meter |
-| Biaya Pressing Mandiri | Rp 2.000 | Listrik heat press 1500W, teflon sheet, tenaga |
-| Packaging & Unboxing | Rp 3.000 | Plastik ziplock/polymailer, stiker logo TeeStock, thank you card |
-| Label & Hangtag Brand | Rp 1.500 | Woven label / hangtag tebal berlogo TeeStock |
-| Overhead Operasional | Rp 2.000 | Lakban, alat pemotong, internet dialokasikan per pcs |
-| Amortisasi Desain | Rp 5.000 | Lisensi komersial Rp 75.000 dibagi target 15 pcs terjual |
-| **TOTAL HPP (COGS)** | **Rp 64.250** | **Biaya dasar riil per 1 pcs kaos jadi** |
+| Blank Kaos Polos NSA 24s | Rp 37.000 – Rp 42.000 | New States Apparel Heavyweight 24s (Rp 37k grosir min 72 pcs / Rp 42k ritel Cititex) |
+| Cetak DTF Film Meteran | Rp 7.000 – Rp 12.000 | Rata-rata per kaos (A4 ~Rp 7k, A3 ~Rp 12k dari harga meteran Rp 28k–35k) |
+| Biaya Pressing Mandiri | Rp 1.500 | In-house heat press di rumah (listrik 1500W, teflon sheet, hemat jasa vendor Rp 5k–7k) |
+| Packaging & Unboxing | Rp 2.000 | Polymailer doff tebal, stiker segel logo TeeStock, thank you card |
+| Overhead Operasional | Rp 1.500 | Lakban, packaging buffer, depresiasi alat |
+| **TOTAL HPP RIIL (COGS)** | **Rp 49.000 – Rp 54.000** | **Biaya modal fisik per 1 pcs kaos jadi (24s Heavyweight)** |
 
-### Simulasi Margin Keuntungan per Pcs (Harga Launch Rp 99.000):
+*(Catatan: Jika menggunakan varian NSA Softstyle 30s, HPP dasar turun sekitar Rp 3.000 – Rp 5.000 per pcs).*
 
-- **Harga Jual Retail:** Rp 99.000
-- **Potongan Fee Shopee (6.5%):** Rp 6.435
-- **Pendapatan Bersih (Net Revenue):** Rp 92.565
-- **HPP Dasar:** Rp 64.250
-- **Laba Bersih per Kaos:** **Rp 28.315**
-- **Margin Laba Bersih:** **28.6%** (Sehat untuk penetrasi awal solopreneur)
+### Simulasi Margin Keuntungan Ritel (Anchor Rp 139.000 → Promo Launching Rp 99.000):
 
-*Catatan: Pada penjualan langsung melalui WhatsApp / Instagram Direct (0% fee marketplace), laba bersih naik menjadi **Rp 34.750 per pcs (Margin 35.1%)**.*
+- **Harga Coret (Anchor Price):** Rp 139.000
+- **Harga Jual Ritel Promo:** Rp 99.000
+- **Potongan Biaya Marketplace (Shopee/TikTok ~10-12%):** ~Rp 10.890
+- **HPP Rata-Rata (Bahan 24s):** Rp 51.500
+- **Laba Bersih per Kaos (Marketplace):** **Rp 36.610** (Margin Bersih **37.0%**)
+- **Laba Bersih per Kaos (Direct WA / Web 0% Fee):** **Rp 47.500** (Margin Bersih **48.0%**)
 
 ---
 
-## 4. Struktur Harga Multi-Tier (Reseller & Dropship)
+## 4. Struktur Harga Multi-Tier Sinkron (Web & Marketplace)
 
-Untuk mendukung 4 revenue stream tanpa merusak margin:
+Struktur harga yang telah diintegrasikan pada sistem katalog web, role authentication, dan formulir kemitraan:
 
-| Channel / Tier | Harga Jual | Syarat / Skema | Margin Bersih TeeStock | Keuntungan Mitra |
+| Channel / Tier | Harga Jual | Syarat & Skema | Laba Bersih TeeStock | Keuntungan Mitra |
 |---|---|---|---|---|
-| **🛒 Retail (Marketplace)** | Rp 99.000 | Satuan (End Customer) | Rp 28.315 (28.6%) | - |
-| **📦 Dropshipper** | Rp 87.000 | Diskon 12% dari retail, no min order | Rp 22.750 (26.1%) | Rp 12.000/pcs |
-| **🏭 Reseller / Komunitas** | Rp 74.000 | Diskon 25% dari retail, min 6 pcs | Rp 9.750 (13.2%) | Rp 25.000/pcs |
-| **🎨 Custom Order Satuan** | Rp 129.000 | Desain request pembeli | Rp 56.615 (43.8%) | Eksklusif personal |
+| **🛒 Retail (Marketplace & Web)** | Rp 99.000 (Anchor Rp 139k) | Satuan (End Customer) | Rp 36.610 – Rp 47.500 | - |
+| **📦 Mitra Dropshipper** | Rp 75.000 | Satuan white-label, resi otomatis | Rp 21.000 – Rp 23.500 (28–31%) | Rp 24.000/pcs |
+| **🏭 Mitra Reseller** | Rp 65.000 | Min 12 pcs, modal distro/toko fisik | Rp 11.000 – Rp 13.500 (17–21%) | Rp 34.000/pcs |
+| **🎨 Custom Order Satuan** | Rp 119.000 – Rp 139.000 | Desain custom konsumen | Rp 55.000 – Rp 75.000 (46–54%) | Eksklusif personal |
+
+*Semua tier harga telah memenuhi target minimal profit pertumbuhan bisnis solopreneur (minimal 10% di atas HPP pada tier reseller terendah).*
 
 ---
 
-## 5. Scoring Matrix Pemilihan Batch 1 (3 Niche Pertama)
+## 5. Strategi Kurasi Koleksi Drop #01 Debut
 
-Dari 17 kategori dalam `daftar-niche-teestock.md`, berikut evaluasi objektif untuk menentukan 3 niche yang diproduksi pertama:
-
-| Niche Kandidat | Akses Komunitas (1-5) | Budaya Merch (1-5) | Tingkat Persaingan (1-5)* | Margin Potensial (1-5) | Total Skor | Status |
-|---|---|---|---|---|---|---|
-| **1. Anak IT / Programmer** | 5 | 5 | 4 | 4 | **18 / 20** | 🟢 **BATCH 1** |
-| **2. Komunitas Outdoor / Gunung** | 4 | 5 | 4 | 4 | **17 / 20** | 🟢 **BATCH 1** |
-| **3. Bahasa Daerah / Local Pride** | 5 | 4 | 3 | 4 | **16 / 20** | 🟢 **BATCH 1** |
-| 4. Pecinta Kucing / Anjing | 3 | 4 | 3 | 4 | 14 / 20 | 🟡 Batch 2 |
-| 5. Humor Receh / Gen Z | 4 | 3 | 2 (Perang harga) | 3 | 12 / 20 | 🟡 Batch 2 |
-| 6. MBTI / Zodiak | 3 | 4 | 3 | 4 | 14 / 20 | 🟡 Batch 2 |
-
-*\*Skor kompetisi: 5 = persaingan sehat & ada celah kualitas, 1 = perang harga ekstrem.*
-
-### Rencana Eksekusi Batch 1 (6 Desain Total):
-1. **Series Profesi:** 2 desain programmer/IT (1 tipografi bold, 1 badge lencana).
-2. **Series Komunitas:** 2 desain pendaki/outdoor (2 template badge emblem).
-3. **Series Lokal:** 2 desain bahasa daerah / kebanggaan kota (1 tipografi bold, 1 ikon+teks).
+> [!IMPORTANT]
+> **Klarifikasi Strategis:** Sampel desain di website sebelumnya (6 desain IT, Outdoor, Local Pride) adalah prototype teknis.  
+> Solopreneur telah memiliki kumpulan aset desain keren tersendiri. Agar peluncuran perdana tidak terkesan "acak" dan membingungkan algoritma media sosial, strategi yang diterapkan adalah **Kurasi Drop #01**:
+> 1. Memilih 3–4 desain jagoan yang memiliki keselarasan visual (*visual consistency*).
+> 2. Memberikan satu tema payung yang kuat (misal: **Drop #01: "RAW IDENTITY"** atau **"ORIGINS"**).
+> 3. Membatasi produksi batch perdana (scarcity model: 24 pcs) untuk menciptakan urgensi dan mengamankan 5–10 penjualan pertama via circle terdekat (Family, Friends, WhatsApp Story).
 
 ---
 

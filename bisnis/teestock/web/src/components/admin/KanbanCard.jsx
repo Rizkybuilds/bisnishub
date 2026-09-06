@@ -7,6 +7,7 @@ import {
   Phone, 
   MessageSquare, 
   Printer, 
+  Truck,
   TrendingUp, 
   ExternalLink,
   Sparkles
@@ -14,9 +15,11 @@ import {
 import { formatRupiah } from '../../utils/formatters';
 import { generateCustomerWhatsAppText, getWhatsAppUrl } from '../../utils/whatsappTemplates';
 import { PrintWorkSlipModal } from './PrintWorkSlipModal';
+import { ShippingLabelModal } from './ShippingLabelModal';
 
 export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
   const isPress = order.status === 'press';
 
   const channelBadges = {
@@ -59,10 +62,18 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
             <button
               type="button"
               onClick={() => setIsPrintModalOpen(true)}
-              className="p-1 rounded bg-ts-surface hover:bg-ts-surfaceHover text-ts-muted hover:text-white border border-ts-border transition-colors"
+              className="p-1 rounded bg-ts-surface hover:bg-ts-surfaceHover text-ts-muted hover:text-white border border-ts-border transition-colors cursor-pointer"
               title="Cetak Tiket Kerja / Slip Packing"
             >
               <Printer className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsShippingModalOpen(true)}
+              className="p-1 rounded bg-ts-surface hover:bg-ts-surfaceHover text-ts-terracotta hover:text-white border border-ts-border transition-colors cursor-pointer"
+              title="Cetak Label Pengiriman Thermal 100x150 mm"
+            >
+              <Truck className="w-3.5 h-3.5" />
             </button>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${channelBadges[order.channel] || 'bg-ts-surface text-ts-muted'}`}>
               {(order.channel || 'DIRECT').toUpperCase()}
@@ -178,6 +189,13 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
       <PrintWorkSlipModal
         isOpen={isPrintModalOpen}
         onClose={() => setIsPrintModalOpen(false)}
+        order={order}
+      />
+
+      {/* Printable Thermal Shipping Label Modal (100x150 mm) */}
+      <ShippingLabelModal
+        isOpen={isShippingModalOpen}
+        onClose={() => setIsShippingModalOpen(false)}
         order={order}
       />
     </>

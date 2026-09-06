@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ShoppingBag, Search, ShieldCheck, Sparkles, User, Package, Zap, LogOut, ChevronDown, Users } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
+import { TeeStockLogo } from '../common/TeeStockLogo';
 
 export function Navbar() {
   const { totalCartItems } = useStore();
@@ -18,7 +19,7 @@ export function Navbar() {
       <div className="bg-[#121110]/90 backdrop-blur-md text-[11px] font-medium text-ts-kremMuted py-1.5 px-4 text-center border-b border-white/[0.06] flex items-center justify-center gap-3 sm:gap-6 overflow-hidden">
         <span className="flex items-center gap-1.5 text-ts-krem">
           <ShieldCheck className="w-3.5 h-3.5 text-ts-green animate-pulse" />
-          <span>100% Garmen Asli New States Apparel (NSA) Softstyle 30s</span>
+          <span>100% Garmen Asli New States Apparel (NSA) • Pilihan Softstyle 30s &amp; Heavyweight 24s Impor</span>
         </span>
         <span className="hidden sm:inline text-white/20">•</span>
         <span className="hidden sm:flex items-center gap-1.5 text-ts-kremMuted">
@@ -35,20 +36,9 @@ export function Navbar() {
       {/* Main Floating Navbar Container */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5">
         <div className="h-14 sm:h-16 px-3 sm:px-5 rounded-2xl bg-ts-surface/80 backdrop-blur-xl border border-white/[0.09] shadow-glass-card shadow-glass-inset flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group">
-            <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-ts-terracotta to-[#9E4620] flex items-center justify-center font-extrabold text-white tracking-wider text-sm sm:text-base shadow-glow-terracotta border border-white/25 transition-transform group-hover:scale-105">
-              <span>TS</span>
-              <div className="absolute -inset-0.5 rounded-xl bg-ts-terracotta/30 blur-sm -z-10 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div>
-              <span className="text-base sm:text-lg font-extrabold tracking-tight text-ts-krem group-hover:text-white transition-colors">
-                TeeStock
-              </span>
-              <span className="text-[9px] sm:text-[10px] block -mt-1 font-bold text-ts-terracotta tracking-widest uppercase font-mono">
-                Apparel
-              </span>
-            </div>
+          {/* Official Brand Logo */}
+          <Link to="/" className="group focus:outline-none" aria-label="TeeStock Apparel Beranda">
+            <TeeStockLogo size="md" badge="APPAREL" />
           </Link>
 
           {/* Navigation Links (Desktop) */}
