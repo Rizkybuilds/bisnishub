@@ -4,6 +4,7 @@ import { Navbar } from '../components/store/Navbar';
 import { Footer } from '../components/store/Footer';
 import { MobileBottomNav } from '../components/store/MobileBottomNav';
 import { FloatingWhatsapp } from '../components/store/FloatingWhatsapp';
+import { AuthModal } from '../components/store/AuthModal';
 
 export function StoreLayout() {
   return (
@@ -15,6 +16,7 @@ export function StoreLayout() {
       <Footer />
       <FloatingWhatsapp />
       <MobileBottomNav />
+      <AuthModal />
     </div>
   );
 }

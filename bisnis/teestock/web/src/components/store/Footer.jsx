@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShieldCheck, Truck, RefreshCw, MessageSquare, Zap } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
+import { NewsletterCapture } from './NewsletterCapture';
 
 export function Footer() {
   const { storeSettings } = useStore();
@@ -51,6 +52,23 @@ export function Footer() {
               <h4 className="text-sm font-bold text-white">Direct WA (0% Fee)</h4>
               <p className="text-xs text-ts-kremMuted mt-0.5">Konsultasi cepat satuan atau custom partai via WhatsApp.</p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Newsletter Bar in Footer */}
+      <div className="border-b border-white/[0.06] py-8 bg-white/[0.01]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="text-center md:text-left max-w-lg">
+            <h4 className="text-sm sm:text-base font-extrabold text-white">
+              Daftar Notifikasi Drop &amp; Dapatkan Diskon 10%
+            </h4>
+            <p className="text-xs text-ts-kremMuted mt-1">
+              Jadilah yang pertama tahu saat Drop #02 rilis. Plus voucher diskon pertama langsung aktif.
+            </p>
+          </div>
+          <div className="w-full md:w-80">
+            <NewsletterCapture source="footer_bar" compact={true} />
           </div>
         </div>
       </div>

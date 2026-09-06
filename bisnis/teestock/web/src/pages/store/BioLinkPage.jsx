@@ -11,6 +11,7 @@ import {
   Music2,
   Instagram,
 } from 'lucide-react';
+import { NewsletterCapture } from '../../components/store/NewsletterCapture';
 
 // ─── Bio Link Data (hardcoded — evolve to Supabase later) ─────────
 const BIO_LINKS = [
@@ -252,6 +253,15 @@ export function BioLinkPage() {
               </a>
             );
           })}
+        </div>
+
+        {/* ─── Newsletter Capture (VIP Drop Alert) ─────────── */}
+        <div className="pt-2 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-sm space-y-2">
+          <div className="text-center">
+            <span className="text-xs font-bold text-white block">Klaim Voucher Diskon 10%</span>
+            <span className="text-[11px] text-ts-kremMuted block mt-0.5">Dapatkan kode promo perdana &amp; notifikasi rilis Drop #02</span>
+          </div>
+          <NewsletterCapture source="biolink" compact={true} />
         </div>
 
         {/* ─── Footer ─────────────────────────────────────────── */}
