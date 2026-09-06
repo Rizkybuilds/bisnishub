@@ -10,7 +10,7 @@ TeeStock adalah *creative apparel & merch house* independen yang memadukan kuras
 1. **TeeStock Originals:** Lini ritel apparel siap pakai dengan sistem rilis berkala (*The Drop Model*).
 2. **TeeStock Studio:** Sayap kreatif untuk pesanan kaos custom, kolaborasi official merch creator/komunitas, dan kemitraan dropship/reseller tanpa modal.
 
-Model produksi lean: blank apparel New States Apparel (NSA Heavyweight 24s & Softstyle 30s) via Cititex, cetak film DTF roll meteran, dan proses **heat press in-house mandiri di rumah**.
+Model produksi lean: blank apparel New States Apparel (NSA Heavyweight 24s & Softstyle 30s) via distributor resmi NSA, cetak film DTF roll meteran, dan proses **heat press in-house mandiri di rumah**.
 
 ---
 
@@ -47,7 +47,7 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel, portal
 - **Stack:** React 18 + Vite + Tailwind CSS + Supabase (PostgreSQL + RLS + Auth) + Cloudinary CDN + Vercel PWA
 - **Fitur Storefront Publik:**
   - Dynamic Funnel Home (6-section architecture: Hero Hook, Live Drop, Dual Pillar, Trust Specs NSA 24s, Brand Story, VIP Lead Capture).
-  - Dynamic Hybrid Stock & SLA Indicator (⚡ Ready Stock Studio H+0 vs 🏢 Gudang Pusat Cititex H+1).
+  - Dynamic Hybrid Stock & SLA Indicator (⚡ Ready Stock Studio H+0 vs 📦 Stok Gudang Pusat H+1).
   - Blank-to-Custom DTF Upsell Banner (+Rp 25.000) terintegrasi langsung ke `/custom-order`.
   - Paket Bundling Hemat AOV Booster (Paket Duo hemat Rp 18k / Paket Trio hemat Rp 42k).
   - Customer Reviews & Social Proof Engine (rating bintang 4.9/5, meteran kepuasan kain NSA & sablon DTF, verified buyer badge).
@@ -62,9 +62,9 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel, portal
 - **Admin HUB (`/admin`):**
   - Dashboard Analitik & Ringkasan Penjualan.
   - Master Katalog (PIM) CRUD & sync Cloudinary.
-  - Manajemen Stok Bahan NSA & Status Supplier Cititex.
-  - Kanban Antrean Produksi dengan Label Sumber Garmen (`[STOK STUDIO]` vs `[TARIK CITITEX]`).
-  - Modal Manifest Tarik Vendor Cititex (JIT) dengan 1-klik salin format chat WhatsApp ke cabang Cititex.
+  - Manajemen Stok Bahan NSA & Status Restok Supplier.
+  - Kanban Antrean Produksi dengan Label Sumber Garmen (`[STOK STUDIO]` vs `[TARIK GARMEN NSA]`).
+  - Modal Manifest Tarik Vendor NSA (JIT) dengan 1-klik salin format chat WhatsApp ke supplier.
   - Generator Label Pengiriman Thermal A6 (100x150 mm) dengan barcode visual & toggle white-label dropship.
   - Gang Sheet Roll DTF Builder interaktif.
   - QC Defect & Return Tracker (pencatatan kerugian HPP akibat reject kain/DTF).
@@ -85,7 +85,7 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel, portal
 
 ### ⚙️ Operasional & Roadmap (`operasional/`)
 - [**`roadmap-pengembangan-teestock.md`**](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/operasional/roadmap-pengembangan-teestock.md) — Roadmap 4 fase solopreneur lengkap dengan exit criteria dan alokasi waktu mingguan.
-- [**`rencana-operasional-teestock.md`**](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/operasional/rencana-operasional-teestock.md) — Alur rantai pasok DTF Cititex, kapasitas produksi harian, SOP heat press in-house, dan struktur channel.
+- [**`rencana-operasional-teestock.md`**](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/operasional/rencana-operasional-teestock.md) — Alur rantai pasok garmen NSA & DTF, kapasitas produksi harian, SOP heat press in-house, dan struktur channel.
 - `struktur-folder-teestock.md` — Struktur folder kerja produksi & katalog.
 
 ### 📊 Riset & Strategi (`riset/`)

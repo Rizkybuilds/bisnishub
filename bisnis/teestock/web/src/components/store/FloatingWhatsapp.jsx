@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { MessageCircle, X } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 
 export function FloatingWhatsapp() {
   const { storeSettings } = useStore();
+  const location = useLocation();
   const [showTooltip, setShowTooltip] = useState(true);
+
+  const isProductPage = location.pathname.startsWith('/produk/');
 
   const rawPhone = storeSettings?.storeWhatsapp || '085220274968';
   const cleanPhone = sanitizePhoneNumber(rawPhone);
@@ -13,7 +17,7 @@ export function FloatingWhatsapp() {
   const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(defaultMessage)}`;
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-40 flex items-end gap-2">
+    <div className={`fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-40 ${isProductPage ? 'hidden md:flex' : 'flex'} items-end gap-2`}>
       {/* Pop-up Mini Banner / Tooltip (can be dismissed) */}
       {showTooltip && (
         <div className="hidden sm:flex items-center gap-2 bg-ts-surface/95 backdrop-blur border border-ts-border px-3.5 py-2 rounded-2xl shadow-xl animate-in slide-in-from-right-4 duration-300">

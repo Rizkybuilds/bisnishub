@@ -43,7 +43,8 @@ export const router = createBrowserRouter([
     element: <StoreLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'katalog', element: <StoreCatalogPage /> },
+      { path: 'katalog', element: <StoreCatalogPage defaultSegment="graphics" /> },
+      { path: 'polos', element: <StoreCatalogPage defaultSegment="blank" /> },
       { path: 'produk/:sku', element: <ProductDetailPage /> },
       { path: 'custom-order', element: <CustomOrderPage /> },
       { path: 'keranjang', element: <CartPage /> },

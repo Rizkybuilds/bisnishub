@@ -94,12 +94,12 @@ export function DashboardPage() {
   const dtfOrders = orders.filter(o => o.status === 'dtf');
   const pressOrders = orders.filter(o => o.status === 'press');
 
-  // Calculate total physical stock
+  // Calculate total physical stock (blanks)
   let totalStock = 0;
   const lowStockItems = [];
 
   Object.entries(inventory).forEach(([gKey, colData]) => {
-    if (gKey === 'supplies') return;
+    if (gKey === 'supplies' || gKey === 'dtf_films') return;
     Object.entries(colData || {}).forEach(([col, szData]) => {
       SIZES.forEach(sz => {
         const count = szData[sz] || 0;
@@ -110,6 +110,24 @@ export function DashboardPage() {
       });
     });
   });
+
+  // Calculate DTF films stock & asset valuation
+  let totalDtfSheets = 0;
+  let totalDtfAssetValue = 0;
+  const lowStockDtfFilms = [];
+
+  if (inventory.dtf_films) {
+    Object.entries(inventory.dtf_films).forEach(([sku, film]) => {
+      const ready = Number(film.ready) || 0;
+      const cost = Number(film.unitCost) || 12000;
+      const min = Number(film.min) || 2;
+      totalDtfSheets += ready;
+      totalDtfAssetValue += ready * cost;
+      if (ready <= min) {
+        lowStockDtfFilms.push({ sku, ...film });
+      }
+    });
+  }
 
   // CFO Dynamic Financial Calculations
   const totalGrossRevenue = orders.reduce((sum, o) => sum + (o.price || 0), 0);
@@ -167,9 +185,9 @@ export function DashboardPage() {
               <Layers className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-xs text-ts-muted font-bold">Stok Kaos NSA (Cititex)</div>
+              <div className="text-xs text-ts-muted font-bold">Stok Kaos NSA (Blanks)</div>
               <div className="font-mono text-2xl font-extrabold text-ts-krem mt-0.5">{totalStock} <span className="text-sm font-normal text-ts-muted">pcs</span></div>
-              <div className="text-[10px] text-ts-krem/70 font-semibold">Ready Stock Gudang</div>
+              <div className="text-[10px] text-ts-teal font-semibold">⚡ {totalDtfSheets} Lembar Film DTF Ready</div>
             </div>
           </Card>
 
@@ -226,7 +244,7 @@ export function DashboardPage() {
               <div className="font-mono text-xl font-extrabold text-amber-400">
                 -{formatRupiah(totalCogs)}
               </div>
-              <div className="text-[10px] text-amber-400/80">NSA Cititex + DTF + Packaging</div>
+              <div className="text-[10px] text-amber-400/80">Kaos NSA + DTF + Packaging</div>
             </div>
 
             <div className="bg-ts-hitam/60 border border-ts-green/40 p-4 rounded-xl space-y-1 bg-gradient-to-b from-ts-green/5 to-transparent">
@@ -235,6 +253,25 @@ export function DashboardPage() {
                 +{formatRupiah(totalNetProfit)}
               </div>
               <div className="text-[10px] text-ts-green/80 font-bold">Margin Bersih: {realizedMarginPct}%</div>
+            </div>
+          </div>
+
+          {/* Persediaan Lancar DTF Asset Valuation */}
+          <div className="mt-4 pt-3 border-t border-ts-borderDim flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs bg-ts-hitam/40 px-3.5 py-2.5 rounded-xl">
+            <div className="flex items-center gap-2 text-ts-muted">
+              <span className="w-2 h-2 rounded-full bg-ts-mustard inline-block"></span>
+              <span><strong>Persediaan Film DTF Studio:</strong> {totalDtfSheets} lembar film siap press</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="font-mono text-ts-krem">
+                Nilai Aset Stok Film: <strong className="text-ts-mustard font-bold">{formatRupiah(totalDtfAssetValue)}</strong>
+              </div>
+              <Link 
+                to="/admin/inventory" 
+                className="text-ts-teal hover:underline inline-flex items-center gap-1 font-semibold text-[11px]"
+              >
+                Cek Tab Film DTF &rarr;
+              </Link>
             </div>
           </div>
         </div>
@@ -311,6 +348,36 @@ export function DashboardPage() {
             )}
           </div>
         </div>
+
+        {/* Low Stock DTF Film Alerts */}
+        {lowStockDtfFilms.length > 0 && (
+          <div className="bg-ts-surface border border-ts-mustard/40 rounded-2xl p-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-ts-krem flex items-center gap-2">
+                <Printer className="w-4 h-4 text-ts-mustard" /> Peringatan Stok Film DTF Menipis (&le; Batas Buffer Minimum)
+              </h3>
+              <Link to="/admin/gangsheet" className="text-xs text-ts-mustard hover:underline font-semibold">
+                Buka Gang Sheet Planner &rarr;
+              </Link>
+            </div>
+
+            <div className="flex flex-wrap gap-2 pt-1">
+              {lowStockDtfFilms.map((film, idx) => (
+                <div
+                  key={idx}
+                  className="px-3 py-1.5 rounded-lg bg-ts-hitam border border-ts-mustard/40 text-xs flex items-center gap-2"
+                >
+                  <span className="text-ts-krem/90 font-medium">
+                    [{film.sku}] {film.name}
+                  </span>
+                  <span className="font-mono font-bold text-ts-mustard">
+                    {film.ready} lembar (Min: {film.min})
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Recent Orders Table with Financial Visibility */}
         <div className="bg-ts-surface border border-ts-border rounded-2xl overflow-hidden shadow-lg">

@@ -87,10 +87,12 @@ export function CartPage() {
 
     const orderId = `WEB-${Date.now().toString().slice(-6)}`;
     
-    // Save each cart item as part of the order
-    cart.forEach(item => {
+    // Save each cart item as part of the order with unique sub-ID if multiple items
+    cart.forEach((item, index) => {
+      const itemOrderId = cart.length > 1 ? `${orderId}-${index + 1}` : orderId;
       const orderRecord = {
-        id: orderId,
+        id: itemOrderId,
+        parentOrderId: orderId,
         customer: customerName.trim(),
         phone: `${phone.trim()} (${city.trim() || 'Indonesia'})`,
         channel: 'web',
@@ -227,7 +229,7 @@ export function CartPage() {
           <div className="space-y-3">
             {cart.map((item, idx) => (
               <div
-                key={idx}
+                key={`${item.sku}-${item.garment}-${item.color}-${item.size}-${idx}`}
                 className="p-4 bg-ts-surface/80 backdrop-blur-xl border border-white/[0.08] rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-glass-card shadow-glass-inset"
               >
                 <div className="flex items-center gap-3.5">
@@ -252,18 +254,28 @@ export function CartPage() {
                   <div className="flex items-center border border-white/[0.1] rounded-xl bg-white/[0.03] p-1">
                     <button
                       type="button"
-                      onClick={() => updateCartQty(idx, -1)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        updateCartQty(idx, -1);
+                      }}
                       className="w-7 h-7 rounded-lg hover:bg-white/[0.1] text-white font-bold text-xs cursor-pointer transition-colors"
+                      title="Kurangi kuantitas"
                     >
                       -
                     </button>
-                    <span className="w-8 text-center font-mono font-bold text-xs text-white">
+                    <span className="w-8 text-center font-mono font-bold text-xs text-white select-none">
                       {item.qty}
                     </span>
                     <button
                       type="button"
-                      onClick={() => updateCartQty(idx, 1)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        updateCartQty(idx, 1);
+                      }}
                       className="w-7 h-7 rounded-lg hover:bg-white/[0.1] text-white font-bold text-xs cursor-pointer transition-colors"
+                      title="Tambah kuantitas"
                     >
                       +
                     </button>
@@ -275,7 +287,11 @@ export function CartPage() {
 
                   <button
                     type="button"
-                    onClick={() => removeFromCart(idx)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      removeFromCart(idx);
+                    }}
                     className="p-2 text-ts-muted hover:text-ts-red hover:bg-white/[0.05] rounded-xl transition-colors cursor-pointer"
                     title="Hapus item"
                   >

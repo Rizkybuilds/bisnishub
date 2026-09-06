@@ -1,7 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getProducts, saveProduct as apiSaveProduct } from '../services/productsApi';
 import { getOrders, saveOrder as apiSaveOrder, updateOrderStatus as apiUpdateOrderStatus } from '../services/ordersApi';
-import { getInventoryMatrix, saveInventoryMatrix, deductStock } from '../services/inventoryApi';
+import { 
+  getInventoryMatrix, 
+  saveInventoryMatrix, 
+  deductStock, 
+  deductDtfFilm, 
+  restockDtfFilm, 
+  restockDtfBatch 
+} from '../services/inventoryApi';
 import { testSupabaseConnection } from '../services/supabase';
 
 const AdminContext = createContext();
@@ -54,8 +61,8 @@ export function AdminProvider({ children }) {
     const oldStatus = target.status;
     const nextStatus = statuses[nextIdx];
 
-    // Deduct stock if order advances from pending -> dtf (start of production)
-    if (oldStatus === "pending" && nextStatus === "dtf") {
+    // Deduct stock if order advances from pending -> production (dtf or press)
+    if (oldStatus === "pending" && (nextStatus === "dtf" || nextStatus === "press")) {
       let gKey = "nsa_softstyle_30s";
       if (target.garment?.includes("24s")) gKey = "nsa_heavyweight_24s";
       else if (target.garment?.includes("Long")) gKey = "nsa_longsleeve";
@@ -66,7 +73,16 @@ export function AdminProvider({ children }) {
       const sz = target.size || "L";
       const qty = target.qty || 1;
 
-      const updatedInv = deductStock(inventory, gKey, col, sz, qty);
+      // 1. Deduct blank garment
+      let updatedInv = deductStock(inventory, gKey, col, sz, qty);
+
+      // 2. Deduct DTF film if it's a graphic product (not a blank apparel)
+      const isBlank = target.sku?.startsWith("TS-BLK") || target.garment === "blank";
+      if (!isBlank && target.sku) {
+        updatedInv = deductDtfFilm(updatedInv, target.sku, qty);
+        showToast(`⚡ 1 lembar film DTF [${target.sku}] otomatis dipotong dari stok studio!`, 'info');
+      }
+
       setInventory(updatedInv);
       showToast(`📦 Kaos polos ${target.garment} (${col} ${sz}) -${qty} pcs otomatis dipotong dari stok!`, 'info');
     }
@@ -113,6 +129,41 @@ export function AdminProvider({ children }) {
     showToast(`Stok diperbarui: ${col} (${sz}) = ${next[gKey][col][sz]} pcs`);
   };
 
+  // Restock batch of DTF film sheets (from Gang Sheet Builder)
+  const restockDtfBatchAction = (items = []) => {
+    const updated = restockDtfBatch(inventory, items);
+    setInventory(updated);
+    const totalSheets = items.reduce((sum, it) => sum + (Number(it.qty) || 1), 0);
+    showToast(`🎉 Sukses mencatat +${totalSheets} lembar film DTF ke stok studio!`);
+  };
+
+  // Update single DTF film stock in place
+  const updateDtfFilmStock = (sku, val) => {
+    const next = JSON.parse(JSON.stringify(inventory));
+    if (!next.dtf_films) next.dtf_films = {};
+    if (next.dtf_films[sku]) {
+      next.dtf_films[sku].ready = Math.max(0, parseInt(val, 10) || 0);
+      saveInventoryMatrix(next);
+      setInventory(next);
+      showToast(`Stok Film DTF [${sku}] diperbarui: ${next.dtf_films[sku].ready} lembar`);
+    }
+  };
+
+  // Helper to check DTF film readiness for a given SKU
+  const getDtfFilmStatus = (sku) => {
+    if (!sku || sku.startsWith("TS-BLK")) return null;
+    const film = inventory?.dtf_films?.[sku];
+    if (!film) return { ready: 0, min: 2, isReady: false, isLow: true, unitCost: 12000, name: sku };
+    return {
+      name: film.name || sku,
+      ready: film.ready || 0,
+      min: film.min || 2,
+      isReady: (film.ready || 0) > 0,
+      isLow: (film.ready || 0) <= (film.min || 2),
+      unitCost: film.unitCost || 12000
+    };
+  };
+
   return (
     <AdminContext.Provider
       value={{
@@ -127,7 +178,10 @@ export function AdminProvider({ children }) {
         addOrder,
         saveProduct,
         restockInventory,
-        updateStockCell
+        updateStockCell,
+        restockDtfBatchAction,
+        updateDtfFilmStock,
+        getDtfFilmStatus
       }}
     >
       {children}

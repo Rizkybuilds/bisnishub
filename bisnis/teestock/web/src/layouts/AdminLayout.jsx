@@ -153,7 +153,7 @@ export function AdminLayout() {
               ))}
             </Select>
             <Select
-              label="Model Kaos NSA (Cititex)"
+              label="Model Kaos NSA (Blanks)"
               value={garment}
               onChange={(e) => setGarment(e.target.value)}
             >

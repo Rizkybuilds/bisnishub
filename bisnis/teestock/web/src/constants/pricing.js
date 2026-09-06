@@ -1,6 +1,6 @@
 /**
  * TeeStock Production & Unit Economics Constants
- * Updated September 2026 based on real Cititex & Vendor DTF parameters
+ * Updated September 2026 based on real NSA Distributor & Vendor DTF parameters
  */
 
 export const PRODUCTION_COSTS = {
@@ -9,7 +9,7 @@ export const PRODUCTION_COSTS = {
   overhead: 1000,      // Listrik mesin press & isolasi tahan panas
 };
 
-// Biaya garmen bahan New States Apparel (Cititex)
+// Biaya garmen bahan New States Apparel (Distributor NSA)
 export const GARMENT_BASE_PRICING = {
   nsa_softstyle_30s: {
     wholesale: 32000,

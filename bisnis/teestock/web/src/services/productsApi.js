@@ -18,20 +18,22 @@ export async function getProducts() {
         const seedMap = new Map(SEED_PRODUCTS.map(p => [p.sku, p]));
         const updated = parsed.map(p => {
           const seed = seedMap.get(p.sku);
-          if (seed && seed.series === 'blank') {
-            return {
-              ...p,
-              colors: seed.colors,
-              sizes: seed.sizes,
+          if (!seed) return p;
+          return {
+            ...p,
+            variantImages: seed.variantImages,
+            generalImages: seed.generalImages,
+            colors: seed.colors || p.colors,
+            sizes: seed.sizes || p.sizes,
+            ...(seed.series === 'blank' ? {
               filePath: seed.filePath,
               cititexCatId: seed.cititexCatId,
               priceRetail: seed.priceRetail,
               priceReseller: seed.priceReseller,
               costBlank: seed.costBlank,
               description: seed.description
-            };
-          }
-          return p;
+            } : {})
+          };
         });
         const existingSkus = new Set(updated.map(p => p.sku));
         const missing = SEED_PRODUCTS.filter(p => !existingSkus.has(p.sku));
@@ -54,20 +56,22 @@ export async function getProducts() {
       const seedMap = new Map(SEED_PRODUCTS.map(p => [p.sku, p]));
       const updated = parsed.map(p => {
         const seed = seedMap.get(p.sku);
-        if (seed && seed.series === 'blank') {
-          return {
-            ...p,
-            colors: seed.colors,
-            sizes: seed.sizes,
+        if (!seed) return p;
+        return {
+          ...p,
+          variantImages: seed.variantImages,
+          generalImages: seed.generalImages,
+          colors: seed.colors || p.colors,
+          sizes: seed.sizes || p.sizes,
+          ...(seed.series === 'blank' ? {
             filePath: seed.filePath,
             cititexCatId: seed.cititexCatId,
             priceRetail: seed.priceRetail,
             priceReseller: seed.priceReseller,
             costBlank: seed.costBlank,
             description: seed.description
-          };
-        }
-        return p;
+          } : {})
+        };
       });
       const existingSkus = new Set(updated.map(p => p.sku));
       const missing = SEED_PRODUCTS.filter(p => !existingSkus.has(p.sku));

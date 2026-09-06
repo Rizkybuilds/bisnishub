@@ -47,7 +47,7 @@ export function CustomOrderPage() {
   const [qty, setQty] = useState(1);
   const [artworkLink, setArtworkLink] = useState('');
   const [notes, setNotes] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [submittedOrder, setSubmittedOrder] = useState(null);
 
   const selectedGarment = GARMENT_TYPES[garmentKey] || GARMENT_TYPES.nsa_softstyle_30s;
   const selectedPrint = DTF_PRINT_SIZES.find(p => p.id === printSizeId) || DTF_PRINT_SIZES[2];
@@ -86,13 +86,13 @@ export function CustomOrderPage() {
     };
 
     addOrder(newOrder);
-    setSubmitted(true);
+    setSubmittedOrder(newOrder);
   };
 
-  if (submitted) {
+  if (submittedOrder) {
     const targetPhone = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
     const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(
-      `Halo TeeStock! Saya ingin konfirmasi pesanan custom:\nNo. Order: CST-${Date.now().toString().slice(-6)}\nNama: ${name}\nModel: ${selectedGarment.name} (${color} - Size ${size})\nJumlah: ${qty} pcs\nUkuran Sablon: ${selectedPrint.name}\nArtwork: ${artworkLink || 'Kirim file via WA'}\nCatatan: ${notes}\nTotal Estimasi: ${formatRupiah(estTotal)}`
+      `Halo TeeStock! Saya ingin konfirmasi pesanan custom:\nNo. Order: ${submittedOrder.id}\nNama: ${submittedOrder.customer}\nModel: ${submittedOrder.garment} (${submittedOrder.color} - Size ${submittedOrder.size})\nJumlah: ${submittedOrder.qty} pcs\nUkuran Sablon: ${selectedPrint.name}\nArtwork: ${artworkLink || 'Kirim file via WA'}\nCatatan: ${notes}\nTotal Estimasi: ${formatRupiah(submittedOrder.price)}`
     )}`;
 
     return (
@@ -108,12 +108,13 @@ export function CustomOrderPage() {
         </div>
 
         <div className="p-6 bg-ts-surface/80 backdrop-blur-xl border border-white/[0.1] rounded-3xl text-left space-y-2.5 text-xs shadow-glass-card shadow-glass-inset">
-          <div className="flex justify-between"><span className="text-ts-muted">Pemesan:</span> <strong className="text-white">{name}</strong></div>
-          <div className="flex justify-between"><span className="text-ts-muted">Model &amp; Varian:</span> <strong className="text-white">{selectedGarment.name} • {color} ({size})</strong></div>
+          <div className="flex justify-between"><span className="text-ts-muted">No. Order:</span> <strong className="font-mono text-ts-terracotta">{submittedOrder.id}</strong></div>
+          <div className="flex justify-between"><span className="text-ts-muted">Pemesan:</span> <strong className="text-white">{submittedOrder.customer}</strong></div>
+          <div className="flex justify-between"><span className="text-ts-muted">Model &amp; Varian:</span> <strong className="text-white">{submittedOrder.garment} • {submittedOrder.color} ({submittedOrder.size})</strong></div>
           <div className="flex justify-between"><span className="text-ts-muted">Area Sablon:</span> <strong className="text-white">{selectedPrint.name}</strong></div>
-          <div className="flex justify-between"><span className="text-ts-muted">Jumlah:</span> <strong className="text-white">{qty} pcs</strong></div>
+          <div className="flex justify-between"><span className="text-ts-muted">Jumlah:</span> <strong className="text-white">{submittedOrder.qty} pcs</strong></div>
           <div className="flex justify-between text-ts-green font-bold text-sm pt-3 border-t border-white/[0.08]">
-            <span>Estimasi Biaya:</span> <span className="font-mono text-base">{formatRupiah(estTotal)}</span>
+            <span>Estimasi Biaya:</span> <span className="font-mono text-base">{formatRupiah(submittedOrder.price)}</span>
           </div>
         </div>
 

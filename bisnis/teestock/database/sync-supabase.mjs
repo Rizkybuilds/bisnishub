@@ -53,11 +53,11 @@ async function run() {
     batch: 'Katalog Polos',
     template: 'blank',
     status: 'active',
-    license_source: 'Official Cititex',
+    license_source: 'Distributor Resmi NSA',
     file_path: p.filePath,
     colors: p.colors,
     sizes: p.sizes,
-    seo_title: `Kaos Polos NSA ${p.name} Cititex — TeeStock`,
+    seo_title: `Kaos Polos NSA ${p.name} Original — TeeStock`,
     description: p.description
   }));
 

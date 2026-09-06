@@ -81,7 +81,7 @@ export function PrintWorkSlipModal({ isOpen, onClose, order }) {
                 📦 Instruksi Kaos Polos NSA (Tanpa Cetak DTF):
               </div>
               <div className="grid grid-cols-2 gap-2 text-[11px]">
-                <div>• Kategori: <strong>Blank Apparel Original Cititex</strong></div>
+                <div>• Kategori: <strong>Blank Apparel Original NSA (New States Apparel)</strong></div>
                 <div>• Quality Check: <strong>Bebas Noda, Serat Rata, Jahitan Rapi</strong></div>
                 <div>• Penanganan: <strong>Langsung Lipat & Masukkan Ziplock</strong></div>
                 <div>• Pelengkap: <strong>Sisipkan Hangtag & Stiker TeeStock</strong></div>

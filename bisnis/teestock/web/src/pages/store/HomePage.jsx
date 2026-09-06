@@ -33,6 +33,7 @@ import { Badge } from '../../components/ui/Badge';
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { NewsletterCapture } from '../../components/store/NewsletterCapture';
+import { ProductCard } from '../../components/store/ProductCard';
 import { SEOHead } from '../../components/common/SEOHead';
 
 export function HomePage() {
@@ -45,8 +46,8 @@ export function HomePage() {
   // Drop #01 "Identity" - 6 Hero Designs
   const drop01Skus = [
     'TS-PRO-001', 'TS-PRO-002', 
-    'TS-KOM-001', 'TS-KOM-002', 
-    'TS-LOK-001', 'TS-LOK-002'
+    'TS-KOM-001', 'TS-LOK-001', 
+    'TS-REC-001', 'TS-FAN-001'
   ];
   
   const homeSchema = {
@@ -215,66 +216,14 @@ export function HomePage() {
         </div>
 
         {/* 6 Drop Designs Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {activeGraphicProducts.map((p) => {
-            const price = p.priceRetail || p.price_retail || 99000;
-            return (
-              <div
-                key={p.sku}
-                className="group bg-ts-surface/75 backdrop-blur-xl border border-white/[0.09] rounded-3xl overflow-hidden hover:border-ts-terracotta/50 transition-all duration-300 flex flex-col justify-between shadow-glass-card shadow-glass-inset"
-              >
-                {/* Product Card Header */}
-                <div className="p-4 pb-0 flex items-center justify-between gap-2">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white/[0.06] text-white border border-white/10">
-                    {p.sku}
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-ts-terracotta/15 text-ts-terracotta border border-ts-terracotta/30 uppercase tracking-wide">
-                    {p.niche || 'Original'}
-                  </span>
-                </div>
-
-                {/* Mockup Showcase */}
-                <Link to={`/produk/${p.sku}`} className="p-4 block">
-                  <div className="aspect-square rounded-2xl bg-ts-hitam/60 border border-white/[0.06] overflow-hidden relative group-hover:border-white/20 transition-all flex items-center justify-center">
-                    <img
-                      src={p.filePath || p.file_path}
-                      alt={p.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <span className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-ts-hitam/80 backdrop-blur-md border border-white/10 text-[10px] text-ts-krem font-medium">
-                      100% NSA Softstyle 30s
-                    </span>
-                  </div>
-                </Link>
-
-                {/* Details & Action */}
-                <div className="px-5 pb-5 space-y-3.5">
-                  <div>
-                    <h3 className="text-base font-extrabold text-white group-hover:text-ts-terracotta transition-colors line-clamp-1">
-                      {p.name}
-                    </h3>
-                    <p className="text-xs text-ts-kremMuted mt-1 line-clamp-2 leading-relaxed">
-                      {p.description}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
-                    <div>
-                      <span className="text-[10px] text-ts-muted block font-mono">Harga Launching</span>
-                      <span className="font-mono text-base font-black text-ts-green">
-                        {formatRupiah(price)}
-                      </span>
-                    </div>
-                    <Link to={`/produk/${p.sku}`}>
-                      <Button size="sm" variant="primary" icon={ArrowRight}>
-                        Pesan Kaos
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {activeGraphicProducts.map((p) => (
+            <ProductCard
+              key={p.sku}
+              product={p}
+              isBlank={false}
+            />
+          ))}
         </div>
 
         {/* Launch Promo Banner */}
@@ -437,7 +386,7 @@ export function HomePage() {
           </div>
 
           <Link
-            to="/katalog?series=blank"
+            to="/polos"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] text-ts-krem border border-white/[0.08] hover:border-ts-teal/50 transition-all"
           >
             <span>Semua 12 Model NSA</span>
@@ -445,57 +394,14 @@ export function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {blankProducts.map((p) => {
-            const colorCount = p.colors ? p.colors.split(',').length : 12;
-            return (
-              <Link
-                key={p.sku}
-                to={`/produk/${p.sku}`}
-                className="group bg-ts-surface/75 backdrop-blur-xl border border-white/[0.08] rounded-2xl overflow-hidden hover:border-ts-teal/50 transition-all flex flex-col shadow-glass-card shadow-glass-inset"
-              >
-                <div className="aspect-square bg-ts-hitam/70 overflow-hidden relative">
-                  <img
-                    src={p.filePath || p.file_path}
-                    alt={p.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <span className="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-ts-hitam/90 text-white border border-white/10">
-                    {p.sku}
-                  </span>
-                  <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-bold bg-ts-teal/30 text-teal-200 border border-ts-teal/40">
-                    {colorCount} Warna
-                  </span>
-                </div>
-
-                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                  <div>
-                    <span className="text-[10px] font-bold text-ts-teal uppercase tracking-wider block">
-                      {p.niche || 'Kaos Polos NSA'}
-                    </span>
-                    <h3 className="text-sm font-bold text-white group-hover:text-ts-teal transition-colors mt-0.5 truncate">
-                      {p.name}
-                    </h3>
-                    <p className="text-[11px] text-ts-kremMuted line-clamp-2 mt-1 leading-relaxed">
-                      {p.description}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
-                    <div>
-                      <div className="text-[10px] text-ts-muted">Harga Satuan</div>
-                      <span className="font-mono text-sm font-extrabold text-ts-green">
-                        {formatRupiah(p.priceRetail || p.price_retail || 35000)}
-                      </span>
-                    </div>
-                    <span className="text-[10px] font-bold px-3 py-1 rounded-xl bg-white/[0.05] border border-white/10 text-white group-hover:bg-ts-teal group-hover:text-zinc-950 transition-colors">
-                      Pesan &rarr;
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          {blankProducts.map((p) => (
+            <ProductCard
+              key={p.sku}
+              product={p}
+              isBlank={true}
+            />
+          ))}
         </div>
       </section>
 

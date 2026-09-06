@@ -1,1 +1,54 @@
-{}
+{
+  "founder": {
+    "role": "Solopreneur / Solo Founder",
+    "businesses_count": 3,
+    "framework": "Lean Solopreneur Framework (1 Founder, 3 Bisnis)"
+  },
+  "portfolio": {
+    "teestock": {
+      "brand_name": "TeeStock",
+      "tagline": "Wear Your Identity, Stock Your Story",
+      "industry": "Curated Apparel & Merch House / Print-on-Demand (POD)",
+      "status": "Fase 1: Launching Preparation (Validasi DTF, In-House Heat Press, Drop #01)",
+      "live_url": "https://teestock.vercel.app",
+      "tech_stack": "React 18 + Vite + Tailwind CSS + Supabase PostgreSQL (RLS) + Cloudinary CDN + Vercel PWA",
+      "production_model": {
+        "garment": "New States Apparel (NSA Heavyweight 24s & Softstyle 30s) via Cititex",
+        "printing": "DTF Roll Meteran (Rp 28.000 - Rp 35.000 / meter)",
+        "pressing": "In-house heat press mandiri di rumah (suhu 155°C, 15s cold peel + 5s finishing press)",
+        "advantage": "Hemat jasa press vendor Rp 5.000 - Rp 7.000/kaos, SLA produksi cepat H+0 s/d H+1"
+      },
+      "unit_economics_nsa_24s": {
+        "cost_blank": 38000,
+        "cost_dtf": 10000,
+        "cost_press_electric": 1500,
+        "cost_pack_polymailer": 2000,
+        "cost_overhead": 1500,
+        "cogs_total": 53000,
+        "anchor_price": 139000,
+        "retail_launch_price": 99000,
+        "dropship_price": 75000,
+        "reseller_price_min12": 65000,
+        "custom_order_price": 129000,
+        "net_margin_marketplace": "37.0%",
+        "net_margin_direct_wa": "48.0%"
+      },
+      "inventory_strategy": "Hybrid 2-Tier: Tier 1 Buffer Studio fast-moving (Hitam/Putih M, L, XL) vs Tier 2 Virtual JIT Cititex (1.500+ SKU warna/model)",
+      "curated_drop_01": {
+        "concept": "RAW IDENTITY / ORIGINS",
+        "target_quota": "24 pcs kuota peluncuran early bird (Rp 89.000 - Rp 99.000)",
+        "exit_criteria_fase_1": "Minimal 5-10 penjualan pertama ke circle terdekat + testimoni nyata"
+      }
+    },
+    "multigraph": {
+      "brand_name": "MultiGraph",
+      "status": "Ideation",
+      "strategic_role": "Supporting packaging and collateral arm for TeeStock (hangtag, thank-you cards, polymailer seals, packaging box) before expanding to external B2B clients"
+    },
+    "titik_buta": {
+      "brand_name": "Titik Buta",
+      "status": "Ideation / Freeze (TBD)",
+      "strategic_role": "Tunda hingga TeeStock stabil mencapai arus kas positif"
+    }
+  }
+}

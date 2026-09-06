@@ -10,7 +10,7 @@ export function Navbar() {
   const { isAuthenticated, user, profile, role, isAdmin, openAuthModal, signOut } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const location = useLocation();
-  const isBlankActive = location.pathname === '/katalog' && location.search.includes('series=blank');
+  const isBlankActive = location.pathname === '/polos' || (location.pathname === '/katalog' && location.search.includes('series=blank'));
   const isGraphicActive = location.pathname === '/katalog' && !location.search.includes('series=blank');
 
   return (
@@ -69,7 +69,7 @@ export function Navbar() {
               Katalog Grafis
             </NavLink>
             <NavLink
-              to="/katalog?series=blank"
+              to="/polos"
               className={() =>
                 `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
                   isBlankActive

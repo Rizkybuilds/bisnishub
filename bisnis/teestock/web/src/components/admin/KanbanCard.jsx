@@ -18,12 +18,15 @@ import { generateCustomerWhatsAppText, getWhatsAppUrl } from '../../utils/whatsa
 import { PrintWorkSlipModal } from './PrintWorkSlipModal';
 import { ShippingLabelModal } from './ShippingLabelModal';
 import { isFastMovingBuffer } from '../../utils/garmentStockRouting';
+import { useAdmin } from '../../context/AdminContext';
 
 export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
+  const { getDtfFilmStatus } = useAdmin();
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
   const isPress = order.status === 'press';
   const isStudioReady = isFastMovingBuffer(order.garment, order.color, order.size);
+  const dtfStatus = getDtfFilmStatus ? getDtfFilmStatus(order.sku) : null;
 
   const channelBadges = {
     shopee: "bg-[#EE4D2D]/20 text-[#FF6E4E] border-[#EE4D2D]/40",
@@ -123,19 +126,38 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
             </span>
           </div>
           
-          {/* Fulfillment Origin Tag */}
-          <div className="flex items-center justify-between text-[10px] pt-1.5 border-t border-ts-borderDim/50">
-            <span className="text-ts-muted font-mono text-[9px] uppercase">Garmen:</span>
-            {isStudioReady ? (
-              <span className="inline-flex items-center gap-1 font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 rounded text-[10px]" title="Tersedia di buffer stok studio (Siap Press/Pack)">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                STOK STUDIO
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 font-mono font-bold text-sky-400 bg-sky-500/10 border border-sky-500/25 px-1.5 py-0.5 rounded text-[10px]" title="Perlu ditarik dari cabang vendor Cititex (JIT)">
-                <Building2 className="w-2.5 h-2.5" />
-                TARIK CITITEX
-              </span>
+          {/* Fulfillment Origin Tag (Garment & DTF Film) */}
+          <div className="space-y-1.5 pt-1.5 border-t border-ts-borderDim/50">
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="text-ts-muted font-mono text-[9px] uppercase">Garmen:</span>
+              {isStudioReady ? (
+                <span className="inline-flex items-center gap-1 font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 rounded text-[10px]" title="Tersedia di buffer stok studio (Siap Press/Pack)">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  STOK STUDIO
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 font-mono font-bold text-sky-400 bg-sky-500/10 border border-sky-500/25 px-1.5 py-0.5 rounded text-[10px]" title="Perlu ditarik dari distributor vendor NSA (JIT)">
+                  <Building2 className="w-2.5 h-2.5" />
+                  TARIK GARMEN NSA
+                </span>
+              )}
+            </div>
+
+            {dtfStatus && (
+              <div className="flex items-center justify-between text-[10px]">
+                <span className="text-ts-muted font-mono text-[9px] uppercase">Film DTF:</span>
+                {dtfStatus.isReady ? (
+                  <span className="inline-flex items-center gap-1 font-mono font-bold text-teal-400 bg-teal-500/10 border border-teal-500/25 px-1.5 py-0.5 rounded text-[10px]" title={`Film DTF siap di studio: ${dtfStatus.ready} lembar ready`}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+                    DTF READY ({dtfStatus.ready} lbr)
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/25 px-1.5 py-0.5 rounded text-[10px]" title="Stok film DTF kosong, perlu dicetak di Gang Sheet">
+                    <Printer className="w-2.5 h-2.5" />
+                    PERLU CETAK DTF
+                  </span>
+                )}
+              </div>
             )}
           </div>
         </div>

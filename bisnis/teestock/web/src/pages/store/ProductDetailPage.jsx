@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   ShoppingBag, 
   ShieldCheck, 
@@ -8,16 +8,17 @@ import {
   ArrowLeft, 
   ArrowRight,
   Check, 
-  MessageSquare,
-  Layers,
-  Ruler,
-  Clock,
-  RotateCcw,
-  Tag,
-  ExternalLink,
+  MessageSquare, 
+  Layers, 
+  Ruler, 
+  Clock, 
+  RotateCcw, 
+  Tag, 
+  ExternalLink, 
   ChevronRight,
-  Building2,
-  Zap
+  ChevronLeft,
+  Building2, 
+  Zap 
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useStore } from '../../context/StoreContext';
@@ -33,71 +34,8 @@ import { SEOHead } from '../../components/common/SEOHead';
 import { BUNDLE_DEALS } from '../../constants/pricing';
 import { ProductReviews } from '../../components/store/ProductReviews';
 import { getFulfillmentSLA } from '../../utils/garmentStockRouting';
-
-const COLOR_HEX_MAP = {
-  "Hitam": "#111111",
-  "Black": "#111111",
-  "Putih": "#F8F8F8",
-  "White": "#F8F8F8",
-  "Charcoal": "#2B2B2B",
-  "Navy": "#1B2A4A",
-  "Maroon": "#5C1D24",
-  "Sport Grey": "#A5A5A5",
-  "Forest Green": "#224A30",
-  "Royal Blue": "#1E40AF",
-  "Red": "#B91C1C",
-  "Merah": "#B91C1C",
-  "Irish Green": "#15803D",
-  "Daisy": "#FBBF24",
-  "Heliconia": "#E11D48",
-  "Sand": "#D4B996",
-  "Orange": "#EA580C",
-  "Mustard": "#D9A441",
-  "Salmon": "#FA8072",
-  "Aqua Sky": "#7AC5CD",
-  "Gold": "#E5A823",
-  "Dark Green": "#1B4D3E",
-  "Neon Green": "#39FF14",
-  "Carolina Blue": "#7BAFD4",
-  "Lime": "#A3E635",
-  "Light Pink": "#FBCFE8",
-  "Sapphire": "#0284C7",
-  "Purple": "#7E22CE",
-  "Chestnut": "#854D0E",
-  "Military Green": "#4D5645",
-  "Butter": "#FEF08A",
-  "Green Ash": "#A7F3D0",
-  "Lilac": "#C084FC",
-  "Dark Chocolate": "#382216",
-  "Army": "#4B5320",
-  "Black Camo": "#262626",
-  "Forest Camo": "#2F3E2E",
-  "Black Heather": "#2D3748",
-  "Navy Heather": "#2A3A5E",
-  "Red Heather": "#9B2C2C",
-  "Dark Green Heather": "#234E32",
-  "Burgundy Heather": "#6B1D2F",
-  "Light Blue": "#93C5FD",
-  "Black-Forest Camo": "#1A2E1A",
-  "Black-Graphite": "#374151",
-  "Black-White": "#1F2937",
-  "Gold - Grey": "#D97706",
-  "Orange - Charcoal": "#C2410C",
-  "Royal Blue - Charcoal": "#1D4ED8",
-  "White - Grey": "#E2E8F0",
-  "White-Black": "#E5E7EB",
-  "White-Red": "#FCA5A5",
-  "White-Navy": "#93C5FD",
-  "White-Forest Green": "#86EFAC",
-  "White-Gold": "#FDE68A",
-  "White-Maroon": "#FECDD3",
-  "White-Royal Blue": "#BFDBFE",
-  "White-Charcoal": "#D1D5DB",
-  "Sport Grey-Black": "#9CA3AF",
-  "Sport Grey-Navy": "#94A3B8",
-  "Sport Grey-Maroon": "#9B7E84",
-  "Sport Grey-Red": "#B87F86"
-};
+import { COLOR_HEX_MAP, getColorHex } from '../../constants/colors';
+import { getProductGallery } from '../../utils/productImages';
 
 const COLOR_CATEGORIES = {
   basic: ["Hitam", "Black", "Putih", "White", "Charcoal", "Sport Grey", "Sport Grey-Black", "White-Black"],
@@ -131,12 +69,35 @@ export function ProductDetailPage() {
   const selectedGarment = GARMENT_TYPES[selectedGarmentKey] || GARMENT_TYPES.nsa_softstyle_30s;
   
   // Available colors
-  const colorList = isBlank && product.colors
-    ? product.colors.split(',').map(c => c.trim()).filter(Boolean)
-    : selectedGarment.colors.map(c => c.name);
+  const colorList = useMemo(() => {
+    if (isBlank && product.colors) {
+      return product.colors.split(',').map(c => c.trim()).filter(Boolean);
+    }
+    if (product.colors) {
+      return product.colors.split(',').map(c => c.trim()).filter(Boolean);
+    }
+    return selectedGarment.colors.map(c => c.name);
+  }, [isBlank, product.colors, selectedGarmentKey]);
 
-  const [selectedColor, setSelectedColor] = useState(colorList[0] || 'Black');
+  const [searchParams] = useSearchParams();
+  const queryColor = searchParams.get('color');
+
+  const [selectedColor, setSelectedColor] = useState(() => {
+    if (queryColor) {
+      const match = colorList.find(c => c.toLowerCase() === queryColor.toLowerCase());
+      if (match) return match;
+    }
+    return colorList[0] || (isBlank ? 'White' : 'Hitam');
+  });
+
   const [activeColorTab, setActiveColorTab] = useState('all'); // 'all', 'basic', 'earthy', 'vibrant'
+
+  // Dynamic multi-photo gallery for current active color
+  const gallery = useMemo(() => {
+    return getProductGallery(product, selectedColor);
+  }, [product, selectedColor]);
+
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
 
   // Filtered color list based on active tab
   const filteredColors = useMemo(() => {
@@ -159,24 +120,49 @@ export function ProductDetailPage() {
 
   // Dynamic image state with fallback
   const defaultImage = product.filePath || product.file_path;
-  const [previewImg, setPreviewImg] = useState(defaultImage);
+  const [previewImg, setPreviewImg] = useState(() => (gallery[0] ? gallery[0].url : defaultImage));
 
-  // Sync state whenever sku changes
+  // Sync state ONLY when SKU changes (not on every re-render)
   useEffect(() => {
-    if (colorList.length > 0) {
-      const initialColor = colorList[0];
-      setSelectedColor(initialColor);
-      if (isBlank && product.cititexCatId) {
-        const initialUrl = `https://cititex.com/api/uploads/category/album/front_side/${product.cititexCatId}-${encodeURIComponent(initialColor)}.jpg`;
-        setPreviewImg(initialUrl);
-      } else {
-        setPreviewImg(defaultImage);
-      }
+    let initialCol = colorList[0] || (isBlank ? 'White' : 'Hitam');
+    if (queryColor) {
+      const match = colorList.find(c => c.toLowerCase() === queryColor.toLowerCase());
+      if (match) initialCol = match;
     }
+    setSelectedColor(initialCol);
     if (sizeList.length > 0) {
       setSelectedSize(sizeList[0]);
     }
   }, [product.sku]);
+
+  // Sync gallery and preview image whenever selectedColor or gallery changes
+  useEffect(() => {
+    setActiveGalleryIndex(0);
+    if (gallery.length > 0) {
+      setPreviewImg(gallery[0].url);
+    } else {
+      setPreviewImg(defaultImage);
+    }
+  }, [selectedColor, gallery, defaultImage]);
+
+  const handleSelectThumbnail = (idx) => {
+    setActiveGalleryIndex(idx);
+    if (gallery[idx]) {
+      setPreviewImg(gallery[idx].url);
+    }
+  };
+
+  const handlePrevImage = (e) => {
+    e.stopPropagation();
+    const newIdx = (activeGalleryIndex - 1 + gallery.length) % gallery.length;
+    handleSelectThumbnail(newIdx);
+  };
+
+  const handleNextImage = (e) => {
+    e.stopPropagation();
+    const newIdx = (activeGalleryIndex + 1) % gallery.length;
+    handleSelectThumbnail(newIdx);
+  };
 
   // Handle scroll for sticky mobile action bar
   useEffect(() => {
@@ -219,7 +205,7 @@ export function ProductDetailPage() {
   }
   const currentPrice = isBlank ? baseRetailPrice : (effectiveBasePrice + priceDelta);
 
-  // Dynamic Hybrid Stock & Fulfillment SLA (Studio Buffer vs Cititex JIT)
+  // Dynamic Hybrid Stock & Fulfillment SLA (Studio Buffer vs Vendor JIT)
   const garmentIdentifier = isBlank ? product.name : (selectedGarment?.name || selectedGarmentKey);
   const fulfillmentSLA = useMemo(() => {
     return getFulfillmentSLA(garmentIdentifier, selectedColor, selectedSize, isBlank);
@@ -249,9 +235,15 @@ export function ProductDetailPage() {
 
   const handleColorChange = (colName) => {
     setSelectedColor(colName);
+    setActiveGalleryIndex(0);
     if (isBlank && product.cititexCatId) {
-      const cititexUrl = `https://cititex.com/api/uploads/category/album/front_side/${product.cititexCatId}-${encodeURIComponent(colName)}.jpg`;
-      setPreviewImg(cititexUrl);
+      const blankGarmentUrl = `https://cititex.com/api/uploads/category/album/front_side/${product.cititexCatId}-${encodeURIComponent(colName)}.jpg`;
+      setPreviewImg(blankGarmentUrl);
+    } else if (product.variantImages && product.variantImages[colName]?.[0]) {
+      const vImg = product.variantImages[colName][0];
+      setPreviewImg(typeof vImg === 'string' ? vImg : vImg.url);
+    } else {
+      setPreviewImg(defaultImage);
     }
   };
 
@@ -289,8 +281,8 @@ export function ProductDetailPage() {
       />
       {/* Breadcrumb Navigation */}
       <div className="flex items-center gap-2 text-xs text-ts-muted">
-        <Link to="/katalog" className="hover:text-ts-terracotta flex items-center gap-1 transition-colors">
-          <ArrowLeft className="w-3.5 h-3.5" /> Katalog
+        <Link to={isBlank ? "/polos" : "/katalog"} className="hover:text-ts-terracotta flex items-center gap-1 transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> {isBlank ? "Kaos Polos NSA" : "Katalog Grafis"}
         </Link>
         <span>/</span>
         <span className="text-ts-kremMuted">{product.seriesName || product.series}</span>
@@ -300,7 +292,7 @@ export function ProductDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         {/* Left Column: Product Showcase & Image (5 Cols) */}
-        <div className="lg:col-span-6 space-y-5">
+        <div className="lg:col-span-6 space-y-4">
           <div className="aspect-square bg-ts-surface/80 border border-white/[0.09] rounded-3xl overflow-hidden shadow-glass-card shadow-glass-inset relative group">
             <img
               src={previewImg}
@@ -327,15 +319,84 @@ export function ProductDetailPage() {
               </div>
             )}
 
-            {/* Active Color Name Pill */}
-            <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-xl bg-ts-hitam/85 backdrop-blur-md border border-white/15 text-xs font-semibold text-white flex items-center gap-2 shadow-lg">
-              <span
-                className="w-3 h-3 rounded-full border border-white/40 shrink-0"
-                style={{ backgroundColor: COLOR_HEX_MAP[selectedColor] || '#333333' }}
-              />
-              <span>Warna: <strong className="text-white">{selectedColor}</strong></span>
+            {/* Prev / Next Chevrons on Main Photo (if multi-photo) */}
+            {gallery.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={handlePrevImage}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer"
+                  title="Foto sebelumnya"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextImage}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer"
+                  title="Foto selanjutnya"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </>
+            )}
+
+            {/* Bottom Bar: Active Color Pill & Photo Label */}
+            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none gap-2">
+              <div className="px-3 py-1.5 rounded-xl bg-ts-hitam/85 backdrop-blur-md border border-white/15 text-xs font-semibold text-white flex items-center gap-2 shadow-lg">
+                <span
+                  className="w-3 h-3 rounded-full border border-white/40 shrink-0"
+                  style={{ backgroundColor: getColorHex(selectedColor) }}
+                />
+                <span className="truncate max-w-[120px]">Warna: <strong className="text-white">{selectedColor}</strong></span>
+              </div>
+
+              {gallery[activeGalleryIndex]?.label && (
+                <div className="px-2.5 py-1 rounded-lg bg-ts-hitam/85 backdrop-blur-md border border-white/15 text-[10px] font-mono text-ts-krem font-medium shadow-md truncate max-w-[170px]">
+                  {gallery[activeGalleryIndex].label}
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Interactive Multi-Photo Thumbnail Strip */}
+          {gallery.length > 1 && (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-[11px] text-ts-kremMuted px-1">
+                <span>Galeri Foto Produk ({gallery.length} Sudut / Detail)</span>
+                <span className="font-mono text-[10px] text-ts-terracotta">
+                  {activeGalleryIndex + 1} dari {gallery.length}
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-thin">
+                {gallery.map((item, idx) => {
+                  const isActive = activeGalleryIndex === idx;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleSelectThumbnail(idx)}
+                      className={`group relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border transition-all duration-200 shrink-0 cursor-pointer ${
+                        isActive
+                          ? 'ring-2 ring-ts-terracotta border-transparent scale-105 shadow-glow-terracotta z-10'
+                          : 'border-white/10 hover:border-white/30 opacity-70 hover:opacity-100'
+                      }`}
+                      title={item.label}
+                    >
+                      <img
+                        src={item.url}
+                        alt={item.label}
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute bottom-0 inset-x-0 bg-ts-hitam/85 backdrop-blur-sm text-[8px] sm:text-[9px] font-mono text-center text-white py-0.5 px-1 truncate block">
+                        {item.type === 'front' ? 'Depan' : item.type === 'back' ? 'Belakang' : item.type === 'model' ? 'Model' : item.type === 'guide' ? 'Spek' : 'Detail'}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Wholesale Lusinan Price Promo Card for Blanks */}
           {isBlank && (

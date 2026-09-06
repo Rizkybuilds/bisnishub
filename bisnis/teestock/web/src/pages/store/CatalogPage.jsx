@@ -1,52 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
-import { Search, Filter, ShoppingBag, Package, Sparkles, ArrowUpDown, X, Tag } from 'lucide-react';
+import { useSearchParams, Link, useLocation } from 'react-router-dom';
+import { Search, Filter, ShoppingBag, Package, Sparkles, ArrowUpDown, X, Tag, ArrowRight } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useAuth } from '../../context/AuthContext';
 import { SERIES } from '../../constants/series';
+import { Button } from '../../components/ui/Button';
 import { formatRupiah } from '../../utils/formatters';
 import { SEOHead } from '../../components/common/SEOHead';
+import { ProductCard } from '../../components/store/ProductCard';
 
-export function CatalogPage() {
+export function CatalogPage({ defaultSegment }) {
   const { catalog } = useAdmin();
   const { isPartner, profile } = useAuth();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const seriesParam = searchParams.get('series') || 'all';
 
+  // Mode check: /polos vs /katalog
+  const isBlankMode = location.pathname === '/polos' || defaultSegment === 'blank' || seriesParam === 'blank';
+
   const [search, setSearch] = useState('');
-  const [activeSegment, setActiveSegment] = useState(() => {
-    if (seriesParam === 'blank') return 'blank';
-    if (seriesParam !== 'all') return 'graphics';
-    return 'all';
-  });
   const [activeSeries, setActiveSeries] = useState(seriesParam);
+  const [selectedBlankModel, setSelectedBlankModel] = useState('all');
   const [sortBy, setSortBy] = useState('default');
 
   useEffect(() => {
     setActiveSeries(seriesParam);
-    if (seriesParam === 'blank') {
-      setActiveSegment('blank');
-    } else if (seriesParam !== 'all') {
-      setActiveSegment('graphics');
-    }
   }, [seriesParam]);
-
-  const handleSegmentChange = (segment) => {
-    setActiveSegment(segment);
-    if (segment === 'blank') {
-      setActiveSeries('blank');
-      searchParams.set('series', 'blank');
-    } else if (segment === 'graphics') {
-      if (activeSeries === 'blank' || activeSeries === 'all') {
-        setActiveSeries('all');
-        searchParams.delete('series');
-      }
-    } else {
-      setActiveSeries('all');
-      searchParams.delete('series');
-    }
-    setSearchParams(searchParams);
-  };
 
   const handleSeriesClick = (id) => {
     setActiveSeries(id);
@@ -58,11 +38,13 @@ export function CatalogPage() {
     setSearchParams(searchParams);
   };
 
-  const blankCount = catalog.filter(p => p.series === 'blank').length;
-  const graphicCount = catalog.filter(p => p.series !== 'blank').length;
+  const blankProducts = catalog.filter(p => p.series === 'blank');
+  const graphicProducts = catalog.filter(p => p.series !== 'blank');
+  const blankCount = blankProducts.length;
+  const graphicCount = graphicProducts.length;
 
-  // Filter logic
-  let filtered = catalog.filter(p => {
+  // Filter logic strictly separated
+  let filtered = (isBlankMode ? blankProducts : graphicProducts).filter(p => {
     // Search query match
     const matchQ = !search || 
       p.name.toLowerCase().includes(search.toLowerCase()) || 
@@ -70,21 +52,19 @@ export function CatalogPage() {
       (p.niche && p.niche.toLowerCase().includes(search.toLowerCase())) ||
       (p.description && p.description.toLowerCase().includes(search.toLowerCase()));
 
-    // Segment match
-    let matchSegment = true;
-    if (activeSegment === 'blank') {
-      matchSegment = p.series === 'blank';
-    } else if (activeSegment === 'graphics') {
-      matchSegment = p.series !== 'blank';
+    // Secondary sub-filters
+    let matchSub = true;
+    if (isBlankMode) {
+      if (selectedBlankModel !== 'all') {
+        matchSub = p.sku === selectedBlankModel || p.name.toLowerCase().includes(selectedBlankModel.toLowerCase());
+      }
+    } else {
+      if (activeSeries !== 'all' && activeSeries !== 'blank') {
+        matchSub = p.series === activeSeries;
+      }
     }
 
-    // Series match
-    let matchS = true;
-    if (activeSeries !== 'all' && activeSeries !== 'blank') {
-      matchS = p.series === activeSeries;
-    }
-
-    return matchQ && matchSegment && matchS;
+    return matchQ && matchSub;
   });
 
   // Sorting logic
@@ -102,29 +82,78 @@ export function CatalogPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
       <SEOHead
         title={
-          activeSegment === 'blank'
-            ? "Jual Kaos Polos NSA Softstyle 30s & Heavyweight 24s Original | TeeStock"
-            : "Katalog Kaos Distro Grafis Curated — Bahan NSA 24s Heavyweight | TeeStock"
+          isBlankMode
+            ? "Katalog Kaos Polos New States Apparel (NSA) Original | TeeStock"
+            : "Katalog Kaos Distro Desain Grafis Curated — Bahan NSA 24s | TeeStock"
         }
         description={
-          activeSegment === 'blank'
-            ? "Beli kaos polos New States Apparel (NSA) Softstyle 30s & Heavyweight 24s original impor. 100% katun tubular tanpa jahitan samping, siap kirim ecer & grosir lusinan."
-            : "Koleksi kaos distro grafis curated TeeStock. Dicetak di atas garmen NSA Heavyweight 24s dengan sablon DTF HD suhu 155°C anti-pecah."
+          isBlankMode
+            ? "Beli kaos polos New States Apparel (NSA) Softstyle 30s & Heavyweight 24s original impor. 100% katun tubular tanpa jahitan samping, eceran dan grosir lusinan."
+            : "Koleksi kaos distro grafis curated TeeStock dalam 9 series tematik. Dicetak di atas garmen NSA Heavyweight 24s dengan sablon DTF HD suhu 155°C anti-pecah."
         }
-        keywords={["katalog kaos distro", "kaos polos nsa", "kaos nsa 24s", "kaos nsa 30s", "sablon dtf satuan"]}
-        canonicalPath={activeSegment === 'blank' ? "/katalog?series=blank" : "/katalog"}
+        keywords={
+          isBlankMode
+            ? ["kaos polos nsa", "kaos nsa 24s", "kaos nsa 30s", "kaos polos grosir", "kaos oversize"]
+            : ["katalog kaos distro", "kaos desain grafis", "kaos dtf satuan", "kaos streetwear lokal", "sablon dtf bandung"]
+        }
+        canonicalPath={isBlankMode ? "/polos" : "/katalog"}
       />
+
+      {/* Two-Tab Top Switcher: Grafis vs Polos */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-2 bg-white/[0.03] border border-white/[0.08] rounded-2xl backdrop-blur-md">
+        <div className="flex items-center gap-1.5 w-full sm:w-auto">
+          <Link
+            to="/katalog"
+            className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              !isBlankMode
+                ? 'bg-ts-terracotta text-white shadow-glow-terracotta border border-white/20'
+                : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Katalog Desain Grafis ({graphicCount})</span>
+          </Link>
+
+          <Link
+            to="/polos"
+            className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              isBlankMode
+                ? 'bg-ts-teal text-white shadow-glow-teal border border-white/20'
+                : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+            }`}
+          >
+            <Package className="w-3.5 h-3.5" />
+            <span>Kaos Polos NSA ({blankCount})</span>
+          </Link>
+        </div>
+
+        {/* Quick Context Tip */}
+        <div className="text-[11px] text-ts-muted hidden md:flex items-center gap-1.5 pr-2">
+          {isBlankMode ? (
+            <span>💡 100% NSA Original tanpa sambungan samping, siap pakai atau disablon</span>
+          ) : (
+            <span>✨ Dicetak dengan sablon DTF HD suhu 155°C di atas bahan katun NSA</span>
+          )}
+        </div>
+      </div>
+
       {/* Title & Search Header */}
       <div className="space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-semibold text-ts-krem">
-          <Tag className="w-3.5 h-3.5 text-ts-terracotta" />
-          <span>OFFICIAL CATALOG • STREETWEAR &amp; BLANK APPAREL</span>
+          <Tag className={`w-3.5 h-3.5 ${isBlankMode ? 'text-ts-teal' : 'text-ts-terracotta'}`} />
+          <span>
+            {isBlankMode ? 'OFFICIAL BLANKS • 100% NEW STATES APPAREL' : 'CURATED GRAPHICS • 9 SERIES THEMATIC'}
+          </span>
         </div>
+
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-          Katalog Lengkap TeeStock
+          {isBlankMode ? 'Katalog Kaos Polos NSA' : 'Katalog Desain Grafis Distro'}
         </h1>
+
         <p className="text-xs sm:text-sm text-ts-kremMuted max-w-2xl leading-relaxed">
-          Eksplorasi seluruh karya desain streetwear eksklusif dan koleksi Kaos Polos New States Apparel (NSA) 100% original garmen impor berkualitas.
+          {isBlankMode
+            ? '100% Cotton impor resmi New States Apparel tanpa sambungan samping (tubular/built-up). Pilihan katun combed Softstyle 30s yang adem, Heavyweight 24s yang tebal garmen prima, hingga Heavyweight 20s boxy streetwear.'
+            : 'Koleksi desain streetwear eksklusif terkurasi dalam 9 tema kepribadian. Dicetak menggunakan tinta DTF HD raster premium di atas bahan katun New States Apparel original.'}
         </p>
 
         {/* Top Controls: Search Bar & Sort Dropdown */}
@@ -134,7 +163,7 @@ export function CatalogPage() {
             <Search className="w-4 h-4 text-ts-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Cari model NSA, seri, tema hobi, profesi..."
+              placeholder={isBlankMode ? "Cari model NSA (Softstyle, Heavyweight, Longsleeve)..." : "Cari judul desain, seri, tema profesi, hobi..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-ts-surface/90 border border-white/[0.1] rounded-2xl pl-10 pr-10 py-2.5 text-xs text-white placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-1 focus:ring-ts-terracotta transition-all shadow-glass-inset"
@@ -170,52 +199,71 @@ export function CatalogPage() {
         </div>
       </div>
 
-      {/* Main Category Segment Pills (21st.dev style glass segment) */}
-      <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-white/[0.03] border border-white/[0.08] rounded-2xl backdrop-blur-md">
-        <button
-          type="button"
-          onClick={() => handleSegmentChange('all')}
-          className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            activeSegment === 'all'
-              ? 'bg-ts-terracotta text-white shadow-glow-terracotta border border-white/20'
-              : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
-          }`}
-        >
-          Semua Koleksi ({catalog.length})
-        </button>
+      {/* Cross-Sell Banners */}
+      {isBlankMode ? (
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-terracotta/20 via-ts-surface/80 to-transparent border border-ts-terracotta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-glass-card shadow-glass-inset">
+          <div>
+            <span className="font-bold text-white block text-sm">Mau Tambah Sablon Custom di Kaos Polos Ini?</span>
+            <span className="text-ts-kremMuted">TeeStock Studio melayani sablon DTF HD satuan &amp; lusinan (+Rp 25.000) tanpa minimal order kaku.</span>
+          </div>
+          <Link to="/custom-order">
+            <Button size="sm" variant="primary" className="whitespace-nowrap shadow-glow-terracotta">
+              Konsultasi Custom Order &rarr;
+            </Button>
+          </Link>
+        </div>
+      ) : (
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-teal/15 via-ts-surface/80 to-transparent border border-ts-teal/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-glass-card shadow-glass-inset">
+          <div>
+            <span className="font-bold text-white block text-sm">Hanya Butuh Kaos Polos Tanpa Sablon?</span>
+            <span className="text-ts-kremMuted">Dapatkan bahan New States Apparel (NSA) original impor mulai Rp 49.000 ecer &amp; grosir.</span>
+          </div>
+          <Link to="/polos">
+            <Button size="sm" variant="secondary" className="border-ts-teal/30 text-teal-300 hover:bg-ts-teal/20 whitespace-nowrap">
+              Buka Katalog Kaos Polos NSA &rarr;
+            </Button>
+          </Link>
+        </div>
+      )}
 
-        <button
-          type="button"
-          onClick={() => handleSegmentChange('blank')}
-          className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-            activeSegment === 'blank'
-              ? 'bg-ts-teal text-white shadow-glow-teal border border-white/20'
-              : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
-          }`}
-        >
-          <Package className="w-3.5 h-3.5" />
-          <span>Kaos Polos NSA ({blankCount})</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSegmentChange('graphics')}
-          className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-            activeSegment === 'graphics'
-              ? 'bg-ts-mustard text-zinc-950 shadow-glow-mustard border border-white/20'
-              : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
-          }`}
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Desain Grafis Distro ({graphicCount})</span>
-        </button>
-      </div>
-
-      {/* Secondary Series Pills */}
-      {activeSegment !== 'blank' && (
+      {/* Sub-Filter Section */}
+      {isBlankMode ? (
         <div className="space-y-2">
           <div className="text-[11px] font-bold text-ts-muted uppercase tracking-wider font-mono">
-            Filter Berdasarkan 9 Series:
+            Pilih Model &amp; Ketebalan Bahan NSA:
+          </div>
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            <button
+              type="button"
+              onClick={() => setSelectedBlankModel('all')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
+                selectedBlankModel === 'all'
+                  ? 'bg-ts-teal text-white border border-ts-teal/50 shadow-glow-teal'
+                  : 'bg-white/[0.03] text-ts-muted hover:text-white border border-white/[0.06]'
+              }`}
+            >
+              Semua Model ({blankCount})
+            </button>
+            {blankProducts.map(bm => (
+              <button
+                key={bm.sku}
+                type="button"
+                onClick={() => setSelectedBlankModel(bm.sku)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
+                  selectedBlankModel === bm.sku
+                    ? 'bg-ts-teal text-white border border-ts-teal/50 shadow-glow-teal'
+                    : 'bg-white/[0.03] text-ts-muted hover:text-white border border-white/[0.06]'
+                }`}
+              >
+                {bm.name.replace('New States Apparel ', '')}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <div className="text-[11px] font-bold text-ts-muted uppercase tracking-wider font-mono">
+            Filter Berdasarkan 9 Series Distro:
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             <button
@@ -223,11 +271,11 @@ export function CatalogPage() {
               onClick={() => handleSeriesClick('all')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
                 activeSeries === 'all'
-                  ? 'bg-white/[0.12] text-white border border-white/20'
+                  ? 'bg-ts-terracotta/20 text-white border border-ts-terracotta/50 shadow-glow-terracotta'
                   : 'bg-white/[0.03] text-ts-muted hover:text-white border border-white/[0.06]'
               }`}
             >
-              Semua Series
+              Semua Series ({graphicCount})
             </button>
 
             {SERIES.map(s => (
@@ -268,101 +316,14 @@ export function CatalogPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {filtered.map(product => {
-            const isBlank = product.series === 'blank';
-            const colorCount = product.colors ? product.colors.split(',').length : null;
-
-            return (
-              <Link
-                key={product.sku}
-                to={`/produk/${product.sku}`}
-                className={`group bg-ts-surface/75 backdrop-blur-xl border rounded-2xl overflow-hidden transition-all duration-200 flex flex-col hover:-translate-y-1 ${
-                  isBlank ? 'hover:border-ts-teal/60' : 'hover:border-ts-terracotta/60'
-                } border-white/[0.08] shadow-glass-card shadow-glass-inset`}
-              >
-                <div className="aspect-square bg-ts-hitam/70 overflow-hidden relative">
-                  <img
-                    src={product.filePath || product.file_path}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <span className="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-ts-hitam/90 text-white border border-white/10">
-                    {product.sku}
-                  </span>
-                  {isBlank ? (
-                    <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-ts-teal/30 text-teal-200 border border-ts-teal/40">
-                      {colorCount ? `${colorCount} Warna` : '100% NSA'}
-                    </span>
-                  ) : (
-                    <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-ts-terracotta/30 text-[#E2885E] border border-ts-terracotta/40">
-                      DTF HD
-                    </span>
-                  )}
-                </div>
-
-                <div className="p-4 flex-1 flex flex-col justify-between space-y-2.5">
-                  <div>
-                    <div className={`text-[10px] font-bold uppercase tracking-wider font-mono ${
-                      isBlank ? 'text-ts-teal' : 'text-ts-terracotta'
-                    }`}>
-                      {isBlank ? 'Kaos Polos NSA' : (product.seriesName || product.series)}
-                    </div>
-                    <h3 className={`text-sm font-bold text-white transition-colors mt-0.5 truncate ${
-                      isBlank ? 'group-hover:text-ts-teal' : 'group-hover:text-ts-terracotta'
-                    }`}>
-                      {product.name}
-                    </h3>
-                    {product.niche && (
-                      <div className="text-[11px] text-ts-kremMuted mt-0.5 truncate">{product.niche}</div>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
-                    <div>
-                      {isPartner && !isBlank ? (
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] text-ts-mustard font-bold uppercase font-mono">Mitra</span>
-                            <span className="text-[10px] text-ts-muted line-through font-mono">
-                              {formatRupiah(product.priceRetail || product.price_retail || 99000)}
-                            </span>
-                          </div>
-                          <span className="font-mono text-sm font-black text-ts-green">
-                            {formatRupiah(
-                              profile?.partner_tier === 'reseller'
-                                ? (product.priceReseller || product.price_reseller || 65000)
-                                : (product.priceDropship || product.price_dropship || 75000)
-                            )}
-                          </span>
-                        </div>
-                      ) : (
-                        <div>
-                          {!isBlank && (
-                            <div className="flex items-center gap-1">
-                              <span className="text-[10px] text-ts-muted line-through font-mono">Rp 139.000</span>
-                              <span className="text-[9px] text-ts-terracotta font-bold font-mono">Hemat 28%</span>
-                            </div>
-                          )}
-                          <div className="text-[10px] text-ts-muted">Harga Launching</div>
-                          <span className="font-mono text-sm font-extrabold text-ts-green">
-                            {formatRupiah(product.priceRetail || product.price_retail || 99000)}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <span className={`text-[10px] font-bold px-3 py-1 rounded-lg border transition-colors ${
-                      isBlank 
-                        ? 'bg-white/[0.04] border-white/10 text-white group-hover:bg-ts-teal group-hover:text-zinc-950' 
-                        : 'bg-white/[0.04] border-white/10 text-white group-hover:bg-ts-terracotta group-hover:text-white'
-                    }`}>
-                      Pesan &rarr;
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+          {filtered.map(product => (
+            <ProductCard
+              key={product.sku}
+              product={product}
+              isBlank={product.series === 'blank'}
+            />
+          ))}
         </div>
       )}
     </div>

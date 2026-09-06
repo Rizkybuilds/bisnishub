@@ -36,7 +36,7 @@ export function VendorPickupModal({ isOpen, onClose, orders = [] }) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Daftar Tarik Garmen Vendor Cititex (JIT)"
+      title="Daftar Tarik Garmen Supplier NSA (JIT)"
       maxWidth="max-w-2xl"
     >
       <div className="space-y-6">
@@ -45,7 +45,7 @@ export function VendorPickupModal({ isOpen, onClose, orders = [] }) {
           <Building2 className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
             <strong className="block font-bold text-white text-sm">
-              Sistem JIT (Just-In-Time) Cabang Cititex
+              Sistem JIT (Just-In-Time) Supplier NSA
             </strong>
             <p className="text-ts-kremMuted leading-relaxed">
               Daftar ini secara otomatis merangkum garmen polos varian <em>slow-moving</em> / warna khusus dari pesanan aktif yang tidak distok di studio. Ambil sekaligus saat jadwal pickup harian atau sekalian mengambil cetakan roll DTF.
@@ -88,7 +88,7 @@ export function VendorPickupModal({ isOpen, onClose, orders = [] }) {
             <div className="py-8 text-center rounded-2xl bg-ts-surface/40 border border-ts-borderDim space-y-2">
               <Package className="w-8 h-8 text-ts-muted mx-auto" />
               <p className="text-xs text-ts-muted">
-                Semua pesanan aktif saat ini menggunakan stok buffer studio. Tidak ada garmen yang perlu ditarik dari Cititex!
+                Semua pesanan aktif saat ini menggunakan stok buffer studio. Tidak ada garmen yang perlu ditarik dari distributor/supplier!
               </p>
             </div>
           ) : (
@@ -130,7 +130,7 @@ export function VendorPickupModal({ isOpen, onClose, orders = [] }) {
             <div className="flex items-center justify-between text-xs font-bold text-ts-krem px-1">
               <span className="flex items-center gap-1.5">
                 <MessageSquare className="w-3.5 h-3.5 text-[#25D366]" />
-                <span>Format Pesan Kilat ke Sales Cabang Cititex:</span>
+                <span>Format Pesan Kilat ke Sales Supplier NSA:</span>
               </span>
               <button
                 type="button"
@@ -173,7 +173,7 @@ export function VendorPickupModal({ isOpen, onClose, orders = [] }) {
               ) : (
                 <>
                   <Copy className="w-4 h-4" />
-                  <span>Salin Format WA ke Cititex ({totalPcs} pcs)</span>
+                  <span>Salin Format WA ke Supplier ({totalPcs} pcs)</span>
                 </>
               )}
             </Button>

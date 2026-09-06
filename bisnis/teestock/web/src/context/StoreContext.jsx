@@ -51,9 +51,12 @@ export function StoreProvider({ children }) {
       );
 
       if (existingIdx !== -1) {
-        const updated = [...prev];
-        updated[existingIdx].qty += qty;
-        return updated;
+        return prev.map((item, i) => {
+          if (i === existingIdx) {
+            return { ...item, qty: item.qty + qty };
+          }
+          return item;
+        });
       }
 
       const effectivePrice = customPrice !== undefined 
@@ -83,11 +86,14 @@ export function StoreProvider({ children }) {
 
   const updateCartQty = (index, delta) => {
     setCart(prev => {
-      const updated = [...prev];
-      const newQty = updated[index].qty + delta;
-      if (newQty <= 0) return prev.filter((_, i) => i !== index);
-      updated[index].qty = newQty;
-      return updated;
+      return prev
+        .map((item, i) => {
+          if (i !== index) return item;
+          const newQty = (item.qty || 1) + delta;
+          if (newQty <= 0) return null;
+          return { ...item, qty: newQty };
+        })
+        .filter(Boolean);
     });
   };
 

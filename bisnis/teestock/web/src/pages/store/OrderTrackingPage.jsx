@@ -13,21 +13,28 @@ export function OrderTrackingPage() {
   const { orders } = useAdmin();
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState('');
-  const [searchResult, setSearchResult] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
   const [searched, setSearched] = useState(false);
+
+  const findMatchingOrders = (term) => {
+    const trimmed = term.trim().toLowerCase();
+    if (!trimmed) return [];
+    return orders.filter(o => 
+      o.id.toLowerCase() === trimmed || 
+      (o.parentOrderId && o.parentOrderId.toLowerCase() === trimmed) ||
+      o.id.toLowerCase().startsWith(trimmed + '-') ||
+      (o.trackingNo && o.trackingNo.toLowerCase() === trimmed) ||
+      (o.phone && o.phone.toLowerCase().includes(trimmed))
+    );
+  };
 
   // Auto-search from ?order= query param
   useEffect(() => {
     const orderParam = searchParams.get('order');
     if (orderParam && orders.length > 0) {
       setQuery(orderParam);
-      const trimmed = orderParam.trim().toLowerCase();
-      const found = orders.find(o => 
-        o.id.toLowerCase() === trimmed || 
-        (o.trackingNo && o.trackingNo.toLowerCase() === trimmed) ||
-        (o.phone && o.phone.toLowerCase().includes(trimmed))
-      );
-      setSearchResult(found || null);
+      const matched = findMatchingOrders(orderParam);
+      setSearchResults(matched);
       setSearched(true);
     }
   }, [searchParams, orders]);
@@ -35,15 +42,8 @@ export function OrderTrackingPage() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (!query.trim()) return;
-
-    const trimmed = query.trim().toLowerCase();
-    const found = orders.find(o => 
-      o.id.toLowerCase() === trimmed || 
-      (o.trackingNo && o.trackingNo.toLowerCase() === trimmed) ||
-      (o.phone && o.phone.toLowerCase().includes(trimmed))
-    );
-
-    setSearchResult(found || null);
+    const matched = findMatchingOrders(query);
+    setSearchResults(matched);
     setSearched(true);
   };
 
@@ -56,8 +56,13 @@ export function OrderTrackingPage() {
   ];
 
   const getCurrentStepIndex = (status) => {
-    return steps.findIndex(s => s.id === status);
+    const idx = steps.findIndex(s => s.id === status);
+    return idx >= 0 ? idx : 0;
   };
+
+  const primaryOrder = searchResults[0] || null;
+  const grandTotal = searchResults.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+  const displayOrderId = primaryOrder?.parentOrderId || primaryOrder?.id;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-8">
@@ -90,23 +95,29 @@ export function OrderTrackingPage() {
       {/* Results */}
       {searched && (
         <div className="animate-in fade-in duration-300">
-          {searchResult ? (
+          {searchResults.length > 0 ? (
             <div className="bg-ts-surface/80 backdrop-blur-xl border border-white/[0.1] rounded-3xl p-6 sm:p-8 space-y-6 shadow-glass-card shadow-glass-inset">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.08]">
                 <div>
                   <div className="text-[11px] text-ts-muted">Nomor Pesanan:</div>
-                  <div className="font-mono text-lg font-bold text-ts-terracotta">{searchResult.id}</div>
+                  <div className="font-mono text-lg font-bold text-ts-terracotta">{displayOrderId}</div>
+                  {primaryOrder.trackingNo && (
+                    <div className="text-[11px] text-ts-kremMuted mt-0.5">
+                      No. Resi Kurir: <span className="font-mono text-white font-semibold">{primaryOrder.trackingNo}</span>
+                    </div>
+                  )}
                 </div>
-                <div className="text-right">
+                <div className="text-left sm:text-right">
                   <div className="text-[11px] text-ts-muted">Penerima:</div>
-                  <div className="font-bold text-white text-sm">{searchResult.customer}</div>
+                  <div className="font-bold text-white text-sm">{primaryOrder.customer}</div>
+                  <div className="text-[11px] text-ts-kremMuted">{searchResults.length} Item Pesanan</div>
                 </div>
               </div>
 
               {/* Status Timeline */}
               <div className="space-y-6 py-4">
                 {steps.map((step, idx) => {
-                  const currentIdx = getStepIndex(searchResult.status);
+                  const currentIdx = getCurrentStepIndex(primaryOrder.status);
                   const isDone = idx <= currentIdx;
                   const isCurrent = idx === currentIdx;
 
@@ -152,17 +163,29 @@ export function OrderTrackingPage() {
               </div>
 
               {/* Order Items Recap */}
-              <div className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-2xl text-xs space-y-2 shadow-glass-inset">
-                <div className="font-bold text-white">Rincian Produk:</div>
-                <div className="flex justify-between text-ts-kremMuted">
-                  <span>{searchResult.productName || searchResult.sku}</span>
-                  <span className="text-white font-mono font-bold">
-                    {searchResult.garment} ({searchResult.color} {searchResult.size}) x{searchResult.qty}
-                  </span>
+              <div className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-2xl text-xs space-y-3 shadow-glass-inset">
+                <div className="font-bold text-white flex items-center justify-between">
+                  <span>Rincian Item ({searchResults.length}):</span>
+                  <span className="text-[11px] text-ts-muted">Channel: {(primaryOrder.channel || 'web').toUpperCase()}</span>
                 </div>
-                <div className="flex justify-between text-ts-green font-bold pt-2 border-t border-white/[0.06]">
+                <div className="divide-y divide-white/[0.06] space-y-2">
+                  {searchResults.map((item, i) => (
+                    <div key={item.id || i} className="pt-2 first:pt-0 flex justify-between items-center text-ts-kremMuted">
+                      <div>
+                        <div className="text-white font-medium">{item.productName || item.sku}</div>
+                        <div className="text-[11px] text-ts-muted">
+                          {item.garment} ({item.color || 'Hitam'} {item.size || 'L'}) • x{item.qty || 1} pcs
+                        </div>
+                      </div>
+                      <div className="font-mono text-white font-bold text-right">
+                        {formatRupiah(item.price)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between text-ts-green font-bold pt-3 border-t border-white/[0.08] text-sm">
                   <span>Total Tagihan:</span>
-                  <span className="font-mono">{formatRupiah(searchResult.price)}</span>
+                  <span className="font-mono text-base">{formatRupiah(grandTotal)}</span>
                 </div>
               </div>
             </div>

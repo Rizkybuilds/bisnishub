@@ -9,6 +9,7 @@ export const SEED_PRODUCTS = [
     priceReseller: 75000,
     costBlank: 38000,
     costDtf: 12750,
+    colors: "Hitam, Putih, Charcoal, Navy",
     filePath: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80",
     description: "Kaos streetwear minimalis bertema developer dan programmer. Bahan NSA Softstyle 30s 100% cotton adem dan sablon DTF HD tajam tahan cuci.",
     status: "active",
@@ -24,6 +25,7 @@ export const SEED_PRODUCTS = [
     priceReseller: 82000,
     costBlank: 48000,
     costDtf: 12750,
+    colors: "Hitam, Charcoal, Putih, Olive",
     filePath: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&auto=format&fit=crop&q=80",
     description: "Visual garis isometrik denah arsitektur di atas bahan tebal NSA Heavyweight 24s. Potongan boxy modern yang nyaman dipakai seharian di proyek maupun studio.",
     status: "active",
@@ -39,6 +41,7 @@ export const SEED_PRODUCTS = [
     priceReseller: 75000,
     costBlank: 38000,
     costDtf: 12750,
+    colors: "Forest Green, Hitam, Charcoal, Sand",
     filePath: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800&auto=format&fit=crop&q=80",
     description: "Ilustrasi kontur topografi puncak-puncak tertinggi Nusantara. Dedikasi untuk jiwa-jiwa petualang alam bebas.",
     status: "active",
@@ -54,6 +57,7 @@ export const SEED_PRODUCTS = [
     priceReseller: 68000,
     costBlank: 38000,
     costDtf: 12750,
+    colors: "Hitam, Maroon, Terracotta, Putih",
     filePath: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=800&auto=format&fit=crop&q=80",
     description: "Aksara Jawa stilasi modern dengan pesan pengingat akar budaya luhur. Elegan dan bermakna mendalam.",
     status: "active",
@@ -69,6 +73,7 @@ export const SEED_PRODUCTS = [
     priceReseller: 75000,
     costBlank: 38000,
     costDtf: 12750,
+    colors: "Hitam, Putih, Krem, Charcoal",
     filePath: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80",
     description: "Menghadapi hari berat dengan secangkir es kopi susu gula aren. Santai, jenaka, dan sangat relatable.",
     status: "active",
@@ -84,6 +89,7 @@ export const SEED_PRODUCTS = [
     priceReseller: 82000,
     costBlank: 48000,
     costDtf: 12750,
+    colors: "Hitam, Charcoal, Navy",
     filePath: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&auto=format&fit=crop&q=80",
     description: "Estetika anime retro cyberpunk 80-an dengan cetakan DTF warna neon di atas kaos NSA Heavyweight 24s hitam pekat.",
     status: "active",
@@ -579,5 +585,15 @@ export const INITIAL_INVENTORY_MATRIX = {
     "Stiker Vinyl Pack TeeStock":  { Ready: 180, Min: 40 },
     "Kertas Roti Baking Paper":    { Ready: 45,  Min: 10 },
     "Lakban Fragile Merah":        { Ready: 6,   Min: 2  }
+  },
+  dtf_films: {
+    "TS-PRO-001": { name: "Commit & Pray", size: "A3 (30x40 cm)", ready: 4, min: 2, unitCost: 12000, category: "graphic" },
+    "TS-PRO-002": { name: "Architect's Blueprint", size: "A3 (30x40 cm)", ready: 2, min: 2, unitCost: 12000, category: "graphic" },
+    "TS-KOM-001": { name: "7 Summits 3000 MDPL", size: "A3 (30x40 cm)", ready: 3, min: 2, unitCost: 12000, category: "graphic" },
+    "TS-LOK-001": { name: "Wong Jowo Ojo Ilang", size: "A3 (30x40 cm)", ready: 2, min: 2, unitCost: 12000, category: "graphic" },
+    "TS-REC-001": { name: "Crisis with Iced Coffee", size: "A3 (30x40 cm)", ready: 1, min: 2, unitCost: 12000, category: "graphic" },
+    "TS-FAN-001": { name: "Neo Tokyo 1988", size: "A3 (30x40 cm)", ready: 3, min: 2, unitCost: 12000, category: "graphic" },
+    "ACC-LABEL-NECK": { name: "Label Kerah Dalam TeeStock", size: "Kecil (6x3 cm)", ready: 24, min: 10, unitCost: 1000, category: "accessory" },
+    "ACC-LOGO-CHEST": { name: "Logo Dada Saku TeeStock", size: "Saku (8x8 cm)", ready: 12, min: 5, unitCost: 1500, category: "accessory" }
   }
 };

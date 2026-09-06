@@ -11,83 +11,88 @@ import {
   Music2,
   Instagram,
 } from 'lucide-react';
+import { useStore } from '../../context/StoreContext';
+import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { NewsletterCapture } from '../../components/store/NewsletterCapture';
 import { SEOHead } from '../../components/common/SEOHead';
 import { TeeStockLogoIcon } from '../../components/common/TeeStockLogo';
 
-// ─── Bio Link Data (hardcoded — evolve to Supabase later) ─────────
-const BIO_LINKS = [
-  {
-    id: 'drop',
-    label: '🔥 DROP #01 "IDENTITY" — LIVE NOW!',
-    subtitle: '6 Desain Eksklusif · Mulai Rp 89.000',
-    href: '/katalog?utm_source=biolink&utm_medium=social&utm_campaign=drop01',
-    internal: true,
-    accent: true,
-    icon: Flame,
-  },
-  {
-    id: 'shopee',
-    label: '🛒 Belanja di Shopee',
-    subtitle: 'Free Ongkir · Gratis Pengembalian',
-    href: 'https://shopee.co.id?utm_source=biolink&utm_medium=social&utm_campaign=shopee',
-    internal: false,
-    icon: ShoppingBag,
-  },
-  {
-    id: 'katalog',
-    label: '📱 Katalog Lengkap',
-    subtitle: 'Website resmi TeeStock',
-    href: '/?utm_source=biolink&utm_medium=social&utm_campaign=website',
-    internal: true,
-    icon: LayoutGrid,
-  },
-  {
-    id: 'custom',
-    label: '🎨 Custom Kaos & Official Merch',
-    subtitle: 'TeeStock Studio — Satuan & Lusinan',
-    href: '/custom-order?utm_source=biolink&utm_medium=social&utm_campaign=studio',
-    internal: true,
-    icon: Palette,
-  },
-  {
-    id: 'reseller',
-    label: '🤝 Jadi Reseller / Dropshipper',
-    subtitle: 'Tanpa modal, margin jelas',
-    href: 'https://wa.me/6285220274968?text=Halo%20TeeStock%2C%20saya%20tertarik%20jadi%20reseller%2Fdropshipper.%20Boleh%20info%20lebih%20lanjut%3F&utm_source=biolink&utm_medium=social&utm_campaign=reseller',
-    internal: false,
-    icon: Users,
-    // hidden: true,  // Uncomment to hide for Fase 1-2
-  },
-];
-
-const SOCIAL_LINKS = [
-  {
-    id: 'whatsapp',
-    label: 'WhatsApp',
-    href: 'https://wa.me/6285220274968?text=Halo%20TeeStock!',
-    icon: MessageCircle,
-    color: 'hover:bg-emerald-500/20 hover:border-emerald-500/40 hover:text-emerald-400',
-  },
-  {
-    id: 'tiktok',
-    label: 'TikTok',
-    href: 'https://tiktok.com/@teestock.id',
-    icon: Music2,
-    color: 'hover:bg-pink-500/20 hover:border-pink-500/40 hover:text-pink-400',
-  },
-  {
-    id: 'instagram',
-    label: 'Instagram',
-    href: 'https://instagram.com/teestock.id',
-    icon: Instagram,
-    color: 'hover:bg-purple-500/20 hover:border-purple-500/40 hover:text-purple-400',
-  },
-];
-
 // ─── Component ────────────────────────────────────────────────────
 export function BioLinkPage() {
-  const visibleLinks = BIO_LINKS.filter(link => !link.hidden);
+  const { storeSettings } = useStore();
+  const shopeeUrl = storeSettings?.shopeeUrl || 'https://shopee.co.id/teestock.id';
+  const rawPhone = storeSettings?.storeWhatsapp || '085220274968';
+  const cleanPhone = sanitizePhoneNumber(rawPhone);
+
+  const bioLinks = [
+    {
+      id: 'drop',
+      label: '🔥 DROP #01 "IDENTITY" — LIVE NOW!',
+      subtitle: '6 Desain Eksklusif · Mulai Rp 89.000',
+      href: '/katalog?utm_source=biolink&utm_medium=social&utm_campaign=drop01',
+      internal: true,
+      accent: true,
+      icon: Flame,
+    },
+    {
+      id: 'shopee',
+      label: '🛒 Belanja di Shopee',
+      subtitle: 'Free Ongkir · Gratis Pengembalian',
+      href: `${shopeeUrl}?utm_source=biolink&utm_medium=social&utm_campaign=shopee`,
+      internal: false,
+      icon: ShoppingBag,
+    },
+    {
+      id: 'katalog',
+      label: '📱 Katalog Lengkap',
+      subtitle: 'Website resmi TeeStock',
+      href: '/?utm_source=biolink&utm_medium=social&utm_campaign=website',
+      internal: true,
+      icon: LayoutGrid,
+    },
+    {
+      id: 'custom',
+      label: '🎨 Custom Kaos & Official Merch',
+      subtitle: 'TeeStock Studio — Satuan & Lusinan',
+      href: '/custom-order?utm_source=biolink&utm_medium=social&utm_campaign=studio',
+      internal: true,
+      icon: Palette,
+    },
+    {
+      id: 'reseller',
+      label: '🤝 Jadi Reseller / Dropshipper',
+      subtitle: 'Tanpa modal, margin jelas',
+      href: `https://wa.me/${cleanPhone}?text=${encodeURIComponent('Halo TeeStock, saya tertarik jadi reseller/dropshipper. Boleh info lebih lanjut?')}&utm_source=biolink&utm_medium=social&utm_campaign=reseller`,
+      internal: false,
+      icon: Users,
+    },
+  ];
+
+  const socialLinks = [
+    {
+      id: 'whatsapp',
+      label: 'WhatsApp',
+      href: `https://wa.me/${cleanPhone}?text=Halo%20TeeStock!`,
+      icon: MessageCircle,
+      color: 'hover:bg-emerald-500/20 hover:border-emerald-500/40 hover:text-emerald-400',
+    },
+    {
+      id: 'tiktok',
+      label: 'TikTok',
+      href: 'https://tiktok.com/@teestock.id',
+      icon: Music2,
+      color: 'hover:bg-pink-500/20 hover:border-pink-500/40 hover:text-pink-400',
+    },
+    {
+      id: 'instagram',
+      label: 'Instagram',
+      href: 'https://instagram.com/teestock.id',
+      icon: Instagram,
+      color: 'hover:bg-purple-500/20 hover:border-purple-500/40 hover:text-purple-400',
+    },
+  ];
+
+  const visibleLinks = bioLinks.filter(link => !link.hidden);
 
   return (
     <div className="min-h-screen bg-ts-hitam text-ts-krem flex items-start justify-center px-4 py-8 sm:py-12">
@@ -206,7 +211,7 @@ export function BioLinkPage() {
 
         {/* ─── Social Links ───────────────────────────────────── */}
         <div className="flex items-center justify-center gap-3 pt-2">
-          {SOCIAL_LINKS.map(social => {
+          {socialLinks.map(social => {
             const Icon = social.icon;
             return (
               <a

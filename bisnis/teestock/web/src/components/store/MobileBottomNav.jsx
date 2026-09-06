@@ -7,11 +7,11 @@ export function MobileBottomNav() {
   const { totalCartItems } = useStore();
   const location = useLocation();
 
-  const isBlankActive = location.pathname === '/katalog' && location.search.includes('series=blank');
+  const isBlankActive = location.pathname === '/polos' || (location.pathname === '/katalog' && location.search.includes('series=blank'));
   const isCatalogActive = location.pathname === '/katalog' && !location.search.includes('series=blank');
 
   return (
-    <div className="fixed bottom-3 left-3 right-3 z-40 md:hidden pointer-events-none">
+    <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-40 md:hidden pointer-events-none">
       <nav className="pointer-events-auto max-w-md mx-auto bg-ts-surface/90 backdrop-blur-2xl border border-white/[0.12] rounded-2xl shadow-glass-card shadow-glass-inset px-2 py-1.5">
         <div className="grid grid-cols-5 items-center">
           {/* Beranda */}
@@ -35,7 +35,7 @@ export function MobileBottomNav() {
 
           {/* Kaos Polos NSA */}
           <NavLink
-            to="/katalog?series=blank"
+            to="/polos"
             className={() =>
               `relative flex flex-col items-center justify-center py-1.5 gap-0.5 text-[10px] font-semibold transition-all ${
                 isBlankActive ? 'text-white' : 'text-ts-muted hover:text-ts-krem'

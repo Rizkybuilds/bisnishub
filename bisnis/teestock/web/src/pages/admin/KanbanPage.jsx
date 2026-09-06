@@ -196,7 +196,7 @@ export function KanbanPage() {
             <span>Kirim Roll DTF</span>
           </Link>
 
-          {/* Quick Trigger: Vendor JIT Cititex Pickup Manifest */}
+          {/* Quick Trigger: Vendor JIT NSA Garment Pickup Manifest */}
           <button
             type="button"
             onClick={() => setIsPickupModalOpen(true)}
@@ -205,10 +205,10 @@ export function KanbanPage() {
                 ? 'bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border-sky-500/40 shadow-sm'
                 : 'bg-ts-hitam/60 text-ts-muted border-ts-borderDim hover:text-white'
             }`}
-            title="Lihat rekap garmen yang perlu ditarik dari cabang Cititex hari ini"
+            title="Lihat rekap garmen yang perlu ditarik dari distributor/supplier NSA hari ini"
           >
             <Building2 className="w-3.5 h-3.5" />
-            <span>Tarik Cititex</span>
+            <span>Tarik Garmen NSA</span>
             {vendorPickupSummary.totalPcs > 0 && (
               <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-sky-500 text-neutral-950 font-black">
                 {vendorPickupSummary.totalPcs}
@@ -243,7 +243,7 @@ export function KanbanPage() {
         })}
       </div>
 
-      {/* Cititex JIT Pickup Manifest Modal */}
+      {/* NSA Garment JIT Pickup Manifest Modal */}
       <VendorPickupModal
         isOpen={isPickupModalOpen}
         onClose={() => setIsPickupModalOpen(false)}

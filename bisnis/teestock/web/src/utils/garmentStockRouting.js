@@ -3,7 +3,7 @@
  * 
  * Mengelola arsitektur inventaris hibrida:
  * 1. Tier 1: Fast-Moving Studio Buffer (Stok Fisik di Rumah/Studio: NSA 24s/30s Hitam & Putih M, L, XL) -> SLA H+0 (Kirim Hari Ini)
- * 2. Tier 2: Cititex Vendor JIT (Virtual Warehouse Cititex: Warna lain & model spesifik) -> SLA H+1 (Kirim Besok)
+ * 2. Tier 2: Vendor / Distributor NSA JIT (Warna lain & model spesifik) -> SLA H+1 (Kirim Besok)
  */
 
 /**
@@ -62,18 +62,18 @@ export function getFulfillmentSLA(garmentNameOrKey = '', color = '', size = '', 
   }
 
   return {
-    type: 'vendor_cititex',
+    type: 'vendor_central',
     isStudioStock: false,
-    badgeLabel: '🏢 Gudang Pusat Cititex',
+    badgeLabel: '📦 Stok Gudang Pusat',
     badgeClass: 'bg-sky-500/15 text-sky-400 border-sky-500/30',
     tagText: 'Dikemas 24 Jam (Kirim H+1)',
-    heading: '🏢 Stok Gudang Pusat Cititex • Dikemas 24 Jam (Kirim H+1)',
-    subtext: 'Tersedia di jaringan gudang cabang resmi New States Apparel Cititex. Ditarik JIT harian, dipacking rapi, dan dikirim H+1.'
+    heading: '📦 Stok Gudang Pusat • Dikemas 24 Jam (Kirim H+1)',
+    subtext: 'Tersedia di jaringan distributor resmi New States Apparel (NSA). Ditarik harian, dipacking rapi, dan dikirim H+1.'
   };
 }
 
 /**
- * Rekap seluruh pesanan aktif yang memerlukan penarikan garmen dari cabang Cititex
+ * Rekap seluruh pesanan aktif yang memerlukan penarikan garmen dari distributor/supplier NSA
  * @param {Array} orders - Daftar pesanan dari database / state admin
  */
 export function aggregateVendorPickupList(orders = []) {
@@ -91,7 +91,7 @@ export function aggregateVendorPickupList(orders = []) {
     const size = order.size || 'L';
     const qty = Number(order.qty || 1);
 
-    // Jika BUKAN stok studio, berarti harus ditarik dari Cititex
+    // Jika BUKAN stok studio, berarti harus ditarik dari distributor/supplier
     if (!isFastMovingBuffer(garment, color, size)) {
       const key = `${garment}:::${color}:::${size}`;
       totalPcs += qty;
@@ -114,9 +114,9 @@ export function aggregateVendorPickupList(orders = []) {
 
   const items = Array.from(pickupMap.values()).sort((a, b) => b.qty - a.qty);
 
-  // Buat draft teks pemesanan WhatsApp otomatis ke sales cabang Cititex
+  // Buat draft teks pemesanan WhatsApp otomatis ke sales distributor/supplier NSA
   const dateStr = new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium' }).format(new Date());
-  let waMessage = `Halo Admin Cititex,\nSaya dari *TeeStock Apparel* mau order / pickup garmen polos hari ini (${dateStr}):\n\n`;
+  let waMessage = `Halo Admin Supplier NSA,\nSaya dari *TeeStock Apparel* mau order / pickup garmen polos hari ini (${dateStr}):\n\n`;
 
   if (items.length === 0) {
     waMessage += `(Belum ada antrean penarikan garmen hari ini)\n`;
