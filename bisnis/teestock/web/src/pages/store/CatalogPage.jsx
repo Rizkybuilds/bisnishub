@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Search, Filter, ShoppingBag, Package, Sparkles, ArrowUpDown, X, Tag } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { useAuth } from '../../context/AuthContext';
 import { SERIES } from '../../constants/series';
 import { formatRupiah } from '../../utils/formatters';
 
 export function CatalogPage() {
   const { catalog } = useAdmin();
+  const { isPartner, profile } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const seriesParam = searchParams.get('series') || 'all';
 
@@ -303,10 +305,30 @@ export function CatalogPage() {
 
                   <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
                     <div>
-                      <div className="text-[10px] text-ts-muted">Harga Satuan</div>
-                      <span className="font-mono text-sm font-extrabold text-ts-green">
-                        {formatRupiah(product.priceRetail || product.price_retail || 99000)}
-                      </span>
+                      {isPartner && !isBlank ? (
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] text-ts-mustard font-bold uppercase font-mono">Mitra</span>
+                            <span className="text-[10px] text-ts-muted line-through font-mono">
+                              {formatRupiah(product.priceRetail || product.price_retail || 99000)}
+                            </span>
+                          </div>
+                          <span className="font-mono text-sm font-black text-ts-green">
+                            {formatRupiah(
+                              profile?.partner_tier === 'reseller'
+                                ? (product.priceReseller || product.price_reseller || 74000)
+                                : (product.priceDropship || product.price_dropship || 87000)
+                            )}
+                          </span>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="text-[10px] text-ts-muted">Harga Satuan</div>
+                          <span className="font-mono text-sm font-extrabold text-ts-green">
+                            {formatRupiah(product.priceRetail || product.price_retail || 99000)}
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <span className={`text-[10px] font-bold px-3 py-1 rounded-lg border transition-colors ${
                       isBlank 

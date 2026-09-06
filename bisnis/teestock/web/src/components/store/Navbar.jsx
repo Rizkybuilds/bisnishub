@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { ShoppingBag, Search, ShieldCheck, Sparkles, User, Package, Zap, LogOut, ChevronDown } from 'lucide-react';
+import { ShoppingBag, Search, ShieldCheck, Sparkles, User, Package, Zap, LogOut, ChevronDown, Users } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -106,6 +106,21 @@ export function Navbar() {
               Custom Sablon
             </NavLink>
             <NavLink
+              to="/partner"
+              className={({ isActive }) =>
+                `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  isActive
+                    ? 'bg-ts-terracotta/20 text-ts-terracotta shadow-sm border border-ts-terracotta/30'
+                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                }`
+              }
+            >
+              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-ts-mustard/20 text-ts-mustard border border-ts-mustard/30">
+                Mitra
+              </span>
+              <span>Dropship</span>
+            </NavLink>
+            <NavLink
               to="/tracking"
               className={({ isActive }) =>
                 `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -171,11 +186,27 @@ export function Navbar() {
                     </div>
 
                     <Link
-                      to="/tracking"
+                      to="/akun"
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] transition-colors"
+                    >
+                      <User className="w-3.5 h-3.5 text-ts-terracotta" />
+                      <span>Akun &amp; Profil</span>
+                    </Link>
+
+                    <Link
+                      to="/akun?tab=orders"
                       className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] transition-colors"
                     >
                       <Package className="w-3.5 h-3.5 text-ts-mustard" />
                       <span>Pesanan Saya</span>
+                    </Link>
+
+                    <Link
+                      to="/partner"
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] transition-colors"
+                    >
+                      <Users className="w-3.5 h-3.5 text-ts-teal" />
+                      <span>Portal Kemitraan</span>
                     </Link>
 
                     {isAdmin && (

@@ -17,6 +17,8 @@ import { ProductDetailPage } from './pages/store/ProductDetailPage';
 import { CustomOrderPage } from './pages/store/CustomOrderPage';
 import { CartPage } from './pages/store/CartPage';
 import { OrderTrackingPage } from './pages/store/OrderTrackingPage';
+import { AccountPage } from './pages/store/AccountPage';
+import { PartnerPage } from './pages/store/PartnerPage';
 
 // Admin Pages
 import { DashboardPage } from './pages/admin/DashboardPage';
@@ -25,6 +27,7 @@ import { InventoryPage } from './pages/admin/InventoryPage';
 import { KanbanPage } from './pages/admin/KanbanPage';
 import { GangSheetPage } from './pages/admin/GangSheetPage';
 import { QuoterPage } from './pages/admin/QuoterPage';
+import { DefectsPage } from './pages/admin/DefectsPage';
 import { SettingsPage } from './pages/admin/SettingsPage';
 
 export const router = createBrowserRouter([
@@ -45,6 +48,8 @@ export const router = createBrowserRouter([
       { path: 'custom-order', element: <CustomOrderPage /> },
       { path: 'keranjang', element: <CartPage /> },
       { path: 'tracking', element: <OrderTrackingPage /> },
+      { path: 'akun', element: <AccountPage /> },
+      { path: 'partner', element: <PartnerPage /> },
     ],
   },
 
@@ -69,6 +74,7 @@ export const router = createBrowserRouter([
       { path: 'kanban', element: <KanbanPage /> },
       { path: 'gangsheet', element: <GangSheetPage /> },
       { path: 'quoter', element: <QuoterPage /> },
+      { path: 'defects', element: <DefectsPage /> },
       { path: 'settings', element: <SettingsPage /> },
     ],
   },

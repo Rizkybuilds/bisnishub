@@ -12,7 +12,8 @@ import {
   Cloud,
   CheckCircle2,
   LogOut,
-  User
+  User,
+  AlertTriangle
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useAuth } from '../../context/AuthContext';
@@ -28,6 +29,7 @@ export function AdminSidebar() {
     { to: '/admin/inventory', label: 'Stok NSA & Bahan', icon: Layers },
     { to: '/admin/kanban', label: 'Antrean & Kanban', icon: Kanban, badge: `${activeOrdersCount} Order`, highlight: true },
     { to: '/admin/gangsheet', label: 'Gang Sheet DTF', icon: ScrollText },
+    { to: '/admin/defects', label: 'QC & Defect Tracker', icon: AlertTriangle },
     { to: '/admin/quoter', label: 'Custom Quoter WA', icon: Calculator },
     { to: '/admin/settings', label: 'Pengaturan Cloud', icon: Settings },
   ];

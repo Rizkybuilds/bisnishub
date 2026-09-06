@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Trash2, ArrowRight, ShieldCheck, CheckCircle2, MessageSquare, Package, Truck, Lock } from 'lucide-react';
+import { ShoppingBag, Trash2, ArrowRight, ShieldCheck, CheckCircle2, MessageSquare, Package, Truck, Lock, Tag, X, Sparkles, Loader2 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAdmin } from '../../context/AdminContext';
+import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Input, Select } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
+import { validateVoucher } from '../../services/vouchersApi';
 
 export function CartPage() {
   const { cart, removeFromCart, updateCartQty, clearCart, totalCartAmount, storeSettings } = useStore();
   const { addOrder } = useAdmin();
+  const { user, profile, role } = useAuth();
   const navigate = useNavigate();
 
   const [customerName, setCustomerName] = useState('');
@@ -21,8 +24,54 @@ export function CartPage() {
   const [courier, setCourier] = useState('J&T Express');
   const [orderComplete, setOrderComplete] = useState(null);
 
+  // Voucher states
+  const [voucherInput, setVoucherInput] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [voucherLoading, setVoucherLoading] = useState(false);
+  const [voucherMsg, setVoucherMsg] = useState(null);
+
+  // Auto-fill recipient data from member profile if logged in
+  useEffect(() => {
+    if (profile) {
+      if (profile.full_name && !customerName) setCustomerName(profile.full_name);
+      if (profile.phone && !phone) setPhone(profile.phone);
+      if (profile.default_address && !address) setAddress(profile.default_address);
+      if (profile.city && !city) setCity(profile.city);
+    }
+  }, [profile]);
+
   const shippingFee = cart.length > 0 ? 15000 : 0;
-  const grandTotal = totalCartAmount + shippingFee;
+  const grandTotal = Math.max(0, totalCartAmount - discountAmount) + shippingFee;
+
+  const handleApplyVoucher = async (codeToApply = null) => {
+    const code = codeToApply || voucherInput;
+    if (!code || !code.trim()) {
+      setVoucherMsg({ type: 'error', text: 'Masukkan kode voucher terlebih dahulu.' });
+      return;
+    }
+
+    setVoucherLoading(true);
+    setVoucherMsg(null);
+
+    const result = await validateVoucher(code, totalCartAmount, role);
+    setVoucherLoading(false);
+
+    if (result.valid) {
+      setAppliedVoucher(result.voucher);
+      setDiscountAmount(result.discountAmount);
+      setVoucherMsg({ type: 'success', text: result.message });
+      setVoucherInput('');
+    } else {
+      setVoucherMsg({ type: 'error', text: result.message });
+    }
+  };
+
+  const handleRemoveVoucher = () => {
+    setAppliedVoucher(null);
+    setDiscountAmount(0);
+    setVoucherMsg(null);
+  };
 
   const handleCheckout = (e) => {
     e.preventDefault();
@@ -49,6 +98,9 @@ export function CartPage() {
         price: item.price * item.qty,
         fee: Math.round((item.price * item.qty) * 0.015),
         status: 'pending',
+        user_id: user?.id || null,
+        voucher_code: appliedVoucher?.code || null,
+        discount: discountAmount,
         date: new Date().toISOString()
       };
       addOrder(orderRecord);
@@ -258,11 +310,85 @@ export function CartPage() {
               <span>Ringkasan Tagihan</span>
             </h3>
 
-            <div className="space-y-3 text-xs">
+            {/* Voucher Section */}
+            <div className="space-y-2.5 pt-1">
+              <label className="block text-[11px] font-bold text-ts-krem flex items-center gap-1.5">
+                <Tag className="w-3.5 h-3.5 text-ts-mustard" />
+                <span>Punya Kode Voucher / Kupon?</span>
+              </label>
+
+              {appliedVoucher ? (
+                <div className="p-3 rounded-2xl bg-ts-green/15 border border-ts-green/30 flex items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-ts-green shrink-0" />
+                    <div>
+                      <span className="font-mono font-bold text-white block">{appliedVoucher.code}</span>
+                      <span className="text-[11px] text-emerald-300">Potongan {formatRupiah(discountAmount)}</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveVoucher}
+                    className="p-1 rounded-lg text-ts-muted hover:text-white hover:bg-white/[0.08] transition-colors"
+                    title="Batalkan Voucher"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={voucherInput}
+                      onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
+                      placeholder="Contoh: WELCOME10"
+                      className="flex-1 bg-white/[0.05] border border-white/[0.1] rounded-xl px-3 py-2 text-xs text-white uppercase font-mono placeholder-ts-muted focus:outline-none focus:border-ts-terracotta"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => handleApplyVoucher()}
+                      disabled={voucherLoading}
+                      className="shrink-0"
+                    >
+                      {voucherLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Terapkan'}
+                    </Button>
+                  </div>
+
+                  {/* Quick voucher shortcut chip */}
+                  <button
+                    type="button"
+                    onClick={() => handleApplyVoucher('WELCOME10')}
+                    className="inline-flex items-center gap-1.5 text-[10px] text-ts-mustard hover:text-ts-mustard/80 underline font-medium"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>Gunakan voucher selamat datang: WELCOME10 (-10%)</span>
+                  </button>
+                </div>
+              )}
+
+              {voucherMsg && (
+                <p className={`text-[11px] leading-tight ${voucherMsg.type === 'success' ? 'text-ts-green' : 'text-red-400'}`}>
+                  {voucherMsg.text}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-3 text-xs pt-3 border-t border-white/[0.06]">
               <div className="flex justify-between text-ts-kremMuted">
                 <span>Subtotal ({cart.length} item):</span>
                 <span className="font-mono text-white font-bold">{formatRupiah(totalCartAmount)}</span>
               </div>
+
+              {discountAmount > 0 && (
+                <div className="flex justify-between text-ts-green font-semibold">
+                  <span>Diskon Kupon ({appliedVoucher?.code}):</span>
+                  <span className="font-mono">- {formatRupiah(discountAmount)}</span>
+                </div>
+              )}
+
               <div className="flex justify-between text-ts-kremMuted">
                 <span>Estimasi Ongkos Kirim:</span>
                 <span className="font-mono text-white font-bold">{formatRupiah(shippingFee)}</span>

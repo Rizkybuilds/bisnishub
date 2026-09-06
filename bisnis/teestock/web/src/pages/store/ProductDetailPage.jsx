@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useStore } from '../../context/StoreContext';
+import { useAuth } from '../../context/AuthContext';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -183,8 +184,25 @@ export function ProductDetailPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Price adjustments
-  const basePrice = product.priceRetail || product.price_retail || 99000;
+  // Price adjustments & Partner Role detection
+  const { role, profile, isPartner } = useAuth();
+  const baseRetailPrice = product.priceRetail || product.price_retail || 99000;
+  
+  let effectiveBasePrice = baseRetailPrice;
+  let partnerSavings = 0;
+  let isPartnerDiscountApplied = false;
+
+  if (isPartner && !isBlank) {
+    const isReseller = profile?.partner_tier === 'reseller';
+    const partnerBase = isReseller
+      ? (product.priceReseller || product.price_reseller || Math.round(baseRetailPrice * 0.75))
+      : (product.priceDropship || product.price_dropship || Math.round(baseRetailPrice * 0.88));
+    
+    effectiveBasePrice = partnerBase;
+    partnerSavings = baseRetailPrice - partnerBase;
+    isPartnerDiscountApplied = true;
+  }
+
   let priceDelta = 0;
   if (!isBlank) {
     if (selectedGarmentKey === 'nsa_heavyweight_24s') priceDelta = 10000;
@@ -192,7 +210,7 @@ export function ProductDetailPage() {
     else if (selectedGarmentKey === 'nsa_hoodie') priceDelta = 85000;
     else if (selectedGarmentKey === 'nsa_polo') priceDelta = 30000;
   }
-  const currentPrice = isBlank ? basePrice : (basePrice + priceDelta);
+  const currentPrice = isBlank ? baseRetailPrice : (effectiveBasePrice + priceDelta);
 
   const handleColorChange = (colName) => {
     setSelectedColor(colName);
@@ -317,11 +335,45 @@ export function ProductDetailPage() {
               {product.name}
             </h1>
 
-            <div className="flex items-baseline gap-3 pt-1">
-              <span className="font-mono text-3xl font-black text-ts-green">
-                {formatRupiah(currentPrice)}
-              </span>
-              <span className="text-xs text-ts-muted font-mono">/ pcs</span>
+            <div className="space-y-2 pt-1">
+              {isPartnerDiscountApplied ? (
+                <div className="space-y-1">
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-3xl font-black text-ts-green">
+                      {formatRupiah(currentPrice)}
+                    </span>
+                    <span className="text-sm text-ts-muted line-through font-mono">
+                      {formatRupiah(baseRetailPrice + priceDelta)}
+                    </span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-ts-mustard/15 text-ts-mustard border border-ts-mustard/30 uppercase">
+                    <Tag className="w-3.5 h-3.5" />
+                    <span>Harga Mitra ({profile?.partner_tier || 'Dropship'}) • Hemat {formatRupiah(partnerSavings)}/pcs</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-mono text-3xl font-black text-ts-green">
+                      {formatRupiah(currentPrice)}
+                    </span>
+                    <span className="text-xs text-ts-muted font-mono">/ pcs</span>
+                  </div>
+
+                  {/* Partner Teaser for non-partners */}
+                  {!isBlank && (
+                    <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2 text-ts-kremMuted">
+                        <span className="text-ts-mustard font-bold">💼 Mau jual kembali?</span>
+                        <span>Harga Mitra mulai <strong className="text-white font-mono">{formatRupiah(product.priceDropship || 87000)}</strong></span>
+                      </div>
+                      <Link to="/akun?tab=partner" className="text-ts-terracotta hover:underline font-bold text-[11px] shrink-0 pl-2">
+                        Info Mitra &rarr;
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
