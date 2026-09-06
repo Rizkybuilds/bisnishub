@@ -11,6 +11,7 @@ import { LoginPage } from './pages/admin/LoginPage';
 
 // Store Pages
 import { HomePage } from './pages/store/HomePage';
+import { BioLinkPage } from './pages/store/BioLinkPage';
 import { CatalogPage as StoreCatalogPage } from './pages/store/CatalogPage';
 import { ProductDetailPage } from './pages/store/ProductDetailPage';
 import { CustomOrderPage } from './pages/store/CustomOrderPage';
@@ -27,6 +28,12 @@ import { QuoterPage } from './pages/admin/QuoterPage';
 import { SettingsPage } from './pages/admin/SettingsPage';
 
 export const router = createBrowserRouter([
+  // Bio Link — standalone micro landing page (no StoreLayout wrapper)
+  {
+    path: '/bio',
+    element: <BioLinkPage />,
+  },
+
   // Storefront Public Routes
   {
     path: '/',

@@ -31,9 +31,22 @@ Model produksi lean: blank apparel New State Apparel, cetak film DTF roll metera
 - `daftar-niche-teestock.md` — Pustaka 197 niche dalam 17 kategori sebagai bank ide Drop masa depan.
 
 ### 🛠️ Interactive Tools (`tools/`)
-- `teestock-catalog.html` — Katalog interaktif web, live color mockup switcher, tier pricing (Retail, Dropship, Reseller), studio custom order, dan WhatsApp checkout.
-- `teestock-hpp-calculator.html` — Kalkulator HPP & pricing interaktif dengan switcher tema Hitam/Krem dan preset Shopee sweet spot (~Rp 99.000).
+> *Catatan: Tool HTML mandiri di bawah ini telah digantikan dan ditingkatkan fungsinya secara penuh oleh web application terintegrasi di folder `web/` (lihat bagian Website & Tech Stack).*
+- `teestock-catalog.html` — *(Digantikan oleh Web Storefront)* Katalog interaktif web, live color mockup switcher, tier pricing (Retail, Dropship, Reseller), studio custom order, dan WhatsApp checkout.
+- `teestock-hpp-calculator.html` — *(Digantikan oleh Admin Quoter)* Kalkulator HPP & pricing interaktif dengan switcher tema Hitam/Krem dan preset Shopee sweet spot (~Rp 99.000).
 - `teestock-business-plan.html` — Business plan lengkap, simulasi cash flow 12 bulan, P&L, peta kompetitor Shopee, dan scoring matrix.
+
+---
+
+## 🌐 Website & Tech Stack
+
+Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel, portal kustomisasi merchandise, dan hub operasional internal produksi studio:
+
+- **Live URL:** [teestock.vercel.app](https://teestock.vercel.app)
+- **Stack:** React 18 + Vite + Tailwind CSS + Supabase + Cloudinary + Vercel
+- **Pages:** Bio Link (`/bio`), Katalog (`/katalog`), Detail Produk (`/produk/:sku`), Custom Order (`/custom-order`), Cart (`/keranjang`), Order Tracking (`/tracking`)
+- **Admin Panel:** `/admin` — Dashboard, Katalog CRUD, Inventory, Kanban Order, Gang Sheet Builder, Quoter, Settings
+- **Source code:** [`web/`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/web) folder
 
 ---
 

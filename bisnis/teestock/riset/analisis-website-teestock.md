@@ -1,5 +1,8 @@
 # Analisis Kebutuhan Website/Aplikasi — TeeStock
 
+> [!NOTE]
+> **Pembaruan September 2026:** Dokumen ini telah diperbarui untuk merefleksikan implementasi aktual tech stack TeeStock yang beralih dari rekomendasi awal WordPress/WooCommerce menjadi **Modern Web Stack (React 18 + Vite + Tailwind CSS + Supabase PostgreSQL + Cloudinary CDN)** yang di-deploy di **Vercel**. Analisis kebutuhan bisnis dan user flow (Bagian 1–5) tetap dipertahankan, sedangkan arsitektur teknis, integrasi, estimasi biaya, roadmap, dan catatan risiko (Bagian 6–10) telah dimutakhirkan.
+
 Dokumen ini menganalisis kebutuhan fitur, UI/UX, dan arsitektur teknis website TeeStock, berdasarkan peran website yang sudah ditetapkan di `rencana-operasional-teestock.md`: bukan cuma etalase jualan, tapi juga pusat operasional untuk Custom Order dan (nanti) Reseller/Member.
 
 ---
@@ -103,60 +106,82 @@ Semua desain antarmuka mengikuti brand guide yang sudah ada — bukan tema gener
 
 ## 6. Rekomendasi Arsitektur Teknis
 
-Karena kondisi teknis belum ditentukan dan prioritasnya adalah **efisiensi biaya + kecepatan jalan**, rekomendasi berikut paling masuk akal untuk solo founder dengan modal terbatas:
+Meskipun pada evaluasi awal sempat dipertimbangkan WordPress + WooCommerce, sistem website TeeStock telah diimplementasikan secara aktual menggunakan arsitektur modern web application: **React 18 + Vite + Tailwind CSS (frontend)**, **Supabase PostgreSQL (backend/database)**, dan **Cloudinary CDN (image hosting)**, yang di-deploy di platform **Vercel**.
 
-### Rekomendasi: WordPress + WooCommerce
+### Arsitektur Aktual: Modern Jamstack & BaaS
 
-| Kenapa cocok | Penjelasan |
-|---|---|
-| Biaya rendah | Cuma perlu bayar hosting + domain (bisa di bawah Rp1 juta/tahun), tidak ada biaya bulanan platform seperti Shopify (yang berbasis USD) |
-| Ekosistem lokal lengkap | Plugin pembayaran (Midtrans, Xendit) dan ongkir (RajaOngkir/Biteship) sudah banyak tersedia dan umum dipakai UMKM Indonesia |
-| Tidak wajib coding | Bisa disusun dengan page builder (Elementor) dan plugin form (untuk form Custom Order terstruktur) tanpa menulis kode dari nol |
-| Fleksibel untuk custom order | Plugin form builder (misal Gravity Forms/WPForms) bisa dipakai untuk membuat alur request custom yang terstruktur, termasuk upload gambar |
-| Skalabel | Kalau nanti butuh fitur reseller/member lebih canggih, banyak plugin membership tersedia untuk WordPress |
+| Lapisan / Komponen | Teknologi | Peran dalam Sistem |
+|---|---|---|
+| **Frontend Framework** | **React 18 + Vite** | Single Page Application (SPA) ultra-cepat, modular, dan interaktif dengan waktu build instan. |
+| **Styling & UI** | **Tailwind CSS** | Styling utility-first yang memberi kontrol visual 100% presisi sesuai brand identity TeeStock tanpa batasan template. |
+| **Backend & Database** | **Supabase (PostgreSQL)** | Database relasional tangguh, Realtime API, skema data terstruktur, dan Row Level Security (RLS). |
+| **Autentikasi** | **Supabase Auth** | Manajemen user bawaan dengan dukungan Google OAuth & Email Magic Link untuk customer dan admin hub. |
+| **Asset & Image CDN** | **Cloudinary CDN** | Penyimpanan mockup resolusi tinggi, foto real produk, dan aset desain custom dengan optimasi format web otomatis. |
+| **Deployment & Hosting** | **Vercel** | Platform deployment serverless global dengan CI/CD otomatis dari repositori GitHub, edge network, dan SSL gratis. |
 
-**Alternatif yang bisa dipertimbangkan (bukan rekomendasi utama, tapi valid):**
-- **Shopify** — lebih "plug and play" dan tampilan lebih polished out-of-the-box, tapi biaya bulanan dalam USD memberatkan untuk budget awal, dan integrasi pembayaran lokal Indonesia tidak seluwes WooCommerce
-- **Platform commerce lokal all-in-one (misal Jubelio, Sirclo)** — menarik karena beberapa dari platform ini juga menawarkan sinkronisasi stok ke marketplace (Shopee/TikTok Shop) sekaligus, tapi biayanya lebih tinggi dan lebih relevan dipertimbangkan **setelah** volume penjualan sudah cukup besar untuk butuh manajemen stok terpusat
+### Mengapa Arsitektur Ini Jauh Lebih Unggul dibanding WordPress/WooCommerce?
 
-**Kalau nanti butuh developer:** karena WooCommerce berbasis WordPress yang sangat umum dipakai, jauh lebih gampang & murah cari freelancer untuk bantu setup/kustomisasi dibanding platform yang lebih niche.
+1. **Nol Biaya Hosting (Zero Hosting Cost):**
+   - Frontend di-hosting gratis di **Vercel Hobby Tier** dengan performa CDN edge global tanpa perlu sewa server cPanel/VPS bulanan.
+   - **Supabase Free Tier** menyediakan database PostgreSQL 500 MB dan hingga 50.000 Monthly Active Users (MAU) untuk autentikasi — sangat mencukupi untuk ribuan transaksi awal.
+   - **Cloudinary Free Tier** menyediakan kuota 25 kredit media per bulan (~25 GB bandwidth/storage) untuk kompresi dan pengiriman gambar cepat.
+2. **Kontrol Penuh atas Branding & UX (Full Branding Control):**
+   - Tidak terikat tema monolitik WordPress yang kaku. UI monokrom minimalis khas TeeStock dapat dikustomisasi secara leluasa tanpa batasan template builder.
+3. **Bebas Ketergantungan Plugin (No Plugin Dependency):**
+   - Mengeliminasi masalah klasik WordPress: konflik antar-plugin, celah keamanan pihak ketiga, beban query database berlebih (*bloat*), dan tagihan lisensi plugin komersial tahunan.
+4. **Kemampuan Membangun Fitur Operasional Kustom (Custom Features):**
+   - Bukan sekadar toko ritel biasa, stack ini memungkinkan pembangunan modul operasional internal langsung di dalam satu aplikasi:
+     - **Admin Panel Terpusat (`/admin`):** Dashboard performa, manajemen katalog CRUD, dan inventory tracking.
+     - **Kanban Order Board:** Visualisasi alur produksi pesanan custom secara real-time.
+     - **Gang Sheet Builder:** Tool layout otomatis untuk efisiensi cetak film DTF meteran.
+     - **Quoter Tool:** Kalkulator instan HPP dan estimasi harga pesanan apparel custom.
+5. **Performa & Kecepatan Akses Mobile:**
+   - Navigasi instan via React Router tanpa reload halaman penuh (*zero page reload*), krusial untuk mengonversi traffic mobile dari link media sosial (TikTok & Instagram).
 
 ## 7. Integrasi yang Dibutuhkan
 
-| Kebutuhan | Rekomendasi integrasi |
-|---|---|
-| Pembayaran | Midtrans atau Xendit (mendukung transfer bank, e-wallet, QRIS dalam satu integrasi) |
-| Ongkos kirim | RajaOngkir atau Biteship (kalkulasi otomatis berdasarkan alamat & kurir) |
-| Komunikasi cepat | Tombol klik-WhatsApp (wa.me link) — cukup di tahap awal, belum perlu WhatsApp Business API berbayar |
-| Analitik | Google Analytics + Meta Pixel (penting untuk lihat sumber traffic dan efektivitas promosi TikTok/Instagram) |
-| Sinkronisasi marketplace (opsional, nanti) | Dipertimbangkan setelah volume order cukup besar untuk butuh manajemen stok terpusat |
+| Kebutuhan | Status & Rekomendasi Integrasi | Keterangan |
+|---|---|---|
+| **Pembayaran** | Midtrans atau Xendit | Mendukung transfer bank virtual account, e-wallet (GoPay, OVO, ShopeePay), dan QRIS dalam satu alur checkout terpadu. |
+| **Ongkos Kirim** | RajaOngkir atau Biteship | Kalkulasi tarif ongkir kurir nasional (J&T, SiCepat, JNE, POS) otomatis berdasarkan alamat tujuan dan berat paket. |
+| **Autentikasi Pengguna** | **Supabase Auth (Aktif)** | Login aman menggunakan Google OAuth dan Magic Link tanpa password untuk pelanggan maupun akses dashboard admin. |
+| **Analitik & Tracking** | **Google Analytics 4 (GA4) + Meta Pixel (Aktif)** | Pelacakan konversi e-commerce, tracking atribusi kampanye iklan TikTok/Instagram, serta analisis funnel belanja. |
+| **Hosting & Delivery Media** | **Cloudinary CDN (Aktif)** | Transformasi gambar dinamis, auto-format WebP, dan pengiriman gambar produk berkecepatan tinggi via CDN. |
+| **Komunikasi Cepat** | Tombol WhatsApp Direct (`wa.me`) | Interaksi langsung untuk konsultasi pesanan custom dan customer support cepat tanpa friksi. |
+| **Sinkronisasi Marketplace** | API Marketplace (Opsional, Fase Lanjutan) | Dipertimbangkan setelah volume penjualan lintas platform menuntut integrasi sinkronisasi stok terpusat. |
 
 ## 8. Estimasi Kebutuhan Biaya Awal Website
 
-| Komponen | Estimasi |
-|---|---|
-| Domain (.com/.id) | Rp150.000 - 300.000/tahun |
-| Hosting | Rp300.000 - 800.000/tahun (tergantung penyedia) |
-| Tema/page builder premium (opsional) | Rp0 - 1.000.000 (banyak opsi gratis yang cukup baik) |
-| Plugin form builder (untuk Custom Order) | Rp0 - 500.000 (ada versi gratis dengan fitur terbatas) |
-| Biaya integrasi payment gateway | Umumnya gratis setup, kena fee per transaksi (~2-3%) |
+Dengan transisi ke modern web stack berbasis serverless & BaaS gratis, pengeluaran modal infrastruktur website berkurang drastis hingga **mendekati nol rupiah (near-zero infrastructure cost)**:
 
-Total kebutuhan awal website bisa ditekan di bawah Rp1,5 juta kalau memilih opsi hosting/tema yang efisien — cukup realistis untuk dianggarkan terpisah dari modal produksi yang sudah direncanakan sebelumnya.
+| Komponen | Provider & Tier | Estimasi Biaya | Keterangan |
+|---|---|---|---|
+| **Domain Kustom (.com / .id)** | Cloudflare / Niagahoster / Namecheap | Rp150.000 - 300.000 / tahun | Satu-satunya biaya wajib tahunan untuk domain resmi |
+| **Frontend Hosting** | Vercel (Hobby Tier) | **Rp0** (Gratis) | SSL otomatis, continuous deployment, unlimited traffic wajar |
+| **Database & Auth** | Supabase (Free Tier) | **Rp0** (Gratis) | 500 MB DB PostgreSQL, 50k MAU, API RESTful otomatis |
+| **Media & Image Storage** | Cloudinary (Free Tier) | **Rp0** (Gratis) | 25 kredit media bulanan (~25 GB bandwidth/storage) |
+| **Lisensi Software / Plugin** | Custom Code (React + Tailwind) | **Rp0** (Gratis) | Tanpa biaya plugin bulanan atau tema komersial |
+| **Payment Gateway** | Midtrans / Xendit | **Rp0 setup** | Biaya variabel hanya dikenakan per transaksi sukses (~1,5% - 2,9% + Rp2.000) |
+
+**Total Kebutuhan Biaya Website:** **< Rp 300.000 / tahun** (hanya sewa domain).
+Jauh lebih hemat dibandingkan estimasi awal WordPress yang membutuhkan sewa shared hosting & plugin berbayar (~Rp 1,5 juta/tahun).
 
 ## 9. Roadmap Pengembangan
 
-| Tahap | Fokus |
-|---|---|
-| **Tahap 1** | Setup dasar: domain, hosting, WooCommerce, katalog Stock Batch 1, integrasi pembayaran & ongkir |
-| **Tahap 2** | Form Custom Order terstruktur + alur notifikasi status pesanan |
-| **Tahap 3** | Optimasi konten (halaman Tentang, FAQ, testimoni) setelah beberapa transaksi awal masuk, untuk bangun kepercayaan |
-| **Tahap 4** | Setelah Fase 2 bisnis (Kolaborasi & Reseller) mulai jalan — tambah halaman Kolaborasi & portal Reseller sederhana |
+Implementasi website telah melangkah lebih maju dari rencana semula dengan tersedianya storefront publik serta modul operasional admin:
+
+| Tahap | Status | Fokus & Fitur |
+|---|---|---|
+| **Tahap 1 (Fondasi & Fitur Inti)** | ✅ **Sudah Dibangun (Live)** | - **Storefront Publik:** Beranda, Katalog Produk (`/katalog`), Detail Produk (`/produk/:sku`), Keranjang Belanja (`/keranjang`), Custom Order Request (`/custom-order`), dan Order Tracking (`/tracking`).<br>- **Admin Panel (`/admin`):** Dashboard metrik, CRUD Katalog Produk, Inventory Tracking, Kanban Order Board, Gang Sheet Builder DTF, dan Quoter estimasi harga.<br>- **Database Schema:** PostgreSQL Supabase terstruktur untuk produk, varian, pesanan, dan item pesanan. |
+| **Tahap 2 (Penyempurnaan & Growth)** | 🔄 **Berikutnya (Next Up)** | - **Bio Link Page (`/bio`):** Halaman landing ringkas mobile-first khusus link-in-bio Instagram & TikTok.<br>- **Role-Based Auth:** Pembagian hak akses terproteksi untuk admin, tim produksi/operator, dan pelanggan.<br>- **Voucher & Promotion System:** Fitur kupon diskon, voucher peluncuran Drop, dan bundling diskon.<br>- **Automated Payment & Shipping:** Integrasi webhook payment gateway (Midtrans) dan API kurir otomatis. |
+| **Tahap 3 (Ekosistem Kemitraan)** | 📅 **Masa Depan** | - **Partner & Reseller Portal:** Portal khusus reseller/dropshipper dengan tier harga otomatis dan materi promosi.<br>- **Customer Account Hub:** Dashboard profil pembeli, riwayat pesanan custom, dan re-order instan. |
 
 ## 10. Catatan Risiko & Pertimbangan
 
-- **Beban maintenance untuk solo founder** — website butuh update rutin (plugin, keamanan). Kalau waktu terbatas, pertimbangkan jasa maintenance ringan atau jadwalkan pengecekan berkala (misal tiap bulan)
-- **Jangan taruh semua energi ke website di awal** — sesuai strategi channel yang sudah dibahas, traffic website akan tumbuh lambat di awal. Fokus utama tetap di marketplace/TikTok untuk penjualan Stock; website diprioritaskan fungsinya untuk Custom Order dulu, bukan untuk menyaingi volume marketplace
-- **Keamanan data pembayaran** — pastikan pakai payment gateway resmi (Midtrans/Xendit), jangan proses data kartu/pembayaran secara manual di form sendiri
+- **Batas Kuota Free Tier (Supabase & Vercel) & Rencana Upgrade** — Free tier Vercel dan Supabase sangat memadai untuk fase peluncuran dan validasi pasar. Namun, kuota database PostgreSQL (500 MB) dan batas upload media harus dipantau. Pastikan seluruh gambar beresolusi tinggi disimpan di Cloudinary (bukan di database). Jika volume pesanan dan traffic meningkat pesat hingga mendekati limit, upgrade ke Supabase Pro ($25/bulan) atau Vercel Pro ($20/bulan) dapat dilakukan secara mulus (*seamless*) saat cash flow bisnis sudah terbukti positif.
+- **Kebijakan Inaktivitas Proyek Supabase Free Tier** — Pada tier gratis, instance Supabase yang tidak menerima request selama 7 hari dapat memasuki status *paused*. Karena website dan admin panel digunakan aktif dalam operasional rutin, hal ini jarang menjadi kendala, namun tetap perlu dipastikan adanya request berkala atau upgrade ke tier berbayar begitu toko beroperasi penuh.
+- **Fokus Channel & Alokasi Energi** — Ketersediaan website kustom yang canggih bukan berarti seluruh energi dicurahkan menunggu pengunjung organik di website. Penjualan ritel apparel Drop tetap didorong lewat marketplace (Shopee/TikTok Shop) dan media sosial; website diprioritaskan sebagai hub transaksi pesanan Custom Order B2B/komunitas, portofolio kredibilitas brand, dan efisiensi operasional studio.
+- **Keamanan Data Pembayaran & Kredensial API** — Jangan pernah mengekspos environment variables rahasia (`SUPABASE_SERVICE_ROLE_KEY` atau secret key payment gateway) ke sisi client/frontend React. Seluruh transaksi pembayaran tetap wajib diproses melalui payment gateway berlisensi resmi (Midtrans/Xendit).
 
 ---
 
