@@ -5,12 +5,10 @@ import { Button } from '../ui/Button';
 import { formatDate } from '../../utils/formatters';
 
 export function ShippingLabelModal({ isOpen, onClose, order }) {
-  if (!order) return null;
-
-  const [courier, setCourier] = useState(order.courier || 'J&T Express');
+  const [courier, setCourier] = useState(order?.courier || 'J&T Express');
   const [serviceType, setServiceType] = useState('EZ / REGULER');
-  const [trackingNumber, setTrackingNumber] = useState(order.trackingNo || order.id || '');
-  const [isDropship, setIsDropship] = useState(order.channel === 'dropship' || false);
+  const [trackingNumber, setTrackingNumber] = useState(order?.trackingNo || order?.id || '');
+  const [isDropship, setIsDropship] = useState(order?.channel === 'dropship' || false);
   const [dropshipStore, setDropshipStore] = useState('Distro Mitra Indie');
   const [dropshipPhone, setDropshipPhone] = useState('0812-3456-7890');
   const [fragileNote, setFragileNote] = useState('FRAGILE: PAKET APPAREL & MERCHANDISE — JANGAN DIBANTING');
@@ -18,6 +16,8 @@ export function ShippingLabelModal({ isOpen, onClose, order }) {
   const handlePrint = () => {
     window.print();
   };
+
+  if (!order) return null;
 
   // Weight estimation: ~250g per t-shirt
   const totalQty = order.qty || 1;

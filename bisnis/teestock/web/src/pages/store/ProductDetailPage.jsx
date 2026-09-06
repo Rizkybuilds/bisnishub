@@ -46,30 +46,20 @@ const COLOR_CATEGORIES = {
 export function ProductDetailPage() {
   const { sku } = useParams();
   const navigate = useNavigate();
-  const { catalog } = useAdmin();
+  const [searchParams] = useSearchParams();
+  const { catalog, loading: adminLoading } = useAdmin();
   const { addToCart, storeSettings } = useStore();
+  const { role, profile, isPartner } = useAuth();
 
   const product = catalog.find(p => p.sku === sku);
-
-  if (!product) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center space-y-4">
-        <h2 className="text-2xl font-bold text-white">Produk Tidak Ditemukan</h2>
-        <p className="text-xs text-ts-muted">Desain atau produk polos dengan SKU {sku} tidak terdaftar di katalog kami.</p>
-        <Link to="/katalog">
-          <Button variant="primary">Kembali ke Katalog</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  const isBlank = product.series === 'blank';
+  const isBlank = product?.series === 'blank';
 
   const [selectedGarmentKey, setSelectedGarmentKey] = useState('nsa_softstyle_30s');
   const selectedGarment = GARMENT_TYPES[selectedGarmentKey] || GARMENT_TYPES.nsa_softstyle_30s;
   
   // Available colors
   const colorList = useMemo(() => {
+    if (!product) return selectedGarment.colors.map(c => c.name);
     if (isBlank && product.colors) {
       return product.colors.split(',').map(c => c.trim()).filter(Boolean);
     }
@@ -77,9 +67,8 @@ export function ProductDetailPage() {
       return product.colors.split(',').map(c => c.trim()).filter(Boolean);
     }
     return selectedGarment.colors.map(c => c.name);
-  }, [isBlank, product.colors, selectedGarmentKey]);
+  }, [isBlank, product?.colors, selectedGarmentKey]);
 
-  const [searchParams] = useSearchParams();
   const queryColor = searchParams.get('color');
 
   const [selectedColor, setSelectedColor] = useState(() => {
@@ -94,6 +83,7 @@ export function ProductDetailPage() {
 
   // Dynamic multi-photo gallery for current active color
   const gallery = useMemo(() => {
+    if (!product) return [];
     return getProductGallery(product, selectedColor);
   }, [product, selectedColor]);
 
@@ -108,7 +98,7 @@ export function ProductDetailPage() {
   }, [colorList, activeColorTab]);
 
   // Available sizes
-  const sizeList = isBlank && product.sizes
+  const sizeList = isBlank && product?.sizes
     ? product.sizes.split(',').map(s => s.trim()).filter(Boolean)
     : SIZES;
 
@@ -119,11 +109,12 @@ export function ProductDetailPage() {
   const [showStickyBar, setShowStickyBar] = useState(false);
 
   // Dynamic image state with fallback
-  const defaultImage = product.filePath || product.file_path;
+  const defaultImage = product ? (product.filePath || product.file_path) : '';
   const [previewImg, setPreviewImg] = useState(() => (gallery[0] ? gallery[0].url : defaultImage));
 
   // Sync state ONLY when SKU changes (not on every re-render)
   useEffect(() => {
+    if (!product) return;
     let initialCol = colorList[0] || (isBlank ? 'White' : 'Hitam');
     if (queryColor) {
       const match = colorList.find(c => c.toLowerCase() === queryColor.toLowerCase());
@@ -133,7 +124,7 @@ export function ProductDetailPage() {
     if (sizeList.length > 0) {
       setSelectedSize(sizeList[0]);
     }
-  }, [product.sku]);
+  }, [product?.sku]);
 
   // Sync gallery and preview image whenever selectedColor or gallery changes
   useEffect(() => {
@@ -144,25 +135,6 @@ export function ProductDetailPage() {
       setPreviewImg(defaultImage);
     }
   }, [selectedColor, gallery, defaultImage]);
-
-  const handleSelectThumbnail = (idx) => {
-    setActiveGalleryIndex(idx);
-    if (gallery[idx]) {
-      setPreviewImg(gallery[idx].url);
-    }
-  };
-
-  const handlePrevImage = (e) => {
-    e.stopPropagation();
-    const newIdx = (activeGalleryIndex - 1 + gallery.length) % gallery.length;
-    handleSelectThumbnail(newIdx);
-  };
-
-  const handleNextImage = (e) => {
-    e.stopPropagation();
-    const newIdx = (activeGalleryIndex + 1) % gallery.length;
-    handleSelectThumbnail(newIdx);
-  };
 
   // Handle scroll for sticky mobile action bar
   useEffect(() => {
@@ -177,8 +149,33 @@ export function ProductDetailPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Price adjustments & Partner Role detection
-  const { role, profile, isPartner } = useAuth();
+  // Dynamic Hybrid Stock & Fulfillment SLA (Studio Buffer vs Vendor JIT)
+  const garmentIdentifier = isBlank ? (product?.name || '') : (selectedGarment?.name || selectedGarmentKey);
+  const fulfillmentSLA = useMemo(() => {
+    return getFulfillmentSLA(garmentIdentifier, selectedColor, selectedSize, isBlank);
+  }, [garmentIdentifier, selectedColor, selectedSize, isBlank]);
+
+  // Safe early return if product not found (placed AFTER all hooks)
+  if (!product) {
+    if (adminLoading) {
+      return (
+        <div className="max-w-7xl mx-auto px-4 py-32 text-center space-y-4">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-ts-terracotta"></div>
+          <p className="text-sm text-ts-kremMuted">Memuat data produk...</p>
+        </div>
+      );
+    }
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center space-y-4">
+        <h2 className="text-2xl font-bold text-white">Produk Tidak Ditemukan</h2>
+        <p className="text-xs text-ts-muted">Desain atau produk polos dengan SKU {sku} tidak terdaftar di katalog kami.</p>
+        <Link to="/katalog">
+          <Button variant="primary">Kembali ke Katalog</Button>
+        </Link>
+      </div>
+    );
+  }
+
   const baseRetailPrice = product.priceRetail || product.price_retail || 99000;
   
   let effectiveBasePrice = baseRetailPrice;
@@ -205,12 +202,6 @@ export function ProductDetailPage() {
   }
   const currentPrice = isBlank ? baseRetailPrice : (effectiveBasePrice + priceDelta);
 
-  // Dynamic Hybrid Stock & Fulfillment SLA (Studio Buffer vs Vendor JIT)
-  const garmentIdentifier = isBlank ? product.name : (selectedGarment?.name || selectedGarmentKey);
-  const fulfillmentSLA = useMemo(() => {
-    return getFulfillmentSLA(garmentIdentifier, selectedColor, selectedSize, isBlank);
-  }, [garmentIdentifier, selectedColor, selectedSize, isBlank]);
-
   const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
@@ -231,6 +222,25 @@ export function ProductDetailPage() {
       "itemCondition": "https://schema.org/NewCondition",
       "availability": "https://schema.org/InStock"
     }
+  };
+
+  const handleSelectThumbnail = (idx) => {
+    setActiveGalleryIndex(idx);
+    if (gallery[idx]) {
+      setPreviewImg(gallery[idx].url);
+    }
+  };
+
+  const handlePrevImage = (e) => {
+    e.stopPropagation();
+    const newIdx = (activeGalleryIndex - 1 + gallery.length) % gallery.length;
+    handleSelectThumbnail(newIdx);
+  };
+
+  const handleNextImage = (e) => {
+    e.stopPropagation();
+    const newIdx = (activeGalleryIndex + 1) % gallery.length;
+    handleSelectThumbnail(newIdx);
   };
 
   const handleColorChange = (colName) => {
