@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Trash2, ArrowRight, ShieldCheck, CheckCircle2, MessageSquare, Package, Truck, Lock, Tag, X, Sparkles, Loader2 } from 'lucide-react';
+import { ShoppingBag, Trash2, ArrowRight, ShieldCheck, CheckCircle2, MessageSquare, Package, Truck, Lock, Tag, X, Sparkles, Loader2, QrCode } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAdmin } from '../../context/AdminContext';
 import { useAuth } from '../../context/AuthContext';
@@ -8,9 +8,10 @@ import { Button } from '../../components/ui/Button';
 import { Input, Select } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
 import { formatRupiah } from '../../utils/formatters';
-import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
+import { sanitizePhoneNumber, generateOrderCheckoutWhatsAppText } from '../../utils/whatsappTemplates';
 import { validateVoucher } from '../../services/vouchersApi';
 import { calculateBundleDiscount, BUNDLE_DEALS } from '../../constants/pricing';
+import { QrisPaymentBox } from '../../components/store/QrisPaymentBox';
 
 export function CartPage() {
   const { cart, removeFromCart, updateCartQty, clearCart, totalCartAmount, storeSettings } = useStore();
@@ -24,6 +25,9 @@ export function CartPage() {
   const [city, setCity] = useState('');
   const [courier, setCourier] = useState('J&T Express');
   const [orderComplete, setOrderComplete] = useState(null);
+
+  // 3-digit unique code for manual QRIS verification (101 - 999)
+  const [uniqueCode] = useState(() => Math.floor(100 + Math.random() * 899));
 
   // Voucher states
   const [voucherInput, setVoucherInput] = useState('');
@@ -47,7 +51,8 @@ export function CartPage() {
   const bundleDiscount = calculateBundleDiscount(totalCartQty, role);
 
   const shippingFee = cart.length > 0 ? 15000 : 0;
-  const grandTotal = Math.max(0, totalCartAmount - bundleDiscount - discountAmount) + shippingFee;
+  const baseGrandTotal = Math.max(0, totalCartAmount - bundleDiscount - discountAmount) + shippingFee;
+  const grandTotal = baseGrandTotal > 0 ? (baseGrandTotal + uniqueCode) : 0;
 
   const handleApplyVoucher = async (codeToApply = null) => {
     const code = codeToApply || voucherInput;
@@ -103,11 +108,14 @@ export function CartPage() {
         size: item.size,
         qty: item.qty,
         price: item.price * item.qty,
-        fee: Math.round((item.price * item.qty) * 0.015),
+        fee: 0, // 0% payment gateway fee via QRIS manual
         status: 'pending',
         user_id: user?.id || null,
         voucher_code: appliedVoucher?.code || null,
         discount: discountAmount,
+        unique_code: uniqueCode,
+        payment_method: 'qris_manual',
+        total_payment: grandTotal,
         date: new Date().toISOString()
       };
       addOrder(orderRecord);
@@ -115,8 +123,14 @@ export function CartPage() {
 
     setOrderComplete({
       orderId,
-      customerName,
-      phone,
+      customerName: customerName.trim(),
+      phone: phone.trim(),
+      city: city.trim(),
+      address: address.trim(),
+      courier,
+      items: [...cart],
+      baseTotal: baseGrandTotal,
+      uniqueCode,
       total: grandTotal,
       itemCount: cart.length
     });
@@ -125,36 +139,54 @@ export function CartPage() {
   };
 
   if (orderComplete) {
+    const merchantName = storeSettings?.qrisMerchantName || 'TeeStock Apparel';
     const targetPhone = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
-    const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(
-      `Halo TeeStock! Saya sudah melakukan checkout di website:\nNo. Order: ${orderComplete.orderId}\nNama: ${orderComplete.customerName}\nTotal Tagihan: ${formatRupiah(orderComplete.total)}\nMohon info nomor rekening transfer pembayaran dan konfirmasi resi. Terima kasih!`
-    )}`;
+    const waText = generateOrderCheckoutWhatsAppText({
+      orderId: orderComplete.orderId,
+      customerName: orderComplete.customerName,
+      phone: orderComplete.phone,
+      city: orderComplete.city,
+      address: orderComplete.address,
+      courier: orderComplete.courier,
+      items: orderComplete.items,
+      baseTotal: orderComplete.baseTotal,
+      uniqueCode: orderComplete.uniqueCode,
+      totalTransfer: orderComplete.total,
+      merchantName
+    });
+    const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(waText)}`;
 
     return (
-      <div className="max-w-xl mx-auto px-4 py-16 sm:py-20 text-center space-y-6">
+      <div className="max-w-2xl mx-auto px-4 py-12 sm:py-16 text-center space-y-6">
         <div className="w-16 h-16 rounded-3xl bg-ts-green/20 text-ts-green flex items-center justify-center mx-auto border border-ts-green/30 shadow-glow-teal">
           <CheckCircle2 className="w-8 h-8" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Pesanan Berhasil Dibuat!</h2>
-          <p className="text-xs sm:text-sm text-ts-kremMuted">
-            Nomor Pesanan Anda: <strong className="text-ts-terracotta font-mono font-bold text-base px-2 py-0.5 rounded-lg bg-ts-terracotta/10 border border-ts-terracotta/30">{orderComplete.orderId}</strong>
-          </p>
-          <p className="text-xs text-ts-muted">
-            Simpan nomor pesanan ini untuk mengecek progres kaos Anda di menu <strong>Lacak Pesanan</strong>.
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ts-terracotta/15 border border-ts-terracotta/30 text-xs font-mono font-bold text-ts-terracotta">
+            Pesanan #{orderComplete.orderId}
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Pesanan Berhasil Dicatat!</h2>
+          <p className="text-xs sm:text-sm text-ts-kremMuted max-w-md mx-auto">
+            Silakan scan QRIS di bawah ini dan transfer nominal <strong>persis sampai 3 angka terakhir</strong> untuk verifikasi instan.
           </p>
         </div>
 
-        <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
-          <a href={waUrl} target="_blank" rel="noreferrer" className="w-full sm:w-auto">
-            <Button size="lg" variant="whatsapp" icon={MessageSquare} className="w-full">
-              Konfirmasi Pembayaran via WhatsApp
-            </Button>
-          </a>
-          <Link to="/" className="w-full sm:w-auto">
-            <Button size="lg" variant="secondary" className="w-full">
-              Kembali ke Beranda
-            </Button>
+        {/* Official QRIS Component */}
+        <QrisPaymentBox
+          orderId={orderComplete.orderId}
+          customerName={orderComplete.customerName}
+          phone={orderComplete.phone}
+          baseTotal={orderComplete.baseTotal}
+          uniqueCode={orderComplete.uniqueCode}
+          totalTransfer={orderComplete.total}
+          merchantName={merchantName}
+          nmid={storeSettings?.qrisNmid || 'ID102609070001'}
+          waUrl={waUrl}
+        />
+
+        <div className="pt-2">
+          <Link to="/" className="inline-block text-xs font-medium text-ts-kremMuted hover:text-white transition-colors">
+            ← Kembali ke Beranda
           </Link>
         </div>
       </div>
@@ -458,10 +490,40 @@ export function CartPage() {
                 <span className="font-mono text-white font-bold">{formatRupiah(shippingFee)}</span>
               </div>
 
+              {/* Unique Code Row */}
+              <div className="flex justify-between items-center text-xs py-1.5 px-3 rounded-xl bg-ts-mustard/10 border border-ts-mustard/25">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
+                  <span className="font-semibold text-ts-krem">Kode Unik Verifikasi (3 Digit):</span>
+                </div>
+                <span className="font-mono font-black text-ts-mustard bg-ts-mustard/20 px-1.5 py-0.5 rounded border border-ts-mustard/30">
+                  + {formatRupiah(uniqueCode)}
+                </span>
+              </div>
+
               <div className="pt-3 border-t border-white/[0.08] flex justify-between items-baseline">
-                <span className="font-bold text-white text-sm">Total Pembayaran:</span>
+                <div>
+                  <span className="font-bold text-white text-sm block">Total Transfer Persis:</span>
+                  <span className="text-[10px] text-ts-kremMuted">Wajib transfer tepat s/d 3 digit akhir</span>
+                </div>
                 <span className="font-mono text-2xl font-black text-ts-green">{formatRupiah(grandTotal)}</span>
               </div>
+            </div>
+
+            {/* Payment Method Badge */}
+            <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-white flex items-center gap-1.5">
+                  <QrCode className="w-4 h-4 text-red-500" />
+                  Metode: QRIS Standar Nasional
+                </span>
+                <span className="text-[10px] font-mono font-bold text-ts-green bg-ts-green/10 px-2 py-0.5 rounded border border-ts-green/30">
+                  0% Fee Admin
+                </span>
+              </div>
+              <p className="text-[11px] text-ts-kremMuted leading-relaxed">
+                Merchant resmi: <strong className="text-white">TeeStock Apparel</strong>. Scan QRIS langsung dari seluruh m-banking &amp; e-wallet (BCA, Mandiri, BRI, GoPay, OVO, DANA, dll).
+              </p>
             </div>
 
             <Button

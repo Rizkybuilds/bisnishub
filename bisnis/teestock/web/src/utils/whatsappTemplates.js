@@ -74,3 +74,39 @@ export function getWhatsAppUrl(phone, message) {
   if (!cleanPhone) return null;
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 }
+
+export function generateOrderCheckoutWhatsAppText({
+  orderId,
+  customerName,
+  phone,
+  city = 'Indonesia',
+  address,
+  courier = 'J&T Express',
+  items = [],
+  baseTotal,
+  uniqueCode,
+  totalTransfer,
+  merchantName = 'TeeStock Apparel'
+}) {
+  const itemListText = items.length > 0
+    ? items.map((item, idx) => `• ${item.name} (${item.garment || 'NSA'} - ${item.color || 'Hitam'} ${item.size || 'L'}) x${item.qty || 1} pcs`).join('\n')
+    : `• Pesanan Kaos TeeStock (${orderId})`;
+
+  return `Halo *${merchantName}*! Saya sudah melakukan checkout di website:
+
+📦 *No. Order:* ${orderId}
+👤 *Nama:* ${customerName}
+📱 *WhatsApp:* ${phone}
+📍 *Alamat:* ${address} (${city})
+🚚 *Kurir:* ${courier}
+
+🛒 *Rincian Item:*
+${itemListText}
+
+💳 *Pembayaran:* QRIS Manual (${merchantName})
+🔢 *Kode Unik Verifikasi:* +${uniqueCode}
+💰 *Total Transfer Persis:* Rp ${Number(totalTransfer).toLocaleString('id-ID')}
+
+Saya sudah transfer dengan nominal persis *Rp ${Number(totalTransfer).toLocaleString('id-ID')}*. Terlampir bukti transfer QRIS. Mohon segera diproses ya kak! Terima kasih 🙏`;
+}
+

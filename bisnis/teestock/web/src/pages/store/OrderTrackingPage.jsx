@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Package, Clock, CheckCircle2, Truck, Flame, Printer, AlertCircle } from 'lucide-react';
+import { Search, Package, Clock, CheckCircle2, Truck, Flame, Printer, AlertCircle, ExternalLink, QrCode } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { useStore } from '../../context/StoreContext';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
@@ -11,6 +12,7 @@ import { SEOHead } from '../../components/common/SEOHead';
 
 export function OrderTrackingPage() {
   const { orders } = useAdmin();
+  const { storeSettings } = useStore();
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -48,7 +50,7 @@ export function OrderTrackingPage() {
   };
 
   const steps = [
-    { id: 'pending', label: 'Order Diterima', icon: Clock, desc: 'Pesanan masuk & verifikasi artwork' },
+    { id: 'pending', label: 'Order Diterima', icon: Clock, desc: 'Pesanan masuk & verifikasi artwork/pembayaran' },
     { id: 'dtf', label: 'Cetak Film DTF', icon: Printer, desc: 'Dicetak di roll DTF HD raster' },
     { id: 'press', label: 'Heat Press 155°C', icon: Flame, desc: 'Proses press garmen NSA & finishing' },
     { id: 'pack', label: 'Quality Control', icon: Package, desc: 'Pengecekan kualitas & polymailer pack' },
@@ -63,6 +65,8 @@ export function OrderTrackingPage() {
   const primaryOrder = searchResults[0] || null;
   const grandTotal = searchResults.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
   const displayOrderId = primaryOrder?.parentOrderId || primaryOrder?.id;
+  const uniqueCode = primaryOrder?.unique_code || primaryOrder?.uniqueCode;
+  const adminWa = storeSettings?.adminPhone || '6281234567890';
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-8">
@@ -113,6 +117,58 @@ export function OrderTrackingPage() {
                   <div className="text-[11px] text-ts-kremMuted">{searchResults.length} Item Pesanan</div>
                 </div>
               </div>
+
+              {/* Payment Verification Status (QRIS Manual) */}
+              {(uniqueCode || primaryOrder.payment_method === 'qris_manual') && (
+                <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                  primaryOrder.status === 'pending'
+                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-200'
+                    : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                }`}>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      {primaryOrder.status === 'pending' ? (
+                        <>
+                          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
+                          <span className="font-bold text-xs text-amber-300 uppercase tracking-wider">
+                            Menunggu Verifikasi Pembayaran QRIS
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                          <span className="font-bold text-xs text-emerald-400 uppercase tracking-wider">
+                            Pembayaran QRIS Lunas &amp; Terverifikasi
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <p className="text-xs text-ts-kremMuted">
+                      {primaryOrder.status === 'pending' ? (
+                        <>
+                          Nominal transfer wajib persis: <strong className="text-white font-mono">{formatRupiah(primaryOrder.total_payment || grandTotal)}</strong> (termasuk kode unik <span className="text-ts-mustard font-bold font-mono">+{uniqueCode}</span>).
+                        </>
+                      ) : (
+                        'Pesanan telah lunas terverifikasi dan masuk antrean produksi sablon.'
+                      )}
+                    </p>
+                  </div>
+
+                  {primaryOrder.status === 'pending' && (
+                    <a
+                      href={`https://wa.me/${adminWa}?text=${encodeURIComponent(
+                        `Halo Admin TeeStock, saya ingin konfirmasi transfer QRIS untuk Pesanan #${displayOrderId} sebesar ${formatRupiah(primaryOrder.total_payment || grandTotal)} (Kode unik: +${uniqueCode}). Terima kasih!`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3.5 py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center justify-center gap-1.5 shrink-0 transition-all"
+                    >
+                      <span>Konfirmasi via WA</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+                </div>
+              )}
 
               {/* Status Timeline */}
               <div className="space-y-6 py-4">

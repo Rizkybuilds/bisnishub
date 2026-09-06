@@ -6,7 +6,9 @@ const DEFAULT_STORE_SETTINGS = {
   storeWhatsapp: '085220274968',
   shopeeUrl: 'https://shopee.co.id',
   tiktokUrl: 'https://tiktok.com',
-  instagramUrl: 'https://instagram.com'
+  instagramUrl: 'https://instagram.com',
+  qrisMerchantName: 'TeeStock Apparel',
+  qrisNmid: 'ID102609070001'
 };
 
 export function StoreProvider({ children }) {

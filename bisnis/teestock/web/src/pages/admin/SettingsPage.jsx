@@ -9,7 +9,9 @@ import {
   Phone,
   ShoppingBag,
   Share2,
-  Save
+  Save,
+  QrCode,
+  Sparkles
 } from 'lucide-react';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
 import { Card } from '../../components/ui/Card';
@@ -36,6 +38,19 @@ export function SettingsPage() {
   const [shopee, setShopee] = useState(storeSettings?.shopeeUrl || 'https://shopee.co.id');
   const [tiktok, setTiktok] = useState(storeSettings?.tiktokUrl || 'https://tiktok.com');
   const [instagram, setInstagram] = useState(storeSettings?.instagramUrl || 'https://instagram.com');
+
+  // QRIS Merchant states
+  const [qrisName, setQrisName] = useState(storeSettings?.qrisMerchantName || 'TeeStock Apparel');
+  const [qrisNmid, setQrisNmid] = useState(storeSettings?.qrisNmid || 'ID102609070001');
+
+  const handleSaveQrisSettings = (e) => {
+    e.preventDefault();
+    updateStoreSettings({
+      qrisMerchantName: qrisName.trim(),
+      qrisNmid: qrisNmid.trim()
+    });
+    showToast("✅ Konfigurasi merchant QRIS TeeStock berhasil disimpan!");
+  };
 
   const handleTestSupabase = async () => {
     setTesting(true);
@@ -113,6 +128,58 @@ export function SettingsPage() {
             <div className="flex justify-end pt-2 border-t border-ts-borderDim">
               <Button type="submit" variant="primary" icon={Save}>
                 Simpan Kontak Toko
+              </Button>
+            </div>
+          </form>
+        </Card>
+
+        {/* QRIS Merchant Configuration Card */}
+        <Card className="space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-ts-borderDim">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-red-600/20 text-red-400 flex items-center justify-center font-bold">
+                <QrCode className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-ts-krem">Konfigurasi Pembayaran QRIS Manual</h3>
+                <p className="text-xs text-ts-muted">Atur identitas merchant QRIS dan sistem kode unik verifikasi 3 digit</p>
+              </div>
+            </div>
+            <span className="text-xs font-mono font-bold text-ts-green bg-ts-green/10 px-2 py-1 rounded">
+              0% Gateway Fee
+            </span>
+          </div>
+
+          <form onSubmit={handleSaveQrisSettings} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Nama Merchant QRIS Terdaftar"
+                placeholder="TeeStock Apparel"
+                value={qrisName}
+                onChange={(e) => setQrisName(e.target.value)}
+                required
+              />
+              <Input
+                label="NMID QRIS (National Merchant ID)"
+                placeholder="Contoh: ID102609070001"
+                value={qrisNmid}
+                onChange={(e) => setQrisNmid(e.target.value)}
+              />
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-ts-kremMuted space-y-1">
+              <div className="text-white font-bold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
+                <span>Sistem Verifikasi Otomatis Kode Unik 3 Digit</span>
+              </div>
+              <p>
+                Setiap pembeli di website akan mendapatkan nominal tagihan dengan 3 digit unik acak (contoh: +342). Anda cukup mencocokkan mutasi rekening bank/e-wallet dengan kode unik pesanan di Kanban Admin tanpa perlu membayar biaya payment gateway.
+              </p>
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-ts-borderDim">
+              <Button type="submit" variant="primary" icon={Save}>
+                Simpan Pengaturan QRIS
               </Button>
             </div>
           </form>
