@@ -6,6 +6,7 @@ import {
   Truck, 
   Sparkles, 
   ArrowLeft, 
+  ArrowRight,
   Check, 
   MessageSquare,
   Layers,
@@ -14,7 +15,9 @@ import {
   RotateCcw,
   Tag,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Building2,
+  Zap
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useStore } from '../../context/StoreContext';
@@ -29,6 +32,7 @@ import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { SEOHead } from '../../components/common/SEOHead';
 import { BUNDLE_DEALS } from '../../constants/pricing';
 import { ProductReviews } from '../../components/store/ProductReviews';
+import { getFulfillmentSLA } from '../../utils/garmentStockRouting';
 
 const COLOR_HEX_MAP = {
   "Hitam": "#111111",
@@ -214,6 +218,12 @@ export function ProductDetailPage() {
     else if (selectedGarmentKey === 'nsa_polo') priceDelta = 30000;
   }
   const currentPrice = isBlank ? baseRetailPrice : (effectiveBasePrice + priceDelta);
+
+  // Dynamic Hybrid Stock & Fulfillment SLA (Studio Buffer vs Cititex JIT)
+  const garmentIdentifier = isBlank ? product.name : (selectedGarment?.name || selectedGarmentKey);
+  const fulfillmentSLA = useMemo(() => {
+    return getFulfillmentSLA(garmentIdentifier, selectedColor, selectedSize, isBlank);
+  }, [garmentIdentifier, selectedColor, selectedSize, isBlank]);
 
   const productSchema = {
     "@context": "https://schema.org/",
@@ -427,22 +437,57 @@ export function ProductDetailPage() {
               : "Kaos print-on-demand premium dengan sablon DTF resolusi tinggi pada kaos katun New States Apparel impor.")}
           </p>
 
-          {/* SLA Badge */}
-          {isBlank ? (
-            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-ts-teal/10 border border-ts-teal/30 text-xs">
-              <Truck className="w-5 h-5 shrink-0 text-ts-teal" />
-              <div>
-                <strong className="block font-bold text-white">⚡ Ready Stock &amp; Pengiriman H+1</strong>
-                <span className="text-[11px] text-ts-kremMuted">Kaos Polos NSA ready di warehouse. Langsung dipacking dan dikirim besok.</span>
-              </div>
+          {/* Dynamic Hybrid Fulfillment SLA Badge */}
+          <div className={`flex items-start gap-3 p-3.5 rounded-2xl border text-xs transition-all ${
+            fulfillmentSLA.isStudioStock 
+              ? 'bg-emerald-500/10 border-emerald-500/30' 
+              : 'bg-sky-500/10 border-sky-500/30'
+          }`}>
+            <div className={`p-2 rounded-xl shrink-0 ${
+              fulfillmentSLA.isStudioStock ? 'bg-emerald-500/20 text-emerald-400' : 'bg-sky-500/20 text-sky-400'
+            }`}>
+              {fulfillmentSLA.isStudioStock ? (
+                <Zap className="w-4 h-4 animate-pulse" />
+              ) : (
+                <Building2 className="w-4 h-4" />
+              )}
             </div>
-          ) : (
-            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-ts-mustard/10 border border-ts-mustard/30 text-xs">
-              <Clock className="w-5 h-5 shrink-0 text-ts-mustard" />
-              <div>
-                <strong className="block font-bold text-white">🛠️ Fresh POD • Cetak Presisi 155°C</strong>
-                <span className="text-[11px] text-ts-kremMuted">Diproduksi khusus on-demand dengan double heat press suhu 155°C anti-retak.</span>
+            <div className="space-y-0.5 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <strong className="font-bold text-white text-xs">
+                  {fulfillmentSLA.heading}
+                </strong>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${fulfillmentSLA.badgeClass}`}>
+                  {fulfillmentSLA.tagText}
+                </span>
               </div>
+              <p className="text-[11px] text-ts-kremMuted leading-relaxed">
+                {fulfillmentSLA.subtext}
+              </p>
+            </div>
+          </div>
+
+          {/* Blank Apparel: Interactive Upsell to Custom DTF Printing */}
+          {isBlank && (
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-ts-terracotta/20 via-ts-mustard/15 to-ts-surface border border-ts-terracotta/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-ts-mustard animate-pulse" />
+                  <span className="text-xs font-black text-white uppercase tracking-wider font-mono">
+                    Mau Kaos Ini Disablon Desain Sendiri?
+                  </span>
+                </div>
+                <p className="text-xs text-ts-kremMuted">
+                  Tambah sablon DTF HD di bahan <strong className="text-white">{product.name}</strong> ini mulai <strong className="text-ts-mustard font-mono">+Rp 25.000</strong>. Tanpa minimum order!
+                </p>
+              </div>
+              <Link
+                to={`/custom-order?blank=${encodeURIComponent(product.sku)}&name=${encodeURIComponent(product.name)}`}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-ts-terracotta hover:bg-ts-terracotta/90 text-white transition shadow-sm shrink-0"
+              >
+                <span>Custom Sablon</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           )}
 

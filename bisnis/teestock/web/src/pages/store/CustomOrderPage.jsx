@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Send, Upload, Sparkles, ShieldCheck, CheckCircle2, MessageSquare, ArrowRight, ArrowLeft, Check, Layers, Printer, User } from 'lucide-react';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { DTF_PRINT_SIZES } from '../../constants/pricing';
@@ -11,15 +12,35 @@ import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { SEOHead } from '../../components/common/SEOHead';
 
+const BLANK_SKU_TO_GARMENT = {
+  'TS-BLK-3600': 'nsa_softstyle_30s',
+  'TS-BLK-7200': 'nsa_heavyweight_24s',
+  'TS-BLK-5400': 'nsa_heavyweight_20s',
+  'TS-BLK-7280': 'nsa_longsleeve',
+  'TS-BLK-5480': 'nsa_heavy_longsleeve',
+  'TS-BLK-7250': 'nsa_ringer',
+  'TS-BLK-7260': 'nsa_raglan',
+  'TS-BLK-8100': 'nsa_polo',
+  'TS-BLK-9500': 'nsa_hoodie',
+  'TS-BLK-9000': 'nsa_crewneck',
+  'TS-BLK-2700': 'nsa_drifit',
+  'TS-BLK-72Y00': 'nsa_youth',
+};
+
 export function CustomOrderPage() {
   const { addOrder } = useAdmin();
   const { storeSettings } = useStore();
+  const [searchParams] = useSearchParams();
+
+  const blankParam = searchParams.get('blank');
+  const blankName = searchParams.get('name');
+  const initialGarmentKey = (blankParam && BLANK_SKU_TO_GARMENT[blankParam]) || 'nsa_softstyle_30s';
 
   const [currentStep, setCurrentStep] = useState(1);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
-  const [garmentKey, setGarmentKey] = useState('nsa_softstyle_30s');
+  const [garmentKey, setGarmentKey] = useState(initialGarmentKey);
   const [color, setColor] = useState('Hitam');
   const [size, setSize] = useState('L');
   const [printSizeId, setPrintSizeId] = useState('a3');
@@ -128,6 +149,21 @@ export function CustomOrderPage() {
           Cetak desain brand, komunitas, atau merchandise kamu dengan sablon DTF HD di atas bahan garmen New States Apparel original.
         </p>
       </div>
+
+      {/* Blank Referrer Context Pill */}
+      {blankParam && (
+        <div className="max-w-2xl mx-auto p-3.5 rounded-2xl bg-ts-teal/15 border border-ts-teal/30 flex items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5 text-ts-krem min-w-0">
+            <Sparkles className="w-4 h-4 text-ts-teal shrink-0" />
+            <span className="truncate">
+              Garmen otomatis dipilih dari katalog: <strong className="text-white">{selectedGarment.name}</strong>
+            </span>
+          </div>
+          <span className="text-[10px] font-mono text-ts-teal uppercase font-bold px-2 py-0.5 rounded bg-ts-teal/20 shrink-0">
+            Katalog Polos
+          </span>
+        </div>
+      )}
 
       {/* 3-Step Wizard Indicator */}
       <div className="flex items-center justify-center gap-2 sm:gap-4 max-w-md mx-auto">

@@ -9,7 +9,7 @@ Workspace ini berisi 3 bisnis yang sedang dirintis:
 
 | # | Bisnis | Folder | Bidang | Status |
 |---|--------|--------|--------|--------|
-| 1 | **TeeStock** | `bisnis/teestock/` | Apparel POD Brand | 🟡 Planning |
+| 1 | **TeeStock** | `bisnis/teestock/` | Apparel POD & Blanks Brand | 🟢 Launch Prep (Web App Live, In-House Heat Press Active) |
 | 2 | **MultiGraph** | `bisnis/multigraph/` | Printing Business | 🔴 Ideation |
 | 3 | **Titik Buta** | `bisnis/titik-buta/` | TBD | 🔴 Ideation |
 

@@ -7,7 +7,7 @@
  *    node sync-supabase.mjs
  * 
  * 2. Tanpa key service_role:
- *    Jalankan file SQL 'update-nsa-blanks.sql' di Supabase SQL Editor:
+ *    Jalankan file SQL 'schema.sql' di Supabase SQL Editor:
  *    https://supabase.com/dashboard/project/tovslowsopqtuxmrogeu/sql/new
  */
 
@@ -25,9 +25,9 @@ async function run() {
     console.log("ℹ️  Tabel ts_products memiliki Row Level Security (RLS) di mana public/anon key hanya memiliki izin READ.");
     console.log("\n📋 CARA UPDATE CLOUD SUPABASE:");
     console.log("1. Buka browser: https://supabase.com/dashboard/project/tovslowsopqtuxmrogeu/sql/new");
-    console.log("2. Copy isi file: bisnis/teestock/database/update-nsa-blanks.sql");
+    console.log("2. Copy isi file: bisnis/teestock/database/schema.sql");
     console.log("3. Paste dan klik tombol 'Run' (Ctrl + Enter).");
-    console.log("\nSelesai! Seluruh 12 produk Blank NSA Cititex akan langsung tersinkronisasi ke Cloud.");
+    console.log("\nSelesai! Seluruh 12 tabel, trigger, dan katalog produk akan langsung tersinkronisasi ke Cloud.");
     return;
   }
 

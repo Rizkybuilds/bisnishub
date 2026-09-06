@@ -31,31 +31,52 @@ Dokumen ini melengkapi analisis bisnis dan brand guide sebelumnya dengan detail 
 4. **Finishing Press (Curing):** Tutup sablonan dengan kertas teflon / baking paper, press kembali selama 5–7 detik untuk menanamkan tinta ke dalam pori-pori kain dan menghilangkan kilap plastik berlebih.
 5. **Quality Check & Fold:** Periksa kerataan rekat lem pada sudut sablon, lipat rapi, dan masukkan ke polymailer dengan stiker segel TeeStock.
 
+### 1.4 Model Hybrid Inventory: Buffer Studio vs JIT Cititex Network
+
+Sebagai solopreneur dengan modal dan kapasitas gudang terbatas di rumah, TeeStock menerapkan **arsitektur persediaan hibrida 2-tier** agar dapat menjual seluruh katalog apparel New States Apparel (NSA) hingga 1.500+ variasi SKU tanpa risiko mati modal (*dead stock*):
+
+1. **Tier 1: Buffer Stock Studio (Fast-Moving, Kirim H+0 / Hari Ini):**
+   - **Lokasi:** Lemari/rak stok di rumah/studio founder.
+   - **SKU Terbatas:** Hanya menyimpan kaos terpopuler: **Hitam & Putih** untuk model **NSA Heavyweight 24s** dan **NSA Softstyle 30s** dalam ukuran **M, L, dan XL** (buffer 3–6 pcs per SKU).
+   - **SLA Pelanggan:** Siap press dan langsung dikirim di hari yang sama (*Same-Day / Next-Day*).
+2. **Tier 2: Virtual Catalog / Just-in-Time (JIT) Cititex Network (Kirim H+1 s/d H+2):**
+   - **Cakupan:** Seluruh spektrum warna (Maroon, Forest Green, Navy, Mustard, Lilac, dll.), ukuran khusus (S, XXL, 3XL), kaos lengan panjang (*Longsleeve*), Hoodie, Raglan, dan Polo NSA.
+   - **Status di Web:** Tampil sebagai *Ready Stock Gudang Pusat* sehingga pembeli tidak ragu memesan.
+   - **Alur Penarikan:** Begitu pesanan masuk, sistem admin menandai pesanan dengan badge `[TARIK CITITEX]`.
+3. **SOP Batching Pengambilan & Efisiensi Biaya:**
+   - **Kalkulasi Unit Economics:** Margin blank apparel murni adalah tipis (Rp 10.000 – Rp 12.000). Jika founder menarik 1 kaos memakai GoSend/GrabExpress (Rp 15.000 – Rp 20.000), margin akan langsung minus (*bocor*).
+   - **Solusi Batching:** Pengambilan garmen ke cabang Cititex dilakukan **sekaligus 1x sehari** di jam operasional sore hari, bersamaan dengan rute pengambilan cetakan film DTF roll meteran dari vendor print, atau dikoordinasikan via WhatsApp admin cabang Cititex terdekat.
+   - **Manifest Otomatis Web App:** Dashboard Admin (`/admin/kanban`) dilengkapi tombol **"Tarik Cititex"** yang mengelompokkan kebutuhan garmen harian per model/warna/ukuran dan menyediakan generator teks WhatsApp siap kirim ke kasir Cititex.
+
 ---
 
 ## 2. Struktur Channel Penjualan
 
 | Channel | Peran utama |
 |---|---|
-| **Shopee** | Volume & pencarian — andalan utama untuk katalog Stock |
-| **TikTok Shop** | Akuisisi lewat konten & FYP — bagus untuk niche dengan budaya konten kuat |
+| **Shopee** | Volume & pencarian — andalan utama untuk katalog Stock & Blanks |
+| **TikTok Shop** | Akuisisi lewat konten & FYP — bagus untuk video proses press & ASMR peel |
 | **Blibli** | Kepercayaan & segmen pembeli yang lebih mengutamakan platform "resmi/terpercaya" |
-| **Website sendiri** | Bukan cuma untuk jualan Stock — jadi pusat untuk **Custom Order** (form request desain) dan nantinya pendaftaran **Reseller/Member**, karena butuh kontrol form dan alur yang nggak bisa difasilitasi marketplace |
+| **Website sendiri (`teestock.vercel.app`)** | Pusat operasional: penjualan Blanks NSA, Custom Order, pendaftaran Partner/Reseller, dan Hub Admin |
 
-**Catatan penting:** website perlu dianggap sebagai *tools operasional*, bukan cuma etalase jualan — terutama begitu lini Custom Order jalan, karena marketplace kurang fleksibel untuk menerima request desain custom dari customer secara terstruktur.
+**Catatan penting:** website berfungsi ganda sebagai *storefront ritel* dan *tools operasional*, dilengkapi kalkulator HPP otomatis, gang sheet layout DTF, dan manifest logistik internal.
 
 ---
 
-## 3. Arsitektur Operasional: TeeStock Originals & TeeStock Studio
+## 3. Arsitektur Operasional: TeeStock Originals, Blanks & Studio
 
-Sesuai pembaruan identitas brand menjadi *Curated Apparel & Merch House*, operasional dibagi menjadi dua sayap terintegrasi:
+Sesuai pembaruan arah bisnis dan arsitektur web aplikasi, operasional dibagi menjadi tiga pilar:
 
 ### A. Sayap Ritel: TeeStock Originals (The Drop Model)
-* **Karakter:** Rilis berkala per edisi/kapsul (*The Drop Model*), bukan 9 series statis yang kaku. Dimulai dari Drop #01 "Identity" (6 desain: IT, Outdoor, Local Pride).
-* **Alur Produksi:** Cetak film DTF meteran sekaligus saat pesanan terkonfirmasi (atau pre-press buffer 2-3 pcs per ukuran untuk pesanan cepat).
-* **Penyimpanan Blank:** Buffer kaos polos New State Apparel dalam ukuran populer (M, L, XL) warna Hitam & Krem.
+* **Karakter:** Rilis berkala per edisi/kapsul (*The Drop Model*), bukan koleksi massal kaku. Dimulai dari kurasi beberapa desain pilihan yang estetik dan disukai pasar tanpa memaksakan sekat kategori kaku di awal sebelum ada validasi pembeli.
+* **Alur Produksi:** Cetak film DTF meteran sekaligus saat pesanan terkonfirmasi, press mandiri menggunakan mesin in-house.
+* **Penyimpanan:** Memanfaatkan buffer kaos polos di studio.
 
-### B. Sayap Layanan & Kemitraan: TeeStock Studio
+### B. Sayap Blanks: Reseller & Dropship NSA Resmi
+* **Katalog Lengkap:** Menjual kaos polos New States Apparel original (24s Heavyweight, 30s Softstyle, Ringer, Longsleeve) secara eceran dan lusinan.
+* **Upsell Custom DTF (+Rp 25.000):** Setiap halaman produk kaos polos dilengkapi banner rekomendasi instan untuk langsung mengubah pesanan menjadi kaos sablon kustom (mengarahkan otomatis ke `/custom-order?blank=SKU`).
+
+### C. Sayap Layanan & Kemitraan: TeeStock Studio
 Sayap ini menangkap peluang non-retail dengan 3 sub-layanan yang diaktifkan bertahap:
 
 1. **Custom Order Studio (Mulai Fase 2):**

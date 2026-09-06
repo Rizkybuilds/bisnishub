@@ -11,11 +11,14 @@ import {
   ScrollText,
   Layers,
   Sparkles,
+  Building2,
   X
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
 import { KanbanColumn } from '../../components/admin/KanbanColumn';
+import { VendorPickupModal } from '../../components/admin/VendorPickupModal';
+import { aggregateVendorPickupList } from '../../utils/garmentStockRouting';
 
 export function KanbanPage() {
   const { openNewOrderModal } = useOutletContext();
@@ -25,6 +28,12 @@ export function KanbanPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedChannel, setSelectedChannel] = useState('all');
   const [batchPreset, setBatchPreset] = useState('all'); // 'all', 'dtf_queue', 'dark_batch', 'light_batch'
+  const [isPickupModalOpen, setIsPickupModalOpen] = useState(false);
+
+  // Vendor JIT Summary Count
+  const vendorPickupSummary = useMemo(() => {
+    return aggregateVendorPickupList(orders);
+  }, [orders]);
 
   const columns = [
     { id: 'pending', title: 'Order Masuk', icon: Inbox, colorClass: 'text-ts-mustard' },
@@ -187,6 +196,26 @@ export function KanbanPage() {
             <span>Kirim Roll DTF</span>
           </Link>
 
+          {/* Quick Trigger: Vendor JIT Cititex Pickup Manifest */}
+          <button
+            type="button"
+            onClick={() => setIsPickupModalOpen(true)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
+              vendorPickupSummary.totalPcs > 0
+                ? 'bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border-sky-500/40 shadow-sm'
+                : 'bg-ts-hitam/60 text-ts-muted border-ts-borderDim hover:text-white'
+            }`}
+            title="Lihat rekap garmen yang perlu ditarik dari cabang Cititex hari ini"
+          >
+            <Building2 className="w-3.5 h-3.5" />
+            <span>Tarik Cititex</span>
+            {vendorPickupSummary.totalPcs > 0 && (
+              <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-sky-500 text-neutral-950 font-black">
+                {vendorPickupSummary.totalPcs}
+              </span>
+            )}
+          </button>
+
           {/* Total badge */}
           <span className="font-mono text-xs text-ts-muted px-2 py-1 bg-ts-hitam/60 rounded border border-ts-border">
             {filteredOrders.length} / {orders.length}
@@ -213,6 +242,13 @@ export function KanbanPage() {
           );
         })}
       </div>
+
+      {/* Cititex JIT Pickup Manifest Modal */}
+      <VendorPickupModal
+        isOpen={isPickupModalOpen}
+        onClose={() => setIsPickupModalOpen(false)}
+        orders={orders}
+      />
     </div>
   );
 }

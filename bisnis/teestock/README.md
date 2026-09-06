@@ -47,6 +47,10 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel, portal
 - **Stack:** React 18 + Vite + Tailwind CSS + Supabase (PostgreSQL + RLS + Auth) + Cloudinary CDN + Vercel PWA
 - **Fitur Storefront Publik:**
   - Dynamic Funnel Home (6-section architecture: Hero Hook, Live Drop, Dual Pillar, Trust Specs NSA 24s, Brand Story, VIP Lead Capture).
+  - Dynamic Hybrid Stock & SLA Indicator (⚡ Ready Stock Studio H+0 vs 🏢 Gudang Pusat Cititex H+1).
+  - Blank-to-Custom DTF Upsell Banner (+Rp 25.000) terintegrasi langsung ke `/custom-order`.
+  - Paket Bundling Hemat AOV Booster (Paket Duo hemat Rp 18k / Paket Trio hemat Rp 42k).
+  - Customer Reviews & Social Proof Engine (rating bintang 4.9/5, meteran kepuasan kain NSA & sablon DTF, verified buyer badge).
   - Katalog 9 Series + Filter NSA + Multi-tier Role Pricing (Ritel vs Reseller vs Dropship).
   - Detail Produk dengan rekomendasi ukuran & spesifikasi sablon DTF suhu 155°C.
   - Custom Order Studio (`/custom-order`) dengan formulir spesifikasi otomatis ke WhatsApp.
@@ -59,10 +63,13 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel, portal
   - Dashboard Analitik & Ringkasan Penjualan.
   - Master Katalog (PIM) CRUD & sync Cloudinary.
   - Manajemen Stok Bahan NSA & Status Supplier Cititex.
-  - Kanban Antrean Produksi dengan Batch Grouping (Queue DTF, Batch Gelap/Terang).
+  - Kanban Antrean Produksi dengan Label Sumber Garmen (`[STOK STUDIO]` vs `[TARIK CITITEX]`).
+  - Modal Manifest Tarik Vendor Cititex (JIT) dengan 1-klik salin format chat WhatsApp ke cabang Cititex.
+  - Generator Label Pengiriman Thermal A6 (100x150 mm) dengan barcode visual & toggle white-label dropship.
   - Gang Sheet Roll DTF Builder interaktif.
   - QC Defect & Return Tracker (pencatatan kerugian HPP akibat reject kain/DTF).
   - WhatsApp Custom Quoter instan.
+- **Database Backend:** Single Consolidated Master Schema [`database/schema.sql`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/database/schema.sql) (12 tabel, trigger auth, RLS, view kalkulasi margin, seed data lengkap).
 - **SEO & PWA:** Dynamic OpenGraph (`SEOHead.jsx`), `sitemap.xml`, `robots.txt`, manifest PWA (Add to Home Screen).
 - **Brand Logo:** Aset vektor SVG resmi tumpukan lipatan kaos (*The Stock*) terintegrasi di seluruh komponen.
 - **Source Code:** [`web/`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/web) folder.

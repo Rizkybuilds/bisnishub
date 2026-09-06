@@ -10,17 +10,20 @@ import {
   Truck,
   TrendingUp, 
   ExternalLink,
-  Sparkles
+  Sparkles,
+  Building2
 } from 'lucide-react';
 import { formatRupiah } from '../../utils/formatters';
 import { generateCustomerWhatsAppText, getWhatsAppUrl } from '../../utils/whatsappTemplates';
 import { PrintWorkSlipModal } from './PrintWorkSlipModal';
 import { ShippingLabelModal } from './ShippingLabelModal';
+import { isFastMovingBuffer } from '../../utils/garmentStockRouting';
 
 export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
   const isPress = order.status === 'press';
+  const isStudioReady = isFastMovingBuffer(order.garment, order.color, order.size);
 
   const channelBadges = {
     shopee: "bg-[#EE4D2D]/20 text-[#FF6E4E] border-[#EE4D2D]/40",
@@ -111,13 +114,29 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
         </div>
 
         {/* Product & Garment Spec */}
-        <div className="bg-ts-surface/60 rounded-lg p-2.5 border border-ts-borderDim text-xs space-y-1">
+        <div className="bg-ts-surface/60 rounded-lg p-2.5 border border-ts-borderDim text-xs space-y-1.5">
           <div className="font-bold text-ts-krem truncate">{order.productName || order.sku}</div>
           <div className="flex items-center justify-between text-[11px] text-ts-muted">
-            <span className="text-ts-krem/90 font-medium">{order.garment}</span>
-            <span className="font-mono font-bold text-ts-terracotta bg-ts-terracotta/10 px-1.5 py-0.2 rounded">
+            <span className="text-ts-krem/90 font-medium truncate max-w-[140px]">{order.garment}</span>
+            <span className="font-mono font-bold text-ts-terracotta bg-ts-terracotta/10 px-1.5 py-0.2 rounded shrink-0">
               {order.color} ({order.size}) x{order.qty}
             </span>
+          </div>
+          
+          {/* Fulfillment Origin Tag */}
+          <div className="flex items-center justify-between text-[10px] pt-1.5 border-t border-ts-borderDim/50">
+            <span className="text-ts-muted font-mono text-[9px] uppercase">Garmen:</span>
+            {isStudioReady ? (
+              <span className="inline-flex items-center gap-1 font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 rounded text-[10px]" title="Tersedia di buffer stok studio (Siap Press/Pack)">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                STOK STUDIO
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 font-mono font-bold text-sky-400 bg-sky-500/10 border border-sky-500/25 px-1.5 py-0.5 rounded text-[10px]" title="Perlu ditarik dari cabang vendor Cititex (JIT)">
+                <Building2 className="w-2.5 h-2.5" />
+                TARIK CITITEX
+              </span>
+            )}
           </div>
         </div>
 
