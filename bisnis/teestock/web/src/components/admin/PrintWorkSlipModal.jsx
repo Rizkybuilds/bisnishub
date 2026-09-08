@@ -52,26 +52,53 @@ export function PrintWorkSlipModal({ isOpen, onClose, order }) {
           {/* Garment & Print Spec */}
           <div className="space-y-2">
             <div className="text-[11px] font-bold text-gray-900 uppercase tracking-wider border-b border-gray-200 pb-1">
-              Spesifikasi Produk:
+              Spesifikasi Produk ({order.qty || 1} pcs total):
             </div>
-            <div className="flex justify-between items-center py-1.5 border-b border-gray-100">
-              <span className="text-xs font-bold text-gray-800">{order.productName || order.sku}</span>
-              <span className="text-xs font-mono font-bold bg-gray-200 px-2 py-0.5 rounded">Qty: {order.qty || 1} pcs</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-xs pt-1">
-              <div>
-                <span className="text-[10px] text-gray-500 block">Blank NSA:</span>
-                <strong className="text-gray-900">{order.garment || 'NSA Softstyle 30s'}</strong>
+            {order.items && order.items.length > 1 ? (
+              <div className="space-y-1.5 overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-gray-200 text-[10px] text-gray-500 uppercase">
+                      <th className="py-1">Item / Desain</th>
+                      <th className="py-1">Garmen NSA</th>
+                      <th className="py-1">Warna / Size</th>
+                      <th className="py-1 text-right">Qty</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 font-sans">
+                    {order.items.map((it, idx) => (
+                      <tr key={idx} className="py-1">
+                        <td className="py-1 font-bold text-gray-800 pr-2">{it.name || it.product_name}</td>
+                        <td className="py-1 text-gray-600 pr-2">{it.garment}</td>
+                        <td className="py-1 text-gray-600 pr-2">{it.color} ({it.size})</td>
+                        <td className="py-1 text-right font-mono font-bold text-gray-900">{it.qty}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <div>
-                <span className="text-[10px] text-gray-500 block">Warna:</span>
-                <strong className="text-gray-900">{order.color || 'Hitam'}</strong>
-              </div>
-              <div>
-                <span className="text-[10px] text-gray-500 block">Ukuran:</span>
-                <strong className="text-gray-900 text-sm font-mono">{order.size || 'L'}</strong>
-              </div>
-            </div>
+            ) : (
+              <>
+                <div className="flex justify-between items-center py-1.5 border-b border-gray-100">
+                  <span className="text-xs font-bold text-gray-800">{order.productName || order.sku}</span>
+                  <span className="text-xs font-mono font-bold bg-gray-200 px-2 py-0.5 rounded">Qty: {order.qty || 1} pcs</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-xs pt-1">
+                  <div>
+                    <span className="text-[10px] text-gray-500 block">Blank NSA:</span>
+                    <strong className="text-gray-900">{order.garment || 'NSA Softstyle 30s'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-500 block">Warna:</span>
+                    <strong className="text-gray-900">{order.color || 'Hitam'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-500 block">Ukuran:</span>
+                    <strong className="text-gray-900 text-sm font-mono">{order.size || 'L'}</strong>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Machine SOP / Blank Inspection Box */}

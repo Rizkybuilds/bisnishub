@@ -195,10 +195,21 @@ export function ShippingLabelModal({ isOpen, onClose, order }) {
               <div className="text-[9px] font-mono font-bold uppercase text-gray-500">
                 RINCIAN ISI PAKET (CONTENT):
               </div>
-              <div className="text-[10px] font-mono font-bold flex justify-between">
-                <span>{order.productName || order.sku}</span>
-                <span>[{order.garment || 'NSA 24s'} • {order.color || 'Black'} • {order.size || 'L'}]</span>
-              </div>
+              {order.items && order.items.length > 1 ? (
+                <div className="space-y-0.5 text-[9px] font-mono">
+                  {order.items.map((it, idx) => (
+                    <div key={idx} className="flex justify-between font-bold text-black">
+                      <span className="truncate max-w-[190px]">{it.name || it.product_name}</span>
+                      <span className="shrink-0">[{it.size} • {it.color} • x{it.qty}]</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-[10px] font-mono font-bold flex justify-between">
+                  <span>{order.productName || order.sku}</span>
+                  <span>[{order.garment || 'NSA 24s'} • {order.color || 'Black'} • {order.size || 'L'}]</span>
+                </div>
+              )}
             </div>
 
             {/* Fragile Notice & Instructions */}

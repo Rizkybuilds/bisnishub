@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link, useLocation } from 'react-router-dom';
 import { Search, Filter, ShoppingBag, Package, Sparkles, ArrowUpDown, X, Tag, ArrowRight } from 'lucide-react';
-import { useAdmin } from '../../context/AdminContext';
+import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { SERIES } from '../../constants/series';
 import { Button } from '../../components/ui/Button';
@@ -10,7 +10,7 @@ import { SEOHead } from '../../components/common/SEOHead';
 import { ProductCard } from '../../components/store/ProductCard';
 
 export function CatalogPage({ defaultSegment }) {
-  const { catalog } = useAdmin();
+  const { catalog } = useStore();
   const { isPartner, profile } = useAuth();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();

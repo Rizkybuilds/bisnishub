@@ -126,13 +126,37 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
 
         {/* Product & Garment Spec */}
         <div className="bg-ts-surface/60 rounded-lg p-2.5 border border-ts-borderDim text-xs space-y-1.5">
-          <div className="font-bold text-ts-krem truncate">{order.productName || order.sku}</div>
-          <div className="flex items-center justify-between text-[11px] text-ts-muted">
-            <span className="text-ts-krem/90 font-medium truncate max-w-[140px]">{order.garment}</span>
-            <span className="font-mono font-bold text-ts-terracotta bg-ts-terracotta/10 px-1.5 py-0.2 rounded shrink-0">
-              {order.color} ({order.size}) x{order.qty}
-            </span>
-          </div>
+          {order.items && order.items.length > 1 ? (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="font-bold text-ts-krem">{order.items.length} Macam Item Pesanan:</span>
+                <span className="font-mono font-bold text-ts-terracotta bg-ts-terracotta/10 px-1.5 py-0.5 rounded">
+                  {order.qty} pcs total
+                </span>
+              </div>
+              <div className="space-y-1 divide-y divide-ts-borderDim/50 max-h-28 overflow-y-auto pr-1 custom-scrollbar">
+                {order.items.map((it, idx) => (
+                  <div key={idx} className="pt-1 first:pt-0">
+                    <div className="font-semibold text-ts-krem/90 text-[11px] truncate">{it.name || it.product_name}</div>
+                    <div className="flex items-center justify-between text-[10px] text-ts-muted">
+                      <span className="truncate max-w-[120px]">{it.garment}</span>
+                      <span className="font-mono text-ts-terracotta">{it.color} ({it.size}) x{it.qty}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="font-bold text-ts-krem truncate">{order.productName || order.sku}</div>
+              <div className="flex items-center justify-between text-[11px] text-ts-muted">
+                <span className="text-ts-krem/90 font-medium truncate max-w-[140px]">{order.garment}</span>
+                <span className="font-mono font-bold text-ts-terracotta bg-ts-terracotta/10 px-1.5 py-0.2 rounded shrink-0">
+                  {order.color} ({order.size}) x{order.qty}
+                </span>
+              </div>
+            </>
+          )}
           
           {/* Fulfillment Origin Tag (Garment & DTF Film) */}
           <div className="space-y-1.5 pt-1.5 border-t border-ts-borderDim/50">

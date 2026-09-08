@@ -99,7 +99,7 @@ Sayap ini menangkap peluang non-retail dengan 3 sub-layanan yang diaktifkan bert
 ## 4. Tahapan Pengembangan (Roadmap 4 Fase)
 
 Tahapan eksekusi lengkap, indikator keberhasilan (*exit criteria*), dan pembagian waktu solopreneur telah dirinci dalam dokumen tersendiri:
-👉 [**`roadmap-pengembangan-teestock.md`**](file:///c:/Users/Rizky/ai-mentor-bisnis/bisnis/teestock/operasional/roadmap-pengembangan-teestock.md)
+👉 [**`roadmap-pengembangan-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/operasional/roadmap-pengembangan-teestock.md)
 
 | Fase | Fokus & Sasaran |
 |---|---|

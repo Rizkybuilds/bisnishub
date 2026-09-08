@@ -73,9 +73,9 @@ Sebagai ganti dari memamerkan katalog secara acak yang berisiko membuat toko ter
 ### 4.1 Logo & Wordmark Resmi
 * **Logo Utama:** Siluet lipatan kaos berkerah crew-neck tegas di atas 3 lipatan bertumpuk (*The Stock*). Melambangkan ketangguhan garmen NSA 24s dan kelincahan suplai produksi distro modern.
 * **Format & Aset:**
-  - **Vector SVG:** [`teestock-logo.svg`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/brand/teestock-logo.svg) & [`web/public/logo-teestock.svg`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/web/public/logo-teestock.svg) untuk render tajam tanpa pecah di seluruh platform digital dan cetak.
-  - **High-Res Master:** [`teestock-logo-master-dark.jpg`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/brand/teestock-logo-master-dark.jpg) & [`teestock-logo-master-light.jpg`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/brand/teestock-logo-master-light.jpg).
-  - **React Component:** `<TeeStockLogo size="md" badge="APPAREL" />` di [`TeeStockLogo.jsx`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/web/src/components/common/TeeStockLogo.jsx).
+  - **Vector SVG:** [`teestock-logo.svg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/teestock-logo.svg) & [`web/public/logo-teestock.svg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/web/public/logo-teestock.svg) untuk render tajam tanpa pecah di seluruh platform digital dan cetak.
+  - **High-Res Master:** [`teestock-logo-master-dark.jpg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/teestock-logo-master-dark.jpg) & [`teestock-logo-master-light.jpg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/teestock-logo-master-light.jpg).
+  - **React Component:** `<TeeStockLogo size="md" badge="APPAREL" />` di [`TeeStockLogo.jsx`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/web/src/components/common/TeeStockLogo.jsx).
 * **Palet Logo:**
   - **Aksen Utama:** Terracotta `#D95D39` (energik, hangat, artisanal craftsmanship).
   - **Monokrom Utama:** Krem `#F5F2EB` di atas Deep Charcoal `#161513`, atau Hitam pekat di atas latar terang.

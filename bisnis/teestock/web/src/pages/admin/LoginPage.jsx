@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth, checkIsAdminEmail } from '../../context/AuthContext';
+import { AlertCircle, LogOut, ArrowLeft } from 'lucide-react';
 
 export function LoginPage() {
-  const { isAuthenticated, loading, signInWithMagicLink } = useAuth();
+  const { isAuthenticated, isAdmin, user, signOut, loading, signInWithMagicLink } = useAuth();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Sudah login → redirect ke admin
-  if (!loading && isAuthenticated) {
+  // Sudah login DAN terverifikasi sebagai admin → redirect ke /admin
+  if (!loading && isAuthenticated && isAdmin) {
     return <Navigate to="/admin" replace />;
   }
 
@@ -22,10 +23,19 @@ export function LoginPage() {
       return;
     }
 
+    const cleanEmail = email.trim().toLowerCase();
+
+    // 🛡️ Pre-validation Whitelist Admin
+    if (!checkIsAdminEmail(cleanEmail)) {
+      setErrorMsg('Email ini tidak terdaftar dalam whitelist Admin TeeStock. Hubungi pemilik sistem.');
+      setStatus('error');
+      return;
+    }
+
     setStatus('sending');
     setErrorMsg('');
 
-    const { error } = await signInWithMagicLink(email.trim());
+    const { error } = await signInWithMagicLink(cleanEmail);
 
     if (error) {
       setErrorMsg(error.message || 'Gagal mengirim magic link. Coba lagi.');
@@ -38,7 +48,46 @@ export function LoginPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-ts-hitam flex items-center justify-center">
-        <div className="animate-pulse text-ts-kremMuted text-sm">Memuat...</div>
+        <div className="animate-pulse text-ts-kremMuted text-sm">Memverifikasi otorisasi...</div>
+      </div>
+    );
+  }
+
+  // 🛡️ Jika user sudah login tapi BUKAN admin (Member biasa), tampilkan halaman pemisah
+  if (isAuthenticated && !isAdmin) {
+    return (
+      <div className="min-h-screen bg-ts-hitam flex items-center justify-center px-4">
+        <div className="w-full max-w-md bg-ts-surface border border-red-500/30 rounded-2xl p-6 sm:p-8 text-center space-y-5">
+          <div className="w-12 h-12 rounded-2xl bg-red-500/20 text-red-400 flex items-center justify-center mx-auto border border-red-500/40">
+            <AlertCircle className="w-6 h-6" />
+          </div>
+          <div className="space-y-1.5">
+            <h2 className="text-xl font-bold text-white">Bukan Akun Administrator</h2>
+            <p className="text-xs text-ts-kremMuted leading-relaxed">
+              Anda sedang masuk menggunakan akun: <br />
+              <strong className="text-white font-mono">{user?.email}</strong>
+            </p>
+            <p className="text-xs text-ts-muted">
+              Akun ini terdaftar sebagai Member/Pelanggan biasa dan tidak memiliki izin akses ke Admin Hub TeeStock.
+            </p>
+          </div>
+          <div className="pt-2 flex flex-col gap-2.5">
+            <button
+              onClick={() => signOut()}
+              className="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Keluar &amp; Ganti Akun Admin</span>
+            </button>
+            <a
+              href="/"
+              className="w-full py-2.5 px-4 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-ts-krem font-bold text-xs flex items-center justify-center gap-2 transition-all"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Kembali ke Halaman Toko</span>
+            </a>
+          </div>
+        </div>
       </div>
     );
   }

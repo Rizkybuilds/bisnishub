@@ -15,7 +15,7 @@ export function StickyMobileBuyBar({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-20 left-3 right-3 z-30 md:hidden animate-in slide-in-from-bottom-5 duration-300 pointer-events-none">
+    <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-40 md:hidden animate-in slide-in-from-bottom-5 duration-300 pointer-events-none">
       <div className="pointer-events-auto max-w-md mx-auto bg-ts-surface/95 backdrop-blur-2xl border border-white/[0.14] rounded-2xl p-3 shadow-glass-card shadow-glass-inset flex items-center justify-between gap-3">
         {/* Thumbnail & Info */}
         <div className="flex items-center gap-2.5 min-w-0">
@@ -48,7 +48,7 @@ export function StickyMobileBuyBar({
             variant="primary"
             icon={MessageSquare}
             onClick={onBuyWhatsapp}
-            className="text-xs px-3 py-2 shadow-glow-terracotta"
+            className="text-xs px-3 py-2 font-bold"
           >
             Beli
           </Button>

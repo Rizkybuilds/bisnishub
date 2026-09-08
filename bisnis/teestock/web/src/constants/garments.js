@@ -6,7 +6,7 @@ export const GARMENT_TYPES = {
     name: "NSA Softstyle 30s",
     code: "NSA-30S",
     description: "100% Ring Spun Cotton, 150 g/m2. Lembut, adem, jahitan rantai rapi tanpa jahitan samping (tubular). Standar kaos distro internasional.",
-    baseCost: 38000,
+    baseCost: 37000,
     colors: [
       { name: "Hitam", hex: "#111111", text: "text-white" },
       { name: "Krem", hex: "#EBE3D5", text: "text-black" },
@@ -22,7 +22,7 @@ export const GARMENT_TYPES = {
     name: "NSA Heavyweight 24s",
     code: "NSA-24S",
     description: "100% Combed Cotton 24s, 180 g/m2. Lebih tebal, kokoh, dan jatuh di badan (boxier fit). Cocok untuk streetwear look.",
-    baseCost: 48000,
+    baseCost: 42000,
     colors: [
       { name: "Hitam", hex: "#111111", text: "text-white" },
       { name: "Krem", hex: "#EBE3D5", text: "text-black" },

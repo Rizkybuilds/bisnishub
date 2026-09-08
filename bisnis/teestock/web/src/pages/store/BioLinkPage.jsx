@@ -27,8 +27,8 @@ export function BioLinkPage() {
   const bioLinks = [
     {
       id: 'drop',
-      label: '🔥 DROP #01 "IDENTITY" — LIVE NOW!',
-      subtitle: '6 Desain Eksklusif · Mulai Rp 89.000',
+      label: 'DROP #01: RAW IDENTITY',
+      subtitle: 'Koleksi Grafis Perdana · Kuota 24 Pcs Early Bird',
       href: '/katalog?utm_source=biolink&utm_medium=social&utm_campaign=drop01',
       internal: true,
       accent: true,
@@ -36,32 +36,32 @@ export function BioLinkPage() {
     },
     {
       id: 'shopee',
-      label: '🛒 Belanja di Shopee',
-      subtitle: 'Free Ongkir · Gratis Pengembalian',
+      label: 'Shopee Official Store',
+      subtitle: 'Klaim Bebas Ongkir & Garansi Retur Se-Indonesia',
       href: `${shopeeUrl}?utm_source=biolink&utm_medium=social&utm_campaign=shopee`,
       internal: false,
       icon: ShoppingBag,
     },
     {
       id: 'katalog',
-      label: '📱 Katalog Lengkap',
-      subtitle: 'Website resmi TeeStock',
+      label: 'Katalog Grafis & Blank NSA',
+      subtitle: 'Website resmi TeeStock Apparel House',
       href: '/?utm_source=biolink&utm_medium=social&utm_campaign=website',
       internal: true,
       icon: LayoutGrid,
     },
     {
       id: 'custom',
-      label: '🎨 Custom Kaos & Official Merch',
-      subtitle: 'TeeStock Studio — Satuan & Lusinan',
+      label: 'TeeStock Atelier (Custom & Merch)',
+      subtitle: 'Sablon Satuan, Komunitas & Official Creator Merch',
       href: '/custom-order?utm_source=biolink&utm_medium=social&utm_campaign=studio',
       internal: true,
       icon: Palette,
     },
     {
       id: 'reseller',
-      label: '🤝 Jadi Reseller / Dropshipper',
-      subtitle: 'Tanpa modal, margin jelas',
+      label: 'Kemitraan Dropship White-Label',
+      subtitle: 'Tanpa modal, materi promosi siap pakai, margin 37-48%',
       href: `https://wa.me/${cleanPhone}?text=${encodeURIComponent('Halo TeeStock, saya tertarik jadi reseller/dropshipper. Boleh info lebih lanjut?')}&utm_source=biolink&utm_medium=social&utm_campaign=reseller`,
       internal: false,
       icon: Users,
@@ -110,27 +110,26 @@ export function BioLinkPage() {
         {/* ─── Profile Header ─────────────────────────────────── */}
         <header className="text-center space-y-3">
           {/* Logo / Avatar */}
-          <div className="relative mx-auto w-20 h-20 rounded-2xl bg-gradient-to-br from-ts-terracotta/20 to-[#9E3B1B]/15 border-2 border-ts-terracotta/40 flex items-center justify-center backdrop-blur-md shadow-glow-terracotta group">
-            <TeeStockLogoIcon className="w-11 h-11 text-ts-terracotta drop-shadow-md transition-transform duration-300 group-hover:scale-110" />
-            {/* Online pulse dot */}
-            <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ts-green opacity-75" />
-              <span className="relative inline-flex rounded-full h-4 w-4 bg-ts-green border-2 border-ts-hitam" />
+          <div className="relative mx-auto w-20 h-20 rounded-2xl bg-[#141312] border border-white/10 flex items-center justify-center group">
+            <TeeStockLogoIcon className="w-11 h-11 text-ts-terracotta transition-transform duration-300 group-hover:scale-105" />
+            {/* Online studio dot */}
+            <span className="absolute -bottom-1 -right-1 flex h-3.5 w-3.5">
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-ts-green border-2 border-ts-hitam" />
             </span>
           </div>
 
           {/* Brand Name */}
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight">
+            <h1 className="text-xl font-black uppercase tracking-tight text-white">
               TeeStock
             </h1>
-            <p className="text-sm text-ts-kremMuted font-medium mt-0.5">
-              Curated Apparel & Merch House
+            <p className="text-xs text-ts-kremMuted font-mono uppercase tracking-wider mt-0.5">
+              Curated Apparel &amp; Merch House
             </p>
           </div>
 
           {/* Tagline */}
-          <p className="text-xs text-ts-muted italic">
+          <p className="text-xs text-ts-muted">
             "Wear Your Identity, Stock Your Story"
           </p>
         </header>
@@ -142,16 +141,16 @@ export function BioLinkPage() {
             const isExternal = !link.internal;
 
             const baseClasses = `
-              group relative w-full flex items-center gap-3 px-4 py-3.5 rounded-xl
-              border backdrop-blur-sm
-              transition-all duration-300 ease-out
-              hover:scale-[1.02] active:scale-[0.98]
-              focus:outline-none focus:ring-2 focus:ring-ts-terracotta/50 focus:ring-offset-2 focus:ring-offset-ts-hitam
+              group relative w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl
+              border
+              transition-all duration-200 ease-out
+              hover:-translate-y-0.5 active:translate-y-0
+              focus:outline-none focus:ring-1 focus:ring-ts-terracotta
             `;
 
             const accentClasses = link.accent
-              ? 'bg-gradient-to-r from-ts-terracotta/20 to-ts-mustard/10 border-ts-terracotta/40 hover:border-ts-terracotta/70 shadow-glow-terracotta'
-              : 'bg-white/[0.04] border-white/[0.08] hover:bg-white/[0.08] hover:border-white/[0.16]';
+              ? 'bg-[#181614] border-ts-terracotta/40 hover:border-ts-terracotta'
+              : 'bg-[#141312] border-white/[0.08] hover:border-white/20';
 
             const content = (
               <>

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getProducts } from '../services/productsApi';
 
 const StoreContext = createContext();
 
@@ -12,6 +13,9 @@ const DEFAULT_STORE_SETTINGS = {
 };
 
 export function StoreProvider({ children }) {
+  const [catalog, setCatalog] = useState([]);
+  const [loadingCatalog, setLoadingCatalog] = useState(true);
+
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem('teestock_cart');
     return saved ? JSON.parse(saved) : [];
@@ -32,6 +36,13 @@ export function StoreProvider({ children }) {
     }
     return DEFAULT_STORE_SETTINGS;
   });
+
+  useEffect(() => {
+    getProducts()
+      .then(prods => setCatalog(prods || []))
+      .catch(err => console.warn('Failed to load store catalog:', err))
+      .finally(() => setLoadingCatalog(false));
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('teestock_cart', JSON.stringify(cart));
@@ -109,6 +120,8 @@ export function StoreProvider({ children }) {
   return (
     <StoreContext.Provider
       value={{
+        catalog,
+        loadingCatalog,
         cart,
         addToCart,
         removeFromCart,

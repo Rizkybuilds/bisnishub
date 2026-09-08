@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Package, Clock, CheckCircle2, Truck, Flame, Printer, AlertCircle, ExternalLink, QrCode } from 'lucide-react';
-import { useAdmin } from '../../context/AdminContext';
+import { Search, Package, Clock, CheckCircle2, Truck, Flame, Printer, AlertCircle, ExternalLink, QrCode, Loader2 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
+import { trackSingleOrder } from '../../services/ordersApi';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
@@ -11,42 +11,42 @@ import { formatRupiah } from '../../utils/formatters';
 import { SEOHead } from '../../components/common/SEOHead';
 
 export function OrderTrackingPage() {
-  const { orders } = useAdmin();
   const { storeSettings } = useStore();
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searched, setSearched] = useState(false);
+  const [searching, setSearching] = useState(false);
 
-  const findMatchingOrders = (term) => {
-    const trimmed = term.trim().toLowerCase();
-    if (!trimmed) return [];
-    return orders.filter(o => 
-      o.id.toLowerCase() === trimmed || 
-      (o.parentOrderId && o.parentOrderId.toLowerCase() === trimmed) ||
-      o.id.toLowerCase().startsWith(trimmed + '-') ||
-      (o.trackingNo && o.trackingNo.toLowerCase() === trimmed) ||
-      (o.phone && o.phone.toLowerCase().includes(trimmed))
-    );
+  const executeSearch = async (term) => {
+    const trimmed = (term || '').trim();
+    if (!trimmed) return;
+    setSearching(true);
+    try {
+      const results = await trackSingleOrder(trimmed);
+      setSearchResults(results);
+      setSearched(true);
+    } catch (err) {
+      console.warn("Tracking search error:", err);
+      setSearchResults([]);
+      setSearched(true);
+    } finally {
+      setSearching(false);
+    }
   };
 
   // Auto-search from ?order= query param
   useEffect(() => {
     const orderParam = searchParams.get('order');
-    if (orderParam && orders.length > 0) {
+    if (orderParam) {
       setQuery(orderParam);
-      const matched = findMatchingOrders(orderParam);
-      setSearchResults(matched);
-      setSearched(true);
+      executeSearch(orderParam);
     }
-  }, [searchParams, orders]);
+  }, [searchParams]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (!query.trim()) return;
-    const matched = findMatchingOrders(query);
-    setSearchResults(matched);
-    setSearched(true);
+    executeSearch(query);
   };
 
   const steps = [
@@ -63,8 +63,11 @@ export function OrderTrackingPage() {
   };
 
   const primaryOrder = searchResults[0] || null;
-  const grandTotal = searchResults.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
-  const displayOrderId = primaryOrder?.parentOrderId || primaryOrder?.id;
+  const itemsToDisplay = (primaryOrder?.items && primaryOrder.items.length > 0)
+    ? primaryOrder.items
+    : searchResults;
+  const grandTotal = primaryOrder?.total_amount || primaryOrder?.price || searchResults.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+  const displayOrderId = primaryOrder?.order_number || primaryOrder?.parentOrderId || primaryOrder?.id;
   const uniqueCode = primaryOrder?.unique_code || primaryOrder?.uniqueCode;
   const adminWa = storeSettings?.adminPhone || '6281234567890';
 
@@ -91,8 +94,8 @@ export function OrderTrackingPage() {
           className="flex-1"
           required
         />
-        <Button type="submit" variant="glow" icon={Search} className="px-5">
-          Lacak
+        <Button type="submit" variant="glow" icon={searching ? Loader2 : Search} disabled={searching} className="px-5">
+          {searching ? 'Mencari...' : 'Lacak'}
         </Button>
       </form>
 
@@ -221,20 +224,20 @@ export function OrderTrackingPage() {
               {/* Order Items Recap */}
               <div className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-2xl text-xs space-y-3 shadow-glass-inset">
                 <div className="font-bold text-white flex items-center justify-between">
-                  <span>Rincian Item ({searchResults.length}):</span>
+                  <span>Rincian Item ({itemsToDisplay.length}):</span>
                   <span className="text-[11px] text-ts-muted">Channel: {(primaryOrder.channel || 'web').toUpperCase()}</span>
                 </div>
                 <div className="divide-y divide-white/[0.06] space-y-2">
-                  {searchResults.map((item, i) => (
+                  {itemsToDisplay.map((item, i) => (
                     <div key={item.id || i} className="pt-2 first:pt-0 flex justify-between items-center text-ts-kremMuted">
                       <div>
-                        <div className="text-white font-medium">{item.productName || item.sku}</div>
+                        <div className="text-white font-medium">{item.name || item.product_name || item.productName || item.sku}</div>
                         <div className="text-[11px] text-ts-muted">
                           {item.garment} ({item.color || 'Hitam'} {item.size || 'L'}) • x{item.qty || 1} pcs
                         </div>
                       </div>
                       <div className="font-mono text-white font-bold text-right">
-                        {formatRupiah(item.price)}
+                        {formatRupiah(item.subtotal || item.price || item.unit_price)}
                       </div>
                     </div>
                   ))}

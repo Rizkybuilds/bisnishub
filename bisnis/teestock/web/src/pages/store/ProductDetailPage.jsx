@@ -20,7 +20,6 @@ import {
   Building2, 
   Zap 
 } from 'lucide-react';
-import { useAdmin } from '../../context/AdminContext';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
@@ -31,7 +30,7 @@ import { StickyMobileBuyBar } from '../../components/store/StickyMobileBuyBar';
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { SEOHead } from '../../components/common/SEOHead';
-import { BUNDLE_DEALS } from '../../constants/pricing';
+import { BUNDLE_DEALS, getSizeSurcharge } from '../../constants/pricing';
 import { ProductReviews } from '../../components/store/ProductReviews';
 import { getFulfillmentSLA } from '../../utils/garmentStockRouting';
 import { COLOR_HEX_MAP, getColorHex } from '../../constants/colors';
@@ -47,8 +46,7 @@ export function ProductDetailPage() {
   const { sku } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { catalog, loading: adminLoading } = useAdmin();
-  const { addToCart, storeSettings } = useStore();
+  const { catalog, loadingCatalog, addToCart, storeSettings } = useStore();
   const { role, profile, isPartner } = useAuth();
 
   const product = catalog.find(p => p.sku === sku);
@@ -157,7 +155,7 @@ export function ProductDetailPage() {
 
   // Safe early return if product not found (placed AFTER all hooks)
   if (!product) {
-    if (adminLoading) {
+    if (loadingCatalog) {
       return (
         <div className="max-w-7xl mx-auto px-4 py-32 text-center space-y-4">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-ts-terracotta"></div>
@@ -200,7 +198,12 @@ export function ProductDetailPage() {
     else if (selectedGarmentKey === 'nsa_hoodie') priceDelta = 85000;
     else if (selectedGarmentKey === 'nsa_polo') priceDelta = 30000;
   }
-  const currentPrice = isBlank ? baseRetailPrice : (effectiveBasePrice + priceDelta);
+
+  // Size surcharge for oversized garments (XXL +Rp 5k, 3XL +Rp 10k)
+  const sizeSurcharge = getSizeSurcharge(selectedSize);
+  const currentPrice = isBlank 
+    ? (baseRetailPrice + sizeSurcharge) 
+    : (effectiveBasePrice + priceDelta + sizeSurcharge);
 
   const productSchema = {
     "@context": "https://schema.org/",
@@ -690,20 +693,30 @@ export function ProductDetailPage() {
               </button>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {sizeList.map(sz => (
-                <button
-                  key={sz}
-                  type="button"
-                  onClick={() => setSelectedSize(sz)}
-                  className={`w-12 h-11 rounded-xl border font-mono text-xs font-extrabold transition-all duration-150 cursor-pointer ${
-                    selectedSize === sz
-                      ? 'bg-ts-terracotta text-white border-ts-terracotta shadow-glow-terracotta'
-                      : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:bg-white/[0.08] hover:text-white'
-                  }`}
-                >
-                  {sz}
-                </button>
-              ))}
+              {sizeList.map(sz => {
+                const surcharge = getSizeSurcharge(sz);
+                return (
+                  <button
+                    key={sz}
+                    type="button"
+                    onClick={() => setSelectedSize(sz)}
+                    className={`min-w-[50px] px-2.5 h-12 rounded-xl border font-mono text-xs font-bold transition-all duration-150 cursor-pointer flex flex-col items-center justify-center ${
+                      selectedSize === sz
+                        ? 'bg-ts-terracotta text-white border-ts-terracotta'
+                        : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:bg-white/[0.08] hover:text-white'
+                    }`}
+                  >
+                    <span>{sz}</span>
+                    {surcharge > 0 && (
+                      <span className={`text-[8px] font-mono leading-none mt-0.5 ${
+                        selectedSize === sz ? 'text-white/80' : 'text-ts-mustard'
+                      }`}>
+                        +{formatRupiah(surcharge).replace(',00', '')}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -727,7 +740,7 @@ export function ProductDetailPage() {
                     onClick={() => setQty(deal.minQty)}
                     className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer ${
                       qty === deal.minQty
-                        ? 'bg-ts-terracotta text-white border-ts-terracotta shadow-glow-terracotta'
+                        ? 'bg-ts-terracotta text-white border-ts-terracotta'
                         : 'bg-white/[0.04] border-white/10 hover:bg-white/[0.08] text-ts-krem'
                     }`}
                   >
@@ -775,7 +788,7 @@ export function ProductDetailPage() {
               <Button
                 variant="primary"
                 size="lg"
-                className="flex-1 text-sm sm:text-base py-3 shadow-glow-terracotta"
+                className="flex-1 text-sm sm:text-base py-3 font-bold"
                 icon={isAdded ? Check : ShoppingBag}
                 onClick={handleAddToCart}
               >
@@ -804,15 +817,29 @@ export function ProductDetailPage() {
               </Button>
             </div>
 
-            {/* Guarantees */}
-            <div className="pt-2 grid grid-cols-2 gap-2 text-[11px] text-ts-muted border-t border-white/[0.06]">
-              <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-ts-green shrink-0" />
-                <span>100% Produk Asli NSA</span>
+            {/* TeeStock 100% Quality & Fit Shield */}
+            <div className="pt-3.5 border-t border-white/[0.08] space-y-2">
+              <div className="text-[10px] font-bold text-ts-kremMuted uppercase tracking-wider flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
+                <span>TeeStock Buyer Protection &amp; Guarantees</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <RotateCcw className="w-3.5 h-3.5 text-ts-terracotta shrink-0" />
-                <span>Garansi Retur Jika Cacat</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-2">
+                  <RotateCcw className="w-3.5 h-3.5 text-ts-terracotta shrink-0" />
+                  <span className="text-ts-krem"><strong>Bebas Tukar Ukuran</strong> jika kurang pas di badan</span>
+                </div>
+                <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-ts-mustard shrink-0" />
+                  <span className="text-ts-krem"><strong>Garansi 100% Ganti Baru</strong> jika sablon cacat/luntur</span>
+                </div>
+                <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-2">
+                  <Layers className="w-3.5 h-3.5 text-ts-teal shrink-0" />
+                  <span className="text-ts-krem"><strong>100% NSA Original</strong> Tubular tanpa jahitan samping</span>
+                </div>
+                <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-2">
+                  <Zap className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span className="text-ts-krem"><strong>Dipress Mandiri H+0 / H+1</strong> kontrol mutu in-house</span>
+                </div>
               </div>
             </div>
           </div>

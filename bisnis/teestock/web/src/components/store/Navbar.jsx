@@ -16,26 +16,26 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full transition-all">
       {/* Top Ticker Notice Bar */}
-      <div className="bg-[#121110]/90 backdrop-blur-md text-[11px] font-medium text-ts-kremMuted py-1.5 px-4 text-center border-b border-white/[0.06] flex items-center justify-center gap-3 sm:gap-6 overflow-hidden">
+      <div className="bg-[#100F0E] text-[10px] font-mono tracking-wider text-ts-kremMuted py-1.5 px-4 text-center border-b border-white/[0.06] flex items-center justify-center gap-3 sm:gap-6 overflow-hidden uppercase">
         <span className="flex items-center gap-1.5 text-ts-krem">
-          <ShieldCheck className="w-3.5 h-3.5 text-ts-green animate-pulse" />
-          <span>100% Garmen Asli New States Apparel (NSA) • Pilihan Softstyle 30s &amp; Heavyweight 24s Impor</span>
+          <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
+          <span>100% Garmen Asli New States Apparel (NSA) • Softstyle 30s &amp; Heavyweight 24s</span>
         </span>
         <span className="hidden sm:inline text-white/20">•</span>
         <span className="hidden sm:flex items-center gap-1.5 text-ts-kremMuted">
           <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
-          <span>Sablon DTF HD Raster Suhu 155°C Anti-Pecah</span>
+          <span>Sablon DTF Double-Press 155°C</span>
         </span>
         <span className="hidden md:inline text-white/20">•</span>
         <span className="hidden md:flex items-center gap-1.5 text-ts-kremMuted">
           <Zap className="w-3.5 h-3.5 text-ts-terracotta" />
-          <span>Produksi &amp; Kirim Cepat H+1</span>
+          <span>SLA Produksi Cepat H+0 / H+1</span>
         </span>
       </div>
 
       {/* Main Floating Navbar Container */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5">
-        <div className="h-14 sm:h-16 px-3 sm:px-5 rounded-2xl bg-ts-surface/80 backdrop-blur-xl border border-white/[0.09] shadow-glass-card shadow-glass-inset flex items-center justify-between">
+        <div className="h-14 sm:h-16 px-3 sm:px-5 rounded-2xl bg-[#141312]/90 backdrop-blur-xl border border-white/[0.08] flex items-center justify-between">
           {/* Official Brand Logo */}
           <Link to="/" className="group focus:outline-none" aria-label="TeeStock Apparel Beranda">
             <TeeStockLogo size="md" badge="APPAREL" />
@@ -141,7 +141,7 @@ export function Navbar() {
             >
               <ShoppingBag className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
               {totalCartItems > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-ts-terracotta text-white text-[10px] font-bold font-mono flex items-center justify-center shadow-glow-terracotta animate-in zoom-in border border-white/20">
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-ts-terracotta text-white text-[10px] font-bold font-mono flex items-center justify-center border border-white/20 animate-in zoom-in">
                   {totalCartItems}
                 </span>
               )}

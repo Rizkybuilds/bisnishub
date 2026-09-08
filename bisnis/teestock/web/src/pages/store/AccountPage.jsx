@@ -21,22 +21,25 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { useAdmin } from '../../context/AdminContext';
 import { useStore } from '../../context/StoreContext';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { formatRupiah, formatDate } from '../../utils/formatters';
 import { getActiveVouchers } from '../../services/vouchersApi';
+import { getUserOrders } from '../../services/ordersApi';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { SEOHead } from '../../components/common/SEOHead';
 
 export function AccountPage() {
   const { user, profile, role, isAdmin, isPartner, isMember, updateProfile, signOut, openAuthModal } = useAuth();
-  const { orders } = useAdmin();
   const { storeSettings } = useStore();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('orders'); // 'orders', 'profile', 'vouchers', 'partner'
+
+  // User Orders state
+  const [userOrders, setUserOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
 
   // Profile Form state
   const [fullName, setFullName] = useState('');
@@ -67,13 +70,18 @@ export function AccountPage() {
     getActiveVouchers(role).then(setVouchers);
   }, [role]);
 
-  // Filter orders related to this user
-  const userOrders = (orders || []).filter(o => {
-    if (!user) return false;
-    // Match by user_id or phone
-    return (o.user_id && o.user_id === user.id) || 
-           (profile?.phone && o.phone && o.phone.includes(profile.phone.replace(/\D/g, '')));
-  });
+  // Fetch only this user's orders
+  useEffect(() => {
+    if (user) {
+      setLoadingOrders(true);
+      getUserOrders(user.id, profile?.phone).then(res => {
+        setUserOrders(res || []);
+        setLoadingOrders(false);
+      });
+    } else {
+      setUserOrders([]);
+    }
+  }, [user, profile?.phone]);
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();

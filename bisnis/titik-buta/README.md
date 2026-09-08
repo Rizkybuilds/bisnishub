@@ -1,17 +1,17 @@
 # 👁️ Titik Buta
 
-> (Deskripsi belum ditentukan)
+> (Ideation / Freeze)
 
-**Status:** 🔴 Ideation — belum ada riset
+**Status:** 🔴 Freeze (TBD) — Ditunda hingga TeeStock stabil mencapai arus kas positif
 
-## Tentang
+## Tentang & Strategi
 
-Titik Buta masih dalam tahap ideation. Detail bisnis belum ditentukan.
+Titik Buta adalah entitas bisnis ketiga dalam portofolio solopreneur. Sesuai prinsip *Lean Solopreneur Framework (1 Founder, 3 Bisnis)*, proyek ini sengaja dibekukan (*freeze*) sementara waktu agar fokus, tenaga, dan modal founder tidak terpecah sebelum TeeStock tervalidasi dan menghasilkan arus kas positif yang stabil.
 
-## TODO
+## Roadmap & Syarat Aktivasi
 
-- [ ] Definisikan konsep bisnis
-- [ ] Riset pasar & kompetitor
-- [ ] Identifikasi target customer
+- [ ] Tunggu *Exit Criteria* TeeStock Fase 1 & 2 tercapai (arus kas operasional positif)
+- [ ] Brainstorming & validasi konsep bisnis Titik Buta
+- [ ] Riset pasar & analisis kompetitor
 - [ ] Hitung modal awal & unit economics
-- [ ] Buat brand identity
+- [ ] Rancang brand identity & MVP

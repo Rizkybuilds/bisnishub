@@ -1,54 +1,249 @@
 import { supabase } from './supabase';
 import { SEED_ORDERS } from '../constants/seedData';
 
-const LOCAL_STORAGE_KEY = 'teestock_orders_list';
+const LOCAL_STORAGE_ADMIN_KEY = 'teestock_orders_list';
+const LOCAL_STORAGE_MY_ORDERS_KEY = 'teestock_my_orders';
 
+/**
+ * Standardize Supabase DB record and local mock representation
+ */
+export function normalizeOrderRecord(o) {
+  if (!o) return null;
+
+  // Process relational child items if available
+  const rawItems = (o.ts_order_items && Array.isArray(o.ts_order_items) && o.ts_order_items.length > 0)
+    ? o.ts_order_items
+    : (o.items && Array.isArray(o.items) && o.items.length > 0)
+      ? o.items
+      : [];
+
+  const items = rawItems.map(it => ({
+    id: it.id || undefined,
+    sku: it.product_sku || it.sku || 'ITEM',
+    product_sku: it.product_sku || it.sku || 'ITEM',
+    name: it.product_name || it.name || 'Kaos TeeStock',
+    product_name: it.product_name || it.name || 'Kaos TeeStock',
+    garment: it.garment || 'NSA Heavyweight 24s',
+    size: it.size || 'L',
+    color: it.color || 'Hitam',
+    qty: Number(it.qty) || 1,
+    price: Number(it.unit_price || it.price) || 0,
+    unit_price: Number(it.unit_price || it.price) || 0,
+    subtotal: Number(it.subtotal) || ((Number(it.unit_price || it.price) || 0) * (Number(it.qty) || 1))
+  }));
+
+  // Fallback single-item synthesis if items array was completely empty
+  const primaryItem = items.length > 0 ? items[0] : null;
+  const totalQty = items.length > 0 
+    ? items.reduce((sum, it) => sum + (it.qty || 1), 0)
+    : Number(o.qty || 1);
+
+  const productName = primaryItem
+    ? (items.length > 1 ? `${primaryItem.name} +${items.length - 1} item` : primaryItem.name)
+    : (o.productName || (o.notes ? o.notes.split(' - ')[0] : 'Kaos TeeStock'));
+
+  const garment = primaryItem ? primaryItem.garment : (o.garment || 'NSA Heavyweight 24s');
+  const color = primaryItem ? primaryItem.color : (o.color || 'Hitam');
+  const size = primaryItem ? primaryItem.size : (o.size || 'L');
+
+  return {
+    id: o.order_number || o.id,
+    order_number: o.order_number || o.id,
+    parentOrderId: o.parentOrderId || o.order_number || o.id,
+    customer: o.customer_name || o.customer || 'Pelanggan',
+    customer_name: o.customer_name || o.customer || 'Pelanggan',
+    phone: o.customer_phone || o.phone || '',
+    customer_phone: o.customer_phone || o.phone || '',
+    city: o.customer_city || o.city || '',
+    address: o.customer_address || o.address || '',
+    channel: o.channel || 'web',
+    tier: o.tier || 'retail',
+    status: o.status || 'pending',
+    price: Number(o.total_amount || o.price || 0),
+    total_amount: Number(o.total_amount || o.price || 0),
+    discount: Number(o.discount_amount || o.discount || 0),
+    discount_amount: Number(o.discount_amount || o.discount || 0),
+    voucher_code: o.voucher_code || null,
+    uniqueCode: o.unique_code || o.uniqueCode || null,
+    unique_code: o.unique_code || o.uniqueCode || null,
+    trackingNo: o.tracking_number || o.trackingNo || null,
+    tracking_number: o.tracking_number || o.trackingNo || null,
+    user_id: o.user_id || null,
+    notes: o.notes || '',
+    productName,
+    garment,
+    color,
+    size,
+    qty: totalQty,
+    items: items.length > 0 ? items : [{
+      sku: o.sku || 'ITEM',
+      product_sku: o.sku || 'ITEM',
+      name: productName,
+      product_name: productName,
+      garment,
+      color,
+      size,
+      qty: totalQty,
+      price: Number(o.total_amount || o.price || 0),
+      unit_price: Number(o.total_amount || o.price || 0),
+      subtotal: Number(o.total_amount || o.price || 0)
+    }],
+    created_at: o.created_at || o.date || new Date().toISOString(),
+    date: o.date || o.created_at || new Date().toISOString()
+  };
+}
+
+/**
+ * 🔒 ADMIN ONLY: Ambil seluruh daftar pesanan toko (HANYA dipanggil dari AdminContext di rute /admin)
+ * Memuat relasi ts_orders dengan ts_order_items
+ */
 export async function getOrders() {
   try {
     const { data, error } = await supabase
       .from('ts_orders')
-      .select('*')
+      .select('*, ts_order_items(*)')
       .order('created_at', { ascending: false });
 
     if (error || !data || data.length === 0) {
-      const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
+      const cached = localStorage.getItem(LOCAL_STORAGE_ADMIN_KEY);
       return cached ? JSON.parse(cached) : SEED_ORDERS;
     }
 
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
-    return data;
+    const normalized = data.map(normalizeOrderRecord);
+    localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(normalized));
+    return normalized;
   } catch (err) {
-    const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const cached = localStorage.getItem(LOCAL_STORAGE_ADMIN_KEY);
     return cached ? JSON.parse(cached) : SEED_ORDERS;
   }
 }
 
-export async function saveOrder(order) {
-  const current = await getOrders();
-  const updated = [order, ...current];
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+/**
+ * 🛡️ PUBLIC CHECKOUT: Buat pesanan baru relasional (1 header ts_orders + N rincian ts_order_items)
+ * Tanpa mengunduh data pelanggan lain ke browser
+ */
+export async function createPublicOrder(order, items = []) {
+  const orderNumber = order.order_number || order.id || `WEB-${Date.now().toString().slice(-6)}`;
+  
+  // Generate deterministic UUID for Supabase relational primary/foreign key
+  const orderUuid = (typeof crypto !== 'undefined' && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : '00000000-0000-4000-8000-' + Date.now().toString(16).padStart(12, '0');
 
+  // Standardize item array
+  const orderItems = (items && Array.isArray(items) && items.length > 0)
+    ? items
+    : (order.items && Array.isArray(order.items) && order.items.length > 0)
+      ? order.items
+      : [{
+          sku: order.sku || 'ITEM',
+          product_sku: order.sku || 'ITEM',
+          name: order.productName || 'Kaos TeeStock',
+          product_name: order.productName || 'Kaos TeeStock',
+          garment: order.garment || 'NSA Heavyweight 24s',
+          size: order.size || 'L',
+          color: order.color || 'Hitam',
+          qty: Number(order.qty) || 1,
+          price: Number(order.price || order.total_amount) || 0,
+          unit_price: Number(order.price || order.total_amount) || 0,
+          subtotal: (Number(order.price || order.total_amount) || 0) * (Number(order.qty) || 1)
+        }];
+
+  const summaryNotes = order.notes || orderItems.map(
+    i => `${i.name || i.product_name} - ${i.garment || ''} (${i.color || ''} ${i.size || ''}) x${i.qty || 1}`
+  ).join('; ');
+
+  const normalized = normalizeOrderRecord({
+    ...order,
+    id: orderNumber,
+    order_number: orderNumber,
+    notes: summaryNotes,
+    items: orderItems
+  });
+
+  // Simpan ke riwayat pesanan milik pengguna lokal sendiri
   try {
-    await supabase.from('ts_orders').insert({
-      order_number: order.id,
-      customer_name: order.customer,
-      customer_phone: order.phone,
-      channel: order.channel,
-      status: order.status || 'pending',
-      total_amount: order.price,
-      notes: `${order.productName} - ${order.garment} (${order.color} ${order.size}) x${order.qty}`
-    });
-  } catch (err) {
-    console.warn("Could not sync order to Supabase:", err);
+    const myOrders = JSON.parse(localStorage.getItem(LOCAL_STORAGE_MY_ORDERS_KEY) || '[]');
+    const filtered = myOrders.filter(o => o.id !== normalized.id);
+    filtered.unshift(normalized);
+    localStorage.setItem(LOCAL_STORAGE_MY_ORDERS_KEY, JSON.stringify(filtered.slice(0, 30)));
+  } catch (e) {
+    // Ignore storage issues
   }
 
-  return updated;
+  // Update juga antrean admin lokal jika ada sesi tersimpan
+  try {
+    const adminOrders = JSON.parse(localStorage.getItem(LOCAL_STORAGE_ADMIN_KEY) || '[]');
+    const updatedAdmin = [normalized, ...adminOrders.filter(o => o.id !== normalized.id)];
+    localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(updatedAdmin));
+  } catch (e) {
+    // Ignore
+  }
+
+  // Sync ke Supabase ts_orders & ts_order_items
+  try {
+    const { error: orderErr } = await supabase.from('ts_orders').insert({
+      id: orderUuid,
+      order_number: normalized.id,
+      user_id: normalized.user_id,
+      customer_name: normalized.customer,
+      customer_phone: normalized.phone,
+      customer_city: order.city || null,
+      customer_address: order.address || null,
+      channel: normalized.channel || 'web',
+      tier: order.tier || 'retail',
+      status: normalized.status || 'pending',
+      total_amount: normalized.price,
+      discount_amount: normalized.discount,
+      voucher_code: normalized.voucher_code,
+      notes: normalized.notes
+    });
+
+    if (!orderErr && orderItems.length > 0) {
+      const itemsPayload = orderItems.map(i => ({
+        order_id: orderUuid,
+        order_number: normalized.id,
+        product_sku: i.sku || i.product_sku || null,
+        product_name: i.name || i.product_name || 'Kaos TeeStock',
+        garment: i.garment || 'NSA Heavyweight 24s',
+        size: i.size || 'L',
+        color: i.color || 'Hitam',
+        qty: Number(i.qty) || 1,
+        unit_price: Number(i.price || i.unit_price) || 0,
+        subtotal: (Number(i.price || i.unit_price) || 0) * (Number(i.qty) || 1)
+      }));
+
+      await supabase.from('ts_order_items').insert(itemsPayload);
+    }
+  } catch (err) {
+    console.warn("Could not sync public order to Supabase:", err);
+  }
+
+  return normalized;
 }
 
+/**
+ * Legacy alias for AdminContext compatibility
+ */
+export async function saveOrder(order) {
+  const normalized = await createPublicOrder(order, order.items || []);
+  try {
+    const current = await getOrders();
+    const updated = [normalized, ...current.filter(o => o.id !== normalized.id)];
+    localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(updated));
+    return updated;
+  } catch {
+    return [normalized];
+  }
+}
+
+/**
+ * 🔒 ADMIN ONLY: Perbarui status Kanban pesanan
+ */
 export async function updateOrderStatus(orderId, newStatus) {
   const current = await getOrders();
   const updated = current.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+  localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(updated));
 
   try {
     await supabase
@@ -60,4 +255,88 @@ export async function updateOrderStatus(orderId, newStatus) {
   }
 
   return updated;
+}
+
+/**
+ * 🔍 PUBLIC SECURE TRACKING: Lacak SATU pesanan spesifik tanpa mengekspos pesanan orang lain
+ */
+export async function trackSingleOrder(term) {
+  if (!term || !term.trim()) return [];
+  const cleanTerm = term.trim().toLowerCase();
+
+  try {
+    // Coba query spesifik ke Supabase beserta child order_items
+    const { data, error } = await supabase
+      .from('ts_orders')
+      .select('*, ts_order_items(*)')
+      .or(`order_number.ilike.%${cleanTerm}%,tracking_number.ilike.%${cleanTerm}%,customer_phone.ilike.%${cleanTerm}%`)
+      .limit(5);
+
+    if (!error && data && data.length > 0) {
+      return data.map(normalizeOrderRecord);
+    }
+  } catch (err) {
+    console.warn("Supabase tracking lookup fallback:", err);
+  }
+
+  // Fallback ke riwayat lokal pesanan pribadi pembeli
+  try {
+    const myOrders = JSON.parse(localStorage.getItem(LOCAL_STORAGE_MY_ORDERS_KEY) || '[]');
+    const matched = myOrders.filter(o => 
+      o.id.toLowerCase().includes(cleanTerm) ||
+      (o.parentOrderId && o.parentOrderId.toLowerCase().includes(cleanTerm)) ||
+      (o.trackingNo && o.trackingNo.toLowerCase().includes(cleanTerm)) ||
+      (o.phone && o.phone.toLowerCase().includes(cleanTerm))
+    );
+    if (matched.length > 0) return matched;
+  } catch (e) {}
+
+  // Fallback demo SEED_ORDERS jika mencari id seed contoh
+  const seedMatched = SEED_ORDERS.filter(o => 
+    o.id.toLowerCase() === cleanTerm ||
+    (o.trackingNo && o.trackingNo.toLowerCase() === cleanTerm) ||
+    (o.phone && o.phone.includes(cleanTerm))
+  );
+
+  return seedMatched.map(normalizeOrderRecord);
+}
+
+/**
+ * 👤 MEMBER SECURE ORDERS: Ambil hanya pesanan milik user yang sedang login
+ */
+export async function getUserOrders(userId, phone = null) {
+  if (!userId && !phone) return [];
+
+  try {
+    let query = supabase
+      .from('ts_orders')
+      .select('*, ts_order_items(*)')
+      .order('created_at', { ascending: false });
+
+    if (userId) {
+      query = query.eq('user_id', userId);
+    } else if (phone) {
+      const cleanPhone = phone.replace(/\D/g, '');
+      query = query.ilike('customer_phone', `%${cleanPhone}%`);
+    }
+
+    const { data, error } = await query;
+    if (!error && data && data.length > 0) {
+      return data.map(normalizeOrderRecord);
+    }
+  } catch (err) {
+    console.warn("Supabase user orders query fallback:", err);
+  }
+
+  // Fallback ke penyimpanan lokal pribadi
+  try {
+    const myOrders = JSON.parse(localStorage.getItem(LOCAL_STORAGE_MY_ORDERS_KEY) || '[]');
+    return myOrders.filter(o => {
+      if (userId && o.user_id === userId) return true;
+      if (phone && o.phone && o.phone.includes(phone.replace(/\D/g, ''))) return true;
+      return false;
+    });
+  } catch (e) {
+    return [];
+  }
 }

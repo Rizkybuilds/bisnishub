@@ -14,7 +14,7 @@ MEMORY_DIR = BASE_DIR / "memory"
 PROFILE_FILE = MEMORY_DIR / "business_profile.json"
 
 # Ganti sesuai model terbaru yang mau kamu pakai
-MODEL = "claude-sonnet-5"
+MODEL = "claude-3-5-sonnet-20241022"
 MAX_TOKENS = 2048
 
 # ── Role registry ──────────────────────────────────────────────────

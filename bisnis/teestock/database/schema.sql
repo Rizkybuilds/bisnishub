@@ -105,6 +105,7 @@ CREATE TABLE ts_inventory (
     brand VARCHAR(100) DEFAULT 'New States Apparel',
     color VARCHAR(50) DEFAULT 'Hitam',
     size VARCHAR(20) DEFAULT 'L',
+    unit_measure VARCHAR(20) DEFAULT 'pcs',        -- pcs, meter, roll, lembar
     stock_qty INT DEFAULT 0,
     min_stock_alert INT DEFAULT 5,
     cost_per_unit NUMERIC(10, 2) NOT NULL,
@@ -161,6 +162,9 @@ CREATE TABLE ts_orders (
 CREATE INDEX idx_ts_orders_status ON ts_orders(status);
 CREATE INDEX idx_ts_orders_user ON ts_orders(user_id);
 CREATE INDEX idx_ts_orders_channel ON ts_orders(channel);
+CREATE INDEX idx_ts_orders_order_number ON ts_orders(order_number);
+CREATE INDEX idx_ts_orders_phone ON ts_orders(customer_phone);
+CREATE INDEX idx_ts_orders_tracking ON ts_orders(tracking_number);
 
 
 -- 6. TABEL: ts_order_items (Rincian Produk per Pesanan)
@@ -179,6 +183,7 @@ CREATE TABLE ts_order_items (
 );
 
 CREATE INDEX idx_ts_order_items_order ON ts_order_items(order_id);
+CREATE INDEX idx_ts_order_items_number ON ts_order_items(order_number);
 
 
 -- 7. TABEL: ts_subscribers (Email VIP Newsletter & Lead Capture Drop)
@@ -192,6 +197,8 @@ CREATE TABLE ts_subscribers (
     status VARCHAR(30) DEFAULT 'active',          -- active, unsubscribed
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+CREATE INDEX idx_ts_subscribers_email ON ts_subscribers(email);
 
 
 -- 8. TABEL: ts_vouchers (Master Kupon Diskon & Voucher Promosi)
@@ -350,10 +357,22 @@ CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
+-- Helper Security Definer: Cek apakah user yang login memiliki role 'admin'
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+    RETURN EXISTS (
+        SELECT 1 
+        FROM public.ts_user_profiles 
+        WHERE id = auth.uid() AND role = 'admin'
+    );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+
 
 -- ====================================================================
--- BAGIAN 5: ROW LEVEL SECURITY (RLS) POLICIES
--- Keamanan data produksi: Publik hanya bisa akses etalase, Admin mengelola data bisnis
+-- BAGIAN 5: ROW LEVEL SECURITY (RLS) POLICIES — HARDENED PRODUCTION
+-- Keamanan data produksi: Publik hanya akses etalase, Admin mengelola data bisnis
 -- ====================================================================
 ALTER TABLE ts_products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ts_unit_economics ENABLE ROW LEVEL SECURITY;
@@ -368,65 +387,64 @@ ALTER TABLE ts_defects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ts_partner_applications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ts_reviews ENABLE ROW LEVEL SECURITY;
 
--- 1. ts_products (Publik baca katalog, authenticated admin tulis)
+-- 1. ts_products (Publik baca katalog, HANYA admin yang bisa tambah/edit/hapus)
 CREATE POLICY "anon_read_products" ON ts_products FOR SELECT USING (true);
-CREATE POLICY "auth_insert_products" ON ts_products FOR INSERT TO authenticated WITH CHECK (true);
-CREATE POLICY "auth_update_products" ON ts_products FOR UPDATE TO authenticated USING (true);
-CREATE POLICY "auth_delete_products" ON ts_products FOR DELETE TO authenticated USING (true);
+CREATE POLICY "admin_insert_products" ON ts_products FOR INSERT TO authenticated WITH CHECK (public.is_admin());
+CREATE POLICY "admin_update_products" ON ts_products FOR UPDATE TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "admin_delete_products" ON ts_products FOR DELETE TO authenticated USING (public.is_admin());
 
--- 2. ts_unit_economics (Publik baca harga, authenticated admin tulis)
-CREATE POLICY "anon_read_unit_economics" ON ts_unit_economics FOR SELECT USING (true);
-CREATE POLICY "auth_insert_unit_economics" ON ts_unit_economics FOR INSERT TO authenticated WITH CHECK (true);
-CREATE POLICY "auth_update_unit_economics" ON ts_unit_economics FOR UPDATE TO authenticated USING (true);
-CREATE POLICY "auth_delete_unit_economics" ON ts_unit_economics FOR DELETE TO authenticated USING (true);
+-- 2. ts_unit_economics (HANYA admin yang bisa membaca & mengelola HPP/rahasia vendor)
+CREATE POLICY "admin_select_unit_economics" ON ts_unit_economics FOR SELECT TO authenticated USING (public.is_admin());
+CREATE POLICY "admin_insert_unit_economics" ON ts_unit_economics FOR INSERT TO authenticated WITH CHECK (public.is_admin());
+CREATE POLICY "admin_update_unit_economics" ON ts_unit_economics FOR UPDATE TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "admin_delete_unit_economics" ON ts_unit_economics FOR DELETE TO authenticated USING (public.is_admin());
 
--- 3. ts_inventory (Hanya authenticated admin)
-CREATE POLICY "auth_read_inventory" ON ts_inventory FOR SELECT TO authenticated USING (true);
-CREATE POLICY "auth_insert_inventory" ON ts_inventory FOR INSERT TO authenticated WITH CHECK (true);
-CREATE POLICY "auth_update_inventory" ON ts_inventory FOR UPDATE TO authenticated USING (true);
-CREATE POLICY "auth_delete_inventory" ON ts_inventory FOR DELETE TO authenticated USING (true);
+-- 3. ts_inventory (HANYA admin yang bisa melihat & mengubah stok gudang NSA)
+CREATE POLICY "admin_manage_inventory" ON ts_inventory FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 4. ts_user_profiles (User baca/update profil sendiri, Admin akses semua)
-CREATE POLICY "user_read_own_profile" ON ts_user_profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "user_update_own_profile" ON ts_user_profiles FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+-- 4. ts_user_profiles (User baca/update profil sendiri, role dilarang diubah sendiri)
+CREATE POLICY "user_read_own_profile" ON ts_user_profiles FOR SELECT USING (auth.uid() = id OR public.is_admin());
+CREATE POLICY "user_update_own_profile" ON ts_user_profiles FOR UPDATE USING (auth.uid() = id OR public.is_admin()) WITH CHECK (auth.uid() = id OR public.is_admin());
 CREATE POLICY "user_insert_own_profile" ON ts_user_profiles FOR INSERT WITH CHECK (auth.uid() = id);
-CREATE POLICY "admin_all_profiles" ON ts_user_profiles FOR ALL TO authenticated USING (
-    EXISTS (SELECT 1 FROM ts_user_profiles p WHERE p.id = auth.uid() AND p.role = 'admin')
-);
+CREATE POLICY "admin_all_profiles" ON ts_user_profiles FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 5. ts_orders (Publik/Member bisa checkout pesanan, Member baca miliknya, Admin kelola semua)
+-- 5. ts_orders (Publik/Member bisa buat order, User baca pesanan miliknya, HANYA admin kelola semua)
 CREATE POLICY "public_insert_orders" ON ts_orders FOR INSERT WITH CHECK (true);
-CREATE POLICY "member_read_own_orders" ON ts_orders FOR SELECT TO authenticated USING (user_id = auth.uid());
-CREATE POLICY "admin_manage_orders" ON ts_orders FOR ALL TO authenticated USING (true);
+CREATE POLICY "member_read_own_orders" ON ts_orders FOR SELECT USING (user_id = auth.uid() OR public.is_admin());
+CREATE POLICY "admin_manage_orders" ON ts_orders FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 6. ts_order_items (Publik/Member insert saat checkout, Admin kelola semua)
+-- 6. ts_order_items (Publik insert saat checkout, HANYA admin kelola semua)
 CREATE POLICY "public_insert_order_items" ON ts_order_items FOR INSERT WITH CHECK (true);
-CREATE POLICY "admin_manage_order_items" ON ts_order_items FOR ALL TO authenticated USING (true);
+CREATE POLICY "member_read_own_order_items" ON ts_order_items FOR SELECT USING (
+    EXISTS (SELECT 1 FROM ts_orders o WHERE o.id = ts_order_items.order_id AND (o.user_id = auth.uid() OR public.is_admin()))
+);
+CREATE POLICY "admin_manage_order_items" ON ts_order_items FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 7. ts_subscribers (Publik bisa daftar newsletter, Admin bisa baca data leads)
+-- 7. ts_subscribers (Publik bisa daftar newsletter, HANYA admin bisa membaca leads)
 CREATE POLICY "anon_insert_subscribers" ON ts_subscribers FOR INSERT WITH CHECK (true);
-CREATE POLICY "auth_read_subscribers" ON ts_subscribers FOR SELECT TO authenticated USING (true);
+CREATE POLICY "admin_read_subscribers" ON ts_subscribers FOR SELECT TO authenticated USING (public.is_admin());
+CREATE POLICY "admin_delete_subscribers" ON ts_subscribers FOR DELETE TO authenticated USING (public.is_admin());
 
--- 8. ts_vouchers (Publik baca voucher aktif, Admin kelola voucher)
-CREATE POLICY "anon_read_active_vouchers" ON ts_vouchers FOR SELECT USING (is_active = true);
-CREATE POLICY "admin_manage_vouchers" ON ts_vouchers FOR ALL TO authenticated USING (true);
+-- 8. ts_vouchers (Publik baca voucher aktif, HANYA admin yang bisa manipulasi voucher)
+CREATE POLICY "anon_read_active_vouchers" ON ts_vouchers FOR SELECT USING (is_active = true OR public.is_admin());
+CREATE POLICY "admin_manage_vouchers" ON ts_vouchers FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 -- 9. ts_voucher_usage (Member baca riwayatnya, Sistem/Member insert saat checkout)
-CREATE POLICY "user_read_own_voucher_usage" ON ts_voucher_usage FOR SELECT USING (user_id = auth.uid());
+CREATE POLICY "user_read_own_voucher_usage" ON ts_voucher_usage FOR SELECT USING (user_id = auth.uid() OR public.is_admin());
 CREATE POLICY "auth_insert_voucher_usage" ON ts_voucher_usage FOR INSERT WITH CHECK (true);
 
--- 10. ts_defects (QC Loss tracker: Hanya admin yang mengelola)
-CREATE POLICY "admin_manage_defects" ON ts_defects FOR ALL TO authenticated USING (true);
+-- 10. ts_defects (QC Loss tracker: HANYA admin)
+CREATE POLICY "admin_manage_defects" ON ts_defects FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 11. ts_partner_applications (Pengunjung bisa submit pengajuan, user baca miliknya, Admin kelola)
+-- 11. ts_partner_applications (Pengunjung bisa submit pengajuan, user baca miliknya, HANYA admin kelola)
 CREATE POLICY "public_insert_partner_app" ON ts_partner_applications FOR INSERT WITH CHECK (true);
-CREATE POLICY "user_read_own_partner_app" ON ts_partner_applications FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "admin_manage_partner_apps" ON ts_partner_applications FOR ALL TO authenticated USING (true);
+CREATE POLICY "user_read_own_partner_app" ON ts_partner_applications FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
+CREATE POLICY "admin_manage_partner_apps" ON ts_partner_applications FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 12. ts_reviews (Publik bisa baca & tulis ulasan, Admin bisa moderasi)
+-- 12. ts_reviews (Publik bisa baca & tulis ulasan, HANYA admin bisa moderasi/hapus)
 CREATE POLICY "public_read_reviews" ON ts_reviews FOR SELECT USING (true);
 CREATE POLICY "public_insert_reviews" ON ts_reviews FOR INSERT WITH CHECK (true);
-CREATE POLICY "admin_manage_reviews" ON ts_reviews FOR ALL TO authenticated USING (true);
+CREATE POLICY "admin_manage_reviews" ON ts_reviews FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 
 -- ====================================================================
@@ -492,20 +510,21 @@ VALUES
 ON CONFLICT (product_sku) DO NOTHING;
 
 
--- 3. Insert Starter Inventory (Bahan Kaos Polos NSA & Supplies Packing)
-INSERT INTO ts_inventory (sku_item, item_type, brand, color, size, stock_qty, min_stock_alert, unit_cost, supplier)
+-- 3. Insert Starter Inventory (Bahan Kaos Polos NSA, DTF Film & MultiGraph Packaging)
+INSERT INTO ts_inventory (sku_item, item_type, brand, color, size, unit_measure, stock_qty, min_stock_alert, cost_per_unit, supplier)
 VALUES
-('NSA-30S-BLK-M', 'blank_tshirt', 'New States Apparel', 'Hitam', 'M', 8, 3, 38000, 'Distributor Resmi NSA'),
-('NSA-30S-BLK-L', 'blank_tshirt', 'New States Apparel', 'Hitam', 'L', 10, 3, 38000, 'Distributor Resmi NSA'),
-('NSA-30S-BLK-XL', 'blank_tshirt', 'New States Apparel', 'Hitam', 'XL', 6, 2, 38000, 'Distributor Resmi NSA'),
-('NSA-30S-CRM-M', 'blank_tshirt', 'New States Apparel', 'Krem', 'M', 5, 2, 38000, 'Distributor Resmi NSA'),
-('NSA-30S-CRM-L', 'blank_tshirt', 'New States Apparel', 'Krem', 'L', 6, 2, 38000, 'Distributor Resmi NSA'),
-('NSA-24S-BLK-L', 'blank_tshirt', 'New States Apparel', 'Hitam', 'L', 8, 3, 48000, 'Distributor Resmi NSA'),
-('NSA-24S-BLK-XL', 'blank_tshirt', 'New States Apparel', 'Hitam', 'XL', 5, 2, 48000, 'Distributor Resmi NSA'),
-('NSA-20S-BLK-L', 'blank_tshirt', 'New States Apparel', 'Hitam', 'L', 5, 2, 65000, 'Distributor Resmi NSA'),
-('MAT-POLY-30X40', 'supplies', 'TeeStock Pack', 'Putih', '30x40 cm', 120, 30, 800, 'Vendor Packaging'),
-('MAT-HANGTAG-01', 'supplies', 'TeeStock Brand', 'Matte Black', 'Standard', 250, 50, 450, 'Percetakan Hangtag'),
-('MAT-STICKER-VP', 'supplies', 'TeeStock Vinyl', 'Die-Cut', '7 cm', 180, 40, 650, 'Percetakan Stiker')
+('NSA-30S-BLK-M', 'blank_tshirt', 'New States Apparel', 'Hitam', 'M', 'pcs', 8, 3, 38000, 'Distributor Resmi NSA'),
+('NSA-30S-BLK-L', 'blank_tshirt', 'New States Apparel', 'Hitam', 'L', 'pcs', 10, 3, 38000, 'Distributor Resmi NSA'),
+('NSA-30S-BLK-XL', 'blank_tshirt', 'New States Apparel', 'Hitam', 'XL', 'pcs', 6, 2, 38000, 'Distributor Resmi NSA'),
+('NSA-30S-CRM-M', 'blank_tshirt', 'New States Apparel', 'Krem', 'M', 'pcs', 5, 2, 38000, 'Distributor Resmi NSA'),
+('NSA-30S-CRM-L', 'blank_tshirt', 'New States Apparel', 'Krem', 'L', 'pcs', 6, 2, 38000, 'Distributor Resmi NSA'),
+('NSA-24S-BLK-L', 'blank_tshirt', 'New States Apparel', 'Hitam', 'L', 'pcs', 8, 3, 48000, 'Distributor Resmi NSA'),
+('NSA-24S-BLK-XL', 'blank_tshirt', 'New States Apparel', 'Hitam', 'XL', 'pcs', 5, 2, 48000, 'Distributor Resmi NSA'),
+('NSA-20S-BLK-L', 'blank_tshirt', 'New States Apparel', 'Hitam', 'L', 'pcs', 5, 2, 65000, 'Distributor Resmi NSA'),
+('DTF-ROLL-58CM', 'dtf_film', 'TeeStock Film HD', 'Transparan', 'Roll 58 cm x 100 m', 'meter', 45, 10, 25000, 'Vendor DTF Partner'),
+('MAT-POLY-30X40', 'supplies', 'TeeStock Pack', 'Putih', '30x40 cm', 'pcs', 120, 30, 800, 'MultiGraph Packaging'),
+('MAT-HANGTAG-01', 'supplies', 'TeeStock Brand', 'Matte Black', 'Standard', 'pcs', 250, 50, 450, 'MultiGraph Printing'),
+('MAT-STICKER-VP', 'supplies', 'TeeStock Vinyl', 'Die-Cut', '7 cm', 'pcs', 180, 40, 650, 'MultiGraph Printing')
 ON CONFLICT (sku_item) DO NOTHING;
 
 
@@ -527,6 +546,15 @@ VALUES
 ('WA-2609-003', 'Komunitas Kopi Pagi', '0818-4455-6677', 'Yogyakarta', 'whatsapp', 'retail', 'press', 210000, 0, NULL, 'Crisis with Iced Coffee - NSA Heavyweight 24s (Krem M) x2'),
 ('WEB-2609-004', 'Andi Wijaya', '0821-8899-0011', 'Surabaya', 'web', 'retail', 'pack', 89000, 1335, 'JP1029485760', 'Wong Jowo Ojo Ilang - NSA Softstyle 30s (Hitam L) x1')
 ON CONFLICT (order_number) DO NOTHING;
+
+
+-- 5b. Insert Sample Order Items Relasional
+INSERT INTO ts_order_items (order_number, product_sku, product_name, garment, size, color, qty, unit_price, subtotal)
+VALUES
+('SHOP-2609-001', 'TS-PRO-001', 'Commit & Pray', 'NSA Softstyle 30s', 'L', 'Hitam', 1, 99000, 99000),
+('TIK-2609-002', 'TS-KOM-001', '7 Summits 3000 MDPL', 'NSA Softstyle 30s', 'XL', 'Hitam', 1, 99000, 99000),
+('WA-2609-003', 'TS-REC-001', 'Crisis with Iced Coffee', 'NSA Heavyweight 24s', 'M', 'Krem', 2, 105000, 210000),
+('WEB-2609-004', 'TS-LOK-001', 'Wong Jowo Ojo Ilang Jawane', 'NSA Softstyle 30s', 'L', 'Hitam', 1, 89000, 89000);
 
 
 -- 6. Insert Sample QC Defect Tracker

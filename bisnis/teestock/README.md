@@ -69,27 +69,27 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel, portal
   - Gang Sheet Roll DTF Builder interaktif.
   - QC Defect & Return Tracker (pencatatan kerugian HPP akibat reject kain/DTF).
   - WhatsApp Custom Quoter instan.
-- **Database Backend:** Single Consolidated Master Schema [`database/schema.sql`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/database/schema.sql) (12 tabel, trigger auth, RLS, view kalkulasi margin, seed data lengkap).
+- **Database Backend:** Single Consolidated Master Schema [`database/schema.sql`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/database/schema.sql) (12 tabel, trigger auth, RLS, view kalkulasi margin, seed data lengkap).
 - **SEO & PWA:** Dynamic OpenGraph (`SEOHead.jsx`), `sitemap.xml`, `robots.txt`, manifest PWA (Add to Home Screen).
 - **Brand Logo:** Aset vektor SVG resmi tumpukan lipatan kaos (*The Stock*) terintegrasi di seluruh komponen.
-- **Source Code:** [`web/`](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/web) folder.
+- **Source Code:** [`web/`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/web) folder.
 
 ---
 
 ## 📂 Dokumen & Tools yang Tersedia
 
 ### 🎨 Brand Identity (`brand/`)
-- [**`brand-guide-teestock.md`**](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/brand/brand-guide-teestock.md) — Identitas brand Curated Apparel & Merch House, dual-pillar architecture, The Drop Model, palet warna, dan packaging experience.
+- [**`brand-guide-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/brand-guide-teestock.md) — Identitas brand Curated Apparel & Merch House, dual-pillar architecture, The Drop Model, palet warna, dan packaging experience.
 - `teestock-logo.svg` & `web/public/logo-teestock.svg` — Master logo vektor resolusi tinggi.
 - `teestock-logo-master-dark.jpg` & `teestock-logo-master-light.jpg` — Master logo visual.
 
 ### ⚙️ Operasional & Roadmap (`operasional/`)
-- [**`roadmap-pengembangan-teestock.md`**](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/operasional/roadmap-pengembangan-teestock.md) — Roadmap 4 fase solopreneur lengkap dengan exit criteria dan alokasi waktu mingguan.
-- [**`rencana-operasional-teestock.md`**](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/operasional/rencana-operasional-teestock.md) — Alur rantai pasok garmen NSA & DTF, kapasitas produksi harian, SOP heat press in-house, dan struktur channel.
+- [**`roadmap-pengembangan-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/operasional/roadmap-pengembangan-teestock.md) — Roadmap 4 fase solopreneur lengkap dengan exit criteria dan alokasi waktu mingguan.
+- [**`rencana-operasional-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/operasional/rencana-operasional-teestock.md) — Alur rantai pasok garmen NSA & DTF, kapasitas produksi harian, SOP heat press in-house, dan struktur channel.
 - `struktur-folder-teestock.md` — Struktur folder kerja produksi & katalog.
 
 ### 📊 Riset & Strategi (`riset/`)
-- [**`analisis-bisnis-teestock.md`**](file:///c:/Users/Administrator/Documents/GitHub/ai-mentor-bisnis/bisnis/teestock/riset/analisis-bisnis-teestock.md) — Riset pasar riil, unit economics aktual HPP Rp 48k–54k, strategi multi-tier, dan scoring matrix.
+- [**`analisis-bisnis-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/riset/analisis-bisnis-teestock.md) — Riset pasar riil, unit economics aktual HPP Rp 48k–54k, strategi multi-tier, dan scoring matrix.
 - `analisis-website-teestock.md` — Analisis kebutuhan arsitektur website React + Supabase.
 - `daftar-niche-teestock.md` — Pustaka 197 niche dalam 17 kategori sebagai bank ide Drop masa depan.
 

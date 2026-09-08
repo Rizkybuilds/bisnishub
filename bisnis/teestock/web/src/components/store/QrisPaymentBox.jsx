@@ -9,7 +9,8 @@ import {
   ShieldCheck, 
   Sparkles, 
   Download,
-  Info
+  Info,
+  Zap
 } from 'lucide-react';
 import { formatRupiah } from '../../utils/formatters';
 import { Button } from '../ui/Button';
@@ -257,15 +258,21 @@ export function QrisPaymentBox({
       </div>
 
       {/* Confirmation Button via WhatsApp */}
-      <div className="space-y-3 pt-2">
+      <div className="space-y-2.5 pt-2">
         <a href={waUrl} target="_blank" rel="noreferrer" className="block w-full">
           <Button size="lg" variant="whatsapp" icon={MessageSquare} className="w-full py-4 text-sm font-extrabold shadow-glow-teal">
             Saya Sudah Bayar — Kirim Bukti Transfer ke WA
           </Button>
         </a>
-        <p className="text-[11px] text-center text-ts-muted">
-          Admin kami akan langsung memvalidasi mutasi pembayaran dan memasukkan kaos Anda ke antrean cetak sablon.
-        </p>
+        <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-center space-y-1">
+          <p className="text-xs font-bold text-ts-green flex items-center justify-center gap-1.5">
+            <Zap className="w-3.5 h-3.5" />
+            <span>Verifikasi Cepat 5–15 Menit (08.00 – 21.00 WIB)</span>
+          </p>
+          <p className="text-[11px] text-ts-kremMuted leading-relaxed">
+            Setelah pembayaran tervalidasi, pesanan langsung masuk antrean produksi (H+0 / H+1) dan tautan live tracking otomatis dikirim ke WhatsApp Anda.
+          </p>
+        </div>
       </div>
     </div>
   );

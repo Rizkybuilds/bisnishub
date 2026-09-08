@@ -44,9 +44,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
   return (
     <Link
       to={`/produk/${product.sku}?color=${encodeURIComponent(selectedColor)}`}
-      className={`group bg-ts-surface/75 backdrop-blur-xl border border-white/[0.08] rounded-2xl overflow-hidden transition-all duration-200 flex flex-col hover:-translate-y-1 shadow-glass-card shadow-glass-inset ${
-        isBlank ? 'hover:border-ts-teal/60' : 'hover:border-ts-terracotta/60'
-      } ${className}`}
+      className={`group bg-[#141312] border border-white/[0.08] rounded-2xl overflow-hidden transition-all duration-200 flex flex-col hover:-translate-y-1 hover:border-white/20 ${className}`}
     >
       {/* Product Image Frame */}
       <div className="aspect-square bg-ts-hitam/70 overflow-hidden relative">
@@ -59,31 +57,40 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
         />
 
         {/* Top-Left SKU Chip */}
-        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-ts-hitam/90 text-white border border-white/10 shadow-sm">
+        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-[#141312]/90 text-white border border-white/10 shadow-sm">
           {product.sku}
         </span>
 
         {/* Top-Right Badge */}
         {isBlank ? (
-          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-ts-teal/25 text-teal-200 border border-ts-teal/40 flex items-center gap-1 shadow-sm">
-            <ShieldCheck className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-white/[0.06] backdrop-blur-md text-ts-krem border border-white/15 flex items-center gap-1 shadow-sm">
+            <ShieldCheck className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-ts-green" />
             <span>100% NSA</span>
           </span>
         ) : (
-          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-ts-terracotta/25 text-[#E2885E] border border-ts-terracotta/40 flex items-center gap-1 shadow-sm">
-            <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-ts-mustard" />
-            <span>DTF HD</span>
+          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-white/[0.06] backdrop-blur-md text-ts-krem border border-white/15 flex items-center gap-1 shadow-sm">
+            <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-ts-terracotta" />
+            <span>IN-HOUSE PRESS</span>
           </span>
         )}
 
-        {/* Active Color Name Overlay on Image Bottom */}
-        <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between pointer-events-none">
-          <span className="px-2 py-0.5 rounded-md bg-ts-hitam/80 backdrop-blur-md border border-white/15 text-[10px] font-medium text-white shadow-md flex items-center gap-1.5">
+        {/* Active Color Name Overlay & SLA on Image Bottom */}
+        <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between pointer-events-none gap-1">
+          <span className="px-2 py-0.5 rounded-md bg-ts-hitam/80 backdrop-blur-md border border-white/15 text-[10px] font-medium text-white shadow-md flex items-center gap-1.5 shrink-0">
             <span
               className="w-2 h-2 rounded-full border border-white/30"
               style={{ backgroundColor: getColorHex(selectedColor) }}
             />
-            <span className="truncate max-w-[90px] sm:max-w-[120px]">{selectedColor}</span>
+            <span className="truncate max-w-[80px] sm:max-w-[110px]">{selectedColor}</span>
+          </span>
+
+          {/* Dynamic SLA chip */}
+          <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold border backdrop-blur-md shadow-sm shrink-0 ${
+            ['hitam', 'black', 'putih', 'white'].includes(selectedColor.toLowerCase())
+              ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-300'
+              : 'bg-sky-950/80 border-sky-500/40 text-sky-300'
+          }`}>
+            {['hitam', 'black', 'putih', 'white'].includes(selectedColor.toLowerCase()) ? '⚡ H+0 Studio' : '📦 H+1 Gudang'}
           </span>
         </div>
       </div>
@@ -154,22 +161,37 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
               </div>
             ) : (
               <div>
-                <span className="text-[9px] text-ts-muted block font-mono">
-                  {isBlank ? 'Harga Satuan' : 'Harga Launching'}
-                </span>
-                <span className="font-mono text-xs sm:text-sm font-black text-ts-green">
-                  {formatRupiah(effectivePrice)}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[9px] text-ts-muted block font-mono">
+                    {isBlank ? 'Harga Satuan' : 'Promo Drop #01'}
+                  </span>
+                  {!isBlank && (
+                    <span className="text-[8px] font-mono font-extrabold text-ts-terracotta bg-ts-terracotta/20 px-1 py-0.2 rounded border border-ts-terracotta/30">
+                      -28%
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-mono text-xs sm:text-sm font-black text-ts-green">
+                    {formatRupiah(effectivePrice)}
+                  </span>
+                  {!isBlank && (
+                    <span className="text-[10px] line-through text-ts-muted/80 font-mono hidden sm:inline">
+                      {formatRupiah(product.priceAnchor || product.price_anchor || 139000)}
+                    </span>
+                  )}
+                </div>
               </div>
             )}
           </div>
 
-          <span className={`text-[10px] font-bold px-2 sm:px-2.5 py-1 rounded-lg transition-colors ${
+          <span className={`text-[10px] font-bold px-2 sm:px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 ${
             isBlank
               ? 'bg-ts-teal/10 border border-ts-teal/30 text-teal-300 group-hover:bg-ts-teal group-hover:text-zinc-950'
-              : 'bg-white/[0.05] border border-white/10 text-white group-hover:bg-ts-terracotta group-hover:text-white'
+              : 'bg-white/[0.05] border border-white/10 text-white group-hover:bg-ts-terracotta group-hover:text-white shadow-sm'
           }`}>
-            Detail &rarr;
+            <span>Pilih</span>
+            <span>&rarr;</span>
           </span>
         </div>
       </div>

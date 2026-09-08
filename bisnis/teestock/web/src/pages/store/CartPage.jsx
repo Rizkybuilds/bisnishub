@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, Trash2, ArrowRight, ShieldCheck, CheckCircle2, MessageSquare, Package, Truck, Lock, Tag, X, Sparkles, Loader2, QrCode } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
-import { useAdmin } from '../../context/AdminContext';
 import { useAuth } from '../../context/AuthContext';
+import { createPublicOrder } from '../../services/ordersApi';
 import { Button } from '../../components/ui/Button';
 import { Input, Select } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
@@ -15,7 +15,6 @@ import { QrisPaymentBox } from '../../components/store/QrisPaymentBox';
 
 export function CartPage() {
   const { cart, removeFromCart, updateCartQty, clearCart, totalCartAmount, storeSettings } = useStore();
-  const { addOrder } = useAdmin();
   const { user, profile, role } = useAuth();
   const navigate = useNavigate();
 
@@ -46,9 +45,12 @@ export function CartPage() {
     }
   }, [profile]);
 
-  // Bundling calculations
+  // Bundling calculations: strictly for graphic t-shirts to protect blank margins
   const totalCartQty = cart.reduce((acc, item) => acc + (item.qty || 1), 0);
-  const bundleDiscount = calculateBundleDiscount(totalCartQty, role);
+  const eligibleGraphicQty = cart
+    .filter(item => item.series !== 'blank' && !item.sku?.startsWith('TS-BLK-'))
+    .reduce((acc, item) => acc + (item.qty || 1), 0);
+  const bundleDiscount = calculateBundleDiscount(eligibleGraphicQty, role);
 
   const shippingFee = cart.length > 0 ? 15000 : 0;
   const baseGrandTotal = Math.max(0, totalCartAmount - bundleDiscount - discountAmount) + shippingFee;
@@ -92,34 +94,31 @@ export function CartPage() {
 
     const orderId = `WEB-${Date.now().toString().slice(-6)}`;
     
-    // Save each cart item as part of the order with unique sub-ID if multiple items
-    cart.forEach((item, index) => {
-      const itemOrderId = cart.length > 1 ? `${orderId}-${index + 1}` : orderId;
-      const orderRecord = {
-        id: itemOrderId,
-        parentOrderId: orderId,
-        customer: customerName.trim(),
-        phone: `${phone.trim()} (${city.trim() || 'Indonesia'})`,
-        channel: 'web',
-        sku: item.sku,
-        productName: item.name,
-        garment: item.garment,
-        color: item.color,
-        size: item.size,
-        qty: item.qty,
-        price: item.price * item.qty,
-        fee: 0, // 0% payment gateway fee via QRIS manual
-        status: 'pending',
-        user_id: user?.id || null,
-        voucher_code: appliedVoucher?.code || null,
-        discount: discountAmount,
-        unique_code: uniqueCode,
-        payment_method: 'qris_manual',
-        total_payment: grandTotal,
-        date: new Date().toISOString()
-      };
-      addOrder(orderRecord);
-    });
+    // Simpan 1 header pesanan relasional dengan seluruh rincian item belanja
+    const orderRecord = {
+      id: orderId,
+      order_number: orderId,
+      customer: customerName.trim(),
+      phone: `${phone.trim()} (${city.trim() || 'Indonesia'})`,
+      city: city.trim(),
+      address: address.trim(),
+      channel: 'web',
+      tier: role || 'retail',
+      status: 'pending',
+      price: grandTotal,
+      total_amount: grandTotal,
+      discount: discountAmount,
+      discount_amount: discountAmount,
+      voucher_code: appliedVoucher?.code || null,
+      unique_code: uniqueCode,
+      uniqueCode: uniqueCode,
+      user_id: user?.id || null,
+      payment_method: 'qris_manual',
+      items: [...cart],
+      date: new Date().toISOString()
+    };
+    
+    createPublicOrder(orderRecord, cart);
 
     setOrderComplete({
       orderId,
@@ -247,9 +246,9 @@ export function CartPage() {
                 <Sparkles className="w-4 h-4 text-ts-mustard" />
                 <div>
                   <span className="font-bold text-white">
-                    {totalCartQty >= 3 ? '🔥 Paket Trio Aktif (Diskon Rp 14.000/pcs)' : '🎉 Paket Duo Aktif (Diskon Rp 18.000)'}
+                    {eligibleGraphicQty >= 3 ? 'Paket Trio Kaos Grafis (Diskon Rp 14.000/pcs)' : 'Paket Duo Kaos Grafis (Diskon Rp 18.000)'}
                   </span>
-                  <span className="text-[11px] text-ts-kremMuted block">Diskon kuantitas langsung memotong total pembayaran Anda.</span>
+                  <span className="text-[11px] text-ts-kremMuted block">Diskon kuantitas {eligibleGraphicQty} pcs kaos grafis diterapkan otomatis.</span>
                 </div>
               </div>
               <span className="font-mono font-bold text-ts-mustard text-sm bg-ts-terracotta/20 px-2 py-0.5 rounded border border-ts-terracotta/30">
@@ -485,9 +484,14 @@ export function CartPage() {
                 </div>
               )}
 
-              <div className="flex justify-between text-ts-kremMuted">
-                <span>Estimasi Ongkos Kirim:</span>
-                <span className="font-mono text-white font-bold">{formatRupiah(shippingFee)}</span>
+              <div className="space-y-1">
+                <div className="flex justify-between text-ts-kremMuted">
+                  <span>Ongkir Reguler (Pulau Jawa):</span>
+                  <span className="font-mono text-white font-bold">{formatRupiah(shippingFee)}</span>
+                </div>
+                <p className="text-[10px] text-ts-kremMuted/80 leading-relaxed">
+                  *Khusus luar Pulau Jawa, penyesuaian tarif &amp; subsidi ongkir akan divalidasi langsung via WhatsApp.
+                </p>
               </div>
 
               {/* Unique Code Row */}

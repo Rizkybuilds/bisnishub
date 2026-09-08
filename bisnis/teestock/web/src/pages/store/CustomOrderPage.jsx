@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Send, Upload, Sparkles, ShieldCheck, CheckCircle2, MessageSquare, ArrowRight, ArrowLeft, Check, Layers, Printer, User } from 'lucide-react';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
-import { DTF_PRINT_SIZES } from '../../constants/pricing';
-import { useAdmin } from '../../context/AdminContext';
+import { DTF_PRINT_SIZES, PRODUCTION_COSTS, getSizeSurcharge } from '../../constants/pricing';
 import { useStore } from '../../context/StoreContext';
+import { createPublicOrder } from '../../services/ordersApi';
 import { Button } from '../../components/ui/Button';
 import { Input, Select } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
@@ -28,7 +28,6 @@ const BLANK_SKU_TO_GARMENT = {
 };
 
 export function CustomOrderPage() {
-  const { addOrder } = useAdmin();
   const { storeSettings } = useStore();
   const [searchParams] = useSearchParams();
 
@@ -53,11 +52,16 @@ export function CustomOrderPage() {
   const selectedPrint = DTF_PRINT_SIZES.find(p => p.id === printSizeId) || DTF_PRINT_SIZES[2];
 
   // Dynamic Price Calculation
-  const baseCost = selectedGarment.baseCost + selectedPrint.cost + 8500;
+  const sizeSurcharge = getSizeSurcharge(size);
+  const baseLaborAndPack = PRODUCTION_COSTS.pressLabor + PRODUCTION_COSTS.packaging + PRODUCTION_COSTS.overhead;
+  const baseCost = selectedGarment.baseCost + selectedPrint.cost + baseLaborAndPack;
+
   let multiplier = 1.65;
-  if (qty >= 12) multiplier = 1.45;
-  if (qty >= 24) multiplier = 1.35;
-  const estPricePerPcs = Math.ceil((baseCost * multiplier) / 1000) * 1000;
+  if (qty >= 12 && qty < 24) multiplier = 1.45;
+  else if (qty >= 24 && qty < 50) multiplier = 1.35;
+  else if (qty >= 50) multiplier = 1.28;
+
+  const estPricePerPcs = Math.ceil(((baseCost * multiplier) + sizeSurcharge) / 1000) * 1000;
   const estTotal = estPricePerPcs * qty;
 
   const handleSubmit = (e) => {
@@ -85,7 +89,7 @@ export function CustomOrderPage() {
       date: new Date().toISOString()
     };
 
-    addOrder(newOrder);
+    createPublicOrder(newOrder);
     setSubmittedOrder(newOrder);
   };
 
@@ -107,8 +111,8 @@ export function CustomOrderPage() {
           </p>
         </div>
 
-        <div className="p-6 bg-ts-surface/80 backdrop-blur-xl border border-white/[0.1] rounded-3xl text-left space-y-2.5 text-xs shadow-glass-card shadow-glass-inset">
-          <div className="flex justify-between"><span className="text-ts-muted">No. Order:</span> <strong className="font-mono text-ts-terracotta">{submittedOrder.id}</strong></div>
+        <div className="p-6 bg-[#141312] border border-white/[0.08] rounded-2xl text-left space-y-2.5 text-xs">
+          <div className="flex justify-between"><span className="text-ts-muted font-mono">No. Order:</span> <strong className="font-mono text-ts-terracotta">{submittedOrder.id}</strong></div>
           <div className="flex justify-between"><span className="text-ts-muted">Pemesan:</span> <strong className="text-white">{submittedOrder.customer}</strong></div>
           <div className="flex justify-between"><span className="text-ts-muted">Model &amp; Varian:</span> <strong className="text-white">{submittedOrder.garment} • {submittedOrder.color} ({submittedOrder.size})</strong></div>
           <div className="flex justify-between"><span className="text-ts-muted">Area Sablon:</span> <strong className="text-white">{selectedPrint.name}</strong></div>
@@ -120,8 +124,8 @@ export function CustomOrderPage() {
 
         <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
           <a href={waUrl} target="_blank" rel="noreferrer">
-            <Button size="lg" variant="whatsapp" icon={MessageSquare} className="w-full sm:w-auto">
-              Lanjutkan Konfirmasi ke WhatsApp Tim Desain
+            <Button size="lg" variant="whatsapp" icon={MessageSquare} className="w-full sm:w-auto font-mono text-xs font-bold">
+              Konfirmasi Order ke WhatsApp Studio
             </Button>
           </a>
         </div>
@@ -138,30 +142,30 @@ export function CustomOrderPage() {
         canonicalPath="/custom-order"
       />
       {/* Header */}
-      <div className="text-center max-w-2xl mx-auto space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-semibold text-ts-krem">
-          <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
-          <span>CUSTOM PRINT STUDIO • 0% MINIMUM ORDER</span>
+      <div className="text-center max-w-2xl mx-auto space-y-2.5">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[10px] font-mono font-bold tracking-wider text-ts-krem uppercase">
+          <Layers className="w-3.5 h-3.5 text-ts-terracotta" />
+          <span>TEESTOCK ATELIER // CUSTOM JOB ORDER</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-          Konfigurator Sablon Kaos Custom
+        <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight uppercase">
+          Studio Custom Kaos &amp; Merch
         </h1>
         <p className="text-xs sm:text-sm text-ts-kremMuted">
-          Cetak desain brand, komunitas, atau merchandise kamu dengan sablon DTF HD di atas bahan garmen New States Apparel original.
+          Cetak desain personal, merchandise komunitas, atau project brand dengan sablon DTF presisi di atas katun New States Apparel (NSA) original.
         </p>
       </div>
 
       {/* Blank Referrer Context Pill */}
       {blankParam && (
-        <div className="max-w-2xl mx-auto p-3.5 rounded-2xl bg-ts-teal/15 border border-ts-teal/30 flex items-center justify-between gap-3 text-xs">
+        <div className="max-w-2xl mx-auto p-3.5 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2.5 text-ts-krem min-w-0">
-            <Sparkles className="w-4 h-4 text-ts-teal shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-ts-teal shrink-0" />
             <span className="truncate">
               Garmen otomatis dipilih dari katalog: <strong className="text-white">{selectedGarment.name}</strong>
             </span>
           </div>
-          <span className="text-[10px] font-mono text-ts-teal uppercase font-bold px-2 py-0.5 rounded bg-ts-teal/20 shrink-0">
-            Katalog Polos
+          <span className="text-[10px] font-mono text-ts-teal uppercase font-bold px-2 py-0.5 rounded bg-ts-teal/15 border border-ts-teal/30 shrink-0">
+            Katalog Blank
           </span>
         </div>
       )}
@@ -177,11 +181,11 @@ export function CustomOrderPage() {
             <button
               type="button"
               onClick={() => setCurrentStep(s.step)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                 currentStep === s.step
-                  ? 'bg-ts-terracotta text-white shadow-glow-terracotta border border-white/20'
+                  ? 'bg-ts-terracotta text-white border border-ts-terracotta'
                   : currentStep > s.step
-                  ? 'bg-white/[0.1] text-white border border-white/10'
+                  ? 'bg-white/[0.08] text-white border border-white/15'
                   : 'bg-white/[0.03] text-ts-muted border border-white/[0.06]'
               }`}
             >
@@ -190,14 +194,14 @@ export function CustomOrderPage() {
               </span>
               <span>{s.label}</span>
             </button>
-            {s.step < 3 && <div className="w-4 h-[1px] bg-white/20 hidden sm:block" />}
+            {s.step < 3 && <div className="w-4 h-[1px] bg-white/15 hidden sm:block" />}
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Step Configuration Form (7 Cols) */}
-        <form onSubmit={handleSubmit} className="lg:col-span-7 bg-ts-surface/80 backdrop-blur-xl border border-white/[0.09] rounded-3xl p-6 sm:p-8 space-y-6 shadow-glass-card shadow-glass-inset">
+        <form onSubmit={handleSubmit} className="lg:col-span-7 bg-[#141312] border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
           
           {/* STEP 1: KAOS & WARNA */}
           {currentStep === 1 && (
@@ -220,9 +224,9 @@ export function CustomOrderPage() {
                       setGarmentKey(k);
                       if (g.colors?.[0]) setColor(g.colors[0].name);
                     }}
-                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                    className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                       garmentKey === k
-                        ? 'bg-ts-terracotta/20 border-ts-terracotta text-white shadow-glow-terracotta ring-1 ring-ts-terracotta'
+                        ? 'bg-ts-terracotta/20 border-ts-terracotta text-white'
                         : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:bg-white/[0.06]'
                     }`}
                   >
@@ -299,9 +303,9 @@ export function CustomOrderPage() {
                     key={p.id}
                     type="button"
                     onClick={() => setPrintSizeId(p.id)}
-                    className={`p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                    className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                       printSizeId === p.id
-                        ? 'bg-ts-mustard/20 border-ts-mustard text-white shadow-glow-mustard ring-1 ring-ts-mustard'
+                        ? 'bg-ts-mustard/20 border-ts-mustard text-white'
                         : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:bg-white/[0.06]'
                     }`}
                   >
@@ -401,11 +405,12 @@ export function CustomOrderPage() {
                 </Button>
                 <Button
                   type="submit"
-                  variant="glow"
+                  variant="primary"
                   size="lg"
                   icon={Send}
+                  className="font-mono text-xs font-bold"
                 >
-                  Kirim Pesanan Custom Sablon
+                  KIRIM JOB ORDER CUSTOM
                 </Button>
               </div>
             </div>
@@ -414,10 +419,13 @@ export function CustomOrderPage() {
 
         {/* Live Estimation Summary Card (5 Cols) */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="bg-ts-surface/80 backdrop-blur-xl border border-white/[0.1] rounded-3xl p-6 space-y-5 shadow-glass-card shadow-glass-inset sticky top-24">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2 pb-3 border-b border-white/[0.08]">
-              <Sparkles className="w-4 h-4 text-ts-mustard" />
-              <span>Kalkulasi Biaya Transparan</span>
+          <div className="bg-[#141312] border border-white/[0.08] rounded-2xl p-6 space-y-5 sticky top-24">
+            <h3 className="text-sm font-bold text-white flex items-center justify-between pb-3 border-b border-white/[0.08]">
+              <span className="flex items-center gap-2">
+                <Layers className="w-4 h-4 text-ts-terracotta" />
+                <span>Rincian Job Order</span>
+              </span>
+              <span className="text-[10px] font-mono text-ts-mustard font-bold uppercase">Estimasi HPP</span>
             </h3>
 
             <div className="space-y-3 text-xs">

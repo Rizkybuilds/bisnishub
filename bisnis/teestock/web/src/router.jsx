@@ -4,6 +4,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 // Layouts
 import { StoreLayout } from './layouts/StoreLayout';
 import { AdminLayout } from './layouts/AdminLayout';
+import { AdminProvider } from './context/AdminContext';
 
 // Auth
 import { AuthGuard } from './components/admin/AuthGuard';
@@ -60,12 +61,14 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
 
-  // Admin Internal Hub Routes (dilindungi AuthGuard)
+  // Admin Internal Hub Routes (dilindungi AuthGuard & AdminProvider)
   {
     path: '/admin',
     element: (
       <AuthGuard>
-        <AdminLayout />
+        <AdminProvider>
+          <AdminLayout />
+        </AdminProvider>
       </AuthGuard>
     ),
     children: [

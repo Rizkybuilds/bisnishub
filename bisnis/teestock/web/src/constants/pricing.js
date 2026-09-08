@@ -56,7 +56,18 @@ export const CHANNELS = [
   { id: "custom", name: "Custom / B2B", feeRate: 0.000, badge: "bg-[#D9A441]/20 text-[#ECC369] border-[#D9A441]/40" }
 ];
 
-// Penawaran Paket Bundling Ritel (AOV Booster)
+// Surcharge untuk ukuran jumbo (tambahan modal garmen dari distributor)
+export const SIZE_SURCHARGES = {
+  XXL: 5000,
+  "3XL": 10000,
+};
+
+export function getSizeSurcharge(size) {
+  if (!size) return 0;
+  return SIZE_SURCHARGES[size.toUpperCase()] || 0;
+}
+
+// Penawaran Paket Bundling Ritel (AOV Booster - Khusus Kaos Grafis)
 export const BUNDLE_DEALS = [
   {
     minQty: 2,
@@ -82,15 +93,16 @@ export const BUNDLE_DEALS = [
 
 /**
  * Hitung diskon bundling otomatis untuk customer ritel
+ * PENTING: Hanya berlaku untuk kaos grafis (non-blank) untuk melindungi margin kaos polos!
  */
-export function calculateBundleDiscount(totalRetailQty, role = 'retail') {
+export function calculateBundleDiscount(graphicQty, role = 'retail') {
   if (role === 'reseller' || role === 'dropship') return 0;
-  if (!totalRetailQty || totalRetailQty < 2) return 0;
+  if (!graphicQty || graphicQty < 2) return 0;
   
-  if (totalRetailQty >= 3) {
-    return (99000 - 85000) * totalRetailQty; // Rp 14.000 hemat per pcs
+  if (graphicQty >= 3) {
+    return (99000 - 85000) * graphicQty; // Rp 14.000 hemat per pcs kaos grafis
   }
-  if (totalRetailQty === 2) {
+  if (graphicQty === 2) {
     return 18000; // Rp 18.000 hemat total (Rp 9.000/pcs)
   }
   return 0;

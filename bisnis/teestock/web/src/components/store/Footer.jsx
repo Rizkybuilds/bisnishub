@@ -11,46 +11,46 @@ export function Footer() {
   const cleanWhatsapp = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
 
   return (
-    <footer className="bg-ts-surface/75 backdrop-blur-xl border-t border-white/[0.08] mt-20 relative">
+    <footer className="bg-[#100F0E] border-t border-white/[0.08] mt-20 relative">
       {/* Guarantees Bar */}
       <div className="border-b border-white/[0.06] py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-ts-terracotta/15 text-ts-terracotta flex items-center justify-center shrink-0 border border-ts-terracotta/30 shadow-glow-terracotta">
+            <div className="w-10 h-10 rounded-xl bg-white/[0.04] text-ts-terracotta flex items-center justify-center shrink-0 border border-white/10">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-white">100% Garmen NSA Asli</h4>
+              <h4 className="text-xs sm:text-sm font-bold text-white uppercase font-mono">100% Garmen NSA</h4>
               <p className="text-xs text-ts-kremMuted mt-0.5">Jaminan keaslian bahan New States Apparel impor resmi.</p>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row items-center md:items-start gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-ts-mustard/15 text-ts-mustard flex items-center justify-center shrink-0 border border-ts-mustard/30 shadow-glow-mustard">
+            <div className="w-10 h-10 rounded-xl bg-white/[0.04] text-ts-mustard flex items-center justify-center shrink-0 border border-white/10">
               <RefreshCw className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-white">Sablon DTF Lentur</h4>
+              <h4 className="text-xs sm:text-sm font-bold text-white uppercase font-mono">Double Press 155°C</h4>
               <p className="text-xs text-ts-kremMuted mt-0.5">Tinta pekat HD raster elastis, tidak retak saat dicuci berulang.</p>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row items-center md:items-start gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-ts-teal/15 text-ts-teal flex items-center justify-center shrink-0 border border-ts-teal/30 shadow-glow-teal">
+            <div className="w-10 h-10 rounded-xl bg-white/[0.04] text-ts-teal flex items-center justify-center shrink-0 border border-white/10">
               <Truck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-white">Pengiriman Cepat H+1</h4>
-              <p className="text-xs text-ts-kremMuted mt-0.5">Packing aman polymailer tebal tahan cuaca + hangtag distro.</p>
+              <h4 className="text-xs sm:text-sm font-bold text-white uppercase font-mono">Kirim Cepat H+1</h4>
+              <p className="text-xs text-ts-kremMuted mt-0.5">Packing aman polymailer doff tahan cuaca + stiker distro.</p>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row items-center md:items-start gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-ts-green/15 text-ts-green flex items-center justify-center shrink-0 border border-ts-green/30 shadow-glow-teal">
+            <div className="w-10 h-10 rounded-xl bg-white/[0.04] text-ts-green flex items-center justify-center shrink-0 border border-white/10">
               <MessageSquare className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-white">Direct WA (0% Fee)</h4>
+              <h4 className="text-xs sm:text-sm font-bold text-white uppercase font-mono">Direct WA (0% Fee)</h4>
               <p className="text-xs text-ts-kremMuted mt-0.5">Konsultasi cepat satuan atau custom partai via WhatsApp.</p>
             </div>
           </div>

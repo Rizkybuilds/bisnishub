@@ -1,6 +1,26 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../services/supabase';
 
+// Whitelist resmi email admin TeeStock (dapat ditambahkan via VITE_ADMIN_EMAILS di .env)
+const DEFAULT_ADMIN_EMAILS = [
+  'admin@teestock.id',
+  'teestock.apparel@gmail.com',
+  'owner@teestock.id'
+];
+
+export function getAdminEmails() {
+  const envEmails = import.meta.env.VITE_ADMIN_EMAILS 
+    ? import.meta.env.VITE_ADMIN_EMAILS.split(',').map(e => e.trim().toLowerCase()) 
+    : [];
+  return [...new Set([...DEFAULT_ADMIN_EMAILS, ...envEmails])];
+}
+
+export function checkIsAdminEmail(email) {
+  if (!email) return false;
+  const clean = email.trim().toLowerCase();
+  return getAdminEmails().includes(clean);
+}
+
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -20,6 +40,10 @@ export function AuthProvider({ children }) {
       return null;
     }
 
+    const currentUser = currentSession?.user;
+    const userEmail = currentUser?.email?.toLowerCase().trim();
+    const isAdminEmail = checkIsAdminEmail(userEmail);
+
     try {
       const { data, error } = await supabase
         .from('ts_user_profiles')
@@ -28,16 +52,16 @@ export function AuthProvider({ children }) {
         .maybeSingle();
 
       if (data) {
-        setProfile(data);
-        return data;
+        const resolved = isAdminEmail ? { ...data, role: 'admin' } : data;
+        setProfile(resolved);
+        return resolved;
       }
 
-      // Jika data profil belum ada di DB (misal trigger belum dibuat di Supabase), buat profil default
-      const currentUser = currentSession?.user;
+      // Jika data profil belum ada di DB, buat profil default (hanya whitelist yang jadi admin)
       const defaultProfile = {
         id: userId,
         full_name: currentUser?.user_metadata?.full_name || currentUser?.user_metadata?.name || currentUser?.email?.split('@')[0] || 'Member',
-        role: currentUser?.email?.toLowerCase().includes('admin') ? 'admin' : 'member',
+        role: isAdminEmail ? 'admin' : 'member',
         avatar_url: currentUser?.user_metadata?.avatar_url || currentUser?.user_metadata?.picture || null,
       };
 
@@ -57,7 +81,7 @@ export function AuthProvider({ children }) {
       const fallback = {
         id: userId,
         full_name: currentSession?.user?.email?.split('@')[0] || 'Member',
-        role: currentSession?.user?.email?.toLowerCase().includes('admin') ? 'admin' : 'member',
+        role: isAdminEmail ? 'admin' : 'member',
       };
       setProfile(fallback);
       return fallback;
@@ -129,21 +153,41 @@ export function AuthProvider({ children }) {
   };
 
   /**
-   * Perbarui data profil pengguna
+   * Perbarui data profil pengguna (dengan sanitasi kolom)
    */
   const updateProfile = async (updates) => {
     if (!user) return { error: new Error('User belum login') };
 
+    // 🛡️ Whitelist kolom yang diizinkan untuk diubah oleh pengguna
+    // Melarang keras injeksi kolom 'role', 'id', dll. dari browser klien
+    const ALLOWED_COLUMNS = [
+      'full_name',
+      'phone',
+      'default_address',
+      'city',
+      'province',
+      'postal_code',
+      'avatar_url'
+    ];
+
+    const sanitized = {};
+    ALLOWED_COLUMNS.forEach(col => {
+      if (updates[col] !== undefined) {
+        sanitized[col] = updates[col];
+      }
+    });
+    sanitized.updated_at = new Date().toISOString();
+
     try {
       const { data, error } = await supabase
         .from('ts_user_profiles')
-        .update({ ...updates, updated_at: new Date().toISOString() })
+        .update(sanitized)
         .eq('id', user.id)
         .select()
         .single();
 
       if (!error && data) {
-        setProfile(data);
+        setProfile(prev => ({ ...prev, ...data }));
       }
       return { data, error };
     } catch (err) {
@@ -165,7 +209,9 @@ export function AuthProvider({ children }) {
   };
 
   // Helper roles
-  const currentRole = profile?.role || (user ? 'member' : 'visitor');
+  const userEmail = user?.email?.toLowerCase().trim();
+  const isAdminEmail = checkIsAdminEmail(userEmail);
+  const currentRole = (isAdminEmail || profile?.role === 'admin') ? 'admin' : (profile?.role || (user ? 'member' : 'visitor'));
   const isAdmin = currentRole === 'admin';
   const isPartner = currentRole === 'partner';
   const isMember = !!user;

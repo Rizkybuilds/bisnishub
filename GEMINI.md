@@ -41,6 +41,17 @@ aktifkan skill yang sesuai.
 | 💰 CFO | `cfo` | Keuangan, pricing, budgeting |
 | 📢 CMO | `cmo` | Marketing, branding, growth |
 
+## Execution & Automation Engine Skills
+
+Tersedia 4 skill mesin eksekusi teknis dan otomatisasi yang dapat diaktifkan:
+
+| Mesin / Engine | Skill | Fokus |
+|---|---|---|
+| ☁️ Database & RLS | `supabase-architect` | Pemodelan PostgreSQL, RLS multi-bisnis, views margin, webhooks |
+| 📦 Supply & Fulfillment | `business-ops-engine` | Inventori hibrida 2-tier, Kanban antrean, label thermal A6, audit defect |
+| 💬 WhatsApp Automation | `whatsapp-automation` | Pesan transaksional, QRIS kode unik, custom quoter, webhook gateway |
+| 🖨️ DTF & Pre-Press | `dtf-print-ops` | Gang sheet roll 58 cm, file pre-flight 300 DPI, SOP heat press 155°C |
+
 ### Cross-Referral
 
 Jika topik diskusi menyentuh area di luar keahlian peran yang sedang aktif,

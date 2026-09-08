@@ -10,6 +10,11 @@ export function MobileBottomNav() {
   const isBlankActive = location.pathname === '/polos' || (location.pathname === '/katalog' && location.search.includes('series=blank'));
   const isCatalogActive = location.pathname === '/katalog' && !location.search.includes('series=blank');
 
+  // Sembunyikan Bottom Nav di halaman detail produk (/produk/:sku) agar StickyMobileBuyBar leluasa dan tidak menumpuk layar
+  if (location.pathname.startsWith('/produk/')) {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-40 md:hidden pointer-events-none">
       <nav className="pointer-events-auto max-w-md mx-auto bg-ts-surface/90 backdrop-blur-2xl border border-white/[0.12] rounded-2xl shadow-glass-card shadow-glass-inset px-2 py-1.5">
