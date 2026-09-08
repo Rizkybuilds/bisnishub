@@ -28,7 +28,6 @@ import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { SizeCalculatorModal } from '../../components/store/SizeCalculatorModal';
-import { StickyMobileBuyBar } from '../../components/store/StickyMobileBuyBar';
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { SEOHead } from '../../components/common/SEOHead';
@@ -130,7 +129,6 @@ export function ProductDetailPage() {
   const [qty, setQty] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
-  const [showStickyBar, setShowStickyBar] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   // Dynamic image state with fallback
@@ -161,18 +159,43 @@ export function ProductDetailPage() {
     }
   }, [selectedColor, gallery, defaultImage]);
 
-  // Handle scroll for sticky mobile action bar
+  // Image handlers for thumbnail & lightbox navigation
+  const handleSelectThumbnail = (idx) => {
+    setActiveGalleryIndex(idx);
+    if (gallery[idx]) {
+      setPreviewImg(gallery[idx].url);
+    }
+  };
+
+  const handlePrevImage = (e) => {
+    if (e?.stopPropagation) e.stopPropagation();
+    const len = gallery.length || 1;
+    const newIdx = (activeGalleryIndex - 1 + len) % len;
+    handleSelectThumbnail(newIdx);
+  };
+
+  const handleNextImage = (e) => {
+    if (e?.stopPropagation) e.stopPropagation();
+    const len = gallery.length || 1;
+    const newIdx = (activeGalleryIndex + 1) % len;
+    handleSelectThumbnail(newIdx);
+  };
+
+  // Lightbox keyboard navigation (Escape to close, Arrow keys to navigate) - Must be before early returns
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 420) {
-        setShowStickyBar(true);
-      } else {
-        setShowStickyBar(false);
+    if (!isLightboxOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setIsLightboxOpen(false);
+      if (e.key === 'ArrowLeft' && gallery.length > 1) {
+        handlePrevImage();
+      }
+      if (e.key === 'ArrowRight' && gallery.length > 1) {
+        handleNextImage();
       }
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLightboxOpen, gallery.length, activeGalleryIndex]);
 
   // Dynamic Hybrid Stock & Fulfillment SLA (Studio Buffer vs Vendor JIT)
   const garmentIdentifier = isBlank ? (product?.name || '') : (selectedGarment?.name || selectedGarmentKey);
@@ -253,41 +276,6 @@ export function ProductDetailPage() {
       "availability": "https://schema.org/InStock"
     }
   };
-
-  const handleSelectThumbnail = (idx) => {
-    setActiveGalleryIndex(idx);
-    if (gallery[idx]) {
-      setPreviewImg(gallery[idx].url);
-    }
-  };
-
-  const handlePrevImage = (e) => {
-    if (e?.stopPropagation) e.stopPropagation();
-    const newIdx = (activeGalleryIndex - 1 + gallery.length) % gallery.length;
-    handleSelectThumbnail(newIdx);
-  };
-
-  const handleNextImage = (e) => {
-    if (e?.stopPropagation) e.stopPropagation();
-    const newIdx = (activeGalleryIndex + 1) % gallery.length;
-    handleSelectThumbnail(newIdx);
-  };
-
-  // Lightbox keyboard navigation (Escape to close, Arrow keys to navigate)
-  useEffect(() => {
-    if (!isLightboxOpen) return;
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setIsLightboxOpen(false);
-      if (e.key === 'ArrowLeft' && gallery.length > 1) {
-        handlePrevImage();
-      }
-      if (e.key === 'ArrowRight' && gallery.length > 1) {
-        handleNextImage();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isLightboxOpen, gallery.length, activeGalleryIndex]);
 
   const handleColorChange = (colName) => {
     setSelectedColor(colName);
@@ -946,19 +934,6 @@ export function ProductDetailPage() {
         onClose={() => setIsSizeModalOpen(false)}
         onSelectSize={(sz) => setSelectedSize(sz)}
         currentSize={selectedSize}
-      />
-
-      {/* Sticky Action Bar on Mobile Viewport */}
-      <StickyMobileBuyBar
-        product={product}
-        selectedColor={selectedColor}
-        selectedSize={selectedSize}
-        price={currentPrice}
-        onAddToCart={handleAddToCart}
-        onBuyNow={handleBuyNow}
-        onBuyWhatsapp={handleBuyWhatsapp}
-        isAdded={isAdded}
-        isVisible={showStickyBar}
       />
 
       {/* Product Image Fullscreen Lightbox Modal */}
