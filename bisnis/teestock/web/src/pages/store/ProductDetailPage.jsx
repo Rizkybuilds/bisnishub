@@ -218,7 +218,7 @@ export function ProductDetailPage() {
     },
     "offers": {
       "@type": "Offer",
-      "url": `https://teestock.vercel.app/produk/${product.sku}`,
+      "url": `https://teestockapparel.vercel.app/produk/${product.sku}`,
       "priceCurrency": "IDR",
       "price": currentPrice,
       "priceValidUntil": "2027-12-31",

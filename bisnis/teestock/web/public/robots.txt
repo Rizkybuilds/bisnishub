@@ -1,6 +1,6 @@
 # ==========================================
 # TeeStock Apparel — robots.txt
-# Domain: https://teestock.vercel.app
+# Domain: https://teestockapparel.vercel.app
 # ==========================================
 
 User-agent: *
@@ -21,4 +21,4 @@ Disallow: /akun/*
 Disallow: /keranjang
 
 # Sitemap
-Sitemap: https://teestock.vercel.app/sitemap.xml
+Sitemap: https://teestockapparel.vercel.app/sitemap.xml

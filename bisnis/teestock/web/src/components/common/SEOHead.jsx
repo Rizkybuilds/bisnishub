@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 
-const SITE_URL = 'https://teestock.vercel.app';
+const SITE_URL = typeof window !== 'undefined' && window.location.origin
+  ? window.location.origin
+  : (import.meta.env.VITE_SITE_URL || 'https://teestockapparel.vercel.app');
 const DEFAULT_TITLE = 'TeeStock Apparel | Curated Merch & Kaos NSA 24s Heavyweight Original';
 const DEFAULT_DESCRIPTION = 'Brand apparel kurasi & studio sablon DTF cepat. Menggunakan garmen New States Apparel (NSA) Heavyweight 24s & Softstyle 30s original tanpa jahitan samping. Siap kirim ritel, dropship, dan custom satuan.';
 const DEFAULT_IMAGE = `${SITE_URL}/logo-teestock.svg`;

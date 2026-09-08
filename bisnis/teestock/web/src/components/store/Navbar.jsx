@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ShoppingBag, Search, ShieldCheck, Sparkles, User, Package, Zap, LogOut, ChevronDown, Users } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
@@ -9,9 +9,30 @@ export function Navbar() {
   const { totalCartItems } = useStore();
   const { isAuthenticated, user, profile, role, isAdmin, openAuthModal, signOut } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
   const location = useLocation();
   const isBlankActive = location.pathname === '/polos' || (location.pathname === '/katalog' && location.search.includes('series=blank'));
   const isGraphicActive = location.pathname === '/katalog' && !location.search.includes('series=blank');
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setUserMenuOpen(false);
+    };
+
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [userMenuOpen]);
 
   return (
     <header className="sticky top-0 z-40 w-full transition-all">
@@ -151,10 +172,14 @@ export function Navbar() {
 
             {/* Auth / Profile Area */}
             {isAuthenticated ? (
-              <div className="relative">
+              <div className="relative" ref={userMenuRef}>
                 <button
+                  type="button"
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-ts-krem transition-all shadow-glass-inset"
+                  aria-expanded={userMenuOpen}
+                  aria-haspopup="menu"
+                  aria-label="Buka menu akun pengguna"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-ts-krem transition-all shadow-glass-inset cursor-pointer"
                 >
                   <div className="w-5 h-5 rounded-full bg-ts-terracotta/30 text-ts-terracotta flex items-center justify-center text-[10px] font-mono">
                     {profile?.full_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
@@ -162,11 +187,13 @@ export function Navbar() {
                   <span className="max-w-[80px] sm:max-w-[100px] truncate hidden sm:inline">
                     {profile?.full_name || user?.email?.split('@')[0]}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-ts-muted" />
+                  <ChevronDown className={`w-3 h-3 text-ts-muted transition-transform duration-150 ${userMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {userMenuOpen && (
                   <div 
+                    role="menu"
+                    aria-label="Menu pengguna"
                     className="absolute right-0 mt-2 w-52 rounded-2xl bg-ts-surface border border-white/[0.12] p-2 shadow-xl z-50 text-xs space-y-1 animate-in fade-in zoom-in-95"
                     onClick={() => setUserMenuOpen(false)}
                   >
