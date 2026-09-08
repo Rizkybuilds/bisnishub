@@ -52,6 +52,7 @@ export function CustomOrderPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notes, setNotes] = useState('');
   const [submittedOrder, setSubmittedOrder] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
 
   const selectedGarment = GARMENT_TYPES[garmentKey] || GARMENT_TYPES.nsa_softstyle_30s;
   const selectedPrint = DTF_PRINT_SIZES.find(p => p.id === printSizeId) || DTF_PRINT_SIZES[2];
@@ -108,12 +109,30 @@ export function CustomOrderPage() {
   const estTotal = estPricePerPcs * qty;
 
   const handleSubmitOrder = async (e) => {
-    e.preventDefault();
-    if (!name.trim() || !phone.trim()) {
-      alert("Mohon lengkapi nama dan nomor WhatsApp Anda");
+    if (e && e.preventDefault) e.preventDefault();
+    const errors = {};
+
+    if (!name.trim()) {
+      errors.name = 'Nama lengkap pemesan wajib diisi.';
+    }
+    if (!phone.trim()) {
+      errors.phone = 'Nomor WhatsApp wajib diisi.';
+    } else if (phone.trim().replace(/\D/g, '').length < 8) {
+      errors.phone = 'Nomor WhatsApp minimal 8 digit.';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      const firstField = Object.keys(errors)[0];
+      const targetEl = document.getElementById(firstField === 'name' ? 'customName' : 'customPhone');
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetEl.focus?.();
+      }
       return;
     }
 
+    setFormErrors({});
     setIsSubmitting(true);
     try {
       const orderNumber = `CST-${Date.now().toString().slice(-6)}`;
@@ -415,17 +434,30 @@ export function CustomOrderPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <Input
+                  id="customName"
                   label="Nama Lengkap"
                   placeholder="Nama pemesan"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  error={formErrors.name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (formErrors.name) setFormErrors(prev => ({ ...prev, name: null }));
+                  }}
                   required
                 />
                 <Input
+                  id="customPhone"
                   label="Nomor WhatsApp"
                   placeholder="0812-xxxx-xxxx"
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  error={formErrors.phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    if (formErrors.phone) setFormErrors(prev => ({ ...prev, phone: null }));
+                  }}
                   required
                 />
               </div>

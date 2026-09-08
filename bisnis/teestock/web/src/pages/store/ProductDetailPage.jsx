@@ -18,7 +18,9 @@ import {
   ChevronRight,
   ChevronLeft,
   Building2, 
-  Zap 
+  Zap,
+  Maximize2,
+  X
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
@@ -129,6 +131,7 @@ export function ProductDetailPage() {
   const [isAdded, setIsAdded] = useState(false);
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   // Dynamic image state with fallback
   const defaultImage = product ? (product.filePath || product.file_path) : '';
@@ -259,16 +262,32 @@ export function ProductDetailPage() {
   };
 
   const handlePrevImage = (e) => {
-    e.stopPropagation();
+    if (e?.stopPropagation) e.stopPropagation();
     const newIdx = (activeGalleryIndex - 1 + gallery.length) % gallery.length;
     handleSelectThumbnail(newIdx);
   };
 
   const handleNextImage = (e) => {
-    e.stopPropagation();
+    if (e?.stopPropagation) e.stopPropagation();
     const newIdx = (activeGalleryIndex + 1) % gallery.length;
     handleSelectThumbnail(newIdx);
   };
+
+  // Lightbox keyboard navigation (Escape to close, Arrow keys to navigate)
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setIsLightboxOpen(false);
+      if (e.key === 'ArrowLeft' && gallery.length > 1) {
+        handlePrevImage();
+      }
+      if (e.key === 'ArrowRight' && gallery.length > 1) {
+        handleNextImage();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLightboxOpen, gallery.length, activeGalleryIndex]);
 
   const handleColorChange = (colName) => {
     setSelectedColor(colName);
@@ -330,7 +349,14 @@ export function ProductDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         {/* Left Column: Product Showcase & Image (5 Cols) */}
         <div className="lg:col-span-6 space-y-4">
-          <div className="aspect-square bg-ts-surface/80 border border-white/[0.09] rounded-3xl overflow-hidden shadow-glass-card shadow-glass-inset relative group">
+          <div 
+            className="aspect-square bg-ts-surface/80 border border-white/[0.09] rounded-3xl overflow-hidden shadow-glass-card shadow-glass-inset relative group cursor-zoom-in"
+            onClick={() => setIsLightboxOpen(true)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsLightboxOpen(true); } }}
+            aria-label="Perbesar foto produk untuk melihat detail sablon dan serat kain"
+          >
             <img
               src={previewImg}
               alt={`${product.name} - ${selectedColor}`}
@@ -339,18 +365,18 @@ export function ProductDetailPage() {
             />
             
             {/* Top SKU Chip */}
-            <div className="absolute top-4 left-4 px-3 py-1 rounded-xl bg-ts-hitam/85 backdrop-blur-md border border-white/10 font-mono text-xs font-bold text-ts-terracotta shadow-md">
+            <div className="absolute top-4 left-4 px-3 py-1 rounded-xl bg-ts-hitam/85 backdrop-blur-md border border-white/10 font-mono text-xs font-bold text-ts-terracotta shadow-md pointer-events-none">
               {product.sku}
             </div>
 
             {/* Top Right Original NSA Seal */}
             {isBlank ? (
-              <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 shadow-md">
+              <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 shadow-md pointer-events-none">
                 <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
                 <span>100% Original NSA</span>
               </div>
             ) : (
-              <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 shadow-md">
+              <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 shadow-md pointer-events-none">
                 <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
                 <span>DTF HD Raster</span>
               </div>
@@ -363,7 +389,7 @@ export function ProductDetailPage() {
                   type="button"
                   onClick={handlePrevImage}
                   aria-label="Foto produk sebelumnya"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 min-w-[44px] min-h-[44px] rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 min-w-[44px] min-h-[44px] rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer z-10"
                   title="Foto sebelumnya"
                 >
                   <ChevronLeft className="w-5 h-5" />
@@ -372,7 +398,7 @@ export function ProductDetailPage() {
                   type="button"
                   onClick={handleNextImage}
                   aria-label="Foto produk selanjutnya"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 min-w-[44px] min-h-[44px] rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 min-w-[44px] min-h-[44px] rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer z-10"
                   title="Foto selanjutnya"
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -380,8 +406,8 @@ export function ProductDetailPage() {
               </>
             )}
 
-            {/* Bottom Bar: Active Color Pill & Photo Label */}
-            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none gap-2">
+            {/* Bottom Bar: Active Color Pill, Photo Label & Zoom Button */}
+            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none gap-2 z-10">
               <div className="px-3 py-1.5 rounded-xl bg-ts-hitam/85 backdrop-blur-md border border-white/15 text-xs font-semibold text-white flex items-center gap-2 shadow-lg">
                 <span
                   className="w-3 h-3 rounded-full border border-white/40 shrink-0"
@@ -390,11 +416,25 @@ export function ProductDetailPage() {
                 <span className="truncate max-w-[120px]">Warna: <strong className="text-white">{selectedColor}</strong></span>
               </div>
 
-              {gallery[activeGalleryIndex]?.label && (
-                <div className="px-2.5 py-1 rounded-lg bg-ts-hitam/85 backdrop-blur-md border border-white/15 text-[10px] font-mono text-ts-krem font-medium shadow-md truncate max-w-[170px]">
-                  {gallery[activeGalleryIndex].label}
-                </div>
-              )}
+              <div className="flex items-center gap-1.5 pointer-events-auto">
+                {gallery[activeGalleryIndex]?.label && (
+                  <div className="px-2.5 py-1 rounded-lg bg-ts-hitam/85 backdrop-blur-md border border-white/15 text-[10px] font-mono text-ts-krem font-medium shadow-md truncate max-w-[130px] hidden xs:block">
+                    {gallery[activeGalleryIndex].label}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsLightboxOpen(true);
+                  }}
+                  aria-label="Perbesar foto produk"
+                  className="p-2 min-w-[36px] min-h-[36px] rounded-xl bg-ts-hitam/85 hover:bg-ts-hitam text-ts-krem hover:text-white backdrop-blur-md border border-white/15 transition shadow-md flex items-center justify-center cursor-pointer"
+                  title="Perbesar foto (DTF Raster & Serat Kain)"
+                >
+                  <Maximize2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           </div>
 
@@ -666,7 +706,7 @@ export function ProductDetailPage() {
 
             {/* Color Swatch Circle Grid */}
             <div className="p-3.5 bg-white/[0.02] border border-white/[0.08] rounded-2xl space-y-2">
-              <div className="flex flex-wrap items-center gap-2.5 max-h-48 overflow-y-auto pr-1">
+              <div className="flex flex-wrap items-center gap-2.5">
                 {filteredColors.map(colName => {
                   const hex = COLOR_HEX_MAP[colName] || '#333333';
                   const isSelected = selectedColor === colName;
@@ -920,6 +960,105 @@ export function ProductDetailPage() {
         isAdded={isAdded}
         isVisible={showStickyBar}
       />
+
+      {/* Product Image Fullscreen Lightbox Modal */}
+      {isLightboxOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between p-4 sm:p-6 animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Tampilan penuh foto produk"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          {/* Lightbox Header */}
+          <div className="flex items-center justify-between z-10 w-full max-w-6xl mx-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs text-ts-terracotta font-bold">{product.sku}</span>
+                <span className="text-white/30">•</span>
+                <span className="text-xs text-ts-kremMuted">Warna: <strong className="text-white">{selectedColor}</strong></span>
+              </div>
+              <h3 className="text-sm sm:text-base font-bold text-white truncate max-w-xs sm:max-w-md">
+                {product.name}
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {gallery.length > 1 && (
+                <span className="text-xs font-mono text-ts-kremMuted hidden sm:inline">
+                  {activeGalleryIndex + 1} / {gallery.length}
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => setIsLightboxOpen(false)}
+                aria-label="Tutup tampilan penuh"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Lightbox Center Image with Nav Buttons */}
+          <div 
+            className="relative flex-1 flex items-center justify-center w-full max-w-6xl mx-auto my-2 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {gallery.length > 1 && (
+              <button
+                type="button"
+                onClick={handlePrevImage}
+                aria-label="Foto sebelumnya"
+                className="absolute left-2 sm:left-4 z-10 w-12 h-12 min-w-[44px] min-h-[44px] rounded-full bg-ts-hitam/80 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/20 transition cursor-pointer shadow-lg"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+            )}
+
+            <img
+              src={previewImg}
+              alt={`${product.name} - ${selectedColor}`}
+              className="max-h-[72vh] sm:max-h-[78vh] max-w-full object-contain rounded-2xl shadow-2xl border border-white/10 select-none"
+            />
+
+            {gallery.length > 1 && (
+              <button
+                type="button"
+                onClick={handleNextImage}
+                aria-label="Foto selanjutnya"
+                className="absolute right-2 sm:right-4 z-10 w-12 h-12 min-w-[44px] min-h-[44px] rounded-full bg-ts-hitam/80 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/20 transition cursor-pointer shadow-lg"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            )}
+          </div>
+
+          {/* Lightbox Footer: Thumbnails Strip */}
+          {gallery.length > 1 && (
+            <div 
+              className="flex items-center justify-center gap-2 overflow-x-auto py-2 z-10 w-full max-w-xl mx-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {gallery.map((item, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleSelectThumbnail(idx)}
+                  className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden border transition shrink-0 cursor-pointer ${
+                    activeGalleryIndex === idx
+                      ? 'ring-2 ring-ts-terracotta border-transparent scale-105'
+                      : 'border-white/20 opacity-60 hover:opacity-100'
+                  }`}
+                  title={item.label}
+                >
+                  <img src={item.url} alt={item.label} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,18 +1,39 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { ShoppingBag, Search, ShieldCheck, Sparkles, User, Package, Zap, LogOut, ChevronDown, Users } from 'lucide-react';
+import { ShoppingBag, Search, ShieldCheck, Sparkles, User, Package, Zap, LogOut, ChevronDown, Users, Menu, X, Palette, HeartHandshake, Truck, HelpCircle } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { TeeStockLogo } from '../common/TeeStockLogo';
+import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 
 export function Navbar() {
-  const { totalCartItems } = useStore();
+  const { totalCartItems, storeSettings } = useStore();
   const { isAuthenticated, user, profile, role, isAdmin, openAuthModal, signOut } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const userMenuRef = useRef(null);
   const location = useLocation();
   const isBlankActive = location.pathname === '/polos' || (location.pathname === '/katalog' && location.search.includes('series=blank'));
   const isGraphicActive = location.pathname === '/katalog' && !location.search.includes('series=blank');
+
+  const cleanWhatsapp = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
+
+  // Auto close drawer when route changes
+  useEffect(() => {
+    setMobileDrawerOpen(false);
+    setUserMenuOpen(false);
+  }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setUserMenuOpen(false);
+        setMobileDrawerOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -257,9 +278,258 @@ export function Navbar() {
                 <span>Masuk</span>
               </button>
             )}
+
+            {/* Mobile Hamburger Drawer Trigger */}
+            <button
+              type="button"
+              onClick={() => setMobileDrawerOpen(true)}
+              className="md:hidden p-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.08] border border-white/[0.08] transition-all cursor-pointer"
+              title="Buka Menu"
+              aria-label="Buka Menu Navigasi"
+              aria-expanded={mobileDrawerOpen}
+            >
+              <Menu className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-ts-krem" />
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Slide-Over Navigation Drawer */}
+      {mobileDrawerOpen && (
+        <div className="fixed inset-0 z-50 md:hidden animate-in fade-in duration-200">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setMobileDrawerOpen(false)}
+            aria-hidden="true"
+          />
+
+          {/* Drawer Sheet */}
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu Navigasi Mobile"
+            className="fixed inset-y-0 right-0 w-full max-w-xs bg-[#141312] border-l border-white/[0.12] p-5 shadow-2xl flex flex-col justify-between overflow-y-auto z-10 animate-in slide-in-from-right duration-300"
+          >
+            <div className="space-y-6">
+              {/* Drawer Top Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+                <TeeStockLogo size="sm" badge="APPAREL" />
+                <button
+                  type="button"
+                  onClick={() => setMobileDrawerOpen(false)}
+                  className="p-1.5 rounded-xl text-ts-muted hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
+                  aria-label="Tutup Menu"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Navigation Links Group */}
+              <div className="space-y-4 text-xs">
+                {/* Section 1: Belanja Ritel */}
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-ts-muted font-bold block mb-1.5 px-1">
+                    Koleksi Apparel
+                  </span>
+                  <div className="space-y-1">
+                    <NavLink
+                      to="/"
+                      end
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
+                          isActive
+                            ? 'bg-ts-terracotta/20 text-white font-bold border border-ts-terracotta/30'
+                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                        }`
+                      }
+                    >
+                      <span>Beranda Utama</span>
+                      <ChevronDown className="-rotate-90 w-3.5 h-3.5 opacity-50" />
+                    </NavLink>
+
+                    <NavLink
+                      to="/katalog"
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className={() =>
+                        `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
+                          isGraphicActive
+                            ? 'bg-ts-terracotta/20 text-white font-bold border border-ts-terracotta/30'
+                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                        }`
+                      }
+                    >
+                      <span className="flex items-center gap-2">
+                        <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
+                        <span>Katalog Desain Grafis</span>
+                      </span>
+                      <span className="text-[9px] font-mono font-bold text-ts-mustard bg-ts-mustard/15 px-1.5 py-0.5 rounded">
+                        Drop #01
+                      </span>
+                    </NavLink>
+
+                    <NavLink
+                      to="/polos"
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className={() =>
+                        `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
+                          isBlankActive
+                            ? 'bg-ts-teal/20 text-white font-bold border border-ts-teal/30'
+                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                        }`
+                      }
+                    >
+                      <span className="flex items-center gap-2">
+                        <Package className="w-3.5 h-3.5 text-ts-teal" />
+                        <span>Kaos Polos NSA Original</span>
+                      </span>
+                      <span className="text-[9px] font-mono font-bold text-teal-300 bg-ts-teal/20 px-1.5 py-0.5 rounded">
+                        12 Model
+                      </span>
+                    </NavLink>
+                  </div>
+                </div>
+
+                {/* Section 2: Layanan Studio & Kemitraan */}
+                <div className="pt-2 border-t border-white/[0.06]">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-ts-muted font-bold block mb-1.5 px-1">
+                    Layanan Studio &amp; B2B
+                  </span>
+                  <div className="space-y-1">
+                    <NavLink
+                      to="/custom-order"
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
+                          isActive
+                            ? 'bg-ts-terracotta/20 text-white font-bold border border-ts-terracotta/30'
+                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                        }`
+                      }
+                    >
+                      <span className="flex items-center gap-2">
+                        <Palette className="w-3.5 h-3.5 text-ts-terracotta" />
+                        <span>TeeStock Atelier (Custom Kaos)</span>
+                      </span>
+                      <span className="text-[9px] font-mono font-bold text-ts-terracotta bg-ts-terracotta/20 px-1.5 py-0.5 rounded">
+                        Satuan / Komunitas
+                      </span>
+                    </NavLink>
+
+                    <NavLink
+                      to="/partner"
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
+                          isActive
+                            ? 'bg-ts-mustard/20 text-white font-bold border border-ts-mustard/30'
+                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                        }`
+                      }
+                    >
+                      <span className="flex items-center gap-2">
+                        <Users className="w-3.5 h-3.5 text-ts-mustard" />
+                        <span>Kemitraan Dropship &amp; Reseller</span>
+                      </span>
+                      <span className="text-[9px] font-mono font-bold text-ts-mustard bg-ts-mustard/20 px-1.5 py-0.5 rounded">
+                        Margin 37-48%
+                      </span>
+                    </NavLink>
+                  </div>
+                </div>
+
+                {/* Section 3: Bantuan & Lacak */}
+                <div className="pt-2 border-t border-white/[0.06]">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-ts-muted font-bold block mb-1.5 px-1">
+                    Bantuan &amp; Transparansi
+                  </span>
+                  <div className="space-y-1">
+                    <NavLink
+                      to="/tracking"
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
+                          isActive
+                            ? 'bg-white/[0.1] text-white font-bold border border-white/20'
+                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                        }`
+                      }
+                    >
+                      <span className="flex items-center gap-2">
+                        <Truck className="w-3.5 h-3.5 text-ts-terracotta" />
+                        <span>Lacak Pesanan &amp; Resi</span>
+                      </span>
+                    </NavLink>
+
+                    <NavLink
+                      to="/care"
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
+                          isActive
+                            ? 'bg-white/[0.1] text-white font-bold border border-white/20'
+                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                        }`
+                      }
+                    >
+                      <span className="flex items-center gap-2">
+                        <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
+                        <span>Garansi &amp; Size Guide NSA</span>
+                      </span>
+                    </NavLink>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Drawer Footer Actions */}
+            <div className="pt-4 border-t border-white/[0.08] space-y-2.5">
+              <a
+                href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Halo TeeStock! Mau konsultasi pemesanan apparel NSA.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-2.5 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-emerald-300 font-bold text-xs flex items-center justify-center gap-2 transition-all"
+              >
+                <span>WhatsApp Customer Support</span>
+              </a>
+
+              {isAuthenticated ? (
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-7 h-7 rounded-lg bg-ts-terracotta/30 text-ts-terracotta font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                      {profile?.full_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-white truncate">{profile?.full_name || 'Member'}</p>
+                      <span className="text-[10px] text-ts-muted font-mono">{role}</span>
+                    </div>
+                  </div>
+                  <Link
+                    to="/akun"
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className="text-xs text-ts-terracotta font-bold hover:underline px-2"
+                  >
+                    Profil &rarr;
+                  </Link>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileDrawerOpen(false);
+                    openAuthModal();
+                  }}
+                  className="w-full py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-ts-krem font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
+                >
+                  <User className="w-3.5 h-3.5 text-ts-terracotta" />
+                  <span>Masuk ke Akun Saya</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

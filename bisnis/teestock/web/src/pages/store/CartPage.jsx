@@ -27,6 +27,7 @@ export function CartPage() {
   const [courier, setCourier] = useState('J&T Express');
   const [orderComplete, setOrderComplete] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
   // 3-digit unique code for manual QRIS verification (101 - 999)
   const [uniqueCode] = useState(() => Math.floor(100 + Math.random() * 899));
@@ -123,12 +124,39 @@ export function CartPage() {
   };
 
   const handleCheckout = async (e) => {
-    e.preventDefault();
-    if (!customerName.trim() || !phone.trim() || !city.trim() || !subdistrict.trim() || !address.trim()) {
-      alert("Mohon lengkapi nama penerima, nomor WhatsApp, kota, kecamatan, dan alamat pengiriman.");
+    if (e && e.preventDefault) e.preventDefault();
+    const errors = {};
+
+    if (!customerName.trim()) {
+      errors.customerName = 'Nama penerima wajib diisi.';
+    }
+    if (!phone.trim()) {
+      errors.phone = 'Nomor WhatsApp wajib diisi.';
+    } else if (phone.trim().replace(/\D/g, '').length < 8) {
+      errors.phone = 'Nomor WhatsApp minimal 8 digit.';
+    }
+    if (!city.trim()) {
+      errors.city = 'Kota / Kabupaten pengiriman wajib diisi.';
+    }
+    if (!subdistrict.trim()) {
+      errors.subdistrict = 'Kecamatan wajib diisi.';
+    }
+    if (!address.trim()) {
+      errors.address = 'Alamat jalan & detail rumah wajib diisi.';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      const firstErrorField = Object.keys(errors)[0];
+      const targetElement = document.getElementById(firstErrorField);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetElement.focus?.();
+      }
       return;
     }
 
+    setFormErrors({});
     setIsSubmitting(true);
     try {
       const orderId = `WEB-${Date.now().toString().slice(-6)}`;
@@ -273,7 +301,7 @@ export function CartPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 pb-32 md:pb-16 space-y-8">
       <div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Troli &amp; Pengiriman Pesanan</h1>
         <p className="text-xs text-ts-kremMuted mt-1">Periksa kembali item pesanan dan lengkapi alamat penerima.</p>
@@ -419,40 +447,64 @@ export function CartPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <Input
+                id="customerName"
                 label="Nama Lengkap Penerima"
                 placeholder="Contoh: Budi Santoso"
                 value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
+                error={formErrors.customerName}
+                onChange={(e) => {
+                  setCustomerName(e.target.value);
+                  if (formErrors.customerName) setFormErrors(prev => ({ ...prev, customerName: null }));
+                }}
                 required
               />
               <Input
+                id="phone"
                 label="Nomor WhatsApp"
                 placeholder="0812-xxxx-xxxx"
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                error={formErrors.phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  if (formErrors.phone) setFormErrors(prev => ({ ...prev, phone: null }));
+                }}
                 required
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <Input
+                id="city"
                 label="Kota / Kabupaten"
                 placeholder="Contoh: Bandung / Surabaya / Medan"
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
+                error={formErrors.city}
+                onChange={(e) => {
+                  setCity(e.target.value);
+                  if (formErrors.city) setFormErrors(prev => ({ ...prev, city: null }));
+                }}
                 required
               />
               <Input
+                id="subdistrict"
                 label="Kecamatan"
                 placeholder="Contoh: Coblong / Sukajadi"
                 value={subdistrict}
-                onChange={(e) => setSubdistrict(e.target.value)}
+                error={formErrors.subdistrict}
+                onChange={(e) => {
+                  setSubdistrict(e.target.value);
+                  if (formErrors.subdistrict) setFormErrors(prev => ({ ...prev, subdistrict: null }));
+                }}
                 required
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <Select
+                id="shippingZone"
                 label="Wilayah Pengiriman (Zona Tarif Ongkir)"
                 value={shippingZone}
                 onChange={(e) => setShippingZone(e.target.value)}
@@ -464,6 +516,7 @@ export function CartPage() {
                 ))}
               </Select>
               <Select
+                id="courier"
                 label="Pilihan Kurir Rekomendasi"
                 value={courier}
                 onChange={(e) => setCourier(e.target.value)}
@@ -476,14 +529,30 @@ export function CartPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-white mb-1.5">Alamat Jalan &amp; Detail Rumah</label>
+              <label htmlFor="address" className="block text-xs font-bold text-ts-krem/90 mb-1.5">
+                Alamat Jalan &amp; Detail Rumah
+              </label>
               <textarea
+                id="address"
                 placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, patokan lokasi..."
                 value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                onChange={(e) => {
+                  setAddress(e.target.value);
+                  if (formErrors.address) setFormErrors(prev => ({ ...prev, address: null }));
+                }}
                 required
-                className="w-full bg-ts-hitam/80 border border-white/[0.1] rounded-2xl p-3 text-xs text-white focus:outline-none focus:border-ts-terracotta h-20"
+                aria-invalid={!!formErrors.address}
+                className={`w-full bg-ts-hitam/80 border ${
+                  formErrors.address
+                    ? 'border-red-500/80 focus:border-red-500 focus:ring-red-500/50'
+                    : 'border-white/[0.1] focus:border-ts-terracotta focus:ring-ts-terracotta'
+                } rounded-2xl p-3 text-xs text-white placeholder:text-[#9A968D] focus:outline-none focus:ring-1 transition-colors h-20`}
               />
+              {formErrors.address && (
+                <p role="alert" className="text-[11px] text-red-400 font-medium mt-1 animate-in fade-in duration-200">
+                  {formErrors.address}
+                </p>
+              )}
             </div>
           </form>
         </div>
@@ -685,6 +754,31 @@ export function CartPage() {
               <span>Checkout aman langsung terhubung ke admin WhatsApp</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile Sticky Checkout Action Bar */}
+      <div className="fixed bottom-0 inset-x-0 z-30 p-3 bg-[#141312]/95 backdrop-blur-xl border-t border-white/[0.12] shadow-2xl md:hidden">
+        <div className="max-w-md mx-auto flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <span className="text-[10px] text-ts-muted uppercase font-mono block">Total Tagihan:</span>
+            <div className="font-mono text-base font-black text-ts-green leading-tight truncate">
+              {formatRupiah(grandTotal)}
+            </div>
+            <span className="text-[9px] text-ts-mustard font-mono">Termasuk kode unik</span>
+          </div>
+
+          <Button
+            type="submit"
+            form="checkoutForm"
+            variant="glow"
+            size="md"
+            className="px-5 py-2.5 text-xs font-bold shrink-0 shadow-glow-terracotta"
+            icon={isSubmitting ? Loader2 : ArrowRight}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Memproses...' : 'Bayar Sekarang'}
+          </Button>
         </div>
       </div>
     </div>

@@ -50,14 +50,37 @@ export function PartnerPage() {
   const [formChannel, setFormChannel] = useState('Shopee & TikTok Shop');
   const [submitting, setSubmitting] = useState(false);
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
+  const [partnerFormErrors, setPartnerFormErrors] = useState({});
 
   const handleSubmitApplication = async (e) => {
-    e.preventDefault();
-    if (!formFullName.trim() || !formPhone.trim() || !formBrandName.trim()) {
-      alert("Mohon lengkapi nama, nomor WhatsApp, dan nama toko/brand.");
+    if (e && e.preventDefault) e.preventDefault();
+    const errors = {};
+
+    if (!formFullName.trim()) {
+      errors.fullName = 'Nama lengkap wajib diisi.';
+    }
+    if (!formPhone.trim()) {
+      errors.phone = 'Nomor WhatsApp wajib diisi.';
+    } else if (formPhone.trim().replace(/\D/g, '').length < 8) {
+      errors.phone = 'Nomor WhatsApp minimal 8 digit.';
+    }
+    if (!formBrandName.trim()) {
+      errors.brandName = 'Nama toko / brand wajib diisi.';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setPartnerFormErrors(errors);
+      const firstField = Object.keys(errors)[0];
+      const targetId = firstField === 'fullName' ? 'partnerFullName' : firstField === 'phone' ? 'partnerPhone' : 'partnerBrandName';
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.focus?.();
+      }
       return;
     }
 
+    setPartnerFormErrors({});
     setSubmitting(true);
 
     try {
@@ -431,27 +454,45 @@ export function PartnerPage() {
             <form onSubmit={handleSubmitApplication} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
+                  id="partnerFullName"
                   label="Nama Lengkap"
                   placeholder="Contoh: Budi Santoso"
                   value={formFullName}
-                  onChange={(e) => setFormFullName(e.target.value)}
+                  error={partnerFormErrors.fullName}
+                  onChange={(e) => {
+                    setFormFullName(e.target.value);
+                    if (partnerFormErrors.fullName) setPartnerFormErrors(prev => ({ ...prev, fullName: null }));
+                  }}
                   required
                 />
                 <Input
+                  id="partnerPhone"
                   label="Nomor WhatsApp"
                   placeholder="0812-xxxx-xxxx"
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel"
                   value={formPhone}
-                  onChange={(e) => setFormPhone(e.target.value)}
+                  error={partnerFormErrors.phone}
+                  onChange={(e) => {
+                    setFormPhone(e.target.value);
+                    if (partnerFormErrors.phone) setPartnerFormErrors(prev => ({ ...prev, phone: null }));
+                  }}
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
+                  id="partnerBrandName"
                   label="Nama Toko / Brand Kamu"
                   placeholder="Contoh: StreetVibe Cloth"
                   value={formBrandName}
-                  onChange={(e) => setFormBrandName(e.target.value)}
+                  error={partnerFormErrors.brandName}
+                  onChange={(e) => {
+                    setFormBrandName(e.target.value);
+                    if (partnerFormErrors.brandName) setPartnerFormErrors(prev => ({ ...prev, brandName: null }));
+                  }}
                   required
                 />
                 <Input

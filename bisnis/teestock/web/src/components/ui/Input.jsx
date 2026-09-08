@@ -17,11 +17,13 @@ export function Input({ label, error, helperText, className = '', id, ...props }
         id={inputId}
         aria-invalid={!!error}
         aria-describedby={error ? errorId : (helperText ? helperId : undefined)}
-        className={`w-full bg-ts-hitam border border-ts-border rounded-lg px-3 py-2 text-sm text-ts-krem placeholder:text-ts-muted/60 focus:outline-none focus:border-ts-terracotta focus:ring-1 focus:ring-ts-terracotta transition-colors disabled:opacity-50 ${className}`}
+        className={`w-full bg-ts-hitam border ${
+          error ? 'border-red-500/80 focus:border-red-500 focus:ring-red-500/50' : 'border-ts-border focus:border-ts-terracotta focus:ring-ts-terracotta'
+        } rounded-lg px-3 py-2 text-sm text-ts-krem placeholder:text-[#9A968D] focus:outline-none focus:ring-1 transition-colors disabled:opacity-50 ${className}`}
         {...props}
       />
       {helperText && !error && <p id={helperId} className="text-[11px] text-ts-muted mt-1">{helperText}</p>}
-      {error && <p id={errorId} role="alert" className="text-[11px] text-ts-red mt-1">{error}</p>}
+      {error && <p id={errorId} role="alert" className="text-[11px] text-red-400 font-medium mt-1 animate-in fade-in duration-200">{error}</p>}
     </div>
   );
 }
