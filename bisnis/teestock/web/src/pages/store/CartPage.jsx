@@ -180,6 +180,10 @@ export function CartPage() {
           totalTransfer={orderComplete.total}
           merchantName={merchantName}
           nmid={storeSettings?.qrisNmid || 'ID102609070001'}
+          qrisImageUrl={storeSettings?.qrisImageUrl || ''}
+          bankName={storeSettings?.bankName || 'BCA'}
+          bankAccountNo={storeSettings?.bankAccountNo || ''}
+          bankAccountHolder={storeSettings?.bankAccountHolder || 'TeeStock Apparel'}
           waUrl={waUrl}
         />
 

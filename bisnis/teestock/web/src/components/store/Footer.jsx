@@ -103,7 +103,7 @@ export function Footer() {
             <li><Link to="/custom-order" className="hover:text-ts-terracotta transition-colors">Pesan Kaos Custom</Link></li>
             <li><Link to="/tracking" className="hover:text-ts-terracotta transition-colors">Cek Status Pesanan</Link></li>
             <li><a href={`https://wa.me/${cleanWhatsapp}`} target="_blank" rel="noreferrer" className="hover:text-ts-terracotta transition-colors">WhatsApp Customer Support</a></li>
-            <li><Link to="/admin" className="hover:text-ts-terracotta transition-colors">Admin Hub</Link></li>
+            <li><Link to="/partner" className="hover:text-ts-terracotta transition-colors">Kemitraan Dropship</Link></li>
           </ul>
         </div>
       </div>

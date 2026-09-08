@@ -39,17 +39,25 @@ export function SettingsPage() {
   const [tiktok, setTiktok] = useState(storeSettings?.tiktokUrl || 'https://tiktok.com');
   const [instagram, setInstagram] = useState(storeSettings?.instagramUrl || 'https://instagram.com');
 
-  // QRIS Merchant states
+  // QRIS & Bank states
   const [qrisName, setQrisName] = useState(storeSettings?.qrisMerchantName || 'TeeStock Apparel');
   const [qrisNmid, setQrisNmid] = useState(storeSettings?.qrisNmid || 'ID102609070001');
+  const [qrisImageUrl, setQrisImageUrl] = useState(storeSettings?.qrisImageUrl || '');
+  const [bankName, setBankName] = useState(storeSettings?.bankName || 'BCA');
+  const [bankAccountNo, setBankAccountNo] = useState(storeSettings?.bankAccountNo || '');
+  const [bankAccountHolder, setBankAccountHolder] = useState(storeSettings?.bankAccountHolder || 'TeeStock Apparel');
 
   const handleSaveQrisSettings = (e) => {
     e.preventDefault();
     updateStoreSettings({
       qrisMerchantName: qrisName.trim(),
-      qrisNmid: qrisNmid.trim()
+      qrisNmid: qrisNmid.trim(),
+      qrisImageUrl: qrisImageUrl.trim(),
+      bankName: bankName.trim(),
+      bankAccountNo: bankAccountNo.trim(),
+      bankAccountHolder: bankAccountHolder.trim()
     });
-    showToast("✅ Konfigurasi merchant QRIS TeeStock berhasil disimpan!");
+    showToast("✅ Konfigurasi QRIS dan rekening bank berhasil disimpan!");
   };
 
   const handleTestSupabase = async () => {
@@ -165,6 +173,35 @@ export function SettingsPage() {
                 value={qrisNmid}
                 onChange={(e) => setQrisNmid(e.target.value)}
               />
+              <div className="md:col-span-2">
+                <Input
+                  label="URL Gambar Barcode QRIS Resmi (Scannable)"
+                  placeholder="https://res.cloudinary.com/.../qris-teestock.jpg atau /qris-master.png"
+                  value={qrisImageUrl}
+                  onChange={(e) => setQrisImageUrl(e.target.value)}
+                  helperText="Upload gambar barcode QRIS Anda ke Cloudinary / hosting dan tempel URL-nya di sini agar pembeli dapat langsung scan."
+                />
+              </div>
+              <Input
+                label="Nama Bank Alternatif (Manual Transfer)"
+                placeholder="BCA / Mandiri / BNI / BRI"
+                value={bankName}
+                onChange={(e) => setBankName(e.target.value)}
+              />
+              <Input
+                label="Nomor Rekening Bank"
+                placeholder="Contoh: 1234567890"
+                value={bankAccountNo}
+                onChange={(e) => setBankAccountNo(e.target.value)}
+              />
+              <div className="md:col-span-2">
+                <Input
+                  label="Atas Nama Pemilik Rekening"
+                  placeholder="Contoh: Rizky / TeeStock Apparel"
+                  value={bankAccountHolder}
+                  onChange={(e) => setBankAccountHolder(e.target.value)}
+                />
+              </div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-ts-kremMuted space-y-1">

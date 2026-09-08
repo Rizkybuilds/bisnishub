@@ -9,7 +9,11 @@ const DEFAULT_STORE_SETTINGS = {
   tiktokUrl: 'https://tiktok.com',
   instagramUrl: 'https://instagram.com',
   qrisMerchantName: 'TeeStock Apparel',
-  qrisNmid: 'ID102609070001'
+  qrisNmid: 'ID102609070001',
+  qrisImageUrl: '',
+  bankName: 'BCA',
+  bankAccountNo: '',
+  bankAccountHolder: 'TeeStock Apparel'
 };
 
 export function StoreProvider({ children }) {

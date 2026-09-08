@@ -69,7 +69,7 @@ export function OrderTrackingPage() {
   const grandTotal = primaryOrder?.total_amount || primaryOrder?.price || searchResults.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
   const displayOrderId = primaryOrder?.order_number || primaryOrder?.parentOrderId || primaryOrder?.id;
   const uniqueCode = primaryOrder?.unique_code || primaryOrder?.uniqueCode;
-  const adminWa = storeSettings?.adminPhone || '6281234567890';
+  const adminWa = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-8">
