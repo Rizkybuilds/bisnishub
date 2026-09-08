@@ -1,20 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getProducts } from '../services/productsApi';
+import { getStoreSettings, saveStoreSettings, DEFAULT_STORE_SETTINGS } from '../services/settingsApi';
 
 const StoreContext = createContext();
-
-const DEFAULT_STORE_SETTINGS = {
-  storeWhatsapp: '085220274968',
-  shopeeUrl: 'https://shopee.co.id',
-  tiktokUrl: 'https://tiktok.com',
-  instagramUrl: 'https://instagram.com',
-  qrisMerchantName: 'TeeStock Apparel',
-  qrisNmid: 'ID102609070001',
-  qrisImageUrl: '',
-  bankName: 'BCA',
-  bankAccountNo: '',
-  bankAccountHolder: 'TeeStock Apparel'
-};
 
 export function StoreProvider({ children }) {
   const [catalog, setCatalog] = useState([]);
@@ -41,6 +29,17 @@ export function StoreProvider({ children }) {
     return DEFAULT_STORE_SETTINGS;
   });
 
+  // Ambil pengaturan toko terbaru dari Supabase ts_settings
+  useEffect(() => {
+    getStoreSettings()
+      .then(settings => {
+        if (settings) {
+          setStoreSettings(settings);
+        }
+      })
+      .catch(err => console.warn('Failed to load cloud store settings:', err));
+  }, []);
+
   useEffect(() => {
     getProducts()
       .then(prods => setCatalog(prods || []))
@@ -56,8 +55,9 @@ export function StoreProvider({ children }) {
     localStorage.setItem('teestock_store_settings', JSON.stringify(storeSettings));
   }, [storeSettings]);
 
-  const updateStoreSettings = (newSettings) => {
+  const updateStoreSettings = async (newSettings) => {
     setStoreSettings(prev => ({ ...prev, ...newSettings }));
+    return await saveStoreSettings(newSettings);
   };
 
   const addToCart = (product, garment, color, size, qty = 1, customPrice) => {

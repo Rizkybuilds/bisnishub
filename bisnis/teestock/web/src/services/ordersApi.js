@@ -317,21 +317,31 @@ export async function trackSingleOrder(term, phoneLast4 = null) {
   // 3. Fallback ke riwayat lokal pesanan pribadi pembeli
   try {
     const myOrders = JSON.parse(localStorage.getItem(LOCAL_STORAGE_MY_ORDERS_KEY) || '[]');
-    const matched = myOrders.filter(o => 
-      o.id.toLowerCase().includes(cleanTermLower) ||
-      (o.parentOrderId && o.parentOrderId.toLowerCase().includes(cleanTermLower)) ||
-      (o.trackingNo && o.trackingNo.toLowerCase().includes(cleanTermLower)) ||
-      (o.phone && o.phone.toLowerCase().includes(cleanTermLower))
-    );
+    const digitsOnly = cleanTerm.replace(/\D/g, '');
+    const matched = myOrders.filter(o => {
+      const oDigits = (o.phone || '').replace(/\D/g, '');
+      return (
+        o.id.toLowerCase().includes(cleanTermLower) ||
+        (o.parentOrderId && o.parentOrderId.toLowerCase().includes(cleanTermLower)) ||
+        (o.trackingNo && o.trackingNo.toLowerCase().includes(cleanTermLower)) ||
+        (o.phone && o.phone.toLowerCase().includes(cleanTermLower)) ||
+        (digitsOnly.length >= 6 && oDigits.includes(digitsOnly))
+      );
+    });
     if (matched.length > 0) return matched;
   } catch (e) {}
 
   // 4. Fallback demo SEED_ORDERS jika mencari id seed contoh
-  const seedMatched = SEED_ORDERS.filter(o => 
-    o.id.toLowerCase() === cleanTermLower ||
-    (o.trackingNo && o.trackingNo.toLowerCase() === cleanTermLower) ||
-    (o.phone && o.phone.includes(cleanTermLower))
-  );
+  const digitsOnly = cleanTerm.replace(/\D/g, '');
+  const seedMatched = SEED_ORDERS.filter(o => {
+    const oDigits = (o.phone || '').replace(/\D/g, '');
+    return (
+      o.id.toLowerCase() === cleanTermLower ||
+      (o.trackingNo && o.trackingNo.toLowerCase() === cleanTermLower) ||
+      (o.phone && o.phone.includes(cleanTermLower)) ||
+      (digitsOnly.length >= 6 && oDigits.includes(digitsOnly))
+    );
+  });
 
   return seedMatched.map(normalizeOrderRecord);
 }

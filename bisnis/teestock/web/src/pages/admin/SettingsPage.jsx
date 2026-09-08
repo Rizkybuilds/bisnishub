@@ -47,17 +47,31 @@ export function SettingsPage() {
   const [bankAccountNo, setBankAccountNo] = useState(storeSettings?.bankAccountNo || '');
   const [bankAccountHolder, setBankAccountHolder] = useState(storeSettings?.bankAccountHolder || 'TeeStock Apparel');
 
-  const handleSaveQrisSettings = (e) => {
+  const [savingQris, setSavingQris] = useState(false);
+  const [savingStore, setSavingStore] = useState(false);
+
+  const handleSaveQrisSettings = async (e) => {
     e.preventDefault();
-    updateStoreSettings({
-      qrisMerchantName: qrisName.trim(),
-      qrisNmid: qrisNmid.trim(),
-      qrisImageUrl: qrisImageUrl.trim(),
-      bankName: bankName.trim(),
-      bankAccountNo: bankAccountNo.trim(),
-      bankAccountHolder: bankAccountHolder.trim()
-    });
-    showToast("✅ Konfigurasi QRIS dan rekening bank berhasil disimpan!");
+    setSavingQris(true);
+    try {
+      const res = await updateStoreSettings({
+        qrisMerchantName: qrisName.trim(),
+        qrisNmid: qrisNmid.trim(),
+        qrisImageUrl: qrisImageUrl.trim(),
+        bankName: bankName.trim(),
+        bankAccountNo: bankAccountNo.trim(),
+        bankAccountHolder: bankAccountHolder.trim()
+      });
+      if (res?.success) {
+        showToast("✅ Konfigurasi QRIS & Rekening tersimpan ke Cloud Supabase!", "success");
+      } else {
+        showToast("ℹ️ Tersimpan di browser lokal (cek koneksi Cloud Supabase).", "info");
+      }
+    } catch (err) {
+      showToast("Gagal menyimpan ke cloud: " + (err.message || err), "error");
+    } finally {
+      setSavingQris(false);
+    }
   };
 
   const handleTestSupabase = async () => {
@@ -68,15 +82,26 @@ export function SettingsPage() {
     showToast(res.message, res.connected ? 'success' : 'error');
   };
 
-  const handleSaveStoreSettings = (e) => {
+  const handleSaveStoreSettings = async (e) => {
     e.preventDefault();
-    updateStoreSettings({
-      storeWhatsapp: whatsapp.trim(),
-      shopeeUrl: shopee.trim(),
-      tiktokUrl: tiktok.trim(),
-      instagramUrl: instagram.trim()
-    });
-    showToast("✅ Pengaturan profil dan kontak toko berhasil disimpan!");
+    setSavingStore(true);
+    try {
+      const res = await updateStoreSettings({
+        storeWhatsapp: whatsapp.trim(),
+        shopeeUrl: shopee.trim(),
+        tiktokUrl: tiktok.trim(),
+        instagramUrl: instagram.trim()
+      });
+      if (res?.success) {
+        showToast("✅ Profil & kontak toko tersimpan ke Cloud Supabase!", "success");
+      } else {
+        showToast("ℹ️ Tersimpan di browser lokal (cek koneksi Cloud Supabase).", "info");
+      }
+    } catch (err) {
+      showToast("Gagal menyimpan ke cloud: " + (err.message || err), "error");
+    } finally {
+      setSavingStore(false);
+    }
   };
 
   return (
@@ -134,8 +159,8 @@ export function SettingsPage() {
             </div>
 
             <div className="flex justify-end pt-2 border-t border-ts-borderDim">
-              <Button type="submit" variant="primary" icon={Save}>
-                Simpan Kontak Toko
+              <Button type="submit" variant="primary" icon={Save} disabled={savingStore}>
+                {savingStore ? 'Menyimpan ke Cloud...' : 'Simpan Kontak Toko'}
               </Button>
             </div>
           </form>
@@ -215,8 +240,8 @@ export function SettingsPage() {
             </div>
 
             <div className="flex justify-end pt-2 border-t border-ts-borderDim">
-              <Button type="submit" variant="primary" icon={Save}>
-                Simpan Pengaturan QRIS
+              <Button type="submit" variant="primary" icon={Save} disabled={savingQris}>
+                {savingQris ? 'Menyimpan ke Cloud...' : 'Simpan Pengaturan QRIS'}
               </Button>
             </div>
           </form>

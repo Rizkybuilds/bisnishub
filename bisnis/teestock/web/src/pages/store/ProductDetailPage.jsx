@@ -363,7 +363,7 @@ export function ProductDetailPage() {
                   type="button"
                   onClick={handlePrevImage}
                   aria-label="Foto produk sebelumnya"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 min-w-[44px] min-h-[44px] rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer"
                   title="Foto sebelumnya"
                 >
                   <ChevronLeft className="w-5 h-5" />
@@ -372,7 +372,7 @@ export function ProductDetailPage() {
                   type="button"
                   onClick={handleNextImage}
                   aria-label="Foto produk selanjutnya"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 min-w-[44px] min-h-[44px] rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer"
                   title="Foto selanjutnya"
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -682,21 +682,25 @@ export function ProductDetailPage() {
                       title={colName}
                       aria-label={`Pilih warna ${colName}`}
                       aria-pressed={isSelected}
-                      className={`group relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden transition-all duration-200 shrink-0 cursor-pointer ${
-                        isSelected
-                          ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-hitam scale-110 z-10 shadow-glow-terracotta'
-                          : 'ring-1 ring-white/20 hover:ring-white/60 hover:scale-105 opacity-85 hover:opacity-100'
-                      }`}
-                      style={{ backgroundColor: hex }}
+                      className="group relative min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0 cursor-pointer p-0.5"
                     >
-                      {swatchUrl && (
-                        <img
-                          src={swatchUrl}
-                          alt={colName}
-                          className="w-full h-full object-cover"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
-                      )}
+                      <span
+                        className={`block w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden transition-all duration-200 ${
+                          isSelected
+                            ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-hitam scale-110 shadow-glow-terracotta z-10'
+                            : 'ring-1 ring-white/20 hover:ring-white/60 hover:scale-105 opacity-85 hover:opacity-100'
+                        }`}
+                        style={{ backgroundColor: hex }}
+                      >
+                        {swatchUrl && (
+                          <img
+                            src={swatchUrl}
+                            alt={colName}
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                        )}
+                      </span>
                       <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block z-30 px-2 py-0.5 rounded-md bg-ts-hitam text-[10px] font-bold text-white border border-white/20 whitespace-nowrap shadow-xl">
                         {colName}
                       </span>

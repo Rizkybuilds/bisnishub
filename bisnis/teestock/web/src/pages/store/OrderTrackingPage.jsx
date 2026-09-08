@@ -18,6 +18,7 @@ export function OrderTrackingPage() {
   const [searchResults, setSearchResults] = useState([]);
   const [searched, setSearched] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [selectedOrderIndex, setSelectedOrderIndex] = useState(0);
 
   const executeSearch = async (term) => {
     const trimmed = (term || '').trim();
@@ -26,10 +27,12 @@ export function OrderTrackingPage() {
     try {
       const results = await trackSingleOrder(trimmed);
       setSearchResults(results);
+      setSelectedOrderIndex(0);
       setSearched(true);
     } catch (err) {
       console.warn("Tracking search error:", err);
       setSearchResults([]);
+      setSelectedOrderIndex(0);
       setSearched(true);
     } finally {
       setSearching(false);
@@ -63,7 +66,7 @@ export function OrderTrackingPage() {
     return idx >= 0 ? idx : 0;
   };
 
-  const primaryOrder = searchResults[0] || null;
+  const primaryOrder = searchResults[selectedOrderIndex] || searchResults[0] || null;
   const itemsToDisplay = (primaryOrder?.items && primaryOrder.items.length > 0)
     ? primaryOrder.items
     : searchResults;
@@ -102,7 +105,28 @@ export function OrderTrackingPage() {
 
       {/* Results */}
       {searched && (
-        <div className="animate-in fade-in duration-300">
+        <div className="animate-in fade-in duration-300 space-y-4">
+          {/* Multi-Order Tabs jika pencarian mengembalikan lebih dari 1 order */}
+          {searchResults.length > 1 && (
+            <div className="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] max-w-lg mx-auto">
+              <span className="text-xs text-ts-muted">Ditemukan {searchResults.length} pesanan:</span>
+              {searchResults.map((ord, idx) => (
+                <button
+                  key={ord.id || ord.order_number || idx}
+                  type="button"
+                  onClick={() => setSelectedOrderIndex(idx)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
+                    selectedOrderIndex === idx
+                      ? 'bg-ts-terracotta text-white shadow-glow-terracotta'
+                      : 'bg-white/[0.06] hover:bg-white/[0.12] text-ts-kremMuted'
+                  }`}
+                >
+                  {ord.order_number || ord.id}
+                </button>
+              ))}
+            </div>
+          )}
+
           {searchResults.length > 0 ? (
             <div className="bg-ts-surface/80 backdrop-blur-xl border border-white/[0.1] rounded-3xl p-6 sm:p-8 space-y-6 shadow-glass-card shadow-glass-inset">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.08]">

@@ -108,3 +108,19 @@ export function calculateBundleDiscount(graphicQty, role = 'retail') {
   return 0;
 }
 
+/**
+ * 🚚 Zona Tarif Ongkir Standar Ekspedisi Nasional (JNE / J&T / SiCepat dari Bandung/Jakarta)
+ * Mencegah kebocoran subsidi margin ritel ke luar pulau Jawa.
+ */
+export const SHIPPING_ZONES = [
+  { id: 'jabodetabek_jabar', name: 'Jabodetabek & Jawa Barat', rate: 10000, eta: '1-2 Hari' },
+  { id: 'jawa_lainnya', name: 'Jawa Tengah, Jawa Timur, & DIY', rate: 15000, eta: '2-3 Hari' },
+  { id: 'luar_jawa_kota', name: 'Luar Jawa — Kota Besar (Sumatera, Bali, Kalbar, Sulsel)', rate: 28000, eta: '3-4 Hari' },
+  { id: 'luar_jawa_timur', name: 'Luar Jawa — Wilayah Lainnya & Indonesia Timur', rate: 45000, eta: '4-7 Hari' }
+];
+
+export function getShippingRateByZone(zoneId) {
+  const zone = SHIPPING_ZONES.find(z => z.id === zoneId);
+  return zone ? zone.rate : 15000;
+}
+

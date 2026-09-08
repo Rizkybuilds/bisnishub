@@ -10,7 +10,7 @@ import { Card } from '../../components/ui/Card';
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber, generateOrderCheckoutWhatsAppText } from '../../utils/whatsappTemplates';
 import { validateVoucher } from '../../services/vouchersApi';
-import { calculateBundleDiscount, BUNDLE_DEALS } from '../../constants/pricing';
+import { calculateBundleDiscount, BUNDLE_DEALS, SHIPPING_ZONES, getShippingRateByZone } from '../../constants/pricing';
 import { QrisPaymentBox } from '../../components/store/QrisPaymentBox';
 
 export function CartPage() {
@@ -23,6 +23,7 @@ export function CartPage() {
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [subdistrict, setSubdistrict] = useState('');
+  const [shippingZone, setShippingZone] = useState('jawa_lainnya');
   const [courier, setCourier] = useState('J&T Express');
   const [orderComplete, setOrderComplete] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,8 +56,41 @@ export function CartPage() {
     .reduce((acc, item) => acc + (item.qty || 1), 0);
   const bundleDiscount = calculateBundleDiscount(eligibleGraphicQty, role);
 
-  const shippingFee = cart.length > 0 ? 15000 : 0;
-  const baseGrandTotal = Math.max(0, totalCartAmount - bundleDiscount - discountAmount) + shippingFee;
+  // 🚚 Zona Ongkir Bertingkat
+  const selectedZone = SHIPPING_ZONES.find(z => z.id === shippingZone) || SHIPPING_ZONES[1];
+  const rawShippingFee = cart.length > 0 ? selectedZone.rate : 0;
+  const isFreeShippingVoucher = appliedVoucher?.type === 'free_shipping';
+  const shippingDiscount = isFreeShippingVoucher ? Math.min(rawShippingFee, discountAmount) : 0;
+  const shippingFee = Math.max(0, rawShippingFee - shippingDiscount);
+
+  // 💰 Aturan Diskon Non-Stackable (Opsi A - Proteksi Margin CFO):
+  // Diskon bundling otomatis dan kupon voucher produk tidak ditumpuk sekaligus.
+  // Sistem otomatis memilih diskon dengan nilai rupiah terbesar untuk pembeli.
+  let effectiveProductDiscount = 0;
+  let activeDiscountLabel = '';
+
+  if (isFreeShippingVoucher) {
+    effectiveProductDiscount = bundleDiscount;
+    activeDiscountLabel = bundleDiscount > 0 ? 'bundle' : 'none';
+  } else {
+    if (bundleDiscount > 0 && discountAmount > 0) {
+      if (bundleDiscount >= discountAmount) {
+        effectiveProductDiscount = bundleDiscount;
+        activeDiscountLabel = 'bundle_preferred'; // bundling lebih besar
+      } else {
+        effectiveProductDiscount = discountAmount;
+        activeDiscountLabel = 'voucher_preferred'; // voucher lebih besar
+      }
+    } else if (bundleDiscount > 0) {
+      effectiveProductDiscount = bundleDiscount;
+      activeDiscountLabel = 'bundle';
+    } else if (discountAmount > 0) {
+      effectiveProductDiscount = discountAmount;
+      activeDiscountLabel = 'voucher';
+    }
+  }
+
+  const baseGrandTotal = Math.max(0, totalCartAmount - effectiveProductDiscount) + shippingFee;
   const grandTotal = baseGrandTotal > 0 ? (baseGrandTotal + uniqueCode) : 0;
 
   const handleApplyVoucher = async (codeToApply = null) => {
@@ -112,13 +146,15 @@ export function CartPage() {
         phone: `${phone.trim()} (${fullCityDisplay})`,
         city: fullCityDisplay,
         address: fullAddressDisplay,
+        shipping_zone: selectedZone.name,
+        shipping_fee: shippingFee,
         channel: 'web',
         tier: role || 'retail',
         status: 'pending',
         price: grandTotal,
         total_amount: grandTotal,
-        discount: discountAmount,
-        discount_amount: discountAmount,
+        discount: effectiveProductDiscount + shippingDiscount,
+        discount_amount: effectiveProductDiscount + shippingDiscount,
         voucher_code: appliedVoucher?.code || null,
         unique_code: uniqueCode,
         uniqueCode: uniqueCode,
@@ -138,6 +174,8 @@ export function CartPage() {
         city: cleanCity,
         subdistrict: cleanSubdistrict,
         address: cleanAddress,
+        shippingZone: selectedZone.name,
+        shippingFee,
         courier,
         items: [...cart],
         baseTotal: baseGrandTotal,
@@ -326,8 +364,9 @@ export function CartPage() {
                         e.stopPropagation();
                         updateCartQty(idx, -1);
                       }}
-                      className="w-7 h-7 rounded-lg hover:bg-white/[0.1] text-white font-bold text-xs cursor-pointer transition-colors"
+                      className="w-9 h-9 sm:w-8 sm:h-8 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-white/[0.1] text-white font-bold text-sm cursor-pointer transition-colors"
                       title="Kurangi kuantitas"
+                      aria-label="Kurangi kuantitas"
                     >
                       -
                     </button>
@@ -341,8 +380,9 @@ export function CartPage() {
                         e.stopPropagation();
                         updateCartQty(idx, 1);
                       }}
-                      className="w-7 h-7 rounded-lg hover:bg-white/[0.1] text-white font-bold text-xs cursor-pointer transition-colors"
+                      className="w-9 h-9 sm:w-8 sm:h-8 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-white/[0.1] text-white font-bold text-sm cursor-pointer transition-colors"
                       title="Tambah kuantitas"
+                      aria-label="Tambah kuantitas"
                     >
                       +
                     </button>
@@ -359,8 +399,9 @@ export function CartPage() {
                       e.stopPropagation();
                       removeFromCart(idx);
                     }}
-                    className="p-2 text-ts-muted hover:text-ts-red hover:bg-white/[0.05] rounded-xl transition-colors cursor-pointer"
+                    className="w-9 h-9 min-w-[36px] min-h-[36px] flex items-center justify-center text-ts-muted hover:text-red-400 hover:bg-white/[0.05] rounded-xl transition-colors cursor-pointer"
                     title="Hapus item"
+                    aria-label="Hapus item dari troli"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -393,10 +434,10 @@ export function CartPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <Input
                 label="Kota / Kabupaten"
-                placeholder="Contoh: Bandung"
+                placeholder="Contoh: Bandung / Surabaya / Medan"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 required
@@ -408,6 +449,20 @@ export function CartPage() {
                 onChange={(e) => setSubdistrict(e.target.value)}
                 required
               />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <Select
+                label="Wilayah Pengiriman (Zona Tarif Ongkir)"
+                value={shippingZone}
+                onChange={(e) => setShippingZone(e.target.value)}
+              >
+                {SHIPPING_ZONES.map(z => (
+                  <option key={z.id} value={z.id}>
+                    {z.name} — {formatRupiah(z.rate)} ({z.eta})
+                  </option>
+                ))}
+              </Select>
               <Select
                 label="Pilihan Kurir Rekomendasi"
                 value={courier}
@@ -513,27 +568,67 @@ export function CartPage() {
                 <span className="font-mono text-white font-bold">{formatRupiah(totalCartAmount)}</span>
               </div>
 
-              {bundleDiscount > 0 && (
+              {/* Rincian Diskon (Non-Stackable Option A) */}
+              {activeDiscountLabel === 'bundle' && (
                 <div className="flex justify-between text-ts-terracotta font-semibold">
                   <span>Diskon Paket Bundling ({totalCartQty} pcs):</span>
                   <span className="font-mono">- {formatRupiah(bundleDiscount)}</span>
                 </div>
               )}
 
-              {discountAmount > 0 && (
+              {activeDiscountLabel === 'bundle_preferred' && (
+                <div className="space-y-1">
+                  <div className="flex justify-between text-ts-terracotta font-semibold">
+                    <span>Diskon Paket Bundling ({totalCartQty} pcs):</span>
+                    <span className="font-mono">- {formatRupiah(bundleDiscount)}</span>
+                  </div>
+                  <p className="text-[10px] text-ts-muted italic">
+                    *Diskon bundling otomatis diterapkan karena lebih hemat daripada voucher {appliedVoucher?.code} ({formatRupiah(discountAmount)}).
+                  </p>
+                </div>
+              )}
+
+              {activeDiscountLabel === 'voucher' && (
                 <div className="flex justify-between text-ts-green font-semibold">
                   <span>Diskon Kupon ({appliedVoucher?.code}):</span>
                   <span className="font-mono">- {formatRupiah(discountAmount)}</span>
                 </div>
               )}
 
+              {activeDiscountLabel === 'voucher_preferred' && (
+                <div className="space-y-1">
+                  <div className="flex justify-between text-ts-green font-semibold">
+                    <span>Diskon Kupon ({appliedVoucher?.code}):</span>
+                    <span className="font-mono">- {formatRupiah(discountAmount)}</span>
+                  </div>
+                  <p className="text-[10px] text-ts-muted italic">
+                    *Kupon voucher diterapkan karena potongan lebih besar daripada bundling ({formatRupiah(bundleDiscount)}).
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-1">
                 <div className="flex justify-between text-ts-kremMuted">
-                  <span>Ongkir Reguler (Pulau Jawa):</span>
-                  <span className="font-mono text-white font-bold">{formatRupiah(shippingFee)}</span>
+                  <span>Ongkir ({selectedZone.name}):</span>
+                  <div className="text-right">
+                    {shippingDiscount > 0 ? (
+                      <span className="space-x-1.5">
+                        <span className="font-mono text-ts-muted line-through text-[11px]">{formatRupiah(rawShippingFee)}</span>
+                        <span className="font-mono text-ts-green font-bold">{formatRupiah(shippingFee)}</span>
+                      </span>
+                    ) : (
+                      <span className="font-mono text-white font-bold">{formatRupiah(shippingFee)}</span>
+                    )}
+                  </div>
                 </div>
+                {shippingDiscount > 0 && (
+                  <div className="flex justify-between text-ts-green font-semibold text-[11px]">
+                    <span>Subsidi Ongkir ({appliedVoucher?.code}):</span>
+                    <span className="font-mono">- {formatRupiah(shippingDiscount)}</span>
+                  </div>
+                )}
                 <p className="text-[10px] text-ts-kremMuted/80 leading-relaxed">
-                  *Khusus luar Pulau Jawa, penyesuaian tarif &amp; subsidi ongkir akan divalidasi langsung via WhatsApp.
+                  Estimasi tiba: <span className="text-white font-medium">{selectedZone.eta}</span> via {courier}
                 </p>
               </div>
 

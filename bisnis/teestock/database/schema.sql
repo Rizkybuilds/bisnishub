@@ -290,6 +290,14 @@ CREATE TABLE ts_reviews (
 CREATE INDEX idx_ts_reviews_sku ON ts_reviews(product_sku);
 
 
+-- 13. TABEL: ts_settings (Pengaturan Global Toko, Kontak WhatsApp, Marketplace, & Rekening/QRIS)
+CREATE TABLE IF NOT EXISTS ts_settings (
+    key VARCHAR(50) PRIMARY KEY,
+    value JSONB NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+
 -- ====================================================================
 -- BAGIAN 3: VIEW OTOMATIS KATALOG & MARGIN KALKULASI
 -- ====================================================================
@@ -403,6 +411,7 @@ CREATE TRIGGER trg_protect_user_role
     FOR EACH ROW EXECUTE FUNCTION public.protect_user_role();
 
 -- 🔍 P1 SECURE GUEST TRACKING: Melacak pesanan publik/tamu dengan data masking & verifikasi aman
+-- Mendukung pencarian via No. Pesanan (WEB-xxxxxx) maupun No. HP (08xxx / 62xxx)
 CREATE OR REPLACE FUNCTION public.track_guest_order(p_order_no TEXT, p_phone_last4 TEXT DEFAULT NULL)
 RETURNS TABLE (
     order_number VARCHAR,
@@ -412,7 +421,13 @@ RETURNS TABLE (
     items JSON,
     customer_masked TEXT
 ) AS $$
+DECLARE
+    clean_search TEXT;
+    digits_only TEXT;
 BEGIN
+    clean_search := UPPER(TRIM(p_order_no));
+    digits_only := regexp_replace(clean_search, '\D', '', 'g');
+
     RETURN QUERY
     SELECT 
         o.order_number,
@@ -429,13 +444,23 @@ BEGIN
         concat(left(o.customer_name, 2), '*** ', right(o.customer_name, 1)) AS customer_masked
     FROM ts_orders o
     LEFT JOIN ts_order_items i ON o.id = i.order_id
-    WHERE o.order_number = UPPER(TRIM(p_order_no))
-      AND (
+    WHERE (
+        -- Pencarian presisi via No. Pesanan
+        o.order_number = clean_search
+        -- Atau via No. HP (jika input memuat minimal 6 digit angka)
+        OR (
+            length(digits_only) >= 6 
+            AND regexp_replace(o.customer_phone, '\D', '', 'g') LIKE '%' || digits_only || '%'
+        )
+    )
+    AND (
         p_phone_last4 IS NULL 
         OR TRIM(p_phone_last4) = '' 
         OR right(regexp_replace(o.customer_phone, '\D', '', 'g'), 4) = TRIM(p_phone_last4)
-      )
-    GROUP BY o.id, o.order_number, o.status, o.tracking_number, o.created_at, o.customer_name;
+    )
+    GROUP BY o.id, o.order_number, o.status, o.tracking_number, o.created_at, o.customer_name
+    ORDER BY o.created_at DESC
+    LIMIT 5;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
@@ -564,6 +589,11 @@ CREATE POLICY "public_read_reviews" ON ts_reviews FOR SELECT USING (true);
 CREATE POLICY "public_insert_reviews" ON ts_reviews FOR INSERT WITH CHECK (true);
 CREATE POLICY "admin_manage_reviews" ON ts_reviews FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
+-- 13. ts_settings (Publik bisa baca pengaturan toko & QRIS, HANYA admin yang bisa mengubah)
+ALTER TABLE ts_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "anon_read_settings" ON ts_settings FOR SELECT USING (true);
+CREATE POLICY "admin_manage_settings" ON ts_settings FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+
 
 -- ====================================================================
 -- BAGIAN 6: SEED DATA AWAL LENGKAP
@@ -688,6 +718,26 @@ VALUES
 ('TS-PRO-001', 'Dimas Aditya', 'Verified Buyer', 5, 'Heavyweight 24s (Black)', 'XL', 'TB 178 cm · BB 74 kg (Fitting Boxy Pas)', 'Bahan NSA 24s-nya beneran tebal dan jatuh di badan enak banget, nggak lemes kayak combed murah. Sablonan DTF-nya rapi, raster halusnya dapet dan pas ditarik lentur nggak kaku. Rekomen parah buat yang nyari kaos distro rasa impor.', true, 14),
 ('TS-PRO-002', 'Rian Kurniawan', 'Verified Buyer', 5, 'Heavyweight 24s (White)', 'L', 'TB 171 cm · BB 66 kg (Pas Sesuai Size Chart)', 'Kerah rib lehernya tebal banget, dicuci 2 kali di mesin cuci nggak melar sama sekali. Sablonnya nempel sempurna ke pori-pori kain. Packaging polymailernya juga rapi ada stiker bonusnya.', true, 9),
 ('TS-KOM-001', 'Bayu Pratama', 'Verified Buyer', 5, 'Softstyle 30s (Black)', 'M', 'TB 167 cm · BB 58 kg', 'Pilihan 30s-nya adem banget buat dipakai motoran siang hari. Desainnya presisi sesuai mockup web. Pengiriman cepat H+1 langsung jalan resinya.', true, 6);
+
+
+-- 8. Seed Master Settings Toko & Pembayaran (ts_settings)
+INSERT INTO ts_settings (key, value)
+VALUES
+('store_contact', '{
+    "storeWhatsapp": "085220274968",
+    "shopeeUrl": "https://shopee.co.id",
+    "tiktokUrl": "https://tiktok.com",
+    "instagramUrl": "https://instagram.com"
+}'::jsonb),
+('payment_qris', '{
+    "qrisMerchantName": "TeeStock Apparel",
+    "qrisNmid": "ID102609070001",
+    "qrisImageUrl": "",
+    "bankName": "BCA",
+    "bankAccountNo": "",
+    "bankAccountHolder": "TeeStock Apparel"
+}'::jsonb)
+ON CONFLICT (key) DO NOTHING;
 
 -- ====================================================================
 -- SELESAI! Master Database TeeStock Siap Digunakan 100%
