@@ -33,7 +33,12 @@ export function AuthModal() {
     const redirectUrl = authModalRedirect || window.location.href;
     const { error } = await signInWithGoogle(redirectUrl);
     if (error) {
-      setErrorMsg(error.message || 'Gagal login via Google. Silakan coba lagi.');
+      const msg = error.message || '';
+      if (msg.includes('provider is not enabled') || msg.includes('Unsupported provider') || msg.includes('validation_failed')) {
+        setErrorMsg('Login Google belum diaktifkan di dashboard Supabase. Silakan masukkan email kamu di bawah untuk masuk instan via Magic Link tanpa password.');
+      } else {
+        setErrorMsg(msg || 'Gagal login via Google. Silakan coba lagi.');
+      }
       setLoadingGoogle(false);
     }
   };
@@ -170,6 +175,7 @@ export function AuthModal() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nama@email.com"
+                  aria-label="Alamat email untuk masuk"
                   disabled={loadingGoogle || loadingMagic}
                   className="w-full bg-white/[0.04] border border-white/[0.1] rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white placeholder-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-1 focus:ring-ts-terracotta transition-all"
                 />
