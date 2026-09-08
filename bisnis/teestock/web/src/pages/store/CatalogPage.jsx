@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link, useLocation } from 'react-router-dom';
-import { Search, Filter, ShoppingBag, Package, Sparkles, ArrowUpDown, X, Tag, ArrowRight } from 'lucide-react';
+import { Search, Filter, ShoppingBag, Package, Sparkles, ArrowUpDown, X, Tag, ArrowRight, Palette } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { SERIES } from '../../constants/series';
@@ -298,22 +298,53 @@ export function CatalogPage({ defaultSegment }) {
 
       {/* Products Grid */}
       {filtered.length === 0 ? (
-        <div className="py-20 text-center space-y-4 bg-ts-surface/40 border border-dashed border-white/[0.1] rounded-3xl backdrop-blur-md">
-          <ShoppingBag className="w-10 h-10 text-ts-muted mx-auto" />
-          <div className="space-y-1">
-            <p className="text-base font-bold text-white">Tidak ada produk yang cocok dengan pencarian Anda</p>
-            <p className="text-xs text-ts-kremMuted">Coba gunakan kata kunci lain atau reset filter pilihan.</p>
+        <div className="py-16 px-4 bg-ts-surface/60 border border-dashed border-white/10 rounded-3xl backdrop-blur-md max-w-xl mx-auto text-center space-y-5">
+          <div className="w-14 h-14 rounded-2xl bg-white/[0.04] text-ts-terracotta flex items-center justify-center mx-auto border border-white/10 shadow-glass-card">
+            <Search className="w-7 h-7" />
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              setSearch('');
-              handleSegmentChange('all');
-            }}
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-white/[0.06] border border-white/10 hover:border-ts-terracotta text-white transition-all cursor-pointer"
-          >
-            Reset Semua Filter
-          </button>
+          <div className="space-y-1.5">
+            <h3 className="text-base sm:text-lg font-bold text-white">
+              {search ? `Desain "${search}" Belum Ditemukan` : "Tidak Ada Produk yang Sesuai Filter"}
+            </h3>
+            <p className="text-xs text-ts-kremMuted max-w-md mx-auto leading-relaxed">
+              Koleksi Drop #01 dirilis dalam edisi terbatas. Punya ide desain sendiri atau butuh seragam komunitas? Cetak satuan di studio in-house kami!
+            </p>
+          </div>
+          <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center items-center">
+            <Link to="/custom-order" className="w-full sm:w-auto">
+              <Button variant="primary" size="sm" icon={Palette} className="w-full sm:w-auto font-bold shadow-glow-terracotta">
+                Cetak Desain Custom Sendiri &rarr;
+              </Button>
+            </Link>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                setSearch('');
+                setActiveSeries('all');
+                setSelectedBlankModel('all');
+              }}
+              className="w-full sm:w-auto text-xs"
+            >
+              Reset Semua Filter
+            </Button>
+          </div>
+          {/* Popular Search Suggestions */}
+          <div className="pt-3 border-t border-white/[0.06] space-y-2">
+            <span className="text-[10px] font-mono uppercase text-ts-muted tracking-wider block">Pencarian Populer:</span>
+            <div className="flex flex-wrap justify-center gap-1.5 text-xs">
+              {['Commit & Pray', '7 Summits', 'Wong Jowo', 'Heavyweight 24s', 'Softstyle 30s'].map((term) => (
+                <button
+                  key={term}
+                  type="button"
+                  onClick={() => setSearch(term)}
+                  className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-ts-kremMuted hover:text-white border border-white/[0.06] text-[11px] transition-all cursor-pointer"
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">

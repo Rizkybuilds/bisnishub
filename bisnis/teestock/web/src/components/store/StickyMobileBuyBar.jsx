@@ -36,21 +36,24 @@ export function StickyMobileBuyBar({
 
         {/* Action Buttons */}
         <div className="flex items-center gap-1.5 shrink-0">
-          <button
-            onClick={onAddToCart}
-            className="p-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 text-ts-krem active:scale-95 transition-all"
-            title="Tambah ke Keranjang"
-          >
-            <ShoppingBag className="w-4 h-4" />
-          </button>
+          {onBuyWhatsapp && (
+            <button
+              onClick={onBuyWhatsapp}
+              className="p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-emerald-400 active:scale-95 transition-all"
+              title="Konsultasi WhatsApp"
+              aria-label="Konsultasi WhatsApp"
+            >
+              <MessageSquare className="w-4 h-4" />
+            </button>
+          )}
           <Button
             size="sm"
             variant="primary"
-            icon={MessageSquare}
-            onClick={onBuyWhatsapp}
-            className="text-xs px-3 py-2 font-bold"
+            icon={ShoppingBag}
+            onClick={onAddToCart}
+            className="text-xs px-3.5 py-2 font-bold shadow-glow-terracotta"
           >
-            Beli
+            Beli Sekarang
           </Button>
         </div>
       </div>

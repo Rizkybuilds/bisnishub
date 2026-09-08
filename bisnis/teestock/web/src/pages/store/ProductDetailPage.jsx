@@ -42,6 +42,30 @@ const COLOR_CATEGORIES = {
   vibrant: ["Daisy", "Mustard", "Orange", "Gold", "Royal Blue", "Red", "Merah", "Heliconia", "Sapphire", "Purple", "Lime", "Lilac", "Aqua Sky"]
 };
 
+function ProductAccordionItem({ title, icon: Icon, children, defaultOpen = false }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-white/[0.08] rounded-2xl overflow-hidden bg-white/[0.02]">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full p-4 flex items-center justify-between text-left hover:bg-white/[0.04] transition-colors cursor-pointer"
+      >
+        <div className="flex items-center gap-2.5 text-xs font-bold text-white">
+          <Icon className="w-4 h-4 text-ts-terracotta shrink-0" />
+          <span>{title}</span>
+        </div>
+        <span className="text-ts-muted text-xs font-mono">{isOpen ? '−' : '+'}</span>
+      </button>
+      {isOpen && (
+        <div className="px-4 pb-4 pt-1 text-xs text-ts-kremMuted leading-relaxed border-t border-white/[0.04]">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function ProductDetailPage() {
   const { sku } = useParams();
   const navigate = useNavigate();
@@ -726,6 +750,10 @@ export function ProductDetailPage() {
                 );
               })}
             </div>
+            <p className="text-[11px] text-ts-kremMuted flex items-center gap-1.5 pt-0.5">
+              <span className="text-ts-mustard">🧍‍♂️</span>
+              <span>Model di foto: <strong className="text-white">TB 175 cm · BB 68 kg</strong> memakai <strong>Size L</strong> (Fitting Boxy Pas).</span>
+            </p>
           </div>
 
           {/* Bundling Promotion Banner (AOV Booster) */}
@@ -806,71 +834,54 @@ export function ProductDetailPage() {
               </div>
             </div>
 
-            {/* Dual CTA: Beli Web & Direct WhatsApp */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {/* Action CTAs: Direct Web Checkout & WhatsApp Support */}
+            <div className="space-y-2 pt-1">
               <Button
                 variant="cream"
                 size="lg"
-                className="w-full text-xs sm:text-sm py-3 font-extrabold"
+                className="w-full text-xs sm:text-sm py-3 font-extrabold shadow-md"
                 onClick={handleBuyNow}
               >
-                Checkout Langsung Web
+                Checkout Langsung Web &rarr;
               </Button>
-              <Button
-                variant="whatsapp"
-                size="lg"
-                className="w-full text-xs sm:text-sm py-3 font-bold"
-                icon={MessageSquare}
-                onClick={handleBuyWhatsapp}
-              >
-                Pesan via WhatsApp (0% Fee)
-              </Button>
+              <div className="text-center pt-0.5">
+                <button
+                  type="button"
+                  onClick={handleBuyWhatsapp}
+                  className="inline-flex items-center gap-1.5 text-xs text-ts-kremMuted hover:text-emerald-400 transition-colors py-1 cursor-pointer"
+                >
+                  <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Ragu soal ukuran atau butuh pesanan khusus? <strong className="text-white underline decoration-emerald-500/50">Chat WhatsApp Admin</strong></span>
+                </button>
+              </div>
             </div>
 
-            {/* TeeStock 100% Quality & Fit Shield */}
-            <div className="pt-3.5 border-t border-white/[0.08] space-y-2.5">
-              <div className="flex items-center justify-between">
-                <div className="text-[11px] font-bold text-ts-krem uppercase tracking-wider flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-ts-green" />
-                  <span>Jaminan Belanja TeeStock</span>
-                </div>
+            {/* Collapsible Product Information & Guarantee Accordion */}
+            <div className="pt-4 border-t border-white/[0.08] space-y-2">
+              <ProductAccordionItem title="Spesifikasi Garmen NSA & Sablon DTF 155°C" icon={ShieldCheck} defaultOpen={true}>
+                {isBlank ? (
+                  <span>100% Katun New States Apparel (NSA) original impor standar ekspor. Pola rajutan tubular knit tanpa sambungan samping, kerah rib 2.2 cm kokoh anti-melar, siap pakai langsung atau disablon custom.</span>
+                ) : (
+                  <span>100% Katun New States Apparel (NSA) Heavyweight 24s gramasi 180 g/m² (atau Softstyle 30s). Pola tubular knit tanpa sambungan samping. Dicetak dengan sablon DTF High-Density curing suhu 155°C dengan tinta elastis tahan cuci berkali-kali.</span>
+                )}
+              </ProductAccordionItem>
+
+              <ProductAccordionItem title="Jadwal Produksi & SLA Pengiriman" icon={Truck}>
+                Warna studio reguler (Hitam, Putih): Dipress in-house &amp; dikirim H+0 / H+1.<br />
+                Warna non-reguler / size jumbo: Ditarik dari gudang pusat H+1, pengiriman H+2 via J&amp;T, SiCepat, atau JNE dengan nomor resi otomatis.
+              </ProductAccordionItem>
+
+              <ProductAccordionItem title="Garansi Kepuasan 100% & Bebas Tukar Ukuran" icon={RotateCcw}>
+                Garansi 100% ganti baru jika sablon cacat/pecah, bahan berlubang, atau salah kirim ukuran dalam 30 hari sejak barang diterima. Hubungi kami via WhatsApp untuk klaim instan.
+              </ProductAccordionItem>
+
+              <div className="flex justify-end pt-1">
                 <Link
                   to="/care"
                   className="text-[11px] text-ts-mustard hover:text-white font-bold transition-colors flex items-center gap-1"
                 >
-                  <span>Panduan &amp; Garansi Lengkap</span>
+                  <span>Panduan Perawatan &amp; Garansi Lengkap</span>
                   <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <Link
-                  to="/care#tukar-size"
-                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-ts-terracotta/40 flex items-center gap-2.5 transition-all group"
-                >
-                  <RotateCcw className="w-4 h-4 text-ts-terracotta shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="text-ts-krem leading-snug"><strong className="text-white">Bebas Tukar Ukuran</strong> jika kurang pas</span>
-                </Link>
-                <Link
-                  to="/care#garansi-sablon"
-                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-ts-mustard/40 flex items-center gap-2.5 transition-all group"
-                >
-                  <Sparkles className="w-4 h-4 text-ts-mustard shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="text-ts-krem leading-snug"><strong className="text-white">100% Ganti Baru</strong> jika cacat / luntur</span>
-                </Link>
-                <Link
-                  to="/care#nsa-original"
-                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-ts-teal/40 flex items-center gap-2.5 transition-all group"
-                >
-                  <Layers className="w-4 h-4 text-ts-teal shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="text-ts-krem leading-snug"><strong className="text-white">100% NSA Original</strong> Tubular tanpa jahitan</span>
-                </Link>
-                <Link
-                  to="/care#fulfillment"
-                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-emerald-400/40 flex items-center gap-2.5 transition-all group"
-                >
-                  <Zap className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="text-ts-krem leading-snug"><strong className="text-white">In-House Press H+0/H+1</strong> QC ketat</span>
                 </Link>
               </div>
             </div>

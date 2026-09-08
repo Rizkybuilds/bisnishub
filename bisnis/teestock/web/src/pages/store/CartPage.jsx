@@ -235,21 +235,34 @@ export function CartPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Cart Items List & Shipping Form (7 Cols) */}
         <div className="lg:col-span-7 space-y-6">
-          {/* Teaser Bundling Promo (Jika 1 item) */}
-          {totalCartQty === 1 && role !== 'reseller' && role !== 'dropship' && (
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-ts-terracotta/20 via-ts-mustard/15 to-transparent border border-ts-terracotta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-sm">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-ts-terracotta/20 flex items-center justify-center shrink-0 text-ts-terracotta">
+          {/* Dynamic Bundling Progress Bar (AOV Booster) */}
+          {role !== 'reseller' && role !== 'dropship' && (
+            <div className="p-4 rounded-2xl bg-ts-surface border border-white/[0.08] space-y-2.5 shadow-sm">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-bold text-white flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-ts-mustard animate-pulse" />
-                </div>
-                <div>
-                  <span className="font-bold text-white block text-sm">Tambah 1 Kaos Lagi untuk Hemat Rp 18.000!</span>
-                  <span className="text-[11px] text-ts-kremMuted">Aktifkan diskon otomatis Paket Duo (2 pcs @Rp 90.000) bebas pilih desain.</span>
-                </div>
+                  {totalCartQty >= 2 
+                    ? "Paket Hemat Duo / Trio Telah Aktif! 🎉" 
+                    : "Tambah 1 Kaos Lagi untuk Hemat Rp 18.000 (Paket Duo)!"}
+                </span>
+                <span className="font-mono text-xs text-ts-mustard font-bold">
+                  {Math.min(100, Math.round((totalCartQty / 2) * 100))}%
+                </span>
               </div>
-              <Link to="/katalog" className="px-3.5 py-2 rounded-xl bg-ts-terracotta hover:bg-[#b54625] text-white font-bold text-xs shrink-0 text-center shadow-glow-terracotta transition-all">
-                + Tambah Kaos
-              </Link>
+              <div className="w-full h-2 bg-white/[0.06] rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-ts-terracotta to-ts-mustard rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, Math.round((totalCartQty / 2) * 100))}%` }}
+                />
+              </div>
+              <div className="flex items-center justify-between text-[11px] text-ts-kremMuted pt-0.5">
+                <span>{totalCartQty >= 2 ? "Diskon otomatis diterapkan pada total pesanan" : "Bebas campur desain grafis & model kaos polos"}</span>
+                {totalCartQty < 2 && (
+                  <Link to="/katalog" className="text-ts-terracotta hover:underline font-bold">
+                    + Tambah Kaos Lain &rarr;
+                  </Link>
+                )}
+              </div>
             </div>
           )}
 
