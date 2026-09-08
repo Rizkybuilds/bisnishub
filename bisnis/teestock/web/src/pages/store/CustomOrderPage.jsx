@@ -240,6 +240,8 @@ export function CustomOrderPage() {
             <button
               type="button"
               onClick={() => setCurrentStep(s.step)}
+              aria-current={currentStep === s.step ? 'step' : undefined}
+              aria-label={`Langkah ${s.step}: ${s.label}`}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                 currentStep === s.step
                   ? 'bg-ts-terracotta text-white border border-ts-terracotta'

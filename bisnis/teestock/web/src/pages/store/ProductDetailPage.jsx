@@ -793,15 +793,17 @@ export function ProductDetailPage() {
               </div>
 
               {/* Add to Cart Button */}
-              <Button
-                variant="primary"
-                size="lg"
-                className="flex-1 text-sm sm:text-base py-3 font-bold"
-                icon={isAdded ? Check : ShoppingBag}
-                onClick={handleAddToCart}
-              >
-                {isAdded ? "Berhasil Masuk Troli!" : "Tambah ke Troli"}
-              </Button>
+              <div aria-live="polite" className="flex-1">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="w-full text-sm sm:text-base py-3 font-bold"
+                  icon={isAdded ? Check : ShoppingBag}
+                  onClick={handleAddToCart}
+                >
+                  {isAdded ? "Berhasil Masuk Troli!" : "Tambah ke Troli"}
+                </Button>
+              </div>
             </div>
 
             {/* Dual CTA: Beli Web & Direct WhatsApp */}

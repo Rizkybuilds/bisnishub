@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Star, CheckCircle2, ThumbsUp, MessageSquare, Camera, Plus, X, Sparkles, Filter, Shirt } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { supabase } from '../../services/supabase';
 
 const INITIAL_REVIEWS = [
   {
@@ -74,6 +75,43 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
   const [content, setContent] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
+  // Sync reviews with Supabase ts_reviews
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchCloudReviews() {
+      try {
+        const { data, error } = await supabase
+          .from('ts_reviews')
+          .select('*')
+          .eq('product_sku', sku)
+          .order('created_at', { ascending: false });
+
+        if (!error && data && data.length > 0 && isMounted) {
+          const mapped = data.map(r => ({
+            id: r.id,
+            author: r.author_name,
+            role: r.role_badge || 'Verified Buyer',
+            avatar: (r.author_name || 'MB').slice(0, 2).toUpperCase(),
+            rating: r.rating || 5,
+            date: r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Baru saja',
+            garmentType: r.garment_type || 'New States Apparel',
+            sizeOrdered: r.size_ordered || 'L',
+            userStats: r.user_stats || 'Pembeli Terverifikasi',
+            content: r.content,
+            helpfulCount: r.helpful_count || 0,
+            verified: r.is_verified ?? true,
+          }));
+          setReviews(mapped);
+        }
+      } catch (err) {
+        console.warn('Review cloud fetch notice:', err);
+      }
+    }
+
+    fetchCloudReviews();
+    return () => { isMounted = false; };
+  }, [sku]);
+
   useEffect(() => {
     try {
       localStorage.setItem(storageKey, JSON.stringify(reviews));
@@ -86,6 +124,11 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
     if (helpfulVoted[id]) return;
     setReviews(prev => prev.map(rev => rev.id === id ? { ...rev, helpfulCount: rev.helpfulCount + 1 } : rev));
     setHelpfulVoted(prev => ({ ...prev, [id]: true }));
+
+    // Jika ID dari Supabase (UUID), sinkronkan increment ke database
+    if (typeof id === 'string' && id.length === 36) {
+      supabase.rpc('increment_review_helpful', { review_id: id }).catch(() => {});
+    }
   };
 
   const handleSubmitReview = (e) => {
@@ -110,6 +153,27 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
 
     setReviews([newRev, ...reviews]);
     setSubmitSuccess(true);
+
+    // Simpan juga ke Supabase ts_reviews
+    try {
+      supabase.from('ts_reviews').insert([{
+        product_sku: sku,
+        author_name: name.trim(),
+        role_badge: 'Verified Buyer',
+        rating: Number(rating),
+        garment_type: garmentType,
+        size_ordered: sizeOrdered,
+        user_stats: userStats.trim() || 'Pembeli Terverifikasi',
+        content: content.trim(),
+        helpful_count: 0,
+        is_verified: true,
+      }]).then(({ error }) => {
+        if (error) console.warn('Gagal menyimpan review ke Supabase:', error.message);
+      });
+    } catch (err) {
+      console.warn('Review submit notice:', err);
+    }
+
     setTimeout(() => {
       setSubmitSuccess(false);
       setIsModalOpen(false);

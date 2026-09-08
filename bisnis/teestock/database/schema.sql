@@ -148,11 +148,11 @@ CREATE TABLE ts_orders (
     channel VARCHAR(50) DEFAULT 'web',             -- web, shopee, tokopedia, tiktok, whatsapp, custom
     tier VARCHAR(30) DEFAULT 'retail',             -- retail, dropship, reseller
     status VARCHAR(50) DEFAULT 'pending',          -- pending, dtf, press, pack, shipped, completed, cancelled
-    total_amount NUMERIC(12, 2) NOT NULL,
-    discount_amount NUMERIC(12, 2) DEFAULT 0,
+    total_amount NUMERIC(12, 2) NOT NULL CHECK (total_amount >= 0),
+    discount_amount NUMERIC(12, 2) DEFAULT 0 CHECK (discount_amount >= 0),
     voucher_code VARCHAR(50),
     marketplace_fee NUMERIC(12, 2) DEFAULT 0,
-    shipping_cost NUMERIC(12, 2) DEFAULT 0,
+    shipping_cost NUMERIC(12, 2) DEFAULT 0 CHECK (shipping_cost >= 0),
     tracking_number VARCHAR(100),
     notes TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -447,6 +447,16 @@ BEGIN
     SET used_count = COALESCE(used_count, 0) + 1,
         updated_at = NOW()
     WHERE UPPER(code) = UPPER(TRIM(voucher_code));
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ⭐ RPC INCREMENT REVIEW HELPFUL: Menaikkan counter helpful_count secara atomik
+CREATE OR REPLACE FUNCTION public.increment_review_helpful(review_id UUID)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE public.ts_reviews
+    SET helpful_count = COALESCE(helpful_count, 0) + 1
+    WHERE id = review_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
