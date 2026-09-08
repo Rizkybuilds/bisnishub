@@ -576,11 +576,13 @@ export function ProductDetailPage() {
                 <span>Pilih Model Garmen Kaos NSA:</span>
                 <span className="text-[11px] font-mono text-ts-mustard">{selectedGarment.name}</span>
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2" role="group" aria-label="Pilihan model garmen kaos NSA">
                 {Object.entries(GARMENT_TYPES).filter(([k]) => k !== 'supplies').slice(0, 5).map(([k, g]) => (
                   <button
                     key={k}
                     type="button"
+                    aria-pressed={selectedGarmentKey === k}
+                    aria-label={`Model garmen ${g.name}`}
                     onClick={() => {
                       setSelectedGarmentKey(k);
                       if (g.colors?.[0]) setSelectedColor(g.colors[0].name);

@@ -438,14 +438,16 @@ CREATE OR REPLACE FUNCTION public.link_guest_orders_on_signup()
 RETURNS TRIGGER AS $$
 DECLARE
     clean_phone TEXT;
+    user_email TEXT;
 BEGIN
+    SELECT email INTO user_email FROM auth.users WHERE id = NEW.id;
     clean_phone := right(regexp_replace(COALESCE(NEW.phone, ''), '\D', '', 'g'), 8);
 
     UPDATE public.ts_orders
     SET user_id = NEW.id
     WHERE user_id IS NULL
       AND (
-        (NEW.email IS NOT NULL AND NEW.email <> '' AND customer_phone ILIKE '%' || NEW.email || '%')
+        (user_email IS NOT NULL AND user_email <> '' AND customer_phone ILIKE '%' || user_email || '%')
         OR (length(clean_phone) >= 8 AND regexp_replace(customer_phone, '\D', '', 'g') LIKE '%' || clean_phone || '%')
       );
 
