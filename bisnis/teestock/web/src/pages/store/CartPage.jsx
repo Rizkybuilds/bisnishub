@@ -24,6 +24,7 @@ export function CartPage() {
   const [city, setCity] = useState('');
   const [courier, setCourier] = useState('J&T Express');
   const [orderComplete, setOrderComplete] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 3-digit unique code for manual QRIS verification (101 - 999)
   const [uniqueCode] = useState(() => Math.floor(100 + Math.random() * 899));
@@ -85,56 +86,65 @@ export function CartPage() {
     setVoucherMsg(null);
   };
 
-  const handleCheckout = (e) => {
+  const handleCheckout = async (e) => {
     e.preventDefault();
     if (!customerName.trim() || !phone.trim() || !address.trim()) {
-      alert("Mohon lengkapi nama, nomor WhatsApp, dan alamat pengiriman");
+      alert("Mohon lengkapi nama penerima, nomor WhatsApp, dan alamat pengiriman.");
       return;
     }
 
-    const orderId = `WEB-${Date.now().toString().slice(-6)}`;
-    
-    // Simpan 1 header pesanan relasional dengan seluruh rincian item belanja
-    const orderRecord = {
-      id: orderId,
-      order_number: orderId,
-      customer: customerName.trim(),
-      phone: `${phone.trim()} (${city.trim() || 'Indonesia'})`,
-      city: city.trim(),
-      address: address.trim(),
-      channel: 'web',
-      tier: role || 'retail',
-      status: 'pending',
-      price: grandTotal,
-      total_amount: grandTotal,
-      discount: discountAmount,
-      discount_amount: discountAmount,
-      voucher_code: appliedVoucher?.code || null,
-      unique_code: uniqueCode,
-      uniqueCode: uniqueCode,
-      user_id: user?.id || null,
-      payment_method: 'qris_manual',
-      items: [...cart],
-      date: new Date().toISOString()
-    };
-    
-    createPublicOrder(orderRecord, cart);
+    setIsSubmitting(true);
+    try {
+      const orderId = `WEB-${Date.now().toString().slice(-6)}`;
+      
+      // Simpan 1 header pesanan relasional dengan seluruh rincian item belanja
+      const orderRecord = {
+        id: orderId,
+        order_number: orderId,
+        customer: customerName.trim(),
+        phone: `${phone.trim()} (${city.trim() || 'Indonesia'})`,
+        city: city.trim(),
+        address: address.trim(),
+        channel: 'web',
+        tier: role || 'retail',
+        status: 'pending',
+        price: grandTotal,
+        total_amount: grandTotal,
+        discount: discountAmount,
+        discount_amount: discountAmount,
+        voucher_code: appliedVoucher?.code || null,
+        unique_code: uniqueCode,
+        uniqueCode: uniqueCode,
+        user_id: user?.id || null,
+        payment_method: 'qris_manual',
+        items: [...cart],
+        date: new Date().toISOString()
+      };
+      
+      // 🛡️ P0: WAJIB DIAWAIT agar pesanan benar-benar tercatat di Supabase
+      await createPublicOrder(orderRecord, cart);
 
-    setOrderComplete({
-      orderId,
-      customerName: customerName.trim(),
-      phone: phone.trim(),
-      city: city.trim(),
-      address: address.trim(),
-      courier,
-      items: [...cart],
-      baseTotal: baseGrandTotal,
-      uniqueCode,
-      total: grandTotal,
-      itemCount: cart.length
-    });
+      setOrderComplete({
+        orderId,
+        customerName: customerName.trim(),
+        phone: phone.trim(),
+        city: city.trim(),
+        address: address.trim(),
+        courier,
+        items: [...cart],
+        baseTotal: baseGrandTotal,
+        uniqueCode,
+        total: grandTotal,
+        itemCount: cart.length
+      });
 
-    clearCart();
+      clearCart();
+    } catch (err) {
+      console.error("Gagal memproses checkout:", err);
+      alert("Terjadi kendala jaringan saat mencatat pesanan. Silakan periksa koneksi Anda dan coba lagi.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (orderComplete) {
@@ -540,9 +550,10 @@ export function CartPage() {
               variant="glow"
               size="lg"
               className="w-full text-sm py-3.5 font-extrabold"
-              icon={ArrowRight}
+              icon={isSubmitting ? Loader2 : ArrowRight}
+              disabled={isSubmitting}
             >
-              Konfirmasi &amp; Proses Pesanan
+              {isSubmitting ? 'Memproses Pesanan...' : 'Konfirmasi & Proses Pesanan'}
             </Button>
 
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-ts-muted text-center pt-2">

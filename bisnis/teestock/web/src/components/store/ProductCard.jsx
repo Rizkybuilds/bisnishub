@@ -41,13 +41,18 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
 
   const fallbackUrl = product.filePath || product.file_path || '';
 
+  const productUrl = `/produk/${product.sku}?color=${encodeURIComponent(selectedColor)}`;
+
   return (
-    <Link
-      to={`/produk/${product.sku}?color=${encodeURIComponent(selectedColor)}`}
-      className={`group bg-[#141312] border border-white/[0.08] rounded-2xl overflow-hidden transition-all duration-200 flex flex-col hover:-translate-y-1 hover:border-white/20 ${className}`}
+    <div
+      className={`group bg-[#141312] border border-white/[0.08] rounded-2xl overflow-hidden transition-all duration-200 flex flex-col hover:-translate-y-1 hover:border-white/20 relative ${className}`}
     >
       {/* Product Image Frame */}
-      <div className="aspect-square bg-ts-hitam/70 overflow-hidden relative">
+      <Link
+        to={productUrl}
+        aria-label={`Lihat detail produk ${product.name} varian ${selectedColor}`}
+        className="aspect-square bg-ts-hitam/70 overflow-hidden relative block"
+      >
         <img
           src={imgError ? fallbackUrl : activeImage}
           alt={`${product.name} - ${selectedColor}`}
@@ -93,7 +98,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
             {['hitam', 'black', 'putih', 'white'].includes(selectedColor.toLowerCase()) ? '⚡ H+0 Studio' : '📦 H+1 Gudang'}
           </span>
         </div>
-      </div>
+      </Link>
 
       {/* Card Content & Interactive Color Swatches */}
       <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
@@ -103,18 +108,20 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
           }`}>
             {isBlank ? 'Kaos Polos NSA' : (product.seriesName || product.series)}
           </div>
-          <h3 className={`text-xs sm:text-sm font-bold text-white transition-colors truncate ${
-            isBlank ? 'group-hover:text-ts-teal' : 'group-hover:text-ts-terracotta'
-          }`}>
-            {product.name}
-          </h3>
+          <Link to={productUrl} className="block group/title">
+            <h3 className={`text-xs sm:text-sm font-bold text-white transition-colors truncate ${
+              isBlank ? 'group-hover/title:text-ts-teal' : 'group-hover/title:text-ts-terracotta'
+            }`}>
+              {product.name}
+            </h3>
+          </Link>
           {product.niche && (
             <div className="text-[10px] sm:text-[11px] text-ts-kremMuted truncate">{product.niche}</div>
           )}
 
-          {/* Color Swatch Dots */}
+          {/* Color Swatch Dots with Accessible Tap Area */}
           {visibleSwatches.length > 1 && (
-            <div className="pt-1 flex items-center gap-1.5 flex-wrap">
+            <div className="pt-1 flex items-center gap-1.5 flex-wrap" role="group" aria-label="Pilihan varian warna">
               {visibleSwatches.map((colorName) => {
                 const hex = getColorHex(colorName);
                 const isSelected = selectedColor === colorName;
@@ -122,19 +129,24 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
                   <button
                     key={colorName}
                     type="button"
-                    title={`Pilih warna ${colorName}`}
+                    aria-label={`Pilih warna ${colorName}`}
+                    aria-pressed={isSelected}
                     onClick={(e) => handleColorSelect(e, colorName)}
-                    className={`w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full transition-all duration-150 cursor-pointer ${
-                      isSelected
-                        ? 'ring-2 ring-ts-terracotta ring-offset-1 ring-offset-ts-hitam scale-110 shadow-sm z-10'
-                        : 'ring-1 ring-white/20 hover:ring-white/60 hover:scale-105 opacity-80 hover:opacity-100'
-                    }`}
-                    style={{ backgroundColor: hex }}
-                  />
+                    className="p-1 -m-1 rounded-full cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ts-terracotta"
+                  >
+                    <span
+                      className={`w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full transition-all duration-150 inline-block ${
+                        isSelected
+                          ? 'ring-2 ring-ts-terracotta ring-offset-1 ring-offset-ts-hitam scale-110 shadow-sm z-10'
+                          : 'ring-1 ring-white/20 hover:ring-white/60 hover:scale-105 opacity-80 hover:opacity-100'
+                      }`}
+                      style={{ backgroundColor: hex }}
+                    />
+                  </button>
                 );
               })}
               {extraColorCount > 0 && (
-                <span className="text-[9px] sm:text-[10px] font-mono text-ts-kremMuted hover:text-white pl-0.5">
+                <span className="text-[9px] sm:text-[10px] font-mono text-ts-kremMuted pl-0.5">
                   +{extraColorCount}
                 </span>
               )}
@@ -185,16 +197,20 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
             )}
           </div>
 
-          <span className={`text-[10px] font-bold px-2 sm:px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 ${
-            isBlank
-              ? 'bg-ts-teal/10 border border-ts-teal/30 text-teal-300 group-hover:bg-ts-teal group-hover:text-zinc-950'
-              : 'bg-white/[0.05] border border-white/10 text-white group-hover:bg-ts-terracotta group-hover:text-white shadow-sm'
-          }`}>
+          <Link
+            to={productUrl}
+            aria-label={`Pilih produk ${product.name}`}
+            className={`text-[10px] font-bold px-2 sm:px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
+              isBlank
+                ? 'bg-ts-teal/10 border border-ts-teal/30 text-teal-300 hover:bg-ts-teal hover:text-zinc-950'
+                : 'bg-white/[0.05] border border-white/10 text-white hover:bg-ts-terracotta hover:text-white shadow-sm'
+            }`}
+          >
             <span>Pilih</span>
             <span>&rarr;</span>
-          </span>
+          </Link>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

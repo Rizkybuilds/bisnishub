@@ -61,20 +61,27 @@ export function PartnerPage() {
     setSubmitting(true);
 
     try {
-      if (user) {
-        await supabase.from('ts_partner_applications').insert([
-          {
-            user_id: user.id,
-            full_name: formFullName.trim(),
-            brand_name: formBrandName.trim(),
-            phone: formPhone.trim(),
-            city: formCity.trim(),
-            sales_channel: formChannel,
-            target_tier: partnerTier,
-            status: 'pending',
-          }
-        ]);
+      // 🛡️ P1: Simpan pengajuan baik saat user login maupun sebagai guest agar calon mitra tidak hilang
+      const applicationPayload = {
+        user_id: user?.id || null,
+        full_name: formFullName.trim(),
+        brand_name: formBrandName.trim(),
+        phone: formPhone.trim(),
+        city: formCity.trim(),
+        sales_channel: formChannel,
+        target_tier: partnerTier,
+        status: 'pending',
+      };
 
+      const { error: insertErr } = await supabase
+        .from('ts_partner_applications')
+        .insert([applicationPayload]);
+
+      if (insertErr) {
+        console.warn('Gagal simpan ke Supabase, fallback WA tetap siap:', insertErr);
+      }
+
+      if (user) {
         await supabase.from('ts_user_profiles').update({
           partner_status: 'pending',
           partner_tier: partnerTier

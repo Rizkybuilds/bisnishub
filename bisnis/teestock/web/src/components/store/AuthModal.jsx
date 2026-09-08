@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Mail, Sparkles, CheckCircle2, ArrowRight, Loader2, ShieldCheck, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { TeeStockLogoIcon } from '../common/TeeStockLogo';
@@ -10,6 +10,20 @@ export function AuthModal() {
   const [loadingMagic, setLoadingMagic] = useState(false);
   const [magicSent, setMagicSent] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') closeAuthModal();
+    };
+    if (isAuthModalOpen) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isAuthModalOpen, closeAuthModal]);
 
   if (!isAuthModalOpen) return null;
 
@@ -45,16 +59,23 @@ export function AuthModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+      onClick={closeAuthModal}
+    >
       <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-modal-title"
         className="relative w-full max-w-md rounded-3xl bg-ts-surface border border-white/[0.12] p-6 sm:p-8 shadow-2xl shadow-black/80 text-ts-krem space-y-6 animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
+          type="button"
           onClick={closeAuthModal}
-          className="absolute top-4 right-4 p-2 rounded-xl text-ts-muted hover:text-white hover:bg-white/[0.08] transition-colors"
-          aria-label="Tutup"
+          className="absolute top-4 right-4 p-2 rounded-xl text-ts-muted hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
+          aria-label="Tutup dialog autentikasi"
         >
           <X className="w-5 h-5" />
         </button>
@@ -64,7 +85,7 @@ export function AuthModal() {
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-ts-terracotta to-[#9E3B1B] flex items-center justify-center mx-auto shadow-glow-terracotta border border-white/20">
             <TeeStockLogoIcon className="w-7 h-7 text-white drop-shadow-sm" />
           </div>
-          <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+          <h3 id="auth-modal-title" className="text-xl sm:text-2xl font-black text-white tracking-tight">
             Akun Member TeeStock
           </h3>
           <p className="text-xs text-ts-kremMuted leading-relaxed">

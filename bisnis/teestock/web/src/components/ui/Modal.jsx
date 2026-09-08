@@ -27,13 +27,20 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-xl' 
       />
 
       {/* Modal Dialog */}
-      <div className={`relative w-full ${maxWidth} bg-ts-surface border border-ts-border rounded-2xl shadow-2xl overflow-hidden z-10 max-h-[90vh] flex flex-col`}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-dialog-title"
+        className={`relative w-full ${maxWidth} bg-ts-surface border border-ts-border rounded-2xl shadow-2xl overflow-hidden z-10 max-h-[90vh] flex flex-col`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-ts-borderDim bg-ts-hitam/40">
-          <h3 className="text-base font-bold text-ts-krem">{title}</h3>
+          <h3 id="modal-dialog-title" className="text-base font-bold text-ts-krem">{title}</h3>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 rounded-lg text-ts-muted hover:text-white hover:bg-ts-surface transition-colors"
+            aria-label="Tutup dialog"
+            className="p-1 rounded-lg text-ts-muted hover:text-white hover:bg-ts-surface transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>

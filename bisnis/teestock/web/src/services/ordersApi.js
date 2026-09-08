@@ -215,6 +215,15 @@ export async function createPublicOrder(order, items = []) {
 
       await supabase.from('ts_order_items').insert(itemsPayload);
     }
+
+    // 🏷️ Perbarui kuota/pemakaian voucher jika order menggunakan voucher
+    if (!orderErr && normalized.voucher_code) {
+      try {
+        await supabase.rpc('increment_voucher_usage', { voucher_code: normalized.voucher_code });
+      } catch (vErr) {
+        console.warn('Could not increment voucher usage in Supabase:', vErr);
+      }
+    }
   } catch (err) {
     console.warn("Could not sync public order to Supabase:", err);
   }
@@ -258,18 +267,44 @@ export async function updateOrderStatus(orderId, newStatus) {
 }
 
 /**
- * 🔍 PUBLIC SECURE TRACKING: Lacak SATU pesanan spesifik tanpa mengekspos pesanan orang lain
+ * 🔍 PUBLIC SECURE TRACKING: Lacak SATU pesanan spesifik dengan Supabase RPC + Data Masking
+ * Memungkinkan pelacakan pesanan tamu (guest) tanpa membuka kebocoran data pelanggan (PII)
  */
-export async function trackSingleOrder(term) {
+export async function trackSingleOrder(term, phoneLast4 = null) {
   if (!term || !term.trim()) return [];
-  const cleanTerm = term.trim().toLowerCase();
+  const cleanTerm = term.trim();
+  const cleanTermLower = cleanTerm.toLowerCase();
 
+  // 1. Coba panggil RPC PostgreSQL track_guest_order (aman dengan masking nama & item)
   try {
-    // Coba query spesifik ke Supabase beserta child order_items
+    const { data: rpcData, error: rpcError } = await supabase.rpc('track_guest_order', {
+      p_order_no: cleanTerm.toUpperCase(),
+      p_phone_last4: phoneLast4 ? phoneLast4.trim() : null
+    });
+
+    if (!rpcError && rpcData && rpcData.length > 0) {
+      return rpcData.map(row => ({
+        id: row.order_number,
+        order_number: row.order_number,
+        status: row.status,
+        trackingNo: row.tracking_number,
+        tracking_number: row.tracking_number,
+        created_at: row.created_at,
+        customer: row.customer_masked || 'Pelanggan TeeStock',
+        items: row.items || [],
+        date: row.created_at
+      }));
+    }
+  } catch (rpcErr) {
+    console.warn("RPC track_guest_order lookup notice:", rpcErr);
+  }
+
+  // 2. Jika user login (member/admin), query ts_orders langsung
+  try {
     const { data, error } = await supabase
       .from('ts_orders')
       .select('*, ts_order_items(*)')
-      .or(`order_number.ilike.%${cleanTerm}%,tracking_number.ilike.%${cleanTerm}%,customer_phone.ilike.%${cleanTerm}%`)
+      .or(`order_number.ilike.%${cleanTermLower}%,tracking_number.ilike.%${cleanTermLower}%,customer_phone.ilike.%${cleanTermLower}%`)
       .limit(5);
 
     if (!error && data && data.length > 0) {
@@ -279,23 +314,23 @@ export async function trackSingleOrder(term) {
     console.warn("Supabase tracking lookup fallback:", err);
   }
 
-  // Fallback ke riwayat lokal pesanan pribadi pembeli
+  // 3. Fallback ke riwayat lokal pesanan pribadi pembeli
   try {
     const myOrders = JSON.parse(localStorage.getItem(LOCAL_STORAGE_MY_ORDERS_KEY) || '[]');
     const matched = myOrders.filter(o => 
-      o.id.toLowerCase().includes(cleanTerm) ||
-      (o.parentOrderId && o.parentOrderId.toLowerCase().includes(cleanTerm)) ||
-      (o.trackingNo && o.trackingNo.toLowerCase().includes(cleanTerm)) ||
-      (o.phone && o.phone.toLowerCase().includes(cleanTerm))
+      o.id.toLowerCase().includes(cleanTermLower) ||
+      (o.parentOrderId && o.parentOrderId.toLowerCase().includes(cleanTermLower)) ||
+      (o.trackingNo && o.trackingNo.toLowerCase().includes(cleanTermLower)) ||
+      (o.phone && o.phone.toLowerCase().includes(cleanTermLower))
     );
     if (matched.length > 0) return matched;
   } catch (e) {}
 
-  // Fallback demo SEED_ORDERS jika mencari id seed contoh
+  // 4. Fallback demo SEED_ORDERS jika mencari id seed contoh
   const seedMatched = SEED_ORDERS.filter(o => 
-    o.id.toLowerCase() === cleanTerm ||
-    (o.trackingNo && o.trackingNo.toLowerCase() === cleanTerm) ||
-    (o.phone && o.phone.includes(cleanTerm))
+    o.id.toLowerCase() === cleanTermLower ||
+    (o.trackingNo && o.trackingNo.toLowerCase() === cleanTermLower) ||
+    (o.phone && o.phone.includes(cleanTermLower))
   );
 
   return seedMatched.map(normalizeOrderRecord);

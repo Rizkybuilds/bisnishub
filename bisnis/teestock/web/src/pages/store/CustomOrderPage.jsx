@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Send, Upload, Sparkles, ShieldCheck, CheckCircle2, MessageSquare, ArrowRight, ArrowLeft, Check, Layers, Printer, User, FileText, X } from 'lucide-react';
+import { Send, Upload, Sparkles, ShieldCheck, CheckCircle2, MessageSquare, ArrowRight, ArrowLeft, Check, Layers, Printer, User, FileText, X, Loader2 } from 'lucide-react';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { DTF_PRINT_SIZES, PRODUCTION_COSTS, getSizeSurcharge } from '../../constants/pricing';
 import { useStore } from '../../context/StoreContext';
@@ -49,6 +49,7 @@ export function CustomOrderPage() {
   const [artworkFile, setArtworkFile] = useState(null);
   const [artworkPreview, setArtworkPreview] = useState(null);
   const [uploadingArtwork, setUploadingArtwork] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [notes, setNotes] = useState('');
   const [submittedOrder, setSubmittedOrder] = useState(null);
 
@@ -68,16 +69,16 @@ export function CustomOrderPage() {
       setArtworkPreview(null);
     }
 
-    // Try optional Cloudinary direct upload if configured
-    if (import.meta.env.VITE_CLOUDINARY_CLOUD_NAME && import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET) {
+    // Auto-upload ke Cloudinary jika file adalah gambar
+    if (file.type.startsWith('image/')) {
+      setUploadingArtwork(true);
       try {
-        setUploadingArtwork(true);
-        const res = await uploadToCloudinary(file);
-        if (res?.url) {
-          setArtworkLink(res.url);
+        const uploadRes = await uploadToCloudinary(file);
+        if (uploadRes && uploadRes.secure_url) {
+          setArtworkLink(uploadRes.secure_url);
         }
       } catch (err) {
-        console.warn('[TeeStock] Cloudinary upload skipped, file will be sent via WhatsApp:', err);
+        console.warn('Gagal auto-upload ke Cloudinary:', err);
       } finally {
         setUploadingArtwork(false);
       }
@@ -90,6 +91,7 @@ export function CustomOrderPage() {
       URL.revokeObjectURL(artworkPreview);
       setArtworkPreview(null);
     }
+    setArtworkLink('');
   };
 
   // Dynamic Price Calculation
@@ -105,36 +107,45 @@ export function CustomOrderPage() {
   const estPricePerPcs = Math.ceil(((baseCost * multiplier) + sizeSurcharge) / 1000) * 1000;
   const estTotal = estPricePerPcs * qty;
 
-  const handleSubmit = (e) => {
+  const handleSubmitOrder = async (e) => {
     e.preventDefault();
     if (!name.trim() || !phone.trim()) {
       alert("Mohon lengkapi nama dan nomor WhatsApp Anda");
       return;
     }
 
-    const orderNumber = `CST-${Date.now().toString().slice(-6)}`;
-    const artworkInfo = artworkLink || (artworkFile ? `File: ${artworkFile.name} (${(artworkFile.size / 1024).toFixed(0)} KB)` : 'Kirim via WA');
-    
-    const newOrder = {
-      id: orderNumber,
-      customer: name.trim(),
-      phone: `${phone.trim()} (${city.trim() || 'Indonesia'})`,
-      channel: 'web',
-      sku: 'CUSTOM-ORDER',
-      productName: `Custom Sablon (${selectedPrint.name})`,
-      garment: selectedGarment.name,
-      color,
-      size,
-      qty: Number(qty),
-      price: estTotal,
-      fee: 0,
-      status: 'pending',
-      date: new Date().toISOString(),
-      notes: notes ? `${notes} | Artwork: ${artworkInfo}` : `Artwork: ${artworkInfo}`
-    };
+    setIsSubmitting(true);
+    try {
+      const orderNumber = `CST-${Date.now().toString().slice(-6)}`;
+      const artworkInfo = artworkLink || (artworkFile ? `File: ${artworkFile.name} (${(artworkFile.size / 1024).toFixed(0)} KB)` : 'Kirim via WA');
+      
+      const newOrder = {
+        id: orderNumber,
+        customer: name.trim(),
+        phone: `${phone.trim()} (${city.trim() || 'Indonesia'})`,
+        channel: 'web',
+        sku: 'CUSTOM-ORDER',
+        productName: `Custom Sablon (${selectedPrint.name})`,
+        garment: selectedGarment.name,
+        color,
+        size,
+        qty: Number(qty),
+        price: estTotal,
+        fee: 0,
+        status: 'pending',
+        date: new Date().toISOString(),
+        notes: notes ? `${notes} | Artwork: ${artworkInfo}` : `Artwork: ${artworkInfo}`
+      };
 
-    createPublicOrder(newOrder);
-    setSubmittedOrder(newOrder);
+      // 🛡️ P0: Wajib diawait agar order tersimpan di Supabase
+      await createPublicOrder(newOrder);
+      setSubmittedOrder(newOrder);
+    } catch (err) {
+      console.error("Gagal mengirim job order custom:", err);
+      alert("Terjadi kendala jaringan saat mengirim pesanan. Silakan periksa koneksi Anda dan coba lagi.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submittedOrder) {
@@ -249,7 +260,7 @@ export function CustomOrderPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Step Configuration Form (7 Cols) */}
-        <form onSubmit={handleSubmit} className="lg:col-span-7 bg-[#141312] border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
+        <form onSubmit={handleSubmitOrder} className="lg:col-span-7 bg-[#141312] border border-white/[0.08] rounded-2xl p-6 sm:p-8 space-y-6">
           
           {/* STEP 1: KAOS & WARNA */}
           {currentStep === 1 && (
@@ -541,10 +552,11 @@ export function CustomOrderPage() {
                   type="submit"
                   variant="primary"
                   size="lg"
-                  icon={Send}
+                  icon={isSubmitting ? Loader2 : Send}
+                  disabled={isSubmitting || uploadingArtwork}
                   className="font-mono text-xs font-bold"
                 >
-                  KIRIM JOB ORDER CUSTOM
+                  {isSubmitting ? 'MENGIRIM PESANAN...' : 'KIRIM JOB ORDER CUSTOM'}
                 </Button>
               </div>
             </div>

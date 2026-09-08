@@ -72,6 +72,11 @@ export async function validateVoucher(rawCode, cartTotal, userRole = 'member') {
       return { valid: false, message: 'Voucher ini sudah melewati masa berlaku.' };
     }
 
+    // 2b. Cek batas penggunaan total (kuota voucher)
+    if (voucher.usage_limit && voucher.used_count && Number(voucher.used_count) >= Number(voucher.usage_limit)) {
+      return { valid: false, message: 'Kuota penggunaan voucher ini sudah habis.' };
+    }
+
     // 3. Cek pembatasan role
     if (voucher.target_role && voucher.target_role !== 'all') {
       if (voucher.target_role === 'partner' && userRole !== 'partner' && userRole !== 'admin') {

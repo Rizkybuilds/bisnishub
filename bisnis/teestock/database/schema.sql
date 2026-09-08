@@ -369,6 +369,70 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 
+-- 🛡️ P0 PROTEKSI ROLE: Mencegah eskalasi hak akses role admin melalui manipulasi REST API client
+CREATE OR REPLACE FUNCTION public.protect_user_role()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.role IS DISTINCT FROM OLD.role AND NOT public.is_admin() THEN
+        RAISE EXCEPTION 'Akses ditolak: Hanya Administrator yang dapat mengubah role pengguna.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS trg_protect_user_role ON public.ts_user_profiles;
+CREATE TRIGGER trg_protect_user_role
+    BEFORE UPDATE ON public.ts_user_profiles
+    FOR EACH ROW EXECUTE FUNCTION public.protect_user_role();
+
+-- 🔍 P1 SECURE GUEST TRACKING: Melacak pesanan publik/tamu dengan data masking & verifikasi aman
+CREATE OR REPLACE FUNCTION public.track_guest_order(p_order_no TEXT, p_phone_last4 TEXT DEFAULT NULL)
+RETURNS TABLE (
+    order_number VARCHAR,
+    status VARCHAR,
+    tracking_number VARCHAR,
+    created_at TIMESTAMPTZ,
+    items JSON,
+    customer_masked TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        o.order_number,
+        o.status,
+        o.tracking_number,
+        o.created_at,
+        COALESCE(json_agg(json_build_object(
+            'name', i.product_name,
+            'garment', i.garment,
+            'size', i.size,
+            'color', i.color,
+            'qty', i.qty
+        )) FILTER (WHERE i.id IS NOT NULL), '[]'::json) AS items,
+        concat(left(o.customer_name, 2), '*** ', right(o.customer_name, 1)) AS customer_masked
+    FROM ts_orders o
+    LEFT JOIN ts_order_items i ON o.id = i.order_id
+    WHERE o.order_number = UPPER(TRIM(p_order_no))
+      AND (
+        p_phone_last4 IS NULL 
+        OR TRIM(p_phone_last4) = '' 
+        OR right(regexp_replace(o.customer_phone, '\D', '', 'g'), 4) = TRIM(p_phone_last4)
+      )
+    GROUP BY o.id, o.order_number, o.status, o.tracking_number, o.created_at, o.customer_name;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 🏷️ RPC INCREMENT VOUCHER USAGE: Menaikkan counter used_count secara atomik saat pesanan berhasil
+CREATE OR REPLACE FUNCTION public.increment_voucher_usage(voucher_code TEXT)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE public.ts_vouchers
+    SET used_count = COALESCE(used_count, 0) + 1,
+        updated_at = NOW()
+    WHERE code = UPPER(TRIM(voucher_code));
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 
 -- ====================================================================
 -- BAGIAN 5: ROW LEVEL SECURITY (RLS) POLICIES — HARDENED PRODUCTION
