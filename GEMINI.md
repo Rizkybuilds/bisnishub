@@ -43,7 +43,7 @@ aktifkan skill yang sesuai.
 
 ## Execution & Automation Engine Skills
 
-Tersedia 4 skill mesin eksekusi teknis dan otomatisasi yang dapat diaktifkan:
+Tersedia 5 skill mesin eksekusi teknis, operasional, dan pemasaran yang dapat diaktifkan:
 
 | Mesin / Engine | Skill | Fokus |
 |---|---|---|
@@ -51,6 +51,7 @@ Tersedia 4 skill mesin eksekusi teknis dan otomatisasi yang dapat diaktifkan:
 | 📦 Supply & Fulfillment | `business-ops-engine` | Inventori hibrida 2-tier, Kanban antrean, label thermal A6, audit defect |
 | 💬 WhatsApp Automation | `whatsapp-automation` | Pesan transaksional, QRIS kode unik, custom quoter, webhook gateway |
 | 🖨️ DTF & Pre-Press | `dtf-print-ops` | Gang sheet roll 58 cm, file pre-flight 300 DPI, SOP heat press 155°C |
+| 🎯 Promosi & Kampanye | `marketing-promo-engine` | Playbook Drop launch, formula copywriting konversi, bundling promo, closing WA, B2B dropship |
 
 ### Cross-Referral
 

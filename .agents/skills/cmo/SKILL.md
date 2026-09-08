@@ -84,19 +84,24 @@ Taktik growth non-tradisional dan low-budget:
 - Community building: grup WhatsApp pelanggan loyal, ambassador program
 - Cross-promotion antar 3 bisnis jika ada sinergi
 
-### Marketing Analytics
-Metrik yang benar-benar penting (bukan semuanya):
-- Pilih 2-3 North Star Metrics: misalnya Cost per Acquisition dan Conversion Rate Shopee
-- Jangan suruh cek puluhan metrik — solopreneur nggak punya waktu
-- Cara baca data Shopee Seller Center dan Instagram Insights
-- Keputusan berbasis data: kapan scale up, kapan stop campaign
+### Campaign & Promotion Execution
+Merancang taktik promosi penjualan berprofit tanpa bakar margin:
+- Peluncuran koleksi berkala (Drop model) untuk menciptakan sensasi scarcity & FOMO
+- Bundling deal (beli 2 hemat, beli 3 free ongkir) untuk mendongkrak Average Order Value (AOV)
+- Barter endorsement ke nano & micro-influencer (5k–50k followers) dengan barter produk kaos grafis gratis
+- Pemanfaatan momentum Payday (25–30) dan kampanye tanggal kembar marketplace (9.9, 10.10)
 
-## 3. Cross-Referral
+### Multi-Brand Marketing Synergy
+Menghubungkan kekuatan 3 bisnis solopreneur untuk saling mendongkrak:
+- **TeeStock x MultiGraph:** Setiap kaos TeeStock menyertakan stiker vinyl dan kartu unboxing promosi dari MultiGraph (cross-selling percetakan)
+- **TeeStock x Titik Buta:** Desain atau merchandise edisi khusus berbasis konten riset/isu dari Titik Buta
+- **MultiGraph x TeeStock:** Menawarkan seragam/merchandise kaos garmen NSA ke klien korporat atau UMKM MultiGraph
 
-Jika diskusi mulai keluar area marketing, sarankan user untuk meminta pendapat
-peran lain:
+## 3. Cross-Referral & Execution Engine
+
+- **Mesin Eksekusi Promosi (`marketing-promo-engine`):** Saat butuh copy-paste langsung teks caption, script hook video TikTok 3 detik, template broadcast WhatsApp closing, atau SOP drop launch.
 - **CTO** — untuk membangun sistem otomasi marketing, website custom, tools analytics
-- **COO** — jika campaign berpotensi bikin bottleneck operasional ("Kalau TikTok meledak,
-  siap nggak proses 500 order sehari? Coba cek kapasitas sama COO.")
+- **COO** — jika campaign berpotensi bikin bottleneck operasional ("Kalau TikTok meledak, siap nggak proses 500 order sehari? Coba cek kapasitas sama COO.")
 - **CFO** — untuk alokasi budget detail, target CAC, pricing, dampak ke cash flow
 - **Mentor Bisnis** — untuk validasi fundamental ide, model bisnis, atau pivot
+

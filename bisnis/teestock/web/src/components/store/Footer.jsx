@@ -100,6 +100,7 @@ export function Footer() {
         <div>
           <h5 className="text-xs font-bold uppercase tracking-wider text-white mb-3 font-mono">Layanan &amp; Bantuan</h5>
           <ul className="space-y-2 text-xs text-ts-kremMuted">
+            <li><Link to="/care" className="hover:text-ts-terracotta transition-colors">Garansi &amp; Panduan Ukuran</Link></li>
             <li><Link to="/custom-order" className="hover:text-ts-terracotta transition-colors">Pesan Kaos Custom</Link></li>
             <li><Link to="/tracking" className="hover:text-ts-terracotta transition-colors">Cek Status Pesanan</Link></li>
             <li><a href={`https://wa.me/${cleanWhatsapp}`} target="_blank" rel="noreferrer" className="hover:text-ts-terracotta transition-colors">WhatsApp Customer Support</a></li>

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Send, Upload, Sparkles, ShieldCheck, CheckCircle2, MessageSquare, ArrowRight, ArrowLeft, Check, Layers, Printer, User } from 'lucide-react';
+import { Send, Upload, Sparkles, ShieldCheck, CheckCircle2, MessageSquare, ArrowRight, ArrowLeft, Check, Layers, Printer, User, FileText, X } from 'lucide-react';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { DTF_PRINT_SIZES, PRODUCTION_COSTS, getSizeSurcharge } from '../../constants/pricing';
 import { useStore } from '../../context/StoreContext';
 import { createPublicOrder } from '../../services/ordersApi';
+import { uploadToCloudinary } from '../../services/cloudinary';
 import { Button } from '../../components/ui/Button';
 import { Input, Select } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
@@ -45,11 +46,51 @@ export function CustomOrderPage() {
   const [printSizeId, setPrintSizeId] = useState('a3');
   const [qty, setQty] = useState(1);
   const [artworkLink, setArtworkLink] = useState('');
+  const [artworkFile, setArtworkFile] = useState(null);
+  const [artworkPreview, setArtworkPreview] = useState(null);
+  const [uploadingArtwork, setUploadingArtwork] = useState(false);
   const [notes, setNotes] = useState('');
   const [submittedOrder, setSubmittedOrder] = useState(null);
 
   const selectedGarment = GARMENT_TYPES[garmentKey] || GARMENT_TYPES.nsa_softstyle_30s;
   const selectedPrint = DTF_PRINT_SIZES.find(p => p.id === printSizeId) || DTF_PRINT_SIZES[2];
+
+  // File Upload Handlers
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setArtworkFile(file);
+    if (file.type.startsWith('image/')) {
+      const previewUrl = URL.createObjectURL(file);
+      setArtworkPreview(previewUrl);
+    } else {
+      setArtworkPreview(null);
+    }
+
+    // Try optional Cloudinary direct upload if configured
+    if (import.meta.env.VITE_CLOUDINARY_CLOUD_NAME && import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET) {
+      try {
+        setUploadingArtwork(true);
+        const res = await uploadToCloudinary(file);
+        if (res?.url) {
+          setArtworkLink(res.url);
+        }
+      } catch (err) {
+        console.warn('[TeeStock] Cloudinary upload skipped, file will be sent via WhatsApp:', err);
+      } finally {
+        setUploadingArtwork(false);
+      }
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setArtworkFile(null);
+    if (artworkPreview) {
+      URL.revokeObjectURL(artworkPreview);
+      setArtworkPreview(null);
+    }
+  };
 
   // Dynamic Price Calculation
   const sizeSurcharge = getSizeSurcharge(size);
@@ -72,6 +113,8 @@ export function CustomOrderPage() {
     }
 
     const orderNumber = `CST-${Date.now().toString().slice(-6)}`;
+    const artworkInfo = artworkLink || (artworkFile ? `File: ${artworkFile.name} (${(artworkFile.size / 1024).toFixed(0)} KB)` : 'Kirim via WA');
+    
     const newOrder = {
       id: orderNumber,
       customer: name.trim(),
@@ -86,7 +129,8 @@ export function CustomOrderPage() {
       price: estTotal,
       fee: 0,
       status: 'pending',
-      date: new Date().toISOString()
+      date: new Date().toISOString(),
+      notes: notes ? `${notes} | Artwork: ${artworkInfo}` : `Artwork: ${artworkInfo}`
     };
 
     createPublicOrder(newOrder);
@@ -95,8 +139,12 @@ export function CustomOrderPage() {
 
   if (submittedOrder) {
     const targetPhone = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
+    const artworkDesc = artworkLink 
+      ? artworkLink 
+      : (artworkFile ? `File: ${artworkFile.name} (siap dikirim di chat ini)` : 'Kirim file via WA');
+
     const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(
-      `Halo TeeStock! Saya ingin konfirmasi pesanan custom:\nNo. Order: ${submittedOrder.id}\nNama: ${submittedOrder.customer}\nModel: ${submittedOrder.garment} (${submittedOrder.color} - Size ${submittedOrder.size})\nJumlah: ${submittedOrder.qty} pcs\nUkuran Sablon: ${selectedPrint.name}\nArtwork: ${artworkLink || 'Kirim file via WA'}\nCatatan: ${notes}\nTotal Estimasi: ${formatRupiah(submittedOrder.price)}`
+      `Halo TeeStock! Saya ingin konfirmasi pesanan custom:\nNo. Order: ${submittedOrder.id}\nNama: ${submittedOrder.customer}\nModel: ${submittedOrder.garment} (${submittedOrder.color} - Size ${submittedOrder.size})\nJumlah: ${submittedOrder.qty} pcs\nUkuran Sablon: ${selectedPrint.name}\nArtwork: ${artworkDesc}\nCatatan: ${notes || '-'}\nTotal Estimasi: ${formatRupiah(submittedOrder.price)}`
     )}`;
 
     return (
@@ -376,12 +424,98 @@ export function CustomOrderPage() {
                 onChange={(e) => setCity(e.target.value)}
               />
 
-              <Input
-                label="Link File Desain (Google Drive / Dropbox / Cloud)"
-                placeholder="https://drive.google.com/... (Bisa juga dikirim nanti via WA)"
-                value={artworkLink}
-                onChange={(e) => setArtworkLink(e.target.value)}
-              />
+              {/* Artwork File Upload & Link */}
+              <div className="space-y-3">
+                <label className="block text-xs font-bold text-white flex items-center justify-between">
+                  <span>File Desain / Artwork:</span>
+                  <span className="text-[10px] text-ts-mustard font-mono font-normal">PNG, PDF, AI, PSD, JPG (300 DPI)</span>
+                </label>
+
+                {/* Upload Zone */}
+                <div className="border-2 border-dashed border-white/15 hover:border-ts-terracotta/50 rounded-2xl p-4 transition-all bg-white/[0.02]">
+                  {artworkPreview ? (
+                    <div className="flex items-center gap-4">
+                      <div className="w-20 h-20 rounded-xl overflow-hidden bg-black/50 border border-white/10 shrink-0 relative flex items-center justify-center">
+                        <img src={artworkPreview} alt="Preview Artwork" className="max-w-full max-h-full object-contain p-1" />
+                      </div>
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-ts-green shrink-0" />
+                          <span className="text-xs font-bold text-white truncate">{artworkFile?.name}</span>
+                        </div>
+                        <p className="text-[11px] text-ts-kremMuted">
+                          {(artworkFile?.size / 1024).toFixed(0)} KB • Siap diproses
+                          {uploadingArtwork && <span className="text-ts-mustard ml-2 animate-pulse">Mengunggah ke Cloud...</span>}
+                          {artworkLink && !uploadingArtwork && <span className="text-ts-teal ml-2">✓ Tersimpan di Cloud</span>}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={handleRemoveFile}
+                          className="text-[11px] text-red-400 hover:text-red-300 font-bold flex items-center gap-1 cursor-pointer pt-1"
+                        >
+                          <X className="w-3.5 h-3.5" /> Ganti File
+                        </button>
+                      </div>
+                    </div>
+                  ) : artworkFile ? (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-ts-mustard">
+                          <FileText className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-white truncate max-w-[200px] sm:max-w-xs">{artworkFile.name}</p>
+                          <p className="text-[10px] text-ts-kremMuted">{(artworkFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveFile}
+                        className="text-xs text-red-400 hover:text-red-300 p-1 cursor-pointer"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex flex-col items-center justify-center py-4 cursor-pointer group">
+                      <div className="w-12 h-12 rounded-2xl bg-white/[0.04] group-hover:bg-ts-terracotta/20 text-ts-kremMuted group-hover:text-ts-terracotta flex items-center justify-center border border-white/10 group-hover:border-ts-terracotta/40 transition-all mb-2">
+                        <Upload className="w-5 h-5" />
+                      </div>
+                      <span className="text-xs font-bold text-white group-hover:text-ts-terracotta transition-colors">
+                        Klik untuk Unggah Gambar Desain / Logo
+                      </span>
+                      <span className="text-[10px] text-ts-muted mt-0.5">
+                        Maksimal 25MB • PNG transparan direkomendasikan
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*,.pdf,.ai,.psd,.eps"
+                        className="hidden"
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  )}
+                </div>
+
+                {/* Cloud Link Fallback */}
+                <div className="space-y-1 pt-1">
+                  <label className="block text-[11px] font-medium text-ts-kremMuted">
+                    Atau Cantumkan Link Cloud (Google Drive / Dropbox / WeTransfer):
+                  </label>
+                  <Input
+                    placeholder="https://drive.google.com/... (opsional bila sudah upload file di atas)"
+                    value={artworkLink}
+                    onChange={(e) => setArtworkLink(e.target.value)}
+                  />
+                </div>
+
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-[11px] text-ts-kremMuted flex items-start gap-2">
+                  <Sparkles className="w-4 h-4 text-ts-mustard shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Standar Pre-Flight DTF:</strong> Tim workshop kami akan memeriksa resolusi dan rasio warna sebelum naik cetak. Anda akan menerima preview mockup digital via WhatsApp sebelum produksi dimulai.
+                  </span>
+                </div>
+              </div>
 
               <div className="space-y-1">
                 <label className="block text-xs font-bold text-white">Catatan Tambahan (Opsional):</label>

@@ -818,28 +818,50 @@ export function ProductDetailPage() {
             </div>
 
             {/* TeeStock 100% Quality & Fit Shield */}
-            <div className="pt-3.5 border-t border-white/[0.08] space-y-2">
-              <div className="text-[10px] font-bold text-ts-kremMuted uppercase tracking-wider flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
-                <span>TeeStock Buyer Protection &amp; Guarantees</span>
+            <div className="pt-3.5 border-t border-white/[0.08] space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="text-[11px] font-bold text-ts-krem uppercase tracking-wider flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-ts-green" />
+                  <span>Jaminan Belanja TeeStock</span>
+                </div>
+                <Link
+                  to="/care"
+                  className="text-[11px] text-ts-mustard hover:text-white font-bold transition-colors flex items-center gap-1"
+                >
+                  <span>Panduan &amp; Garansi Lengkap</span>
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-2">
-                  <RotateCcw className="w-3.5 h-3.5 text-ts-terracotta shrink-0" />
-                  <span className="text-ts-krem"><strong>Bebas Tukar Ukuran</strong> jika kurang pas di badan</span>
-                </div>
-                <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-ts-mustard shrink-0" />
-                  <span className="text-ts-krem"><strong>Garansi 100% Ganti Baru</strong> jika sablon cacat/luntur</span>
-                </div>
-                <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-2">
-                  <Layers className="w-3.5 h-3.5 text-ts-teal shrink-0" />
-                  <span className="text-ts-krem"><strong>100% NSA Original</strong> Tubular tanpa jahitan samping</span>
-                </div>
-                <div className="p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center gap-2">
-                  <Zap className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span className="text-ts-krem"><strong>Dipress Mandiri H+0 / H+1</strong> kontrol mutu in-house</span>
-                </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <Link
+                  to="/care#tukar-size"
+                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-ts-terracotta/40 flex items-center gap-2.5 transition-all group"
+                >
+                  <RotateCcw className="w-4 h-4 text-ts-terracotta shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="text-ts-krem leading-snug"><strong className="text-white">Bebas Tukar Ukuran</strong> jika kurang pas</span>
+                </Link>
+                <Link
+                  to="/care#garansi-sablon"
+                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-ts-mustard/40 flex items-center gap-2.5 transition-all group"
+                >
+                  <Sparkles className="w-4 h-4 text-ts-mustard shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="text-ts-krem leading-snug"><strong className="text-white">100% Ganti Baru</strong> jika cacat / luntur</span>
+                </Link>
+                <Link
+                  to="/care#nsa-original"
+                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-ts-teal/40 flex items-center gap-2.5 transition-all group"
+                >
+                  <Layers className="w-4 h-4 text-ts-teal shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="text-ts-krem leading-snug"><strong className="text-white">100% NSA Original</strong> Tubular tanpa jahitan</span>
+                </Link>
+                <Link
+                  to="/care#fulfillment"
+                  className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-emerald-400/40 flex items-center gap-2.5 transition-all group"
+                >
+                  <Zap className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="text-ts-krem leading-snug"><strong className="text-white">In-House Press H+0/H+1</strong> QC ketat</span>
+                </Link>
               </div>
             </div>
           </div>

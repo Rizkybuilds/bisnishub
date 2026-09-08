@@ -20,6 +20,7 @@ import { CartPage } from './pages/store/CartPage';
 import { OrderTrackingPage } from './pages/store/OrderTrackingPage';
 import { AccountPage } from './pages/store/AccountPage';
 import { PartnerPage } from './pages/store/PartnerPage';
+import { GaransiPage } from './pages/store/GaransiPage';
 
 // Admin Pages
 import { DashboardPage } from './pages/admin/DashboardPage';
@@ -52,6 +53,8 @@ export const router = createBrowserRouter([
       { path: 'tracking', element: <OrderTrackingPage /> },
       { path: 'akun', element: <AccountPage /> },
       { path: 'partner', element: <PartnerPage /> },
+      { path: 'care', element: <GaransiPage /> },
+      { path: 'garansi', element: <GaransiPage /> },
     ],
   },
 
