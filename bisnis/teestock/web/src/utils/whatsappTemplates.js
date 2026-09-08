@@ -80,6 +80,7 @@ export function generateOrderCheckoutWhatsAppText({
   customerName,
   phone,
   city = 'Indonesia',
+  subdistrict,
   address,
   courier = 'J&T Express',
   items = [],
@@ -92,12 +93,14 @@ export function generateOrderCheckoutWhatsAppText({
     ? items.map((item, idx) => `• ${item.name} (${item.garment || 'NSA'} - ${item.color || 'Hitam'} ${item.size || 'L'}) x${item.qty || 1} pcs`).join('\n')
     : `• Pesanan Kaos TeeStock (${orderId})`;
 
+  const fullLocation = subdistrict ? `Kec. ${subdistrict}, ${city}` : city;
+
   return `Halo *${merchantName}*! Saya sudah melakukan checkout di website:
 
 📦 *No. Order:* ${orderId}
 👤 *Nama:* ${customerName}
 📱 *WhatsApp:* ${phone}
-📍 *Alamat:* ${address} (${city})
+📍 *Alamat:* ${address} (${fullLocation})
 🚚 *Kurir:* ${courier}
 
 🛒 *Rincian Item:*

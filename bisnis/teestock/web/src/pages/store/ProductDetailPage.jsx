@@ -717,9 +717,11 @@ export function ProductDetailPage() {
               <button
                 type="button"
                 onClick={() => setIsSizeModalOpen(true)}
-                className="text-xs text-ts-mustard hover:text-white font-bold flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] px-3 py-1 rounded-lg border border-white/[0.1] transition-all cursor-pointer"
+                className="text-xs text-ts-mustard hover:text-white font-bold flex items-center gap-1.5 bg-ts-mustard/10 hover:bg-ts-mustard/20 px-3 py-1 rounded-lg border border-ts-mustard/30 transition-all cursor-pointer shadow-sm"
               >
-                <Ruler className="w-3.5 h-3.5" /> Hitung Ukuran (TB/BB)
+                <Ruler className="w-3.5 h-3.5 text-ts-mustard" />
+                <span>Hitung Ukuran (TB/BB)</span>
+                <span className="text-[10px] bg-ts-mustard/25 text-ts-mustard px-1.5 py-0.5 rounded font-mono font-black">⭐ Akurat</span>
               </button>
             </div>
             <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Pilihan ukuran kaos">
@@ -909,7 +911,9 @@ export function ProductDetailPage() {
         selectedSize={selectedSize}
         price={currentPrice}
         onAddToCart={handleAddToCart}
+        onBuyNow={handleBuyNow}
         onBuyWhatsapp={handleBuyWhatsapp}
+        isAdded={isAdded}
         isVisible={showStickyBar}
       />
     </div>

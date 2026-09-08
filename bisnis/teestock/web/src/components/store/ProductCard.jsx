@@ -129,6 +129,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
                   <button
                     key={colorName}
                     type="button"
+                    title={`Warna: ${colorName}`}
                     aria-label={`Pilih warna ${colorName}`}
                     aria-pressed={isSelected}
                     onClick={(e) => handleColorSelect(e, colorName)}

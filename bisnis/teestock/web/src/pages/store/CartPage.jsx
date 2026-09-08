@@ -22,6 +22,7 @@ export function CartPage() {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
+  const [subdistrict, setSubdistrict] = useState('');
   const [courier, setCourier] = useState('J&T Express');
   const [orderComplete, setOrderComplete] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,6 +44,7 @@ export function CartPage() {
       if (profile.phone && !phone) setPhone(profile.phone);
       if (profile.default_address && !address) setAddress(profile.default_address);
       if (profile.city && !city) setCity(profile.city);
+      if (profile.subdistrict && !subdistrict) setSubdistrict(profile.subdistrict);
     }
   }, [profile]);
 
@@ -88,23 +90,28 @@ export function CartPage() {
 
   const handleCheckout = async (e) => {
     e.preventDefault();
-    if (!customerName.trim() || !phone.trim() || !address.trim()) {
-      alert("Mohon lengkapi nama penerima, nomor WhatsApp, dan alamat pengiriman.");
+    if (!customerName.trim() || !phone.trim() || !city.trim() || !subdistrict.trim() || !address.trim()) {
+      alert("Mohon lengkapi nama penerima, nomor WhatsApp, kota, kecamatan, dan alamat pengiriman.");
       return;
     }
 
     setIsSubmitting(true);
     try {
       const orderId = `WEB-${Date.now().toString().slice(-6)}`;
+      const cleanCity = city.trim();
+      const cleanSubdistrict = subdistrict.trim();
+      const cleanAddress = address.trim();
+      const fullCityDisplay = cleanSubdistrict ? `${cleanCity} (Kec. ${cleanSubdistrict})` : cleanCity;
+      const fullAddressDisplay = cleanSubdistrict ? `Kec. ${cleanSubdistrict}, ${cleanAddress}` : cleanAddress;
       
       // Simpan 1 header pesanan relasional dengan seluruh rincian item belanja
       const orderRecord = {
         id: orderId,
         order_number: orderId,
         customer: customerName.trim(),
-        phone: `${phone.trim()} (${city.trim() || 'Indonesia'})`,
-        city: city.trim(),
-        address: address.trim(),
+        phone: `${phone.trim()} (${fullCityDisplay})`,
+        city: fullCityDisplay,
+        address: fullAddressDisplay,
         channel: 'web',
         tier: role || 'retail',
         status: 'pending',
@@ -128,8 +135,9 @@ export function CartPage() {
         orderId,
         customerName: customerName.trim(),
         phone: phone.trim(),
-        city: city.trim(),
-        address: address.trim(),
+        city: cleanCity,
+        subdistrict: cleanSubdistrict,
+        address: cleanAddress,
         courier,
         items: [...cart],
         baseTotal: baseGrandTotal,
@@ -155,6 +163,7 @@ export function CartPage() {
       customerName: orderComplete.customerName,
       phone: orderComplete.phone,
       city: orderComplete.city,
+      subdistrict: orderComplete.subdistrict,
       address: orderComplete.address,
       courier: orderComplete.courier,
       items: orderComplete.items,
@@ -384,12 +393,19 @@ export function CartPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
               <Input
                 label="Kota / Kabupaten"
-                placeholder="Contoh: Bandung, Surabaya, Medan"
+                placeholder="Contoh: Bandung"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
+                required
+              />
+              <Input
+                label="Kecamatan"
+                placeholder="Contoh: Coblong / Sukajadi"
+                value={subdistrict}
+                onChange={(e) => setSubdistrict(e.target.value)}
                 required
               />
               <Select
@@ -405,9 +421,9 @@ export function CartPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-white mb-1.5">Alamat Lengkap Pengiriman</label>
+              <label className="block text-xs font-bold text-white mb-1.5">Alamat Jalan &amp; Detail Rumah</label>
               <textarea
-                placeholder="Jalan, RT/RW, No. Rumah, Kelurahan, Kecamatan, Kode Pos..."
+                placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, patokan lokasi..."
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 required
