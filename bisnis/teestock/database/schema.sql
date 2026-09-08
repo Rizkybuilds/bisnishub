@@ -358,9 +358,18 @@ CREATE TRIGGER on_auth_user_created
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- Helper Security Definer: Cek apakah user yang login memiliki role 'admin'
+-- Otomatis mengenali akses internal (SQL Editor, Service Role, Superuser)
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN AS $$
 BEGIN
+    -- 1. Jika query dieksekusi via Supabase SQL Editor / Service Role / Postgres Superuser
+    IF current_user IN ('postgres', 'supabase_admin', 'service_role') 
+       OR (current_setting('request.jwt.claims', true) IS NULL)
+       OR (current_setting('request.jwt.claim.role', true) = 'service_role') THEN
+        RETURN TRUE;
+    END IF;
+
+    -- 2. Jika user terautentikasi (JWT Bearer dari browser)
     RETURN EXISTS (
         SELECT 1 
         FROM public.ts_user_profiles 
@@ -373,6 +382,14 @@ $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 CREATE OR REPLACE FUNCTION public.protect_user_role()
 RETURNS TRIGGER AS $$
 BEGIN
+    -- Izinkan jika eksekusi berasal dari SQL Editor, Superuser, atau Service Role
+    IF current_user IN ('postgres', 'supabase_admin', 'service_role')
+       OR (current_setting('request.jwt.claims', true) IS NULL)
+       OR (current_setting('request.jwt.claim.role', true) = 'service_role') THEN
+        RETURN NEW;
+    END IF;
+
+    -- Jika via REST API / Client Web, hanya izinkan jika user yang login adalah admin
     IF NEW.role IS DISTINCT FROM OLD.role AND NOT public.is_admin() THEN
         RAISE EXCEPTION 'Akses ditolak: Hanya Administrator yang dapat mengubah role pengguna.';
     END IF;
