@@ -73,7 +73,7 @@ export async function validateVoucher(rawCode, cartTotal, userRole = 'member') {
     }
 
     // 2b. Cek batas penggunaan total (kuota voucher)
-    if (voucher.usage_limit && voucher.used_count && Number(voucher.used_count) >= Number(voucher.usage_limit)) {
+    if (voucher.usage_limit && Number(voucher.used_count || 0) >= Number(voucher.usage_limit)) {
       return { valid: false, message: 'Kuota penggunaan voucher ini sudah habis.' };
     }
 

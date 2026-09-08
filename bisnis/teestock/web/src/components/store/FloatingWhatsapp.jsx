@@ -29,9 +29,11 @@ export function FloatingWhatsapp() {
             <div className="text-[10px] text-ts-muted">Konsultasi ukuran &amp; stok NSA</div>
           </div>
           <button
+            type="button"
             onClick={() => setShowTooltip(false)}
-            className="p-1 rounded-full text-ts-muted hover:text-ts-krem ml-1"
+            className="p-1 rounded-full text-ts-muted hover:text-ts-krem ml-1 cursor-pointer"
             title="Tutup"
+            aria-label="Tutup pesan bantuan"
           >
             <X className="w-3.5 h-3.5" />
           </button>

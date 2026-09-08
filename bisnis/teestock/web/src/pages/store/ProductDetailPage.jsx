@@ -338,6 +338,7 @@ export function ProductDetailPage() {
                 <button
                   type="button"
                   onClick={handlePrevImage}
+                  aria-label="Foto produk sebelumnya"
                   className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer"
                   title="Foto sebelumnya"
                 >
@@ -346,6 +347,7 @@ export function ProductDetailPage() {
                 <button
                   type="button"
                   onClick={handleNextImage}
+                  aria-label="Foto produk selanjutnya"
                   className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer"
                   title="Foto selanjutnya"
                 >
@@ -652,6 +654,8 @@ export function ProductDetailPage() {
                       type="button"
                       onClick={() => handleColorChange(colName)}
                       title={colName}
+                      aria-label={`Pilih warna ${colName}`}
+                      aria-pressed={isSelected}
                       className={`group relative w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden transition-all duration-200 shrink-0 cursor-pointer ${
                         isSelected
                           ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-hitam scale-110 z-10 shadow-glow-terracotta'
@@ -692,13 +696,15 @@ export function ProductDetailPage() {
                 <Ruler className="w-3.5 h-3.5" /> Hitung Ukuran (TB/BB)
               </button>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Pilihan ukuran kaos">
               {sizeList.map(sz => {
                 const surcharge = getSizeSurcharge(sz);
                 return (
                   <button
                     key={sz}
                     type="button"
+                    aria-label={`Pilih ukuran ${sz}${surcharge > 0 ? `, tambahan biaya ${formatRupiah(surcharge)}` : ''}`}
+                    aria-pressed={selectedSize === sz}
                     onClick={() => setSelectedSize(sz)}
                     className={`min-w-[50px] px-2.5 h-12 rounded-xl border font-mono text-xs font-bold transition-all duration-150 cursor-pointer flex flex-col items-center justify-center ${
                       selectedSize === sz

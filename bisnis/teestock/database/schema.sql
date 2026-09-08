@@ -429,9 +429,34 @@ BEGIN
     UPDATE public.ts_vouchers
     SET used_count = COALESCE(used_count, 0) + 1,
         updated_at = NOW()
-    WHERE code = UPPER(TRIM(voucher_code));
+    WHERE UPPER(code) = UPPER(TRIM(voucher_code));
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 🔗 GUEST-TO-MEMBER ORDER LINKING: Menghubungkan pesanan tamu sebelumnya ke akun baru saat user login/signup
+CREATE OR REPLACE FUNCTION public.link_guest_orders_on_signup()
+RETURNS TRIGGER AS $$
+DECLARE
+    clean_phone TEXT;
+BEGIN
+    clean_phone := right(regexp_replace(COALESCE(NEW.phone, ''), '\D', '', 'g'), 8);
+
+    UPDATE public.ts_orders
+    SET user_id = NEW.id
+    WHERE user_id IS NULL
+      AND (
+        (NEW.email IS NOT NULL AND NEW.email <> '' AND customer_phone ILIKE '%' || NEW.email || '%')
+        OR (length(clean_phone) >= 8 AND regexp_replace(customer_phone, '\D', '', 'g') LIKE '%' || clean_phone || '%')
+      );
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS trg_link_guest_orders ON public.ts_user_profiles;
+CREATE TRIGGER trg_link_guest_orders
+    AFTER INSERT OR UPDATE OF phone ON public.ts_user_profiles
+    FOR EACH ROW EXECUTE FUNCTION public.link_guest_orders_on_signup();
 
 
 -- ====================================================================

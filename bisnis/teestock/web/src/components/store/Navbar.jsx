@@ -130,6 +130,7 @@ export function Navbar() {
               to="/katalog"
               className="p-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] transition-all"
               title="Cari Desain / Polos"
+              aria-label="Cari desain katalog atau kaos polos"
             >
               <Search className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
             </Link>
@@ -138,6 +139,7 @@ export function Navbar() {
               to="/keranjang"
               className="relative p-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] transition-all"
               title="Keranjang Belanja"
+              aria-label={`Keranjang belanja, ${totalCartItems} item`}
             >
               <ShoppingBag className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
               {totalCartItems > 0 && (
