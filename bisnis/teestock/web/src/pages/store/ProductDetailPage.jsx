@@ -31,11 +31,11 @@ import { SizeCalculatorModal } from '../../components/store/SizeCalculatorModal'
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { SEOHead } from '../../components/common/SEOHead';
-import { BUNDLE_DEALS, getSizeSurcharge } from '../../constants/pricing';
+import { BUNDLE_DEALS, getSizeSurcharge, getBlankPricing } from '../../constants/pricing';
 import { ProductReviews } from '../../components/store/ProductReviews';
 import { getFulfillmentSLA } from '../../utils/garmentStockRouting';
 import { COLOR_HEX_MAP, getColorHex } from '../../constants/colors';
-import { getProductGallery } from '../../utils/productImages';
+import { getProductGallery, getFabricSwatchUrl } from '../../utils/productImages';
 
 const COLOR_CATEGORIES = {
   basic: ["Hitam", "Black", "Putih", "White", "Charcoal", "Sport Grey", "Sport Grey-Black", "White-Black"],
@@ -120,12 +120,31 @@ export function ProductDetailPage() {
     return matched.length > 0 ? matched : colorList;
   }, [colorList, activeColorTab]);
 
-  // Available sizes
-  const sizeList = isBlank && product?.sizes
-    ? product.sizes.split(',').map(s => s.trim()).filter(Boolean)
-    : SIZES;
+  // 8 Warna khusus NSA 7200 yang tersedia hingga ukuran 5XL
+  const SIZES_5XL_COLORS = ['black', 'white', 'navy', 'maroon', 'red', 'royal blue', 'forest green', 'carolina blue', 'caroline blue'];
+
+  // Available sizes dengan filtering dinamis per warna
+  const sizeList = useMemo(() => {
+    if (isBlank && (product?.sku === 'TS-BLK-7200' || product?.name?.includes('7200'))) {
+      const is5XL = SIZES_5XL_COLORS.includes(String(selectedColor).trim().toLowerCase());
+      return is5XL 
+        ? ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL']
+        : ['S', 'M', 'L', 'XL', '2XL', '3XL'];
+    }
+    if (isBlank && product?.sizes) {
+      return product.sizes.split(',').map(s => s.trim()).filter(Boolean);
+    }
+    return SIZES;
+  }, [isBlank, product, selectedColor]);
 
   const [selectedSize, setSelectedSize] = useState(sizeList[0] || 'L');
+
+  // Pastikan jika ganti warna dan ukuran lama tidak ada (misal 5XL ke warna 3XL), auto-switch ke ukuran terdekat
+  useEffect(() => {
+    if (sizeList.length > 0 && !sizeList.includes(selectedSize)) {
+      setSelectedSize(sizeList[sizeList.length - 1] || 'L');
+    }
+  }, [sizeList, selectedSize]);
   const [qty, setQty] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
@@ -224,7 +243,14 @@ export function ProductDetailPage() {
     );
   }
 
-  const baseRetailPrice = product.priceRetail || product.price_retail || 99000;
+  const is7200 = isBlank && (product.sku === 'TS-BLK-7200' || product.name?.includes('7200'));
+  const blankPricing = is7200
+    ? getBlankPricing(product, selectedColor, role, selectedSize)
+    : null;
+
+  const baseRetailPrice = is7200 
+    ? (blankPricing.isWhite ? 49000 : 52000)
+    : (product.priceRetail || product.price_retail || 99000);
   
   let effectiveBasePrice = baseRetailPrice;
   let partnerSavings = 0;
@@ -239,6 +265,11 @@ export function ProductDetailPage() {
     effectiveBasePrice = partnerBase;
     partnerSavings = baseRetailPrice - partnerBase;
     isPartnerDiscountApplied = true;
+  } else if (isPartner && is7200) {
+    const resellerBase = blankPricing.isWhite ? 41000 : 44000;
+    effectiveBasePrice = resellerBase;
+    partnerSavings = baseRetailPrice - resellerBase;
+    isPartnerDiscountApplied = true;
   }
 
   let priceDelta = 0;
@@ -249,11 +280,13 @@ export function ProductDetailPage() {
     else if (selectedGarmentKey === 'nsa_polo') priceDelta = 30000;
   }
 
-  // Size surcharge for oversized garments (XXL +Rp 5k, 3XL +Rp 10k)
+  // Size surcharge for oversized garments (2XL +Rp 5k, 3XL +Rp 10k, 4XL +Rp 15k, 5XL +Rp 20k)
   const sizeSurcharge = getSizeSurcharge(selectedSize);
-  const currentPrice = isBlank 
-    ? (baseRetailPrice + sizeSurcharge) 
-    : (effectiveBasePrice + priceDelta + sizeSurcharge);
+  const currentPrice = is7200
+    ? (effectiveBasePrice + sizeSurcharge)
+    : (isBlank 
+      ? (baseRetailPrice + sizeSurcharge) 
+      : (effectiveBasePrice + priceDelta + sizeSurcharge));
 
   const productSchema = {
     "@context": "https://schema.org/",
@@ -698,9 +731,10 @@ export function ProductDetailPage() {
                 {filteredColors.map(colName => {
                   const hex = COLOR_HEX_MAP[colName] || '#333333';
                   const isSelected = selectedColor === colName;
-                  const swatchUrl = product.cititexCatId 
+                  const fabricSwatch = getFabricSwatchUrl(product, colName);
+                  const swatchUrl = fabricSwatch || (product.cititexCatId 
                     ? `https://cititex.com/api/uploads/category/album/color/${product.cititexCatId}-${encodeURIComponent(colName)}.jpg`
-                    : null;
+                    : null);
 
                   return (
                     <button

@@ -58,13 +58,44 @@ export const CHANNELS = [
 
 // Surcharge untuk ukuran jumbo (tambahan modal garmen dari distributor)
 export const SIZE_SURCHARGES = {
-  XXL: 5000,
+  "XXL": 5000,
+  "2XL": 5000,
   "3XL": 10000,
+  "4XL": 15000,
+  "5XL": 20000,
 };
 
 export function getSizeSurcharge(size) {
   if (!size) return 0;
-  return SIZE_SURCHARGES[size.toUpperCase()] || 0;
+  const clean = String(size).toUpperCase().trim();
+  return SIZE_SURCHARGES[clean] || 0;
+}
+
+/**
+ * Kalkulasi harga dasar kaos polos NSA 7200 berdasarkan aturan margin founder:
+ * - Retail: Vendor + Rp 10.000 (White: Rp 49.000, Colors: Rp 52.000)
+ * - Reseller: Vendor + Rp 2.000 (White: Rp 41.000, Colors: Rp 44.000)
+ * - Batas Minimum Diskon/Voucher: Profit tidak boleh di bawah Rp 2.000
+ */
+export function getBlankPricing(product, colorName = 'Black', role = 'retail', size = 'L') {
+  const isWhite = String(colorName).trim().toLowerCase() === 'white';
+  const vendorCostBase = isWhite ? 39000 : 42000;
+  const surcharge = getSizeSurcharge(size);
+  const vendorCostTotal = vendorCostBase + surcharge;
+
+  const isReseller = role === 'reseller' || role === 'partner' || role === 'dropship';
+  const targetProfit = isReseller ? 2000 : 10000;
+  const finalPrice = vendorCostBase + targetProfit + surcharge;
+  const minFloorPrice = vendorCostTotal + 2000; // Floor laba minimal Rp 2.000
+
+  return {
+    basePrice: finalPrice,
+    vendorCost: vendorCostTotal,
+    minFloorPrice,
+    surcharge,
+    targetProfit,
+    isWhite
+  };
 }
 
 // Penawaran Paket Bundling Ritel (AOV Booster - Khusus Kaos Grafis)

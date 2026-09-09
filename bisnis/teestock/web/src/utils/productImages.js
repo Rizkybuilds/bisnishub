@@ -33,6 +33,33 @@ export function getAvailableColors(product) {
   return ["Hitam", "Putih", "Charcoal", "Navy", "Olive"];
 }
 
+const SUPABASE_STORAGE_URL = 'https://tovslowsopqtuxmrogeu.supabase.co/storage/v1/object/public';
+
+/**
+ * Normalisasi nama warna ke nama folder di Supabase Storage (Blank/7200/)
+ */
+export function colorToSlug(colorName) {
+  if (!colorName) return 'black';
+  const clean = String(colorName).trim().toLowerCase();
+  if (clean === 'carolina blue' || clean === 'carolina-blue') {
+    return 'caroline-blue'; // Folder di Supabase menggunakan caroline-blue
+  }
+  return clean.replace(/\s+/g, '-');
+}
+
+/**
+ * Mendapatkan URL Fabric Swatch tekstur kain asli dari Supabase Storage
+ */
+export function getFabricSwatchUrl(product, colorName) {
+  if (!product || !colorName) return null;
+  const is7200 = product.sku === 'TS-BLK-7200' || product.name?.includes('7200');
+  if (is7200) {
+    const slug = colorToSlug(colorName);
+    return `${SUPABASE_STORAGE_URL}/Blank/7200/${slug}/swatch.jpeg`;
+  }
+  return null;
+}
+
 /**
  * Resolves single image URL for ProductCard preview given active color
  */
@@ -40,13 +67,22 @@ export function getCardPreviewImage(product, colorName) {
   if (!product) return '';
 
   const isBlank = product.series === 'blank';
+  const is7200 = product.sku === 'TS-BLK-7200' || product.name?.includes('7200');
 
-  // 1. Blanks NSA flatlay photo (clean flatlay t-shirt without people)
+  // 1. Blanks NSA 7200 dengan aset resmi Supabase Storage
+  if (is7200) {
+    const effectiveColor = colorName || 'Black';
+    const slug = colorToSlug(effectiveColor);
+    const frontFile = slug === 'white' ? 'model-front.jpeg' : 'ghost-front.png';
+    return `${SUPABASE_STORAGE_URL}/Blank/7200/${slug}/${frontFile}`;
+  }
+
+  // 2. Blanks NSA via Cititex jika ada ID
   if (isBlank && product.cititexCatId && colorName) {
     return `https://cititex.com/api/uploads/category/album/front_side/${product.cititexCatId}-${encodeURIComponent(colorName)}.jpg`;
   }
 
-  // 2. Graphic apparel with variantImages dictionary
+  // 3. Graphic apparel with variantImages dictionary
   if (product.variantImages && colorName && product.variantImages[colorName]) {
     const variantImgs = product.variantImages[colorName];
     if (Array.isArray(variantImgs) && variantImgs.length > 0) {
@@ -55,28 +91,100 @@ export function getCardPreviewImage(product, colorName) {
     if (typeof variantImgs === 'string') return variantImgs;
   }
 
-  // 3. Fallback to product.filePath or product.file_path (only actual product image)
+  // 4. Fallback to product.filePath or product.file_path
   return product.filePath || product.file_path || '';
 }
 
 /**
  * Resolves full multi-photo gallery array for ProductDetailPage given active color.
- * Only returns actual product images uploaded or available. NEVER injects random photos of people.
  * Returns: Array<{ url: string, label: string, type: 'front' | 'back' | 'detail' }>
  */
 export function getProductGallery(product, activeColor) {
   if (!product) return [];
 
   const isBlank = product.series === 'blank';
+  const is7200 = product.sku === 'TS-BLK-7200' || product.name?.includes('7200');
   const gallery = [];
 
   // ==========================================
-  // A. BLANK APPAREL (NSA)
+  // A. BLANK APPAREL (NSA 7200 — 9 ASET LENGKAP SUPABASE STORAGE)
   // ==========================================
+  if (is7200) {
+    const effectiveColor = activeColor || 'Black';
+    const slug = colorToSlug(effectiveColor);
+    const base = `${SUPABASE_STORAGE_URL}/Blank/7200/${slug}`;
+    const frontFile = slug === 'white' ? 'model-front.jpeg' : 'ghost-front.png';
+
+    // 1. Ghost Mannequin Depan
+    gallery.push({
+      url: `${base}/${frontFile}`,
+      label: `Tampak Depan (${effectiveColor})`,
+      type: 'front'
+    });
+
+    // 2. Ghost Mannequin Belakang
+    gallery.push({
+      url: `${base}/ghost-back.png`,
+      label: `Tampak Belakang (${effectiveColor})`,
+      type: 'back'
+    });
+
+    // 3. Ghost Mannequin Samping Kiri
+    gallery.push({
+      url: `${base}/ghost-left.png`,
+      label: `Samping Kiri (${effectiveColor})`,
+      type: 'detail'
+    });
+
+    // 4. Ghost Mannequin Samping Kanan
+    gallery.push({
+      url: `${base}/ghost-right.png`,
+      label: `Samping Kanan (${effectiveColor})`,
+      type: 'detail'
+    });
+
+    // 5. Kaos Dilipat (Folded)
+    gallery.push({
+      url: `${base}/folded.png`,
+      label: `Kaos Dilipat (${effectiveColor})`,
+      type: 'detail'
+    });
+
+    // 6. On-Model Depan
+    gallery.push({
+      url: `${base}/model-front.jpeg`,
+      label: `Fitting On-Model Depan (${effectiveColor})`,
+      type: 'detail'
+    });
+
+    // 7. On-Model Belakang
+    gallery.push({
+      url: `${base}/model-back.jpeg`,
+      label: `Fitting On-Model Belakang (${effectiveColor})`,
+      type: 'detail'
+    });
+
+    // 8. On-Model Samping
+    gallery.push({
+      url: `${base}/model-side.jpeg`,
+      label: `Fitting On-Model Samping (${effectiveColor})`,
+      type: 'detail'
+    });
+
+    // 9. Detail Serat Kain (Swatch)
+    gallery.push({
+      url: `${base}/swatch.jpeg`,
+      label: `Tekstur Kain Swatch (${effectiveColor})`,
+      type: 'detail'
+    });
+
+    return gallery;
+  }
+
+  // Blank apparel umum lainnya
   if (isBlank) {
     const effectiveColor = activeColor || 'White';
 
-    // 1. Tampak Depan Warna Terpilih (Flatlay kaos tanpa orang)
     if (product.cititexCatId) {
       gallery.push({
         url: `https://cititex.com/api/uploads/category/album/front_side/${product.cititexCatId}-${encodeURIComponent(effectiveColor)}.jpg`,
@@ -91,7 +199,6 @@ export function getProductGallery(product, activeColor) {
       });
     }
 
-    // 2. Foto tambahan yang di-upload user untuk blanks jika ada
     if (Array.isArray(product.images) && product.images.length > 0) {
       product.images.forEach((img, idx) => {
         const url = typeof img === 'string' ? img : img.url;

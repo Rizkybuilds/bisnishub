@@ -91,6 +91,23 @@ export function CartPage() {
     }
   }
 
+  // 🛡️ CFO Margin Guard: Pastikan potongan diskon tidak membuat laba kaos polos jatuh di bawah Rp 2.000/pcs
+  const maxAllowableDiscount = cart.reduce((acc, item) => {
+    const isBlankItem = item.series === 'blank' || item.sku?.startsWith('TS-BLK-');
+    if (isBlankItem) {
+      const isWhite = String(item.color).trim().toLowerCase() === 'white';
+      const vendorBase = isWhite ? 39000 : 42000;
+      const surcharge = getSizeSurcharge(item.size);
+      const floorPricePerPcs = vendorBase + 2000 + surcharge; // Modal + Laba Minimal Rp 2.000
+      const maxDiscForThisItem = Math.max(0, ((item.unitPrice || 52000) - floorPricePerPcs) * (item.qty || 1));
+      return acc + maxDiscForThisItem;
+    }
+    // Kaos grafis memiliki margin fleksibel
+    return acc + Math.max(0, ((item.unitPrice || 99000) - 55000) * (item.qty || 1));
+  }, 0);
+
+  effectiveProductDiscount = Math.min(effectiveProductDiscount, maxAllowableDiscount);
+
   const baseGrandTotal = Math.max(0, totalCartAmount - effectiveProductDiscount) + shippingFee;
   const grandTotal = baseGrandTotal > 0 ? (baseGrandTotal + uniqueCode) : 0;
 
