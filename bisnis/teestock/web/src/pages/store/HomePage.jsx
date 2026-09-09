@@ -284,7 +284,7 @@ export function HomePage() {
               </div>
 
               <p className="text-xs sm:text-sm text-ts-kremMuted leading-relaxed">
-                Apparel grafis yang dirancang berkala dalam format edisi kapsul. Setiap rilis dicetak eksklusif di atas katun impor <strong className="text-white">New States Apparel (NSA) Heavyweight 24s</strong> tubular tanpa sambungan samping dengan detail raster DTF tajam.
+                Apparel grafis yang dirancang berkala dalam format edisi kapsul. Setiap rilis dicetak eksklusif di atas garmen <strong className="text-white">New States Apparel (NSA) Heavyweight 24s</strong> original rajutan tubular tanpa sambungan samping dengan detail raster DTF tajam.
               </p>
 
               <div className="space-y-2.5 pt-2 border-t border-white/[0.06] text-xs text-ts-krem">
@@ -298,7 +298,7 @@ export function HomePage() {
                 </div>
                 <div className="flex items-start gap-2.5">
                   <span className="font-mono text-ts-terracotta font-bold text-[11px] mt-0.5">03/</span>
-                  <span className="text-ts-kremMuted">Jaminan 100% NSA Original impor tanpa sambungan samping</span>
+                  <span className="text-ts-kremMuted">Jaminan 100% NSA Original Cititex tanpa sambungan samping</span>
                 </div>
               </div>
             </div>
@@ -374,7 +374,7 @@ export function HomePage() {
               Official Blank Supply // New States Apparel
             </h2>
             <p className="text-xs sm:text-sm text-ts-kremMuted mt-1 max-w-xl leading-relaxed">
-              Katun impor silinder tubular tanpa jahitan samping. Standar internasional untuk kebutuhan harian, seragam komunitas, sabloner, dan brand fashion lokal.
+              Katun rajutan silinder tubular tanpa jahitan samping. Standar kualitas internasional untuk kebutuhan harian, seragam komunitas, sabloner, dan brand fashion lokal.
             </p>
           </div>
 
@@ -427,7 +427,7 @@ export function HomePage() {
               </div>
               <h3 className="font-bold text-base text-white">Garmen Built-Up Tubular NSA</h3>
               <p className="text-xs text-ts-kremMuted leading-relaxed">
-                Menggunakan bahan katun ringspun New States Apparel impor resmi. Rajutan silinder tanpa sambungan samping yang jatuh rapi di badan, sejuk dipakai, dan tahan bentuk.
+                Menggunakan bahan katun ringspun New States Apparel (NSA) original Cititex. Rajutan silinder tanpa sambungan samping yang jatuh rapi di badan, sejuk dipakai, dan tahan bentuk.
               </p>
               <div className="pt-2 text-[11px] font-mono text-ts-terracotta">
                 • 170-180 GSM (24s) / 150 GSM (30s)
@@ -573,7 +573,7 @@ export function HomePage() {
               Kami memulai TeeStock dari kegelisahan sederhana: pasar apparel sering kali terbagi dua kubu ekstrem. Di satu sisi, toko sablon serba ada yang menghasilkan kaos kaku dan tipografi murahan. Di sisi lain, distro eksklusif yang mematok harga tidak masuk akal demi cap gengsi semu.
             </p>
             <p>
-              <strong className="text-white font-semibold">TeeStock lahir sebagai titik temu yang jujur.</strong> Kami mengkurasi gagasan, identitas profesi, dan kultur independen ke dalam desain grafis beresolusi tinggi — lalu mencetaknya di atas garmen katun impor resmi New States Apparel dengan ketelitian suhu press 155°C.
+              <strong className="text-white font-semibold">TeeStock lahir sebagai titik temu yang jujur.</strong> Kami mengkurasi gagasan, identitas profesi, dan kultur independen ke dalam desain grafis beresolusi tinggi — lalu mencetaknya di atas garmen katun New States Apparel original dengan ketelitian suhu press 155°C.
             </p>
             <p className="italic text-ts-krem border-l-2 border-ts-terracotta pl-4 py-1">
               "Bagi kami, sehelai kaos bukan sekadar penutup tubuh. Ia adalah pernyataan identitas, memori perjalanan, dan cerita yang kamu kenakan setiap hari."

@@ -1,0 +1,4329 @@
+[
+  {
+    "id": 96,
+    "name": "New States Apparel Premium Cotton Polo Shirt 8100",
+    "mill": "8100",
+    "class": "Polo Shirts",
+    "cartoon": 36,
+    "showColor": "Sport Grey",
+    "showPrice": 40000,
+    "description": "Potongan rapi dan jahitan halus menciptakan tampilan elegan, dengan tekstur yang\r\nringan dan lembut memberikan kenyamanan serta kesan premium.",
+    "shortDescription": "Dilengkapi kerah elegan berpori mikro dengan bahan full katun lembut, yang nyaman dipakai untuk gaya kasual maupun semi-formal.",
+    "materialHtml": "<ul><li>200/205 Gsm Pique.</li>\r\n<li>100% combed Ringspun cotton.</li>\r\n<li>Reinforcing tape on neck.</li>\r\n<li>Reinforced button placket.</li>\r\n<li>Rib collar.</li></ul>",
+    "features": [
+      "14 Warna",
+      "S-3XL",
+      "200gsm",
+      "24s"
+    ],
+    "colors": [
+      "Black",
+      "White",
+      "Sport Grey",
+      "Navy",
+      "Maroon",
+      "Royal Blue",
+      "Red",
+      "Irish Green",
+      "Orange",
+      "Daisy",
+      "Forest Green",
+      "Light Pink",
+      "Charcoal",
+      "Carolina Blue"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+10.000",
+        "3xl": "+20.000",
+        "color": "Rp. 80.000",
+        "white": "Rp. 75.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+10.000",
+        "3xl": "+20.000",
+        "color": "Rp. 78.000",
+        "white": "Rp. 73.000",
+        "column": "",
+        "quantity": "> 12pcs",
+        "new_column_4": ""
+      },
+      {
+        "2xl": "+10.000",
+        "3xl": "+20.000",
+        "color": "Rp. 75.000",
+        "white": "Rp. 70.000",
+        "column": "",
+        "quantity": "> 72pcs",
+        "new_column_4": ""
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "20",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "48"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "21",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "51"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "22",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "54"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "23",
+        "panjang_(cm)": "76",
+        "lebar_dada_(cm)": "57"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "24",
+        "panjang_(cm)": "80",
+        "lebar_dada_(cm)": "60"
+      },
+      {
+        "size": "3XL",
+        "column": "",
+        "lengan_(cm)": "25",
+        "panjang_(cm)": "84",
+        "lebar_dada_(cm)": "63"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/96.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/96-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/96-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/front_side/96-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/96-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/96-Maroon.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/96-Royal%20Blue.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/96-Red.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/front_side/96-Irish%20Green.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/front_side/96-Orange.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/front_side/96-Daisy.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/front_side/96-Forest%20Green.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/front_side/96-Light%20Pink.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/front_side/96-Charcoal.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/front_side/96-Carolina%20Blue.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/96-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/96-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/back_side/96-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/96-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/96-Maroon.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/96-Royal%20Blue.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/96-Red.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/back_side/96-Irish%20Green.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/back_side/96-Orange.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/back_side/96-Daisy.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/back_side/96-Forest%20Green.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/back_side/96-Light%20Pink.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/back_side/96-Charcoal.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/back_side/96-Carolina%20Blue.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/96-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/96-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/color/96-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/96-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/96-Maroon.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/96-Royal%20Blue.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/96-Red.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/color/96-Irish%20Green.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/color/96-Orange.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/color/96-Daisy.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/color/96-Forest%20Green.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/color/96-Light%20Pink.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/color/96-Charcoal.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/color/96-Carolina%20Blue.jpg"
+      }
+    }
+  },
+  {
+    "id": 29,
+    "name": "6089M Premium Classic Snapback",
+    "mill": "6089M",
+    "class": "Headwear",
+    "cartoon": 144,
+    "showColor": "Maroon",
+    "showPrice": 110000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "6089M Caps",
+    "materialHtml": "<ul><li>80% Acrylic / 20% Wool *Camo colorway (60% Cotton / 40% Polyester).</li>\r\n<li>Size : OSFA</li>\r\n<li>Classic shape.  </li>\r\n<li>Premium wool blend.</li>\r\n<li>Matching plastic snap.</li>\r\n<li>Hard buckram. </li>\r\n<li>Classic green undervisor.</li></ul>",
+    "features": [],
+    "colors": [
+      "Royal",
+      "Black",
+      "Navy",
+      "Maroon",
+      "Spruce",
+      "Dark Grey",
+      "Red",
+      "White",
+      "Dark Heather"
+    ],
+    "sizes": [
+      "OSFA"
+    ],
+    "priceTiers": [
+      {
+        "color": "Rp. 110.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "color": "Rp. 105.000",
+        "column": "",
+        "quantity": "> 12 pcs"
+      },
+      {
+        "color": "Rp. 100.000",
+        "column": "",
+        "quantity": "> 72 pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "OSFA",
+        "column": ""
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "action",
+        "label": "action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/29.jpg",
+      "frontByColor": {
+        "Royal": "https://cititex.com/api/uploads/category/album/front_side/29-Royal.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/29-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/29-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/29-Maroon.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/front_side/29-Spruce.jpg",
+        "Dark Grey": "https://cititex.com/api/uploads/category/album/front_side/29-Dark%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/29-Red.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/29-White.jpg",
+        "Dark Heather": "https://cititex.com/api/uploads/category/album/front_side/29-Dark%20Heather.jpg"
+      },
+      "backByColor": {
+        "Royal": "https://cititex.com/api/uploads/category/album/back_side/29-Royal.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/29-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/29-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/29-Maroon.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/back_side/29-Spruce.jpg",
+        "Dark Grey": "https://cititex.com/api/uploads/category/album/back_side/29-Dark%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/29-Red.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/29-White.jpg",
+        "Dark Heather": "https://cititex.com/api/uploads/category/album/back_side/29-Dark%20Heather.jpg"
+      },
+      "swatchByColor": {
+        "Royal": "https://cititex.com/api/uploads/category/album/color/29-Royal.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/color/29-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/29-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/29-Maroon.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/color/29-Spruce.jpg",
+        "Dark Grey": "https://cititex.com/api/uploads/category/album/color/29-Dark%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/29-Red.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/29-White.jpg",
+        "Dark Heather": "https://cititex.com/api/uploads/category/album/color/29-Dark%20Heather.jpg"
+      }
+    }
+  },
+  {
+    "id": 118,
+    "name": "New States Apparel Super Blend Crewneck Sweatshirt 9000",
+    "mill": "9000",
+    "class": "Outdoor",
+    "cartoon": 24,
+    "showColor": "Navy",
+    "showPrice": 100000,
+    "description": "Dibuat dari bahan fleece yang memberikan kenyamanan maksimal untuk berbagai aktivitas. Dengan desain klasik dan nyaman, mudah dipadukan dengan berbagai outfit kasual.",
+    "shortDescription": "Sweatshirt berkualitas premium yang lembut dan hangat dengan desain klasik untuk kenyamanan sehari-hari.",
+    "materialHtml": "<ul><li>50% Cotton / 50% Polyester (80% Cotton / 20% Polyester for Camo Series).</li>\r\n<li>270 g/m² Preshrunk fleece knit (210 g/m² for Camo Series).</li>\r\n<li>Air jet yarn = softer feel and reduced pilling.</li>\r\n<li>Double-needle stitching at waistband and cuffs.</li>\r\n<li>1 x 1 rib with spandex.</li></ul>",
+    "features": [
+      "10 Warna",
+      "S-2XL",
+      "270gsm"
+    ],
+    "colors": [
+      "Black",
+      "Navy",
+      "Sport Grey",
+      "Maroon",
+      "White",
+      "Red",
+      "Forest Green",
+      "Black Camo",
+      "Forest Camo",
+      "Royal Blue",
+      "Army",
+      "Light Pink"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+10.000",
+        "camo": "Rp. 110.000",
+        "color": "Rp. 100.000",
+        "white": "Rp. 100.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+10.000",
+        "camo": "Rp. 105.000",
+        "color": "Rp. 95.000",
+        "white": "Rp. 95.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "2xl": "+10.000",
+        "camo": "Rp. 100.000",
+        "color": "Rp. 90.000",
+        "white": "Rp. 90.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "59",
+        "panjang_(cm)": "65",
+        "lebar_dada_(cm)": "51"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "60",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "61",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "62",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "61"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "63",
+        "panjang_(cm)": "76",
+        "lebar_dada_(cm)": "64"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/118.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/118-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/118-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/front_side/118-Sport%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/118-Maroon.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/118-White.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/118-Red.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/front_side/118-Forest%20Green.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/front_side/118-Black%20Camo.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/front_side/118-Forest%20Camo.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/118-Royal%20Blue.jpg",
+        "Army": "https://cititex.com/api/uploads/category/album/front_side/118-Army.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/front_side/118-Light%20Pink.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/118-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/118-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/back_side/118-Sport%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/118-Maroon.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/118-White.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/118-Red.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/back_side/118-Forest%20Green.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/back_side/118-Black%20Camo.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/back_side/118-Forest%20Camo.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/118-Royal%20Blue.jpg",
+        "Army": "https://cititex.com/api/uploads/category/album/back_side/118-Army.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/back_side/118-Light%20Pink.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/118-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/118-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/color/118-Sport%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/118-Maroon.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/118-White.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/118-Red.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/color/118-Forest%20Green.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/color/118-Black%20Camo.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/color/118-Forest%20Camo.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/118-Royal%20Blue.jpg",
+        "Army": "https://cititex.com/api/uploads/category/album/color/118-Army.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/color/118-Light%20Pink.jpg"
+      }
+    }
+  },
+  {
+    "id": 99,
+    "name": "New States Apparel Premium Cotton T-shirt 7200",
+    "mill": "7200",
+    "class": "T-shirts",
+    "cartoon": 72,
+    "showColor": "Salmon",
+    "showPrice": 42000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "Bahan berkualitas premium memadukan rasa ringan dengan tekstur lembut untuk aktivitas harian.",
+    "materialHtml": "<ul><li>100% cotton ring spun preshrunk jersey knit.</li>\r\n<li>50% Cotton, 50% Polyester for Heather colors.</li>\r\n<li>90% Cotton, 10% Polyester for Sport Grey color.</li>\r\n<li>180g/m2.</li>\r\n<li>Single needle 2.2 cm collar.</li>\r\n<li>Taped neck and shoulders.</li>\r\n<li>Tubular construction.</li>\r\n<li>Double needle sleeve and bottom hems.</li>\r\n<li>Quarter-turned to eliminate centre crease.</li></ul>",
+    "features": [
+      "34 Warna",
+      "S-5XL",
+      "180gsm",
+      "24s"
+    ],
+    "colors": [
+      "Black",
+      "White",
+      "Sport Grey",
+      "Navy",
+      "Maroon",
+      "Red",
+      "Royal Blue",
+      "Irish Green",
+      "Daisy",
+      "Forest Green",
+      "Charcoal",
+      "Gold",
+      "Dark Chocolate",
+      "Military Green",
+      "Carolina Blue",
+      "Orange",
+      "Light Pink",
+      "Sand",
+      "Purple",
+      "Black Heather",
+      "Navy Heather",
+      "Red Heather",
+      "Dark Green Heather",
+      "Burgundy Heather",
+      "Aqua Sky",
+      "Butter",
+      "Green Ash",
+      "Lilac",
+      "Salmon",
+      "Mustard",
+      "Lime",
+      "Chestnut",
+      "Sapphire",
+      "Heliconia"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL",
+      "4XL",
+      "5XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+5.000",
+        "3xl": "+10.000",
+        "4xl": "+15.000",
+        "5xl": "+20.000",
+        "color": "Rp. 42.000",
+        "white": "Rp. 39.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+5.000",
+        "3xl": "+10.000",
+        "4xl": "+15.000",
+        "5xl": "+20.000",
+        "color": "Rp. 40.000",
+        "white": "Rp. 37.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "2xl": "+5.000",
+        "3xl": "+10.000",
+        "4xl": "+15.000",
+        "5xl": "+20.000",
+        "color": "Rp. 37.000",
+        "white": "Rp. 34.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "19",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "47"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "19.5",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "50"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "20",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "20.5",
+        "panjang_(cm)": "75",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "21",
+        "panjang_(cm)": "77",
+        "lebar_dada_(cm)": "59"
+      },
+      {
+        "size": "3XL",
+        "column": "",
+        "lengan_(cm)": "21.5",
+        "panjang_(cm)": "80",
+        "lebar_dada_(cm)": "62"
+      },
+      {
+        "size": "4XL",
+        "column": "",
+        "lengan_(cm)": "22",
+        "panjang_(cm)": "83",
+        "lebar_dada_(cm)": "65"
+      },
+      {
+        "size": "5XL",
+        "column": "",
+        "lengan_(cm)": "22.5",
+        "panjang_(cm)": "86",
+        "lebar_dada_(cm)": "68"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/99.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/99-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/99-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/front_side/99-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/99-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/99-Maroon.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/99-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/99-Royal%20Blue.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/front_side/99-Irish%20Green.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/front_side/99-Daisy.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/front_side/99-Forest%20Green.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/front_side/99-Charcoal.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/front_side/99-Gold.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/front_side/99-Dark%20Chocolate.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/front_side/99-Military%20Green.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/front_side/99-Carolina%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/front_side/99-Orange.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/front_side/99-Light%20Pink.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/front_side/99-Sand.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/front_side/99-Purple.jpg",
+        "Black Heather": "https://cititex.com/api/uploads/category/album/front_side/99-Black%20Heather.jpg",
+        "Navy Heather": "https://cititex.com/api/uploads/category/album/front_side/99-Navy%20Heather.jpg",
+        "Red Heather": "https://cititex.com/api/uploads/category/album/front_side/99-Red%20Heather.jpg",
+        "Dark Green Heather": "https://cititex.com/api/uploads/category/album/front_side/99-Dark%20Green%20Heather.jpg",
+        "Burgundy Heather": "https://cititex.com/api/uploads/category/album/front_side/99-Burgundy%20Heather.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/front_side/99-Aqua%20Sky.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/front_side/99-Butter.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/front_side/99-Green%20Ash.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/front_side/99-Lilac.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/front_side/99-Salmon.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/front_side/99-Mustard.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/front_side/99-Lime.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/front_side/99-Chestnut.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/front_side/99-Sapphire.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/front_side/99-Heliconia.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/99-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/99-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/back_side/99-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/99-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/99-Maroon.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/99-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/99-Royal%20Blue.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/back_side/99-Irish%20Green.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/back_side/99-Daisy.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/back_side/99-Forest%20Green.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/back_side/99-Charcoal.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/back_side/99-Gold.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/back_side/99-Dark%20Chocolate.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/back_side/99-Military%20Green.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/back_side/99-Carolina%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/back_side/99-Orange.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/back_side/99-Light%20Pink.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/back_side/99-Sand.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/back_side/99-Purple.jpg",
+        "Black Heather": "https://cititex.com/api/uploads/category/album/back_side/99-Black%20Heather.jpg",
+        "Navy Heather": "https://cititex.com/api/uploads/category/album/back_side/99-Navy%20Heather.jpg",
+        "Red Heather": "https://cititex.com/api/uploads/category/album/back_side/99-Red%20Heather.jpg",
+        "Dark Green Heather": "https://cititex.com/api/uploads/category/album/back_side/99-Dark%20Green%20Heather.jpg",
+        "Burgundy Heather": "https://cititex.com/api/uploads/category/album/back_side/99-Burgundy%20Heather.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/back_side/99-Aqua%20Sky.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/back_side/99-Butter.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/back_side/99-Green%20Ash.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/back_side/99-Lilac.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/back_side/99-Salmon.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/back_side/99-Mustard.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/back_side/99-Lime.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/back_side/99-Chestnut.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/back_side/99-Sapphire.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/back_side/99-Heliconia.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/99-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/99-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/color/99-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/99-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/99-Maroon.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/99-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/99-Royal%20Blue.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/color/99-Irish%20Green.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/color/99-Daisy.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/color/99-Forest%20Green.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/color/99-Charcoal.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/color/99-Gold.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/color/99-Dark%20Chocolate.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/color/99-Military%20Green.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/color/99-Carolina%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/color/99-Orange.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/color/99-Light%20Pink.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/color/99-Sand.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/color/99-Purple.jpg",
+        "Black Heather": "https://cititex.com/api/uploads/category/album/color/99-Black%20Heather.jpg",
+        "Navy Heather": "https://cititex.com/api/uploads/category/album/color/99-Navy%20Heather.jpg",
+        "Red Heather": "https://cititex.com/api/uploads/category/album/color/99-Red%20Heather.jpg",
+        "Dark Green Heather": "https://cititex.com/api/uploads/category/album/color/99-Dark%20Green%20Heather.jpg",
+        "Burgundy Heather": "https://cititex.com/api/uploads/category/album/color/99-Burgundy%20Heather.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/color/99-Aqua%20Sky.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/color/99-Butter.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/color/99-Green%20Ash.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/color/99-Lilac.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/color/99-Salmon.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/color/99-Mustard.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/color/99-Lime.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/color/99-Chestnut.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/color/99-Sapphire.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/color/99-Heliconia.jpg"
+      }
+    }
+  },
+  {
+    "id": 139,
+    "name": "New States Apparel Easy Care Polo Shirt 8165",
+    "mill": "8165",
+    "class": "Polo Shirts",
+    "cartoon": 36,
+    "showColor": "Maroon",
+    "showPrice": 58000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks",
+    "shortDescription": "8165 Polo Shirt",
+    "materialHtml": "<ul><li>200 Gsm Pique.</li>\r\n<li>35% Cotton / 65% Polyester.</li>\r\n<li>Satin Label</li>\r\n<li>Clean finished placket with reinforced bottom box</li>\r\n<li>3 color-matched buttons</li>\r\n<li>Double needle bottom hem</li></ul>",
+    "features": [
+      "14 Warna",
+      "S-3XL",
+      "200gsm",
+      "24s"
+    ],
+    "colors": [
+      "White",
+      "Sport Grey",
+      "Red",
+      "Royal Blue",
+      "Orange",
+      "Navy",
+      "Maroon",
+      "Light Pink",
+      "Irish Green",
+      "Forest Green",
+      "Daisy",
+      "Charcoal",
+      "Carolina Blue",
+      "Black",
+      "Dark Chocolate",
+      "Gold",
+      "Military Green",
+      "Sand"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+7.000",
+        "3xl": "+14.000",
+        "color": "Rp. 58.000",
+        "white": "Rp. 55.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+7.000",
+        "3xl": "+14.000",
+        "color": "Rp. 56.000",
+        "white": "Rp. 53.000",
+        "column": "",
+        "quantity": "> 12pcs",
+        "new_column_4": ""
+      },
+      {
+        "2xl": "+7.000",
+        "3xl": "+14.000",
+        "color": "Rp. 53.000",
+        "white": "Rp. 50.000",
+        "column": "",
+        "quantity": "> 72pcs",
+        "new_column_4": ""
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "20",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "48"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "21",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "51"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "22",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "54"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "23",
+        "panjang_(cm)": "76",
+        "lebar_dada_(cm)": "57"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "24",
+        "panjang_(cm)": "80",
+        "lebar_dada_(cm)": "60"
+      },
+      {
+        "size": "3XL",
+        "column": "",
+        "lengan_(cm)": "25",
+        "panjang_(cm)": "84",
+        "lebar_dada_(cm)": "63"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/139.jpg",
+      "frontByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/front_side/139-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/front_side/139-Sport%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/139-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/139-Royal%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/front_side/139-Orange.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/139-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/139-Maroon.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/front_side/139-Light%20Pink.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/front_side/139-Irish%20Green.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/front_side/139-Forest%20Green.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/front_side/139-Daisy.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/front_side/139-Charcoal.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/front_side/139-Carolina%20Blue.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/139-Black.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/front_side/139-Dark%20Chocolate.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/front_side/139-Gold.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/front_side/139-Military%20Green.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/front_side/139-Sand.jpg"
+      },
+      "backByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/back_side/139-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/back_side/139-Sport%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/139-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/139-Royal%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/back_side/139-Orange.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/139-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/139-Maroon.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/back_side/139-Light%20Pink.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/back_side/139-Irish%20Green.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/back_side/139-Forest%20Green.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/back_side/139-Daisy.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/back_side/139-Charcoal.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/back_side/139-Carolina%20Blue.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/139-Black.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/back_side/139-Dark%20Chocolate.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/back_side/139-Gold.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/back_side/139-Military%20Green.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/back_side/139-Sand.jpg"
+      },
+      "swatchByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/color/139-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/color/139-Sport%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/139-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/139-Royal%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/color/139-Orange.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/139-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/139-Maroon.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/color/139-Light%20Pink.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/color/139-Irish%20Green.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/color/139-Forest%20Green.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/color/139-Daisy.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/color/139-Charcoal.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/color/139-Carolina%20Blue.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/color/139-Black.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/color/139-Dark%20Chocolate.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/color/139-Gold.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/color/139-Military%20Green.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/color/139-Sand.jpg"
+      }
+    }
+  },
+  {
+    "id": 130,
+    "name": "New States Apparel Dri-Fit T-shirt 2700",
+    "mill": "2700",
+    "class": "Sport T-Shirts",
+    "cartoon": 100,
+    "showColor": "Neon Green",
+    "showPrice": 42000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "Super soft and lightweight modal-blend tee, exceptionally comfortable to wear.",
+    "materialHtml": "<ul><li>100% Polyester.</li>\r\n<li>150g/m2.</li>\r\n<li>Double-needle collar.</li>\r\n<li>Double needle sleeve and bottom hems.</li>\r\n<li>Soft And Breathable, Best Sweat-Absorbing.</li></ul>",
+    "features": [
+      "8 Warna",
+      "S-2XL",
+      "150gsm"
+    ],
+    "colors": [
+      "Black",
+      "Charcoal",
+      "Gold",
+      "Navy",
+      "Neon Green",
+      "Red",
+      "Royal Blue",
+      "White"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 42.000",
+        "white": "Rp. 42.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 39.000",
+        "white": "Rp. 39.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 36.000",
+        "white": "Rp. 36.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "19",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "47"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "19.5",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "50"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "20",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "20.5",
+        "panjang_(cm)": "75",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "21",
+        "panjang_(cm)": "77",
+        "lebar_dada_(cm)": "59"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/130.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/130-Black.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/front_side/130-Charcoal.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/front_side/130-Gold.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/130-Navy.jpg",
+        "Neon Green": "https://cititex.com/api/uploads/category/album/front_side/130-Neon%20Green.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/130-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/130-Royal%20Blue.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/130-White.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/130-Black.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/back_side/130-Charcoal.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/back_side/130-Gold.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/130-Navy.jpg",
+        "Neon Green": "https://cititex.com/api/uploads/category/album/back_side/130-Neon%20Green.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/130-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/130-Royal%20Blue.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/130-White.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/130-Black.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/color/130-Charcoal.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/color/130-Gold.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/130-Navy.jpg",
+        "Neon Green": "https://cititex.com/api/uploads/category/album/color/130-Neon%20Green.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/130-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/130-Royal%20Blue.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/130-White.jpg"
+      }
+    }
+  },
+  {
+    "id": 103,
+    "name": "New States Apparel Super Blend Hooded Sweatshirt 9500",
+    "mill": "9500",
+    "class": "Outdoor",
+    "cartoon": 24,
+    "showColor": "Lilac",
+    "showPrice": 140000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "Super soft and lightweight modal-blend tee, exceptionally comfortable to wear.",
+    "materialHtml": "<ul><li>50% Cotton / 50% Polyester (80% Cotton / 20% Polyester for Camo Series).</li>\r\n<li>270 g/m² Preshrunk fleece knit (210 g/m² for Camo Series).</li>\r\n<li>Air jet yarn = softer feel and reduced pilling.</li>\r\n<li>Double-lined hood with color-matched drawcord</li>\r\n<li>Pouch pockets.</li>\r\n<li>Double-needle stitching at waistband and cuffs.</li>\r\n<li>1 x 1 rib with spandex.</li></ul>",
+    "features": [
+      "15 Warna",
+      "S-2XL",
+      "270gsm"
+    ],
+    "colors": [
+      "Black",
+      "Navy",
+      "Sport Grey",
+      "Maroon",
+      "Black Camo",
+      "Forest Camo",
+      "Forest Green",
+      "Red",
+      "Gold",
+      "Army",
+      "Royal Blue",
+      "Lilac",
+      "White",
+      "Light Blue",
+      "Light Pink"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+10.000",
+        "camo": "Rp. 150.000",
+        "color": "Rp. 140.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+10.000",
+        "camo": "Rp. 145.000",
+        "color": "Rp. 135.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "2xl": "+10.000",
+        "camo": "Rp. 140.000",
+        "color": "Rp. 130.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "59",
+        "panjang_(cm)": "65",
+        "lebar_dada_(cm)": "51"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "60",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "61",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "62",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "61"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "63",
+        "panjang_(cm)": "76",
+        "lebar_dada_(cm)": "64"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/103.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/103-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/103-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/front_side/103-Sport%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/103-Maroon.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/front_side/103-Black%20Camo.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/front_side/103-Forest%20Camo.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/front_side/103-Forest%20Green.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/103-Red.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/front_side/103-Gold.jpg",
+        "Army": "https://cititex.com/api/uploads/category/album/front_side/103-Army.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/103-Royal%20Blue.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/front_side/103-Lilac.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/103-White.jpg",
+        "Light Blue": "https://cititex.com/api/uploads/category/album/front_side/103-Light%20Blue.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/front_side/103-Light%20Pink.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/103-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/103-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/back_side/103-Sport%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/103-Maroon.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/back_side/103-Black%20Camo.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/back_side/103-Forest%20Camo.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/back_side/103-Forest%20Green.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/103-Red.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/back_side/103-Gold.jpg",
+        "Army": "https://cititex.com/api/uploads/category/album/back_side/103-Army.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/103-Royal%20Blue.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/back_side/103-Lilac.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/103-White.jpg",
+        "Light Blue": "https://cititex.com/api/uploads/category/album/back_side/103-Light%20Blue.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/back_side/103-Light%20Pink.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/103-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/103-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/color/103-Sport%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/103-Maroon.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/color/103-Black%20Camo.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/color/103-Forest%20Camo.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/color/103-Forest%20Green.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/103-Red.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/color/103-Gold.jpg",
+        "Army": "https://cititex.com/api/uploads/category/album/color/103-Army.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/103-Royal%20Blue.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/color/103-Lilac.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/103-White.jpg",
+        "Light Blue": "https://cititex.com/api/uploads/category/album/color/103-Light%20Blue.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/color/103-Light%20Pink.jpg"
+      }
+    }
+  },
+  {
+    "id": 87,
+    "name": "New States Apparel Softstyle 3600",
+    "mill": "3600",
+    "class": "T-shirts",
+    "cartoon": 72,
+    "showColor": "Maroon",
+    "showPrice": 37000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks.",
+    "shortDescription": "Super soft and lightweight modal-blend tee, exceptionally comfortable to wear.",
+    "materialHtml": "<ul><li>100% cotton ring spun preshrunk jersey knit.</li>\r\n<li>90% Cotton, 10% Polyester for Sport Grey color.</li>\r\n<li>150g/m2 (4.5 oz per sq yd) for white.</li>\r\n<li>145g/m2 (4.2 oz per sq yd) for colours.</li>\r\n<li>Single needle 2 cm collar.</li>\r\n<li>Taped neck and shoulders.</li>\r\n<li>Tubular construction.</li>\r\n<li>Double needle sleeve and bottom hems.</li>\r\n<li>Quarter-turned to eliminate centre crease.</li></ul>",
+    "features": [
+      "28 Warna",
+      "S-3XL",
+      "180gsm",
+      "30s"
+    ],
+    "colors": [
+      "White",
+      "Black",
+      "Red",
+      "Navy",
+      "Royal Blue",
+      "Maroon",
+      "Irish Green",
+      "Sport Grey",
+      "Charcoal",
+      "Forest Green",
+      "Dark Chocolate",
+      "Daisy",
+      "Heliconia",
+      "Orange",
+      "Sand",
+      "Carolina Blue",
+      "Lime",
+      "Light Pink",
+      "Sapphire",
+      "Purple",
+      "Gold",
+      "Chestnut",
+      "Military Green",
+      "Aqua Sky",
+      "Lilac",
+      "Butter",
+      "Green Ash",
+      "Salmon",
+      "Mustard"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 37.000",
+        "white": "Rp. 34.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 35.000",
+        "white": "Rp. 32.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 32.000",
+        "white": "Rp. 29.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "19",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "47"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "19.5",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "50"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "20",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "20.5",
+        "panjang_(cm)": "75",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "21",
+        "panjang_(cm)": "77",
+        "lebar_dada_(cm)": "59"
+      },
+      {
+        "size": "3XL",
+        "column": "",
+        "lengan_(cm)": "21.5",
+        "panjang_(cm)": "80",
+        "lebar_dada_(cm)": "62"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/87.jpg",
+      "frontByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/front_side/87-White.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/87-Black.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/87-Red.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/87-Navy.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/87-Royal%20Blue.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/87-Maroon.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/front_side/87-Irish%20Green.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/front_side/87-Sport%20Grey.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/front_side/87-Charcoal.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/front_side/87-Forest%20Green.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/front_side/87-Dark%20Chocolate.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/front_side/87-Daisy.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/front_side/87-Heliconia.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/front_side/87-Orange.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/front_side/87-Sand.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/front_side/87-Carolina%20Blue.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/front_side/87-Lime.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/front_side/87-Light%20Pink.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/front_side/87-Sapphire.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/front_side/87-Purple.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/front_side/87-Gold.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/front_side/87-Chestnut.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/front_side/87-Military%20Green.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/front_side/87-Aqua%20Sky.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/front_side/87-Lilac.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/front_side/87-Butter.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/front_side/87-Green%20Ash.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/front_side/87-Salmon.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/front_side/87-Mustard.jpg"
+      },
+      "backByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/back_side/87-White.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/87-Black.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/87-Red.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/87-Navy.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/87-Royal%20Blue.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/87-Maroon.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/back_side/87-Irish%20Green.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/back_side/87-Sport%20Grey.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/back_side/87-Charcoal.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/back_side/87-Forest%20Green.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/back_side/87-Dark%20Chocolate.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/back_side/87-Daisy.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/back_side/87-Heliconia.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/back_side/87-Orange.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/back_side/87-Sand.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/back_side/87-Carolina%20Blue.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/back_side/87-Lime.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/back_side/87-Light%20Pink.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/back_side/87-Sapphire.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/back_side/87-Purple.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/back_side/87-Gold.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/back_side/87-Chestnut.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/back_side/87-Military%20Green.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/back_side/87-Aqua%20Sky.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/back_side/87-Lilac.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/back_side/87-Butter.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/back_side/87-Green%20Ash.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/back_side/87-Salmon.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/back_side/87-Mustard.jpg"
+      },
+      "swatchByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/color/87-White.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/color/87-Black.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/87-Red.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/87-Navy.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/87-Royal%20Blue.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/87-Maroon.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/color/87-Irish%20Green.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/color/87-Sport%20Grey.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/color/87-Charcoal.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/color/87-Forest%20Green.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/color/87-Dark%20Chocolate.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/color/87-Daisy.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/color/87-Heliconia.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/color/87-Orange.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/color/87-Sand.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/color/87-Carolina%20Blue.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/color/87-Lime.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/color/87-Light%20Pink.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/color/87-Sapphire.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/color/87-Purple.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/color/87-Gold.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/color/87-Chestnut.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/color/87-Military%20Green.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/color/87-Aqua%20Sky.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/color/87-Lilac.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/color/87-Butter.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/color/87-Green%20Ash.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/color/87-Salmon.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/color/87-Mustard.jpg"
+      }
+    }
+  },
+  {
+    "id": 94,
+    "name": "New States Apparel Premium Cotton Long Sleeve 7280",
+    "mill": "7280",
+    "class": "T-shirts",
+    "cartoon": 36,
+    "showColor": "Aqua Sky",
+    "showPrice": 56000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks.",
+    "shortDescription": "Bahan berkualitas premium memadukan rasa ringan dengan tekstur lembut untuk aktivitas harian.",
+    "materialHtml": "<ul><li>100% cotton ring spun preshrunk jersey knit.</li>\r\n<li>90% Cotton, 10% Polyester for Sport Grey color.</li>\r\n<li>180g/m2</li>\r\n<li>Single needle 2 cm collar.</li>\r\n<li>Taped neck and shoulders.</li>\r\n<li>Tubular construction.</li>\r\n<li>Double needle sleeve and bottom hems.</li>\r\n<li>Quarter-turned to eliminate centre crease.</li></ul>",
+    "features": [
+      "32 Warna",
+      "S-3XL",
+      "180gsm",
+      "24s"
+    ],
+    "colors": [
+      "Black",
+      "White",
+      "Sport Grey",
+      "Navy",
+      "Maroon",
+      "Forest Green",
+      "Royal Blue",
+      "Red",
+      "Gold",
+      "Dark Chocolate",
+      "Charcoal",
+      "Military Green",
+      "Carolina Blue",
+      "Orange",
+      "Light Pink",
+      "Irish Green",
+      "Daisy",
+      "Sand",
+      "Purple",
+      "Lilac",
+      "Salmon",
+      "Aqua Sky",
+      "Green Ash",
+      "Butter",
+      "Chestnut",
+      "Heliconia",
+      "Sapphire",
+      "Black Heather",
+      "Burgundy Heather",
+      "Dark Green Heather",
+      "Navy Heather",
+      "Red Heather",
+      "Mustard",
+      "Lime"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL",
+      "4XL",
+      "5XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+7.000",
+        "3xl": "+14.000",
+        "4xl": "+21.000",
+        "5xl": "+28.000",
+        "color": "Rp. 56.000",
+        "white": "Rp. 53.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+7.000",
+        "3xl": "+14.000",
+        "4xl": "+21.000",
+        "5xl": "+28.000",
+        "color": "Rp 54.000",
+        "white": "Rp. 51.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "2xl": "+7.000",
+        "3xl": "+14.000",
+        "4xl": "+21.000",
+        "5xl": "+28.000",
+        "color": "Rp. 51.000",
+        "white": "Rp. 48.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "58",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "47"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "59",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "50"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "60",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "61",
+        "panjang_(cm)": "75",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "62",
+        "panjang_(cm)": "77",
+        "lebar_dada_(cm)": "59"
+      },
+      {
+        "size": "3XL",
+        "column": "",
+        "lengan_(cm)": "63",
+        "panjang_(cm)": "80",
+        "lebar_dada_(cm)": "62"
+      },
+      {
+        "size": "4XL",
+        "column": "",
+        "lengan_(cm)": "64",
+        "panjang_(cm)": "83",
+        "lebar_dada_(cm)": "65"
+      },
+      {
+        "size": "5XL",
+        "column": "",
+        "lengan_(cm)": "65",
+        "panjang_(cm)": "86",
+        "lebar_dada_(cm)": "68"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/94.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/94-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/94-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/front_side/94-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/94-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/94-Maroon.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/front_side/94-Forest%20Green.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/94-Royal%20Blue.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/94-Red.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/front_side/94-Gold.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/front_side/94-Dark%20Chocolate.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/front_side/94-Charcoal.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/front_side/94-Military%20Green.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/front_side/94-Carolina%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/front_side/94-Orange.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/front_side/94-Light%20Pink.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/front_side/94-Irish%20Green.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/front_side/94-Daisy.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/front_side/94-Sand.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/front_side/94-Purple.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/front_side/94-Lilac.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/front_side/94-Salmon.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/front_side/94-Aqua%20Sky.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/front_side/94-Green%20Ash.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/front_side/94-Butter.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/front_side/94-Chestnut.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/front_side/94-Heliconia.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/front_side/94-Sapphire.jpg",
+        "Black Heather": "https://cititex.com/api/uploads/category/album/front_side/94-Black%20Heather.jpg",
+        "Burgundy Heather": "https://cititex.com/api/uploads/category/album/front_side/94-Burgundy%20Heather.jpg",
+        "Dark Green Heather": "https://cititex.com/api/uploads/category/album/front_side/94-Dark%20Green%20Heather.jpg",
+        "Navy Heather": "https://cititex.com/api/uploads/category/album/front_side/94-Navy%20Heather.jpg",
+        "Red Heather": "https://cititex.com/api/uploads/category/album/front_side/94-Red%20Heather.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/front_side/94-Mustard.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/front_side/94-Lime.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/94-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/94-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/back_side/94-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/94-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/94-Maroon.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/back_side/94-Forest%20Green.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/94-Royal%20Blue.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/94-Red.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/back_side/94-Gold.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/back_side/94-Dark%20Chocolate.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/back_side/94-Charcoal.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/back_side/94-Military%20Green.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/back_side/94-Carolina%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/back_side/94-Orange.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/back_side/94-Light%20Pink.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/back_side/94-Irish%20Green.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/back_side/94-Daisy.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/back_side/94-Sand.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/back_side/94-Purple.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/back_side/94-Lilac.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/back_side/94-Salmon.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/back_side/94-Aqua%20Sky.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/back_side/94-Green%20Ash.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/back_side/94-Butter.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/back_side/94-Chestnut.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/back_side/94-Heliconia.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/back_side/94-Sapphire.jpg",
+        "Black Heather": "https://cititex.com/api/uploads/category/album/back_side/94-Black%20Heather.jpg",
+        "Burgundy Heather": "https://cititex.com/api/uploads/category/album/back_side/94-Burgundy%20Heather.jpg",
+        "Dark Green Heather": "https://cititex.com/api/uploads/category/album/back_side/94-Dark%20Green%20Heather.jpg",
+        "Navy Heather": "https://cititex.com/api/uploads/category/album/back_side/94-Navy%20Heather.jpg",
+        "Red Heather": "https://cititex.com/api/uploads/category/album/back_side/94-Red%20Heather.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/back_side/94-Mustard.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/back_side/94-Lime.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/94-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/94-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/color/94-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/94-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/94-Maroon.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/color/94-Forest%20Green.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/94-Royal%20Blue.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/94-Red.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/color/94-Gold.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/color/94-Dark%20Chocolate.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/color/94-Charcoal.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/color/94-Military%20Green.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/color/94-Carolina%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/color/94-Orange.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/color/94-Light%20Pink.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/color/94-Irish%20Green.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/color/94-Daisy.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/color/94-Sand.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/color/94-Purple.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/color/94-Lilac.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/color/94-Salmon.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/color/94-Aqua%20Sky.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/color/94-Green%20Ash.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/color/94-Butter.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/color/94-Chestnut.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/color/94-Heliconia.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/color/94-Sapphire.jpg",
+        "Black Heather": "https://cititex.com/api/uploads/category/album/color/94-Black%20Heather.jpg",
+        "Burgundy Heather": "https://cititex.com/api/uploads/category/album/color/94-Burgundy%20Heather.jpg",
+        "Dark Green Heather": "https://cititex.com/api/uploads/category/album/color/94-Dark%20Green%20Heather.jpg",
+        "Navy Heather": "https://cititex.com/api/uploads/category/album/color/94-Navy%20Heather.jpg",
+        "Red Heather": "https://cititex.com/api/uploads/category/album/color/94-Red%20Heather.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/color/94-Mustard.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/color/94-Lime.jpg"
+      }
+    }
+  },
+  {
+    "id": 102,
+    "name": "New States Apparel Super Blend Full Zip Hooded Sweatshirt 9600",
+    "mill": "9600",
+    "class": "Outdoor",
+    "cartoon": 24,
+    "showColor": "Black Camo",
+    "showPrice": 150000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "Super soft and lightweight modal-blend tee, exceptionally comfortable to wear.",
+    "materialHtml": "<ul><li>50% Cotton / 50% Polyester (80% Cotton / 20% Polyester for Camo Series).</li>\r\n<li>270 g/m² Preshrunk fleece knit (210 g/m² for Camo Series).</li>\r\n<li>Air jet yarn = softer feel and reduced pilling.</li>\r\n<li>Double-lined hood with color-matched drawcord</li>\r\n<li>Overlapped fabric across zipper allows full front printing.</li>\r\n<li>Pouch pockets.</li>\r\n<li>Double-needle stitching at waistband and cuffs.</li>\r\n<li>1 x 1 rib with spandex.</li></ul>",
+    "features": [
+      "7 Warna",
+      "S-2XL",
+      "270gsm"
+    ],
+    "colors": [
+      "Black",
+      "Navy",
+      "Sport Grey",
+      "Maroon",
+      "Black Camo",
+      "Forest Camo",
+      "Forest Green"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+10.000",
+        "camo": "Rp. 160.000",
+        "color": "Rp. 150.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+10.000",
+        "camo": "Rp. 155.000",
+        "color": "Rp. 145.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "2xl": "+10.000",
+        "camo": "Rp. 150.000",
+        "color": "Rp. 140.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "59",
+        "panjang_(cm)": "65",
+        "lebar_dada_(cm)": "51"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "60",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "61",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "62",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "61"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "63",
+        "panjang_(cm)": "76",
+        "lebar_dada_(cm)": "64"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/102.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/102-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/102-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/front_side/102-Sport%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/102-Maroon.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/front_side/102-Black%20Camo.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/front_side/102-Forest%20Camo.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/front_side/102-Forest%20Green.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/102-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/102-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/back_side/102-Sport%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/102-Maroon.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/back_side/102-Black%20Camo.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/back_side/102-Forest%20Camo.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/back_side/102-Forest%20Green.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/102-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/102-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/color/102-Sport%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/102-Maroon.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/color/102-Black%20Camo.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/color/102-Forest%20Camo.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/color/102-Forest%20Green.jpg"
+      }
+    }
+  },
+  {
+    "id": 117,
+    "name": "6089MC Yupoong Classic Snapback Multicam",
+    "mill": "6089MC",
+    "class": "Headwear",
+    "cartoon": 144,
+    "showColor": "Black",
+    "showPrice": 180000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "6089MC Caps",
+    "materialHtml": "<ul><li>98% Cotton / 2% P.U. Spandex.</li>\r\n<li>Size : OSFA.</li>\r\n<li>Official licensed MULTICAM® pattern. </li>\r\n<li>Pattern is the proven multienvironment concealment solution.</li>\r\n<li>Black plastic snap closure. </li>\r\n<li>Hard buckram. </li>\r\n<li>Black undervisor.</li></ul>",
+    "features": [],
+    "colors": [
+      "Black",
+      "New Color"
+    ],
+    "sizes": [
+      "OSFA"
+    ],
+    "priceTiers": [
+      {
+        "color": "Rp. 180.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "color": "Rp. 170.000",
+        "column": "",
+        "quantity": "> 12 pcs"
+      },
+      {
+        "color": "Rp. 150.000",
+        "column": "",
+        "quantity": "> 72 pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "OSFA",
+        "column": ""
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "action",
+        "label": "action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/117.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/117-Black.jpg",
+        "New Color": "https://cititex.com/api/uploads/category/album/front_side/117-New%20Color.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/117-Black.jpg",
+        "New Color": "https://cititex.com/api/uploads/category/album/back_side/117-New%20Color.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/117-Black.jpg",
+        "New Color": "https://cititex.com/api/uploads/category/album/color/117-New%20Color.jpg"
+      }
+    }
+  },
+  {
+    "id": 129,
+    "name": "New States Apparel Premium Cotton Youth T-shirt 72Y00",
+    "mill": "72Y00",
+    "class": "T-shirts",
+    "cartoon": 72,
+    "showColor": "Black",
+    "showPrice": 33000,
+    "description": "Terbuat dari katun ring-spun yang ringan, kaus ini menawarkan sensasi yang jauh lebih lembut dan nyaman. Memiliki potongan reguler yang pas tanpa terasa ketat. Pilihan serbaguna untuk hari-hari santai atau tampilan kasual yang rapi.",
+    "shortDescription": "Tersedia berbagai macam pilihan warna ceria dengan jahitan rapi, nyaman untuk aktivitas anak seharian.",
+    "materialHtml": "<ul><li>100% cotton ring spun preshrunk jersey knit.</li>\r\n<li>180g/m2.</li>\r\n<li>Single-needle collar.</li>\r\n<li>Taped neck and shoulders.</li>\r\n<li>Double needle sleeve and bottom hems.</li>\r\n<li>1 X 1 Cotton Rib.</li></ul>",
+    "features": [
+      "29 Warna",
+      "XS-XL",
+      "180gsm",
+      "24s"
+    ],
+    "colors": [
+      "Black",
+      "White",
+      "Navy",
+      "Sport Grey",
+      "Red",
+      "Royal Blue",
+      "Gold",
+      "Light Pink",
+      "Daisy",
+      "Carolina Blue",
+      "Heliconia",
+      "Irish Green",
+      "Lime",
+      "Orange",
+      "Maroon",
+      "Green Ash",
+      "Aqua Sky",
+      "Lilac",
+      "Salmon",
+      "Purple",
+      "Butter",
+      "Forest Green",
+      "Sand",
+      "Military Green",
+      "Charcoal",
+      "Chestnut",
+      "Dark Chocolate",
+      "Mustard",
+      "Sapphire",
+      "Black Heather",
+      "Burgundy Heather",
+      "Dark Green Heather",
+      "Navy Heather",
+      "Red Heather"
+    ],
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "priceTiers": [
+      {
+        "color": "Rp. 33.000",
+        "white": "Rp. 33.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "color": "Rp. 31.000",
+        "white": "Rp. 31.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "color": "Rp. 28.000",
+        "white": "Rp. 28.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "XS",
+        "column": "",
+        "lengan_(cm)": "11.5",
+        "panjang_(cm)": "45",
+        "lebar_dada_(cm)": "33"
+      },
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "12.5",
+        "panjang_(cm)": "48",
+        "lebar_dada_(cm)": "36"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "13.5",
+        "panjang_(cm)": "51",
+        "lebar_dada_(cm)": "38"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "14.5",
+        "panjang_(cm)": "54",
+        "lebar_dada_(cm)": "41"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "15.5",
+        "panjang_(cm)": "58",
+        "lebar_dada_(cm)": "43"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/129.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/129-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/129-White.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/129-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/front_side/129-Sport%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/129-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/129-Royal%20Blue.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/front_side/129-Gold.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/front_side/129-Light%20Pink.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/front_side/129-Daisy.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/front_side/129-Carolina%20Blue.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/front_side/129-Heliconia.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/front_side/129-Irish%20Green.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/front_side/129-Lime.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/front_side/129-Orange.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/129-Maroon.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/front_side/129-Green%20Ash.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/front_side/129-Aqua%20Sky.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/front_side/129-Lilac.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/front_side/129-Salmon.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/front_side/129-Purple.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/front_side/129-Butter.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/front_side/129-Forest%20Green.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/front_side/129-Sand.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/front_side/129-Military%20Green.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/front_side/129-Charcoal.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/front_side/129-Chestnut.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/front_side/129-Dark%20Chocolate.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/front_side/129-Mustard.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/front_side/129-Sapphire.jpg",
+        "Black Heather": "https://cititex.com/api/uploads/category/album/front_side/129-Black%20Heather.jpg",
+        "Burgundy Heather": "https://cititex.com/api/uploads/category/album/front_side/129-Burgundy%20Heather.jpg",
+        "Dark Green Heather": "https://cititex.com/api/uploads/category/album/front_side/129-Dark%20Green%20Heather.jpg",
+        "Navy Heather": "https://cititex.com/api/uploads/category/album/front_side/129-Navy%20Heather.jpg",
+        "Red Heather": "https://cititex.com/api/uploads/category/album/front_side/129-Red%20Heather.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/129-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/129-White.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/129-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/back_side/129-Sport%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/129-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/129-Royal%20Blue.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/back_side/129-Gold.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/back_side/129-Light%20Pink.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/back_side/129-Daisy.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/back_side/129-Carolina%20Blue.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/back_side/129-Heliconia.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/back_side/129-Irish%20Green.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/back_side/129-Lime.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/back_side/129-Orange.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/129-Maroon.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/back_side/129-Green%20Ash.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/back_side/129-Aqua%20Sky.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/back_side/129-Lilac.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/back_side/129-Salmon.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/back_side/129-Purple.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/back_side/129-Butter.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/back_side/129-Forest%20Green.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/back_side/129-Sand.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/back_side/129-Military%20Green.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/back_side/129-Charcoal.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/back_side/129-Chestnut.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/back_side/129-Dark%20Chocolate.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/back_side/129-Mustard.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/back_side/129-Sapphire.jpg",
+        "Black Heather": "https://cititex.com/api/uploads/category/album/back_side/129-Black%20Heather.jpg",
+        "Burgundy Heather": "https://cititex.com/api/uploads/category/album/back_side/129-Burgundy%20Heather.jpg",
+        "Dark Green Heather": "https://cititex.com/api/uploads/category/album/back_side/129-Dark%20Green%20Heather.jpg",
+        "Navy Heather": "https://cititex.com/api/uploads/category/album/back_side/129-Navy%20Heather.jpg",
+        "Red Heather": "https://cititex.com/api/uploads/category/album/back_side/129-Red%20Heather.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/129-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/129-White.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/129-Navy.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/color/129-Sport%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/129-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/129-Royal%20Blue.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/color/129-Gold.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/color/129-Light%20Pink.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/color/129-Daisy.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/color/129-Carolina%20Blue.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/color/129-Heliconia.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/color/129-Irish%20Green.jpg",
+        "Lime": "https://cititex.com/api/uploads/category/album/color/129-Lime.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/color/129-Orange.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/129-Maroon.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/color/129-Green%20Ash.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/color/129-Aqua%20Sky.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/color/129-Lilac.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/color/129-Salmon.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/color/129-Purple.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/color/129-Butter.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/color/129-Forest%20Green.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/color/129-Sand.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/color/129-Military%20Green.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/color/129-Charcoal.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/color/129-Chestnut.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/color/129-Dark%20Chocolate.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/color/129-Mustard.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/color/129-Sapphire.jpg",
+        "Black Heather": "https://cititex.com/api/uploads/category/album/color/129-Black%20Heather.jpg",
+        "Burgundy Heather": "https://cititex.com/api/uploads/category/album/color/129-Burgundy%20Heather.jpg",
+        "Dark Green Heather": "https://cititex.com/api/uploads/category/album/color/129-Dark%20Green%20Heather.jpg",
+        "Navy Heather": "https://cititex.com/api/uploads/category/album/color/129-Navy%20Heather.jpg",
+        "Red Heather": "https://cititex.com/api/uploads/category/album/color/129-Red%20Heather.jpg"
+      }
+    }
+  },
+  {
+    "id": 122,
+    "name": "New States Apparel Windbreaker 9810",
+    "mill": "9810",
+    "class": "Outdoor",
+    "cartoon": 24,
+    "showColor": "Maroon",
+    "showPrice": 185000,
+    "description": "Jaket ini terbuat dari bahan bertekstur doff yang menahan cipratan air dan hujan ringan, tetap nyaman dipakai saat cuaca basah. Dilengkapi resleting berkualitas dengan tarikan karet untuk pemakaian yang lebih mudah.",
+    "shortDescription": "Dirancang dari bahan ringan dengan tampilan minimalis memberi kesan modern dan rapi.",
+    "materialHtml": "<ul><li>100% Polyester.</li>\r\n<li>82 g/m².</li>\r\n<li>Waterproof Pressure Resistance 400 mm.</li>\r\n<li>Matte Finish Eyelets and Zippers.</li>\r\n<li>Zipper with Zipper Pull &amp; Rubber Zipper Pull Tab.</li>\r\n<li>Reverse Zipper Tape.</li></ul>",
+    "features": [
+      "9 Warna",
+      "S-2XL",
+      "82gsm"
+    ],
+    "colors": [
+      "Black",
+      "Maroon",
+      "Navy",
+      "Forest Camo",
+      "Black Camo",
+      "Black-Forest Camo",
+      "Black-Graphite",
+      "Light Blue",
+      "Light Pink"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "camo": "Rp. 200.000",
+        "color": "Rp. 185.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "camo": "Rp. 190.000",
+        "color": "Rp. 175.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "camo": "Rp. 180.000",
+        "color": "Rp. 165.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "67.5",
+        "panjang_(cm)": "65",
+        "lebar_dada_(cm)": "51"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "68.5",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "69.5",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "70.5",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "61"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "71.5",
+        "panjang_(cm)": "76",
+        "lebar_dada_(cm)": "64"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/122.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/122-Black.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/122-Maroon.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/122-Navy.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/front_side/122-Forest%20Camo.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/front_side/122-Black%20Camo.jpg",
+        "Black-Forest Camo": "https://cititex.com/api/uploads/category/album/front_side/122-Black-Forest%20Camo.jpg",
+        "Black-Graphite": "https://cititex.com/api/uploads/category/album/front_side/122-Black-Graphite.jpg",
+        "Light Blue": "https://cititex.com/api/uploads/category/album/front_side/122-Light%20Blue.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/front_side/122-Light%20Pink.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/122-Black.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/122-Maroon.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/122-Navy.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/back_side/122-Forest%20Camo.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/back_side/122-Black%20Camo.jpg",
+        "Black-Forest Camo": "https://cititex.com/api/uploads/category/album/back_side/122-Black-Forest%20Camo.jpg",
+        "Black-Graphite": "https://cititex.com/api/uploads/category/album/back_side/122-Black-Graphite.jpg",
+        "Light Blue": "https://cititex.com/api/uploads/category/album/back_side/122-Light%20Blue.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/back_side/122-Light%20Pink.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/122-Black.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/122-Maroon.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/122-Navy.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/color/122-Forest%20Camo.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/color/122-Black%20Camo.jpg",
+        "Black-Forest Camo": "https://cititex.com/api/uploads/category/album/color/122-Black-Forest%20Camo.jpg",
+        "Black-Graphite": "https://cititex.com/api/uploads/category/album/color/122-Black-Graphite.jpg",
+        "Light Blue": "https://cititex.com/api/uploads/category/album/color/122-Light%20Blue.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/color/122-Light%20Pink.jpg"
+      }
+    }
+  },
+  {
+    "id": 131,
+    "name": "New States Apparel Dri-Fit T-shirt 2701",
+    "mill": "2701",
+    "class": "Sport T-Shirts",
+    "cartoon": 100,
+    "showColor": "Orange - Charcoal",
+    "showPrice": 47000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "2701 Dri-Fit Two Color T-shirt S/S",
+    "materialHtml": "<ul><li>100% Polyester.</li>\r\n<li>150g/m2.</li>\r\n<li>Double-needle collar.</li>\r\n<li>Double needle sleeve and bottom hems.</li>\r\n<li>Soft And Breathable, Best Sweat-Absorbing.</li></ul>",
+    "features": [
+      "4 Warna",
+      "S-2XL",
+      "150gsm"
+    ],
+    "colors": [
+      "Gold - Grey",
+      "Orange - Charcoal",
+      "Royal Blue - Charcoal",
+      "White - Grey"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 47.000",
+        "white": "Rp. 42.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 44.000",
+        "white": "Rp. 39.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 41.000",
+        "white": "Rp. 36.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "19",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "47"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "19.5",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "50"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "20",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "20.5",
+        "panjang_(cm)": "75",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "21",
+        "panjang_(cm)": "77",
+        "lebar_dada_(cm)": "59"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/131.jpg",
+      "frontByColor": {
+        "Gold - Grey": "https://cititex.com/api/uploads/category/album/front_side/131-Gold%20-%20Grey.jpg",
+        "Orange - Charcoal": "https://cititex.com/api/uploads/category/album/front_side/131-Orange%20-%20Charcoal.jpg",
+        "Royal Blue - Charcoal": "https://cititex.com/api/uploads/category/album/front_side/131-Royal%20Blue%20-%20Charcoal.jpg",
+        "White - Grey": "https://cititex.com/api/uploads/category/album/front_side/131-White%20-%20Grey.jpg"
+      },
+      "backByColor": {
+        "Gold - Grey": "https://cititex.com/api/uploads/category/album/back_side/131-Gold%20-%20Grey.jpg",
+        "Orange - Charcoal": "https://cititex.com/api/uploads/category/album/back_side/131-Orange%20-%20Charcoal.jpg",
+        "Royal Blue - Charcoal": "https://cititex.com/api/uploads/category/album/back_side/131-Royal%20Blue%20-%20Charcoal.jpg",
+        "White - Grey": "https://cititex.com/api/uploads/category/album/back_side/131-White%20-%20Grey.jpg"
+      },
+      "swatchByColor": {
+        "Gold - Grey": "https://cititex.com/api/uploads/category/album/color/131-Gold%20-%20Grey.jpg",
+        "Orange - Charcoal": "https://cititex.com/api/uploads/category/album/color/131-Orange%20-%20Charcoal.jpg",
+        "Royal Blue - Charcoal": "https://cititex.com/api/uploads/category/album/color/131-Royal%20Blue%20-%20Charcoal.jpg",
+        "White - Grey": "https://cititex.com/api/uploads/category/album/color/131-White%20-%20Grey.jpg"
+      }
+    }
+  },
+  {
+    "id": 98,
+    "name": "New States Apparel Premium Cotton Raglan 3/4 7260",
+    "mill": "7260",
+    "class": "T-shirts",
+    "cartoon": 72,
+    "showColor": "White-Forest Green",
+    "showPrice": 55000,
+    "description": "Terbuat dari katun ring-spun yang ringan, kaus ini menawarkan sensasi yang jauh lebih lembut dan nyaman. Memiliki potongan reguler yang pas tanpa terasa ketat. Pilihan serbaguna untuk hari-hari santai atau tampilan kasual yang rapi.",
+    "shortDescription": "Kaos lembut dan nyaman dengan kombinasi dua warna yang cocok untuk aktivitas sehari-hari serta memberikan tampilan outfit yang rapi dan modern.",
+    "materialHtml": "<ul><li>100% cotton ring spun preshrunk jersey knit.</li>\r\n<li>180g/m2</li>\r\n<li>Taped neck and shoulders.</li>\r\n<li>Tubular construction.</li>\r\n<li>Double needle sleeve and bottom hems.</li>\r\n<li>Quarter-turned to eliminate centre crease.</li></ul>",
+    "features": [
+      "11 Warna",
+      "S-2XL",
+      "180gsm",
+      "24s"
+    ],
+    "colors": [
+      "White-Black",
+      "White-Navy",
+      "White-Maroon",
+      "White-Red",
+      "White-Forest Green",
+      "White-Charcoal",
+      "White-Royal Blue",
+      "Sport Grey-Black",
+      "Sport Grey-Navy",
+      "Sport Grey-Maroon",
+      "Sport Grey-Red"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 55.000",
+        "white": "Rp. 55.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 53.000",
+        "white": "Rp. 53.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 50.000",
+        "white": "Rp. 50.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "52",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "47"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "53",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "50"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "54",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "55",
+        "panjang_(cm)": "75",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "56",
+        "panjang_(cm)": "77",
+        "lebar_dada_(cm)": "59"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/98.jpg",
+      "frontByColor": {
+        "White-Black": "https://cititex.com/api/uploads/category/album/front_side/98-White-Black.jpg",
+        "White-Navy": "https://cititex.com/api/uploads/category/album/front_side/98-White-Navy.jpg",
+        "White-Maroon": "https://cititex.com/api/uploads/category/album/front_side/98-White-Maroon.jpg",
+        "White-Red": "https://cititex.com/api/uploads/category/album/front_side/98-White-Red.jpg",
+        "White-Forest Green": "https://cititex.com/api/uploads/category/album/front_side/98-White-Forest%20Green.jpg",
+        "White-Charcoal": "https://cititex.com/api/uploads/category/album/front_side/98-White-Charcoal.jpg",
+        "White-Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/98-White-Royal%20Blue.jpg",
+        "Sport Grey-Black": "https://cititex.com/api/uploads/category/album/front_side/98-Sport%20Grey-Black.jpg",
+        "Sport Grey-Navy": "https://cititex.com/api/uploads/category/album/front_side/98-Sport%20Grey-Navy.jpg",
+        "Sport Grey-Maroon": "https://cititex.com/api/uploads/category/album/front_side/98-Sport%20Grey-Maroon.jpg",
+        "Sport Grey-Red": "https://cititex.com/api/uploads/category/album/front_side/98-Sport%20Grey-Red.jpg"
+      },
+      "backByColor": {
+        "White-Black": "https://cititex.com/api/uploads/category/album/back_side/98-White-Black.jpg",
+        "White-Navy": "https://cititex.com/api/uploads/category/album/back_side/98-White-Navy.jpg",
+        "White-Maroon": "https://cititex.com/api/uploads/category/album/back_side/98-White-Maroon.jpg",
+        "White-Red": "https://cititex.com/api/uploads/category/album/back_side/98-White-Red.jpg",
+        "White-Forest Green": "https://cititex.com/api/uploads/category/album/back_side/98-White-Forest%20Green.jpg",
+        "White-Charcoal": "https://cititex.com/api/uploads/category/album/back_side/98-White-Charcoal.jpg",
+        "White-Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/98-White-Royal%20Blue.jpg",
+        "Sport Grey-Black": "https://cititex.com/api/uploads/category/album/back_side/98-Sport%20Grey-Black.jpg",
+        "Sport Grey-Navy": "https://cititex.com/api/uploads/category/album/back_side/98-Sport%20Grey-Navy.jpg",
+        "Sport Grey-Maroon": "https://cititex.com/api/uploads/category/album/back_side/98-Sport%20Grey-Maroon.jpg",
+        "Sport Grey-Red": "https://cititex.com/api/uploads/category/album/back_side/98-Sport%20Grey-Red.jpg"
+      },
+      "swatchByColor": {
+        "White-Black": "https://cititex.com/api/uploads/category/album/color/98-White-Black.jpg",
+        "White-Navy": "https://cititex.com/api/uploads/category/album/color/98-White-Navy.jpg",
+        "White-Maroon": "https://cititex.com/api/uploads/category/album/color/98-White-Maroon.jpg",
+        "White-Red": "https://cititex.com/api/uploads/category/album/color/98-White-Red.jpg",
+        "White-Forest Green": "https://cititex.com/api/uploads/category/album/color/98-White-Forest%20Green.jpg",
+        "White-Charcoal": "https://cititex.com/api/uploads/category/album/color/98-White-Charcoal.jpg",
+        "White-Royal Blue": "https://cititex.com/api/uploads/category/album/color/98-White-Royal%20Blue.jpg",
+        "Sport Grey-Black": "https://cititex.com/api/uploads/category/album/color/98-Sport%20Grey-Black.jpg",
+        "Sport Grey-Navy": "https://cititex.com/api/uploads/category/album/color/98-Sport%20Grey-Navy.jpg",
+        "Sport Grey-Maroon": "https://cititex.com/api/uploads/category/album/color/98-Sport%20Grey-Maroon.jpg",
+        "Sport Grey-Red": "https://cititex.com/api/uploads/category/album/color/98-Sport%20Grey-Red.jpg"
+      }
+    }
+  },
+  {
+    "id": 60,
+    "name": "6245CM Low Profile Cotton Twill Dad Hat",
+    "mill": "6245CM",
+    "class": "Headwear",
+    "cartoon": 144,
+    "showColor": "Green Camo",
+    "showPrice": 105000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "6245CM Caps",
+    "materialHtml": "<ul><li>100% Cotton</li>\r\n<li>OSFA</li>\r\n<li>Extra low profile.  </li>\r\n<li> Antique brass buckle closure. </li>\r\n<li>Matching undervisor. </li>\r\n<li>Unstructured for classic, elegant style. </li>\r\n<li>4 rows of stitching on visor.</li>\r\n<li>The quintessential dad hat.</li></ul>",
+    "features": [],
+    "colors": [
+      "Black",
+      "White",
+      "Navy",
+      "Khaki",
+      "Pink",
+      "Spruce",
+      "Light Blue",
+      "Cranberry",
+      "Dark Grey",
+      "Orange",
+      "Stone",
+      "Green Camo"
+    ],
+    "sizes": [
+      "OSFA"
+    ],
+    "priceTiers": [
+      {
+        "color": "Rp. 105.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "color": "Rp. 100.000",
+        "column": "",
+        "quantity": "> 12 pcs"
+      },
+      {
+        "color": "Rp. 95.000",
+        "column": "",
+        "quantity": "> 72 pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "OSFA",
+        "column": ""
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "action",
+        "label": "action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/60.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/60-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/60-White.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/60-Navy.jpg",
+        "Khaki": "https://cititex.com/api/uploads/category/album/front_side/60-Khaki.jpg",
+        "Pink": "https://cititex.com/api/uploads/category/album/front_side/60-Pink.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/front_side/60-Spruce.jpg",
+        "Light Blue": "https://cititex.com/api/uploads/category/album/front_side/60-Light%20Blue.jpg",
+        "Cranberry": "https://cititex.com/api/uploads/category/album/front_side/60-Cranberry.jpg",
+        "Dark Grey": "https://cititex.com/api/uploads/category/album/front_side/60-Dark%20Grey.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/front_side/60-Orange.jpg",
+        "Stone": "https://cititex.com/api/uploads/category/album/front_side/60-Stone.jpg",
+        "Green Camo": "https://cititex.com/api/uploads/category/album/front_side/60-Green%20Camo.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/60-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/60-White.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/60-Navy.jpg",
+        "Khaki": "https://cititex.com/api/uploads/category/album/back_side/60-Khaki.jpg",
+        "Pink": "https://cititex.com/api/uploads/category/album/back_side/60-Pink.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/back_side/60-Spruce.jpg",
+        "Light Blue": "https://cititex.com/api/uploads/category/album/back_side/60-Light%20Blue.jpg",
+        "Cranberry": "https://cititex.com/api/uploads/category/album/back_side/60-Cranberry.jpg",
+        "Dark Grey": "https://cititex.com/api/uploads/category/album/back_side/60-Dark%20Grey.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/back_side/60-Orange.jpg",
+        "Stone": "https://cititex.com/api/uploads/category/album/back_side/60-Stone.jpg",
+        "Green Camo": "https://cititex.com/api/uploads/category/album/back_side/60-Green%20Camo.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/60-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/60-White.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/60-Navy.jpg",
+        "Khaki": "https://cititex.com/api/uploads/category/album/color/60-Khaki.jpg",
+        "Pink": "https://cititex.com/api/uploads/category/album/color/60-Pink.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/color/60-Spruce.jpg",
+        "Light Blue": "https://cititex.com/api/uploads/category/album/color/60-Light%20Blue.jpg",
+        "Cranberry": "https://cititex.com/api/uploads/category/album/color/60-Cranberry.jpg",
+        "Dark Grey": "https://cititex.com/api/uploads/category/album/color/60-Dark%20Grey.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/color/60-Orange.jpg",
+        "Stone": "https://cititex.com/api/uploads/category/album/color/60-Stone.jpg",
+        "Green Camo": "https://cititex.com/api/uploads/category/album/color/60-Green%20Camo.jpg"
+      }
+    }
+  },
+  {
+    "id": 123,
+    "name": "New States Apparel Coaches Jacket 9820",
+    "mill": "9820",
+    "class": "Outdoor",
+    "cartoon": 24,
+    "showColor": "Forest Camo",
+    "showPrice": 230000,
+    "description": "Jaket ini memadukan kesan elegan dan fleksibilitas tinggi, membuat nyaman bergerak di setiap momen. Tetap rapi dan modern, cocok untuk berbagai aktivitas.",
+    "shortDescription": "Dirancang menggunakan bahan nilon premium, kuat menahan air dan ideal untuk aktivitas outdoor.",
+    "materialHtml": "<ul><li>100% Nylon.</li>\r\n<li>Nylon Outer Shell: Waterproof Coating = Level 3.</li>\r\n<li>Water Pressure Resistance = 10,000 mm.</li></ul>",
+    "features": [
+      "5 Warna",
+      "S-2XL"
+    ],
+    "colors": [
+      "Black",
+      "Maroon",
+      "Navy",
+      "Forest Camo",
+      "Black Camo"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "camo": "Rp. 260.000",
+        "color": "Rp. 230.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "camo": "Rp. 250.000",
+        "color": "Rp. 220.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "camo": "Rp. 240.000",
+        "color": "Rp. 210.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "67.5",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "51"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "68.5",
+        "panjang_(cm)": "69",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "69.5",
+        "panjang_(cm)": "72",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "70.5",
+        "panjang_(cm)": "75",
+        "lebar_dada_(cm)": "61"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "71.5",
+        "panjang_(cm)": "78",
+        "lebar_dada_(cm)": "64"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/123.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/123-Black.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/123-Maroon.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/123-Navy.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/front_side/123-Forest%20Camo.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/front_side/123-Black%20Camo.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/123-Black.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/123-Maroon.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/123-Navy.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/back_side/123-Forest%20Camo.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/back_side/123-Black%20Camo.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/123-Black.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/123-Maroon.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/123-Navy.jpg",
+        "Forest Camo": "https://cititex.com/api/uploads/category/album/color/123-Forest%20Camo.jpg",
+        "Black Camo": "https://cititex.com/api/uploads/category/album/color/123-Black%20Camo.jpg"
+      }
+    }
+  },
+  {
+    "id": 97,
+    "name": "New States Apparel Premium Cotton Ringer 7250",
+    "mill": "7250",
+    "class": "T-shirts",
+    "cartoon": 72,
+    "showColor": "White-Gold",
+    "showPrice": 45000,
+    "description": "Terbuat dari katun ring-spun yang ringan, kaus ini menawarkan sensasi yang jauh lebih lembut dan nyaman. Memiliki potongan reguler yang pas tanpa terasa ketat. Pilihan serbaguna untuk hari-hari santai atau tampilan kasual yang rapi.",
+    "shortDescription": "Kaos lembut dan nyaman dengan kombinasi dua warna yang cocok untuk aktivitas sehari-hari serta memberikan tampilan outfit yang rapi dan modern.",
+    "materialHtml": "<ul><li>Kain rajut jersey 100% katun ring spun yang sudah menyusut.</li>\r\n<li>180g/m2</li>\r\n<li>Taped neck and shoulders.</li>\r\n<li>Tubular construction.</li>\r\n<li>Jahitan ganda pada bagian lengan dan bawah.</li>\r\n<li>Quarter-turned to eliminate centre crease.</li></ul>",
+    "features": [
+      "11 Warna",
+      "S-2XL",
+      "180gsm",
+      "24s"
+    ],
+    "colors": [
+      "White-Black",
+      "White-Navy",
+      "White-Maroon",
+      "White-Red",
+      "White-Forest Green",
+      "White-Gold",
+      "White-Royal Blue",
+      "Sport Grey-Black",
+      "Sport Grey-Navy",
+      "Sport Grey-Maroon",
+      "Sport Grey-Red"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 45.000",
+        "white": "Rp. 45.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2": "",
+        "2xl": "+5.000",
+        "color": "Rp. 43.000",
+        "white": "Rp. 43.000",
+        "column": "",
+        "quantity": "> 12pcs",
+        "new_column_3": ""
+      },
+      {
+        "2": "",
+        "2xl": "+5.000",
+        "color": "Rp 40.000",
+        "white": "Rp. 40.000",
+        "column": "",
+        "quantity": "> 72pcs",
+        "new_column_3": ""
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "19.5",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "47"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "20",
+        "new_column_2": "",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "50"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "20.5",
+        "new_column_2": "",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "21",
+        "new_column_2": "",
+        "panjang_(cm)": "75",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "21.5",
+        "new_column_2": "",
+        "panjang_(cm)": "77",
+        "lebar_dada_(cm)": "59"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/97.jpg",
+      "frontByColor": {
+        "White-Black": "https://cititex.com/api/uploads/category/album/front_side/97-White-Black.jpg",
+        "White-Navy": "https://cititex.com/api/uploads/category/album/front_side/97-White-Navy.jpg",
+        "White-Maroon": "https://cititex.com/api/uploads/category/album/front_side/97-White-Maroon.jpg",
+        "White-Red": "https://cititex.com/api/uploads/category/album/front_side/97-White-Red.jpg",
+        "White-Forest Green": "https://cititex.com/api/uploads/category/album/front_side/97-White-Forest%20Green.jpg",
+        "White-Gold": "https://cititex.com/api/uploads/category/album/front_side/97-White-Gold.jpg",
+        "White-Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/97-White-Royal%20Blue.jpg",
+        "Sport Grey-Black": "https://cititex.com/api/uploads/category/album/front_side/97-Sport%20Grey-Black.jpg",
+        "Sport Grey-Navy": "https://cititex.com/api/uploads/category/album/front_side/97-Sport%20Grey-Navy.jpg",
+        "Sport Grey-Maroon": "https://cititex.com/api/uploads/category/album/front_side/97-Sport%20Grey-Maroon.jpg",
+        "Sport Grey-Red": "https://cititex.com/api/uploads/category/album/front_side/97-Sport%20Grey-Red.jpg"
+      },
+      "backByColor": {
+        "White-Black": "https://cititex.com/api/uploads/category/album/back_side/97-White-Black.jpg",
+        "White-Navy": "https://cititex.com/api/uploads/category/album/back_side/97-White-Navy.jpg",
+        "White-Maroon": "https://cititex.com/api/uploads/category/album/back_side/97-White-Maroon.jpg",
+        "White-Red": "https://cititex.com/api/uploads/category/album/back_side/97-White-Red.jpg",
+        "White-Forest Green": "https://cititex.com/api/uploads/category/album/back_side/97-White-Forest%20Green.jpg",
+        "White-Gold": "https://cititex.com/api/uploads/category/album/back_side/97-White-Gold.jpg",
+        "White-Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/97-White-Royal%20Blue.jpg",
+        "Sport Grey-Black": "https://cititex.com/api/uploads/category/album/back_side/97-Sport%20Grey-Black.jpg",
+        "Sport Grey-Navy": "https://cititex.com/api/uploads/category/album/back_side/97-Sport%20Grey-Navy.jpg",
+        "Sport Grey-Maroon": "https://cititex.com/api/uploads/category/album/back_side/97-Sport%20Grey-Maroon.jpg",
+        "Sport Grey-Red": "https://cititex.com/api/uploads/category/album/back_side/97-Sport%20Grey-Red.jpg"
+      },
+      "swatchByColor": {
+        "White-Black": "https://cititex.com/api/uploads/category/album/color/97-White-Black.jpg",
+        "White-Navy": "https://cititex.com/api/uploads/category/album/color/97-White-Navy.jpg",
+        "White-Maroon": "https://cititex.com/api/uploads/category/album/color/97-White-Maroon.jpg",
+        "White-Red": "https://cititex.com/api/uploads/category/album/color/97-White-Red.jpg",
+        "White-Forest Green": "https://cititex.com/api/uploads/category/album/color/97-White-Forest%20Green.jpg",
+        "White-Gold": "https://cititex.com/api/uploads/category/album/color/97-White-Gold.jpg",
+        "White-Royal Blue": "https://cititex.com/api/uploads/category/album/color/97-White-Royal%20Blue.jpg",
+        "Sport Grey-Black": "https://cititex.com/api/uploads/category/album/color/97-Sport%20Grey-Black.jpg",
+        "Sport Grey-Navy": "https://cititex.com/api/uploads/category/album/color/97-Sport%20Grey-Navy.jpg",
+        "Sport Grey-Maroon": "https://cititex.com/api/uploads/category/album/color/97-Sport%20Grey-Maroon.jpg",
+        "Sport Grey-Red": "https://cititex.com/api/uploads/category/album/color/97-Sport%20Grey-Red.jpg"
+      }
+    }
+  },
+  {
+    "id": 127,
+    "name": "New States Apparel Bomber Jacket 9830",
+    "mill": "9830",
+    "class": "Outdoor",
+    "cartoon": 24,
+    "showColor": "Black-White",
+    "showPrice": 205000,
+    "description": "Jaket ini memadukan desain rapi dengan detail fungsional yang cermat. Saku welt\r\nmemberikan tampilan bersih, label satin di leher menambah sentuhan halus dan premium, sementara loop di bagian belakang memudahkan saat digantung. Ringan dan nyaman dipakai, tanpa harus mengorbankan gaya.",
+    "shortDescription": "Dirancang untuk kenyamanan sepanjang hari, jaket ini memberikan tampilan rapi dan fleksibilitas saat digunakan untuk berbagai aktivitas.",
+    "materialHtml": "<ul><li>100% polyester fabric with interior water resistant coating.</li>\r\n<li>Waterproof Pressure Resistance: 600 mm.</li>\r\n<li>Self neck tape.</li>\r\n<li>Satin neck label.</li>\r\n<li>Welt pockets.</li>\r\n<li>Locker loop in center back.</li></ul>",
+    "features": [
+      "3 Warna",
+      "S-2XL"
+    ],
+    "colors": [
+      "Black",
+      "Army",
+      "Black-White"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "color": "Rp. 205.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "color": "Rp. 195.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "color": "Rp. 185.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "67.5",
+        "panjang_(cm)": "65",
+        "lebar_dada_(cm)": "51"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "68.5",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "69.5",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "70.5",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "61"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "71.5",
+        "panjang_(cm)": "76",
+        "lebar_dada_(cm)": "64"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/127.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/127-Black.jpg",
+        "Army": "https://cititex.com/api/uploads/category/album/front_side/127-Army.jpg",
+        "Black-White": "https://cititex.com/api/uploads/category/album/front_side/127-Black-White.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/127-Black.jpg",
+        "Army": "https://cititex.com/api/uploads/category/album/back_side/127-Army.jpg",
+        "Black-White": "https://cititex.com/api/uploads/category/album/back_side/127-Black-White.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/127-Black.jpg",
+        "Army": "https://cititex.com/api/uploads/category/album/color/127-Army.jpg",
+        "Black-White": "https://cititex.com/api/uploads/category/album/color/127-Black-White.jpg"
+      }
+    }
+  },
+  {
+    "id": 95,
+    "name": "New States Apparel Heavyweight T-shirt 5400",
+    "mill": "5400",
+    "class": "T-shirts",
+    "cartoon": 72,
+    "showColor": "Gold",
+    "showPrice": 65000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks.",
+    "shortDescription": "Bahan berkualitas premium memadukan rasa ringan dengan tekstur lembut untuk aktivitas harian.",
+    "materialHtml": "<ul><li>100% Cotton Preshrunk.</li>\r\n<li>180g/m2 (5.3 oz per sq yd).</li>\r\n<li>Single needle 2.2 cm collar.</li>\r\n<li>Taped neck and shoulders.</li>\r\n<li>Tubular construction.</li>\r\n<li>Double needle sleeve and bottom hems.</li></ul>",
+    "features": [
+      "8 Warna",
+      "S-2XL",
+      "180gsm",
+      "20s"
+    ],
+    "colors": [
+      "Black",
+      "White",
+      "Sport Grey",
+      "Navy",
+      "Maroon",
+      "Gold",
+      "Red",
+      "Royal Blue"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 65.000",
+        "white": "Rp. 61.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 62.000",
+        "white": "Rp. 58.000",
+        "column": "",
+        "quantity": "> 12pcs",
+        "new_column_3": ""
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 59.000",
+        "white": "Rp. 55.000",
+        "column": "",
+        "quantity": "> 72pcs",
+        "new_column_3": ""
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "17.5",
+        "panjang_(cm)": "71",
+        "lebar_dada_(cm)": "46"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "19",
+        "panjang_(cm)": "73.5",
+        "lebar_dada_(cm)": "51"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "20.5",
+        "panjang_(cm)": "76",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "22",
+        "panjang_(cm)": "78.5",
+        "lebar_dada_(cm)": "61"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "23.5",
+        "panjang_(cm)": "81",
+        "lebar_dada_(cm)": "66"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/95.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/95-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/95-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/front_side/95-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/95-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/95-Maroon.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/front_side/95-Gold.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/95-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/95-Royal%20Blue.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/95-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/95-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/back_side/95-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/95-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/95-Maroon.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/back_side/95-Gold.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/95-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/95-Royal%20Blue.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/95-Black.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/95-White.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/color/95-Sport%20Grey.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/95-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/95-Maroon.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/color/95-Gold.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/95-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/95-Royal%20Blue.jpg"
+      }
+    }
+  },
+  {
+    "id": 124,
+    "name": "New States Apparel Heavy Weight Long Sleeve 5480",
+    "mill": "5480",
+    "class": "T-shirts",
+    "cartoon": 60,
+    "showColor": "Sport Grey",
+    "showPrice": 84000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "Super soft and lightweight modal-blend tee, exceptionally comfortable to wear.",
+    "materialHtml": "<ul><li>100% Cotton Preshrunk.</li>\r\n<li>180g/m2 (5.3 oz per sq yd).</li>\r\n<li>Single needle 2.2 cm collar.</li>\r\n<li>Taped neck and shoulders.</li>\r\n<li>Tubular construction.</li>\r\n<li>Double needle sleeve and bottom hems.</li>\r\n<li><strong>Made in Nicaragua / Honduras.</strong></li></ul>",
+    "features": [
+      "8 Warna",
+      "S-2XL",
+      "180gsm",
+      "20s"
+    ],
+    "colors": [
+      "White",
+      "Black",
+      "Navy",
+      "Maroon",
+      "Sport Grey",
+      "Red",
+      "Royal Blue",
+      "Gold"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 84.000",
+        "white": "Rp. 79.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp 81.000",
+        "white": "Rp. 76.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "2xl": "+5.000",
+        "color": "Rp. 77.000",
+        "white": "Rp. 72.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "62",
+        "panjang_(cm)": "71",
+        "lebar_dada_(cm)": "46"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "63.5",
+        "panjang_(cm)": "73.5",
+        "lebar_dada_(cm)": "51"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "65",
+        "panjang_(cm)": "76",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "66.5",
+        "panjang_(cm)": "78.5",
+        "lebar_dada_(cm)": "61"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "68",
+        "panjang_(cm)": "81",
+        "lebar_dada_(cm)": "66"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/124.jpg",
+      "frontByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/front_side/124-White.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/124-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/124-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/124-Maroon.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/front_side/124-Sport%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/124-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/124-Royal%20Blue.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/front_side/124-Gold.jpg"
+      },
+      "backByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/back_side/124-White.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/124-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/124-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/124-Maroon.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/back_side/124-Sport%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/124-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/124-Royal%20Blue.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/back_side/124-Gold.jpg"
+      },
+      "swatchByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/color/124-White.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/color/124-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/124-Navy.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/124-Maroon.jpg",
+        "Sport Grey": "https://cititex.com/api/uploads/category/album/color/124-Sport%20Grey.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/124-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/124-Royal%20Blue.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/color/124-Gold.jpg"
+      }
+    }
+  },
+  {
+    "id": 34,
+    "name": "6277 Flexfit Wooly Combed",
+    "mill": "6277",
+    "class": "Headwear",
+    "cartoon": 144,
+    "showColor": "Navy",
+    "showPrice": 115000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "6277 Caps",
+    "materialHtml": "<ul><li>63% Polyester / 34% Cotton / 3% Spandex.</li>\r\n<li>Size : S/M (6 3/4\" - 7 1/4\"), L/XL (7 1/8\" - 7 5/8\")</li>\r\n<li>Athletic Shape. </li>\r\n<li>8 rows of stitching on visor.</li>\r\n<li>Look and feel of wool. </li>\r\n<li>Silver undervisor. </li>\r\n<li>Hard buckram. </li></ul>",
+    "features": [],
+    "colors": [
+      "Black",
+      "Navy",
+      "Khaki",
+      "White",
+      "Red",
+      "Royal",
+      "Grey",
+      "Spruce",
+      "Dark Grey",
+      "Maroon",
+      "Silver",
+      "Pink"
+    ],
+    "sizes": [
+      "SM"
+    ],
+    "priceTiers": [
+      {
+        "color": "Rp. 115.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "color": "Rp. 110.000",
+        "column": "",
+        "quantity": "> 12 pcs"
+      },
+      {
+        "color": "Rp. 105.000",
+        "column": "",
+        "quantity": "> 72 pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S/M",
+        "unit": "( 6 3/4\" - 7 1/4\" )",
+        "column": ""
+      },
+      {
+        "size": "L/XL",
+        "unit": "( 7 1/8\" - 7 5/8\" )",
+        "column": ""
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "unit",
+        "label": "Unit"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/34.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/34-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/34-Navy.jpg",
+        "Khaki": "https://cititex.com/api/uploads/category/album/front_side/34-Khaki.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/34-White.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/34-Red.jpg",
+        "Royal": "https://cititex.com/api/uploads/category/album/front_side/34-Royal.jpg",
+        "Grey": "https://cititex.com/api/uploads/category/album/front_side/34-Grey.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/front_side/34-Spruce.jpg",
+        "Dark Grey": "https://cititex.com/api/uploads/category/album/front_side/34-Dark%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/34-Maroon.jpg",
+        "Silver": "https://cititex.com/api/uploads/category/album/front_side/34-Silver.jpg",
+        "Pink": "https://cititex.com/api/uploads/category/album/front_side/34-Pink.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/34-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/34-Navy.jpg",
+        "Khaki": "https://cititex.com/api/uploads/category/album/back_side/34-Khaki.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/34-White.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/34-Red.jpg",
+        "Royal": "https://cititex.com/api/uploads/category/album/back_side/34-Royal.jpg",
+        "Grey": "https://cititex.com/api/uploads/category/album/back_side/34-Grey.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/back_side/34-Spruce.jpg",
+        "Dark Grey": "https://cititex.com/api/uploads/category/album/back_side/34-Dark%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/34-Maroon.jpg",
+        "Silver": "https://cititex.com/api/uploads/category/album/back_side/34-Silver.jpg",
+        "Pink": "https://cititex.com/api/uploads/category/album/back_side/34-Pink.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/34-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/34-Navy.jpg",
+        "Khaki": "https://cititex.com/api/uploads/category/album/color/34-Khaki.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/34-White.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/34-Red.jpg",
+        "Royal": "https://cititex.com/api/uploads/category/album/color/34-Royal.jpg",
+        "Grey": "https://cititex.com/api/uploads/category/album/color/34-Grey.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/color/34-Spruce.jpg",
+        "Dark Grey": "https://cititex.com/api/uploads/category/album/color/34-Dark%20Grey.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/34-Maroon.jpg",
+        "Silver": "https://cititex.com/api/uploads/category/album/color/34-Silver.jpg",
+        "Pink": "https://cititex.com/api/uploads/category/album/color/34-Pink.jpg"
+      }
+    }
+  },
+  {
+    "id": 35,
+    "name": "6677 Flexfit Pro-Style Wool",
+    "mill": "6677",
+    "class": "Headwear",
+    "cartoon": 144,
+    "showColor": "Maroon",
+    "showPrice": 130000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "6677 Caps",
+    "materialHtml": "<ul><li>83% Acrylic / 15% Wool / 2% Spandex.</li>\r\n<li>Size : OSFA(6 7/8\" - 7 3/8\")</li>\r\n<li>Pro-style, high profile hape. Hard buckram. Silver undervisor. 8 rows of stitching on visor.</li></ul>",
+    "features": [],
+    "colors": [
+      "Black",
+      "Maroon",
+      "Spruce"
+    ],
+    "sizes": [
+      "OSFA"
+    ],
+    "priceTiers": [],
+    "sizeChart": [],
+    "sizeChartHeaders": [],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/35.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/35-Black.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/35-Maroon.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/front_side/35-Spruce.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/35-Black.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/35-Maroon.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/back_side/35-Spruce.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/35-Black.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/35-Maroon.jpg",
+        "Spruce": "https://cititex.com/api/uploads/category/album/color/35-Spruce.jpg"
+      }
+    }
+  },
+  {
+    "id": 84,
+    "name": "180 Flexfit Delta",
+    "mill": "180",
+    "class": "Headwear",
+    "cartoon": 144,
+    "showColor": "Silver",
+    "showPrice": 160000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "180 Caps",
+    "materialHtml": "<ul><li>92% Polyester / 8% Spandex</li>\r\n<li>Flexfit Delta is a revolutionary cap that is the lighter, sleeker, smarter and more comfortable choice. It fuses panels with a seamless, stitch-free finish and it couples a lightweight visor fabrication with a new 3-Layer multifunction sweatband. There's even patent-pending stain block tech that prevents sweat staining on the cap's crown. New lightweight, hard buckram.</li></ul>",
+    "features": [],
+    "colors": [
+      "Black",
+      "Navy",
+      "White",
+      "Silver"
+    ],
+    "sizes": [
+      "SM"
+    ],
+    "priceTiers": [
+      {
+        "color": "Rp. 160.000",
+        "column": "",
+        "retail": "Retail",
+        "quantity": "Retail"
+      },
+      {
+        "color": "Rp. 150.000",
+        "column": "",
+        "retail": "> 12 pcs",
+        "quantity": "> 12 pcs"
+      },
+      {
+        "color": "Rp. 140.000",
+        "column": "",
+        "retail": "> 72 pcs",
+        "quantity": "> 72 pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "OSFA",
+        "column": ""
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "action",
+        "label": "action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/84.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/84-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/84-Navy.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/84-White.jpg",
+        "Silver": "https://cititex.com/api/uploads/category/album/front_side/84-Silver.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/84-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/84-Navy.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/84-White.jpg",
+        "Silver": "https://cititex.com/api/uploads/category/album/back_side/84-Silver.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/84-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/84-Navy.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/84-White.jpg",
+        "Silver": "https://cititex.com/api/uploads/category/album/color/84-Silver.jpg"
+      }
+    }
+  },
+  {
+    "id": 136,
+    "name": "110M One Ten Mesh Snapback ",
+    "mill": "110M",
+    "class": "Headwear",
+    "cartoon": 144,
+    "showColor": "Black",
+    "showPrice": 120000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "110M Mesh Snapback",
+    "materialHtml": "<ul><li>56% Polyester | 44% Cotton</li>\r\n<li>OSFA</li>\r\n<li>6 Panel. Mid Profile. Trucker cap with Flexfit® Tech and Snapback adjustable strap Visor, Button & Eyelets same colour as body.</li></ul>",
+    "features": [],
+    "colors": [
+      "Navy",
+      "Charcoal",
+      "Black"
+    ],
+    "sizes": [
+      "OSFA"
+    ],
+    "priceTiers": [
+      {
+        "color": "Rp. 120.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "color": "Rp. 115.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "color": "Rp. 110.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "OSFA",
+        "column": ""
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "action",
+        "label": "action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/136.jpg",
+      "frontByColor": {
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/136-Navy.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/front_side/136-Charcoal.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/136-Black.jpg"
+      },
+      "backByColor": {
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/136-Navy.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/back_side/136-Charcoal.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/136-Black.jpg"
+      },
+      "swatchByColor": {
+        "Navy": "https://cititex.com/api/uploads/category/album/color/136-Navy.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/color/136-Charcoal.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/color/136-Black.jpg"
+      }
+    }
+  },
+  {
+    "id": 138,
+    "name": "New States Apparel Dri-Fit T-shirt 2720",
+    "mill": "2720",
+    "class": "Sport T-Shirts",
+    "cartoon": 72,
+    "showColor": "Royal Blue",
+    "showPrice": 32000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks.",
+    "shortDescription": "Super soft and lightweight modal-blend tee, exceptionally comfortable to wear.",
+    "materialHtml": "<ul><li>100% Polyester.</li>\r\n<li>150g/m2.</li>\r\n<li>Double-needle collar.</li>\r\n<li>Double needle sleeve and bottom hems.</li>\r\n<li>Soft And Breathable, Best Sweat-Absorbing.</li></ul>",
+    "features": [
+      "18 Warna",
+      "S-2XL",
+      "150gsm"
+    ],
+    "colors": [
+      "White",
+      "Sapphire",
+      "Red",
+      "Royal Blue",
+      "Orange",
+      "Navy",
+      "Neon Green",
+      "Aqua Sky",
+      "Maroon",
+      "Military Green",
+      "Black",
+      "Light Pink",
+      "Carolina Blue",
+      "Charcoal",
+      "Lilac",
+      "Irish Green",
+      "Dark Chocolate",
+      "Daisy",
+      "Heliconia",
+      "Forest Green",
+      "Gold",
+      "Green Ash",
+      "Butter",
+      "Chestnut",
+      "Mustard",
+      "Purple",
+      "Salmon",
+      "Sand"
+    ],
+    "sizes": [
+      "XL",
+      "S",
+      "M",
+      "L",
+      "2XL",
+      "3XL"
+    ],
+    "priceTiers": [
+      {
+        "2xl": "+5.000",
+        "3xl": "+10.000 ",
+        "color": "Rp. 32.000",
+        "white": "Rp. 42.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "2xl": "+5.000",
+        "3xl": "+10.000 ",
+        "color": "Rp. 30.000",
+        "white": "Rp. 39.000",
+        "column": "",
+        "quantity": "> 12pcs"
+      },
+      {
+        "2xl": "+5.000",
+        "3xl": "+10.000",
+        "color": "Rp. 27000",
+        "white": "Rp. 36.000",
+        "column": "",
+        "quantity": "> 72pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S",
+        "column": "",
+        "lengan_(cm)": "19",
+        "panjang_(cm)": "67",
+        "lebar_dada_(cm)": "47"
+      },
+      {
+        "size": "M",
+        "column": "",
+        "lengan_(cm)": "19.5",
+        "panjang_(cm)": "70",
+        "lebar_dada_(cm)": "50"
+      },
+      {
+        "size": "L",
+        "column": "",
+        "lengan_(cm)": "20",
+        "panjang_(cm)": "73",
+        "lebar_dada_(cm)": "53"
+      },
+      {
+        "size": "XL",
+        "column": "",
+        "lengan_(cm)": "20.5",
+        "panjang_(cm)": "75",
+        "lebar_dada_(cm)": "56"
+      },
+      {
+        "size": "2XL",
+        "column": "",
+        "lengan_(cm)": "21",
+        "panjang_(cm)": "77",
+        "lebar_dada_(cm)": "59"
+      },
+      {
+        "size": "3XL",
+        "column": "",
+        "lengan_(cm)": "21.5",
+        "panjang_(cm)": "80",
+        "lebar_dada_(cm)": "62"
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "lebar_dada_(cm)",
+        "label": "Lebar Dada (cm)"
+      },
+      {
+        "key": "panjang_(cm)",
+        "label": "Panjang (cm)"
+      },
+      {
+        "key": "lengan_(cm)",
+        "label": "Lengan (cm)"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/138.jpg",
+      "frontByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/front_side/138-White.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/front_side/138-Sapphire.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/front_side/138-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/front_side/138-Royal%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/front_side/138-Orange.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/138-Navy.jpg",
+        "Neon Green": "https://cititex.com/api/uploads/category/album/front_side/138-Neon%20Green.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/front_side/138-Aqua%20Sky.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/front_side/138-Maroon.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/front_side/138-Military%20Green.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/138-Black.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/front_side/138-Light%20Pink.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/front_side/138-Carolina%20Blue.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/front_side/138-Charcoal.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/front_side/138-Lilac.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/front_side/138-Irish%20Green.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/front_side/138-Dark%20Chocolate.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/front_side/138-Daisy.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/front_side/138-Heliconia.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/front_side/138-Forest%20Green.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/front_side/138-Gold.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/front_side/138-Green%20Ash.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/front_side/138-Butter.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/front_side/138-Chestnut.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/front_side/138-Mustard.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/front_side/138-Purple.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/front_side/138-Salmon.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/front_side/138-Sand.jpg"
+      },
+      "backByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/back_side/138-White.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/back_side/138-Sapphire.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/back_side/138-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/back_side/138-Royal%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/back_side/138-Orange.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/138-Navy.jpg",
+        "Neon Green": "https://cititex.com/api/uploads/category/album/back_side/138-Neon%20Green.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/back_side/138-Aqua%20Sky.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/back_side/138-Maroon.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/back_side/138-Military%20Green.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/138-Black.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/back_side/138-Light%20Pink.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/back_side/138-Carolina%20Blue.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/back_side/138-Charcoal.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/back_side/138-Lilac.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/back_side/138-Irish%20Green.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/back_side/138-Dark%20Chocolate.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/back_side/138-Daisy.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/back_side/138-Heliconia.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/back_side/138-Forest%20Green.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/back_side/138-Gold.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/back_side/138-Green%20Ash.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/back_side/138-Butter.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/back_side/138-Chestnut.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/back_side/138-Mustard.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/back_side/138-Purple.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/back_side/138-Salmon.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/back_side/138-Sand.jpg"
+      },
+      "swatchByColor": {
+        "White": "https://cititex.com/api/uploads/category/album/color/138-White.jpg",
+        "Sapphire": "https://cititex.com/api/uploads/category/album/color/138-Sapphire.jpg",
+        "Red": "https://cititex.com/api/uploads/category/album/color/138-Red.jpg",
+        "Royal Blue": "https://cititex.com/api/uploads/category/album/color/138-Royal%20Blue.jpg",
+        "Orange": "https://cititex.com/api/uploads/category/album/color/138-Orange.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/138-Navy.jpg",
+        "Neon Green": "https://cititex.com/api/uploads/category/album/color/138-Neon%20Green.jpg",
+        "Aqua Sky": "https://cititex.com/api/uploads/category/album/color/138-Aqua%20Sky.jpg",
+        "Maroon": "https://cititex.com/api/uploads/category/album/color/138-Maroon.jpg",
+        "Military Green": "https://cititex.com/api/uploads/category/album/color/138-Military%20Green.jpg",
+        "Black": "https://cititex.com/api/uploads/category/album/color/138-Black.jpg",
+        "Light Pink": "https://cititex.com/api/uploads/category/album/color/138-Light%20Pink.jpg",
+        "Carolina Blue": "https://cititex.com/api/uploads/category/album/color/138-Carolina%20Blue.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/color/138-Charcoal.jpg",
+        "Lilac": "https://cititex.com/api/uploads/category/album/color/138-Lilac.jpg",
+        "Irish Green": "https://cititex.com/api/uploads/category/album/color/138-Irish%20Green.jpg",
+        "Dark Chocolate": "https://cititex.com/api/uploads/category/album/color/138-Dark%20Chocolate.jpg",
+        "Daisy": "https://cititex.com/api/uploads/category/album/color/138-Daisy.jpg",
+        "Heliconia": "https://cititex.com/api/uploads/category/album/color/138-Heliconia.jpg",
+        "Forest Green": "https://cititex.com/api/uploads/category/album/color/138-Forest%20Green.jpg",
+        "Gold": "https://cititex.com/api/uploads/category/album/color/138-Gold.jpg",
+        "Green Ash": "https://cititex.com/api/uploads/category/album/color/138-Green%20Ash.jpg",
+        "Butter": "https://cititex.com/api/uploads/category/album/color/138-Butter.jpg",
+        "Chestnut": "https://cititex.com/api/uploads/category/album/color/138-Chestnut.jpg",
+        "Mustard": "https://cititex.com/api/uploads/category/album/color/138-Mustard.jpg",
+        "Purple": "https://cititex.com/api/uploads/category/album/color/138-Purple.jpg",
+        "Salmon": "https://cititex.com/api/uploads/category/album/color/138-Salmon.jpg",
+        "Sand": "https://cititex.com/api/uploads/category/album/color/138-Sand.jpg"
+      }
+    }
+  },
+  {
+    "id": 85,
+    "name": "6606 Retro Trucker",
+    "mill": "6606",
+    "class": "Headwear",
+    "cartoon": 144,
+    "showColor": "Navy",
+    "showPrice": 90000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "6606 Caps",
+    "materialHtml": "<ul><li>71% Cotton / 28% Nylon / 1% </li>\r\n<li>Trucker mesh back. </li>\r\n<li>Matching undervisor.</li>\r\n<li>Hard buckram. </li>\r\n<li>Matching plastic snap.</li></ul>",
+    "features": [],
+    "colors": [
+      "Black",
+      "Navy",
+      "Khaki",
+      "White",
+      "Pink"
+    ],
+    "sizes": [
+      "OSFA"
+    ],
+    "priceTiers": [
+      {
+        "color": "Rp. 90.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "color": "Rp. 85.000",
+        "column": "",
+        "quantity": "> 12 pcs",
+        "new_column_2": ""
+      },
+      {
+        "color": "Rp. 80.000",
+        "column": "",
+        "quantity": "> 72 pcs",
+        "new_column_2": ""
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "OSFA",
+        "column": ""
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "action",
+        "label": "action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/85.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/85-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/85-Navy.jpg",
+        "Khaki": "https://cititex.com/api/uploads/category/album/front_side/85-Khaki.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/85-White.jpg",
+        "Pink": "https://cititex.com/api/uploads/category/album/front_side/85-Pink.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/85-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/85-Navy.jpg",
+        "Khaki": "https://cititex.com/api/uploads/category/album/back_side/85-Khaki.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/85-White.jpg",
+        "Pink": "https://cititex.com/api/uploads/category/album/back_side/85-Pink.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/85-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/85-Navy.jpg",
+        "Khaki": "https://cititex.com/api/uploads/category/album/color/85-Khaki.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/85-White.jpg",
+        "Pink": "https://cititex.com/api/uploads/category/album/color/85-Pink.jpg"
+      }
+    }
+  },
+  {
+    "id": 48,
+    "name": "6006 Classic Trucker",
+    "mill": "6006",
+    "class": "Headwear",
+    "cartoon": 144,
+    "showColor": "Black",
+    "showPrice": 80000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "6006 Caps",
+    "materialHtml": "<ul><li>80% Cotton, 40% Polyester</li>\r\n<li>Size : OSFA</li>\r\n<li>Ideal for screenprinting &amp; embroidery. </li>\r\n<li>Trucker mesh back.</li>\r\n<li> Matching plastic snap. </li>\r\n<li>Hard buckram. </li>\r\n<li>Matching undervisor.</li></ul>",
+    "features": [],
+    "colors": [
+      "Black",
+      "Navy",
+      "Charcoal"
+    ],
+    "sizes": [
+      "OSFA"
+    ],
+    "priceTiers": [
+      {
+        "color": "Rp. 80.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "color": "Rp. 75.000",
+        "column": "",
+        "quantity": "> 12 pcs"
+      },
+      {
+        "color": "Rp. 70.000",
+        "column": "",
+        "quantity": "> 72 pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "OSFA",
+        "column": ""
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "action",
+        "label": "action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/48.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/48-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/48-Navy.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/front_side/48-Charcoal.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/48-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/48-Navy.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/back_side/48-Charcoal.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/48-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/48-Navy.jpg",
+        "Charcoal": "https://cititex.com/api/uploads/category/album/color/48-Charcoal.jpg"
+      }
+    }
+  },
+  {
+    "id": 82,
+    "name": "6511 Flexfit Trucker Mesh",
+    "mill": "6511",
+    "class": "Headwear",
+    "cartoon": 144,
+    "showColor": "White",
+    "showPrice": 115000,
+    "description": "Made from lightweight ring-spun cotton, this t-shirt offers a noticeably softer and more comfortable feel. It features a regular fit that sits nicely without feeling tight. A versatile choice for relaxed days or clean, casual looks. ",
+    "shortDescription": "6511 Caps",
+    "materialHtml": "<ul><li>55% Polyester / 43% Cotton / 2% Spandex</li>\r\n<li>Elastic Flexfit Trucker Mesh.</li>\r\n<li>8 rows of stitching on visor.</li>\r\n<li>Silver undervisor. </li>\r\n<li>Hard buckram. </li>\r\n<li> Comfort fit. </li></ul>",
+    "features": [],
+    "colors": [
+      "Black",
+      "Navy",
+      "White"
+    ],
+    "sizes": [
+      "OSFA"
+    ],
+    "priceTiers": [
+      {
+        "color": "Rp. 115.000",
+        "column": "",
+        "quantity": "Retail"
+      },
+      {
+        "color": "Rp. 110.000",
+        "column": "",
+        "quantity": "> 12 pcs"
+      },
+      {
+        "color": "Rp. 105.000",
+        "column": "",
+        "quantity": "> 72 pcs"
+      }
+    ],
+    "sizeChart": [
+      {
+        "size": "S/M",
+        "unit": "( 6 3/4\" - 7 1/4\" )",
+        "column": ""
+      },
+      {
+        "size": "L/XL",
+        "unit": "( 7 1/8\" - 7 5/8\" )",
+        "column": ""
+      }
+    ],
+    "sizeChartHeaders": [
+      {
+        "key": "size",
+        "label": "Size"
+      },
+      {
+        "key": "unit",
+        "label": "Unit"
+      },
+      {
+        "key": "action",
+        "label": "Action"
+      }
+    ],
+    "images": {
+      "sizeGuide": "https://cititex.com/api/uploads/category/album/size_guide/82.jpg",
+      "frontByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/front_side/82-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/front_side/82-Navy.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/front_side/82-White.jpg"
+      },
+      "backByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/back_side/82-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/back_side/82-Navy.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/back_side/82-White.jpg"
+      },
+      "swatchByColor": {
+        "Black": "https://cititex.com/api/uploads/category/album/color/82-Black.jpg",
+        "Navy": "https://cititex.com/api/uploads/category/album/color/82-Navy.jpg",
+        "White": "https://cititex.com/api/uploads/category/album/color/82-White.jpg"
+      }
+    }
+  }
+]

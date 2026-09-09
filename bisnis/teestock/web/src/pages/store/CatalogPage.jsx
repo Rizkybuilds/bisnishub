@@ -88,7 +88,7 @@ export function CatalogPage({ defaultSegment }) {
         }
         description={
           isBlankMode
-            ? "Beli kaos polos New States Apparel (NSA) Softstyle 30s & Heavyweight 24s original impor. 100% katun tubular tanpa jahitan samping, eceran dan grosir lusinan."
+            ? "Beli kaos polos New States Apparel (NSA) Softstyle 30s & Heavyweight 24s Original Cititex. 100% katun tubular tanpa jahitan samping, eceran dan grosir lusinan."
             : "Koleksi kaos distro grafis curated TeeStock dalam 9 series tematik. Dicetak di atas garmen NSA Heavyweight 24s dengan sablon DTF HD suhu 155°C anti-pecah."
         }
         keywords={
@@ -152,7 +152,7 @@ export function CatalogPage({ defaultSegment }) {
 
         <p className="text-xs sm:text-sm text-ts-kremMuted max-w-2xl leading-relaxed">
           {isBlankMode
-            ? '100% Cotton impor resmi New States Apparel tanpa sambungan samping (tubular/built-up). Pilihan katun combed Softstyle 30s yang adem, Heavyweight 24s yang tebal garmen prima, hingga Heavyweight 20s boxy streetwear.'
+            ? '100% Katun New States Apparel (NSA) Original tanpa sambungan samping (tubular/built-up). Pilihan katun combed Softstyle 30s yang adem, Heavyweight 24s yang tebal garmen prima, hingga Heavyweight 20s boxy streetwear.'
             : 'Koleksi desain streetwear eksklusif terkurasi dalam 9 tema kepribadian. Dicetak menggunakan tinta DTF HD raster premium di atas bahan katun New States Apparel original.'}
         </p>
 
@@ -216,7 +216,7 @@ export function CatalogPage({ defaultSegment }) {
         <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-teal/15 via-ts-surface/80 to-transparent border border-ts-teal/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-glass-card shadow-glass-inset">
           <div>
             <span className="font-bold text-white block text-sm">Hanya Butuh Kaos Polos Tanpa Sablon?</span>
-            <span className="text-ts-kremMuted">Dapatkan bahan New States Apparel (NSA) original impor mulai Rp 49.000 ecer &amp; grosir.</span>
+            <span className="text-ts-kremMuted">Dapatkan bahan New States Apparel (NSA) Original Cititex mulai Rp 49.000 ecer &amp; grosir.</span>
           </div>
           <Link to="/polos">
             <Button size="sm" variant="secondary" className="border-ts-teal/30 text-teal-300 hover:bg-ts-teal/20 whitespace-nowrap">

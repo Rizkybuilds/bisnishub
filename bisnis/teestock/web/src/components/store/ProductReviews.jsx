@@ -14,7 +14,7 @@ const INITIAL_REVIEWS = [
     garmentType: 'Heavyweight 24s (Black)',
     sizeOrdered: 'XL',
     userStats: 'TB 178 cm · BB 74 kg (Fitting Boxy Pas)',
-    content: 'Bahan NSA 24s-nya beneran tebal dan jatuh di badan enak banget, nggak lemes kayak combed murah. Sablonan DTF-nya rapi, raster halusnya dapet dan pas ditarik lentur nggak kaku. Rekomen parah buat yang nyari kaos distro rasa impor.',
+    content: 'Bahan NSA 24s-nya beneran tebal dan jatuh di badan enak banget, nggak lemes kayak combed murah. Sablonan DTF-nya rapi, raster halusnya dapet dan pas ditarik lentur nggak kaku. Rekomen parah buat yang nyari kaos distro kualitas premium.',
     helpfulCount: 14,
     images: [],
     verified: true,

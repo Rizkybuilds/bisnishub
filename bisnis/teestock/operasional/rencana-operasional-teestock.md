@@ -8,7 +8,7 @@ Dokumen ini melengkapi analisis bisnis dan brand guide sebelumnya dengan detail 
 
 ### 1.1 Sumber Bahan (Blank Apparel)
 
-**Vendor utama:** New States Apparel (NSA) via Cititex — varian utama **NSA Heavyweight 24s** (impor premium, tubular tanpa jahitan samping) dan opsi **NSA Softstyle 30s**.
+**Vendor utama:** New States Apparel (NSA) via Cititex — varian utama **NSA Heavyweight 24s** (original Cititex, tubular tanpa jahitan samping) dan opsi **NSA Softstyle 30s**.
 * **Harga Beli:** Rp 37.000 (grosir min 72 pcs) hingga Rp 42.000 (ritel satuan).
 * **Status Fisik:** Sampel fisik kaos NSA 24s sudah dipegang langsung oleh founder dan lulus verifikasi ketebalan serta fitting garmen.
 

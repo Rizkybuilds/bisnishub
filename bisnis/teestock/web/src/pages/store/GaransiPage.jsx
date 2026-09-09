@@ -60,9 +60,9 @@ export function GaransiPage() {
             <div className="w-10 h-10 rounded-xl bg-ts-green/15 text-ts-green flex items-center justify-center font-bold">
               <CheckCircle2 className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-base text-white">100% Garmen NSA Impor Asli</h3>
+            <h3 className="font-bold text-base text-white">100% Garmen NSA Original Cititex</h3>
             <p className="text-xs text-ts-kremMuted leading-relaxed">
-              Kami hanya menggunakan garmen New States Apparel resmi tanpa jahitan samping (*tubular built-up*). Jika terbukti kain bukan NSA impor resmi, kami kembalikan dana 100%.
+              Kami hanya menggunakan garmen New States Apparel resmi tanpa jahitan samping (*tubular built-up*). Jika terbukti kain bukan NSA original, kami kembalikan dana 100%.
             </p>
           </div>
 

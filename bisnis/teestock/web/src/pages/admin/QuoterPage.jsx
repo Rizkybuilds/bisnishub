@@ -38,7 +38,7 @@ export function QuoterPage() {
   const waText = `Halo kak! Terima kasih sudah menghubungi *TeeStock Apparel* 😊
 
 Berikut rincian penawaran resmi untuk kaos custom kamu:
-• Model Kaos: *${selectedGarment.name}* (100% Cotton Impor Asli)
+• Model Kaos: *${selectedGarment.name}* (100% Cotton Original NSA)
 • Sablon: *DTF HD Raster (${selectedPrint.name})*
 • Jumlah Pesanan: *${qty} pcs*
 • Harga Satuan: *${formatRupiah(rawRetail)}*

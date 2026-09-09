@@ -715,7 +715,7 @@ VALUES
 -- 7. Insert Sample Verified Reviews
 INSERT INTO ts_reviews (product_sku, author_name, role_badge, rating, garment_type, size_ordered, user_stats, content, is_verified, helpful_count)
 VALUES
-('TS-PRO-001', 'Dimas Aditya', 'Verified Buyer', 5, 'Heavyweight 24s (Black)', 'XL', 'TB 178 cm · BB 74 kg (Fitting Boxy Pas)', 'Bahan NSA 24s-nya beneran tebal dan jatuh di badan enak banget, nggak lemes kayak combed murah. Sablonan DTF-nya rapi, raster halusnya dapet dan pas ditarik lentur nggak kaku. Rekomen parah buat yang nyari kaos distro rasa impor.', true, 14),
+('TS-PRO-001', 'Dimas Aditya', 'Verified Buyer', 5, 'Heavyweight 24s (Black)', 'XL', 'TB 178 cm · BB 74 kg (Fitting Boxy Pas)', 'Bahan NSA 24s-nya beneran tebal dan jatuh di badan enak banget, nggak lemes kayak combed murah. Sablonan DTF-nya rapi, raster halusnya dapet dan pas ditarik lentur nggak kaku. Rekomen parah buat yang nyari kaos distro kualitas premium.', true, 14),
 ('TS-PRO-002', 'Rian Kurniawan', 'Verified Buyer', 5, 'Heavyweight 24s (White)', 'L', 'TB 171 cm · BB 66 kg (Pas Sesuai Size Chart)', 'Kerah rib lehernya tebal banget, dicuci 2 kali di mesin cuci nggak melar sama sekali. Sablonnya nempel sempurna ke pori-pori kain. Packaging polymailernya juga rapi ada stiker bonusnya.', true, 9),
 ('TS-KOM-001', 'Bayu Pratama', 'Verified Buyer', 5, 'Softstyle 30s (Black)', 'M', 'TB 167 cm · BB 58 kg', 'Pilihan 30s-nya adem banget buat dipakai motoran siang hari. Desainnya presisi sesuai mockup web. Pengiriman cepat H+1 langsung jalan resinya.', true, 6);
 

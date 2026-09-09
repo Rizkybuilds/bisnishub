@@ -21,7 +21,7 @@ export function Footer() {
             </div>
             <div>
               <h4 className="text-xs sm:text-sm font-bold text-white uppercase font-mono">100% Garmen NSA</h4>
-              <p className="text-xs text-ts-kremMuted mt-0.5">Jaminan keaslian bahan New States Apparel impor resmi.</p>
+              <p className="text-xs text-ts-kremMuted mt-0.5">Jaminan keaslian bahan New States Apparel Original Cititex.</p>
             </div>
           </div>
 

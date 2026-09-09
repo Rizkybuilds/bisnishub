@@ -562,7 +562,7 @@ export function ProductDetailPage() {
           <p className="text-xs sm:text-sm text-ts-kremMuted leading-relaxed">
             {product.description || (isBlank 
               ? "Kaos polos original New States Apparel (NSA) tanpa jahitan samping (tubular) standar ekspor internasional."
-              : "Kaos print-on-demand premium dengan sablon DTF resolusi tinggi pada kaos katun New States Apparel impor.")}
+              : "Kaos print-on-demand premium dengan sablon DTF resolusi tinggi pada kaos katun New States Apparel original.")}
           </p>
 
           {/* Dynamic Hybrid Fulfillment SLA Badge */}
@@ -894,7 +894,7 @@ export function ProductDetailPage() {
             <div className="pt-4 border-t border-white/[0.08] space-y-2">
               <ProductAccordionItem title="Spesifikasi Garmen NSA & Sablon DTF 155°C" icon={ShieldCheck} defaultOpen={true}>
                 {isBlank ? (
-                  <span>100% Katun New States Apparel (NSA) original impor standar ekspor. Pola rajutan tubular knit tanpa sambungan samping, kerah rib 2.2 cm kokoh anti-melar, siap pakai langsung atau disablon custom.</span>
+                  <span>100% Katun New States Apparel (NSA) Original Cititex. Pola rajutan tubular knit tanpa sambungan samping, kerah rib 2.2 cm kokoh anti-melar, siap pakai langsung atau disablon custom.</span>
                 ) : (
                   <span>100% Katun New States Apparel (NSA) Heavyweight 24s gramasi 180 g/m² (atau Softstyle 30s). Pola tubular knit tanpa sambungan samping. Dicetak dengan sablon DTF High-Density curing suhu 155°C dengan tinta elastis tahan cuci berkali-kali.</span>
                 )}
