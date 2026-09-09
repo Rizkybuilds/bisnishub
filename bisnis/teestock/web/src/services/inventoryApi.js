@@ -3,29 +3,92 @@ import { INITIAL_INVENTORY_MATRIX } from '../constants/seedData';
 
 const LOCAL_STORAGE_KEY = 'teestock_inventory_matrix';
 
+/**
+ * 🌐 Ambil matriks stok inventori (Kaos polos NSA, DTF film, dan Supplies)
+ * Prioritas: Cloud Supabase (ts_settings) -> LocalStorage -> INITIAL_INVENTORY_MATRIX
+ */
 export async function getInventoryMatrix() {
-  const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
+  // 1. Coba ambil dari Cloud Supabase
+  try {
+    const { data, error } = await supabase
+      .from('ts_settings')
+      .select('value')
+      .eq('key', 'inventory_matrix')
+      .maybeSingle();
+
+    if (!error && data && data.value && typeof data.value === 'object') {
+      const cloudMatrix = data.value;
+      if (!cloudMatrix.dtf_films) {
+        cloudMatrix.dtf_films = INITIAL_INVENTORY_MATRIX.dtf_films;
+      }
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cloudMatrix));
+      return cloudMatrix;
+    }
+  } catch (err) {
+    console.warn('Cloud inventory fetch fallback:', err.message);
+  }
+
+  // 2. Fallback ke penyimpanan lokal browser
+  const cached = typeof localStorage !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_KEY) : null;
   if (cached) {
     try {
       const parsed = JSON.parse(cached);
-      // Ensure dtf_films exists even if user has previous cache in localStorage
       if (!parsed.dtf_films) {
         parsed.dtf_films = INITIAL_INVENTORY_MATRIX.dtf_films;
         saveInventoryMatrix(parsed);
       }
       return parsed;
     } catch (e) {
-      console.error(e);
+      console.error('Error parsing local inventory matrix:', e);
     }
   }
+
+  // 3. Fallback ke seed awal
   return INITIAL_INVENTORY_MATRIX;
 }
 
+/**
+ * 💾 Simpan matriks inventori ke LocalStorage & Cloud Supabase (ts_settings)
+ */
 export function saveInventoryMatrix(matrix) {
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(matrix));
+  if (!matrix) return matrix;
+
+  // Update localStorage seketika untuk responsivitas instan antarmuka UI
+  if (typeof localStorage !== 'undefined') {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(matrix));
+    } catch (e) {
+      console.warn('LocalStorage save failed:', e);
+    }
+  }
+
+  // Sinkronkan ke Cloud Supabase di latar belakang (non-blocking)
+  try {
+    supabase
+      .from('ts_settings')
+      .upsert({
+        key: 'inventory_matrix',
+        value: matrix,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'key' })
+      .then(({ error }) => {
+        if (error) {
+          console.warn('Sync inventory to Supabase notice:', error.message);
+        }
+      })
+      .catch((syncErr) => {
+        console.warn('Network sync inventory error:', syncErr);
+      });
+  } catch (err) {
+    // Non-blocking network safety
+  }
+
   return matrix;
 }
 
+/**
+ * Potong stok garmen kaos polos (NSA Softstyle, Heavyweight, Longsleeve, dll.)
+ */
 export function deductStock(matrix, garmentKey, color, size, qty = 1) {
   const updated = JSON.parse(JSON.stringify(matrix));
   if (updated[garmentKey]?.[color]?.[size] !== undefined) {
@@ -35,6 +98,9 @@ export function deductStock(matrix, garmentKey, color, size, qty = 1) {
   return updated;
 }
 
+/**
+ * Potong stok film DTF studio siap press untuk SKU desain grafis tertentu
+ */
 export function deductDtfFilm(matrix, sku, qty = 1) {
   const updated = JSON.parse(JSON.stringify(matrix));
   if (!updated.dtf_films) {
@@ -48,6 +114,9 @@ export function deductDtfFilm(matrix, sku, qty = 1) {
   return updated;
 }
 
+/**
+ * Tambah / restok lembar film DTF per SKU
+ */
 export function restockDtfFilm(matrix, sku, qty = 1, unitCost = 12000, name = '') {
   const updated = JSON.parse(JSON.stringify(matrix));
   if (!updated.dtf_films) {
@@ -73,6 +142,9 @@ export function restockDtfFilm(matrix, sku, qty = 1, unitCost = 12000, name = ''
   return updated;
 }
 
+/**
+ * Restok satu batch film DTF meteran sekaligus (dari Gang Sheet Builder)
+ */
 export function restockDtfBatch(matrix, batchItems = []) {
   const updated = JSON.parse(JSON.stringify(matrix));
   if (!updated.dtf_films) {
