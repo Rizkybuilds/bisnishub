@@ -133,49 +133,49 @@ export function getProductGallery(product, activeColor) {
     gallery.push({
       url: `${base}/ghost-left.png`,
       label: `Samping Kiri (${effectiveColor})`,
-      type: 'detail'
+      type: 'left'
     });
 
     // 4. Ghost Mannequin Samping Kanan
     gallery.push({
       url: `${base}/ghost-right.png`,
       label: `Samping Kanan (${effectiveColor})`,
-      type: 'detail'
+      type: 'right'
     });
 
     // 5. Kaos Dilipat (Folded)
     gallery.push({
       url: `${base}/folded.png`,
       label: `Kaos Dilipat (${effectiveColor})`,
-      type: 'detail'
+      type: 'folded'
     });
 
     // 6. On-Model Depan
     gallery.push({
       url: `${base}/model-front.jpeg`,
       label: `Fitting On-Model Depan (${effectiveColor})`,
-      type: 'detail'
+      type: 'model'
     });
 
     // 7. On-Model Belakang
     gallery.push({
       url: `${base}/model-back.jpeg`,
       label: `Fitting On-Model Belakang (${effectiveColor})`,
-      type: 'detail'
+      type: 'model'
     });
 
     // 8. On-Model Samping
     gallery.push({
       url: `${base}/model-side.jpeg`,
       label: `Fitting On-Model Samping (${effectiveColor})`,
-      type: 'detail'
+      type: 'model'
     });
 
     // 9. Detail Serat Kain (Swatch)
     gallery.push({
       url: `${base}/swatch.jpeg`,
       label: `Tekstur Kain Swatch (${effectiveColor})`,
-      type: 'detail'
+      type: 'swatch'
     });
 
     return gallery;

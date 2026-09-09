@@ -26,10 +26,14 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
   };
 
   // Price calculations
-  const baseRetailPrice = product.priceRetail || product.price_retail || (isBlank ? 49000 : 99000);
+  const is7200 = isBlank && (product.sku === 'TS-BLK-7200' || product.name?.includes('7200'));
+  const isWhite = selectedColor?.toLowerCase() === 'white';
+  const baseRetailPrice = is7200 
+    ? (isWhite ? 49000 : 52000)
+    : (product.priceRetail || product.price_retail || (isBlank ? 49000 : 99000));
   const isReseller = profile?.partner_tier === 'reseller';
   const partnerPrice = isReseller
-    ? (product.priceReseller || product.price_reseller || (isBlank ? 42000 : 65000))
+    ? (is7200 ? (isWhite ? 41000 : 44000) : (product.priceReseller || product.price_reseller || (isBlank ? 42000 : 65000)))
     : (product.priceDropship || product.price_dropship || (isBlank ? 45000 : 75000));
 
   const effectivePrice = isPartner && !isBlank ? partnerPrice : baseRetailPrice;
@@ -51,13 +55,19 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
       <Link
         to={productUrl}
         aria-label={`Lihat detail produk ${product.name} varian ${selectedColor}`}
-        className="aspect-square bg-ts-hitam/70 overflow-hidden relative block"
+        className={`aspect-[3/4] bg-gradient-to-b from-[#181716] via-[#121110] to-[#0c0b0a] overflow-hidden relative flex items-center justify-center ${
+          isBlank ? 'p-3 sm:p-4' : ''
+        }`}
       >
         <img
           src={imgError ? fallbackUrl : activeImage}
           alt={`${product.name} - ${selectedColor}`}
           onError={() => setImgError(true)}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className={`w-full h-full transition-transform duration-300 group-hover:scale-105 ${
+            isBlank 
+              ? 'object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.65)]' 
+              : 'object-cover'
+          }`}
           loading="lazy"
         />
 

@@ -386,7 +386,9 @@ export function CartPage() {
                   <img
                     src={item.filePath || item.file_path}
                     alt={item.name}
-                    className="w-16 h-16 rounded-xl object-cover bg-ts-hitam shrink-0 border border-white/10"
+                    className={`w-16 h-16 rounded-xl bg-ts-hitam shrink-0 border border-white/10 ${
+                      item.series === 'blank' || item.sku?.startsWith('TS-BLK') ? 'object-contain p-1' : 'object-cover'
+                    }`}
                   />
                   <div>
                     <span className="font-mono text-[10px] text-ts-terracotta font-bold">{item.sku}</span>

@@ -248,6 +248,17 @@ export function ProductDetailPage() {
     ? getBlankPricing(product, selectedColor, role, selectedSize)
     : null;
 
+  const activeGalleryItem = gallery[activeGalleryIndex];
+  const isSwatch = activeGalleryItem?.type === 'swatch' || String(previewImg).includes('swatch');
+  const isGhostOrFolded = activeGalleryItem?.type === 'front' || 
+    activeGalleryItem?.type === 'back' || 
+    activeGalleryItem?.type === 'left' || 
+    activeGalleryItem?.type === 'right' || 
+    activeGalleryItem?.type === 'folded' || 
+    String(previewImg).includes('ghost-') || 
+    String(previewImg).includes('folded');
+  const isModel = activeGalleryItem?.type === 'model' || String(previewImg).includes('model-');
+
   const baseRetailPrice = is7200 
     ? (blankPricing.isWhite ? 49000 : 52000)
     : (product.priceRetail || product.price_retail || 99000);
@@ -371,19 +382,57 @@ export function ProductDetailPage() {
         {/* Left Column: Product Showcase & Image (5 Cols) */}
         <div className="lg:col-span-6 space-y-4">
           <div 
-            className="aspect-square bg-ts-surface/80 border border-white/[0.09] rounded-3xl overflow-hidden shadow-glass-card shadow-glass-inset relative group cursor-zoom-in"
+            className="w-full aspect-[3/4] bg-gradient-to-b from-[#1c1b1a] via-[#141312] to-[#0c0b0a] border border-white/[0.09] rounded-3xl overflow-hidden shadow-2xl relative group cursor-zoom-in flex items-center justify-center select-none"
             onClick={() => setIsLightboxOpen(true)}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsLightboxOpen(true); } }}
             aria-label="Perbesar foto produk untuk melihat detail sablon dan serat kain"
           >
-            <img
-              src={previewImg}
-              alt={`${product.name} - ${selectedColor}`}
-              onError={() => setPreviewImg(defaultImage)}
-              className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
-            />
+            {/* Subtle Studio Spotlight Glow */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_45%,rgba(255,255,255,0.04)_0%,transparent_75%)] pointer-events-none" />
+
+            {/* Main Product Image / Swatch Inspector */}
+            {isSwatch ? (
+              <div className="flex flex-col items-center justify-center p-6 text-center space-y-4 z-10 animate-fadeIn">
+                <div className="relative w-48 h-48 sm:w-60 sm:h-60 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl ring-4 ring-ts-terracotta/20 bg-ts-hitam">
+                  <img
+                    src={previewImg}
+                    alt={`${product.name} - Tekstur Serat Kain ${selectedColor}`}
+                    className="w-full h-full object-cover scale-105 transition-transform duration-500 group-hover:scale-125"
+                  />
+                  <div className="absolute inset-0 ring-1 ring-inset ring-white/20 rounded-3xl pointer-events-none" />
+                  <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-ts-hitam/80 backdrop-blur-md text-[9px] font-mono font-bold text-white border border-white/10">
+                    Macro 1:1
+                  </div>
+                </div>
+                <div className="space-y-1 max-w-xs">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ts-terracotta/20 border border-ts-terracotta/40 text-ts-terracotta text-xs font-mono font-bold">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Macro Texture View</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-ts-krem font-bold">Serat 100% Combed Cotton 24s</p>
+                  <p className="text-[11px] text-ts-muted leading-relaxed">
+                    Gramasi 180 g/m² • Rajutan Tubular Halus • Penyerapan Keringat Maksimal
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <img
+                src={previewImg}
+                alt={`${product.name} - ${selectedColor}`}
+                onError={() => setPreviewImg(defaultImage)}
+                className={`transition-all duration-500 group-hover:scale-105 select-none ${
+                  isGhostOrFolded
+                    ? 'w-full h-full object-contain p-4 sm:p-6 drop-shadow-[0_16px_32px_rgba(0,0,0,0.75)]'
+                    : isModel
+                    ? 'w-full h-full object-contain p-2 sm:p-4 rounded-2xl drop-shadow-md'
+                    : isBlank
+                    ? 'w-full h-full object-contain p-4 sm:p-6 drop-shadow-[0_16px_32px_rgba(0,0,0,0.75)]'
+                    : 'w-full h-full object-cover'
+                }`}
+              />
+            )}
             
             {/* Top SKU Chip */}
             <div className="absolute top-4 left-4 px-3 py-1 rounded-xl bg-ts-hitam/85 backdrop-blur-md border border-white/10 font-mono text-xs font-bold text-ts-terracotta shadow-md pointer-events-none">
@@ -464,19 +513,29 @@ export function ProductDetailPage() {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-[11px] text-ts-kremMuted px-1">
                 <span>Galeri Foto Produk ({gallery.length} Sudut / Detail)</span>
-                <span className="font-mono text-[10px] text-ts-terracotta">
+                <span className="font-mono text-[10px] text-ts-terracotta font-semibold">
                   {activeGalleryIndex + 1} dari {gallery.length}
                 </span>
               </div>
-              <div className="flex items-center gap-2.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-thin">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 scrollbar-thin">
                 {gallery.map((item, idx) => {
                   const isActive = activeGalleryIndex === idx;
+                  const typeLabel = 
+                    item.type === 'front' ? 'Depan' :
+                    item.type === 'back' ? 'Belakang' :
+                    item.type === 'left' ? 'Kiri' :
+                    item.type === 'right' ? 'Kanan' :
+                    item.type === 'folded' ? 'Lipat' :
+                    item.type === 'model' ? 'Model' :
+                    item.type === 'swatch' ? 'Kain' :
+                    item.type === 'guide' ? 'Spek' : 'Detail';
+
                   return (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => handleSelectThumbnail(idx)}
-                      className={`group relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border transition-all duration-200 shrink-0 cursor-pointer ${
+                      className={`group relative w-14 h-18 sm:w-16 sm:h-22 aspect-[3/4] rounded-xl overflow-hidden border transition-all duration-200 shrink-0 cursor-pointer bg-[#141312] p-1 flex items-center justify-center ${
                         isActive
                           ? 'ring-2 ring-ts-terracotta border-transparent scale-105 shadow-glow-terracotta z-10'
                           : 'border-white/10 hover:border-white/30 opacity-70 hover:opacity-100'
@@ -486,10 +545,10 @@ export function ProductDetailPage() {
                       <img
                         src={item.url}
                         alt={item.label}
-                        className="w-full h-full object-cover"
+                        className={`w-full h-full ${item.type === 'swatch' ? 'object-cover rounded-md' : 'object-contain'}`}
                       />
-                      <span className="absolute bottom-0 inset-x-0 bg-ts-hitam/85 backdrop-blur-sm text-[8px] sm:text-[9px] font-mono text-center text-white py-0.5 px-1 truncate block">
-                        {item.type === 'front' ? 'Depan' : item.type === 'back' ? 'Belakang' : item.type === 'model' ? 'Model' : item.type === 'guide' ? 'Spek' : 'Detail'}
+                      <span className="absolute bottom-0 inset-x-0 bg-ts-hitam/90 backdrop-blur-sm text-[8px] sm:text-[9px] font-mono text-center text-white py-0.5 px-0.5 truncate block">
+                        {typeLabel}
                       </span>
                     </button>
                   );
@@ -1025,11 +1084,19 @@ export function ProductDetailPage() {
               </button>
             )}
 
-            <img
-              src={previewImg}
-              alt={`${product.name} - ${selectedColor}`}
-              className="max-h-[72vh] sm:max-h-[78vh] max-w-full object-contain rounded-2xl shadow-2xl border border-white/10 select-none"
-            />
+            <div className="relative flex items-center justify-center max-h-[74vh] sm:max-h-[80vh] p-4 sm:p-8 rounded-3xl bg-gradient-to-b from-white/[0.04] via-white/[0.02] to-transparent border border-white/10 shadow-2xl backdrop-blur-sm">
+              <img
+                src={previewImg}
+                alt={`${product.name} - ${selectedColor}`}
+                className={`max-h-[66vh] sm:max-h-[72vh] max-w-full object-contain select-none transition-transform duration-300 ${
+                  isSwatch
+                    ? 'rounded-2xl ring-2 ring-white/20'
+                    : isGhostOrFolded
+                    ? 'drop-shadow-[0_20px_40px_rgba(0,0,0,0.85)]'
+                    : 'rounded-2xl drop-shadow-xl'
+                }`}
+              />
+            </div>
 
             {gallery.length > 1 && (
               <button
@@ -1054,14 +1121,18 @@ export function ProductDetailPage() {
                   key={idx}
                   type="button"
                   onClick={() => handleSelectThumbnail(idx)}
-                  className={`relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden border transition shrink-0 cursor-pointer ${
+                  className={`relative w-12 h-16 sm:w-14 sm:h-18 aspect-[3/4] rounded-xl overflow-hidden border transition shrink-0 cursor-pointer bg-[#141312] p-1 flex items-center justify-center ${
                     activeGalleryIndex === idx
                       ? 'ring-2 ring-ts-terracotta border-transparent scale-105'
                       : 'border-white/20 opacity-60 hover:opacity-100'
                   }`}
                   title={item.label}
                 >
-                  <img src={item.url} alt={item.label} className="w-full h-full object-cover" />
+                  <img
+                    src={item.url}
+                    alt={item.label}
+                    className={`w-full h-full ${item.type === 'swatch' ? 'object-cover rounded-md' : 'object-contain'}`}
+                  />
                 </button>
               ))}
             </div>

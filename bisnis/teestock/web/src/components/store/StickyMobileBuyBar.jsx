@@ -23,7 +23,9 @@ export function StickyMobileBuyBar({
           <img
             src={product.filePath || product.file_path}
             alt={product.name}
-            className="w-10 h-10 rounded-xl object-cover border border-white/10 bg-ts-hitam shrink-0"
+            className={`w-10 h-10 rounded-xl border border-white/10 bg-ts-hitam shrink-0 ${
+              product.series === 'blank' || product.sku?.startsWith('TS-BLK') ? 'object-contain p-0.5' : 'object-cover'
+            }`}
           />
           <div className="min-w-0">
             <div className="font-mono text-xs font-black text-ts-green leading-tight">
