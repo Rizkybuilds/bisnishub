@@ -123,8 +123,9 @@ export function GaransiPage() {
             <thead className="bg-white/[0.04] text-white font-mono uppercase tracking-wider border-b border-white/[0.08]">
               <tr>
                 <th className="py-3 px-4 font-bold">Size</th>
-                <th className="py-3 px-4 font-bold">Lebar Dada (A)</th>
-                <th className="py-3 px-4 font-bold">Panjang Badan (B)</th>
+                <th className="py-3 px-4 font-bold">Lebar Dada</th>
+                <th className="py-3 px-4 font-bold">Panjang Badan</th>
+                <th className="py-3 px-4 font-bold">Lengan</th>
                 <th className="py-3 px-4 font-bold">Estimasi Tinggi</th>
                 <th className="py-3 px-4 font-bold">Estimasi Berat</th>
               </tr>
@@ -133,44 +134,66 @@ export function GaransiPage() {
               <tr className="hover:bg-white/[0.02] transition-colors">
                 <td className="py-3 px-4 font-bold text-white">S</td>
                 <td className="py-3 px-4">47 cm</td>
-                <td className="py-3 px-4">66 cm</td>
+                <td className="py-3 px-4">67 cm</td>
+                <td className="py-3 px-4">19 cm</td>
                 <td className="py-3 px-4">155 – 165 cm</td>
                 <td className="py-3 px-4">45 – 55 kg</td>
               </tr>
               <tr className="hover:bg-white/[0.02] transition-colors">
                 <td className="py-3 px-4 font-bold text-white">M</td>
                 <td className="py-3 px-4">50 cm</td>
-                <td className="py-3 px-4">69 cm</td>
+                <td className="py-3 px-4">70 cm</td>
+                <td className="py-3 px-4">19.5 cm</td>
                 <td className="py-3 px-4">160 – 170 cm</td>
                 <td className="py-3 px-4">55 – 65 kg</td>
               </tr>
               <tr className="hover:bg-white/[0.02] transition-colors bg-ts-terracotta/5">
                 <td className="py-3 px-4 font-bold text-ts-terracotta">L (Best Seller)</td>
                 <td className="py-3 px-4 font-bold text-white">53 cm</td>
-                <td className="py-3 px-4 font-bold text-white">72 cm</td>
+                <td className="py-3 px-4 font-bold text-white">73 cm</td>
+                <td className="py-3 px-4 font-bold text-white">20 cm</td>
                 <td className="py-3 px-4">165 – 178 cm</td>
                 <td className="py-3 px-4">65 – 75 kg</td>
               </tr>
               <tr className="hover:bg-white/[0.02] transition-colors">
                 <td className="py-3 px-4 font-bold text-white">XL</td>
                 <td className="py-3 px-4">56 cm</td>
-                <td className="py-3 px-4">74 cm</td>
+                <td className="py-3 px-4">75 cm</td>
+                <td className="py-3 px-4">20.5 cm</td>
                 <td className="py-3 px-4">170 – 185 cm</td>
-                <td className="py-3 px-4">75 – 85 kg</td>
+                <td className="py-3 px-4">75 – 88 kg</td>
               </tr>
               <tr className="hover:bg-white/[0.02] transition-colors">
-                <td className="py-3 px-4 font-bold text-white">XXL</td>
+                <td className="py-3 px-4 font-bold text-white">2XL</td>
                 <td className="py-3 px-4">59 cm</td>
-                <td className="py-3 px-4">76 cm</td>
+                <td className="py-3 px-4">77 cm</td>
+                <td className="py-3 px-4">21 cm</td>
                 <td className="py-3 px-4">175 – 190 cm</td>
-                <td className="py-3 px-4">85 – 98 kg</td>
+                <td className="py-3 px-4">88 – 100 kg</td>
               </tr>
               <tr className="hover:bg-white/[0.02] transition-colors">
                 <td className="py-3 px-4 font-bold text-white">3XL</td>
                 <td className="py-3 px-4">62 cm</td>
                 <td className="py-3 px-4">80 cm</td>
-                <td className="py-3 px-4">&gt; 180 cm</td>
-                <td className="py-3 px-4">98 – 115 kg</td>
+                <td className="py-3 px-4">21.5 cm</td>
+                <td className="py-3 px-4">180 – 195 cm</td>
+                <td className="py-3 px-4">100 – 112 kg</td>
+              </tr>
+              <tr className="hover:bg-white/[0.02] transition-colors">
+                <td className="py-3 px-4 font-bold text-white">4XL</td>
+                <td className="py-3 px-4">65 cm</td>
+                <td className="py-3 px-4">83 cm</td>
+                <td className="py-3 px-4">22 cm</td>
+                <td className="py-3 px-4">&gt; 185 cm</td>
+                <td className="py-3 px-4">112 – 125 kg</td>
+              </tr>
+              <tr className="hover:bg-white/[0.02] transition-colors">
+                <td className="py-3 px-4 font-bold text-white">5XL</td>
+                <td className="py-3 px-4">68 cm</td>
+                <td className="py-3 px-4">86 cm</td>
+                <td className="py-3 px-4">22.5 cm</td>
+                <td className="py-3 px-4">&gt; 185 cm</td>
+                <td className="py-3 px-4">&gt; 125 kg</td>
               </tr>
             </tbody>
           </table>

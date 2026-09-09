@@ -26,15 +26,30 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
   };
 
   // Price calculations
+  const is3600 = isBlank && (product.sku === 'TS-BLK-3600' || product.name?.includes('3600'));
   const is7200 = isBlank && (product.sku === 'TS-BLK-7200' || product.name?.includes('7200'));
   const isWhite = selectedColor?.toLowerCase() === 'white';
-  const baseRetailPrice = is7200 
-    ? (isWhite ? 49000 : 52000)
-    : (product.priceRetail || product.price_retail || (isBlank ? 49000 : 99000));
+
+  let baseRetailPrice;
+  if (is3600) {
+    baseRetailPrice = isWhite ? 34000 : 37000;
+  } else if (is7200) {
+    baseRetailPrice = isWhite ? 49000 : 52000;
+  } else {
+    baseRetailPrice = product.priceRetail || product.price_retail || (isBlank ? 49000 : 99000);
+  }
+
   const isReseller = profile?.partner_tier === 'reseller';
-  const partnerPrice = isReseller
-    ? (is7200 ? (isWhite ? 41000 : 44000) : (product.priceReseller || product.price_reseller || (isBlank ? 42000 : 65000)))
-    : (product.priceDropship || product.price_dropship || (isBlank ? 45000 : 75000));
+  let partnerPrice;
+  if (isReseller) {
+    if (is3600) partnerPrice = isWhite ? 32000 : 35000;
+    else if (is7200) partnerPrice = isWhite ? 41000 : 44000;
+    else partnerPrice = product.priceReseller || product.price_reseller || (isBlank ? 42000 : 65000);
+  } else {
+    if (is3600) partnerPrice = isWhite ? 32000 : 35000;
+    else if (is7200) partnerPrice = isWhite ? 41000 : 44000;
+    else partnerPrice = product.priceDropship || product.price_dropship || (isBlank ? 45000 : 75000);
+  }
 
   const effectivePrice = isPartner && !isBlank ? partnerPrice : baseRetailPrice;
   const colorCount = availableColors.length;
@@ -116,7 +131,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
           <div className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-wider font-mono ${
             isBlank ? 'text-ts-teal' : 'text-ts-terracotta'
           }`}>
-            {isBlank ? 'Kaos Polos NSA' : (product.seriesName || product.series)}
+            {isBlank ? (is3600 ? 'Kaos Polos NSA 3600 (30s)' : is7200 ? 'Kaos Polos NSA 7200 (24s)' : 'Kaos Polos NSA') : (product.seriesName || product.series)}
           </div>
           <Link to={productUrl} className="block group/title">
             <h3 className={`text-xs sm:text-sm font-bold text-white transition-colors truncate ${

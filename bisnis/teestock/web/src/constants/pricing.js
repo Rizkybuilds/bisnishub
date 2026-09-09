@@ -72,29 +72,77 @@ export function getSizeSurcharge(size) {
 }
 
 /**
- * Kalkulasi harga dasar kaos polos NSA 7200 berdasarkan aturan margin founder:
- * - Retail: Vendor + Rp 10.000 (White: Rp 49.000, Colors: Rp 52.000)
- * - Reseller: Vendor + Rp 2.000 (White: Rp 41.000, Colors: Rp 44.000)
- * - Batas Minimum Diskon/Voucher: Profit tidak boleh di bawah Rp 2.000
+ * Struktur Harga Grosir Bertingkat NSA 3600 (Softstyle 30s)
  */
-export function getBlankPricing(product, colorName = 'Black', role = 'retail', size = 'L') {
-  const isWhite = String(colorName).trim().toLowerCase() === 'white';
-  const vendorCostBase = isWhite ? 39000 : 42000;
-  const surcharge = getSizeSurcharge(size);
-  const vendorCostTotal = vendorCostBase + surcharge;
+export const NSA_3600_TIERS = [
+  { minQty: 1, label: 'Satuan (<12 pcs)', white: 34000, color: 37000 },
+  { minQty: 12, label: 'Grosir Lusinan (≥12 pcs)', white: 32000, color: 35000, badge: 'HEMAT RP 2.000/PCS' },
+  { minQty: 72, label: 'Partai Besar (≥72 pcs)', white: 29000, color: 32000, badge: 'HEMAT RP 5.000/PCS' },
+];
 
-  const isReseller = role === 'reseller' || role === 'partner' || role === 'dropship';
+/**
+ * Kalkulasi harga dasar kaos polos NSA (7200 & 3600):
+ * - NSA 3600:
+ *   Retail: White Rp 34.000, Color Rp 37.000
+ *   ≥12 pcs / Reseller: White Rp 32.000, Color Rp 35.000
+ *   ≥72 pcs (Partai): White Rp 29.000, Color Rp 32.000
+ *   2XL: +Rp 5.000
+ * - NSA 7200:
+ *   Retail: White Rp 49.000, Color Rp 52.000
+ *   ≥12 pcs / Reseller: White Rp 41.000, Color Rp 44.000
+ *   Surcharge: 2XL +5k, 3XL +10k, 4XL +15k, 5XL +20k
+ */
+export function getBlankPricing(product, colorName = 'Black', role = 'retail', size = 'L', qty = 1) {
+  const is3600 = product?.sku === 'TS-BLK-3600' || product?.name?.includes('3600');
+  const isWhite = String(colorName).trim().toLowerCase() === 'white';
+  const surcharge = getSizeSurcharge(size);
+
+  if (is3600) {
+    let unitPrice;
+    if (qty >= 72) {
+      unitPrice = isWhite ? 29000 : 32000;
+    } else if (qty >= 12 || role === 'reseller' || role === 'partner' || role === 'dropship') {
+      unitPrice = isWhite ? 32000 : 35000;
+    } else {
+      unitPrice = isWhite ? 34000 : 37000;
+    }
+
+    const vendorCostBase = isWhite ? 27000 : 30000;
+    const vendorCostTotal = vendorCostBase + surcharge;
+    const finalPrice = unitPrice + surcharge;
+    const minFloorPrice = (isWhite ? 29000 : 32000) + surcharge;
+
+    return {
+      basePrice: finalPrice,
+      unitPrice,
+      vendorCost: vendorCostTotal,
+      minFloorPrice,
+      surcharge,
+      targetProfit: finalPrice - vendorCostTotal,
+      isWhite,
+      is3600: true,
+      tier: qty >= 72 ? 'partai' : qty >= 12 ? 'grosir' : 'retail'
+    };
+  }
+
+  // NSA 7200
+  const isReseller = role === 'reseller' || role === 'partner' || role === 'dropship' || qty >= 12;
+  const vendorCostBase = isWhite ? 39000 : 42000;
+  const vendorCostTotal = vendorCostBase + surcharge;
   const targetProfit = isReseller ? 2000 : 10000;
   const finalPrice = vendorCostBase + targetProfit + surcharge;
-  const minFloorPrice = vendorCostTotal + 2000; // Floor laba minimal Rp 2.000
+  const minFloorPrice = vendorCostTotal + 2000;
 
   return {
     basePrice: finalPrice,
+    unitPrice: vendorCostBase + targetProfit,
     vendorCost: vendorCostTotal,
     minFloorPrice,
     surcharge,
     targetProfit,
-    isWhite
+    isWhite,
+    is3600: false,
+    tier: isReseller ? 'grosir' : 'retail'
   };
 }
 

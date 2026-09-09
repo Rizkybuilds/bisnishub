@@ -24,14 +24,14 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
-import { GARMENT_TYPES, SIZES } from '../../constants/garments';
+import { GARMENT_TYPES, SIZES, NSA_7200_SIZE_CHART, NSA_3600_SIZE_CHART } from '../../constants/garments';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { SizeCalculatorModal } from '../../components/store/SizeCalculatorModal';
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { SEOHead } from '../../components/common/SEOHead';
-import { BUNDLE_DEALS, getSizeSurcharge, getBlankPricing } from '../../constants/pricing';
+import { BUNDLE_DEALS, getSizeSurcharge, getBlankPricing, NSA_3600_TIERS } from '../../constants/pricing';
 import { ProductReviews } from '../../components/store/ProductReviews';
 import { getFulfillmentSLA } from '../../utils/garmentStockRouting';
 import { COLOR_HEX_MAP, getColorHex } from '../../constants/colors';
@@ -125,6 +125,9 @@ export function ProductDetailPage() {
 
   // Available sizes dengan filtering dinamis per warna
   const sizeList = useMemo(() => {
+    if (isBlank && (product?.sku === 'TS-BLK-3600' || product?.name?.includes('3600'))) {
+      return ['S', 'M', 'L', 'XL', '2XL'];
+    }
     if (isBlank && (product?.sku === 'TS-BLK-7200' || product?.name?.includes('7200'))) {
       const is5XL = SIZES_5XL_COLORS.includes(String(selectedColor).trim().toLowerCase());
       return is5XL 
@@ -243,9 +246,10 @@ export function ProductDetailPage() {
     );
   }
 
+  const is3600 = isBlank && (product.sku === 'TS-BLK-3600' || product.name?.includes('3600'));
   const is7200 = isBlank && (product.sku === 'TS-BLK-7200' || product.name?.includes('7200'));
-  const blankPricing = is7200
-    ? getBlankPricing(product, selectedColor, role, selectedSize)
+  const blankPricing = (is7200 || is3600)
+    ? getBlankPricing(product, selectedColor, role, selectedSize, qty)
     : null;
 
   const activeGalleryItem = gallery[activeGalleryIndex];
@@ -259,8 +263,10 @@ export function ProductDetailPage() {
     String(previewImg).includes('folded');
   const isModel = activeGalleryItem?.type === 'model' || String(previewImg).includes('model-');
 
-  const baseRetailPrice = is7200 
-    ? (blankPricing.isWhite ? 49000 : 52000)
+  const baseRetailPrice = is3600 
+    ? (blankPricing?.isWhite ? 34000 : 37000)
+    : is7200 
+    ? (blankPricing?.isWhite ? 49000 : 52000)
     : (product.priceRetail || product.price_retail || 99000);
   
   let effectiveBasePrice = baseRetailPrice;
@@ -276,8 +282,22 @@ export function ProductDetailPage() {
     effectiveBasePrice = partnerBase;
     partnerSavings = baseRetailPrice - partnerBase;
     isPartnerDiscountApplied = true;
+  } else if (isPartner && is3600) {
+    const resellerBase = blankPricing?.unitPrice || (blankPricing?.isWhite ? 32000 : 35000);
+    effectiveBasePrice = resellerBase;
+    partnerSavings = baseRetailPrice - resellerBase;
+    isPartnerDiscountApplied = partnerSavings > 0;
   } else if (isPartner && is7200) {
-    const resellerBase = blankPricing.isWhite ? 41000 : 44000;
+    const resellerBase = blankPricing?.isWhite ? 41000 : 44000;
+    effectiveBasePrice = resellerBase;
+    partnerSavings = baseRetailPrice - resellerBase;
+    isPartnerDiscountApplied = true;
+  } else if (is3600 && qty >= 12) {
+    effectiveBasePrice = blankPricing?.unitPrice;
+    partnerSavings = baseRetailPrice - (blankPricing?.unitPrice || baseRetailPrice);
+    isPartnerDiscountApplied = partnerSavings > 0;
+  } else if (is7200 && qty >= 12) {
+    const resellerBase = blankPricing?.isWhite ? 41000 : 44000;
     effectiveBasePrice = resellerBase;
     partnerSavings = baseRetailPrice - resellerBase;
     isPartnerDiscountApplied = true;
@@ -293,7 +313,7 @@ export function ProductDetailPage() {
 
   // Size surcharge for oversized garments (2XL +Rp 5k, 3XL +Rp 10k, 4XL +Rp 15k, 5XL +Rp 20k)
   const sizeSurcharge = getSizeSurcharge(selectedSize);
-  const currentPrice = is7200
+  const currentPrice = (is7200 || is3600)
     ? (effectiveBasePrice + sizeSurcharge)
     : (isBlank 
       ? (baseRetailPrice + sizeSurcharge) 
@@ -411,9 +431,13 @@ export function ProductDetailPage() {
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>Macro Texture View</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-ts-krem font-bold">Serat 100% Combed Cotton 24s</p>
+                  <p className="text-xs sm:text-sm text-ts-krem font-bold">
+                    {is3600 ? 'Serat 100% Ring Spun Cotton 30s' : 'Serat 100% Combed Cotton 24s'}
+                  </p>
                   <p className="text-[11px] text-ts-muted leading-relaxed">
-                    Gramasi 180 g/m² • Rajutan Tubular Halus • Penyerapan Keringat Maksimal
+                    {is3600
+                      ? 'Gramasi 150 g/m² • Rajutan Ring-Spun Halus & Lembut • Sangat Adem & Ringan'
+                      : 'Gramasi 180 g/m² • Rajutan Tubular Halus • Penyerapan Keringat Maksimal'}
                   </p>
                 </div>
               </div>
@@ -563,16 +587,18 @@ export function ProductDetailPage() {
               <div className="space-y-1">
                 <div className="font-extrabold text-white flex items-center gap-1.5 text-sm">
                   <Tag className="w-4 h-4 text-ts-teal" />
-                  <span>Harga Grosir Lusinan (&ge;12 pcs)</span>
+                  <span>{is3600 ? 'Harga Grosir & Partai (≥12 pcs)' : 'Harga Grosir Lusinan (≥12 pcs)'}</span>
                 </div>
                 <p className="text-[11px] text-ts-kremMuted">
-                  Beli 12 pcs atau lebih (bisa campur warna &amp; size) otomatis dapat harga grosir reseller.
+                  {is3600 
+                    ? 'Beli 12 pcs atau lebih dapat harga grosir, order ≥72 pcs otomatis harga partai.'
+                    : 'Beli 12 pcs atau lebih (bisa campur warna & size) otomatis dapat harga grosir reseller.'}
                 </p>
               </div>
               <div className="text-right font-mono shrink-0 pl-3">
                 <div className="text-[10px] text-ts-muted">Mulai</div>
                 <div className="font-black text-base sm:text-lg text-ts-green">
-                  {formatRupiah(product.priceReseller || (currentPrice - 7000))}
+                  {formatRupiah(is3600 ? 29000 : (product.priceReseller || (currentPrice - 7000)))}
                   <span className="text-[10px] font-normal text-ts-muted">/pcs</span>
                 </div>
               </div>
@@ -883,8 +909,8 @@ export function ProductDetailPage() {
             </p>
           </div>
 
-          {/* Bundling Promotion Banner (AOV Booster) */}
-          {role !== 'reseller' && role !== 'dropship' && (
+          {/* Bundling Promotion Banner (AOV Booster) for Graphic Tees */}
+          {!isBlank && role !== 'reseller' && role !== 'dropship' && (
             <div className="p-3.5 rounded-2xl bg-gradient-to-r from-ts-terracotta/15 via-ts-mustard/10 to-transparent border border-ts-terracotta/30 space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-white flex items-center gap-1.5 uppercase tracking-wide">
@@ -919,6 +945,119 @@ export function ProductDetailPage() {
                     </div>
                   </button>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Wholesale Tiers Banner for NSA 3600 */}
+          {is3600 && (
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-ts-teal/10 to-transparent border border-emerald-500/30 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black text-white flex items-center gap-1.5 uppercase tracking-wide">
+                  <Tag className="w-3.5 h-3.5 text-emerald-400" />
+                  Pilihan Grosir Bertingkat NSA 3600
+                </span>
+                <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/40">
+                  HEMAT S.D RP 5.000/PCS
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                {NSA_3600_TIERS.map((tier) => {
+                  const isWhiteCol = String(selectedColor).trim().toLowerCase() === 'white';
+                  const tierPrice = isWhiteCol ? tier.white : tier.color;
+                  const isActive = (tier.minQty === 72 && qty >= 72) ||
+                    (tier.minQty === 12 && qty >= 12 && qty < 72) ||
+                    (tier.minQty === 1 && qty < 12);
+                  return (
+                    <button
+                      key={tier.minQty}
+                      type="button"
+                      onClick={() => setQty(tier.minQty)}
+                      className={`p-2 sm:p-2.5 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
+                        isActive
+                          ? 'bg-emerald-500/20 text-white border-emerald-500 shadow-glow-emerald ring-1 ring-emerald-500'
+                          : 'bg-white/[0.04] border-white/10 hover:bg-white/[0.08] text-ts-krem'
+                      }`}
+                    >
+                      <div>
+                        <div className="font-bold text-[11px] leading-tight flex items-center justify-between">
+                          <span>{tier.label.split(' ')[0]}</span>
+                          {isActive && <Check className="w-3 h-3 text-emerald-400" />}
+                        </div>
+                        <div className="text-[9px] text-ts-kremMuted mt-0.5">
+                          {tier.minQty === 1 ? '1 - 11 pcs' : tier.minQty === 12 ? '12 - 71 pcs' : '≥ 72 pcs'}
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <div className="text-[11px] font-mono font-black text-emerald-300">
+                          {formatRupiah(tierPrice)}
+                          <span className="text-[9px] font-normal text-ts-muted">/pcs</span>
+                        </div>
+                        {tier.badge && (
+                          <div className="text-[8px] font-mono text-ts-mustard font-semibold truncate mt-0.5">
+                            {tier.badge}
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Wholesale Tiers Banner for NSA 7200 */}
+          {is7200 && (
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-ts-teal/15 via-ts-teal/10 to-transparent border border-ts-teal/30 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black text-white flex items-center gap-1.5 uppercase tracking-wide">
+                  <Tag className="w-3.5 h-3.5 text-ts-teal" />
+                  Grosir Lusinan NSA 7200
+                </span>
+                <span className="text-[10px] font-mono font-bold text-ts-teal bg-ts-teal/20 px-2 py-0.5 rounded border border-ts-teal/40">
+                  HEMAT RP 8.000/PCS
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {[
+                  { minQty: 1, label: 'Satuan', range: '1 - 11 pcs', white: 49000, color: 52000 },
+                  { minQty: 12, label: 'Grosir Lusinan', range: '≥ 12 pcs', white: 41000, color: 44000, badge: 'HEMAT RP 8.000/PCS' }
+                ].map((tier) => {
+                  const isWhiteCol = String(selectedColor).trim().toLowerCase() === 'white';
+                  const tierPrice = isWhiteCol ? tier.white : tier.color;
+                  const isActive = tier.minQty === 12 ? qty >= 12 : qty < 12;
+                  return (
+                    <button
+                      key={tier.minQty}
+                      type="button"
+                      onClick={() => setQty(tier.minQty)}
+                      className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
+                        isActive
+                          ? 'bg-ts-teal/20 text-white border-ts-teal ring-1 ring-ts-teal'
+                          : 'bg-white/[0.04] border-white/10 hover:bg-white/[0.08] text-ts-krem'
+                      }`}
+                    >
+                      <div>
+                        <div className="font-bold text-[11px] leading-tight flex items-center justify-between">
+                          <span>{tier.label}</span>
+                          {isActive && <Check className="w-3 h-3 text-ts-teal" />}
+                        </div>
+                        <div className="text-[9px] text-ts-kremMuted mt-0.5">{tier.range}</div>
+                      </div>
+                      <div className="mt-2">
+                        <div className="text-[11px] font-mono font-black text-ts-teal">
+                          {formatRupiah(tierPrice)}
+                          <span className="text-[9px] font-normal text-ts-muted">/pcs</span>
+                        </div>
+                        {tier.badge && (
+                          <div className="text-[8px] font-mono text-ts-mustard font-semibold truncate mt-0.5">
+                            {tier.badge}
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -985,9 +1124,67 @@ export function ProductDetailPage() {
 
             {/* Collapsible Product Information & Guarantee Accordion */}
             <div className="pt-4 border-t border-white/[0.08] space-y-2">
-              <ProductAccordionItem title="Spesifikasi Garmen NSA & Sablon DTF 155°C" icon={ShieldCheck} defaultOpen={true}>
-                {isBlank ? (
-                  <span>100% Katun New States Apparel (NSA) Original Cititex. Pola rajutan tubular knit tanpa sambungan samping, kerah rib 2.2 cm kokoh anti-melar, siap pakai langsung atau disablon custom.</span>
+              <ProductAccordionItem title={`Panduan Ukuran (Size Chart ${is3600 ? 'NSA 3600' : 'NSA 7200'})`} icon={Ruler} defaultOpen={isBlank}>
+                <div className="space-y-3">
+                  <p className="text-[11px] text-ts-kremMuted leading-relaxed">
+                    {is3600
+                      ? "Standar ukuran New States Apparel Softstyle 3600 (Asian Fit) tubular built-up tanpa sambungan samping. Toleransi penjahitan pabrik ±1-2 cm."
+                      : "Standar potongan Asia (Asian Fit) tubular built-up tanpa sambungan samping. Toleransi penjahitan pabrik ±1-2 cm."}
+                  </p>
+                  <div className="overflow-x-auto rounded-xl border border-white/[0.08]">
+                    <table className="w-full text-left text-[11px] border-collapse">
+                      <thead>
+                        <tr className="bg-white/[0.04] font-mono text-ts-muted border-b border-white/[0.08]">
+                          <th className="py-2 px-2.5 font-bold">Size</th>
+                          <th className="py-2 px-2.5">Lebar Dada</th>
+                          <th className="py-2 px-2.5">Panjang</th>
+                          <th className="py-2 px-2.5">Lengan</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/[0.05] font-mono">
+                        {(is3600 ? NSA_3600_SIZE_CHART : NSA_7200_SIZE_CHART).map((item) => {
+                          const isCurrent = selectedSize === item.size;
+                          const isAvail = sizeList.includes(item.size);
+                          return (
+                            <tr
+                              key={item.size}
+                              className={`hover:bg-white/[0.03] transition-colors ${
+                                isCurrent ? 'bg-ts-terracotta/15 font-bold text-white' : ''
+                              }`}
+                            >
+                              <td className="py-1.5 px-2.5 font-bold text-ts-terracotta">
+                                <span>{item.size}</span>
+                                {!isAvail && !is3600 && (
+                                  <span className="block text-[8px] font-sans text-ts-muted font-normal">
+                                    8 Warna
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-1.5 px-2.5">{item.chest} cm</td>
+                              <td className="py-1.5 px-2.5">{item.length} cm</td>
+                              <td className="py-1.5 px-2.5">{item.sleeve} cm</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsSizeModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 text-xs text-ts-mustard hover:text-white font-bold transition-colors pt-0.5 cursor-pointer"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Buka Kalkulator Ukuran Pas (Rekomendasi TB / BB) &rarr;</span>
+                  </button>
+                </div>
+              </ProductAccordionItem>
+
+              <ProductAccordionItem title="Spesifikasi Garmen NSA & Sablon DTF 155°C" icon={ShieldCheck} defaultOpen={!isBlank}>
+                {is3600 ? (
+                  <span>100% Ring Spun Cotton New States Apparel (NSA) Softstyle 3600 Original Cititex. Gramasi 150 g/m² (30s), pola rajutan tubular knit tanpa sambungan samping, kerah rib 2.0 cm kokoh anti-melar, sangat sejuk, lembut, dan nyaman untuk iklim tropis. Siap pakai langsung atau disablon custom.</span>
+                ) : isBlank ? (
+                  <span>100% Katun Combed New States Apparel (NSA) Premium 7200 Original Cititex. Gramasi 180 g/m² (24s), pola rajutan tubular knit tanpa sambungan samping, kerah rib 2.2 cm kokoh anti-melar, tebal dan jatuh di badan. Siap pakai langsung atau disablon custom.</span>
                 ) : (
                   <span>100% Katun New States Apparel (NSA) Heavyweight 24s gramasi 180 g/m² (atau Softstyle 30s). Pola tubular knit tanpa sambungan samping. Dicetak dengan sablon DTF High-Density curing suhu 155°C dengan tinta elastis tahan cuci berkali-kali.</span>
                 )}
@@ -1027,6 +1224,7 @@ export function ProductDetailPage() {
         onClose={() => setIsSizeModalOpen(false)}
         onSelectSize={(sz) => setSelectedSize(sz)}
         currentSize={selectedSize}
+        availableSizes={sizeList}
       />
 
       {/* Product Image Fullscreen Lightbox Modal */}
