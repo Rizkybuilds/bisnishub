@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 // Layouts
@@ -6,31 +6,69 @@ import { StoreLayout } from './layouts/StoreLayout';
 import { AdminLayout } from './layouts/AdminLayout';
 import { AdminProvider } from './context/AdminContext';
 
-// Auth
+// Auth Guard
 import { AuthGuard } from './components/admin/AuthGuard';
-import { LoginPage } from './pages/admin/LoginPage';
 
-// Store Pages
+// Eager Store Pages (Above-the-fold critical routes)
 import { HomePage } from './pages/store/HomePage';
 import { BioLinkPage } from './pages/store/BioLinkPage';
-import { CatalogPage as StoreCatalogPage } from './pages/store/CatalogPage';
-import { ProductDetailPage } from './pages/store/ProductDetailPage';
-import { CustomOrderPage } from './pages/store/CustomOrderPage';
-import { CartPage } from './pages/store/CartPage';
-import { OrderTrackingPage } from './pages/store/OrderTrackingPage';
-import { AccountPage } from './pages/store/AccountPage';
-import { PartnerPage } from './pages/store/PartnerPage';
-import { GaransiPage } from './pages/store/GaransiPage';
 
-// Admin Pages
-import { DashboardPage } from './pages/admin/DashboardPage';
-import { CatalogPage as AdminCatalogPage } from './pages/admin/CatalogPage';
-import { InventoryPage } from './pages/admin/InventoryPage';
-import { KanbanPage } from './pages/admin/KanbanPage';
-import { GangSheetPage } from './pages/admin/GangSheetPage';
-import { QuoterPage } from './pages/admin/QuoterPage';
-import { DefectsPage } from './pages/admin/DefectsPage';
-import { SettingsPage } from './pages/admin/SettingsPage';
+// Lazy-loaded Store Pages (Code Splitting for Core Web Vitals)
+const StoreCatalogPage = lazy(() => import('./pages/store/CatalogPage').then(m => ({ default: m.CatalogPage })));
+const ProductDetailPage = lazy(() => import('./pages/store/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
+const CustomOrderPage = lazy(() => import('./pages/store/CustomOrderPage').then(m => ({ default: m.CustomOrderPage })));
+const CartPage = lazy(() => import('./pages/store/CartPage').then(m => ({ default: m.CartPage })));
+const OrderTrackingPage = lazy(() => import('./pages/store/OrderTrackingPage').then(m => ({ default: m.OrderTrackingPage })));
+const AccountPage = lazy(() => import('./pages/store/AccountPage').then(m => ({ default: m.AccountPage })));
+const PartnerPage = lazy(() => import('./pages/store/PartnerPage').then(m => ({ default: m.PartnerPage })));
+const GaransiPage = lazy(() => import('./pages/store/GaransiPage').then(m => ({ default: m.GaransiPage })));
+
+// Lazy-loaded Admin Pages (Zero Admin Code in Initial Public Bundle)
+const LoginPage = lazy(() => import('./pages/admin/LoginPage').then(m => ({ default: m.LoginPage })));
+const DashboardPage = lazy(() => import('./pages/admin/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const AdminCatalogPage = lazy(() => import('./pages/admin/CatalogPage').then(m => ({ default: m.CatalogPage })));
+const InventoryPage = lazy(() => import('./pages/admin/InventoryPage').then(m => ({ default: m.InventoryPage })));
+const KanbanPage = lazy(() => import('./pages/admin/KanbanPage').then(m => ({ default: m.KanbanPage })));
+const GangSheetPage = lazy(() => import('./pages/admin/GangSheetPage').then(m => ({ default: m.GangSheetPage })));
+const QuoterPage = lazy(() => import('./pages/admin/QuoterPage').then(m => ({ default: m.QuoterPage })));
+const DefectsPage = lazy(() => import('./pages/admin/DefectsPage').then(m => ({ default: m.DefectsPage })));
+const SettingsPage = lazy(() => import('./pages/admin/SettingsPage').then(m => ({ default: m.SettingsPage })));
+
+/**
+ * Loading fallback component for Storefront routes
+ */
+function StoreSuspense({ children, message = 'Memuat...' }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[50vh] flex-col items-center justify-center p-8 text-center">
+          <div className="h-7 w-7 animate-spin rounded-full border-2 border-ts-terracotta border-t-transparent" />
+          <p className="mt-3 font-mono text-xs uppercase tracking-wider text-ts-kremMuted">{message}</p>
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
+  );
+}
+
+/**
+ * Loading fallback component for Admin Hub routes
+ */
+function AdminSuspense({ children }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[60vh] flex-col items-center justify-center p-12 text-center">
+          <div className="h-7 w-7 animate-spin rounded-full border-2 border-ts-teal border-t-transparent" />
+          <p className="mt-3 font-mono text-xs uppercase tracking-wider text-ts-muted">Memuat Modul Admin...</p>
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
+  );
+}
 
 export const router = createBrowserRouter([
   // Bio Link — standalone micro landing page (no StoreLayout wrapper)
@@ -45,23 +83,53 @@ export const router = createBrowserRouter([
     element: <StoreLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'katalog', element: <StoreCatalogPage defaultSegment="graphics" /> },
-      { path: 'polos', element: <StoreCatalogPage defaultSegment="blank" /> },
-      { path: 'produk/:sku', element: <ProductDetailPage /> },
-      { path: 'custom-order', element: <CustomOrderPage /> },
-      { path: 'keranjang', element: <CartPage /> },
-      { path: 'tracking', element: <OrderTrackingPage /> },
-      { path: 'akun', element: <AccountPage /> },
-      { path: 'partner', element: <PartnerPage /> },
-      { path: 'care', element: <GaransiPage /> },
-      { path: 'garansi', element: <GaransiPage /> },
+      { 
+        path: 'katalog', 
+        element: <StoreSuspense message="Memuat Katalog Grafis..."><StoreCatalogPage defaultSegment="graphics" /></StoreSuspense> 
+      },
+      { 
+        path: 'polos', 
+        element: <StoreSuspense message="Memuat Katalog NSA Blanks..."><StoreCatalogPage defaultSegment="blank" /></StoreSuspense> 
+      },
+      { 
+        path: 'produk/:sku', 
+        element: <StoreSuspense message="Memuat Detail Produk..."><ProductDetailPage /></StoreSuspense> 
+      },
+      { 
+        path: 'custom-order', 
+        element: <StoreSuspense message="Memuat Studio Custom..."><CustomOrderPage /></StoreSuspense> 
+      },
+      { 
+        path: 'keranjang', 
+        element: <StoreSuspense message="Memuat Keranjang..."><CartPage /></StoreSuspense> 
+      },
+      { 
+        path: 'tracking', 
+        element: <StoreSuspense message="Memuat Pelacakan..."><OrderTrackingPage /></StoreSuspense> 
+      },
+      { 
+        path: 'akun', 
+        element: <StoreSuspense message="Memuat Akun..."><AccountPage /></StoreSuspense> 
+      },
+      { 
+        path: 'partner', 
+        element: <StoreSuspense message="Memuat Info Kemitraan..."><PartnerPage /></StoreSuspense> 
+      },
+      { 
+        path: 'care', 
+        element: <StoreSuspense message="Memuat Garansi & Panduan Perawatan..."><GaransiPage /></StoreSuspense> 
+      },
+      { 
+        path: 'garansi', 
+        element: <StoreSuspense message="Memuat Garansi..."><GaransiPage /></StoreSuspense> 
+      },
     ],
   },
 
   // Admin Login (publik — di luar AuthGuard)
   {
     path: '/admin/login',
-    element: <LoginPage />,
+    element: <AdminSuspense><LoginPage /></AdminSuspense>,
   },
 
   // Admin Internal Hub Routes (dilindungi AuthGuard & AdminProvider)
@@ -75,14 +143,14 @@ export const router = createBrowserRouter([
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <DashboardPage /> },
-      { path: 'katalog', element: <AdminCatalogPage /> },
-      { path: 'inventory', element: <InventoryPage /> },
-      { path: 'kanban', element: <KanbanPage /> },
-      { path: 'gangsheet', element: <GangSheetPage /> },
-      { path: 'quoter', element: <QuoterPage /> },
-      { path: 'defects', element: <DefectsPage /> },
-      { path: 'settings', element: <SettingsPage /> },
+      { index: true, element: <AdminSuspense><DashboardPage /></AdminSuspense> },
+      { path: 'katalog', element: <AdminSuspense><AdminCatalogPage /></AdminSuspense> },
+      { path: 'inventory', element: <AdminSuspense><InventoryPage /></AdminSuspense> },
+      { path: 'kanban', element: <AdminSuspense><KanbanPage /></AdminSuspense> },
+      { path: 'gangsheet', element: <AdminSuspense><GangSheetPage /></AdminSuspense> },
+      { path: 'quoter', element: <AdminSuspense><QuoterPage /></AdminSuspense> },
+      { path: 'defects', element: <AdminSuspense><DefectsPage /></AdminSuspense> },
+      { path: 'settings', element: <AdminSuspense><SettingsPage /></AdminSuspense> },
     ],
   },
 
@@ -92,4 +160,3 @@ export const router = createBrowserRouter([
     element: <Navigate to="/" replace />
   }
 ]);
-

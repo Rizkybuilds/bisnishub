@@ -53,6 +53,18 @@ Tersedia 5 skill mesin eksekusi teknis, operasional, dan pemasaran yang dapat di
 | 🖨️ DTF & Pre-Press | `dtf-print-ops` | Gang sheet roll 58 cm, file pre-flight 300 DPI, SOP heat press 155°C |
 | 🎯 Promosi & Kampanye | `marketing-promo-engine` | Playbook Drop launch, formula copywriting konversi, bundling promo, closing WA, B2B dropship |
 
+## Web App Development & Architecture Squad
+
+Tersedia 5 skill spesialis untuk perancangan, pengembangan, pengujian, dan keamanan web application:
+
+| Peran Web App | Skill | Fokus Utama |
+|---|---|---|
+| 📐 Web App Architect | `web-app-architect` | Perancangan sistem, diagram user flow, hierarki komponen, state management, & API specs |
+| 💻 Fullstack Web Dev | `fullstack-web-dev` | Implementasi React/Vite/Next.js, TypeScript, Tailwind, Zod + Hook Form, & TanStack Query |
+| 🔌 API & Backend Engineer | `api-backend-engineer` | REST API, Edge Functions, integrasi Midtrans/QRIS, logistik RajaOngkir, & webhook safety |
+| 🧪 Web QA & Testing | `web-qa-testing` | Otomasi pengujian E2E Playwright, unit/integration test Vitest, & skenario checkout |
+| 🛡️ Web Sec & Perf Engineer | `web-sec-perf` | Keamanan OWASP (XSS/CSRF/secrets), optimasi Core Web Vitals (LCP/CLS/INP), & SEO |
+
 ### Cross-Referral
 
 Jika topik diskusi menyentuh area di luar keahlian peran yang sedang aktif,
