@@ -1,6 +1,7 @@
 import React from 'react';
-import { Tag, Sparkles, X, Loader2, ShieldCheck, Truck, ArrowRight } from 'lucide-react';
+import { Tag, Sparkles, X, Loader2, ShieldCheck, Truck, ArrowRight, Zap, QrCode } from 'lucide-react';
 import { formatRupiah } from '../../../utils/formatters';
+import { PAYMENT_PROVIDERS } from '../../../services/paymentAdapter';
 
 export function CartSummaryCard({
   totalCartAmount,
@@ -19,8 +20,12 @@ export function CartSummaryCard({
   voucherLoading,
   voucherMsg,
   isSubmitting,
-  onTriggerSubmit
+  onTriggerSubmit,
+  weightInfo = null,
+  selectedPaymentMethod = PAYMENT_PROVIDERS.MANUAL_QRIS
 }) {
+  const isInstantPayment = selectedPaymentMethod === PAYMENT_PROVIDERS.MIDTRANS_SNAP;
+
   return (
     <div className="space-y-6">
       <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/[0.08] space-y-5">
@@ -52,7 +57,7 @@ export function CartSummaryCard({
               <button
                 type="button"
                 onClick={handleRemoveVoucher}
-                className="p-1.5 hover:bg-white/10 rounded-lg text-ts-kremMuted hover:text-white transition-colors"
+                className="p-1.5 hover:bg-white/10 rounded-lg text-ts-kremMuted hover:text-white transition-colors cursor-pointer"
                 title="Hapus voucher"
               >
                 <X className="w-4 h-4" />
@@ -72,7 +77,7 @@ export function CartSummaryCard({
                 type="button"
                 onClick={() => handleApplyVoucher()}
                 disabled={voucherLoading || !voucherInput.trim()}
-                className="px-4 py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-xs font-bold text-white border border-white/[0.1] transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0"
+                className="px-4 py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-xs font-bold text-white border border-white/[0.1] transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0 cursor-pointer"
               >
                 {voucherLoading ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -110,7 +115,7 @@ export function CartSummaryCard({
           <div className="flex justify-between text-ts-kremMuted">
             <span className="flex items-center gap-1">
               <Truck className="w-3.5 h-3.5 text-ts-muted" />
-              Ongkos Kirim
+              Ongkos Kirim {weightInfo?.billableWeightKg ? `(${weightInfo.billableWeightKg} kg)` : ''}
             </span>
             <div className="text-right font-mono">
               {shippingDiscount > 0 ? (
@@ -124,7 +129,8 @@ export function CartSummaryCard({
             </div>
           </div>
 
-          {uniqueCode > 0 && (
+          {/* Unique code only for manual bank/qris verification */}
+          {!isInstantPayment && uniqueCode > 0 && (
             <div className="flex justify-between text-ts-kremMuted">
               <span className="flex items-center gap-1 text-[11px]">
                 Kode Unik Transfer
@@ -139,7 +145,9 @@ export function CartSummaryCard({
         <div className="pt-4 border-t border-white/[0.1] flex items-baseline justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-ts-kremMuted">Total Pembayaran</p>
-            <p className="text-[11px] text-ts-muted">Sudah termasuk kode unik</p>
+            <p className="text-[11px] text-ts-muted">
+              {isInstantPayment ? 'Sesuai nominal pas' : 'Sudah termasuk kode unik'}
+            </p>
           </div>
           <div className="text-right">
             <p className="text-xl sm:text-2xl font-black font-mono text-white text-ts-terracotta">
@@ -153,12 +161,21 @@ export function CartSummaryCard({
           type="button"
           onClick={onTriggerSubmit}
           disabled={isSubmitting || totalCartAmount === 0}
-          className="w-full py-3.5 rounded-xl bg-ts-terracotta hover:bg-ts-terracottaDark text-white font-bold text-sm tracking-wide transition-all shadow-lg shadow-ts-terracotta/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className={`w-full py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${
+            isInstantPayment
+              ? 'bg-sky-500 hover:bg-sky-600 text-white shadow-sky-500/20'
+              : 'bg-ts-terracotta hover:bg-ts-terracottaDark text-white shadow-ts-terracotta/20'
+          }`}
         >
           {isSubmitting ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Memproses Pesanan...</span>
+              <span>Memproses Transaksi...</span>
+            </>
+          ) : isInstantPayment ? (
+            <>
+              <Zap className="w-4 h-4" />
+              <span>Bayar Instan Sekarang (Midtrans)</span>
             </>
           ) : (
             <>
@@ -167,6 +184,12 @@ export function CartSummaryCard({
             </>
           )}
         </button>
+
+        <p className="text-[10px] text-center text-ts-muted">
+          {isInstantPayment
+            ? '⚡ Instan 24 Jam via GoPay, ShopeePay, QRIS, & Virtual Account'
+            : '📱 Scan QRIS atau transfer BCA manual + konfirmasi instan WhatsApp'}
+        </p>
       </div>
 
       {/* Trust Badges */}

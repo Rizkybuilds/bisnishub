@@ -24,4 +24,8 @@ export default defineConfig({
     port: 5173,
     open: false,
   },
+  test: {
+    include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}'],
+    exclude: ['tests/e2e/**', 'node_modules/**']
+  },
 });

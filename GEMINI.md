@@ -65,6 +65,19 @@ Tersedia 5 skill spesialis untuk perancangan, pengembangan, pengujian, dan keama
 | 🧪 Web QA & Testing | `web-qa-testing` | Otomasi pengujian E2E Playwright, unit/integration test Vitest, & skenario checkout |
 | 🛡️ Web Sec & Perf Engineer | `web-sec-perf` | Keamanan OWASP (XSS/CSRF/secrets), optimasi Core Web Vitals (LCP/CLS/INP), & SEO |
 
+## Creative & Growth Marketing Squad
+
+Tersedia 5 skill spesialis untuk narasi konversi, perancangan visual, periklanan berbayar, konten viral organik, dan loyalitas pelanggan:
+
+| Peran Marketing | Skill | Fokus Utama |
+|---|---|---|
+| ✍️ Conversion Wordsmith | `copywriter-pro` | Landing page, PDP konversi tinggi, VSL & video script, WA blast, objection handling |
+| 🎨 Creative Director | `creative-director` | Moodboard koleksi drop, panduan photoshoot, master prompt AI mockup, storyboard iklan |
+| 📈 Performance Ads Specialist | `performance-ads-specialist` | Meta/TikTok/Shopee Ads budget hemat (Rp25k-100k/hari), TOFU-MOFU-BOFU, Breakeven ROAS |
+| 📱 Viral Content Strategist | `content-strategist` | 4E content pillars, batching konten 30 hari, TikTok & IG Social SEO, brief kolaborasi UGC |
+| 🔁 Retention & CRM Expert | `retention-crm-expert` | Unboxing experience viral, alur WhatsApp pasca-beli, DTF care guide, VIP reorder engine |
+
+
 ### Cross-Referral
 
 Jika topik diskusi menyentuh area di luar keahlian peran yang sedang aktif,

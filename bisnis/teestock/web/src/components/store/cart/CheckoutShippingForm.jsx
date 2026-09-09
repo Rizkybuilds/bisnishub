@@ -1,15 +1,21 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { User, Phone, MapPin, Truck, AlertCircle } from 'lucide-react';
+import { User, Phone, MapPin, Truck, AlertCircle, Package, CreditCard, Zap, QrCode } from 'lucide-react';
 import { checkoutSchema } from '../../../schemas/checkoutSchema';
 import { SHIPPING_ZONES } from '../../../constants/pricing';
 import { formatRupiah } from '../../../utils/formatters';
+import { PAYMENT_METHODS, PAYMENT_PROVIDERS } from '../../../services/paymentAdapter';
+import { AVAILABLE_COURIERS } from '../../../services/shippingApi';
 
 export function CheckoutShippingForm({
   profile,
   onSubmitOrder,
   onShippingZoneChange,
+  onCourierChange,
+  selectedPaymentMethod = PAYMENT_PROVIDERS.MANUAL_QRIS,
+  onPaymentMethodChange,
+  weightInfo = null,
   isSubmitting,
   formRef
 }) {
@@ -33,13 +39,21 @@ export function CheckoutShippingForm({
     }
   });
 
-  // Watch shippingZone to synchronize rate calculations in parent summary
+  // Watch shippingZone and courier to synchronize rate calculations in parent summary
   const currentZone = watch('shippingZone');
+  const currentCourier = watch('courier');
+
   useEffect(() => {
     if (currentZone && onShippingZoneChange) {
       onShippingZoneChange(currentZone);
     }
   }, [currentZone, onShippingZoneChange]);
+
+  useEffect(() => {
+    if (currentCourier && onCourierChange) {
+      onCourierChange(currentCourier);
+    }
+  }, [currentCourier, onCourierChange]);
 
   // Autofill from user profile if available
   useEffect(() => {
@@ -56,7 +70,7 @@ export function CheckoutShippingForm({
     <form
       ref={formRef}
       onSubmit={handleSubmit(onSubmitOrder)}
-      className="p-6 rounded-3xl bg-white/[0.02] border border-white/[0.08] space-y-5"
+      className="p-6 rounded-3xl bg-white/[0.02] border border-white/[0.08] space-y-6"
     >
       <div className="pb-3 border-b border-white/[0.08] flex items-center justify-between">
         <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
@@ -165,6 +179,24 @@ export function CheckoutShippingForm({
         )}
       </div>
 
+      {/* Package Weight Live Indicator */}
+      {weightInfo && weightInfo.actualWeightGrams > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-xs">
+          <div className="flex items-center gap-2 text-ts-kremMuted">
+            <Package className="w-4 h-4 text-ts-mustard shrink-0" />
+            <span>
+              Total Berat Paket: <strong className="text-white font-mono">{weightInfo.actualWeightGrams} gram</strong> (termasuk polymailer)
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-ts-muted uppercase">Beban Ekspedisi:</span>
+            <span className="px-2 py-0.5 rounded-lg bg-ts-mustard/20 border border-ts-mustard/40 text-ts-mustard font-bold text-xs font-mono">
+              {weightInfo.billableWeightKg} kg
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Zona Ongkir & Pilihan Kurir */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
         <div className="space-y-1.5">
@@ -178,7 +210,7 @@ export function CheckoutShippingForm({
           >
             {SHIPPING_ZONES.map((zone) => (
               <option key={zone.id} value={zone.id} className="bg-ts-surface text-white">
-                {zone.name} ({formatRupiah(zone.rate)} • {zone.eta})
+                {zone.name} ({formatRupiah(zone.rate)}/kg • {zone.eta})
               </option>
             ))}
           </select>
@@ -192,11 +224,59 @@ export function CheckoutShippingForm({
             {...register('courier')}
             className="w-full px-3.5 py-2.5 rounded-xl bg-ts-surface border border-white/[0.12] text-xs text-white focus:outline-none focus:border-ts-terracotta transition-colors cursor-pointer"
           >
-            <option value="J&T Express" className="bg-ts-surface text-white">J&T Express (Rekomendasi Cepat)</option>
-            <option value="SiCepat Reguler" className="bg-ts-surface text-white">SiCepat Reguler</option>
-            <option value="JNE Reguler" className="bg-ts-surface text-white">JNE Reguler</option>
-            <option value="AnterAja" className="bg-ts-surface text-white">AnterAja</option>
+            {AVAILABLE_COURIERS.map((c) => (
+              <option key={c.id} value={c.name} className="bg-ts-surface text-white">
+                {c.name} ({c.service} • {c.badge})
+              </option>
+            ))}
           </select>
+        </div>
+      </div>
+
+      {/* Dynamic Payment Method Selector */}
+      <div className="space-y-3 pt-3 border-t border-white/[0.08]">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+            <CreditCard className="w-4 h-4 text-ts-teal" />
+            Metode Pembayaran
+          </label>
+          <span className="text-[11px] text-ts-kremMuted">Pilih sistem verifikasi</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {PAYMENT_METHODS.map((method) => {
+            const isSelected = selectedPaymentMethod === method.id;
+            const isInstant = method.id === PAYMENT_PROVIDERS.MIDTRANS_SNAP;
+            return (
+              <button
+                key={method.id}
+                type="button"
+                onClick={() => onPaymentMethodChange && onPaymentMethodChange(method.id)}
+                className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between space-y-2.5 ${
+                  isSelected
+                    ? 'bg-ts-surface border-ts-terracotta shadow-glow-teal ring-1 ring-ts-terracotta/80'
+                    : 'bg-white/[0.02] border-white/[0.08] hover:bg-white/[0.05]'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                    {isInstant ? (
+                      <Zap className="w-4 h-4 text-sky-400 shrink-0" />
+                    ) : (
+                      <QrCode className="w-4 h-4 text-ts-green shrink-0" />
+                    )}
+                    <span>{method.name}</span>
+                  </span>
+                  <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded border whitespace-nowrap ${method.badgeColor}`}>
+                    {method.badge}
+                  </span>
+                </div>
+                <p className="text-[11px] text-ts-kremMuted leading-relaxed">
+                  {method.description}
+                </p>
+              </button>
+            );
+          })}
         </div>
       </div>
     </form>

@@ -1,17 +1,22 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, ArrowRight, CheckCircle2, Tag } from 'lucide-react';
+import { ShoppingBag, ArrowRight, CheckCircle2, Tag, Zap, ShieldCheck, Clock } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { createPublicOrder } from '../../services/ordersApi';
 import { validateVoucher } from '../../services/vouchersApi';
 import { 
   calculateBundleDiscount, 
-  BUNDLE_DEALS, 
-  SHIPPING_ZONES, 
   getSizeSurcharge 
 } from '../../constants/pricing';
+import { calculateOrderWeight, calculateShippingFee } from '../../services/shippingApi';
+import { 
+  PAYMENT_PROVIDERS, 
+  createPaymentSession, 
+  formatMidtransTransactionParameter 
+} from '../../services/paymentAdapter';
 import { sanitizePhoneNumber, generateOrderCheckoutWhatsAppText } from '../../utils/whatsappTemplates';
+import { formatRupiah } from '../../utils/formatters';
 import { QrisPaymentBox } from '../../components/store/QrisPaymentBox';
 import { CartItemList } from '../../components/store/cart/CartItemList';
 import { CheckoutShippingForm } from '../../components/store/cart/CheckoutShippingForm';
@@ -25,8 +30,10 @@ export function CartPage() {
   const [orderComplete, setOrderComplete] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shippingZone, setShippingZone] = useState('jawa_lainnya');
+  const [courier, setCourier] = useState('J&T Express');
+  const [paymentMethod, setPaymentMethod] = useState(PAYMENT_PROVIDERS.MANUAL_QRIS);
 
-  // 3-digit random unique code for payment reconciliation
+  // 3-digit random unique code for manual payment reconciliation
   const [uniqueCode] = useState(() => Math.floor(100 + Math.random() * 899));
 
   // Voucher states
@@ -43,9 +50,15 @@ export function CartPage() {
     .reduce((acc, item) => acc + (item.qty || 1), 0);
   const bundleDiscount = calculateBundleDiscount(eligibleGraphicQty, role);
 
-  // Shipping rate calculations
-  const selectedZone = SHIPPING_ZONES.find(z => z.id === shippingZone) || SHIPPING_ZONES[1];
-  const rawShippingFee = cart.length > 0 ? selectedZone.rate : 0;
+  // Dynamic Weight-Based Shipping calculations
+  const weightInfo = calculateOrderWeight(cart);
+  const shippingCalculation = calculateShippingFee({
+    zoneId: shippingZone,
+    cartItems: cart,
+    courierName: courier
+  });
+
+  const rawShippingFee = cart.length > 0 ? shippingCalculation.shippingFee : 0;
   const isFreeShippingVoucher = appliedVoucher?.type === 'free_shipping';
   const shippingDiscount = isFreeShippingVoucher ? Math.min(rawShippingFee, discountAmount) : 0;
   const shippingFee = Math.max(0, rawShippingFee - shippingDiscount);
@@ -91,8 +104,10 @@ export function CartPage() {
 
   effectiveProductDiscount = Math.min(effectiveProductDiscount, maxAllowableDiscount);
 
+  const isInstantPayment = paymentMethod === PAYMENT_PROVIDERS.MIDTRANS_SNAP;
   const baseGrandTotal = Math.max(0, totalCartAmount - effectiveProductDiscount) + shippingFee;
-  const grandTotal = baseGrandTotal > 0 ? (baseGrandTotal + uniqueCode) : 0;
+  // Instant payment uses exact total, manual QRIS includes unique 3-digit code
+  const grandTotal = baseGrandTotal > 0 ? (isInstantPayment ? baseGrandTotal : baseGrandTotal + uniqueCode) : 0;
 
   const handleApplyVoucher = async (codeToApply = null) => {
     const code = codeToApply || voucherInput;
@@ -147,25 +162,46 @@ export function CartPage() {
         phone: `${formData.phone.trim()} (${fullCityDisplay})`,
         city: fullCityDisplay,
         address: fullAddressDisplay,
-        shipping_zone: selectedZone.name,
+        shipping_zone: `${shippingCalculation.zoneName} (${formData.courier || courier})`,
         shipping_fee: shippingFee,
+        package_weight_grams: weightInfo.actualWeightGrams,
+        billable_weight_kg: weightInfo.billableWeightKg,
         channel: 'web',
         tier: role || 'retail',
-        status: 'pending',
+        status: isInstantPayment ? 'processing' : 'pending',
         price: grandTotal,
         total_amount: grandTotal,
         discount: effectiveProductDiscount + shippingDiscount,
         discount_amount: effectiveProductDiscount + shippingDiscount,
         voucher_code: appliedVoucher?.code || null,
-        unique_code: uniqueCode,
-        uniqueCode: uniqueCode,
+        unique_code: isInstantPayment ? null : uniqueCode,
+        uniqueCode: isInstantPayment ? null : uniqueCode,
         user_id: user?.id || null,
-        payment_method: 'qris_manual',
+        payment_method: paymentMethod,
         items: [...cart],
         date: new Date().toISOString()
       };
 
+      // 1. Persist order to Supabase / Local database
       await createPublicOrder(orderRecord, cart);
+
+      // 2. Dispatch Payment Session
+      const paymentSession = await createPaymentSession(orderRecord, paymentMethod);
+
+      // Handle Midtrans Snap popup if available in browser
+      if (isInstantPayment && typeof window !== 'undefined' && window.snap && paymentSession.token) {
+        window.snap.pay(paymentSession.token, {
+          onSuccess: (res) => {
+            console.log('Midtrans payment success:', res);
+          },
+          onPending: (res) => {
+            console.log('Midtrans payment pending:', res);
+          },
+          onError: (err) => {
+            console.error('Midtrans payment error:', err);
+          }
+        });
+      }
 
       setOrderComplete({
         orderId,
@@ -174,14 +210,17 @@ export function CartPage() {
         city: cleanCity,
         subdistrict: cleanSubdistrict,
         address: cleanAddress,
-        shippingZone: selectedZone.name,
+        shippingZone: shippingCalculation.zoneName,
         shippingFee,
-        courier: formData.courier || 'J&T Express',
+        courier: formData.courier || courier,
         items: [...cart],
         baseTotal: baseGrandTotal,
-        uniqueCode,
+        uniqueCode: isInstantPayment ? 0 : uniqueCode,
         total: grandTotal,
-        itemCount: cart.length
+        itemCount: cart.length,
+        paymentMethod,
+        isInstantPayment,
+        paymentSession
       });
 
       clearCart();
@@ -193,7 +232,7 @@ export function CartPage() {
     }
   };
 
-  // Order Complete Screen (QRIS Payment Display)
+  // Order Complete Screen (QRIS Payment Display or Instant Gateway Confirmation)
   if (orderComplete) {
     const merchantName = storeSettings?.qrisMerchantName || 'TeeStock Apparel';
     const targetPhone = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
@@ -222,27 +261,76 @@ export function CartPage() {
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ts-terracotta/15 border border-ts-terracotta/30 text-xs font-mono font-bold text-ts-terracotta">
             Pesanan #{orderComplete.orderId}
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Pesanan Berhasil Dicatat!</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            {orderComplete.isInstantPayment ? 'Transaksi Berhasil Diinisialisasi!' : 'Pesanan Berhasil Dicatat!'}
+          </h2>
           <p className="text-xs sm:text-sm text-ts-kremMuted max-w-md mx-auto">
-            Silakan scan QRIS di bawah ini dan transfer nominal <strong>persis sampai 3 angka terakhir</strong> untuk verifikasi instan.
+            {orderComplete.isInstantPayment 
+              ? 'Pembayaran instan melalui sistem otomatis Midtrans. Status pesanan Anda langsung diperbarui di sistem antrean produksi.'
+              : 'Silakan scan QRIS di bawah ini dan transfer nominal persis sampai 3 angka terakhir untuk verifikasi instan.'}
           </p>
         </div>
 
-        <QrisPaymentBox
-          orderId={orderComplete.orderId}
-          customerName={orderComplete.customerName}
-          phone={orderComplete.phone}
-          baseTotal={orderComplete.baseTotal}
-          uniqueCode={orderComplete.uniqueCode}
-          totalTransfer={orderComplete.total}
-          merchantName={merchantName}
-          nmid={storeSettings?.qrisNmid || 'ID102609070001'}
-          qrisImageUrl={storeSettings?.qrisImageUrl || ''}
-          bankName={storeSettings?.bankName || 'BCA'}
-          bankAccountNo={storeSettings?.bankAccountNo || ''}
-          bankAccountHolder={storeSettings?.bankAccountHolder || 'TeeStock Apparel'}
-          waUrl={waUrl}
-        />
+        {orderComplete.isInstantPayment ? (
+          <div className="p-6 rounded-3xl bg-ts-surface border border-sky-500/30 space-y-4 text-left shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-sky-400" />
+                Gateway Pembayaran Instan
+              </span>
+              <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-mono text-[11px] font-bold">
+                Midtrans Snap
+              </span>
+            </div>
+
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between text-ts-kremMuted">
+                <span>Nama Pemesan:</span>
+                <strong className="text-white">{orderComplete.customerName}</strong>
+              </div>
+              <div className="flex justify-between text-ts-kremMuted">
+                <span>Total Tagihan:</span>
+                <strong className="text-sky-300 font-mono text-base">{formatRupiah(orderComplete.total)}</strong>
+              </div>
+              <div className="flex justify-between text-ts-kremMuted">
+                <span>Kurir Pengiriman:</span>
+                <span className="text-white">{orderComplete.courier} ({orderComplete.shippingZone})</span>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-200 flex items-start gap-2">
+              <ShieldCheck className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+              <p className="leading-relaxed">
+                Tanda terima pesanan otomatis dikirimkan ke WhatsApp <strong className="text-white font-mono">{orderComplete.phone}</strong>. Pesanan Anda segera disiapkan oleh tim produksi.
+              </p>
+            </div>
+
+            <a href={waUrl} target="_blank" rel="noreferrer" className="block w-full pt-1">
+              <button
+                type="button"
+                className="w-full py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Konfirmasi Status Pesanan ke Admin via WhatsApp</span>
+              </button>
+            </a>
+          </div>
+        ) : (
+          <QrisPaymentBox
+            orderId={orderComplete.orderId}
+            customerName={orderComplete.customerName}
+            phone={orderComplete.phone}
+            baseTotal={orderComplete.baseTotal}
+            uniqueCode={orderComplete.uniqueCode}
+            totalTransfer={orderComplete.total}
+            merchantName={merchantName}
+            nmid={storeSettings?.qrisNmid || 'ID102609070001'}
+            qrisImageUrl={storeSettings?.qrisImageUrl || ''}
+            bankName={storeSettings?.bankName || 'BCA'}
+            bankAccountNo={storeSettings?.bankAccountNo || ''}
+            bankAccountHolder={storeSettings?.bankAccountHolder || 'TeeStock Apparel'}
+            waUrl={waUrl}
+          />
+        )}
 
         <div className="pt-2">
           <Link to="/" className="inline-block text-xs font-medium text-ts-kremMuted hover:text-white transition-colors">
@@ -313,6 +401,10 @@ export function CartPage() {
             profile={profile}
             onSubmitOrder={handleProcessOrder}
             onShippingZoneChange={setShippingZone}
+            onCourierChange={setCourier}
+            selectedPaymentMethod={paymentMethod}
+            onPaymentMethodChange={setPaymentMethod}
+            weightInfo={weightInfo}
             isSubmitting={isSubmitting}
           />
         </div>
@@ -337,6 +429,8 @@ export function CartPage() {
             voucherMsg={voucherMsg}
             isSubmitting={isSubmitting}
             onTriggerSubmit={handleTriggerFormSubmit}
+            weightInfo={weightInfo}
+            selectedPaymentMethod={paymentMethod}
           />
         </div>
       </div>
