@@ -4,6 +4,9 @@ import {
   calculateBundleDiscount, 
   getBlankPricing, 
   getShippingRateByZone,
+  calculateProductHPPAndARB,
+  applyARBGuard,
+  UNIT_COST_STANDARDS,
   SIZE_SURCHARGES,
   BUNDLE_DEALS,
   SHIPPING_ZONES
@@ -127,6 +130,75 @@ describe('TeeStock Financial & Pricing Engine', () => {
 
     it('memberikan fallback Rp 15.000 jika zona tidak dikenali', () => {
       expect(getShippingRateByZone('unknown_zone')).toBe(15000);
+    });
+  });
+
+  describe('calculateProductHPPAndARB() — HPP & Auto Rijek Bawah (ARB)', () => {
+    it('menghitung HPP Kaos Polos Blank (Kaos + Packing)', () => {
+      const result = calculateProductHPPAndARB({
+        garmentCost: 33000,
+        isBlank: true
+      });
+      // HPP = 33.000 + 2.000 = 35.000
+      expect(result.packCost).toBe(2000);
+      expect(result.electCost).toBe(0);
+      expect(result.dtfCost).toBe(0);
+      expect(result.totalHPP).toBe(35000);
+      // ARB = 35.000 * 1.10 = 38.500 -> Ceil ke 39.000
+      expect(result.arbFloorPrice).toBe(39000);
+    });
+
+    it('menghitung HPP Kaos Grafis A3 (Kaos + DTF + Packing + Listrik)', () => {
+      const result = calculateProductHPPAndARB({
+        garmentCost: 38000, // NSA 7200
+        printSize: 'a3',
+        isBlank: false
+      });
+      // HPP = 38.000 (kaos) + 12.500 (DTF A3) + 2.000 (pack) + 1.000 (listrik) = 53.500
+      expect(result.dtfCost).toBe(12500);
+      expect(result.packCost).toBe(2000);
+      expect(result.electCost).toBe(1000);
+      expect(result.totalHPP).toBe(53500);
+      // ARB = 53.500 * 1.10 = 58.850 -> Ceil ke 59.000
+      expect(result.arbFloorPrice).toBe(59000);
+    });
+
+    it('menghitung HPP Kaos Grafis Double A3 (Full Depan + Belakang)', () => {
+      const result = calculateProductHPPAndARB({
+        garmentCost: 38000,
+        printSize: 'double_a3',
+        isBlank: false
+      });
+      // HPP = 38.000 + 24.000 + 2.000 + 1.000 = 65.000
+      expect(result.dtfCost).toBe(24000);
+      expect(result.totalHPP).toBe(65000);
+      // ARB = 65.000 * 1.10 = 71.500 -> Ceil ke 72.000
+      expect(result.arbFloorPrice).toBe(72000);
+    });
+  });
+
+  describe('applyARBGuard() — Proteksi Diskon/Promo agar Tidak Tembus ARB', () => {
+    const arbFloor = 59000;
+
+    it('mengizinkan harga promo jika berada di atas ARB', () => {
+      const promoCheck = applyARBGuard(89000, arbFloor);
+      expect(promoCheck.finalPrice).toBe(89000);
+      expect(promoCheck.isFloorClamped).toBe(false);
+      expect(promoCheck.message).toBeNull();
+    });
+
+    it('mengizinkan harga promo jika tepat sama dengan ARB', () => {
+      const promoCheck = applyARBGuard(59000, arbFloor);
+      expect(promoCheck.finalPrice).toBe(59000);
+      expect(promoCheck.isFloorClamped).toBe(false);
+    });
+
+    it('MENOLAK dan MENGUNCI harga ke floor jika promo tembus di bawah ARB', () => {
+      // Misal diskon bug / diskon kelewat besar sehingga harga jatuh ke 45.000
+      const promoCheck = applyARBGuard(45000, arbFloor);
+      expect(promoCheck.finalPrice).toBe(59000);
+      expect(promoCheck.isFloorClamped).toBe(true);
+      expect(promoCheck.message).toContain('Diskon optimal maksimal telah diterapkan');
     });
   });
 });

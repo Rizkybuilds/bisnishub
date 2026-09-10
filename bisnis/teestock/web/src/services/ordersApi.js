@@ -1,5 +1,4 @@
 import { supabase } from './supabase';
-import { SEED_ORDERS } from '../constants/seedData';
 
 const LOCAL_STORAGE_ADMIN_KEY = 'teestock_orders_list';
 const LOCAL_STORAGE_MY_ORDERS_KEY = 'teestock_my_orders';
@@ -106,7 +105,7 @@ export async function getOrders() {
 
     if (error || !data || data.length === 0) {
       const cached = localStorage.getItem(LOCAL_STORAGE_ADMIN_KEY);
-      return cached ? JSON.parse(cached) : SEED_ORDERS;
+      return cached ? JSON.parse(cached) : [];
     }
 
     const normalized = data.map(normalizeOrderRecord);
@@ -114,7 +113,7 @@ export async function getOrders() {
     return normalized;
   } catch (err) {
     const cached = localStorage.getItem(LOCAL_STORAGE_ADMIN_KEY);
-    return cached ? JSON.parse(cached) : SEED_ORDERS;
+    return cached ? JSON.parse(cached) : [];
   }
 }
 
@@ -331,19 +330,8 @@ export async function trackSingleOrder(term, phoneLast4 = null) {
     if (matched.length > 0) return matched;
   } catch (e) {}
 
-  // 4. Fallback demo SEED_ORDERS jika mencari id seed contoh
-  const digitsOnly = cleanTerm.replace(/\D/g, '');
-  const seedMatched = SEED_ORDERS.filter(o => {
-    const oDigits = (o.phone || '').replace(/\D/g, '');
-    return (
-      o.id.toLowerCase() === cleanTermLower ||
-      (o.trackingNo && o.trackingNo.toLowerCase() === cleanTermLower) ||
-      (o.phone && o.phone.includes(cleanTermLower)) ||
-      (digitsOnly.length >= 6 && oDigits.includes(digitsOnly))
-    );
-  });
-
-  return seedMatched.map(normalizeOrderRecord);
+  // 4. Jika tidak ditemukan di mana pun
+  return [];
 }
 
 /**

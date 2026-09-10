@@ -41,13 +41,9 @@ export function HomePage() {
   const cleanWhatsapp = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
   const shopeeUrl = storeSettings?.shopeeUrl || 'https://shopee.co.id';
 
-  // Drop #01 "Identity" - 6 Hero Designs
-  const drop01Skus = [
-    'TS-PRO-001', 'TS-PRO-002', 
-    'TS-KOM-001', 'TS-LOK-001', 
-    'TS-REC-001', 'TS-FAN-001'
-  ];
-  
+  const activeGraphicProducts = catalog.filter(p => p.series !== 'blank' && p.status === 'active').slice(0, 6);
+  const blankProducts = catalog.filter(p => p.series === 'blank').slice(0, 4);
+
   const homeSchema = {
     "@context": "https://schema.org",
     "@type": "ClothingStore",
@@ -63,17 +59,6 @@ export function HomePage() {
       "addressCountry": "ID"
     }
   };
-  
-  const drop01Products = drop01Skus
-    .map(sku => catalog.find(p => p.sku === sku))
-    .filter(Boolean);
-
-  // Fallback to active non-blank products if specific SKUs not found
-  const activeGraphicProducts = drop01Products.length >= 3 
-    ? drop01Products 
-    : catalog.filter(p => p.series !== 'blank' && p.status === 'active').slice(0, 6);
-
-  const blankProducts = catalog.filter(p => p.series === 'blank').slice(0, 4);
 
   // Editorial Studio Ticker items
   const tickerItems = [
@@ -199,25 +184,56 @@ export function HomePage() {
 
           <div className="flex items-center gap-3 shrink-0">
             <Link
-              to="/katalog"
+              to={activeGraphicProducts.length > 0 ? "/katalog" : "/polos"}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white/[0.05] hover:bg-white/[0.1] text-white border border-white/15 transition-all"
             >
-              <span>Lihat Semua Katalog ({catalog.length})</span>
+              <span>{activeGraphicProducts.length > 0 ? `Lihat Semua Katalog (${catalog.length})` : `Buka Katalog Polos (${blankProducts.length})`}</span>
               <ArrowRight className="w-3.5 h-3.5 text-ts-terracotta" />
             </Link>
           </div>
         </div>
 
-        {/* 6 Drop Designs Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {activeGraphicProducts.map((p) => (
-            <ProductCard
-              key={p.sku}
-              product={p}
-              isBlank={false}
-            />
-          ))}
-        </div>
+        {/* Drop Designs Grid or Curation Teaser */}
+        {activeGraphicProducts.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {activeGraphicProducts.map((p) => (
+              <ProductCard
+                key={p.sku}
+                product={p}
+                isBlank={false}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 sm:p-12 rounded-3xl bg-[#141312] border border-white/[0.08] text-center space-y-5 max-w-2xl mx-auto">
+            <div className="w-14 h-14 rounded-2xl bg-ts-terracotta/10 text-ts-terracotta flex items-center justify-center mx-auto border border-ts-terracotta/20">
+              <Sparkles className="w-7 h-7 animate-pulse" />
+            </div>
+            <div className="space-y-2">
+              <span className="text-[11px] font-mono font-bold text-ts-mustard tracking-wider uppercase bg-ts-mustard/10 px-3 py-1 rounded-full border border-ts-mustard/20">
+                DROP ARCHIVE IN PREPARATION
+              </span>
+              <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
+                Koleksi Drop Grafis Sedang Dikurasi
+              </h3>
+              <p className="text-xs sm:text-sm text-ts-kremMuted max-w-lg mx-auto leading-relaxed">
+                Katalog grafis bertema sedang dipersiapkan. Saat ini stok ready berfokus pada <strong className="text-white">Kaos Polos New States Apparel (NSA) Original</strong> dan layanan <strong className="text-white">Custom Sablon DTF Satuan</strong> tanpa minimum order.
+              </p>
+            </div>
+            <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
+              <Link to="/polos">
+                <Button variant="primary" size="md" icon={Package} className="w-full sm:w-auto font-bold">
+                  Beli Kaos Polos NSA Original
+                </Button>
+              </Link>
+              <Link to="/custom-order">
+                <Button variant="secondary" size="md" icon={Palette} className="w-full sm:w-auto font-bold border-white/15">
+                  Cetak Desain Custom Sendiri
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Launch Studio Pass Banner */}
         <div className="p-5 sm:p-6 rounded-2xl bg-[#141312] border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -382,7 +398,7 @@ export function HomePage() {
             to="/polos"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-bold bg-white/[0.04] hover:bg-white/[0.08] text-ts-krem border border-white/[0.1] hover:border-white/25 transition-all"
           >
-            <span>LIHAT 12 MODEL BLANK</span>
+            <span>LIHAT SEMUA MODEL BLANK ({blankProducts.length})</span>
             <ArrowRight className="w-3.5 h-3.5 text-ts-terracotta" />
           </Link>
         </div>

@@ -1,7 +1,55 @@
 import { supabase } from './supabase';
-import { SEED_PRODUCTS } from '../constants/seedData';
 
 const LOCAL_STORAGE_KEY = 'teestock_catalog_products';
+
+/**
+ * Filter out any legacy mockup seed products that might be lingering in browser localStorage
+ */
+function sanitizeCatalog(list) {
+  if (!Array.isArray(list)) return [];
+  return list.filter(p => {
+    if (!p || !p.sku) return false;
+    // Reject legacy dummy SKUs from the development mockup phase
+    const isMockSku = /^(TS-PRO-|TS-KOM-|TS-LOK-|TS-REC-|TS-FAN-)/.test(p.sku);
+    return !isMockSku;
+  });
+}
+
+/**
+ * Standardize product data structure between PostgreSQL snake_case and UI camelCase
+ */
+export function normalizeProduct(p) {
+  if (!p) return null;
+  return {
+    ...p,
+    sku: p.sku,
+    name: p.name,
+    series: p.series || 'blank',
+    seriesName: p.series_name ?? p.seriesName ?? (p.series === 'blank' ? 'NSA Blank Apparel' : 'Curated'),
+    seriesColor: p.series_color ?? p.seriesColor ?? '#EBE3D5',
+    niche: p.niche || '',
+    batch: p.batch || '',
+    template: p.template || 'blank',
+    status: p.status || 'active',
+    filePath: p.file_path ?? p.filePath ?? '',
+    file_path: p.file_path ?? p.filePath ?? '',
+    colors: p.colors || '',
+    sizes: p.sizes || '',
+    priceRetail: Number(p.price_retail ?? p.priceRetail ?? 0),
+    price_retail: Number(p.price_retail ?? p.priceRetail ?? 0),
+    priceReseller: Number(p.price_reseller ?? p.priceReseller ?? 0),
+    price_reseller: Number(p.price_reseller ?? p.priceReseller ?? 0),
+    costBlank: Number(p.cost_blank ?? p.costBlank ?? 0),
+    cost_blank: Number(p.cost_blank ?? p.costBlank ?? 0),
+    costDtf: Number(p.cost_dtf ?? p.costDtf ?? 0),
+    cost_dtf: Number(p.cost_dtf ?? p.costDtf ?? 0),
+    featured: Boolean(p.featured),
+    description: p.description || '',
+    variantImages: p.variant_images ?? p.variantImages ?? null,
+    generalImages: p.general_images ?? p.generalImages ?? null,
+    sizeGuideUrl: p.size_guide_url ?? p.sizeGuideUrl ?? null
+  };
+}
 
 export async function getProducts() {
   try {
@@ -10,128 +58,75 @@ export async function getProducts() {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error || !data || data.length === 0) {
+    if (error) {
+      console.warn("Supabase ts_products fetch error, using local cache fallback:", error.message);
       const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (!cached) return SEED_PRODUCTS;
+      if (!cached) return [];
       try {
         const parsed = JSON.parse(cached);
-        const seedMap = new Map(SEED_PRODUCTS.map(p => [p.sku, p]));
-        const updated = parsed.map(p => {
-          const seed = seedMap.get(p.sku);
-          if (!seed) return p;
-          return {
-            ...p,
-            variantImages: seed.variantImages,
-            generalImages: seed.generalImages,
-            colors: seed.colors || p.colors,
-            sizes: seed.sizes || p.sizes,
-            ...(seed.series === 'blank' ? {
-              filePath: seed.filePath,
-              cititexCatId: seed.cititexCatId,
-              priceRetail: seed.priceRetail,
-              priceReseller: seed.priceReseller,
-              costBlank: seed.costBlank,
-              description: seed.description
-            } : {})
-          };
-        });
-        const existingSkus = new Set(updated.map(p => p.sku));
-        const missing = SEED_PRODUCTS.filter(p => !existingSkus.has(p.sku));
-        const finalProducts = [...updated, ...missing];
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(finalProducts));
-        return finalProducts;
+        return sanitizeCatalog(parsed).map(normalizeProduct);
       } catch (e) {
-        return SEED_PRODUCTS;
+        return [];
       }
     }
-    
-    // Merge DB products with SEED_PRODUCTS to guarantee full catalog availability
-    const seedMap = new Map(SEED_PRODUCTS.map(p => [p.sku, p]));
-    const dbSkus = new Set(data.map(p => p.sku));
-    const enrichedDb = data.map(p => {
-      const seed = seedMap.get(p.sku);
-      return {
-        ...seed,
-        ...p,
-        priceRetail: p.price_retail ?? p.priceRetail ?? seed?.priceRetail,
-        priceReseller: p.price_reseller ?? p.priceReseller ?? seed?.priceReseller,
-        costBlank: p.cost_blank ?? p.costBlank ?? seed?.costBlank,
-        costDtf: p.cost_dtf ?? p.costDtf ?? seed?.costDtf,
-        filePath: p.file_path ?? p.filePath ?? seed?.filePath,
-        seriesName: p.series_name ?? p.seriesName ?? seed?.seriesName,
-        seriesColor: p.series_color ?? p.seriesColor ?? seed?.seriesColor,
-        variantImages: p.variant_images ?? p.variantImages ?? seed?.variantImages,
-        generalImages: p.general_images ?? p.generalImages ?? seed?.generalImages,
-        colors: p.colors || seed?.colors,
-        sizes: p.sizes || seed?.sizes
-      };
-    });
-    const missing = SEED_PRODUCTS.filter(p => !dbSkus.has(p.sku));
-    const finalProducts = [...enrichedDb, ...missing];
 
-    // Cache locally
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(finalProducts));
-    return finalProducts;
+    if (!data || data.length === 0) {
+      // Supabase returned clean 0 products
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify([]));
+      return [];
+    }
+
+    // Process and normalize real Supabase products
+    const normalized = data.map(normalizeProduct);
+
+    // Cache to localStorage
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(normalized));
+    return normalized;
   } catch (err) {
+    console.warn("Network error during getProducts, checking cache:", err);
     const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!cached) return SEED_PRODUCTS;
+    if (!cached) return [];
     try {
       const parsed = JSON.parse(cached);
-      const seedMap = new Map(SEED_PRODUCTS.map(p => [p.sku, p]));
-      const updated = parsed.map(p => {
-        const seed = seedMap.get(p.sku);
-        if (!seed) return p;
-        return {
-          ...p,
-          variantImages: seed.variantImages,
-          generalImages: seed.generalImages,
-          colors: seed.colors || p.colors,
-          sizes: seed.sizes || p.sizes,
-          ...(seed.series === 'blank' ? {
-            filePath: seed.filePath,
-            cititexCatId: seed.cititexCatId,
-            priceRetail: seed.priceRetail,
-            priceReseller: seed.priceReseller,
-            costBlank: seed.costBlank,
-            description: seed.description
-          } : {})
-        };
-      });
-      const existingSkus = new Set(updated.map(p => p.sku));
-      const missing = SEED_PRODUCTS.filter(p => !existingSkus.has(p.sku));
-      const finalProducts = [...updated, ...missing];
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(finalProducts));
-      return finalProducts;
+      return sanitizeCatalog(parsed).map(normalizeProduct);
     } catch (e) {
-      return SEED_PRODUCTS;
+      return [];
     }
   }
 }
 
 export async function saveProduct(product) {
-  // Update local storage first
+  const normalizedInput = normalizeProduct(product);
+
+  // Update local storage first for instant feedback
   const current = await getProducts();
-  const index = current.findIndex(p => p.sku === product.sku);
+  const index = current.findIndex(p => p.sku === normalizedInput.sku);
   let updated;
   if (index !== -1) {
     updated = [...current];
-    updated[index] = { ...updated[index], ...product };
+    updated[index] = { ...updated[index], ...normalizedInput };
   } else {
-    updated = [product, ...current];
+    updated = [normalizedInput, ...current];
   }
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
 
-  // Try sync to Supabase
+  // Sync to Supabase
   try {
     await supabase.from('ts_products').upsert({
-      sku: product.sku,
-      name: product.name,
-      series: product.series,
-      niche: product.niche,
-      file_path: product.filePath || product.file_path,
-      price_retail: product.priceRetail || product.price_retail,
-      price_reseller: product.priceReseller || product.price_reseller,
-      status: product.status || 'active'
+      sku: normalizedInput.sku,
+      name: normalizedInput.name,
+      series: normalizedInput.series,
+      niche: normalizedInput.niche,
+      file_path: normalizedInput.filePath,
+      price_retail: normalizedInput.priceRetail,
+      price_reseller: normalizedInput.priceReseller,
+      cost_blank: normalizedInput.costBlank,
+      cost_dtf: normalizedInput.costDtf,
+      colors: normalizedInput.colors,
+      sizes: normalizedInput.sizes,
+      description: normalizedInput.description,
+      status: normalizedInput.status || 'active',
+      featured: normalizedInput.featured
     });
   } catch (err) {
     console.warn("Could not sync to Supabase:", err);

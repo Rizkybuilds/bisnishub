@@ -2,11 +2,11 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => {
   test('Alur Lengkap Transaksi: Katalog -> PDP -> Keranjang -> Voucher -> Checkout QRIS -> Tracking Status', async ({ page }) => {
-    // 1. Kunjungi Halaman Katalog
-    await page.goto('/katalog');
+    // 1. Kunjungi Halaman Katalog Kaos Polos NSA Original (Real Supabase Catalog)
+    await page.goto('/polos');
     await expect(page).toHaveTitle(/TeeStock/i);
 
-    // Pastikan etalase menampilkan kartu produk
+    // Pastikan etalase menampilkan kartu produk NSA
     const productCards = page.locator('a[href^="/produk/"]');
     await expect(productCards.first()).toBeVisible({ timeout: 10000 });
 
@@ -79,8 +79,8 @@ test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => 
   });
 
   test('Validasi form mencegah submission jika nomor HP tidak valid', async ({ page }) => {
-    // 1. Kunjungi katalog dan masukkan produk ke troli
-    await page.goto('/katalog');
+    // 1. Kunjungi katalog polos dan masukkan produk ke troli
+    await page.goto('/polos');
     const product = page.locator('a[href^="/produk/"]').first();
     await expect(product).toBeVisible({ timeout: 10000 });
     await product.click();
@@ -156,5 +156,12 @@ test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => 
 
     const blankCards = page.locator('a[href^="/produk/"]');
     await expect(blankCards.first()).toBeVisible({ timeout: 10000 });
+  });
+
+  test('Halaman Katalog Grafis (/katalog) menampilkan status kurasi elegan jika belum ada produk grafis', async ({ page }) => {
+    await page.goto('/katalog');
+    await expect(page).toHaveTitle(/TeeStock/i);
+    await expect(page.locator('text=Koleksi Drop Grafis Sedang Dikurasi')).toBeVisible();
+    await expect(page.locator('a:has-text("Lihat Kaos Polos NSA")')).toBeVisible();
   });
 });

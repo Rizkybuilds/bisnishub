@@ -12,7 +12,10 @@ import {
   DollarSign,
   Wallet,
   Coins,
-  Download
+  Download,
+  Boxes,
+  ShieldCheck,
+  Building2
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
@@ -24,7 +27,7 @@ import { SIZES } from '../../constants/garments';
 
 export function DashboardPage() {
   const { openNewOrderModal } = useOutletContext();
-  const { catalog, orders, inventory } = useAdmin();
+  const { catalog, orders, inventory, founderWealth, procurements } = useAdmin();
 
   // CSV Export Handler
   const handleExportCsv = () => {
@@ -150,12 +153,148 @@ export function DashboardPage() {
   return (
     <div>
       <AdminTopbar
-        title="Dashboard Ringkasan Bisnis"
-        subtitle="Monitoring real-time inventori, pesanan aktif, dan antrean heat press"
+        title="Founder Command Center"
+        subtitle="Visibilitas eksekutif neraca kekayaan bisnis, alokasi modal, dan operasional produksi"
         onNewOrder={openNewOrderModal}
       />
 
       <div className="p-8 space-y-8 max-w-7xl mx-auto">
+        {/* 🏛️ FOUNDER'S REAL-TIME BALANCE SHEET (NERACA KEKAYAAN BISNIS) */}
+        <div className="bg-gradient-to-br from-ts-surface via-ts-surface to-ts-surfaceHover border-2 border-ts-mustard/40 rounded-2xl p-6 space-y-5 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-ts-mustard/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-ts-borderDim pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-ts-mustard/20 text-ts-mustard border border-ts-mustard/40">
+                  EXECUTIVE BALANCE SHEET
+                </span>
+                <span className="text-[10px] font-mono text-ts-muted">Live Valuation</span>
+              </div>
+              <h2 className="text-xl font-extrabold text-ts-krem tracking-wide mt-1">
+                Neraca Harta &amp; Pertumbuhan Modal Founder
+              </h2>
+              <p className="text-xs text-ts-muted">
+                Transparansi total: di mana uang modal Anda berada saat ini dan berapa pertumbuhan nilai bersih usaha.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <Link to="/admin/buku-kas">
+                <Button variant="secondary" size="sm">
+                  <Wallet className="w-3.5 h-3.5 mr-1" /> Kelola Kas &amp; Modal
+                </Button>
+              </Link>
+              <Link to="/admin/pengadaan">
+                <Button variant="primary" size="sm">
+                  <Boxes className="w-3.5 h-3.5 mr-1" /> + Belanja Bahan (BOM)
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Main Equity & Total Wealth Summary */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-ts-hitam/70 p-4 rounded-xl border border-ts-borderDim">
+              <span className="text-[11px] text-ts-muted font-medium block">Total Modal Disetor Founder</span>
+              <div className="font-mono font-extrabold text-2xl text-amber-400 mt-1">
+                {formatRupiah(founderWealth.totalInjected)}
+              </div>
+              <div className="flex items-center justify-between text-[10px] text-ts-muted mt-1.5 pt-1.5 border-t border-ts-borderDim/40 font-mono">
+                <span>Prive Ditarik: -{formatRupiah(founderWealth.totalPrive)}</span>
+                <span className="text-ts-krem font-bold">Net: {formatRupiah(founderWealth.netFounderEquity)}</span>
+              </div>
+            </div>
+
+            <div className="bg-ts-hitam/70 p-4 rounded-xl border border-ts-mustard/30 relative">
+              <span className="text-[11px] text-ts-mustard font-bold uppercase tracking-wider block">Total Nilai Harta TeeStock</span>
+              <div className="font-mono font-extrabold text-2xl text-ts-krem mt-1">
+                {formatRupiah(founderWealth.totalBusinessWealth)}
+              </div>
+              <div className="text-[10px] text-emerald-400 mt-1.5 pt-1.5 border-t border-ts-borderDim/40 font-mono flex items-center justify-between">
+                <span>Pertumbuhan Modal (ROI):</span>
+                <span className="font-bold text-xs">+{founderWealth.growthPercentage}% 🚀</span>
+              </div>
+            </div>
+
+            <div className="bg-ts-hitam/70 p-4 rounded-xl border border-ts-borderDim">
+              <span className="text-[11px] text-ts-muted font-medium block">Nilai Tambah Bersih (Net Growth)</span>
+              <div className="font-mono font-extrabold text-2xl text-emerald-400 mt-1">
+                +{formatRupiah(founderWealth.netWealthGrowth)}
+              </div>
+              <div className="text-[10px] text-ts-muted mt-1.5 pt-1.5 border-t border-ts-borderDim/40 font-mono">
+                Total Aset dikurangi Modal Bersih
+              </div>
+            </div>
+          </div>
+
+          {/* Breakdown Wujud Harta (Where is the money right now?) */}
+          <div className="space-y-2 pt-2">
+            <div className="text-xs font-bold text-ts-muted uppercase tracking-wider flex items-center justify-between">
+              <span>Di Mana Saja Uang Tersebut Berada Saat Ini? (Asset Allocation)</span>
+              <span className="text-[10px] text-ts-teal font-mono">100% Kasat Mata</span>
+            </div>
+
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              {/* 1. Kas Tunai & Bank */}
+              <div className="bg-ts-surface p-3.5 rounded-xl border border-ts-borderDim space-y-1">
+                <div className="flex items-center justify-between text-ts-muted text-[11px]">
+                  <span className="flex items-center gap-1.5 font-semibold text-ts-teal">
+                    <Building2 className="w-3.5 h-3.5" /> 1. Kas &amp; Bank
+                  </span>
+                  <span className="font-mono">{formatRupiah(founderWealth.netCashLiquidity)}</span>
+                </div>
+                <div className="font-mono font-bold text-base text-ts-krem">
+                  {formatRupiah(founderWealth.netCashLiquidity)}
+                </div>
+                <p className="text-[10px] text-ts-muted font-mono">Saldo siap belanja bahan</p>
+              </div>
+
+              {/* 2. Kaos Polos NSA */}
+              <div className="bg-ts-surface p-3.5 rounded-xl border border-ts-borderDim space-y-1">
+                <div className="flex items-center justify-between text-ts-muted text-[11px]">
+                  <span className="flex items-center gap-1.5 font-semibold text-ts-mustard">
+                    <Shirt className="w-3.5 h-3.5" /> 2. Kaos Polos NSA
+                  </span>
+                  <span className="font-mono">{totalStock} pcs</span>
+                </div>
+                <div className="font-mono font-bold text-base text-ts-krem">
+                  {formatRupiah(founderWealth.blankStockValue)}
+                </div>
+                <p className="text-[10px] text-ts-muted font-mono">Nilai aset Moving Average</p>
+              </div>
+
+              {/* 3. Sablon & Kemasan (BOM) */}
+              <div className="bg-ts-surface p-3.5 rounded-xl border border-ts-borderDim space-y-1">
+                <div className="flex items-center justify-between text-ts-muted text-[11px]">
+                  <span className="flex items-center gap-1.5 font-semibold text-sky-400">
+                    <ScrollText className="w-3.5 h-3.5" /> 3. DTF &amp; Kemasan
+                  </span>
+                  <span className="font-mono">{totalDtfSheets} DTF</span>
+                </div>
+                <div className="font-mono font-bold text-base text-ts-krem">
+                  {formatRupiah(founderWealth.dtfStockValue + founderWealth.packagingStockValue)}
+                </div>
+                <p className="text-[10px] text-ts-muted font-mono">Film DTF + Polymailer + Stiker</p>
+              </div>
+
+              {/* 4. Mesin & Alat Kerja (CAPEX) */}
+              <div className="bg-ts-surface p-3.5 rounded-xl border border-ts-borderDim space-y-1">
+                <div className="flex items-center justify-between text-ts-muted text-[11px]">
+                  <span className="flex items-center gap-1.5 font-semibold text-amber-400">
+                    <Flame className="w-3.5 h-3.5" /> 4. Mesin Press (CAPEX)
+                  </span>
+                  <span className="font-mono">In-House</span>
+                </div>
+                <div className="font-mono font-bold text-base text-ts-krem">
+                  {formatRupiah(founderWealth.fixedAssetsValue)}
+                </div>
+                <p className="text-[10px] text-ts-muted font-mono">Heat Press High-Pressure</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* KPI Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="flex items-center gap-4">

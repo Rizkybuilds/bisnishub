@@ -33,6 +33,9 @@ const GangSheetPage = lazy(() => import('./pages/admin/GangSheetPage').then(m =>
 const QuoterPage = lazy(() => import('./pages/admin/QuoterPage').then(m => ({ default: m.QuoterPage })));
 const DefectsPage = lazy(() => import('./pages/admin/DefectsPage').then(m => ({ default: m.DefectsPage })));
 const SettingsPage = lazy(() => import('./pages/admin/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const ProcurementsPage = lazy(() => import('./pages/admin/ProcurementsPage').then(m => ({ default: m.ProcurementsPage })));
+const LedgerPage = lazy(() => import('./pages/admin/LedgerPage').then(m => ({ default: m.LedgerPage })));
+const AssetsPage = lazy(() => import('./pages/admin/AssetsPage').then(m => ({ default: m.AssetsPage })));
 
 /**
  * Loading fallback component for Storefront routes
@@ -144,6 +147,9 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <AdminSuspense><DashboardPage /></AdminSuspense> },
+      { path: 'pengadaan', element: <AdminSuspense><ProcurementsPage /></AdminSuspense> },
+      { path: 'buku-kas', element: <AdminSuspense><LedgerPage /></AdminSuspense> },
+      { path: 'aset', element: <AdminSuspense><AssetsPage /></AdminSuspense> },
       { path: 'katalog', element: <AdminSuspense><AdminCatalogPage /></AdminSuspense> },
       { path: 'inventory', element: <AdminSuspense><InventoryPage /></AdminSuspense> },
       { path: 'kanban', element: <AdminSuspense><KanbanPage /></AdminSuspense> },

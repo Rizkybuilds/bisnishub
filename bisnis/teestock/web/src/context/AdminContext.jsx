@@ -9,6 +9,9 @@ import {
   restockDtfFilm, 
   restockDtfBatch 
 } from '../services/inventoryApi';
+import { getProcurements, saveProcurement as apiSaveProcurement, deleteProcurement as apiDeleteProcurement } from '../services/procurementsApi';
+import { getCashTransactions, addCashTransaction as apiAddCashTransaction, calculateLedgerSummary } from '../services/ledgerApi';
+import { getFixedAssets, saveFixedAsset as apiSaveFixedAsset, deleteFixedAsset as apiDeleteFixedAsset, getTotalFixedAssetsValue } from '../services/assetsApi';
 import { testSupabaseConnection } from '../services/supabase';
 
 const AdminContext = createContext();
@@ -17,6 +20,9 @@ export function AdminProvider({ children }) {
   const [catalog, setCatalog] = useState([]);
   const [orders, setOrders] = useState([]);
   const [inventory, setInventory] = useState({});
+  const [procurements, setProcurements] = useState([]);
+  const [cashTransactions, setCashTransactions] = useState([]);
+  const [fixedAssets, setFixedAssets] = useState([]);
   const [supabaseStatus, setSupabaseStatus] = useState({ connected: false, message: 'Checking...' });
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,15 +35,21 @@ export function AdminProvider({ children }) {
   useEffect(() => {
     async function init() {
       try {
-        const [prods, ords, inv, sbStatus] = await Promise.all([
+        const [prods, ords, inv, procs, txs, assets, sbStatus] = await Promise.all([
           getProducts(),
           getOrders(),
           getInventoryMatrix(),
+          getProcurements(),
+          getCashTransactions(),
+          getFixedAssets(),
           testSupabaseConnection()
         ]);
         setCatalog(prods);
         setOrders(ords);
         setInventory(inv);
+        setProcurements(procs);
+        setCashTransactions(txs);
+        setFixedAssets(assets);
         setSupabaseStatus(sbStatus);
       } catch (err) {
         console.error("Admin context init error:", err);
@@ -164,12 +176,112 @@ export function AdminProvider({ children }) {
     };
   };
 
+  // 1. Procurements actions
+  const addProcurement = async (procData) => {
+    const updated = await apiSaveProcurement(procData);
+    setProcurements(updated);
+    const updatedTxs = await getCashTransactions();
+    setCashTransactions(updatedTxs);
+    showToast(`✅ Pengadaan ${procData.itemName} berhasil dicatat & masuk buku kas!`);
+  };
+
+  const removeProcurement = async (id) => {
+    const updated = await apiDeleteProcurement(id);
+    setProcurements(updated);
+    showToast(`🗑️ Data pengadaan berhasil dihapus`);
+  };
+
+  // 2. Cash Ledger actions
+  const recordCashTransaction = async (txData) => {
+    const updated = await apiAddCashTransaction(txData);
+    setCashTransactions(updated);
+    showToast(`✅ Transaksi kas ${txData.type === 'CASH_IN' ? 'Masuk' : 'Keluar'} Rp ${Number(txData.amount).toLocaleString('id-ID')} dicatat!`);
+  };
+
+  // 3. Fixed Assets actions
+  const addFixedAsset = async (assetData) => {
+    const updated = await apiSaveFixedAsset(assetData);
+    setFixedAssets(updated);
+    showToast(`✅ Aset ${assetData.assetName} berhasil disimpan!`);
+  };
+
+  const removeFixedAsset = async (id) => {
+    const updated = await apiDeleteFixedAsset(id);
+    setFixedAssets(updated);
+    showToast(`🗑️ Aset berhasil dihapus`);
+  };
+
+  // 4. Dynamic Founder Wealth & Real-Time Balance Sheet Calculations
+  const ledgerSummary = calculateLedgerSummary(cashTransactions);
+  const totalAssetsValue = getTotalFixedAssetsValue(fixedAssets);
+
+  let totalStockUnits = 0;
+  let blankStockValue = 0;
+  Object.entries(inventory).forEach(([gKey, colData]) => {
+    if (gKey === 'supplies' || gKey === 'dtf_films') return;
+    const isHeavy = gKey.includes('24s') || gKey.includes('heavyweight');
+    const unitHpp = isHeavy ? 40000 : 35000;
+    Object.entries(colData || {}).forEach(([_, szData]) => {
+      Object.values(szData || {}).forEach(cnt => {
+        const count = Number(cnt) || 0;
+        totalStockUnits += count;
+        blankStockValue += count * unitHpp;
+      });
+    });
+  });
+
+  let dtfStockValue = 0;
+  if (inventory.dtf_films) {
+    Object.values(inventory.dtf_films).forEach(f => {
+      dtfStockValue += (Number(f.ready) || 0) * (Number(f.unitCost) || 12000);
+    });
+  }
+
+  let packagingStockValue = 0;
+  if (inventory.supplies) {
+    Object.values(inventory.supplies).forEach(s => {
+      packagingStockValue += (Number(s.ready) || 0) * (Number(s.unitCost) || 800);
+    });
+  }
+  if (packagingStockValue === 0) packagingStockValue = 284000;
+
+  const totalInventoryValue = blankStockValue + dtfStockValue + packagingStockValue;
+  const totalBusinessWealth = ledgerSummary.netCashLiquidity + totalInventoryValue + totalAssetsValue;
+  const netWealthGrowth = totalBusinessWealth - ledgerSummary.netFounderEquityInjected;
+  const growthPercentage = ledgerSummary.netFounderEquityInjected > 0 
+    ? ((netWealthGrowth / ledgerSummary.netFounderEquityInjected) * 100).toFixed(1) 
+    : '0.0';
+
+  const founderWealth = {
+    totalInjected: ledgerSummary.totalInjected,
+    totalPrive: ledgerSummary.totalPrive,
+    netFounderEquity: ledgerSummary.netFounderEquityInjected,
+    netCashLiquidity: ledgerSummary.netCashLiquidity,
+    bankBalance: ledgerSummary.bankBalance,
+    qrisBalance: ledgerSummary.qrisBalance,
+    blankStockValue,
+    dtfStockValue,
+    packagingStockValue,
+    totalInventoryValue,
+    totalStockUnits,
+    fixedAssetsValue: totalAssetsValue,
+    totalBusinessWealth,
+    netWealthGrowth,
+    growthPercentage
+  };
+
   return (
     <AdminContext.Provider
       value={{
         catalog,
         orders,
         inventory,
+        procurements,
+        cashTransactions,
+        fixedAssets,
+        ledgerSummary,
+        totalAssetsValue,
+        founderWealth,
         supabaseStatus,
         loading,
         showToast,
@@ -181,7 +293,12 @@ export function AdminProvider({ children }) {
         updateStockCell,
         restockDtfBatchAction,
         updateDtfFilmStock,
-        getDtfFilmStatus
+        getDtfFilmStatus,
+        addProcurement,
+        removeProcurement,
+        recordCashTransaction,
+        addFixedAsset,
+        removeFixedAsset
       }}
     >
       {children}

@@ -13,22 +13,31 @@ import {
   CheckCircle2,
   LogOut,
   User,
-  AlertTriangle
+  AlertTriangle,
+  Boxes,
+  Wallet,
+  Flame
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useAuth } from '../../context/AuthContext';
 import { TeeStockLogo } from '../common/TeeStockLogo';
 
 export function AdminSidebar() {
-  const { orders, catalog, supabaseStatus } = useAdmin();
+  const { orders, catalog, procurements, supabaseStatus } = useAdmin();
   const { user, signOut } = useAuth();
   const activeOrdersCount = orders.filter(o => o.status !== 'shipped').length;
 
-  const navItems = [
-    { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
-    { to: '/admin/katalog', label: 'Master Katalog (PIM)', icon: Shirt, badge: catalog.length },
-    { to: '/admin/inventory', label: 'Stok NSA & Bahan', icon: Layers },
+  const founderNavItems = [
+    { to: '/admin', label: 'Neraca & Ekuitas', icon: LayoutDashboard, end: true },
+    { to: '/admin/pengadaan', label: 'Pengadaan Bahan (BOM)', icon: Boxes, badge: procurements?.length ? `${procurements.length} PO` : undefined },
+    { to: '/admin/buku-kas', label: 'Buku Kas & Modal', icon: Wallet, highlight: true },
+    { to: '/admin/aset', label: 'Aset Mesin (CAPEX)', icon: Flame },
+  ];
+
+  const opsNavItems = [
     { to: '/admin/kanban', label: 'Antrean & Kanban', icon: Kanban, badge: `${activeOrdersCount} Order`, highlight: true },
+    { to: '/admin/inventory', label: 'Stok NSA & Bahan', icon: Layers },
+    { to: '/admin/katalog', label: 'Master Katalog (PIM)', icon: Shirt, badge: catalog.length },
     { to: '/admin/gangsheet', label: 'Gang Sheet DTF', icon: ScrollText },
     { to: '/admin/defects', label: 'QC & Defect Tracker', icon: AlertTriangle },
     { to: '/admin/quoter', label: 'Custom Quoter WA', icon: Calculator },
@@ -40,20 +49,21 @@ export function AdminSidebar() {
       {/* Brand Header */}
       <div className="p-4 border-b border-ts-borderDim">
         <div className="flex items-center justify-between">
-          <TeeStockLogo size="sm" badge="OPERATIONS" />
+          <TeeStockLogo size="sm" badge="FOUNDER" />
           <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/40">
             HUB
           </span>
         </div>
-        <div className="text-[10px] text-ts-muted mt-1.5 font-mono">Production &amp; Fulfillment Suite</div>
+        <div className="text-[10px] text-ts-muted mt-1.5 font-mono">Solopreneur Command Center</div>
       </div>
 
       {/* Navigation */}
       <nav className="p-3 space-y-1 flex-1">
-        <div className="px-3 py-2 text-[10px] font-bold tracking-wider text-ts-muted uppercase">
-          Menu Operasional
+        <div className="px-3 py-1.5 text-[10px] font-bold tracking-wider text-ts-mustard uppercase flex items-center justify-between">
+          <span>Keuangan &amp; Modal</span>
+          <span className="text-[9px] font-mono px-1 rounded bg-ts-mustard/10 text-ts-mustard">FOUNDER</span>
         </div>
-        {navItems.map((item) => {
+        {founderNavItems.map((item) => {
           const Icon = item.icon;
           return (
             <NavLink
@@ -61,7 +71,44 @@ export function AdminSidebar() {
               to={item.to}
               end={item.end}
               className={({ isActive }) =>
-                `flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                  isActive
+                    ? 'bg-ts-terracotta text-white font-bold shadow-sm'
+                    : 'text-ts-krem/80 hover:text-white hover:bg-ts-surfaceHover'
+                }`
+              }
+            >
+              <div className="flex items-center gap-3">
+                <Icon className="w-4 h-4 shrink-0" />
+                <span>{item.label}</span>
+              </div>
+              {item.badge !== undefined && (
+                <span
+                  className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold ${
+                    item.highlight
+                      ? 'bg-ts-mustard/20 text-ts-mustard border border-ts-mustard/30'
+                      : 'bg-ts-hitam/60 text-ts-krem/70 border border-ts-border'
+                  }`}
+                >
+                  {item.badge}
+                </span>
+              )}
+            </NavLink>
+          );
+        })}
+
+        <div className="pt-3 px-3 py-1.5 text-[10px] font-bold tracking-wider text-ts-muted uppercase">
+          Operasional Studio
+        </div>
+        {opsNavItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) =>
+                `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
                   isActive
                     ? 'bg-ts-terracotta text-white font-bold shadow-sm'
                     : 'text-ts-krem/80 hover:text-white hover:bg-ts-surfaceHover'

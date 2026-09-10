@@ -304,36 +304,51 @@ export function CatalogPage({ defaultSegment }) {
           </div>
           <div className="space-y-1.5">
             <h3 className="text-base sm:text-lg font-bold text-white">
-              {search ? `Desain "${search}" Belum Ditemukan` : "Tidak Ada Produk yang Sesuai Filter"}
+              {search 
+                ? `Pencarian "${search}" Belum Ditemukan` 
+                : (!isBlankMode && graphicCount === 0)
+                  ? "Koleksi Drop Grafis Sedang Dikurasi"
+                  : "Tidak Ada Produk yang Sesuai Filter"}
             </h3>
             <p className="text-xs text-ts-kremMuted max-w-md mx-auto leading-relaxed">
-              Koleksi Drop #01 dirilis dalam edisi terbatas. Punya ide desain sendiri atau butuh seragam komunitas? Cetak satuan di studio in-house kami!
+              {!isBlankMode && graphicCount === 0
+                ? "Koleksi desain grafis kurasi sedang dipersiapkan untuk rilis batch perdana. Saat ini tersedia Kaos Polos NSA Original dan Layanan Custom Sablon DTF Satuan."
+                : "Silakan sesuaikan kata kunci pencarian atau reset filter untuk melihat seluruh produk yang tersedia."}
             </p>
           </div>
           <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center items-center">
+            {!isBlankMode && (
+              <Link to="/polos" className="w-full sm:w-auto">
+                <Button variant="primary" size="sm" icon={Package} className="w-full sm:w-auto font-bold shadow-glow-terracotta">
+                  Lihat Kaos Polos NSA &rarr;
+                </Button>
+              </Link>
+            )}
             <Link to="/custom-order" className="w-full sm:w-auto">
-              <Button variant="primary" size="sm" icon={Palette} className="w-full sm:w-auto font-bold shadow-glow-terracotta">
-                Cetak Desain Custom Sendiri &rarr;
+              <Button variant="secondary" size="sm" icon={Palette} className="w-full sm:w-auto font-bold border-white/15">
+                Cetak Desain Custom &rarr;
               </Button>
             </Link>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => {
-                setSearch('');
-                setActiveSeries('all');
-                setSelectedBlankModel('all');
-              }}
-              className="w-full sm:w-auto text-xs"
-            >
-              Reset Semua Filter
-            </Button>
+            {search && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSearch('');
+                  setActiveSeries('all');
+                  setSelectedBlankModel('all');
+                }}
+                className="w-full sm:w-auto text-xs"
+              >
+                Reset Filter
+              </Button>
+            )}
           </div>
           {/* Popular Search Suggestions */}
           <div className="pt-3 border-t border-white/[0.06] space-y-2">
             <span className="text-[10px] font-mono uppercase text-ts-muted tracking-wider block">Pencarian Populer:</span>
             <div className="flex flex-wrap justify-center gap-1.5 text-xs">
-              {['Commit & Pray', '7 Summits', 'Wong Jowo', 'Heavyweight 24s', 'Softstyle 30s'].map((term) => (
+              {['NSA Premium Cotton 7200', 'NSA Softstyle 3600', 'Heavyweight 24s', 'Combed 30s', 'Custom Sablon'].map((term) => (
                 <button
                   key={term}
                   type="button"

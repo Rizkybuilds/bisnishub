@@ -203,3 +203,68 @@ export function getShippingRateByZone(zoneId) {
   return zone ? zone.rate : 15000;
 }
 
+/**
+ * 📦 Standar Biaya Satuan Kemasan & Operasional TeeStock (September 2026)
+ * Sesuai arahan Founder & C-Suite:
+ * - Packing: Polymailer (800) + Stiker (600) + Lakban & Label Thermal A6 (600) = Rp 2.000
+ * - Operasional: Listrik Heat Press In-House 900W & Curing = Rp 1.000
+ * - DTF Rates: Roll 58x100 cm @ Rp 35.000 terbagi proporsional per ukuran
+ */
+export const UNIT_COST_STANDARDS = {
+  packaging: 2000,
+  electricity: 1000,
+  dtfRates: {
+    a6: 2000,
+    a5: 4500,
+    a4: 7500,
+    a3: 12500,
+    a3_plus_a6: 14500,
+    double_a3: 24000
+  }
+};
+
+/**
+ * 🧮 Hitung HPP dan Harga ARB (Auto Rijek Bawah)
+ * Aturan:
+ * - HPP Blank = HPP Kaos + Packing
+ * - HPP Katalog Grafis = HPP Kaos + HPP DTF + Packing + Operasional Listrik
+ * - Harga ARB = HPP Total + 10% Profit Bersih (Dibulatkan ke atas / Math.ceil ke Rp 1.000)
+ */
+export function calculateProductHPPAndARB({ garmentCost = 38000, printSize = 'a3', isBlank = false }) {
+  const packCost = UNIT_COST_STANDARDS.packaging;
+  const electCost = isBlank ? 0 : UNIT_COST_STANDARDS.electricity;
+  const dtfCost = isBlank ? 0 : (UNIT_COST_STANDARDS.dtfRates[printSize] || 12500);
+
+  const totalHPP = garmentCost + dtfCost + packCost + electCost;
+  const rawARB = totalHPP * 1.10;
+  const arbFloorPrice = Math.ceil(rawARB / 1000) * 1000;
+
+  return {
+    garmentCost,
+    dtfCost,
+    packCost,
+    electCost,
+    totalHPP,
+    arbFloorPrice
+  };
+}
+
+/**
+ * 🛡️ ARB Guard Engine: Validasi apakah harga akhir setelah promo/diskon aman
+ * Menolak pemotongan harga yang tembus di bawah floor price (ARB)!
+ */
+export function applyARBGuard(calculatedPrice, arbFloorPrice) {
+  if (calculatedPrice < arbFloorPrice) {
+    return {
+      finalPrice: arbFloorPrice,
+      isFloorClamped: true,
+      message: 'Diskon optimal maksimal telah diterapkan untuk menjaga standar kualitas material.'
+    };
+  }
+  return {
+    finalPrice: calculatedPrice,
+    isFloorClamped: false,
+    message: null
+  };
+}
+

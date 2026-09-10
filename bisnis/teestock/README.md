@@ -84,9 +84,14 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel, portal
 - `teestock-logo-master-dark.jpg` & `teestock-logo-master-light.jpg` — Master logo visual.
 
 ### ⚙️ Operasional & Roadmap (`operasional/`)
+- [**`arsitektur-otomasi-website.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/operasional/arsitektur-otomasi-website.md) — Blueprint otomatisasi penuh (Midtrans, Fonnte WA, Biteship API, n8n, Vercel, Supabase).
 - [**`roadmap-pengembangan-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/operasional/roadmap-pengembangan-teestock.md) — Roadmap 4 fase solopreneur lengkap dengan exit criteria dan alokasi waktu mingguan.
 - [**`rencana-operasional-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/operasional/rencana-operasional-teestock.md) — Alur rantai pasok garmen NSA & DTF, kapasitas produksi harian, SOP heat press in-house, dan struktur channel.
 - `struktur-folder-teestock.md` — Struktur folder kerja produksi & katalog.
+
+### 💰 Keuangan & Pricing (`keuangan/`)
+- [**`skema-pricing-dan-pencatatan-keuangan.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/keuangan/skema-pricing-dan-pencatatan-keuangan.md) — Master Blueprint Skema Pricing Dinamis, HPP Moving Average, Hard Floor ARB (Auto Rijek Bawah), pengadaan barang, dan pemisahan kas bisnis vs pribadi.
+- [**`analisis-fee-payment-gateway-dan-margin.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/keuangan/analisis-fee-payment-gateway-dan-margin.md) — Analisis finansial CFO dampak fee QRIS 0,7% vs Virtual Account Rp 4.000 flat vs Shopee 12% terhadap HPP garmen & margin bersih.
 
 ### 📊 Riset & Strategi (`riset/`)
 - [**`analisis-bisnis-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/riset/analisis-bisnis-teestock.md) — Riset pasar riil, unit economics aktual HPP Rp 48k–54k, strategi multi-tier, dan scoring matrix.
