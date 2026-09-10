@@ -333,26 +333,37 @@ export function CheckoutShippingForm({
                 key={method.id}
                 type="button"
                 onClick={() => onPaymentMethodChange && onPaymentMethodChange(method.id)}
-                className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between space-y-2.5 ${
+                className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-2.5 relative ${
                   isSelected
-                    ? 'bg-ts-surface border-ts-terracotta shadow-glow-teal ring-1 ring-ts-terracotta/80'
-                    : 'bg-white/[0.02] border-white/[0.08] hover:bg-white/[0.05]'
+                    ? isInstant
+                      ? 'bg-sky-950/30 border-sky-500/80 shadow-lg shadow-sky-500/10 ring-1 ring-sky-500/50'
+                      : 'bg-ts-surface border-ts-terracotta shadow-glow-terracotta-sm ring-1 ring-ts-terracotta/80'
+                    : 'bg-white/[0.02] border-white/[0.08] hover:bg-white/[0.05] hover:border-white/20'
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                    {isInstant ? (
-                      <Zap className="w-4 h-4 text-sky-400 shrink-0" />
-                    ) : (
-                      <QrCode className="w-4 h-4 text-ts-green shrink-0" />
-                    )}
-                    <span>{method.name}</span>
-                  </span>
-                  <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded border whitespace-nowrap ${method.badgeColor}`}>
+                  <div className="flex items-center gap-2.5">
+                    <span className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                      isSelected
+                        ? isInstant ? 'border-sky-400 bg-sky-500 text-white' : 'border-ts-terracotta bg-ts-terracotta text-white'
+                        : 'border-white/30 bg-transparent'
+                    }`}>
+                      {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </span>
+                    <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                      {isInstant ? (
+                        <Zap className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                      ) : (
+                        <QrCode className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      )}
+                      <span>{method.name}</span>
+                    </span>
+                  </div>
+                  <span className={`text-[9px] font-mono font-extrabold px-1.5 py-0.5 rounded border whitespace-nowrap ${method.badgeColor}`}>
                     {method.badge}
                   </span>
                 </div>
-                <p className="text-[11px] text-ts-kremMuted leading-relaxed">
+                <p className="text-[11px] text-ts-kremMuted leading-relaxed pl-6">
                   {method.description}
                 </p>
               </button>

@@ -192,6 +192,37 @@ export function CartSummaryCard({
         </p>
       </div>
 
+      {/* 🎁 Exclusive Unboxing Perks Included */}
+      <div className="p-4 rounded-2xl bg-ts-surface/90 border border-ts-terracotta/30 shadow-glow-terracotta-sm space-y-2.5 text-xs">
+        <div className="flex items-center justify-between">
+          <span className="font-bold text-white flex items-center gap-1.5 text-xs uppercase tracking-wider font-mono">
+            <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
+            Paket Unboxing Eksklusif
+          </span>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ts-mustard/20 text-ts-mustard font-bold">
+            GRATIS
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-[11px] text-ts-kremMuted pt-1">
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+            <span>🎁</span>
+            <span className="truncate">Sticker Pack Vol. #01</span>
+          </div>
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+            <span>🏷️</span>
+            <span className="truncate">Founder Care Card</span>
+          </div>
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+            <span>📦</span>
+            <span className="truncate">Polymailer Doff Distro</span>
+          </div>
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+            <span>🛡️</span>
+            <span className="truncate">Garansi 100% Anti-Pecah</span>
+          </div>
+        </div>
+      </div>
+
       {/* Trust Badges */}
       <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2.5 text-xs text-ts-kremMuted">
         <div className="flex items-center gap-2 text-white font-semibold text-xs">
