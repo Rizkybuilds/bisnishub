@@ -25,6 +25,8 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { formatRupiah } from '../../utils/formatters';
 import { SIZES } from '../../constants/garments';
+import { FounderBepSimulator } from '../../components/admin/FounderBepSimulator';
+import { DailyStudioRoutine } from '../../components/admin/DailyStudioRoutine';
 
 export function DashboardPage() {
   const { openNewOrderModal } = useOutletContext();
@@ -295,6 +297,12 @@ export function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* 🎯 CFO Intelligence: Simulator Target Gaji & BEP Harian Founder */}
+        <FounderBepSimulator orders={orders} />
+
+        {/* ⚙️ COO Workflow: SOP Rutinitas Studio & Batching Time-Block */}
+        <DailyStudioRoutine />
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

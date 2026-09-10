@@ -14,7 +14,7 @@ import {
   Building2
 } from 'lucide-react';
 import { formatRupiah } from '../../utils/formatters';
-import { generateCustomerWhatsAppText, getWhatsAppUrl } from '../../utils/whatsappTemplates';
+import { generateCustomerWhatsAppText, generateUnpaidFollowUpWhatsAppText, getWhatsAppUrl } from '../../utils/whatsappTemplates';
 import { PrintWorkSlipModal } from './PrintWorkSlipModal';
 import { ShippingLabelModal } from './ShippingLabelModal';
 import { isFastMovingBuffer } from '../../utils/garmentStockRouting';
@@ -43,7 +43,10 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
   const netProfit = (order.price || 0) - platformFee - estimatedHpp;
 
   // WhatsApp template triggers
-  const waMessage = generateCustomerWhatsAppText(order);
+  const isPending = order.status === 'pending';
+  const waMessage = isPending
+    ? generateUnpaidFollowUpWhatsAppText(order)
+    : generateCustomerWhatsAppText(order);
   const waUrl = getWhatsAppUrl(order.phone, waMessage);
 
   const reviewMessage = generateCustomerWhatsAppText(order, 'review');
@@ -108,11 +111,21 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
                 href={waUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-[10px] font-bold bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#4EFA8A] px-2 py-0.5 rounded-full border border-[#25D366]/40 transition-colors shrink-0"
-                title="Kirim Update Status via WhatsApp"
+                className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border transition-colors shrink-0 ${
+                  isPending
+                    ? 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border-amber-500/40 shadow-sm'
+                    : 'bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#4EFA8A] border-[#25D366]/40'
+                }`}
+                title={isPending ? 'Kirim Follow-Up Pembayaran via WhatsApp' : 'Kirim Update Status via WhatsApp'}
               >
+                {isPending && (
+                  <span className="relative flex h-1.5 w-1.5 mr-0.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
+                  </span>
+                )}
                 <MessageSquare className="w-2.5 h-2.5" />
-                <span>Kirim WA</span>
+                <span>{isPending ? 'Follow-Up WA' : 'Kirim WA'}</span>
               </a>
             )}
           </div>

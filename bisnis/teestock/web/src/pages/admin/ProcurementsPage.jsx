@@ -298,9 +298,14 @@ export function ProcurementsPage() {
                         )}
                       </td>
                       <td className="py-3.5 px-4 text-ts-krem/90">
-                        <div className="flex items-center gap-1.5">
-                          <Building2 className="w-3.5 h-3.5 text-ts-muted" />
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <Building2 className="w-3.5 h-3.5 text-ts-muted shrink-0" />
                           <span>{p.supplierName}</span>
+                          {p.supplierName && p.supplierName.toLowerCase().includes('multigraph') && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/30 shrink-0">
+                              🏢 Sinergi Internal
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="py-3.5 px-4 text-center font-mono capitalize">

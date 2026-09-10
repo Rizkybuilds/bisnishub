@@ -113,3 +113,29 @@ ${itemListText}
 Saya sudah transfer dengan nominal persis *Rp ${Number(totalTransfer).toLocaleString('id-ID')}*. Terlampir bukti transfer QRIS. Mohon segera diproses ya kak! Terima kasih 🙏`;
 }
 
+/**
+ * CMO Engine: Template follow-up WhatsApp ramah untuk calon pembeli yang belum transfer/selesai bayar
+ */
+export function generateUnpaidFollowUpWhatsAppText(order) {
+  const customer = order.customer || order.customer_name || 'Kak';
+  const orderId = order.id || order.order_number || 'Pesananmu';
+  const garment = order.garment || 'New States Apparel';
+  const spec = `${order.productName || order.sku || 'Kaos TeeStock'} (${garment} - ${order.color || 'Hitam'} ${order.size || 'L'})`;
+  const total = Number(order.price || order.total_amount || 0);
+  const formattedTotal = total > 0 ? `sebesar *Rp ${total.toLocaleString('id-ID')}*` : '';
+
+  return `Halo ${customer}! Salam hangat dari *TeeStock Apparel* 😊
+
+Kami melihat pesanan Kakak (*${orderId}*):
+👕 *${spec}* ${formattedTotal}
+statusnya saat ini masih menunggu verifikasi pembayaran QRIS.
+
+Apakah ada kendala saat scan QRIS atau pemilihan alamat yang bisa kami bantu kak?
+
+💡 *Info Antrean Hari Ini:*
+Jika Kakak menyelesaikan pembayaran sebelum jam 14:00 WIB, pesanan Kakak langsung kami masukkan ke jadwal cetak film DTF dan heat press hari ini juga agar cepat sampai! 🙏
+
+Bila sudah transfer, cukup kirimkan screenshot bukti transfer ke chat ini ya kak. Terima kasih! ✨`;
+}
+
+

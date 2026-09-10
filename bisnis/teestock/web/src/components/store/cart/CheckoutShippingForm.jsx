@@ -66,6 +66,21 @@ export function CheckoutShippingForm({
     }
   }, [profile, setValue]);
 
+  // 🛡️ CMO Engine: Auto-capture checkout lead to recover abandoned carts
+  const watchedName = watch('customerName');
+  const watchedPhone = watch('phone');
+  useEffect(() => {
+    if (watchedPhone && watchedPhone.replace(/\D/g, '').length >= 9) {
+      try {
+        localStorage.setItem('teestock_checkout_draft', JSON.stringify({
+          customerName: watchedName || 'Calon Pembeli',
+          phone: watchedPhone,
+          updatedAt: new Date().toISOString()
+        }));
+      } catch (_) {}
+    }
+  }, [watchedName, watchedPhone]);
+
   return (
     <form
       ref={formRef}

@@ -19,6 +19,7 @@ import { AdminTopbar } from '../../components/admin/AdminTopbar';
 import { KanbanColumn } from '../../components/admin/KanbanColumn';
 import { VendorPickupModal } from '../../components/admin/VendorPickupModal';
 import { aggregateVendorPickupList } from '../../utils/garmentStockRouting';
+import { PrintCareCardModal } from '../../components/admin/PrintCareCardModal';
 
 export function KanbanPage() {
   const { openNewOrderModal } = useOutletContext();
@@ -27,8 +28,14 @@ export function KanbanPage() {
   // Filters & Batch Grouping
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedChannel, setSelectedChannel] = useState('all');
-  const [batchPreset, setBatchPreset] = useState('all'); // 'all', 'dtf_queue', 'dark_batch', 'light_batch'
+  const [batchPreset, setBatchPreset] = useState('all'); // 'all', 'unpaid_followup', 'dtf_queue', 'dark_batch', 'light_batch'
   const [isPickupModalOpen, setIsPickupModalOpen] = useState(false);
+  const [isCareCardModalOpen, setIsCareCardModalOpen] = useState(false);
+
+  // Unpaid / Pending Follow-Up Count
+  const pendingCount = useMemo(() => {
+    return orders.filter(o => o.status === 'pending').length;
+  }, [orders]);
 
   // Vendor JIT Summary Count
   const vendorPickupSummary = useMemo(() => {
@@ -61,7 +68,9 @@ export function KanbanPage() {
       }
 
       // 3. Batch Preset Filter
-      if (batchPreset === 'dtf_queue') {
+      if (batchPreset === 'unpaid_followup') {
+        if (order.status !== 'pending') return false;
+      } else if (batchPreset === 'dtf_queue') {
         // Priority DTF queue (needs printing or pending)
         if (order.status !== 'pending' && order.status !== 'dtf') return false;
       } else if (batchPreset === 'dark_batch') {
@@ -152,6 +161,26 @@ export function KanbanPage() {
               Semua
             </button>
             <button
+              onClick={() => setBatchPreset('unpaid_followup')}
+              className={`px-2 py-1 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${
+                batchPreset === 'unpaid_followup'
+                  ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40'
+                  : 'text-ts-muted hover:text-white'
+              }`}
+              title="Filter pesanan yang belum bayar & butuh difollow-up via WhatsApp"
+            >
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
+              </span>
+              <span>Follow-Up WA</span>
+              {pendingCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-500/30 text-amber-300 font-bold">
+                  {pendingCount}
+                </span>
+              )}
+            </button>
+            <button
               onClick={() => setBatchPreset('dtf_queue')}
               className={`px-2 py-1 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${
                 batchPreset === 'dtf_queue'
@@ -195,6 +224,17 @@ export function KanbanPage() {
             <ScrollText className="w-3.5 h-3.5" />
             <span>Kirim Roll DTF</span>
           </Link>
+
+          {/* Quick Trigger: Cetak Care Card A6 Unboxing Insert */}
+          <button
+            type="button"
+            onClick={() => setIsCareCardModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-ts-terracotta/15 hover:bg-ts-terracotta/25 border border-ts-terracotta/30 text-ts-terracotta rounded-lg text-[11px] font-bold transition-colors cursor-pointer"
+            title="Cetak Kartu Petunjuk Cuci & Thank You Insert A6 untuk diselipkan di polymailer"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Care Card A6</span>
+          </button>
 
           {/* Quick Trigger: Vendor JIT NSA Garment Pickup Manifest */}
           <button
@@ -248,6 +288,12 @@ export function KanbanPage() {
         isOpen={isPickupModalOpen}
         onClose={() => setIsPickupModalOpen(false)}
         orders={orders}
+      />
+
+      {/* Unboxing Care Card & Thank You Insert Printable Modal */}
+      <PrintCareCardModal
+        isOpen={isCareCardModalOpen}
+        onClose={() => setIsCareCardModalOpen(false)}
       />
     </div>
   );
