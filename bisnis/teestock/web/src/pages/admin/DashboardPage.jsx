@@ -15,7 +15,8 @@ import {
   Download,
   Boxes,
   ShieldCheck,
-  Building2
+  Building2,
+  ScrollText
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
