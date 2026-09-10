@@ -10,7 +10,9 @@ import {
   Building2, 
   Search,
   Trash2,
-  AlertCircle
+  AlertCircle,
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
@@ -20,6 +22,7 @@ import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 import { Input, Select } from '../../components/ui/Input';
 import { formatRupiah } from '../../utils/formatters';
+import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 
 export function ProcurementsPage() {
   const { procurements, addProcurement, removeProcurement } = useAdmin();
@@ -35,28 +38,94 @@ export function ProcurementsPage() {
   const [purchaseType, setPurchaseType] = useState('lusinan');
   const [qty, setQty] = useState(12);
   const [unitMeasure, setUnitMeasure] = useState('pcs');
-  const [unitCost, setUnitCost] = useState(35000);
+  const [unitCost, setUnitCost] = useState(42000);
   const [shippingCost, setShippingCost] = useState(0);
   const [paymentSource, setPaymentSource] = useState('business_bank');
   const [notes, setNotes] = useState('');
+
+  // Inventory Auto-Sync Selectors
+  const [garmentKey, setGarmentKey] = useState('nsa_heavyweight_24s');
+  const [color, setColor] = useState('Hitam');
+  const [size, setSize] = useState('L');
+  const [supplyId, setSupplyId] = useState('polymailer');
+  const [dtfSku, setDtfSku] = useState('');
+  const [keepOpen, setKeepOpen] = useState(false);
 
   // BOM Real-time Cost Calculation Preview
   const totalCost = (Number(qty || 0) * Number(unitCost || 0)) + Number(shippingCost || 0);
   const realUnitCost = Number(qty) > 0 ? Math.round(totalCost / Number(qty)) : 0;
 
+  // Sync Helper for Blank Garment
+  const updateGarmentSelection = (newKey, newCol, newSz) => {
+    const targetKey = newKey || garmentKey;
+    const gObj = GARMENT_TYPES[targetKey] || GARMENT_TYPES.nsa_heavyweight_24s;
+    const availableColors = gObj?.colors?.map(c => c.name) || ['Hitam'];
+    const targetCol = newCol !== undefined ? newCol : (availableColors.includes(color) ? color : availableColors[0]);
+    const targetSz = newSz !== undefined ? newSz : size;
+
+    setGarmentKey(targetKey);
+    setColor(targetCol);
+    setSize(targetSz);
+
+    const generatedName = `${gObj.name} ${targetCol} ${targetSz}`;
+    const cleanColor = targetCol.toUpperCase().replace(/\s+/g, '');
+    const generatedSku = `${gObj.code || 'NSA'}-${cleanColor}-${targetSz}`;
+
+    setItemName(generatedName);
+    setItemSku(generatedSku);
+    setUnitMeasure('pcs');
+    if (gObj.baseCost) {
+      setUnitCost(gObj.baseCost);
+    }
+  };
+
+  // Sync Helper for Packaging & Supplies
+  const updateSupplySelection = (newSupplyId) => {
+    setSupplyId(newSupplyId);
+    const sup = GARMENT_TYPES.supplies?.items?.find(s => s.id === newSupplyId);
+    if (sup) {
+      setItemName(sup.name);
+      setItemSku(`MAT-${sup.id.toUpperCase()}`);
+      setUnitMeasure(sup.unit || 'pcs');
+      if (sup.id === 'polymailer') {
+        setUnitCost(800);
+        setSupplierName('MultiGraph Packaging & Printing');
+      } else if (sup.id === 'sticker') {
+        setUnitCost(600);
+        setSupplierName('MultiGraph Printing');
+      } else if (sup.id === 'care_card') {
+        setUnitCost(400);
+        setSupplierName('MultiGraph Printing');
+      } else if (sup.id === 'hangtag') {
+        setUnitCost(500);
+        setSupplierName('MultiGraph Printing');
+      } else if (sup.id === 'teflon_sheet') {
+        setUnitCost(25000);
+        setSupplierName('Vendor Alat Sablon');
+      } else if (sup.id === 'lakban') {
+        setUnitCost(15000);
+        setSupplierName('Toko ATK');
+      }
+    }
+  };
+
   const handleOpenNew = (presetType = 'blank_tshirt') => {
     setItemType(presetType);
     if (presetType === 'blank_tshirt') {
-      setItemName('NSA Softstyle 30s Black L (1 Lusin)');
-      setItemSku('NSA-30S-BLK-L');
+      const gObj = GARMENT_TYPES.nsa_heavyweight_24s;
+      setGarmentKey('nsa_heavyweight_24s');
+      setColor('Hitam');
+      setSize('L');
+      setItemName('NSA Heavyweight 24s Hitam L');
+      setItemSku('NSA-24S-HITAM-L');
       setSupplierName('Distributor Resmi NSA');
       setPurchaseType('lusinan');
       setQty(12);
       setUnitMeasure('pcs');
-      setUnitCost(35000);
-      setShippingCost(15000);
+      setUnitCost(gObj?.baseCost || 42000);
+      setShippingCost(0);
     } else if (presetType === 'dtf_film') {
-      setItemName('Roll Film DTF 58 cm x 100 m');
+      setItemName('Roll Film DTF 58 cm x 10 m');
       setItemSku('DTF-ROLL-58CM');
       setSupplierName('Vendor DTF Partner');
       setPurchaseType('roll_meter');
@@ -64,17 +133,73 @@ export function ProcurementsPage() {
       setUnitMeasure('meter');
       setUnitCost(30000);
       setShippingCost(0);
-    } else if (presetType === 'packaging') {
-      setItemName('Polymailer Doff Hitam 30x40 cm (100 pcs)');
-      setItemSku('MAT-POLY-30X40');
-      setSupplierName('MultiGraph Packaging');
+    } else if (presetType === 'packaging' || presetType === 'supplies') {
+      setItemType('packaging');
+      setSupplyId('polymailer');
+      const sup = GARMENT_TYPES.supplies?.items?.find(s => s.id === 'polymailer');
+      setItemName(sup?.name || 'Polymailer Hitam Doff 30x40');
+      setItemSku('MAT-POLYMAILER');
+      setSupplierName('MultiGraph Packaging & Printing');
       setPurchaseType('partai');
-      setQty(100);
+      setQty(48);
       setUnitMeasure('pcs');
       setUnitCost(800);
       setShippingCost(0);
     }
     setIsModalOpen(true);
+  };
+
+  // 1-Click Fast Presets (e.g. user scenario)
+  const applyQuickPreset = (type) => {
+    if (type === 'nsa24s_black_l') {
+      setItemType('blank_tshirt');
+      setGarmentKey('nsa_heavyweight_24s');
+      setColor('Hitam');
+      setSize('L');
+      setItemName('NSA Heavyweight 24s Hitam L');
+      setItemSku('NSA-24S-HITAM-L');
+      setSupplierName('Distributor Resmi NSA');
+      setPurchaseType('lusinan');
+      setQty(12);
+      setUnitMeasure('pcs');
+      setUnitCost(42000);
+      setShippingCost(0);
+    } else if (type === 'nsa30s_white_l') {
+      setItemType('blank_tshirt');
+      setGarmentKey('nsa_softstyle_30s');
+      setColor('Putih');
+      setSize('L');
+      setItemName('NSA Softstyle 30s Putih L');
+      setItemSku('NSA-30S-PUTIH-L');
+      setSupplierName('Distributor Resmi NSA');
+      setPurchaseType('lusinan');
+      setQty(12);
+      setUnitMeasure('pcs');
+      setUnitCost(37000);
+      setShippingCost(0);
+    } else if (type === 'sticker_35') {
+      setItemType('packaging');
+      setSupplyId('sticker');
+      setItemName('Stiker Vinyl Unboxing 6x6 cm');
+      setItemSku('MAT-STICKER');
+      setSupplierName('MultiGraph Printing');
+      setPurchaseType('partai');
+      setQty(35);
+      setUnitMeasure('pcs');
+      setUnitCost(600);
+      setShippingCost(0);
+    } else if (type === 'polymailer_48') {
+      setItemType('packaging');
+      setSupplyId('polymailer');
+      setItemName('Polymailer Hitam Doff 30x40');
+      setItemSku('MAT-POLYMAILER');
+      setSupplierName('MultiGraph Packaging & Printing');
+      setPurchaseType('partai');
+      setQty(48);
+      setUnitMeasure('pcs');
+      setUnitCost(800);
+      setShippingCost(0);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -97,11 +222,21 @@ export function ProcurementsPage() {
       totalCost,
       realUnitCost,
       paymentSource,
-      notes: notes.trim()
+      notes: notes.trim(),
+      // Auto-sync inventory links
+      garmentKey: itemType === 'blank_tshirt' ? garmentKey : null,
+      color: itemType === 'blank_tshirt' ? color : null,
+      size: itemType === 'blank_tshirt' ? size : null,
+      supplyId: (itemType === 'packaging' || itemType === 'supplies') ? supplyId : null,
+      dtfSku: itemType === 'dtf_film' ? (dtfSku.trim() || null) : null
     });
 
-    setIsModalOpen(false);
-    setNotes('');
+    if (!keepOpen) {
+      setIsModalOpen(false);
+      setNotes('');
+    } else {
+      setNotes('');
+    }
   };
 
   // Metrics
@@ -370,6 +505,47 @@ export function ProcurementsPage() {
         maxWidth="max-w-2xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Quick Preset Buttons */}
+          <div className="bg-ts-surfaceHover/50 p-2.5 rounded-xl border border-ts-borderDim space-y-1.5">
+            <div className="flex items-center justify-between text-[11px] text-ts-muted">
+              <span className="font-semibold flex items-center gap-1 text-ts-krem">
+                <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
+                Input Cepat Sesuai Belanja Rutin:
+              </span>
+              <span>1-Klik isi otomatis</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                type="button"
+                onClick={() => applyQuickPreset('nsa24s_black_l')}
+                className="px-2.5 py-1 rounded-lg bg-ts-hitam/80 hover:bg-ts-hitam text-[11px] font-mono font-medium text-ts-krem border border-ts-border transition-colors hover:border-ts-terracotta"
+              >
+                👕 NSA 24s Hitam L (12 pcs)
+              </button>
+              <button
+                type="button"
+                onClick={() => applyQuickPreset('nsa30s_white_l')}
+                className="px-2.5 py-1 rounded-lg bg-ts-hitam/80 hover:bg-ts-hitam text-[11px] font-mono font-medium text-ts-krem border border-ts-border transition-colors hover:border-ts-terracotta"
+              >
+                👕 NSA 30s Putih L (12 pcs)
+              </button>
+              <button
+                type="button"
+                onClick={() => applyQuickPreset('polymailer_48')}
+                className="px-2.5 py-1 rounded-lg bg-ts-hitam/80 hover:bg-ts-hitam text-[11px] font-mono font-medium text-ts-krem border border-ts-border transition-colors hover:border-ts-mustard"
+              >
+                📦 Polymailer (48 pcs)
+              </button>
+              <button
+                type="button"
+                onClick={() => applyQuickPreset('sticker_35')}
+                className="px-2.5 py-1 rounded-lg bg-ts-hitam/80 hover:bg-ts-hitam text-[11px] font-mono font-medium text-ts-krem border border-ts-border transition-colors hover:border-ts-mustard"
+              >
+                🏷️ Stiker (35 pcs)
+              </button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <Select
               label="Kategori Bahan"
@@ -394,6 +570,102 @@ export function ProcurementsPage() {
             </Select>
           </div>
 
+          {/* Conditional Selectors for Blank Garment Auto-Sync */}
+          {itemType === 'blank_tshirt' && (
+            <div className="bg-ts-terracotta/10 border border-ts-terracotta/30 rounded-xl p-3.5 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-ts-krem flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-ts-terracotta" />
+                  Spesifikasi Kaos Polos NSA (Sinkronisasi Stok Otomatis)
+                </span>
+                <span className="text-[10px] font-mono text-ts-terracotta font-bold">
+                  AUTO-SYNC INVENTORY
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <Select
+                  label="Model Garmen NSA"
+                  value={garmentKey}
+                  onChange={(e) => updateGarmentSelection(e.target.value, undefined, size)}
+                >
+                  {Object.entries(GARMENT_TYPES)
+                    .filter(([k]) => k !== 'supplies')
+                    .map(([k, g]) => (
+                      <option key={k} value={k}>{g.name}</option>
+                    ))}
+                </Select>
+
+                <Select
+                  label="Warna Kaos"
+                  value={color}
+                  onChange={(e) => updateGarmentSelection(garmentKey, e.target.value, size)}
+                >
+                  {(GARMENT_TYPES[garmentKey]?.colors || []).map(c => (
+                    <option key={c.name} value={c.name}>{c.name}</option>
+                  ))}
+                </Select>
+
+                <Select
+                  label="Ukuran (Size)"
+                  value={size}
+                  onChange={(e) => updateGarmentSelection(garmentKey, color, e.target.value)}
+                >
+                  {SIZES.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </Select>
+              </div>
+
+              <div className="flex items-center gap-2 p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-xs text-emerald-400">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                <div>
+                  <span className="font-bold">✨ Stok Terhubung:</span> Stok kaos{' '}
+                  <span className="font-bold text-white underline">{GARMENT_TYPES[garmentKey]?.name} {color} {size}</span>{' '}
+                  akan otomatis bertambah <span className="font-mono font-bold text-ts-mustard">+{qty} pcs</span> di Matriks Gudang saat disimpan.
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Conditional Selectors for Packaging Auto-Sync */}
+          {(itemType === 'packaging' || itemType === 'supplies') && (
+            <div className="bg-ts-mustard/10 border border-ts-mustard/30 rounded-xl p-3.5 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-ts-krem flex items-center gap-1.5">
+                  <Boxes className="w-3.5 h-3.5 text-ts-mustard" />
+                  Pilih Kemasan / Material (Otomatis Masuk Stok MultiGraph/Studio)
+                </span>
+                <span className="text-[10px] font-mono text-ts-mustard font-bold">
+                  AUTO-SYNC PACKAGING
+                </span>
+              </div>
+              <div>
+                <Select
+                  label="Jenis Kemasan / Perlengkapan"
+                  value={supplyId}
+                  onChange={(e) => updateSupplySelection(e.target.value)}
+                >
+                  {GARMENT_TYPES.supplies?.items?.map(s => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} ({s.unit})
+                    </option>
+                  ))}
+                </Select>
+              </div>
+
+              <div className="flex items-center gap-2 p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-xs text-emerald-400">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                <div>
+                  <span className="font-bold">✨ Stok Terhubung:</span> Stok kemasan{' '}
+                  <span className="font-bold text-white underline">
+                    {GARMENT_TYPES.supplies?.items?.find(s => s.id === supplyId)?.name || supplyId}
+                  </span>{' '}
+                  akan otomatis bertambah <span className="font-mono font-bold text-ts-mustard">+{qty} {unitMeasure}</span> di tab Kemasan saat disimpan.
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-3 gap-3">
             <div className="col-span-2">
               <Input
@@ -405,7 +677,7 @@ export function ProcurementsPage() {
             </div>
             <Input
               label="SKU Terkait (Opsional)"
-              placeholder="cth: NSA-30S-BLK-L"
+              placeholder="cth: NSA-24S-HITAM-L"
               value={itemSku}
               onChange={(e) => setItemSku(e.target.value)}
             />
@@ -502,13 +774,25 @@ export function ProcurementsPage() {
             </div>
           </div>
 
-          <div className="pt-3 flex justify-end gap-2 border-t border-ts-borderDim">
-            <Button type="button" variant="secondary" onClick={() => setIsModalOpen(false)}>
-              Batal
-            </Button>
-            <Button type="submit" variant="primary">
-              Simpan Pengadaan &amp; Update Stok
-            </Button>
+          <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-ts-borderDim">
+            <label className="flex items-center gap-2 text-xs text-ts-muted cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={keepOpen}
+                onChange={(e) => setKeepOpen(e.target.checked)}
+                className="rounded border-ts-border text-ts-terracotta focus:ring-ts-terracotta bg-ts-hitam"
+              />
+              <span>Simpan &amp; Lanjut Input Barang Lain (Mode Cepat Nota Belanja)</span>
+            </label>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <Button type="button" variant="secondary" onClick={() => setIsModalOpen(false)}>
+                Batal
+              </Button>
+              <Button type="submit" variant="primary">
+                Simpan Pengadaan &amp; Update Stok
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>

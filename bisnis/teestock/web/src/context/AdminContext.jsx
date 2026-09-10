@@ -7,7 +7,9 @@ import {
   deductStock, 
   deductDtfFilm, 
   restockDtfFilm, 
-  restockDtfBatch 
+  restockDtfBatch,
+  restockBlankGarment,
+  restockSupplyItem
 } from '../services/inventoryApi';
 import { getProcurements, saveProcurement as apiSaveProcurement, deleteProcurement as apiDeleteProcurement } from '../services/procurementsApi';
 import { getCashTransactions, addCashTransaction as apiAddCashTransaction, calculateLedgerSummary } from '../services/ledgerApi';
@@ -133,6 +135,14 @@ export function AdminProvider({ children }) {
   // Update specific stock cell in place
   const updateStockCell = (gKey, col, sz, val) => {
     const next = JSON.parse(JSON.stringify(inventory));
+    if (gKey === 'supplies') {
+      if (!next.supplies) next.supplies = {};
+      next.supplies[col] = Math.max(0, parseInt(val, 10) || 0);
+      saveInventoryMatrix(next);
+      setInventory(next);
+      showToast(`Stok kemasan/material diperbarui: ${col} = ${next.supplies[col]}`);
+      return;
+    }
     if (!next[gKey]) next[gKey] = {};
     if (!next[gKey][col]) next[gKey][col] = {};
     next[gKey][col][sz] = Math.max(0, parseInt(val, 10) || 0);
@@ -176,13 +186,32 @@ export function AdminProvider({ children }) {
     };
   };
 
-  // 1. Procurements actions
+  // 1. Procurements actions & Real-Time Inventory Stock Synchronization
   const addProcurement = async (procData) => {
     const updated = await apiSaveProcurement(procData);
     setProcurements(updated);
     const updatedTxs = await getCashTransactions();
     setCashTransactions(updatedTxs);
-    showToast(`✅ Pengadaan ${procData.itemName} berhasil dicatat & masuk buku kas!`);
+
+    // 📦 SINKRONISASI OTOMATIS KE INVENTORI STOK FISIK
+    let nextInv = { ...inventory };
+    let syncDetail = '';
+
+    if (procData.itemType === 'blank_tshirt' && procData.garmentKey && procData.color && procData.size) {
+      nextInv = restockBlankGarment(nextInv, procData.garmentKey, procData.color, procData.size, procData.qty);
+      setInventory(nextInv);
+      syncDetail = ` (Stok ${procData.color} ${procData.size} +${procData.qty} pcs)`;
+    } else if ((procData.itemType === 'packaging' || procData.itemType === 'supplies') && procData.supplyId) {
+      nextInv = restockSupplyItem(nextInv, procData.supplyId, procData.qty);
+      setInventory(nextInv);
+      syncDetail = ` (Stok ${procData.supplyId} +${procData.qty} pcs)`;
+    } else if (procData.itemType === 'dtf_film' && procData.dtfSku) {
+      nextInv = restockDtfFilm(nextInv, procData.dtfSku, procData.qty, procData.unitCost, procData.itemName);
+      setInventory(nextInv);
+      syncDetail = ` (Stok Film DTF +${procData.qty} lbr)`;
+    }
+
+    showToast(`✅ Pengadaan ${procData.itemName} berhasil dicatat & stok otomatis terupdate!${syncDetail}`);
   };
 
   const removeProcurement = async (id) => {

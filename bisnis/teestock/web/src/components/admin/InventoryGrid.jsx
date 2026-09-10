@@ -415,7 +415,8 @@ Mohon info ketersediaan stok di gerai terdekat dan total tagihannya ya kak. Teri
         /* Supplies Section */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {GARMENT_TYPES.supplies.items.map(sup => {
-            const currentVal = inventory.supplies?.[sup.id] || 0;
+            const rawVal = inventory.supplies?.[sup.id];
+            const currentVal = typeof rawVal === 'object' && rawVal !== null ? (Number(rawVal.qty) || 0) : (Number(rawVal) || 0);
             const isLow = currentVal <= sup.minStock;
 
             return (

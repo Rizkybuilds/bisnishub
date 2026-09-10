@@ -99,6 +99,34 @@ export function deductStock(matrix, garmentKey, color, size, qty = 1) {
 }
 
 /**
+ * Tambah stok garmen kaos polos (Restok dari Pengadaan Bahan)
+ */
+export function restockBlankGarment(matrix, garmentKey, color, size, qty = 1) {
+  const updated = JSON.parse(JSON.stringify(matrix));
+  if (!updated[garmentKey]) updated[garmentKey] = {};
+  if (!updated[garmentKey][color]) updated[garmentKey][color] = {};
+  const current = Number(updated[garmentKey][color][size]) || 0;
+  updated[garmentKey][color][size] = current + Number(qty);
+  saveInventoryMatrix(updated);
+  return updated;
+}
+
+/**
+ * Tambah / restok kemasan & material operasional (polymailer, sticker, hangtag, care card, dll.)
+ */
+export function restockSupplyItem(matrix, supplyId, qty = 1) {
+  const updated = JSON.parse(JSON.stringify(matrix));
+  if (!updated.supplies) {
+    updated.supplies = {};
+  }
+  const raw = updated.supplies[supplyId];
+  const current = typeof raw === 'object' && raw !== null ? Number(raw.qty || 0) : Number(raw || 0);
+  updated.supplies[supplyId] = current + Number(qty);
+  saveInventoryMatrix(updated);
+  return updated;
+}
+
+/**
  * Potong stok film DTF studio siap press untuk SKU desain grafis tertentu
  */
 export function deductDtfFilm(matrix, sku, qty = 1) {

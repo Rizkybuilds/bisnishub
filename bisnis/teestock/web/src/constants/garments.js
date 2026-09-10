@@ -203,6 +203,14 @@ export const GARMENT_TYPES = {
     code: "SUPPLIES",
     description: "Kemasan polymailer tebal, stiker vinyl, hangtag distro, kertas roti baking paper heat press, dan lakban fragile.",
     baseCost: 0,
-    colors: []
+    colors: [],
+    items: [
+      { id: "polymailer", name: "Polymailer Hitam Doff 30x40", unit: "pcs", minStock: 20 },
+      { id: "sticker", name: "Stiker Vinyl Unboxing 6x6 cm", unit: "pcs", minStock: 25 },
+      { id: "care_card", name: "Care Card & Thank You Insert A6", unit: "pcs", minStock: 20 },
+      { id: "hangtag", name: "Hangtag Distro Kraft Tebal", unit: "pcs", minStock: 20 },
+      { id: "teflon_sheet", name: "Kertas Teflon Heat Press", unit: "lembar", minStock: 2 },
+      { id: "lakban", name: "Lakban Fragile & Bening", unit: "roll", minStock: 2 }
+    ]
   }
 };

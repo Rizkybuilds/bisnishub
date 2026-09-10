@@ -3,7 +3,9 @@ import {
   deductStock, 
   deductDtfFilm, 
   restockDtfFilm, 
-  restockDtfBatch 
+  restockDtfBatch,
+  restockBlankGarment,
+  restockSupplyItem
 } from '../inventoryApi';
 
 describe('Inventory Stock Engine (inventoryApi.js)', () => {
@@ -74,6 +76,42 @@ describe('Inventory Stock Engine (inventoryApi.js)', () => {
       expect(result.dtf_films['TS-PRO-001'].ready).toBe(8); // 5 + 3
       expect(result.dtf_films['TS-KOM-001'].ready).toBe(2);
       expect(result.dtf_films['TS-KOM-001'].name).toBe('7 Summits');
+    });
+  });
+
+  describe('restockBlankGarment() — Restok Otomatis dari Pengadaan Bahan NSA', () => {
+    it('menambahkan stok NSA 24s L Hitam sebesar 12 pcs ke matriks', () => {
+      const result = restockBlankGarment(mockMatrix, 'nsa_heavyweight_24s', 'Hitam', 'L', 12);
+      expect(result.nsa_heavyweight_24s.Hitam.L).toBe(12);
+    });
+
+    it('mengakumulasi stok NSA 30s L Hitam yang sudah ada sebelumnya', () => {
+      // Sebelumnya L = 10
+      const result = restockBlankGarment(mockMatrix, 'nsa_softstyle_30s', 'Hitam', 'L', 12);
+      expect(result.nsa_softstyle_30s.Hitam.L).toBe(22); // 10 + 12
+    });
+
+    it('menambahkan warna atau varian baru secara aman', () => {
+      const result = restockBlankGarment(mockMatrix, 'nsa_softstyle_30s', 'Putih', 'L', 12);
+      expect(result.nsa_softstyle_30s.Putih.L).toBe(12);
+    });
+  });
+
+  describe('restockSupplyItem() — Restok Otomatis Kemasan & Material', () => {
+    it('menambahkan stok polymailer 48 pcs', () => {
+      const result = restockSupplyItem(mockMatrix, 'polymailer', 48);
+      expect(result.supplies.polymailer).toBe(48);
+    });
+
+    it('menambahkan stok sticker 35 pcs', () => {
+      const result = restockSupplyItem(mockMatrix, 'sticker', 35);
+      expect(result.supplies.sticker).toBe(35);
+    });
+
+    it('mengakumulasi stok kemasan jika sebelumnya sudah ada nilai stok', () => {
+      mockMatrix.supplies = { polymailer: 10 };
+      const result = restockSupplyItem(mockMatrix, 'polymailer', 48);
+      expect(result.supplies.polymailer).toBe(58); // 10 + 48
     });
   });
 });
