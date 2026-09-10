@@ -7,6 +7,92 @@
  */
 
 /**
+ * Master Fulfillment Hubs — Multi-Gudang & Sentra Produksi TeeStock
+ */
+export const FULFILLMENT_HUBS = {
+  CITAYAM_STUDIO: {
+    id: 'citayam_studio',
+    name: 'TeeStock Studio & Print Lab (Citayam Hub)',
+    shortName: 'Studio Citayam',
+    city: 'Kab. Bogor / Depok',
+    district: 'Citayam (Tugu Macan)',
+    address: 'Jl. Tugu Macan, Citayam, Kab. Bogor / Depok',
+    tagline: 'Sentra Produksi Heat Press & Workshop Utama',
+    badge: '🏭 TeeStock Studio & Print Lab (Citayam Hub)',
+    badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+    capabilities: ['custom_dtf', 'heat_press', 'blank_buffer', 'national_shipping']
+  },
+  BOGOR_EXPRESS: {
+    id: 'bogor_express',
+    name: 'TeeStock Express Hub (Bogor)',
+    shortName: 'Express Bogor',
+    city: 'Kota Bogor',
+    district: 'Bogor Kota',
+    address: 'Jaringan Distribusi NSA Resmi — Hub Satelit Bogor',
+    tagline: 'Fulfillment Kaos Polos NSA Satelit (Sameday / Instant Ready)',
+    badge: '⚡ TeeStock Express Hub (Bogor)',
+    badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    capabilities: ['blank_only', 'sameday_instant', 'jabodetabek_express']
+  }
+};
+
+/**
+ * Smart Fulfillment Origin Switcher
+ * Menentukan asal hub pengiriman berdasarkan komposisi keranjang dan kota tujuan:
+ * 1. Jika ada kaos grafis -> Wajib dikirim dari TeeStock Studio & Print Lab (Citayam Hub) karena butuh heat press.
+ * 2. Jika 100% kaos polos NSA dan tujuan Bogor -> Dialihkan ke TeeStock Express Hub (Bogor) agar dekat & bisa Sameday/Instant.
+ * 3. Jika 100% kaos polos tapi tujuan lain -> Dikirim dari Citayam Hub dengan ekspedisi nasional standar.
+ * 
+ * @param {Array} cartItems - Item dalam keranjang belanja
+ * @param {string} destinationCity - Kota tujuan pengiriman
+ * @param {string} destinationSubdistrict - Kecamatan tujuan pengiriman
+ */
+export function determineFulfillmentOrigin(cartItems = [], destinationCity = '', destinationSubdistrict = '') {
+  if (!cartItems || cartItems.length === 0) {
+    return {
+      hub: FULFILLMENT_HUBS.CITAYAM_STUDIO,
+      isExpressHub: false,
+      supportsInstant: false,
+      supportsSameday: false,
+      reason: 'Keranjang kosong, default ke Studio Citayam.'
+    };
+  }
+
+  // Cek apakah ada barang grafis / custom yang butuh sablon heat press
+  const hasGraphicOrCustom = cartItems.some(item => {
+    const isBlank = item.series === 'blank' || String(item.sku || '').startsWith('TS-BLK-');
+    return !isBlank;
+  });
+
+  const destCombined = `${destinationCity} ${destinationSubdistrict}`.toLowerCase();
+  const isBogorDestination = destCombined.includes('bogor');
+
+  // Aturan 1: Kaos polos murni + Tujuan Bogor -> Rute Express Hub Bogor
+  if (!hasGraphicOrCustom && isBogorDestination) {
+    return {
+      hub: FULFILLMENT_HUBS.BOGOR_EXPRESS,
+      isExpressHub: true,
+      supportsInstant: true,
+      supportsSameday: true,
+      badgeLabel: '⚡ Dikirim dari Hub Bogor (Sameday Ready)',
+      reason: 'Pesanan kaos polos tujuan Bogor dialihkan langsung ke TeeStock Express Hub (Bogor). Tersedia layanan Sameday/Instant!'
+    };
+  }
+
+  // Aturan 2 & 3: Ada kaos grafis atau tujuan selain Bogor -> Rute Studio Citayam
+  return {
+    hub: FULFILLMENT_HUBS.CITAYAM_STUDIO,
+    isExpressHub: false,
+    supportsInstant: false,
+    supportsSameday: false,
+    badgeLabel: '🏭 Diproses di Central Studio Citayam',
+    reason: hasGraphicOrCustom
+      ? 'Pesanan memuat kaos grafis yang diproses heat press suhu 155°C di Central Studio Citayam.'
+      : 'Pesanan kaos polos dipacking rapi dan dikirim via ekspedisi nasional dari Central Studio Citayam.'
+  };
+}
+
+/**
  * Cek apakah varian produk termasuk dalam buffer stock fisik studio
  * @param {string} garmentNameOrKey - Nama atau key jenis garmen (cth: "NSA Softstyle 30s", "nsa_heavyweight_24s", "TS-BLK-7200")
  * @param {string} color - Pilihan warna (cth: "Hitam", "Putih", "Charcoal")

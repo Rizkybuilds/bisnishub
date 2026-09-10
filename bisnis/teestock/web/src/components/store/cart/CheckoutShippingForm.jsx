@@ -1,18 +1,21 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { User, Phone, MapPin, Truck, AlertCircle, Package, CreditCard, Zap, QrCode } from 'lucide-react';
+import { User, Phone, MapPin, Truck, AlertCircle, Package, CreditCard, Zap, QrCode, Building2, Navigation } from 'lucide-react';
 import { checkoutSchema } from '../../../schemas/checkoutSchema';
 import { SHIPPING_ZONES } from '../../../constants/pricing';
 import { formatRupiah } from '../../../utils/formatters';
 import { PAYMENT_METHODS, PAYMENT_PROVIDERS } from '../../../services/paymentAdapter';
-import { AVAILABLE_COURIERS } from '../../../services/shippingApi';
+import { AVAILABLE_COURIERS, getAvailableCouriers } from '../../../services/shippingApi';
 
 export function CheckoutShippingForm({
   profile,
   onSubmitOrder,
   onShippingZoneChange,
   onCourierChange,
+  onCityChange,
+  onSubdistrictChange,
+  fulfillmentOrigin = null,
   selectedPaymentMethod = PAYMENT_PROVIDERS.MANUAL_QRIS,
   onPaymentMethodChange,
   weightInfo = null,
@@ -42,6 +45,8 @@ export function CheckoutShippingForm({
   // Watch shippingZone and courier to synchronize rate calculations in parent summary
   const currentZone = watch('shippingZone');
   const currentCourier = watch('courier');
+  const currentCity = watch('city');
+  const currentSubdistrict = watch('subdistrict');
 
   useEffect(() => {
     if (currentZone && onShippingZoneChange) {
@@ -54,6 +59,19 @@ export function CheckoutShippingForm({
       onCourierChange(currentCourier);
     }
   }, [currentCourier, onCourierChange]);
+
+  useEffect(() => {
+    if (onCityChange) {
+      onCityChange(currentCity || '');
+    }
+  }, [currentCity, onCityChange]);
+
+  useEffect(() => {
+    if (onSubdistrictChange) {
+      onSubdistrictChange(currentSubdistrict || '');
+    }
+  }, [currentSubdistrict, onSubdistrictChange]);
+
 
   // Autofill from user profile if available
   useEffect(() => {
@@ -194,6 +212,47 @@ export function CheckoutShippingForm({
         )}
       </div>
 
+      {/* 🏭 Live Multi-Origin Fulfillment Hub Banner */}
+      {fulfillmentOrigin && (
+        <div className={`p-4 rounded-2xl border transition-all ${
+          fulfillmentOrigin.isExpressHub
+            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 shadow-sm'
+            : 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+        }`}>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-mono uppercase tracking-wider font-extrabold px-2 py-0.5 rounded bg-white/10 flex items-center gap-1">
+                  {fulfillmentOrigin.isExpressHub ? (
+                    <>
+                      <Zap className="w-3 h-3 text-emerald-400 shrink-0" />
+                      EXPRESS SATELLITE HUB
+                    </>
+                  ) : (
+                    <>
+                      <Building2 className="w-3 h-3 text-amber-400 shrink-0" />
+                      CENTRAL PRINT LAB & WORKSHOP
+                    </>
+                  )}
+                </span>
+                <span className="text-xs font-bold text-white">
+                  {fulfillmentOrigin.hub.name}
+                </span>
+              </div>
+              <p className="text-[11px] text-ts-kremMuted leading-relaxed">
+                {fulfillmentOrigin.reason}
+              </p>
+            </div>
+            <div className="shrink-0 text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-white/10">
+              <span className="text-[10px] text-ts-muted block uppercase tracking-wider font-semibold">Origin Pengiriman:</span>
+              <span className="text-xs font-mono font-bold text-ts-krem">
+                {fulfillmentOrigin.hub.city}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Package Weight Live Indicator */}
       {weightInfo && weightInfo.actualWeightGrams > 0 && (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-xs">
@@ -232,14 +291,21 @@ export function CheckoutShippingForm({
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-ts-kremMuted">
-            Pilihan Kurir Ekspedisi
-          </label>
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-semibold text-ts-kremMuted">
+              Pilihan Kurir Ekspedisi
+            </label>
+            {fulfillmentOrigin?.isExpressHub && (
+              <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+                <Zap className="w-3 h-3" /> Sameday Aktif
+              </span>
+            )}
+          </div>
           <select
             {...register('courier')}
             className="w-full px-3.5 py-2.5 rounded-xl bg-ts-surface border border-white/[0.12] text-xs text-white focus:outline-none focus:border-ts-terracotta transition-colors cursor-pointer"
           >
-            {AVAILABLE_COURIERS.map((c) => (
+            {getAvailableCouriers(fulfillmentOrigin?.isExpressHub).map((c) => (
               <option key={c.id} value={c.name} className="bg-ts-surface text-white">
                 {c.name} ({c.service} • {c.badge})
               </option>

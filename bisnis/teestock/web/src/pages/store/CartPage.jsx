@@ -10,6 +10,7 @@ import {
   getSizeSurcharge 
 } from '../../constants/pricing';
 import { calculateOrderWeight, calculateShippingFee } from '../../services/shippingApi';
+import { determineFulfillmentOrigin } from '../../utils/garmentStockRouting';
 import { 
   PAYMENT_PROVIDERS, 
   createPaymentSession, 
@@ -33,6 +34,10 @@ export function CartPage() {
   const [courier, setCourier] = useState('J&T Express');
   const [paymentMethod, setPaymentMethod] = useState(PAYMENT_PROVIDERS.MANUAL_QRIS);
 
+  // Live destination input tracking for Smart Multi-Hub Routing
+  const [destinationCity, setDestinationCity] = useState('');
+  const [destinationSubdistrict, setDestinationSubdistrict] = useState('');
+
   // 3-digit random unique code for manual payment reconciliation
   const [uniqueCode] = useState(() => Math.floor(100 + Math.random() * 899));
 
@@ -43,6 +48,9 @@ export function CartPage() {
   const [voucherLoading, setVoucherLoading] = useState(false);
   const [voucherMsg, setVoucherMsg] = useState(null);
 
+  // Smart Multi-Hub Origin Routing (Citayam Studio vs Bogor Express Hub)
+  const fulfillmentOrigin = determineFulfillmentOrigin(cart, destinationCity, destinationSubdistrict);
+
   // Bundling calculations (for graphic merchandise only)
   const totalCartQty = cart.reduce((acc, item) => acc + (item.qty || 1), 0);
   const eligibleGraphicQty = cart
@@ -50,18 +58,20 @@ export function CartPage() {
     .reduce((acc, item) => acc + (item.qty || 1), 0);
   const bundleDiscount = calculateBundleDiscount(eligibleGraphicQty, role);
 
-  // Dynamic Weight-Based Shipping calculations
+  // Dynamic Weight-Based & Multi-Origin Shipping calculations
   const weightInfo = calculateOrderWeight(cart);
   const shippingCalculation = calculateShippingFee({
     zoneId: shippingZone,
     cartItems: cart,
-    courierName: courier
+    courierName: courier,
+    originHubId: fulfillmentOrigin.hub.id
   });
 
   const rawShippingFee = cart.length > 0 ? shippingCalculation.shippingFee : 0;
   const isFreeShippingVoucher = appliedVoucher?.type === 'free_shipping';
   const shippingDiscount = isFreeShippingVoucher ? Math.min(rawShippingFee, discountAmount) : 0;
   const shippingFee = Math.max(0, rawShippingFee - shippingDiscount);
+
 
   // Non-stackable discount selection
   let effectiveProductDiscount = 0;
@@ -166,6 +176,10 @@ export function CartPage() {
         shipping_fee: shippingFee,
         package_weight_grams: weightInfo.actualWeightGrams,
         billable_weight_kg: weightInfo.billableWeightKg,
+        fulfillment_origin: fulfillmentOrigin.hub.name,
+        origin_hub_id: fulfillmentOrigin.hub.id,
+        origin_hub_short: fulfillmentOrigin.hub.shortName,
+        origin_address: fulfillmentOrigin.hub.address,
         channel: 'web',
         tier: role || 'retail',
         status: isInstantPayment ? 'processing' : 'pending',
@@ -213,6 +227,7 @@ export function CartPage() {
         shippingZone: shippingCalculation.zoneName,
         shippingFee,
         courier: formData.courier || courier,
+        fulfillmentOrigin,
         items: [...cart],
         baseTotal: baseGrandTotal,
         uniqueCode: isInstantPayment ? 0 : uniqueCode,
@@ -295,6 +310,10 @@ export function CartPage() {
               <div className="flex justify-between text-ts-kremMuted">
                 <span>Kurir Pengiriman:</span>
                 <span className="text-white">{orderComplete.courier} ({orderComplete.shippingZone})</span>
+              </div>
+              <div className="flex justify-between text-ts-kremMuted pt-1 border-t border-white/[0.06]">
+                <span>Sentra Pengiriman:</span>
+                <span className="text-emerald-400 font-semibold">{orderComplete.fulfillmentOrigin?.hub?.name || 'TeeStock Studio & Print Lab (Citayam Hub)'}</span>
               </div>
             </div>
 
@@ -409,6 +428,9 @@ export function CartPage() {
             onSubmitOrder={handleProcessOrder}
             onShippingZoneChange={setShippingZone}
             onCourierChange={setCourier}
+            onCityChange={setDestinationCity}
+            onSubdistrictChange={setDestinationSubdistrict}
+            fulfillmentOrigin={fulfillmentOrigin}
             selectedPaymentMethod={paymentMethod}
             onPaymentMethodChange={setPaymentMethod}
             weightInfo={weightInfo}

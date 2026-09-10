@@ -51,14 +51,28 @@ export const GARMENT_WEIGHT_TABLE = {
 };
 
 /**
- * National Courier Providers with Service Slugs and Rate Adjusters
+ * National & Local Express Courier Providers with Service Slugs and Rate Adjusters
  */
 export const AVAILABLE_COURIERS = [
-  { id: 'jnt', name: 'J&T Express', service: 'EZ', rateMultiplier: 1.0, isRecommended: true, badge: 'Rekomendasi Cepat' },
-  { id: 'sicepat', name: 'SiCepat Reguler', service: 'REG', rateMultiplier: 1.0, isRecommended: false, badge: 'Standar' },
-  { id: 'jne', name: 'JNE Reguler', service: 'REG', rateMultiplier: 1.05, isRecommended: false, badge: 'Jaringan Luas' },
-  { id: 'anteraja', name: 'AnterAja', service: 'Reguler', rateMultiplier: 0.95, isRecommended: false, badge: 'Hemat' }
+  { id: 'jnt', name: 'J&T Express', service: 'EZ', rateMultiplier: 1.0, isRecommended: true, badge: 'Rekomendasi Cepat', category: 'regular' },
+  { id: 'sicepat', name: 'SiCepat Reguler', service: 'REG', rateMultiplier: 1.0, isRecommended: false, badge: 'Standar', category: 'regular' },
+  { id: 'jne', name: 'JNE Reguler', service: 'REG', rateMultiplier: 1.05, isRecommended: false, badge: 'Jaringan Luas', category: 'regular' },
+  { id: 'anteraja', name: 'AnterAja', service: 'Reguler', rateMultiplier: 0.95, isRecommended: false, badge: 'Hemat', category: 'regular' },
+  { id: 'gosend_sameday', name: 'GoSend / Grab Sameday', service: 'Sameday (6-8 Jam)', rateMultiplier: 1.8, isRecommended: false, badge: '⚡ Tiba Hari Ini (Bogor)', category: 'express_hub_only', flatSurcharge: 16000 },
+  { id: 'gosend_instant', name: 'GoSend / Grab Instant', service: 'Instant (1-2 Jam)', rateMultiplier: 2.5, isRecommended: false, badge: '🚀 Kilat Super Cepat', category: 'express_hub_only', flatSurcharge: 25000 }
 ];
+
+/**
+ * Filter available couriers based on fulfillment hub capabilities
+ * @param {boolean} supportsExpress - Whether the current hub supports sameday / instant delivery
+ */
+export function getAvailableCouriers(supportsExpress = false) {
+  if (supportsExpress) {
+    return AVAILABLE_COURIERS;
+  }
+  return AVAILABLE_COURIERS.filter(c => c.category !== 'express_hub_only');
+}
+
 
 /**
  * Identify weight of a single item in grams
@@ -154,12 +168,13 @@ export function calculateBillableWeightKg(weightInGrams) {
 }
 
 /**
- * Calculate Dynamic Shipping Fee based on Zone, Cart Items, and Courier
+ * Calculate Dynamic Shipping Fee based on Zone, Cart Items, Courier, and Origin Hub
  */
 export function calculateShippingFee({
   zoneId = 'jawa_lainnya',
   cartItems = [],
-  courierName = 'J&T Express'
+  courierName = 'J&T Express',
+  originHubId = 'citayam_studio'
 }) {
   if (!cartItems || cartItems.length === 0) {
     return {
@@ -169,7 +184,8 @@ export function calculateShippingFee({
       courierName,
       shippingFee: 0,
       eta: '1-3 Hari',
-      zoneName: ''
+      zoneName: '',
+      originHubId
     };
   }
 
@@ -181,9 +197,20 @@ export function calculateShippingFee({
     c => c.name.toLowerCase() === String(courierName).toLowerCase() || c.id === String(courierName).toLowerCase()
   ) || AVAILABLE_COURIERS[0];
 
-  const rawFee = zone.rate * billableKg * matchedCourier.rateMultiplier;
+  let rawFee = zone.rate * billableKg * matchedCourier.rateMultiplier;
+
+  // If courier is express hub local delivery (GoSend/Grab Instant or Sameday)
+  if (matchedCourier.flatSurcharge) {
+    const extraKgSurcharge = billableKg > 1 ? (billableKg - 1) * 5000 : 0;
+    rawFee = Math.max(rawFee, matchedCourier.flatSurcharge + extraKgSurcharge);
+  }
+
   // Round to nearest 500 for clean Indonesian billing
   const shippingFee = Math.round(rawFee / 500) * 500;
+
+  const eta = matchedCourier.service.includes('Jam')
+    ? matchedCourier.service
+    : zone.eta;
 
   return {
     baseZoneRate: zone.rate,
@@ -191,8 +218,10 @@ export function calculateShippingFee({
     actualWeightGrams: weightInfo.actualWeightGrams,
     courierName: matchedCourier.name,
     shippingFee,
-    eta: zone.eta,
+    eta,
     zoneName: zone.name,
-    isOverweight: billableKg > 1
+    isOverweight: billableKg > 1,
+    originHubId
   };
 }
+

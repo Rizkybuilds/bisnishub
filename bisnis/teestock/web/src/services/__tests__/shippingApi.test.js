@@ -5,8 +5,11 @@ import {
   calculateOrderWeight,
   calculateBillableWeightKg,
   calculateShippingFee,
-  AVAILABLE_COURIERS
+  AVAILABLE_COURIERS,
+  getAvailableCouriers
 } from '../shippingApi';
+import { determineFulfillmentOrigin } from '../../utils/garmentStockRouting';
+
 
 describe('Layanan Kalkulasi Pengiriman Berbasis Berat (shippingApi)', () => {
   describe('Gramasi Satuan Garmen (getItemWeightGrams)', () => {
@@ -129,5 +132,74 @@ describe('Layanan Kalkulasi Pengiriman Berbasis Berat (shippingApi)', () => {
       expect(result.shippingFee).toBe(10500);
       expect(result.courierName).toBe('JNE Reguler');
     });
+
+    it('menghitung tarif flat untuk GoSend / Grab Instant lokal satelit', () => {
+      const cart = [{ sku: 'TS-BLK-3600', qty: 1 }];
+      const result = calculateShippingFee({
+        zoneId: 'jabodetabek_jabar',
+        cartItems: cart,
+        courierName: 'GoSend / Grab Instant'
+      });
+
+      expect(result.shippingFee).toBe(25000);
+      expect(result.eta).toContain('1-2 Jam');
+    });
+  });
+
+  describe('Smart Multi-Hub Routing & Filter Kurir (determineFulfillmentOrigin & getAvailableCouriers)', () => {
+    it('mengarahkan pesanan kaos grafis ke Central Studio Citayam Hub (wajib heat press)', () => {
+      const cart = [
+        { sku: 'TS-PRO-001', name: 'Commit & Pray', series: 'profesi', qty: 1 }
+      ];
+      const origin = determineFulfillmentOrigin(cart, 'Bogor', 'Bogor Tengah');
+      expect(origin.hub.id).toBe('citayam_studio');
+      expect(origin.isExpressHub).toBe(false);
+      expect(origin.supportsInstant).toBe(false);
+      expect(origin.hub.name).toBe('TeeStock Studio & Print Lab (Citayam Hub)');
+    });
+
+    it('mengarahkan pesanan khusus kaos polos tujuan Bogor ke Express Hub Bogor', () => {
+      const cart = [
+        { sku: 'TS-BLK-3600', name: 'NSA Softstyle 3600', series: 'blank', qty: 2 }
+      ];
+      const origin = determineFulfillmentOrigin(cart, 'Kota Bogor', 'Bogor Timur');
+      expect(origin.hub.id).toBe('bogor_express');
+      expect(origin.isExpressHub).toBe(true);
+      expect(origin.supportsInstant).toBe(true);
+      expect(origin.supportsSameday).toBe(true);
+      expect(origin.hub.name).toBe('TeeStock Express Hub (Bogor)');
+    });
+
+    it('mengarahkan keranjang campuran (kaos polos + kaos grafis) tetap ke Central Studio Citayam', () => {
+      const cart = [
+        { sku: 'TS-BLK-3600', name: 'NSA Softstyle 3600', series: 'blank', qty: 1 },
+        { sku: 'TS-KOM-001', name: '7 Summits 3000 MDPL', series: 'komunitas', qty: 1 }
+      ];
+      // Meskipun tujuannya Bogor, karena ada kaos grafis yang butuh press, wajib Citayam Hub!
+      const origin = determineFulfillmentOrigin(cart, 'Kota Bogor', 'Bogor Selatan');
+      expect(origin.hub.id).toBe('citayam_studio');
+      expect(origin.isExpressHub).toBe(false);
+    });
+
+    it('mengarahkan pesanan kaos polos tujuan non-Bogor (cth: Surabaya) ke Central Studio Citayam', () => {
+      const cart = [
+        { sku: 'TS-BLK-7200', name: 'NSA Heavyweight 7200', series: 'blank', qty: 1 }
+      ];
+      const origin = determineFulfillmentOrigin(cart, 'Surabaya', 'Gubeng');
+      expect(origin.hub.id).toBe('citayam_studio');
+      expect(origin.isExpressHub).toBe(false);
+    });
+
+    it('memfilter opsi kurir instant/sameday hanya ketika Express Hub aktif', () => {
+      const regularCouriers = getAvailableCouriers(false);
+      expect(regularCouriers.some(c => c.id === 'gosend_instant')).toBe(false);
+      expect(regularCouriers.length).toBe(4); // J&T, SiCepat, JNE, AnterAja
+
+      const expressCouriers = getAvailableCouriers(true);
+      expect(expressCouriers.some(c => c.id === 'gosend_instant')).toBe(true);
+      expect(expressCouriers.some(c => c.id === 'gosend_sameday')).toBe(true);
+      expect(expressCouriers.length).toBe(6);
+    });
   });
 });
+

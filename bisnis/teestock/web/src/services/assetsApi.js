@@ -15,8 +15,8 @@ const STARTER_ASSETS = [
     purchaseCost: 2500000,
     currentValue: 2500000,
     status: 'active',
-    location: 'In-House Studio Rumah',
-    notes: 'Mesin press utama in-house untuk sablon DTF suhu 155°C (kapasitas 40-60 pcs/hari)'
+    location: 'TeeStock Studio & Print Lab (Citayam Hub)',
+    notes: 'Mesin press utama studio untuk sablon DTF suhu 155°C (kapasitas 40-60 pcs/hari)'
   }
 ];
 
@@ -58,7 +58,7 @@ export async function saveFixedAsset(assetData) {
     purchaseCost: Number(assetData.purchaseCost) || 0,
     currentValue: Number(assetData.currentValue) || Number(assetData.purchaseCost) || 0,
     status: assetData.status || 'active',
-    location: assetData.location || 'In-House Studio',
+    location: assetData.location || 'TeeStock Studio & Print Lab (Citayam Hub)',
     notes: assetData.notes || ''
   };
 

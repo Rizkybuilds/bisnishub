@@ -156,8 +156,9 @@ CREATE TABLE ts_orders (
     discount_amount NUMERIC(12, 2) DEFAULT 0 CHECK (discount_amount >= 0),
     voucher_code VARCHAR(50),
     marketplace_fee NUMERIC(12, 2) DEFAULT 0,
-    shipping_cost NUMERIC(12, 2) DEFAULT 0 CHECK (shipping_cost >= 0),
     tracking_number VARCHAR(100),
+    fulfillment_origin VARCHAR(100) DEFAULT 'TeeStock Studio & Print Lab (Citayam Hub)',
+    origin_hub_id VARCHAR(50) DEFAULT 'citayam_studio',
     notes TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -900,7 +901,7 @@ CREATE TABLE IF NOT EXISTS ts_fixed_assets (
     purchase_cost NUMERIC(12, 2) NOT NULL CHECK (purchase_cost >= 0),
     current_value NUMERIC(12, 2) NOT NULL CHECK (current_value >= 0),
     status VARCHAR(30) DEFAULT 'active',            -- active, maintenance, retired
-    location VARCHAR(100) DEFAULT 'In-House Studio',
+    location VARCHAR(100) DEFAULT 'TeeStock Studio & Print Lab (Citayam Hub)',
     notes TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -980,7 +981,7 @@ CROSS JOIN fixed_assets_summary fa;
 -- 21. SEED DATA AWAL FOUNDER: Mesin Heat Press In-House (Rp 2.500.000) & Modal Awal
 INSERT INTO ts_fixed_assets (asset_name, category, acquisition_date, purchase_cost, current_value, status, location, notes)
 VALUES
-('Mesin Heat Press High-Pressure 38x38 cm', 'machine', CURRENT_DATE, 2500000, 2500000, 'active', 'In-House Studio Rumah', 'Mesin press utama in-house untuk sablon DTF suhu 155°C (kapasitas 40-60 pcs/hari)')
+('Mesin Heat Press High-Pressure 38x38 cm', 'machine', CURRENT_DATE, 2500000, 2500000, 'active', 'TeeStock Studio & Print Lab (Citayam Hub)', 'Mesin press utama studio untuk sablon DTF suhu 155°C (kapasitas 40-60 pcs/hari)')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO ts_capital_investments (transaction_no, type, amount, source_or_destination, transaction_date, notes)

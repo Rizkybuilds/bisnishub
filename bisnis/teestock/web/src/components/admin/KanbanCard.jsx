@@ -204,6 +204,17 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
                 )}
               </div>
             )}
+            {/* Sentra Hub Dispatch */}
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="text-ts-muted font-mono text-[9px] uppercase">Sentra:</span>
+              <span className={`inline-flex items-center gap-1 font-mono font-bold px-1.5 py-0.5 rounded text-[9px] ${
+                order.origin_hub_id === 'bogor_express'
+                  ? 'text-emerald-400 bg-emerald-500/15 border border-emerald-500/30'
+                  : 'text-amber-400 bg-amber-500/15 border border-amber-500/30'
+              }`} title={order.fulfillment_origin || 'TeeStock Studio & Print Lab (Citayam Hub)'}>
+                {order.origin_hub_id === 'bogor_express' ? '⚡ HUB BOGOR' : '🏭 STUDIO CITAYAM'}
+              </span>
+            </div>
           </div>
         </div>
 

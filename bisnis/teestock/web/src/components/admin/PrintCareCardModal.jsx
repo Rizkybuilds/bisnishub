@@ -95,7 +95,7 @@ export function PrintCareCardModal({ isOpen, onClose }) {
                   Thank You for Supporting Local!
                 </h3>
                 <p className="text-[11px] text-white/70 leading-relaxed">
-                  Kaos ini dipres secara in-house dengan dedikasi tinggi menggunakan bahan katun <strong className="text-white">New States Apparel</strong> original dan teknologi sablon DTF HD.
+                  Kaos ini dipres dengan standar presisi tinggi di <strong className="text-white">TeeStock Studio &amp; Print Lab</strong> menggunakan bahan katun <strong className="text-white">New States Apparel</strong> original dan teknologi sablon DTF HD.
                 </p>
               </div>
 
