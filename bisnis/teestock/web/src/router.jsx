@@ -13,29 +13,62 @@ import { AuthGuard } from './components/admin/AuthGuard';
 import { HomePage } from './pages/store/HomePage';
 import { BioLinkPage } from './pages/store/BioLinkPage';
 
+/**
+ * Safe lazy loader with auto-retry on new Vercel deployment chunk mismatches
+ */
+function safeLazy(importFn) {
+  return lazy(async () => {
+    try {
+      const module = await importFn();
+      // Clear retry counter on successful load
+      try {
+        sessionStorage.removeItem('chunk_reload_' + window.location.pathname);
+      } catch (_) {}
+      return module;
+    } catch (error) {
+      console.warn('Chunk load error, auto-reloading page with new deployment:', error);
+      const isChunkError = 
+        error?.message?.includes('dynamically imported module') || 
+        error?.message?.includes('Loading chunk') ||
+        error?.name === 'TypeError';
+
+      if (isChunkError && typeof window !== 'undefined') {
+        const reloadKey = 'chunk_reload_' + window.location.pathname;
+        const attempts = Number(sessionStorage.getItem(reloadKey) || 0);
+        if (attempts < 2) {
+          sessionStorage.setItem(reloadKey, String(attempts + 1));
+          window.location.reload();
+          return new Promise(() => {});
+        }
+      }
+      throw error;
+    }
+  });
+}
+
 // Lazy-loaded Store Pages (Code Splitting for Core Web Vitals)
-const StoreCatalogPage = lazy(() => import('./pages/store/CatalogPage').then(m => ({ default: m.CatalogPage })));
-const ProductDetailPage = lazy(() => import('./pages/store/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
-const CustomOrderPage = lazy(() => import('./pages/store/CustomOrderPage').then(m => ({ default: m.CustomOrderPage })));
-const CartPage = lazy(() => import('./pages/store/CartPage').then(m => ({ default: m.CartPage })));
-const OrderTrackingPage = lazy(() => import('./pages/store/OrderTrackingPage').then(m => ({ default: m.OrderTrackingPage })));
-const AccountPage = lazy(() => import('./pages/store/AccountPage').then(m => ({ default: m.AccountPage })));
-const PartnerPage = lazy(() => import('./pages/store/PartnerPage').then(m => ({ default: m.PartnerPage })));
-const GaransiPage = lazy(() => import('./pages/store/GaransiPage').then(m => ({ default: m.GaransiPage })));
+const StoreCatalogPage = safeLazy(() => import('./pages/store/CatalogPage').then(m => ({ default: m.CatalogPage })));
+const ProductDetailPage = safeLazy(() => import('./pages/store/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
+const CustomOrderPage = safeLazy(() => import('./pages/store/CustomOrderPage').then(m => ({ default: m.CustomOrderPage })));
+const CartPage = safeLazy(() => import('./pages/store/CartPage').then(m => ({ default: m.CartPage })));
+const OrderTrackingPage = safeLazy(() => import('./pages/store/OrderTrackingPage').then(m => ({ default: m.OrderTrackingPage })));
+const AccountPage = safeLazy(() => import('./pages/store/AccountPage').then(m => ({ default: m.AccountPage })));
+const PartnerPage = safeLazy(() => import('./pages/store/PartnerPage').then(m => ({ default: m.PartnerPage })));
+const GaransiPage = safeLazy(() => import('./pages/store/GaransiPage').then(m => ({ default: m.GaransiPage })));
 
 // Lazy-loaded Admin Pages (Zero Admin Code in Initial Public Bundle)
-const LoginPage = lazy(() => import('./pages/admin/LoginPage').then(m => ({ default: m.LoginPage })));
-const DashboardPage = lazy(() => import('./pages/admin/DashboardPage').then(m => ({ default: m.DashboardPage })));
-const AdminCatalogPage = lazy(() => import('./pages/admin/CatalogPage').then(m => ({ default: m.CatalogPage })));
-const InventoryPage = lazy(() => import('./pages/admin/InventoryPage').then(m => ({ default: m.InventoryPage })));
-const KanbanPage = lazy(() => import('./pages/admin/KanbanPage').then(m => ({ default: m.KanbanPage })));
-const GangSheetPage = lazy(() => import('./pages/admin/GangSheetPage').then(m => ({ default: m.GangSheetPage })));
-const QuoterPage = lazy(() => import('./pages/admin/QuoterPage').then(m => ({ default: m.QuoterPage })));
-const DefectsPage = lazy(() => import('./pages/admin/DefectsPage').then(m => ({ default: m.DefectsPage })));
-const SettingsPage = lazy(() => import('./pages/admin/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const ProcurementsPage = lazy(() => import('./pages/admin/ProcurementsPage').then(m => ({ default: m.ProcurementsPage })));
-const LedgerPage = lazy(() => import('./pages/admin/LedgerPage').then(m => ({ default: m.LedgerPage })));
-const AssetsPage = lazy(() => import('./pages/admin/AssetsPage').then(m => ({ default: m.AssetsPage })));
+const LoginPage = safeLazy(() => import('./pages/admin/LoginPage').then(m => ({ default: m.LoginPage })));
+const DashboardPage = safeLazy(() => import('./pages/admin/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const AdminCatalogPage = safeLazy(() => import('./pages/admin/CatalogPage').then(m => ({ default: m.CatalogPage })));
+const InventoryPage = safeLazy(() => import('./pages/admin/InventoryPage').then(m => ({ default: m.InventoryPage })));
+const KanbanPage = safeLazy(() => import('./pages/admin/KanbanPage').then(m => ({ default: m.KanbanPage })));
+const GangSheetPage = safeLazy(() => import('./pages/admin/GangSheetPage').then(m => ({ default: m.GangSheetPage })));
+const QuoterPage = safeLazy(() => import('./pages/admin/QuoterPage').then(m => ({ default: m.QuoterPage })));
+const DefectsPage = safeLazy(() => import('./pages/admin/DefectsPage').then(m => ({ default: m.DefectsPage })));
+const SettingsPage = safeLazy(() => import('./pages/admin/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const ProcurementsPage = safeLazy(() => import('./pages/admin/ProcurementsPage').then(m => ({ default: m.ProcurementsPage })));
+const LedgerPage = safeLazy(() => import('./pages/admin/LedgerPage').then(m => ({ default: m.LedgerPage })));
+const AssetsPage = safeLazy(() => import('./pages/admin/AssetsPage').then(m => ({ default: m.AssetsPage })));
 
 /**
  * Loading fallback component for Storefront routes
