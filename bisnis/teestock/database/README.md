@@ -55,11 +55,30 @@ Kredensial tersimpan di `bisnis/teestock/web/.env`:
 | 10 | `ts_defects` | Pencatatan cacat produksi QC, retur kurir, dan kalkulasi kerugian HPP | Read/Write: Admin |
 | 11 | `ts_partner_applications` | Formulir pendaftaran calon mitra dropshipper / reseller | Insert: Publik, Manage: Admin |
 | 12 | `ts_reviews` | Ulasan pembeli terverifikasi, rating bintang 1-5, testimoni fitting | Read/Insert: Publik, Manage: Admin |
+| 13 | `ts_settings` | Pengaturan toko, payment gateway, rekening bank, & social links | Read/Write: Admin |
+| 14 | `ts_procurements` | Pengadaan bahan baku (Kaos NSA, Roll DTF, kemasan) & kalkulator BOM | Read/Write: Admin |
+| 15 | `ts_cash_ledger` | Buku kas satu pintu & pemisahan dompet pribadi vs bisnis | Read/Write: Admin |
+| 16 | `ts_fixed_assets` | Pelacak aset alat produksi CAPEX (Mesin Heat Press Rp 2.500.000) | Read/Write: Admin |
+| 17 | `ts_capital_investments` | Catatan ekuitas setoran modal awal (injeksi) & penarikan prive | Read/Write: Admin |
 
 ### Fitur Database Tambahan:
 - **View Otomatis `ts_view_catalog_summary`:** Menyatukan data produk, total HPP, margin kotor, fee marketplace 6.5%, dan profit bersih per pcs.
+- **View Eksekutif `ts_view_founder_wealth`:** Neraca kasat mata total kekayaan bisnis (Kas + Stok NSA + Stok DTF + Kemasan + Mesin Press) dan pertumbuhan ROI modal founder.
+- **Trigger `apply_procurement_moving_average`:** Otomatis menghitung ulang Moving Average Cost di persediaan saat pengadaan baru diinput, serta mencatat arus kas keluar di buku kas.
 - **Trigger `on_auth_user_created`:** Otomatis membuat baris baru di `ts_user_profiles` saat pengguna mendaftar melalui Google OAuth atau Magic Link Email.
-- **RLS (Row Level Security):** Mengamankan data sensitif seperti omset, order customer, dan stok bahan dari publik, sambil tetap mengizinkan pengunjung melakukan pembelian (guest checkout) dan mendaftar newsletter.
+- **RLS (Row Level Security):** Mengamankan data sensitif seperti omset, order customer, data kas, dan stok bahan dari publik, sambil tetap mengizinkan pengunjung melakukan pembelian (guest checkout) dan mendaftar newsletter.
+
+---
+
+## ⚡ Langkah Migrasi Founder Hub (Non-Destruktif)
+Jika database Anda sudah memiliki 13 tabel awal dan hanya perlu menambahkan sistem Founder Hub:
+1. Buka [Supabase SQL Editor](https://supabase.com/dashboard/project/tovslowsopqtuxmrogeu/sql/new).
+2. Buka file [`migration_founder_system.sql`](./migration_founder_system.sql).
+3. Copy-paste kodenya lalu klik **Run**.
+4. Cek status kapan saja via terminal:
+   ```bash
+   node bisnis/teestock/database/check_tables.mjs
+   ```
 
 ---
 
