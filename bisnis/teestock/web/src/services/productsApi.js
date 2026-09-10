@@ -45,9 +45,33 @@ export async function getProducts() {
       }
     }
     
+    // Merge DB products with SEED_PRODUCTS to guarantee full catalog availability
+    const seedMap = new Map(SEED_PRODUCTS.map(p => [p.sku, p]));
+    const dbSkus = new Set(data.map(p => p.sku));
+    const enrichedDb = data.map(p => {
+      const seed = seedMap.get(p.sku);
+      return {
+        ...seed,
+        ...p,
+        priceRetail: p.price_retail ?? p.priceRetail ?? seed?.priceRetail,
+        priceReseller: p.price_reseller ?? p.priceReseller ?? seed?.priceReseller,
+        costBlank: p.cost_blank ?? p.costBlank ?? seed?.costBlank,
+        costDtf: p.cost_dtf ?? p.costDtf ?? seed?.costDtf,
+        filePath: p.file_path ?? p.filePath ?? seed?.filePath,
+        seriesName: p.series_name ?? p.seriesName ?? seed?.seriesName,
+        seriesColor: p.series_color ?? p.seriesColor ?? seed?.seriesColor,
+        variantImages: p.variant_images ?? p.variantImages ?? seed?.variantImages,
+        generalImages: p.general_images ?? p.generalImages ?? seed?.generalImages,
+        colors: p.colors || seed?.colors,
+        sizes: p.sizes || seed?.sizes
+      };
+    });
+    const missing = SEED_PRODUCTS.filter(p => !dbSkus.has(p.sku));
+    const finalProducts = [...enrichedDb, ...missing];
+
     // Cache locally
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
-    return data;
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(finalProducts));
+    return finalProducts;
   } catch (err) {
     const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!cached) return SEED_PRODUCTS;

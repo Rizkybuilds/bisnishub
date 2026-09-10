@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, ArrowRight, CheckCircle2, Tag, Zap, ShieldCheck, Clock } from 'lucide-react';
+import { ShoppingBag, ArrowRight, CheckCircle2, Tag, Zap, ShieldCheck, Clock, Truck } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { createPublicOrder } from '../../services/ordersApi';
@@ -332,7 +332,14 @@ export function CartPage() {
           />
         )}
 
-        <div className="pt-2">
+        <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            to={`/tracking?order=${orderComplete.orderId}`}
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] text-xs font-bold text-ts-krem hover:text-white border border-white/15 transition-all inline-flex items-center justify-center gap-2 shadow-sm"
+          >
+            <Truck className="w-4 h-4 text-ts-terracotta" />
+            <span>Lacak Status Pesanan #{orderComplete.orderId}</span>
+          </Link>
           <Link to="/" className="inline-block text-xs font-medium text-ts-kremMuted hover:text-white transition-colors">
             ← Kembali ke Beranda
           </Link>
