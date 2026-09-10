@@ -31,82 +31,76 @@ Dokumen ini melengkapi analisis bisnis dan brand guide sebelumnya dengan detail 
 4. **Finishing Press (Curing):** Tutup sablonan dengan kertas teflon / baking paper, press kembali selama 5–7 detik untuk menanamkan tinta ke dalam pori-pori kain dan menghilangkan kilap plastik berlebih.
 5. **Quality Check & Fold:** Periksa kerataan rekat lem pada sudut sablon, lipat rapi, dan masukkan ke polymailer dengan stiker segel TeeStock.
 
-### 1.4 Model Hybrid Inventory: Buffer Studio vs JIT Cititex Network
+### 1.4 Model Hybrid Inventory & Smart Multi-Hub Routing
 
-Sebagai solopreneur dengan modal dan kapasitas gudang terbatas di rumah, TeeStock menerapkan **arsitektur persediaan hibrida 2-tier** agar dapat menjual seluruh katalog apparel New States Apparel (NSA) hingga 1.500+ variasi SKU tanpa risiko mati modal (*dead stock*):
+Sebagai solopreneur dengan modal dan kapasitas gudang terukur, TeeStock menerapkan **arsitektur persediaan hibrida 2-tier dan sistem logistik multi-hub**:
 
 1. **Tier 1: Buffer Stock Studio (Fast-Moving, Kirim H+0 / Hari Ini):**
-   - **Lokasi:** Lemari/rak stok di rumah/studio founder.
-   - **SKU Terbatas:** Hanya menyimpan kaos terpopuler: **Hitam & Putih** untuk model **NSA Heavyweight 24s** dan **NSA Softstyle 30s** dalam ukuran **M, L, dan XL** (buffer 3–6 pcs per SKU).
+   - **Lokasi:** Lemari/rak stok di Central Studio (Citayam Hub).
+   - **SKU Terbatas:** Kaos terpopuler: **Hitam & Putih** untuk model **NSA Heavyweight 24s** dan **NSA Softstyle 30s** dalam ukuran **M, L, dan XL** (buffer 3–6 pcs per SKU).
    - **SLA Pelanggan:** Siap press dan langsung dikirim di hari yang sama (*Same-Day / Next-Day*).
-2. **Tier 2: Virtual Catalog / Just-in-Time (JIT) Cititex Network (Kirim H+1 s/d H+2):**
-   - **Cakupan:** Seluruh spektrum warna (Maroon, Forest Green, Navy, Mustard, Lilac, dll.), ukuran khusus (S, XXL, 3XL), kaos lengan panjang (*Longsleeve*), Hoodie, Raglan, dan Polo NSA.
-   - **Status di Web:** Tampil sebagai *Ready Stock Gudang Pusat* sehingga pembeli tidak ragu memesan.
-   - **Alur Penarikan:** Begitu pesanan masuk, sistem admin menandai pesanan dengan badge `[TARIK CITITEX]`.
-3. **SOP Batching Pengambilan & Efisiensi Biaya:**
-   - **Kalkulasi Unit Economics:** Margin blank apparel murni adalah tipis (Rp 10.000 – Rp 12.000). Jika founder menarik 1 kaos memakai GoSend/GrabExpress (Rp 15.000 – Rp 20.000), margin akan langsung minus (*bocor*).
-   - **Solusi Batching:** Pengambilan garmen ke cabang Cititex dilakukan **sekaligus 1x sehari** di jam operasional sore hari, bersamaan dengan rute pengambilan cetakan film DTF roll meteran dari vendor print, atau dikoordinasikan via WhatsApp admin cabang Cititex terdekat.
-   - **Manifest Otomatis Web App:** Dashboard Admin (`/admin/kanban`) dilengkapi tombol **"Tarik Cititex"** yang mengelompokkan kebutuhan garmen harian per model/warna/ukuran dan menyediakan generator teks WhatsApp siap kirim ke kasir Cititex.
+2. **Tier 2: Virtual Catalog / Just-in-Time (JIT) Network (Kirim H+1 s/d H+2):**
+   - **Cakupan:** Seluruh spektrum warna (Maroon, Forest Green, Navy, Mustard, Lilac, dll.), ukuran khusus (S, XXL, 3XL), Longsleeve, Hoodie, Raglan, dan Polo NSA.
+   - **Status di Web:** Tampil sebagai *Ready Stock Gudang Pusat*.
+3. **Logika Smart Multi-Hub Routing:**
+   - **Skenario A (Order Kaos Polos Saja — Area Bogor/Jabodetabek):**
+     * Pengiriman langsung di-route dari **TeeStock Satellite Hub (Bogor)** via jaringan distributor/Cititex Bogor.
+     * Mengaktifkan opsi kurir Instant/Same-Day (GoSend/Grab/Paxel) dengan ongkir lebih murah dan waktu tempuh hitungan jam.
+   - **Skenario B (Order Katalog Desain Originals atau Custom Atelier):**
+     * Pengiriman wajib diproses dari **TeeStock Central Studio (Citayam Hub)** karena memerlukan proses heat press 155°C, quality control, dan finishing *unboxing packaging*.
+   - **Skenario C (Order Campuran: Kaos Polos + Kaos Desain):**
+     * Seluruh pesanan dikonsolidasikan dan dikirim bersamaan dari **TeeStock Central Studio (Citayam Hub)**. Bahan ditarik melalui batching harian sore hari, sehingga pembeli hanya membayar satu kali ongkir normal.
+4. **Standardisasi Identitas Pengiriman (Label Resi Thermal A6):**
+   - Menghindari label tidak profesional seperti "inhome" atau nama pribadi.
+   - **Pesanan Sablon/Custom:** Pengirim tercetak resmi sebagai **"TeeStock Central Studio — Citayam"** (Tugu Macan Citayam, Kab. Bogor / Depok).
+   - **Pesanan Blanks Polos:** Pengirim tercetak resmi sebagai **"TeeStock Fulfillment Hub — Bogor"**.
 
 ---
 
 ## 2. Struktur Channel Penjualan
 
-| Channel | Peran utama |
+| Channel | Peran Utama & Karakter |
 |---|---|
-| **Shopee** | Volume & pencarian — andalan utama untuk katalog Stock & Blanks |
-| **TikTok Shop** | Akuisisi lewat konten & FYP — bagus untuk video proses press & ASMR peel |
-| **Blibli** | Kepercayaan & segmen pembeli yang lebih mengutamakan platform "resmi/terpercaya" |
-| **Website sendiri (`teestock.vercel.app`)** | Pusat operasional: penjualan Blanks NSA, Custom Order, pendaftaran Partner/Reseller, dan Hub Admin |
-
-**Catatan penting:** website berfungsi ganda sebagai *storefront ritel* dan *tools operasional*, dilengkapi kalkulator HPP otomatis, gang sheet layout DTF, dan manifest logistik internal.
+| **Website Utama (`teestock.id` / `teestock.vercel.app`)** | Storefront ritel resmi (B2C Flagship): etalase Drop Originals, katalog NSA Blanks, studio Custom Atelier, dan bio-link terintegrasi. Bersih dari banner grosir/reseller. |
+| **Marketplace (Shopee & TikTok Shop)** | Kanal volume & akuisisi — etalase rilis Drop #01 dan katalog Kaos Polos resmi, didukung konten video proses heat press in-house (ASMR peel). |
+| **WhatsApp CS Direct** | Konsultasi personal pemesanan Custom Atelier satuan/komunitas dan penanganan garansi 100%. |
+| **Subdomain Kemitraan (`mitra.teestock.id` — Fase 2)** | Dedicated portal khusus reseller dan dropshipper terverifikasi dengan login terisolasi dan harga grosir transparan. |
 
 ---
 
-## 3. Arsitektur Operasional: TeeStock Originals, Blanks & Studio
+## 3. Arsitektur Operasional: 3 Pilar Ritel B2C
 
-Sesuai pembaruan arah bisnis dan arsitektur web aplikasi, operasional dibagi menjadi tiga pilar:
+Operasional storefront publik `teestock.id` sepenuhnya fokus melayani konsumen retail melalui 3 pilar:
 
-### A. Sayap Ritel: TeeStock Originals (The Drop Model)
-* **Karakter:** Rilis berkala per edisi/kapsul (*The Drop Model*), bukan koleksi massal kaku. Dimulai dari kurasi beberapa desain pilihan yang estetik dan disukai pasar tanpa memaksakan sekat kategori kaku di awal sebelum ada validasi pembeli.
-* **Alur Produksi:** Cetak film DTF meteran sekaligus saat pesanan terkonfirmasi, press mandiri menggunakan mesin in-house.
-* **Penyimpanan:** Memanfaatkan buffer kaos polos di studio.
+### A. Pilar 1: TeeStock Originals (The Drop Model)
+* **Karakter:** Rilis grafis tematik berkala per batch/kapsul (**Drop #01: "RAW IDENTITY"**). Kuota batch terbatas (24 pcs) untuk menjaga eksklusivitas.
+* **Alur Produksi:** Cetak film DTF meteran 300 DPI -> Heat press in-house 155°C (15 detik press + 5 detik curing teflon) -> QC lem -> Finishing unboxing (Polymailer doff + Stiker seal + Kartu Garansi + Stiker bonus).
+* **Harga Ritel:** Rp 99.000 (Anchor Price Rp 139.000).
 
-### B. Sayap Blanks: Reseller & Dropship NSA Resmi
-* **Katalog Lengkap:** Menjual kaos polos New States Apparel original (24s Heavyweight, 30s Softstyle, Ringer, Longsleeve) secara eceran dan lusinan.
-* **Upsell Custom DTF (+Rp 25.000):** Setiap halaman produk kaos polos dilengkapi banner rekomendasi instan untuk langsung mengubah pesanan menjadi kaos sablon kustom (mengarahkan otomatis ke `/custom-order?blank=SKU`).
+### B. Pilar 2: TeeStock Blanks (Official NSA Blanks)
+* **Katalog Lengkap:** Menjual kaos polos New States Apparel original (24s Heavyweight & 30s Softstyle) secara eceran.
+* **Smart Fulfillment:** Pengiriman instan melalui Satellite Hub Bogor atau buffer Central Studio Citayam.
+* **Upsell Custom DTF (+Rp 25.000):** Banner interaktif di setiap halaman produk polos untuk mengubah order menjadi kaos custom kustom dengan 1 klik.
 
-### C. Sayap Layanan & Kemitraan: TeeStock Studio
-Sayap ini menangkap peluang non-retail dengan 3 sub-layanan yang diaktifkan bertahap:
-
-1. **Custom Order Studio (Mulai Fase 2):**
-   * Menerima pesanan kaos custom satuan maupun komunitas via WhatsApp / Google Form.
-   * Alur: Konsultasi desain -> Pembayaran DP 50% / Lunas -> Finalisasi preview mock-up (maksimal 2x revisi) -> Heat press & QC -> Kirim.
-   * Sinergi: Desain custom yang terbukti viral dapat dinegosiasikan untuk masuk ke katalog kurasi Originals.
-
-2. **Creator Merch Collab (Mulai Fase 2):**
-   * Kerja sama merchandise resmi dengan kreator/seniman lokal tanpa modal dari creator.
-   * Model *revenue sharing* dari margin bersih (50/50). Produksi dijalankan secara pre-order atau on-demand.
-
-3. **Partner & Dropship Network (Aktif & Live di Web):**
-   * Memberikan dua tier harga mitra transparan:
-     - **Tier Dropship:** Rp 75.000 (satuan white-label, resi otomatis marketplace atas nama toko mitra).
-     - **Tier Reseller:** Rp 65.000 (min 12 pcs, modal stok distro/komunitas lokal).
-   * Menjaga margin pertumbuhan bisnis solopreneur tetap di atas target minimal 10% dari HPP.
+### C. Pilar 3: TeeStock Atelier (Custom Print Lab Satuan)
+* **Karakter:** Layanan cetak custom satuan tanpa batas minimal order untuk kreator, musisi lokal, perorangan, atau komunitas.
+* **Alur Pemesanan:** Konsultasi desain via WhatsApp -> Simulasi mockup digital -> Pembayaran lunas / DP 50% -> Cetak DTF & heat press in-house di Citayam Studio -> Kirim via kurir ekspedisi.
+* **Harga:** Rp 119.000 – Rp 139.000 per pcs.
 
 ---
 
 ## 4. Tahapan Pengembangan (Roadmap 4 Fase)
 
-Tahapan eksekusi lengkap, indikator keberhasilan (*exit criteria*), dan pembagian waktu solopreneur telah dirinci dalam dokumen tersendiri:
+Tahapan eksekusi lengkap, indikator keberhasilan (*exit criteria*), dan pembagian waktu solopreneur telah dirinci dalam dokumen:
 👉 [**`roadmap-pengembangan-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/operasional/roadmap-pengembangan-teestock.md)
 
-| Fase | Fokus & Sasaran |
+| Fase | Fokus & Sasaran Utama |
 |---|---|
-| **Fase 1 (Bulan 1)** | Proof of Quality & Launch Originals (Drop #01), SOP press, 10 ulasan bintang 5 pertama |
-| **Fase 2 (Bulan 2)** | The Concierge Studio: Pilot 1 kolaborasi creator mikro & SOP custom order |
-| **Fase 3 (Bulan 3–4)** | Partner & Dropship Network: Rekrut 10 dropshipper aktif, reseller media kit |
-| **Fase 4 (Bulan 5+)** | Sinergi MultiGraph: Cetak kemasan in-house, ekspansi totebag & merchandise non-kaos |
+| **Fase 1 (Bulan 1 — Current)** | 100% Fokus Ritel B2C: Launch Drop #01, Kaos Polos NSA, Custom Atelier via Central Studio Citayam & Satellite Hub Bogor, 10–20 pembeli pertama. |
+| **Fase 2 (Bulan 2–3)** | Peluncuran Portal Kemitraan `mitra.teestock.id`: Portal login terpisah untuk reseller/dropship tanpa mengorbankan prestige harga ritel Rp 99.000 di toko utama. |
+| **Fase 3 (Bulan 4–5)** | Sinergi MultiGraph: Cetak perlengkapan unboxing in-house (stiker laminasi, segel kemasan, kartu garansi), ekspansi totebag canvas & merch komunitas. |
+| **Fase 4 (Bulan 6+)** | Multi-Tenant Partner Web Builder: Solusi storefront mandiri berdomain khusus untuk mitra skala besar (>20 mitra aktif). |
+
 
 ---
 

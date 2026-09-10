@@ -6,19 +6,24 @@
 
 ## Tentang
 
-TeeStock adalah *creative apparel & merch house* independen yang memadukan kurasi desain apparel berkarakter dengan fasilitas studio produksi merchandise. TeeStock beroperasi dengan dua sayap utama:
-1. **TeeStock Originals:** Lini ritel apparel siap pakai dengan sistem rilis berkala (*The Drop Model*).
-2. **TeeStock Studio:** Sayap kreatif untuk pesanan kaos custom, kolaborasi official merch creator/komunitas, dan kemitraan dropship/reseller tanpa modal.
+TeeStock adalah *creative apparel & merch house* independen yang memadukan kurasi desain streetwear berkarakter dengan fasilitas studio produksi merchandise. TeeStock beroperasi dengan strategi **100% Fokus Ritel Konsumen (B2C)** melalui 3 pilar:
+1. **TeeStock Originals (Curated Drop Archive):** Rilis berkala desain tematik (*The Drop Model*, Drop #01: "RAW IDENTITY") di atas katun NSA 24s Heavyweight tubular knit dengan sablon DTF double-press in-house (@ Rp 99.000).
+2. **TeeStock Blanks (Official NSA Blanks):** Kaos polos resmi New States Apparel (24s Heavyweight & 30s Softstyle) dengan opsi instan upsell sablon kustom.
+3. **TeeStock Atelier (Custom Print Lab Satuan):** Layanan sablon DTF satuan tanpa minimum order untuk perorangan, komunitas, dan kreator via WhatsApp order flow.
 
-Model produksi lean: blank apparel New States Apparel (NSA Heavyweight 24s & Softstyle 30s) via distributor resmi NSA, cetak film DTF roll meteran, dan proses **heat press in-house mandiri di rumah**.
+> **Pemisahan Kemitraan (B2B):** Program reseller dan dropshipper dialokasikan pada subdomain terpisah **`mitra.teestock.id`** (Roadmap Fase 2), sehingga storefront publik ritel tetap bersih, berwibawa, dan menjaga *prestige* harga jual Rp 99.000.
 
 ---
 
-## ⚙️ Fasilitas Produksi & Status Fisik (Update September 2026)
+## ⚙️ Fasilitas Produksi & Multi-Hub Fulfillment (Update September 2026)
 
-* **Bahan Kaos Blank:** Kaos New States Apparel (NSA) Heavyweight 24s & Softstyle 30s sudah dipegang fisiknya oleh founder dan tervalidasi berkualitas garmen prima (fitting mantap & kain tebal berbobot).
-* **Peralatan Cetak:** **Mesin Heat Press in-house sudah tersedia di rumah** — menghemat biaya jasa press vendor (hemat Rp 5.000 – Rp 7.000/pcs) dan mempercepat turnaround pesanan menjadi H+0 / H+1.
-* **Sablon:** DTF roll meteran (Rp 28.000 – Rp 35.000/meter). Uji cetak DTF dan uji cuci (*stress test*) sedang dijalankan.
+* **Bahan Kaos Blank:** Kaos New States Apparel (NSA) Heavyweight 24s & Softstyle 30s resmi bersertifikasi, tubular knit (tanpa jahitan samping), fitting mantap, dan kain berbobot.
+* **TeeStock Central Studio (Citayam Hub - Tugu Macan Citayam):**
+  - Mesin heat press in-house aktif — menghemat biaya jasa press vendor (hemat Rp 5.000 – Rp 7.000/pcs) dan mempercepat SLA menjadi H+0 / H+1.
+  - Pusat produksi sablon DTF 155°C, quality control, dan finishing unboxing experience untuk pesanan Originals & Custom Atelier.
+* **TeeStock Satellite Fulfillment (Bogor Hub / Cititex Network):**
+  - Hub pengiriman khusus pesanan kaos polos (NSA Blanks) di area Bogor dan Jabodetabek untuk mendukung pengiriman Same-Day / Instant.
+* **Label Pengirim Resmi:** Seluruh paket dikirim dengan identitas profesional (*"TeeStock Central Studio, Citayam"* atau *"TeeStock Fulfillment Hub, Bogor"*), bukan alamat perorangan atau "inhome".
 
 ---
 
@@ -26,38 +31,37 @@ Model produksi lean: blank apparel New States Apparel (NSA Heavyweight 24s & Sof
 
 * **HPP Kaos NSA 24s Jadi:** ~**Rp 48.000 – Rp 54.000** (Kaos grosir Rp 37k + DTF A3/A4 Rp 8k-12k + Listrik/Press Rp 1k-2k + Packing/Polymailer Rp 2k).
 * **Anchor Price (Harga Coret):** `Rp 139.000`
-* **Harga Ritel Launching:** `Rp 99.000` (Sweet spot marketplace distro, margin kotor ~45%).
-* **Harga Mitra Reseller:** `Rp 65.000` (Min 12 pcs, laba bersih solopreneur Rp 11k–16k/pcs atau ~16–20%, di atas target minimal 10%).
-* **Harga Mitra Dropship:** `Rp 75.000` (Satuan white-label, laba bersih solopreneur Rp 21k–25k/pcs).
-* **Custom Order Satuan:** `Rp 119.000 – Rp 139.000`
+* **Harga Ritel Launching (Drop #01):** `Rp 99.000` (Sweet spot marketplace distro, margin kotor ~45%).
+* **Kaos Polos NSA Original:** `Rp 34.000 – Rp 52.000` (Tergantung gramasi 30s/24s dan ukuran).
+* **Custom Order Satuan (Atelier):** `Rp 119.000 – Rp 139.000` (Atau add-on sablon +Rp 25.000 dari kaos polos).
+* **Harga Khusus B2B (Khusus Portal `mitra.teestock.id` Fase 2):** Reseller Rp 65.000 (Min 12 pcs) | Dropship Rp 75.000 (White-label).
 
 ---
 
 ## 🎨 Koleksi Perdana: Kurasi Drop #01 Debut
 
-> *Catatan: 6 sampel desain sebelumnya (IT/Tech, Outdoor, Local Pride) adalah sampel prototype pengembangan website. Solopreneur sudah memiliki kumpulan aset desain keren tersendiri yang saat ini sedang dikurasi menjadi 3–4 desain jagoan dengan payung tema terpadu (seperti "RAW IDENTITY" atau "ORIGINS") agar tidak membingungkan audiens dan algoritma media sosial.*
+> *Catatan: 6 sampel desain sebelumnya (IT/Tech, Outdoor, Local Pride) adalah prototype pengembangan website. Solopreneur sudah memiliki kumpulan aset desain keren tersendiri yang saat ini sedang dikurasi menjadi 3–4 desain jagoan dengan tema payung terpadu (**Drop #01: "RAW IDENTITY"**) agar konsisten dan memicu rasa penasaran di media sosial.*
 
 ---
 
 ## 🌐 Website & Tech Stack (Selesai 100%)
 
-Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel, portal kustomisasi merchandise, dan hub operasional internal produksi studio:
+Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel B2C, portal kustomisasi merchandise, dan hub operasional internal produksi studio:
 
 - **Live URL:** [teestock.vercel.app](https://teestock.vercel.app)
 - **Stack:** React 18 + Vite + Tailwind CSS + Supabase (PostgreSQL + RLS + Auth) + Cloudinary CDN + Vercel PWA
-- **Fitur Storefront Publik:**
-  - Dynamic Funnel Home (6-section architecture: Hero Hook, Live Drop, Dual Pillar, Trust Specs NSA 24s, Brand Story, VIP Lead Capture).
+- **Fitur Storefront Publik (100% Ritel B2C):**
+  - Dynamic Funnel Home (6-section architecture: Hero Hook, Live Drop, 3 Pilar Produk, Trust Specs NSA 24s, Brand Story, VIP Lead Capture).
   - Dynamic Hybrid Stock & SLA Indicator (⚡ Ready Stock Studio H+0 vs 📦 Stok Gudang Pusat H+1).
   - Blank-to-Custom DTF Upsell Banner (+Rp 25.000) terintegrasi langsung ke `/custom-order`.
   - Paket Bundling Hemat AOV Booster (Paket Duo hemat Rp 18k / Paket Trio hemat Rp 42k).
   - Customer Reviews & Social Proof Engine (rating bintang 4.9/5, meteran kepuasan kain NSA & sablon DTF, verified buyer badge).
-  - Katalog 9 Series + Filter NSA + Multi-tier Role Pricing (Ritel vs Reseller vs Dropship).
+  - Katalog Terkurasi + Filter NSA Blanks.
   - Detail Produk dengan rekomendasi ukuran & spesifikasi sablon DTF suhu 155°C.
   - Custom Order Studio (`/custom-order`) dengan formulir spesifikasi otomatis ke WhatsApp.
   - Cart & Checkout (`/keranjang`) dengan validasi kode kupon/voucher promo.
   - Pelacakan Pesanan Real-Time (`/tracking`).
-  - Halaman Akun Member (`/akun`) dengan riwayat order, alamat tersimpan, dan status kemitraan.
-  - Portal Kemitraan Mandiri (`/partner`) dengan kalkulator proyeksi profit interaktif.
+  - Halaman Akun Member (`/akun`) dengan riwayat order dan alamat tersimpan.
   - Micro Landing Page Bio Link (`/bio`) khusus bio TikTok & Instagram berparameter UTM.
 - **Admin HUB (`/admin`):**
   - Dashboard Analitik & Ringkasan Penjualan.

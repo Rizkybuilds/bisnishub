@@ -1,6 +1,6 @@
 # Brand Guide — TeeStock: Curated Apparel & Merch House
 
-Dokumen acuan identitas brand TeeStock. Dipakai sebagai kompas strategis dan operasional untuk perancangan produk, materi promosi, kolaborasi creator, hingga pengalaman pelanggan (*unboxing experience*).
+Dokumen acuan identitas brand TeeStock. Dipakai sebagai kompas strategis dan operasional untuk perancangan produk, kurasi rilisan (*The Drop Model*), materi komunikasi ritel, hingga pengalaman pelanggan (*unboxing experience*).
 
 ---
 
@@ -11,50 +11,58 @@ Dokumen acuan identitas brand TeeStock. Dipakai sebagai kompas strategis dan ope
 * **Sub-tagline Konsumen:** *"Wear Your Identity, Stock Your Story"*
 
 ### Positioning Statement
-> **TeeStock** adalah *creative apparel & merch house* independen yang memadukan kurasi desain berkarakter kuat dengan standar produksi apparel berkualitas tinggi. Kami bukan sekadar toko ritel pakaian, melainkan wadah di mana setiap individu, kreator, dan komunitas dapat mengekspresikan identitas serta merayakan karyanya melalui apparel yang bermakna.
+> **TeeStock** adalah *curated apparel & merch house* independen yang memadukan kurasi desain streetwear berkarakter kuat dengan standar garmen tubular knit New States Apparel (NSA) dan teknik sablon presisi in-house. Kami bukan sekadar toko sablon biasa, melainkan wadah di mana setiap individu dan komunitas dapat mengekspresikan identitas melalui apparel berstandar tinggi tanpa kompromi.
 
 ### Mengapa TeeStock Berbeda?
-* **Bukan Toserba Sablon Murahan:** Menghindari citra "toko sablon palugada" yang membingungkan. Semua karya ritel dikurasi dengan ketat, rapi, dan memiliki nilai rasa (*perceived value*) tinggi.
-* **Bukan Distro Eksklusif Sempit:** Memiliki fleksibilitas portofolio desain yang luas melalui sistem rilis berkala (*The Drop Model*).
-* **Mitra Terpercaya untuk Creator:** Memiliki lini studio yang memberikan solusi hulu-ke-hilir bagi kreator dan komunitas yang ingin merilis official merchandise tanpa repot urusan produksi dan modal besar.
+* **Bukan Toserba Sablon Murahan:** Menghindari citra "toko sablon palugada" murah tanpa rasa seni. Seluruh koleksi ritel dikurasi dengan narasi kuat, rapi, dan memiliki nilai rasa (*perceived value*) tinggi setara distro premium.
+* **Bukan Distro Tertutup Sempit:** Memiliki fleksibilitas portofolio desain melalui sistem rilis berkala (*The Drop Model*), sekaligus menyediakan kaos polos resmi (NSA Blanks) dan studio kustomisasi satuan (*Custom Atelier*).
+* **Fokus 100% Konsumen Ritel (B2C):** Storefront utama (`teestock.id`) dirancang khusus untuk kenyamanan dan kebanggaan pembeli akhir. Tidak mencampuradukkan banner dropship/reseller di etalase ritel agar prestise dan harga brand tetap terlindungi.
 
 ---
 
-## 2. Arsitektur Brand: Dual-Pillar Model
+## 2. Arsitektur Brand: 3 Pilar Ritel B2C & Kanal Kemitraan Terpisah
 
-TeeStock beroperasi dengan arsitektur dua sayap yang saling memperkuat reputasi brand:
+TeeStock memisahkan secara tegas antara pengalaman belanja konsumen akhir di toko utama dengan kanal kemitraan bisnis:
 
 ```
-                  ┌───────────────────────────────┐
-                  │           TEESTOCK            │
-                  │ Curated Apparel & Merch House │
-                  └───────────────┬───────────────┘
-                                  │
-         ┌────────────────────────┴────────────────────────┐
-         ▼                                                 ▼
-┌─────────────────────────────────┐       ┌─────────────────────────────────┐
-│       TEESTOCK ORIGINALS        │       │         TEESTOCK STUDIO         │
-│  (Koleksi Ritel Desain In-House)│       │  (Layanan Kreatif & Kemitraan)  │
-└────────────────┬────────────────┘       └────────────────┬────────────────┘
-                 │                                         │
-        ┌────────┴────────┐                       ┌────────┼────────┐
-        ▼                 ▼                       ▼        ▼        ▼
-   Drop Kapsul       Pustaka Tema              Creator   Custom   Partner /
-   (Rilis Berkala)   (Kurasi Internal)          Merch    Studio   Reseller
+                  ┌─────────────────────────────────────────┐
+                  │                TEESTOCK                 │
+                  │      Curated Apparel & Merch House      │
+                  └────────────────────┬────────────────────┘
+                                       │
+        ┌──────────────────────────────┴──────────────────────────────┐
+        ▼                                                             ▼
+┌───────────────────────────────────────────────┐     ┌───────────────────────────────┐
+│          FLAGSHIP STORE: teestock.id          │     │    PARTNER PORTAL (FASE 2)    │
+│        (100% Fokus Ritel Konsumen B2C)        │     │       mitra.teestock.id       │
+└───────────────────────┬───────────────────────┘     └───────────────┬───────────────┘
+                        │                                             │
+      ┌─────────────────┼─────────────────┐                           ▼
+      ▼                 ▼                 ▼                  Reseller & Dropship Hub
+1. ORIGINALS      2. BLANKS         3. ATELIER               - Akses Login Khusus
+- Drop Archive    - Official NSA    - Custom Satuan          - Harga Grosir/B2B
+- Desain Kurasi   - 24s Heavyweight - Tanpa Minimum          - Resi White-Label
+- Rp 99.000       - 30s Softstyle   - Sablon DTF 155°C       - Asset Media Kit
 ```
 
-### 1. TeeStock Originals (Lini Ritel B2C)
-* Sayap produk apparel siap pakai (*ready-to-wear*) yang dirancang sendiri oleh tim internal TeeStock.
-* Dijual langsung ke konsumen akhir melalui marketplace (Shopee, TikTok Shop) dan katalog web resmi.
-* Memiliki margin penuh dan menjadi etalase utama yang membangun citra kualitas TeeStock di mata publik.
+### 3 Pilar Utama Storefront Ritel (`teestock.id`):
+1. **TeeStock Originals (Curated Drop Archive):**
+   * Koleksi apparel grafis tematik yang dirilis secara berkala (*Drop Model*).
+   * Dibuat menggunakan bahan katun New States Apparel Heavyweight 24s tubular knit (tanpa jahitan samping) dengan sablon DTF double-press in-house pada suhu 155°C.
+   * Target harga ritel: **Rp 99.000** (Anchor Price Rp 139.000).
+2. **TeeStock Blanks (Official NSA Blanks):**
+   * Penjualan kaos polos resmi New States Apparel (NSA Heavyweight 24s & Softstyle 30s) untuk konsumen yang mencari kaos basic berkualitas prima.
+   * Dilengkapi fitur upsell 1-klik ke *Custom Atelier* (+Rp 25.000) bagi pembeli yang ingin menambahkan sablon kustom.
+   * Sistem pemenuhan fleksibel: stok buffer studio & jaringan hub satelit.
+3. **TeeStock Atelier (Custom Print Lab Satuan):**
+   * Layanan sablon kustom satuan tanpa minimum order untuk perorangan, komunitas, atau kreator.
+   * Menggunakan formulir spesifikasi otomatis langsung terhubung ke WhatsApp CS.
+   * Rentang harga: **Rp 119.000 – Rp 139.000**.
 
-### 2. TeeStock Studio (Sayap Kreatif & Kemitraan B2B2C)
-* Sayap layanan produksi dan kolaborasi yang menangani kebutuhan non-retail:
-  1. **Creator Merch Collab:** Kolaborasi resmi dengan kreator konten, seniman visual, atau musisi lokal untuk memproduksi official merchandise dengan sistem bagi hasil (*revenue sharing*).
-  2. **Custom Order Studio:** Melayani pesanan kaos custom (satuan maupun lusinan) untuk komunitas, event, atau perorangan dengan standar bahan New State Apparel.
-  3. **Partner / Reseller Program:** Memberikan peluang usaha bagi reseller dan dropshipper untuk memasarkan produk TeeStock dengan harga grosir dan materi promosi siap pakai.
+### Pemisahan Kanal Kemitraan (`mitra.teestock.id` — Roadmap Fase 2):
+* Program reseller dan dropshipper **tidak ditampilkan secara mencolok** di etalase utama ritel guna menjaga persepsi eksklusivitas produk Rp 99.000.
+* Mitra yang ingin bergabung akan diarahkan ke sub-domain khusus `mitra.teestock.id` dengan login terpisah, katalog harga modal grosir, panduan aset konten, dan fitur cetak resi *white-label*.
 
----
 
 ## 3. Sistem "The Drop Model" (TeeStock Originals)
 
@@ -103,37 +111,60 @@ Setiap desain kaos baru wajib mengikuti salah satu dari 3 formula tata letak ber
 
 ---
 
-## 5. Tone of Voice & Komunikasi
+## 5. Tone of Voice & Karakter Komunikasi (B2C Focus)
 
-| Audiens | Pilar Brand | Karakter Komunikasi | Contoh Pesan |
+| Audiens Ritel | Pilar Brand | Karakter Komunikasi | Contoh Pesan / Copywriting |
 |---|---|---|---|
-| **Pembeli Retail** | Originals | Akrab, cerdas, sedikit jenaka, menghargai detail | *"Dibuat untuk kamu yang tahu susahnya debugging di hari Jumat malam. Katun tebal, sablon presisi."* |
-| **Kreator / Seniman** | Studio | Kolaboratif, profesional, suportif, berorientasi eksekusi | *"Fokuslah berkarya. Biarkan TeeStock Studio yang mengurus produksi, cetak DTF, hingga packaging merch resmimu."* |
-| **Reseller / Mitra** | Studio | Terpercaya, transparan, memberi peluang bisnis nyata | *"Mulai bisnis apparel tanpa stok gudang dan tanpa mesin sablon. Katalog siap jual, margin jelas."* |
+| **Pembeli Grafis Tematik** | *TeeStock Originals* | Akrab, percaya diri, raw, sedikit jenaka, menghargai detail material | *"Bukan kaos distro pasaran tipis. NSA 24s tubular knit tanpa jahitan samping, sablon DTF dipress in-house 155°C. Built for raw identity."* |
+| **Pencari Kaos Polos** | *TeeStock Blanks* | Lugas, transparan, solutif, jaminan originalitas 100% | *"100% Original New States Apparel resmi. Fitting pas, kerah kokoh, siap kirim hari ini dari hub terdekat."* |
+| **Pemesan Sablon Satuan** | *TeeStock Atelier* | Suportif, kolaboratif, presisi, tanpa ribet birokrasi | *"Bawa ide atau karyamu sendiri. Tanpa minimum order, konsultasi mockup via WhatsApp, selesai dalam 24-48 jam."* |
+
+> *Catatan Kemitraan: Komunikasi B2B untuk calon reseller/dropshipper dialokasikan khusus pada subdomain `mitra.teestock.id` agar tidak mencemari persona ritel di mata end-consumer.*
 
 ---
 
 ## 6. Standar Penamaan & Listing Produk
 
-### Format Judul Produk Ritel (Marketplace & Web):
-```
-[Nama Desain] T-Shirt — TeeStock Originals (Drop #[Nomor])
-Contoh: "Stack Overflow Certified" T-Shirt — TeeStock Originals (Drop #01)
-```
-
-### Format Kolaborasi Creator (Studio):
-```
-[Nama Desain] Official Merch — [Nama Creator] x TeeStock Studio
-Contoh: "Midnight Explorer" Official Merch — Raka Outdoor x TeeStock Studio
-```
+### Format Judul Produk Ritel:
+1. **Drop Archive (Originals):**
+   ```
+   [Nama Desain] T-Shirt — TeeStock Originals (Drop #[Nomor])
+   Contoh: "RAW IDENTITY" Heavyweight T-Shirt — TeeStock Originals (Drop #01)
+   Contoh: "Stack Overflow Certified" T-Shirt — TeeStock Originals (Drop #01)
+   ```
+2. **Official Blanks (Kaos Polos):**
+   ```
+   Kaos Polos New States Apparel (NSA) [Tipe 24s/30s] — TeeStock Blanks
+   Contoh: Kaos Polos New States Apparel 7200 Heavyweight 24s Cotton — Black
+   ```
+3. **Custom Atelier (Sablon Satuan):**
+   ```
+   Custom Sablon DTF Satuan NSA 24s Heavyweight — TeeStock Atelier
+   ```
 
 ---
 
-## 7. Packaging & Unboxing Experience (Brand Touchpoint)
+## 7. Standar Packaging & Unboxing Experience (The 5 Touchpoints)
 
-Untuk menjaga persepsi brand besar dengan biaya operasional lean:
-1. **Polymailer / Ziplock Doff Polos:** Bersih dan higienis.
-2. **Branded Sticker Seal:** Segel kemasan dengan logo monokrom TeeStock.
-3. **Insert Card (Thank You & Care Guide):** Kartu ucapan terima kasih dengan petunjuk pencucian dan QR code katalog web.
-4. **Bonus Stiker Koleksi:** 1 stiker vinil tahan air bertema desain yang dibeli (meningkatkan *delight factor* pembeli).
-5. **Estimasi Biaya Kemasan:** Wajib berada dalam pagu maksimal **Rp 2.000 – Rp 2.500 per paket** (sudah masuk dalam perhitungan HPP).
+Untuk membangun kesan brand mahal dan memicu konten *unboxing* organik (UGC) di TikTok/Instagram dengan pagu biaya lean (**Rp 2.000 – Rp 2.500 per paket**):
+
+1. **Matte Doff Polymailer (Charcoal/Hitam):** Kemasan luar doff tebal kedap air, rapi, dan memberikan sentuhan visual premium.
+2. **Branded Security Seal Label:** Segel stiker perekat dengan logo resmi monokrom TeeStock.
+3. **Founder Thank You & 100% Warranty Card:**
+   - Kartu ucapan terima kasih personal dari founder.
+   - Pernyataan garansi retur 100%: *"Jika ada cacat sablon atau cacat kain, kami ganti baru tanpa ribet."*
+4. **DTF Care Guide 155°C:** Petunjuk perawatan garmen (cuci bagian dalam ke luar, hindari setrika langsung pada sablon, jangan cuci air panas >40°C).
+5. **Bonus Collector Sticker Pack Vol. #01:** 1 stiker vinil laminasi doff bertema artwork yang dibeli + 1 stiker logo TeeStock.
+
+---
+
+## 8. Identitas Pengiriman & Multi-Hub Branding (Fulfillment Persona)
+
+Untuk menjaga persepsi kredibilitas operasional di mata pembeli dan kurir ekspedisi, TeeStock tidak menggunakan label pengirim perorangan atau "rumah/inhome", melainkan format resmi:
+
+| Jenis Pesanan | Lokasi Produksi/Gudang | Label Pengirim Resmi di Resi/Thermal A6 | Keunggulan Layanan |
+|---|---|---|---|
+| **Katalog Desain & Custom Atelier** | Central Studio (Citayam Hub) | **TeeStock Central Studio — Citayam**<br>*(Tugu Macan Citayam, Kab. Bogor / Depok)* | Kontrol press 155°C & QC ketat sebelum kirim |
+| **Kaos Polos NSA Saja (Blanks)** | Jaringan Satelit (Bogor Hub) | **TeeStock Fulfillment Hub — Bogor**<br>*(Cititex Partner Network)* | Dekat pembeli Bogor/Jabodetabek, mendukung Instant/Same-Day |
+| **Order Campuran (Kaos Polos + Desain)** | Konsolidasi di Central Studio | **TeeStock Central Studio — Citayam** | Digabung dalam 1 paket hemat ongkir untuk pembeli |
+

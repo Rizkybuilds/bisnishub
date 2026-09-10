@@ -9,13 +9,18 @@
 
 ## 1. Ringkasan Eksekutif
 
-TeeStock masuk ke pasar apparel Print-on-Demand (POD) Indonesia dengan diferensiasi strategis: **koleksi katalog desain yang luas berbasis 9 series**, didukung layanan **Custom Order satuan**, **Kolaborasi Kreator**, dan kemitraan **Reseller/Dropship**.
+TeeStock masuk ke pasar apparel Print-on-Demand (POD) Indonesia dengan fokus strategis **100% Ritel Konsumen (B2C)** melalui 3 pilar:
+1. **TeeStock Originals:** Rilisan kapsul desain grafis tematik (*The Drop Model*, Drop #01: "RAW IDENTITY" @ Rp 99.000).
+2. **TeeStock Blanks:** Penjualan kaos polos New States Apparel (NSA) original dengan pemenuhan cepat via jaringan multi-hub.
+3. **TeeStock Atelier:** Layanan sablon DTF satuan tanpa minimum order untuk perorangan, komunitas, dan kreator.
 
-Alih-alih terkunci pada 1 identitas visual sempit seperti brand distro konvensional atau menjual kaos generik tanpa branding seperti toko sablon murah di marketplace, TeeStock memadukan:
-- **Kualitas garmen terstandarisasi** (New State Apparel Softstyle / Heavyweight)
-- **Kemandirian produksi** (DTF roll meteran dipress sendiri di rumah)
-- **Brand architecture yang solid** (9 series dengan palet warna dan template visual terkurasi)
-- **Zero dead stock risk** (produksi hanya berjalan setelah ada pesanan valid)
+Alih-alih mencampuradukkan penawaran reseller murah di etalase ritel yang dapat merusak persepsi brand, TeeStock menerapkan **pemisahan kanal secara ketat**: storefront publik `teestock.id` murni melayani pembeli ritel, sementara program kemitraan dialokasikan pada subdomain terpisah `mitra.teestock.id` pada fase berikutnya.
+
+Keunggulan model eksekusi:
+- **Kualitas garmen terstandarisasi** (New States Apparel Heavyweight 24s tubular knit tanpa jahitan samping)
+- **Kemandirian produksi** (DTF roll meteran dipress in-house pada suhu 155°C di Central Studio Citayam)
+- **Logistik multi-hub cerdas** (Citayam Central Studio untuk sablon/custom & Bogor Satellite Hub untuk blanks express)
+- **Zero dead stock risk** (produksi on-demand dengan perputaran modal terjaga)
 
 ---
 
@@ -82,18 +87,24 @@ Perhitungan berbasis data riil vendor resmi **New States Apparel (NSA Heavyweigh
 
 ---
 
-## 4. Struktur Harga Multi-Tier Sinkron (Web & Marketplace)
+## 4. Struktur Harga Tersegregasi (Ritel Publik vs Portal B2B)
 
-Struktur harga yang telah diintegrasikan pada sistem katalog web, role authentication, dan formulir kemitraan:
+Untuk menjaga *perceived value* produk ritel Rp 99.000 tetap tinggi dan tidak terkesan "kaos murah grosiran", struktur harga dibagi secara terisolasi:
 
-| Channel / Tier | Harga Jual | Syarat & Skema | Laba Bersih TeeStock | Keuntungan Mitra |
+### A. Etalase Ritel Publik (`teestock.id` / Marketplace):
+* **🛒 Drop Originals (Katalog Grafis):** **Rp 99.000** (Anchor Price Rp 139.000) — Margin Bersih 37–48%.
+* **📦 Kaos Polos NSA Original (Blanks):** **Rp 34.000 – Rp 52.000** (Tergantung ketebalan 30s/24s & size).
+* **🎨 Custom Atelier Satuan:** **Rp 119.000 – Rp 139.000** (Atau add-on sablon +Rp 25.000 dari blanks).
+
+### B. Portal Kemitraan Khusus (`mitra.teestock.id` — Roadmap Fase 2):
+*(Hanya dapat diakses melalui login akun mitra terverifikasi)*
+
+| Tier Kemitraan | Harga Modal B2B | Syarat & Skema | Laba Bersih TeeStock | Keuntungan Mitra |
 |---|---|---|---|---|
-| **🛒 Retail (Marketplace & Web)** | Rp 99.000 (Anchor Rp 139k) | Satuan (End Customer) | Rp 36.610 – Rp 47.500 | - |
-| **📦 Mitra Dropshipper** | Rp 75.000 | Satuan white-label, resi otomatis | Rp 21.000 – Rp 23.500 (28–31%) | Rp 24.000/pcs |
-| **🏭 Mitra Reseller** | Rp 65.000 | Min 12 pcs, modal distro/toko fisik | Rp 11.000 – Rp 13.500 (17–21%) | Rp 34.000/pcs |
-| **🎨 Custom Order Satuan** | Rp 119.000 – Rp 139.000 | Desain custom konsumen | Rp 55.000 – Rp 75.000 (46–54%) | Eksklusif personal |
+| **📦 Mitra Dropshipper** | Rp 75.000 | Satuan white-label, resi otomatis marketplace | Rp 21.000 – Rp 23.500 (28–31%) | Rp 24.000/pcs |
+| **🏭 Mitra Reseller** | Rp 65.000 | Min 12 pcs, modal stok distro/toko fisik | Rp 11.000 – Rp 13.500 (17–21%) | Rp 34.000/pcs |
 
-*Semua tier harga telah memenuhi target minimal profit pertumbuhan bisnis solopreneur (minimal 10% di atas HPP pada tier reseller terendah).*
+*Semua tier kemitraan telah diverifikasi oleh CFO untuk memenuhi target minimal margin pertumbuhan bisnis (minimal 10% di atas HPP pada tier reseller terendah).*
 
 ---
 

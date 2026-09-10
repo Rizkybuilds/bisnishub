@@ -11,123 +11,113 @@ Dokumen ini memetakan tahapan pengembangan TeeStock dari rilis perdana hingga me
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ FASE 1 (Bulan 1): Proof of Quality & Launch Originals (Drop #01)            │
-│ Target: 10 ulasan bintang 5 pertama, SOP press matang, Shopee aktif         │
+│ FASE 1 (Bulan 1 - Current): 100% Fokus Ritel B2C & Validasi Kualitas        │
+│ Target: Drop #01 ("RAW IDENTITY"), Kaos Polos NSA, Custom Atelier Satuan,   │
+│ Multi-Hub Fulfillment (Citayam Studio & Bogor Hub), 10-20 pembeli pertama   │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ FASE 2 (Bulan 2): The Concierge Studio (Custom & Creator Merch)             │
-│ Target: Pilot 1 kolaborasi creator mikro, SOP custom order via WhatsApp     │
+│ FASE 2 (Bulan 2-3): Peluncuran Portal Kemitraan mitra.teestock.id            │
+│ Target: Subdomain terpisah khusus B2B/Dropship, 10 mitra aktif, resi A6     │
+│ white-label tanpa mengorbankan prestige harga ritel Rp 99.000 di teestock.id│
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ FASE 3 (Bulan 3-4): Partner & Dropship Network                              │
-│ Target: 10 dropshipper aktif, reseller media kit siap pakai, tier Rp 79.000 │
+│ FASE 3 (Bulan 4-5): Sinergi MultiGraph & Diversifikasi Merchandise          │
+│ Target: Produksi kemasan in-house (stiker, segel) bersama MultiGraph,       │
+│ ekspansi totebag canvas, pouch, & full merch kit komunitas                  │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ FASE 4 (Bulan 5+): Sinergi MultiGraph & Skalasi Produk                      │
-│ Target: Integrasi percetakan kemasan MultiGraph, ekspansi totebag & merch   │
+│ FASE 4 (Bulan 6+): Multi-Tenant Partner Web Builder (SaaS Ekspansi)         │
+│ Target: Storefront mandiri & custom domain untuk top mitra (>20 mitra)      │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## FASE 1: Proof of Quality & Launch TeeStock Originals (Bulan 1 — Sedang Berjalan)
+## FASE 1: 100% Fokus Ritel B2C & Validasi Kualitas (Bulan 1 — Sedang Berjalan)
 
-**Fokus Utama:** Membuktikan kualitas fisik sablon mandiri di atas bahan New States Apparel (NSA) 24s, mengurasi 3–4 desain jagoan untuk Drop #01, dan mengamankan 5–10 pembeli pertama via circle terdekat.
+**Fokus Utama:** Membuktikan kualitas fisik sablon DTF in-house pada suhu 155°C di atas bahan New States Apparel (NSA) Heavyweight 24s tubular knit, meluncurkan koleksi perdana **Drop #01: "RAW IDENTITY"**, mengaktifkan penjualan kaos polos resmi dan pesanan sablon custom satuan via WhatsApp, serta mengamankan 10–20 pembeli retail pertama.
 
 ### Status Pencapaian (Update September 2026):
-* `[x]` **Infrastruktur Digital Selesai 100%:** Web Storefront, Katalog 9 Series, Admin HUB, Kanban Batch, Gang Sheet DTF, SEOHead, PWA, dan Logo Vektor resmi.
-* `[x]` **Validasi Bahan Fisik:** Sampel kaos polos NSA 24s Heavyweight sudah dipegang oleh founder dan tervalidasi bagus.
-* `[x]` **Kesiapan Alat In-House:** Mesin heat press pribadi sudah siap aktif di rumah (menghemat ongkos press Rp 5.000 – Rp 7.000 per kaos).
+* `[x]` **Storefront Ritel Bersih 100%:** Desain web teestock.id murni berorientasi B2C tanpa banner reseller/kemitraan yang mengaburkan harga pasar.
+* `[x]` **Validasi Bahan Fisik:** Sampel fisik kaos polos NSA 24s Heavyweight sudah dipegang langsung oleh founder dan lulus verifikasi ketebalan serta fitting garmen.
+* `[x]` **Kesiapan Alat In-House:** Mesin heat press pribadi aktif di rumah (menghemat ongkos press Rp 5.000 – Rp 7.000 per kaos).
+* `[x]` **Infrastruktur Multi-Hub:** Penetapan peran *TeeStock Central Studio (Citayam Hub)* untuk produksi sablon/custom & *TeeStock Satellite Hub (Bogor)* untuk blanks same-day.
 
 ### Tindakan Konkret Saat Ini:
-1. **Uji Coba DTF & Quality Control (Hari Ini):**
+1. **Uji Coba DTF & Quality Control In-House (Hari Ini):**
    * Cetak sampel DTF roll meteran (Rp 28.000 – Rp 35.000/meter).
-   * Lakukan heat press in-house (suhu 155°C, 15 detik, cold peel, second press 5 detik).
+   * Lakukan heat press in-house (suhu 155°C, 15 detik, cold peel, second press finishing 5 detik).
    * Jalankan uji cuci 3x dan *stress test* (tarik sablon) untuk memastikan kelenturan dan daya rekat tinta.
 2. **Kurasi Koleksi Drop #01 (3–4 Desain Jagoan):**
-   * *(Catatan: 6 sampel di web adalah prototype)*. Dari kumpulan desain keren yang sudah dimiliki, pilih 3–4 desain yang selaras secara visual.
-   * Tetapkan tema payung (misal: Drop #01: "RAW IDENTITY" atau "ORIGINS").
-3. **Produksi Aset Konten Peluncuran:**
+   * Dari kumpulan desain keren yang sudah dimiliki, pilih 3–4 artwork yang memiliki keselarasan visual dengan payung konsep **Drop #01: "RAW IDENTITY"**.
+   * Siapkan file cetak master resolusi tinggi (300 DPI, CMYK/RGB vivid, background transparan).
+3. **Produksi Aset Konten & Unboxing Experience:**
    * Rekam proses press dan kupas DTF (ASMR peel video) untuk TikTok & Instagram Reels.
-   * Ambil foto produk asli di badan (real fitting) atau flat-lay estetik di atas latar krem netral.
-4. **Scarcity Launch & 5–10 Pembeli Pertama:**
-   * Buka kuota terbatas batch perdana (24 pcs) di harga early bird **Rp 89.000 – Rp 99.000** (Anchor Price Rp 139.000).
-   * Hubungkan channel penjualan melalui link `/bio`, WhatsApp Direct, dan toko Shopee.
+   * Siapkan paket unboxing: Matte doff polymailer, stiker segel resmi, *Founder Warranty Card 100%*, dan *Collector Sticker Pack Vol. #01*.
+4. **Scarcity Launch & 10–20 Pembeli Retail Pertama:**
+   * Buka kuota terbatas batch perdana (24 pcs) di harga peluncuran **Rp 99.000** (Anchor Price Rp 139.000).
+   * Buka penjualan kaos polos NSA Original (Rp 34k - Rp 52k) dan Custom Atelier via link `/bio` dan WhatsApp CS.
 
 > **Exit Criteria Fase 1:**
-> - [x] Infrastruktur web, pricing tiers, dan aset visual logo siap digunakan.
-> - [ ] Uji cuci 3x dan SOP press mandiri lolos tanpa cacat.
-> - [ ] 3–4 desain Drop #01 terpilih dan file cetak siap pakai.
-> - [ ] Minimal 5–10 pcs terjual ke circle pertama dan mengantongi testimoni/foto asli.
+> - [x] Storefront web teestock.id murni B2C dengan 3 pilar produk (Originals, Blanks, Atelier).
+> - [ ] Uji cuci 3x dan SOP press mandiri lolos tanpa retak/luntur.
+> - [ ] 3–4 desain Drop #01 terpilih dan file cetak siap naik cetak DTF.
+> - [ ] Minimal 10 pcs terjual ke konsumen retail dengan testimoni bintang 5 dan video unboxing autentik.
 
 ---
 
-## FASE 2: The Concierge Studio — Custom & Creator Merch (Bulan 2)
+## FASE 2: Peluncuran Portal Kemitraan mitra.teestock.id (Bulan 2–3)
 
-**Fokus Utama:** Mengaktifkan sayap **TeeStock Studio** untuk menangkap pasar custom dan kolaborasi creator tanpa perlu membangun aplikasi website rumit.
+**Fokus Utama:** Membuka peluang usaha bagi dropshipper dan reseller aktif dengan membangun portal tersendiri pada subdomain **`mitra.teestock.id`**. Dengan pendekatan ini, konsumen umum di `teestock.id` tetap memandang TeeStock sebagai brand streetwear premium, sementara mitra mendapatkan portal operasional yang efisien.
 
 ### Tindakan Konkret:
-1. **Luncurkan Landing Page Concierge Studio:**
-   * Perbarui katalog web (`teestock-catalog.html`) dengan tab resmi: **TeeStock Studio**.
-   * Sediakan tombol direct WhatsApp: *"Bikin Merch Resmi Creator"* dan *"Custom Kaos Komunitas"*.
-2. **Pilot Kolaborasi 1 Creator Mikro:**
-   * Identifikasi 1 kreator konten lokal (niche ilustrasi, komunitas outdoor, atau komunitas tech) dengan 1.000 – 10.000 followers aktif.
-   * Tawarkan kerja sama merch: TeeStock yang menanggung cetak dan kirim, creator membuat/menyetujui desain dan mempromosikannya ke followers.
-   * Terapkan skema bagi hasil bersih (misal dari margin kotor Rp 30.000: Rp 15.000 creator, Rp 15.000 TeeStock).
-3. **Standarisasi Alur Custom Order Satuan/Komunitas:**
-   * Buat template Google Form atau format chat WhatsApp untuk pemesanan custom (upload gambar, pilihan ukuran, alamat).
-   * Buat kebijakan baku: DP 50% di muka, maksimal 2x revisi tata letak, estimasi pengerjaan 2–3 hari kerja.
+1. **Setup Subdomain `mitra.teestock.id`:**
+   * Portal login mandiri untuk reseller dan dropshipper terverifikasi.
+   * Menampilkan harga modal grosir secara privat (Tier Reseller Rp 65.000 min 12 pcs / Tier Dropship Rp 75.000 satuan).
+2. **Reseller Digital Media Kit & Aset Promosi:**
+   * Cloud repository (Google Drive / CDN) berisi foto katalog bersih tanpa watermark, panduan ukuran (*size chart*), dan materi video pendek siap posting.
+3. **Generator Resi & Label Thermal A6 White-Label:**
+   * Sistem otomatis untuk menghasilkan label pengiriman thermal 100x150 mm dengan nama toko mitra sebagai pengirim (*white-label fulfillment*), barcode kurir, dan packing slip rapi.
+4. **Perekrutan 10 Mitra Perdana:**
+   * Mengajak konsumen loyal dari Fase 1 atau komunitas seller lokal untuk bergabung sebagai beta partner.
 
 > **Exit Criteria Fase 2:**
-> - [ ] Minimal 1 proyek kolaborasi creator berhasil rilis dan menghasilkan transaksi.
-> - [ ] Minimal 3 order custom komunitas/satuan selesai tanpa kendala kepuasan.
-> - [ ] Kas masuk dari lini Studio mulai menambah perputaran modal kerja.
+> - [ ] Subdomain `mitra.teestock.id` live dan terpisah secara data dari storefront publik.
+> - [ ] Minimal 10 mitra dropship/reseller aktif melakukan transaksi mingguan.
+> - [ ] Alur pengiriman white-label berjalan mulus tanpa kebocoran identitas harga grosir ke pembeli akhir.
 
 ---
 
-## FASE 3: Partner & Dropship Network (Bulan 3–4)
+## FASE 3: Sinergi MultiGraph & Diversifikasi Merchandise (Bulan 4–5)
 
-**Fokus Utama:** Membuka pintu kemitraan bagi reseller dan dropshipper minim modal untuk memperbesar volume penjualan kaos tanpa menambah pengeluaran iklan berbayar (*paid ads*).
+**Fokus Utama:** Mengintegrasikan TeeStock secara vertikal dengan lini percetakan **MultiGraph** untuk menekan HPP unboxing dan memperluas portofolio produk merchandise di luar t-shirt.
 
 ### Tindakan Konkret:
-1. **Penyusunan Paket Harga Kemitraan (Tier Pricing):**
-   * **Harga Retail Umum:** Rp 99.000 – Rp 109.000.
-   * **Harga Mitra / Dropship:** Rp 79.000 per pcs (Margin mitra: Rp 20.000 – Rp 30.000; Margin TeeStock: ~Rp 14.750 bersih).
-   * Ketentuan: Tanpa minimum order untuk dropshipper terdaftar, nama pengirim di resi menggunakan nama toko mitra (*white-label dropship*).
-2. **Penyediaan Reseller Media Kit di Cloud:**
-   * Buat folder Google Drive publik untuk mitra berisi: foto katalog polos tanpa watermark TeeStock, panduan ukuran (*size chart*), dan draft copywriting media sosial.
-3. **Perekrutan 10 Mitra Perdana:**
-   * Rekrut 5–10 orang pertama dari komunitas kampus, kenalan online, atau pembeli loyal Fase 1.
-   * Koordinasi pesanan dropship cukup melalui grup WhatsApp khusus mitra.
+1. **Sinergi Percetakan Kemasan In-House:**
+   * Cetak perlengkapan unboxing (stiker vinyl laminasi doff, segel polymailer, hangtag tebal, dan kartu garansi) dialihkan produksinya ke MultiGraph.
+   * Menghemat biaya kemasan fisik hingga 30–40% per paket sekaligus menjadi klien internal pertama bagi MultiGraph.
+2. **Diversifikasi Produk Non-Kaos:**
+   * Menambahkan varian totebag canvas tebal, pouch, dan merchandise komunitas.
+   * Menawarkan paket *Creator Merch Kit* (Kaos + Totebag + Stiker Pack).
 
 > **Exit Criteria Fase 3:**
-> - [ ] Tersedia 10 mitra reseller/dropshipper aktif.
-> - [ ] Terjadi transaksi repeat order dropship mingguan.
-> - [ ] Alur pengiriman dropship berjalan rapi menggunakan fitur resi otomatis marketplace.
+> - [ ] Seluruh aset kemasan fisik diproduksi mandiri melalui kapabilitas MultiGraph.
+> - [ ] Produk non-kaos mulai menyumbang minimal 15–20% dari perputaran omzet bulanan.
+> - [ ] Sinergi antar kedua bisnis berjalan harmonis tanpa menyita kapasitas waktu founder.
 
 ---
 
-## FASE 4: Sinergi MultiGraph & Skalasi Produk (Bulan 5+)
+## FASE 4: Multi-Tenant Partner Web Builder (Bulan 6+ — Opsional)
 
-**Fokus Utama:** Mengintegrasikan TeeStock secara vertikal dengan bisnis **MultiGraph (Printing Business)** dan memperluas variasi produk merchandise di luar kaos.
+**Fokus Utama:** Memberikan fasilitas teknologi bagi mitra top-tier yang ingin memiliki toko online berdomain sendiri (*custom domain* atau subdomain `[nama-brand].teestock.id`) yang terhubung langsung ke sistem produksi dan stok TeeStock.
 
-### Tindakan Konkret:
-1. **Sinergi Back-End Percetakan bersama MultiGraph:**
-   * Cetak perlengkapan kemasan TeeStock (stiker vinyl bonus, hangtag, kartu ucapan, lakban fragile custom) dialihkan produksinya ke MultiGraph.
-   * Menghemat biaya unboxing TeeStock hingga 30–40% sekaligus menjadi sumber pendapatan awal untuk MultiGraph.
-2. **Diversifikasi Produk TeeStock Studio:**
-   * Mengembangkan produk merchandise non-kaos: totebag canvas, pouch, notebook custom, dan mug cetak.
-   * Menawarkan paket *Full Merch Kit* untuk komunitas dan creator (Kaos + Totebag + Stiker Pack).
-3. **Automasi & Peningkatan Katalog Web:**
-   * Jika volume pesanan sudah konsisten >100 pcs per bulan, pertimbangkan integrasi sistem order web yang lebih otomatis (payment gateway dan resi tracking).
+### Kriteria Eksekusi:
+* Fitur ini **hanya akan dibangun jika dan hanya jika** sudah ada minimal 20 reseller aktif dengan volume pesanan stabil (>50 pcs/bulan per mitra) yang membutuhkan toko online mandiri.
+* Menjaga founder tetap fokus pada pertumbuhan penjualan langsung tanpa terjebak *over-engineering* teknis di awal.
 
-> **Exit Criteria Fase 4:**
-> - [ ] Seluruh aset kemasan fisik diproduksi melalui kapabilitas MultiGraph.
-> - [ ] TeeStock memiliki lini non-kaos yang menyumbang minimal 20% dari total pendapatan.
-> - [ ] Sinergi 2 bisnis (TeeStock + MultiGraph) berjalan tanpa bentrok waktu founder.
 
 ---
 

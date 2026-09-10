@@ -1,11 +1,22 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { checkoutSchema } from '../../schemas/checkoutSchema';
 import { calculateShippingFee, calculateOrderWeight } from '../shippingApi';
 import { createPaymentSession, PAYMENT_PROVIDERS } from '../paymentAdapter';
 import { createPublicOrder } from '../ordersApi';
 import { calculateBundleDiscount, getSizeSurcharge } from '../../constants/pricing';
 
+vi.mock('../supabase', () => ({
+  supabase: {
+    from: () => ({
+      insert: vi.fn().mockResolvedValue({ data: null, error: null }),
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockResolvedValue({ data: [], error: null })
+    })
+  }
+}));
+
 describe('Integration Test: Alur Lengkap Transaksi Checkout (Checkout Integration)', () => {
+
   beforeEach(() => {
     // Clear mock storage if any
     if (typeof localStorage !== 'undefined') {
