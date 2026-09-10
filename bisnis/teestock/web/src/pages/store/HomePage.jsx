@@ -374,7 +374,7 @@ export function HomePage() {
                 </div>
                 <div className="flex items-start gap-2.5">
                   <span className="font-mono text-ts-teal font-bold text-[11px] mt-0.5">03/</span>
-                  <span className="text-ts-kremMuted">Peluang dropship white-label dengan materi promosi siap pakai</span>
+                  <span className="text-ts-kremMuted">Bebas bawa desain sendiri (file siap cetak PNG transparan 300 DPI)</span>
                 </div>
               </div>
             </div>

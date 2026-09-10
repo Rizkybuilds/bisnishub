@@ -138,21 +138,6 @@ export function Navbar() {
               Custom Sablon
             </NavLink>
             <NavLink
-              to="/partner"
-              className={({ isActive }) =>
-                `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                  isActive
-                    ? 'bg-ts-terracotta/20 text-ts-terracotta shadow-sm border border-ts-terracotta/30'
-                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
-                }`
-              }
-            >
-              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-ts-mustard/20 text-ts-mustard border border-ts-mustard/30">
-                Mitra
-              </span>
-              <span>Dropship</span>
-            </NavLink>
-            <NavLink
               to="/tracking"
               className={({ isActive }) =>
                 `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -418,22 +403,22 @@ export function Navbar() {
                     </NavLink>
 
                     <NavLink
-                      to="/partner"
+                      to="/garansi"
                       onClick={() => setMobileDrawerOpen(false)}
                       className={({ isActive }) =>
                         `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
                           isActive
-                            ? 'bg-ts-mustard/20 text-white font-bold border border-ts-mustard/30'
+                            ? 'bg-white/[0.1] text-white font-bold border border-white/20'
                             : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
                         }`
                       }
                     >
                       <span className="flex items-center gap-2">
-                        <Users className="w-3.5 h-3.5 text-ts-mustard" />
-                        <span>Kemitraan Dropship &amp; Reseller</span>
+                        <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
+                        <span>Garansi &amp; Panduan Perawatan</span>
                       </span>
-                      <span className="text-[9px] font-mono font-bold text-ts-mustard bg-ts-mustard/20 px-1.5 py-0.5 rounded">
-                        Margin 37-48%
+                      <span className="text-[9px] font-mono font-bold text-ts-green bg-ts-green/20 px-1.5 py-0.5 rounded">
+                        100% Retur
                       </span>
                     </NavLink>
                   </div>
