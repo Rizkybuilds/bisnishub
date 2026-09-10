@@ -78,36 +78,65 @@ Sebagai ganti dari memamerkan katalog secara acak yang berisiko membuat toko ter
 
 ## 4. Identitas Visual
 
-### 4.1 Logo & Wordmark Resmi
-* **Logo Utama:** Siluet lipatan kaos berkerah crew-neck tegas di atas 3 lipatan bertumpuk (*The Stock*). Melambangkan ketangguhan garmen NSA 24s dan kelincahan suplai produksi distro modern.
-* **Format & Aset:**
-  - **Vector SVG:** [`teestock-logo.svg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/teestock-logo.svg) & [`web/public/logo-teestock.svg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/web/public/logo-teestock.svg) untuk render tajam tanpa pecah di seluruh platform digital dan cetak.
-  - **High-Res Master:** [`teestock-logo-master-dark.jpg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/teestock-logo-master-dark.jpg) & [`teestock-logo-master-light.jpg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/teestock-logo-master-light.jpg).
-  - **React Component:** `<TeeStockLogo size="md" badge="APPAREL" />` di [`TeeStockLogo.jsx`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/web/src/components/common/TeeStockLogo.jsx).
-* **Palet Logo:**
-  - **Aksen Utama:** Terracotta `#D95D39` (energik, hangat, artisanal craftsmanship).
-  - **Monokrom Utama:** Krem `#F5F2EB` di atas Deep Charcoal `#161513`, atau Hitam pekat di atas latar terang.
+### 4.1 Logo Master & Makna Geometri Otentik
+Logo resmi TeeStock merupakan siluet kaos lipat dengan kerah crewneck berusuk tegas di atas 3 lipatan tumpuk horizontal (*"The Tee & The Stock"*), yang dirancang dengan bobot garis tebal dan proporsional.
 
-### 4.2 Palet Warna Brand & Produk (Blank Apparel)
-Produk dasar apparel dan sistem UI website menggunakan kombinasi palet estetik:
+```
+                    ┌───────┐
+             ───────│  ( )  │───────    <- Ribbed Crewneck Collar (Double Arc)
+            /       └───────┘       \   <- Confident Sloped Shoulders
+           /  /|                 |\  \  <- Angled Short Sleeves & Armpit Inseams
+          └──┘ │                 │ └──┘
+               (=================)      <- Fold #1: Torso Taper & Chest Crease
+               (=================)      <- Fold #2: Middle Stock Capsule
+               (=================)      <- Fold #3: Grounded Foundation Base
+```
 
-| Warna | Hex Code | Karakteristik & Peran |
+* **Anatomi Visual Logo:**
+  1. **The Tee (Kerah & Bahu):** Crewneck ribbed collar dengan double concentric arc dan potongan lengan bersudut tegas, melambangkan konstruksi kaos tubular knit New States Apparel (NSA) yang kokoh dan tidak melar.
+  2. **The Stock (3 Lipatan Bertumpuk):** Tiga lapisan lipatan horizontal rounded di bagian bawah yang melambangkan kesiapan stok buffer studio, arsip kurasi Drop, dan kelincahan fulfillment print-on-demand.
+  3. **Line-Weight Heavyweight (Stroke 4.5pt):** Kontur garis tebal yang merefleksikan ketebalan kain katun murni NSA 24s Heavyweight (180 g/m²).
+
+* **Format & Lokasi Aset Master:**
+  - **Aset Asli Master Founder:** [`Logo TeeStock Monokrom.png`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/Logo%20TeeStock%20Monokrom.png) (1024x1024 px hi-res).
+  - **Master Vector SVG (Monokrom):** [`teestock-logo.svg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/teestock-logo.svg) — Vektor murni `viewBox="0 0 100 100"` untuk cetak sablon, hangtag, dan DTF gang sheet.
+  - **App & Favicon Badge SVG:** [`web/public/logo-teestock.svg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/web/public/logo-teestock.svg) — Emblem Terracotta `#D95D39` kontras tinggi untuk browser tab & mobile PWA.
+  - **Komponen React:** `<TeeStockLogo size="md" badge="APPAREL HOUSE" />` di [`TeeStockLogo.jsx`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/web/src/components/common/TeeStockLogo.jsx).
+
+### 4.2 Wordmark & Standar Tipografi
+* **Wordmark "TeeStock":** Ditulis menggunakan tipe huruf *Plus Jakarta Sans 900 (Black)* dengan tracking rapat (`-0.03em`) dan leading proporsional.
+* **Sub-Badge Label:** `"RETAIL APPAREL HOUSE"` menggunakan *JetBrains Mono Bold* dengan letter-spacing lebar (`+0.14em` s/d `+0.18em`) dalam warna aksen Terracotta.
+* **Font Hirarki Web & Digital:**
+  - **Display / Heading:** *Plus Jakarta Sans* (Weight 700, 800, 900).
+  - **Body Copy:** *Plus Jakarta Sans* (Weight 400, 500, 600).
+  - **Technical / Spec / Pricing:** *JetBrains Mono* (Weight 500, 700) untuk label NSA 24s, kode SKU, dan status hub.
+
+### 4.3 Palet Warna Resmi (Artisanal Retail Palette)
+Sistem warna TeeStock mengusung nuansa *vintage craftsmanship* yang hangat dan berwibawa:
+
+| Nama Warna | Hex Code | Peran Desain & Identitas |
 |---|---|---|
-| **Terracotta** | `#D95D39` | Warna aksen brand, badge, CTA glow, dan emblem |
-| **Mustard Gold** | `#D9A441` | Aksen premium, bintang rating, dan highlight promo |
-| **Deep Charcoal** | `#161513` | Background utama UI website & kaos hitam pekat |
-| **Natural Cream** | `#F5F2EB` | Warna teks utama, kaos krem, dan latar foto resmi |
-| **Teal Vintage** | `#2A9D8F` | Aksen sekunder varian kaos polos & status operasional |
+| **Terracotta** | `#D95D39` | Warna primer brand, emblem box, glow CTA, dan badge status |
+| **Studio Obsidian** | `#121110` | Kanvas latar belakang terdalam website & kemasan polymailer luar |
+| **Deep Charcoal** | `#161513` | Warna kartu konten, bento grid, dan kaos hitam pekat |
+| **Ecru Vintage** | `#F6F3EC` | Warna teks utama, kaos krem alami, dan hangtag unboxing |
+| **Mustard Gold** | `#D9A441` | Aksen premium, bintang review, dan highlight diskon bundling |
+| **Teal Vintage** | `#2A9D8F` | Aksen status kurasi katalog dan varian kaos polos komunitas |
 
-### 4.3 Template Layout Desain Baku
-Setiap desain kaos baru wajib mengikuti salah satu dari 3 formula tata letak berikut:
+### 4.4 Aturan Ukuran Minimum & Ruang Bebas (Clear Space)
+* **Ruang Bebas (Clear Space):** Minimum `0.5X` di sekeliling logo, di mana `X` adalah tinggi bukaan kerah kaos. Tidak boleh ada elemen teks atau grafis lain yang menabrak area ini.
+* **Batas Ukuran Minimum:**
+  - **Digital Favicon:** 16x16 px (menggunakan varian Terracotta emblem badge).
+  - **Mobile Header:** 24x24 px.
+  - **Desktop Header:** 36x36 px.
+  - **Woven Label Leher:** 20x20 mm.
+  - **Segel Stiker Polymailer:** 40x40 mm.
+
+### 4.5 Template Layout Desain Kaos Baku
+Setiap rilisan grafis baru wajib mengikuti salah satu dari 3 formula tata letak berikut:
 1. **Emblem / Badge Layout:** Cocok untuk tema outdoor, komunitas, dan local pride. Bentuk lencana dengan garis tegas.
 2. **Bold Typographic Statement:** Cocok untuk tema tech, sarkas, dan kutipan berwawasan. Fokus pada kekuatan tata huruf dan pesan.
 3. **Minimalist Icon + Caption:** Cocok untuk estetika modern, micro-niche, dan gaya visual bersih.
-
-### 4.4 Tipografi
-* **Font Display / Heading:** *Plus Jakarta Sans* (modern, bersih, geometris profesional).
-* **Font Teknis / Monospace:** *JetBrains Mono* (spesifikasi bahan NSA 24s, kode SKU, label operasional).
 
 ---
 

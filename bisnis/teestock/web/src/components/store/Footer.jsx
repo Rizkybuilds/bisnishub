@@ -81,8 +81,8 @@ export function Footer() {
           <p className="text-xs text-ts-kremMuted max-w-md leading-relaxed">
             Brand distro print-on-demand modern yang mengangkat identitas profesi, hobi, dan fase hidup lewat estetika desain grafis berkelas di atas kaos polos New States Apparel.
           </p>
-          <div className="text-xs text-ts-muted">
-            Workshop &amp; Printing Hub: Tangerang / Jakarta • Indonesia
+          <div className="text-xs text-ts-muted font-mono">
+            Central Studio Workshop: Citayam &bull; Satellite Hub: Bogor &bull; 100% Online D2C
           </div>
         </div>
 

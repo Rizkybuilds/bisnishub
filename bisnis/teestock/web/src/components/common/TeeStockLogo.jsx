@@ -2,7 +2,7 @@ import React from 'react';
 
 /**
  * Official TeeStock Brand Logo Component
- * Renders the curated Folded T-Shirt Stack ('The Stock') mark & typography
+ * Renders the authentic Folded Heavyweight T-Shirt Stack ('The Stock') mark & typography
  */
 export function TeeStockLogoIcon({ className = "w-6 h-6", color = "currentColor" }) {
   return (
@@ -15,21 +15,34 @@ export function TeeStockLogoIcon({ className = "w-6 h-6", color = "currentColor"
       strokeLinejoin="round"
       className={className}
     >
-      {/* Crew Neck Collar */}
-      <path d="M 38 25 C 43 32, 57 32, 62 25" />
-      <path d="M 38 25 C 44 22, 56 22, 62 25" />
-      
-      {/* Outer T-Shirt Silhouette: Shoulders, Sleeves & Torso */}
-      <path d="M 38 25 L 26 29 L 20 44 L 28 48 L 30 38 L 26 56" />
-      <path d="M 62 25 L 74 29 L 80 44 L 72 48 L 70 38 L 74 56" />
+      {/* Crewneck Collar: Double Rib Arc */}
+      <path d="M 38 16 C 42 18.8, 46 19.8, 50 19.8 C 54 19.8, 58 18.8, 62 16" />
+      <path d="M 39 19.5 C 42.5 27, 46 29, 50 29 C 54 29, 57.5 27, 61 19.5" strokeWidth="4" />
+      <path d="M 35 23 C 38.5 32, 44 34, 50 34 C 56 34, 61.5 32, 65 23" />
 
-      {/* Stacked Folds (The Stock) */}
-      {/* Layer 1 */}
-      <path d="M 26 56 C 24 57, 24 62, 27 63 L 73 63 C 76 62, 76 57, 74 56" />
-      {/* Layer 2 */}
-      <path d="M 27 63 C 24 64, 24 69, 27 70 L 73 70 C 76 69, 76 64, 73 63" />
-      {/* Layer 3 (Base Fold) */}
-      <path d="M 27 70 C 24 71, 24 77, 28 78 L 72 78 C 76 77, 76 71, 73 70" />
+      {/* Shoulders */}
+      <path d="M 38 16 L 22 21" />
+      <path d="M 62 16 L 78 21" />
+
+      {/* Left Sleeve: Outer Edge & Inward Cuff Hem */}
+      <path d="M 22 21 L 13.5 43.5 L 24 48" />
+      <path d="M 26.5 31.5 L 26.5 47.5" strokeWidth="3.8" />
+
+      {/* Right Sleeve: Outer Edge & Inward Cuff Hem */}
+      <path d="M 78 21 L 86.5 43.5 L 76 48" />
+      <path d="M 73.5 31.5 L 73.5 47.5" strokeWidth="3.8" />
+
+      {/* Torso & Fold 1 (Top Fold) */}
+      <path d="M 26.5 47.5 C 26.5 53, 23 57, 19.5 60.5 C 17 63, 17 66.5, 20.5 68 L 79.5 68 C 83 66.5, 83 63, 80.5 60.5 C 77 57, 73.5 53, 73.5 47.5" />
+
+      {/* Chest Crease Accent */}
+      <path d="M 35 60 C 42 59.2, 58 59.2, 65 60" strokeWidth="3.2" />
+
+      {/* Fold 2 (Middle Pill Fold) */}
+      <path d="M 20.5 68 C 17 69.8, 17 74.2, 20.5 76 L 79.5 76 C 83 74.2, 83 69.8, 79.5 68" />
+
+      {/* Fold 3 (Base Pill Fold) */}
+      <path d="M 20.5 76 C 17 78, 17 83, 21.5 84.5 C 26 85.8, 40 85, 50 85 C 60 85, 74 85.8, 78.5 84.5 C 83 83, 83 78, 79.5 76" />
     </svg>
   );
 }
@@ -38,13 +51,13 @@ export function TeeStockLogo({
   size = "md", 
   variant = "full", 
   className = "",
-  badge = "APPAREL",
+  badge = "RETAIL APPAREL HOUSE",
   glow = true
 }) {
   const sizeMap = {
-    sm: { box: "w-7 h-7", icon: "w-4.5 h-4.5", title: "text-sm", sub: "text-[8px]" },
-    md: { box: "w-8 h-8 sm:w-9 sm:h-9", icon: "w-5 h-5 sm:w-6 sm:h-6", title: "text-base sm:text-lg", sub: "text-[9px] sm:text-[10px]" },
-    lg: { box: "w-12 h-12", icon: "w-8 h-8", title: "text-xl sm:text-2xl", sub: "text-xs" },
+    sm: { box: "w-7 h-7", icon: "w-4.5 h-4.5", title: "text-sm", sub: "text-[7px]" },
+    md: { box: "w-8 h-8 sm:w-9 sm:h-9", icon: "w-5 h-5 sm:w-6 sm:h-6", title: "text-base sm:text-lg", sub: "text-[8px] sm:text-[9px]" },
+    lg: { box: "w-12 h-12", icon: "w-8 h-8", title: "text-xl sm:text-2xl", sub: "text-[10px] sm:text-xs" },
     xl: { box: "w-16 h-16 sm:w-20 sm:h-20", icon: "w-10 h-10 sm:w-12 sm:h-12", title: "text-2xl sm:text-3xl", sub: "text-xs sm:text-sm" },
   };
 
@@ -63,10 +76,10 @@ export function TeeStockLogo({
       {/* Typography Wordmark (if not mark-only) */}
       {variant !== 'mark' && (
         <div>
-          <span className={`${currentSize.title} font-extrabold tracking-tight text-ts-krem group-hover:text-white transition-colors block leading-tight`}>
+          <span className={`${currentSize.title} font-black tracking-[-0.03em] text-ts-krem group-hover:text-white transition-colors block leading-tight`}>
             TeeStock
           </span>
-          <span className={`${currentSize.sub} font-bold text-ts-terracotta tracking-widest uppercase font-mono block -mt-0.5`}>
+          <span className={`${currentSize.sub} font-bold text-ts-terracotta tracking-[0.14em] uppercase font-mono block -mt-0.5`}>
             {badge}
           </span>
         </div>

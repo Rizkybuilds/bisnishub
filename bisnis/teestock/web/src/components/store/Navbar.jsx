@@ -80,7 +80,7 @@ export function Navbar() {
         <div className="h-14 sm:h-16 px-3 sm:px-5 rounded-2xl bg-[#141312]/90 backdrop-blur-xl border border-white/[0.08] flex items-center justify-between">
           {/* Official Brand Logo */}
           <Link to="/" className="group focus:outline-none" aria-label="TeeStock Apparel Beranda">
-            <TeeStockLogo size="md" badge="APPAREL" />
+            <TeeStockLogo size="md" badge="APPAREL HOUSE" />
           </Link>
 
           {/* Navigation Links (Desktop) */}
@@ -299,7 +299,7 @@ export function Navbar() {
             <div className="space-y-6">
               {/* Drawer Top Header */}
               <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
-                <TeeStockLogo size="sm" badge="APPAREL" />
+                <TeeStockLogo size="sm" badge="APPAREL HOUSE" />
                 <button
                   type="button"
                   onClick={() => setMobileDrawerOpen(false)}
