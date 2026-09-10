@@ -153,6 +153,7 @@ export function ProductPurchasePanel({
               .filter(([k]) => ['nsa_softstyle_30s', 'nsa_heavyweight_24s', 'nsa_longsleeve'].includes(k))
               .map(([key, garment]) => {
                 const isSelected = selectedGarmentKey === key;
+                const gsmBadge = key === 'nsa_softstyle_30s' ? '150 GSM' : '180 GSM';
                 return (
                   <button
                     key={key}
@@ -160,19 +161,24 @@ export function ProductPurchasePanel({
                     onClick={() => setSelectedGarmentKey(key)}
                     className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-ts-terracotta bg-ts-terracotta/10 text-white ring-1 ring-ts-terracotta/50'
+                        ? 'border-ts-terracotta bg-ts-terracotta/10 text-white ring-1 ring-ts-terracotta/50 shadow-glow-terracotta-sm'
                         : 'border-white/[0.08] bg-white/[0.02] text-ts-kremMuted hover:border-white/20'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-1">
                       <span className="text-xs font-bold text-white">{garment.name}</span>
-                      {key === 'nsa_heavyweight_24s' && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-ts-mustard/20 text-ts-mustard font-semibold">
-                          Best Seller
+                      <div className="flex items-center gap-1 shrink-0">
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-ts-krem border border-white/10 font-bold">
+                          {gsmBadge}
                         </span>
-                      )}
+                        {key === 'nsa_heavyweight_24s' && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-ts-mustard/20 text-ts-mustard border border-ts-mustard/30 font-bold">
+                            Favorite
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <p className="text-[11px] text-ts-muted mt-0.5">{garment.tagline}</p>
+                    <p className="text-[11px] text-ts-muted mt-1 leading-snug">{garment.tagline}</p>
                   </button>
                 );
               })}

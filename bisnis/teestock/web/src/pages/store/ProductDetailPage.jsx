@@ -16,6 +16,7 @@ import { getProductGallery } from '../../utils/productImages';
 import { ProductImageGallery } from '../../components/store/product/ProductImageGallery';
 import { ProductPurchasePanel } from '../../components/store/product/ProductPurchasePanel';
 import { ProductSpecsAccordion } from '../../components/store/product/ProductSpecsAccordion';
+import { StickyMobileBuyBar } from '../../components/store/StickyMobileBuyBar';
 
 const SIZES_5XL_COLORS = ['black', 'white', 'navy', 'maroon', 'red', 'royal blue', 'forest green', 'carolina blue', 'caroline blue'];
 
@@ -412,6 +413,20 @@ export function ProductDetailPage() {
         onSelectSize={(sz) => setSelectedSize(sz)}
         currentSize={selectedSize}
         availableSizes={sizeList}
+      />
+
+      {/* Sticky Mobile Conversion Buy Bar */}
+      <StickyMobileBuyBar
+        product={product}
+        selectedColor={selectedColor}
+        selectedSize={selectedSize}
+        price={currentPrice}
+        previewImg={previewImg}
+        onAddToCart={handleAddToCart}
+        onBuyNow={handleBuyNow}
+        onBuyWhatsapp={handleBuyWhatsapp}
+        isAdded={isAdded}
+        isVisible={true}
       />
     </div>
   );

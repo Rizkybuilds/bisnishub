@@ -7,13 +7,16 @@ export function StickyMobileBuyBar({
   selectedColor,
   selectedSize,
   price,
+  previewImg,
   onAddToCart,
   onBuyNow,
   onBuyWhatsapp,
   isAdded,
   isVisible
 }) {
-  if (!isVisible) return null;
+  if (!isVisible || !product) return null;
+
+  const displayImage = previewImg || product.filePath || product.file_path;
 
   return (
     <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-40 md:hidden animate-in slide-in-from-bottom-5 duration-300 pointer-events-none">
@@ -21,7 +24,7 @@ export function StickyMobileBuyBar({
         {/* Thumbnail & Info Ringkas */}
         <div className="flex items-center gap-2 min-w-0">
           <img
-            src={product.filePath || product.file_path}
+            src={displayImage}
             alt={product.name}
             className={`w-10 h-10 rounded-xl border border-white/10 bg-ts-hitam shrink-0 ${
               product.series === 'blank' || product.sku?.startsWith('TS-BLK') ? 'object-contain p-0.5' : 'object-cover'

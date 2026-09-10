@@ -40,8 +40,12 @@ export default {
       },
       boxShadow: {
         'glow-terracotta': '0 0 35px -5px rgba(193, 103, 61, 0.3)',
+        'glow-terracotta-sm': '0 0 15px -3px rgba(193, 103, 61, 0.4)',
+        'glow-terracotta-lg': '0 0 50px -5px rgba(193, 103, 61, 0.4)',
         'glow-mustard': '0 0 35px -5px rgba(217, 164, 65, 0.25)',
         'glow-teal': '0 0 35px -5px rgba(79, 124, 116, 0.25)',
+        'glow-teal-sm': '0 0 15px -3px rgba(79, 124, 116, 0.35)',
+        'glow-emerald': '0 0 25px -4px rgba(16, 185, 129, 0.3)',
         'glass-inset': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.1)',
         'glass-card': '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
       },

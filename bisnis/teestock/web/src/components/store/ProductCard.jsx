@@ -64,7 +64,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
 
   return (
     <div
-      className={`group bg-[#141312] border border-white/[0.08] rounded-2xl overflow-hidden transition-all duration-200 flex flex-col hover:-translate-y-1 hover:border-white/20 relative ${className}`}
+      className={`group bg-[#141312] border border-white/[0.08] rounded-2xl overflow-hidden transition-all duration-300 flex flex-col hover:-translate-y-1 hover:border-white/25 hover:shadow-glass-card relative ${className}`}
     >
       {/* Product Image Frame */}
       <Link
@@ -87,20 +87,20 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
         />
 
         {/* Top-Left SKU Chip */}
-        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-[#141312]/90 text-white border border-white/10 shadow-sm">
+        <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-[#141312]/90 text-white border border-white/10 shadow-sm backdrop-blur-md">
           {product.sku}
         </span>
 
         {/* Top-Right Badge */}
         {isBlank ? (
-          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-white/[0.06] backdrop-blur-md text-ts-krem border border-white/15 flex items-center gap-1 shadow-sm">
-            <ShieldCheck className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-ts-green" />
-            <span>100% NSA</span>
+          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-[#141312]/80 backdrop-blur-md text-ts-krem border border-ts-teal/30 flex items-center gap-1 shadow-sm">
+            <ShieldCheck className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-ts-teal" />
+            <span className="tracking-wide">100% NSA</span>
           </span>
         ) : (
-          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-white/[0.06] backdrop-blur-md text-ts-krem border border-white/15 flex items-center gap-1 shadow-sm">
+          <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 sm:px-2.5 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold bg-[#141312]/80 backdrop-blur-md text-ts-krem border border-ts-terracotta/30 flex items-center gap-1 shadow-sm">
             <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-ts-terracotta" />
-            <span>IN-HOUSE PRESS</span>
+            <span className="tracking-wide text-white">STUDIO PRINT LAB</span>
           </span>
         )}
 
@@ -161,9 +161,9 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
                     className="p-1 -m-1 rounded-full cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ts-terracotta"
                   >
                     <span
-                      className={`w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full transition-all duration-150 inline-block ${
+                      className={`w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full transition-all duration-200 inline-block shadow-sm ${
                         isSelected
-                          ? 'ring-2 ring-ts-terracotta ring-offset-1 ring-offset-ts-hitam scale-110 shadow-sm z-10'
+                          ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-hitam scale-110 shadow-glow-terracotta-sm z-10'
                           : 'ring-1 ring-white/20 hover:ring-white/60 hover:scale-105 opacity-80 hover:opacity-100'
                       }`}
                       style={{ backgroundColor: hex }}
@@ -226,10 +226,10 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
           <Link
             to={productUrl}
             aria-label={`Pilih produk ${product.name}`}
-            className={`text-[10px] font-bold px-2 sm:px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
+            className={`text-[10px] font-bold px-2.5 sm:px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 cursor-pointer ${
               isBlank
-                ? 'bg-ts-teal/10 border border-ts-teal/30 text-teal-300 hover:bg-ts-teal hover:text-zinc-950'
-                : 'bg-white/[0.05] border border-white/10 text-white hover:bg-ts-terracotta hover:text-white shadow-sm'
+                ? 'bg-ts-teal/15 border border-ts-teal/30 text-teal-300 hover:bg-ts-teal hover:text-zinc-950 shadow-sm'
+                : 'bg-white/[0.06] border border-white/12 text-white hover:bg-ts-terracotta hover:border-ts-terracotta hover:text-white shadow-sm'
             }`}
           >
             <span>Pilih</span>

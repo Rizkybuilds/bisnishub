@@ -269,29 +269,39 @@ export function CatalogPage({ defaultSegment }) {
             <button
               type="button"
               onClick={() => handleSeriesClick('all')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
                 activeSeries === 'all'
-                  ? 'bg-ts-terracotta/20 text-white border border-ts-terracotta/50 shadow-glow-terracotta'
-                  : 'bg-white/[0.03] text-ts-muted hover:text-white border border-white/[0.06]'
+                  ? 'bg-ts-terracotta text-white border border-ts-terracotta/80 shadow-glow-terracotta-sm'
+                  : 'bg-white/[0.03] text-ts-muted hover:text-white border border-white/[0.06] hover:bg-white/[0.06]'
               }`}
             >
               Semua Series ({graphicCount})
             </button>
 
-            {SERIES.map(s => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => handleSeriesClick(s.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
-                  activeSeries === s.id
-                    ? 'bg-ts-terracotta/20 text-white border border-ts-terracotta/50 shadow-glow-terracotta'
-                    : 'bg-white/[0.03] text-ts-muted hover:text-white border border-white/[0.06]'
-                }`}
-              >
-                {s.name}
-              </button>
-            ))}
+            {SERIES.map(s => {
+              const seriesCount = catalog.filter(p => p.series === s.id && p.status === 'active').length;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => handleSeriesClick(s.id)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1.5 ${
+                    activeSeries === s.id
+                      ? 'bg-ts-terracotta text-white border border-ts-terracotta/80 shadow-glow-terracotta-sm'
+                      : 'bg-white/[0.03] text-ts-muted hover:text-white border border-white/[0.06] hover:bg-white/[0.06]'
+                  }`}
+                >
+                  <span>{s.name}</span>
+                  {seriesCount > 0 && (
+                    <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
+                      activeSeries === s.id ? 'bg-white/20 text-white' : 'bg-white/[0.06] text-ts-kremMuted'
+                    }`}>
+                      {seriesCount}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

@@ -54,11 +54,11 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
 
   return (
     <>
-      <div className="bg-ts-hitam/80 border border-ts-border rounded-xl p-3.5 space-y-3 shadow-md hover:border-ts-muted/60 transition-all">
+      <div className="bg-[#141312] border border-white/[0.08] rounded-2xl p-3.5 space-y-3 shadow-glass-card hover:border-white/20 transition-all duration-200">
         {/* Header: ID & Channel */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <span className="font-mono text-xs font-bold text-ts-krem bg-ts-surface px-2 py-0.5 rounded border border-ts-border">
+            <span className="font-mono text-xs font-bold text-ts-krem bg-white/[0.04] px-2 py-0.5 rounded border border-white/10">
               {order.id}
             </span>
             {(order.unique_code || order.uniqueCode) && (

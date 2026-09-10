@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "project": {
+    "name": "teestock-web",
+    "productType": null,
+    "stack": [
+      "react",
+      "tailwind-v3",
+      "vite"
+    ]
+  },
+  "sources": {
+    "tokens": [],
+    "components": [
+      "src/components/ui"
+    ],
+    "assets": [],
+    "instructions": []
+  },
+  "design": {
+    "colorMode": "unknown",
+    "colors": {},
+    "typography": {},
+    "spacing": {},
+    "radius": {},
+    "shadows": {},
+    "motion": {},
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [
+      "Badge",
+      "Button",
+      "Card",
+      "Input",
+      "Modal",
+      "Toast"
+    ],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [
+      "Strict dark mode boutique streetwear aesthetic (Deep Charcoal, Warm Terracotta, Natural Cream, Vintage Teal)",
+      "Preserve all 85 passing Vitest tests and business logic (Smart Origin Citayam vs Bogor, JIT routing, QRIS unique code)",
+      "Mobile-first conversion: render StickyMobileBuyBar on ProductDetailPage with instant buy & cart triggers",
+      "Ensure all buttons and interactive controls have accessible labels and touch targets >= 44px",
+      "Maintain 3:4/4:5 aspect ratio on product cards for clean streetwear apparel presentation"
+    ],
+    "avoid": [
+      "Do not use generic light-mode backgrounds or low contrast grey text on dark background",
+      "Do not remove existing data-testid attributes used by Vitest test suites",
+      "Avoid slow or blocking layout shifts during color swatch switches"
+    ]
+  },
+  "decisions": [],
+  "evidence": [
+    {
+      "fact": "components.installed",
+      "source": "src/components/ui"
+    },
+    {
+      "fact": "project.stack:react",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:tailwind-v3",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:vite",
+      "source": "package.json"
+    }
+  ],
+  "generatedAt": "2026-09-10T09:00:49.572Z"
+}

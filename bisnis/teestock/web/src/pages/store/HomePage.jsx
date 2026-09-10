@@ -23,7 +23,8 @@ import {
   Users,
   Compass,
   Code2,
-  HeartHandshake
+  HeartHandshake,
+  X
 } from 'lucide-react';
 import { SERIES } from '../../constants/series';
 import { useStore } from '../../context/StoreContext';
@@ -89,13 +90,19 @@ export function HomePage() {
           SECTION 1: HERO — THE HOOK (Above the fold)
           ==================================================================== */}
       <section className="relative pt-8 sm:pt-16 pb-6 sm:pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
-        {/* Floating Release Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.1] backdrop-blur-xl text-xs font-semibold text-ts-krem hover:border-ts-terracotta/40 transition-colors">
-          <span className="flex h-2 w-2 rounded-full bg-ts-terracotta animate-pulse" />
-          <span className="font-mono text-[11px] text-white font-bold uppercase tracking-wider">DROP #01: RAW IDENTITY</span>
-          <span className="text-white/20">•</span>
-          <span className="text-ts-kremMuted">Limited 24 Pcs Early Bird</span>
-          <ArrowRight className="w-3.5 h-3.5 text-ts-kremMuted ml-0.5" />
+        {/* Floating Release Badge & Live Batch Progress */}
+        <div className="inline-flex flex-col sm:flex-row items-center gap-2.5 p-1.5 sm:pr-4 rounded-full bg-white/[0.04] border border-white/[0.1] backdrop-blur-xl text-xs text-ts-krem shadow-glass-card hover:border-ts-terracotta/40 transition-all">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-ts-terracotta/20 border border-ts-terracotta/30">
+            <span className="flex h-2 w-2 rounded-full bg-ts-terracotta animate-pulse" />
+            <span className="font-mono text-[11px] text-white font-bold uppercase tracking-wider">DROP #01: RAW IDENTITY</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <span className="font-mono text-[11px] text-ts-kremMuted">18 / 24 Pcs Diklaim</span>
+            <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
+              <div className="w-3/4 h-full bg-gradient-to-r from-ts-mustard to-ts-terracotta rounded-full" />
+            </div>
+            <span className="text-[10px] font-mono font-bold text-ts-mustard">Sisa 6</span>
+          </div>
         </div>
 
         {/* Hero Title & Value Proposition */}
@@ -108,20 +115,25 @@ export function HomePage() {
           </h1>
 
           <p className="text-sm sm:text-base lg:text-lg text-ts-kremMuted max-w-2xl mx-auto leading-relaxed font-normal">
-            Studio apparel independen berbasis kurasi fisik. Menggunakan bahan resmi <strong className="text-white font-semibold">New States Apparel (NSA) Heavyweight 24s</strong> tubular tanpa jahitan samping, disablon dan dipress mandiri in-house dengan suhu 155°C.
+            Studio apparel independen berbasis kurasi fisik. Menggunakan bahan resmi <strong className="text-white font-semibold">New States Apparel (NSA) Heavyweight 24s</strong> tubular tanpa jahitan samping, disablon dan dipress mandiri di <strong className="text-white font-semibold">TeeStock Studio &amp; Print Lab</strong> dengan suhu 155°C.
           </p>
         </div>
 
         {/* Dual Primary CTA Action Buttons */}
         <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
           <a href="#live-drop">
-            <Button size="lg" variant="primary" icon={ArrowRight} className="px-6 py-3 text-sm sm:text-base font-bold shadow-sm">
+            <Button size="lg" variant="primary" icon={ArrowRight} className="px-6 py-3 text-sm sm:text-base font-bold shadow-glow-terracotta-sm">
               Lihat Koleksi Drop #01
             </Button>
           </a>
+          <Link to="/polos">
+            <Button size="lg" variant="secondary" icon={Package} className="px-6 py-3 text-sm sm:text-base border-ts-teal/40 bg-ts-teal/10 text-teal-300 font-bold hover:bg-ts-teal/20">
+              Kaos Polos NSA (30s &amp; 24s)
+            </Button>
+          </Link>
           <Link to="/custom-order">
-            <Button size="lg" variant="secondary" icon={Palette} className="px-6 py-3 text-sm sm:text-base border-white/20 font-bold hover:bg-white/[0.08]">
-              TeeStock Studio (Custom Kaos)
+            <Button size="lg" variant="secondary" icon={Palette} className="px-5 py-3 text-sm sm:text-base border-white/20 font-bold hover:bg-white/[0.08]">
+              Custom Satuan
             </Button>
           </Link>
           {shopeeUrl && (
@@ -411,6 +423,138 @@ export function HomePage() {
               isBlank={true}
             />
           ))}
+        </div>
+      </section>
+
+      {/* ====================================================================
+          SECTION: NSA TUBULAR VS ORDINARY COMBED COMPARISON
+          ==================================================================== */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center max-w-2xl mx-auto space-y-2.5">
+          <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-ts-mustard tracking-widest uppercase bg-ts-mustard/10 px-3.5 py-1 rounded-full border border-ts-mustard/25">
+            <Zap className="w-3.5 h-3.5 text-ts-mustard" />
+            <span>FABRIC ENGINEERING BREAKDOWN</span>
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight uppercase">
+            Kenapa Harus NSA 24s Tubular Built-Up?
+          </h2>
+          <p className="text-xs sm:text-sm text-ts-kremMuted leading-relaxed">
+            Perbandingan jujur antara standar garmen TeeStock dengan kaos distro konvensional yang beredar di pasaran.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+          {/* Card 1: TeeStock NSA 24s Heavyweight (The Winner) */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#161514] border-2 border-ts-terracotta/40 shadow-glow-terracotta-sm relative overflow-hidden flex flex-col justify-between space-y-6">
+            <div className="absolute top-0 right-0 px-4 py-1.5 rounded-bl-2xl bg-ts-terracotta text-white font-mono text-[10px] font-bold tracking-wider uppercase">
+              STANDAR TEESTOCK
+            </div>
+
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-ts-terracotta/20 text-ts-terracotta flex items-center justify-center border border-ts-terracotta/40 shrink-0">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg sm:text-xl font-black text-white">NSA 24s Heavyweight Original</h3>
+                  <p className="text-xs text-ts-mustard font-mono">180 GSM • 100% Cotton Built-Up</p>
+                </div>
+              </div>
+
+              <div className="space-y-3.5 pt-3 border-t border-white/[0.08] text-xs">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-white block font-semibold">Tubular Knit (Tanpa Jahitan Samping)</strong>
+                    <span className="text-ts-kremMuted">Dirajut dari silinder utuh. Baju tidak akan pernah melintir, miring, atau berubah bentuk setelah dicuci berkali-kali.</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-white block font-semibold">Ketebalan Ideal 180 GSM (Heavyweight 24s)</strong>
+                    <span className="text-ts-kremMuted">Tebal berbobot, drape jatuh tegak di badan streetwear, tidak menerawang meski dipakai di bawah terik matahari.</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-white block font-semibold">Rib Kerah 2.2 cm Single Needle</strong>
+                    <span className="text-ts-kremMuted">Kerah kokoh berlapis elastan, tidak gampang melar atau bergelombang (bacon collar).</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-white block font-semibold">Double Heat Press 155°C Studio Lab</strong>
+                    <span className="text-ts-kremMuted">Tinta menyerap ke serat benang, sablon lentur berdaya rekat tinggi, anti-pecah dan tahan mesin cuci.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between text-xs font-mono">
+              <span className="text-ts-kremMuted">Fitting: Asian Comfort Loose</span>
+              <span className="text-emerald-400 font-bold">100% Anti-Melintir</span>
+            </div>
+          </div>
+
+          {/* Card 2: Kaos Distro Jahit Samping Biasa */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#121110] border border-white/[0.08] relative opacity-90 flex flex-col justify-between space-y-6">
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-white/[0.04] text-ts-muted flex items-center justify-center border border-white/10 shrink-0">
+                  <Layers className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg sm:text-xl font-bold text-ts-kremMuted">Kaos Distro Konvensional</h3>
+                  <p className="text-xs text-ts-muted font-mono">140–150 GSM • Combed 30s Pasaran</p>
+                </div>
+              </div>
+
+              <div className="space-y-3.5 pt-3 border-t border-white/[0.06] text-xs">
+                <div className="flex items-start gap-3">
+                  <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-ts-kremMuted block font-semibold">Ada Sambungan Jahitan Samping</strong>
+                    <span className="text-ts-muted">Pola potong lembaran kain. Kerap melintir spiral setelah dicuci karena tegangan benang berbeda.</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-ts-kremMuted block font-semibold">Tipis &amp; Rentan Menerawang</strong>
+                    <span className="text-ts-muted">Gramasi 140 GSM cenderung lemas, menempel di kulit saat berkeringat dan lekuk tubuh terlihat.</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-ts-kremMuted block font-semibold">Kerah Cepat Melar (Bacon Collar)</strong>
+                    <span className="text-ts-muted">Karet rib tipis tanpa pengunci, melar dan keriting setelah beberapa kali jemur.</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <X className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-ts-kremMuted block font-semibold">Sablon Satu Kali Press Suhu Bebas</strong>
+                    <span className="text-ts-muted">Tanpa proses curing sekunder, rentan rontok dan pecah saat ditarik atau disikat.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04] flex items-center justify-between text-xs font-mono">
+              <span className="text-ts-muted">Fitting: Standar Lokal Sempit</span>
+              <span className="text-rose-400 font-bold">Resiko Melintir Tinggi</span>
+            </div>
+          </div>
         </div>
       </section>
 
