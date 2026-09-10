@@ -9,7 +9,10 @@ import {
   restockDtfFilm, 
   restockDtfBatch,
   restockBlankGarment,
-  restockSupplyItem
+  restockSupplyItem,
+  getBlankGarmentSku,
+  getSupplySku,
+  updateDatabaseInventoryItem
 } from '../services/inventoryApi';
 import { getProcurements, saveProcurement as apiSaveProcurement, deleteProcurement as apiDeleteProcurement } from '../services/procurementsApi';
 import { getCashTransactions, addCashTransaction as apiAddCashTransaction, calculateLedgerSummary } from '../services/ledgerApi';
@@ -135,20 +138,28 @@ export function AdminProvider({ children }) {
   // Update specific stock cell in place
   const updateStockCell = (gKey, col, sz, val) => {
     const next = JSON.parse(JSON.stringify(inventory));
+    const newQty = Math.max(0, parseInt(val, 10) || 0);
+
     if (gKey === 'supplies') {
       if (!next.supplies) next.supplies = {};
-      next.supplies[col] = Math.max(0, parseInt(val, 10) || 0);
+      next.supplies[col] = newQty;
       saveInventoryMatrix(next);
       setInventory(next);
-      showToast(`Stok kemasan/material diperbarui: ${col} = ${next.supplies[col]}`);
+      const supplySku = getSupplySku(col);
+      updateDatabaseInventoryItem(supplySku, newQty);
+      showToast(`Stok kemasan/material diperbarui: ${col} = ${newQty}`);
       return;
     }
+
     if (!next[gKey]) next[gKey] = {};
     if (!next[gKey][col]) next[gKey][col] = {};
-    next[gKey][col][sz] = Math.max(0, parseInt(val, 10) || 0);
+    next[gKey][col][sz] = newQty;
     saveInventoryMatrix(next);
     setInventory(next);
-    showToast(`Stok diperbarui: ${col} (${sz}) = ${next[gKey][col][sz]} pcs`);
+
+    const garmentSku = getBlankGarmentSku(gKey, col, sz);
+    updateDatabaseInventoryItem(garmentSku, newQty);
+    showToast(`Stok diperbarui: ${col} (${sz}) = ${newQty} pcs`);
   };
 
   // Restock batch of DTF film sheets (from Gang Sheet Builder)
@@ -164,10 +175,12 @@ export function AdminProvider({ children }) {
     const next = JSON.parse(JSON.stringify(inventory));
     if (!next.dtf_films) next.dtf_films = {};
     if (next.dtf_films[sku]) {
-      next.dtf_films[sku].ready = Math.max(0, parseInt(val, 10) || 0);
+      const newQty = Math.max(0, parseInt(val, 10) || 0);
+      next.dtf_films[sku].ready = newQty;
       saveInventoryMatrix(next);
       setInventory(next);
-      showToast(`Stok Film DTF [${sku}] diperbarui: ${next.dtf_films[sku].ready} lembar`);
+      updateDatabaseInventoryItem(sku, newQty);
+      showToast(`Stok Film DTF [${sku}] diperbarui: ${newQty} lembar`);
     }
   };
 
