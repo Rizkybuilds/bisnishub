@@ -25,7 +25,7 @@ export const GARMENT_BASE_PRICING = {
 export const DTF_PRINT_SIZES = [
   { id: "a6", name: "Logo Dada (A6 - 10x10 cm)", cost: 4500 },
   { id: "a4", name: "Sedang (A4 - 21x30 cm)", cost: 8500 },
-  { id: "a3", name: "Standar Distro (A3 - 28x40 cm)", cost: 12500 },
+  { id: "a3", name: "Studio Standard (A3 - 28x40 cm)", cost: 12500 },
   { id: "a3_plus_a6", name: "Depan A6 + Belakang A3", cost: 16500 },
   { id: "double_a3", name: "Full Depan + Belakang (2x A3)", cost: 24000 }
 ];
@@ -40,7 +40,7 @@ export const VENDOR_DTF_RATES = {
 
 // Arsitektur Harga (Anchor Pricing & Multi-Tier)
 export const TIER_PRICING = {
-  anchorPrice: 139000,       // Harga coret psikologis (nilai pasar distro)
+  anchorPrice: 139000,       // Harga coret psikologis (nilai pasar ritel)
   retailDisplay: 99000,      // Harga etalase standar di web
   promoCampaign: 89000,      // Harga promo event / flash sale
   partnerReseller: 65000,    // HPP grosir Rp 56k + profit ~16% (min 12 pcs)

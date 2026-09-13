@@ -83,18 +83,18 @@ export function CatalogPage({ defaultSegment }) {
       <SEOHead
         title={
           isBlankMode
-            ? "Katalog Kaos Polos New States Apparel (NSA) Original | TeeStock"
-            : "Katalog Kaos Distro Desain Grafis Curated — Bahan NSA 24s | TeeStock"
+            ? "Official NSA Blanks Supply | Kaos Polos New States Apparel Original | TeeStock"
+            : "TeeStock Originals // Graphic Archive — Heavyweight 24s | TeeStock"
         }
         description={
           isBlankMode
             ? "Beli kaos polos New States Apparel (NSA) Softstyle 30s & Heavyweight 24s Original Cititex. 100% katun tubular tanpa jahitan samping, eceran dan grosir lusinan."
-            : "Koleksi kaos distro grafis curated TeeStock dalam 9 series tematik. Dicetak di atas garmen NSA Heavyweight 24s dengan sablon DTF HD suhu 155°C anti-pecah."
+            : "Koleksi kurasi grafis bertema TeeStock dalam 3 seri kurasi (Graphic Statement, Urban Subculture, Outdoor Explorer). Dicetak di atas garmen NSA Heavyweight 24s dengan sablon DTF double-press in-house 155°C."
         }
         keywords={
           isBlankMode
             ? ["kaos polos nsa", "kaos nsa 24s", "kaos nsa 30s", "kaos polos grosir", "kaos oversize"]
-            : ["katalog kaos distro", "kaos desain grafis", "kaos dtf satuan", "kaos streetwear lokal", "sablon dtf bandung"]
+            : ["teestock originals", "curated graphic tees", "kaos dtf satuan", "streetwear apparel", "kaos nsa 24s"]
         }
         canonicalPath={isBlankMode ? "/polos" : "/katalog"}
       />
@@ -142,18 +142,18 @@ export function CatalogPage({ defaultSegment }) {
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ts-surface border border-ts-border text-[11px] font-semibold text-ts-krem">
           <Tag className={`w-3.5 h-3.5 ${isBlankMode ? 'text-ts-teal' : 'text-ts-terracotta'}`} />
           <span>
-            {isBlankMode ? 'OFFICIAL BLANKS • 100% NEW STATES APPAREL' : 'CURATED GRAPHICS • 9 SERIES THEMATIC'}
+            {isBlankMode ? 'OFFICIAL BLANKS • 100% NEW STATES APPAREL' : 'CURATED GRAPHICS • THE ARCHIVE'}
           </span>
         </div>
 
         <h1 className="text-3xl sm:text-4xl font-extrabold text-ts-krem tracking-tight">
-          {isBlankMode ? 'Katalog Kaos Polos NSA' : 'Katalog Desain Grafis Distro'}
+          {isBlankMode ? 'Official NSA Blanks' : 'TeeStock Originals // Graphic Archive'}
         </h1>
 
         <p className="text-xs sm:text-sm text-ts-kremMuted max-w-2xl leading-relaxed">
           {isBlankMode
-            ? '100% Katun New States Apparel (NSA) Original tanpa sambungan samping (tubular/built-up). Pilihan katun combed Softstyle 30s yang adem, Heavyweight 24s yang tebal garmen prima, hingga Heavyweight 20s boxy streetwear.'
-            : 'Koleksi desain streetwear eksklusif terkurasi dalam 9 tema kepribadian. Dicetak menggunakan tinta DTF HD raster premium di atas bahan katun New States Apparel original.'}
+            ? '100% Katun New States Apparel (NSA) Original tanpa sambungan samping (tubular built-up). Pilihan katun combed Softstyle 30s sejuk, Heavyweight 24s berbobot mantap, hingga Heavyweight 20s boxy cut.'
+            : 'Koleksi kurasi rilis grafis bertema subkultur di atas katun New States Apparel Heavyweight 24s tubular knit dengan sablon in-house 155°C.'}
         </p>
 
         {/* Top Controls: Search Bar & Sort Dropdown */}
@@ -204,7 +204,7 @@ export function CatalogPage({ defaultSegment }) {
         <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-terracotta/20 via-ts-surface/80 to-transparent border border-ts-terracotta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-sm">
           <div>
             <span className="font-bold text-ts-krem block text-sm">Mau Tambah Sablon Custom di Kaos Polos Ini?</span>
-            <span className="text-ts-kremMuted">TeeStock Studio melayani sablon DTF HD satuan &amp; lusinan (+Rp 25.000) tanpa minimal order kaku.</span>
+            <span className="text-ts-kremMuted">TeeStock Atelier melayani sablon DTF in-house 155°C satuan &amp; lusinan tanpa minimum order kaku.</span>
           </div>
           <Link to="/custom-order">
             <Button size="sm" variant="primary" className="whitespace-nowrap shadow-sm">
@@ -216,11 +216,11 @@ export function CatalogPage({ defaultSegment }) {
         <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-teal/15 via-ts-surface/80 to-transparent border border-ts-teal/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-sm">
           <div>
             <span className="font-bold text-ts-krem block text-sm">Hanya Butuh Kaos Polos Tanpa Sablon?</span>
-            <span className="text-ts-kremMuted">Dapatkan bahan New States Apparel (NSA) Original Cititex mulai Rp 49.000 ecer &amp; grosir.</span>
+            <span className="text-ts-kremMuted">Dapatkan bahan New States Apparel (NSA) Original Cititex mulai Rp 34.000 ecer &amp; grosir.</span>
           </div>
           <Link to="/polos">
             <Button size="sm" variant="secondary" className="border-ts-teal/30 text-ts-teal hover:bg-ts-teal/20 whitespace-nowrap">
-              Buka Katalog Kaos Polos NSA &rarr;
+              Buka Kaos Polos NSA &rarr;
             </Button>
           </Link>
         </div>
@@ -263,7 +263,7 @@ export function CatalogPage({ defaultSegment }) {
       ) : (
         <div className="space-y-2">
           <div className="text-[11px] font-bold text-ts-muted uppercase tracking-wider font-mono">
-            Filter Berdasarkan 9 Series Distro:
+            Filter Series Koleksi:
           </div>
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             <button
@@ -278,7 +278,7 @@ export function CatalogPage({ defaultSegment }) {
               Semua Series ({graphicCount})
             </button>
 
-            {SERIES.map(s => {
+            {SERIES.filter(s => s.id !== 'blank').map(s => {
               const seriesCount = catalog.filter(p => p.series === s.id && p.status === 'active').length;
               return (
                 <button

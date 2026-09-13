@@ -35,25 +35,25 @@ export function BioLinkPage() {
       icon: Flame,
     },
     {
-      id: 'shopee',
-      label: 'Shopee Official Store',
-      subtitle: 'Klaim Bebas Ongkir & Garansi Retur Se-Indonesia',
-      href: `${shopeeUrl}?utm_source=biolink&utm_medium=social&utm_campaign=shopee`,
-      internal: false,
-      icon: ShoppingBag,
-    },
-    {
       id: 'katalog',
-      label: 'Katalog Grafis & Blank NSA',
-      subtitle: 'Website resmi TeeStock Apparel House',
+      label: 'Official Website Store',
+      subtitle: 'The Direct Studio Privilege // Free Vinyl Sticker Pack',
       href: '/?utm_source=biolink&utm_medium=social&utm_campaign=website',
       internal: true,
       icon: LayoutGrid,
     },
     {
+      id: 'blanks',
+      label: 'The Blanks // Kaos Polos NSA Original',
+      subtitle: 'Heavyweight 24s & Softstyle 30s tubular mulai Rp 34K',
+      href: '/polos?utm_source=biolink&utm_medium=social&utm_campaign=blanks',
+      internal: true,
+      icon: ShoppingBag,
+    },
+    {
       id: 'custom',
       label: 'TeeStock Atelier (Custom & Merch)',
-      subtitle: 'Sablon Satuan, Komunitas & Official Creator Merch',
+      subtitle: 'Sablon satuan in-house 155°C tanpa minimum order',
       href: '/custom-order?utm_source=biolink&utm_medium=social&utm_campaign=studio',
       internal: true,
       icon: Palette,
@@ -61,10 +61,18 @@ export function BioLinkPage() {
     {
       id: 'reseller',
       label: 'Kemitraan Dropship White-Label',
-      subtitle: 'Tanpa modal, materi promosi siap pakai, margin 37-48%',
-      href: `https://wa.me/${cleanPhone}?text=${encodeURIComponent('Halo TeeStock, saya tertarik jadi reseller/dropshipper. Boleh info lebih lanjut?')}&utm_source=biolink&utm_medium=social&utm_campaign=reseller`,
+      subtitle: 'Supply brand tanpa modal stok, margin 37-48%',
+      href: `https://wa.me/${cleanPhone}?text=${encodeURIComponent('Halo TeeStock, saya tertarik kemitraan dropship/reseller brand. Boleh info lebih lanjut?')}&utm_source=biolink&utm_medium=social&utm_campaign=reseller`,
       internal: false,
       icon: Users,
+    },
+    {
+      id: 'shopee',
+      label: 'Shopee Official Store',
+      subtitle: 'Opsi transaksi via marketplace',
+      href: `${shopeeUrl}?utm_source=biolink&utm_medium=social&utm_campaign=shopee`,
+      internal: false,
+      icon: ExternalLink,
     },
   ];
 
@@ -98,7 +106,7 @@ export function BioLinkPage() {
     <div className="min-h-screen bg-ts-hitam text-ts-krem flex items-start justify-center px-4 py-8 sm:py-12">
       <SEOHead
         title="TeeStock Apparel | Link Resmi Bio Instagram & TikTok"
-        description="Wear Your Identity, Stock Your Story. Koleksi eksklusif Drop #01, Official Shopee Store, Jasa Kaos Custom, dan Peluang Kemitraan Dropship TeeStock."
+        description="Wear Your Identity. Koleksi eksklusif Drop #01, Official Website Store, Jasa Kaos Custom, dan Peluang Kemitraan Dropship TeeStock."
         canonicalPath="/bio"
       />
       {/* Ambient glow */}
@@ -124,13 +132,13 @@ export function BioLinkPage() {
               TeeStock
             </h1>
             <p className="text-xs text-ts-kremMuted font-mono uppercase tracking-wider mt-0.5">
-              Curated Apparel &amp; Merch House
+              Curated Apparel House
             </p>
           </div>
 
           {/* Tagline */}
           <p className="text-xs text-ts-muted">
-            "Wear Your Identity, Stock Your Story"
+            Wear Your Identity.
           </p>
         </header>
 
@@ -234,11 +242,11 @@ export function BioLinkPage() {
           })}
         </div>
 
-        {/* ─── Newsletter Capture (VIP Drop Alert) ─────────── */}
+        {/* ─── Newsletter Capture (The Archive Club) ─────────── */}
         <div className="pt-2 p-4 rounded-2xl bg-ts-surface border border-ts-border shadow-sm space-y-2">
           <div className="text-center">
-            <span className="text-xs font-bold text-ts-krem block">Klaim Voucher Diskon 10%</span>
-            <span className="text-[11px] text-ts-kremMuted block mt-0.5">Dapatkan kode promo perdana &amp; notifikasi rilis Drop #02</span>
+            <span className="text-xs font-bold text-ts-krem block">The Archive Club</span>
+            <span className="text-[11px] text-ts-kremMuted block mt-0.5">Akses 24 jam lebih awal sebelum rilis drop ke publik</span>
           </div>
           <NewsletterCapture source="biolink" compact={true} />
         </div>

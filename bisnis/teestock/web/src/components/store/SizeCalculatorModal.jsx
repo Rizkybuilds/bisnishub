@@ -164,7 +164,7 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { id: 'slim', label: 'Slim Fit', sub: 'Pas Tubuh' },
-                  { id: 'regular', label: 'Regular', sub: 'Standar Distro' },
+                  { id: 'regular', label: 'Regular Fit', sub: 'Classic Asian Fit' },
                   { id: 'oversize', label: 'Oversized', sub: 'Longgar / Boxy' },
                 ].map((f) => (
                   <button

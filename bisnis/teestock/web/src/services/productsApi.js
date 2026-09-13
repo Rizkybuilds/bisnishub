@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { SEED_PRODUCTS } from '../constants/seedData';
 
 const LOCAL_STORAGE_KEY = 'teestock_catalog_products';
 
@@ -52,6 +53,20 @@ export function normalizeProduct(p) {
 }
 
 export async function getProducts() {
+  const getFallback = () => {
+    const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        const sanitized = sanitizeCatalog(parsed);
+        if (sanitized.length > 0) return sanitized.map(normalizeProduct);
+      } catch (e) {
+        // parsing error
+      }
+    }
+    return SEED_PRODUCTS.map(normalizeProduct);
+  };
+
   try {
     const { data, error } = await supabase
       .from('ts_products')
@@ -59,21 +74,13 @@ export async function getProducts() {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.warn("Supabase ts_products fetch error, using local cache fallback:", error.message);
-      const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (!cached) return [];
-      try {
-        const parsed = JSON.parse(cached);
-        return sanitizeCatalog(parsed).map(normalizeProduct);
-      } catch (e) {
-        return [];
-      }
+      console.warn("Supabase ts_products fetch error, using local cache / seed fallback:", error.message);
+      return getFallback();
     }
 
     if (!data || data.length === 0) {
-      // Supabase returned clean 0 products
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify([]));
-      return [];
+      // Supabase returned clean 0 products - use seed products as initial catalog
+      return getFallback();
     }
 
     // Process and normalize real Supabase products
@@ -83,15 +90,8 @@ export async function getProducts() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(normalized));
     return normalized;
   } catch (err) {
-    console.warn("Network error during getProducts, checking cache:", err);
-    const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!cached) return [];
-    try {
-      const parsed = JSON.parse(cached);
-      return sanitizeCatalog(parsed).map(normalizeProduct);
-    } catch (e) {
-      return [];
-    }
+    console.warn("Network error during getProducts, checking cache / seed:", err);
+    return getFallback();
   }
 }
 

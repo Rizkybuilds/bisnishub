@@ -41,7 +41,7 @@ export function Footer() {
             </div>
             <div>
               <h4 className="text-xs sm:text-sm font-bold text-ts-krem uppercase font-mono">Kirim Cepat H+1</h4>
-              <p className="text-xs text-ts-kremMuted mt-0.5">Packing aman polymailer doff tahan cuaca + stiker distro.</p>
+              <p className="text-xs text-ts-kremMuted mt-0.5">Packing aman polymailer doff kedap air + die-cut vinyl stickers.</p>
             </div>
           </div>
 
@@ -62,10 +62,10 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-center md:text-left max-w-lg">
             <h4 className="text-sm sm:text-base font-extrabold text-ts-krem">
-              Daftar Notifikasi Drop &amp; Dapatkan Diskon 10%
+              The Archive Club // Member Access
             </h4>
             <p className="text-xs text-ts-kremMuted mt-1">
-              Jadilah yang pertama tahu saat Drop #02 rilis. Plus voucher diskon pertama langsung aktif.
+              Dapatkan akses 24 jam lebih awal sebelum rilis drop ke publik, unreleased preview, dan catatan studio.
             </p>
           </div>
           <div className="w-full md:w-80">
@@ -79,10 +79,10 @@ export function Footer() {
         <div className="md:col-span-2 space-y-4">
           <TeeStockLogo size="md" badge="APPAREL HOUSE" />
           <p className="text-xs text-ts-kremMuted max-w-md leading-relaxed">
-            Brand distro print-on-demand modern yang mengangkat identitas profesi, hobi, dan fase hidup lewat estetika desain grafis berkelas di atas kaos polos New States Apparel.
+            Independent Curated Apparel House &mdash; <em>&ldquo;Wear Your Identity.&rdquo;</em> Rilisan grafis tematik di atas katun New States Apparel (NSA) Heavyweight 24s tubular knit dengan sablon in-house 155&deg;C.
           </p>
           <div className="text-xs text-ts-muted font-mono">
-            Central Studio Workshop: Citayam &bull; Satellite Hub: Bogor &bull; 100% Online D2C
+            Central Studio &amp; Fulfillment: Depok &bull; Kirim ke Seluruh Indonesia
           </div>
 
           {/* Social Links */}

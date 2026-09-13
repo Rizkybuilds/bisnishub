@@ -152,6 +152,10 @@ export const router = createBrowserRouter([
         element: <StoreSuspense message="Memuat Info Kemitraan..."><PartnerPage /></StoreSuspense> 
       },
       { 
+        path: 'mitra', 
+        element: <StoreSuspense message="Memuat Portal Kemitraan B2B..."><PartnerPage /></StoreSuspense> 
+      },
+      { 
         path: 'care', 
         element: <StoreSuspense message="Memuat Garansi & Panduan Perawatan..."><GaransiPage /></StoreSuspense> 
       },

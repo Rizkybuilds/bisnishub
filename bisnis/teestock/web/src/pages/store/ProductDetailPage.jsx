@@ -36,8 +36,10 @@ export function ProductDetailPage() {
   const product = catalog.find(p => p.sku === sku);
   const isBlank = product?.series === 'blank';
 
-  const [selectedGarmentKey, setSelectedGarmentKey] = useState('nsa_softstyle_30s');
-  const selectedGarment = GARMENT_TYPES[selectedGarmentKey] || GARMENT_TYPES.nsa_softstyle_30s;
+  const [selectedGarmentKey, setSelectedGarmentKey] = useState(
+    product?.template === 'softstyle_30s' ? 'nsa_softstyle_30s' : 'nsa_heavyweight_24s'
+  );
+  const selectedGarment = GARMENT_TYPES[selectedGarmentKey] || GARMENT_TYPES.nsa_heavyweight_24s;
   
   // Available colors
   const colorList = useMemo(() => {
@@ -122,6 +124,9 @@ export function ProductDetailPage() {
     if (sizeList.length > 0) {
       setSelectedSize(sizeList[0]);
     }
+    setSelectedGarmentKey(
+      product?.template === 'softstyle_30s' ? 'nsa_softstyle_30s' : 'nsa_heavyweight_24s'
+    );
   }, [product?.sku]);
 
   // Sync preview image whenever color or gallery changes
@@ -254,7 +259,8 @@ export function ProductDetailPage() {
 
   let priceDelta = 0;
   if (!isBlank) {
-    if (selectedGarmentKey === 'nsa_heavyweight_24s') priceDelta = 10000;
+    if (selectedGarmentKey === 'nsa_heavyweight_24s') priceDelta = 0; // Standard for Originals!
+    else if (selectedGarmentKey === 'nsa_softstyle_30s') priceDelta = 0;
     else if (selectedGarmentKey === 'nsa_longsleeve') priceDelta = 12000;
     else if (selectedGarmentKey === 'nsa_hoodie') priceDelta = 85000;
     else if (selectedGarmentKey === 'nsa_polo') priceDelta = 30000;
@@ -315,7 +321,7 @@ export function ProductDetailPage() {
       <SEOHead
         title={`${product.name} — Kaos NSA 24s Heavyweight Sablon DTF HD | TeeStock`}
         description={`${product.name}. Dicetak dengan sablon DTF HD di atas garmen New States Apparel (NSA) Heavyweight 24s / Softstyle 30s original tanpa jahitan samping.`}
-        keywords={[product.name, product.seriesName || 'kaos distro', 'kaos nsa 24s heavyweight', 'kaos nsa softstyle 30s', 'sablon dtf satuan']}
+        keywords={[product.name, product.seriesName || 'teestock originals', 'kaos nsa 24s heavyweight', 'kaos nsa softstyle 30s', 'sablon dtf satuan']}
         image={previewImg}
         canonicalPath={`/produk/${product.sku}`}
         type="product"

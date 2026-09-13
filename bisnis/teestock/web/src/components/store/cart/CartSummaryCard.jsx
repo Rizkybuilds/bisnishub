@@ -214,7 +214,7 @@ export function CartSummaryCard({
           </div>
           <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
             <span>📦</span>
-            <span className="truncate">Polymailer Doff Distro</span>
+            <span className="truncate">Signature Matte Doff Mailer</span>
           </div>
           <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
             <span>🛡️</span>

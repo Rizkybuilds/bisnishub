@@ -66,20 +66,17 @@ export function TeeStockLogo({
   return (
     <div className={`flex items-center gap-2.5 sm:gap-3 group ${className}`}>
       {/* Icon Emblem Box */}
-      <div className={`relative ${currentSize.box} rounded-xl bg-gradient-to-br from-ts-terracotta to-[#9E3B1B] flex items-center justify-center text-white border border-white/20 transition-transform duration-300 group-hover:scale-105 shadow-glow-terracotta shrink-0`}>
+      <div className={`relative ${currentSize.box} rounded-xl bg-gradient-to-br from-ts-terracotta to-[#A84323] flex items-center justify-center text-white border border-white/15 transition-transform duration-300 group-hover:scale-105 shadow-sm shrink-0`}>
         <TeeStockLogoIcon className={`${currentSize.icon} text-white drop-shadow-sm`} />
-        {glow && (
-          <div className="absolute -inset-0.5 rounded-xl bg-ts-terracotta/30 blur-sm -z-10 group-hover:opacity-100 transition-opacity" />
-        )}
       </div>
 
       {/* Typography Wordmark (if not mark-only) */}
       {variant !== 'mark' && (
         <div>
-          <span className={`${currentSize.title} font-black tracking-[-0.03em] text-ts-krem group-hover:text-ts-terracotta transition-colors block leading-tight`}>
+          <span className={`${currentSize.title} font-display font-black tracking-[-0.04em] text-ts-krem group-hover:text-white transition-colors block leading-tight`}>
             TeeStock
           </span>
-          <span className={`${currentSize.sub} font-bold text-ts-terracotta tracking-[0.14em] uppercase font-mono block -mt-0.5`}>
+          <span className={`${currentSize.sub} font-bold text-ts-terracotta tracking-[0.16em] uppercase font-mono block -mt-0.5`}>
             {badge}
           </span>
         </div>

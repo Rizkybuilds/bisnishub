@@ -14,7 +14,7 @@ export const FULFILLMENT_HUBS = {
     id: 'citayam_studio',
     name: 'TeeStock Studio & Print Lab (Citayam Hub)',
     shortName: 'Studio Citayam',
-    city: 'Kab. Bogor / Depok',
+    city: 'Depok',
     district: 'Citayam (Tugu Macan)',
     address: 'Jl. Tugu Macan, Citayam, Kab. Bogor / Depok',
     tagline: 'Sentra Produksi Heat Press & Workshop Utama',

@@ -271,7 +271,7 @@ export function AccountPage() {
                   pending: { label: 'Menunggu Konfirmasi', color: 'bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/30' },
                   dtf: { label: 'Cetak Film DTF HD', color: 'bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/30' },
                   press: { label: 'Heat Press 155°C', color: 'bg-ts-terracotta/20 text-ts-terracotta border-ts-terracotta/40' },
-                  pack: { label: 'Packing Polymailer Distro', color: 'bg-purple-500/15 text-purple-600 dark:text-purple-300 border-purple-500/30' },
+                  pack: { label: 'QC & Studio Packing', color: 'bg-purple-500/15 text-purple-600 dark:text-purple-300 border-purple-500/30' },
                   shipped: { label: 'Sedang Dikirim Kurir', color: 'bg-ts-teal/20 text-ts-teal border-ts-teal/40' },
                   review: { label: 'Pesanan Selesai', color: 'bg-ts-green/15 text-ts-green border-ts-green/30' },
                 };

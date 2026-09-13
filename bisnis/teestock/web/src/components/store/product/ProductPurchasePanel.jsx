@@ -10,7 +10,9 @@ import {
   Clock, 
   Building2, 
   ShieldCheck,
-  Zap
+  Zap,
+  Package,
+  RotateCcw
 } from 'lucide-react';
 import { Button } from '../../ui/Button';
 import { GARMENT_TYPES } from '../../../constants/garments';
@@ -358,6 +360,45 @@ export function ProductPurchasePanel({
               <MessageSquare className="w-3.5 h-3.5 text-emerald-500" />
               <span>Ragu soal ukuran atau butuh pesanan khusus? <strong className="text-ts-krem underline decoration-emerald-500/50">Chat WhatsApp Admin</strong></span>
             </button>
+          </div>
+        </div>
+
+        {/* TeeStock Craft Mark Trust Badges */}
+        <div className="p-4 rounded-2xl bg-ts-surface border border-ts-border space-y-3">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-mono font-bold text-ts-krem flex items-center gap-1.5 uppercase text-[11px]">
+              <ShieldCheck className="w-4 h-4 text-ts-terracotta" />
+              TeeStock Craft Mark // Garansi Standar Garmen
+            </span>
+            <span className="text-[10px] font-mono text-emerald-500 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+              ORIGINAL
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-[11px] text-ts-kremMuted font-mono">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-ts-terracotta" />
+              <span>NSA 24s 180 GSM Katun</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-ts-teal" />
+              <span>0 Samping (Tubular)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-ts-mustard" />
+              <span>Kerah Rib 2.2 cm Kokoh</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-ts-terracotta" />
+              <span>Double Press 155°C Studio</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-ts-mustard" />
+              <span>Free Vinyl Sticker Pack</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>100% Garansi Ganti Baru</span>
+            </div>
           </div>
         </div>
       </div>

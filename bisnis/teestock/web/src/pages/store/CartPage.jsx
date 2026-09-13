@@ -385,9 +385,9 @@ export function CartPage() {
           <ShoppingBag className="w-8 h-8" />
         </div>
         <div className="space-y-1">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Troli Belanja Anda Masih Kosong</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white">Troli Belanja Masih Kosong</h2>
           <p className="text-xs sm:text-sm text-ts-kremMuted max-w-sm mx-auto">
-            Temukan desain distro tematik sesuai kepribadianmu atau pesan kaos polos NSA sekarang.
+            Temukan kurasi grafis bertema subkultur atau pesan kaos polos New States Apparel original sekarang.
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
@@ -395,14 +395,14 @@ export function CartPage() {
             to="/katalog"
             className="px-6 py-3 rounded-xl bg-ts-terracotta hover:bg-ts-terracottaDark text-white font-bold text-xs tracking-wider transition-colors inline-flex items-center gap-2"
           >
-            <span>Eksplor Katalog Desain</span>
+            <span>Explore Drop Archive</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           <Link
             to="/polos"
             className="px-6 py-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-white font-bold text-xs tracking-wider transition-colors inline-flex items-center gap-2"
           >
-            <span>Katalog Kaos Polos NSA</span>
+            <span>The Blanks (Kaos Polos NSA)</span>
           </Link>
         </div>
       </div>

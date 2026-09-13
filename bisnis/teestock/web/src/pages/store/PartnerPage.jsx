@@ -133,9 +133,9 @@ export function PartnerPage() {
   return (
     <div className="min-h-screen pb-24 space-y-20 sm:space-y-28">
       <SEOHead
-        title="Peluang Usaha Dropship & Reseller Kaos Distro White-Label | TeeStock"
+        title="Peluang Kemitraan Dropship & Studio Supply White-Label | TeeStock"
         description="Mulai bisnis brand clothing kamu sendiri tanpa modal stok dan mesin. HPP mulai Rp 65.000/pcs, 100% bahan New States Apparel (NSA) 24s/30s asli, sablon DTF HD, pengiriman white-label atas nama tokomu."
-        keywords={["dropship kaos distro", "reseller kaos distro", "peluang usaha apparel", "supplier kaos nsa", "sablon dtf satuan"]}
+        keywords={["dropship apparel brand", "reseller kaos nsa", "peluang usaha streetwear", "supplier kaos nsa", "sablon dtf satuan"]}
         canonicalPath="/partner"
       />
       {/* ─── Hero Section ───────────────────────────────────── */}
@@ -151,14 +151,14 @@ export function PartnerPage() {
         </div>
 
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-ts-krem tracking-tight max-w-4xl mx-auto leading-tight">
-          Mulai Bisnis Apparel Distro <br />
+          Mulai Brand Apparel Independen <br />
           <span className="bg-gradient-to-r from-ts-mustard via-[#F5D77F] to-ts-terracotta bg-clip-text text-transparent">
             Tanpa Modal Stok &amp; Mesin Sablon.
           </span>
         </h1>
 
         <p className="text-xs sm:text-sm lg:text-base text-ts-muted max-w-2xl mx-auto leading-relaxed">
-          Fokuslah membangun toko dan menjaring pembeli di Shopee, TikTok, atau Instagram. Seluruh urusan garmen New States Apparel, sablon DTF HD 155°C, hingga packing polymailer atas nama brand kamu — biarkan TeeStock yang tangani.
+          Fokuslah membangun komunitas dan identitas brand kamu. Seluruh urusan garmen New States Apparel, sablon DTF in-house 155°C, hingga packaging pengiriman atas nama brand kamu — biarkan TeeStock Studio yang tangani.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
@@ -354,7 +354,7 @@ export function PartnerPage() {
             Bagaimana Cara Kerjanya?
           </h2>
           <p className="text-xs sm:text-sm text-ts-muted">
-            Alur praktis 4 langkah jualan apparel distro tanpa perlu pusing mikirin alat sablon dan packing.
+            Alur praktis 4 langkah jualan apparel brand kamu tanpa perlu pusing mikirin alat sablon dan packing.
           </p>
         </div>
 
@@ -518,7 +518,7 @@ export function PartnerPage() {
                   <option value="Shopee & TikTok Shop">Shopee &amp; TikTok Shop</option>
                   <option value="Instagram & WhatsApp">Instagram &amp; WhatsApp</option>
                   <option value="Komunitas & Relasi">Komunitas &amp; Circle Terdekat</option>
-                  <option value="Toko Fisik / Distro Offline">Toko Fisik / Distro Offline</option>
+                  <option value="Toko Fisik / Offline Store">Toko Fisik / Offline Store</option>
                   <option value="Baru Mau Mulai Belajar">Baru Mau Mulai Belajar</option>
                 </select>
               </div>

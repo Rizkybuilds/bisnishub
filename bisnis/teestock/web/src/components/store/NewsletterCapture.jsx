@@ -81,28 +81,25 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
       <div className="absolute top-0 right-0 w-64 h-64 bg-ts-terracotta/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div className="max-w-xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ts-terracotta/15 border border-ts-terracotta/30 text-ts-terracotta text-xs font-semibold mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ts-surfaceHover border border-ts-border text-ts-terracotta text-xs font-mono font-bold mb-3">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>VIP DROP ALERT &amp; DISKON PERDANA</span>
+          <span>THE ARCHIVE CLUB // PRIVATE ACCESS</span>
         </div>
 
-        <h3 className="text-xl sm:text-2xl font-black text-ts-krem tracking-tight">
-          Jangan Ketinggalan Rilis Drop Berikutnya.
+        <h3 className="text-2xl sm:text-3xl font-black text-ts-krem tracking-tight">
+          Early Access. Secret Drops. Zero Noise.
         </h3>
-        <p className="text-xs sm:text-sm text-ts-kremMuted mt-1.5 leading-relaxed">
-          Dapatkan akses 24 jam lebih awal ke koleksi kapsul terbatas TeeStock, cerita di balik desain, dan <strong>voucher diskon 10%</strong> untuk pesanan pertamamu.
+        <p className="text-xs sm:text-sm text-ts-kremMuted mt-2 leading-relaxed">
+          Dapatkan akses 24 jam lebih awal sebelum rilis publik, arsip desain terbatas, dan catatan studio in-house langsung ke inbox kamu.
         </p>
 
-        <div className="mt-5">
+        <div className="mt-6">
           {status === 'success' ? (
             <div className="p-4 rounded-2xl bg-ts-green/15 border border-ts-green/30 text-xs text-ts-green flex items-start gap-3 animate-in zoom-in-95">
               <CheckCircle2 className="w-5 h-5 shrink-0 text-ts-green mt-0.5" />
               <div className="space-y-1">
-                <p className="font-bold text-sm text-ts-krem">Selamat Datang di Lingkaran TeeStock!</p>
+                <p className="font-bold text-sm text-ts-krem">Kamu Terdaftar di Archive Club.</p>
                 <p className="text-xs leading-relaxed text-ts-kremMuted">{message}</p>
-                <div className="inline-block mt-2 px-2.5 py-1 rounded-md bg-ts-surfaceHover border border-ts-green/40 font-mono text-[11px] text-ts-green font-bold">
-                  Gunakan kode: WELCOME10
-                </div>
               </div>
             </div>
           ) : (
@@ -113,21 +110,21 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Masukkan alamat email aktif kamu..."
+                  placeholder="Masukkan email kamu..."
                   disabled={loading}
-                  className="w-full bg-ts-surfaceHover/60 border border-ts-border rounded-xl pl-10 pr-4 py-3 text-xs sm:text-sm text-ts-krem placeholder-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-2 focus:ring-ts-terracotta/30 transition-all"
+                  className="w-full bg-ts-surfaceHover/60 border border-ts-border rounded-xl pl-10 pr-4 py-3 text-xs sm:text-sm text-ts-krem placeholder-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-2 focus:ring-ts-terracotta/30 transition-all font-mono"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-3 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 shrink-0 disabled:opacity-50"
+                className="px-6 py-3 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 shrink-0 disabled:opacity-50 font-mono"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
-                    <span>Dapatkan Notifikasi</span>
+                    <span>Join the Club</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
@@ -136,11 +133,11 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
           )}
 
           {status === 'error' && (
-            <p className="text-xs text-red-500 mt-2 pl-1">{message}</p>
+            <p className="text-xs text-red-500 mt-2 pl-1 font-mono">{message}</p>
           )}
 
-          <p className="text-[10px] text-ts-muted mt-2.5 flex items-center gap-1.5">
-            <span>🔒 Kami menghargai privasi kamu. Bebas spam, bisa berhenti berlangganan kapan saja.</span>
+          <p className="text-[10px] text-ts-muted mt-3 flex items-center gap-1.5 font-mono">
+            <span>Privasi terjaga. Tanpa spam, berhenti langganan kapan saja.</span>
           </p>
         </div>
       </div>

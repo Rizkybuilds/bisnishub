@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { formatRupiah } from '../../utils/formatters';
 import { getColorHex } from '../../constants/colors';
 import { getAvailableColors, getCardPreviewImage } from '../../utils/productImages';
+import { TiltCard } from './interactive/TiltCard';
 
 export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
   const { isPartner, role, profile } = useAuth();
@@ -63,9 +64,10 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
   const productUrl = `/produk/${product.sku}?color=${encodeURIComponent(selectedColor)}`;
 
   return (
-    <div
-      className={`group bg-ts-surface border border-ts-border rounded-2xl overflow-hidden transition-all duration-300 flex flex-col hover:-translate-y-1 hover:border-ts-borderHover shadow-sm hover:shadow-elevation relative ${className}`}
-    >
+    <TiltCard maxTilt={5} scale={1.01} className={`h-full ${className}`}>
+      <div
+        className="group bg-ts-surface border border-ts-border rounded-2xl overflow-hidden transition-all duration-300 flex flex-col hover:-translate-y-1 hover:border-ts-borderHover shadow-sm hover:shadow-elevation relative h-full"
+      >
       {/* Product Image Frame */}
       <Link
         to={productUrl}
@@ -210,7 +212,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
                   )}
                 </div>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="font-mono text-xs sm:text-sm font-black text-ts-green">
+                  <span className="font-mono text-xs sm:text-sm font-black text-ts-krem">
                     {formatRupiah(effectivePrice)}
                   </span>
                   {!isBlank && (
@@ -226,11 +228,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
           <Link
             to={productUrl}
             aria-label={`Pilih produk ${product.name}`}
-            className={`text-[10px] font-bold px-2.5 sm:px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 cursor-pointer ${
-              isBlank
-                ? 'bg-ts-teal/15 border border-ts-teal/30 text-teal-600 dark:text-teal-300 hover:bg-ts-teal hover:text-white shadow-sm'
-                : 'bg-ts-surfaceHover border border-ts-border text-ts-krem hover:bg-ts-terracotta hover:border-ts-terracotta hover:text-white shadow-sm'
-            }`}
+            className="text-[10px] font-bold px-2.5 sm:px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 cursor-pointer bg-ts-surfaceHover border border-ts-border text-ts-krem hover:bg-zinc-950 hover:text-white dark:hover:bg-white dark:hover:text-zinc-950 dark:hover:border-white shadow-sm"
           >
             <span>Pilih</span>
             <span>&rarr;</span>
@@ -238,5 +236,6 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
         </div>
       </div>
     </div>
-  );
+  </TiltCard>
+);
 }

@@ -12,45 +12,45 @@
 .dark {
   color-scheme: dark;
 
-  /* Backgrounds */
-  --color-bg-base: #0E0D0C;
-  --color-bg-surface: #171615;
-  --color-bg-surface-hover: #22201E;
-  --color-bg-surface-card: rgba(23, 22, 21, 0.78);
-  --color-bg-overlay: rgba(14, 13, 12, 0.82);
+  /* Backgrounds — The Luxury Monolith (Pitch Black & Washed Charcoal) */
+  --color-bg-base: #0A0A0A;
+  --color-bg-surface: #141414;
+  --color-bg-surface-hover: #1C1C1C;
+  --color-bg-surface-card: rgba(20, 20, 20, 0.88);
+  --color-bg-overlay: rgba(10, 10, 10, 0.88);
 
-  /* Borders */
+  /* Borders — Clean Architectural Precision */
   --color-border: rgba(255, 255, 255, 0.08);
   --color-border-dim: rgba(255, 255, 255, 0.04);
-  --color-border-hover: rgba(255, 255, 255, 0.18);
+  --color-border-hover: rgba(255, 255, 255, 0.16);
 
-  /* Typography */
-  --color-text-krem: #F5F2EB;
-  --color-text-krem-light: #FAF8F5;
-  --color-text-krem-muted: #C5BFB2;
-  --color-text-muted: #8E8B82;
+  /* Typography — High-Contrast Chalk White & Cool Silver */
+  --color-text-krem: #FAFAFA;
+  --color-text-krem-light: #FFFFFF;
+  --color-text-krem-muted: #A1A1AA;
+  --color-text-muted: #71717A;
 
-  /* Brand Accents */
-  --color-terracotta: #C1673D;
-  --color-terracotta-glow: rgba(193, 103, 61, 0.28);
+  /* Brand Accents (Surgical & Subdued) */
+  --color-terracotta: #D95D39;
+  --color-terracotta-glow: rgba(217, 93, 57, 0.14);
   --color-mustard: #D9A441;
   --color-teal: #4F7C74;
 
-  /* Shadows */
-  --shadow-elevation: 0 12px 40px -10px rgba(0, 0, 0, 0.65);
-  --glass-bg: rgba(23, 22, 21, 0.78);
-  --glass-bg-hover: rgba(30, 28, 27, 0.92);
-  --glass-border: rgba(255, 255, 255, 0.09);
-  --glass-border-hover: rgba(255, 255, 255, 0.20);
-  --glass-inset: inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
+  /* Shadows — Deep Studio Shadows */
+  --shadow-elevation: 0 16px 48px -12px rgba(0, 0, 0, 0.85);
+  --glass-bg: rgba(20, 20, 20, 0.82);
+  --glass-bg-hover: rgba(28, 28, 28, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hover: rgba(255, 255, 255, 0.18);
+  --glass-inset: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
 
   /* Grid dots */
-  --dot-color: rgba(255, 255, 255, 0.07);
-  --dot-dense-color: rgba(255, 255, 255, 0.09);
+  --dot-color: rgba(255, 255, 255, 0.04);
+  --dot-dense-color: rgba(255, 255, 255, 0.06);
 
   /* Scrollbar */
-  --scrollbar-track: #0E0D0C;
-  --scrollbar-thumb: #262422;
+  --scrollbar-track: #0A0A0A;
+  --scrollbar-thumb: #222222;
 }
 
 [data-theme="light"],
@@ -106,6 +106,14 @@ body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   overflow-x: hidden;
   transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Typography Hierarchy (The Luxury Heavyweight Monolith — Kiblat: Fear of God & Apple) */
+h1, h2, h3, h4, .font-display {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
 }
 
 ::selection {
