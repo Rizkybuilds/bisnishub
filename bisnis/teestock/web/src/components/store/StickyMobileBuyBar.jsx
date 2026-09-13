@@ -20,13 +20,13 @@ export function StickyMobileBuyBar({
 
   return (
     <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-40 md:hidden animate-in slide-in-from-bottom-5 duration-300 pointer-events-none">
-      <div className="pointer-events-auto max-w-md mx-auto bg-ts-surface/95 backdrop-blur-2xl border border-white/[0.14] rounded-2xl p-2.5 sm:p-3 shadow-glass-card shadow-glass-inset flex items-center justify-between gap-2.5">
+      <div className="pointer-events-auto max-w-md mx-auto bg-ts-surfaceCard backdrop-blur-2xl border border-ts-border rounded-2xl p-2.5 sm:p-3 shadow-elevation flex items-center justify-between gap-2.5 transition-colors">
         {/* Thumbnail & Info Ringkas */}
         <div className="flex items-center gap-2 min-w-0">
           <img
             src={displayImage}
             alt={product.name}
-            className={`w-10 h-10 rounded-xl border border-white/10 bg-ts-hitam shrink-0 ${
+            className={`w-10 h-10 rounded-xl border border-ts-border bg-ts-surface shrink-0 ${
               product.series === 'blank' || product.sku?.startsWith('TS-BLK') ? 'object-contain p-0.5' : 'object-cover'
             }`}
           />
@@ -45,7 +45,7 @@ export function StickyMobileBuyBar({
           {onBuyWhatsapp && (
             <button
               onClick={onBuyWhatsapp}
-              className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-emerald-400 active:scale-95 transition-all"
+              className="p-2 rounded-xl bg-ts-surfaceHover hover:bg-ts-border border border-ts-border text-emerald-500 active:scale-95 transition-all"
               title="Konsultasi WhatsApp"
               aria-label="Konsultasi WhatsApp"
             >
@@ -59,7 +59,7 @@ export function StickyMobileBuyBar({
             className={`px-3 py-2 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer ${
               isAdded
                 ? 'bg-ts-green/20 border-ts-green text-ts-green'
-                : 'bg-white/[0.06] border-white/10 text-white hover:bg-white/[0.1]'
+                : 'bg-ts-surfaceHover border-ts-border text-ts-krem hover:bg-ts-border'
             }`}
             title="Tambah ke Keranjang"
           >
@@ -79,7 +79,7 @@ export function StickyMobileBuyBar({
           <button
             type="button"
             onClick={onBuyNow}
-            className="px-3.5 py-2 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white border border-ts-terracotta/50 text-xs font-black shadow-glow-terracotta flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white border border-ts-terracotta text-xs font-black shadow-sm flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
           >
             <span>Beli</span>
             <ArrowRight className="w-3.5 h-3.5" />

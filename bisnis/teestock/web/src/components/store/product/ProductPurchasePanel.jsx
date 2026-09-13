@@ -71,7 +71,7 @@ export function ProductPurchasePanel({
           )}
         </div>
 
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-ts-krem tracking-tight leading-tight">
           {product.name}
         </h1>
 
@@ -117,9 +117,9 @@ export function ProductPurchasePanel({
 
       {/* Bundle Deals Banner (Graphic T-Shirts Only) */}
       {!isBlank && (
-        <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-2">
+        <div className="p-3.5 rounded-2xl bg-ts-surface border border-ts-border space-y-2 shadow-sm">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-white flex items-center gap-1.5">
+            <span className="font-bold text-ts-krem flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
               Promo Bundling Koleksi
             </span>
@@ -127,9 +127,9 @@ export function ProductPurchasePanel({
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs">
             {BUNDLE_DEALS.map((deal, idx) => (
-              <div key={idx} className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-1">
+              <div key={idx} className="p-2.5 rounded-xl bg-ts-surfaceHover border border-ts-border space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-white">{deal.title}</span>
+                  <span className="font-bold text-ts-krem">{deal.title}</span>
                   <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-ts-terracotta/20 text-ts-terracotta font-semibold">
                     {deal.badge}
                   </span>
@@ -161,14 +161,14 @@ export function ProductPurchasePanel({
                     onClick={() => setSelectedGarmentKey(key)}
                     className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-ts-terracotta bg-ts-terracotta/10 text-white ring-1 ring-ts-terracotta/50 shadow-glow-terracotta-sm'
-                        : 'border-white/[0.08] bg-white/[0.02] text-ts-kremMuted hover:border-white/20'
+                        ? 'border-ts-terracotta bg-ts-terracotta/10 text-ts-krem ring-1 ring-ts-terracotta/50 shadow-sm'
+                        : 'border-ts-border bg-ts-surface text-ts-kremMuted hover:border-ts-borderHover'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-1">
-                      <span className="text-xs font-bold text-white">{garment.name}</span>
+                      <span className="text-xs font-bold text-ts-krem">{garment.name}</span>
                       <div className="flex items-center gap-1 shrink-0">
-                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-ts-krem border border-white/10 font-bold">
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-ts-surfaceHover text-ts-krem border border-ts-border font-bold">
                           {gsmBadge}
                         </span>
                         {key === 'nsa_heavyweight_24s' && (
@@ -192,12 +192,12 @@ export function ProductPurchasePanel({
           <label className="font-bold uppercase tracking-wider text-ts-kremMuted">
             Pilihan Warna ({colorList.length} Pilihan)
           </label>
-          <span className="font-semibold text-white">{selectedColor}</span>
+          <span className="font-semibold text-ts-krem">{selectedColor}</span>
         </div>
 
         {/* Category Tabs for blanks with many colors */}
         {colorList.length > 8 && (
-          <div className="flex gap-1.5 border-b border-white/[0.06] pb-2 text-[11px]">
+          <div className="flex gap-1.5 border-b border-ts-border pb-2 text-[11px]">
             {['all', 'basic', 'earthy', 'vibrant'].map((tab) => (
               <button
                 key={tab}
@@ -205,7 +205,7 @@ export function ProductPurchasePanel({
                 onClick={() => setActiveColorTab(tab)}
                 className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-colors cursor-pointer ${
                   activeColorTab === tab
-                    ? 'bg-white/[0.1] text-white font-bold'
+                    ? 'bg-ts-surfaceHover text-ts-krem font-bold'
                     : 'text-ts-muted hover:text-ts-krem'
                 }`}
               >
@@ -227,12 +227,12 @@ export function ProductPurchasePanel({
                 onClick={() => setSelectedColor(colorName)}
                 className={`group flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs transition-all cursor-pointer ${
                   isSelected
-                    ? 'border-ts-terracotta bg-ts-terracotta/15 text-white ring-1 ring-ts-terracotta/50'
-                    : 'border-white/[0.08] bg-white/[0.02] text-ts-kremMuted hover:border-white/20'
+                    ? 'border-ts-terracotta bg-ts-terracotta/15 text-ts-krem ring-1 ring-ts-terracotta/50'
+                    : 'border-ts-border bg-ts-surface text-ts-kremMuted hover:border-ts-borderHover'
                 }`}
               >
                 <span
-                  className="w-3.5 h-3.5 rounded-full border border-white/30 shrink-0 shadow-sm"
+                  className="w-3.5 h-3.5 rounded-full border border-ts-border shrink-0 shadow-sm"
                   style={{ backgroundColor: hex }}
                 />
                 <span className="truncate max-w-[100px]">{colorName}</span>
@@ -251,7 +251,7 @@ export function ProductPurchasePanel({
           <button
             type="button"
             onClick={onOpenSizeModal}
-            className="text-ts-mustard hover:text-white font-bold inline-flex items-center gap-1 transition-colors cursor-pointer"
+            className="text-ts-mustard hover:text-ts-krem font-bold inline-flex items-center gap-1 transition-colors cursor-pointer"
           >
             <Ruler className="w-3.5 h-3.5" />
             <span>Size Chart & Panduan</span>
@@ -269,8 +269,8 @@ export function ProductPurchasePanel({
                 onClick={() => setSelectedSize(size)}
                 className={`py-2.5 px-2 rounded-xl border text-center transition-all cursor-pointer ${
                   isSelected
-                    ? 'border-ts-terracotta bg-ts-terracotta/15 text-white ring-1 ring-ts-terracotta font-bold'
-                    : 'border-white/[0.08] bg-white/[0.02] text-ts-kremMuted hover:border-white/20'
+                    ? 'border-ts-terracotta bg-ts-terracotta/15 text-ts-krem ring-1 ring-ts-terracotta font-bold'
+                    : 'border-ts-border bg-ts-surface text-ts-kremMuted hover:border-ts-borderHover'
                 }`}
               >
                 <span className="block text-sm font-mono">{size}</span>
@@ -287,11 +287,11 @@ export function ProductPurchasePanel({
 
       {/* Stock SLA Routing Badge */}
       {fulfillmentSLA && (
-        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between text-xs">
+        <div className="p-3 rounded-xl bg-ts-surface border border-ts-border flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-ts-teal shrink-0" />
             <div>
-              <p className="font-semibold text-white text-xs">{fulfillmentSLA.slaLabel || 'Siap Kirim H+0 / H+1'}</p>
+              <p className="font-semibold text-ts-krem text-xs">{fulfillmentSLA.slaLabel || 'Siap Kirim H+0 / H+1'}</p>
               <p className="text-[11px] text-ts-muted">{fulfillmentSLA.sourceLabel || 'Stok buffer studio aktif'}</p>
             </div>
           </div>
@@ -305,21 +305,21 @@ export function ProductPurchasePanel({
       <div className="space-y-3.5 pt-2">
         <div className="flex items-center gap-3">
           {/* Stepper */}
-          <div className="flex items-center border border-white/[0.1] rounded-xl bg-white/[0.03] p-1 shrink-0">
+          <div className="flex items-center border border-ts-border rounded-xl bg-ts-surface p-1 shrink-0">
             <button
               type="button"
               onClick={() => setQty(Math.max(1, qty - 1))}
-              className="w-8 h-9 rounded-lg hover:bg-white/[0.1] text-white font-bold text-base cursor-pointer transition-colors"
+              className="w-8 h-9 rounded-lg hover:bg-ts-surfaceHover text-ts-krem font-bold text-base cursor-pointer transition-colors"
             >
               -
             </button>
-            <span className="w-10 text-center font-mono font-bold text-sm text-white">
+            <span className="w-10 text-center font-mono font-bold text-sm text-ts-krem">
               {qty}
             </span>
             <button
               type="button"
               onClick={() => setQty(qty + 1)}
-              className="w-8 h-9 rounded-lg hover:bg-white/[0.1] text-white font-bold text-base cursor-pointer transition-colors"
+              className="w-8 h-9 rounded-lg hover:bg-ts-surfaceHover text-ts-krem font-bold text-base cursor-pointer transition-colors"
             >
               +
             </button>
@@ -344,7 +344,7 @@ export function ProductPurchasePanel({
           <Button
             variant="cream"
             size="lg"
-            className="w-full text-xs sm:text-sm py-3 font-extrabold shadow-md"
+            className="w-full text-xs sm:text-sm py-3 font-extrabold shadow-sm"
             onClick={handleBuyNow}
           >
             Checkout Langsung Web &rarr;
@@ -353,10 +353,10 @@ export function ProductPurchasePanel({
             <button
               type="button"
               onClick={handleBuyWhatsapp}
-              className="inline-flex items-center gap-1.5 text-xs text-ts-kremMuted hover:text-emerald-400 transition-colors py-1 cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs text-ts-kremMuted hover:text-emerald-500 transition-colors py-1 cursor-pointer"
             >
-              <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Ragu soal ukuran atau butuh pesanan khusus? <strong className="text-white underline decoration-emerald-500/50">Chat WhatsApp Admin</strong></span>
+              <MessageSquare className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Ragu soal ukuran atau butuh pesanan khusus? <strong className="text-ts-krem underline decoration-emerald-500/50">Chat WhatsApp Admin</strong></span>
             </button>
           </div>
         </div>

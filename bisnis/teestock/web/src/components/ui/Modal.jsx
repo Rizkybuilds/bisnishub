@@ -40,7 +40,7 @@ export function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-xl' 
             type="button"
             onClick={onClose}
             aria-label="Tutup dialog"
-            className="p-1 rounded-lg text-ts-muted hover:text-white hover:bg-ts-surface transition-colors cursor-pointer"
+            className="p-1 rounded-lg text-ts-muted hover:text-ts-krem hover:bg-ts-hitam/10 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>

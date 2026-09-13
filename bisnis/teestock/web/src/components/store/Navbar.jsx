@@ -4,6 +4,7 @@ import { ShoppingBag, Search, ShieldCheck, Sparkles, User, Package, Zap, LogOut,
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { TeeStockLogo } from '../common/TeeStockLogo';
+import { ThemeToggle } from '../common/ThemeToggle';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 
 export function Navbar() {
@@ -58,17 +59,17 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full transition-all">
       {/* Top Ticker Notice Bar */}
-      <div className="bg-[#100F0E] text-[10px] font-mono tracking-wider text-ts-kremMuted py-1.5 px-4 text-center border-b border-white/[0.06] flex items-center justify-center gap-3 sm:gap-6 overflow-hidden uppercase">
-        <span className="flex items-center gap-1.5 text-ts-krem">
+      <div className="bg-ts-surface text-[10px] font-mono tracking-wider text-ts-kremMuted py-1.5 px-4 text-center border-b border-ts-border flex items-center justify-center gap-3 sm:gap-6 overflow-hidden uppercase transition-colors">
+        <span className="flex items-center gap-1.5 text-ts-krem font-medium">
           <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
           <span>100% Garmen Asli New States Apparel (NSA) • Softstyle 30s &amp; Heavyweight 24s</span>
         </span>
-        <span className="hidden sm:inline text-white/20">•</span>
+        <span className="hidden sm:inline text-ts-borderHover">•</span>
         <span className="hidden sm:flex items-center gap-1.5 text-ts-kremMuted">
           <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
           <span>Sablon DTF Double-Press 155°C</span>
         </span>
-        <span className="hidden md:inline text-white/20">•</span>
+        <span className="hidden md:inline text-ts-borderHover">•</span>
         <span className="hidden md:flex items-center gap-1.5 text-ts-kremMuted">
           <Zap className="w-3.5 h-3.5 text-ts-terracotta" />
           <span>SLA Produksi Cepat H+0 / H+1</span>
@@ -77,22 +78,22 @@ export function Navbar() {
 
       {/* Main Floating Navbar Container */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5">
-        <div className="h-14 sm:h-16 px-3 sm:px-5 rounded-2xl bg-[#141312]/90 backdrop-blur-xl border border-white/[0.08] flex items-center justify-between">
+        <div className="h-14 sm:h-16 px-3 sm:px-5 rounded-2xl bg-ts-surfaceCard backdrop-blur-xl border border-ts-border flex items-center justify-between shadow-elevation transition-all">
           {/* Official Brand Logo */}
           <Link to="/" className="group focus:outline-none" aria-label="TeeStock Apparel Beranda">
             <TeeStockLogo size="md" badge="APPAREL HOUSE" />
           </Link>
 
           {/* Navigation Links (Desktop) */}
-          <nav className="hidden md:flex items-center gap-1 bg-white/[0.03] p-1 rounded-xl border border-white/[0.06]">
+          <nav className="hidden md:flex items-center gap-1 bg-ts-surface p-1 rounded-xl border border-ts-border">
             <NavLink
               to="/"
               end
               className={({ isActive }) =>
                 `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   isActive
-                    ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
-                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                    ? 'bg-ts-surfaceHover text-ts-krem shadow-sm border border-ts-borderHover'
+                    : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover/50'
                 }`
               }
             >
@@ -103,8 +104,8 @@ export function Navbar() {
               className={() =>
                 `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   isGraphicActive
-                    ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
-                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                    ? 'bg-ts-surfaceHover text-ts-krem shadow-sm border border-ts-borderHover'
+                    : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover/50'
                 }`
               }
             >
@@ -115,12 +116,12 @@ export function Navbar() {
               className={() =>
                 `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
                   isBlankActive
-                    ? 'bg-ts-teal/20 text-white shadow-sm border border-ts-teal/30'
-                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                    ? 'bg-ts-teal/20 text-ts-teal dark:text-white shadow-sm border border-ts-teal/30'
+                    : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover/50'
                 }`
               }
             >
-              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-ts-teal/30 text-teal-300 border border-ts-teal/40">
+              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-ts-teal/30 text-teal-700 dark:text-teal-300 border border-ts-teal/40">
                 NSA
               </span>
               <span>Kaos Polos</span>
@@ -130,8 +131,8 @@ export function Navbar() {
               className={({ isActive }) =>
                 `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   isActive
-                    ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
-                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                    ? 'bg-ts-surfaceHover text-ts-krem shadow-sm border border-ts-borderHover'
+                    : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover/50'
                 }`
               }
             >
@@ -142,8 +143,8 @@ export function Navbar() {
               className={({ isActive }) =>
                 `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   isActive
-                    ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
-                    : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                    ? 'bg-ts-surfaceHover text-ts-krem shadow-sm border border-ts-borderHover'
+                    : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover/50'
                 }`
               }
             >
@@ -152,10 +153,12 @@ export function Navbar() {
           </nav>
 
           {/* Right Action Buttons */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <ThemeToggle compact={true} />
+
             <Link
               to="/katalog"
-              className="p-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] transition-all"
+              className="p-2 rounded-xl text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover border border-transparent hover:border-ts-border transition-all"
               title="Cari Desain / Polos"
               aria-label="Cari desain katalog atau kaos polos"
             >
@@ -164,7 +167,7 @@ export function Navbar() {
 
             <Link
               to="/keranjang"
-              className="relative p-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] transition-all"
+              className="relative p-2 rounded-xl text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover border border-transparent hover:border-ts-border transition-all"
               title="Keranjang Belanja"
               aria-label={`Keranjang belanja, ${totalCartItems} item`}
             >
@@ -294,20 +297,23 @@ export function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label="Menu Navigasi Mobile"
-            className="fixed inset-y-0 right-0 w-full max-w-xs bg-[#141312] border-l border-white/[0.12] p-5 shadow-2xl flex flex-col justify-between overflow-y-auto z-10 animate-in slide-in-from-right duration-300"
+            className="fixed inset-y-0 right-0 w-full max-w-xs bg-ts-surface text-ts-krem border-l border-ts-border p-5 shadow-2xl flex flex-col justify-between overflow-y-auto z-10 animate-in slide-in-from-right duration-300 transition-colors"
           >
             <div className="space-y-6">
               {/* Drawer Top Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+              <div className="flex items-center justify-between pb-3 border-b border-ts-border">
                 <TeeStockLogo size="sm" badge="APPAREL HOUSE" />
-                <button
-                  type="button"
-                  onClick={() => setMobileDrawerOpen(false)}
-                  className="p-1.5 rounded-xl text-ts-muted hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
-                  aria-label="Tutup Menu"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <ThemeToggle compact={true} />
+                  <button
+                    type="button"
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className="p-1.5 rounded-xl text-ts-muted hover:text-ts-krem hover:bg-ts-surfaceHover transition-colors cursor-pointer"
+                    aria-label="Tutup Menu"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
 
               {/* Navigation Links Group */}

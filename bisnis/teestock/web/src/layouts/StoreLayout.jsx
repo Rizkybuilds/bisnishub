@@ -8,7 +8,7 @@ import { AuthModal } from '../components/store/AuthModal';
 
 export function StoreLayout() {
   return (
-    <div className="min-h-screen flex flex-col bg-ts-hitam text-ts-krem relative">
+    <div className="min-h-screen flex flex-col bg-ts-hitam text-ts-krem relative transition-colors duration-200">
       <Navbar />
       <main className="flex-1 pb-24 md:pb-0">
         <Outlet />

@@ -39,11 +39,11 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
     return (
       <div className={className}>
         {status === 'success' ? (
-          <div className="p-3.5 rounded-xl bg-ts-green/15 border border-ts-green/30 text-xs text-green-300 flex items-start gap-2.5 animate-in fade-in">
+          <div className="p-3.5 rounded-xl bg-ts-green/15 border border-ts-green/30 text-xs text-ts-green flex items-start gap-2.5 animate-in fade-in">
             <CheckCircle2 className="w-4 h-4 shrink-0 text-ts-green mt-0.5" />
             <div className="space-y-1">
-              <p className="font-semibold text-white">Berhasil Terdaftar!</p>
-              <p className="text-[11px] leading-relaxed text-emerald-200/90">{message}</p>
+              <p className="font-semibold text-ts-krem">Berhasil Terdaftar!</p>
+              <p className="text-[11px] leading-relaxed text-ts-kremMuted">{message}</p>
             </div>
           </div>
         ) : (
@@ -55,7 +55,7 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Masukkan email kamu..."
                 disabled={loading}
-                className="w-full bg-white/[0.05] border border-white/[0.12] rounded-xl pl-9 pr-24 py-2.5 text-xs text-white placeholder-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-1 focus:ring-ts-terracotta transition-all"
+                className="w-full bg-ts-surfaceHover/60 border border-ts-border rounded-xl pl-9 pr-24 py-2.5 text-xs text-ts-krem placeholder-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-1 focus:ring-ts-terracotta transition-all"
               />
               <Mail className="w-4 h-4 text-ts-muted absolute left-3 pointer-events-none" />
               <button
@@ -67,7 +67,7 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
               </button>
             </div>
             {status === 'error' && (
-              <p className="text-[10px] text-red-400 pl-1">{message}</p>
+              <p className="text-[10px] text-red-500 pl-1">{message}</p>
             )}
           </form>
         )}
@@ -76,7 +76,7 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
   }
 
   return (
-    <div className={`p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-ts-surface/90 via-[#1D1B19] to-ts-surface border border-white/[0.1] shadow-glass-card shadow-glass-inset relative overflow-hidden ${className}`}>
+    <div className={`p-6 sm:p-8 rounded-3xl bg-ts-surface border border-ts-border shadow-sm relative overflow-hidden transition-colors duration-300 ${className}`}>
       {/* Background ambient glow */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-ts-terracotta/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
@@ -86,7 +86,7 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
           <span>VIP DROP ALERT &amp; DISKON PERDANA</span>
         </div>
 
-        <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+        <h3 className="text-xl sm:text-2xl font-black text-ts-krem tracking-tight">
           Jangan Ketinggalan Rilis Drop Berikutnya.
         </h3>
         <p className="text-xs sm:text-sm text-ts-kremMuted mt-1.5 leading-relaxed">
@@ -95,12 +95,12 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
 
         <div className="mt-5">
           {status === 'success' ? (
-            <div className="p-4 rounded-2xl bg-ts-green/15 border border-ts-green/30 text-xs text-green-300 flex items-start gap-3 animate-in zoom-in-95">
+            <div className="p-4 rounded-2xl bg-ts-green/15 border border-ts-green/30 text-xs text-ts-green flex items-start gap-3 animate-in zoom-in-95">
               <CheckCircle2 className="w-5 h-5 shrink-0 text-ts-green mt-0.5" />
               <div className="space-y-1">
-                <p className="font-bold text-sm text-white">Selamat Datang di Lingkaran TeeStock!</p>
-                <p className="text-xs leading-relaxed text-emerald-200">{message}</p>
-                <div className="inline-block mt-2 px-2.5 py-1 rounded-md bg-zinc-900 border border-ts-green/40 font-mono text-[11px] text-ts-green font-bold">
+                <p className="font-bold text-sm text-ts-krem">Selamat Datang di Lingkaran TeeStock!</p>
+                <p className="text-xs leading-relaxed text-ts-kremMuted">{message}</p>
+                <div className="inline-block mt-2 px-2.5 py-1 rounded-md bg-ts-surfaceHover border border-ts-green/40 font-mono text-[11px] text-ts-green font-bold">
                   Gunakan kode: WELCOME10
                 </div>
               </div>
@@ -115,13 +115,13 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Masukkan alamat email aktif kamu..."
                   disabled={loading}
-                  className="w-full bg-white/[0.05] border border-white/[0.12] rounded-xl pl-10 pr-4 py-3 text-xs sm:text-sm text-white placeholder-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-2 focus:ring-ts-terracotta/30 transition-all"
+                  className="w-full bg-ts-surfaceHover/60 border border-ts-border rounded-xl pl-10 pr-4 py-3 text-xs sm:text-sm text-ts-krem placeholder-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-2 focus:ring-ts-terracotta/30 transition-all"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-3 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-glow-terracotta transition-all active:scale-95 shrink-0 disabled:opacity-50"
+                className="px-6 py-3 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 shrink-0 disabled:opacity-50"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -136,7 +136,7 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
           )}
 
           {status === 'error' && (
-            <p className="text-xs text-red-400 mt-2 pl-1">{message}</p>
+            <p className="text-xs text-red-500 mt-2 pl-1">{message}</p>
           )}
 
           <p className="text-[10px] text-ts-muted mt-2.5 flex items-center gap-1.5">

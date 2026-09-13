@@ -35,7 +35,7 @@ export function ProductImageGallery({
     <div className="space-y-4">
       {/* Main Image Showcase Container */}
       <div 
-        className="w-full aspect-[3/4] bg-gradient-to-b from-[#1c1b1a] via-[#141312] to-[#0c0b0a] border border-white/[0.09] rounded-3xl overflow-hidden shadow-2xl relative group cursor-zoom-in flex items-center justify-center select-none"
+        className="w-full aspect-[3/4] bg-gradient-to-b from-ts-surface via-ts-surfaceHover/40 to-ts-surface border border-ts-border rounded-3xl overflow-hidden shadow-sm relative group cursor-zoom-in flex items-center justify-center select-none transition-colors duration-300"
         onClick={() => setIsLightboxOpen(true)}
         role="button"
         tabIndex={0}
@@ -48,14 +48,14 @@ export function ProductImageGallery({
         {/* Swatch Texture Macro or Product Photo */}
         {isSwatch ? (
           <div className="flex flex-col items-center justify-center p-6 text-center space-y-4 z-10 animate-fadeIn">
-            <div className="relative w-48 h-48 sm:w-60 sm:h-60 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl ring-4 ring-ts-terracotta/20 bg-ts-hitam">
+            <div className="relative w-48 h-48 sm:w-60 sm:h-60 rounded-3xl overflow-hidden border-2 border-ts-border shadow-md ring-4 ring-ts-terracotta/20 bg-ts-surface">
               <img
                 src={previewImg}
                 alt={`${product.name} - Tekstur Serat Kain ${selectedColor}`}
                 className="w-full h-full object-cover scale-105 transition-transform duration-500 group-hover:scale-125"
               />
               <div className="absolute inset-0 ring-1 ring-inset ring-white/20 rounded-3xl pointer-events-none" />
-              <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-ts-hitam/80 backdrop-blur-md text-[9px] font-mono font-bold text-white border border-white/10">
+              <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-ts-surface/90 backdrop-blur-md text-[9px] font-mono font-bold text-ts-krem border border-ts-border">
                 Macro 1:1
               </div>
             </div>
@@ -188,10 +188,10 @@ export function ProductImageGallery({
                   key={idx}
                   type="button"
                   onClick={() => onSelectThumbnail(idx)}
-                  className={`group relative w-14 h-18 sm:w-16 sm:h-22 aspect-[3/4] rounded-xl overflow-hidden border transition-all duration-200 shrink-0 cursor-pointer bg-[#141312] p-1 flex items-center justify-center ${
+                  className={`group relative w-14 h-18 sm:w-16 sm:h-22 aspect-[3/4] rounded-xl overflow-hidden border transition-all duration-200 shrink-0 cursor-pointer bg-ts-surface p-1 flex items-center justify-center ${
                     isActive
-                      ? 'ring-2 ring-ts-terracotta border-transparent scale-105 shadow-glow-terracotta z-10'
-                      : 'border-white/10 hover:border-white/30 opacity-70 hover:opacity-100'
+                      ? 'ring-2 ring-ts-terracotta border-transparent scale-105 shadow-sm z-10'
+                      : 'border-ts-border hover:border-ts-terracotta/40 opacity-70 hover:opacity-100'
                   }`}
                   title={item.label}
                 >
@@ -212,9 +212,9 @@ export function ProductImageGallery({
 
       {/* Wholesale Promo Card for Blanks */}
       {isBlank && (
-        <div className="p-4 sm:p-5 bg-gradient-to-r from-ts-teal/15 via-ts-surface/90 to-ts-surface/90 border border-ts-teal/30 rounded-2xl flex items-center justify-between text-xs shadow-glass-inset">
+        <div className="p-4 sm:p-5 bg-gradient-to-r from-ts-teal/15 via-ts-surface/90 to-ts-surface/90 border border-ts-teal/30 rounded-2xl flex items-center justify-between text-xs shadow-sm">
           <div className="space-y-1">
-            <div className="font-extrabold text-white flex items-center gap-1.5 text-sm">
+            <div className="font-extrabold text-ts-krem flex items-center gap-1.5 text-sm">
               <Tag className="w-4 h-4 text-ts-teal" />
               <span>{is3600 ? 'Harga Grosir & Partai (≥12 pcs)' : 'Harga Grosir Lusinan (≥12 pcs)'}</span>
             </div>

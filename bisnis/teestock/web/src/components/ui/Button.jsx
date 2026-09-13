@@ -18,15 +18,15 @@ export function Button({
   };
 
   const variantStyles = {
-    primary: "bg-[#B35324] hover:bg-[#C1673D] text-white border border-white/15 shadow-sm focus:ring-[#B35324]",
-    secondary: "bg-[#151413] hover:bg-[#201E1C] text-ts-krem border border-white/10 hover:border-white/20 focus:ring-white/20",
-    cream: "bg-ts-krem hover:bg-white text-ts-hitam focus:ring-ts-krem font-bold shadow-sm",
-    outline: "bg-transparent hover:bg-white/[0.04] text-ts-krem border border-white/10 hover:border-white/25 focus:ring-white/20",
-    glow: "bg-[#B35324] hover:bg-[#C1673D] text-white font-bold border border-white/20 shadow-sm",
-    shopee: "bg-[#EE4D2D] hover:bg-[#EE4D2D]/90 text-white font-bold shadow-sm border border-white/15",
-    whatsapp: "bg-[#25D366] hover:bg-[#22bf5b] text-zinc-950 font-bold shadow-sm border border-white/15",
+    primary: "bg-ts-terracotta hover:bg-ts-terracotta/90 text-white border border-ts-terracotta shadow-sm focus:ring-ts-terracotta",
+    secondary: "bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem border border-ts-border hover:border-ts-borderHover focus:ring-ts-border shadow-sm",
+    cream: "bg-ts-krem hover:opacity-90 text-ts-hitam focus:ring-ts-krem font-bold shadow-sm",
+    outline: "bg-transparent hover:bg-ts-surfaceHover text-ts-krem border border-ts-border hover:border-ts-borderHover focus:ring-ts-border",
+    glow: "bg-ts-terracotta hover:bg-ts-terracotta/90 text-white font-bold border border-ts-terracotta shadow-sm",
+    shopee: "bg-[#EE4D2D] hover:bg-[#EE4D2D]/90 text-white font-bold shadow-sm border border-[#EE4D2D]",
+    whatsapp: "bg-[#25D366] hover:bg-[#22bf5b] text-zinc-950 font-bold shadow-sm border border-[#25D366]",
     danger: "bg-ts-red hover:bg-ts-red/90 text-white focus:ring-ts-red shadow-sm",
-    ghost: "bg-transparent hover:bg-white/[0.05] text-ts-krem/80 hover:text-white",
+    ghost: "bg-transparent hover:bg-ts-surfaceHover text-ts-kremMuted hover:text-ts-krem",
   };
 
   return (

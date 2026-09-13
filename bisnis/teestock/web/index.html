@@ -1,16 +1,36 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo-teestock.svg" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#161513" />
+    <meta name="theme-color" content="#0E0D0C" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>TeeStock Apparel | Curated Merch & Kaos NSA 24s Heavyweight Original</title>
     <meta name="description" content="Brand apparel kurasi dan studio sablon DTF cepat. Menggunakan 100% garmen New States Apparel (NSA) Heavyweight 24s & Softstyle 30s original. Siap kirim ritel, dropship, dan custom satuan." />
+    <!-- Prevent Theme Flash -->
+    <script>
+      (function() {
+        try {
+          var savedTheme = localStorage.getItem('teestock_theme');
+          var theme = savedTheme === 'light' || savedTheme === 'dark' 
+            ? savedTheme 
+            : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          var root = document.documentElement;
+          root.setAttribute('data-theme', theme);
+          if (theme === 'light') {
+            root.classList.add('light');
+            root.classList.remove('dark');
+          } else {
+            root.classList.add('dark');
+            root.classList.remove('light');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

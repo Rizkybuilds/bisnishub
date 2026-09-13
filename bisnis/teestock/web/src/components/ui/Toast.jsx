@@ -15,7 +15,7 @@ export function Toast({ message, type = 'success', onClose }) {
       {icons[type] || icons.info}
       <p className="text-xs font-semibold text-ts-krem flex-1">{message}</p>
       {onClose && (
-        <button onClick={onClose} className="text-ts-muted hover:text-white p-0.5">
+        <button onClick={onClose} className="text-ts-muted hover:text-ts-krem p-0.5 transition-colors cursor-pointer" aria-label="Tutup notifikasi">
           <X className="w-4 h-4" />
         </button>
       )}

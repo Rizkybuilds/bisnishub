@@ -72,14 +72,14 @@ export function AuthModal() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="auth-modal-title"
-        className="relative w-full max-w-md rounded-3xl bg-ts-surface border border-white/[0.12] p-6 sm:p-8 shadow-2xl shadow-black/80 text-ts-krem space-y-6 animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-md rounded-3xl bg-ts-surface border border-ts-border p-6 sm:p-8 shadow-2xl shadow-black/20 dark:shadow-black/80 text-ts-krem space-y-6 animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           type="button"
           onClick={closeAuthModal}
-          className="absolute top-4 right-4 p-2 rounded-xl text-ts-muted hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
+          className="absolute top-4 right-4 p-2 rounded-xl text-ts-muted hover:text-ts-krem hover:bg-ts-hitam/10 transition-colors cursor-pointer"
           aria-label="Tutup dialog autentikasi"
         >
           <X className="w-5 h-5" />
@@ -87,20 +87,20 @@ export function AuthModal() {
 
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-ts-terracotta to-[#9E3B1B] flex items-center justify-center mx-auto shadow-glow-terracotta border border-white/20">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-ts-terracotta to-[#9E3B1B] flex items-center justify-center mx-auto shadow-glow-terracotta border border-ts-border">
             <TeeStockLogoIcon className="w-7 h-7 text-white drop-shadow-sm" />
           </div>
-          <h3 id="auth-modal-title" className="text-xl sm:text-2xl font-black text-white tracking-tight">
+          <h3 id="auth-modal-title" className="text-xl sm:text-2xl font-black text-ts-krem tracking-tight">
             Akun Member TeeStock
           </h3>
-          <p className="text-xs text-ts-kremMuted leading-relaxed">
+          <p className="text-xs text-ts-muted leading-relaxed">
             Satu akun untuk lacak pesanan, simpan alamat pengiriman, dan nikmati diskon khusus member &amp; mitra.
           </p>
         </div>
 
         {/* Status / Error */}
         {errorMsg && (
-          <div className="p-3 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-xs text-center">
+          <div className="p-3 rounded-xl bg-red-500/15 border border-red-500/30 text-red-500 dark:text-red-300 text-xs text-center">
             {errorMsg}
           </div>
         )}
@@ -111,9 +111,9 @@ export function AuthModal() {
             <div className="w-12 h-12 rounded-full bg-ts-green/20 text-ts-green flex items-center justify-center mx-auto border border-ts-green/30">
               <Mail className="w-6 h-6" />
             </div>
-            <h4 className="text-base font-bold text-white">Cek Email Kamu</h4>
-            <p className="text-xs text-ts-kremMuted leading-relaxed">
-              Tautan masuk telah dikirim ke <strong className="text-white">{email}</strong>.
+            <h4 className="text-base font-bold text-ts-krem">Cek Email Kamu</h4>
+            <p className="text-xs text-ts-muted leading-relaxed">
+              Tautan masuk telah dikirim ke <strong className="text-ts-krem">{email}</strong>.
               Klik tautan di email untuk langsung masuk tanpa perlu mengingat password!
             </p>
             <button
@@ -130,10 +130,10 @@ export function AuthModal() {
             <button
               onClick={handleGoogleLogin}
               disabled={loadingGoogle || loadingMagic}
-              className="w-full py-3 px-4 rounded-xl bg-white hover:bg-zinc-100 text-zinc-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-3 transition-all shadow-md active:scale-98 disabled:opacity-60"
+              className="w-full py-3 px-4 rounded-xl bg-ts-krem hover:bg-white text-ts-hitam font-bold text-xs sm:text-sm flex items-center justify-center gap-3 transition-all border border-ts-border shadow-sm active:scale-98 disabled:opacity-60 cursor-pointer"
             >
               {loadingGoogle ? (
-                <Loader2 className="w-4 h-4 animate-spin text-zinc-700" />
+                <Loader2 className="w-4 h-4 animate-spin text-ts-hitam" />
               ) : (
                 <>
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -161,9 +161,9 @@ export function AuthModal() {
 
             {/* Divider */}
             <div className="flex items-center gap-3 text-xs text-ts-muted">
-              <span className="flex-1 h-px bg-white/[0.08]" />
+              <span className="flex-1 h-px bg-ts-border" />
               <span className="font-mono text-[10px] uppercase">atau via email</span>
-              <span className="flex-1 h-px bg-white/[0.08]" />
+              <span className="flex-1 h-px bg-ts-border" />
             </div>
 
             {/* 2. Magic Link Email */}
@@ -177,13 +177,13 @@ export function AuthModal() {
                   placeholder="nama@email.com"
                   aria-label="Alamat email untuk masuk"
                   disabled={loadingGoogle || loadingMagic}
-                  className="w-full bg-white/[0.04] border border-white/[0.1] rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white placeholder-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-1 focus:ring-ts-terracotta transition-all"
+                  className="w-full bg-ts-hitam border border-ts-border rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-ts-krem placeholder-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-1 focus:ring-ts-terracotta transition-all"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loadingGoogle || loadingMagic}
-                className="w-full py-2.5 px-4 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-ts-krem hover:text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-98 disabled:opacity-50"
+                className="w-full py-2.5 px-4 rounded-xl bg-ts-surface hover:bg-ts-border border border-ts-border text-ts-krem font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-98 disabled:opacity-50 cursor-pointer"
               >
                 {loadingMagic ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -199,7 +199,7 @@ export function AuthModal() {
         )}
 
         {/* Benefits Micro Bar */}
-        <div className="pt-2 border-t border-white/[0.06] grid grid-cols-2 gap-2 text-[11px] text-ts-muted">
+        <div className="pt-2 border-t border-ts-border grid grid-cols-2 gap-2 text-[11px] text-ts-muted">
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-ts-green shrink-0" />
             <span>Riwayat pesanan tersimpan</span>

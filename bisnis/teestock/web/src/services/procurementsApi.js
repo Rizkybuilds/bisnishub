@@ -123,8 +123,19 @@ export async function saveProcurement(procData) {
   const totalCost = (qty * unitCost) + shippingCost;
   const realUnitCost = Math.round(totalCost / qty);
 
+  const generateUuid = () => {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  };
+
   const newProc = {
-    id: procData.id || `proc-${Date.now()}`,
+    id: procData.id || generateUuid(),
     procurementNo: procData.procurementNo || `PO-${Date.now().toString().slice(-6)}`,
     itemType: procData.itemType || 'blank_tshirt',
     itemSku: procData.itemSku || '',
@@ -212,8 +223,9 @@ function mapFromSupabase(row) {
 }
 
 function mapToSupabase(item) {
+  const isUuid = item.id && item.id.includes('-') && item.id.length === 36;
   return {
-    id: item.id.includes('-') && item.id.length === 36 ? item.id : undefined,
+    id: isUuid ? item.id : undefined,
     procurement_no: item.procurementNo,
     item_type: item.itemType,
     item_sku: item.itemSku,

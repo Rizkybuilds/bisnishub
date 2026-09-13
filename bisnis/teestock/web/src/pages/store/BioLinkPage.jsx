@@ -110,17 +110,17 @@ export function BioLinkPage() {
         {/* ─── Profile Header ─────────────────────────────────── */}
         <header className="text-center space-y-3">
           {/* Logo / Avatar */}
-          <div className="relative mx-auto w-20 h-20 rounded-2xl bg-[#141312] border border-white/10 flex items-center justify-center group">
+          <div className="relative mx-auto w-20 h-20 rounded-2xl bg-ts-surface border border-ts-border flex items-center justify-center group shadow-sm">
             <TeeStockLogoIcon className="w-11 h-11 text-ts-terracotta transition-transform duration-300 group-hover:scale-105" />
             {/* Online studio dot */}
             <span className="absolute -bottom-1 -right-1 flex h-3.5 w-3.5">
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-ts-green border-2 border-ts-hitam" />
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-ts-green border-2 border-ts-surface" />
             </span>
           </div>
 
           {/* Brand Name */}
           <div>
-            <h1 className="text-xl font-black uppercase tracking-tight text-white">
+            <h1 className="text-xl font-black uppercase tracking-tight text-ts-krem">
               TeeStock
             </h1>
             <p className="text-xs text-ts-kremMuted font-mono uppercase tracking-wider mt-0.5">
@@ -142,28 +142,28 @@ export function BioLinkPage() {
 
             const baseClasses = `
               group relative w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl
-              border
+              border shadow-sm
               transition-all duration-200 ease-out
               hover:-translate-y-0.5 active:translate-y-0
               focus:outline-none focus:ring-1 focus:ring-ts-terracotta
             `;
 
             const accentClasses = link.accent
-              ? 'bg-[#181614] border-ts-terracotta/40 hover:border-ts-terracotta'
-              : 'bg-[#141312] border-white/[0.08] hover:border-white/20';
+              ? 'bg-ts-surface border-ts-terracotta/40 hover:border-ts-terracotta'
+              : 'bg-ts-surface border-ts-border hover:border-ts-borderHover';
 
             const content = (
               <>
                 <span className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center ${
                   link.accent 
-                    ? 'bg-ts-terracotta/30 text-ts-terracotta' 
-                    : 'bg-white/[0.06] text-ts-kremMuted group-hover:text-ts-krem'
+                    ? 'bg-ts-terracotta/20 text-ts-terracotta' 
+                    : 'bg-ts-surfaceHover text-ts-kremMuted group-hover:text-ts-krem'
                 }`}>
                   <Icon className="w-4.5 h-4.5" />
                 </span>
                 <span className="flex-1 text-left min-w-0">
                   <span className={`block text-sm font-semibold leading-snug ${
-                    link.accent ? 'text-white' : 'text-ts-krem'
+                    link.accent ? 'text-ts-krem font-bold' : 'text-ts-krem'
                   }`}>
                     {link.label}
                   </span>
@@ -219,10 +219,10 @@ export function BioLinkPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`
-                  flex items-center gap-2 px-4 py-2.5 rounded-lg
-                  bg-white/[0.04] border border-white/[0.08]
+                  flex items-center gap-2 px-4 py-2.5 rounded-xl
+                  bg-ts-surface border border-ts-border
                   text-ts-kremMuted text-xs font-medium
-                  transition-all duration-300
+                  transition-all duration-300 shadow-sm
                   ${social.color}
                 `}
                 aria-label={social.label}
@@ -235,9 +235,9 @@ export function BioLinkPage() {
         </div>
 
         {/* ─── Newsletter Capture (VIP Drop Alert) ─────────── */}
-        <div className="pt-2 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-sm space-y-2">
+        <div className="pt-2 p-4 rounded-2xl bg-ts-surface border border-ts-border shadow-sm space-y-2">
           <div className="text-center">
-            <span className="text-xs font-bold text-white block">Klaim Voucher Diskon 10%</span>
+            <span className="text-xs font-bold text-ts-krem block">Klaim Voucher Diskon 10%</span>
             <span className="text-[11px] text-ts-kremMuted block mt-0.5">Dapatkan kode promo perdana &amp; notifikasi rilis Drop #02</span>
           </div>
           <NewsletterCapture source="biolink" compact={true} />
@@ -246,11 +246,11 @@ export function BioLinkPage() {
         {/* ─── Footer ─────────────────────────────────────────── */}
         <footer className="text-center pt-4 pb-6 space-y-3">
           <div className="flex items-center justify-center gap-1.5 text-[10px] text-ts-muted/60">
-            <span className="w-8 h-px bg-white/[0.08]" />
+            <span className="w-8 h-px bg-ts-border" />
             <span className="uppercase tracking-widest font-mono">TeeStock © 2026</span>
-            <span className="w-8 h-px bg-white/[0.08]" />
+            <span className="w-8 h-px bg-ts-border" />
           </div>
-          <p className="text-[10px] text-ts-muted/40">
+          <p className="text-[10px] text-ts-muted/60">
             100% Original NSA · DTF HD Premium · Produksi Mandiri
           </p>
         </footer>

@@ -76,7 +76,7 @@ export function TeeStockLogo({
       {/* Typography Wordmark (if not mark-only) */}
       {variant !== 'mark' && (
         <div>
-          <span className={`${currentSize.title} font-black tracking-[-0.03em] text-ts-krem group-hover:text-white transition-colors block leading-tight`}>
+          <span className={`${currentSize.title} font-black tracking-[-0.03em] text-ts-krem group-hover:text-ts-terracotta transition-colors block leading-tight`}>
             TeeStock
           </span>
           <span className={`${currentSize.sub} font-bold text-ts-terracotta tracking-[0.14em] uppercase font-mono block -mt-0.5`}>

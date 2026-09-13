@@ -6,20 +6,20 @@ import { NSA_7200_SIZE_CHART, NSA_3600_SIZE_CHART } from '../../../constants/gar
 function AccordionItem({ title, icon: Icon, children, defaultOpen = false }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
-    <div className="border border-white/[0.08] rounded-2xl overflow-hidden bg-white/[0.02]">
+    <div className="border border-ts-border rounded-2xl overflow-hidden bg-ts-surface">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-4 flex items-center justify-between text-left hover:bg-white/[0.04] transition-colors cursor-pointer"
+        className="w-full p-4 flex items-center justify-between text-left hover:bg-ts-surfaceHover transition-colors cursor-pointer"
       >
-        <div className="flex items-center gap-2.5 text-xs font-bold text-white">
+        <div className="flex items-center gap-2.5 text-xs font-bold text-ts-krem">
           <Icon className="w-4 h-4 text-ts-terracotta shrink-0" />
           <span>{title}</span>
         </div>
         <span className="text-ts-muted text-xs font-mono">{isOpen ? '−' : '+'}</span>
       </button>
       {isOpen && (
-        <div className="px-4 pb-4 pt-1 text-xs text-ts-kremMuted leading-relaxed border-t border-white/[0.04]">
+        <div className="px-4 pb-4 pt-1 text-xs text-ts-kremMuted leading-relaxed border-t border-ts-border">
           {children}
         </div>
       )}
@@ -35,7 +35,7 @@ export function ProductSpecsAccordion({
   onOpenSizeModal
 }) {
   return (
-    <div className="pt-4 border-t border-white/[0.08] space-y-2">
+    <div className="pt-4 border-t border-ts-border space-y-2">
       {/* Panduan Ukuran */}
       <AccordionItem
         title={`Panduan Ukuran (Size Chart ${is3600 ? 'NSA 3600' : 'NSA 7200'})`}
@@ -48,25 +48,25 @@ export function ProductSpecsAccordion({
               ? 'Standar ukuran New States Apparel Softstyle 3600 (Asian Fit) tubular built-up tanpa sambungan samping. Toleransi penjahitan pabrik ±1-2 cm.'
               : 'Standar potongan Asia (Asian Fit) tubular built-up tanpa sambungan samping. Toleransi penjahitan pabrik ±1-2 cm.'}
           </p>
-          <div className="overflow-x-auto rounded-xl border border-white/[0.08]">
+          <div className="overflow-x-auto rounded-xl border border-ts-border">
             <table className="w-full text-left text-[11px] border-collapse">
               <thead>
-                <tr className="bg-white/[0.04] font-mono text-ts-muted border-b border-white/[0.08]">
+                <tr className="bg-ts-surfaceHover font-mono text-ts-muted border-b border-ts-border">
                   <th className="py-2 px-2.5 font-bold">Size</th>
                   <th className="py-2 px-2.5">Lebar Dada</th>
                   <th className="py-2 px-2.5">Panjang</th>
                   <th className="py-2 px-2.5">Lengan</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.05] font-mono">
+              <tbody className="divide-y divide-ts-border font-mono">
                 {(is3600 ? NSA_3600_SIZE_CHART : NSA_7200_SIZE_CHART).map((item) => {
                   const isCurrent = selectedSize === item.size;
                   const isAvail = sizeList.includes(item.size);
                   return (
                     <tr
                       key={item.size}
-                      className={`hover:bg-white/[0.03] transition-colors ${
-                        isCurrent ? 'bg-ts-terracotta/15 font-bold text-white' : ''
+                      className={`hover:bg-ts-surfaceHover transition-colors ${
+                        isCurrent ? 'bg-ts-terracotta/15 font-bold text-ts-krem' : ''
                       }`}
                     >
                       <td className="py-1.5 px-2.5 font-bold text-ts-terracotta">
@@ -89,7 +89,7 @@ export function ProductSpecsAccordion({
           <button
             type="button"
             onClick={onOpenSizeModal}
-            className="inline-flex items-center gap-1.5 text-xs text-ts-mustard hover:text-white font-bold transition-colors pt-0.5 cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs text-ts-mustard hover:text-ts-krem font-bold transition-colors pt-0.5 cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Buka Kalkulator Ukuran Pas (Rekomendasi TB / BB) &rarr;</span>
@@ -131,8 +131,8 @@ export function ProductSpecsAccordion({
 
       <div className="flex justify-end pt-1">
         <Link
-          to="/care"
-          className="text-[11px] text-ts-mustard hover:text-white font-bold transition-colors flex items-center gap-1"
+          to="/garansi"
+          className="text-[11px] text-ts-mustard hover:text-ts-krem font-bold transition-colors flex items-center gap-1"
         >
           <span>Panduan Perawatan &amp; Garansi Lengkap</span>
           <ArrowRight className="w-3 h-3" />

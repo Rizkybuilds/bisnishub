@@ -17,7 +17,7 @@ export function MobileBottomNav() {
 
   return (
     <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-40 md:hidden pointer-events-none">
-      <nav className="pointer-events-auto max-w-md mx-auto bg-ts-surface/90 backdrop-blur-2xl border border-white/[0.12] rounded-2xl shadow-glass-card shadow-glass-inset px-2 py-1.5">
+      <nav className="pointer-events-auto max-w-md mx-auto bg-ts-surfaceCard backdrop-blur-2xl border border-ts-border rounded-2xl shadow-elevation px-2 py-1.5 transition-colors">
         <div className="grid grid-cols-5 items-center">
           {/* Beranda */}
           <NavLink
@@ -25,7 +25,7 @@ export function MobileBottomNav() {
             end
             className={({ isActive }) =>
               `relative flex flex-col items-center justify-center py-1.5 gap-0.5 text-[10px] font-semibold transition-all ${
-                isActive ? 'text-white' : 'text-ts-muted hover:text-ts-krem'
+                isActive ? 'text-ts-krem font-bold' : 'text-ts-muted hover:text-ts-krem'
               }`
             }
           >
@@ -43,7 +43,7 @@ export function MobileBottomNav() {
             to="/polos"
             className={() =>
               `relative flex flex-col items-center justify-center py-1.5 gap-0.5 text-[10px] font-semibold transition-all ${
-                isBlankActive ? 'text-white' : 'text-ts-muted hover:text-ts-krem'
+                isBlankActive ? 'text-ts-krem font-bold' : 'text-ts-muted hover:text-ts-krem'
               }`
             }
           >
@@ -57,7 +57,7 @@ export function MobileBottomNav() {
             to="/katalog"
             className={() =>
               `relative flex flex-col items-center justify-center py-1.5 gap-0.5 text-[10px] font-semibold transition-all ${
-                isCatalogActive ? 'text-white' : 'text-ts-muted hover:text-ts-krem'
+                isCatalogActive ? 'text-ts-krem font-bold' : 'text-ts-muted hover:text-ts-krem'
               }`
             }
           >
@@ -71,7 +71,7 @@ export function MobileBottomNav() {
             to="/tracking"
             className={({ isActive }) =>
               `relative flex flex-col items-center justify-center py-1.5 gap-0.5 text-[10px] font-semibold transition-all ${
-                isActive ? 'text-white' : 'text-ts-muted hover:text-ts-krem'
+                isActive ? 'text-ts-krem font-bold' : 'text-ts-muted hover:text-ts-krem'
               }`
             }
           >
@@ -89,7 +89,7 @@ export function MobileBottomNav() {
             to="/keranjang"
             className={({ isActive }) =>
               `relative flex flex-col items-center justify-center py-1.5 gap-0.5 text-[10px] font-semibold transition-all ${
-                isActive ? 'text-white' : 'text-ts-muted hover:text-ts-krem'
+                isActive ? 'text-ts-krem font-bold' : 'text-ts-muted hover:text-ts-krem'
               }`
             }
           >

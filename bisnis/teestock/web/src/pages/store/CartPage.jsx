@@ -199,22 +199,32 @@ export function CartPage() {
       // 1. Persist order to Supabase / Local database
       await createPublicOrder(orderRecord, cart);
 
-      // 2. Dispatch Payment Session
-      const paymentSession = await createPaymentSession(orderRecord, paymentMethod);
+      // 2. Dispatch Payment Session (Safely isolated to prevent duplicate orders)
+      let paymentSession = null;
+      try {
+        paymentSession = await createPaymentSession(orderRecord, paymentMethod);
 
-      // Handle Midtrans Snap popup if available in browser
-      if (isInstantPayment && typeof window !== 'undefined' && window.snap && paymentSession.token) {
-        window.snap.pay(paymentSession.token, {
-          onSuccess: (res) => {
-            console.log('Midtrans payment success:', res);
-          },
-          onPending: (res) => {
-            console.log('Midtrans payment pending:', res);
-          },
-          onError: (err) => {
-            console.error('Midtrans payment error:', err);
-          }
-        });
+        // Handle Midtrans Snap popup if available in browser
+        if (isInstantPayment && typeof window !== 'undefined' && window.snap && paymentSession?.token) {
+          window.snap.pay(paymentSession.token, {
+            onSuccess: (res) => {
+              console.log('Midtrans payment success:', res);
+            },
+            onPending: (res) => {
+              console.log('Midtrans payment pending:', res);
+            },
+            onError: (err) => {
+              console.error('Midtrans payment error:', err);
+            }
+          });
+        }
+      } catch (payErr) {
+        console.warn('Payment session initialization warning, falling back to manual verification:', payErr);
+        paymentSession = {
+          status: 'pending',
+          requiresManualVerification: true,
+          uniqueCode: isInstantPayment ? 0 : uniqueCode
+        };
       }
 
       setOrderComplete({

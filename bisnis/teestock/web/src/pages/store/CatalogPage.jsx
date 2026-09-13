@@ -100,14 +100,14 @@ export function CatalogPage({ defaultSegment }) {
       />
 
       {/* Two-Tab Top Switcher: Grafis vs Polos */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-2 bg-white/[0.03] border border-white/[0.08] rounded-2xl backdrop-blur-md">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-2 bg-ts-surface border border-ts-border rounded-2xl shadow-sm">
         <div className="flex items-center gap-1.5 w-full sm:w-auto">
           <Link
             to="/katalog"
             className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
               !isBlankMode
-                ? 'bg-ts-terracotta text-white shadow-glow-terracotta border border-white/20'
-                : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-ts-terracotta text-white shadow-sm border border-ts-terracotta'
+                : 'text-ts-muted hover:text-ts-krem hover:bg-ts-surfaceHover'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
@@ -118,8 +118,8 @@ export function CatalogPage({ defaultSegment }) {
             to="/polos"
             className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
               isBlankMode
-                ? 'bg-ts-teal text-white shadow-glow-teal border border-white/20'
-                : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-ts-teal text-white shadow-sm border border-ts-teal'
+                : 'text-ts-muted hover:text-ts-krem hover:bg-ts-surfaceHover'
             }`}
           >
             <Package className="w-3.5 h-3.5" />
@@ -139,14 +139,14 @@ export function CatalogPage({ defaultSegment }) {
 
       {/* Title & Search Header */}
       <div className="space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-semibold text-ts-krem">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ts-surface border border-ts-border text-[11px] font-semibold text-ts-krem">
           <Tag className={`w-3.5 h-3.5 ${isBlankMode ? 'text-ts-teal' : 'text-ts-terracotta'}`} />
           <span>
             {isBlankMode ? 'OFFICIAL BLANKS • 100% NEW STATES APPAREL' : 'CURATED GRAPHICS • 9 SERIES THEMATIC'}
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-ts-krem tracking-tight">
           {isBlankMode ? 'Katalog Kaos Polos NSA' : 'Katalog Desain Grafis Distro'}
         </h1>
 
@@ -166,13 +166,13 @@ export function CatalogPage({ defaultSegment }) {
               placeholder={isBlankMode ? "Cari model NSA (Softstyle, Heavyweight, Longsleeve)..." : "Cari judul desain, seri, tema profesi, hobi..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-ts-surface/90 border border-white/[0.1] rounded-2xl pl-10 pr-10 py-2.5 text-xs text-white placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-1 focus:ring-ts-terracotta transition-all shadow-glass-inset"
+              className="w-full bg-ts-surface border border-ts-border rounded-2xl pl-10 pr-10 py-2.5 text-xs text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-1 focus:ring-ts-terracotta transition-all shadow-sm"
             />
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ts-muted hover:text-white cursor-pointer"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ts-muted hover:text-ts-krem cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -188,7 +188,7 @@ export function CatalogPage({ defaultSegment }) {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-ts-surface/90 border border-white/[0.1] rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-ts-terracotta cursor-pointer shadow-glass-inset"
+              className="bg-ts-surface border border-ts-border rounded-xl px-3 py-2 text-xs font-semibold text-ts-krem focus:outline-none focus:border-ts-terracotta cursor-pointer shadow-sm"
             >
               <option value="default">Rekomendasi Utama</option>
               <option value="price-asc">Harga: Rendah ke Tinggi</option>
@@ -201,25 +201,25 @@ export function CatalogPage({ defaultSegment }) {
 
       {/* Cross-Sell Banners */}
       {isBlankMode ? (
-        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-terracotta/20 via-ts-surface/80 to-transparent border border-ts-terracotta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-glass-card shadow-glass-inset">
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-terracotta/20 via-ts-surface/80 to-transparent border border-ts-terracotta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-sm">
           <div>
-            <span className="font-bold text-white block text-sm">Mau Tambah Sablon Custom di Kaos Polos Ini?</span>
+            <span className="font-bold text-ts-krem block text-sm">Mau Tambah Sablon Custom di Kaos Polos Ini?</span>
             <span className="text-ts-kremMuted">TeeStock Studio melayani sablon DTF HD satuan &amp; lusinan (+Rp 25.000) tanpa minimal order kaku.</span>
           </div>
           <Link to="/custom-order">
-            <Button size="sm" variant="primary" className="whitespace-nowrap shadow-glow-terracotta">
+            <Button size="sm" variant="primary" className="whitespace-nowrap shadow-sm">
               Konsultasi Custom Order &rarr;
             </Button>
           </Link>
         </div>
       ) : (
-        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-teal/15 via-ts-surface/80 to-transparent border border-ts-teal/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-glass-card shadow-glass-inset">
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-teal/15 via-ts-surface/80 to-transparent border border-ts-teal/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-sm">
           <div>
-            <span className="font-bold text-white block text-sm">Hanya Butuh Kaos Polos Tanpa Sablon?</span>
+            <span className="font-bold text-ts-krem block text-sm">Hanya Butuh Kaos Polos Tanpa Sablon?</span>
             <span className="text-ts-kremMuted">Dapatkan bahan New States Apparel (NSA) Original Cititex mulai Rp 49.000 ecer &amp; grosir.</span>
           </div>
           <Link to="/polos">
-            <Button size="sm" variant="secondary" className="border-ts-teal/30 text-teal-300 hover:bg-ts-teal/20 whitespace-nowrap">
+            <Button size="sm" variant="secondary" className="border-ts-teal/30 text-ts-teal hover:bg-ts-teal/20 whitespace-nowrap">
               Buka Katalog Kaos Polos NSA &rarr;
             </Button>
           </Link>
@@ -238,8 +238,8 @@ export function CatalogPage({ defaultSegment }) {
               onClick={() => setSelectedBlankModel('all')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
                 selectedBlankModel === 'all'
-                  ? 'bg-ts-teal text-white border border-ts-teal/50 shadow-glow-teal'
-                  : 'bg-white/[0.03] text-ts-muted hover:text-white border border-white/[0.06]'
+                  ? 'bg-ts-teal text-white border border-ts-teal'
+                  : 'bg-ts-surface text-ts-muted hover:text-ts-krem border border-ts-border hover:bg-ts-surfaceHover'
               }`}
             >
               Semua Model ({blankCount})
@@ -251,8 +251,8 @@ export function CatalogPage({ defaultSegment }) {
                 onClick={() => setSelectedBlankModel(bm.sku)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
                   selectedBlankModel === bm.sku
-                    ? 'bg-ts-teal text-white border border-ts-teal/50 shadow-glow-teal'
-                    : 'bg-white/[0.03] text-ts-muted hover:text-white border border-white/[0.06]'
+                    ? 'bg-ts-teal text-white border border-ts-teal'
+                    : 'bg-ts-surface text-ts-muted hover:text-ts-krem border border-ts-border hover:bg-ts-surfaceHover'
                 }`}
               >
                 {bm.name.replace('New States Apparel ', '')}
@@ -271,8 +271,8 @@ export function CatalogPage({ defaultSegment }) {
               onClick={() => handleSeriesClick('all')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
                 activeSeries === 'all'
-                  ? 'bg-ts-terracotta text-white border border-ts-terracotta/80 shadow-glow-terracotta-sm'
-                  : 'bg-white/[0.03] text-ts-muted hover:text-white border border-white/[0.06] hover:bg-white/[0.06]'
+                  ? 'bg-ts-terracotta text-white border border-ts-terracotta'
+                  : 'bg-ts-surface text-ts-muted hover:text-ts-krem border border-ts-border hover:bg-ts-surfaceHover'
               }`}
             >
               Semua Series ({graphicCount})
@@ -287,14 +287,14 @@ export function CatalogPage({ defaultSegment }) {
                   onClick={() => handleSeriesClick(s.id)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1.5 ${
                     activeSeries === s.id
-                      ? 'bg-ts-terracotta text-white border border-ts-terracotta/80 shadow-glow-terracotta-sm'
-                      : 'bg-white/[0.03] text-ts-muted hover:text-white border border-white/[0.06] hover:bg-white/[0.06]'
+                      ? 'bg-ts-terracotta text-white border border-ts-terracotta'
+                      : 'bg-ts-surface text-ts-muted hover:text-ts-krem border border-ts-border hover:bg-ts-surfaceHover'
                   }`}
                 >
                   <span>{s.name}</span>
                   {seriesCount > 0 && (
                     <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
-                      activeSeries === s.id ? 'bg-white/20 text-white' : 'bg-white/[0.06] text-ts-kremMuted'
+                      activeSeries === s.id ? 'bg-white/20 text-white' : 'bg-ts-surfaceHover text-ts-kremMuted'
                     }`}>
                       {seriesCount}
                     </span>
@@ -308,12 +308,12 @@ export function CatalogPage({ defaultSegment }) {
 
       {/* Products Grid */}
       {filtered.length === 0 ? (
-        <div className="py-16 px-4 bg-ts-surface/60 border border-dashed border-white/10 rounded-3xl backdrop-blur-md max-w-xl mx-auto text-center space-y-5">
-          <div className="w-14 h-14 rounded-2xl bg-white/[0.04] text-ts-terracotta flex items-center justify-center mx-auto border border-white/10 shadow-glass-card">
+        <div className="py-16 px-4 bg-ts-surface border border-dashed border-ts-border rounded-3xl max-w-xl mx-auto text-center space-y-5 shadow-sm">
+          <div className="w-14 h-14 rounded-2xl bg-ts-surfaceHover text-ts-terracotta flex items-center justify-center mx-auto border border-ts-border">
             <Search className="w-7 h-7" />
           </div>
           <div className="space-y-1.5">
-            <h3 className="text-base sm:text-lg font-bold text-white">
+            <h3 className="text-base sm:text-lg font-bold text-ts-krem">
               {search 
                 ? `Pencarian "${search}" Belum Ditemukan` 
                 : (!isBlankMode && graphicCount === 0)
@@ -329,13 +329,13 @@ export function CatalogPage({ defaultSegment }) {
           <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center items-center">
             {!isBlankMode && (
               <Link to="/polos" className="w-full sm:w-auto">
-                <Button variant="primary" size="sm" icon={Package} className="w-full sm:w-auto font-bold shadow-glow-terracotta">
+                <Button variant="primary" size="sm" icon={Package} className="w-full sm:w-auto font-bold shadow-sm">
                   Lihat Kaos Polos NSA &rarr;
                 </Button>
               </Link>
             )}
             <Link to="/custom-order" className="w-full sm:w-auto">
-              <Button variant="secondary" size="sm" icon={Palette} className="w-full sm:w-auto font-bold border-white/15">
+              <Button variant="secondary" size="sm" icon={Palette} className="w-full sm:w-auto font-bold border-ts-border">
                 Cetak Desain Custom &rarr;
               </Button>
             </Link>
@@ -355,7 +355,7 @@ export function CatalogPage({ defaultSegment }) {
             )}
           </div>
           {/* Popular Search Suggestions */}
-          <div className="pt-3 border-t border-white/[0.06] space-y-2">
+          <div className="pt-3 border-t border-ts-border space-y-2">
             <span className="text-[10px] font-mono uppercase text-ts-muted tracking-wider block">Pencarian Populer:</span>
             <div className="flex flex-wrap justify-center gap-1.5 text-xs">
               {['NSA Premium Cotton 7200', 'NSA Softstyle 3600', 'Heavyweight 24s', 'Combed 30s', 'Custom Sablon'].map((term) => (
@@ -363,7 +363,7 @@ export function CatalogPage({ defaultSegment }) {
                   key={term}
                   type="button"
                   onClick={() => setSearch(term)}
-                  className="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-ts-kremMuted hover:text-white border border-white/[0.06] text-[11px] transition-all cursor-pointer"
+                  className="px-2.5 py-1 rounded-lg bg-ts-surface hover:bg-ts-surfaceHover text-ts-kremMuted hover:text-ts-krem border border-ts-border text-[11px] transition-all cursor-pointer"
                 >
                   {term}
                 </button>

@@ -101,7 +101,10 @@ export function PartnerPage() {
         .insert([applicationPayload]);
 
       if (insertErr) {
-        console.warn('Gagal simpan ke Supabase, fallback WA tetap siap:', insertErr);
+        console.warn('Gagal simpan ke Supabase, mengarahkan ke fallback WA:', insertErr);
+        setPartnerFormErrors({ general: 'Koneksi database sedang sibuk. Silakan lanjutkan pendaftaran langsung via WhatsApp di bawah.' });
+        setSubmitting(false);
+        return;
       }
 
       if (user) {
@@ -110,12 +113,14 @@ export function PartnerPage() {
           partner_tier: partnerTier
         }).eq('id', user.id);
       }
+
+      setSubmittedSuccess(true);
     } catch (err) {
       console.warn('Partner app submit notice:', err);
+      setPartnerFormErrors({ general: 'Terjadi kendala jaringan. Silakan kirim data langsung via WhatsApp.' });
+    } finally {
+      setSubmitting(false);
     }
-
-    setSubmitting(false);
-    setSubmittedSuccess(true);
   };
 
   const getWaApplyUrl = () => {
@@ -145,14 +150,14 @@ export function PartnerPage() {
           <span>PROGRAM KEMITRAAN TEESTOCK STUDIO</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight max-w-4xl mx-auto leading-tight">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-ts-krem tracking-tight max-w-4xl mx-auto leading-tight">
           Mulai Bisnis Apparel Distro <br />
           <span className="bg-gradient-to-r from-ts-mustard via-[#F5D77F] to-ts-terracotta bg-clip-text text-transparent">
             Tanpa Modal Stok &amp; Mesin Sablon.
           </span>
         </h1>
 
-        <p className="text-xs sm:text-sm lg:text-base text-ts-kremMuted max-w-2xl mx-auto leading-relaxed">
+        <p className="text-xs sm:text-sm lg:text-base text-ts-muted max-w-2xl mx-auto leading-relaxed">
           Fokuslah membangun toko dan menjaring pembeli di Shopee, TikTok, atau Instagram. Seluruh urusan garmen New States Apparel, sablon DTF HD 155°C, hingga packing polymailer atas nama brand kamu — biarkan TeeStock yang tangani.
         </p>
 
@@ -171,32 +176,32 @@ export function PartnerPage() {
 
         {/* 3 Quick Benefit Metrics */}
         <div className="pt-10 grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto text-left">
-          <div className="p-5 rounded-3xl bg-ts-surface/75 border border-white/[0.08] shadow-glass-card">
+          <div className="p-5 rounded-3xl bg-ts-surface border border-ts-border shadow-glass-card">
             <div className="w-10 h-10 rounded-2xl bg-ts-green/15 text-ts-green flex items-center justify-center border border-ts-green/30 mb-3">
               <TrendingUp className="w-5 h-5" />
             </div>
-            <h3 className="text-sm font-bold text-white">Margin Rp 20k - Rp 45k/pcs</h3>
-            <p className="text-xs text-ts-kremMuted mt-1">
+            <h3 className="text-sm font-bold text-ts-krem">Margin Rp 20k - Rp 45k/pcs</h3>
+            <p className="text-xs text-ts-muted mt-1">
               Harga modal mitra mulai Rp 74.000. Kamu bebas menentukan harga jual eceran tokomu sendiri.
             </p>
           </div>
 
-          <div className="p-5 rounded-3xl bg-ts-surface/75 border border-white/[0.08] shadow-glass-card">
+          <div className="p-5 rounded-3xl bg-ts-surface border border-ts-border shadow-glass-card">
             <div className="w-10 h-10 rounded-2xl bg-ts-mustard/15 text-ts-mustard flex items-center justify-center border border-ts-mustard/30 mb-3">
               <Package className="w-5 h-5" />
             </div>
-            <h3 className="text-sm font-bold text-white">100% Pengiriman White-Label</h3>
-            <p className="text-xs text-ts-kremMuted mt-1">
+            <h3 className="text-sm font-bold text-ts-krem">100% Pengiriman White-Label</h3>
+            <p className="text-xs text-ts-muted mt-1">
               Label pengiriman menggunakan nama toko dan no HP kamu. Bebas atribut TeeStock sehingga customer tetap setia ke kamu.
             </p>
           </div>
 
-          <div className="p-5 rounded-3xl bg-ts-surface/75 border border-white/[0.08] shadow-glass-card">
+          <div className="p-5 rounded-3xl bg-ts-surface border border-ts-border shadow-glass-card">
             <div className="w-10 h-10 rounded-2xl bg-ts-teal/15 text-ts-teal flex items-center justify-center border border-ts-teal/30 mb-3">
               <Truck className="w-5 h-5" />
             </div>
-            <h3 className="text-sm font-bold text-white">Tanpa Modal &amp; Minimum Order</h3>
-            <p className="text-xs text-ts-kremMuted mt-1">
+            <h3 className="text-sm font-bold text-ts-krem">Tanpa Modal &amp; Minimum Order</h3>
+            <p className="text-xs text-ts-muted mt-1">
               Order 1 pcs tetap kami proses cepat H+1. Tidak ada risiko menimbun stok mati yang tidak laku.
             </p>
           </div>
@@ -205,16 +210,16 @@ export function PartnerPage() {
 
       {/* ─── Interactive Margin Calculator ─────────────────── */}
       <section id="kalkulator-profit" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
-        <div className="p-6 sm:p-10 rounded-3xl bg-gradient-to-br from-ts-surface/90 via-[#1D1A17] to-ts-surface border border-ts-mustard/30 shadow-glass-card shadow-glass-inset space-y-8">
+        <div className="p-6 sm:p-10 rounded-3xl bg-ts-surface border border-ts-border shadow-glass-card shadow-glass-inset space-y-8">
           <div className="text-center max-w-xl mx-auto space-y-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ts-mustard/15 text-ts-mustard text-xs font-mono font-bold">
               <Calculator className="w-3.5 h-3.5" />
               <span>SIMULASI PENGHASILAN BULANAN</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white">
+            <h2 className="text-2xl sm:text-3xl font-black text-ts-krem">
               Berapa Potensi Keuntungan Bersih Kamu?
             </h2>
-            <p className="text-xs sm:text-sm text-ts-kremMuted">
+            <p className="text-xs sm:text-sm text-ts-muted">
               Sesuaikan target penjualan dan harga jual tokomu untuk melihat potensi cash flow yang dihasilkan.
             </p>
           </div>
@@ -224,15 +229,15 @@ export function PartnerPage() {
             <div className="lg:col-span-7 space-y-6">
               {/* Tier Switcher */}
               <div>
-                <label className="block text-xs font-bold text-white mb-2">Pilihan Tier Kemitraan:</label>
+                <label className="block text-xs font-bold text-ts-krem mb-2">Pilihan Tier Kemitraan:</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setPartnerTier('dropship')}
                     className={`p-3.5 rounded-2xl border text-left transition-all ${
                       partnerTier === 'dropship'
-                        ? 'bg-ts-mustard/20 border-ts-mustard text-white shadow-glow-mustard'
-                        : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:border-white/20'
+                        ? 'bg-ts-mustard/20 border-ts-mustard text-ts-krem shadow-glow-mustard'
+                        : 'bg-ts-hitam/20 border-ts-border text-ts-muted hover:border-ts-mustard/40'
                     }`}
                   >
                     <div className="font-bold text-xs">Mitra Dropshipper</div>
@@ -245,8 +250,8 @@ export function PartnerPage() {
                     onClick={() => setPartnerTier('reseller')}
                     className={`p-3.5 rounded-2xl border text-left transition-all ${
                       partnerTier === 'reseller'
-                        ? 'bg-ts-green/20 border-ts-green text-white shadow-glow-teal'
-                        : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:border-white/20'
+                        ? 'bg-ts-green/20 border-ts-green text-ts-krem shadow-glow-teal'
+                        : 'bg-ts-hitam/20 border-ts-border text-ts-muted hover:border-ts-green/40'
                     }`}
                   >
                     <div className="font-bold text-xs">Mitra Reseller VIP</div>
@@ -259,8 +264,8 @@ export function PartnerPage() {
               {/* Volume Slider */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold">
-                  <span className="text-white">Target Penjualan Bulanan:</span>
-                  <span className="font-mono text-base text-ts-mustard px-3 py-1 rounded-xl bg-white/[0.06] border border-white/10">
+                  <span className="text-ts-krem">Target Penjualan Bulanan:</span>
+                  <span className="font-mono text-base text-ts-mustard px-3 py-1 rounded-xl bg-ts-hitam/20 border border-ts-border">
                     {targetPcs} Kaos / Bulan
                   </span>
                 </div>
@@ -283,8 +288,8 @@ export function PartnerPage() {
               {/* Selling Price Slider */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold">
-                  <span className="text-white">Harga Jual Ritel Toko Kamu:</span>
-                  <span className="font-mono text-base text-white px-3 py-1 rounded-xl bg-white/[0.06] border border-white/10">
+                  <span className="text-ts-krem">Harga Jual Ritel Toko Kamu:</span>
+                  <span className="font-mono text-base text-ts-krem px-3 py-1 rounded-xl bg-ts-hitam/20 border border-ts-border">
                     {formatRupiah(sellingPrice)}
                   </span>
                 </div>
@@ -306,25 +311,25 @@ export function PartnerPage() {
             </div>
 
             {/* Live Result Card (5 Cols) */}
-            <div className="lg:col-span-5 p-6 sm:p-7 rounded-3xl bg-ts-surface border border-white/[0.12] space-y-5 shadow-2xl">
-              <div className="border-b border-white/[0.08] pb-4">
+            <div className="lg:col-span-5 p-6 sm:p-7 rounded-3xl bg-ts-surface border border-ts-border space-y-5 shadow-2xl">
+              <div className="border-b border-ts-border pb-4">
                 <span className="text-[11px] font-mono text-ts-muted block uppercase">Estimasi Laba Bersih</span>
                 <div className="font-mono text-3xl sm:text-4xl font-black text-ts-green mt-1">
                   {formatRupiah(monthlyProfit)}
                 </div>
-                <span className="text-[11px] text-ts-kremMuted mt-0.5 block">per bulan masuk ke kantong kamu</span>
+                <span className="text-[11px] text-ts-muted mt-0.5 block">per bulan masuk ke kantong kamu</span>
               </div>
 
               <div className="space-y-2.5 text-xs">
-                <div className="flex justify-between text-ts-kremMuted">
+                <div className="flex justify-between text-ts-muted">
                   <span>Margin Bersih per Kaos:</span>
-                  <span className="font-mono text-white font-bold">{formatRupiah(marginPerPcs)}</span>
+                  <span className="font-mono text-ts-krem font-bold">{formatRupiah(marginPerPcs)}</span>
                 </div>
-                <div className="flex justify-between text-ts-kremMuted">
+                <div className="flex justify-between text-ts-muted">
                   <span>Estimasi Omset Toko Kamu:</span>
-                  <span className="font-mono text-white font-bold">{formatRupiah(monthlyRevenue)}</span>
+                  <span className="font-mono text-ts-krem font-bold">{formatRupiah(monthlyRevenue)}</span>
                 </div>
-                <div className="flex justify-between text-ts-kremMuted">
+                <div className="flex justify-between text-ts-muted">
                   <span>Modal Stok Dibutuhkan:</span>
                   <span className="font-mono text-ts-green font-bold">Rp 0 (Tanpa Modal)</span>
                 </div>
@@ -332,7 +337,7 @@ export function PartnerPage() {
 
               <a
                 href="#daftar-mitra"
-                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-ts-mustard hover:bg-ts-mustard/90 text-zinc-950 font-extrabold text-xs shadow-glow-mustard transition-all active:scale-95"
+                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-ts-mustard hover:bg-ts-mustard/90 text-zinc-950 font-extrabold text-xs shadow-glow-mustard transition-all active:scale-95 cursor-pointer"
               >
                 <span>Daftar &amp; Dapatkan Harga Ini</span>
                 <ArrowRight className="w-4 h-4" />
@@ -345,43 +350,43 @@ export function PartnerPage() {
       {/* ─── How It Works (Alur Dropship) ──────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="text-center max-w-xl mx-auto space-y-2">
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-ts-krem tracking-tight">
             Bagaimana Cara Kerjanya?
           </h2>
-          <p className="text-xs sm:text-sm text-ts-kremMuted">
+          <p className="text-xs sm:text-sm text-ts-muted">
             Alur praktis 4 langkah jualan apparel distro tanpa perlu pusing mikirin alat sablon dan packing.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div className="p-6 rounded-3xl bg-ts-surface/75 border border-white/[0.08] space-y-3 relative shadow-glass-card">
-            <span className="font-mono text-3xl font-black text-white/15">01</span>
-            <h3 className="text-sm font-bold text-white">Upload Foto Produk</h3>
-            <p className="text-xs text-ts-kremMuted leading-relaxed">
+          <div className="p-6 rounded-3xl bg-ts-surface border border-ts-border space-y-3 relative shadow-glass-card">
+            <span className="font-mono text-3xl font-black text-ts-krem/15">01</span>
+            <h3 className="text-sm font-bold text-ts-krem">Upload Foto Produk</h3>
+            <p className="text-xs text-ts-muted leading-relaxed">
               Unduh media kit mockup resolusi tinggi kami dan unggah ke tokomu di Shopee, TikTok Shop, atau IG.
             </p>
           </div>
 
-          <div className="p-6 rounded-3xl bg-ts-surface/75 border border-white/[0.08] space-y-3 relative shadow-glass-card">
-            <span className="font-mono text-3xl font-black text-white/15">02</span>
-            <h3 className="text-sm font-bold text-white">Terima Pesanan</h3>
-            <p className="text-xs text-ts-kremMuted leading-relaxed">
+          <div className="p-6 rounded-3xl bg-ts-surface border border-ts-border space-y-3 relative shadow-glass-card">
+            <span className="font-mono text-3xl font-black text-ts-krem/15">02</span>
+            <h3 className="text-sm font-bold text-ts-krem">Terima Pesanan</h3>
+            <p className="text-xs text-ts-muted leading-relaxed">
               Customer membeli dan membayar ke rekening/marketplace kamu dengan harga ritel yang kamu tentukan.
             </p>
           </div>
 
-          <div className="p-6 rounded-3xl bg-ts-surface/75 border border-white/[0.08] space-y-3 relative shadow-glass-card">
-            <span className="font-mono text-3xl font-black text-white/15">03</span>
-            <h3 className="text-sm font-bold text-white">Pesan ke TeeStock</h3>
-            <p className="text-xs text-ts-kremMuted leading-relaxed">
+          <div className="p-6 rounded-3xl bg-ts-surface border border-ts-border space-y-3 relative shadow-glass-card">
+            <span className="font-mono text-3xl font-black text-ts-krem/15">03</span>
+            <h3 className="text-sm font-bold text-ts-krem">Pesan ke TeeStock</h3>
+            <p className="text-xs text-ts-muted leading-relaxed">
               Buka website TeeStock, masukkan pesanan pembeli dengan harga modal mitra, dan centang opsi dropship.
             </p>
           </div>
 
-          <div className="p-6 rounded-3xl bg-ts-surface/75 border border-white/[0.08] space-y-3 relative shadow-glass-card">
-            <span className="font-mono text-3xl font-black text-white/15">04</span>
-            <h3 className="text-sm font-bold text-white">Kami Kirim ke Customer</h3>
-            <p className="text-xs text-ts-kremMuted leading-relaxed">
+          <div className="p-6 rounded-3xl bg-ts-surface border border-ts-border space-y-3 relative shadow-glass-card">
+            <span className="font-mono text-3xl font-black text-ts-krem/15">04</span>
+            <h3 className="text-sm font-bold text-ts-krem">Kami Kirim ke Customer</h3>
+            <p className="text-xs text-ts-muted leading-relaxed">
               Kami cetak DTF HD, press suhu 155°C, pack polymailer rapi, dan kirim atas nama tokomu. Selesai!
             </p>
           </div>
@@ -390,14 +395,14 @@ export function PartnerPage() {
 
       {/* ─── Media Kit & Aset Download Teaser ───────────────── */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-6 sm:p-8 rounded-3xl bg-white/[0.03] border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="p-6 sm:p-8 rounded-3xl bg-ts-surface border border-ts-border flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center sm:text-left">
             <div className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold text-ts-teal bg-ts-teal/15 px-2.5 py-0.5 rounded-full border border-ts-teal/30 mb-1">
               <Download className="w-3 h-3" />
               <span>ASET PROMOSI RESMI</span>
             </div>
-            <h3 className="text-lg font-bold text-white">Media Kit &amp; Foto Katalog Polos</h3>
-            <p className="text-xs text-ts-kremMuted max-w-lg">
+            <h3 className="text-lg font-bold text-ts-krem">Media Kit &amp; Foto Katalog Polos</h3>
+            <p className="text-xs text-ts-muted max-w-lg">
               Semua mitra berhak atas folder Google Drive berisi mockup apparel resolusi tinggi tanpa watermark TeeStock siap upload.
             </p>
           </div>
@@ -406,7 +411,7 @@ export function PartnerPage() {
             href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent("Halo TeeStock! Saya ingin meminta link Google Drive Media Kit foto katalog polos untuk materi dropship.")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 px-5 py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-white border border-white/15 text-xs font-bold flex items-center gap-2 transition-all"
+            className="shrink-0 px-5 py-2.5 rounded-xl bg-ts-hitam/20 hover:bg-ts-hitam/40 text-ts-krem border border-ts-border text-xs font-bold flex items-center gap-2 transition-all cursor-pointer"
           >
             <Download className="w-4 h-4 text-ts-teal" />
             <span>Minta Akses Media Kit</span>
@@ -416,15 +421,15 @@ export function PartnerPage() {
 
       {/* ─── Form Pendaftaran Mitra ─────────────────────────── */}
       <section id="daftar-mitra" className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
-        <div className="p-6 sm:p-8 rounded-3xl bg-ts-surface/85 backdrop-blur-xl border border-white/[0.1] shadow-glass-card shadow-glass-inset space-y-6">
-          <div className="border-b border-white/[0.08] pb-4">
+        <div className="p-6 sm:p-8 rounded-3xl bg-ts-surface border border-ts-border shadow-glass-card shadow-glass-inset space-y-6">
+          <div className="border-b border-ts-border pb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-xl bg-ts-mustard/20 text-ts-mustard flex items-center justify-center font-bold">
                 <Users className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-bold text-white">Formulir Pengajuan Akun Mitra</h3>
+              <h3 className="text-lg font-bold text-ts-krem">Formulir Pengajuan Akun Mitra</h3>
             </div>
-            <p className="text-xs text-ts-kremMuted mt-1">
+            <p className="text-xs text-ts-muted mt-1">
               Pendaftaran akan dikurasi manual oleh tim TeeStock untuk menjaga standar kualitas kemitraan.
             </p>
           </div>
@@ -434,8 +439,8 @@ export function PartnerPage() {
               <div className="w-12 h-12 rounded-full bg-ts-green/20 text-ts-green flex items-center justify-center mx-auto border border-ts-green/30">
                 <Check className="w-6 h-6" />
               </div>
-              <h4 className="text-base font-bold text-white">Pengajuan Berhasil Dikirim!</h4>
-              <p className="text-xs text-ts-kremMuted leading-relaxed">
+              <h4 className="text-base font-bold text-ts-krem">Pengajuan Berhasil Dikirim!</h4>
+              <p className="text-xs text-ts-muted leading-relaxed">
                 Tim admin TeeStock akan meninjau data tokomu dan mengaktifkan tier harga mitra dalam 1x24 jam.
               </p>
               <div className="pt-2">
@@ -443,7 +448,7 @@ export function PartnerPage() {
                   href={getWaApplyUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-ts-green hover:bg-ts-green/90 text-zinc-950 text-xs font-bold shadow-md transition-all"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-ts-green hover:bg-ts-green/90 text-zinc-950 text-xs font-bold shadow-md transition-all cursor-pointer"
                 >
                   <MessageSquare className="w-4 h-4" />
                   <span>Konfirmasi Cepat via WhatsApp</span>
@@ -504,11 +509,11 @@ export function PartnerPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-white mb-1.5">Channel Penjualan Utama</label>
+                <label className="block text-xs font-bold text-ts-krem mb-1.5">Channel Penjualan Utama</label>
                 <select
                   value={formChannel}
                   onChange={(e) => setFormChannel(e.target.value)}
-                  className="w-full bg-ts-hitam/80 border border-white/[0.1] rounded-2xl p-3 text-xs text-white focus:outline-none focus:border-ts-terracotta"
+                  className="w-full bg-ts-hitam border border-ts-border rounded-xl p-3 text-xs text-ts-krem focus:outline-none focus:border-ts-terracotta"
                 >
                   <option value="Shopee & TikTok Shop">Shopee &amp; TikTok Shop</option>
                   <option value="Instagram & WhatsApp">Instagram &amp; WhatsApp</option>
@@ -534,7 +539,7 @@ export function PartnerPage() {
                   href={getWaApplyUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-white border border-white/10 text-xs font-bold transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ts-hitam/20 hover:bg-ts-hitam/40 text-ts-krem border border-ts-border text-xs font-bold transition-all cursor-pointer"
                 >
                   <MessageSquare className="w-4 h-4 text-ts-green" />
                   <span>Daftar via WA</span>
