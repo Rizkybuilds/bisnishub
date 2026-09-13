@@ -34,7 +34,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const serverKey = Deno.env.get('MIDTRANS_SERVER_KEY') || 'Mid-server-aS32AAjPc00_rz6QdJGyNPvV';
+    const serverKey = Deno.env.get('MIDTRANS_SERVER_KEY') || 'Mid-server-c8SVBfpNa3-M-QcqYFTnHXwv';
     
     // 1. Verifikasi Signature SHA-512
     const rawGross = typeof grossAmount === 'number' ? grossAmount.toFixed(2) : String(grossAmount);

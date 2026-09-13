@@ -171,7 +171,7 @@ export function CartPage() {
         await new Promise((resolve) => {
           const script = document.createElement('script');
           script.src = targetScriptSrc;
-          script.setAttribute('data-client-key', 'Mid-client-WWRMeWNQzS_zx-E-');
+          script.setAttribute('data-client-key', isSandbox ? 'Mid-client-WWRMeWNQzS_zx-E-' : 'Mid-client-DL-HKOnueKXtxjSF');
           script.async = true;
           script.onload = () => resolve(window.snap);
           script.onerror = () => resolve(null);

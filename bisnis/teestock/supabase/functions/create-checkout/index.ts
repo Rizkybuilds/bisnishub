@@ -197,7 +197,7 @@ Deno.serve(async (req: Request) => {
     let midtransError: any = null;
 
     if (paymentMethod === 'midtrans_snap') {
-      const serverKey = Deno.env.get('MIDTRANS_SERVER_KEY') || 'Mid-server-aS32AAjPc00_rz6QdJGyNPvV';
+      const serverKey = Deno.env.get('MIDTRANS_SERVER_KEY') || 'Mid-server-c8SVBfpNa3-M-QcqYFTnHXwv';
       const isProduction = Deno.env.get('MIDTRANS_IS_PRODUCTION') === 'true' || serverKey.startsWith('Mid-server-');
       const snapApiUrl = isProduction
         ? 'https://app.midtrans.com/snap/v1/transactions'
