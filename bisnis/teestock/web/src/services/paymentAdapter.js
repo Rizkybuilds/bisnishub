@@ -69,19 +69,23 @@ export function loadMidtransScript(clientKey, isProduction = false) {
  */
 export function formatMidtransTransactionParameter(order) {
   const items = (order.items || []).map((item, idx) => ({
-    id: String(item.sku || item.product_sku || `ITEM-${idx + 1}`).slice(0, 50),
+    id: String(item.sku || item.product_sku || `ITEM-${idx + 1}`).slice(0, 45),
     price: Math.round(Number(item.price || item.unit_price || 0)),
     quantity: Math.max(1, Number(item.qty || 1)),
-    name: String(item.name || item.product_name || 'Kaos TeeStock').slice(0, 50)
+    name: String(item.name || item.product_name || 'Kaos TeeStock').slice(0, 45)
   }));
 
   // Append shipping fee item if exists
   if (order.shipping_fee && Number(order.shipping_fee) > 0) {
+    const cleanZone = String(order.shipping_zone || 'Reguler')
+      .replace(/[()&]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
     items.push({
       id: 'SHIPPING-FEE',
       price: Math.round(Number(order.shipping_fee)),
       quantity: 1,
-      name: `Ongkir (${order.shipping_zone || 'Reguler'})`
+      name: `Ongkir - ${cleanZone}`.slice(0, 45)
     });
   }
 
@@ -91,11 +95,31 @@ export function formatMidtransTransactionParameter(order) {
       id: 'DISCOUNT-VOUCHER',
       price: -Math.round(Number(order.discount_amount)),
       quantity: 1,
-      name: 'Diskon Promosi / Voucher'
+      name: 'Diskon Promosi / Voucher'.slice(0, 45)
     });
   }
 
   const grossAmount = Math.round(Number(order.total_amount || order.price || 0));
+
+  // Mathematical reconciliation: Ensure sum(item_details) === gross_amount
+  const itemsSum = items.reduce((acc, it) => acc + (it.price * it.quantity), 0);
+  if (itemsSum !== grossAmount) {
+    const diff = grossAmount - itemsSum;
+    items.push({
+      id: 'ADJUSTMENT',
+      price: diff,
+      quantity: 1,
+      name: 'Penyesuaian'.slice(0, 45)
+    });
+  }
+
+  // Clean customer details
+  const cleanPhone = String(order.customer_phone || order.phone || '').replace(/[^0-9+]/g, '').slice(0, 19) || '08123456789';
+  const cleanAddress = String(order.customer_address || order.address || '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[<>[\]]/g, '')
+    .slice(0, 190);
+  const cleanCity = String(order.customer_city || order.city || '').replace(/[()]/g, '').slice(0, 90);
 
   return {
     transaction_details: {
@@ -104,10 +128,10 @@ export function formatMidtransTransactionParameter(order) {
     },
     customer_details: {
       first_name: String(order.customer_name || order.customer || 'Pelanggan').slice(0, 50),
-      phone: String(order.customer_phone || order.phone || '').slice(0, 30),
+      phone: cleanPhone,
       billing_address: {
-        address: String(order.customer_address || order.address || '').slice(0, 200),
-        city: String(order.customer_city || order.city || '').slice(0, 100)
+        address: cleanAddress,
+        city: cleanCity
       }
     },
     item_details: items,

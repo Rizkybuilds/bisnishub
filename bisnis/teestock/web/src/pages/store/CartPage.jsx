@@ -199,7 +199,7 @@ export function CartPage() {
         id: orderId,
         order_number: orderId,
         customer: formData.customerName.trim(),
-        phone: `${formData.phone.trim()} (${fullCityDisplay})`,
+        phone: formData.phone.trim(),
         city: fullCityDisplay,
         address: fullAddressDisplay,
         shipping_zone: `${shippingCalculation.zoneName} (${formData.courier || courier})`,

@@ -202,19 +202,24 @@ Deno.serve(async (req: Request) => {
         ? 'https://app.midtrans.com/snap/v1/transactions'
         : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
 
-      const midtransItems = verifiedOrderItems.map((item, idx) => ({
-        id: String(item.product_sku || `ITEM-${idx + 1}`).slice(0, 50),
+      // Midtrans strictly requires item_details name to be <= 50 characters
+      const midtransItems: Array<{ id: string; price: number; quantity: number; name: string }> = verifiedOrderItems.map((item, idx) => ({
+        id: String(item.product_sku || `ITEM-${idx + 1}`).slice(0, 45),
         price: Math.round(item.unit_price),
         quantity: item.qty,
-        name: String(item.product_name).slice(0, 50)
+        name: String(item.product_name || 'Kaos TeeStock').slice(0, 45)
       }));
 
       if (shippingFee > 0) {
+        const cleanZone = String(shipping.zone || 'Reguler')
+          .replace(/[()&]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
         midtransItems.push({
           id: 'SHIPPING-FEE',
           price: Math.round(shippingFee),
           quantity: 1,
-          name: `Ongkir (${shipping.zone || 'Reguler'})`
+          name: `Ongkir - ${cleanZone}`.slice(0, 45)
         });
       }
 
@@ -223,21 +228,42 @@ Deno.serve(async (req: Request) => {
           id: 'DISCOUNT-TOTAL',
           price: -Math.round(totalDiscount),
           quantity: 1,
-          name: 'Diskon Paket / Voucher'
+          name: 'Diskon Paket / Voucher'.slice(0, 45)
         });
       }
 
-      const snapPayload = {
+      // Mathematical validation: Midtrans rejects if sum(item_details) !== gross_amount
+      const targetGross = Math.round(grandTotal);
+      const itemsSum = midtransItems.reduce((acc, it) => acc + (it.price * it.quantity), 0);
+      if (itemsSum !== targetGross) {
+        const diff = targetGross - itemsSum;
+        midtransItems.push({
+          id: 'ADJUSTMENT',
+          price: diff,
+          quantity: 1,
+          name: 'Penyesuaian'.slice(0, 45)
+        });
+      }
+
+      // Clean customer phone (digits only, 9-19 chars) and address (strip markdown URLs)
+      const cleanCustomerPhone = customerPhone.replace(/[^0-9+]/g, '').slice(0, 19) || '08123456789';
+      const cleanCustomerAddress = customerAddress
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+        .replace(/[<>[\]]/g, '')
+        .slice(0, 190);
+      const cleanCustomerCity = customerCity.replace(/[()]/g, '').slice(0, 90);
+
+      const snapPayload: Record<string, any> = {
         transaction_details: {
           order_id: orderNumber,
-          gross_amount: Math.round(grandTotal)
+          gross_amount: targetGross
         },
         customer_details: {
           first_name: customerName.slice(0, 50),
-          phone: customerPhone.slice(0, 30),
+          phone: cleanCustomerPhone,
           billing_address: {
-            address: customerAddress.slice(0, 200),
-            city: customerCity.slice(0, 100)
+            address: cleanCustomerAddress,
+            city: cleanCustomerCity
           }
         },
         item_details: midtransItems,
