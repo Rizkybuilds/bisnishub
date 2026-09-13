@@ -432,6 +432,31 @@ export function CartPage() {
             removeFromCart={removeFromCart}
           />
 
+          {/* Cross-Sell: Sering Dibeli Bersamaan */}
+          {cart.length > 0 && (
+            <div className="glass-panel rounded-2xl p-5 border border-ts-border">
+              <h3 className="text-sm font-mono font-bold text-ts-kremMuted uppercase tracking-wider mb-4">
+                Sering Dibeli Bersamaan
+              </h3>
+              <div className="space-y-3">
+                {/* Order Bump: Kaos Polos NSA */}
+                <div className="flex items-center gap-4 p-3 rounded-xl border border-ts-borderDim hover:border-ts-borderHover transition-colors cursor-pointer group">
+                  <div className="w-14 h-14 rounded-lg bg-ts-surface flex items-center justify-center shrink-0">
+                    <span className="text-2xl">👕</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-ts-krem">Tambah Kaos Polos NSA 24s</p>
+                    <p className="text-xs text-ts-kremMuted">Heavyweight Tubular • Baselayer sempurna</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-mono font-bold text-ts-terracotta">+Rp 45.000</p>
+                    <button className="text-xs text-ts-kremMuted hover:text-ts-terracotta transition-colors font-medium mt-0.5">+ Tambah</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <CheckoutShippingForm
             formRef={formRef}
             profile={profile}

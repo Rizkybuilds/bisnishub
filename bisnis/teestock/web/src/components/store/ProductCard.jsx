@@ -17,12 +17,14 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
   const [selectedColor, setSelectedColor] = useState(initialColor);
   const [activeImage, setActiveImage] = useState(() => getCardPreviewImage(product, initialColor));
   const [imgError, setImgError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleColorSelect = (e, colorName) => {
     e.preventDefault();
     e.stopPropagation();
     setSelectedColor(colorName);
     setImgError(false);
+    setImageLoaded(false);
     setActiveImage(getCardPreviewImage(product, colorName));
   };
 
@@ -66,7 +68,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
   return (
     <TiltCard maxTilt={5} scale={1.01} className={`h-full ${className}`}>
       <div
-        className="group bg-ts-surface border border-ts-border rounded-2xl overflow-hidden transition-all duration-300 flex flex-col hover:-translate-y-1 hover:border-ts-borderHover shadow-sm hover:shadow-elevation relative h-full"
+        className="group bg-ts-surface border border-ts-border rounded-2xl overflow-hidden transition-all duration-300 ease-out flex flex-col hover:scale-[1.02] hover:-translate-y-1 hover:border-ts-borderHover shadow-sm hover:shadow-glow-terracotta-sm relative h-full"
       >
       {/* Product Image Frame */}
       <Link
@@ -76,11 +78,18 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
           isBlank ? 'p-3 sm:p-4' : ''
         }`}
       >
+        {/* Skeleton saat gambar loading */}
+        {!imageLoaded && (
+          <div className="absolute inset-0 animate-pulse bg-ts-surface z-[1]" />
+        )}
         <img
           src={imgError ? fallbackUrl : activeImage}
           alt={`${product.name} - ${selectedColor}`}
           onError={() => setImgError(true)}
-          className={`w-full h-full transition-transform duration-300 group-hover:scale-105 ${
+          onLoad={() => setImageLoaded(true)}
+          className={`w-full h-full transition-all duration-300 group-hover:scale-105 ${
+            !imageLoaded ? 'opacity-0' : 'opacity-100'
+          } ${
             isBlank 
               ? 'object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_8px_16px_rgba(0,0,0,0.65)]' 
               : 'object-cover'
@@ -210,17 +219,17 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
                     {isBlank ? 'Harga Satuan' : 'Katalog Resmi'}
                   </span>
                   {!isBlank && (
-                    <span className="text-[8px] font-mono font-extrabold text-ts-terracotta bg-ts-terracotta/20 px-1 py-0.2 rounded border border-ts-terracotta/30">
+                    <span className="bg-ts-terracotta/15 text-ts-terracotta text-xs font-mono font-bold px-2 py-0.5 rounded">
                       -28%
                     </span>
                   )}
                 </div>
                 <div className="flex items-baseline gap-1 sm:gap-1.5">
-                  <span className="font-mono text-xs sm:text-sm font-black text-ts-krem">
+                  <span className="font-mono text-lg font-bold text-ts-krem">
                     {formatRupiah(effectivePrice)}
                   </span>
                   {!isBlank && (
-                    <span className="text-[9px] sm:text-[10px] line-through text-ts-muted/80 font-mono hidden sm:inline">
+                    <span className="text-sm line-through text-ts-kremMuted font-mono hidden sm:inline">
                       {formatRupiah(product.priceAnchor || product.price_anchor || 139000)}
                     </span>
                   )}

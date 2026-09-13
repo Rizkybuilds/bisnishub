@@ -4,8 +4,8 @@ const SITE_URL = typeof window !== 'undefined' && window.location.origin
   ? window.location.origin
   : (import.meta.env.VITE_SITE_URL || 'https://teestockapparel.vercel.app');
 const DEFAULT_TITLE = 'TeeStock Apparel | Curated Merch & Kaos NSA 24s Heavyweight Original';
-const DEFAULT_DESCRIPTION = 'Brand apparel kurasi & studio sablon DTF cepat. Menggunakan garmen New States Apparel (NSA) Heavyweight 24s & Softstyle 30s original tanpa jahitan samping. Siap kirim ritel, dropship, dan custom satuan.';
-const DEFAULT_IMAGE = `${SITE_URL}/logo-teestock.svg`;
+const DEFAULT_DESCRIPTION = 'Koleksi grafis kurasi di atas katun New States Apparel 24s Heavyweight tubular (180 GSM). Disablon presisi 155°C di studio Citayam. Harga jujur Rp 99.000.';
+const DEFAULT_IMAGE = '/og-image-teestock.png';
 
 /**
  * Lightweight dynamic SEO & OpenGraph Head manager for React SPA
@@ -67,25 +67,40 @@ export function SEOHead({
     updateMeta('og:image', fullImageUrl, true);
     updateMeta('og:url', fullCanonical, true);
     updateMeta('og:type', type, true);
-    updateMeta('og:site_name', 'TeeStock Apparel', true);
+    updateMeta('og:site_name', 'TeeStock — Curated Apparel & Merch House', true);
     updateMeta('og:locale', 'id_ID', true);
 
     // 6. Twitter Card Tags
     updateMeta('twitter:card', 'summary_large_image');
+    updateMeta('twitter:site', '@teestock.id');
     updateMeta('twitter:title', fullTitle);
     updateMeta('twitter:description', description);
     updateMeta('twitter:image', fullImageUrl);
 
     // 7. Schema.org JSON-LD Structured Data
+    const defaultSchema = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "TeeStock",
+      "url": "https://teestock.id",
+      "logo": "https://teestock.vercel.app/logo-teestock.svg",
+      "description": "Independent Curated Graphic Apparel House",
+      "sameAs": [
+        "https://instagram.com/teestock.id",
+        "https://tiktok.com/@teestock.id"
+      ]
+    };
+    const finalSchema = schema || defaultSchema;
+
     let schemaScript = document.getElementById('teestock-structured-data');
-    if (schema) {
+    if (finalSchema) {
       if (!schemaScript) {
         schemaScript = document.createElement('script');
         schemaScript.id = 'teestock-structured-data';
         schemaScript.type = 'application/ld+json';
         document.head.appendChild(schemaScript);
       }
-      schemaScript.textContent = JSON.stringify(schema);
+      schemaScript.textContent = JSON.stringify(finalSchema);
     } else if (schemaScript) {
       schemaScript.remove();
     }

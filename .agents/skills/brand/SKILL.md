@@ -25,7 +25,7 @@ Brand identity, voice, messaging, asset management, and consistency frameworks.
 ### 1. TeeStock (Curated POD Streetwear & Blanks)
 * **Archetype:** *The Creator & Street Stylist*
 * **Tone of Voice:** Raw, authentic, honest, witty, relatable. Hindari gaya bahasa kaku korporat atau klaim palsu berlebihan.
-* **Core Palette:** Hitam Charcoal (`#161513`), Krem/Sand (`#F4F0EA`), Terracotta Rust (`#B84220`), Mustard (`#D99B26`), Teal (`#14B8A6`).
+* **Core Palette:** Pitch Black (`#0A0A0A`), Chalk White (`#FAFAFA`), Terracotta Heat (`#D95D39`), Mustard (`#D9A441`), Teal Muted (`#4F7C74`). Light Mode: Warm Ecru (`#F8F6F0`), Obsidian (`#141312`), Terracotta (`#B95B30`).
 * **Visual Style:** Monokrom minimalis, typografi tajam (Plus Jakarta Sans + JetBrains Mono), visual close-up tekstur garmen NSA & presisi sablon DTF.
 
 ### 2. MultiGraph (Printing & Packaging Studio)

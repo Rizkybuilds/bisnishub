@@ -19,7 +19,7 @@ export function StickyMobileBuyBar({
   const displayImage = previewImg || product.filePath || product.file_path;
 
   return (
-    <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-40 md:hidden animate-in slide-in-from-bottom-5 duration-300 pointer-events-none">
+    <div className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 right-3 z-40 md:hidden animate-slide-in-up duration-300 pointer-events-none">
       <div className="pointer-events-auto max-w-md mx-auto bg-ts-surfaceCard backdrop-blur-2xl border border-ts-border rounded-2xl p-2.5 sm:p-3 shadow-elevation flex items-center justify-between gap-2.5 transition-colors">
         {/* Thumbnail & Info Ringkas */}
         <div className="flex items-center gap-2 min-w-0">
@@ -41,22 +41,22 @@ export function StickyMobileBuyBar({
         </div>
 
         {/* Action Buttons: WhatsApp, Tambah Troli, & Checkout Cepat */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           {onBuyWhatsapp && (
             <button
               onClick={onBuyWhatsapp}
-              className="p-2 rounded-xl bg-ts-surfaceHover hover:bg-ts-border border border-ts-border text-emerald-500 active:scale-95 transition-all"
+              className="min-h-[48px] min-w-[48px] flex items-center justify-center rounded-xl bg-ts-surfaceHover hover:bg-ts-border border border-ts-border text-emerald-500 active:scale-95 transition-all"
               title="Konsultasi WhatsApp"
               aria-label="Konsultasi WhatsApp"
             >
-              <MessageSquare className="w-4 h-4" />
+              <MessageSquare className="w-5 h-5" />
             </button>
           )}
 
           <button
             type="button"
             onClick={onAddToCart}
-            className={`px-3 py-2 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer ${
+            className={`min-h-[48px] px-4 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer ${
               isAdded
                 ? 'bg-ts-green/20 border-ts-green text-ts-green'
                 : 'bg-ts-surfaceHover border-ts-border text-ts-krem hover:bg-ts-border'
@@ -65,12 +65,12 @@ export function StickyMobileBuyBar({
           >
             {isAdded ? (
               <>
-                <Check className="w-3.5 h-3.5" />
+                <Check className="w-4 h-4" />
                 <span>Masuk!</span>
               </>
             ) : (
               <>
-                <ShoppingBag className="w-3.5 h-3.5" />
+                <ShoppingBag className="w-4 h-4" />
                 <span>+ Troli</span>
               </>
             )}
@@ -79,10 +79,10 @@ export function StickyMobileBuyBar({
           <button
             type="button"
             onClick={onBuyNow}
-            className="px-3.5 py-2 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white border border-ts-terracotta text-xs font-black shadow-sm flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+            className="min-h-[48px] px-5 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white border border-ts-terracotta text-xs font-black shadow-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer"
           >
             <span>Beli</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>

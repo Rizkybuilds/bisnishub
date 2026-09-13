@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { SERIES } from '../../constants/series';
 import { useStore } from '../../context/StoreContext';
+import { useScrollReveal, ScrollRevealSection } from '../../hooks/useScrollReveal';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { formatRupiah } from '../../utils/formatters';
@@ -149,7 +150,7 @@ export function HomePage() {
           {/* Left Column (7 cols): Editorial Typography, Value Prop, CTAs, Micro-Trust */}
           <div className="lg:col-span-7 text-left space-y-5 sm:space-y-6">
             {/* Floating Release Badge: Curated Graphic Archive */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-ts-surface border border-ts-border backdrop-blur-xl text-xs text-ts-krem shadow-sm hover:border-ts-terracotta/40 transition-all max-w-full overflow-hidden">
+            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-ts-surface border border-ts-border backdrop-blur-xl text-xs text-ts-krem shadow-sm hover:border-ts-terracotta/40 transition-all max-w-full overflow-hidden opacity-0 animate-fade-in-up">
               <Sparkles className="w-3.5 h-3.5 text-ts-terracotta shrink-0" />
               <span className="font-mono text-[10px] sm:text-[11px] text-ts-terracotta font-black uppercase tracking-wider truncate">
                 THE CURATED GRAPHIC ARCHIVE
@@ -162,17 +163,17 @@ export function HomePage() {
 
             {/* Hero Title & Value Proposition */}
             <div className="space-y-3">
-              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black tracking-tight text-ts-krem leading-[1.1]">
+              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black tracking-tight text-ts-krem leading-[1.1] opacity-0 animate-fade-in-up-delay-1">
                 Wear Your <span className="text-ts-terracotta">Identity.</span>
               </h1>
 
-              <p className="text-xs sm:text-base text-ts-kremMuted max-w-xl leading-relaxed font-normal">
+              <p className="text-xs sm:text-base text-ts-kremMuted max-w-xl leading-relaxed font-normal opacity-0 animate-fade-in-up-delay-2">
                 Kurasi beragam pilihan karya grafis berkarakter kuat di atas katun New States Apparel 24s Heavyweight tanpa jahitan samping. Dikerjakan presisi di studio in-house kami.
               </p>
             </div>
 
             {/* Primary Action CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-1 opacity-0 animate-fade-in-up-delay-3">
               <a href="#katalog-section" className="w-full sm:w-auto">
                 <Button size="lg" variant="primary" icon={ArrowRight} className="w-full sm:w-auto justify-center px-6 py-3 text-xs sm:text-sm font-bold shadow-sm">
                   Jelajahi Pilihan Desain
@@ -214,7 +215,7 @@ export function HomePage() {
           </div>
 
           {/* Right Column (5 cols): Interactive Lookbook Spotlight Showcase */}
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5 opacity-0 animate-scale-in">
             <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-ts-surface border border-ts-border shadow-elevation relative overflow-hidden space-y-3 sm:space-y-4">
               {/* Spotlight Top Bar */}
               <div className="flex items-center justify-between text-xs font-mono">
@@ -316,12 +317,14 @@ export function HomePage() {
       </section>
 
       {/* ─── Editorial Studio Marquee Ticker ────────────────────────── */}
-      <MarqueeTicker items={tickerItems} speed={30} />
+      <ScrollRevealSection>
+        <MarqueeTicker items={tickerItems} speed={30} />
+      </ScrollRevealSection>
 
       {/* ====================================================================
           SECTION 2: CATALOG SHOWCASE WITH CATEGORY FILTER PILLS
           ==================================================================== */}
-      <section id="katalog-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 scroll-mt-24">
+      <ScrollRevealSection id="katalog-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 scroll-mt-24">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3.5 sm:gap-4 border-b border-ts-border pb-4 sm:pb-5">
           <div>
@@ -420,7 +423,7 @@ export function HomePage() {
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
-      </section>
+      </ScrollRevealSection>
 
       {/* ====================================================================
           SECTION: SENSORY UNBOXING SHOWCASE (The 4 Physical Touchpoints)
@@ -430,7 +433,7 @@ export function HomePage() {
       {/* ====================================================================
           SECTION 3: 3 WAYS TO SHOP — BENTO GRID (Katalog, Polos, Custom)
           ==================================================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+      <ScrollRevealSection className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-ts-krem tracking-widest uppercase bg-ts-surface px-3 py-1 rounded-full border border-ts-border">
             <Layers className="w-3.5 h-3.5 text-ts-terracotta" />
@@ -523,10 +526,10 @@ export function HomePage() {
             </Link>
           </div>
         </div>
-      </section>
+      </ScrollRevealSection>
 
       {/* Kaos Polos NSA Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-6">
+      <ScrollRevealSection className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3.5 sm:gap-4 border-b border-ts-border pb-4 sm:pb-5">
           <div>
             <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-ts-krem tracking-wider uppercase bg-ts-surface px-3 py-1 rounded-full border border-ts-border mb-2">
@@ -559,7 +562,7 @@ export function HomePage() {
             />
           ))}
         </div>
-      </section>
+      </ScrollRevealSection>
 
 
 
@@ -569,7 +572,7 @@ export function HomePage() {
       {/* ====================================================================
           SECTION 4: THE STUDIO MANIFESTO // OBSESSIVE CRAFT
           ==================================================================== */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollRevealSection className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="p-5 sm:p-10 rounded-2xl sm:rounded-3xl bg-ts-surface border border-ts-border relative overflow-hidden space-y-6 sm:space-y-8 shadow-sm transition-colors duration-300">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-ts-border pb-5 sm:pb-6">
             <div>
@@ -654,12 +657,12 @@ export function HomePage() {
             </a>
           </div>
         </div>
-      </section>
+      </ScrollRevealSection>
 
       {/* ====================================================================
           SECTION 5: AUTHENTIC FITTING NOTES & CUSTOMER REVIEWS
           ==================================================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollRevealSection className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-5 sm:space-y-6">
             <div className="text-center space-y-2">
               <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
@@ -742,10 +745,10 @@ export function HomePage() {
               </div>
             </div>
           </div>
-        </section>
+        </ScrollRevealSection>
 
       {/* Discreet B2B Partner Portal Gateway (Pemisahan Resmi teestock.id B2C & mitra.teestock.id B2B) */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollRevealSection className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-ts-surface border border-ts-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-ts-mustard/15 border border-ts-mustard/30 text-[10px] font-mono font-bold text-ts-mustard uppercase">
@@ -768,7 +771,7 @@ export function HomePage() {
             <ExternalLink className="w-3.5 h-3.5 text-ts-mustard" />
           </a>
         </div>
-      </section>
+      </ScrollRevealSection>
 
       {/* Editorial Reverse Ticker Divider */}
       <div className="w-full">
@@ -787,9 +790,9 @@ export function HomePage() {
       {/* ====================================================================
           SECTION 6: LEAD CAPTURE & VIP UPDATES (Newsletter Capture)
           ==================================================================== */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollRevealSection className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <NewsletterCapture source="homepage_funnel" />
-      </section>
+      </ScrollRevealSection>
     </div>
   );
 }

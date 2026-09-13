@@ -22,7 +22,7 @@ Setiap bisnis memiliki bahasa visual tegas agar tidak saling tumpang tindih:
 
 | Bisnis | Visual Archetype | Palet Warna Inti | Estetika & Mood | Aksen Khas |
 |---|---|---|---|---|
-| **TeeStock** | *Tokyo / Seoul Cyber Streetwear* | Matte Charcoal (`#161513`), Raw Off-White (`#F4F0EA`), Terracotta Rust (`#B84220`) | Brutalist typography, high contrast, film grain halus, tekstur katun tebal, siluet boxy | Hangtag doff tebal, label thermal A6 minimalis, polymailer matte |
+| **TeeStock** | *Tokyo / Seoul Cyber Streetwear* | Pitch Black (`#0A0A0A`), Chalk White (`#FAFAFA`), Terracotta Heat (`#D95D39`) | Brutalist typography, high contrast, film grain halus, tekstur katun tebal, siluet boxy | Hangtag doff tebal, label thermal A6 minimalis, polymailer matte |
 | **MultiGraph** | *Precision Industrial Craftsman* | Deep Slate Blue (`#1E293B`), Gunmetal (`#334155`), Neon Cyan (`#06B6D4`) | Arsitektural, presisi mekanis, grid tajam, fokus pada detail material kertas & tinta | Cutting die lines, foil stamp holographic, pantone swatch cards |
 | **Titik Buta** | *Dark Provocative & Insight Seeker* | Pitch Black (`#0A0A0A`), Ash Grey (`#71717A`), Acid Lime (`#84CC16`) | Tipografi editorial tajam, negatif space lebar, monokrom dramatis, bayangan tebal | Distorted text, manifesto poster, high grain texture |
 
