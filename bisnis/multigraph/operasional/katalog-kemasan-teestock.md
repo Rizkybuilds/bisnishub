@@ -10,10 +10,10 @@
 
 | # | Item Kemasan | Spesifikasi Teknis | Satuan Belanja | HPP Cetak MultiGraph | Harga Pasok ke TeeStock | Efisiensi Penghematan vs Vendor Luar |
 |---|---|---|---|---|---|---|
-| **1** | **Stiker Vinyl Unboxing** | Bahan Vinyl Glossy/Matte Anti Air, Cetak Full Color, Die-Cut bulat/kotak 5x5 cm atau 6x6 cm. | 100 pcs (1 Pack A3+) | Rp 350 / pcs | **Rp 600 / pcs** | Hemat 40% (Vendor luar: Rp 1.000/pcs) |
-| **2** | **Care Card & Thank You Insert** | Art Carton 260 gsm, Ukuran A6 (105x148 mm), Cetak 2 sisi (Depan: Thank You & Voucher VIP, Belakang: SOP Cuci DTF). | 100 lembar (25 lembar A4) | Rp 450 / lembar | **Rp 750 / lembar** | Hemat 50% (Vendor luar: Rp 1.500/lbr) |
-| **3** | **Polymailer Sablon Logo 1 Warna** | Plastik Polymailer Doff Tebal 30x40 cm warna hitam pekat, Sablon manual logo TeeStock 1 warna putih/terracotta. | 100 pcs | Rp 950 / pcs | **Rp 1.200 / pcs** | Hemat 33% (Vendor luar: Rp 1.800/pcs) |
-| **4** | **Hangtag Distro Kraft** | Kertas Kraft Cokelat Tebal 350 gsm / Art Carton 310 gsm, Ukuran 4x9 cm, Lubang plong 3 mm + Tali kur elastis. | 100 pcs | Rp 250 / pcs | **Rp 450 / pcs** | Hemat 55% (Vendor luar: Rp 1.000/pcs) |
+| **1** | **Stiker Vinyl Unboxing** | Bahan Vinyl Matte Doff Anti Air, Cetak Full Color, Die-Cut 5x5 cm atau 6x6 cm (Collector Sticker Pack Vol. #01: Artwork Drop + Logo Otentik TeeStock). | 100 pcs (1 Pack A3+) | Rp 350 / pcs | **Rp 600 / pcs** | Hemat 40% (Vendor luar: Rp 1.000/pcs) |
+| **2** | **Care Card & Warranty Insert** | Art Carton 260 gsm, Ukuran A6 (105x148 mm), Cetak 2 sisi (Depan: Founder Note, Garansi Retur 100% & QR Code, Belakang: SOP Cuci DTF 155°C). | 100 lembar (25 lembar A4) | Rp 450 / lembar | **Rp 750 / lembar** | Hemat 50% (Vendor luar: Rp 1.500/lbr) |
+| **3** | **Polymailer Sablon Logo Otentik** | Plastik Polymailer Doff Tebal 30x40 cm warna Studio Obsidian / Hitam Doff, Sablon Logo Master Otentik ("The Tee & The Stock") 1 warna Terracotta `#D95D39` / Putih. | 100 pcs | Rp 950 / pcs | **Rp 1.200 / pcs** | Hemat 33% (Vendor luar: Rp 1.800/pcs) |
+| **4** | **Hangtag Distro Kraft** | Kertas Kraft Cokelat Tebal 350 gsm / Art Carton 310 gsm, Ukuran 4x9 cm ber-emblem TeeStock RETAIL APPAREL HOUSE, Lubang plong 3 mm + Tali kur elastis. | 100 pcs | Rp 250 / pcs | **Rp 450 / pcs** | Hemat 55% (Vendor luar: Rp 1.000/pcs) |
 
 ---
 

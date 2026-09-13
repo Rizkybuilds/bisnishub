@@ -29,7 +29,7 @@ Dokumen ini melengkapi analisis bisnis dan brand guide sebelumnya dengan detail 
 2. **First Press:** Letakkan film DTF, press dengan tekanan medium-heavy selama 15 detik pada suhu 155°C – 160°C.
 3. **Cooling (Cold Peel):** Diamkan hingga plastik PET film benar-benar dingin sebelum dikupas perlahan dari sudut ke sudut.
 4. **Finishing Press (Curing):** Tutup sablonan dengan kertas teflon / baking paper, press kembali selama 5–7 detik untuk menanamkan tinta ke dalam pori-pori kain dan menghilangkan kilap plastik berlebih.
-5. **Quality Check & Fold:** Periksa kerataan rekat lem pada sudut sablon, lipat rapi, dan masukkan ke polymailer dengan stiker segel TeeStock.
+5. **Quality Check & Fold:** Periksa kerataan rekat lem pada sudut sablon, lipat rapi, dan masukkan ke polymailer matte doff Studio Obsidian dengan stiker segel logo master otentik TeeStock (*"The Tee & The Stock"*), *Founder Note & 100% Warranty Card*, kartu instruksi cuci DTF 155°C, dan *Collector Sticker Pack*.
 
 ### 1.4 Model Hybrid Inventory & Smart Multi-Hub Routing
 
@@ -57,11 +57,14 @@ Sebagai solopreneur dengan modal dan kapasitas gudang terukur, TeeStock menerapk
 
 ---
 
-## 2. Struktur Channel Penjualan
+## 2. Struktur Channel Penjualan (100% Online Direct-to-Consumer)
+
+> [!NOTE]
+> **100% Online D2C — Tanpa Toko Fisik:** TeeStock tidak menyewa ruko mall atau toko fisik walk-in. Seluruh efisiensi biaya sewa ruko dan SPG (menghemat 60% alokasi biaya) dialihkan langsung untuk memaksimalkan spesifikasi kain (New States Apparel 24s Heavyweight tubular knit) dan sablon DTF double-press in-house di harga ritel terjangkau Rp 99.000.
 
 | Channel | Peran Utama & Karakter |
 |---|---|
-| **Website Utama (`teestock.id` / `teestock.vercel.app`)** | Storefront ritel resmi (B2C Flagship): etalase Drop Originals, katalog NSA Blanks, studio Custom Atelier, dan bio-link terintegrasi. Bersih dari banner grosir/reseller. |
+| **Website Utama (`teestock.id` / `teestock.vercel.app`)** | Storefront ritel resmi (B2C Flagship): mengusung tema **Direction A ("Editorial Lookbook & Interactive Spotlight")** dengan live color swatches hero, etalase Drop Originals, katalog NSA Blanks, studio Custom Atelier, dan bio-link terintegrasi. Bersih dari banner grosir/reseller. |
 | **Marketplace (Shopee & TikTok Shop)** | Kanal volume & akuisisi — etalase rilis Drop #01 dan katalog Kaos Polos resmi, didukung konten video proses heat press in-house (ASMR peel). |
 | **WhatsApp CS Direct** | Konsultasi personal pemesanan Custom Atelier satuan/komunitas dan penanganan garansi 100%. |
 | **Subdomain Kemitraan (`mitra.teestock.id` — Fase 2)** | Dedicated portal khusus reseller dan dropshipper terverifikasi dengan login terisolasi dan harga grosir transparan. |

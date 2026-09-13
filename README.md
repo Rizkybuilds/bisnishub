@@ -95,8 +95,8 @@ ai-mentor-bisnis/
 
 | # | Bisnis | Bidang | Status |
 |---|--------|--------|--------|
-| 1 | **TeeStock** | Apparel POD Brand | 🟡 Launching Prep — Web App Ready, In-House Heat Press Active |
-| 2 | **MultiGraph** | Printing | 🔴 Ideation |
+| 1 | **TeeStock** | Apparel POD & Blanks House | 🟢 Launch Prep — Web App Live, Direction A Lookbook, In-House Heat Press Active, Authentic Master Logo Integrated |
+| 2 | **MultiGraph** | Printing & Packaging Collateral | 🟡 Supporting Arm — Riset B2B & Pasokan Kemasan Unboxing TeeStock |
 | 3 | **Titik Buta** | TBD | 🔴 Ideation |
 
 ## 📌 Konvensi Folder

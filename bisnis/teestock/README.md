@@ -2,11 +2,11 @@
 
 > Curated Apparel & Merch House — *"Wear Your Identity, Stock Your Story"*
 
-**Status:** 🟡 Fase 1: Launching Preparation (Validasi Fisik DTF, In-House Heat Press & Kurasi Drop #01)
+**Status:** 🟢 Fase 1: Launch Preparation (Web App Live, Direction A Lookbook, Authentic Master Logo & In-House Heat Press Active)
 
 ## Tentang
 
-TeeStock adalah *creative apparel & merch house* independen yang memadukan kurasi desain streetwear berkarakter dengan fasilitas studio produksi merchandise. TeeStock beroperasi dengan strategi **100% Fokus Ritel Konsumen (B2C)** melalui 3 pilar:
+TeeStock adalah *creative apparel & merch house* independen yang memadukan kurasi desain streetwear berkarakter dengan fasilitas studio produksi merchandise. TeeStock beroperasi dengan strategi **100% Fokus Ritel Konsumen (B2C)** dan **100% Online Direct-to-Consumer (D2C)** melalui 3 pilar:
 1. **TeeStock Originals (Curated Drop Archive):** Rilis berkala desain tematik (*The Drop Model*, Drop #01: "RAW IDENTITY") di atas katun NSA 24s Heavyweight tubular knit dengan sablon DTF double-press in-house (@ Rp 99.000).
 2. **TeeStock Blanks (Official NSA Blanks):** Kaos polos resmi New States Apparel (24s Heavyweight & 30s Softstyle) dengan opsi instan upsell sablon kustom.
 3. **TeeStock Atelier (Custom Print Lab Satuan):** Layanan sablon DTF satuan tanpa minimum order untuk perorangan, komunitas, dan kreator via WhatsApp order flow.
@@ -50,19 +50,24 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel B2C, po
 
 - **Live URL:** [teestock.vercel.app](https://teestock.vercel.app)
 - **Stack:** React 18 + Vite + Tailwind CSS + Supabase (PostgreSQL + RLS + Auth) + Cloudinary CDN + Vercel PWA
-- **Fitur Storefront Publik (100% Ritel B2C):**
-  - Dynamic Funnel Home (6-section architecture: Hero Hook, Live Drop, 3 Pilar Produk, Trust Specs NSA 24s, Brand Story, VIP Lead Capture).
-  - Dynamic Hybrid Stock & SLA Indicator (⚡ Ready Stock Studio H+0 vs 📦 Stok Gudang Pusat H+1).
-  - Blank-to-Custom DTF Upsell Banner (+Rp 25.000) terintegrasi langsung ke `/custom-order`.
-  - Paket Bundling Hemat AOV Booster (Paket Duo hemat Rp 18k / Paket Trio hemat Rp 42k).
-  - Customer Reviews & Social Proof Engine (rating bintang 4.9/5, meteran kepuasan kain NSA & sablon DTF, verified buyer badge).
-  - Katalog Terkurasi + Filter NSA Blanks.
-  - Detail Produk dengan rekomendasi ukuran & spesifikasi sablon DTF suhu 155°C.
-  - Custom Order Studio (`/custom-order`) dengan formulir spesifikasi otomatis ke WhatsApp.
-  - Cart & Checkout (`/keranjang`) dengan validasi kode kupon/voucher promo.
-  - Pelacakan Pesanan Real-Time (`/tracking`).
-  - Halaman Akun Member (`/akun`) dengan riwayat order dan alamat tersimpan.
-  - Micro Landing Page Bio Link (`/bio`) khusus bio TikTok & Instagram berparameter UTM.
+- **Fitur Storefront Publik (100% Ritel B2C — Direction A Lookbook):**
+  - **Editorial Lookbook & Interactive Spotlight Hero:** Asymmetric split hero berheadline Formula D (*"Kaos Nyaman dengan Desain yang Nggak Pernah Ngebosenin"*), live interactive color swatches langsung di hero, dan tech badge floating.
+  - **21st Category Filter Pills:** Tab navigasi cepat (`all`, `profesi`, `komunitas`, `receh`, `lokal`, `blank`).
+  - **3-Pilar Bento Grid:** Originals (Rp 99.000), Official Blanks (Rp 34k-52k), dan Custom Atelier (Rp 119k-139k).
+  - **Interactive Garment Hotspot Anatomy:** 5 tombol pin interaktif (Kerah anti-bacon 2.2 cm, Tubular knit tanpa jahitan, Katun 180 GSM, Double press 155°C, Kemasan doff) dengan komparasi langsung vs kaos combed 30s distro biasa.
+  - **Visual Cost Transparency Infographic:** Komparasi alokasi biaya 100% Online D2C (70% fisik bahan NSA & sablon) vs Distro Konvensional Mall (hanya 40% untuk bahan, 60% habis untuk sewa ruko & SPG).
+  - **Mobile Sticky Action Bar:** Quick CTA bar di mobile view untuk navigasi cepat ke katalog, blanks, dan custom lab.
+  - **Dynamic Hybrid Stock & SLA Indicator:** (⚡ Ready Stock Studio H+0 vs 📦 Stok Gudang Pusat H+1).
+  - **Blank-to-Custom DTF Upsell Banner:** (+Rp 25.000) terintegrasi langsung ke `/custom-order`.
+  - **Paket Bundling Hemat AOV Booster:** (Paket Duo hemat Rp 18k / Paket Trio hemat Rp 42k).
+  - **Customer Reviews & Social Proof Engine:** rating bintang 4.9/5, meteran kepuasan kain NSA & sablon DTF, verified buyer badge.
+  - **Katalog Terkurasi + Filter NSA Blanks.**
+  - **Detail Produk:** dengan rekomendasi ukuran & spesifikasi sablon DTF suhu 155°C.
+  - **Custom Order Studio (`/custom-order`):** formulir spesifikasi otomatis ke WhatsApp.
+  - **Cart & Checkout (`/keranjang`):** validasi kode kupon/voucher promo & estimasi ongkir.
+  - **Pelacakan Pesanan Real-Time (`/tracking`).**
+  - **Halaman Akun Member (`/akun`):** riwayat order dan alamat tersimpan.
+  - **Micro Landing Page Bio Link (`/bio`):** khusus bio TikTok & Instagram berparameter UTM.
 - **Admin HUB (`/admin`):**
   - Dashboard Analitik & Ringkasan Penjualan.
   - Master Katalog (PIM) CRUD & sync Cloudinary.
@@ -75,7 +80,11 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel B2C, po
   - WhatsApp Custom Quoter instan.
 - **Database Backend:** Single Consolidated Master Schema [`database/schema.sql`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/database/schema.sql) (12 tabel, trigger auth, RLS, view kalkulasi margin, seed data lengkap).
 - **SEO & PWA:** Dynamic OpenGraph (`SEOHead.jsx`), `sitemap.xml`, `robots.txt`, manifest PWA (Add to Home Screen).
-- **Brand Logo:** Aset vektor SVG resmi tumpukan lipatan kaos (*The Stock*) terintegrasi di seluruh komponen.
+- **Brand Logo & Tipografi:** 
+  - Vektor Master Logo Otentik ("The Tee & The Stock" — siluet kaos lipat berkerah crewneck ribbed di atas 3 lipatan bertumpuk) berbasis aset asli founder [`Logo TeeStock Monokrom.png`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/Logo%20TeeStock%20Monokrom.png).
+  - Wordmark tipografi **Plus Jakarta Sans 900 (Black)** dengan tracking rapat `-0.03em`.
+  - Sub-badge resmi: **`RETAIL APPAREL HOUSE`** (JetBrains Mono Bold).
+  - Favicon & App Icon: Terracotta Emblem Badge (`#D95D39`, `rx="22"`).
 - **Source Code:** [`web/`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/web) folder.
 
 ---
@@ -83,9 +92,10 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel B2C, po
 ## 📂 Dokumen & Tools yang Tersedia
 
 ### 🎨 Brand Identity (`brand/`)
-- [**`brand-guide-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/brand-guide-teestock.md) — Identitas brand Curated Apparel & Merch House, dual-pillar architecture, The Drop Model, palet warna, dan packaging experience.
-- `teestock-logo.svg` & `web/public/logo-teestock.svg` — Master logo vektor resolusi tinggi.
-- `teestock-logo-master-dark.jpg` & `teestock-logo-master-light.jpg` — Master logo visual.
+- [**`brand-guide-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/brand-guide-teestock.md) — Identitas brand Curated Apparel & Merch House, dual-pillar architecture, The Drop Model, anatomi logo otentik, palet warna, dan packaging experience.
+- [`Logo TeeStock Monokrom.png`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/Logo%20TeeStock%20Monokrom.png) — Aset master asli 1024px dari founder.
+- [`teestock-logo.svg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/teestock-logo.svg) & [`web/public/logo-teestock.svg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/web/public/logo-teestock.svg) — Master logo vektor resolusi tinggi dan Terracotta app icon badge.
+- `teestock-logo-master-dark.jpg` & `teestock-logo-master-light.jpg` — Master logo visual preview.
 
 ### ⚙️ Operasional & Roadmap (`operasional/`)
 - [**`arsitektur-otomasi-website.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/operasional/arsitektur-otomasi-website.md) — Blueprint otomatisasi penuh (Midtrans, Fonnte WA, Biteship API, n8n, Vercel, Supabase).
@@ -99,7 +109,7 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel B2C, po
 
 ### 📊 Riset & Strategi (`riset/`)
 - [**`analisis-bisnis-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/riset/analisis-bisnis-teestock.md) — Riset pasar riil, unit economics aktual HPP Rp 48k–54k, strategi multi-tier, dan scoring matrix.
-- `analisis-website-teestock.md` — Analisis kebutuhan arsitektur website React + Supabase.
+- [**`analisis-website-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/riset/analisis-website-teestock.md) — Analisis kebutuhan arsitektur website React + Supabase.
 - `daftar-niche-teestock.md` — Pustaka 197 niche dalam 17 kategori sebagai bank ide Drop masa depan.
 
 ---
@@ -108,7 +118,9 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel B2C, po
 
 1. [x] **Inspeksi Fisik Blank Kaos:** Blank NSA 24s sudah dipegang dan tervalidasi bagus.
 2. [x] **Kesiapan Alat Produksi:** Mesin heat press in-house sudah siap di rumah.
-3. [ ] **Uji Coba DTF & Stress Test (Hari Ini):** Cetak sampel DTF, lakukan press dengan suhu 155°C, uji kupas film dan uji cuci 3x.
-4. [ ] **Dokumentasi Video Aset Konten:** Rekam proses press dan kupas DTF (ASMR peel) sebagai bahan video peluncuran TikTok & Reels.
-5. [ ] **Kurasi 3–4 Desain Drop #01:** Pilih 3–4 desain jagoan dari bank desain dengan satu tema payung yang konsisten.
-6. [ ] **First 5–10 Sales:** Buka batch perdana (24 pcs kuota) dengan promo launching Rp 89.000 – Rp 99.000 ke circle terdekat via WhatsApp & link `/bio`.
+3. [x] **Master Brand Identity & Logo Otentik:** Vektorisasi presisi master logo asli "The Tee & The Stock" dan integrasi tipografi Plus Jakarta Sans 900.
+4. [x] **Modern Editorial Lookbook Storefront:** Desain Direction A live dengan split hero, live color swatches, hotspot anatomy, dan infografis cost transparency.
+5. [ ] **Uji Coba DTF & Stress Test (Hari Ini):** Cetak sampel DTF, lakukan press dengan suhu 155°C, uji kupas film dan uji cuci 3x.
+6. [ ] **Dokumentasi Video Aset Konten:** Rekam proses press dan kupas DTF (ASMR peel) sebagai bahan video peluncuran TikTok & Reels.
+7. [ ] **Kurasi 3–4 Desain Drop #01:** Pilih 3–4 desain jagoan dari bank desain dengan satu tema payung yang konsisten ("RAW IDENTITY").
+8. [ ] **First 5–10 Sales:** Buka batch perdana (24 pcs kuota) dengan promo launching Rp 89.000 – Rp 99.000 ke circle terdekat via WhatsApp & link `/bio`.

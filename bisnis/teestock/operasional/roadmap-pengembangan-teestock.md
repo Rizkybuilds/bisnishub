@@ -41,10 +41,12 @@ Dokumen ini memetakan tahapan pengembangan TeeStock dari rilis perdana hingga me
 **Fokus Utama:** Membuktikan kualitas fisik sablon DTF in-house pada suhu 155°C di atas bahan New States Apparel (NSA) Heavyweight 24s tubular knit, meluncurkan koleksi perdana **Drop #01: "RAW IDENTITY"**, mengaktifkan penjualan kaos polos resmi dan pesanan sablon custom satuan via WhatsApp, serta mengamankan 10–20 pembeli retail pertama.
 
 ### Status Pencapaian (Update September 2026):
-* `[x]` **Storefront Ritel Bersih 100%:** Desain web teestock.id murni berorientasi B2C tanpa banner reseller/kemitraan yang mengaburkan harga pasar.
+* `[x]` **Storefront Ritel Bersih 100% & Direction A Lookbook:** Desain web teestock.id murni B2C dengan implementasi Direction A ("Editorial Lookbook & Interactive Spotlight"), split hero, live color swatches, 21st category filter pills, garment hotspot anatomy, cost transparency infographic, dan mobile action bar.
+* `[x]` **Master Brand Identity & Logo Otentik:** Penggantian total logo sample AI dengan Vektor Master Otentik ("The Tee & The Stock") berbasis aset founder `Logo TeeStock Monokrom.png`, tipografi Plus Jakarta Sans 900 (Black), badge `RETAIL APPAREL HOUSE`, dan Terracotta favicon badge.
 * `[x]` **Validasi Bahan Fisik:** Sampel fisik kaos polos NSA 24s Heavyweight sudah dipegang langsung oleh founder dan lulus verifikasi ketebalan serta fitting garmen.
 * `[x]` **Kesiapan Alat In-House:** Mesin heat press pribadi aktif di rumah (menghemat ongkos press Rp 5.000 – Rp 7.000 per kaos).
 * `[x]` **Infrastruktur Multi-Hub:** Penetapan peran *TeeStock Central Studio (Citayam Hub)* untuk produksi sablon/custom & *TeeStock Satellite Hub (Bogor)* untuk blanks same-day.
+* `[x]` **Kualitas Kode & Testing:** 85/85 Vitest unit & integration test lolos, Vite production bundle berhasil di-compile tanpa error.
 
 ### Tindakan Konkret Saat Ini:
 1. **Uji Coba DTF & Quality Control In-House (Hari Ini):**
