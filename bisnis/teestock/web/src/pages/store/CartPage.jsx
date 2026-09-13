@@ -154,6 +154,36 @@ export function CartPage() {
     }
   };
 
+  const triggerSnapPayment = (token, redirectUrl) => {
+    if (typeof window !== 'undefined' && window.snap && typeof window.snap.pay === 'function' && token) {
+      try {
+        window.snap.pay(token, {
+          onSuccess: (res) => {
+            console.log('Midtrans payment success callback:', res);
+          },
+          onPending: (res) => {
+            console.log('Midtrans payment pending callback:', res);
+          },
+          onError: (err) => {
+            console.error('Midtrans payment error callback:', err);
+          },
+          onClose: () => {
+            console.log('Midtrans payment popup closed by customer');
+          }
+        });
+        return;
+      } catch (e) {
+        console.warn('snap.pay runtime exception:', e);
+      }
+    }
+
+    // Direct redirection fallback if window.snap is blocked by browser or extensions
+    const directUrl = redirectUrl || (token ? `https://app.midtrans.com/snap/v4/redirection/${token}` : null);
+    if (directUrl && typeof window !== 'undefined') {
+      window.open(directUrl, '_blank');
+    }
+  };
+
   // Called when CheckoutShippingForm passes Zod schema validation
   const handleProcessOrder = async (formData) => {
     setIsSubmitting(true);
@@ -205,22 +235,13 @@ export function CartPage() {
       try {
         paymentSession = await createPaymentSession(createdOrder, paymentMethod);
 
-        // Handle Midtrans Snap popup jika token telah tersedia
-        if (isInstantPayment && typeof window !== 'undefined' && window.snap && paymentSession?.token) {
-          window.snap.pay(paymentSession.token, {
-            onSuccess: (res) => {
-              console.log('Midtrans payment success callback:', res);
-            },
-            onPending: (res) => {
-              console.log('Midtrans payment pending callback:', res);
-            },
-            onError: (err) => {
-              console.error('Midtrans payment error callback:', err);
-            },
-            onClose: () => {
-              console.log('Midtrans payment popup closed by customer');
-            }
-          });
+        // Auto trigger popup with safe timing
+        if (isInstantPayment && (paymentSession?.token || createdOrder?.snapToken)) {
+          const snapTok = paymentSession?.token || createdOrder?.snapToken;
+          const redir = paymentSession?.redirectUrl || createdOrder?.redirectUrl;
+          setTimeout(() => {
+            triggerSnapPayment(snapTok, redir);
+          }, 300);
         }
       } catch (payErr) {
         console.warn('Payment session initialization warning, falling back to manual verification:', payErr);
@@ -249,7 +270,9 @@ export function CartPage() {
         itemCount: cart.length,
         paymentMethod,
         isInstantPayment,
-        paymentSession
+        paymentSession,
+        snapToken: paymentSession?.token || createdOrder?.snapToken || null,
+        redirectUrl: paymentSession?.redirectUrl || createdOrder?.redirectUrl || null
       });
 
       clearCart();
@@ -334,14 +357,41 @@ export function CartPage() {
             <div className="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-200 flex items-start gap-2">
               <ShieldCheck className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
               <p className="leading-relaxed">
-                Tanda terima pesanan otomatis dikirimkan ke WhatsApp <strong className="text-white font-mono">{orderComplete.phone}</strong>. Pesanan Anda segera disiapkan oleh tim produksi.
+                Tanda terima pesanan tercatat di sistem antrean studio. Silakan selesaikan pembayaran untuk memulai proses sablon DTF 155°C.
               </p>
+            </div>
+
+            {/* Tombol Utama: Buka Layar Pembayaran Midtrans Snap */}
+            <div className="space-y-2 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  const snapTok = orderComplete.paymentSession?.token || orderComplete.snapToken;
+                  const redir = orderComplete.paymentSession?.redirectUrl || orderComplete.redirectUrl;
+                  triggerSnapPayment(snapTok, redir);
+                }}
+                className="w-full py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-extrabold text-sm shadow-xl shadow-sky-500/25 hover:shadow-sky-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer ring-2 ring-sky-400/40 animate-pulse"
+              >
+                <Zap className="w-5 h-5 text-yellow-300 fill-yellow-300" />
+                <span>Bayar Sekarang (Buka Layar QRIS / VA)</span>
+              </button>
+
+              {(orderComplete.paymentSession?.redirectUrl || orderComplete.redirectUrl || orderComplete.paymentSession?.token) && (
+                <a
+                  href={orderComplete.paymentSession?.redirectUrl || orderComplete.redirectUrl || `https://app.midtrans.com/snap/v4/redirection/${orderComplete.paymentSession?.token}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block text-center text-[11px] text-sky-400 hover:text-sky-300 hover:underline pt-1 transition-colors"
+                >
+                  Layar pembayaran belum muncul? Klik di sini untuk bayar langsung &rarr;
+                </a>
+              )}
             </div>
 
             <a href={waUrl} target="_blank" rel="noreferrer" className="block w-full pt-1">
               <button
                 type="button"
-                className="w-full py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-ts-kremMuted hover:text-white font-semibold text-xs border border-white/[0.08] transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Konfirmasi Status Pesanan ke Admin via WhatsApp</span>
               </button>

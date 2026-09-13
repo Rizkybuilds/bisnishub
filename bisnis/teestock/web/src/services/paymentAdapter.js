@@ -188,6 +188,7 @@ export async function createPaymentSession(order, providerId = PAYMENT_PROVIDERS
         provider: PAYMENT_PROVIDERS.MIDTRANS_SNAP,
         orderId: order.order_number || order.id,
         token: order.snapToken || null,
+        redirectUrl: order.redirectUrl || null,
         parameter,
         isSimulated: false,
         message: 'Midtrans Snap siap diluncurkan'
