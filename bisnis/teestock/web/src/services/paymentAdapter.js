@@ -190,7 +190,7 @@ export async function createPaymentSession(order, providerId = PAYMENT_PROVIDERS
   if (cleanProvider === PAYMENT_PROVIDERS.MIDTRANS_SNAP) {
     const clientKey = options.clientKey !== undefined
       ? options.clientKey
-      : ((typeof import.meta !== 'undefined' && import.meta.env?.VITE_MIDTRANS_CLIENT_KEY) || 'Mid-client-DL-HKOnueKXtxjSF');
+      : ((typeof import.meta !== 'undefined' && import.meta.env?.VITE_MIDTRANS_CLIENT_KEY) || 'Mid-client-WWRMeWNQzS_zx-E-');
     const isProduction = options.isProduction !== undefined
       ? options.isProduction
       : ((typeof import.meta !== 'undefined' && import.meta.env?.VITE_MIDTRANS_IS_PRODUCTION === 'true') || clientKey.startsWith('Mid-client-'));

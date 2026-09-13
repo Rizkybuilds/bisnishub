@@ -154,31 +154,56 @@ export function CartPage() {
     }
   };
 
-  const triggerSnapPayment = (token, redirectUrl) => {
-    if (typeof window !== 'undefined' && window.snap && typeof window.snap.pay === 'function' && token) {
-      try {
-        window.snap.pay(token, {
-          onSuccess: (res) => {
-            console.log('Midtrans payment success callback:', res);
-          },
-          onPending: (res) => {
-            console.log('Midtrans payment pending callback:', res);
-          },
-          onError: (err) => {
-            console.error('Midtrans payment error callback:', err);
-          },
-          onClose: () => {
-            console.log('Midtrans payment popup closed by customer');
-          }
+  const triggerSnapPayment = async (token, redirectUrl) => {
+    const isSandbox = Boolean(redirectUrl && redirectUrl.includes('sandbox.midtrans.com'));
+    const targetScriptSrc = isSandbox 
+      ? 'https://app.sandbox.midtrans.com/snap/snap.js'
+      : 'https://app.midtrans.com/snap/snap.js';
+    
+    if (typeof window !== 'undefined') {
+      const existingScript = document.querySelector('script[src*="/snap/snap.js"]');
+      if (existingScript && !existingScript.src.includes(isSandbox ? 'sandbox' : 'app.midtrans.com')) {
+        existingScript.remove();
+        delete window.snap;
+      }
+
+      if (!window.snap) {
+        await new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = targetScriptSrc;
+          script.setAttribute('data-client-key', 'Mid-client-WWRMeWNQzS_zx-E-');
+          script.async = true;
+          script.onload = () => resolve(window.snap);
+          script.onerror = () => resolve(null);
+          document.head.appendChild(script);
         });
-        return;
-      } catch (e) {
-        console.warn('snap.pay runtime exception:', e);
+      }
+
+      if (window.snap && typeof window.snap.pay === 'function' && token) {
+        try {
+          window.snap.pay(token, {
+            onSuccess: (res) => {
+              console.log('Midtrans payment success callback:', res);
+            },
+            onPending: (res) => {
+              console.log('Midtrans payment pending callback:', res);
+            },
+            onError: (err) => {
+              console.error('Midtrans payment error callback:', err);
+            },
+            onClose: () => {
+              console.log('Midtrans payment popup closed by customer');
+            }
+          });
+          return;
+        } catch (e) {
+          console.warn('snap.pay runtime exception:', e);
+        }
       }
     }
 
     // Direct redirection fallback if window.snap is blocked by browser or extensions
-    const directUrl = redirectUrl || (token ? `https://app.midtrans.com/snap/v4/redirection/${token}` : null);
+    const directUrl = redirectUrl || (token ? `https://${isSandbox ? 'app.sandbox.midtrans.com' : 'app.midtrans.com'}/snap/v4/redirection/${token}` : null);
     if (directUrl && typeof window !== 'undefined') {
       window.open(directUrl, '_blank');
     }

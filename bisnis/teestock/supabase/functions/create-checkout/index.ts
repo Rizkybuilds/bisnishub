@@ -194,9 +194,10 @@ Deno.serve(async (req: Request) => {
     // 7. Request Midtrans Snap Token if payment method is Midtrans
     let snapToken = null;
     let redirectUrl = null;
+    let midtransError: any = null;
 
     if (paymentMethod === 'midtrans_snap') {
-      const serverKey = Deno.env.get('MIDTRANS_SERVER_KEY') || 'Mid-server-c8SVBfpNa3-M-QcqYFTnHXwv';
+      const serverKey = Deno.env.get('MIDTRANS_SERVER_KEY') || 'Mid-server-aS32AAjPc00_rz6QdJGyNPvV';
       const isProduction = Deno.env.get('MIDTRANS_IS_PRODUCTION') === 'true' || serverKey.startsWith('Mid-server-');
       const snapApiUrl = isProduction
         ? 'https://app.midtrans.com/snap/v1/transactions'
@@ -271,7 +272,7 @@ Deno.serve(async (req: Request) => {
 
       try {
         const authHeader = 'Basic ' + btoa(`${serverKey}:`);
-        const snapRes = await fetch(snapApiUrl, {
+        let snapRes = await fetch(snapApiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -281,6 +282,26 @@ Deno.serve(async (req: Request) => {
           body: JSON.stringify(snapPayload)
         });
 
+        // If 401 unauthorized, try alternate environment (Sandbox <-> Production)
+        if (snapRes.status === 401) {
+          const alternateUrl = isProduction
+            ? 'https://app.sandbox.midtrans.com/snap/v1/transactions'
+            : 'https://app.midtrans.com/snap/v1/transactions';
+          console.warn(`Midtrans 401 on ${snapApiUrl}, attempting alternate environment: ${alternateUrl}`);
+          const altRes = await fetch(alternateUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': authHeader
+            },
+            body: JSON.stringify(snapPayload)
+          });
+          if (altRes.ok) {
+            snapRes = altRes;
+          }
+        }
+
         if (snapRes.ok) {
           const snapData = await snapRes.json();
           snapToken = snapData.token;
@@ -288,9 +309,11 @@ Deno.serve(async (req: Request) => {
         } else {
           const snapErrText = await snapRes.text();
           console.error('Midtrans Snap API Error:', snapRes.status, snapErrText);
+          midtransError = { status: snapRes.status, message: snapErrText, apiUrl: snapApiUrl };
         }
-      } catch (snapEx) {
+      } catch (snapEx: any) {
         console.error('Midtrans network exception:', snapEx);
+        midtransError = { exception: snapEx.message || String(snapEx) };
       }
     }
 
@@ -309,6 +332,7 @@ Deno.serve(async (req: Request) => {
           paymentMethod,
           snapToken,
           redirectUrl,
+          midtransError,
           items: verifiedOrderItems
         }
       }),
