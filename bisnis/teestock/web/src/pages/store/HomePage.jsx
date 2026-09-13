@@ -128,7 +128,7 @@ export function HomePage() {
 
 
   return (
-    <div className="relative min-h-screen space-y-20 sm:space-y-28 pb-24 overflow-hidden">
+    <div className="relative min-h-screen space-y-12 sm:space-y-24 lg:space-y-28 pb-24 overflow-hidden">
       <SEOHead
         title="TeeStock Apparel | Curated Merch & Kaos NSA 24s Heavyweight Original"
         description="Brand apparel kurasi dan studio sablon DTF cepat. 100% garmen New States Apparel (NSA) Heavyweight 24s & Softstyle 30s original tanpa jahitan samping. Beli ritel, custom satuan, atau kemitraan dropship."
@@ -144,68 +144,70 @@ export function HomePage() {
       {/* ====================================================================
           SECTION 1: EDITORIAL SPLIT HERO (Direction A — Asymmetric Spotlight)
           ==================================================================== */}
-      <section className="relative pt-6 sm:pt-12 pb-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <section className="relative pt-4 sm:pt-12 pb-4 sm:pb-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
           {/* Left Column (7 cols): Editorial Typography, Value Prop, CTAs, Micro-Trust */}
-          <div className="lg:col-span-7 text-left space-y-6">
+          <div className="lg:col-span-7 text-left space-y-5 sm:space-y-6">
             {/* Floating Release Badge: Curated Graphic Archive */}
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-ts-surface border border-ts-border backdrop-blur-xl text-xs text-ts-krem shadow-sm hover:border-ts-terracotta/40 transition-all">
-              <Sparkles className="w-3.5 h-3.5 text-ts-terracotta" />
-              <span className="font-mono text-[11px] text-ts-terracotta font-black uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-ts-surface border border-ts-border backdrop-blur-xl text-xs text-ts-krem shadow-sm hover:border-ts-terracotta/40 transition-all max-w-full overflow-hidden">
+              <Sparkles className="w-3.5 h-3.5 text-ts-terracotta shrink-0" />
+              <span className="font-mono text-[10px] sm:text-[11px] text-ts-terracotta font-black uppercase tracking-wider truncate">
                 THE CURATED GRAPHIC ARCHIVE
               </span>
-              <span className="text-ts-borderHover">•</span>
-              <span className="font-mono text-[10px] text-ts-kremMuted font-bold uppercase tracking-wider">
+              <span className="text-ts-borderHover shrink-0">•</span>
+              <span className="font-mono text-[9px] sm:text-[10px] text-ts-kremMuted font-bold uppercase tracking-wider truncate">
                 100% NSA 24S HEAVYWEIGHT
               </span>
             </div>
 
-            {/* Hero Title & Value Proposition (Opsi A — Pure Minimalist) */}
-            <div className="space-y-3.5">
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-ts-krem leading-[1.08]">
+            {/* Hero Title & Value Proposition */}
+            <div className="space-y-3">
+              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black tracking-tight text-ts-krem leading-[1.1]">
                 Wear Your <span className="text-ts-terracotta">Identity.</span>
               </h1>
 
-              <p className="text-sm sm:text-base text-ts-kremMuted max-w-xl leading-relaxed font-normal">
+              <p className="text-xs sm:text-base text-ts-kremMuted max-w-xl leading-relaxed font-normal">
                 Kurasi beragam pilihan karya grafis berkarakter kuat di atas katun New States Apparel 24s Heavyweight tanpa jahitan samping. Dikerjakan presisi di studio in-house kami.
               </p>
             </div>
 
             {/* Primary Action CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              <a href="#katalog-section">
-                <Button size="lg" variant="primary" icon={ArrowRight} className="px-6 py-3 text-sm font-bold shadow-sm">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-1">
+              <a href="#katalog-section" className="w-full sm:w-auto">
+                <Button size="lg" variant="primary" icon={ArrowRight} className="w-full sm:w-auto justify-center px-6 py-3 text-xs sm:text-sm font-bold shadow-sm">
                   Jelajahi Pilihan Desain
                 </Button>
               </a>
-              <Link to="/polos">
-                <Button size="lg" variant="secondary" icon={Package} className="px-5 py-3 text-sm font-bold border-ts-border bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem">
-                  The Blanks
-                </Button>
-              </Link>
-              <Link to="/custom-order">
-                <Button size="lg" variant="secondary" icon={Palette} className="px-5 py-3 text-sm border-ts-border bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem font-bold">
-                  Studio Lab
-                </Button>
-              </Link>
+              <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-3 w-full sm:w-auto">
+                <Link to="/polos" className="w-full sm:w-auto">
+                  <Button size="lg" variant="secondary" icon={Package} className="w-full sm:w-auto justify-center px-3 sm:px-5 py-3 text-xs sm:text-sm font-bold border-ts-border bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem">
+                    The Blanks
+                  </Button>
+                </Link>
+                <Link to="/custom-order" className="w-full sm:w-auto">
+                  <Button size="lg" variant="secondary" icon={Palette} className="w-full sm:w-auto justify-center px-3 sm:px-5 py-3 text-xs sm:text-sm border-ts-border bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem font-bold">
+                    Studio Lab
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             {/* Micro Trust Stats */}
-            <div className="pt-2 flex flex-wrap items-center gap-4 sm:gap-6 text-xs font-mono text-ts-kremMuted border-t border-ts-border">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+            <div className="pt-2 grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-6 text-[11px] sm:text-xs font-mono text-ts-kremMuted border-t border-ts-border">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                 <span>100% NSA Original</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>180 GSM Tubular Knit</span>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>180 GSM Tubular</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>155°C In-House Curing</span>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>155°C Dual Press</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                 <span>Garansi Retur 100%</span>
               </div>
             </div>
@@ -213,14 +215,14 @@ export function HomePage() {
 
           {/* Right Column (5 cols): Interactive Lookbook Spotlight Showcase */}
           <div className="lg:col-span-5">
-            <div className="p-4 sm:p-5 rounded-3xl bg-ts-surface border border-ts-border shadow-elevation relative overflow-hidden space-y-4">
+            <div className="p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-ts-surface border border-ts-border shadow-elevation relative overflow-hidden space-y-3 sm:space-y-4">
               {/* Spotlight Top Bar */}
               <div className="flex items-center justify-between text-xs font-mono">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-ts-terracotta animate-pulse" />
-                  <span className="text-[11px] font-bold text-ts-krem uppercase tracking-wider">LOOKBOOK SPOTLIGHT</span>
+                  <span className="text-[10px] sm:text-[11px] font-bold text-ts-krem uppercase tracking-wider">LOOKBOOK SPOTLIGHT</span>
                 </div>
-                <span className="px-2 py-0.5 rounded bg-ts-surfaceHover text-ts-krem text-[10px] border border-ts-border font-bold">
+                <span className="px-2 py-0.5 rounded bg-ts-surfaceHover text-ts-krem text-[9px] sm:text-[10px] border border-ts-border font-bold">
                   {featuredProduct.sku || 'TS-FEATURED'}
                 </span>
               </div>
@@ -228,7 +230,7 @@ export function HomePage() {
               {/* Garment Mockup Showcase Box with Floating Tech Badges */}
               <Link
                 to={`/produk/${featuredProduct.sku}?color=${encodeURIComponent(heroSelectedColor)}`}
-                className="block aspect-[4/4] sm:aspect-[4/4.2] rounded-2xl bg-ts-surfaceHover/50 relative overflow-hidden flex items-center justify-center p-4 border border-ts-border group cursor-pointer"
+                className="block aspect-[4/4] sm:aspect-[4/4.2] rounded-2xl bg-ts-surfaceHover/50 relative overflow-hidden flex items-center justify-center p-3 sm:p-4 border border-ts-border group cursor-pointer"
                 aria-label={`Buka detail produk ${featuredProduct.name} varian ${heroSelectedColor}`}
               >
                 <img
@@ -239,28 +241,28 @@ export function HomePage() {
                 />
 
                 {/* Floating Badge Top-Left: Fabric Spec */}
-                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-xl bg-ts-surfaceCard/90 backdrop-blur-md border border-ts-border text-[10px] font-mono text-ts-krem flex items-center gap-1.5 shadow-sm">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl bg-ts-surfaceCard/90 backdrop-blur-md border border-ts-border text-[9px] sm:text-[10px] font-mono text-ts-krem flex items-center gap-1.5 shadow-sm">
+                  <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-500" />
                   <span className="font-bold">NSA 24s (180 GSM)</span>
                 </div>
 
                 {/* Floating Badge Top-Right: Press Spec */}
-                <div className="absolute top-3 right-3 px-2.5 py-1 rounded-xl bg-ts-surfaceCard/90 backdrop-blur-md border border-ts-terracotta/30 text-[10px] font-mono text-ts-terracotta flex items-center gap-1.5 shadow-sm">
-                  <Flame className="w-3.5 h-3.5 text-ts-terracotta" />
-                  <span className="font-bold">155°C In-House</span>
+                <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl bg-ts-surfaceCard/90 backdrop-blur-md border border-ts-terracotta/30 text-[9px] sm:text-[10px] font-mono text-ts-terracotta flex items-center gap-1.5 shadow-sm">
+                  <Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-ts-terracotta" />
+                  <span className="font-bold">155°C Dual-Press</span>
                 </div>
 
                 {/* Floating Badge Bottom-Left: Live Color Tag */}
-                <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-xl bg-ts-surfaceCard/90 backdrop-blur-md border border-ts-border text-[10px] font-mono text-ts-krem flex items-center gap-1.5 shadow-sm">
+                <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl bg-ts-surfaceCard/90 backdrop-blur-md border border-ts-border text-[9px] sm:text-[10px] font-mono text-ts-krem flex items-center gap-1.5 shadow-sm">
                   <span
-                    className="w-2.5 h-2.5 rounded-full border border-ts-border"
+                    className="w-2 h-2 rounded-full border border-ts-border"
                     style={{ backgroundColor: getColorHex(heroSelectedColor) }}
                   />
                   <span className="font-bold">{heroSelectedColor}</span>
                 </div>
 
                 {/* Floating Badge Bottom-Right: Price */}
-                <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-xl bg-zinc-950/90 dark:bg-black/90 backdrop-blur-md border border-white/20 text-[11px] font-mono text-white font-black shadow-sm">
+                <div className="absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl bg-zinc-950/90 dark:bg-black/90 backdrop-blur-md border border-white/20 text-[10px] sm:text-[11px] font-mono text-white font-black shadow-sm">
                   {formatRupiah(featuredProduct.priceRetail || featuredProduct.price_retail || 99000)}
                 </div>
               </Link>
@@ -268,11 +270,11 @@ export function HomePage() {
               {/* Interactive Swatch Selector directly on the Hero */}
               <div className="space-y-2 pt-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-ts-krem font-bold truncate max-w-[200px]">{featuredProduct.name}</span>
-                  <span className="text-[10px] font-mono text-ts-muted">Pilih Mockup Warna:</span>
+                  <span className="text-ts-krem font-bold truncate max-w-[170px] sm:max-w-[200px]">{featuredProduct.name}</span>
+                  <span className="text-[10px] font-mono text-ts-muted">Pilih Warna:</span>
                 </div>
                 
-                <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Pilihan warna spotlight">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap" role="group" aria-label="Pilihan warna spotlight">
                   {heroColors.slice(0, 6).map((colorName) => {
                     const hex = getColorHex(colorName);
                     const isSelected = heroSelectedColor === colorName;
@@ -284,14 +286,14 @@ export function HomePage() {
                         aria-label={`Pilih warna ${colorName}`}
                         aria-pressed={isSelected}
                         onClick={() => setHeroSelectedColor(colorName)}
-                        className={`p-1 rounded-full cursor-pointer transition-all duration-200 ${
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full cursor-pointer flex items-center justify-center transition-all duration-200 ${
                           isSelected
-                            ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-surface scale-110'
+                            ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-surface scale-105'
                             : 'ring-1 ring-ts-border hover:ring-ts-borderHover opacity-80 hover:opacity-100'
                         }`}
                       >
                         <span
-                          className="w-5 h-5 rounded-full inline-block shadow-sm"
+                          className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full inline-block shadow-sm"
                           style={{ backgroundColor: hex }}
                         />
                       </button>
@@ -303,7 +305,7 @@ export function HomePage() {
               {/* Link to detail */}
               <Link
                 to={`/produk/${featuredProduct.sku}?color=${encodeURIComponent(heroSelectedColor)}`}
-                className="w-full py-2.5 rounded-xl bg-ts-surfaceHover text-ts-krem font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all border border-ts-border hover:border-white/20"
+                className="w-full py-2.5 px-3 rounded-xl bg-ts-surfaceHover text-ts-krem font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all border border-ts-border hover:border-white/20"
               >
                 <span>Buka Detail &amp; Order Kaos Ini</span>
                 <ArrowRight className="w-3.5 h-3.5 text-ts-krem" />
@@ -319,26 +321,26 @@ export function HomePage() {
       {/* ====================================================================
           SECTION 2: CATALOG SHOWCASE WITH CATEGORY FILTER PILLS
           ==================================================================== */}
-      <section id="katalog-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 scroll-mt-24">
+      <section id="katalog-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 scroll-mt-24">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-ts-border pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3.5 sm:gap-4 border-b border-ts-border pb-4 sm:pb-5">
           <div>
-            <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-ts-kremMuted bg-ts-surface px-3 py-1 rounded-full border border-ts-border mb-2.5">
+            <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-ts-kremMuted bg-ts-surface px-3 py-1 rounded-full border border-ts-border mb-2">
               <Sparkles className="w-3.5 h-3.5 text-ts-krem" />
               <span>ARSIP KURASI GRAFIS // BANYAK PILIHAN DESAIN</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-black text-ts-krem tracking-tight">
+            <h2 className="text-xl sm:text-3xl lg:text-4xl font-black text-ts-krem tracking-tight">
               Koleksi Grafis &amp; Kaos Polos Pilihan
             </h2>
-            <p className="text-xs sm:text-sm text-ts-kremMuted mt-1.5 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-ts-kremMuted mt-1 max-w-2xl leading-relaxed">
               Temukan grafis yang mewakili identitasmu atau ambil kaos polos New States Apparel original. Kualitas garmen tubular knit tanpa jahitan samping, awet dicuci harian.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
             <Link
               to="/katalog"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem border border-ts-border transition-all"
+              className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem border border-ts-border transition-all shadow-sm"
             >
               <span>Buka Semua Katalog ({catalog.length})</span>
               <ArrowRight className="w-3.5 h-3.5 text-ts-krem" />
@@ -347,7 +349,7 @@ export function HomePage() {
         </div>
 
         {/* Category Filter Pills (Monochrome High-End) */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 touch-pan-x">
           {[
             { id: 'all', label: 'Semua Desain', icon: Flame },
             { id: 'statement', label: 'Graphic Statement', icon: Code2 },
@@ -361,7 +363,7 @@ export function HomePage() {
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold whitespace-nowrap transition-all ${
+                className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-mono font-bold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
                     ? 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 shadow-sm border border-zinc-950 dark:border-white'
                     : 'bg-ts-surface text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover border border-ts-border'
@@ -376,7 +378,7 @@ export function HomePage() {
 
         {/* Dynamic Products Grid */}
         {displayedProducts.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {displayedProducts.map((p) => (
               <ProductCard
                 key={p.sku}
@@ -395,25 +397,24 @@ export function HomePage() {
           </div>
         )}
 
-
         {/* Direct Studio Advantage Banner */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-ts-surface border border-ts-border flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-          <div className="flex items-center gap-3.5 text-center sm:text-left">
-            <div className="w-10 h-10 rounded-xl bg-ts-surfaceHover text-ts-terracotta flex items-center justify-center shrink-0 border border-ts-border">
+        <div className="p-4 sm:p-6 rounded-2xl bg-ts-surface border border-ts-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 sm:gap-4 shadow-sm">
+          <div className="flex items-start sm:items-center gap-3 text-left">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-ts-surfaceHover text-ts-terracotta flex items-center justify-center shrink-0 border border-ts-border mt-0.5 sm:mt-0">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-sm sm:text-base font-bold text-ts-krem uppercase tracking-tight font-mono">
+              <h4 className="text-xs sm:text-base font-bold text-ts-krem uppercase tracking-tight font-mono">
                 The Direct Studio Privilege // Official Store Perk
               </h4>
-              <p className="text-xs text-ts-kremMuted mt-0.5">
+              <p className="text-xs text-ts-kremMuted mt-0.5 leading-relaxed">
                 Order via website resmi: 2x Limited Die-Cut Vinyl Stickers, kemasan matte doff, dan prioritas antrean studio H+0/H+1.
               </p>
             </div>
           </div>
           <Link
             to="/katalog"
-            className="shrink-0 px-5 py-2.5 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white font-mono font-bold text-xs flex items-center gap-2 transition-all active:scale-95 shadow-sm"
+            className="w-full sm:w-auto justify-center shrink-0 px-4 sm:px-5 py-2.5 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white font-mono font-bold text-xs flex items-center gap-2 transition-all active:scale-95 shadow-sm text-center"
           >
             <span>JELAJAHI SEMUA DESAIN</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -429,13 +430,13 @@ export function HomePage() {
       {/* ====================================================================
           SECTION 3: 3 WAYS TO SHOP — BENTO GRID (Katalog, Polos, Custom)
           ==================================================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center max-w-2xl mx-auto space-y-2.5">
-          <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-ts-krem tracking-widest uppercase bg-ts-surface px-3.5 py-1 rounded-full border border-ts-border">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+        <div className="text-center max-w-2xl mx-auto space-y-2">
+          <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-ts-krem tracking-widest uppercase bg-ts-surface px-3 py-1 rounded-full border border-ts-border">
             <Layers className="w-3.5 h-3.5 text-ts-terracotta" />
             <span>THE THREE HOUSES // TEESTOCK ARCHITECTURE</span>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-black text-ts-krem tracking-tight uppercase">
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-black text-ts-krem tracking-tight uppercase">
             Arsitektur Koleksi TeeStock
           </h2>
           <p className="text-xs sm:text-sm text-ts-kremMuted leading-relaxed">
@@ -443,16 +444,16 @@ export function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           {/* Card 1: TeeStock Originals (The Hero) */}
-          <div className="p-6 sm:p-8 rounded-2xl bg-ts-surface border border-ts-border hover:border-ts-terracotta/40 shadow-sm hover:shadow-elevation transition-all flex flex-col justify-between space-y-6">
-            <div className="space-y-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-ts-terracotta/15 text-ts-terracotta flex items-center justify-center border border-ts-terracotta/30">
-                <ShoppingBag className="w-6 h-6" />
+          <div className="p-5 sm:p-8 rounded-2xl bg-ts-surface border border-ts-border hover:border-ts-terracotta/40 shadow-sm hover:shadow-elevation transition-all flex flex-col justify-between space-y-5 sm:space-y-6">
+            <div className="space-y-3">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-ts-terracotta/15 text-ts-terracotta flex items-center justify-center border border-ts-terracotta/30">
+                <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
                 <span className="text-[10px] font-mono font-bold text-ts-terracotta uppercase tracking-wider">PILAR 01 // THE HERO ARCHIVE</span>
-                <h3 className="text-xl sm:text-2xl font-black text-ts-krem uppercase tracking-tight mt-0.5">
+                <h3 className="text-lg sm:text-2xl font-black text-ts-krem uppercase tracking-tight mt-0.5">
                   TeeStock Originals
                 </h3>
                 <p className="text-xs font-mono text-zinc-950 dark:text-white font-bold mt-1">
@@ -471,14 +472,14 @@ export function HomePage() {
           </div>
 
           {/* Card 2: Official NSA Blanks (The Pure Foundation) */}
-          <div className="p-6 sm:p-8 rounded-2xl bg-ts-surface border border-ts-border hover:border-teal-400/40 shadow-sm hover:shadow-elevation transition-all flex flex-col justify-between space-y-6">
-            <div className="space-y-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-teal-400/15 text-teal-600 dark:text-teal-300 flex items-center justify-center border border-teal-400/30">
-                <Package className="w-6 h-6" />
+          <div className="p-5 sm:p-8 rounded-2xl bg-ts-surface border border-ts-border hover:border-teal-400/40 shadow-sm hover:shadow-elevation transition-all flex flex-col justify-between space-y-5 sm:space-y-6">
+            <div className="space-y-3">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-teal-400/15 text-teal-600 dark:text-teal-300 flex items-center justify-center border border-teal-400/30">
+                <Package className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
                 <span className="text-[10px] font-mono font-bold text-teal-600 dark:text-teal-300 uppercase tracking-wider">PILAR 02 // THE PURE FOUNDATION</span>
-                <h3 className="text-xl sm:text-2xl font-black text-ts-krem uppercase tracking-tight mt-0.5">
+                <h3 className="text-lg sm:text-2xl font-black text-ts-krem uppercase tracking-tight mt-0.5">
                   Official NSA Blanks
                 </h3>
                 <p className="text-xs font-mono text-zinc-950 dark:text-white font-bold mt-1">
@@ -497,14 +498,14 @@ export function HomePage() {
           </div>
 
           {/* Card 3: Custom Atelier (The Studio Lab) */}
-          <div className="p-6 sm:p-8 rounded-2xl bg-ts-surface border border-ts-border hover:border-ts-mustard/40 shadow-sm hover:shadow-elevation transition-all flex flex-col justify-between space-y-6">
-            <div className="space-y-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-ts-mustard/15 text-ts-mustard flex items-center justify-center border border-ts-mustard/30">
-                <Palette className="w-6 h-6" />
+          <div className="p-5 sm:p-8 rounded-2xl bg-ts-surface border border-ts-border hover:border-ts-mustard/40 shadow-sm hover:shadow-elevation transition-all flex flex-col justify-between space-y-5 sm:space-y-6">
+            <div className="space-y-3">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-ts-mustard/15 text-ts-mustard flex items-center justify-center border border-ts-mustard/30">
+                <Palette className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
                 <span className="text-[10px] font-mono font-bold text-ts-mustard uppercase tracking-wider">PILAR 03 // THE STUDIO LAB</span>
-                <h3 className="text-xl sm:text-2xl font-black text-ts-krem uppercase tracking-tight mt-0.5">
+                <h3 className="text-lg sm:text-2xl font-black text-ts-krem uppercase tracking-tight mt-0.5">
                   TeeStock Atelier
                 </h3>
                 <p className="text-xs font-mono text-zinc-950 dark:text-white font-bold mt-1">
@@ -525,14 +526,14 @@ export function HomePage() {
       </section>
 
       {/* Kaos Polos NSA Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-ts-border pb-5">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3.5 sm:gap-4 border-b border-ts-border pb-4 sm:pb-5">
           <div>
-            <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-ts-krem tracking-wider uppercase bg-ts-surface px-3 py-1 rounded-full border border-ts-border mb-2.5">
+            <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-ts-krem tracking-wider uppercase bg-ts-surface px-3 py-1 rounded-full border border-ts-border mb-2">
               <Package className="w-3.5 h-3.5 text-ts-mustard" />
               <span>RAW MATERIAL STANDARD</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-ts-krem tracking-tight uppercase">
+            <h2 className="text-xl sm:text-3xl font-black text-ts-krem tracking-tight uppercase">
               Official Blank Supply // New States Apparel
             </h2>
             <p className="text-xs sm:text-sm text-ts-kremMuted mt-1 max-w-xl leading-relaxed">
@@ -542,14 +543,14 @@ export function HomePage() {
 
           <Link
             to="/polos"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-bold bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem border border-ts-border transition-all"
+            className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-bold bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem border border-ts-border transition-all shadow-sm"
           >
             <span>LIHAT SEMUA MODEL BLANK ({totalBlankCount || blankProducts.length})</span>
             <ArrowRight className="w-3.5 h-3.5 text-ts-terracotta" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {blankProducts.map((p) => (
             <ProductCard
               key={p.sku}
@@ -565,15 +566,18 @@ export function HomePage() {
       {/* ====================================================================
           SECTION 4: THE STUDIO MANIFESTO // OBSESSIVE CRAFT
           ==================================================================== */}
+      {/* ====================================================================
+          SECTION 4: THE STUDIO MANIFESTO // OBSESSIVE CRAFT
+          ==================================================================== */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-6 sm:p-10 rounded-3xl bg-ts-surface border border-ts-border relative overflow-hidden space-y-8 shadow-sm transition-colors duration-300">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-ts-border pb-6">
+        <div className="p-5 sm:p-10 rounded-2xl sm:rounded-3xl bg-ts-surface border border-ts-border relative overflow-hidden space-y-6 sm:space-y-8 shadow-sm transition-colors duration-300">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-ts-border pb-5 sm:pb-6">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ts-surfaceHover border border-ts-border text-ts-terracotta text-[10px] font-mono font-bold uppercase tracking-wider mb-2">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>THE STUDIO MANIFESTO // IN-HOUSE CRAFT</span>
               </div>
-              <h2 className="text-2xl sm:text-4xl font-black text-ts-krem tracking-tight uppercase leading-snug">
+              <h2 className="text-xl sm:text-3xl lg:text-4xl font-black text-ts-krem tracking-tight uppercase leading-snug">
                 Obsessive Craft. <br className="hidden sm:inline" />
                 Zero Compromise.
               </h2>
@@ -583,12 +587,12 @@ export function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5">
             {/* Pillar 1: Heavyweight Cotton */}
-            <div className="p-5 rounded-2xl bg-ts-surfaceHover/30 border border-ts-border space-y-3 flex flex-col justify-between">
-              <div className="space-y-2.5">
+            <div className="p-4 sm:p-5 rounded-2xl bg-ts-surfaceHover/30 border border-ts-border space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
                 <span className="text-[10px] font-mono text-ts-terracotta uppercase tracking-wider font-bold">01 // GARMEN</span>
-                <h3 className="text-base font-bold text-ts-krem">180 GSM Heavyweight Tubular</h3>
+                <h3 className="text-sm sm:text-base font-bold text-ts-krem">180 GSM Heavyweight Tubular</h3>
                 <p className="text-xs text-ts-kremMuted leading-relaxed">
                   Katun 100% ringspun New States Apparel tanpa jahitan samping. Memberi siluet bahu yang tegap, tidak melintir, dan tidak menerawang di bawah sinar matahari.
                 </p>
@@ -599,10 +603,10 @@ export function HomePage() {
             </div>
 
             {/* Pillar 2: Dual Heat Curing */}
-            <div className="p-5 rounded-2xl bg-ts-surfaceHover/30 border border-ts-border space-y-3 flex flex-col justify-between">
-              <div className="space-y-2.5">
+            <div className="p-4 sm:p-5 rounded-2xl bg-ts-surfaceHover/30 border border-ts-border space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
                 <span className="text-[10px] font-mono text-ts-mustard uppercase tracking-wider font-bold">02 // SABLON</span>
-                <h3 className="text-base font-bold text-ts-krem">155°C Dual-Heat Curing</h3>
+                <h3 className="text-sm sm:text-base font-bold text-ts-krem">155°C Dual-Heat Curing</h3>
                 <p className="text-xs text-ts-kremMuted leading-relaxed">
                   Bukan sablon massal asal jadi. Setiap lembar dipress dua kali di suhu 155°C dengan tekanan 4 bar agar tinta elastis mengunci sempurna ke pori serat kain.
                 </p>
@@ -613,10 +617,10 @@ export function HomePage() {
             </div>
 
             {/* Pillar 3: Unboxing Experience */}
-            <div className="p-5 rounded-2xl bg-ts-surfaceHover/30 border border-ts-border space-y-3 flex flex-col justify-between">
-              <div className="space-y-2.5">
+            <div className="p-4 sm:p-5 rounded-2xl bg-ts-surfaceHover/30 border border-ts-border space-y-3 flex flex-col justify-between">
+              <div className="space-y-2">
                 <span className="text-[10px] font-mono text-teal-600 dark:text-teal-300 uppercase tracking-wider font-bold">03 // PENGALAMAN</span>
-                <h3 className="text-base font-bold text-ts-krem">The Unboxing Standard</h3>
+                <h3 className="text-sm sm:text-base font-bold text-ts-krem">The Unboxing Standard</h3>
                 <p className="text-xs text-ts-kremMuted leading-relaxed">
                   Bebas label leher kertas yang gatal. Polymailer charcoal doff kedap air, aroma studio segar, 2x limited vinyl sticker pack, dan kartu garansi founder.
                 </p>
@@ -628,9 +632,9 @@ export function HomePage() {
           </div>
 
           {/* Workshop Origin Transparency Footer */}
-          <div className="pt-4 border-t border-ts-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="pt-4 border-t border-ts-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3.5">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-ts-terracotta/20 text-ts-terracotta font-bold flex items-center justify-center font-mono text-xs border border-ts-terracotta/30">
+              <div className="w-9 h-9 rounded-lg bg-ts-terracotta/20 text-ts-terracotta font-bold flex items-center justify-center font-mono text-xs border border-ts-terracotta/30 shrink-0">
                 TS
               </div>
               <div>
@@ -643,7 +647,7 @@ export function HomePage() {
               href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent("Halo TeeStock Studio! Saya ingin tanya produk / custom order.")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-bold bg-ts-surfaceHover hover:bg-ts-border text-ts-krem border border-ts-border transition-all cursor-pointer"
+              className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-bold bg-ts-surfaceHover hover:bg-ts-border text-ts-krem border border-ts-border transition-all cursor-pointer text-center"
             >
               <MessageSquare className="w-3.5 h-3.5 text-ts-green" />
               <span>DISKUSI VIA WHATSAPP</span>
@@ -656,7 +660,7 @@ export function HomePage() {
           SECTION 5: AUTHENTIC FITTING NOTES & CUSTOMER REVIEWS
           ==================================================================== */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="space-y-6">
+        <div className="space-y-5 sm:space-y-6">
             <div className="text-center space-y-2">
               <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
                 <Star className="w-3.5 h-3.5 fill-amber-500 dark:fill-amber-400 text-amber-500 dark:text-amber-400" />
@@ -665,14 +669,14 @@ export function HomePage() {
               <h3 className="text-xl sm:text-2xl font-black text-ts-krem tracking-tight uppercase">
                 Catatan Fitting &amp; Uji Pemakaian Nyata
               </h3>
-              <p className="text-xs text-ts-kremMuted max-w-lg mx-auto">
+              <p className="text-xs text-ts-kremMuted max-w-lg mx-auto leading-relaxed">
                 Feedback langsung dari pelanggan terverifikasi mengenai kenyamanan bahan katun NSA, akurasi ukuran, dan ketahanan sablon studio.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className="p-6 rounded-2xl bg-ts-surface border border-ts-border flex flex-col justify-between space-y-4 shadow-sm">
-                <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5">
+              <div className="p-4 sm:p-6 rounded-2xl bg-ts-surface border border-ts-border flex flex-col justify-between space-y-3.5 sm:space-y-4 shadow-sm">
+                <div className="space-y-2.5">
                   <div className="flex items-center gap-1 text-amber-400">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="w-3.5 h-3.5 fill-current" />
@@ -693,8 +697,8 @@ export function HomePage() {
                 </div>
               </div>
 
-              <div className="p-6 rounded-2xl bg-ts-surface border border-ts-border flex flex-col justify-between space-y-4 shadow-sm">
-                <div className="space-y-3">
+              <div className="p-4 sm:p-6 rounded-2xl bg-ts-surface border border-ts-border flex flex-col justify-between space-y-3.5 sm:space-y-4 shadow-sm">
+                <div className="space-y-2.5">
                   <div className="flex items-center gap-1 text-amber-400">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="w-3.5 h-3.5 fill-current" />
@@ -715,8 +719,8 @@ export function HomePage() {
                 </div>
               </div>
 
-              <div className="p-6 rounded-2xl bg-ts-surface border border-ts-border flex flex-col justify-between space-y-4 shadow-sm">
-                <div className="space-y-3">
+              <div className="p-4 sm:p-6 rounded-2xl bg-ts-surface border border-ts-border flex flex-col justify-between space-y-3.5 sm:space-y-4 shadow-sm">
+                <div className="space-y-2.5">
                   <div className="flex items-center gap-1 text-amber-400">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="w-3.5 h-3.5 fill-current" />
@@ -742,7 +746,7 @@ export function HomePage() {
 
       {/* Discreet B2B Partner Portal Gateway (Pemisahan Resmi teestock.id B2C & mitra.teestock.id B2B) */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-5 sm:p-6 rounded-3xl bg-ts-surface border border-ts-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-ts-surface border border-ts-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-ts-mustard/15 border border-ts-mustard/30 text-[10px] font-mono font-bold text-ts-mustard uppercase">
               B2B RESELLER &amp; DROPSHIP PORTAL
@@ -758,7 +762,7 @@ export function HomePage() {
             href="https://mitra.teestock.id"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-bold bg-ts-surfaceHover hover:bg-ts-border text-ts-krem border border-ts-border transition-all shrink-0 hover:border-ts-mustard/50"
+            className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-bold bg-ts-surfaceHover hover:bg-ts-border text-ts-krem border border-ts-border transition-all shrink-0 hover:border-ts-mustard/50 text-center"
           >
             <span>Buka mitra.teestock.id</span>
             <ExternalLink className="w-3.5 h-3.5 text-ts-mustard" />

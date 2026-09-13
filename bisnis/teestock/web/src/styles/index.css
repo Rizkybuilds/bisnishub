@@ -98,6 +98,13 @@
   --scrollbar-thumb: #D8D3C8;
 }
 
+html {
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   padding: 0;

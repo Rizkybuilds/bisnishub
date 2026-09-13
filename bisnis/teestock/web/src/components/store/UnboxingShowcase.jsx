@@ -42,14 +42,14 @@ export function UnboxingShowcase() {
   ];
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
       {/* Section Header */}
-      <div className="text-center max-w-2xl mx-auto space-y-2.5">
-        <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-ts-krem tracking-widest uppercase bg-ts-surface px-3.5 py-1 rounded-full border border-ts-border">
+      <div className="text-center max-w-2xl mx-auto space-y-2">
+        <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold text-ts-krem tracking-widest uppercase bg-ts-surface px-3 py-1 rounded-full border border-ts-border">
           <Package className="w-3.5 h-3.5 text-ts-terracotta" />
           <span>THE SENSORY EXPERIENCE // UNBOXING STANDARD</span>
         </div>
-        <h2 className="text-2xl sm:text-4xl font-black text-ts-krem tracking-tight uppercase">
+        <h2 className="text-xl sm:text-3xl lg:text-4xl font-black text-ts-krem tracking-tight uppercase">
           Standar Kemasan Setiap Paket
         </h2>
         <p className="text-xs sm:text-sm text-ts-kremMuted leading-relaxed">
@@ -58,13 +58,13 @@ export function UnboxingShowcase() {
       </div>
 
       {/* Bento Grid 4 Pillars */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
         {touchpoints.map((tp) => {
           const Icon = tp.icon;
           return (
             <div
               key={tp.number}
-              className="p-5 sm:p-6 rounded-2xl bg-ts-surface border border-ts-border hover:border-ts-borderHover shadow-sm hover:shadow-elevation transition-all flex flex-col justify-between space-y-4 group"
+              className="p-4 sm:p-6 rounded-2xl bg-ts-surface border border-ts-border hover:border-ts-borderHover shadow-sm hover:shadow-elevation transition-all flex flex-col justify-between space-y-3.5 sm:space-y-4 group"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">

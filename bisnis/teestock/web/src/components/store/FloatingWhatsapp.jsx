@@ -17,7 +17,7 @@ export function FloatingWhatsapp() {
   const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(defaultMessage)}`;
 
   return (
-    <div className={`fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-40 ${isProductPage ? 'hidden md:flex' : 'flex'} items-end gap-2`}>
+    <div className={`fixed bottom-24 sm:bottom-20 md:bottom-6 right-3 sm:right-6 z-40 ${isProductPage ? 'hidden md:flex' : 'flex'} items-end gap-2`}>
       {/* Pop-up Mini Banner / Tooltip (can be dismissed) */}
       {showTooltip && (
         <div className="hidden sm:flex items-center gap-2 bg-ts-surface/95 backdrop-blur border border-ts-border px-3.5 py-2 rounded-2xl shadow-xl animate-in slide-in-from-right-4 duration-300">
@@ -46,12 +46,9 @@ export function FloatingWhatsapp() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat WhatsApp TeeStock"
-        className="relative group flex items-center justify-center w-13 h-13 p-3.5 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-xl shadow-[#25D366]/30 hover:scale-105 active:scale-95 transition-all"
+        className="relative group flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 p-2.5 sm:p-3.5 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-lg shadow-[#25D366]/25 hover:scale-105 active:scale-95 transition-all"
       >
-        {/* Radar ping effect */}
-        <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-30 animate-ping pointer-events-none" />
-        
-        <MessageCircle className="w-6 h-6 fill-current relative z-10" />
+        <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 fill-current relative z-10" />
       </a>
     </div>
   );

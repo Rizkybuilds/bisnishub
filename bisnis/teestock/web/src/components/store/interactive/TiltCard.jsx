@@ -15,6 +15,9 @@ export function TiltCard({
 
   const handleMouseMove = useCallback((e) => {
     if (!cardRef.current) return;
+    if (typeof window !== 'undefined' && window.matchMedia && !window.matchMedia('(hover: hover)').matches) {
+      return;
+    }
     const card = cardRef.current;
     const rect = card.getBoundingClientRect();
 

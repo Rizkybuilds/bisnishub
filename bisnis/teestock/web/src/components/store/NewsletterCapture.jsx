@@ -76,24 +76,24 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
   }
 
   return (
-    <div className={`p-6 sm:p-8 rounded-3xl bg-ts-surface border border-ts-border shadow-sm relative overflow-hidden transition-colors duration-300 ${className}`}>
+    <div className={`p-5 sm:p-8 rounded-2xl sm:rounded-3xl bg-ts-surface border border-ts-border shadow-sm relative overflow-hidden transition-colors duration-300 ${className}`}>
       {/* Background ambient glow */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-ts-terracotta/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div className="max-w-xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ts-surfaceHover border border-ts-border text-ts-terracotta text-xs font-mono font-bold mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ts-surfaceHover border border-ts-border text-ts-terracotta text-[10px] sm:text-xs font-mono font-bold mb-3">
           <Sparkles className="w-3.5 h-3.5" />
           <span>THE ARCHIVE CLUB // PRIVATE ACCESS</span>
         </div>
 
-        <h3 className="text-2xl sm:text-3xl font-black text-ts-krem tracking-tight">
-          Early Access. Secret Drops. Zero Noise.
+        <h3 className="text-xl sm:text-3xl font-black text-ts-krem tracking-tight">
+          Early Access. Curated Archive. Zero Noise.
         </h3>
-        <p className="text-xs sm:text-sm text-ts-kremMuted mt-2 leading-relaxed">
-          Dapatkan akses 24 jam lebih awal sebelum rilis publik, arsip desain terbatas, dan catatan studio in-house langsung ke inbox kamu.
+        <p className="text-xs sm:text-sm text-ts-kremMuted mt-1.5 sm:mt-2 leading-relaxed">
+          Dapatkan akses 24 jam lebih awal sebelum rilisan publik, rilisan desain terkurasi, dan catatan studio in-house langsung ke inbox kamu.
         </p>
 
-        <div className="mt-6">
+        <div className="mt-5 sm:mt-6">
           {status === 'success' ? (
             <div className="p-4 rounded-2xl bg-ts-green/15 border border-ts-green/30 text-xs text-ts-green flex items-start gap-3 animate-in zoom-in-95">
               <CheckCircle2 className="w-5 h-5 shrink-0 text-ts-green mt-0.5" />
@@ -112,13 +112,13 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Masukkan email kamu..."
                   disabled={loading}
-                  className="w-full bg-ts-surfaceHover/60 border border-ts-border rounded-xl pl-10 pr-4 py-3 text-xs sm:text-sm text-ts-krem placeholder-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-2 focus:ring-ts-terracotta/30 transition-all font-mono"
+                  className="w-full bg-ts-surfaceHover/60 border border-ts-border rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm text-ts-krem placeholder-ts-muted focus:outline-none focus:border-ts-terracotta focus:ring-2 focus:ring-ts-terracotta/30 transition-all font-mono"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-3 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 shrink-0 disabled:opacity-50 font-mono"
+                className="w-full sm:w-auto px-6 py-2.5 sm:py-3 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 shrink-0 disabled:opacity-50 font-mono text-center cursor-pointer"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

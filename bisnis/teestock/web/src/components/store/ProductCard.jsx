@@ -108,28 +108,32 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
 
         {/* Active Color Name Overlay & SLA on Image Bottom */}
         <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between pointer-events-none gap-1">
-          <span className="px-2 py-0.5 rounded-md bg-ts-surfaceCard/90 backdrop-blur-md border border-ts-border text-[10px] font-medium text-ts-krem shadow-md flex items-center gap-1.5 shrink-0">
+          <span className="px-1.5 sm:px-2 py-0.5 rounded-md bg-ts-surfaceCard/90 backdrop-blur-md border border-ts-border text-[9px] sm:text-[10px] font-medium text-ts-krem shadow-md flex items-center gap-1 sm:gap-1.5 shrink-0">
             <span
-              className="w-2 h-2 rounded-full border border-ts-border"
+              className="w-2 h-2 rounded-full border border-ts-border shrink-0"
               style={{ backgroundColor: getColorHex(selectedColor) }}
             />
-            <span className="truncate max-w-[80px] sm:max-w-[110px]">{selectedColor}</span>
+            <span className="truncate max-w-[65px] sm:max-w-[110px]">{selectedColor}</span>
           </span>
 
           {/* Dynamic SLA chip */}
-          <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold border backdrop-blur-md shadow-sm shrink-0 ${
+          <span className={`px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-mono font-bold border backdrop-blur-md shadow-sm shrink-0 ${
             ['hitam', 'black', 'putih', 'white'].includes(selectedColor.toLowerCase())
               ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-300'
               : 'bg-sky-950/80 border-sky-500/40 text-sky-300'
           }`}>
-            {['hitam', 'black', 'putih', 'white'].includes(selectedColor.toLowerCase()) ? '⚡ H+0 Studio' : '📦 H+1 Gudang'}
+            {['hitam', 'black', 'putih', 'white'].includes(selectedColor.toLowerCase()) ? (
+              <>⚡ H+0<span className="hidden sm:inline"> Studio</span></>
+            ) : (
+              <>📦 H+1<span className="hidden sm:inline"> Gudang</span></>
+            )}
           </span>
         </div>
       </Link>
 
       {/* Card Content & Interactive Color Swatches */}
-      <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
-        <div className="space-y-1.5">
+      <div className="p-2.5 sm:p-4 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
+        <div className="space-y-1 sm:space-y-1.5">
           <div className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-wider font-mono ${
             isBlank ? 'text-ts-teal' : 'text-ts-terracotta'
           }`}>
@@ -160,10 +164,10 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
                     aria-label={`Pilih warna ${colorName}`}
                     aria-pressed={isSelected}
                     onClick={(e) => handleColorSelect(e, colorName)}
-                    className="p-1 -m-1 rounded-full cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ts-terracotta"
+                    className="p-1.5 -m-1 rounded-full cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ts-terracotta"
                   >
                     <span
-                      className={`w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full transition-all duration-200 inline-block shadow-sm ${
+                      className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-all duration-200 inline-block shadow-sm ${
                         isSelected
                           ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-hitam scale-110 shadow-glow-terracotta-sm z-10'
                           : 'ring-1 ring-ts-border hover:ring-ts-borderHover hover:scale-105 opacity-80 hover:opacity-100'
@@ -201,9 +205,9 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
               </div>
             ) : (
               <div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1 sm:gap-1.5">
                   <span className="text-[9px] text-ts-muted block font-mono">
-                    {isBlank ? 'Harga Satuan' : 'Promo Drop #01'}
+                    {isBlank ? 'Harga Satuan' : 'Katalog Resmi'}
                   </span>
                   {!isBlank && (
                     <span className="text-[8px] font-mono font-extrabold text-ts-terracotta bg-ts-terracotta/20 px-1 py-0.2 rounded border border-ts-terracotta/30">
@@ -211,12 +215,12 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
                     </span>
                   )}
                 </div>
-                <div className="flex items-baseline gap-1.5">
+                <div className="flex items-baseline gap-1 sm:gap-1.5">
                   <span className="font-mono text-xs sm:text-sm font-black text-ts-krem">
                     {formatRupiah(effectivePrice)}
                   </span>
                   {!isBlank && (
-                    <span className="text-[10px] line-through text-ts-muted/80 font-mono hidden sm:inline">
+                    <span className="text-[9px] sm:text-[10px] line-through text-ts-muted/80 font-mono hidden sm:inline">
                       {formatRupiah(product.priceAnchor || product.price_anchor || 139000)}
                     </span>
                   )}
@@ -228,7 +232,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
           <Link
             to={productUrl}
             aria-label={`Pilih produk ${product.name}`}
-            className="text-[10px] font-bold px-2.5 sm:px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 cursor-pointer bg-ts-surfaceHover border border-ts-border text-ts-krem hover:bg-zinc-950 hover:text-white dark:hover:bg-white dark:hover:text-zinc-950 dark:hover:border-white shadow-sm"
+            className="text-[9px] sm:text-[10px] font-bold px-2 sm:px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 cursor-pointer bg-ts-surfaceHover border border-ts-border text-ts-krem hover:bg-zinc-950 hover:text-white dark:hover:bg-white dark:hover:text-zinc-950 dark:hover:border-white shadow-sm shrink-0"
           >
             <span>Pilih</span>
             <span>&rarr;</span>

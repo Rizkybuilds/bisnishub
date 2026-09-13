@@ -60,9 +60,9 @@ export function Navbar() {
     <header className="sticky top-0 z-40 w-full transition-all">
       {/* Top Ticker Notice Bar */}
       <div className="bg-ts-surface text-[10px] font-mono tracking-wider text-ts-kremMuted py-1.5 px-4 text-center border-b border-ts-border flex items-center justify-center gap-3 sm:gap-6 overflow-hidden uppercase transition-colors">
-        <span className="flex items-center gap-1.5 text-ts-krem font-medium">
-          <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
-          <span>100% Garmen Asli New States Apparel (NSA) • Softstyle 30s &amp; Heavyweight 24s</span>
+        <span className="flex items-center gap-1.5 text-ts-krem font-medium truncate">
+          <ShieldCheck className="w-3.5 h-3.5 text-ts-green shrink-0" />
+          <span>100% Garmen Asli New States Apparel (NSA) <span className="hidden sm:inline">• Softstyle 30s &amp; Heavyweight 24s</span></span>
         </span>
         <span className="hidden sm:inline text-ts-borderHover">•</span>
         <span className="hidden sm:flex items-center gap-1.5 text-ts-kremMuted">
@@ -153,8 +153,10 @@ export function Navbar() {
           </nav>
 
           {/* Right Action Buttons */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <ThemeToggle compact={true} />
+          <div className="flex items-center gap-1 sm:gap-2">
+            <div className="hidden sm:flex items-center">
+              <ThemeToggle compact={true} />
+            </div>
 
             <Link
               to="/katalog"
@@ -188,7 +190,7 @@ export function Navbar() {
                   aria-expanded={userMenuOpen}
                   aria-haspopup="menu"
                   aria-label="Buka menu akun pengguna"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-ts-krem transition-all shadow-glass-inset cursor-pointer"
+                  className="inline-flex items-center gap-1.5 p-1.5 sm:px-3 sm:py-1.5 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-ts-krem transition-all shadow-glass-inset cursor-pointer"
                 >
                   <div className="w-5 h-5 rounded-full bg-ts-terracotta/30 text-ts-terracotta flex items-center justify-center text-[10px] font-mono">
                     {profile?.full_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
@@ -196,7 +198,7 @@ export function Navbar() {
                   <span className="max-w-[80px] sm:max-w-[100px] truncate hidden sm:inline">
                     {profile?.full_name || user?.email?.split('@')[0]}
                   </span>
-                  <ChevronDown className={`w-3 h-3 text-ts-muted transition-transform duration-150 ${userMenuOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-3 h-3 text-ts-muted transition-transform duration-150 hidden sm:inline ${userMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {userMenuOpen && (
@@ -260,7 +262,7 @@ export function Navbar() {
             ) : (
               <button
                 onClick={() => openAuthModal()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-ts-terracotta/50 text-ts-krem transition-all shadow-glass-inset"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-ts-terracotta/50 text-ts-krem transition-all shadow-glass-inset"
               >
                 <User className="w-3.5 h-3.5 text-ts-terracotta" />
                 <span>Masuk</span>
@@ -356,7 +358,7 @@ export function Navbar() {
                         <span>Katalog Desain Grafis</span>
                       </span>
                       <span className="text-[9px] font-mono font-bold text-ts-mustard bg-ts-mustard/15 px-1.5 py-0.5 rounded">
-                        Drop #01
+                        Curated
                       </span>
                     </NavLink>
 
