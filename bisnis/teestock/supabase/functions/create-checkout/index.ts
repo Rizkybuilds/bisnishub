@@ -266,17 +266,7 @@ Deno.serve(async (req: Request) => {
             city: cleanCustomerCity
           }
         },
-        item_details: midtransItems,
-        enabled_payments: [
-          'gopay',
-          'shopeepay',
-          'qris',
-          'bca_va',
-          'mandiri_va',
-          'bni_va',
-          'bri_va',
-          'other_va'
-        ]
+        item_details: midtransItems
       };
 
       try {

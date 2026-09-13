@@ -67,7 +67,7 @@ export function loadMidtransScript(clientKey, isProduction = false) {
 /**
  * Format order details into standard Midtrans Snap transaction parameter
  */
-export function formatMidtransTransactionParameter(order) {
+export function formatMidtransTransactionParameter(order, options = {}) {
   const items = (order.items || []).map((item, idx) => ({
     id: String(item.sku || item.product_sku || `ITEM-${idx + 1}`).slice(0, 45),
     price: Math.round(Number(item.price || item.unit_price || 0)),
@@ -121,7 +121,7 @@ export function formatMidtransTransactionParameter(order) {
     .slice(0, 190);
   const cleanCity = String(order.customer_city || order.city || '').replace(/[()]/g, '').slice(0, 90);
 
-  return {
+  const payload = {
     transaction_details: {
       order_id: String(order.order_number || order.id),
       gross_amount: grossAmount
@@ -134,8 +134,11 @@ export function formatMidtransTransactionParameter(order) {
         city: cleanCity
       }
     },
-    item_details: items,
-    enabled_payments: [
+    item_details: items
+  };
+
+  if (options.omitEnabledPayments !== true) {
+    payload.enabled_payments = options.enabledPayments || [
       'gopay',
       'shopeepay',
       'qris',
@@ -144,8 +147,10 @@ export function formatMidtransTransactionParameter(order) {
       'bni_va',
       'bri_va',
       'other_va'
-    ]
-  };
+    ];
+  }
+
+  return payload;
 }
 
 /**
