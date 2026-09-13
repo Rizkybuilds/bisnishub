@@ -182,7 +182,7 @@ export function CartPage() {
         origin_address: fulfillmentOrigin.hub.address,
         channel: 'web',
         tier: role || 'retail',
-        status: isInstantPayment ? 'processing' : 'pending',
+        status: 'pending_payment', // Keamanan Transaksi: Status awal selalu pending sampai diverifikasi
         price: grandTotal,
         total_amount: grandTotal,
         discount: effectiveProductDiscount + shippingDiscount,
@@ -196,25 +196,29 @@ export function CartPage() {
         date: new Date().toISOString()
       };
 
-      // 1. Persist order to Supabase / Local database
-      await createPublicOrder(orderRecord, cart);
+      // 1. Persist order via Edge Function create-checkout / authoritative pipeline
+      const createdOrder = await createPublicOrder(orderRecord, cart);
+      const finalOrderId = createdOrder?.id || createdOrder?.order_number || orderId;
 
-      // 2. Dispatch Payment Session (Safely isolated to prevent duplicate orders)
+      // 2. Dispatch Payment Session (Memanfaatkan Snap Token dari server jika metode Midtrans)
       let paymentSession = null;
       try {
-        paymentSession = await createPaymentSession(orderRecord, paymentMethod);
+        paymentSession = await createPaymentSession(createdOrder, paymentMethod);
 
-        // Handle Midtrans Snap popup if available in browser
+        // Handle Midtrans Snap popup jika token telah tersedia
         if (isInstantPayment && typeof window !== 'undefined' && window.snap && paymentSession?.token) {
           window.snap.pay(paymentSession.token, {
             onSuccess: (res) => {
-              console.log('Midtrans payment success:', res);
+              console.log('Midtrans payment success callback:', res);
             },
             onPending: (res) => {
-              console.log('Midtrans payment pending:', res);
+              console.log('Midtrans payment pending callback:', res);
             },
             onError: (err) => {
-              console.error('Midtrans payment error:', err);
+              console.error('Midtrans payment error callback:', err);
+            },
+            onClose: () => {
+              console.log('Midtrans payment popup closed by customer');
             }
           });
         }
@@ -228,7 +232,7 @@ export function CartPage() {
       }
 
       setOrderComplete({
-        orderId,
+        orderId: finalOrderId,
         customerName: formData.customerName.trim(),
         phone: formData.phone.trim(),
         city: cleanCity,

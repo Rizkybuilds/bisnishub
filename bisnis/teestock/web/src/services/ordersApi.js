@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { generateOrderNumber } from '../utils/orderNumber';
 
 const LOCAL_STORAGE_ADMIN_KEY = 'teestock_orders_list';
 const LOCAL_STORAGE_MY_ORDERS_KEY = 'teestock_my_orders';
@@ -122,13 +123,6 @@ export async function getOrders() {
  * Tanpa mengunduh data pelanggan lain ke browser
  */
 export async function createPublicOrder(order, items = []) {
-  const orderNumber = order.order_number || order.id || `WEB-${Date.now().toString().slice(-6)}`;
-  
-  // Generate deterministic UUID for Supabase relational primary/foreign key
-  const orderUuid = (typeof crypto !== 'undefined' && crypto.randomUUID)
-    ? crypto.randomUUID()
-    : '00000000-0000-4000-8000-' + Date.now().toString(16).padStart(12, '0');
-
   // Standardize item array
   const orderItems = (items && Array.isArray(items) && items.length > 0)
     ? items
@@ -152,18 +146,72 @@ export async function createPublicOrder(order, items = []) {
     i => `${i.name || i.product_name} - ${i.garment || ''} (${i.color || ''} ${i.size || ''}) x${i.qty || 1}`
   ).join('; ');
 
+  // 1. Coba panggil Supabase Edge Function create-checkout secara server-side
+  let backendResult = null;
+  try {
+    if (supabase && supabase.functions && typeof supabase.functions.invoke === 'function') {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          items: orderItems.map(i => ({
+            sku: i.sku || i.product_sku || 'ITEM',
+            name: i.name || i.product_name || 'Kaos TeeStock',
+            garment: i.garment || 'NSA Heavyweight 24s',
+            size: i.size || 'L',
+            color: i.color || 'Hitam',
+            qty: Number(i.qty) || 1,
+            price: Number(i.price || i.unit_price) || 0
+          })),
+          customer: {
+            name: order.customer || order.customer_name || 'Pelanggan',
+            phone: order.phone || order.customer_phone || '',
+            city: order.city || order.customer_city || '',
+            address: order.address || order.customer_address || '',
+            subdistrict: order.subdistrict || ''
+          },
+          shipping: {
+            fee: order.shipping_fee || 0,
+            zone: order.shipping_zone || '',
+            courier: order.courier || ''
+          },
+          paymentMethod: order.payment_method || 'manual_qris',
+          voucherCode: order.voucher_code || null,
+          userId: order.user_id || null,
+          notes: summaryNotes
+        }
+      });
+
+      if (!error && data?.status === 'success' && data.data) {
+        backendResult = data.data;
+      }
+    }
+  } catch (fnErr) {
+    console.warn('Edge Function create-checkout unavailable, utilizing offline dev mode:', fnErr);
+  }
+
+  // Gunakan hasil dari backend jika tersedia, atau fallback lokal standar
+  const orderNumber = backendResult?.orderNumber || order.order_number || order.id || generateOrderNumber();
+  const orderUuid = backendResult?.orderUuid || ((typeof crypto !== 'undefined' && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : '00000000-0000-4000-8000-' + Date.now().toString(16).padStart(12, '0'));
+
   const normalized = normalizeOrderRecord({
     ...order,
     id: orderNumber,
     order_number: orderNumber,
     notes: summaryNotes,
-    items: orderItems
+    items: orderItems,
+    price: backendResult?.grandTotal ?? order.total_amount ?? order.price,
+    total_amount: backendResult?.grandTotal ?? order.total_amount ?? order.price,
+    discount: backendResult?.discountAmount ?? order.discount ?? order.discount_amount ?? 0,
+    status: 'pending_payment', // Status awal pesanan SELALU pending sebelum diverifikasi
+    snapToken: backendResult?.snapToken || null,
+    redirectUrl: backendResult?.redirectUrl || null
   });
 
   // Simpan ke riwayat pesanan milik pengguna lokal sendiri
   try {
     const myOrders = JSON.parse(localStorage.getItem(LOCAL_STORAGE_MY_ORDERS_KEY) || '[]');
-    const filtered = myOrders.filter(o => o.id !== normalized.id);
+    const filtered = Array.isArray(myOrders) ? myOrders.filter(o => o.id !== normalized.id) : [];
     filtered.unshift(normalized);
     localStorage.setItem(LOCAL_STORAGE_MY_ORDERS_KEY, JSON.stringify(filtered.slice(0, 30)));
   } catch (e) {
@@ -173,61 +221,66 @@ export async function createPublicOrder(order, items = []) {
   // Update juga antrean admin lokal jika ada sesi tersimpan
   try {
     const adminOrders = JSON.parse(localStorage.getItem(LOCAL_STORAGE_ADMIN_KEY) || '[]');
-    const updatedAdmin = [normalized, ...adminOrders.filter(o => o.id !== normalized.id)];
+    const updatedAdmin = Array.isArray(adminOrders) ? [normalized, ...adminOrders.filter(o => o.id !== normalized.id)] : [normalized];
     localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(updatedAdmin));
   } catch (e) {
     // Ignore
   }
 
-  // Sync ke Supabase ts_orders & ts_order_items
-  try {
-    const { error: orderErr } = await supabase.from('ts_orders').insert({
-      id: orderUuid,
-      order_number: normalized.id,
-      user_id: normalized.user_id,
-      customer_name: normalized.customer,
-      customer_phone: normalized.phone,
-      customer_city: order.city || null,
-      customer_address: order.address || null,
-      channel: normalized.channel || 'web',
-      tier: order.tier || 'retail',
-      status: normalized.status || 'pending',
-      total_amount: normalized.price,
-      discount_amount: normalized.discount,
-      voucher_code: normalized.voucher_code,
-      notes: normalized.notes
-    });
-
-    if (!orderErr && orderItems.length > 0) {
-      const itemsPayload = orderItems.map(i => ({
-        order_id: orderUuid,
+  // Jika Edge Function belum dijalankan (misal dev/offline mode), sync fallback ke Supabase
+  if (!backendResult) {
+    try {
+      const { error: orderErr } = await supabase.from('ts_orders').insert({
+        id: orderUuid,
         order_number: normalized.id,
-        product_sku: i.sku || i.product_sku || null,
-        product_name: i.name || i.product_name || 'Kaos TeeStock',
-        garment: i.garment || 'NSA Heavyweight 24s',
-        size: i.size || 'L',
-        color: i.color || 'Hitam',
-        qty: Number(i.qty) || 1,
-        unit_price: Number(i.price || i.unit_price) || 0,
-        subtotal: (Number(i.price || i.unit_price) || 0) * (Number(i.qty) || 1)
-      }));
+        user_id: normalized.user_id,
+        customer_name: normalized.customer,
+        customer_phone: normalized.phone,
+        customer_city: order.city || null,
+        customer_address: order.address || null,
+        channel: normalized.channel || 'web',
+        tier: order.tier || 'retail',
+        status: 'pending_payment',
+        total_amount: normalized.price,
+        discount_amount: normalized.discount,
+        voucher_code: normalized.voucher_code,
+        notes: normalized.notes
+      });
 
-      await supabase.from('ts_order_items').insert(itemsPayload);
-    }
+      if (!orderErr && orderItems.length > 0) {
+        const itemsPayload = orderItems.map(i => ({
+          order_id: orderUuid,
+          order_number: normalized.id,
+          product_sku: i.sku || i.product_sku || null,
+          product_name: i.name || i.product_name || 'Kaos TeeStock',
+          garment: i.garment || 'NSA Heavyweight 24s',
+          size: i.size || 'L',
+          color: i.color || 'Hitam',
+          qty: Number(i.qty) || 1,
+          unit_price: Number(i.price || i.unit_price) || 0,
+          subtotal: (Number(i.price || i.unit_price) || 0) * (Number(i.qty) || 1)
+        }));
 
-    // 🏷️ Perbarui kuota/pemakaian voucher jika order menggunakan voucher
-    if (!orderErr && normalized.voucher_code) {
-      try {
-        await supabase.rpc('increment_voucher_usage', { voucher_code: normalized.voucher_code });
-      } catch (vErr) {
-        console.warn('Could not increment voucher usage in Supabase:', vErr);
+        await supabase.from('ts_order_items').insert(itemsPayload);
       }
+
+      if (!orderErr && normalized.voucher_code) {
+        try {
+          await supabase.rpc('increment_voucher_usage', { voucher_code: normalized.voucher_code });
+        } catch (vErr) {
+          console.warn('Could not increment voucher usage in Supabase:', vErr);
+        }
+      }
+    } catch (err) {
+      console.warn("Could not sync public order to Supabase:", err);
     }
-  } catch (err) {
-    console.warn("Could not sync public order to Supabase:", err);
   }
 
-  return normalized;
+  return {
+    ...normalized,
+    snapToken: backendResult?.snapToken || null,
+    redirectUrl: backendResult?.redirectUrl || null
+  };
 }
 
 /**

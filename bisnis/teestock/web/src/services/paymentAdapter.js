@@ -159,8 +159,12 @@ export async function createPaymentSession(order, providerId = PAYMENT_PROVIDERS
 
   // 3. MIDTRANS SNAP GATEWAY
   if (cleanProvider === PAYMENT_PROVIDERS.MIDTRANS_SNAP) {
-    const clientKey = options.clientKey || (typeof import.meta !== 'undefined' && import.meta.env?.VITE_MIDTRANS_CLIENT_KEY);
-    const isProduction = options.isProduction || (typeof import.meta !== 'undefined' && import.meta.env?.VITE_MIDTRANS_IS_PRODUCTION === 'true');
+    const clientKey = options.clientKey !== undefined
+      ? options.clientKey
+      : ((typeof import.meta !== 'undefined' && import.meta.env?.VITE_MIDTRANS_CLIENT_KEY) || 'Mid-client-DL-HKOnueKXtxjSF');
+    const isProduction = options.isProduction !== undefined
+      ? options.isProduction
+      : ((typeof import.meta !== 'undefined' && import.meta.env?.VITE_MIDTRANS_IS_PRODUCTION === 'true') || clientKey.startsWith('Mid-client-'));
 
     // If client key is not configured, gracefully fallback to sandbox simulation
     if (!clientKey) {
@@ -169,9 +173,9 @@ export async function createPaymentSession(order, providerId = PAYMENT_PROVIDERS
         provider: PAYMENT_PROVIDERS.MIDTRANS_SNAP,
         orderId: order.order_number || order.id,
         grossAmount: order.total_amount || order.price,
-        token: `SNAP-SIM-${Date.now()}`,
+        token: order.snapToken || `SNAP-SIM-${Date.now()}`,
         isSimulated: true,
-        message: 'Mode simulasi sandbox payment gateway aktif (API Key belum dipasang)'
+        message: 'Mode simulasi sandbox payment gateway aktif'
       };
     }
 
@@ -183,6 +187,7 @@ export async function createPaymentSession(order, providerId = PAYMENT_PROVIDERS
         status: 'ready',
         provider: PAYMENT_PROVIDERS.MIDTRANS_SNAP,
         orderId: order.order_number || order.id,
+        token: order.snapToken || null,
         parameter,
         isSimulated: false,
         message: 'Midtrans Snap siap diluncurkan'

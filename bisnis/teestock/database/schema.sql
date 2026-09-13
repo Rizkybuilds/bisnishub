@@ -556,14 +556,14 @@ CREATE POLICY "user_update_own_profile" ON ts_user_profiles FOR UPDATE USING (au
 CREATE POLICY "user_insert_own_profile" ON ts_user_profiles FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "admin_all_profiles" ON ts_user_profiles FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 5. ts_orders (Publik/Member bisa buat order, User baca pesanan miliknya, HANYA admin kelola semua)
-CREATE POLICY "public_insert_orders" ON ts_orders FOR INSERT WITH CHECK (true);
-CREATE POLICY "member_read_own_orders" ON ts_orders FOR SELECT USING (user_id = auth.uid() OR public.is_admin());
+-- 5. ts_orders (Edge Function Service Role buat pesanan, Member baca pesanan miliknya, Admin kelola semua)
+CREATE POLICY "service_role_manage_orders" ON ts_orders FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "member_read_own_orders" ON ts_orders FOR SELECT TO authenticated USING (user_id = auth.uid() OR public.is_admin());
 CREATE POLICY "admin_manage_orders" ON ts_orders FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 6. ts_order_items (Publik insert saat checkout, HANYA admin kelola semua)
-CREATE POLICY "public_insert_order_items" ON ts_order_items FOR INSERT WITH CHECK (true);
-CREATE POLICY "member_read_own_order_items" ON ts_order_items FOR SELECT USING (
+-- 6. ts_order_items (Edge Function Service Role insert rincian, Member baca miliknya, Admin kelola semua)
+CREATE POLICY "service_role_manage_order_items" ON ts_order_items FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "member_read_own_order_items" ON ts_order_items FOR SELECT TO authenticated USING (
     EXISTS (SELECT 1 FROM ts_orders o WHERE o.id = ts_order_items.order_id AND (o.user_id = auth.uid() OR public.is_admin()))
 );
 CREATE POLICY "admin_manage_order_items" ON ts_order_items FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());

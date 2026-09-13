@@ -13,6 +13,9 @@ export function Navbar() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const userMenuRef = useRef(null);
+  const drawerRef = useRef(null);
+  const closeBtnRef = useRef(null);
+  const hamburgerBtnRef = useRef(null);
   const location = useLocation();
   const isBlankActive = location.pathname === '/polos' || (location.pathname === '/katalog' && location.search.includes('series=blank'));
   const isGraphicActive = location.pathname === '/katalog' && !location.search.includes('series=blank');
@@ -25,16 +28,55 @@ export function Navbar() {
     setUserMenuOpen(false);
   }, [location.pathname, location.search]);
 
+  // Mobile drawer accessibility: Focus trap, Tab looping, Escape key, & body scroll lock
   useEffect(() => {
+    if (!mobileDrawerOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const timer = setTimeout(() => {
+      closeBtnRef.current?.focus();
+    }, 50);
+
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
-        setUserMenuOpen(false);
         setMobileDrawerOpen(false);
+        return;
+      }
+
+      if (e.key === 'Tab' && drawerRef.current) {
+        const focusables = drawerRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusables.length) return;
+
+        const firstEl = focusables[0];
+        const lastEl = focusables[focusables.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstEl) {
+            lastEl.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastEl) {
+            firstEl.focus();
+            e.preventDefault();
+          }
+        }
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      clearTimeout(timer);
+      document.body.style.overflow = originalOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+      hamburgerBtnRef.current?.focus();
+    };
+  }, [mobileDrawerOpen]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -271,6 +313,7 @@ export function Navbar() {
 
             {/* Mobile Hamburger Drawer Trigger */}
             <button
+              ref={hamburgerBtnRef}
               type="button"
               onClick={() => setMobileDrawerOpen(true)}
               className="md:hidden p-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.08] border border-white/[0.08] transition-all cursor-pointer"
@@ -296,6 +339,7 @@ export function Navbar() {
 
           {/* Drawer Sheet */}
           <div
+            ref={drawerRef}
             role="dialog"
             aria-modal="true"
             aria-label="Menu Navigasi Mobile"
@@ -308,6 +352,7 @@ export function Navbar() {
                 <div className="flex items-center gap-2">
                   <ThemeToggle compact={true} />
                   <button
+                    ref={closeBtnRef}
                     type="button"
                     onClick={() => setMobileDrawerOpen(false)}
                     className="p-1.5 rounded-xl text-ts-muted hover:text-ts-krem hover:bg-ts-surfaceHover transition-colors cursor-pointer"

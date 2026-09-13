@@ -9,8 +9,18 @@ export function StoreProvider({ children }) {
   const [loadingCatalog, setLoadingCatalog] = useState(true);
 
   const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem('teestock_cart');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('teestock_cart');
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.warn('Gagal memproses data keranjang dari localStorage, me-reset ke array kosong:', e);
+      try {
+        localStorage.removeItem('teestock_cart');
+      } catch (_) {}
+      return [];
+    }
   });
 
   const [storeSettings, setStoreSettings] = useState(() => {
