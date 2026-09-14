@@ -124,14 +124,35 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
     }
   }, [reviews, storageKey]);
 
-  const handleHelpful = (id) => {
+  const handleHelpful = async (id) => {
     if (helpfulVoted[id]) return;
     setReviews(prev => prev.map(rev => rev.id === id ? { ...rev, helpfulCount: rev.helpfulCount + 1 } : rev));
     setHelpfulVoted(prev => ({ ...prev, [id]: true }));
 
-    // Jika ID dari Supabase (UUID), sinkronkan increment ke database
-    if (typeof id === 'string' && id.length === 36) {
-      supabase.rpc('increment_review_helpful', { review_id: id }).catch(() => {});
+    // Jika ID dari Supabase (UUID), sinkronkan voting atomik 1-vote-per-identity ke database
+    if (typeof id === 'string' && id.length === 36 && supabase?.rpc) {
+      let voterId = 'anon';
+      try {
+        voterId = localStorage.getItem('teestock_visitor_id');
+        if (!voterId) {
+          voterId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'vtr_' + Math.random().toString(36).slice(2);
+          localStorage.setItem('teestock_visitor_id', voterId);
+        }
+      } catch (e) {
+        voterId = 'vtr_' + Math.random().toString(36).slice(2);
+      }
+
+      try {
+        const { data } = await supabase.rpc('vote_review_helpful', {
+          p_review_id: id,
+          p_voter_id: voterId
+        });
+        if (data && typeof data.helpful_count === 'number') {
+          setReviews(prev => prev.map(rev => rev.id === id ? { ...rev, helpfulCount: data.helpful_count } : rev));
+        }
+      } catch (err) {
+        console.warn('Voting helpful review note:', err);
+      }
     }
   };
 

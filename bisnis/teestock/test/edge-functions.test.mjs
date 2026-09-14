@@ -18,6 +18,8 @@ const REVIEW_PATH = '/functions/v1/submit-review';
 const RPC_ORDER_PATH = '/rest/v1/rpc/create_order_transactional';
 const RPC_VOUCHER_PATH = '/rest/v1/rpc/increment_voucher_usage';
 const RPC_TRACK_PATH = '/rest/v1/rpc/track_guest_order';
+const RPC_INCREMENT_REVIEW_PATH = '/rest/v1/rpc/increment_review_helpful';
+const RPC_VOTE_REVIEW_PATH = '/rest/v1/rpc/vote_review_helpful';
 const REVIEWS_TABLE_PATH = '/rest/v1/ts_reviews';
 const ANON_KEY = process.env.TEST_ANON_KEY || 'sb_publishable_8iRmZUulGLChIPZhFXn_rg_QuHlmpA4';
 
@@ -146,6 +148,35 @@ async function runSuite() {
   } catch (err) {
     assert(false, 'Request direct insert ts_reviews harus dieksekusi', err.message);
   }
+
+  // 1e. increment_review_helpful (Direct unauthenticated counter increment blocked)
+  try {
+    const resIncHelpful = await makeRequest(RPC_INCREMENT_REVIEW_PATH, {
+      method: 'POST',
+      body: { review_id: '00000000-0000-0000-0000-000000000000' }
+    });
+    const isBlocked = resIncHelpful.status === 404 || resIncHelpful.status === 401 || resIncHelpful.status === 403;
+    assert(isBlocked, 'increment_review_helpful harus diblokir dari anon (404/401/403)', `Status: ${resIncHelpful.status}`);
+  } catch (err) {
+    assert(false, 'Request RPC increment_review_helpful harus dieksekusi', err.message);
+  }
+
+  // 1f. vote_review_helpful (Audited 1-vote-per-identity RPC accessible and validates inputs)
+  try {
+    const resVoteRpc = await makeRequest(RPC_VOTE_REVIEW_PATH, {
+      method: 'POST',
+      body: {
+        p_review_id: '00000000-0000-0000-0000-000000000000',
+        p_voter_id: 'test_voter_unit'
+      }
+    });
+    // Menghasilkan 200 dengan payload { success: false, message: 'Ulasan tidak ditemukan' }
+    const isValidResponse = resVoteRpc.status === 200 && resVoteRpc.data?.success === false;
+    assert(isValidResponse, 'vote_review_helpful dapat diakses dan memvalidasi eksistensi ulasan', `Status: ${resVoteRpc.status}, Msg: ${resVoteRpc.data?.message}`);
+  } catch (err) {
+    assert(false, 'Request RPC vote_review_helpful harus dieksekusi', err.message);
+  }
+
 
   // ---------------------------------------------------------------------------
   // 2. Zero-Trust SKU Validation (Inactive / Fake SKU Rejected)

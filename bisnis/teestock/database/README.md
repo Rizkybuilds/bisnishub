@@ -39,27 +39,28 @@ Kredensial tersimpan di `bisnis/teestock/web/.env`:
 
 ---
 
-## 📊 Struktur Lengkap 12 Tabel TeeStock yang Terbentuk
+## 📊 Struktur Lengkap 18 Tabel TeeStock yang Terbentuk
 
 | # | Nama Tabel | Fungsi Utama | Akses Publik / RLS |
 |---|---|---|---|
 | 1 | `ts_products` | Master katalog desain grafis & katalog kaos polos NSA Cititex | Read: Publik, Write: Admin |
 | 2 | `ts_unit_economics` | Rincian HPP (blank, dtf, press, pack) & tier harga (retail, dropship, reseller) | Read: Publik, Write: Admin |
 | 3 | `ts_inventory` | Stok garmen New States Apparel & material operasional (polymailer, hangtag, stiker) | Read/Write: Admin |
-| 4 | `ts_orders` | Rekap pesanan multichannel (Web, Shopee, TikTok, WA) + Kanban status | Insert: Publik/Guest, Read: User & Admin |
-| 5 | `ts_order_items` | Rincian item per pesanan (SKU, garmen, warna, size, qty, subtotal) | Insert: Publik/Guest, Read: Admin |
+| 4 | `ts_orders` | Rekap pesanan multichannel (Web, Shopee, TikTok, WA) + Kanban status | Insert: Edge Function (`service_role`), Read: Own User & Admin |
+| 5 | `ts_order_items` | Rincian item per pesanan (SKU, garmen, warna, size, qty, subtotal) | Insert: Edge Function (`service_role`), Read: Own User & Admin |
 | 6 | `ts_user_profiles` | Profil member, role RBAC (member, partner, admin), alamat pengiriman | Read/Update: Own User, All: Admin |
 | 7 | `ts_subscribers` | Email VIP newsletter & lead capture untuk peluncuran Drop | Insert: Publik, Read: Admin |
 | 8 | `ts_vouchers` | Master kupon promo (`WELCOME10`, `TEESTOCKDROP`, `FREESHIP15`, `PARTNERVIP`) | Read: Active only, All: Admin |
-| 9 | `ts_voucher_usage` | Riwayat transaksi pemakaian voucher kupon | Read: Own User, Insert: Checkout |
+| 9 | `ts_voucher_usage` | Riwayat transaksi pemakaian voucher kupon | Read: Own User, Insert: Edge Function / Member |
 | 10 | `ts_defects` | Pencatatan cacat produksi QC, retur kurir, dan kalkulasi kerugian HPP | Read/Write: Admin |
 | 11 | `ts_partner_applications` | Formulir pendaftaran calon mitra dropshipper / reseller | Insert: Publik, Manage: Admin |
-| 12 | `ts_reviews` | Ulasan pembeli terverifikasi, rating bintang 1-5, testimoni fitting | Read/Insert: Publik, Manage: Admin |
-| 13 | `ts_settings` | Pengaturan toko, payment gateway, rekening bank, & social links | Read/Write: Admin |
+| 12 | `ts_reviews` | Ulasan pembeli terverifikasi, rating bintang 1-5, testimoni fitting | Read: Publik, Write: Edge Function (`service_role`) & Admin |
+| 13 | `ts_settings` | Pengaturan toko, payment gateway, rekening bank, & social links | Read: Publik, Write: Admin |
 | 14 | `ts_procurements` | Pengadaan bahan baku (Kaos NSA, Roll DTF, kemasan) & kalkulator BOM | Read/Write: Admin |
 | 15 | `ts_cash_ledger` | Buku kas satu pintu & pemisahan dompet pribadi vs bisnis | Read/Write: Admin |
 | 16 | `ts_fixed_assets` | Pelacak aset alat produksi CAPEX (Mesin Heat Press Rp 2.500.000) | Read/Write: Admin |
 | 17 | `ts_capital_investments` | Catatan ekuitas setoran modal awal (injeksi) & penarikan prive | Read/Write: Admin |
+| 18 | `ts_review_votes` | Audit jejak suara bermanfaat ulasan & pembatasan 1-vote-per-identitas | Read: Publik & Member, Vote: RPC `vote_review_helpful` |
 
 ### Fitur Database Tambahan:
 - **View Otomatis `ts_view_catalog_summary`:** Menyatukan data produk, total HPP, margin kotor, fee marketplace 6.5%, dan profit bersih per pcs.

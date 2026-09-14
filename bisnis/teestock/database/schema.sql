@@ -295,6 +295,18 @@ CREATE TABLE ts_reviews (
 CREATE INDEX idx_ts_reviews_sku ON ts_reviews(product_sku);
 
 
+-- 12b. TABEL: ts_review_votes (Audit Suara Membantu & Batasan 1 Vote per Identitas)
+CREATE TABLE IF NOT EXISTS ts_review_votes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    review_id UUID NOT NULL REFERENCES ts_reviews(id) ON DELETE CASCADE,
+    voter_identifier TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    CONSTRAINT uq_review_voter UNIQUE(review_id, voter_identifier)
+);
+
+CREATE INDEX IF NOT EXISTS idx_ts_review_votes_review_id ON ts_review_votes(review_id);
+
+
 -- 13. TABEL: ts_settings (Pengaturan Global Toko, Kontak WhatsApp, Marketplace, & Rekening/QRIS)
 CREATE TABLE IF NOT EXISTS ts_settings (
     key VARCHAR(50) PRIMARY KEY,
@@ -489,7 +501,7 @@ $$;
 REVOKE ALL ON FUNCTION public.increment_voucher_usage(TEXT) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.increment_voucher_usage(TEXT) TO service_role;
 
--- ⭐ RPC INCREMENT REVIEW HELPFUL: Menaikkan counter helpful_count secara atomik
+-- ⭐ RPC INCREMENT REVIEW HELPFUL: Menaikkan counter helpful_count secara atomik (Internal/Service Role Only)
 CREATE OR REPLACE FUNCTION public.increment_review_helpful(review_id UUID)
 RETURNS VOID
 LANGUAGE plpgsql
@@ -502,6 +514,78 @@ BEGIN
     WHERE id = review_id;
 END;
 $$;
+
+REVOKE ALL ON FUNCTION public.increment_review_helpful(UUID) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.increment_review_helpful(UUID) TO service_role;
+
+-- ⭐ RPC VOTE REVIEW HELPFUL: 1-Vote-Per-Identity Atomik untuk Pengunjung Web & Member
+CREATE OR REPLACE FUNCTION public.vote_review_helpful(
+    p_review_id UUID,
+    p_voter_id TEXT
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+    v_clean_voter TEXT;
+    v_inserted BOOLEAN := FALSE;
+    v_new_count INTEGER;
+BEGIN
+    v_clean_voter := TRIM(COALESCE(p_voter_id, ''));
+    
+    -- Validasi identitas voter minimal 3 karakter untuk mencegah voting string kosong
+    IF length(v_clean_voter) < 3 THEN
+        RETURN jsonb_build_object(
+            'success', false,
+            'message', 'Identitas voter tidak valid (minimal 3 karakter)'
+        );
+    END IF;
+
+    -- Pastikan ulasan sasaran ada
+    IF NOT EXISTS (SELECT 1 FROM public.ts_reviews WHERE id = p_review_id) THEN
+        RETURN jsonb_build_object(
+            'success', false,
+            'message', 'Ulasan tidak ditemukan'
+        );
+    END IF;
+
+    -- Insert vote baru; jika sudah ada pasangan (review_id, voter_identifier), skip
+    INSERT INTO public.ts_review_votes (review_id, voter_identifier)
+    VALUES (p_review_id, v_clean_voter)
+    ON CONFLICT (review_id, voter_identifier) DO NOTHING
+    RETURNING true INTO v_inserted;
+
+    -- Hanya naikkan counter jika baris baru berhasil di-insert
+    IF v_inserted IS TRUE THEN
+        UPDATE public.ts_reviews
+        SET helpful_count = COALESCE(helpful_count, 0) + 1
+        WHERE id = p_review_id
+        RETURNING helpful_count INTO v_new_count;
+
+        RETURN jsonb_build_object(
+            'success', true,
+            'voted', true,
+            'helpful_count', v_new_count
+        );
+    ELSE
+        -- Pengguna sudah pernah vote ulasan ini sebelumnya
+        SELECT COALESCE(helpful_count, 0) INTO v_new_count
+        FROM public.ts_reviews
+        WHERE id = p_review_id;
+
+        RETURN jsonb_build_object(
+            'success', true,
+            'voted', false,
+            'helpful_count', v_new_count,
+            'message', 'Sudah pernah memberikan suara membantu'
+        );
+    END IF;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.vote_review_helpful(UUID, TEXT) TO anon, authenticated, service_role;
 
 -- 🔗 GUEST-TO-MEMBER ORDER LINKING: Menghubungkan pesanan tamu sebelumnya ke akun baru saat user login/signup
 CREATE OR REPLACE FUNCTION public.link_guest_orders_on_signup()
@@ -551,6 +635,7 @@ ALTER TABLE ts_voucher_usage ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ts_defects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ts_partner_applications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ts_reviews ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ts_review_votes ENABLE ROW LEVEL SECURITY;
 
 -- 1. ts_products (Publik baca katalog, HANYA admin yang bisa tambah/edit/hapus)
 CREATE POLICY "anon_read_products" ON ts_products FOR SELECT USING (true);
@@ -610,6 +695,9 @@ CREATE POLICY "admin_manage_partner_apps" ON ts_partner_applications FOR ALL TO 
 CREATE POLICY "public_read_reviews" ON ts_reviews FOR SELECT USING (true);
 CREATE POLICY "service_role_manage_reviews" ON ts_reviews FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "admin_manage_reviews" ON ts_reviews FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+
+-- 12b. ts_review_votes (Publik & member membaca riwayat vote, manipulasi hanya lewat RPC berpagar)
+CREATE POLICY "public_read_review_votes" ON ts_review_votes FOR SELECT TO anon, authenticated, service_role USING (true);
 
 -- 13. ts_settings (Publik bisa baca pengaturan toko & QRIS, HANYA admin yang bisa mengubah)
 ALTER TABLE ts_settings ENABLE ROW LEVEL SECURITY;
