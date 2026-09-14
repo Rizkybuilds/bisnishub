@@ -1,3 +1,18 @@
+---
+title: "Master Skema Pricing, HPP Dinamis & Sistem Keuangan TeeStock"
+date: "2026-09-14"
+bisnis: teestock
+kategori: keuangan
+status: active
+tags:
+  - bisnis/teestock
+  - keuangan
+  - pricing
+  - hpp
+  - unit-economics
+  - cfo
+---
+
 # 📊 Master Skema Pricing, HPP Dinamis & Sistem Keuangan TeeStock
 
 > **Dokumen Strategis C-Suite (CFO, COO, CTO, CMO, Mentor Bisnis)**  

@@ -1,3 +1,17 @@
+---
+title: "Katalog & Kontrak Pasokan Kemasan Perdana (TeeStock)"
+date: "2026-09-14"
+bisnis: multigraph
+kategori: operasional
+status: active
+tags:
+  - bisnis/multigraph
+  - operasional
+  - packaging
+  - sinergi
+  - teestock
+---
+
 # 🖨️ MultiGraph — Katalog & Kontrak Pasokan Kemasan Perdana (TeeStock)
 
 > **Klien Pertama:** TeeStock Apparel (`bisnis/teestock`)  

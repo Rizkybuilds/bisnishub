@@ -10,6 +10,7 @@ import {
   ArrowUpRight,
   Music2,
   Instagram,
+  Sparkles,
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
@@ -65,6 +66,14 @@ export function BioLinkPage() {
       href: `https://wa.me/${cleanPhone}?text=${encodeURIComponent('Halo TeeStock, saya tertarik kemitraan dropship/reseller brand. Boleh info lebih lanjut?')}&utm_source=biolink&utm_medium=social&utm_campaign=reseller`,
       internal: false,
       icon: Users,
+    },
+    {
+      id: 'creator',
+      label: 'Panggung Kreator & Seniman',
+      subtitle: 'Upload karya & terima royalti Rp 25.000 / kaos',
+      href: '/creator?utm_source=biolink&utm_medium=social&utm_campaign=creator',
+      internal: true,
+      icon: Sparkles,
     },
     {
       id: 'shopee',

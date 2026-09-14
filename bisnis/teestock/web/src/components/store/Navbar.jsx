@@ -181,6 +181,19 @@ export function Navbar() {
               Custom Sablon
             </NavLink>
             <NavLink
+              to="/creator"
+              className={({ isActive }) =>
+                `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  isActive
+                    ? 'bg-ts-terracotta/20 text-ts-terracotta shadow-sm border border-ts-terracotta/40'
+                    : 'text-ts-kremMuted hover:text-ts-terracotta hover:bg-ts-surfaceHover/50'
+                }`
+              }
+            >
+              <Sparkles className="w-3.5 h-3.5 text-ts-terracotta" />
+              <span>Panggung Kreator</span>
+            </NavLink>
+            <NavLink
               to="/tracking"
               className={({ isActive }) =>
                 `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -232,7 +245,7 @@ export function Navbar() {
                   aria-expanded={userMenuOpen}
                   aria-haspopup="menu"
                   aria-label="Buka menu akun pengguna"
-                  className="inline-flex items-center gap-1.5 p-1.5 sm:px-3 sm:py-1.5 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-ts-krem transition-all shadow-glass-inset cursor-pointer"
+                  className="inline-flex items-center gap-1.5 p-1.5 sm:px-3 sm:py-1.5 rounded-xl text-xs font-bold bg-ts-surface hover:bg-ts-surfaceHover border border-ts-border text-ts-krem transition-all shadow-sm cursor-pointer"
                 >
                   <div className="w-5 h-5 rounded-full bg-ts-terracotta/30 text-ts-terracotta flex items-center justify-center text-[10px] font-mono">
                     {profile?.full_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
@@ -247,11 +260,11 @@ export function Navbar() {
                   <div 
                     role="menu"
                     aria-label="Menu pengguna"
-                    className="absolute right-0 mt-2 w-52 rounded-2xl bg-ts-surface border border-white/[0.12] p-2 shadow-xl z-50 text-xs space-y-1 animate-in fade-in zoom-in-95"
+                    className="absolute right-0 mt-2 w-52 rounded-2xl bg-ts-surface border border-ts-border p-2 shadow-xl z-50 text-xs space-y-1 animate-in fade-in zoom-in-95"
                     onClick={() => setUserMenuOpen(false)}
                   >
-                    <div className="px-3 py-2 border-b border-white/[0.06] mb-1">
-                      <p className="font-bold text-white truncate">{profile?.full_name || 'Member'}</p>
+                    <div className="px-3 py-2 border-b border-ts-border mb-1">
+                      <p className="font-bold text-ts-krem truncate">{profile?.full_name || 'Member'}</p>
                       <span className="inline-block mt-0.5 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/30">
                         Role: {role}
                       </span>
@@ -259,7 +272,7 @@ export function Navbar() {
 
                     <Link
                       to="/akun"
-                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] transition-colors"
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover transition-colors"
                     >
                       <User className="w-3.5 h-3.5 text-ts-terracotta" />
                       <span>Akun &amp; Profil</span>
@@ -267,7 +280,7 @@ export function Navbar() {
 
                     <Link
                       to="/akun?tab=orders"
-                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] transition-colors"
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover transition-colors"
                     >
                       <Package className="w-3.5 h-3.5 text-ts-mustard" />
                       <span>Pesanan Saya</span>
@@ -275,7 +288,7 @@ export function Navbar() {
 
                     <Link
                       to="/partner"
-                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] transition-colors"
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover transition-colors"
                     >
                       <Users className="w-3.5 h-3.5 text-ts-teal" />
                       <span>Portal Kemitraan</span>
@@ -284,7 +297,7 @@ export function Navbar() {
                     {isAdmin && (
                       <Link
                         to="/admin"
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.06] transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover transition-colors"
                       >
                         <User className="w-3.5 h-3.5 text-ts-terracotta" />
                         <span>Admin Hub</span>
@@ -304,7 +317,7 @@ export function Navbar() {
             ) : (
               <button
                 onClick={() => openAuthModal()}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-ts-terracotta/50 text-ts-krem transition-all shadow-glass-inset"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-ts-surface hover:bg-ts-surfaceHover border border-ts-border hover:border-ts-terracotta text-ts-krem transition-all shadow-sm"
               >
                 <User className="w-3.5 h-3.5 text-ts-terracotta" />
                 <span>Masuk</span>
@@ -316,7 +329,7 @@ export function Navbar() {
               ref={hamburgerBtnRef}
               type="button"
               onClick={() => setMobileDrawerOpen(true)}
-              className="md:hidden p-2 rounded-xl text-ts-kremMuted hover:text-white hover:bg-white/[0.08] border border-white/[0.08] transition-all cursor-pointer"
+              className="md:hidden p-2 rounded-xl text-ts-krem hover:bg-ts-surfaceHover border border-ts-border transition-all cursor-pointer"
               title="Buka Menu"
               aria-label="Buka Menu Navigasi"
               aria-expanded={mobileDrawerOpen}
@@ -378,8 +391,8 @@ export function Navbar() {
                       className={({ isActive }) =>
                         `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
                           isActive
-                            ? 'bg-ts-terracotta/20 text-white font-bold border border-ts-terracotta/30'
-                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                            ? 'bg-ts-terracotta/15 text-ts-terracotta font-bold border border-ts-terracotta/30'
+                            : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover'
                         }`
                       }
                     >
@@ -393,8 +406,8 @@ export function Navbar() {
                       className={() =>
                         `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
                           isGraphicActive
-                            ? 'bg-ts-terracotta/20 text-white font-bold border border-ts-terracotta/30'
-                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                            ? 'bg-ts-terracotta/15 text-ts-terracotta font-bold border border-ts-terracotta/30'
+                            : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover'
                         }`
                       }
                     >
@@ -413,8 +426,8 @@ export function Navbar() {
                       className={() =>
                         `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
                           isBlankActive
-                            ? 'bg-ts-teal/20 text-white font-bold border border-ts-teal/30'
-                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                            ? 'bg-ts-teal/15 text-ts-teal font-bold border border-ts-teal/30'
+                            : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover'
                         }`
                       }
                     >
@@ -422,7 +435,7 @@ export function Navbar() {
                         <Package className="w-3.5 h-3.5 text-ts-teal" />
                         <span>Kaos Polos NSA Original</span>
                       </span>
-                      <span className="text-[9px] font-mono font-bold text-teal-300 bg-ts-teal/20 px-1.5 py-0.5 rounded">
+                      <span className="text-[9px] font-mono font-bold text-ts-teal bg-ts-teal/15 px-1.5 py-0.5 rounded">
                         12 Model
                       </span>
                     </NavLink>
@@ -430,7 +443,7 @@ export function Navbar() {
                 </div>
 
                 {/* Section 2: Layanan Studio & Kemitraan */}
-                <div className="pt-2 border-t border-white/[0.06]">
+                <div className="pt-2 border-t border-ts-border">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-ts-muted font-bold block mb-1.5 px-1">
                     Layanan Studio &amp; B2B
                   </span>
@@ -441,8 +454,8 @@ export function Navbar() {
                       className={({ isActive }) =>
                         `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
                           isActive
-                            ? 'bg-ts-terracotta/20 text-white font-bold border border-ts-terracotta/30'
-                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                            ? 'bg-ts-terracotta/15 text-ts-terracotta font-bold border border-ts-terracotta/30'
+                            : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover'
                         }`
                       }
                     >
@@ -450,8 +463,28 @@ export function Navbar() {
                         <Palette className="w-3.5 h-3.5 text-ts-terracotta" />
                         <span>TeeStock Atelier (Custom Kaos)</span>
                       </span>
-                      <span className="text-[9px] font-mono font-bold text-ts-terracotta bg-ts-terracotta/20 px-1.5 py-0.5 rounded">
+                      <span className="text-[9px] font-mono font-bold text-ts-terracotta bg-ts-terracotta/15 px-1.5 py-0.5 rounded">
                         Satuan / Komunitas
+                      </span>
+                    </NavLink>
+
+                    <NavLink
+                      to="/creator"
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
+                          isActive
+                            ? 'bg-ts-terracotta/15 text-ts-terracotta font-bold border border-ts-terracotta/30'
+                            : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover'
+                        }`
+                      }
+                    >
+                      <span className="flex items-center gap-2">
+                        <Sparkles className="w-3.5 h-3.5 text-ts-terracotta" />
+                        <span>Panggung Kreator</span>
+                      </span>
+                      <span className="text-[9px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded">
+                        Royalti 25k
                       </span>
                     </NavLink>
 
@@ -461,8 +494,8 @@ export function Navbar() {
                       className={({ isActive }) =>
                         `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
                           isActive
-                            ? 'bg-white/[0.1] text-white font-bold border border-white/20'
-                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                            ? 'bg-ts-surfaceHover text-ts-krem font-bold border border-ts-border'
+                            : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover'
                         }`
                       }
                     >
@@ -470,7 +503,7 @@ export function Navbar() {
                         <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
                         <span>Garansi &amp; Panduan Perawatan</span>
                       </span>
-                      <span className="text-[9px] font-mono font-bold text-ts-green bg-ts-green/20 px-1.5 py-0.5 rounded">
+                      <span className="text-[9px] font-mono font-bold text-ts-green bg-ts-green/15 px-1.5 py-0.5 rounded">
                         100% Retur
                       </span>
                     </NavLink>
@@ -478,7 +511,7 @@ export function Navbar() {
                 </div>
 
                 {/* Section 3: Bantuan & Lacak */}
-                <div className="pt-2 border-t border-white/[0.06]">
+                <div className="pt-2 border-t border-ts-border">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-ts-muted font-bold block mb-1.5 px-1">
                     Bantuan &amp; Transparansi
                   </span>
@@ -489,8 +522,8 @@ export function Navbar() {
                       className={({ isActive }) =>
                         `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
                           isActive
-                            ? 'bg-white/[0.1] text-white font-bold border border-white/20'
-                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                            ? 'bg-ts-surfaceHover text-ts-krem font-bold border border-ts-border'
+                            : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover'
                         }`
                       }
                     >
@@ -506,8 +539,8 @@ export function Navbar() {
                       className={({ isActive }) =>
                         `flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
                           isActive
-                            ? 'bg-white/[0.1] text-white font-bold border border-white/20'
-                            : 'text-ts-kremMuted hover:text-white hover:bg-white/[0.04]'
+                            ? 'bg-ts-surfaceHover text-ts-krem font-bold border border-ts-border'
+                            : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover'
                         }`
                       }
                     >
@@ -522,24 +555,24 @@ export function Navbar() {
             </div>
 
             {/* Drawer Footer Actions */}
-            <div className="pt-4 border-t border-white/[0.08] space-y-2.5">
+            <div className="pt-4 border-t border-ts-border space-y-2.5">
               <a
                 href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent('Halo TeeStock! Mau konsultasi pemesanan apparel NSA.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2.5 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-emerald-300 font-bold text-xs flex items-center justify-center gap-2 transition-all"
+                className="w-full py-2.5 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center justify-center gap-2 transition-all"
               >
                 <span>WhatsApp Customer Support</span>
               </a>
 
               {isAuthenticated ? (
-                <div className="flex items-center justify-between p-2 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-ts-surfaceHover border border-ts-border">
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className="w-7 h-7 rounded-lg bg-ts-terracotta/30 text-ts-terracotta font-mono font-bold text-xs flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-ts-terracotta/20 text-ts-terracotta font-mono font-bold text-xs flex items-center justify-center shrink-0">
                       {profile?.full_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-white truncate">{profile?.full_name || 'Member'}</p>
+                      <p className="text-xs font-bold text-ts-krem truncate">{profile?.full_name || 'Member'}</p>
                       <span className="text-[10px] text-ts-muted font-mono">{role}</span>
                     </div>
                   </div>
@@ -558,7 +591,7 @@ export function Navbar() {
                     setMobileDrawerOpen(false);
                     openAuthModal();
                   }}
-                  className="w-full py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-ts-krem font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
+                  className="w-full py-2 px-3 rounded-xl bg-ts-surfaceHover hover:bg-ts-border border border-ts-border text-ts-krem font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
                 >
                   <User className="w-3.5 h-3.5 text-ts-terracotta" />
                   <span>Masuk ke Akun Saya</span>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { AdminSidebar } from '../components/admin/AdminSidebar';
 import { Toast } from '../components/ui/Toast';
 import { Modal } from '../components/ui/Modal';
@@ -79,6 +79,7 @@ export function AdminLayout() {
 
   return (
     <div className="flex min-h-screen bg-ts-hitam text-ts-krem">
+      <ScrollRestoration />
       <SEOHead
         title="TeeStock Operations & Production Hub"
         noindex={true}

@@ -12,13 +12,13 @@
 export const FULFILLMENT_HUBS = {
   CITAYAM_STUDIO: {
     id: 'citayam_studio',
-    name: 'TeeStock Studio & Print Lab (Citayam Hub)',
-    shortName: 'Studio Citayam',
+    name: 'TeeStock Central Studio (Depok)',
+    shortName: 'Central Studio Depok',
     city: 'Depok',
-    district: 'Citayam (Tugu Macan)',
-    address: 'Jl. Tugu Macan, Citayam, Kab. Bogor / Depok',
+    district: 'Depok Barat',
+    address: 'Studio & Print Lab TeeStock, Depok, Jawa Barat',
     tagline: 'Sentra Produksi Heat Press & Workshop Utama',
-    badge: '🏭 TeeStock Studio & Print Lab (Citayam Hub)',
+    badge: '🏭 TeeStock Central Studio (Depok)',
     badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
     capabilities: ['custom_dtf', 'heat_press', 'blank_buffer', 'national_shipping']
   },
@@ -54,7 +54,7 @@ export function determineFulfillmentOrigin(cartItems = [], destinationCity = '',
       isExpressHub: false,
       supportsInstant: false,
       supportsSameday: false,
-      reason: 'Keranjang kosong, default ke Studio Citayam.'
+      reason: 'Keranjang kosong, default ke Central Studio Depok.'
     };
   }
 
@@ -79,16 +79,16 @@ export function determineFulfillmentOrigin(cartItems = [], destinationCity = '',
     };
   }
 
-  // Aturan 2 & 3: Ada kaos grafis atau tujuan selain Bogor -> Rute Studio Citayam
+  // Aturan 2 & 3: Ada kaos grafis atau tujuan selain Bogor -> Rute Studio Depok
   return {
     hub: FULFILLMENT_HUBS.CITAYAM_STUDIO,
     isExpressHub: false,
     supportsInstant: false,
     supportsSameday: false,
-    badgeLabel: '🏭 Diproses di Central Studio Citayam',
+    badgeLabel: '🏭 Diproses di Central Studio Depok',
     reason: hasGraphicOrCustom
-      ? 'Pesanan memuat kaos grafis yang diproses heat press suhu 155°C di Central Studio Citayam.'
-      : 'Pesanan kaos polos dipacking rapi dan dikirim via ekspedisi nasional dari Central Studio Citayam.'
+      ? 'Pesanan memuat kaos grafis yang diproses heat press suhu 155°C di Central Studio Depok.'
+      : 'Pesanan kaos polos dipacking rapi dan dikirim via ekspedisi nasional dari Central Studio Depok.'
   };
 }
 

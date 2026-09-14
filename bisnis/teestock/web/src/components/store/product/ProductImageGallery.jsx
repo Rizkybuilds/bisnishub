@@ -91,18 +91,18 @@ export function ProductImageGallery({
         )}
 
         {/* Top SKU Chip */}
-        <div className="absolute top-4 left-4 px-3 py-1 rounded-xl bg-ts-hitam/85 backdrop-blur-md border border-white/10 font-mono text-xs font-bold text-ts-terracotta shadow-md pointer-events-none">
+        <div className="absolute top-4 left-4 px-3 py-1 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-ts-border font-mono text-xs font-bold text-ts-terracotta shadow-md pointer-events-none">
           {product.sku}
         </div>
 
         {/* Top Right Badges */}
         {isBlank ? (
-          <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 shadow-md pointer-events-none">
+          <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-ts-border text-xs font-bold text-ts-krem flex items-center gap-1.5 shadow-md pointer-events-none">
             <ShieldCheck className="w-3.5 h-3.5 text-ts-green" />
             <span>100% Original NSA</span>
           </div>
         ) : (
-          <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 shadow-md pointer-events-none">
+          <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-ts-border text-xs font-bold text-ts-krem flex items-center gap-1.5 shadow-md pointer-events-none">
             <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
             <span>DTF HD Raster</span>
           </div>
@@ -115,7 +115,7 @@ export function ProductImageGallery({
               type="button"
               onClick={onPrevImage}
               aria-label="Foto produk sebelumnya"
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 min-w-[44px] min-h-[44px] rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer z-10"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 min-w-[44px] min-h-[44px] rounded-full bg-ts-surface/90 hover:bg-ts-surface text-ts-krem hover:text-ts-terracotta flex items-center justify-center border border-ts-border opacity-90 hover:opacity-100 transition-all shadow-lg cursor-pointer z-10"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -123,7 +123,7 @@ export function ProductImageGallery({
               type="button"
               onClick={onNextImage}
               aria-label="Foto produk selanjutnya"
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 min-w-[44px] min-h-[44px] rounded-full bg-ts-hitam/75 hover:bg-ts-hitam text-white flex items-center justify-center border border-white/15 opacity-80 hover:opacity-100 transition-all shadow-lg cursor-pointer z-10"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-10 sm:h-10 min-w-[44px] min-h-[44px] rounded-full bg-ts-surface/90 hover:bg-ts-surface text-ts-krem hover:text-ts-terracotta flex items-center justify-center border border-ts-border opacity-90 hover:opacity-100 transition-all shadow-lg cursor-pointer z-10"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -132,17 +132,17 @@ export function ProductImageGallery({
 
         {/* Bottom Bar: Active Color Pill & Zoom Icon */}
         <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none gap-2 z-10">
-          <div className="px-3 py-1.5 rounded-xl bg-ts-hitam/85 backdrop-blur-md border border-white/15 text-xs font-semibold text-white flex items-center gap-2 shadow-lg">
+          <div className="px-3 py-1.5 rounded-xl bg-ts-surface/90 backdrop-blur-md border border-ts-border text-xs font-semibold text-ts-krem flex items-center gap-2 shadow-lg">
             <span
-              className="w-3 h-3 rounded-full border border-white/40 shrink-0"
+              className="w-3 h-3 rounded-full border border-ts-border shrink-0"
               style={{ backgroundColor: getColorHex(selectedColor) }}
             />
-            <span className="truncate max-w-[120px]">Warna: <strong className="text-white">{selectedColor}</strong></span>
+            <span className="truncate max-w-[120px]">Warna: <strong className="text-ts-krem font-bold">{selectedColor}</strong></span>
           </div>
 
           <div className="flex items-center gap-1.5 pointer-events-auto">
             {gallery[activeGalleryIndex]?.label && (
-              <div className="px-2.5 py-1 rounded-lg bg-ts-hitam/85 backdrop-blur-md border border-white/15 text-[10px] font-mono text-ts-krem font-medium shadow-md truncate max-w-[130px] hidden xs:block">
+              <div className="px-2.5 py-1 rounded-lg bg-ts-surface/90 backdrop-blur-md border border-ts-border text-[10px] font-mono text-ts-krem font-medium shadow-md truncate max-w-[130px] hidden xs:block">
                 {gallery[activeGalleryIndex].label}
               </div>
             )}
@@ -153,7 +153,7 @@ export function ProductImageGallery({
                 setIsLightboxOpen(true);
               }}
               aria-label="Perbesar foto produk"
-              className="p-2 min-w-[36px] min-h-[36px] rounded-xl bg-ts-hitam/85 hover:bg-ts-hitam text-ts-krem hover:text-white backdrop-blur-md border border-white/15 transition shadow-md flex items-center justify-center cursor-pointer"
+              className="p-2 min-w-[36px] min-h-[36px] rounded-xl bg-ts-surface/90 hover:bg-ts-surface text-ts-krem hover:text-ts-terracotta backdrop-blur-md border border-ts-border transition shadow-md flex items-center justify-center cursor-pointer"
             >
               <Maximize2 className="w-3.5 h-3.5" />
             </button>
@@ -200,7 +200,7 @@ export function ProductImageGallery({
                     alt={item.label}
                     className={`w-full h-full ${item.type === 'swatch' ? 'object-cover rounded-md' : 'object-contain'}`}
                   />
-                  <span className="absolute bottom-0 inset-x-0 bg-ts-hitam/90 backdrop-blur-sm text-[8px] sm:text-[9px] font-mono text-center text-white py-0.5 px-0.5 truncate block">
+                  <span className="absolute bottom-0 inset-x-0 bg-ts-surface/90 backdrop-blur-sm text-[8px] sm:text-[9px] font-mono text-center text-ts-krem py-0.5 px-0.5 truncate block border-t border-ts-border">
                     {typeLabel}
                   </span>
                 </button>

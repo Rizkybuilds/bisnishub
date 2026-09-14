@@ -211,8 +211,8 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
                 order.origin_hub_id === 'bogor_express'
                   ? 'text-emerald-400 bg-emerald-500/15 border border-emerald-500/30'
                   : 'text-amber-400 bg-amber-500/15 border border-amber-500/30'
-              }`} title={order.fulfillment_origin || 'TeeStock Studio & Print Lab (Citayam Hub)'}>
-                {order.origin_hub_id === 'bogor_express' ? '⚡ HUB BOGOR' : '🏭 STUDIO CITAYAM'}
+              }`} title={order.fulfillment_origin || 'TeeStock Central Studio (Depok)'}>
+                {order.origin_hub_id === 'bogor_express' ? '⚡ HUB BOGOR' : '🏭 STUDIO DEPOK'}
               </span>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams, useNavigationType } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
@@ -29,6 +29,7 @@ const COLOR_CATEGORIES = {
 export function ProductDetailPage() {
   const { sku } = useParams();
   const navigate = useNavigate();
+  const navigationType = useNavigationType();
   const [searchParams] = useSearchParams();
   const { catalog, loadingCatalog, addToCart, storeSettings } = useStore();
   const { role, profile, isPartner } = useAuth();
@@ -129,6 +130,15 @@ export function ProductDetailPage() {
     );
   }, [product?.sku]);
 
+  // Route Scroll Best-Practice:
+  // When opening product detail (PUSH), immediately scroll to top photo gallery area.
+  // If navigating back via history (POP), ScrollRestoration preserves the user's last position.
+  useEffect(() => {
+    if (navigationType !== 'POP') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+  }, [sku, navigationType]);
+
   // Sync preview image whenever color or gallery changes
   useEffect(() => {
     setActiveGalleryIndex(0);
@@ -191,7 +201,7 @@ export function ProductDetailPage() {
     }
     return (
       <div className="max-w-7xl mx-auto px-4 py-20 text-center space-y-4">
-        <h2 className="text-2xl font-bold text-white">Produk Tidak Ditemukan</h2>
+        <h2 className="text-2xl font-bold text-ts-krem">Produk Tidak Ditemukan</h2>
         <p className="text-xs text-ts-muted">Desain atau produk polos dengan SKU {sku} tidak terdaftar di katalog kami.</p>
         <Link to="/katalog">
           <Button variant="primary">Kembali ke Katalog</Button>
@@ -328,21 +338,32 @@ export function ProductDetailPage() {
         schema={productSchema}
       />
 
-      {/* Breadcrumb Navigation */}
+      {/* Breadcrumb Navigation & Back Route with Scroll Restoration */}
       <div className="flex items-center gap-2 text-xs text-ts-muted">
-        <Link to={isBlank ? "/polos" : "/katalog"} className="hover:text-ts-terracotta flex items-center gap-1 transition-colors">
+        <button
+          type="button"
+          onClick={() => {
+            if (window.history.length > 2) {
+              navigate(-1);
+            } else {
+              navigate(isBlank ? '/polos' : '/katalog');
+            }
+          }}
+          className="hover:text-ts-terracotta flex items-center gap-1 transition-colors cursor-pointer"
+          title="Kembali ke posisi terakhir di katalog"
+        >
           <ArrowLeft className="w-3.5 h-3.5" /> {isBlank ? "Kaos Polos NSA" : "Katalog Grafis"}
-        </Link>
+        </button>
         <span>/</span>
         <span className="text-ts-kremMuted">{product.seriesName || product.series}</span>
         <span>/</span>
-        <span className="text-white font-bold truncate max-w-xs">{product.name}</span>
+        <span className="text-ts-krem font-bold truncate max-w-xs">{product.name}</span>
       </div>
 
       {/* 2-Column Product Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         {/* Left Column: Gallery Showcase */}
-        <div className="lg:col-span-6 space-y-4">
+        <div id="product-gallery-area" className="lg:col-span-6 space-y-4 scroll-mt-24">
           <ProductImageGallery
             product={product}
             gallery={gallery}

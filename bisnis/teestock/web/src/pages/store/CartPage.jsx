@@ -355,7 +355,7 @@ export function CartPage() {
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ts-terracotta/15 border border-ts-terracotta/30 text-xs font-mono font-bold text-ts-terracotta">
             Pesanan #{orderComplete.orderId}
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-ts-krem tracking-tight">
             {orderComplete.isInstantPayment ? 'Transaksi Berhasil Diinisialisasi!' : 'Pesanan Berhasil Dicatat!'}
           </h2>
           <p className="text-xs sm:text-sm text-ts-kremMuted max-w-md mx-auto">
@@ -367,12 +367,12 @@ export function CartPage() {
 
         {orderComplete.isInstantPayment ? (
           <div className="p-6 rounded-3xl bg-ts-surface border border-sky-500/30 space-y-4 text-left shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-sky-400" />
+            <div className="flex items-center justify-between border-b border-ts-border pb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-sky-500 flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-sky-500" />
                 Gateway Pembayaran Instan
               </span>
-              <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-mono text-[11px] font-bold">
+              <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono text-[11px] font-bold">
                 Midtrans Snap
               </span>
             </div>
@@ -380,19 +380,19 @@ export function CartPage() {
             <div className="space-y-2 text-xs">
               <div className="flex justify-between text-ts-kremMuted">
                 <span>Nama Pemesan:</span>
-                <strong className="text-white">{orderComplete.customerName}</strong>
+                <strong className="text-ts-krem">{orderComplete.customerName}</strong>
               </div>
               <div className="flex justify-between text-ts-kremMuted">
                 <span>Total Tagihan:</span>
-                <strong className="text-sky-300 font-mono text-base">{formatRupiah(orderComplete.total)}</strong>
+                <strong className="text-sky-500 dark:text-sky-300 font-mono text-base">{formatRupiah(orderComplete.total)}</strong>
               </div>
               <div className="flex justify-between text-ts-kremMuted">
                 <span>Kurir Pengiriman:</span>
-                <span className="text-white">{orderComplete.courier} ({orderComplete.shippingZone})</span>
+                <span className="text-ts-krem font-medium">{orderComplete.courier} ({orderComplete.shippingZone})</span>
               </div>
-              <div className="flex justify-between text-ts-kremMuted pt-1 border-t border-white/[0.06]">
+              <div className="flex justify-between text-ts-kremMuted pt-1 border-t border-ts-border">
                 <span>Sentra Pengiriman:</span>
-                <span className="text-emerald-400 font-semibold">{orderComplete.fulfillmentOrigin?.hub?.name || 'TeeStock Studio & Print Lab (Citayam Hub)'}</span>
+                <span className="text-emerald-500 font-semibold">{orderComplete.fulfillmentOrigin?.hub?.name || 'TeeStock Central Studio (Depok)'}</span>
               </div>
             </div>
 
@@ -433,7 +433,7 @@ export function CartPage() {
             <a href={waUrl} target="_blank" rel="noreferrer" className="block w-full pt-1">
               <button
                 type="button"
-                className="w-full py-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-ts-kremMuted hover:text-white font-semibold text-xs border border-white/[0.08] transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 rounded-xl bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem font-semibold text-xs border border-ts-border transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Konfirmasi Status Pesanan ke Admin via WhatsApp</span>
               </button>
@@ -460,12 +460,12 @@ export function CartPage() {
         <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             to={`/tracking?order=${orderComplete.orderId}`}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] text-xs font-bold text-ts-krem hover:text-white border border-white/15 transition-all inline-flex items-center justify-center gap-2 shadow-sm"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-ts-surface hover:bg-ts-surfaceHover text-xs font-bold text-ts-krem border border-ts-border transition-all inline-flex items-center justify-center gap-2 shadow-sm"
           >
             <Truck className="w-4 h-4 text-ts-terracotta" />
             <span>Lacak Status Pesanan #{orderComplete.orderId}</span>
           </Link>
-          <Link to="/" className="inline-block text-xs font-medium text-ts-kremMuted hover:text-white transition-colors">
+          <Link to="/" className="inline-block text-xs font-medium text-ts-kremMuted hover:text-ts-krem transition-colors">
             ← Kembali ke Beranda
           </Link>
         </div>
@@ -477,11 +477,11 @@ export function CartPage() {
   if (cart.length === 0) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-24 text-center space-y-5">
-        <div className="w-16 h-16 rounded-3xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center mx-auto text-ts-muted">
+        <div className="w-16 h-16 rounded-3xl bg-ts-surface border border-ts-border flex items-center justify-center mx-auto text-ts-muted">
           <ShoppingBag className="w-8 h-8" />
         </div>
         <div className="space-y-1">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Troli Belanja Masih Kosong</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-ts-krem">Troli Belanja Masih Kosong</h2>
           <p className="text-xs sm:text-sm text-ts-kremMuted max-w-sm mx-auto">
             Temukan kurasi grafis bertema subkultur atau pesan kaos polos New States Apparel original sekarang.
           </p>
@@ -496,7 +496,7 @@ export function CartPage() {
           </Link>
           <Link
             to="/polos"
-            className="px-6 py-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-white font-bold text-xs tracking-wider transition-colors inline-flex items-center gap-2"
+            className="px-6 py-3 rounded-xl bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem font-bold text-xs tracking-wider border border-ts-border transition-colors inline-flex items-center gap-2"
           >
             <span>The Blanks (Kaos Polos NSA)</span>
           </Link>
@@ -509,9 +509,9 @@ export function CartPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-8">
       {/* Title */}
-      <div className="space-y-1 pb-4 border-b border-white/[0.08]">
-        <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
-          Keranjang & Checkout
+      <div className="space-y-1 pb-4 border-b border-ts-border">
+        <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-ts-krem">
+          Keranjang &amp; Checkout
         </h1>
         <p className="text-xs text-ts-kremMuted">
           Lengkapi detail pesanan dan alamat pengiriman untuk proses cetak & pengiriman cepat.

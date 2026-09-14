@@ -6,7 +6,7 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0A0A0A" />
+    <meta name="theme-color" content="#FBFBF9" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>TeeStock Apparel | Curated Merch & Kaos NSA 24s Heavyweight Original</title>
@@ -16,9 +16,7 @@
       (function() {
         try {
           var savedTheme = localStorage.getItem('teestock_theme');
-          var theme = savedTheme === 'light' || savedTheme === 'dark' 
-            ? savedTheme 
-            : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          var theme = savedTheme === 'dark' ? 'dark' : 'light';
           var root = document.documentElement;
           root.setAttribute('data-theme', theme);
           if (theme === 'light') {
@@ -31,10 +29,10 @@
         } catch (e) {}
       })();
     </script>
-    <!-- Google Fonts: Luxury Neo-Grotesk & Technical Mono -->
+    <!-- Google Fonts: Geometric-Humanist & Technical Studio Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Google Analytics 4 (Privacy Consent Mode) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-G5K9FLMJ6X"></script>
     <script>

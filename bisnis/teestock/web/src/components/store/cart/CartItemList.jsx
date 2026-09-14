@@ -8,8 +8,8 @@ export function CartItemList({ cart, updateCartQty, removeFromCart }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between pb-2 border-b border-white/[0.08]">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
+      <div className="flex items-center justify-between pb-2 border-b border-ts-border">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-ts-krem flex items-center gap-2">
           <Package className="w-4 h-4 text-ts-terracotta" />
           Daftar Item ({cart.reduce((acc, it) => acc + (it.qty || 1), 0)} Pcs)
         </h2>
@@ -26,11 +26,11 @@ export function CartItemList({ cart, updateCartQty, removeFromCart }) {
           return (
             <div
               key={`${item.sku}-${item.garment}-${item.color}-${item.size}-${index}`}
-              className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors hover:border-white/[0.14]"
+              className="p-4 rounded-2xl bg-ts-surface border border-ts-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors hover:border-ts-borderHover shadow-sm"
             >
               {/* Product Info & Thumbnail */}
               <div className="flex items-center gap-3.5 min-w-0">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-ts-surface border border-white/[0.08] shrink-0">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-ts-surfaceHover/50 border border-ts-border shrink-0">
                   {item.filePath ? (
                     <img
                       src={item.filePath}
@@ -47,15 +47,15 @@ export function CartItemList({ cart, updateCartQty, removeFromCart }) {
 
                 <div className="min-w-0 space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/[0.06] text-ts-kremMuted uppercase">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ts-surfaceHover text-ts-kremMuted uppercase border border-ts-border">
                       {item.sku}
                     </span>
                     {isBlank ? (
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ts-terracotta/20 text-ts-terracotta font-semibold">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ts-teal/15 text-ts-teal font-semibold border border-ts-teal/20">
                         NSA Blank
                       </span>
                     ) : (
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ts-olive/20 text-ts-olive font-semibold">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ts-terracotta/15 text-ts-terracotta font-semibold border border-ts-terracotta/20">
                         Curated Merch
                       </span>
                     )}
@@ -63,13 +63,13 @@ export function CartItemList({ cart, updateCartQty, removeFromCart }) {
 
                   <Link
                     to={`/produk/${item.sku}`}
-                    className="block text-sm font-bold text-white hover:text-ts-terracotta transition-colors truncate"
+                    className="block text-sm font-bold text-ts-krem hover:text-ts-terracotta transition-colors truncate"
                   >
                     {item.name}
                   </Link>
 
                   <p className="text-xs text-ts-kremMuted truncate">
-                    {item.garment} • <span className="font-semibold text-white">{item.color}</span> • Ukuran <span className="font-semibold text-white">{item.size}</span>
+                    {item.garment} • <span className="font-semibold text-ts-krem">{item.color}</span> • Ukuran <span className="font-semibold text-ts-krem">{item.size}</span>
                   </p>
 
                   <p className="text-xs font-mono font-bold text-ts-terracotta">
@@ -79,24 +79,24 @@ export function CartItemList({ cart, updateCartQty, removeFromCart }) {
               </div>
 
               {/* Quantity Stepper & Subtotal */}
-              <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 pt-2 sm:pt-0 border-t sm:border-0 border-white/[0.04]">
-                {/* Stepper */}
-                <div className="flex items-center border border-white/[0.12] rounded-xl bg-white/[0.04] p-0.5">
+              <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 pt-2 sm:pt-0 border-t sm:border-0 border-ts-border">
+                {/* Stepper with accessible tap targets */}
+                <div className="flex items-center border border-ts-border rounded-xl bg-ts-surfaceHover/60 p-0.5">
                   <button
                     type="button"
                     onClick={() => updateCartQty(index, -1)}
-                    className="w-8 h-8 flex items-center justify-center text-ts-kremMuted hover:text-white hover:bg-white/[0.08] rounded-lg transition-colors"
+                    className="w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surface rounded-lg transition-colors cursor-pointer active:scale-95"
                     aria-label="Kurangi kuantitas"
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
-                  <span className="w-10 text-center font-mono text-xs font-bold text-white">
+                  <span className="w-10 text-center font-mono text-xs font-bold text-ts-krem">
                     {item.qty || 1}
                   </span>
                   <button
                     type="button"
                     onClick={() => updateCartQty(index, 1)}
-                    className="w-8 h-8 flex items-center justify-center text-ts-kremMuted hover:text-white hover:bg-white/[0.08] rounded-lg transition-colors"
+                    className="w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surface rounded-lg transition-colors cursor-pointer active:scale-95"
                     aria-label="Tambah kuantitas"
                   >
                     <Plus className="w-3.5 h-3.5" />
@@ -105,13 +105,13 @@ export function CartItemList({ cart, updateCartQty, removeFromCart }) {
 
                 {/* Subtotal & Delete */}
                 <div className="text-right min-w-[100px]">
-                  <p className="text-sm font-mono font-extrabold text-white">
+                  <p className="text-sm font-mono font-extrabold text-ts-krem">
                     {formatRupiah(itemTotal)}
                   </p>
                   <button
                     type="button"
                     onClick={() => removeFromCart(index)}
-                    className="inline-flex items-center gap-1 text-[11px] text-rose-400/80 hover:text-rose-400 mt-1 transition-colors"
+                    className="inline-flex items-center gap-1 text-[11px] text-rose-500 hover:text-rose-600 mt-1 transition-colors cursor-pointer py-1 px-1.5 rounded hover:bg-rose-500/10"
                   >
                     <Trash2 className="w-3 h-3" />
                     <span>Hapus</span>

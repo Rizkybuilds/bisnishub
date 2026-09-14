@@ -28,8 +28,8 @@ export function CartSummaryCard({
 
   return (
     <div className="space-y-6">
-      <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/[0.08] space-y-5">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2 pb-3 border-b border-white/[0.08]">
+      <div className="p-6 rounded-3xl bg-ts-surface border border-ts-border space-y-5 shadow-sm">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-ts-krem flex items-center gap-2 pb-3 border-b border-ts-border">
           <Sparkles className="w-4 h-4 text-ts-terracotta" />
           Ringkasan Pesanan
         </h3>
@@ -57,7 +57,7 @@ export function CartSummaryCard({
               <button
                 type="button"
                 onClick={handleRemoveVoucher}
-                className="p-1.5 hover:bg-white/10 rounded-lg text-ts-kremMuted hover:text-white transition-colors cursor-pointer"
+                className="p-1.5 hover:bg-ts-surfaceHover rounded-lg text-ts-kremMuted hover:text-ts-krem transition-colors cursor-pointer"
                 title="Hapus voucher"
               >
                 <X className="w-4 h-4" />
@@ -71,13 +71,13 @@ export function CartSummaryCard({
                 value={voucherInput}
                 onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleApplyVoucher())}
-                className="flex-1 px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.12] text-xs font-mono uppercase text-white placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta transition-colors"
+                className="flex-1 px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover border border-ts-border text-xs font-mono uppercase text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta transition-colors"
               />
               <button
                 type="button"
                 onClick={() => handleApplyVoucher()}
                 disabled={voucherLoading || !voucherInput.trim()}
-                className="px-4 py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-xs font-bold text-white border border-white/[0.1] transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0 cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-ts-surface border border-ts-border hover:bg-ts-surfaceHover text-xs font-bold text-ts-krem transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0 cursor-pointer shadow-sm"
               >
                 {voucherLoading ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -89,17 +89,17 @@ export function CartSummaryCard({
           )}
 
           {voucherMsg && (
-            <p className={`text-[11px] ${voucherMsg.type === 'success' ? 'text-ts-teal font-medium' : 'text-rose-400'}`}>
+            <p className={`text-[11px] ${voucherMsg.type === 'success' ? 'text-ts-teal font-medium' : 'text-rose-500 font-medium'}`}>
               {voucherMsg.text}
             </p>
           )}
         </div>
 
         {/* Calculation Lines */}
-        <div className="space-y-2.5 pt-3 border-t border-white/[0.06] text-xs">
+        <div className="space-y-2.5 pt-3 border-t border-ts-border text-xs">
           <div className="flex justify-between text-ts-kremMuted">
             <span>Subtotal Produk</span>
-            <span className="font-mono text-white">{formatRupiah(totalCartAmount)}</span>
+            <span className="font-mono text-ts-krem font-semibold">{formatRupiah(totalCartAmount)}</span>
           </div>
 
           {effectiveProductDiscount > 0 && (
@@ -124,7 +124,7 @@ export function CartSummaryCard({
                   <span className="text-ts-teal font-bold">{formatRupiah(shippingFee)}</span>
                 </span>
               ) : (
-                <span className="text-white">{formatRupiah(shippingFee)}</span>
+                <span className="text-ts-krem font-semibold">{formatRupiah(shippingFee)}</span>
               )}
             </div>
           </div>
@@ -134,7 +134,7 @@ export function CartSummaryCard({
             <div className="flex justify-between text-ts-kremMuted">
               <span className="flex items-center gap-1 text-[11px]">
                 Kode Unik Transfer
-                <span className="px-1.5 py-0.2 rounded bg-white/[0.06] font-mono text-[10px]">Otomatis</span>
+                <span className="px-1.5 py-0.2 rounded bg-ts-surfaceHover border border-ts-border font-mono text-[10px]">Otomatis</span>
               </span>
               <span className="font-mono text-ts-mustard font-semibold">+{uniqueCode}</span>
             </div>
@@ -142,7 +142,7 @@ export function CartSummaryCard({
         </div>
 
         {/* Grand Total */}
-        <div className="pt-4 border-t border-white/[0.1] flex items-baseline justify-between">
+        <div className="pt-4 border-t border-ts-border flex items-baseline justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-ts-kremMuted">Total Pembayaran</p>
             <p className="text-[11px] text-ts-muted">
@@ -150,7 +150,7 @@ export function CartSummaryCard({
             </p>
           </div>
           <div className="text-right">
-            <p className="text-xl sm:text-2xl font-black font-mono text-white text-ts-terracotta">
+            <p className="text-xl sm:text-2xl font-black font-mono text-ts-terracotta">
               {formatRupiah(grandTotal)}
             </p>
           </div>
@@ -164,7 +164,7 @@ export function CartSummaryCard({
           className={`w-full py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${
             isInstantPayment
               ? 'bg-sky-500 hover:bg-sky-600 text-white shadow-sky-500/20'
-              : 'bg-ts-terracotta hover:bg-ts-terracottaDark text-white shadow-ts-terracotta/20'
+              : 'bg-ts-terracotta hover:bg-ts-terracotta/90 text-white shadow-glow-terracotta'
           }`}
         >
           {isSubmitting ? (
@@ -193,9 +193,9 @@ export function CartSummaryCard({
       </div>
 
       {/* 🎁 Exclusive Unboxing Perks Included */}
-      <div className="p-4 rounded-2xl bg-ts-surface/90 border border-ts-terracotta/30 shadow-glow-terracotta-sm space-y-2.5 text-xs">
+      <div className="p-4 rounded-2xl bg-ts-surface border border-ts-terracotta/30 shadow-glow-terracotta-sm space-y-2.5 text-xs">
         <div className="flex items-center justify-between">
-          <span className="font-bold text-white flex items-center gap-1.5 text-xs uppercase tracking-wider font-mono">
+          <span className="font-bold text-ts-krem flex items-center gap-1.5 text-xs uppercase tracking-wider font-mono">
             <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
             Paket Unboxing Eksklusif
           </span>
@@ -204,19 +204,19 @@ export function CartSummaryCard({
           </span>
         </div>
         <div className="grid grid-cols-2 gap-2 text-[11px] text-ts-kremMuted pt-1">
-          <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-ts-surfaceHover/50 border border-ts-border">
             <span>🎁</span>
             <span className="truncate">Sticker Pack Vol. #01</span>
           </div>
-          <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-ts-surfaceHover/50 border border-ts-border">
             <span>🏷️</span>
             <span className="truncate">Founder Care Card</span>
           </div>
-          <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-ts-surfaceHover/50 border border-ts-border">
             <span>📦</span>
             <span className="truncate">Signature Matte Doff Mailer</span>
           </div>
-          <div className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-ts-surfaceHover/50 border border-ts-border">
             <span>🛡️</span>
             <span className="truncate">Garansi 100% Anti-Pecah</span>
           </div>
@@ -224,8 +224,8 @@ export function CartSummaryCard({
       </div>
 
       {/* Trust Badges */}
-      <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2.5 text-xs text-ts-kremMuted">
-        <div className="flex items-center gap-2 text-white font-semibold text-xs">
+      <div className="p-4 rounded-2xl bg-ts-surface border border-ts-border space-y-2.5 text-xs text-ts-kremMuted shadow-sm">
+        <div className="flex items-center gap-2 text-ts-krem font-semibold text-xs">
           <ShieldCheck className="w-4 h-4 text-ts-teal" />
           <span>Jaminan Belanja TeeStock Apparel</span>
         </div>

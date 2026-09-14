@@ -8,94 +8,94 @@
    ═════════════════════════════════════════════════════════════════════ */
 
 :root,
+[data-theme="light"],
+.light {
+  color-scheme: light;
+
+  /* Backgrounds — The Warm Curated Gallery (Warm Alabaster Canvas & Crisp Studio Surface) */
+  --color-bg-base: #FBFBF9;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-hover: #F4F4F0;
+  --color-bg-surface-card: #FFFFFF;
+  --color-bg-overlay: rgba(251, 251, 249, 0.92);
+
+  /* Borders — Clean Neutral Framing (The Gallery Canvas Rule) */
+  --color-border: #E4E4E7;
+  --color-border-dim: rgba(24, 24, 27, 0.05);
+  --color-border-hover: rgba(24, 24, 27, 0.20);
+
+  /* Typography — Deep Charcoal Ink & Cool Zinc */
+  --color-text-krem: #18181B;
+  --color-text-krem-light: #09090B;
+  --color-text-krem-muted: #71717A;
+  --color-text-muted: #A1A1AA;
+
+  /* Brand Accents — Heat Press 155°C & Studio Trust */
+  --color-terracotta: #D95D39;
+  --color-terracotta-glow: rgba(217, 93, 57, 0.16);
+  --color-mustard: #D9A441;
+  --color-teal: #0D9488;
+
+  /* Shadows — Soft Elevated Gallery */
+  --shadow-elevation: 0 12px 35px -10px rgba(24, 24, 27, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --glass-bg-hover: rgba(255, 255, 255, 0.98);
+  --glass-border: rgba(24, 24, 27, 0.08);
+  --glass-border-hover: rgba(24, 24, 27, 0.18);
+  --glass-inset: inset 0 1px 0 0 rgba(255, 255, 255, 0.85);
+
+  /* Grid dots */
+  --dot-color: rgba(24, 24, 27, 0.05);
+  --dot-dense-color: rgba(24, 24, 27, 0.08);
+
+  /* Scrollbar */
+  --scrollbar-track: #FBFBF9;
+  --scrollbar-thumb: #D4D4D8;
+}
+
 [data-theme="dark"],
 .dark {
   color-scheme: dark;
 
-  /* Backgrounds — The Luxury Monolith (Pitch Black & Washed Charcoal) */
-  --color-bg-base: #0A0A0A;
-  --color-bg-surface: #141414;
-  --color-bg-surface-hover: #1C1C1C;
-  --color-bg-surface-card: rgba(20, 20, 20, 0.88);
-  --color-bg-overlay: rgba(10, 10, 10, 0.88);
+  /* Backgrounds — The Obsidian Studio */
+  --color-bg-base: #121214;
+  --color-bg-surface: #1A1A1E;
+  --color-bg-surface-hover: #222228;
+  --color-bg-surface-card: rgba(26, 26, 30, 0.92);
+  --color-bg-overlay: rgba(18, 18, 20, 0.90);
 
-  /* Borders — Clean Architectural Precision */
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-dim: rgba(255, 255, 255, 0.04);
-  --color-border-hover: rgba(255, 255, 255, 0.16);
+  /* Borders — Crisp Architectural Precision */
+  --color-border: rgba(255, 255, 255, 0.10);
+  --color-border-dim: rgba(255, 255, 255, 0.05);
+  --color-border-hover: rgba(255, 255, 255, 0.20);
 
-  /* Typography — High-Contrast Chalk White & Cool Silver */
+  /* Typography — Chalk White & Cool Silver */
   --color-text-krem: #FAFAFA;
   --color-text-krem-light: #FFFFFF;
   --color-text-krem-muted: #A1A1AA;
   --color-text-muted: #71717A;
 
-  /* Brand Accents (Surgical & Subdued) */
+  /* Brand Accents */
   --color-terracotta: #D95D39;
-  --color-terracotta-glow: rgba(217, 93, 57, 0.14);
+  --color-terracotta-glow: rgba(217, 93, 57, 0.18);
   --color-mustard: #D9A441;
-  --color-teal: #4F7C74;
+  --color-teal: #14B8A6;
 
   /* Shadows — Deep Studio Shadows */
   --shadow-elevation: 0 16px 48px -12px rgba(0, 0, 0, 0.85);
-  --glass-bg: rgba(20, 20, 20, 0.82);
-  --glass-bg-hover: rgba(28, 28, 28, 0.95);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-border-hover: rgba(255, 255, 255, 0.18);
-  --glass-inset: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  --glass-bg: rgba(26, 26, 30, 0.85);
+  --glass-bg-hover: rgba(34, 34, 40, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-border-hover: rgba(255, 255, 255, 0.22);
+  --glass-inset: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
 
   /* Grid dots */
-  --dot-color: rgba(255, 255, 255, 0.04);
-  --dot-dense-color: rgba(255, 255, 255, 0.06);
+  --dot-color: rgba(255, 255, 255, 0.05);
+  --dot-dense-color: rgba(255, 255, 255, 0.08);
 
   /* Scrollbar */
-  --scrollbar-track: #0A0A0A;
-  --scrollbar-thumb: #222222;
-}
-
-[data-theme="light"],
-.light {
-  color-scheme: light;
-
-  /* Backgrounds - Editorial Warm Ecru / Linen */
-  --color-bg-base: #F8F6F0;
-  --color-bg-surface: #FFFFFF;
-  --color-bg-surface-hover: #F2EFE8;
-  --color-bg-surface-card: rgba(255, 255, 255, 0.92);
-  --color-bg-overlay: rgba(248, 246, 240, 0.88);
-
-  /* Borders - Crisp Subtle Charcoal */
-  --color-border: rgba(20, 19, 18, 0.10);
-  --color-border-dim: rgba(20, 19, 18, 0.05);
-  --color-border-hover: rgba(20, 19, 18, 0.22);
-
-  /* Typography - Deep Obsidian Black */
-  --color-text-krem: #141312;
-  --color-text-krem-light: #000000;
-  --color-text-krem-muted: #524E48;
-  --color-text-muted: #7A756D;
-
-  /* Brand Accents - Rich Terracotta */
-  --color-terracotta: #B95B30;
-  --color-terracotta-glow: rgba(185, 91, 48, 0.18);
-  --color-mustard: #C8902A;
-  --color-teal: #3E6E66;
-
-  /* Shadows - Soft Architectural */
-  --shadow-elevation: 0 12px 35px -10px rgba(20, 19, 18, 0.10);
-  --glass-bg: rgba(255, 255, 255, 0.88);
-  --glass-bg-hover: rgba(255, 255, 255, 0.98);
-  --glass-border: rgba(20, 19, 18, 0.12);
-  --glass-border-hover: rgba(20, 19, 18, 0.24);
-  --glass-inset: inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
-
-  /* Grid dots */
-  --dot-color: rgba(20, 19, 18, 0.07);
-  --dot-dense-color: rgba(20, 19, 18, 0.10);
-
-  /* Scrollbar */
-  --scrollbar-track: #F8F6F0;
-  --scrollbar-thumb: #D8D3C8;
+  --scrollbar-track: #121214;
+  --scrollbar-thumb: #2A2A30;
 }
 
 html {

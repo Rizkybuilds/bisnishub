@@ -233,12 +233,12 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
   const averageRating = (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length).toFixed(1);
 
   return (
-    <div className="rounded-3xl bg-ts-surface border border-white/[0.08] p-6 sm:p-8 space-y-8">
+    <div className="rounded-3xl bg-ts-surface border border-ts-border p-6 sm:p-8 space-y-8">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/[0.08] pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-ts-border pb-6">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            <h3 className="text-xl sm:text-2xl font-black text-ts-krem tracking-tight">
               Ulasan &amp; Bukti Kualitas Pembeli
             </h3>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/40">
@@ -252,7 +252,7 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-bold text-white border border-white/15 transition-all shadow-sm shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-ts-surface hover:bg-ts-surfaceHover text-xs font-bold text-ts-krem border border-ts-border transition-all shadow-sm shrink-0 cursor-pointer"
         >
           <Plus className="w-4 h-4 text-ts-terracotta" />
           <span>Tulis Ulasan Pembeli</span>
@@ -260,10 +260,10 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
       </div>
 
       {/* Ratings Breakdown Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white/[0.02] p-5 rounded-2xl border border-white/[0.05]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-ts-surfaceHover/60 p-5 rounded-2xl border border-ts-border">
         {/* Overall Score */}
-        <div className="flex flex-col items-center justify-center text-center p-4 border-b md:border-b-0 md:border-r border-white/[0.08]">
-          <div className="text-4xl sm:text-5xl font-black text-white tracking-tight flex items-baseline gap-1">
+        <div className="flex flex-col items-center justify-center text-center p-4 border-b md:border-b-0 md:border-r border-ts-border">
+          <div className="text-4xl sm:text-5xl font-black text-ts-krem tracking-tight flex items-baseline gap-1">
             <span>{averageRating}</span>
             <span className="text-base text-ts-muted font-normal">/ 5.0</span>
           </div>
@@ -281,39 +281,39 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
         <div className="md:col-span-2 space-y-3 justify-center flex flex-col px-2 sm:px-4">
           <div>
             <div className="flex justify-between text-xs font-semibold mb-1">
-              <span className="text-white flex items-center gap-1.5">
+              <span className="text-ts-krem flex items-center gap-1.5">
                 <Shirt className="w-3.5 h-3.5 text-ts-teal" />
                 Ketebalan &amp; Fitting NSA 24s
               </span>
-              <span className="text-ts-teal font-mono">98% Sangat Puas</span>
+              <span className="text-ts-teal font-mono font-bold">98% Sangat Puas</span>
             </div>
-            <div className="w-full bg-white/[0.06] h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-ts-border h-2 rounded-full overflow-hidden">
               <div className="bg-ts-teal h-full rounded-full w-[98%]" />
             </div>
           </div>
 
           <div>
             <div className="flex justify-between text-xs font-semibold mb-1">
-              <span className="text-white flex items-center gap-1.5">
+              <span className="text-ts-krem flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
                 Ketajaman &amp; Kelenturan Sablon DTF
               </span>
-              <span className="text-ts-mustard font-mono">99% Awet &amp; Lentur</span>
+              <span className="text-ts-mustard font-mono font-bold">99% Awet &amp; Lentur</span>
             </div>
-            <div className="w-full bg-white/[0.06] h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-ts-border h-2 rounded-full overflow-hidden">
               <div className="bg-ts-mustard h-full rounded-full w-[99%]" />
             </div>
           </div>
 
           <div>
             <div className="flex justify-between text-xs font-semibold mb-1">
-              <span className="text-white flex items-center gap-1.5">
+              <span className="text-ts-krem flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-ts-green" />
                 Kesesuaian Ukuran (Size Chart)
               </span>
-              <span className="text-ts-green font-mono">96% Pas Sesuai Standar</span>
+              <span className="text-ts-green font-mono font-bold">96% Pas Sesuai Standar</span>
             </div>
-            <div className="w-full bg-white/[0.06] h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-ts-border h-2 rounded-full overflow-hidden">
               <div className="bg-ts-green h-full rounded-full w-[96%]" />
             </div>
           </div>
@@ -324,20 +324,20 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
       <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
         <button
           onClick={() => setActiveFilter('all')}
-          className={`px-3 py-1.5 rounded-lg font-semibold transition-all shrink-0 ${
+          className={`px-3 py-1.5 rounded-lg font-semibold transition-all shrink-0 cursor-pointer ${
             activeFilter === 'all'
               ? 'bg-ts-terracotta text-white shadow-glow-terracotta'
-              : 'bg-white/[0.04] text-ts-kremMuted hover:bg-white/[0.08]'
+              : 'bg-ts-surface text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover border border-ts-border'
           }`}
         >
           Semua ({reviews.length})
         </button>
         <button
           onClick={() => setActiveFilter('5star')}
-          className={`px-3 py-1.5 rounded-lg font-semibold transition-all shrink-0 flex items-center gap-1 ${
+          className={`px-3 py-1.5 rounded-lg font-semibold transition-all shrink-0 flex items-center gap-1 cursor-pointer ${
             activeFilter === '5star'
               ? 'bg-ts-terracotta text-white shadow-glow-terracotta'
-              : 'bg-white/[0.04] text-ts-kremMuted hover:bg-white/[0.08]'
+              : 'bg-ts-surface text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover border border-ts-border'
           }`}
         >
           <Star className="w-3.5 h-3.5 fill-current" />
@@ -350,17 +350,17 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
         {filteredReviews.map((rev) => (
           <div
             key={rev.id}
-            className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3 transition-all hover:border-white/[0.12]"
+            className="p-5 rounded-2xl bg-ts-surface border border-ts-border space-y-3 transition-all hover:border-ts-borderHover shadow-sm"
           >
             {/* Reviewer Header */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-ts-terracotta/30 to-ts-mustard/20 border border-white/15 flex items-center justify-center font-bold text-white text-xs font-mono">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-ts-terracotta/20 to-ts-mustard/20 border border-ts-border flex items-center justify-center font-bold text-ts-terracotta text-xs font-mono">
                   {rev.avatar}
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-sm font-bold text-white">{rev.author}</span>
+                    <span className="text-sm font-bold text-ts-krem">{rev.author}</span>
                     <span className="flex items-center gap-1 text-[10px] text-ts-green font-semibold bg-ts-green/10 px-1.5 py-0.5 rounded border border-ts-green/20">
                       <CheckCircle2 className="w-3 h-3" />
                       Pembeli Terverifikasi
@@ -384,8 +384,8 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
 
             {/* Fitting / Size Spec Badge */}
             {rev.userStats && (
-              <div className="text-[11px] font-mono text-ts-kremMuted bg-white/[0.03] px-2.5 py-1 rounded-lg border border-white/[0.05] inline-block">
-                Size: <strong className="text-white">{rev.sizeOrdered}</strong> • {rev.userStats}
+              <div className="text-[11px] font-mono text-ts-kremMuted bg-ts-surfaceHover px-2.5 py-1 rounded-lg border border-ts-border inline-block">
+                Size: <strong className="text-ts-krem font-bold">{rev.sizeOrdered}</strong> • {rev.userStats}
               </div>
             )}
 
@@ -399,10 +399,10 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
               <button
                 onClick={() => handleHelpful(rev.id)}
                 disabled={helpfulVoted[rev.id]}
-                className={`inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg border transition-all ${
+                className={`inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
                   helpfulVoted[rev.id]
                     ? 'bg-ts-green/15 text-ts-green border-ts-green/30 cursor-default'
-                    : 'bg-white/[0.03] hover:bg-white/[0.08] text-ts-muted hover:text-white border-white/[0.06]'
+                    : 'bg-ts-surface hover:bg-ts-surfaceHover text-ts-muted hover:text-ts-krem border border-ts-border'
                 }`}
               >
                 <ThumbsUp className="w-3 h-3" />
@@ -416,16 +416,16 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
       {/* Review Submission Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg rounded-3xl bg-ts-surface border border-white/[0.12] p-6 sm:p-8 shadow-2xl text-ts-krem space-y-5">
+          <div className="relative w-full max-w-lg rounded-3xl bg-ts-surface border border-ts-border p-6 sm:p-8 shadow-2xl text-ts-krem space-y-5">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 p-2 rounded-xl text-ts-muted hover:text-white hover:bg-white/[0.08]"
+              className="absolute top-4 right-4 p-2 rounded-xl text-ts-muted hover:text-ts-krem hover:bg-ts-surfaceHover cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div>
-              <h4 className="text-lg sm:text-xl font-bold text-white">
+              <h4 className="text-lg sm:text-xl font-bold text-ts-krem">
                 Tulis Ulasan untuk {productName}
               </h4>
               <p className="text-xs text-ts-kremMuted mt-0.5">
@@ -436,7 +436,7 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
             {submitSuccess ? (
               <div className="py-8 text-center space-y-2">
                 <CheckCircle2 className="w-12 h-12 text-ts-green mx-auto animate-bounce" />
-                <h5 className="text-base font-bold text-white">Ulasan Berhasil Dikirim!</h5>
+                <h5 className="text-base font-bold text-ts-krem">Ulasan Berhasil Dikirim!</h5>
                 <p className="text-xs text-ts-kremMuted">Terima kasih telah berbagi pengalaman dengan komunitas TeeStock.</p>
               </div>
             ) : (
@@ -449,7 +449,7 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
                         type="button"
                         key={s}
                         onClick={() => setRating(s)}
-                        className="p-1 text-ts-mustard transition-transform hover:scale-110"
+                        className="p-1 text-ts-mustard transition-transform hover:scale-110 cursor-pointer"
                       >
                         <Star className={`w-6 h-6 ${s <= rating ? 'fill-ts-mustard' : 'text-ts-muted'}`} />
                       </button>
@@ -469,7 +469,7 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
                       placeholder="Contoh: Rian K."
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-ts-terracotta"
+                      className="w-full px-3 py-2 rounded-xl bg-ts-surfaceHover border border-ts-border text-ts-krem focus:outline-none focus:border-ts-terracotta"
                     />
                   </div>
                   <div>
@@ -477,7 +477,7 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
                     <select
                       value={sizeOrdered}
                       onChange={(e) => setSizeOrdered(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-[#201E1B] border border-white/10 text-white focus:outline-none focus:border-ts-terracotta"
+                      className="w-full px-3 py-2 rounded-xl bg-ts-surfaceHover border border-ts-border text-ts-krem focus:outline-none focus:border-ts-terracotta"
                     >
                       <option value="S">S</option>
                       <option value="M">M</option>
@@ -495,7 +495,7 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
                     placeholder="Contoh: TB 175 cm · BB 70 kg (Fitting pas/agak longgar)"
                     value={userStats}
                     onChange={(e) => setUserStats(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-ts-terracotta"
+                    className="w-full px-3 py-2 rounded-xl bg-ts-surfaceHover border border-ts-border text-ts-krem focus:outline-none focus:border-ts-terracotta"
                   />
                 </div>
 
@@ -507,12 +507,12 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
                     placeholder="Ceritakan kepuasan Anda terkait ketebalan kain NSA, kerah leher, elastisitas sablon DTF, atau respon pengiriman..."
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-ts-terracotta resize-none"
+                    className="w-full px-3 py-2 rounded-xl bg-ts-surfaceHover border border-ts-border text-ts-krem focus:outline-none focus:border-ts-terracotta resize-none"
                   />
                 </div>
 
                 {/* Optional Verified Buyer Verification Box */}
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
+                <div className="p-3 rounded-xl bg-ts-surfaceHover/60 border border-ts-border space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-ts-krem flex items-center gap-1.5">
                       <CheckCircle2 className="w-3.5 h-3.5 text-ts-green" /> Verifikasi Pembeli Resmi (Opsional)
@@ -528,7 +528,7 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
                       placeholder="No. Pesanan (cth: TS-260914-XXXX)"
                       value={orderNumber}
                       onChange={(e) => setOrderNumber(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-ts-terracotta text-xs uppercase"
+                      className="w-full px-3 py-2 rounded-xl bg-ts-surface border border-ts-border text-ts-krem focus:outline-none focus:border-ts-terracotta text-xs uppercase"
                     />
                     <input
                       type="text"
@@ -536,13 +536,13 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
                       value={phoneLast4}
                       onChange={(e) => setPhoneLast4(e.target.value.replace(/\D/g, '').slice(0, 4))}
                       maxLength={4}
-                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-ts-terracotta text-xs font-mono"
+                      className="w-full px-3 py-2 rounded-xl bg-ts-surface border border-ts-border text-ts-krem focus:outline-none focus:border-ts-terracotta text-xs font-mono"
                     />
                   </div>
                 </div>
 
                 {submitError && (
-                  <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+                  <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs">
                     {submitError}
                   </div>
                 )}
@@ -551,7 +551,7 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 rounded-xl text-ts-muted hover:bg-white/[0.06]"
+                    className="px-4 py-2 rounded-xl text-ts-muted hover:bg-ts-surfaceHover hover:text-ts-krem cursor-pointer"
                   >
                     Batal
                   </button>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Plus, 
   AlertTriangle, 
@@ -154,12 +155,12 @@ Mohon info ketersediaan stok di gerai terdekat dan total tagihannya ya kak. Teri
               Order Belanja Supplier NSA ({lowStockItems.length} Menipis)
             </Button>
           ) : (
-            <a
-              href="/admin/gang-sheet"
+            <Link
+              to="/admin/gangsheet"
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 border border-teal-500/30 transition-all"
             >
               <span>+ Rancang Roll Gang Sheet (1 Meter)</span>
-            </a>
+            </Link>
           )}
 
           {onOpenRestock && activeTab !== 'dtf_films' && (

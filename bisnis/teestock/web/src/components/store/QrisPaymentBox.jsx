@@ -74,7 +74,7 @@ export function QrisPaymentBox({
           <Clock className="w-4 h-4 text-ts-mustard animate-pulse" />
           <span>Selesaikan pembayaran dalam:</span>
         </div>
-        <span className="font-mono font-bold text-sm tracking-widest text-white px-2 py-0.5 rounded-lg bg-ts-hitam/60 border border-white/10">
+        <span className="font-mono font-bold text-sm tracking-widest text-ts-krem px-2.5 py-0.5 rounded-lg bg-ts-surface border border-ts-border shadow-sm">
           {formatTimer(timeLeft)}
         </span>
       </div>
@@ -237,7 +237,7 @@ export function QrisPaymentBox({
             className={`px-4 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md ${
               copied 
                 ? 'bg-ts-green text-ts-hitam font-extrabold'
-                : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
+                : 'bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem border border-ts-border'
             }`}
           >
             {copied ? (
@@ -255,13 +255,13 @@ export function QrisPaymentBox({
         </div>
 
         {/* 3-Digit Breakdown Chip */}
-        <div className="p-3 rounded-2xl bg-ts-hitam/60 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+        <div className="p-3 rounded-2xl bg-ts-surface border border-ts-border flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
           <div className="text-ts-kremMuted flex items-center gap-1.5">
-            <span>Tagihan: <strong className="text-white">{formatRupiah(baseTotal)}</strong></span>
+            <span>Tagihan: <strong className="text-ts-krem">{formatRupiah(baseTotal)}</strong></span>
             <span>+</span>
             <span className="flex items-center gap-1 font-bold text-ts-mustard">
               Kode Unik:
-              <span className="font-mono bg-ts-mustard/20 px-1.5 py-0.5 rounded border border-ts-mustard/40 text-white font-extrabold">
+              <span className="font-mono bg-ts-mustard/20 px-1.5 py-0.5 rounded border border-ts-mustard/40 text-ts-krem font-extrabold">
                 +{uniqueCode}
               </span>
             </span>
@@ -273,10 +273,10 @@ export function QrisPaymentBox({
         </div>
 
         {/* Warning Callout */}
-        <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-2.5 text-xs text-amber-200">
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-2.5 text-xs text-amber-700 dark:text-amber-200">
+          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
           <p className="leading-relaxed">
-            <strong className="text-amber-300 font-bold">PENTING:</strong> Mohon transfer <strong>PERSIS sejumlah {formatRupiah(totalTransfer)}</strong> (jangan dibulatkan). Tiga digit terakhir (<strong className="font-mono text-white">{uniqueCode}</strong>) adalah tanda pengenal pesanan Anda agar terverifikasi otomatis.
+            <strong className="text-amber-700 dark:text-amber-300 font-bold">PENTING:</strong> Mohon transfer <strong>PERSIS sejumlah {formatRupiah(totalTransfer)}</strong> (jangan dibulatkan). Tiga digit terakhir (<strong className="font-mono text-amber-800 dark:text-white bg-amber-500/20 px-1.5 py-0.5 rounded border border-amber-500/30">{uniqueCode}</strong>) adalah tanda pengenal pesanan Anda agar terverifikasi otomatis.
           </p>
         </div>
       </div>
@@ -288,7 +288,7 @@ export function QrisPaymentBox({
             Saya Sudah Bayar — Kirim Bukti Transfer ke WA
           </Button>
         </a>
-        <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-center space-y-1">
+        <div className="p-3 rounded-2xl bg-ts-surface border border-ts-border text-center space-y-1">
           <p className="text-xs font-bold text-ts-green flex items-center justify-center gap-1.5">
             <Zap className="w-3.5 h-3.5" />
             <span>Verifikasi Cepat 5–15 Menit (08.00 – 21.00 WIB)</span>

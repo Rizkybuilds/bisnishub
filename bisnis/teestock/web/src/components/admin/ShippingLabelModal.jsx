@@ -173,7 +173,7 @@ export function ShippingLabelModal({ isOpen, onClose, order }) {
                     {isDropship ? dropshipStore : (order.origin_hub_short ? `TeeStock Apparel (${order.origin_hub_short})` : 'TeeStock Studio & Print Lab')}
                   </span>
                   <div className="text-[8px] text-gray-600 leading-tight">
-                    {isDropship ? 'Mitra Terverifikasi' : (order.origin_address || 'Citayam Hub, Kab. Bogor / Depok')}
+                    {isDropship ? 'Mitra Terverifikasi' : (order.origin_address || 'Central Studio Depok, Jawa Barat')}
                   </div>
                   <div className="font-mono text-gray-700 text-[9px]">
                     {isDropship ? dropshipPhone : '0852-2027-4968'}

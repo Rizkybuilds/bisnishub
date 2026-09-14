@@ -1,3 +1,17 @@
+---
+title: "Roadmap Pengembangan Produk & Fitur TeeStock"
+date: "2026-09-14"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - operasional
+  - roadmap
+  - cto
+  - fitur
+---
+
 # Roadmap Pengembangan Bertahap — TeeStock
 
 > **Posisi Brand:** Curated Apparel & Merch House  

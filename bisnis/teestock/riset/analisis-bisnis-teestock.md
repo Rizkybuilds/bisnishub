@@ -1,26 +1,39 @@
+---
+title: "Analisis & Evaluasi Model Bisnis TeeStock"
+date: "2026-09-14"
+bisnis: teestock
+kategori: riset
+status: active
+tags:
+  - bisnis/teestock
+  - riset
+  - model-bisnis
+  - pod
+  - evaluasi
+  - unit-economics
+---
+
 # Analisis Bisnis & Unit Economics — TeeStock
 
 > **Status:** Updated September 2026  
-> **Brand:** TeeStock (Your Design, Your Stock)  
-> **Model:** Print-on-Demand (POD) Apparel Lean Solo Founder  
-> **Produksi:** Blank New State Apparel + Cetak DTF Roll Meteran + Heat Press Mandiri
+> **Brand:** TeeStock (*The Everyday Curated Graphic Apparel House*)  
+> **Tagline:** *"Banyak Pilihan Desain, Satu Standar Kualitas."*  
+> **Model:** Everyday Curated Graphic Apparel & POD Merch House  
+> **Produksi:** Blank New States Apparel (NSA) + Cetak DTF Roll Meteran + Heat Press Mandiri 155°C  
 
 ---
 
 ## 1. Ringkasan Eksekutif
 
-TeeStock masuk ke pasar apparel Print-on-Demand (POD) Indonesia dengan fokus strategis **100% Ritel Konsumen (B2C)** melalui 3 pilar:
-1. **TeeStock Originals:** Rilisan kapsul desain grafis tematik (*The Drop Model*, Drop #01: "RAW IDENTITY" @ Rp 99.000).
-2. **TeeStock Blanks:** Penjualan kaos polos New States Apparel (NSA) original dengan pemenuhan cepat via jaringan multi-hub.
-3. **TeeStock Atelier:** Layanan sablon DTF satuan tanpa minimum order untuk perorangan, komunitas, dan kreator.
+TeeStock memposisikan diri di pasar apparel Indonesia bukan sebagai brand streetwear elitis yang mahal dan berjarak, juga bukan toko sablon murahan yang mudah melar. Mengadopsi benchmark global seperti **Threadless** dan **Cotton Bureau**, TeeStock hadir sebagai **"The Everyday Curated Graphic Apparel House"**:
 
-Alih-alih mencampuradukkan penawaran reseller murah di etalase ritel yang dapat merusak persepsi brand, TeeStock menerapkan **pemisahan kanal secara ketat**: storefront publik `teestock.id` murni melayani pembeli ritel, sementara program kemitraan dialokasikan pada subdomain terpisah `mitra.teestock.id` pada fase berikutnya.
+1. **Inklusif & Ramah Semua Kalangan:** Menyediakan ratusan pilihan desain visual yang tertata rapi (hobi, kopi, teknologi/coding, hewan peliharaan, musik, hingga humor santai) yang cocok dipakai siapa saja.
+2. **Kualitas Garmen Pasti (Brand Trust):** Seluruh kaos wajib menggunakan katun murni **New States Apparel (NSA Heavyweight 24s & Softstyle 30s)** konstruksi tubular knit (tanpa jahitan samping, kerah rib 2.2 cm anti-meleyot).
+3. **Produksi In-House Mandiri:** Sablon dicetak presisi dengan *double heat-press 155°C* di Central Studio Citayam (menghemat biaya vendor Rp 5.000 – Rp 7.000/pcs dan mempercepat SLA menjadi H+0 / H+1).
+4. **Harga Jujur:** Kualitas setara distro mall Rp 150k+, di harga ramah kantong **Rp 89.000 – Rp 99.000**.
 
-Keunggulan model eksekusi:
-- **Kualitas garmen terstandarisasi** (New States Apparel Heavyweight 24s tubular knit tanpa jahitan samping)
-- **Kemandirian produksi** (DTF roll meteran dipress in-house pada suhu 155°C di Central Studio Citayam)
-- **Logistik multi-hub cerdas** (Citayam Central Studio untuk sablon/custom & Bogor Satellite Hub untuk blanks express)
-- **Zero dead stock risk** (produksi on-demand dengan perputaran modal terjaga)
+Untuk rincian lengkap 5 pilar pendapatan dan alur operasionalnya, lihat:  
+👉 [[bisnis/teestock/riset/breakdown-model-bisnis-teestock|Breakdown 5 Pilar Model Bisnis TeeStock]].
 
 ---
 
@@ -44,11 +57,10 @@ Berdasarkan riset pasar riil di platform e-commerce utama (Shopee & Tokopedia) p
 ### 2.2 Validasi Positioning Harga TeeStock
 
 > [!IMPORTANT]
-> **Kesimpulan Riset:** Menjual kaos reguler langsung di harga Rp 129.000 pada fase peluncuran (Bulan 1-3) berisiko tinggi kalah bersaing di Shopee karena bersinggungan langsung dengan brand mapan (Erigo/3Second).  
+> **Kesimpulan Riset:** Menjual kaos reguler langsung di harga Rp 129.000 pada fase peluncuran berisiko tinggi kalah bersaing di Shopee karena bersinggungan langsung dengan brand mapan.  
 > **Sweet spot peluncuran TeeStock adalah Rp 89.000 – Rp 99.000.**
 
 #### Strategi Penetrasi Harga 3 Fase ("Start Mid, Build Brand, Go Premium"):
-
 1. **Fase 1: Launch & Validasi (Bulan 1-3)**
    * **Harga Retail:** **Rp 89.000 – Rp 99.000**
    * **Fokus:** Mengumpulkan 50-100 ulasan bintang 5 pertama di Shopee & membangun bukti sosial.
@@ -57,7 +69,7 @@ Berdasarkan riset pasar riil di platform e-commerce utama (Shopee & Tokopedia) p
    * **Fokus:** Meningkatkan margin seiring naiknya kepercayaan pasar dan ekspansi katalog.
 3. **Fase 3: Establishment & Premium (Bulan 7-12)**
    * **Harga Retail:** **Rp 119.000 – Rp 149.000**
-   * **Fokus:** Khusus untuk edisi kolaborasi eksklusif, bahan heavy 24s/16s, dan layanan Custom Order premium.
+   * **Fokus:** Khusus untuk edisi kolaborasi eksklusif kreator, bahan heavy 24s/16s, dan layanan Custom Order premium.
 
 ---
 
@@ -69,85 +81,39 @@ Perhitungan berbasis data riil vendor resmi **New States Apparel (NSA Heavyweigh
 |---|---|---|
 | Blank Kaos Polos NSA 24s | Rp 37.000 – Rp 42.000 | New States Apparel Heavyweight 24s (Rp 37k grosir min 72 pcs / Rp 42k ritel Cititex) |
 | Cetak DTF Film Meteran | Rp 7.000 – Rp 12.000 | Rata-rata per kaos (A4 ~Rp 7k, A3 ~Rp 12k dari harga meteran Rp 28k–35k) |
-| Biaya Pressing Mandiri | Rp 1.500 | In-house heat press di rumah (listrik 1500W, teflon sheet, hemat jasa vendor Rp 5k–7k) |
-| Packaging & Unboxing | Rp 2.000 | Polymailer doff tebal, stiker segel logo TeeStock, thank you card |
+| Biaya Pressing Mandiri | Rp 1.500 | In-house heat press di rumah (listrik 900W, teflon sheet, hemat jasa vendor Rp 5k–7k) |
+| Packaging & Unboxing | Rp 2.000 | Polymailer doff tebal, stiker segel logo TeeStock, Story Card unboxing |
 | Overhead Operasional | Rp 1.500 | Lakban, packaging buffer, depresiasi alat |
 | **TOTAL HPP RIIL (COGS)** | **Rp 49.000 – Rp 54.000** | **Biaya modal fisik per 1 pcs kaos jadi (24s Heavyweight)** |
 
-*(Catatan: Jika menggunakan varian NSA Softstyle 30s, HPP dasar turun sekitar Rp 3.000 – Rp 5.000 per pcs).*
-
-### Simulasi Margin Keuntungan Ritel (Anchor Rp 139.000 → Promo Launching Rp 99.000):
-
+### Simulasi Margin Keuntungan Ritel (Anchor Rp 139.000 → Launching Rp 89.000 – Rp 99.000):
 - **Harga Coret (Anchor Price):** Rp 139.000
-- **Harga Jual Ritel Promo:** Rp 99.000
+- **Harga Jual Ritel Promo:** Rp 89.000 – Rp 99.000
 - **Potongan Biaya Marketplace (Shopee/TikTok ~10-12%):** ~Rp 10.890
 - **HPP Rata-Rata (Bahan 24s):** Rp 51.500
-- **Laba Bersih per Kaos (Marketplace):** **Rp 36.610** (Margin Bersih **37.0%**)
-- **Laba Bersih per Kaos (Direct WA / Web 0% Fee):** **Rp 47.500** (Margin Bersih **48.0%**)
+- **Laba Bersih per Kaos (Marketplace):** **Rp 26.610 – Rp 36.610** (Margin Bersih **30% – 37%**)
+- **Laba Bersih per Kaos (Direct WA / Web 0% Fee):** **Rp 37.500 – Rp 47.500** (Margin Bersih **42% – 48%**)
 
 ---
 
-## 4. Struktur Harga Tersegregasi (Ritel Publik vs Portal B2B)
+## 4. Arsitektur 5 Model Pendapatan (Revenue Streams)
 
-Untuk menjaga *perceived value* produk ritel Rp 99.000 tetap tinggi dan tidak terkesan "kaos murah grosiran", struktur harga dibagi secara terisolasi:
+TeeStock mengintegrasikan 5 pilar bisnis untuk memaksimalkan kapasitas produksi studio Citayam:
 
-### A. Etalase Ritel Publik (`teestock.id` / Marketplace):
-* **🛒 Drop Originals (Katalog Grafis):** **Rp 99.000** (Anchor Price Rp 139.000) — Margin Bersih 37–48%.
-* **📦 Kaos Polos NSA Original (Blanks):** **Rp 34.000 – Rp 52.000** (Tergantung ketebalan 30s/24s & size).
-* **🎨 Custom Atelier Satuan:** **Rp 119.000 – Rp 139.000** (Atau add-on sablon +Rp 25.000 dari blanks).
-
-### B. Portal Kemitraan Khusus (`mitra.teestock.id` — Roadmap Fase 2):
-*(Hanya dapat diakses melalui login akun mitra terverifikasi)*
-
-| Tier Kemitraan | Harga Modal B2B | Syarat & Skema | Laba Bersih TeeStock | Keuntungan Mitra |
-|---|---|---|---|---|
-| **📦 Mitra Dropshipper** | Rp 75.000 | Satuan white-label, resi otomatis marketplace | Rp 21.000 – Rp 23.500 (28–31%) | Rp 24.000/pcs |
-| **🏭 Mitra Reseller** | Rp 65.000 | Min 12 pcs, modal stok distro/toko fisik | Rp 11.000 – Rp 13.500 (17–21%) | Rp 34.000/pcs |
-
-*Semua tier kemitraan telah diverifikasi oleh CFO untuk memenuhi target minimal margin pertumbuhan bisnis (minimal 10% di atas HPP pada tier reseller terendah).*
+1. **Curated Originals (Ritel D2C):** Kaos grafis terkurasi siap beli (@ Rp 89k–99k). Margin ~50%.
+2. **Custom Atelier (Satuan & Komunitas):** Sablon kustom satuan (@ Rp 119k–139k) & pesanan komunitas. Margin 58–64%.
+3. **Open Reseller & Dropship:** Kemitraan jualan katalog TeeStock atau brand milik mitra secara *white-label* (@ Rp 75k dropship / Rp 65k grosir min 12 pcs).
+4. **Creator Collaboration (Royalti):** Seniman/ilustrator upload karya tanpa modal uang, mendapat royalti **Rp 25.000/pcs** terjual. TeeStock laba bersih **Rp 40.500/pcs**.
+5. **Blank Retail & Wholesale:** Kaos polos NSA original eceran (@ Rp 49k–59k) & grosir lusinan (margin Rp 3k–6k/pcs) untuk perputaran cashflow cepat.
 
 ---
 
-## 5. Strategi Kurasi Koleksi Drop #01 Debut
+## 5. Strategi Sourcing Desain (Hybrid Pipeline)
 
-> [!IMPORTANT]
-> **Klarifikasi Strategis:** Sampel desain di website sebelumnya (6 desain IT, Outdoor, Local Pride) adalah prototype teknis.  
-> Solopreneur telah memiliki kumpulan aset desain keren tersendiri. Agar peluncuran perdana tidak terkesan "acak" dan membingungkan algoritma media sosial, strategi yang diterapkan adalah **Kurasi Drop #01**:
-> 1. Memilih 3–4 desain jagoan yang memiliki keselarasan visual (*visual consistency*).
-> 2. Memberikan satu tema payung yang kuat (misal: **Drop #01: "RAW IDENTITY"** atau **"ORIGINS"**).
-> 3. Membatasi produksi batch perdana (scarcity model: 24 pcs) untuk menciptakan urgensi dan mengamankan 5–10 penjualan pertama via circle terdekat (Family, Friends, WhatsApp Story).
+Untuk menjamin katalog selalu kaya pilihan dan terkurasi:
+* **Buyout Aset Platform (Etsy / Creative Market):** Modal Rp 30k–100k per aset dengan lisensi komersial POD untuk mengisi kategori umum (kopi, kucing, hobi retro).
+* **Buyout Freelance Lokal:** Modal Rp 100k–250k per karya bertema lokal Indonesia dengan serah terima hak cipta komersial penuh.
+* **Submission Kreator (Royalti Rp 25k/pcs):** Kemitraan berbasis bagi hasil dengan kreator independen yang memiliki audiens sendiri.
 
----
-
-## 6. Analisis SWOT yang Diperbarui
-
-### Strengths (Kekuatan)
-- Model bisnis tanpa modal mati (zero dead stock POD).
-- Mesin heat press sudah dimiliki sendiri (menghemat modal awal Rp 2,5jt+).
-- Brand guide matang dengan 9 series & sistem desain 3 template terstandar.
-- Biaya operasional tetap sangat rendah (Rp 500.000/bulan).
-
-### Weaknesses (Kelemahan)
-- Kapasitas harian terbatas di 1 orang (maksimal 15-20 pcs/hari).
-- Belum memiliki reputasi dan ulasan di marketplace.
-- Ketergantungan pada 1 supplier garmen (New State Apparel).
-
-### Opportunities (Peluang)
-- Tren personalisasi dan "local pride" terus menguat di TikTok Shop & Instagram.
-- Pembeli komunitas hobi rela membayar lebih untuk desain yang otentik.
-- Program kemitraan reseller/dropship memperluas jangkauan tanpa menambah beban operasional cetak di muka.
-
-### Threats (Tantangan)
-- Toko non-brand yang menjual kaos combed murah di bawah Rp 40.000 di Shopee.
-- Fluktuasi biaya film DTF dan kenaikan potongan fee komisi e-commerce.
-- Risiko hak cipta desain jika mengambil aset pihak ketiga tanpa lisensi komersial jelas.
-
----
-
-## 7. Rencana Aksi Konkret (Action Plan)
-
-1. [ ] **Uji Coba Produksi Mandiri (Batch 0):** Cetak dan press 5-10 kaos sampel. Ukur durasi press, setting suhu/tekanan optimal, dan uji cuci 3x untuk memastikan daya rekat sablon DTF.
-2. [ ] **Finalisasi 6 Desain Batch 1:** Siapkan file resolusi tinggi (300 DPI) format PNG transparan sesuai 3 template brand guide.
-3. [ ] **Setup Listing Shopee & Tokopedia:** Gunakan format judul standar: `[Nama Desain] — TeeStock [Nama Series]` dengan harga peluncuran Rp 99.000.
-4. [ ] **Foto Produk Realistis:** Ambil foto produk asli hasil press mandiri dengan pencahayaan natural di atas latar krem netral (`#F2EEE4`).
-5. [ ] **Koleksi 10 Ulasan Pertama:** Tawarkan program tester diskon khusus ke circle terdekat untuk mengamankan rating bintang 5 dan foto ulasan pembeli pertama.
+Rincian SOP teknis DTF (300 DPI, format PNG transparan, line weight 1.5 mm) dan kontrak anti-plagiasi dapat dilihat di:  
+👉 [[bisnis/teestock/operasional/panduan-kurasi-desain-dan-lisensi|Panduan Kurasi Desain & Lisensi HAKI]].

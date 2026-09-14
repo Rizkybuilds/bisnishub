@@ -3,8 +3,8 @@ import React, { useEffect } from 'react';
 const SITE_URL = typeof window !== 'undefined' && window.location.origin
   ? window.location.origin
   : (import.meta.env.VITE_SITE_URL || 'https://teestockapparel.vercel.app');
-const DEFAULT_TITLE = 'TeeStock Apparel | Curated Merch & Kaos NSA 24s Heavyweight Original';
-const DEFAULT_DESCRIPTION = 'Koleksi grafis kurasi di atas katun New States Apparel 24s Heavyweight tubular (180 GSM). Disablon presisi 155°C di studio Citayam. Harga jujur Rp 99.000.';
+const DEFAULT_TITLE = 'TeeStock | The Everyday Curated Graphic Apparel House';
+const DEFAULT_DESCRIPTION = 'Ratusan pilihan kaos grafis terkurasi di atas katun murni New States Apparel 24s Heavyweight tubular (180 GSM). Disablon in-house double-press 155°C. Pengiriman dari Depok ke seluruh Indonesia.';
 const DEFAULT_IMAGE = '/og-image-teestock.png';
 
 /**

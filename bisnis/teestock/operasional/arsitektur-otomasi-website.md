@@ -1,3 +1,18 @@
+---
+title: "Arsitektur Otomasi & Alur Data Web TeeStock"
+date: "2026-09-14"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - operasional
+  - web
+  - otomasi
+  - supabase
+  - architecture
+---
+
 # Arsitektur & Roadmap Otomasi Website TeeStock (Full Automation Blueprint)
 
 > Dokumen perencanaan teknis dari **CTO & Technical Squad** untuk otomatisasi alur transaksi, notifikasi, dan operasional website TeeStock (`bisnis/teestock/web`).

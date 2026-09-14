@@ -1,3 +1,16 @@
+---
+title: "Struktur Folder & Standarisasi Dokumen TeeStock"
+date: "2026-09-14"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - operasional
+  - struktur-folder
+  - konvensi
+---
+
 # Struktur Folder — TeeStock
 
 Struktur ini dirancang untuk mengakomodasi: katalog desain multi-series yang terus bertambah, pesanan custom per-customer, beberapa vendor dengan peran berbeda, dokumentasi produksi, empat channel penjualan, empat lini bisnis, dan pencatatan keuangan — dalam satu sistem yang tetap gampang dicari meski TeeStock berkembang.

@@ -9,7 +9,7 @@ Workspace ini berisi 3 bisnis yang sedang dirintis:
 
 | # | Bisnis | Folder | Bidang | Status |
 |---|--------|--------|--------|--------|
-| 1 | **TeeStock** | `bisnis/teestock/` | Apparel POD & Blanks Brand | 🟢 Launch Prep (Web App Live, In-House Heat Press Active) |
+| 1 | **TeeStock** | `bisnis/teestock/` | Everyday Curated Graphic Apparel & Merch House | 🟢 Launch Prep (Web App Live, In-House Heat Press Active) |
 | 2 | **MultiGraph** | `bisnis/multigraph/` | Printing Business | 🔴 Ideation |
 | 3 | **Titik Buta** | `bisnis/titik-buta/` | TBD | 🔴 Ideation |
 
@@ -96,3 +96,37 @@ Saat memberikan saran dalam peran apapun, selalu pertimbangkan:
 
 Gunakan Bahasa Indonesia yang natural dan profesional, dengan istilah
 bisnis/teknis bahasa Inggris yang umum digunakan di industri.
+
+## Protokol Dokumentasi Obsidian & Antigravity
+
+Workspace ini berfungsi ganda sebagai **Obsidian Vault** sekaligus workspace **Google Antigravity**. Setiap kali AI membuat atau memperbarui file dokumentasi, riset, SOP, atau catatan, patuhi standar berikut:
+
+1. **YAML Frontmatter Wajib di Setiap File Markdown Baru**:
+   ```yaml
+   ---
+   title: "Judul Catatan"
+   date: "YYYY-MM-DD"
+   bisnis: teestock | multigraph | titik-buta | umum
+   kategori: riset | operasional | keuangan | brand | marketing | catatan
+   status: draft | review | active | archived
+   tags:
+     - bisnis/teestock
+     - kategori/riset
+   ---
+   ```
+2. **Obsidian Wikilinks untuk Cross-Referencing**:
+   - Gunakan selalu format `[[Path/Ke/Catatan|Judul Tampilan]]` atau `[[NamaCatatan]]` saat mereferensikan file lain agar terhubung di Obsidian Graph View dan Backlinks.
+   - Contoh: `[[bisnis/teestock/brand/brand-guide-teestock|Brand Guide TeeStock]]`.
+3. **Obsidian Callouts Styling**:
+   - Gunakan GitHub/Obsidian callouts untuk menyorot informasi penting:
+     - `> [!abstract]` untuk visi atau ringkasan eksekutif
+     - `> [!info]` untuk metadata dan konteks
+     - `> [!tip]` untuk rekomendasi praktis & shortcut
+     - `> [!important]` untuk hal krusial atau SOP wajib
+     - `> [!warning]` untuk risiko operasional / finansial
+     - `> [!success]` untuk capaian milestone
+     - `> [!question]` untuk pertanyaan founder / user
+4. **Keamanan Konfigurasi Obsidian**:
+   - Dilarang keras memodifikasi, menimpa, atau menghapus file di dalam folder `.obsidian/` kecuali diinstruksikan secara eksplisit oleh user.
+5. **Kesesuaian Dataview**:
+   - Pastikan field metadata (status, tags, date, bisnis) konsisten agar dapat di-query secara otomatis oleh plugin Obsidian Dataview.

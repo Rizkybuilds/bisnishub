@@ -1,3 +1,17 @@
+---
+title: "Daftar Niche Potensial & Target Segmen TeeStock"
+date: "2026-09-14"
+bisnis: teestock
+kategori: riset
+status: active
+tags:
+  - bisnis/teestock
+  - riset
+  - niche
+  - target-pasar
+  - streetwear
+---
+
 # Daftar Niche Lengkap — TeeStock
 
 Panduan referensi untuk perencanaan katalog desain kaos TeeStock. Gunakan daftar ini untuk memilih niche tiap batch produksi (lihat sistem rollout bertahap yang sudah disusun sebelumnya).

@@ -28,7 +28,7 @@ Dengan memproduksi kemasan sendiri (memanfaatkan sisa ruang kosong gang sheet DT
 
 - [x] Definisikan peran strategis awal (Supporting Arm TeeStock)
 - [x] Susun spesifikasi paket kemasan & unboxing experience TeeStock (BOM Rp 2.550–3.000/pcs)
-- [x] Hitung HPP dan margin cetak kemasan mandiri di [`katalog-kemasan-teestock.md`](file:///c:/Users/Rizky/bisnishub/bisnis/multigraph/operasional/katalog-kemasan-teestock.md)
+- [x] Hitung HPP dan margin cetak kemasan mandiri di [[bisnis/multigraph/operasional/katalog-kemasan-teestock|Katalog Kemasan TeeStock]]
 - [ ] Buat file template master cetak hangtag, thank you card, dan stiker segel berlogo otentik TeeStock
 - [ ] Riset pasar cetak kemasan UMKM / distro lokal (fase B2B eksternal)
 - [ ] Finalisasi brand identity MultiGraph (Logo & Katalog Layanan)

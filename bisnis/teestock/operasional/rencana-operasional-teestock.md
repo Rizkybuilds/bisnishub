@@ -1,122 +1,109 @@
-# Rencana Operasional & Model Bisnis — TeeStock
+---
+title: "Rencana Operasional & Rantai Pasok TeeStock"
+date: "2026-09-14"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - operasional
+  - sop
+  - heat-press
+  - vendor
+  - cititex
+  - 5-pilar
+---
 
-Dokumen ini melengkapi analisis bisnis dan brand guide sebelumnya dengan detail rantai pasok, model produksi, struktur channel, dan lini bisnis TeeStock berdasarkan keputusan terbaru.
+# Rencana Operasional & Rantai Pasok — TeeStock
+
+Dokumen ini memuat detail rantai pasok, model produksi studio, struktur channel, dan SOP operasional TeeStock berbasis arsitektur 5 pilar bisnis dan sistem pengadaan desain hibrida.
 
 ---
 
 ## 1. Rantai Pasok & Model Produksi (Aktual September 2026)
 
 ### 1.1 Sumber Bahan (Blank Apparel)
-
-**Vendor utama:** New States Apparel (NSA) via Cititex — varian utama **NSA Heavyweight 24s** (original Cititex, tubular tanpa jahitan samping) dan opsi **NSA Softstyle 30s**.
-* **Harga Beli:** Rp 37.000 (grosir min 72 pcs) hingga Rp 42.000 (ritel satuan).
-* **Status Fisik:** Sampel fisik kaos NSA 24s sudah dipegang langsung oleh founder dan lulus verifikasi ketebalan serta fitting garmen.
-
-**Antisipasi:** Simpan kontak cadangan (Doxa Apparel / Gildan Hammer) jika Cititex mengalami kekosongan ukuran L/XL warna hitam.
+* **Vendor Utama:** New States Apparel (NSA) via jaringan distributor resmi Cititex.
+* **Varian Utama:** **NSA Heavyweight 7200 24s** (180 GSM, tubular knit silinder tanpa sambungan samping, kerah rib 2.2 cm anti-meleyot) dan **NSA Softstyle 3600 30s**.
+* **Harga Pengadaan:** Rp 37.000 (grosir min 72 pcs) hingga Rp 42.000 (ritel satuan).
+* **Kontak Cadangan:** Doxa Apparel / Gildan Hammer jika terjadi kelangkaan ukuran L/XL warna hitam.
 
 ### 1.2 Proses Cetak: DTF Roll Meteran + Mesin Heat Press In-House
-
-* **Cetak Film:** Membeli film DTF roll meteran (Rp 28.000 – Rp 35.000 / meter).
-* **Eksekusi Press:** **Dilakukan sendiri di rumah menggunakan mesin heat press pribadi milik founder**.
+* **Cetak Film:** Memesan film DTF roll meteran lebar 58 cm (Rp 28.000 – Rp 35.000 / meter).
+* **Eksekusi Press Mandiri:** Dilakukan sendiri di Central Studio Citayam menggunakan mesin heat press pribadi founder.
 * **Keunggulan Kompetitif:**
-  - **Efisiensi Biaya:** Mengeliminasi biaya ongkos press vendor (menghemat Rp 5.000 – Rp 7.000 per kaos).
-  - **Kontrol Kualitas 100%:** Penentuan suhu (155°C), durasi (15 detik), tekanan presisi, dan finishing teflon dikerjakan mandiri tanpa risiko kecerobohan pihak ketiga.
-  - **SLA Cepat (H+0 / H+1):** Pesanan yang masuk pagi bisa langsung dipress siang hari dan dikirim sore tanpa menunggu antrean vendor sablon.
+  - **Hemat Biaya:** Mengeliminasi jasa press vendor (menghemat Rp 5.000 – Rp 7.000 per pcs).
+  - **Kontrol Mutu 100%:** Memastikan suhu stabil 155°C, tekanan hidrolik pas, dan waktu curing optimal.
+  - **SLA Super Cepat (H+0 / H+1):** Pesanan masuk pagi bisa langsung dipress siang dan dikirim sore.
 
-### 1.3 SOP Heat Press Baku (NSA 24s & DTF)
-
-1. **Pre-press:** Press kaos polos kosong selama 3–5 detik pada suhu 155°C untuk menghilangkan kelembapan serat katun.
-2. **First Press:** Letakkan film DTF, press dengan tekanan medium-heavy selama 15 detik pada suhu 155°C – 160°C.
-3. **Cooling (Cold Peel):** Diamkan hingga plastik PET film benar-benar dingin sebelum dikupas perlahan dari sudut ke sudut.
-4. **Finishing Press (Curing):** Tutup sablonan dengan kertas teflon / baking paper, press kembali selama 5–7 detik untuk menanamkan tinta ke dalam pori-pori kain dan menghilangkan kilap plastik berlebih.
-5. **Quality Check & Fold:** Periksa kerataan rekat lem pada sudut sablon, lipat rapi, dan masukkan ke polymailer matte doff Studio Obsidian dengan stiker segel logo master otentik TeeStock (*"The Tee & The Stock"*), *Founder Note & 100% Warranty Card*, kartu instruksi cuci DTF 155°C, dan *Collector Sticker Pack*.
+### 1.3 SOP Heat Press Baku (Suhu 155°C)
+1. **Pre-press:** Press kaos polos selama 3–5 detik pada suhu 155°C untuk membuang kelembapan serat kain.
+2. **First Press:** Posisikan film DTF, press dengan tekanan medium-heavy selama 15 detik pada suhu 155°C.
+3. **Cooling (Cold Peel):** Diamkan hingga film PET benar-benar dingin sebelum dikupas perlahan.
+4. **Finishing Press (Curing):** Lapisi sablonan dengan kertas teflon, press kembali selama 5–7 detik untuk menanamkan tinta ke dalam serat katun.
+5. **Inner Neck Print:** Sobek label kertas pabrik, press sablon logo studio TeeStock di bagian dalam tengkuk leher.
+6. **QC & Fold:** Masukkan ke polymailer matte doff + Story Card Unboxing + Bonus Sticker Pack via [[bisnis/multigraph/README|MultiGraph]].
 
 ### 1.4 Model Hybrid Inventory & Smart Multi-Hub Routing
-
-Sebagai solopreneur dengan modal dan kapasitas gudang terukur, TeeStock menerapkan **arsitektur persediaan hibrida 2-tier dan sistem logistik multi-hub**:
-
-1. **Tier 1: Buffer Stock Studio (Fast-Moving, Kirim H+0 / Hari Ini):**
-   - **Lokasi:** Lemari/rak stok di Central Studio (Citayam Hub).
-   - **SKU Terbatas:** Kaos terpopuler: **Hitam & Putih** untuk model **NSA Heavyweight 24s** dan **NSA Softstyle 30s** dalam ukuran **M, L, dan XL** (buffer 3–6 pcs per SKU).
-   - **SLA Pelanggan:** Siap press dan langsung dikirim di hari yang sama (*Same-Day / Next-Day*).
-2. **Tier 2: Virtual Catalog / Just-in-Time (JIT) Network (Kirim H+1 s/d H+2):**
-   - **Cakupan:** Seluruh spektrum warna (Maroon, Forest Green, Navy, Mustard, Lilac, dll.), ukuran khusus (S, XXL, 3XL), Longsleeve, Hoodie, Raglan, dan Polo NSA.
-   - **Status di Web:** Tampil sebagai *Ready Stock Gudang Pusat*.
-3. **Logika Smart Multi-Hub Routing:**
-   - **Skenario A (Order Kaos Polos Saja — Area Bogor/Jabodetabek):**
-     * Pengiriman langsung di-route dari **TeeStock Satellite Hub (Bogor)** via jaringan distributor/Cititex Bogor.
-     * Mengaktifkan opsi kurir Instant/Same-Day (GoSend/Grab/Paxel) dengan ongkir lebih murah dan waktu tempuh hitungan jam.
-   - **Skenario B (Order Katalog Desain Originals atau Custom Atelier):**
-     * Pengiriman wajib diproses dari **TeeStock Central Studio (Citayam Hub)** karena memerlukan proses heat press 155°C, quality control, dan finishing *unboxing packaging*.
-   - **Skenario C (Order Campuran: Kaos Polos + Kaos Desain):**
-     * Seluruh pesanan dikonsolidasikan dan dikirim bersamaan dari **TeeStock Central Studio (Citayam Hub)**. Bahan ditarik melalui batching harian sore hari, sehingga pembeli hanya membayar satu kali ongkir normal.
-4. **Standardisasi Identitas Pengiriman (Label Resi Thermal A6):**
-   - Menghindari label tidak profesional seperti "inhome" atau nama pribadi.
-   - **Pesanan Sablon/Custom:** Pengirim tercetak resmi sebagai **"TeeStock Central Studio — Citayam"** (Tugu Macan Citayam, Kab. Bogor / Depok).
-   - **Pesanan Blanks Polos:** Pengirim tercetak resmi sebagai **"TeeStock Fulfillment Hub — Bogor"**.
+1. **Tier 1: Buffer Stock Studio (Citayam Hub - Kirim H+0 / Hari Ini):**
+   - Lemari stok Central Studio berisi warna laris: Hitam & Putih ukuran M, L, dan XL (buffer 3–6 pcs per SKU).
+2. **Tier 2: Just-In-Time (JIT) Network (Kirim H+1 s/d H+2):**
+   - Varian warna khusus (Maroon, Navy, Forest Green) dan ukuran besar (XXL/3XL) ditarik harian dari distributor.
+3. **Smart Multi-Hub Routing:**
+   - *Order Kaos Polos Saja (Area Bogor/Jabodetabek):* Langsung di-route dari **TeeStock Satellite Hub (Bogor)** untuk mendukung kurir Instant/Same-Day.
+   - *Order Kaos Desain (Originals, Custom, Creator):* Diproses dari **TeeStock Central Studio (Citayam Hub)** karena butuh proses press 155°C.
+   - *Label Pengiriman Resmi (Thermal A6):* Tercetak sebagai **"TeeStock Central Studio — Citayam"** atau **"TeeStock Fulfillment Hub — Bogor"** (Bukan nama pribadi atau "inhome").
 
 ---
 
-## 2. Struktur Channel Penjualan (100% Online Direct-to-Consumer)
+## 2. Struktur Operasional 5 Pilar Bisnis
 
-> [!NOTE]
-> **100% Online D2C — Tanpa Toko Fisik:** TeeStock tidak menyewa ruko mall atau toko fisik walk-in. Seluruh efisiensi biaya sewa ruko dan SPG (menghemat 60% alokasi biaya) dialihkan langsung untuk memaksimalkan spesifikasi kain (New States Apparel 24s Heavyweight tubular knit) dan sablon DTF double-press in-house di harga ritel terjangkau Rp 99.000.
+TeeStock menjalankan 5 lini operasional yang saling mendukung kapasitas produksi:
 
-| Channel | Peran Utama & Karakter |
+### A. Pilar 1: TeeStock Originals (Curated Graphic Tees)
+* **Karakter:** Ratusan pilihan desain terkurasi untuk semua kalangan (kopi, coding, hobi, humor santai).
+* **Alur:** File DTF digabung dalam gang sheet roll 58 cm $\rightarrow$ Press JIT saat pesanan masuk $\rightarrow$ Kemas dengan Story Card.
+* **Harga Ritel:** Rp 89.000 – Rp 99.000 (Anchor Price Rp 139.000).
+
+### B. Pilar 2: Custom Order (TeeStock Atelier)
+* **Karakter:** Sablon satuan & komunitas tanpa minimum order.
+* **SOP File:** Wajib PNG transparan 300 DPI, garis minimal 1.5 mm. Biaya setting desain Rp 15k–25k jika customer meminta edit rumit.
+* **Harga Ritel:** Rp 119.000 – Rp 139.000 per pcs.
+
+### C. Pilar 3: Open Reseller & Dropshipper
+* **Karakter:** Kemitraan jualan katalog TeeStock atau brand milik mitra sendiri secara *white-label*.
+* **Eksekusi:** Cetak resi thermal A6 otomatis dengan nama toko mitra via Admin HUB.
+* **Harga B2B:** Rp 75.000 (Dropship) / Rp 65.000 (Grosir min 12 pcs).
+
+### D. Pilar 4: Kolaborasi Kreator (Creator Launchpad)
+* **Karakter:** Ilustrator/kreator submit karya tanpa modal uang.
+* **Skema Finansial:** Royalti bersih **Rp 25.000 / pcs** terjual, ditransfer tiap tanggal 5 awal bulan (min payout Rp 100.000).
+* **Legalitas:** Hak cipta moral 100% milik kreator, TeeStock memegang lisensi produksi ritel eksklusif, klausul indemnification anti-plagiasi disetujui di awal.
+
+### E. Pilar 5: Blank Retail & Wholesale (NSA Official)
+* **Karakter:** Penjualan kaos polos New States Apparel original.
+* **Eceran:** Rp 49.000 (30s) / Rp 59.000 (24s) langsung di etalase web.
+* **Grosir (Min 1 Lusin):** Dijual ke konveksi/distro kecil sekitar Depok/Bogor/Citayam dengan margin Rp 3.000 – Rp 6.000/pcs tanpa proses press.
+
+---
+
+## 3. SOP Pengadaan Desain (Hybrid Sourcing Pipeline)
+
+Untuk memastikan katalog selalu ramai tanpa menghabiskan modal solopreneur:
+1. **Platform Buyout (Etsy / Creative Market):** Pembelian aset vektor komersial POD (Rp 30k–100k) untuk mengisi kategori evergreen.
+2. **Freelancer Buyout (Lokal):** Pemesanan desain khas kultur Indonesia (Rp 100k–250k) dengan surat serah terima hak cipta penuh.
+3. **Creator Submission Form:** Form online untuk kurasi seniman independen dengan kriteria lolos teknis 300 DPI & estetika berselera.
+
+Panduan teknis pre-flight DTF dan template perjanjian lisensi dirinci di:  
+👉 [[bisnis/teestock/operasional/panduan-kurasi-desain-dan-lisensi|Panduan Kurasi Desain & Lisensi HAKI]].
+
+---
+
+## 4. Manajemen Risiko Operasional
+
+| Risiko Operasional | Mitigasi Solopreneur |
 |---|---|
-| **Website Utama (`teestock.id` / `teestock.vercel.app`)** | Storefront ritel resmi (B2C Flagship): mengusung tema **Direction A ("Editorial Lookbook & Interactive Spotlight")** dengan live color swatches hero, etalase Drop Originals, katalog NSA Blanks, studio Custom Atelier, dan bio-link terintegrasi. Bersih dari banner grosir/reseller. |
-| **Marketplace (Shopee & TikTok Shop)** | Kanal volume & akuisisi — etalase rilis Drop #01 dan katalog Kaos Polos resmi, didukung konten video proses heat press in-house (ASMR peel). |
-| **WhatsApp CS Direct** | Konsultasi personal pemesanan Custom Atelier satuan/komunitas dan penanganan garansi 100%. |
-| **Subdomain Kemitraan (`mitra.teestock.id` — Fase 2)** | Dedicated portal khusus reseller dan dropshipper terverifikasi dengan login terisolasi dan harga grosir transparan. |
-
----
-
-## 3. Arsitektur Operasional: 3 Pilar Ritel B2C
-
-Operasional storefront publik `teestock.id` sepenuhnya fokus melayani konsumen retail melalui 3 pilar:
-
-### A. Pilar 1: TeeStock Originals (The Drop Model)
-* **Karakter:** Rilis grafis tematik berkala per batch/kapsul (**Drop #01: "RAW IDENTITY"**). Kuota batch terbatas (24 pcs) untuk menjaga eksklusivitas.
-* **Alur Produksi:** Cetak film DTF meteran 300 DPI -> Heat press in-house 155°C (15 detik press + 5 detik curing teflon) -> QC lem -> Finishing unboxing (Polymailer doff + Stiker seal + Kartu Garansi + Stiker bonus).
-* **Harga Ritel:** Rp 99.000 (Anchor Price Rp 139.000).
-
-### B. Pilar 2: TeeStock Blanks (Official NSA Blanks)
-* **Katalog Lengkap:** Menjual kaos polos New States Apparel original (24s Heavyweight & 30s Softstyle) secara eceran.
-* **Smart Fulfillment:** Pengiriman instan melalui Satellite Hub Bogor atau buffer Central Studio Citayam.
-* **Upsell Custom DTF (+Rp 25.000):** Banner interaktif di setiap halaman produk polos untuk mengubah order menjadi kaos custom kustom dengan 1 klik.
-
-### C. Pilar 3: TeeStock Atelier (Custom Print Lab Satuan)
-* **Karakter:** Layanan cetak custom satuan tanpa batas minimal order untuk kreator, musisi lokal, perorangan, atau komunitas.
-* **Alur Pemesanan:** Konsultasi desain via WhatsApp -> Simulasi mockup digital -> Pembayaran lunas / DP 50% -> Cetak DTF & heat press in-house di Citayam Studio -> Kirim via kurir ekspedisi.
-* **Harga:** Rp 119.000 – Rp 139.000 per pcs.
-
----
-
-## 4. Tahapan Pengembangan (Roadmap 4 Fase)
-
-Tahapan eksekusi lengkap, indikator keberhasilan (*exit criteria*), dan pembagian waktu solopreneur telah dirinci dalam dokumen:
-👉 [**`roadmap-pengembangan-teestock.md`**](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/operasional/roadmap-pengembangan-teestock.md)
-
-| Fase | Fokus & Sasaran Utama |
-|---|---|
-| **Fase 1 (Bulan 1 — Current)** | 100% Fokus Ritel B2C: Launch Drop #01, Kaos Polos NSA, Custom Atelier via Central Studio Citayam & Satellite Hub Bogor, 10–20 pembeli pertama. |
-| **Fase 2 (Bulan 2–3)** | Peluncuran Portal Kemitraan `mitra.teestock.id`: Portal login terpisah untuk reseller/dropship tanpa mengorbankan prestige harga ritel Rp 99.000 di toko utama. |
-| **Fase 3 (Bulan 4–5)** | Sinergi MultiGraph: Cetak perlengkapan unboxing in-house (stiker laminasi, segel kemasan, kartu garansi), ekspansi totebag canvas & merch komunitas. |
-| **Fase 4 (Bulan 6+)** | Multi-Tenant Partner Web Builder: Solusi storefront mandiri berdomain khusus untuk mitra skala besar (>20 mitra aktif). |
-
-
----
-
-## 5. Risiko Tambahan dari Model Operasional Ini
-
-| Risiko | Mitigasi |
-|---|---|
-| Kapasitas produksi terbatas (1 mesin, 1 orang) jadi bottleneck saat Stock + Custom jalan bersamaan | Tentukan kuota harian/mingguan realistis, komunikasikan estimasi waktu produksi dengan jujur ke customer |
-| Ketergantungan 1 vendor blank apparel | Simpan kontak vendor cadangan meski belum dipakai |
-| Kualitas press tidak konsisten tanpa SOP | Buat SOP tertulis (suhu/tekanan/durasi per jenis bahan) sejak awal |
-| Custom order bermargin tipis kalau harga tidak dihitung dengan benar | Tentukan harga dasar & minimum sebelum mulai menerima order, jangan menentukan harga on-the-spot |
-| Website belum ada traffic tapi sudah jadi tumpuan Custom Order/Reseller | Arahkan traffic ke website dari bio/link di marketplace dan sosial media sejak awal, meski penjualan utama tetap di marketplace |
-
----
-
-*Dokumen ini melengkapi `analisis-bisnis-teestock.md`, `brand-guide-teestock.md`, dan `daftar-niche-teestock.md` sebagai satu set rencana bisnis TeeStock.*
+| **Bottleneck Produksi (1 orang, 1 mesin press)** | Kuota produksi harian maksimal 20–25 pcs/hari. Gunakan sistem batching harian (press serentak jam 13.00 - 15.00). |
+| **Kerugian Cacat Sablon (Reject HPP)** | Gunakan modul QC Defect Tracker di `/admin` untuk mencatat kerugian kain/DTF agar HPP moving average tetap akurat. |
+| **Desain Pelanggaran Hak Cipta dari Kreator** | Wajibkan centang klausul *Indemnification & Warranty* di form submission sebelum desain diupload ke katalog. |
+| **File Customer Custom Pecah/Buram** | Terapkan hard-rule: File di bawah 300 DPI otomatis ditolak atau dikenakan biaya tracing ulang. |

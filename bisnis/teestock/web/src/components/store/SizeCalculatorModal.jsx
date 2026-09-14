@@ -87,14 +87,14 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
     >
       <div className="space-y-6 text-ts-krem">
         {/* Tab Selection */}
-        <div className="flex rounded-xl bg-white/[0.04] p-1 border border-white/[0.08]">
+        <div className="flex rounded-xl bg-ts-surfaceHover p-1 border border-ts-border">
           <button
             type="button"
             onClick={() => setActiveTab('calculator')}
             className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'calculator'
-                ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
-                : 'text-ts-muted hover:text-white'
+                ? 'bg-ts-surface text-ts-krem shadow-sm border border-ts-border'
+                : 'text-ts-kremMuted hover:text-ts-krem'
             }`}
           >
             <Ruler className="w-3.5 h-3.5 text-ts-terracotta" />
@@ -105,8 +105,8 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
             onClick={() => setActiveTab('chart')}
             className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               activeTab === 'chart'
-                ? 'bg-white/[0.1] text-white shadow-sm border border-white/10'
-                : 'text-ts-muted hover:text-white'
+                ? 'bg-ts-surface text-ts-krem shadow-sm border border-ts-border'
+                : 'text-ts-kremMuted hover:text-ts-krem'
             }`}
           >
             <Table className="w-3.5 h-3.5 text-ts-teal" />
@@ -118,10 +118,10 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
           <div className="space-y-5">
             {/* Inputs with Sliders */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2 bg-white/[0.03] p-3.5 rounded-2xl border border-white/[0.08]">
+              <div className="space-y-2 bg-ts-surfaceHover/60 p-3.5 rounded-2xl border border-ts-border">
                 <div className="flex justify-between items-center text-xs">
                   <label className="font-bold text-ts-kremMuted">Tinggi Badan</label>
-                  <span className="font-mono font-black text-white text-sm">{height} cm</span>
+                  <span className="font-mono font-black text-ts-krem text-sm">{height} cm</span>
                 </div>
                 <input
                   type="range"
@@ -133,10 +133,10 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
                 />
               </div>
 
-              <div className="space-y-2 bg-white/[0.03] p-3.5 rounded-2xl border border-white/[0.08]">
+              <div className="space-y-2 bg-ts-surfaceHover/60 p-3.5 rounded-2xl border border-ts-border">
                 <div className="flex justify-between items-center text-xs">
                   <label className="font-bold text-ts-kremMuted">Berat Badan</label>
-                  <span className="font-mono font-black text-white text-sm">{weight} kg</span>
+                  <span className="font-mono font-black text-ts-krem text-sm">{weight} kg</span>
                 </div>
                 <input
                   type="range"
@@ -164,8 +164,8 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
                     onClick={() => setFitPref(f.id)}
                     className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                       fitPref === f.id
-                        ? 'bg-ts-terracotta/20 border-ts-terracotta text-white shadow-glow-terracotta ring-1 ring-ts-terracotta'
-                        : 'bg-white/[0.03] border-white/[0.08] text-ts-kremMuted hover:bg-white/[0.06]'
+                        ? 'bg-ts-terracotta/20 border-ts-terracotta text-ts-krem shadow-glow-terracotta ring-1 ring-ts-terracotta'
+                        : 'bg-ts-surfaceHover/40 border-ts-border text-ts-kremMuted hover:bg-ts-surfaceHover hover:text-ts-krem'
                     }`}
                   >
                     <div className="text-xs font-bold">{f.label}</div>
@@ -176,13 +176,13 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
             </div>
 
             {/* Result Box (21st.dev style card) */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-terracotta/20 via-ts-surface to-[#ECC369]/10 border border-ts-terracotta/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-glass-inset">
+            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-ts-terracotta/15 via-ts-surface to-[#ECC369]/10 border border-ts-terracotta/30 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-glass-inset">
               <div className="space-y-1 text-center sm:text-left w-full sm:w-auto">
                 <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-ts-mustard">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Ukuran Paling Pas Buat Kamu:</span>
                 </div>
-                <div className="text-3xl font-black font-mono text-white flex items-baseline justify-center sm:justify-start gap-2">
+                <div className="text-3xl font-black font-mono text-ts-krem flex items-baseline justify-center sm:justify-start gap-2">
                   <span>Size {recommendedSize}</span>
                   <span className="text-xs font-normal text-ts-muted font-sans">
                     ({fitPref === 'oversize' ? 'Boxy/Oversize' : fitPref === 'slim' ? 'Fit' : 'Regular Kasual'})
@@ -213,10 +213,10 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
             <p className="text-xs text-ts-muted leading-relaxed">
               Standar garmen New States Apparel Premium Cotton 7200 tubular built-up tanpa jahitan samping. Toleransi penjahitan pabrik &plusmn;1-2 cm.
             </p>
-            <div className="overflow-x-auto rounded-xl border border-white/[0.08]">
+            <div className="overflow-x-auto rounded-xl border border-ts-border">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-white/[0.04] font-mono text-ts-muted border-b border-white/[0.08]">
+                  <tr className="bg-ts-surfaceHover font-mono text-ts-kremMuted border-b border-ts-border">
                     <th className="p-2.5">Size</th>
                     <th className="p-2.5">Lebar Dada</th>
                     <th className="p-2.5">Panjang</th>
@@ -224,7 +224,7 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
                     <th className="p-2.5 text-right">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.05] font-mono">
+                <tbody className="divide-y divide-ts-border font-mono">
                   {['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'].map((sz) => {
                     const s = NSA_SIZE_SPECS[sz];
                     const isSelected = currentSize === sz || (currentSize === 'XXL' && sz === '2XL');
@@ -232,8 +232,8 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
                     return (
                       <tr
                         key={sz}
-                        className={`hover:bg-white/[0.04] transition-colors ${
-                          isSelected ? 'bg-ts-terracotta/15 text-white font-bold' : ''
+                        className={`hover:bg-ts-surfaceHover/50 transition-colors ${
+                          isSelected ? 'bg-ts-terracotta/15 text-ts-krem font-bold' : ''
                         }`}
                       >
                         <td className="p-2.5 font-bold text-ts-terracotta">
@@ -254,7 +254,7 @@ export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize
                               if (onSelectSize) onSelectSize(sz);
                               onClose();
                             }}
-                            className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white/[0.06] border border-white/10 hover:border-ts-terracotta text-white transition-colors cursor-pointer"
+                            className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-ts-surface border border-ts-border hover:border-ts-terracotta text-ts-krem transition-colors cursor-pointer"
                           >
                             Pilih {sz}
                           </button>

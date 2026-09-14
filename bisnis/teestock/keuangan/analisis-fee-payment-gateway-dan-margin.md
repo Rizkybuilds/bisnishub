@@ -1,3 +1,18 @@
+---
+title: "Analisis Fee Payment Gateway & Margin TeeStock"
+date: "2026-09-14"
+bisnis: teestock
+kategori: keuangan
+status: active
+tags:
+  - bisnis/teestock
+  - keuangan
+  - midtrans
+  - qris
+  - payment-gateway
+  - margin
+---
+
 # Analisis Dampak Biaya Payment Gateway Terhadap Margin & Unit Economics TeeStock
 
 > Dokumen analisis finansial dari **CFO (Chief Financial Officer)** untuk mengawal profitabilitas, struktur harga, dan pencegahan kebocoran kas akibat biaya transaksi pembayaran di TeeStock (`bisnis/teestock/web`).

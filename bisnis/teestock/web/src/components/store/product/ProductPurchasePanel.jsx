@@ -67,7 +67,7 @@ export function ProductPurchasePanel({
           </span>
           {product.niche && (
             <>
-              <span className="text-white/20">•</span>
+              <span className="text-ts-border font-bold">•</span>
               <span className="text-xs font-medium text-ts-kremMuted">{product.niche}</span>
             </>
           )}

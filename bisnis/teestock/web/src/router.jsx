@@ -55,6 +55,8 @@ const OrderTrackingPage = safeLazy(() => import('./pages/store/OrderTrackingPage
 const AccountPage = safeLazy(() => import('./pages/store/AccountPage').then(m => ({ default: m.AccountPage })));
 const PartnerPage = safeLazy(() => import('./pages/store/PartnerPage').then(m => ({ default: m.PartnerPage })));
 const GaransiPage = safeLazy(() => import('./pages/store/GaransiPage').then(m => ({ default: m.GaransiPage })));
+const CreatorPage = safeLazy(() => import('./pages/store/CreatorPage').then(m => ({ default: m.CreatorPage })));
+const NotFoundPage = safeLazy(() => import('./pages/store/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
 // Lazy-loaded Admin Pages (Zero Admin Code in Initial Public Bundle)
 const LoginPage = safeLazy(() => import('./pages/admin/LoginPage').then(m => ({ default: m.LoginPage })));
@@ -163,6 +165,18 @@ export const router = createBrowserRouter([
         path: 'garansi', 
         element: <StoreSuspense message="Memuat Garansi..."><GaransiPage /></StoreSuspense> 
       },
+      { 
+        path: 'creator', 
+        element: <StoreSuspense message="Memuat Panggung Kreator..."><CreatorPage /></StoreSuspense> 
+      },
+      { 
+        path: 'kreator', 
+        element: <StoreSuspense message="Memuat Panggung Kreator..."><CreatorPage /></StoreSuspense> 
+      },
+      {
+        path: '*',
+        element: <StoreSuspense message="Mencari Halaman..."><NotFoundPage /></StoreSuspense>
+      },
     ],
   },
 
@@ -191,15 +205,17 @@ export const router = createBrowserRouter([
       { path: 'inventory', element: <AdminSuspense><InventoryPage /></AdminSuspense> },
       { path: 'kanban', element: <AdminSuspense><KanbanPage /></AdminSuspense> },
       { path: 'gangsheet', element: <AdminSuspense><GangSheetPage /></AdminSuspense> },
+      { path: 'gang-sheet', element: <Navigate to="/admin/gangsheet" replace /> },
       { path: 'quoter', element: <AdminSuspense><QuoterPage /></AdminSuspense> },
       { path: 'defects', element: <AdminSuspense><DefectsPage /></AdminSuspense> },
       { path: 'settings', element: <AdminSuspense><SettingsPage /></AdminSuspense> },
+      { path: '*', element: <Navigate to="/admin" replace /> },
     ],
   },
 
-  // Fallback 404
+  // Fallback 404 Root
   {
     path: '*',
-    element: <Navigate to="/" replace />
+    element: <StoreLayout><StoreSuspense message="Mencari Halaman..."><NotFoundPage /></StoreSuspense></StoreLayout>
   }
 ]);

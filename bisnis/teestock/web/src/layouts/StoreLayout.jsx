@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { Navbar } from '../components/store/Navbar';
 import { Footer } from '../components/store/Footer';
 import { MobileBottomNav } from '../components/store/MobileBottomNav';
@@ -9,6 +9,7 @@ import { AuthModal } from '../components/store/AuthModal';
 export function StoreLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-ts-hitam text-ts-krem relative transition-colors duration-200">
+      <ScrollRestoration />
       <Navbar />
       <main className="flex-1 pb-24 md:pb-0">
         <Outlet />

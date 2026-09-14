@@ -74,7 +74,7 @@ export function AdminSidebar() {
                 `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
                   isActive
                     ? 'bg-ts-terracotta text-white font-bold shadow-sm'
-                    : 'text-ts-krem/80 hover:text-white hover:bg-ts-surfaceHover'
+                    : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover'
                 }`
               }
             >
@@ -111,7 +111,7 @@ export function AdminSidebar() {
                 `flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
                   isActive
                     ? 'bg-ts-terracotta text-white font-bold shadow-sm'
-                    : 'text-ts-krem/80 hover:text-white hover:bg-ts-surfaceHover'
+                    : 'text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover'
                 }`
               }
             >

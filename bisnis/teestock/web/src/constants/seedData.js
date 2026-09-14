@@ -134,7 +134,7 @@ export const SEED_PRODUCTS = [
     colors: "Hitam, Olive, Putih",
     sizes: "S, M, L, XL, 2XL, 3XL",
     file_path: "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=900&q=80",
-    description: "Line-art botani presisi yang merayakan vegetasi liar hutan hujan tropis. Dicetak di studio Citayam di atas katun NSA 24s Heavyweight 180 GSM."
+    description: "Line-art botani presisi yang merayakan vegetasi liar hutan hujan tropis. Dicetak di in-house studio kami di atas katun NSA 24s Heavyweight 180 GSM."
   },
 
   // === NSA BLANK APPAREL (THE RAW CANVASES) ===

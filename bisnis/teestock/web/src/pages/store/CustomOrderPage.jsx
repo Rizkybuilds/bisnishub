@@ -196,7 +196,7 @@ export function CustomOrderPage() {
           <CheckCircle2 className="w-8 h-8" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Permintaan Custom Diterima!</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-ts-krem tracking-tight">Permintaan Custom Diterima!</h2>
           <p className="text-xs sm:text-sm text-ts-kremMuted max-w-md mx-auto leading-relaxed">
             Pesanan Anda telah dicatat di antrean workshop. Tim kami akan segera meninjau artwork dan mengirimkan mockup digital sebelum cetak.
           </p>
@@ -229,7 +229,7 @@ export function CustomOrderPage() {
       <SEOHead
         title="Custom Sablon DTF Satuan & Komunitas — Bahan NSA Original | TeeStock"
         description="Jasa bikin kaos custom sablon DTF satuan, komunitas, merchandise band, dan event. Menggunakan garmen New States Apparel (NSA) Heavyweight 24s & Softstyle 30s. Dapatkan estimasi harga instan!"
-        keywords={["custom kaos satuan", "sablon dtf satuan", "bikin merch komunitas", "kaos custom nsa 24s", "sablon kaos bandung"]}
+        keywords={["custom kaos satuan", "sablon dtf satuan", "bikin merch komunitas", "kaos custom nsa 24s", "sablon dtf depok"]}
         canonicalPath="/custom-order"
       />
       {/* Header */}

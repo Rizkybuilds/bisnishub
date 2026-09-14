@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext();
 
@@ -26,7 +26,7 @@ export function ThemeProvider({ children }) {
     // Update theme-color meta tag for mobile browsers
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', t === 'light' ? '#F8F6F0' : '#0E0D0C');
+      metaThemeColor.setAttribute('content', t === 'light' ? '#FBFBF9' : '#121214');
     }
   };
 

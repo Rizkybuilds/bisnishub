@@ -155,7 +155,7 @@ describe('Layanan Kalkulasi Pengiriman Berbasis Berat (shippingApi)', () => {
       expect(origin.hub.id).toBe('citayam_studio');
       expect(origin.isExpressHub).toBe(false);
       expect(origin.supportsInstant).toBe(false);
-      expect(origin.hub.name).toBe('TeeStock Studio & Print Lab (Citayam Hub)');
+      expect(origin.hub.name).toBe('TeeStock Central Studio (Depok)');
     });
 
     it('mengarahkan pesanan khusus kaos polos tujuan Bogor ke Express Hub Bogor', () => {

@@ -1,3 +1,17 @@
+---
+title: "Dokumentasi Arsitektur Database TeeStock"
+date: "2026-09-14"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - database
+  - supabase
+  - postgresql
+  - schema
+---
+
 # ☁️ Panduan Setup Supabase Backend — TeeStock & Multi-Business Hub
 
 > Panduan praktis langkah demi langkah menghubungkan master catalog & operasional TeeStock ke cloud database Supabase dalam **1 File SQL Master Terpadu**.

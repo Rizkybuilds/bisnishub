@@ -21,11 +21,15 @@ tags:
 > Buka peta visual interaktif arsitektur bisnis dan alur operasional:
 > 🔗 **[[🗺️ BisnisHub Ecosystem.canvas|Buka BisnisHub Ecosystem Canvas]]**
 
-| 📅 **Harian** | 🤖 **AI Sesi** | 📁 **Templates** | ⚙️ **System** |
+| 📅 **Jurnal & Review** | 🤖 **AI Sessions & Engine** | 📁 **Templates Master** | ⚙️ **System & Panduan** |
 |---|---|---|---|
-| [[catatan/harian/2026-09-14\|Catatan Harian]] | `catatan/sesi/` | [[templates/Template - Catatan Harian\|T-Harian]] | [[README\|README Workspace]] |
-| [[catatan/ide/.gitkeep\|Ide & Scratchpad]] | `python main.py` | [[templates/Template - Sesi Konsultasi C-Suite\|T-Konsultasi]] | [[GEMINI\|AI Rules & Engine]] |
-| | | [[templates/Template - SOP Operasional\|T-SOP]] | [[memory/business_profile.json\|Business Profile]] |
+| [[catatan/harian/2026-09-14|Catatan Harian]] | `catatan/sesi/` (Log C-Suite) | [[templates/Template - Catatan Harian|T-Harian]] | [[README|README Workspace]] |
+| [[catatan/weekly-review/README|Weekly Review]] | `python main.py` (Interactive CLI) | [[templates/Template - Weekly Business Review|T-Weekly Review]] | [[GEMINI|AI Rules & Engine]] |
+| [[catatan/ide/README|Ide & Scratchpad]] | [[catatan/panduan-antigravity-obsidian|Panduan AGY + Obsidian]] | [[templates/Template - Sesi Konsultasi C-Suite|T-Konsultasi]] | [[memory/business_profile.json|Business Profile]] |
+| | | [[templates/Template - SOP Operasional|T-SOP]] | [[bisnis/teestock/operasional/struktur-folder-teestock|Konvensi Folder]] |
+| | | [[templates/Template - Riset & Benchmarking|T-Riset]] | |
+| | | [[templates/Template - Marketing & Konten Kampanye|T-Marketing]] | |
+| | | [[templates/Template - Validasi & Riset Ide|T-Validasi]] | |
 
 ---
 
@@ -95,3 +99,35 @@ Jalankan `python main.py` di terminal untuk mulai berdiskusi. Sesi otomatis ters
 > 1. **Resource Terbatas**: Utamakan otomatisasi dan lean setup daripada overhead berlebih.
 > 2. **Sinergi Antar Bisnis**: Manfaatkan kolateral percetakan MultiGraph untuk mempercantik unboxing TeeStock.
 > 3. **Actionable Minggu Ini**: Hindari rencana abstrak jangka panjang; tuntaskan langkah berikutnya yang langsung menghasilkan penjualan.
+
+---
+
+## 📊 Dynamic Dataview Hub (Auto-Query Obsidian)
+
+> [!tip] **Otomasi Tampilan dengan Plugin Dataview**
+> Blok berikut otomatis memunculkan dokumen terbaru saat Anda mengaktifkan plugin **Dataview** di Obsidian.
+
+### 🤖 5 Sesi Konsultasi C-Suite Terakhir
+```dataview
+TABLE role_label AS "Peran AI", business_label AS "Bisnis", date AS "Waktu"
+FROM "catatan/sesi"
+SORT file.ctime DESC
+LIMIT 5
+```
+
+### 📋 Dokumen Riset & Operasional Terbaru
+```dataview
+TABLE bisnis AS "Bisnis", kategori AS "Kategori", status AS "Status", date AS "Update"
+FROM "bisnis"
+WHERE file.name != "README"
+SORT file.mtime DESC
+LIMIT 7
+```
+
+### 📅 Log Jurnal Harian Terakhir
+```dataview
+TABLE date AS "Tanggal", file.size AS "Ukuran"
+FROM "catatan/harian"
+SORT file.name DESC
+LIMIT 5
+```

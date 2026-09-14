@@ -79,10 +79,10 @@ export function Footer() {
         <div className="md:col-span-2 space-y-4">
           <TeeStockLogo size="md" badge="APPAREL HOUSE" />
           <p className="text-xs text-ts-kremMuted max-w-md leading-relaxed">
-            Independent Curated Apparel House &mdash; <em>&ldquo;Wear Your Identity.&rdquo;</em> Rilisan grafis tematik di atas katun New States Apparel (NSA) Heavyweight 24s tubular knit dengan sablon in-house 155&deg;C.
+            The Everyday Curated Graphic Apparel House &mdash; <em>&ldquo;Banyak Pilihan Desain, Satu Standar Kualitas.&rdquo;</em> Ratusan pilihan karya grafis terkurasi di atas katun New States Apparel (NSA) Heavyweight 24s tubular dengan sablon in-house 155&deg;C.
           </p>
           <div className="text-xs text-ts-muted font-mono">
-            Central Studio &amp; Fulfillment: Depok &bull; Kirim ke Seluruh Indonesia
+            Pengiriman dari Depok &bull; Kirim ke Seluruh Indonesia
           </div>
 
           {/* Social Links */}
@@ -130,10 +130,12 @@ export function Footer() {
         <div>
           <h5 className="text-xs font-bold uppercase tracking-wider text-ts-krem mb-3 font-mono">Layanan &amp; Bantuan</h5>
           <ul className="space-y-2 text-xs text-ts-kremMuted">
+            <li><Link to="/creator" className="hover:text-ts-terracotta text-ts-terracotta transition-colors font-medium">Panggung Kreator (Royalti 25k)</Link></li>
+            <li><Link to="/mitra" className="hover:text-ts-terracotta transition-colors">Program Reseller &amp; Dropship</Link></li>
             <li><Link to="/care" className="hover:text-ts-terracotta transition-colors">Garansi &amp; Panduan Ukuran</Link></li>
-            <li><Link to="/custom-order" className="hover:text-ts-terracotta transition-colors">Pesan Kaos Custom</Link></li>
+            <li><Link to="/custom-order" className="hover:text-ts-terracotta transition-colors">Pesan Kaos Custom Satuan</Link></li>
             <li><Link to="/tracking" className="hover:text-ts-terracotta transition-colors">Cek Status Pesanan</Link></li>
-            <li><a href={`https://wa.me/${cleanWhatsapp}`} target="_blank" rel="noopener noreferrer" className="hover:text-ts-terracotta transition-colors">WhatsApp Customer Support</a></li>
+            <li><a href={`https://wa.me/${cleanWhatsapp}`} target="_blank" rel="noopener noreferrer" className="hover:text-ts-terracotta transition-colors">WhatsApp CS</a></li>
             <li><Link to="/garansi" className="hover:text-ts-terracotta transition-colors">Garansi Retur 100%</Link></li>
           </ul>
         </div>

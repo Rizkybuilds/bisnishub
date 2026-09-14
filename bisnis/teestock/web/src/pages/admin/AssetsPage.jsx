@@ -28,7 +28,7 @@ export function AssetsPage() {
   const [category, setCategory] = useState('machine');
   const [purchaseCost, setPurchaseCost] = useState(2500000);
   const [currentValue, setCurrentValue] = useState(2500000);
-  const [location, setLocation] = useState('TeeStock Studio & Print Lab (Citayam Hub)');
+  const [location, setLocation] = useState('TeeStock Central Studio (Depok)');
   const [notes, setNotes] = useState('');
 
   const handleOpenNew = () => {
@@ -36,7 +36,7 @@ export function AssetsPage() {
     setCategory('machine');
     setPurchaseCost(500000);
     setCurrentValue(500000);
-    setLocation('TeeStock Studio & Print Lab (Citayam Hub)');
+    setLocation('TeeStock Central Studio (Depok)');
     setNotes('');
     setIsModalOpen(true);
   };
