@@ -154,3 +154,17 @@ EXCEPTION
     RAISE EXCEPTION 'Transaksi pesanan gagal: %', SQLERRM;
 END;
 $$;
+
+-- 🔒 Keamanan Ketat SECURITY DEFINER:
+-- 1. Kunci search_path untuk mencegah eksploitasi search_path hijacking
+ALTER FUNCTION public.create_order_transactional(jsonb, jsonb, text, numeric)
+  SET search_path = public, pg_temp;
+
+-- 2. Cabut seluruh izin eksekusi dari PUBLIC, anon, dan authenticated untuk mencegah bypass Edge Function via PostgREST RPC
+REVOKE EXECUTE ON FUNCTION public.create_order_transactional(jsonb, jsonb, text, numeric)
+  FROM PUBLIC, anon, authenticated;
+
+-- 3. Berikan izin eksekusi HANYA kepada service_role (Supabase Edge Functions / Backend Admin)
+GRANT EXECUTE ON FUNCTION public.create_order_transactional(jsonb, jsonb, text, numeric)
+  TO service_role;
+

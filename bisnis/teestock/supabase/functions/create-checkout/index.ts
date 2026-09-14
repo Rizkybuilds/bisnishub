@@ -109,12 +109,51 @@ function generateOrderNumber(): string {
   return `TS-${yy}${mm}${dd}-${randomHex}`;
 }
 
+// 🛡️ Anti-Abuse: In-Memory Rate Limiter per Client IP (Mencegah brute force / spam flood)
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 menit
+const MAX_REQUESTS_PER_WINDOW = 15; // Maksimal 15 percobaan checkout per menit per IP
+const ipRequestHistory = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  if (!ip || ip === 'unknown') return false;
+  const now = Date.now();
+  const timestamps = (ipRequestHistory.get(ip) || []).filter(t => now - t < RATE_LIMIT_WINDOW_MS);
+  if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    return true;
+  }
+  timestamps.push(now);
+  ipRequestHistory.set(ip, timestamps);
+  if (ipRequestHistory.size > 2000) {
+    for (const [k, v] of ipRequestHistory.entries()) {
+      if (v.every(t => now - t >= RATE_LIMIT_WINDOW_MS)) {
+        ipRequestHistory.delete(k);
+      }
+    }
+  }
+  return false;
+}
+
 Deno.serve(async (req: Request) => {
   const cors = getCorsHeaders(req);
 
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: cors });
+  }
+
+  // Cek Rate Limit per IP
+  const clientIp = req.headers.get('cf-connecting-ip') || 
+                   req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
+                   'unknown';
+
+  if (isRateLimited(clientIp)) {
+    return new Response(
+      JSON.stringify({ 
+        status: 'error', 
+        message: 'Terlalu banyak permintaan transaksi dalam waktu singkat. Silakan tunggu 1 menit.' 
+      }),
+      { status: 429, headers: { ...cors, 'Content-Type': 'application/json', 'Retry-After': '60' } }
+    );
   }
 
   try {
@@ -150,7 +189,24 @@ Deno.serve(async (req: Request) => {
 
     const supabase = getAdminClient();
 
-    // 2. Ekstraksi Identitas User dari JWT Authorization Header (Zero Trust pada body.userId)
+    // 2. Proteksi Spam Order Pending: Batasi maksimal 5 pesanan berstatus pending_payment per nomor telepon
+    const { count: pendingCount } = await supabase
+      .from('ts_orders')
+      .select('id', { count: 'exact', head: true })
+      .eq('customer_phone', customerPhone)
+      .eq('status', 'pending_payment');
+
+    if (pendingCount && pendingCount >= 5) {
+      return new Response(
+        JSON.stringify({
+          status: 'error',
+          message: 'Nomor telepon ini memiliki 5 pesanan tertunda yang belum diselesaikan pembayarannya. Silakan selesaikan pesanan sebelumnya terlebih dahulu atau hubungi CS kami.'
+        }),
+        { status: 429, headers: { ...cors, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // 3. Ekstraksi Identitas User dari JWT Authorization Header (Zero Trust pada body.userId)
     let verifiedUserId: string | null = null;
     const authHeader = req.headers.get('Authorization');
     if (authHeader && authHeader.startsWith('Bearer ')) {
