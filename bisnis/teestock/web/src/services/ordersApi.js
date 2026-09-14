@@ -302,14 +302,6 @@ export async function createPublicOrder(order, items = []) {
 
         await supabase.from('ts_order_items').insert(itemsPayload);
       }
-
-      if (!orderErr && normalized.voucher_code) {
-        try {
-          await supabase.rpc('increment_voucher_usage', { voucher_code: normalized.voucher_code });
-        } catch (vErr) {
-          console.warn('Could not increment voucher usage in Supabase:', vErr);
-        }
-      }
     } catch (err) {
       console.warn("Could not sync public order to Supabase in dev mode:", err);
     }
@@ -366,28 +358,39 @@ export async function trackSingleOrder(term, phoneLast4 = null) {
   const cleanTerm = term.trim();
   const cleanTermLower = cleanTerm.toLowerCase();
 
-  // 1. Coba panggil RPC PostgreSQL track_guest_order (aman dengan masking nama & item)
+  // 1. Coba panggil Edge Function track-order (aman dengan rate-limiting & verifikasi 4-digit HP)
+  const cleanLast4 = phoneLast4 ? String(phoneLast4).replace(/\D/g, '') : '';
   try {
-    const { data: rpcData, error: rpcError } = await supabase.rpc('track_guest_order', {
-      p_order_no: cleanTerm.toUpperCase(),
-      p_phone_last4: phoneLast4 ? phoneLast4.trim() : null
-    });
+    if (supabase && supabase.functions && typeof supabase.functions.invoke === 'function') {
+      const { data: edgeData, error: edgeError } = await supabase.functions.invoke('track-order', {
+        body: {
+          orderNumber: cleanTerm.toUpperCase(),
+          phoneLast4: cleanLast4
+        }
+      });
 
-    if (!rpcError && rpcData && rpcData.length > 0) {
-      return rpcData.map(row => ({
-        id: row.order_number,
-        order_number: row.order_number,
-        status: row.status,
-        trackingNo: row.tracking_number,
-        tracking_number: row.tracking_number,
-        created_at: row.created_at,
-        customer: row.customer_masked || 'Pelanggan TeeStock',
-        items: row.items || [],
-        date: row.created_at
-      }));
+      if (!edgeError && edgeData?.status === 'success' && edgeData.data) {
+        const row = edgeData.data;
+        return [{
+          id: row.order_number,
+          order_number: row.order_number,
+          status: row.status,
+          trackingNo: row.tracking_number,
+          tracking_number: row.tracking_number,
+          created_at: row.created_at,
+          customer: row.customer_masked || 'Pelanggan TeeStock',
+          items: row.items || [],
+          date: row.created_at
+        }];
+      } else if (edgeData?.message) {
+        throw new Error(edgeData.message);
+      }
     }
-  } catch (rpcErr) {
-    console.warn("RPC track_guest_order lookup notice:", rpcErr);
+  } catch (edgeErr) {
+    if (edgeErr.message && !edgeErr.message.includes('unavailable') && !edgeErr.message.includes('FunctionsFetchError')) {
+      throw edgeErr;
+    }
+    console.warn("Edge Function track-order notice:", edgeErr);
   }
 
   // 2. Jika user login (member/admin), query ts_orders langsung

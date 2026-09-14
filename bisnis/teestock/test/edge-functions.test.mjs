@@ -13,7 +13,12 @@ import https from 'node:https';
 const SUPABASE_HOST = process.env.TEST_SUPABASE_HOST || 'tovslowsopqtuxmrogeu.supabase.co';
 const CHECKOUT_PATH = '/functions/v1/create-checkout';
 const WEBHOOK_PATH = '/functions/v1/midtrans-webhook';
-const RPC_PATH = '/rest/v1/rpc/create_order_transactional';
+const TRACK_PATH = '/functions/v1/track-order';
+const REVIEW_PATH = '/functions/v1/submit-review';
+const RPC_ORDER_PATH = '/rest/v1/rpc/create_order_transactional';
+const RPC_VOUCHER_PATH = '/rest/v1/rpc/increment_voucher_usage';
+const RPC_TRACK_PATH = '/rest/v1/rpc/track_guest_order';
+const REVIEWS_TABLE_PATH = '/rest/v1/ts_reviews';
 const ANON_KEY = process.env.TEST_ANON_KEY || 'sb_publishable_8iRmZUulGLChIPZhFXn_rg_QuHlmpA4';
 
 let totalTests = 0;
@@ -84,24 +89,62 @@ async function runSuite() {
   console.log('================================================================\n');
 
   // ---------------------------------------------------------------------------
-  // 1. P0: Direct PostgREST RPC Access Blocked (SECURITY DEFINER Privilege Check)
+  // 1. Direct PostgREST RPC Access Blocked (SECURITY DEFINER Privilege Check)
   // ---------------------------------------------------------------------------
-  console.log('1. Menguji Pemblokiran Akses Publik Langsung ke create_order_transactional (P0 RPC Lock)...');
+  console.log('1. Menguji Pemblokiran Akses Publik Langsung ke Database RPCs...');
+  
+  // 1a. create_order_transactional
   try {
-    const resRpc = await makeRequest(RPC_PATH, {
+    const resOrderRpc = await makeRequest(RPC_ORDER_PATH, {
       method: 'POST',
       body: { p_order: {}, p_items: [] }
     });
-
-    // PostgREST mengembalikan 404 (schema cache hidden) atau 401/403 jika anonim tidak memiliki izin EXECUTE
-    const isBlocked = resRpc.status === 404 || resRpc.status === 401 || resRpc.status === 403;
-    assert(
-      isBlocked,
-      'Akses RPC publik langsung via anon key harus diblokir (404/401/403)',
-      `Status diterima: ${resRpc.status}`
-    );
+    const isBlocked = resOrderRpc.status === 404 || resOrderRpc.status === 401 || resOrderRpc.status === 403;
+    assert(isBlocked, 'create_order_transactional harus diblokir dari anon (404/401/403)', `Status: ${resOrderRpc.status}`);
   } catch (err) {
-    assert(false, 'Request verifikasi privilege RPC harus dapat dieksekusi', err.message);
+    assert(false, 'Request RPC create_order_transactional harus dieksekusi', err.message);
+  }
+
+  // 1b. increment_voucher_usage
+  try {
+    const resVoucherRpc = await makeRequest(RPC_VOUCHER_PATH, {
+      method: 'POST',
+      body: { voucher_code: 'TESTPROMO' }
+    });
+    const isBlocked = resVoucherRpc.status === 404 || resVoucherRpc.status === 401 || resVoucherRpc.status === 403;
+    assert(isBlocked, 'increment_voucher_usage harus diblokir dari anon (404/401/403)', `Status: ${resVoucherRpc.status}`);
+  } catch (err) {
+    assert(false, 'Request RPC increment_voucher_usage harus dieksekusi', err.message);
+  }
+
+  // 1c. track_guest_order
+  try {
+    const resTrackRpc = await makeRequest(RPC_TRACK_PATH, {
+      method: 'POST',
+      body: { p_order_no: 'TS-TEST-0000', p_phone_last4: '1234' }
+    });
+    const isBlocked = resTrackRpc.status === 404 || resTrackRpc.status === 401 || resTrackRpc.status === 403;
+    assert(isBlocked, 'track_guest_order harus diblokir dari anon (404/401/403)', `Status: ${resTrackRpc.status}`);
+  } catch (err) {
+    assert(false, 'Request RPC track_guest_order harus dieksekusi', err.message);
+  }
+
+  // 1d. ts_reviews direct public insert blocked by RLS
+  try {
+    const resReviewDirect = await makeRequest(REVIEWS_TABLE_PATH, {
+      method: 'POST',
+      body: {
+        product_sku: 'TS-BLK-7200',
+        author_name: 'Attacker',
+        content: 'Fake Review Direct Insert',
+        is_verified: true,
+        role_badge: 'Verified Buyer'
+      }
+    });
+    const isBlocked = resReviewDirect.status === 401 || resReviewDirect.status === 403 || resReviewDirect.status === 404;
+    assert(isBlocked, 'Direct insert ke ts_reviews via anon key harus ditolak RLS (401/403)', `Status: ${resReviewDirect.status}`);
+  } catch (err) {
+    assert(false, 'Request direct insert ts_reviews harus dieksekusi', err.message);
   }
 
   // ---------------------------------------------------------------------------
@@ -192,10 +235,64 @@ async function runSuite() {
   }
 
   // ---------------------------------------------------------------------------
-  // 5. Mutating Cloud Order Flow (Diisolasi dengan RUN_MUTATING_TESTS=true)
+  // 5. Edge Function track-order Security & Validation
+  // ---------------------------------------------------------------------------
+  console.log('\n5. Menguji Edge Function track-order (Privacy & Validation)...');
+  try {
+    // 5a. Request tanpa 4-digit nomor HP
+    const resNoPhone = await makeRequest(TRACK_PATH, {
+      method: 'POST',
+      body: { orderNumber: 'TS-260914-A7FC', phoneLast4: '' }
+    });
+    assert(resNoPhone.status === 400, 'track-order harus tolak request tanpa 4-digit nomor HP (HTTP 400)', `Status: ${resNoPhone.status}`);
+
+    // 5b. Request dengan nomor pesanan acak / tidak ada
+    const resNotFound = await makeRequest(TRACK_PATH, {
+      method: 'POST',
+      body: { orderNumber: 'TS-999999-XXXX', phoneLast4: '9999' }
+    });
+    assert(resNotFound.status === 404, 'track-order harus respons 404 untuk kombinasi tidak cocok/tidak ada', `Status: ${resNotFound.status}`);
+  } catch (err) {
+    assert(false, 'Request track-order test harus dapat dieksekusi', err.message);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 6. Edge Function submit-review Validation
+  // ---------------------------------------------------------------------------
+  console.log('\n6. Menguji Edge Function submit-review (Input Validation)...');
+  try {
+    // 6a. Rating di luar range 1-5
+    const resBadRating = await makeRequest(REVIEW_PATH, {
+      method: 'POST',
+      body: {
+        productSku: 'TS-BLK-7200',
+        authorName: 'Penilai',
+        rating: 10,
+        content: 'Review dengan rating tidak valid'
+      }
+    });
+    assert(resBadRating.status === 400, 'submit-review harus tolak rating di luar 1-5 (HTTP 400)', `Status: ${resBadRating.status}`);
+
+    // 6b. Konten ulasan terlalu pendek
+    const resShortContent = await makeRequest(REVIEW_PATH, {
+      method: 'POST',
+      body: {
+        productSku: 'TS-BLK-7200',
+        authorName: 'Penilai',
+        rating: 5,
+        content: 'Hi'
+      }
+    });
+    assert(resShortContent.status === 400, 'submit-review harus tolak ulasan < 5 karakter (HTTP 400)', `Status: ${resShortContent.status}`);
+  } catch (err) {
+    assert(false, 'Request submit-review test harus dapat dieksekusi', err.message);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 7. Mutating Cloud Order Flow (Diisolasi dengan RUN_MUTATING_TESTS=true)
   // ---------------------------------------------------------------------------
   if (process.env.RUN_MUTATING_TESTS === 'true') {
-    console.log('\n5. Menguji Mutating Order Flow (Authoritative Pricing & Snap Token)...');
+    console.log('\n7. Menguji Mutating Order Flow (Authoritative Pricing & Snap Token)...');
     try {
       const res = await makeRequest(CHECKOUT_PATH, {
         method: 'POST',
@@ -222,7 +319,7 @@ async function runSuite() {
   }
 
   // ---------------------------------------------------------------------------
-  // 6. Ringkasan Hasil Suite
+  // Ringkasan Hasil Suite
   // ---------------------------------------------------------------------------
   console.log('\n================================================================');
   console.log(`📊 HASIL PENGUJIAN: ${passedTests}/${totalTests} UJI LULUS (${Math.round((passedTests/totalTests)*100)}%)`);
@@ -238,4 +335,7 @@ async function runSuite() {
   }
 }
 
-runSuite();
+runSuite().catch((err) => {
+  console.error('Fatal suite runner error:', err);
+  process.exit(1);
+});

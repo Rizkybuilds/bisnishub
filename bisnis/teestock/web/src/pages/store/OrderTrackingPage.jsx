@@ -15,25 +15,35 @@ export function OrderTrackingPage() {
   const { storeSettings } = useStore();
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState('');
+  const [phoneLast4, setPhoneLast4] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searched, setSearched] = useState(false);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [selectedOrderIndex, setSelectedOrderIndex] = useState(0);
 
-  const executeSearch = async (term) => {
+  const executeSearch = async (term, last4) => {
     const trimmed = (term || '').trim();
+    const cleanLast4 = String(last4 ?? phoneLast4 ?? '').replace(/\D/g, '');
     if (!trimmed) return;
+
+    if (cleanLast4.length !== 4) {
+      setSearchError('Demi melindungi privasi pelanggan, masukkan tepat 4 digit terakhir nomor HP pemesan.');
+      setSearchResults([]);
+      setSearched(true);
+      return;
+    }
+
     setSearching(true);
     setSearchError(null);
     try {
-      const results = await trackSingleOrder(trimmed);
+      const results = await trackSingleOrder(trimmed, cleanLast4);
       setSearchResults(results);
       setSelectedOrderIndex(0);
       setSearched(true);
     } catch (err) {
       console.warn("Tracking search error:", err);
-      setSearchError(err.message || 'Gagal memuat data pelacakan.');
+      setSearchError(err.message || 'Pesanan tidak ditemukan atau 4 digit nomor HP tidak cocok.');
       setSearchResults([]);
       setSelectedOrderIndex(0);
       setSearched(true);
@@ -45,15 +55,20 @@ export function OrderTrackingPage() {
   // Auto-search from ?order= query param
   useEffect(() => {
     const orderParam = searchParams.get('order');
+    const phoneParam = searchParams.get('phone');
     if (orderParam) {
       setQuery(orderParam);
-      executeSearch(orderParam);
+      if (phoneParam) {
+        const last4 = phoneParam.replace(/\D/g, '').slice(-4);
+        setPhoneLast4(last4);
+        executeSearch(orderParam, last4);
+      }
     }
   }, [searchParams]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    executeSearch(query);
+    executeSearch(query, phoneLast4);
   };
 
   const steps = [
@@ -93,17 +108,34 @@ export function OrderTrackingPage() {
       </div>
 
       {/* Search Bar */}
-      <form onSubmit={handleSearch} className="flex gap-2 max-w-lg mx-auto">
-        <Input
-          placeholder="Masukkan No. Pesanan (cth: WEB-123456) atau No. HP..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="flex-1"
-          required
-        />
-        <Button type="submit" variant="glow" icon={searching ? Loader2 : Search} disabled={searching} className="px-5">
-          {searching ? 'Mencari...' : 'Lacak'}
-        </Button>
+      <form onSubmit={handleSearch} className="max-w-xl mx-auto space-y-3">
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex-1">
+            <Input
+              placeholder="Nomor Pesanan (cth: TS-260914-A7FC)..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full"
+              required
+            />
+          </div>
+          <div className="w-full sm:w-44">
+            <Input
+              placeholder="4 Digit Akhir HP"
+              value={phoneLast4}
+              onChange={(e) => setPhoneLast4(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              className="w-full text-center font-mono tracking-widest"
+              maxLength={4}
+              required
+            />
+          </div>
+          <Button type="submit" variant="glow" icon={searching ? Loader2 : Search} disabled={searching} className="px-6 whitespace-nowrap">
+            {searching ? 'Mencari...' : 'Lacak'}
+          </Button>
+        </div>
+        <p className="text-[11px] text-ts-kremMuted/80 text-center">
+          🔒 Verifikasi 4 digit HP diperlukan untuk melindungi kerahasiaan rincian pesanan dan status resi Anda.
+        </p>
       </form>
 
       {/* Results */}

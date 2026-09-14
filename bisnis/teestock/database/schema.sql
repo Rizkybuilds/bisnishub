@@ -281,13 +281,13 @@ CREATE TABLE ts_reviews (
     product_sku VARCHAR(50) REFERENCES ts_products(sku) ON DELETE CASCADE,
     user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     author_name VARCHAR(150) NOT NULL,
-    role_badge VARCHAR(50) DEFAULT 'Verified Buyer',
+    role_badge VARCHAR(50) DEFAULT 'Ulasan Komunitas',
     rating INT DEFAULT 5 CHECK (rating >= 1 AND rating <= 5),
     garment_type VARCHAR(100),
     size_ordered VARCHAR(20),
     user_stats VARCHAR(100),                      -- cth: TB 175 cm · BB 70 kg
     content TEXT NOT NULL,
-    is_verified BOOLEAN DEFAULT true,
+    is_verified BOOLEAN DEFAULT false,
     helpful_count INT DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -364,7 +364,8 @@ BEGIN
     ON CONFLICT (id) DO NOTHING;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public, pg_temp;
 
 CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
@@ -389,7 +390,8 @@ BEGIN
         WHERE id = auth.uid() AND role = 'admin'
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public, pg_temp;
 
 -- 🛡️ P0 PROTEKSI ROLE: Mencegah eskalasi hak akses role admin melalui manipulasi REST API client
 CREATE OR REPLACE FUNCTION public.protect_user_role()
@@ -408,16 +410,16 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public, pg_temp;
 
 DROP TRIGGER IF EXISTS trg_protect_user_role ON public.ts_user_profiles;
 CREATE TRIGGER trg_protect_user_role
     BEFORE UPDATE ON public.ts_user_profiles
     FOR EACH ROW EXECUTE FUNCTION public.protect_user_role();
 
--- 🔍 P1 SECURE GUEST TRACKING: Melacak pesanan publik/tamu dengan data masking & verifikasi aman
--- Mendukung pencarian via No. Pesanan (WEB-xxxxxx) maupun No. HP (08xxx / 62xxx)
-CREATE OR REPLACE FUNCTION public.track_guest_order(p_order_no TEXT, p_phone_last4 TEXT DEFAULT NULL)
+-- 🔍 P1 SECURE GUEST TRACKING: Melacak pesanan publik/tamu dengan verifikasi 4-digit HP wajib & pembatasan service_role
+CREATE OR REPLACE FUNCTION public.track_guest_order(p_order_no TEXT, p_phone_last4 TEXT)
 RETURNS TABLE (
     order_number VARCHAR,
     status VARCHAR,
@@ -425,13 +427,22 @@ RETURNS TABLE (
     created_at TIMESTAMPTZ,
     items JSON,
     customer_masked TEXT
-) AS $$
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
 DECLARE
-    clean_search TEXT;
-    digits_only TEXT;
+    clean_order TEXT;
+    clean_last4 TEXT;
 BEGIN
-    clean_search := UPPER(TRIM(p_order_no));
-    digits_only := regexp_replace(clean_search, '\D', '', 'g');
+    clean_order := UPPER(TRIM(COALESCE(p_order_no, '')));
+    clean_last4 := regexp_replace(COALESCE(p_phone_last4, ''), '\D', '', 'g');
+
+    -- Validasi wajib: Nomor order tidak boleh kosong dan 4 digit terakhir no HP harus tepat 4 angka
+    IF clean_order = '' OR length(clean_last4) <> 4 THEN
+        RAISE EXCEPTION 'Verifikasi gagal: Nomor pesanan dan 4 digit terakhir nomor HP wajib diisi dengan tepat.';
+    END IF;
 
     RETURN QUERY
     SELECT 
@@ -449,50 +460,56 @@ BEGIN
         concat(left(o.customer_name, 2), '*** ', right(o.customer_name, 1)) AS customer_masked
     FROM ts_orders o
     LEFT JOIN ts_order_items i ON o.id = i.order_id
-    WHERE (
-        -- Pencarian presisi via No. Pesanan
-        o.order_number = clean_search
-        -- Atau via No. HP (jika input memuat minimal 6 digit angka)
-        OR (
-            length(digits_only) >= 6 
-            AND regexp_replace(o.customer_phone, '\D', '', 'g') LIKE '%' || digits_only || '%'
-        )
-    )
-    AND (
-        p_phone_last4 IS NULL 
-        OR TRIM(p_phone_last4) = '' 
-        OR right(regexp_replace(o.customer_phone, '\D', '', 'g'), 4) = TRIM(p_phone_last4)
-    )
+    WHERE o.order_number = clean_order
+      AND right(regexp_replace(o.customer_phone, '\D', '', 'g'), 4) = clean_last4
     GROUP BY o.id, o.order_number, o.status, o.tracking_number, o.created_at, o.customer_name
     ORDER BY o.created_at DESC
-    LIMIT 5;
+    LIMIT 1;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
--- 🏷️ RPC INCREMENT VOUCHER USAGE: Menaikkan counter used_count secara atomik saat pesanan berhasil
+REVOKE ALL ON FUNCTION public.track_guest_order(TEXT, TEXT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.track_guest_order(TEXT, TEXT) TO service_role;
+
+-- 🏷️ RPC INCREMENT VOUCHER USAGE: Menaikkan counter used_count (Hanya service_role)
 CREATE OR REPLACE FUNCTION public.increment_voucher_usage(voucher_code TEXT)
-RETURNS VOID AS $$
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
 BEGIN
     UPDATE public.ts_vouchers
     SET used_count = COALESCE(used_count, 0) + 1,
         updated_at = NOW()
     WHERE UPPER(code) = UPPER(TRIM(voucher_code));
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
+
+REVOKE ALL ON FUNCTION public.increment_voucher_usage(TEXT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.increment_voucher_usage(TEXT) TO service_role;
 
 -- ⭐ RPC INCREMENT REVIEW HELPFUL: Menaikkan counter helpful_count secara atomik
 CREATE OR REPLACE FUNCTION public.increment_review_helpful(review_id UUID)
-RETURNS VOID AS $$
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
 BEGIN
     UPDATE public.ts_reviews
     SET helpful_count = COALESCE(helpful_count, 0) + 1
     WHERE id = review_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 -- 🔗 GUEST-TO-MEMBER ORDER LINKING: Menghubungkan pesanan tamu sebelumnya ke akun baru saat user login/signup
 CREATE OR REPLACE FUNCTION public.link_guest_orders_on_signup()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
 DECLARE
     clean_phone TEXT;
     user_email TEXT;
@@ -510,7 +527,7 @@ BEGIN
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 DROP TRIGGER IF EXISTS trg_link_guest_orders ON public.ts_user_profiles;
 CREATE TRIGGER trg_link_guest_orders
@@ -589,9 +606,9 @@ CREATE POLICY "public_insert_partner_app" ON ts_partner_applications FOR INSERT 
 CREATE POLICY "user_read_own_partner_app" ON ts_partner_applications FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
 CREATE POLICY "admin_manage_partner_apps" ON ts_partner_applications FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- 12. ts_reviews (Publik bisa baca & tulis ulasan, HANYA admin bisa moderasi/hapus)
+-- 12. ts_reviews (Publik hanya baca ulasan, HANYA service_role & admin yang kelola/tulis ulasan)
 CREATE POLICY "public_read_reviews" ON ts_reviews FOR SELECT USING (true);
-CREATE POLICY "public_insert_reviews" ON ts_reviews FOR INSERT WITH CHECK (true);
+CREATE POLICY "service_role_manage_reviews" ON ts_reviews FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "admin_manage_reviews" ON ts_reviews FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 -- 13. ts_settings (Publik bisa baca pengaturan toko & QRIS, HANYA admin yang bisa mengubah)
@@ -871,7 +888,8 @@ BEGIN
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public, pg_temp;
 
 DROP TRIGGER IF EXISTS trg_procurement_moving_average ON public.ts_procurements;
 CREATE TRIGGER trg_procurement_moving_average

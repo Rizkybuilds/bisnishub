@@ -73,6 +73,10 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
   const [sizeOrdered, setSizeOrdered] = useState('L');
   const [garmentType, setGarmentType] = useState('Heavyweight 24s (Black)');
   const [content, setContent] = useState('');
+  const [orderNumber, setOrderNumber] = useState('');
+  const [phoneLast4, setPhoneLast4] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   // Sync reviews with Supabase ts_reviews
@@ -90,16 +94,16 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
           const mapped = data.map(r => ({
             id: r.id,
             author: r.author_name,
-            role: r.role_badge || 'Verified Buyer',
+            role: r.role_badge || (r.is_verified ? 'Verified Buyer' : 'Ulasan Komunitas'),
             avatar: (r.author_name || 'MB').slice(0, 2).toUpperCase(),
             rating: r.rating || 5,
             date: r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Baru saja',
             garmentType: r.garment_type || 'New States Apparel',
             sizeOrdered: r.size_ordered || 'L',
-            userStats: r.user_stats || 'Pembeli Terverifikasi',
+            userStats: r.user_stats || (r.is_verified ? 'Pembeli Terverifikasi' : 'Ulasan Komunitas'),
             content: r.content,
             helpfulCount: r.helpful_count || 0,
-            verified: r.is_verified ?? true,
+            verified: Boolean(r.is_verified),
           }));
           setReviews(mapped);
         }
@@ -131,48 +135,62 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
     }
   };
 
-  const handleSubmitReview = (e) => {
+  const handleSubmitReview = async (e) => {
     e.preventDefault();
     if (!name.trim() || !content.trim()) return;
 
+    setSubmitting(true);
+    setSubmitError(null);
+
+    let serverReview = null;
+    try {
+      if (supabase && supabase.functions && typeof supabase.functions.invoke === 'function') {
+        const { data, error } = await supabase.functions.invoke('submit-review', {
+          body: {
+            productSku: sku,
+            authorName: name.trim(),
+            rating: Number(rating),
+            content: content.trim(),
+            garmentType,
+            sizeOrdered,
+            userStats: userStats.trim() || null,
+            orderNumber: orderNumber.trim() || null,
+            phoneLast4: phoneLast4.trim() || null
+          }
+        });
+
+        if (!error && data?.status === 'success' && data.data) {
+          serverReview = data.data;
+        } else if (data?.message) {
+          setSubmitError(data.message);
+        }
+      }
+    } catch (err) {
+      console.warn('Review submission via Edge Function notice:', err);
+    }
+
+    const isVerified = Boolean(serverReview?.is_verified);
+    const roleBadge = serverReview?.role_badge || (isVerified ? 'Verified Buyer' : 'Ulasan Komunitas');
+
     const newRev = {
-      id: `rev-${Date.now()}`,
+      id: serverReview?.id || `rev-${Date.now()}`,
       author: name.trim(),
-      role: 'Verified Buyer',
+      role: roleBadge,
       avatar: name.trim().slice(0, 2).toUpperCase(),
       rating: Number(rating),
       date: 'Baru saja',
       garmentType,
       sizeOrdered,
-      userStats: userStats.trim() || 'Pembeli Terverifikasi',
+      userStats: userStats.trim() || (isVerified ? 'Pembeli Terverifikasi' : 'Ulasan Komunitas'),
       content: content.trim(),
       helpfulCount: 0,
       images: [],
-      verified: true,
+      verified: isVerified,
     };
 
     setReviews([newRev, ...reviews]);
     setSubmitSuccess(true);
-
-    // Simpan juga ke Supabase ts_reviews
-    try {
-      supabase.from('ts_reviews').insert([{
-        product_sku: sku,
-        author_name: name.trim(),
-        role_badge: 'Verified Buyer',
-        rating: Number(rating),
-        garment_type: garmentType,
-        size_ordered: sizeOrdered,
-        user_stats: userStats.trim() || 'Pembeli Terverifikasi',
-        content: content.trim(),
-        helpful_count: 0,
-        is_verified: true,
-      }]).then(({ error }) => {
-        if (error) console.warn('Gagal menyimpan review ke Supabase:', error.message);
-      });
-    } catch (err) {
-      console.warn('Review submit notice:', err);
-    }
+    setSubmitting(false);
 
     setTimeout(() => {
       setSubmitSuccess(false);
@@ -180,6 +198,9 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
       setName('');
       setContent('');
       setUserStats('');
+      setOrderNumber('');
+      setPhoneLast4('');
+      setSubmitError(null);
     }, 1200);
   };
 
@@ -469,6 +490,42 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
                   />
                 </div>
 
+                {/* Optional Verified Buyer Verification Box */}
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-ts-krem flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-ts-green" /> Verifikasi Pembeli Resmi (Opsional)
+                    </span>
+                    <span className="text-[10px] text-ts-kremMuted">Badge Terverifikasi</span>
+                  </div>
+                  <p className="text-[11px] text-ts-kremMuted leading-relaxed">
+                    Pernah membeli kaos ini? Masukkan nomor pesanan dan 4 digit terakhir nomor HP Anda agar ulasan diverifikasi otomatis sebagai <strong>Verified Buyer</strong>.
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="No. Pesanan (cth: TS-260914-XXXX)"
+                      value={orderNumber}
+                      onChange={(e) => setOrderNumber(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-ts-terracotta text-xs uppercase"
+                    />
+                    <input
+                      type="text"
+                      placeholder="4 Digit Akhir No. HP"
+                      value={phoneLast4}
+                      onChange={(e) => setPhoneLast4(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                      maxLength={4}
+                      className="w-full px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-white focus:outline-none focus:border-ts-terracotta text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                {submitError && (
+                  <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+                    {submitError}
+                  </div>
+                )}
+
                 <div className="pt-2 flex justify-end gap-2">
                   <button
                     type="button"
@@ -477,8 +534,8 @@ export function ProductReviews({ productName = "Kaos TeeStock", sku = "TS-ORIGIN
                   >
                     Batal
                   </button>
-                  <Button type="submit" variant="primary" className="px-6 py-2">
-                    Kirim Ulasan
+                  <Button type="submit" variant="primary" disabled={submitting} className="px-6 py-2">
+                    {submitting ? 'Mengirim...' : 'Kirim Ulasan'}
                   </Button>
                 </div>
               </form>
