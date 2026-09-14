@@ -1,7 +1,7 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { getAdminClient } from '../_shared/supabaseClient.ts';
 
-// Size surcharges mapping
+// Size surcharges mapping (Berdasarkan HPP distributor NSA)
 const SIZE_SURCHARGES: Record<string, number> = {
   'XXL': 5000,
   '2XL': 5000,
@@ -16,11 +16,87 @@ function getSizeSurcharge(size?: string): number {
   return SIZE_SURCHARGES[clean] || 0;
 }
 
+// Berat per garmen dalam gram
+const GARMENT_WEIGHT_MAP: Record<string, number> = {
+  'TS-BLK-3600': 180,
+  '3600': 180,
+  '30S': 180,
+  'TS-BLK-7200': 220,
+  '7200': 220,
+  '24S': 220,
+  'DEFAULT': 220,
+  'PACKAGING': 30
+};
+
+function getItemWeight(sku: string, garment: string): number {
+  const cleanSku = (sku || '').toUpperCase();
+  const cleanGarment = (garment || '').toUpperCase();
+  if (cleanSku.includes('3600') || cleanGarment.includes('30S') || cleanGarment.includes('3600')) {
+    return GARMENT_WEIGHT_MAP['3600'];
+  }
+  return GARMENT_WEIGHT_MAP['7200'];
+}
+
+// Perhitungan Billable Weight Standar Logistik Indonesia (Toleransi 1.200g = 1kg)
+function calculateBillableKg(totalGrams: number): number {
+  if (totalGrams <= 1200) return 1;
+  return Math.ceil((totalGrams - 200) / 1000);
+}
+
+// 4 Zona Tarif Pengiriman Standar (HPP Ekspedisi dari Sentra Citayam / Depok / Jabar)
+const SHIPPING_ZONE_RATES: Record<string, { rate: number; name: string }> = {
+  'jabodetabek_jabar': { rate: 10000, name: 'Jabodetabek & Jawa Barat' },
+  'jawa_lainnya': { rate: 15000, name: 'Jawa Tengah, Jawa Timur, & DIY' },
+  'luar_jawa_kota': { rate: 28000, name: 'Luar Jawa — Kota Besar' },
+  'luar_jawa_timur': { rate: 45000, name: 'Luar Jawa — Wilayah Timur' }
+};
+
+function detectShippingZone(city = '', zoneId = ''): { id: string; rate: number; name: string } {
+  if (zoneId && SHIPPING_ZONE_RATES[zoneId]) {
+    return { id: zoneId, ...SHIPPING_ZONE_RATES[zoneId] };
+  }
+  const c = city.toLowerCase();
+  if (
+    c.includes('jakarta') || c.includes('bogor') || c.includes('depok') || 
+    c.includes('tangerang') || c.includes('bekasi') || c.includes('bandung') || 
+    c.includes('cimahi') || c.includes('cirebon') || c.includes('sukabumi') || 
+    c.includes('tasik') || c.includes('garut') || c.includes('jawa barat')
+  ) {
+    return { id: 'jabodetabek_jabar', ...SHIPPING_ZONE_RATES['jabodetabek_jabar'] };
+  }
+  if (
+    c.includes('jawa tengah') || c.includes('jawa timur') || c.includes('diy') || 
+    c.includes('jogja') || c.includes('yogyakarta') || c.includes('semarang') || 
+    c.includes('solo') || c.includes('surabaya') || c.includes('malang') || 
+    c.includes('kediri') || c.includes('banyuwangi')
+  ) {
+    return { id: 'jawa_lainnya', ...SHIPPING_ZONE_RATES['jawa_lainnya'] };
+  }
+  if (
+    c.includes('sumatera') || c.includes('medan') || c.includes('palembang') || 
+    c.includes('padang') || c.includes('pekanbaru') || c.includes('lampung') || 
+    c.includes('bali') || c.includes('denpasar') || c.includes('pontianak') || 
+    c.includes('banjarmasin') || c.includes('samarinda') || c.includes('makassar') || 
+    c.includes('manado')
+  ) {
+    return { id: 'luar_jawa_kota', ...SHIPPING_ZONE_RATES['luar_jawa_kota'] };
+  }
+  return { id: 'luar_jawa_timur', ...SHIPPING_ZONE_RATES['luar_jawa_timur'] };
+}
+
+// Multiplier Kurir
+const COURIER_MULTIPLIERS: Record<string, number> = {
+  'jne': 1.05,
+  'anteraja': 0.95,
+  'jnt': 1.0,
+  'sicepat': 1.0
+};
+
 function calculateBundleDiscount(graphicQty: number, role = 'retail'): number {
   if (role === 'reseller' || role === 'dropship') return 0;
   if (!graphicQty || graphicQty < 2) return 0;
-  if (graphicQty >= 3) return 14000 * graphicQty; // Rp 42.000 (min 3)
-  if (graphicQty === 2) return 18000;
+  if (graphicQty >= 3) return 14000 * graphicQty; // Rp 42.000 untuk 3 pcs (@Rp 85.000)
+  if (graphicQty === 2) return 18000; // Rp 18.000 untuk 2 pcs (@Rp 90.000)
   return 0;
 }
 
@@ -34,9 +110,11 @@ function generateOrderNumber(): string {
 }
 
 Deno.serve(async (req: Request) => {
+  const cors = getCorsHeaders(req);
+
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response('ok', { headers: cors });
   }
 
   try {
@@ -47,15 +125,14 @@ Deno.serve(async (req: Request) => {
       shipping = {},
       paymentMethod = 'manual_qris',
       voucherCode = null,
-      userId = null,
       notes = null
     } = body;
 
-    // 1. Input Validation
+    // 1. Validasi Input Dasar
     if (!Array.isArray(items) || items.length === 0) {
       return new Response(
         JSON.stringify({ status: 'error', message: 'Keranjang belanja kosong atau tidak valid.' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -67,43 +144,92 @@ Deno.serve(async (req: Request) => {
     if (!customerName || !customerPhone) {
       return new Response(
         JSON.stringify({ status: 'error', message: 'Nama dan nomor telepon penerima wajib diisi.' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
       );
     }
 
     const supabase = getAdminClient();
 
-    // 2. Authoritative Price Fetching from Supabase
-    const skus = items.map((i: any) => i.sku).filter(Boolean);
-    const { data: dbProducts } = await supabase
+    // 2. Ekstraksi Identitas User dari JWT Authorization Header (Zero Trust pada body.userId)
+    let verifiedUserId: string | null = null;
+    const authHeader = req.headers.get('Authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.replace('Bearer ', '').trim();
+      if (token && token !== 'undefined' && token !== 'null') {
+        try {
+          const { data: { user } } = await supabase.auth.getUser(token);
+          if (user && user.id) {
+            verifiedUserId = user.id;
+          }
+        } catch (authErr) {
+          console.warn('Gagal memverifikasi JWT user:', authErr);
+        }
+      }
+    }
+
+    // 3. Verifikasi Harga & Produk Otoritatif dari Database ts_products (Zero-Trust)
+    const requestedSkus = items.map((i: any) => String(i.sku || '').trim()).filter(Boolean);
+    const { data: dbProducts, error: prodErr } = await supabase
       .from('ts_products')
-      .select('sku, title, price_retail, price_dropship, price_reseller, series, category')
-      .in('sku', skus);
+      .select('sku, name, price_retail, price_reseller, series, status')
+      .in('sku', requestedSkus);
+
+    if (prodErr) {
+      return new Response(
+        JSON.stringify({ status: 'error', message: `Gagal membaca katalog produk: ${prodErr.message}` }),
+        { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const productMap = new Map<string, any>();
     if (dbProducts) {
-      dbProducts.forEach((p: any) => productMap.set(p.sku, p));
+      dbProducts.forEach((p: any) => {
+        if (p.status === 'active') {
+          productMap.set(p.sku, p);
+        }
+      });
     }
 
-    // 3. Server-side Subtotal & Surcharge Calculation
     let calculatedSubtotal = 0;
     let graphicCount = 0;
+    let totalOrderGrams = GARMENT_WEIGHT_MAP['PACKAGING'];
     const verifiedOrderItems: any[] = [];
 
     for (const item of items) {
-      const qty = Math.max(1, Math.min(100, Number(item.qty) || 1));
-      const dbProduct = productMap.get(item.sku);
-      
-      let baseUnitPrice = 99000;
+      const qty = Math.max(1, Math.min(100, Number(item.qty || item.quantity) || 1));
+      const sku = String(item.sku || item.product_sku || item.id || '').trim();
+      const dbProduct = productMap.get(sku);
+
+      let baseUnitPrice = 0;
+      let productName = '';
       let isGraphic = true;
+      const garment = String(item.garment || 'NSA Heavyweight 24s');
 
       if (dbProduct) {
         baseUnitPrice = Number(dbProduct.price_retail) || 99000;
-        isGraphic = dbProduct.series !== 'blank' && dbProduct.category !== 'Blanks';
-      } else if (item.price && Number(item.price) > 0) {
-        // Fallback for custom atelier / blanks variant
-        baseUnitPrice = Number(item.price);
-        isGraphic = !item.sku?.includes('BLK') && !item.name?.toLowerCase().includes('polos');
+        productName = dbProduct.name;
+        isGraphic = dbProduct.series !== 'blank';
+      } else if (sku === 'TS-BLK-3600' || sku === 'TS-BLK-7200') {
+        // Blanks NSA 3600 & 7200 resmi
+        const isWhite = String(item.color || '').toLowerCase().includes('putih') || 
+                        String(item.color || '').toLowerCase().includes('white');
+        if (sku === 'TS-BLK-3600') {
+          baseUnitPrice = isWhite ? 34000 : 37000;
+          productName = 'New States Apparel Softstyle 30s';
+        } else {
+          baseUnitPrice = isWhite ? 49000 : 52000;
+          productName = 'New States Apparel Premium Cotton 7200';
+        }
+        isGraphic = false;
+      } else {
+        // Zero-Trust: SKU tidak dikenal atau tidak aktif -> Tolak langsung dengan HTTP 400!
+        return new Response(
+          JSON.stringify({ 
+            status: 'error', 
+            message: `Produk dengan SKU '${sku}' tidak ditemukan di katalog atau sudah tidak aktif.` 
+          }),
+          { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
+        );
       }
 
       const surcharge = getSizeSurcharge(item.size);
@@ -114,11 +240,14 @@ Deno.serve(async (req: Request) => {
         graphicCount += qty;
       }
 
+      const unitWeight = getItemWeight(sku, garment);
+      totalOrderGrams += unitWeight * qty;
       calculatedSubtotal += itemSubtotal;
+
       verifiedOrderItems.push({
-        product_sku: item.sku || 'ITEM',
-        product_name: item.name || dbProduct?.title || 'Kaos TeeStock',
-        garment: item.garment || 'NSA Heavyweight 24s',
+        product_sku: sku,
+        product_name: productName,
+        garment: garment,
         size: item.size || 'L',
         color: item.color || 'Hitam',
         qty,
@@ -127,83 +256,187 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // 4. Calculate Authoritative Discounts
+    // 4. Kalkulasi Diskon Bundling Otoritatif di Server
     const bundleDiscount = calculateBundleDiscount(graphicCount, 'retail');
-    
+
+    // 5. Validasi Voucher Otoritatif dari Database ts_vouchers
     let voucherDiscount = 0;
+    let validatedVoucherCode: string | null = null;
+
     if (voucherCode) {
       const cleanCode = String(voucherCode).trim().toUpperCase();
-      if (cleanCode === 'WELCOME10') {
-        voucherDiscount = Math.round(calculatedSubtotal * 0.10);
-      } else if (cleanCode === 'PERDANA15') {
-        voucherDiscount = calculatedSubtotal >= 99000 ? 15000 : 0;
+      const { data: voucherData, error: voucherErr } = await supabase
+        .from('ts_vouchers')
+        .select('id, code, discount_type, discount_value, min_order, max_discount, usage_limit, used_count, is_active, expires_at')
+        .eq('code', cleanCode)
+        .maybeSingle();
+
+      if (voucherErr || !voucherData) {
+        return new Response(
+          JSON.stringify({ status: 'error', message: `Kupon voucher '${cleanCode}' tidak valid atau tidak terdaftar.` }),
+          { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
+        );
       }
+
+      if (!voucherData.is_active) {
+        return new Response(
+          JSON.stringify({ status: 'error', message: `Kupon voucher '${cleanCode}' sudah tidak aktif.` }),
+          { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (voucherData.expires_at && new Date(voucherData.expires_at) < new Date()) {
+        return new Response(
+          JSON.stringify({ status: 'error', message: `Kupon voucher '${cleanCode}' telah kedaluwarsa.` }),
+          { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (voucherData.usage_limit && voucherData.used_count >= voucherData.usage_limit) {
+        return new Response(
+          JSON.stringify({ status: 'error', message: `Kuota penggunaan voucher '${cleanCode}' telah habis.` }),
+          { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const minOrder = Number(voucherData.min_order) || 0;
+      if (calculatedSubtotal < minOrder) {
+        return new Response(
+          JSON.stringify({ 
+            status: 'error', 
+            message: `Voucher '${cleanCode}' membutuhkan minimal belanja Rp ${minOrder.toLocaleString('id-ID')}.` 
+          }),
+          { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (voucherData.discount_type === 'percent') {
+        const rawDisc = Math.round(calculatedSubtotal * (Number(voucherData.discount_value) / 100));
+        const maxDisc = Number(voucherData.max_discount) || Infinity;
+        voucherDiscount = Math.min(rawDisc, maxDisc);
+      } else {
+        voucherDiscount = Math.min(calculatedSubtotal, Number(voucherData.discount_value));
+      }
+
+      validatedVoucherCode = cleanCode;
     }
 
     const totalDiscount = bundleDiscount + voucherDiscount;
-    const shippingFee = Math.max(0, Number(shipping.fee) || 0);
 
-    // 5. Unique Code for Manual QRIS Verification (100 - 999)
+    // 6. Kalkulasi Ongkir Otoritatif di Server (Zero Trust pada shipping.fee client)
+    const matchedZone = detectShippingZone(customerCity, shipping.zoneId);
+    const billableKg = calculateBillableKg(totalOrderGrams);
+    const courierKey = String(shipping.courierId || shipping.courier || 'jnt').toLowerCase();
+    const courierMultiplier = COURIER_MULTIPLIERS[courierKey] || 1.0;
+    const authoritativeShippingFee = Math.round(matchedZone.rate * billableKg * courierMultiplier);
+
+    // 7. Kode Unik untuk Verifikasi QRIS Manual (100 - 999)
     let uniqueCode = 0;
     if (paymentMethod === 'manual_qris') {
       uniqueCode = Math.floor(100 + Math.random() * 900);
     }
 
-    const grandTotal = Math.max(0, calculatedSubtotal - totalDiscount + shippingFee + uniqueCode);
+    const grandTotal = Math.max(0, calculatedSubtotal - totalDiscount + authoritativeShippingFee + uniqueCode);
     const orderNumber = generateOrderNumber();
     const orderUuid = crypto.randomUUID();
 
-    // 6. Insert Order atomically using service_role key (Pending Payment status)
     const summaryNotes = notes || verifiedOrderItems.map(
-      i => `${i.product_name} - ${i.garment} (${i.color} ${i.size}) x${i.qty}`
+      i => `${i.product_name} (${i.color} ${i.size}) x${i.qty}`
     ).join('; ');
 
-    const { error: orderInsertErr } = await supabase.from('ts_orders').insert({
+    // 8. Transaksi Database Atomik (via RPC PostgreSQL create_order_transactional)
+    const orderHeaderData = {
       id: orderUuid,
       order_number: orderNumber,
-      user_id: userId || null,
+      user_id: verifiedUserId,
       customer_name: customerName,
       customer_phone: customerPhone,
       customer_city: customerCity,
       customer_address: customerAddress,
       channel: 'web',
       tier: 'retail',
-      status: 'pending_payment',
       total_amount: grandTotal,
       discount_amount: totalDiscount,
-      voucher_code: voucherCode || null,
+      voucher_code: validatedVoucherCode,
       notes: summaryNotes,
-    });
+    };
 
-    if (orderInsertErr) {
-      throw new Error(`Gagal menyimpan pesanan ke database: ${orderInsertErr.message}`);
-    }
-
-    // Insert order items
-    const itemsPayload = verifiedOrderItems.map(item => ({
-      order_id: orderUuid,
-      order_number: orderNumber,
-      ...item
+    const orderItemsData = verifiedOrderItems.map(item => ({
+      ...item,
+      order_number: orderNumber
     }));
 
-    const { error: itemsInsertErr } = await supabase.from('ts_order_items').insert(itemsPayload);
-    if (itemsInsertErr) {
-      console.error('Warning inserting order items:', itemsInsertErr);
+    // Coba eksekusi fungsi RPC transaksi atomik
+    const { data: rpcResult, error: rpcErr } = await supabase.rpc('create_order_transactional', {
+      p_order: orderHeaderData,
+      p_items: orderItemsData,
+      p_voucher_code: validatedVoucherCode,
+      p_voucher_discount: voucherDiscount
+    });
+
+    if (rpcErr) {
+      console.warn('RPC create_order_transactional gagal atau belum terpasang, beralih ke atomic batch insert:', rpcErr);
+      // Fallback batch insert dengan rollback manual jika item gagal
+      const { error: insOrderErr } = await supabase.from('ts_orders').insert({
+        ...orderHeaderData,
+        status: 'pending_payment'
+      });
+
+      if (insOrderErr) {
+        throw new Error(`Gagal mencatat pesanan: ${insOrderErr.message}`);
+      }
+
+      const itemsWithOrder = orderItemsData.map(it => ({
+        order_id: orderUuid,
+        ...it
+      }));
+
+      const { error: insItemsErr } = await supabase.from('ts_order_items').insert(itemsWithOrder);
+      if (insItemsErr) {
+        // Rollback pesanan header agar tidak terjadi orphaned order
+        await supabase.from('ts_orders').delete().eq('id', orderUuid);
+        throw new Error(`Gagal mencatat rincian pesanan atomik: ${insItemsErr.message}`);
+      }
+
+      // Catat voucher usage jika ada
+      if (validatedVoucherCode && voucherDiscount > 0) {
+        const { data: vRecord } = await supabase.from('ts_vouchers').select('id, used_count').eq('code', validatedVoucherCode).single();
+        if (vRecord) {
+          await supabase.from('ts_vouchers').update({ used_count: (vRecord.used_count || 0) + 1 }).eq('id', vRecord.id);
+          await supabase.from('ts_voucher_usage').insert({
+            voucher_id: vRecord.id,
+            user_id: verifiedUserId,
+            order_id: orderNumber,
+            discount_applied: voucherDiscount
+          });
+        }
+      }
     }
 
-    // 7. Request Midtrans Snap Token if payment method is Midtrans
+    // 9. Request Midtrans Snap Token (Fail-Closed Tanpa Hardcoded Secret)
     let snapToken = null;
     let redirectUrl = null;
     let midtransError: any = null;
 
     if (paymentMethod === 'midtrans_snap') {
-      const serverKey = Deno.env.get('MIDTRANS_SERVER_KEY') || 'Mid-server-c8SVBfpNa3-M-QcqYFTnHXwv';
+      const serverKey = Deno.env.get('MIDTRANS_SERVER_KEY');
+      if (!serverKey) {
+        console.error('Configuration error: MIDTRANS_SERVER_KEY is missing from environment.');
+        return new Response(
+          JSON.stringify({ 
+            status: 'error', 
+            message: 'Konfigurasi pembayaran server belum lengkap. Hubungi admin toko.' 
+          }),
+          { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
+        );
+      }
+
       const isProduction = Deno.env.get('MIDTRANS_IS_PRODUCTION') === 'true' || serverKey.startsWith('Mid-server-');
       const snapApiUrl = isProduction
         ? 'https://app.midtrans.com/snap/v1/transactions'
         : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
 
-      // Midtrans strictly requires item_details name to be <= 50 characters
+      // Midtrans membatasi panjang item_details name maksimal 50 karakter
       const midtransItems: Array<{ id: string; price: number; quantity: number; name: string }> = verifiedOrderItems.map((item, idx) => ({
         id: String(item.product_sku || `ITEM-${idx + 1}`).slice(0, 45),
         price: Math.round(item.unit_price),
@@ -211,14 +444,14 @@ Deno.serve(async (req: Request) => {
         name: String(item.product_name || 'Kaos TeeStock').slice(0, 45)
       }));
 
-      if (shippingFee > 0) {
-        const cleanZone = String(shipping.zone || 'Reguler')
+      if (authoritativeShippingFee > 0) {
+        const cleanZone = String(matchedZone.name || 'Reguler')
           .replace(/[()&]/g, ' ')
           .replace(/\s+/g, ' ')
           .trim();
         midtransItems.push({
           id: 'SHIPPING-FEE',
-          price: Math.round(shippingFee),
+          price: Math.round(authoritativeShippingFee),
           quantity: 1,
           name: `Ongkir - ${cleanZone}`.slice(0, 45)
         });
@@ -233,7 +466,7 @@ Deno.serve(async (req: Request) => {
         });
       }
 
-      // Mathematical validation: Midtrans rejects if sum(item_details) !== gross_amount
+      // Rekonsiliasi Matematis: sum(item_details) WAJIB sama persis dengan gross_amount
       const targetGross = Math.round(grandTotal);
       const itemsSum = midtransItems.reduce((acc, it) => acc + (it.price * it.quantity), 0);
       if (itemsSum !== targetGross) {
@@ -246,7 +479,7 @@ Deno.serve(async (req: Request) => {
         });
       }
 
-      // Clean customer phone (digits only, 9-19 chars) and address (strip markdown URLs)
+      // Pembersihan nomor telepon (hanya digit, 9-19 digit) dan alamat (hapus tautan markdown)
       const cleanCustomerPhone = customerPhone.replace(/[^0-9+]/g, '').slice(0, 19) || '08123456789';
       const cleanCustomerAddress = customerAddress
         .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
@@ -282,12 +515,12 @@ Deno.serve(async (req: Request) => {
           body: JSON.stringify(snapPayload)
         });
 
-        // If 401 unauthorized, try alternate environment (Sandbox <-> Production)
+        // Jika 401 unauthorized, coba endpoint alternatif (Sandbox <-> Production)
         if (snapRes.status === 401) {
           const alternateUrl = isProduction
             ? 'https://app.sandbox.midtrans.com/snap/v1/transactions'
             : 'https://app.midtrans.com/snap/v1/transactions';
-          console.warn(`Midtrans 401 on ${snapApiUrl}, attempting alternate environment: ${alternateUrl}`);
+          console.warn(`Midtrans 401 on ${snapApiUrl}, mencoba endpoint alternatif: ${alternateUrl}`);
           const altRes = await fetch(alternateUrl, {
             method: 'POST',
             headers: {
@@ -317,7 +550,7 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // 8. Return Authoritative Response
+    // 10. Kembalikan Respons Otoritatif Server
     return new Response(
       JSON.stringify({
         status: 'success',
@@ -326,10 +559,13 @@ Deno.serve(async (req: Request) => {
           orderUuid,
           subtotal: calculatedSubtotal,
           discountAmount: totalDiscount,
-          shippingFee,
+          shippingFee: authoritativeShippingFee,
+          shippingZone: matchedZone.name,
+          billableWeightKg: billableKg,
           uniqueCode,
           grandTotal,
           paymentMethod,
+          userId: verifiedUserId,
           snapToken,
           redirectUrl,
           midtransError,
@@ -338,7 +574,7 @@ Deno.serve(async (req: Request) => {
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...cors, 'Content-Type': 'application/json' }
       }
     );
 
@@ -346,7 +582,7 @@ Deno.serve(async (req: Request) => {
     console.error('Checkout error:', err);
     return new Response(
       JSON.stringify({ status: 'error', message: err.message || 'Terjadi kesalahan internal checkout.' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
     );
   }
 });

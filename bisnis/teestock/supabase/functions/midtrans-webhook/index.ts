@@ -34,7 +34,14 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const serverKey = Deno.env.get('MIDTRANS_SERVER_KEY') || 'Mid-server-c8SVBfpNa3-M-QcqYFTnHXwv';
+    const serverKey = Deno.env.get('MIDTRANS_SERVER_KEY');
+    if (!serverKey) {
+      console.error('Configuration error: MIDTRANS_SERVER_KEY is not configured in environment.');
+      return new Response(
+        JSON.stringify({ status: 'error', message: 'Server configuration error: MIDTRANS_SERVER_KEY is missing.' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
     
     // 1. Verifikasi Signature SHA-512
     const rawGross = typeof grossAmount === 'number' ? grossAmount.toFixed(2) : String(grossAmount);

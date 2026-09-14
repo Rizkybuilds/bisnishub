@@ -5,6 +5,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { StoreProvider } from './context/StoreContext';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { CookieConsentBanner } from './components/common/CookieConsentBanner';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <AuthProvider>
           <StoreProvider>
             <RouterProvider router={router} />
+            <CookieConsentBanner />
           </StoreProvider>
         </AuthProvider>
       </ThemeProvider>

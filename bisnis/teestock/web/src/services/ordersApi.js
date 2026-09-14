@@ -182,13 +182,27 @@ export async function createPublicOrder(order, items = []) {
 
       if (!error && data?.status === 'success' && data.data) {
         backendResult = data.data;
+      } else if (data?.status === 'error' && data.message) {
+        throw new Error(data.message);
+      } else if (error) {
+        throw new Error(error.message || 'Gagal memanggil layanan checkout.');
       }
     }
   } catch (fnErr) {
-    console.warn('Edge Function create-checkout unavailable, utilizing offline dev mode:', fnErr);
+    if (typeof import.meta !== 'undefined' && import.meta.env?.DEV) {
+      console.warn('Edge Function create-checkout unavailable, utilizing offline dev mode:', fnErr);
+    } else {
+      console.error('Server checkout invocation failed in production:', fnErr);
+      throw fnErr;
+    }
   }
 
-  // Gunakan hasil dari backend jika tersedia, atau fallback lokal standar
+  // Jika di Production dan tidak ada backend result, tolak pembuatan order palsu lokal
+  if (!backendResult && !(typeof import.meta !== 'undefined' && import.meta.env?.DEV)) {
+    throw new Error('Pesanan tidak dapat diproses oleh server. Silakan segarkan halaman dan coba lagi.');
+  }
+
+  // Gunakan hasil dari backend jika tersedia, atau fallback lokal standar untuk dev
   const orderNumber = backendResult?.orderNumber || order.order_number || order.id || generateOrderNumber();
   const orderUuid = backendResult?.orderUuid || ((typeof crypto !== 'undefined' && crypto.randomUUID)
     ? crypto.randomUUID()
@@ -203,6 +217,8 @@ export async function createPublicOrder(order, items = []) {
     price: backendResult?.grandTotal ?? order.total_amount ?? order.price,
     total_amount: backendResult?.grandTotal ?? order.total_amount ?? order.price,
     discount: backendResult?.discountAmount ?? order.discount ?? order.discount_amount ?? 0,
+    shipping_fee: backendResult?.shippingFee ?? order.shipping_fee ?? 0,
+    shipping_zone: backendResult?.shippingZone ?? order.shipping_zone ?? '',
     status: 'pending_payment', // Status awal pesanan SELALU pending sebelum diverifikasi
     snapToken: backendResult?.snapToken || null,
     redirectUrl: backendResult?.redirectUrl || null
@@ -227,8 +243,8 @@ export async function createPublicOrder(order, items = []) {
     // Ignore
   }
 
-  // Jika Edge Function belum dijalankan (misal dev/offline mode), sync fallback ke Supabase
-  if (!backendResult) {
+  // Fallback direct insert hanya boleh aktif di development lokal
+  if (!backendResult && typeof import.meta !== 'undefined' && import.meta.env?.DEV) {
     try {
       const { error: orderErr } = await supabase.from('ts_orders').insert({
         id: orderUuid,
@@ -272,7 +288,7 @@ export async function createPublicOrder(order, items = []) {
         }
       }
     } catch (err) {
-      console.warn("Could not sync public order to Supabase:", err);
+      console.warn("Could not sync public order to Supabase in dev mode:", err);
     }
   }
 
