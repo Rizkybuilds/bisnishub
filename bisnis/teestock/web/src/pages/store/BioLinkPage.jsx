@@ -190,14 +190,14 @@ export function BioLinkPage() {
             // Internal links use anchor with relative path, external links open new tab
             if (link.internal) {
               return (
-                <a
+                <Link
                   key={link.id}
-                  href={link.href}
+                  to={link.href}
                   className={`${baseClasses} ${accentClasses}`}
                   style={{ animationDelay: `${index * 80}ms` }}
                 >
                   {content}
-                </a>
+                </Link>
               );
             }
 

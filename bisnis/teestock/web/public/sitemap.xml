@@ -15,11 +15,32 @@
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
+  <!-- Koleksi Kaos Polos NSA -->
+  <url>
+    <loc>https://teestockapparel.vercel.app/polos</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
   <url>
     <loc>https://teestockapparel.vercel.app/katalog?series=blank</loc>
     <lastmod>2026-09-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+  </url>
+
+  <!-- Garansi & Care Guide -->
+  <url>
+    <loc>https://teestockapparel.vercel.app/care</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://teestockapparel.vercel.app/garansi</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <!-- Dedicated Partner Portal -->

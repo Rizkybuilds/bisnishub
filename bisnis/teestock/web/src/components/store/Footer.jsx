@@ -120,11 +120,10 @@ export function Footer() {
         <div>
           <h5 className="text-xs font-bold uppercase tracking-wider text-ts-krem mb-3 font-mono">Jelajahi Series</h5>
           <ul className="space-y-2 text-xs text-ts-kremMuted">
-            <li><Link to="/katalog?series=profesi" className="hover:text-ts-terracotta transition-colors">TeeStock Profesi</Link></li>
-            <li><Link to="/katalog?series=komunitas" className="hover:text-ts-terracotta transition-colors">TeeStock Komunitas / Aktif</Link></li>
-            <li><Link to="/katalog?series=fase" className="hover:text-ts-terracotta transition-colors">TeeStock Fase Hidup</Link></li>
-            <li><Link to="/katalog?series=lokal" className="hover:text-ts-terracotta transition-colors">TeeStock Lokal</Link></li>
-            <li><Link to="/katalog?series=blank" className="hover:text-ts-teal transition-colors">Koleksi Kaos Polos NSA</Link></li>
+            <li><Link to="/katalog?series=statement" className="hover:text-ts-terracotta transition-colors">Series 01 — Statement</Link></li>
+            <li><Link to="/katalog?series=subculture" className="hover:text-ts-terracotta transition-colors">Series 02 — Subculture</Link></li>
+            <li><Link to="/katalog?series=outdoor" className="hover:text-ts-terracotta transition-colors">Series 03 — Outdoor</Link></li>
+            <li><Link to="/polos" className="hover:text-ts-teal transition-colors">Koleksi Kaos Polos NSA</Link></li>
           </ul>
         </div>
 

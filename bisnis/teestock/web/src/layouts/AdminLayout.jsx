@@ -40,7 +40,7 @@ export function AdminLayout() {
   const handleCreateOrder = (e) => {
     e.preventDefault();
     if (!customer.trim()) {
-      alert("Mohon isi nama customer");
+      showToast("Mohon isi nama customer", "error");
       return;
     }
 

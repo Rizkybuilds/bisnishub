@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { RefreshCw, AlertTriangle, Home } from 'lucide-react';
 
 export class ErrorBoundary extends React.Component {
@@ -47,7 +47,7 @@ export class ErrorBoundary extends React.Component {
               Halaman mengalami galat yang tidak terduga. Silakan muat ulang halaman atau kembali ke beranda TeeStock.
             </p>
 
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <div className="mt-4 p-3 bg-red-950/30 border border-red-500/20 rounded text-left overflow-auto max-h-32 text-xs font-mono text-red-300">
                 {this.state.error.toString()}
               </div>

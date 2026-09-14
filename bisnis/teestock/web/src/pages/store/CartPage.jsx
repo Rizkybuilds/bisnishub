@@ -287,8 +287,8 @@ export function CartPage() {
       const authTotal = Number(createdOrder?.total_amount ?? createdOrder?.price ?? grandTotal);
       const authShippingFee = Number(createdOrder?.shipping_fee ?? shippingFee);
       const authShippingZone = createdOrder?.shipping_zone || shippingCalculation.zoneName;
-      const authSubtotal = Number(createdOrder?.subtotal ?? subtotal);
-      const authDiscount = Number(createdOrder?.discount_amount ?? createdOrder?.discount ?? totalDiscount);
+      const authSubtotal = Number(createdOrder?.subtotal ?? totalCartAmount);
+      const authDiscount = Number(createdOrder?.discount_amount ?? createdOrder?.discount ?? (effectiveProductDiscount + shippingDiscount));
       const authBaseTotal = Math.max(0, authSubtotal + authShippingFee - authDiscount);
       const authItems = (createdOrder?.items && Array.isArray(createdOrder.items) && createdOrder.items.length > 0)
         ? createdOrder.items
@@ -546,7 +546,7 @@ export function CartPage() {
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-sm font-mono font-bold text-ts-terracotta">+Rp 45.000</p>
-                    <button className="text-xs text-ts-kremMuted hover:text-ts-terracotta transition-colors font-medium mt-0.5">+ Tambah</button>
+                    <button onClick={() => window.location.href = '/polos'} className="text-xs text-ts-kremMuted hover:text-ts-terracotta transition-colors font-medium mt-0.5">+ Tambah</button>
                   </div>
                 </div>
               </div>

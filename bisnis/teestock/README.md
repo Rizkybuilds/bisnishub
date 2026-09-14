@@ -131,7 +131,7 @@ Aplikasi web modern terintegrasi yang berfungsi sebagai storefront ritel B2C, po
 2. [x] **Kesiapan Alat Produksi:** Mesin heat press in-house sudah siap di rumah.
 3. [x] **Master Brand Identity & Logo Otentik:** Vektorisasi presisi master logo asli "The Tee & The Stock" dan integrasi tipografi Plus Jakarta Sans 900.
 4. [x] **Modern Editorial Lookbook Storefront:** Desain Direction A live dengan split hero, live color swatches, hotspot anatomy, dan infografis cost transparency.
-5. [ ] **Uji Coba DTF & Stress Test (Hari Ini):** Cetak sampel DTF, lakukan press dengan suhu 155°C, uji kupas film dan uji cuci 3x.
+5. [x] **Uji Coba DTF & Stress Test (Hari Ini):** Cetak sampel DTF, lakukan press dengan suhu 155°C, uji kupas film dan uji cuci 3x.
 6. [ ] **Dokumentasi Video Aset Konten:** Rekam proses press dan kupas DTF (ASMR peel) sebagai bahan video peluncuran TikTok & Reels.
 7. [ ] **Kurasi 3–4 Desain Drop #01:** Pilih 3–4 desain jagoan dari bank desain dengan satu tema payung yang konsisten ("RAW IDENTITY").
 8. [ ] **First 5–10 Sales:** Buka batch perdana (24 pcs kuota) dengan promo launching Rp 89.000 – Rp 99.000 ke circle terdekat via WhatsApp & link `/bio`.

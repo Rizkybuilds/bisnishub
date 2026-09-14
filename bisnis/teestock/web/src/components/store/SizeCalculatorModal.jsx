@@ -2,18 +2,9 @@ import React, { useState } from 'react';
 import { Modal } from '../ui/Modal';
 import { Ruler, Sparkles, Check, Table, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { NSA_SIZE_SPECS } from '../../constants/garments';
 
-export const NSA_SIZE_SPECS = {
-  S: { chest: 47, length: 67, sleeve: 19, desc: 'Lebar 47 cm • Panjang 67 cm • Lengan 19 cm' },
-  M: { chest: 50, length: 70, sleeve: 19.5, desc: 'Lebar 50 cm • Panjang 70 cm • Lengan 19.5 cm' },
-  L: { chest: 53, length: 73, sleeve: 20, desc: 'Lebar 53 cm • Panjang 73 cm • Lengan 20 cm' },
-  XL: { chest: 56, length: 75, sleeve: 20.5, desc: 'Lebar 56 cm • Panjang 75 cm • Lengan 20.5 cm' },
-  '2XL': { chest: 59, length: 77, sleeve: 21, desc: 'Lebar 59 cm • Panjang 77 cm • Lengan 21 cm' },
-  '3XL': { chest: 62, length: 80, sleeve: 21.5, desc: 'Lebar 62 cm • Panjang 80 cm • Lengan 21.5 cm' },
-  '4XL': { chest: 65, length: 83, sleeve: 22, desc: 'Lebar 65 cm • Panjang 83 cm • Lengan 22 cm' },
-  '5XL': { chest: 68, length: 86, sleeve: 22.5, desc: 'Lebar 68 cm • Panjang 86 cm • Lengan 22.5 cm' },
-  XXL: { chest: 59, length: 77, sleeve: 21, desc: 'Lebar 59 cm • Panjang 77 cm • Lengan 21 cm' }
-};
+export { NSA_SIZE_SPECS };
 
 export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize, availableSizes }) {
   const [height, setHeight] = useState('170');

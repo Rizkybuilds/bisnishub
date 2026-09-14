@@ -7,7 +7,8 @@ import {
   ShoppingCart, 
   Copy, 
   Check, 
-  ExternalLink 
+  ExternalLink,
+  Package 
 } from 'lucide-react';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { useAdmin } from '../../context/AdminContext';
