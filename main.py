@@ -9,8 +9,9 @@ Perintah yang tersedia:
   /bisnis        pilih/ganti konteks bisnis
   /consult       konsultasi ke peran lain tanpa ganti peran
   /profile       tampilkan business profile saat ini
-  /save          simpan sesi sekarang (tanpa keluar)
-  /exit          keluar & simpan sesi
+  /export        ekspor sesi ke catatan Obsidian (catatan/sesi/)
+  /save          simpan sesi sekarang & sinkron ke Obsidian
+  /exit          keluar, simpan sesi & sinkron ke Obsidian
   /help          tampilkan pesan ini
 """.strip()
 
@@ -129,12 +130,22 @@ def main():
         # ── Commands ──
         if user_input == "/exit":
             agent.save_session()
-            print("Sesi disimpan. Sampai jumpa! 👋")
+            print("Sesi disimpan & disinkronkan ke Obsidian. Sampai jumpa! 👋")
             break
 
         elif user_input == "/save":
             agent.save_session()
-            print("[✅ sesi disimpan]")
+            print("[✅ Sesi disimpan & disinkronkan ke Obsidian (catatan/sesi/)]")
+            continue
+
+        elif user_input.startswith("/export"):
+            parts = user_input.split(maxsplit=1)
+            title = parts[1].strip() if len(parts) > 1 else None
+            note_path = agent.export_obsidian_session(title=title)
+            if note_path:
+                print(f"[📝 Catatan Obsidian berhasil dibuat: {note_path.name}]")
+            else:
+                print("[⚠️ Belum ada percakapan untuk diekspor]")
             continue
 
         elif user_input == "/profile":

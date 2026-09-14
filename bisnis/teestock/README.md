@@ -1,3 +1,14 @@
+---
+title: TeeStock
+status: launch-prep
+type: bisnis
+tags:
+  - bisnis/teestock
+  - apparel
+  - pod
+  - d2c
+---
+
 # 👕 TeeStock
 
 > Curated Apparel & Merch House — *"Wear Your Identity, Stock Your Story"*

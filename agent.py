@@ -10,6 +10,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).parent
 PROMPTS_DIR = BASE_DIR / "prompts"
 MEMORY_DIR = BASE_DIR / "memory"
+NOTES_SESSION_DIR = BASE_DIR / "catatan" / "sesi"
 
 PROFILE_FILE = MEMORY_DIR / "business_profile.json"
 
@@ -201,6 +202,77 @@ class MentorAgent:
         self._save_json(self._history_path(), self.history)
         self._save_json(self._growth_log_path(), self.growth_log)
         self._save_json(PROFILE_FILE, self.business_profile)
+        self.export_obsidian_session()
+
+    def export_obsidian_session(self, title: str | None = None) -> Path | None:
+        """Ekspor sesi percakapan saat ini ke format Markdown Obsidian."""
+        if not self.history:
+            return None
+
+        NOTES_SESSION_DIR.mkdir(parents=True, exist_ok=True)
+        now = datetime.now()
+        date_str = now.strftime("%Y-%m-%d")
+        time_str = now.strftime("%H:%M:%S")
+
+        role_info = ROLES.get(self.role, {"label": self.role, "emoji": "🤖", "description": ""})
+        biz_code = self.business or "umum"
+        biz_label = BUSINESSES[self.business]["label"] if self.business in BUSINESSES else "Umum"
+
+        if title:
+            safe_title = "".join(c for c in title if c.isalnum() or c in (" ", "-", "_")).strip()
+            filename = f"{date_str} - Sesi {role_info['label']} - {safe_title}.md"
+        else:
+            filename = f"{date_str} - Sesi {role_info['label']} ({biz_label}).md"
+
+        filepath = NOTES_SESSION_DIR / filename
+
+        md_lines = [
+            "---",
+            f'date: "{date_str} {time_str}"',
+            f'role: "{self.role}"',
+            f'role_label: "{role_info["label"]}"',
+            f'business: "{biz_code}"',
+            f'business_label: "{biz_label}"',
+            "tags:",
+            "  - sesi-csuite",
+            f'  - "role/{self.role}"',
+            f'  - "bisnis/{biz_code}"',
+            "---",
+            "",
+            f"# {role_info['emoji']} Sesi Konsultasi: {role_info['label']} — {biz_label}",
+            "",
+            "> [!info] **Metadata Sesi**",
+            f"> - **Waktu**: {date_str} {time_str}",
+            f"> - **Peran AI**: {role_info['label']} ({role_info['description']})",
+            f"> - **Konteks Bisnis**: {biz_label}",
+            "> - **Navigasi**: [[🏠 BisnisHub Command Center|Kembali ke Command Center]]",
+            "",
+            "---",
+            "",
+            "## 💬 Percakapan Sesi",
+            "",
+        ]
+
+        for msg in self.history:
+            role = msg.get("role", "")
+            content = msg.get("content", "").strip()
+            if role == "user":
+                formatted = content.replace("\n", "\n> ")
+                md_lines.append(f"> [!question] 👤 Founder\n> {formatted}\n")
+            elif role == "assistant":
+                formatted = content.replace("\n", "\n> ")
+                md_lines.append(f"> [!quote] {role_info['emoji']} {role_info['label']}\n> {formatted}\n")
+
+        md_lines.extend([
+            "---",
+            "",
+            "## ⚡ Action Items",
+            "- [ ] Review rekomendasi sesi ini",
+            "",
+        ])
+
+        filepath.write_text("\n".join(md_lines), encoding="utf-8")
+        return filepath
 
     def add_growth_note(self, note: str):
         """Agent mencatat insight tentang caranya sendiri bekerja."""

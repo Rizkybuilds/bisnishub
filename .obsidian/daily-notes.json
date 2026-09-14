@@ -1,0 +1,6 @@
+{
+  "format": "YYYY-MM-DD",
+  "folder": "catatan/harian",
+  "template": "templates/Template - Catatan Harian.md",
+  "autorun": false
+}

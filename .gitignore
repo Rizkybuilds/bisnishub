@@ -30,4 +30,9 @@ dist/
 Thumbs.db
 /supabase
 **/.temp/
-bisnishub/
+
+# Obsidian local state (keep configs, ignore device layout)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+.obsidian/backups/

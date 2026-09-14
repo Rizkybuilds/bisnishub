@@ -1,0 +1,21 @@
+{
+  "userIgnoreFilters": [
+    "node_modules",
+    "node_modules/**",
+    "**/node_modules/**",
+    "bisnis/teestock/web/node_modules/**",
+    "bisnis/teestock/web/dist/**",
+    "bisnis/teestock/web/.vercel/**",
+    ".vercel/**",
+    ".git/**",
+    "__pycache__/**",
+    ".agents/**",
+    "bisnis/teestock/supabase/.temp/**",
+    "supabase/.temp/**"
+  ],
+  "useMarkdownLinks": false,
+  "attachmentFolderPath": "assets",
+  "newFileFolderPath": "catatan",
+  "showLineNumber": true,
+  "livePreview": true
+}

@@ -1,3 +1,13 @@
+---
+title: MultiGraph
+status: supporting-arm
+type: bisnis
+tags:
+  - bisnis/multigraph
+  - packaging
+  - percetakan
+---
+
 # 🖨️ MultiGraph
 
 > Printing & Packaging Collateral

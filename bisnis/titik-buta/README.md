@@ -1,3 +1,13 @@
+---
+title: Titik Buta
+status: ideation
+type: bisnis
+tags:
+  - bisnis/titik-buta
+  - ideation
+  - incubator
+---
+
 # 👁️ Titik Buta
 
 > (Ideation / Freeze)

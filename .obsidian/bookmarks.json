@@ -1,0 +1,56 @@
+{
+  "items": [
+    {
+      "type": "file",
+      "path": "🏠 BisnisHub Command Center.md",
+      "title": "🏠 Command Center"
+    },
+    {
+      "type": "file",
+      "path": "🗺️ BisnisHub Ecosystem.canvas",
+      "title": "🗺️ Ecosystem Canvas"
+    },
+    {
+      "type": "group",
+      "title": "🏢 Portofolio Bisnis",
+      "items": [
+        {
+          "type": "file",
+          "path": "bisnis/teestock/README.md",
+          "title": "👕 TeeStock"
+        },
+        {
+          "type": "file",
+          "path": "bisnis/multigraph/README.md",
+          "title": "🖨️ MultiGraph"
+        },
+        {
+          "type": "file",
+          "path": "bisnis/titik-buta/README.md",
+          "title": "👁️ Titik Buta"
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "title": "📅 Catatan & Log Sesi",
+      "items": [
+        {
+          "type": "folder",
+          "path": "catatan/harian",
+          "title": "📅 Catatan Harian"
+        },
+        {
+          "type": "folder",
+          "path": "catatan/sesi",
+          "title": "🤖 Log Sesi AI C-Suite"
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "path": "templates",
+      "title": "📝 Templates Solopreneur"
+    }
+  ]
+}
