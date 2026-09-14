@@ -8,7 +8,8 @@ const ALLOWED_ORIGINS = [
 
 export function getCorsHeaders(req?: Request) {
   const origin = req ? req.headers.get('Origin') : null;
-  const isAllowed = origin && (ALLOWED_ORIGINS.includes(origin) || origin.endsWith('.vercel.app'));
+  const isVercelPreview = origin && /^https:\/\/(teestock|teestockapparel)(-[a-z0-9-]+)?\.vercel\.app$/.test(origin);
+  const isAllowed = origin && (ALLOWED_ORIGINS.includes(origin) || isVercelPreview);
   const allowOrigin = isAllowed ? origin : 'https://teestockapparel.vercel.app';
 
   return {

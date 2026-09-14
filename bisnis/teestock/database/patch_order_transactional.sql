@@ -19,6 +19,8 @@ DECLARE
   v_order_id uuid;
   v_item jsonb;
   v_voucher_id uuid;
+  v_usage_limit int;
+  v_used_count int;
   v_item_count int := 0;
 BEGIN
   -- Validasi keberadaan payload
@@ -80,8 +82,7 @@ BEGIN
       color,
       qty,
       unit_price,
-      subtotal,
-      created_at
+      subtotal
     ) VALUES (
       v_order_id,
       p_order->>'order_number',
@@ -92,47 +93,54 @@ BEGIN
       COALESCE(v_item->>'color', 'Hitam'),
       (v_item->>'qty')::int,
       (v_item->>'unit_price')::numeric,
-      (v_item->>'subtotal')::numeric,
-      NOW()
+      (v_item->>'subtotal')::numeric
     );
     v_item_count := v_item_count + 1;
   END LOOP;
 
   -- 3. Transaksi Penggunaan Voucher (Bila ada)
   IF p_voucher_code IS NOT NULL AND TRIM(p_voucher_code) <> '' AND p_voucher_discount > 0 THEN
-    SELECT id INTO v_voucher_id 
+    -- Lock baris voucher secara eksklusif (FOR UPDATE) untuk mencegah race condition
+    SELECT id, usage_limit, used_count 
+    INTO v_voucher_id, v_usage_limit, v_used_count
     FROM public.ts_vouchers 
     WHERE code = UPPER(TRIM(p_voucher_code)) 
       AND is_active = true 
       AND (expires_at IS NULL OR expires_at > NOW())
-    LIMIT 1;
+    FOR UPDATE;
 
-    IF v_voucher_id IS NOT NULL THEN
-      -- Update jumlah pemakaian voucher
-      UPDATE public.ts_vouchers
-      SET used_count = COALESCE(used_count, 0) + 1,
-          updated_at = NOW()
-      WHERE id = v_voucher_id;
-
-      -- Catat log pemakaian voucher
-      INSERT INTO public.ts_voucher_usage (
-        voucher_id,
-        user_id,
-        order_id,
-        discount_applied,
-        created_at
-      ) VALUES (
-        v_voucher_id,
-        CASE 
-          WHEN p_order->>'user_id' IS NOT NULL AND p_order->>'user_id' <> '' AND p_order->>'user_id' <> 'null' 
-          THEN (p_order->>'user_id')::uuid 
-          ELSE NULL 
-        END,
-        p_order->>'order_number',
-        p_voucher_discount,
-        NOW()
-      );
+    IF v_voucher_id IS NULL THEN
+      RAISE EXCEPTION 'Voucher tidak valid atau masa berlaku telah habis.';
     END IF;
+
+    IF v_usage_limit IS NOT NULL AND COALESCE(v_used_count, 0) >= v_usage_limit THEN
+      RAISE EXCEPTION 'Batas total kuota pemakaian voucher telah tercapai.';
+    END IF;
+
+    -- Update jumlah pemakaian voucher secara atomik
+    UPDATE public.ts_vouchers
+    SET used_count = COALESCE(used_count, 0) + 1,
+        updated_at = NOW()
+    WHERE id = v_voucher_id;
+
+    -- Catat log pemakaian voucher
+    INSERT INTO public.ts_voucher_usage (
+      voucher_id,
+      user_id,
+      order_id,
+      discount_applied,
+      created_at
+    ) VALUES (
+      v_voucher_id,
+      CASE 
+        WHEN p_order->>'user_id' IS NOT NULL AND p_order->>'user_id' <> '' AND p_order->>'user_id' <> 'null' 
+        THEN (p_order->>'user_id')::uuid 
+        ELSE NULL 
+      END,
+      p_order->>'order_number',
+      p_voucher_discount,
+      NOW()
+    );
   END IF;
 
   RETURN jsonb_build_object(

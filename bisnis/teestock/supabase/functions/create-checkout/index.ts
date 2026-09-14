@@ -168,7 +168,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // 3. Verifikasi Harga & Produk Otoritatif dari Database ts_products (Zero-Trust)
-    const requestedSkus = items.map((i: any) => String(i.sku || '').trim()).filter(Boolean);
+    const requestedSkus = items.map((i: any) => String(i.sku || i.product_sku || i.id || '').trim()).filter(Boolean);
     const { data: dbProducts, error: prodErr } = await supabase
       .from('ts_products')
       .select('sku, name, price_retail, price_reseller, series, status')
@@ -344,79 +344,9 @@ Deno.serve(async (req: Request) => {
       i => `${i.product_name} (${i.color} ${i.size}) x${i.qty}`
     ).join('; ');
 
-    // 8. Transaksi Database Atomik (via RPC PostgreSQL create_order_transactional)
-    const orderHeaderData = {
-      id: orderUuid,
-      order_number: orderNumber,
-      user_id: verifiedUserId,
-      customer_name: customerName,
-      customer_phone: customerPhone,
-      customer_city: customerCity,
-      customer_address: customerAddress,
-      channel: 'web',
-      tier: 'retail',
-      total_amount: grandTotal,
-      discount_amount: totalDiscount,
-      voucher_code: validatedVoucherCode,
-      notes: summaryNotes,
-    };
-
-    const orderItemsData = verifiedOrderItems.map(item => ({
-      ...item,
-      order_number: orderNumber
-    }));
-
-    // Coba eksekusi fungsi RPC transaksi atomik
-    const { data: rpcResult, error: rpcErr } = await supabase.rpc('create_order_transactional', {
-      p_order: orderHeaderData,
-      p_items: orderItemsData,
-      p_voucher_code: validatedVoucherCode,
-      p_voucher_discount: voucherDiscount
-    });
-
-    if (rpcErr) {
-      console.warn('RPC create_order_transactional gagal atau belum terpasang, beralih ke atomic batch insert:', rpcErr);
-      // Fallback batch insert dengan rollback manual jika item gagal
-      const { error: insOrderErr } = await supabase.from('ts_orders').insert({
-        ...orderHeaderData,
-        status: 'pending_payment'
-      });
-
-      if (insOrderErr) {
-        throw new Error(`Gagal mencatat pesanan: ${insOrderErr.message}`);
-      }
-
-      const itemsWithOrder = orderItemsData.map(it => ({
-        order_id: orderUuid,
-        ...it
-      }));
-
-      const { error: insItemsErr } = await supabase.from('ts_order_items').insert(itemsWithOrder);
-      if (insItemsErr) {
-        // Rollback pesanan header agar tidak terjadi orphaned order
-        await supabase.from('ts_orders').delete().eq('id', orderUuid);
-        throw new Error(`Gagal mencatat rincian pesanan atomik: ${insItemsErr.message}`);
-      }
-
-      // Catat voucher usage jika ada
-      if (validatedVoucherCode && voucherDiscount > 0) {
-        const { data: vRecord } = await supabase.from('ts_vouchers').select('id, used_count').eq('code', validatedVoucherCode).single();
-        if (vRecord) {
-          await supabase.from('ts_vouchers').update({ used_count: (vRecord.used_count || 0) + 1 }).eq('id', vRecord.id);
-          await supabase.from('ts_voucher_usage').insert({
-            voucher_id: vRecord.id,
-            user_id: verifiedUserId,
-            order_id: orderNumber,
-            discount_applied: voucherDiscount
-          });
-        }
-      }
-    }
-
-    // 9. Request Midtrans Snap Token (Fail-Closed Tanpa Hardcoded Secret)
+    // 8. Request Midtrans Snap Token Terlebih Dahulu (Bila metode midtrans_snap)
     let snapToken = null;
     let redirectUrl = null;
-    let midtransError: any = null;
 
     if (paymentMethod === 'midtrans_snap') {
       const serverKey = Deno.env.get('MIDTRANS_SERVER_KEY');
@@ -542,12 +472,66 @@ Deno.serve(async (req: Request) => {
         } else {
           const snapErrText = await snapRes.text();
           console.error('Midtrans Snap API Error:', snapRes.status, snapErrText);
-          midtransError = { status: snapRes.status, message: snapErrText, apiUrl: snapApiUrl };
+          // Gagalkan transaksi sebelum pesanan dicatat di DB untuk mencegah order yatim
+          return new Response(
+            JSON.stringify({
+              status: 'error',
+              message: `Gagal membuat sesi pembayaran Midtrans (${snapRes.status}). Silakan coba lagi atau gunakan metode QRIS Manual.`
+            }),
+            { status: 502, headers: { ...cors, 'Content-Type': 'application/json' } }
+          );
         }
       } catch (snapEx: any) {
         console.error('Midtrans network exception:', snapEx);
-        midtransError = { exception: snapEx.message || String(snapEx) };
+        return new Response(
+          JSON.stringify({
+            status: 'error',
+            message: `Gagal terhubung ke gateway pembayaran Midtrans: ${snapEx.message || 'Koneksi terputus'}. Silakan coba lagi atau gunakan metode QRIS Manual.`
+          }),
+          { status: 502, headers: { ...cors, 'Content-Type': 'application/json' } }
+        );
       }
+    }
+
+    // 9. Transaksi Database Atomik (via RPC PostgreSQL create_order_transactional)
+    const orderHeaderData = {
+      id: orderUuid,
+      order_number: orderNumber,
+      user_id: verifiedUserId,
+      customer_name: customerName,
+      customer_phone: customerPhone,
+      customer_city: customerCity,
+      customer_address: customerAddress,
+      channel: 'web',
+      tier: 'retail',
+      total_amount: grandTotal,
+      discount_amount: totalDiscount,
+      voucher_code: validatedVoucherCode,
+      notes: summaryNotes,
+    };
+
+    const orderItemsData = verifiedOrderItems.map(item => ({
+      ...item,
+      order_number: orderNumber
+    }));
+
+    // Eksekusi fungsi RPC transaksi atomik
+    const { data: rpcResult, error: rpcErr } = await supabase.rpc('create_order_transactional', {
+      p_order: orderHeaderData,
+      p_items: orderItemsData,
+      p_voucher_code: validatedVoucherCode,
+      p_voucher_discount: voucherDiscount
+    });
+
+    if (rpcErr) {
+      console.error('RPC create_order_transactional error:', rpcErr);
+      return new Response(
+        JSON.stringify({
+          status: 'error',
+          message: `Gagal memproses transaksi pesanan secara atomik: ${rpcErr.message}`
+        }),
+        { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
+      );
     }
 
     // 10. Kembalikan Respons Otoritatif Server
@@ -568,7 +552,6 @@ Deno.serve(async (req: Request) => {
           userId: verifiedUserId,
           snapToken,
           redirectUrl,
-          midtransError,
           items: verifiedOrderItems
         }
       }),

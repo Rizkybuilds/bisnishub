@@ -273,26 +273,43 @@ export function CartPage() {
         paymentSession = {
           status: 'pending',
           requiresManualVerification: true,
-          uniqueCode: isInstantPayment ? 0 : uniqueCode
+          uniqueCode: isInstantPayment ? 0 : Number(createdOrder?.unique_code ?? 0)
         };
       }
 
+      // Verifikasi ketersediaan token untuk Midtrans Snap sebelum menyelesaikan order di UI
+      if (isInstantPayment && !paymentSession?.token && !createdOrder?.snapToken) {
+        throw new Error('Sesi pembayaran online Midtrans tidak dapat diinisialisasi. Silakan coba lagi atau gunakan metode QRIS & Transfer Manual.');
+      }
+
+      // 3. Sumber Otoritatif Server: Gunakan HANYA data resmi yang dikembalikan backend/createdOrder
+      const authUniqueCode = Number(createdOrder?.unique_code ?? createdOrder?.uniqueCode ?? 0);
+      const authTotal = Number(createdOrder?.total_amount ?? createdOrder?.price ?? grandTotal);
+      const authShippingFee = Number(createdOrder?.shipping_fee ?? shippingFee);
+      const authShippingZone = createdOrder?.shipping_zone || shippingCalculation.zoneName;
+      const authSubtotal = Number(createdOrder?.subtotal ?? subtotal);
+      const authDiscount = Number(createdOrder?.discount_amount ?? createdOrder?.discount ?? totalDiscount);
+      const authBaseTotal = Math.max(0, authSubtotal + authShippingFee - authDiscount);
+      const authItems = (createdOrder?.items && Array.isArray(createdOrder.items) && createdOrder.items.length > 0)
+        ? createdOrder.items
+        : [...cart];
+
       setOrderComplete({
         orderId: finalOrderId,
-        customerName: formData.customerName.trim(),
-        phone: formData.phone.trim(),
+        customerName: createdOrder?.customer_name || formData.customerName.trim(),
+        phone: createdOrder?.customer_phone || formData.phone.trim(),
         city: cleanCity,
         subdistrict: cleanSubdistrict,
         address: cleanAddress,
-        shippingZone: shippingCalculation.zoneName,
-        shippingFee,
+        shippingZone: authShippingZone,
+        shippingFee: authShippingFee,
         courier: formData.courier || courier,
         fulfillmentOrigin,
-        items: [...cart],
-        baseTotal: baseGrandTotal,
-        uniqueCode: isInstantPayment ? 0 : uniqueCode,
-        total: grandTotal,
-        itemCount: cart.length,
+        items: authItems,
+        baseTotal: authBaseTotal,
+        uniqueCode: isInstantPayment ? 0 : authUniqueCode,
+        total: authTotal,
+        itemCount: authItems.length,
         paymentMethod,
         isInstantPayment,
         paymentSession,
@@ -303,7 +320,7 @@ export function CartPage() {
       clearCart();
     } catch (err) {
       console.error("Gagal memproses checkout:", err);
-      alert("Terjadi kendala saat mencatat pesanan. Silakan periksa koneksi Anda dan coba lagi.");
+      alert(err.message || "Terjadi kendala saat memproses pesanan. Silakan periksa koneksi Anda dan coba lagi.");
     } finally {
       setIsSubmitting(false);
     }
