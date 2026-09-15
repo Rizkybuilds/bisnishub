@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layers, Plus, Database, RefreshCw, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Plus, Database, RefreshCw } from 'lucide-react';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
 import { InventoryGrid } from '../../components/admin/InventoryGrid';
 import { Modal } from '../../components/ui/Modal';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calculator, Copy, Check, MessageSquare, Send } from 'lucide-react';
+import { Calculator, Copy, Check, MessageSquare } from 'lucide-react';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';

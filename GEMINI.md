@@ -5,13 +5,14 @@
 
 ## Konteks Bisnis
 
-Workspace ini berisi 3 bisnis yang sedang dirintis:
+Workspace ini berisi 4 bisnis yang sedang dirintis:
 
 | # | Bisnis | Folder | Bidang | Status |
 |---|--------|--------|--------|--------|
 | 1 | **TeeStock** | `bisnis/teestock/` | Everyday Curated Graphic Apparel & Merch House | 🟢 Launch Prep (Web App Live, In-House Heat Press Active) |
 | 2 | **MultiGraph** | `bisnis/multigraph/` | Printing Business | 🔴 Ideation |
 | 3 | **Titik Buta** | `bisnis/titik-buta/` | TBD | 🔴 Ideation |
+| 4 | **KasKita** | `bisnis/kaskita/` | Personal Finance & Community SaaS | 🟡 Planning & Architecture Validated |
 
 ## Konvensi Folder per Bisnis
 
@@ -27,55 +28,13 @@ Setiap bisnis punya sub-folder standar:
 | `desain/` | File desain produk (opsional, per bisnis) |
 | `marketing/` | Konten kalender, copywriting, aset sosmed |
 
-## Virtual C-Suite Team
+## Squad Skills & Peran Tersedia
 
-Ada 5 peran AI yang tersedia sebagai skills. Ketika user meminta saran dari
-peran tertentu (misal: "sebagai CTO..." atau "minta pendapat CFO..."),
-aktifkan skill yang sesuai.
-
-| Peran | Skill | Fokus |
-|-------|-------|-------|
-| 🧠 Mentor Bisnis | `mentor-bisnis` | Thinking partner & strategi keseluruhan |
-| 🔧 CTO | `cto` | Teknologi, arsitektur produk, development |
-| ⚙️ COO | `coo` | Operasional, SOP, supply chain |
-| 💰 CFO | `cfo` | Keuangan, pricing, budgeting |
-| 📢 CMO | `cmo` | Marketing, branding, growth |
-
-## Execution & Automation Engine Skills
-
-Tersedia 5 skill mesin eksekusi teknis, operasional, dan pemasaran yang dapat diaktifkan:
-
-| Mesin / Engine | Skill | Fokus |
-|---|---|---|
-| ☁️ Database & RLS | `supabase-architect` | Pemodelan PostgreSQL, RLS multi-bisnis, views margin, webhooks |
-| 📦 Supply & Fulfillment | `business-ops-engine` | Inventori hibrida 2-tier, Kanban antrean, label thermal A6, audit defect |
-| 💬 WhatsApp Automation | `whatsapp-automation` | Pesan transaksional, QRIS kode unik, custom quoter, webhook gateway |
-| 🖨️ DTF & Pre-Press | `dtf-print-ops` | Gang sheet roll 58 cm, file pre-flight 300 DPI, SOP heat press 155°C |
-| 🎯 Promosi & Kampanye | `marketing-promo-engine` | Playbook Drop launch, formula copywriting konversi, bundling promo, closing WA, B2B dropship |
-
-## Web App Development & Architecture Squad
-
-Tersedia 5 skill spesialis untuk perancangan, pengembangan, pengujian, dan keamanan web application:
-
-| Peran Web App | Skill | Fokus Utama |
-|---|---|---|
-| 📐 Web App Architect | `web-app-architect` | Perancangan sistem, diagram user flow, hierarki komponen, state management, & API specs |
-| 💻 Fullstack Web Dev | `fullstack-web-dev` | Implementasi React/Vite/Next.js, TypeScript, Tailwind, Zod + Hook Form, & TanStack Query |
-| 🔌 API & Backend Engineer | `api-backend-engineer` | REST API, Edge Functions, integrasi Midtrans/QRIS, logistik RajaOngkir, & webhook safety |
-| 🧪 Web QA & Testing | `web-qa-testing` | Otomasi pengujian E2E Playwright, unit/integration test Vitest, & skenario checkout |
-| 🛡️ Web Sec & Perf Engineer | `web-sec-perf` | Keamanan OWASP (XSS/CSRF/secrets), optimasi Core Web Vitals (LCP/CLS/INP), & SEO |
-
-## Creative & Growth Marketing Squad
-
-Tersedia 5 skill spesialis untuk narasi konversi, perancangan visual, periklanan berbayar, konten viral organik, dan loyalitas pelanggan:
-
-| Peran Marketing | Skill | Fokus Utama |
-|---|---|---|
-| ✍️ Conversion Wordsmith | `copywriter-pro` | Landing page, PDP konversi tinggi, VSL & video script, WA blast, objection handling |
-| 🎨 Creative Director | `creative-director` | Moodboard koleksi drop, panduan photoshoot, master prompt AI mockup, storyboard iklan |
-| 📈 Performance Ads Specialist | `performance-ads-specialist` | Meta/TikTok/Shopee Ads budget hemat (Rp25k-100k/hari), TOFU-MOFU-BOFU, Breakeven ROAS |
-| 📱 Viral Content Strategist | `content-strategist` | 4E content pillars, batching konten 30 hari, TikTok & IG Social SEO, brief kolaborasi UGC |
-| 🔁 Retention & CRM Expert | `retention-crm-expert` | Unboxing experience viral, alur WhatsApp pasca-beli, DTF care guide, VIP reorder engine |
+Aktifkan skill spesifik saat user meminta saran atau eksekusi domain terkait:
+- **C-Suite Leadership**: `mentor-bisnis` (strategi), `cto` (teknologi), `coo` (operasional), `cfo` (keuangan & pricing), `cmo` (marketing).
+- **Execution & Ops Engine**: `supabase-architect` (database & RLS), `business-ops-engine` (inventori & fulfillment), `whatsapp-automation` (chat & order notification), `dtf-print-ops` (gang sheet & heat press), `marketing-promo-engine` (drop promo & script WA).
+- **Web App Squad**: `web-app-architect` (sistem & flows), `fullstack-web-dev` (React/Vite/Next), `api-backend-engineer` (API & payment gateway), `web-qa-testing` (E2E Playwright & Vitest), `web-sec-perf` (OWASP & Core Web Vitals).
+- **Creative & Growth Squad**: `copywriter-pro` (conversion copywriting & PDP), `creative-director` (moodboard & art direction), `performance-ads-specialist` (Meta/TikTok/Shopee Ads), `content-strategist` (konten 4E & TikTok SEO), `retention-crm-expert` (unboxing experience & repeat order).
 
 
 ### Cross-Referral
@@ -96,6 +55,35 @@ Saat memberikan saran dalam peran apapun, selalu pertimbangkan:
 
 Gunakan Bahasa Indonesia yang natural dan profesional, dengan istilah
 bisnis/teknis bahasa Inggris yang umum digunakan di industri.
+
+## Subagents Otonom Tersedia
+
+Workspace ini dilengkapi 4 subagent spesialis yang dapat didelegasikan via `invoke_subagent`:
+1. `csuite-council`: Dewan penasihat strategis (sintesis Mentor Bisnis, CFO, COO, CMO, CTO) untuk evaluasi roadmap & pricing tanpa memakan konteks obrolan utama.
+2. `code-architect`: Senior fullstack engineer untuk implementasi React/Vite/Tailwind di `bisnis/teestock/web`, skrip SQL Supabase, Edge Functions, dan Playwright E2E.
+3. `growth-marketer`: Copywriter & growth hacker untuk batching kalender konten 30 hari, naskah PDP konversi tinggi, script WA blast, dan creative ads testing.
+4. `ops-specialist`: Spesialis DTF & logistik untuk pre-flight 300 DPI, kalkulasi gang sheet 58 cm, label thermal A6, dan alur bot WhatsApp.
+
+---
+
+## Guardrails Operasional & Teknis
+
+### 1. Web & Mobile-First Guardrail (TeeStock Web)
+- **Viewport Mobile-First**: 85%+ pembeli berasal dari smartphone via Instagram/TikTok link. Setiap layout, sheet keranjang, dan checkout form wajib diuji pada resolusi 360px - 430px dengan touch target minimal 44x44px.
+- **Webhook Idempotency**: Setiap webhook receiver (Midtrans/QRIS, WhatsApp gateway) wajib melakukan verifikasi signature dan idempotency check terhadap `order_id` untuk mencegah double-fulfillment.
+- **Tech Stack**: React 18/19, Vite, Tailwind CSS, Lucide Icons, Supabase Client, Playwright E2E.
+
+### 2. Finansial & Pricing Floor Guardrail (CFO Rule)
+- **Margin Bersih Minimum**: 35% pada penjualan ritel apparel TeeStock.
+- **Formula HPP Wajib**: `Kaos Polos NSA + Biaya DTF Print + Kemasan (Polymailer, Tag, Sticker pack ~Rp 3.500) + Buffer Defect (5%)`.
+- **Batas Diskon**: Dilarang merancang promo/bundling yang menekan net margin di bawah 25% tanpa persetujuan eksplisit.
+
+### 3. DTF Pre-Press & Quality Guardrail (COO Rule)
+- **Pre-Flight Asset**: Resolusi minimal 300 DPI skala 1:1, latar transparan (PNG), tanpa white fringing.
+- **Gang Sheet Standard**: Lebar roll 58 cm dengan safe margin 1.5 cm di sisi kiri dan kanan.
+- **Parameter Press**: Suhu 155°C, durasi 15 detik, tekanan 4-5 bar, metode *cold peel* (wajib dingin sebelum dikelupas), finishing press 5 detik menggunakan sheet teflon.
+
+---
 
 ## Protokol Dokumentasi Obsidian & Antigravity
 

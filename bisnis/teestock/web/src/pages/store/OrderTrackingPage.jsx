@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Package, Clock, CheckCircle2, Truck, Flame, Printer, AlertCircle, ExternalLink, QrCode, Loader2 } from 'lucide-react';
+import { Search, Package, Clock, CheckCircle2, Truck, Flame, Printer, AlertCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { trackSingleOrder } from '../../services/ordersApi';
 import { Button } from '../../components/ui/Button';

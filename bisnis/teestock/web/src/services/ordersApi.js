@@ -7,7 +7,7 @@ const LOCAL_STORAGE_MY_ORDERS_KEY = 'teestock_my_orders';
 /**
  * Standardize Supabase DB record and local mock representation
  */
-export function normalizeOrderRecord(o) {
+function normalizeOrderRecord(o) {
   if (!o) return null;
 
   // Process relational child items if available

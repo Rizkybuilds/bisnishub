@@ -8,7 +8,7 @@ const DEFAULT_ADMIN_EMAILS = [
   'owner@teestock.id'
 ];
 
-export function getAdminEmails() {
+function getAdminEmails() {
   const envEmails = import.meta.env.VITE_ADMIN_EMAILS 
     ? import.meta.env.VITE_ADMIN_EMAILS.split(',').map(e => e.trim().toLowerCase()) 
     : [];

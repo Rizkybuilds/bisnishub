@@ -15,15 +15,3 @@ export function Card({ children, className = '', hover = false, glow = false, ..
   );
 }
 
-export function CardHeader({ title, subtitle, action, className = '' }) {
-  return (
-    <div className={`flex items-start justify-between pb-4 border-b border-ts-border mb-4 ${className}`}>
-      <div>
-        <h3 className="text-base font-bold text-ts-krem tracking-tight">{title}</h3>
-        {subtitle && <p className="text-xs text-ts-muted mt-0.5 leading-relaxed">{subtitle}</p>}
-      </div>
-      {action && <div className="shrink-0">{action}</div>}
-    </div>
-  );
-}
-

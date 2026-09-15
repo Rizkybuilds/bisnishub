@@ -1,15 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Building2, 
-  X, 
   Copy, 
   Check, 
   Package, 
-  AlertCircle, 
-  MessageSquare, 
-  ExternalLink,
-  Info,
-  Layers
+  MessageSquare
 } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';

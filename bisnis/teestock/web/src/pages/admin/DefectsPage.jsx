@@ -6,14 +6,8 @@ import {
   ShieldAlert, 
   TrendingDown, 
   DollarSign, 
-  Layers, 
-  CheckCircle2, 
   Filter, 
-  X,
-  Printer,
-  Package,
-  Truck,
-  RotateCcw
+  X
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';

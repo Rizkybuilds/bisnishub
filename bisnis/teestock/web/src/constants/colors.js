@@ -3,7 +3,7 @@
  * Centralized color map used across ProductCard, ProductDetailPage, and Admin tools.
  */
 
-export const COLOR_HEX_MAP = {
+const COLOR_HEX_MAP = {
   // Neutral & Basics
   "Hitam": "#111111",
   "Black": "#111111",

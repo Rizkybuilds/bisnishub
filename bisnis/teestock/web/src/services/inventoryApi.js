@@ -31,7 +31,7 @@ export function getSupplySku(supplyId) {
 /**
  * 🔄 Helper: Merekonstruksi 2D matrix [garmentKey][color][size] dari baris ts_inventory di Supabase
  */
-export function buildMatrixFromInventoryRows(rows = []) {
+function buildMatrixFromInventoryRows(rows = []) {
   const matrix = {
     supplies: {
       polymailer: 0,

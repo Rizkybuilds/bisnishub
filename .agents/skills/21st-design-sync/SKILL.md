@@ -1,13 +1,6 @@
 ---
 name: 21st-design-sync
-description: >-
-  Look at the current project's design (its shadcn / Tailwind CSS variables and
-  color tokens) and publish it to the 21st.dev community as a shareable theme,
-  using `21st publish-theme`. Use when the user says "publish my theme",
-  "share our design as a 21st theme", "sync my design to 21st", "turn my
-  globals.css into a theme", "залей наш дизайн темой", "опубликуй тему". This is
-  the 21st equivalent of design-sync: it reads the project's design tokens and
-  syncs them into the public theme library.
+description: Extract project shadcn/Tailwind design tokens and publish as a shareable theme on 21st.dev via 21st CLI.
 ---
 
 # 21st Design Sync — publish your project's design as a theme

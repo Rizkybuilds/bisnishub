@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Truck, RefreshCw, MessageSquare, Zap } from 'lucide-react';
+import { ShieldCheck, Truck, RefreshCw, MessageSquare } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { NewsletterCapture } from './NewsletterCapture';

@@ -9,18 +9,6 @@ export const PRODUCTION_COSTS = {
   overhead: 1000,      // Listrik mesin press & isolasi tahan panas
 };
 
-// Biaya garmen bahan New States Apparel (Distributor NSA)
-export const GARMENT_BASE_PRICING = {
-  nsa_softstyle_30s: {
-    wholesale: 32000,
-    retail: 37000,
-  },
-  nsa_heavyweight_24s: {
-    wholesale: 37000,  // Grosir min 72 pcs
-    retail: 42000,     // Beli satuan / retail
-  }
-};
-
 // Estimasi biaya sablon DTF berdasarkan ukuran
 export const DTF_PRINT_SIZES = [
   { id: "a6", name: "Logo Dada (A6 - 10x10 cm)", cost: 4500 },
@@ -36,15 +24,6 @@ export const VENDOR_DTF_RATES = {
   meterRateMax: 35000, // Harga standar vendor DTF (Rp 35.000/m)
   meterRate: 30000,    // Baseline estimasi
   minOrderMeters: 1.0,
-};
-
-// Arsitektur Harga (Anchor Pricing & Multi-Tier)
-export const TIER_PRICING = {
-  anchorPrice: 139000,       // Harga coret psikologis (nilai pasar ritel)
-  retailDisplay: 99000,      // Harga etalase standar di web
-  promoCampaign: 89000,      // Harga promo event / flash sale
-  partnerReseller: 65000,    // HPP grosir Rp 56k + profit ~16% (min 12 pcs)
-  partnerDropship: 75000,    // HPP eceran Rp 64k + profit ~17% (satuan white-label)
 };
 
 // Estimasi komisi/potongan marketplace
@@ -70,15 +49,6 @@ export function getSizeSurcharge(size) {
   const clean = String(size).toUpperCase().trim();
   return SIZE_SURCHARGES[clean] || 0;
 }
-
-/**
- * Struktur Harga Grosir Bertingkat NSA 3600 (Softstyle 30s)
- */
-export const NSA_3600_TIERS = [
-  { minQty: 1, label: 'Satuan (<12 pcs)', white: 34000, color: 37000 },
-  { minQty: 12, label: 'Grosir Lusinan (≥12 pcs)', white: 32000, color: 35000, badge: 'HEMAT RP 2.000/PCS' },
-  { minQty: 72, label: 'Partai Besar (≥72 pcs)', white: 29000, color: 32000, badge: 'HEMAT RP 5.000/PCS' },
-];
 
 /**
  * Kalkulasi harga dasar kaos polos NSA (7200 & 3600):

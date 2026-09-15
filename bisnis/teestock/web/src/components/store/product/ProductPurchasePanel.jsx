@@ -8,11 +8,7 @@ import {
   Layers, 
   Ruler, 
   Clock, 
-  Building2, 
-  ShieldCheck,
-  Zap,
-  Package,
-  RotateCcw
+  ShieldCheck
 } from 'lucide-react';
 import { Button } from '../../ui/Button';
 import { GARMENT_TYPES } from '../../../constants/garments';

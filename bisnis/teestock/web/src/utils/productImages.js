@@ -38,7 +38,7 @@ const SUPABASE_STORAGE_URL = 'https://tovslowsopqtuxmrogeu.supabase.co/storage/v
 /**
  * Normalisasi nama warna ke nama folder di Supabase Storage (Blank/7200/)
  */
-export function colorToSlug(colorName) {
+function colorToSlug(colorName) {
   if (!colorName) return 'black';
   const clean = String(colorName).trim().toLowerCase();
   if (clean === 'carolina blue' || clean === 'carolina-blue') {
@@ -51,22 +51,9 @@ export function colorToSlug(colorName) {
  * Normalisasi nama warna ke file Supabase Storage NSA 3600 (Blank/3600/ghost-front/)
  * Carolina Blue di 3600 tersimpan dengan carolina-blue.png
  */
-export function colorToSlug3600(colorName) {
+function colorToSlug3600(colorName) {
   if (!colorName) return 'black';
   return String(colorName).trim().toLowerCase().replace(/\s+/g, '-');
-}
-
-/**
- * Mendapatkan URL Fabric Swatch tekstur kain asli dari Supabase Storage
- */
-export function getFabricSwatchUrl(product, colorName) {
-  if (!product || !colorName) return null;
-  const isBlankNSA = product.sku === 'TS-BLK-7200' || product.sku === 'TS-BLK-3600' || product.name?.includes('7200') || product.name?.includes('3600');
-  if (isBlankNSA) {
-    const slug = colorToSlug(colorName);
-    return `${SUPABASE_STORAGE_URL}/Blank/7200/${slug}/swatch.jpeg`;
-  }
-  return null;
 }
 
 /**

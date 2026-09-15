@@ -9,12 +9,9 @@ import {
   ArrowRight,
   Flame, 
   Printer,
-  DollarSign,
   Wallet,
-  Coins,
   Download,
   Boxes,
-  ShieldCheck,
   Building2,
   ScrollText
 } from 'lucide-react';

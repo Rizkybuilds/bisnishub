@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { checkoutSchema } from '../../schemas/checkoutSchema';
 import { calculateShippingFee, calculateOrderWeight } from '../shippingApi';
 import { createPaymentSession, PAYMENT_PROVIDERS } from '../paymentAdapter';
+import { calculateBundleDiscount } from '../../constants/pricing';
 import { createPublicOrder } from '../ordersApi';
-import { calculateBundleDiscount, getSizeSurcharge } from '../../constants/pricing';
 
 vi.mock('../supabase', () => ({
   supabase: {

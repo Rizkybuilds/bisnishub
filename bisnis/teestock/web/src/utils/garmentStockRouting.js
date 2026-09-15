@@ -9,7 +9,7 @@
 /**
  * Master Fulfillment Hubs — Multi-Gudang & Sentra Produksi TeeStock
  */
-export const FULFILLMENT_HUBS = {
+const FULFILLMENT_HUBS = {
   CITAYAM_STUDIO: {
     id: 'citayam_studio',
     name: 'TeeStock Central Studio (Depok)',

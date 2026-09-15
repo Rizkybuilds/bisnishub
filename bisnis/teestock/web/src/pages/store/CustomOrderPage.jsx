@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Send, Upload, Sparkles, ShieldCheck, CheckCircle2, MessageSquare, ArrowRight, ArrowLeft, Check, Layers, Printer, User, FileText, X, Loader2 } from 'lucide-react';
+import { Send, Upload, Sparkles, ShieldCheck, CheckCircle2, MessageSquare, ArrowRight, ArrowLeft, Layers, Printer, User, FileText, X, Loader2 } from 'lucide-react';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { DTF_PRINT_SIZES, PRODUCTION_COSTS, getSizeSurcharge } from '../../constants/pricing';
 import { useStore } from '../../context/StoreContext';

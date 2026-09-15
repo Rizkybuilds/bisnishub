@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Trash2, Plus, Minus, Package, Sparkles } from 'lucide-react';
+import { Trash2, Plus, Minus, Package } from 'lucide-react';
 import { formatRupiah } from '../../../utils/formatters';
 
 export function CartItemList({ cart, updateCartQty, removeFromCart }) {

@@ -1,11 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
-  GARMENT_WEIGHT_TABLE,
   getItemWeightGrams,
   calculateOrderWeight,
   calculateBillableWeightKg,
   calculateShippingFee,
-  AVAILABLE_COURIERS,
   getAvailableCouriers
 } from '../shippingApi';
 import { determineFulfillmentOrigin } from '../../utils/garmentStockRouting';

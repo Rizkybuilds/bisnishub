@@ -1,19 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { 
   ShieldCheck, 
   RefreshCw, 
   Ruler, 
   Flame, 
-  HelpCircle, 
-  ArrowRight, 
   CheckCircle2, 
   AlertTriangle,
   MessageSquare,
-  Sparkles,
-  Package,
-  Layers,
-  RotateCcw
+  Package
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { SEOHead } from '../../components/common/SEOHead';

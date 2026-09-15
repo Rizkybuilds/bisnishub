@@ -9,10 +9,8 @@ import {
   ShieldCheck, 
   Sparkles, 
   Download,
-  Info,
   Zap,
-  Building2,
-  ExternalLink
+  Building2
 } from 'lucide-react';
 import { formatRupiah } from '../../utils/formatters';
 import { Button } from '../ui/Button';

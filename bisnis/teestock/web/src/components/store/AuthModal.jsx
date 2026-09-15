@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Mail, Sparkles, CheckCircle2, ArrowRight, Loader2, ShieldCheck, User } from 'lucide-react';
+import { X, Mail, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { TeeStockLogoIcon } from '../common/TeeStockLogo';
 

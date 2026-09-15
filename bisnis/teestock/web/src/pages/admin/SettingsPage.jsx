@@ -4,11 +4,8 @@ import {
   Cloud, 
   Database, 
   CheckCircle2, 
-  AlertCircle, 
   RefreshCw,
   Phone,
-  ShoppingBag,
-  Share2,
   Save,
   QrCode,
   Sparkles

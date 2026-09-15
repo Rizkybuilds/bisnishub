@@ -2,17 +2,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Sparkles, 
-  Palette, 
   Coins, 
-  ShieldCheck, 
-  ArrowRight, 
   CheckCircle2, 
   UploadCloud, 
-  ExternalLink,
-  HeartHandshake,
-  FileCheck,
-  Send,
-  HelpCircle
+  Send
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';

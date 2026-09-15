@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Printer, Truck, ShieldCheck, Tag, Building2, User, Phone, MapPin, Package, Sparkles } from 'lucide-react';
+import { Printer, Truck } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { formatDate } from '../../utils/formatters';

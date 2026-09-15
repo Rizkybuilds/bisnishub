@@ -31,7 +31,7 @@ export const PAYMENT_METHODS = [
 /**
  * Dynamically inject Midtrans Snap JS SDK
  */
-export function loadMidtransScript(clientKey, isProduction = false) {
+function loadMidtransScript(clientKey, isProduction = false) {
   return new Promise((resolve, reject) => {
     if (typeof window === 'undefined') {
       return resolve(null);

@@ -5,11 +5,7 @@ import {
   getBlankPricing, 
   getShippingRateByZone,
   calculateProductHPPAndARB,
-  applyARBGuard,
-  UNIT_COST_STANDARDS,
-  SIZE_SURCHARGES,
-  BUNDLE_DEALS,
-  SHIPPING_ZONES
+  applyARBGuard
 } from '../pricing';
 
 describe('TeeStock Financial & Pricing Engine', () => {

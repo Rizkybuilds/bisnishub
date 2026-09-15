@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, ArrowRight, CheckCircle2, Tag, Zap, ShieldCheck, Clock, Truck } from 'lucide-react';
+import { ShoppingBag, ArrowRight, CheckCircle2, Zap, ShieldCheck } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { createPublicOrder } from '../../services/ordersApi';
@@ -13,8 +13,7 @@ import { calculateOrderWeight, calculateShippingFee } from '../../services/shipp
 import { determineFulfillmentOrigin } from '../../utils/garmentStockRouting';
 import { 
   PAYMENT_PROVIDERS, 
-  createPaymentSession, 
-  formatMidtransTransactionParameter 
+  createPaymentSession
 } from '../../services/paymentAdapter';
 import { sanitizePhoneNumber, generateOrderCheckoutWhatsAppText } from '../../utils/whatsappTemplates';
 import { formatRupiah } from '../../utils/formatters';

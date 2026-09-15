@@ -1,20 +1,6 @@
 ---
 name: 21st-registry
-description: >-
-  Publish your own work to 21st.dev and manage it from the terminal with the
-  `21st` CLI (`@21st-dev/cli`): publish a React component to a team library,
-  publish a CSS theme or a template listing, edit / unpublish / delete your
-  published items, list and reopen existing component work, and read/replace
-  your public profile page (bento board).
-  Triggers when the user says "publish/share/upload this to 21st", "залей в
-  наш регистр", "опубликуй компонент/тему/темплейт", "share with team", "make
-  this reusable", "unpublish/edit/delete my component", "change its
-  visibility", "find/open my old component or draft", "найди/открой мой старый
-  компонент или драфт", "add this to my 21st profile/bento", "update my
-  profile page", "обнови мой профиль на 21st", "добавь блок в бенто", "add
-  controls/knobs to my demo", "сделай демо с контролами".
-  For finding and installing existing items use `21st-cli-use`; for turning a
-  project's design tokens into a theme use `21st-design-sync`.
+description: Publish and manage React components, themes, and templates on 21st.dev via 21st CLI. Use when publishing, updating, or deleting components on 21st registry.
 ---
 
 # Publish & manage on the 21st registry

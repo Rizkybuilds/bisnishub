@@ -9,12 +9,10 @@ import {
   Plus, 
   Minus, 
   Trash2, 
-  ArrowRight, 
   Zap, 
   RotateCcw,
   CheckCircle2,
   Box,
-  Layers,
   Flame
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';

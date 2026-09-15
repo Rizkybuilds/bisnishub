@@ -1,16 +1,6 @@
 ---
 name: 21st-ai
-description: >-
-  Generate and iterate on UI with 21st AI from the terminal via the `21st` CLI
-  (`@21st-dev/cli`): sketch a UI from a prompt, preview the variants in the
-  browser, edit any variant in place with a natural-language change, and pull
-  the final code into the project. Use whenever the user wants to BUILD / SKETCH
-  new UI ("sketch a pricing page", "generate a hero with 21st", "make me a <X>
-  section"), ITERATE on a generated draft ("edit the third variant", "add a
-  toggle to that take"), or GRAB the code of a draft ("pull that variant's
-  code", "сгенери UI на 21st", "поправь третий вариант", "забери код того
-  наброска"). For finding/installing existing components use the `21st-cli-use`
-  skill; to publish your own, `21st-registry`.
+description: Generate, iterate, and preview UI drafts with 21st AI via the 21st CLI. Use when sketching UI components, generating variants, or grabbing drafted code into the project.
 ---
 
 # 21st AI — sketch, iterate & grab code from the terminal

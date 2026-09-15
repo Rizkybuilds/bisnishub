@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, CheckSquare, Square, Flame, PackageCheck, Printer, RotateCcw, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Clock, CheckSquare, Square, Flame, RotateCcw, CheckCircle2 } from 'lucide-react';
 
 const ROUTINE_TASKS = [
   {

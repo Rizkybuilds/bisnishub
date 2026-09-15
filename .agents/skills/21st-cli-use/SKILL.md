@@ -1,14 +1,6 @@
 ---
 name: 21st-cli-use
-description: >-
-  Search, install and pull code from the 21st.dev catalog with the `21st` CLI
-  (`@21st-dev/cli`): find React/shadcn components, themes and templates, print a
-  component's code or a theme's CSS, install an item into the project, or
-  generate a new component with 21st AI. Use whenever the user says "search/find
-  a component/theme on 21st", "install our team's Button", "add @user/slug",
-  "pull that component's code", "найди компонент на 21st", "поставь наш компонент",
-  or wants to script catalog access from the shell/CI. Auto-activate when a
-  project has a `components.json` — search 21st before hand-writing UI.
+description: Search, install, and pull React/shadcn components, themes, and templates from 21st.dev using the 21st CLI. Use when looking up or installing components from 21st.dev.
 ---
 
 # 21st CLI — find, install & generate from the terminal

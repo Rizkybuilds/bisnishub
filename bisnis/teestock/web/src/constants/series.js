@@ -45,18 +45,3 @@ export const SERIES = [
   }
 ];
 
-/**
- * Helper to retrieve series metadata by ID with fallback
- */
-export function getSeriesById(id) {
-  return SERIES.find(s => s.id === id) || {
-    id: id || 'curated',
-    code: 'CUR',
-    name: 'Curated Drop',
-    tagline: 'Wear Your Identity',
-    hex: '#D95D39',
-    badgeBg: 'bg-zinc-800/60 text-zinc-100 border-zinc-700',
-    description: 'Koleksi kurasi rilis terbatas TeeStock.'
-  };
-}
-

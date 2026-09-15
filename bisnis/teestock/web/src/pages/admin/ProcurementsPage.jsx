@@ -5,7 +5,6 @@ import {
   Layers, 
   ScrollText, 
   Boxes, 
-  Truck, 
   Wallet, 
   Building2, 
   Search,

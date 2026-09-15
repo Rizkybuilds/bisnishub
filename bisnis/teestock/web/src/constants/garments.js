@@ -1,8 +1,5 @@
 export const SIZES = ["S", "M", "L", "XL", "XXL", "3XL"];
 
-export const NSA_7200_SIZES = ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
-export const NSA_3600_SIZES = ["S", "M", "L", "XL", "2XL"];
-
 export const NSA_3600_SIZE_CHART = [
   { size: "S", chest: 47, length: 67, sleeve: 19 },
   { size: "M", chest: 50, length: 70, sleeve: 19.5 },

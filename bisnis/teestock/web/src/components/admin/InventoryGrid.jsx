@@ -4,11 +4,9 @@ import {
   Plus, 
   AlertTriangle, 
   Layers, 
-  CheckCircle2, 
   ShoppingCart, 
   Copy, 
   Check, 
-  ExternalLink,
   Package 
 } from 'lucide-react';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';

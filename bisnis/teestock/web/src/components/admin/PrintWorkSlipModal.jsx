@@ -1,8 +1,8 @@
 import React from 'react';
-import { Printer, CheckSquare, Sparkles } from 'lucide-react';
+import { Printer } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
-import { formatDate, formatRupiah } from '../../utils/formatters';
+import { formatDate } from '../../utils/formatters';
 
 export function PrintWorkSlipModal({ isOpen, onClose, order }) {
   if (!order) return null;

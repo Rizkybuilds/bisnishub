@@ -19,7 +19,7 @@ function sanitizeCatalog(list) {
 /**
  * Standardize product data structure between PostgreSQL snake_case and UI camelCase
  */
-export function normalizeProduct(p) {
+function normalizeProduct(p) {
   if (!p) return null;
   return {
     ...p,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tag, Sparkles, X, Loader2, ShieldCheck, Truck, ArrowRight, Zap, QrCode } from 'lucide-react';
+import { Tag, Sparkles, X, Loader2, ShieldCheck, Truck, ArrowRight, Zap } from 'lucide-react';
 import { formatRupiah } from '../../../utils/formatters';
 import { PAYMENT_PROVIDERS } from '../../../services/paymentAdapter';
 

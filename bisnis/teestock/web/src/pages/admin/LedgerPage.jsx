@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import { 
   Wallet, 
-  ArrowDownLeft, 
   ArrowUpRight, 
   Plus, 
   Minus, 
   Building2, 
   Search, 
-  ShieldCheck, 
-  TrendingUp, 
-  DollarSign, 
-  Coins,
-  CreditCard
+  ShieldCheck
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
@@ -19,7 +14,7 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
-import { Input, Select } from '../../components/ui/Input';
+import { Input } from '../../components/ui/Input';
 import { formatRupiah } from '../../utils/formatters';
 
 export function LedgerPage() {

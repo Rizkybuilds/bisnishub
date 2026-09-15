@@ -182,8 +182,6 @@ export const SEED_PRODUCTS = [
   }
 ];
 
-export const SEED_ORDERS = [];
-
 export const INITIAL_INVENTORY_MATRIX = {
   nsa_softstyle_30s: {},
   nsa_heavyweight_24s: {},

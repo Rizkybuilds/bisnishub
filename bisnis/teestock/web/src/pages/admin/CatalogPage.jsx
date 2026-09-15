@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shirt, Plus, Search, Filter, Upload, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { Search, Filter, Upload, Image as ImageIcon } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
 import { Button } from '../../components/ui/Button';

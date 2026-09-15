@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Printer, ShieldCheck, Sparkles, Heart, RefreshCw, QrCode, Tag } from 'lucide-react';
+import { X, Printer, ShieldCheck, Sparkles, Tag } from 'lucide-react';
 
 export function PrintCareCardModal({ isOpen, onClose }) {
   const [activeSide, setActiveSide] = useState('both'); // 'front', 'back', 'both'

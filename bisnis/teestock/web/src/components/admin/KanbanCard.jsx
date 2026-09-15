@@ -8,8 +8,6 @@ import {
   MessageSquare, 
   Printer, 
   Truck,
-  TrendingUp, 
-  ExternalLink,
   Sparkles,
   Building2
 } from 'lucide-react';

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { User, Phone, MapPin, Truck, AlertCircle, Package, CreditCard, Zap, QrCode, Building2, Navigation } from 'lucide-react';
+import { User, Phone, MapPin, Truck, AlertCircle, Package, CreditCard, Zap, QrCode, Building2 } from 'lucide-react';
 import { checkoutSchema } from '../../../schemas/checkoutSchema';
 import { SHIPPING_ZONES } from '../../../constants/pricing';
 import { formatRupiah } from '../../../utils/formatters';
 import { PAYMENT_METHODS, PAYMENT_PROVIDERS } from '../../../services/paymentAdapter';
-import { AVAILABLE_COURIERS, getAvailableCouriers } from '../../../services/shippingApi';
+import { getAvailableCouriers } from '../../../services/shippingApi';
 
 export function CheckoutShippingForm({
   profile,

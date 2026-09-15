@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Flame, ShieldCheck, Zap, Layers, Truck } from 'lucide-react';
+import { Sparkles, Flame, ShieldCheck, Zap, Layers } from 'lucide-react';
 
 const DEFAULT_ITEMS = [
   { icon: Flame, text: 'DROP #01 LIVE // RAW IDENTITY', highlight: true },

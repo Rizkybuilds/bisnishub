@@ -4,11 +4,8 @@ import {
   Wrench, 
   Plus, 
   Trash2, 
-  Building2, 
   ShieldCheck, 
-  Calendar, 
-  MapPin, 
-  Layers
+  MapPin
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
