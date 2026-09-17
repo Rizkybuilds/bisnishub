@@ -206,17 +206,15 @@ export function AdminProvider({ children }) {
   const recordDefectDeduction = (defectData) => {
     let nextInv = { ...inventory };
     const qty = Number(defectData.qty) || 1;
-    let detailMsg = '';
+    const details = [];
 
-    if (defectData.itemType === 'blank_tshirt' && defectData.garmentKey && defectData.color && defectData.size) {
+    // 1. Potong Garmen Polos (jika ada data garmen)
+    if (defectData.garmentKey && defectData.garmentColor && defectData.garmentSize) {
+      nextInv = deductStock(nextInv, defectData.garmentKey, defectData.garmentColor, defectData.garmentSize, qty);
+      details.push(`Kaos ${defectData.garmentColor} (${defectData.garmentSize}) -${qty} pcs`);
+    } else if (defectData.itemType === 'blank_tshirt' && defectData.garmentKey && defectData.color && defectData.size) {
       nextInv = deductStock(nextInv, defectData.garmentKey, defectData.color, defectData.size, qty);
-      detailMsg = `Kaos ${defectData.color} (${defectData.size}) -${qty} pcs`;
-    } else if (defectData.itemType === 'dtf_film' && defectData.sku) {
-      nextInv = deductDtfFilm(nextInv, defectData.sku, qty);
-      detailMsg = `Film DTF [${defectData.sku}] -${qty} lembar`;
-    } else if (defectData.itemType === 'supplies' && defectData.supplyId) {
-      nextInv = deductSupplyItem(nextInv, defectData.supplyId, qty);
-      detailMsg = `Kemasan ${defectData.supplyId} -${qty} pcs`;
+      details.push(`Kaos ${defectData.color} (${defectData.size}) -${qty} pcs`);
     } else if (defectData.sku?.startsWith('NSA-')) {
       const parts = defectData.sku.split('-');
       if (parts.length >= 4) {
@@ -224,14 +222,25 @@ export function AdminProvider({ children }) {
         const col = parts[2];
         const sz = parts[parts.length - 1];
         nextInv = deductStock(nextInv, gKey, col, sz, qty);
-        detailMsg = `Kaos ${col} (${sz}) -${qty} pcs`;
+        details.push(`Kaos ${col} (${sz}) -${qty} pcs`);
       }
-    } else if (defectData.sku) {
-      nextInv = deductDtfFilm(nextInv, defectData.sku, qty);
-      detailMsg = `Film DTF [${defectData.sku}] -${qty} lembar`;
+    }
+
+    // 2. Potong Film DTF (jika ada data film DTF atau jika defectType === heat_press_failed / dtf_print)
+    const targetFilmSku = defectData.dtfSku || (defectData.itemType === 'dtf_film' ? defectData.sku : null) || (defectData.defectType === 'heat_press_failed' && defectData.sku && !defectData.sku.startsWith('NSA-') ? defectData.sku : null);
+    if (targetFilmSku) {
+      nextInv = deductDtfFilm(nextInv, targetFilmSku, qty);
+      details.push(`Film DTF [${targetFilmSku}] -${qty} lbr`);
+    }
+
+    // 3. Potong Bahan Kemasan (jika reject kemasan)
+    if (defectData.itemType === 'supplies' && defectData.supplyId) {
+      nextInv = deductSupplyItem(nextInv, defectData.supplyId, qty);
+      details.push(`Kemasan ${defectData.supplyId} -${qty} pcs`);
     }
 
     setInventory(nextInv);
+    const detailMsg = details.length > 0 ? details.join(' & ') : `Item [${defectData.sku}] -${qty} pcs`;
     showToast(`🛡️ Reject QC sah: Stok ${detailMsg} otomatis dipotong dari gudang fisik.`);
     return nextInv;
   };
