@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Search, 
   Filter, 
@@ -28,7 +28,12 @@ import {
   Camera, 
   LayoutGrid, 
   List,
-  Printer
+  Printer,
+  Download,
+  Link2,
+  Copy,
+  TrendingUp,
+  Boxes
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
@@ -40,6 +45,11 @@ import { formatRupiah } from '../../utils/formatters';
 import { SERIES } from '../../constants/series';
 import { uploadToCloudinary } from '../../services/cloudinary';
 import { ProcurementIntakeModal } from '../../components/admin/ProcurementIntakeModal';
+import { 
+  calculateProductEconomics, 
+  getCatalogKpis, 
+  exportCatalogCsv 
+} from '../../services/catalogApi';
 import { 
   DTF_SERVICE_RATES, 
   GARMENT_OPTIONS, 
@@ -53,7 +63,7 @@ import {
 } from '../../constants/pricing';
 
 export function CatalogPage() {
-  const { catalog, saveProduct, deleteProduct, clearAllCatalogProducts, showToast, addProcurement } = useAdmin();
+  const { catalog, inventory, saveProduct, deleteProduct, clearAllCatalogProducts, showToast, addProcurement } = useAdmin();
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState('table'); // 'table' | 'grid'
   const [seriesFilter, setSeriesFilter] = useState('all');
@@ -114,6 +124,22 @@ export function CatalogPage() {
   const [formCreatorHandle, setFormCreatorHandle] = useState('');
   const [formRoyaltyAmount, setFormRoyaltyAmount] = useState(20000);
   const [formCreatorPayoutAccount, setFormCreatorPayoutAccount] = useState('');
+
+  // 4 Executive KPI Ribbon Calculations
+  const kpis = useMemo(() => {
+    return getCatalogKpis(catalog, inventory);
+  }, [catalog, inventory]);
+
+  const handleCopyPdpLink = (sku) => {
+    const url = `https://teestockapparel.vercel.app/p/${sku}`;
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(url)
+        .then(() => showToast(`🔗 Link PDP [${sku}] berhasil disalin ke clipboard!`))
+        .catch(() => showToast(`URL: ${url}`));
+    } else {
+      showToast(`URL: ${url}`);
+    }
+  };
 
   const filteredCatalog = catalog.filter(p => {
     const matchQ = !search || 
@@ -533,6 +559,103 @@ export function CatalogPage() {
       />
 
       <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+        {/* 4 Executive KPI Ribbon Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {/* Card 1: Total Koleksi Aktif */}
+          <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-zinc-400">Total Koleksi Aktif</span>
+              <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                <Shirt className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-xl sm:text-2xl font-extrabold text-white font-mono">
+                {kpis.totalProducts} <span className="text-xs font-normal text-zinc-400">Desain</span>
+              </div>
+              <div className="text-[11px] text-zinc-400 mt-1 flex items-center gap-1.5">
+                <span className="text-zinc-300 font-medium">{kpis.graphicProducts} Grafis</span>
+                <span>•</span>
+                <span>{kpis.blankProducts} Kaos Polos</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Rata-Rata Margin Ritel */}
+          <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-zinc-400">Rerata Margin Ritel</span>
+              <div className={`w-8 h-8 rounded-xl border flex items-center justify-center ${
+                kpis.avgRetailMargin >= 35 
+                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
+                  : kpis.avgRetailMargin >= 25 
+                  ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' 
+                  : 'bg-rose-500/10 border-rose-500/20 text-rose-400'
+              }`}>
+                <TrendingUp className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-xl sm:text-2xl font-extrabold font-mono flex items-center gap-2 text-white">
+                <span>{kpis.avgRetailMargin}%</span>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                  kpis.avgRetailMargin >= 35 
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' 
+                    : kpis.avgRetailMargin >= 25 
+                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' 
+                    : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                }`}>
+                  {kpis.avgRetailMargin >= 35 ? 'Target CFO' : 'Di Bawah 35%'}
+                </span>
+              </div>
+              <div className="text-[11px] text-zinc-400 mt-1">
+                {kpis.cfoHealthyCount} dari {kpis.graphicProducts || 0} SKU grafis lolos floor
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Kesiapan Buffer DTF */}
+          <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-zinc-400">Buffer DTF Ready</span>
+              <div className="w-8 h-8 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                <Printer className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-xl sm:text-2xl font-extrabold text-white font-mono">
+                {kpis.readyDtfCount} <span className="text-xs font-normal text-zinc-400">/ {kpis.graphicProducts || 0} SKU</span>
+                <span className="text-xs font-bold text-sky-400 ml-2">({kpis.readyDtfPercent}%)</span>
+              </div>
+              <div className="text-[11px] text-zinc-400 mt-1">
+                {kpis.totalReadySheets} lembar film siap press di rak studio
+              </div>
+            </div>
+          </div>
+
+          {/* Card 4: Portofolio Kolaborasi & Lisensi */}
+          <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between shadow-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-zinc-400">Portofolio Lisensi</span>
+              <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                <Handshake className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="mt-3">
+              <div className="text-xl sm:text-2xl font-extrabold text-white font-mono">
+                {kpis.portfolioCollabCount} <span className="text-xs font-normal text-zinc-400">Karya</span>
+              </div>
+              <div className="text-[11px] text-zinc-400 mt-1 flex items-center gap-1.5">
+                <span className="text-purple-300 font-medium">{kpis.collabCount} Kolab</span>
+                <span>•</span>
+                <span className="text-sky-300 font-medium">{kpis.flatFeeCount} Beli Putih</span>
+                <span>•</span>
+                <span>{kpis.inHouseCount} In-House</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Filters & View Mode Toggle */}
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-[#121215] border border-white/[0.08] p-3 sm:p-4 rounded-2xl">
           <div className="relative w-full md:w-80">
@@ -606,6 +729,17 @@ export function CatalogPage() {
               </button>
             </div>
 
+            {/* Export CSV Button */}
+            <button
+              type="button"
+              onClick={() => exportCatalogCsv(filteredCatalog, inventory)}
+              className="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+              title="Unduh seluruh data katalog terfilter dalam format CSV (Price List Resmi)"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Unduh CSV PIM</span>
+            </button>
+
             {catalog.length > 0 && (
               <button
                 type="button"
@@ -640,33 +774,9 @@ export function CatalogPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredCatalog.map(p => {
-                const isBlank = isProductBlank(p);
-                const cBlank = Number(p.costBlank ?? p.cost_blank ?? 38000);
-                const cDtf = isBlank ? 0 : Number(p.costDtf ?? p.cost_dtf ?? 12750);
-                const cPackaging = isBlank ? 0 : 3500;
-                const cOps = isBlank ? 0 : 1000;
-                const cDefect = isBlank ? 0 : Math.round((cBlank + cDtf) * 0.05);
-                const physicalHpp = cBlank + cDtf + cPackaging + cOps + cDefect;
-
-                const pModel = p.designSource || p.design_source || 
-                  (p.creatorName || p.creator_name ? 'creator_collab' : (p.licenseSource || p.designCost ? 'flat_fee' : 'in_house'));
-
-                let dBurden = 0;
-                if (!isBlank) {
-                  if (pModel === 'flat_fee') {
-                    const dCost = Number(p.designCost ?? p.design_cost ?? 0);
-                    const dTarget = Math.max(1, Number(p.amortizationTarget ?? p.amortization_target ?? 25));
-                    dBurden = Math.round(dCost / dTarget);
-                  } else if (pModel === 'creator_collab') {
-                    dBurden = Number(p.royaltyAmount ?? p.royalty_amount ?? 0);
-                  }
-                }
-
-                const totalRealHpp = physicalHpp + dBurden;
-                const retail = Number(p.priceRetail ?? p.price_retail ?? (isBlank ? 45000 : 99000));
-                const gateway = isBlank ? 0 : Math.round(retail * 0.02);
-                const profit = retail - totalRealHpp - gateway;
-                const margin = retail > 0 ? ((profit / retail) * 100).toFixed(1) : 0;
+                const econ = calculateProductEconomics(p);
+                const isBlank = econ.isBlank;
+                const dtfStock = !isBlank ? (inventory?.dtf_films?.[p.sku]?.ready || 0) : 0;
 
                 return (
                   <div key={p.sku} className="bg-[#121215] border border-white/[0.08] hover:border-white/20 rounded-2xl overflow-hidden transition-all group flex flex-col shadow-lg">
@@ -690,7 +800,7 @@ export function CatalogPage() {
                       {/* Model Pill */}
                       <div className="absolute top-2.5 right-2.5">
                         <span className="px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-sm border border-white/20 text-[10px] font-semibold text-zinc-300">
-                          {pModel === 'flat_fee' ? 'Flat-Fee' : pModel === 'creator_collab' ? 'Kolab' : 'In-House'}
+                          {isBlank ? 'Blank NSA' : econ.designModel === 'flat_fee' ? 'Flat-Fee' : econ.designModel === 'creator_collab' ? 'Kolab' : 'In-House'}
                         </span>
                       </div>
                     </div>
@@ -698,28 +808,59 @@ export function CatalogPage() {
                     {/* Info */}
                     <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                       <div>
-                        <h4 className="font-bold text-sm text-white line-clamp-1 group-hover:text-zinc-200 transition-colors">
-                          {p.name}
-                        </h4>
+                        <div className="flex items-start justify-between gap-2">
+                          <h4 className="font-bold text-sm text-white line-clamp-1 group-hover:text-zinc-200 transition-colors">
+                            {p.name}
+                          </h4>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyPdpLink(p.sku)}
+                            className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors shrink-0 cursor-pointer"
+                            title="Salin Link PDP Storefront"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                         <p className="text-[11px] text-zinc-400 mt-0.5 capitalize">
                           {p.series || 'Katalog'} {p.niche ? `• ${p.niche}` : ''}
                         </p>
+
+                        {/* DTF Buffer Stock Readiness Pill */}
+                        <div className="mt-2">
+                          {isBlank ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[10px] font-semibold">
+                              <Shirt className="w-3 h-3" /> Kaos Polos NSA
+                            </span>
+                          ) : dtfStock > 0 ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-semibold">
+                              <CheckCircle2 className="w-3 h-3" /> Ready: {dtfStock} Lembar DTF
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-800 border border-zinc-700/70 text-zinc-400 text-[10px] font-semibold">
+                              <Boxes className="w-3 h-3" /> On-Demand (0 Lembar)
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Financial stats */}
                       <div className="bg-black/40 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5 text-xs">
                         <div className="flex items-center justify-between text-zinc-400">
                           <span>Harga Retail:</span>
-                          <span className="font-mono font-bold text-white">{formatRupiah(retail)}</span>
+                          <span className="font-mono font-bold text-white">{formatRupiah(econ.retailPrice)}</span>
                         </div>
                         <div className="flex items-center justify-between text-zinc-400 text-[11px]">
                           <span>HPP Nyata:</span>
-                          <span className="font-mono text-zinc-300">{formatRupiah(totalRealHpp)}</span>
+                          <span className="font-mono text-zinc-300">{formatRupiah(econ.totalRealHpp)}</span>
                         </div>
                         <div className="flex items-center justify-between pt-1 border-t border-white/[0.06]">
                           <span className="text-[11px] text-zinc-400">Margin Bersih:</span>
-                          <span className={`font-mono text-xs font-bold ${Number(margin) >= 35 ? 'text-white' : Number(margin) >= 25 ? 'text-amber-400' : 'text-rose-400'}`}>
-                            +{formatRupiah(Math.round(profit))} ({margin}%)
+                          <span className={`font-mono text-xs font-bold ${
+                            isBlank ? 'text-white font-normal' :
+                            econ.marginRetail >= 35 ? 'text-emerald-400' : 
+                            econ.marginRetail >= 25 ? 'text-amber-400' : 'text-rose-400'
+                          }`}>
+                            +{formatRupiah(Math.round(econ.netProfitRetail))} ({econ.marginRetail}%)
                           </span>
                         </div>
                       </div>
@@ -730,7 +871,7 @@ export function CatalogPage() {
                           <button
                             type="button"
                             onClick={() => handleOpenDtfProcurement(p)}
-                            className="px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 text-xs font-bold flex items-center gap-1 min-h-[36px] transition-colors"
+                            className="px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 text-xs font-bold flex items-center gap-1 min-h-[36px] transition-colors cursor-pointer"
                             title="Pesan cetak lembar film DTF untuk desain ini"
                           >
                             <Printer className="w-3.5 h-3.5" />
@@ -743,7 +884,7 @@ export function CatalogPage() {
                         <button
                           type="button"
                           onClick={() => handleDelete(p.sku, p.name)}
-                          className="p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500/25 transition-colors"
+                          className="p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500/25 transition-colors cursor-pointer"
                           title="Hapus Desain"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -761,21 +902,22 @@ export function CatalogPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-ts-hitam/60 border-b border-ts-border text-ts-muted font-bold tracking-wider uppercase">
+                <tr className="bg-black/60 border-b border-white/[0.08] text-zinc-400 font-bold tracking-wider uppercase">
                   <th className="py-3.5 px-4">Mockup</th>
                   <th className="py-3.5 px-4">SKU & Desain</th>
                   <th className="py-3.5 px-4">Model Pengadaan</th>
                   <th className="py-3.5 px-4">Series / Niche</th>
+                  <th className="py-3.5 px-4">Status DTF</th>
                   <th className="py-3.5 px-4">HPP Nyata</th>
                   <th className="py-3.5 px-4">Harga Retail</th>
                   <th className="py-3.5 px-4">Laba Bersih</th>
                   <th className="py-3.5 px-4 text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-ts-borderDim">
+              <tbody className="divide-y divide-white/[0.06]">
                 {filteredCatalog.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="py-16 text-center">
+                    <td colSpan={9} className="py-16 text-center">
                       <div className="max-w-md mx-auto space-y-3 px-4">
                         <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 mx-auto">
                           <Shirt className="w-6 h-6 text-zinc-400" />
@@ -801,38 +943,14 @@ export function CatalogPage() {
                   </tr>
                 ) : (
                   filteredCatalog.map(p => {
-                    const isBlank = isProductBlank(p);
-                    const cBlank = Number(p.costBlank ?? p.cost_blank ?? 38000);
-                    const cDtf = isBlank ? 0 : Number(p.costDtf ?? p.cost_dtf ?? 12750);
-                    const cPackaging = isBlank ? 0 : 3500;
-                    const cOps = isBlank ? 0 : 1000;
-                    const cDefect = isBlank ? 0 : Math.round((cBlank + cDtf) * 0.05);
-                    const physicalHpp = cBlank + cDtf + cPackaging + cOps + cDefect;
-
-                    const pModel = p.designSource || p.design_source || 
-                      (p.creatorName || p.creator_name ? 'creator_collab' : (p.licenseSource || p.designCost ? 'flat_fee' : 'in_house'));
-
-                    let dBurden = 0;
-                    if (!isBlank) {
-                      if (pModel === 'flat_fee') {
-                        const dCost = Number(p.designCost ?? p.design_cost ?? 0);
-                        const dTarget = Math.max(1, Number(p.amortizationTarget ?? p.amortization_target ?? 25));
-                        dBurden = Math.round(dCost / dTarget);
-                      } else if (pModel === 'creator_collab') {
-                        dBurden = Number(p.royaltyAmount ?? p.royalty_amount ?? 0);
-                      }
-                    }
-
-                    const totalRealHpp = physicalHpp + dBurden;
-                    const retail = Number(p.priceRetail ?? p.price_retail ?? (isBlank ? 45000 : 99000));
-                    const gateway = isBlank ? 0 : Math.round(retail * 0.02);
-                    const profit = retail - totalRealHpp - gateway;
-                    const margin = retail > 0 ? ((profit / retail) * 100).toFixed(1) : 0;
+                    const econ = calculateProductEconomics(p);
+                    const isBlank = econ.isBlank;
+                    const dtfStock = !isBlank ? (inventory?.dtf_films?.[p.sku]?.ready || 0) : 0;
 
                     return (
-                      <tr key={p.sku} className="hover:bg-ts-surfaceHover/50 transition-colors">
+                      <tr key={p.sku} className="hover:bg-white/[0.02] transition-colors">
                         <td className="py-3 px-4">
-                          <div className="w-12 h-12 rounded-lg bg-ts-hitam border border-ts-border overflow-hidden flex items-center justify-center shrink-0">
+                          <div className="w-12 h-12 rounded-lg bg-black/60 border border-white/[0.08] overflow-hidden flex items-center justify-center shrink-0">
                             {p.filePath || p.file_path ? (
                               <img
                                 src={p.filePath || p.file_path}
@@ -840,13 +958,23 @@ export function CatalogPage() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <ImageIcon className="w-5 h-5 text-ts-muted" />
+                              <ImageIcon className="w-5 h-5 text-zinc-600" />
                             )}
                           </div>
                         </td>
                         <td className="py-3 px-4">
-                          <span className="font-mono text-xs font-bold text-ts-terracotta">{p.sku}</span>
-                          <div className="font-bold text-sm text-ts-krem mt-0.5">{p.name}</div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs font-bold text-amber-400">{p.sku}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyPdpLink(p.sku)}
+                              className="p-1 rounded text-zinc-500 hover:text-white transition-colors cursor-pointer"
+                              title="Salin Link PDP Storefront"
+                            >
+                              <Copy className="w-3 h-3" />
+                            </button>
+                          </div>
+                          <div className="font-bold text-sm text-white mt-0.5">{p.name}</div>
                           <div className="flex flex-wrap items-center gap-1.5 mt-1">
                             <span className="px-1.5 py-0.5 rounded bg-zinc-800 text-[9px] font-mono text-zinc-300 uppercase border border-zinc-700/60">
                               {isBlank ? 'Kaos Polos Blank' :
@@ -880,22 +1008,22 @@ export function CatalogPage() {
                                 Margin Tetap: +Rp 3.000/pcs
                               </div>
                             </div>
-                          ) : pModel === 'flat_fee' ? (
+                          ) : econ.designModel === 'flat_fee' ? (
                             <div className="space-y-1">
                               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
                                 <ShoppingBag className="w-3 h-3" /> Beli Putih ({p.licenseSource || p.license_source || 'Etsy'})
                               </span>
                               <div className="text-[10px] text-zinc-400 font-mono">
-                                Amortisasi: +{formatRupiah(dBurden)}/pcs ({p.amortizationTarget || p.amortization_target || 25} pcs)
+                                Amortisasi: +{formatRupiah(econ.designBurden)}/pcs ({p.amortizationTarget || p.amortization_target || 25} pcs)
                               </div>
                             </div>
-                          ) : pModel === 'creator_collab' ? (
+                          ) : econ.designModel === 'creator_collab' ? (
                             <div className="space-y-1">
                               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
                                 <Handshake className="w-3 h-3" /> Kolab: {p.creatorName || p.creator_name || 'Kreator'}
                               </span>
                               <div className="text-[10px] text-purple-400 font-mono">
-                                {p.creatorHandle || p.creator_handle || '@kreator'} • Royalti: +{formatRupiah(dBurden)}/pcs
+                                {p.creatorHandle || p.creator_handle || '@kreator'} • Royalti: +{formatRupiah(econ.designBurden)}/pcs
                               </div>
                             </div>
                           ) : (
@@ -911,31 +1039,50 @@ export function CatalogPage() {
                         </td>
                         <td className="py-3 px-4">
                           <Badge variant="terracotta">{p.seriesName || p.series}</Badge>
-                          <div className="text-[11px] text-ts-muted mt-1">{p.niche || '-'}</div>
+                          <div className="text-[11px] text-zinc-400 mt-1">{p.niche || '-'}</div>
                         </td>
                         <td className="py-3 px-4">
-                          <div className="font-mono font-bold text-ts-krem">
-                            {formatRupiah(totalRealHpp)}
-                          </div>
-                          <div className="text-[10px] text-ts-muted">
-                            {isBlank ? 'Modal Vendor NSA Cititex' : `Fisik ${formatRupiah(physicalHpp)} ${dBurden > 0 ? `+ Desain ${formatRupiah(dBurden)}` : ''}`}
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 font-mono font-extrabold text-ts-krem">
-                          {formatRupiah(retail)}
+                          {isBlank ? (
+                            <span className="text-[11px] text-zinc-400 font-medium">Kaos Polos NSA</span>
+                          ) : dtfStock > 0 ? (
+                            <div className="space-y-0.5">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold font-mono">
+                                <CheckCircle2 className="w-3 h-3" /> Ready: {dtfStock} Lbr
+                              </span>
+                              <div className="text-[9px] text-zinc-400">Bisa langsung press</div>
+                            </div>
+                          ) : (
+                            <div className="space-y-0.5">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-800 text-zinc-400 border border-zinc-700 text-[10px] font-medium font-mono">
+                                <Boxes className="w-3 h-3" /> On-Demand
+                              </span>
+                              <div className="text-[9px] text-zinc-500">0 lembar di rak</div>
+                            </div>
+                          )}
                         </td>
                         <td className="py-3 px-4">
-                          <div className={`font-mono font-extrabold ${profit >= 0 ? 'text-ts-green' : 'text-rose-400'}`}>
-                            {profit >= 0 ? `+${formatRupiah(Math.round(profit))}` : formatRupiah(Math.round(profit))}
+                          <div className="font-mono font-bold text-zinc-200">
+                            {formatRupiah(econ.totalRealHpp)}
+                          </div>
+                          <div className="text-[10px] text-zinc-400">
+                            {isBlank ? 'Modal Vendor NSA' : `Fisik ${formatRupiah(econ.physicalHpp)} ${econ.designBurden > 0 ? `+ Desain ${formatRupiah(econ.designBurden)}` : ''}`}
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 font-mono font-extrabold text-white">
+                          {formatRupiah(econ.retailPrice)}
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className={`font-mono font-extrabold ${econ.netProfitRetail >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            {econ.netProfitRetail >= 0 ? `+${formatRupiah(Math.round(econ.netProfitRetail))}` : formatRupiah(Math.round(econ.netProfitRetail))}
                           </div>
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                             isBlank
-                              ? 'text-ts-green bg-ts-green/10 border border-ts-green/20'
-                              : Number(margin) >= 35 ? 'text-ts-green bg-ts-green/10 border border-ts-green/20' :
-                                Number(margin) >= 25 ? 'text-amber-400 bg-amber-400/10 border border-amber-400/20' :
+                              ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
+                              : econ.marginRetail >= 35 ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' :
+                                econ.marginRetail >= 25 ? 'text-amber-400 bg-amber-400/10 border border-amber-400/20' :
                                 'text-rose-400 bg-rose-400/10 border border-rose-400/20'
                           }`}>
-                            {isBlank ? `+${formatRupiah(Math.round(profit))} (${margin}%)` : `${margin}%`}
+                            {isBlank ? `+${formatRupiah(Math.round(econ.netProfitRetail))} (${econ.marginRetail}%)` : `${econ.marginRetail}%`}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-center">
