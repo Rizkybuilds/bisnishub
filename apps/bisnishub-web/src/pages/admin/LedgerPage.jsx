@@ -2,26 +2,27 @@ import React, { useState } from 'react';
 import { 
   Wallet, 
   ArrowUpRight, 
-  ArrowDownRight,
-  ArrowRightLeft,
+  ArrowDownRight, 
+  ArrowRightLeft, 
   Plus, 
   Minus, 
   Building2, 
   Search, 
-  ShieldCheck,
-  TrendingUp,
-  AlertTriangle,
-  FileText,
-  Clock,
-  CheckCircle2,
-  PieChart,
-  Activity,
-  Layers,
-  Sparkles,
-  HelpCircle,
-  ExternalLink,
-  ChevronRight,
-  Filter
+  ShieldCheck, 
+  TrendingUp, 
+  AlertTriangle, 
+  FileText, 
+  Clock, 
+  CheckCircle2, 
+  PieChart, 
+  Activity, 
+  Layers, 
+  Sparkles, 
+  HelpCircle, 
+  ExternalLink, 
+  ChevronRight, 
+  Filter,
+  Download
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
@@ -31,6 +32,30 @@ import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 import { Input, Select } from '../../components/ui/Input';
 import { formatRupiah, formatDate } from '../../utils/formatters';
+
+const BUSINESS_WALLETS = [
+  { id: 'wallet_teestock', name: 'TeeStock (BCA Bisnis - Apparel Ritel)', unit: 'teestock' },
+  { id: 'wallet_multigraph', name: 'MultiGraph (BCA Maklon - Kemasan B2B)', unit: 'multigraph' },
+  { id: 'wallet_holding', name: 'Holding Reserve (Kas Cadangan & Ekspansi)', unit: 'holding' }
+];
+
+const EXTERNAL_INCOMING_SOURCES = [
+  { id: 'Pelanggan (QRIS / Midtrans)', name: 'Pelanggan Online (QRIS / Midtrans)' },
+  { id: 'Pelanggan (Transfer Bank WA)', name: 'Pelanggan Direct WA (BCA / Mandiri)' },
+  { id: 'Pembeli Tunai / Cash Studio', name: 'Pembeli Tunai / COD Studio' },
+  { id: 'Klien B2B MultiGraph', name: 'Klien B2B MultiGraph (DP / Pelunasan)' },
+  { id: 'Pihak Luar Lainnya', name: 'Pihak Luar Lainnya' }
+];
+
+const EXTERNAL_OUTGOING_DESTINATIONS = [
+  { id: 'Cititex Rawamangun (Bahan Kaos NSA)', name: 'Cititex Rawamangun (Kaos NSA)' },
+  { id: 'Vendor DTF Printing Senen', name: 'Vendor DTF Printing Senen' },
+  { id: 'Vendor Polymailer & Stiker Grosir', name: 'Vendor Polymailer & Stiker Grosir' },
+  { id: 'Ekspedisi (JNE / SiCepat / Lion Parcel)', name: 'Ekspedisi Logistik / Kurir Pengiriman' },
+  { id: 'PLN & Provider Wifi Studio', name: 'Listrik Heat Press 155°C & Wifi Studio' },
+  { id: 'Meta / TikTok Ads Budget', name: 'Budget Iklan Meta / TikTok Ads' },
+  { id: 'Vendor / Pihak Lainnya', name: 'Vendor / Pihak Lainnya' }
+];
 
 export function LedgerPage() {
   const { 
@@ -61,61 +86,83 @@ export function LedgerPage() {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('cash_in'); // 'cash_in' | 'cash_out' | 'inter_transfer' | 'founder_equity'
+  const [equityMode, setEquityMode] = useState('injection'); // 'injection' | 'prive'
   
   // Form State
   const [txUnit, setTxUnit] = useState('teestock');
   const [txType, setTxType] = useState('CASH_IN');
   const [amount, setAmount] = useState(150000);
   const [category, setCategory] = useState('sales_retail');
-  const [sourceWallet, setSourceWallet] = useState('Midtrans QRIS (Settlement H+1)');
+  const [sourceWallet, setSourceWallet] = useState('Pelanggan (QRIS / Midtrans)');
   const [destinationWallet, setDestinationWallet] = useState('wallet_teestock');
   const [description, setDescription] = useState('');
   const [proofReceiptRef, setProofReceiptRef] = useState('');
   const [relatedId, setRelatedId] = useState('');
   const [settlementStatus, setSettlementStatus] = useState('cleared');
 
-  // Open Modal Handler with Pre-configured Mode
-  const handleOpenAction = (mode) => {
+  // Open Modal Handler with Pre-configured Mode & Defaults
+  const handleOpenAction = (mode, param1, param2) => {
     setModalMode(mode);
     if (mode === 'cash_in') {
+      const unit = param1 || 'teestock';
       setTxType('CASH_IN');
-      setTxUnit('teestock');
-      setCategory('sales_retail');
-      setSourceWallet('Pelanggan (QRIS / Transfer)');
-      setDestinationWallet('wallet_teestock');
-      setDescription('Penerimaan pembayaran pesanan ritel apparel');
+      setTxUnit(unit);
+      setCategory(unit === 'multigraph' ? 'b2b_packaging_dp' : unit === 'holding' ? 'holding_profit_allocation' : 'sales_retail');
+      setSourceWallet('Pelanggan (QRIS / Midtrans)');
+      setDestinationWallet(unit === 'multigraph' ? 'wallet_multigraph' : unit === 'holding' ? 'wallet_holding' : 'wallet_teestock');
+      setDescription(unit === 'multigraph' ? 'Penerimaan DP cetak kemasan klien B2B' : 'Penerimaan pembayaran pesanan ritel apparel');
       setAmount(198000);
       setSettlementStatus('cleared');
     } else if (mode === 'cash_out') {
+      const unit = param1 || 'teestock';
       setTxType('CASH_OUT');
-      setTxUnit('teestock');
-      setCategory('blank_garment');
-      setSourceWallet('wallet_teestock');
-      setDestinationWallet('Cititex Rawamangun');
-      setDescription('Pembelian bahan kaos polos NSA');
+      setTxUnit(unit);
+      setCategory(unit === 'multigraph' ? 'raw_materials_packaging' : 'blank_garment');
+      setSourceWallet(unit === 'multigraph' ? 'wallet_multigraph' : unit === 'holding' ? 'wallet_holding' : 'wallet_teestock');
+      setDestinationWallet(unit === 'multigraph' ? 'Vendor Polymailer & Stiker Grosir' : 'Cititex Rawamangun (Bahan Kaos NSA)');
+      setDescription(unit === 'multigraph' ? 'Pembelian bahan polymailer doff grosir' : 'Pembelian bahan kaos polos NSA');
       setAmount(380000);
       setSettlementStatus('cleared');
     } else if (mode === 'inter_transfer') {
+      const from = param1 || 'teestock';
+      const to = param2 || (from === 'teestock' ? 'multigraph' : 'teestock');
       setTxType('INTER_TRANSFER');
-      setTxUnit('teestock');
-      setCategory('unboxing_packaging');
-      setSourceWallet('wallet_teestock');
-      setDestinationWallet('wallet_multigraph');
-      setDescription('Pembayaran pasokan paket kemasan unboxing ke MultiGraph');
-      setAmount(60000);
+      setTxUnit(from);
+      setCategory(from === 'teestock' && to === 'multigraph' ? 'unboxing_packaging' : 'inter_unit_transfer');
+      setSourceWallet(`wallet_${from}`);
+      setDestinationWallet(`wallet_${to}`);
+      setDescription(from === 'teestock' && to === 'multigraph' ? 'Pembayaran pasokan paket kemasan unboxing ke MultiGraph' : `Transfer saldo internal dari ${from} ke ${to}`);
+      setAmount(from === 'teestock' && to === 'multigraph' ? 60000 : 500000);
       setSettlementStatus('cleared');
     } else if (mode === 'founder_equity') {
-      setTxType('CAPITAL_INJECTION');
+      const subType = param1 || 'injection';
+      setEquityMode(subType);
+      setTxType(subType === 'injection' ? 'CAPITAL_INJECTION' : 'FOUNDER_PRIVE');
       setTxUnit('founder');
-      setCategory('capital_injection');
-      setSourceWallet('wallet_founder');
-      setDestinationWallet('wallet_teestock');
-      setDescription('Injeksi modal kerja founder ke operasional TeeStock');
+      setCategory(subType === 'injection' ? 'capital_injection' : 'owner_prive');
+      setSourceWallet(subType === 'injection' ? 'wallet_founder' : 'wallet_teestock');
+      setDestinationWallet(subType === 'injection' ? 'wallet_teestock' : 'wallet_founder');
+      setDescription(subType === 'injection' ? 'Injeksi modal kerja founder ke operasional TeeStock' : 'Penarikan prive laba founder');
       setAmount(1000000);
       setSettlementStatus('cleared');
     }
     setIsModalOpen(true);
   };
+
+  // Check Overdraft on active form selection
+  const currentSourceBalance = sourceWallet === 'wallet_teestock'
+    ? multiUnitBalances?.teestock?.balance || 0
+    : sourceWallet === 'wallet_multigraph'
+      ? multiUnitBalances?.multigraph?.balance || 0
+      : sourceWallet === 'wallet_holding'
+        ? multiUnitBalances?.holding?.balance || 0
+        : 0;
+
+  const isOverdraftWarning = (
+    modalMode === 'cash_out' || 
+    modalMode === 'inter_transfer' || 
+    (modalMode === 'founder_equity' && equityMode === 'prive')
+  ) && Number(amount) > currentSourceBalance;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -127,6 +174,11 @@ export function LedgerPage() {
     if (modalMode === 'inter_transfer') {
       const fromUnit = sourceWallet.replace('wallet_', '');
       const toUnit = destinationWallet.replace('wallet_', '');
+      if (fromUnit === toUnit) {
+        alert('Rekening asal dan tujuan tidak boleh sama');
+        return;
+      }
+
       await recordInterUnitTransfer({
         fromUnit: fromUnit || 'teestock',
         toUnit: toUnit || 'multigraph',
@@ -134,6 +186,23 @@ export function LedgerPage() {
         description: description.trim(),
         proofRef: proofReceiptRef.trim(),
         relatedId: relatedId.trim()
+      });
+    } else if (modalMode === 'founder_equity') {
+      const isInj = equityMode === 'injection';
+      const targetUnit = isInj ? destinationWallet.replace('wallet_', '') : sourceWallet.replace('wallet_', '');
+      await recordCashTransaction({
+        transactionNo: `TX-EQ-${Date.now().toString().slice(-6)}`,
+        date: new Date().toISOString().slice(0, 10),
+        businessUnit: targetUnit,
+        type: isInj ? 'CAPITAL_INJECTION' : 'FOUNDER_PRIVE',
+        category: isInj ? 'capital_injection' : 'owner_prive',
+        amount: Number(amount),
+        sourceWallet: isInj ? 'wallet_founder' : sourceWallet,
+        destinationWallet: isInj ? destinationWallet : 'wallet_founder',
+        relatedId: relatedId.trim(),
+        proofReceiptRef: proofReceiptRef.trim(),
+        description: description.trim() || (isInj ? 'Injeksi modal pribadi founder' : 'Penarikan prive founder'),
+        settlementStatus: 'cleared'
       });
     } else {
       await recordCashTransaction({
@@ -188,14 +257,72 @@ export function LedgerPage() {
     return matchUnit && matchType && matchStatus && matchQuery;
   });
 
+  // Export CSV for Audit Trail
+  const handleExportAuditCsv = () => {
+    if (!filteredTxs || filteredTxs.length === 0) {
+      alert('Tidak ada mutasi buku kas untuk diekspor');
+      return;
+    }
+
+    const headers = [
+      "No. Mutasi",
+      "Tanggal",
+      "Unit Bisnis",
+      "Jenis Transaksi",
+      "Kategori",
+      "Uraian / Deskripsi",
+      "Akun Sumber",
+      "Akun Tujuan",
+      "No. Bukti / Ref",
+      "ID Kaitan",
+      "Status Settlement",
+      "Nominal (Rp)"
+    ];
+
+    const rows = filteredTxs.map(tx => [
+      `"${tx.transactionNo || ''}"`,
+      `"${tx.date || ''}"`,
+      `"${(tx.businessUnit || '').toUpperCase()}"`,
+      `"${tx.type || ''}"`,
+      `"${tx.category || ''}"`,
+      `"${(tx.description || '').replace(/"/g, '""')}"`,
+      `"${tx.sourceWallet || ''}"`,
+      `"${tx.destinationWallet || ''}"`,
+      `"${tx.proofReceiptRef || ''}"`,
+      `"${tx.relatedId || ''}"`,
+      `"${tx.settlementStatus || ''}"`,
+      Number(tx.amount) || 0
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `buku_kas_bisnishub_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Filter Stats
+  const totalFilteredIn = filteredTxs
+    .filter(t => t.type === 'CASH_IN' || t.type === 'CAPITAL_INJECTION' || t.category === 'capital_injection')
+    .reduce((s, t) => s + (Number(t.amount) || 0), 0);
+
+  const totalFilteredOut = filteredTxs
+    .filter(t => t.type === 'CASH_OUT' || t.type === 'FOUNDER_PRIVE' || t.category === 'owner_prive')
+    .reduce((s, t) => s + (Number(t.amount) || 0), 0);
+
+  const netFilteredFlow = totalFilteredIn - totalFilteredOut;
+
   // Calculate synergy savings (e.g. MultiGraph packaging supply to TeeStock)
   const packagingTxs = cashTransactions.filter(t => t.category === 'unboxing_packaging' || (t.type === 'INTER_TRANSFER' && t.destinationWallet === 'wallet_multigraph'));
   const totalInternalPackagingVolume = packagingTxs.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-  const estimatedMarketRetailRate = totalInternalPackagingVolume * 1.6; // If bought from outside retail
+  const estimatedMarketRetailRate = totalInternalPackagingVolume * 1.6;
   const estimatedSynergySavings = Math.max(0, estimatedMarketRetailRate - totalInternalPackagingVolume);
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 bg-ts-hitam">
+    <div className="flex-1 flex flex-col min-w-0 bg-[#09090B] text-zinc-100 min-h-screen">
       <AdminTopbar title="Executive CFO Suite & Multi-Unit Treasury" />
 
       <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
@@ -226,6 +353,7 @@ export function LedgerPage() {
             {/* Quick Action Buttons */}
             <div className="flex flex-wrap items-center gap-2 shrink-0">
               <button 
+                type="button"
                 onClick={() => handleOpenAction('inter_transfer')}
                 className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/10 transition-all flex items-center gap-1.5"
               >
@@ -233,13 +361,15 @@ export function LedgerPage() {
                 <span>Transfer Antar-Unit</span>
               </button>
               <button 
-                onClick={() => handleOpenAction('founder_equity')}
+                type="button"
+                onClick={() => handleOpenAction('founder_equity', 'injection')}
                 className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/10 transition-all flex items-center gap-1.5"
               >
                 <Wallet className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Ekuitas Founder</span>
+                <span>Suntik / Prive</span>
               </button>
               <button 
+                type="button"
                 onClick={() => handleOpenAction('cash_in')}
                 className="px-4 py-2 rounded-xl text-xs font-bold bg-white text-zinc-950 hover:bg-zinc-200 transition-all shadow-sm flex items-center gap-1.5"
               >
@@ -293,8 +423,8 @@ export function LedgerPage() {
           </div>
         </div>
 
-        {/* Sub-Navigation Tabs (21st.dev capsule style) */}
-        <div className="flex items-center gap-1.5 p-1.5 bg-[#121215] border border-white/[0.08] rounded-2xl overflow-x-auto">
+        {/* Sub-Navigation Tabs */}
+        <div className="flex items-center gap-1.5 p-1.5 bg-[#121215] border border-white/[0.08] rounded-2xl overflow-x-auto no-scrollbar">
           {[
             { id: 'wallets', label: '1. Neraca Multi-Kantong', icon: Wallet, desc: 'Pemisahan Dompet' },
             { id: 'audit', label: '2. Buku Kas 7-Dimensi', icon: FileText, desc: 'Audit Trail Lengkap' },
@@ -307,6 +437,7 @@ export function LedgerPage() {
             return (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs transition-all whitespace-nowrap ${
                   isActive
@@ -346,8 +477,9 @@ export function LedgerPage() {
               </span>
             </div>
 
-            {/* 4 Isolated Wallet Cards */}
+            {/* 4 Isolated Wallet Cards with Direct Actions */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              
               {/* Wallet 1: TeeStock */}
               <div className="bg-[#121215] border border-white/[0.08] hover:border-white/20 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between transition-all group">
                 <div>
@@ -378,9 +510,34 @@ export function LedgerPage() {
                   <div className="flex justify-between text-zinc-400">
                     <span>Net Margin Ritel:</span>
                     <span className="font-mono font-bold text-white">
-                      {teestockPnl?.netMarginPercent}% (CFO Rule: &gt;35%)
+                      {teestockPnl?.netMarginPercent}% (CFO: &ge;35%)
                     </span>
                   </div>
+                </div>
+
+                {/* Quick Action Buttons for TeeStock */}
+                <div className="grid grid-cols-2 gap-1.5 pt-3 mt-3 border-t border-white/[0.06]">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAction('cash_in', 'teestock')}
+                    className="py-1.5 px-2 rounded-lg bg-white/[0.05] hover:bg-white/10 text-zinc-200 hover:text-white text-[11px] font-bold transition-all text-center"
+                  >
+                    + Kas Masuk
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAction('cash_out', 'teestock')}
+                    className="py-1.5 px-2 rounded-lg bg-white/[0.05] hover:bg-white/10 text-zinc-200 hover:text-white text-[11px] font-bold transition-all text-center"
+                  >
+                    - Belanja Bahan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAction('inter_transfer', 'teestock', 'multigraph')}
+                    className="col-span-2 py-1.5 px-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white text-[11px] font-semibold transition-all text-center border border-white/10"
+                  >
+                    ⇄ Bayar Pack ke MultiGraph
+                  </button>
                 </div>
               </div>
 
@@ -415,6 +572,31 @@ export function LedgerPage() {
                     <span>Pasokan ke TeeStock:</span>
                     <span className="text-white font-mono font-semibold">{formatRupiah(totalInternalPackagingVolume)}</span>
                   </div>
+                </div>
+
+                {/* Quick Action Buttons for MultiGraph */}
+                <div className="grid grid-cols-2 gap-1.5 pt-3 mt-3 border-t border-white/[0.06]">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAction('cash_in', 'multigraph')}
+                    className="py-1.5 px-2 rounded-lg bg-white/[0.05] hover:bg-white/10 text-zinc-200 hover:text-white text-[11px] font-bold transition-all text-center"
+                  >
+                    + Terima DP
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAction('cash_out', 'multigraph')}
+                    className="py-1.5 px-2 rounded-lg bg-white/[0.05] hover:bg-white/10 text-zinc-200 hover:text-white text-[11px] font-bold transition-all text-center"
+                  >
+                    - Bahan Baku
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAction('inter_transfer', 'multigraph', 'holding')}
+                    className="col-span-2 py-1.5 px-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white text-[11px] font-semibold transition-all text-center border border-white/10"
+                  >
+                    ⇄ Setor Kas ke Holding
+                  </button>
                 </div>
               </div>
 
@@ -454,6 +636,24 @@ export function LedgerPage() {
                     />
                   </div>
                 </div>
+
+                {/* Quick Action Buttons for Holding */}
+                <div className="grid grid-cols-2 gap-1.5 pt-3 mt-3 border-t border-white/[0.06]">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAction('cash_in', 'holding')}
+                    className="py-1.5 px-2 rounded-lg bg-white/[0.05] hover:bg-white/10 text-zinc-200 hover:text-white text-[11px] font-bold transition-all text-center"
+                  >
+                    + Alokasi Kas
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAction('inter_transfer', 'holding', 'teestock')}
+                    className="py-1.5 px-2 rounded-lg bg-white/[0.05] hover:bg-white/10 text-zinc-200 hover:text-white text-[11px] font-bold transition-all text-center"
+                  >
+                    ⇄ Bantu Unit
+                  </button>
+                </div>
               </div>
 
               {/* Wallet 4: Founder Equity */}
@@ -488,11 +688,29 @@ export function LedgerPage() {
                     <span className="text-white font-mono font-bold">100% Tertib Tercatat</span>
                   </div>
                 </div>
+
+                {/* Quick Action Buttons for Founder */}
+                <div className="grid grid-cols-2 gap-1.5 pt-3 mt-3 border-t border-white/[0.06]">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAction('founder_equity', 'injection')}
+                    className="py-1.5 px-2 rounded-lg bg-white text-zinc-950 text-[11px] font-bold transition-all text-center hover:bg-zinc-200 shadow-sm"
+                  >
+                    + Suntik Modal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenAction('founder_equity', 'prive')}
+                    className="py-1.5 px-2 rounded-lg bg-white/[0.05] hover:bg-white/10 text-zinc-200 hover:text-white text-[11px] font-bold transition-all text-center"
+                  >
+                    - Tarik Prive
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Synergy & Internal Supply Flow Panel */}
-            <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5">
+            <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 shadow-2xl">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
                 <div>
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
@@ -537,14 +755,15 @@ export function LedgerPage() {
         {/* ========================================================================= */}
         {activeTab === 'audit' && (
           <div className="space-y-4">
-            {/* Filter Toolbar */}
-            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-ts-surface p-3.5 rounded-xl border border-ts-border">
+            
+            {/* Filter Toolbar & Export CSV */}
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-[#121215] p-4 rounded-2xl border border-white/[0.08]">
               <div className="flex flex-wrap items-center gap-2">
                 {/* Unit Filter */}
                 <select
                   value={filterUnit}
                   onChange={(e) => setFilterUnit(e.target.value)}
-                  className="bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem px-3 py-2 font-medium focus:outline-none focus:border-ts-terracotta"
+                  className="bg-black/40 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2 font-medium focus:outline-none focus:border-white/30"
                 >
                   <option value="all">Semua Unit Bisnis</option>
                   <option value="teestock">👕 TeeStock Apparel</option>
@@ -557,7 +776,7 @@ export function LedgerPage() {
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
-                  className="bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem px-3 py-2 font-medium focus:outline-none focus:border-ts-terracotta"
+                  className="bg-black/40 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2 font-medium focus:outline-none focus:border-white/30"
                 >
                   <option value="all">Semua Jenis Transaksi</option>
                   <option value="in">📥 Pemasukan (Cash In)</option>
@@ -571,7 +790,7 @@ export function LedgerPage() {
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem px-3 py-2 font-medium focus:outline-none focus:border-ts-terracotta"
+                  className="bg-black/40 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2 font-medium focus:outline-none focus:border-white/30"
                 >
                   <option value="all">Semua Status</option>
                   <option value="cleared">✅ Cleared / Sah</option>
@@ -579,38 +798,71 @@ export function LedgerPage() {
                 </select>
               </div>
 
-              {/* Search Bar */}
-              <div className="relative w-full lg:w-72">
-                <Search className="w-4 h-4 text-ts-muted absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  placeholder="Cari no. bukti, PO, mutasi, uraian..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem placeholder-ts-muted focus:outline-none focus:border-ts-terracotta"
-                />
+              {/* Search Bar & Export CSV */}
+              <div className="flex items-center gap-2">
+                <div className="relative w-full lg:w-64">
+                  <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Cari bukti, ref, uraian..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-8 pr-3 py-2 bg-black/40 border border-white/10 rounded-xl text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-white/30"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleExportAuditCsv}
+                  className="px-3 py-2 min-h-[36px] rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/10 transition-all flex items-center gap-1.5 shrink-0"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Unduh CSV</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Stats Mini Ribbon */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-[#121215] p-3 rounded-xl border border-white/[0.08]">
+                <span className="text-[10px] text-zinc-500 uppercase font-mono font-bold block">Total Transaksi</span>
+                <span className="text-base font-mono font-bold text-white">{filteredTxs.length} mutasi</span>
+              </div>
+              <div className="bg-[#121215] p-3 rounded-xl border border-white/[0.08]">
+                <span className="text-[10px] text-zinc-500 uppercase font-mono font-bold block">Total Kas Masuk (+)</span>
+                <span className="text-base font-mono font-bold text-white">+{formatRupiah(totalFilteredIn)}</span>
+              </div>
+              <div className="bg-[#121215] p-3 rounded-xl border border-white/[0.08]">
+                <span className="text-[10px] text-zinc-500 uppercase font-mono font-bold block">Total Kas Keluar (-)</span>
+                <span className="text-base font-mono font-bold text-rose-400">-{formatRupiah(totalFilteredOut)}</span>
+              </div>
+              <div className="bg-[#121215] p-3 rounded-xl border border-white/[0.08]">
+                <span className="text-[10px] text-zinc-500 uppercase font-mono font-bold block">Arus Kas Bersih</span>
+                <span className={`text-base font-mono font-bold ${netFilteredFlow >= 0 ? 'text-white' : 'text-rose-400'}`}>
+                  {netFilteredFlow >= 0 ? `+${formatRupiah(netFilteredFlow)}` : formatRupiah(netFilteredFlow)}
+                </span>
               </div>
             </div>
 
             {/* 7-Dimensional Audit Trail Table */}
-            <Card className="bg-ts-surface border-ts-border overflow-hidden">
+            <div className="bg-[#121215] border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-ts-hitam/70 border-b border-ts-borderDim text-ts-muted uppercase font-mono text-[10px]">
+                  <thead className="bg-black/50 border-b border-white/[0.08] text-zinc-400 uppercase font-mono text-[10px]">
                     <tr>
-                      <th className="py-3 px-4">No. Mutasi &amp; Tanggal</th>
-                      <th className="py-3 px-4">Unit &amp; Dompet</th>
-                      <th className="py-3 px-4">Kategori &amp; Jenis</th>
-                      <th className="py-3 px-4">Uraian / Deskripsi &amp; Ref ID</th>
-                      <th className="py-3 px-4">Bukti Nota / Dokumen</th>
-                      <th className="py-3 px-4 text-center">Status</th>
-                      <th className="py-3 px-4 text-right">Nominal Arus Kas</th>
+                      <th className="py-3.5 px-4">No. Mutasi &amp; Tanggal</th>
+                      <th className="py-3.5 px-4">Unit &amp; Dompet</th>
+                      <th className="py-3.5 px-4">Kategori &amp; Jenis</th>
+                      <th className="py-3.5 px-4">Uraian / Deskripsi &amp; Ref ID</th>
+                      <th className="py-3.5 px-4">Bukti Nota / Dokumen</th>
+                      <th className="py-3.5 px-4 text-center">Status</th>
+                      <th className="py-3.5 px-4 text-right">Nominal Arus Kas</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-ts-borderDim/50 text-ts-krem">
+                  <tbody className="divide-y divide-white/[0.05] text-zinc-200">
                     {filteredTxs.length === 0 ? (
                       <tr>
-                        <td colSpan="7" className="py-12 text-center text-ts-muted">
+                        <td colSpan={7} className="py-12 text-center text-zinc-500">
                           Tidak ditemukan mutasi kas yang sesuai kriteria pencarian / filter.
                         </td>
                       </tr>
@@ -618,35 +870,27 @@ export function LedgerPage() {
                       filteredTxs.map(tx => {
                         const isIn = tx.type === 'CASH_IN';
                         const isInter = tx.type === 'INTER_TRANSFER';
-                        const isInjection = tx.type === 'CAPITAL_INJECTION' || tx.category === 'capital_injection';
+                        const isInjection = tx.type === 'CAPITAL_INJECTION' || tx.category === 'capital_injection' || tx.category === 'personal_injection';
                         const isPrive = tx.type === 'FOUNDER_PRIVE' || tx.category === 'owner_prive';
 
                         return (
-                          <tr key={tx.id} className="hover:bg-ts-surfaceHover/60 transition-colors">
+                          <tr key={tx.id} className="hover:bg-white/[0.02] transition-colors">
                             {/* 1. Transaction No & Date */}
                             <td className="py-3.5 px-4 font-mono">
                               <div className="font-bold text-white">{tx.transactionNo}</div>
-                              <div className="text-[10px] text-ts-muted flex items-center gap-1 mt-0.5">
+                              <div className="text-[10px] text-zinc-500 flex items-center gap-1 mt-0.5">
                                 <Clock className="w-3 h-3" /> {tx.date}
                               </div>
                             </td>
 
                             {/* 2. Business Unit & Wallets */}
                             <td className="py-3.5 px-4">
-                              <span className={`inline-flex items-center text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
-                                tx.businessUnit === 'teestock'
-                                  ? 'bg-ts-terracotta/15 text-ts-terracotta border-ts-terracotta/30'
-                                  : tx.businessUnit === 'multigraph'
-                                  ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                                  : tx.businessUnit === 'holding'
-                                  ? 'bg-sky-500/15 text-sky-400 border-sky-500/30'
-                                  : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
-                              }`}>
+                              <span className="inline-flex items-center text-[10px] font-mono px-2 py-0.5 rounded font-bold bg-white/[0.08] text-zinc-200 border border-white/10 uppercase">
                                 {tx.businessUnit === 'teestock' ? 'TeeStock' :
                                  tx.businessUnit === 'multigraph' ? 'MultiGraph' :
                                  tx.businessUnit === 'holding' ? 'Holding' : 'Founder'}
                               </span>
-                              <div className="text-[10px] text-ts-muted font-mono mt-1 flex items-center gap-1">
+                              <div className="text-[10px] text-zinc-500 font-mono mt-1 flex items-center gap-1">
                                 <span className="truncate max-w-[110px]" title={tx.sourceWallet}>
                                   {tx.sourceWallet?.replace('wallet_', '')}
                                 </span>
@@ -659,21 +903,21 @@ export function LedgerPage() {
 
                             {/* 3. Category & Type */}
                             <td className="py-3.5 px-4">
-                              <span className="text-[11px] font-semibold text-ts-krem block">
+                              <span className="text-[11px] font-semibold text-zinc-200 block">
                                 {tx.category?.replace(/_/g, ' ').toUpperCase()}
                               </span>
-                              <span className="text-[9px] font-mono text-ts-muted">
-                                {isInter ? '⇄ INTER-TRANSFER' : isInjection ? '💼 EKUITAS MASUK' : isPrive ? '💸 PRIVE KELUAR' : isIn ? '📥 CASH IN' : '📤 CASH OUT'}
+                              <span className="text-[9px] font-mono text-zinc-500">
+                                {isInter ? '⇄ INTER-TRANSFER' : isInjection ? '💼 SUNTIK MODAL' : isPrive ? '💸 TARIK PRIVE' : isIn ? '📥 CASH IN' : '📤 CASH OUT'}
                               </span>
                             </td>
 
                             {/* 4. Description & Related ID */}
                             <td className="py-3.5 px-4 max-w-xs">
-                              <div className="font-medium text-ts-krem leading-snug line-clamp-2">
+                              <div className="font-medium text-zinc-200 leading-snug line-clamp-2">
                                 {tx.description}
                               </div>
                               {tx.relatedId && (
-                                <span className="font-mono text-[10px] text-sky-400 bg-sky-500/10 px-1.5 py-0.5 rounded border border-sky-500/20 inline-block mt-1">
+                                <span className="font-mono text-[10px] text-zinc-400 bg-white/5 px-1.5 py-0.5 rounded border border-white/10 inline-block mt-1">
                                   Ref: {tx.relatedId}
                                 </span>
                               )}
@@ -682,22 +926,22 @@ export function LedgerPage() {
                             {/* 5. Proof Receipt Ref */}
                             <td className="py-3.5 px-4">
                               {tx.proofReceiptRef ? (
-                                <span className="font-mono text-[10px] text-ts-krem/90 bg-ts-hitam/80 px-2 py-1 rounded border border-ts-borderDim flex items-center gap-1 w-max">
-                                  <FileText className="w-3 h-3 text-ts-terracotta" /> {tx.proofReceiptRef}
+                                <span className="font-mono text-[10px] text-zinc-300 bg-black/40 px-2 py-1 rounded border border-white/10 flex items-center gap-1 w-max">
+                                  <FileText className="w-3 h-3 text-zinc-400" /> {tx.proofReceiptRef}
                                 </span>
                               ) : (
-                                <span className="text-[10px] text-ts-muted italic">- Tanpa Nota -</span>
+                                <span className="text-[10px] text-zinc-600 italic">- Tanpa Nota -</span>
                               )}
                             </td>
 
                             {/* 6. Settlement Status */}
                             <td className="py-3.5 px-4 text-center">
                               {tx.settlementStatus === 'pending' ? (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                                <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-zinc-400 border border-white/10">
                                   ⏳ Pending
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                                <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white border border-white/20 font-bold">
                                   <CheckCircle2 className="w-3 h-3" /> Cleared
                                 </span>
                               )}
@@ -706,10 +950,9 @@ export function LedgerPage() {
                             {/* 7. Amount */}
                             <td className="py-3.5 px-4 text-right font-mono font-bold text-sm whitespace-nowrap">
                               <span className={
-                                isInter ? 'text-sky-400' :
-                                isInjection ? 'text-amber-400' :
-                                isPrive ? 'text-rose-400' :
-                                isIn ? 'text-emerald-400' : 'text-rose-400'
+                                isInter ? 'text-zinc-200' :
+                                isInjection || isIn ? 'text-white' :
+                                'text-rose-400'
                               }>
                                 {isInter ? '⇄ ' : isIn || isInjection ? '+' : '-'}{formatRupiah(tx.amount)}
                               </span>
@@ -721,7 +964,7 @@ export function LedgerPage() {
                   </tbody>
                 </table>
               </div>
-            </Card>
+            </div>
           </div>
         )}
 
@@ -733,10 +976,10 @@ export function LedgerPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <PieChart className="w-4 h-4 text-emerald-400" />
+                  <PieChart className="w-4 h-4 text-zinc-400" />
                   Laporan Laba Rugi Unit (Unit Economics P&amp;L)
                 </h2>
-                <p className="text-xs text-ts-muted mt-0.5">
+                <p className="text-xs text-zinc-400 mt-0.5">
                   Analisis kinerja operasional riil per unit bisnis. Standar CFO: Margin bersih ritel apparel wajib &ge;35%.
                 </p>
               </div>
@@ -746,111 +989,111 @@ export function LedgerPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
               {/* P&L TeeStock */}
-              <Card className="bg-ts-surface border-ts-border p-5 space-y-4">
-                <div className="flex items-center justify-between border-b border-ts-borderDim pb-3">
+              <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 space-y-4 shadow-2xl">
+                <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
                   <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-ts-terracotta" />
-                    <h3 className="text-sm font-black text-white">TeeStock Apparel (Ritel &amp; POD)</h3>
+                    <span className="w-2.5 h-2.5 rounded-full bg-white" />
+                    <h3 className="text-sm font-bold text-white">TeeStock Apparel (Ritel &amp; POD)</h3>
                   </div>
-                  <Badge variant="outline" className="font-mono text-xs border-ts-terracotta/40 text-ts-terracotta">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/10 text-white border border-white/20">
                     Unit B2C
-                  </Badge>
+                  </span>
                 </div>
 
                 <div className="space-y-3 text-xs font-mono">
                   {/* Revenue */}
-                  <div className="flex justify-between items-center py-1.5 border-b border-ts-borderDim/50">
-                    <span className="text-ts-krem font-sans font-medium">1. Pendapatan Penjualan Kaos</span>
-                    <span className="text-emerald-400 font-bold">{formatRupiah(teestockPnl?.revenue || 0)}</span>
+                  <div className="flex justify-between items-center py-1.5 border-b border-white/[0.06]">
+                    <span className="text-zinc-300 font-sans font-medium">1. Pendapatan Penjualan Kaos</span>
+                    <span className="text-white font-bold">{formatRupiah(teestockPnl?.revenue || 0)}</span>
                   </div>
 
                   {/* COGS */}
                   <div className="space-y-1.5 pl-3 border-l-2 border-rose-500/40">
-                    <div className="flex justify-between text-ts-muted">
+                    <div className="flex justify-between text-zinc-400">
                       <span className="font-sans">Kaos Polos NSA Softstyle / 24s:</span>
                       <span>{formatRupiah(456000)}</span>
                     </div>
-                    <div className="flex justify-between text-ts-muted">
+                    <div className="flex justify-between text-zinc-400">
                       <span className="font-sans">Jasa Cetak DTF Roll 58cm Senen:</span>
                       <span>{formatRupiah(140000)}</span>
                     </div>
-                    <div className="flex justify-between text-ts-muted">
+                    <div className="flex justify-between text-zinc-400">
                       <span className="font-sans">Paket Kemasan MultiGraph:</span>
                       <span>{formatRupiah(60000)}</span>
                     </div>
-                    <div className="flex justify-between text-rose-400 font-bold pt-1 border-t border-ts-borderDim/30">
+                    <div className="flex justify-between text-rose-400 font-bold pt-1 border-t border-white/[0.06]">
                       <span className="font-sans">Total HPP / COGS:</span>
                       <span>-{formatRupiah(teestockPnl?.cogs || 0)}</span>
                     </div>
                   </div>
 
                   {/* Gross Profit */}
-                  <div className="flex justify-between items-center py-2 bg-ts-hitam/60 px-3 rounded-lg border border-ts-borderDim">
+                  <div className="flex justify-between items-center py-2.5 bg-black/40 px-3.5 rounded-xl border border-white/[0.08]">
                     <span className="text-white font-sans font-bold">Laba Kotor (Gross Profit)</span>
                     <div className="text-right">
                       <span className="text-white font-bold block">{formatRupiah(teestockPnl?.grossProfit || 0)}</span>
-                      <span className="text-[10px] text-emerald-400 font-bold">Gross Margin: {teestockPnl?.grossMarginPercent}%</span>
+                      <span className="text-[10px] text-zinc-400 font-bold">Gross Margin: {teestockPnl?.grossMarginPercent}%</span>
                     </div>
                   </div>
 
                   {/* OPEX */}
-                  <div className="space-y-1.5 pl-3 border-l-2 border-amber-500/40">
-                    <div className="flex justify-between text-ts-muted">
+                  <div className="space-y-1.5 pl-3 border-l-2 border-white/20">
+                    <div className="flex justify-between text-zinc-400">
                       <span className="font-sans">Listrik Heat Press 155°C &amp; Kuota:</span>
                       <span>Rp 0</span>
                     </div>
-                    <div className="flex justify-between text-ts-muted">
+                    <div className="flex justify-between text-zinc-400">
                       <span className="font-sans">Fee Midtrans &amp; Packing Tape:</span>
                       <span>Rp 0</span>
                     </div>
-                    <div className="flex justify-between text-amber-400 font-bold pt-1 border-t border-ts-borderDim/30">
+                    <div className="flex justify-between text-zinc-300 font-bold pt-1 border-t border-white/[0.06]">
                       <span className="font-sans">Total Beban OPEX:</span>
                       <span>-{formatRupiah(teestockPnl?.opex || 0)}</span>
                     </div>
                   </div>
 
                   {/* Net Profit */}
-                  <div className="flex justify-between items-center py-3 bg-emerald-500/10 px-3 rounded-xl border border-emerald-500/30">
+                  <div className="flex justify-between items-center py-3 bg-white/[0.04] px-3.5 rounded-xl border border-white/10">
                     <div>
                       <span className="text-white font-sans font-bold block text-sm">Laba Bersih Operasional</span>
-                      <span className="text-[10px] text-ts-muted font-sans">Sebelum alokasi dividen / prive</span>
+                      <span className="text-[10px] text-zinc-400 font-sans">Sebelum alokasi dividen / prive</span>
                     </div>
                     <div className="text-right">
-                      <span className={`text-base font-bold block ${teestockPnl?.netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      <span className={`text-base font-bold block ${teestockPnl?.netProfit >= 0 ? 'text-white' : 'text-rose-400'}`}>
                         {formatRupiah(teestockPnl?.netProfit || 0)}
                       </span>
-                      <span className={`text-[10px] font-bold ${teestockPnl?.netMarginPercent >= 35 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                      <span className={`text-[10px] font-bold ${teestockPnl?.netMarginPercent >= 35 ? 'text-white' : 'text-zinc-400'}`}>
                         Net Margin: {teestockPnl?.netMarginPercent}%
                       </span>
                     </div>
                   </div>
                 </div>
-              </Card>
+              </div>
 
               {/* P&L MultiGraph */}
-              <Card className="bg-ts-surface border-ts-border p-5 space-y-4">
-                <div className="flex items-center justify-between border-b border-ts-borderDim pb-3">
+              <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 space-y-4 shadow-2xl">
+                <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
                   <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-emerald-500" />
-                    <h3 className="text-sm font-black text-white">MultiGraph Printing &amp; Packaging</h3>
+                    <span className="w-2.5 h-2.5 rounded-full bg-zinc-400" />
+                    <h3 className="text-sm font-bold text-white">MultiGraph Printing &amp; Packaging</h3>
                   </div>
-                  <Badge variant="outline" className="font-mono text-xs border-emerald-500/40 text-emerald-400">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/10 text-white border border-white/20">
                     Unit B2B
-                  </Badge>
+                  </span>
                 </div>
 
                 <div className="space-y-3 text-xs font-mono">
                   {/* Revenue */}
-                  <div className="space-y-1.5 pl-3 border-l-2 border-emerald-500/40">
-                    <div className="flex justify-between text-ts-muted">
+                  <div className="space-y-1.5 pl-3 border-l-2 border-white/30">
+                    <div className="flex justify-between text-zinc-400">
                       <span className="font-sans">Order Klien B2B (DP Stiker/Box):</span>
                       <span>{formatRupiah(150000)}</span>
                     </div>
-                    <div className="flex justify-between text-ts-muted">
+                    <div className="flex justify-between text-zinc-400">
                       <span className="font-sans">Pasokan Kemasan Internal ke TeeStock:</span>
                       <span>{formatRupiah(60000)}</span>
                     </div>
-                    <div className="flex justify-between text-emerald-400 font-bold pt-1 border-t border-ts-borderDim/30">
+                    <div className="flex justify-between text-white font-bold pt-1 border-t border-white/[0.06]">
                       <span className="font-sans">Total Pendapatan Maklon:</span>
                       <span>{formatRupiah(multigraphPnl?.revenue || 0)}</span>
                     </div>
@@ -858,58 +1101,58 @@ export function LedgerPage() {
 
                   {/* COGS */}
                   <div className="space-y-1.5 pl-3 border-l-2 border-rose-500/40">
-                    <div className="flex justify-between text-ts-muted">
+                    <div className="flex justify-between text-zinc-400">
                       <span className="font-sans">Bahan Polymailer Grosir 100 pcs:</span>
                       <span>{formatRupiah(95000)}</span>
                     </div>
-                    <div className="flex justify-between text-ts-muted">
+                    <div className="flex justify-between text-zinc-400">
                       <span className="font-sans">Bahan Kertas Hangtag &amp; Stiker:</span>
                       <span>Rp 0</span>
                     </div>
-                    <div className="flex justify-between text-rose-400 font-bold pt-1 border-t border-ts-borderDim/30">
+                    <div className="flex justify-between text-rose-400 font-bold pt-1 border-t border-white/[0.06]">
                       <span className="font-sans">Total HPP Bahan Baku:</span>
                       <span>-{formatRupiah(multigraphPnl?.cogs || 0)}</span>
                     </div>
                   </div>
 
                   {/* Gross Profit */}
-                  <div className="flex justify-between items-center py-2 bg-ts-hitam/60 px-3 rounded-lg border border-ts-borderDim">
+                  <div className="flex justify-between items-center py-2.5 bg-black/40 px-3.5 rounded-xl border border-white/[0.08]">
                     <span className="text-white font-sans font-bold">Laba Kotor Maklon</span>
                     <div className="text-right">
                       <span className="text-white font-bold block">{formatRupiah(multigraphPnl?.grossProfit || 0)}</span>
-                      <span className="text-[10px] text-emerald-400 font-bold">Gross Margin: {multigraphPnl?.grossMarginPercent}%</span>
+                      <span className="text-[10px] text-zinc-400 font-bold">Gross Margin: {multigraphPnl?.grossMarginPercent}%</span>
                     </div>
                   </div>
 
                   {/* OPEX */}
-                  <div className="space-y-1.5 pl-3 border-l-2 border-amber-500/40">
-                    <div className="flex justify-between text-ts-muted">
+                  <div className="space-y-1.5 pl-3 border-l-2 border-white/20">
+                    <div className="flex justify-between text-zinc-400">
                       <span className="font-sans">Ongkir Ekspedisi Bahan Grosir:</span>
                       <span>Rp 0</span>
                     </div>
-                    <div className="flex justify-between text-amber-400 font-bold pt-1 border-t border-ts-borderDim/30">
+                    <div className="flex justify-between text-zinc-300 font-bold pt-1 border-t border-white/[0.06]">
                       <span className="font-sans">Total Beban OPEX:</span>
                       <span>-{formatRupiah(multigraphPnl?.opex || 0)}</span>
                     </div>
                   </div>
 
                   {/* Net Profit */}
-                  <div className="flex justify-between items-center py-3 bg-emerald-500/10 px-3 rounded-xl border border-emerald-500/30">
+                  <div className="flex justify-between items-center py-3 bg-white/[0.04] px-3.5 rounded-xl border border-white/10">
                     <div>
                       <span className="text-white font-sans font-bold block text-sm">Laba Bersih Maklon</span>
-                      <span className="text-[10px] text-ts-muted font-sans">Margin sehat B2B supply</span>
+                      <span className="text-[10px] text-zinc-400 font-sans">Margin sehat B2B supply</span>
                     </div>
                     <div className="text-right">
-                      <span className={`text-base font-bold block ${multigraphPnl?.netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      <span className={`text-base font-bold block ${multigraphPnl?.netProfit >= 0 ? 'text-white' : 'text-rose-400'}`}>
                         {formatRupiah(multigraphPnl?.netProfit || 0)}
                       </span>
-                      <span className="text-[10px] font-bold text-emerald-400">
+                      <span className="text-[10px] font-bold text-white">
                         Net Margin: {multigraphPnl?.netMarginPercent}%
                       </span>
                     </div>
                   </div>
                 </div>
-              </Card>
+              </div>
             </div>
           </div>
         )}
@@ -922,10 +1165,10 @@ export function LedgerPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-amber-400" />
+                  <Activity className="w-4 h-4 text-zinc-400" />
                   CFO AI Runway &amp; Financial Health Diagnostics
                 </h2>
-                <p className="text-xs text-ts-muted mt-0.5">
+                <p className="text-xs text-zinc-400 mt-0.5">
                   Pemantauan detak jantung kas harian (Daily Burn Rate), kapasitas bertahan hidup (Cash Runway), dan mitigasi risiko kehabisan uang kas.
                 </p>
               </div>
@@ -933,91 +1176,91 @@ export function LedgerPage() {
 
             {/* 3 Metric Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="bg-ts-surface border-ts-border p-5">
-                <span className="text-xs text-ts-muted font-medium">Daily Burn Rate (Rata-Rata)</span>
+              <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 shadow-2xl">
+                <span className="text-xs text-zinc-400 font-medium">Daily Burn Rate (Rata-Rata)</span>
                 <div className="text-2xl font-mono font-black text-rose-400 mt-1">
                   {formatRupiah(runwayData?.dailyBurnRate || 0)} / hari
                 </div>
-                <p className="text-[10px] text-ts-muted mt-2">
+                <p className="text-[10px] text-zinc-500 mt-2">
                   Pengeluaran operasional dan belanja bahan 30 hari terakhir dibagi 30 hari kalender.
                 </p>
-              </Card>
+              </div>
 
-              <Card className="bg-ts-surface border-ts-border p-5">
-                <span className="text-xs text-ts-muted font-medium">Cash Runway (Kapasitas Bertahan)</span>
-                <div className="text-2xl font-mono font-black text-emerald-400 mt-1">
+              <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 shadow-2xl">
+                <span className="text-xs text-zinc-400 font-medium">Cash Runway (Kapasitas Bertahan)</span>
+                <div className="text-2xl font-mono font-black text-white mt-1">
                   {runwayData?.runwayMonths || '99+'} Bulan
                 </div>
-                <p className="text-[10px] text-ts-muted mt-2">
+                <p className="text-[10px] text-zinc-500 mt-2">
                   Berapa lama kas holding bertahan jika sama sekali tidak ada omset masuk baru.
                 </p>
-              </Card>
+              </div>
 
-              <Card className="bg-ts-surface border-ts-border p-5">
-                <span className="text-xs text-ts-muted font-medium">CFO Financial Health Score</span>
-                <div className="text-2xl font-mono font-black text-sky-400 mt-1 flex items-center gap-2">
-                  88 / 100 <span className="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">SEHAT</span>
+              <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 shadow-2xl">
+                <span className="text-xs text-zinc-400 font-medium">CFO Financial Health Score</span>
+                <div className="text-2xl font-mono font-black text-white mt-1 flex items-center gap-2">
+                  88 / 100 <span className="text-xs px-2 py-0.5 rounded-md bg-white/10 text-white border border-white/20">SEHAT</span>
                 </div>
-                <p className="text-[10px] text-ts-muted mt-2">
+                <p className="text-[10px] text-zinc-500 mt-2">
                   Kriteria: Nol utang bank, kas operasional positif, pemisahan rekening disiplin 100%.
                 </p>
-              </Card>
+              </div>
             </div>
 
             {/* CFO AI Advisory & Action List */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <Card className="bg-ts-surface border-ts-border p-5 space-y-3">
+              <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 space-y-3 shadow-2xl">
                 <div className="flex items-center gap-2 text-sm font-bold text-white">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <Sparkles className="w-4 h-4 text-zinc-400" />
                   Rekomendasi Strategis CFO untuk Rizky (Founder)
                 </div>
-                <ul className="space-y-2.5 text-xs text-ts-krem/90">
+                <ul className="space-y-2.5 text-xs text-zinc-300">
                   <li className="flex items-start gap-2">
-                    <span className="text-emerald-400 font-bold">&bull;</span>
+                    <span className="text-white font-bold">&bull;</span>
                     <span><strong>Pertahankan Cash Runway &ge; 6 Bulan:</strong> Jangan pernah menghabiskan kas operasional TeeStock untuk beli aset besar (mesin) sebelum kas cadangan terkumpul di Holding Treasury.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-emerald-400 font-bold">&bull;</span>
+                    <span className="text-white font-bold">&bull;</span>
                     <span><strong>Disiplin HPP TeeStock:</strong> Kaos polos NSA 24s Rp 38.000 + cetak DTF Rp 10.000 + unboxing pack MultiGraph Rp 3.000 + buffer defect 5% (Rp 2.500) = HPP Rp 53.500. Harga jual minimum Rp 99.000 (Margin 46%).</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-emerald-400 font-bold">&bull;</span>
+                    <span className="text-white font-bold">&bull;</span>
                     <span><strong>Aturan Prive:</strong> Prive hanya boleh ditarik maksimal 30% dari laba bersih kas yang sudah <em>cleared</em>, bukan dari omset bruto atau dari DP klien yang belum selesai dikerjakan.</span>
                   </li>
                 </ul>
-              </Card>
+              </div>
 
-              <Card className="bg-ts-surface border-ts-border p-5 space-y-3">
+              <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 space-y-3 shadow-2xl">
                 <div className="flex items-center gap-2 text-sm font-bold text-white">
                   <AlertTriangle className="w-4 h-4 text-rose-400" />
                   Mitigasi Risiko Keuangan &amp; Early Warning System
                 </div>
                 <div className="space-y-2 text-xs">
-                  <div className="p-2.5 rounded-lg bg-ts-hitam/60 border border-ts-borderDim flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <div className="p-2.5 rounded-xl bg-black/40 border border-white/[0.06] flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-white shrink-0 mt-0.5" />
                     <div>
                       <span className="font-bold text-white block">Status Rekening: Terisolasi 100%</span>
-                      <span className="text-ts-muted text-[11px]">Tidak ada transaksi pribadi Rizky yang bercampur di kas operasional.</span>
+                      <span className="text-zinc-400 text-[11px]">Tidak ada transaksi pribadi Rizky yang bercampur di kas operasional.</span>
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-lg bg-ts-hitam/60 border border-ts-borderDim flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <div className="p-2.5 rounded-xl bg-black/40 border border-white/[0.06] flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-white shrink-0 mt-0.5" />
                     <div>
                       <span className="font-bold text-white block">Utang Berbunga: Rp 0 (Nol Beban Bunga)</span>
-                      <span className="text-ts-muted text-[11px]">Seluruh permodalan murni bootstrapped tanpa cicilan bank atau pinjaman berbunga.</span>
+                      <span className="text-zinc-400 text-[11px]">Seluruh permodalan murni bootstrapped tanpa cicilan bank atau pinjaman berbunga.</span>
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-lg bg-ts-hitam/60 border border-ts-borderDim flex items-start gap-2">
-                    <Clock className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+                  <div className="p-2.5 rounded-xl bg-black/40 border border-white/[0.06] flex items-start gap-2">
+                    <Clock className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
                     <div>
                       <span className="font-bold text-white block">Settlement QRIS / Gateway</span>
-                      <span className="text-ts-muted text-[11px]">Seluruh settlement masuk secara tertib H+1 langsung ke rekening BCA Bisnis.</span>
+                      <span className="text-zinc-400 text-[11px]">Seluruh settlement masuk secara tertib H+1 langsung ke rekening BCA Bisnis.</span>
                     </div>
                   </div>
                 </div>
-              </Card>
+              </div>
             </div>
           </div>
         )}
@@ -1027,14 +1270,13 @@ export function LedgerPage() {
         {/* ========================================================================= */}
         {activeTab === 'valuation' && (
           <div className="space-y-6">
-            {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-emerald-400" />
+                  <TrendingUp className="w-4 h-4 text-zinc-400" />
                   Valuasi Ekuitas &amp; Pertumbuhan MultiGraph Holding
                 </h2>
-                <p className="text-xs text-ts-muted mt-0.5">
+                <p className="text-xs text-zinc-400 mt-0.5">
                   Penilaian objektif nilai ekosistem bisnis menggabungkan aset riil (NAV), kelipatan laba bersih (SDE Multiple), dan skala omset disetahunkan.
                 </p>
               </div>
@@ -1049,6 +1291,7 @@ export function LedgerPage() {
                 ].map(s => (
                   <button
                     key={s.id}
+                    type="button"
                     onClick={() => setValuationScenario(s.id)}
                     className={`px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold transition-all ${
                       valuationScenario === s.id
@@ -1076,7 +1319,7 @@ export function LedgerPage() {
               const dynamicGrowthPercent = (((dynamicWealthGrowth) / (businessValuation?.netFounderEquity || 4500000)) * 100).toFixed(1);
 
               return (
-                <div className="bg-[#121215] border border-white/20 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+                <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-6 shadow-2xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-80 h-80 bg-white/[0.02] rounded-full blur-3xl pointer-events-none" />
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
@@ -1145,8 +1388,6 @@ export function LedgerPage() {
 
             {/* 3 Detailed Valuation Pillars */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              
-              {/* Pillar 1: Net Asset Value */}
               <div className="bg-[#121215] border border-white/[0.08] hover:border-white/20 rounded-2xl p-5 space-y-3 transition-all">
                 <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
                   <span className="text-xs font-bold text-white flex items-center gap-1.5">
@@ -1176,7 +1417,6 @@ export function LedgerPage() {
                 </div>
               </div>
 
-              {/* Pillar 2: SDE Multiple Valuation */}
               <div className="bg-[#121215] border border-white/[0.08] hover:border-white/20 rounded-2xl p-5 space-y-3 transition-all">
                 <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
                   <span className="text-xs font-bold text-white flex items-center gap-1.5">
@@ -1206,7 +1446,6 @@ export function LedgerPage() {
                 </div>
               </div>
 
-              {/* Pillar 3: Revenue Multiple */}
               <div className="bg-[#121215] border border-white/[0.08] hover:border-white/20 rounded-2xl p-5 space-y-3 transition-all">
                 <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
                   <span className="text-xs font-bold text-white flex items-center gap-1.5">
@@ -1237,7 +1476,7 @@ export function LedgerPage() {
               </div>
             </div>
 
-            {/* Holding Valuation Roadmap & Milestone Progress */}
+            {/* Holding Valuation Roadmap */}
             <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-6 space-y-5">
               <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
                 <div>
@@ -1296,67 +1535,13 @@ export function LedgerPage() {
                 ))}
               </div>
             </div>
-
-            {/* Capital Velocity & Cash Conversion Cycle */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 space-y-3">
-                <span className="text-xs font-bold text-white flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-zinc-400" />
-                  Kecepatan Perputaran Modal (Cash Conversion Cycle)
-                </span>
-                <p className="text-xs text-zinc-400 leading-relaxed">
-                  Dalam model hybrid On-Demand TeeStock dan maklon MultiGraph, siklus uang berputar sangat cepat:
-                </p>
-                <div className="grid grid-cols-3 gap-2 text-center pt-2">
-                  <div className="bg-black/40 p-2.5 rounded-lg border border-white/[0.08]">
-                    <span className="text-[10px] text-zinc-500 block font-mono">Beli Kaos &amp; DTF</span>
-                    <span className="text-xs font-mono font-bold text-white mt-1 block">Hari ke-0</span>
-                  </div>
-                  <div className="bg-black/40 p-2.5 rounded-lg border border-white/[0.08]">
-                    <span className="text-[10px] text-zinc-500 block font-mono">Press &amp; Kirim</span>
-                    <span className="text-xs font-mono font-bold text-white mt-1 block">Hari ke-1</span>
-                  </div>
-                  <div className="bg-black/40 p-2.5 rounded-lg border border-white/[0.08]">
-                    <span className="text-[10px] text-zinc-500 block font-mono">Kas Masuk Rekening</span>
-                    <span className="text-xs font-mono font-bold text-white mt-1 block">Hari ke-2 (H+1)</span>
-                  </div>
-                </div>
-                <div className="text-[11px] text-zinc-400 font-mono text-center pt-1 flex items-center justify-center gap-1">
-                  <span>⚡ Siklus Kas Sempurna: Hanya 48 jam modal kembali menjadi uang kas plus laba!</span>
-                </div>
-              </div>
-
-              <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 space-y-3">
-                <span className="text-xs font-bold text-white flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-zinc-400" />
-                  Pertahanan Ekuitas Founder (Anti-Dilusi &amp; Anti-Utang)
-                </span>
-                <p className="text-xs text-zinc-400 leading-relaxed">
-                  BisnisHub OS dirancang agar Rizky memiliki <strong>100% kepemilikan saham tanpa dilusi</strong>:
-                </p>
-                <ul className="space-y-2 text-xs text-zinc-300 pl-1">
-                  <li className="flex items-center gap-2">
-                    <span className="text-white font-bold">&check;</span>
-                    <span>100% Saham dimiliki Sole Founder Rizky (Nol utang pihak ketiga).</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-white font-bold">&check;</span>
-                    <span>Pertumbuhan organik dibiayai dari laba ditahan (Retained Earnings).</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-white font-bold">&check;</span>
-                    <span>Valuasi meningkat seiring naiknya aset mesin in-house &amp; volume order.</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
           </div>
         )}
 
       </div>
 
       {/* ========================================================================= */}
-      {/* MODAL INPUT TRANSAKSI MULTIFUNGSI (CFO GRADE)                             */}
+      {/* MODAL INPUT TRANSAKSI MULTIFUNGSI (CFO GRADE & VALIDATED)                 */}
       {/* ========================================================================= */}
       <Modal
         isOpen={isModalOpen}
@@ -1364,7 +1549,7 @@ export function LedgerPage() {
         title={
           modalMode === 'cash_in' ? 'Catat Kas Masuk (Pemasukan Omset / Maklon)' :
           modalMode === 'cash_out' ? 'Catat Kas Keluar (Belanja Bahan / OPEX / Aset)' :
-          modalMode === 'inter_transfer' ? 'Transfer Antar-Unit Bisnis (TeeStock &harr; MultiGraph)' :
+          modalMode === 'inter_transfer' ? 'Transfer Antar-Unit Bisnis (TeeStock ⇄ MultiGraph ⇄ Holding)' :
           'Transaksi Ekuitas Founder (Injeksi Modal / Prive)'
         }
         maxWidth="max-w-xl"
@@ -1372,154 +1557,298 @@ export function LedgerPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           
           {/* Mode Selector Tabs inside Modal */}
-          <div className="grid grid-cols-4 gap-1 p-1 bg-ts-hitam rounded-lg border border-ts-borderDim text-[11px] font-bold">
+          <div className="grid grid-cols-4 gap-1 p-1 bg-black/60 rounded-xl border border-white/10 text-[11px] font-bold">
             <button
               type="button"
               onClick={() => handleOpenAction('cash_in')}
-              className={`py-1.5 rounded text-center transition-all ${modalMode === 'cash_in' ? 'bg-emerald-600 text-white shadow' : 'text-ts-muted hover:text-white'}`}
+              className={`py-2 rounded-lg text-center transition-all ${
+                modalMode === 'cash_in' 
+                  ? 'bg-white text-zinc-950 shadow-sm' 
+                  : 'text-zinc-400 hover:text-white'
+              }`}
             >
               + Masuk
             </button>
             <button
               type="button"
               onClick={() => handleOpenAction('cash_out')}
-              className={`py-1.5 rounded text-center transition-all ${modalMode === 'cash_out' ? 'bg-rose-600 text-white shadow' : 'text-ts-muted hover:text-white'}`}
+              className={`py-2 rounded-lg text-center transition-all ${
+                modalMode === 'cash_out' 
+                  ? 'bg-white text-zinc-950 shadow-sm' 
+                  : 'text-zinc-400 hover:text-white'
+              }`}
             >
               - Keluar
             </button>
             <button
               type="button"
               onClick={() => handleOpenAction('inter_transfer')}
-              className={`py-1.5 rounded text-center transition-all ${modalMode === 'inter_transfer' ? 'bg-sky-600 text-white shadow' : 'text-ts-muted hover:text-white'}`}
+              className={`py-2 rounded-lg text-center transition-all ${
+                modalMode === 'inter_transfer' 
+                  ? 'bg-white text-zinc-950 shadow-sm' 
+                  : 'text-zinc-400 hover:text-white'
+              }`}
             >
               ⇄ Transfer
             </button>
             <button
               type="button"
-              onClick={() => handleOpenAction('founder_equity')}
-              className={`py-1.5 rounded text-center transition-all ${modalMode === 'founder_equity' ? 'bg-amber-600 text-white shadow' : 'text-ts-muted hover:text-white'}`}
+              onClick={() => handleOpenAction('founder_equity', 'injection')}
+              className={`py-2 rounded-lg text-center transition-all ${
+                modalMode === 'founder_equity' 
+                  ? 'bg-white text-zinc-950 shadow-sm' 
+                  : 'text-zinc-400 hover:text-white'
+              }`}
             >
               💼 Ekuitas
             </button>
           </div>
 
-          {/* Business Unit & Category Row */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
-                Unit Bisnis Penanggung Jawab
-              </label>
-              <select
-                value={txUnit}
-                onChange={(e) => setTxUnit(e.target.value)}
-                className="w-full bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem px-3 py-2 focus:outline-none focus:border-ts-terracotta"
+          {/* Sub-mode for Founder Equity */}
+          {modalMode === 'founder_equity' && (
+            <div className="grid grid-cols-2 gap-2 p-1 bg-black/40 rounded-xl border border-white/10 text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => {
+                  setEquityMode('injection');
+                  setTxType('CAPITAL_INJECTION');
+                  setCategory('capital_injection');
+                  setSourceWallet('wallet_founder');
+                  setDestinationWallet('wallet_teestock');
+                  setDescription('Injeksi modal kerja founder ke operasional TeeStock');
+                }}
+                className={`py-2 rounded-lg text-center transition-all ${
+                  equityMode === 'injection'
+                    ? 'bg-white text-zinc-950 shadow-sm'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
               >
-                <option value="teestock">👕 TeeStock Apparel</option>
-                <option value="multigraph">📦 MultiGraph Printing</option>
-                <option value="holding">🏛️ Holding Treasury</option>
-                <option value="founder">💼 Ekuitas Founder</option>
-              </select>
+                + Suntik Modal (Cash In)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEquityMode('prive');
+                  setTxType('FOUNDER_PRIVE');
+                  setCategory('owner_prive');
+                  setSourceWallet('wallet_teestock');
+                  setDestinationWallet('wallet_founder');
+                  setDescription('Penarikan prive laba founder');
+                }}
+                className={`py-2 rounded-lg text-center transition-all ${
+                  equityMode === 'prive'
+                    ? 'bg-white text-zinc-950 shadow-sm'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                - Tarik Prive (Cash Out)
+              </button>
+            </div>
+          )}
+
+          {/* Business Unit & Category Row (For Cash In / Cash Out) */}
+          {(modalMode === 'cash_in' || modalMode === 'cash_out') && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-semibold text-zinc-300 block mb-1">
+                  Unit Bisnis Penanggung Jawab
+                </label>
+                <select
+                  value={txUnit}
+                  onChange={(e) => {
+                    const u = e.target.value;
+                    setTxUnit(u);
+                    if (modalMode === 'cash_in') {
+                      setDestinationWallet(u === 'multigraph' ? 'wallet_multigraph' : u === 'holding' ? 'wallet_holding' : 'wallet_teestock');
+                      setCategory(u === 'multigraph' ? 'b2b_packaging_dp' : u === 'holding' ? 'holding_profit_allocation' : 'sales_retail');
+                    } else if (modalMode === 'cash_out') {
+                      setSourceWallet(u === 'multigraph' ? 'wallet_multigraph' : u === 'holding' ? 'wallet_holding' : 'wallet_teestock');
+                      setCategory(u === 'multigraph' ? 'raw_materials_packaging' : 'blank_garment');
+                    }
+                  }}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2.5 focus:outline-none focus:border-white/30"
+                >
+                  <option value="teestock">👕 TeeStock Apparel</option>
+                  <option value="multigraph">📦 MultiGraph Printing</option>
+                  <option value="holding">🏛️ Holding Treasury</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-zinc-300 block mb-1">
+                  Kategori Transaksi (COA)
+                </label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2.5 focus:outline-none focus:border-white/30"
+                >
+                  {transactionCategories
+                    ?.filter(c => (c.unit === txUnit || c.unit === 'all') && (modalMode === 'cash_in' ? c.type === 'CASH_IN' : c.type === 'CASH_OUT'))
+                    .map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.label}</option>
+                    ))}
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Amount Input with Quick Presets */}
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-semibold text-zinc-300 block mb-1">
+                  Nominal Transaksi (Rp)
+                </label>
+                <input
+                  type="number"
+                  min="1000"
+                  value={amount}
+                  onChange={(e) => setAmount(Number(e.target.value))}
+                  required
+                  className="w-full bg-black/50 border border-white/10 rounded-xl text-sm font-mono font-bold text-white px-3 py-2 focus:outline-none focus:border-white/30"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-zinc-300 block mb-1">
+                  Status Settlement Kas
+                </label>
+                <select
+                  value={settlementStatus}
+                  onChange={(e) => setSettlementStatus(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2.5 focus:outline-none focus:border-white/30"
+                >
+                  <option value="cleared">✅ Cleared (Sudah Masuk/Keluar)</option>
+                  <option value="pending">⏳ Pending (Menunggu Kliring H+1)</option>
+                </select>
+              </div>
             </div>
 
+            {/* Quick Nominal Presets */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+              {[50000, 100000, 250000, 500000, 1000000, 2500000, 5000000].map(val => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setAmount(val)}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all shrink-0 ${
+                    amount === val
+                      ? 'bg-white text-zinc-950 font-bold shadow-sm'
+                      : 'bg-white/5 text-zinc-400 hover:text-white border border-white/10'
+                  }`}
+                >
+                  {val >= 1000000 ? `${val / 1000000} Jt` : `${val / 1000}k`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Wallets Source & Destination Dropdowns */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* Source Wallet / Channel */}
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
-                Kategori Transaksi (COA)
+              <label className="text-xs font-semibold text-zinc-300 block mb-1">
+                Rekening / Sumber Dana Asal:
               </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem px-3 py-2 focus:outline-none focus:border-ts-terracotta"
-              >
-                {transactionCategories
-                  ?.filter(c => c.unit === txUnit || c.unit === 'all' || modalMode === 'founder_equity' || modalMode === 'inter_transfer')
-                  .map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.label}</option>
+              {modalMode === 'cash_in' ? (
+                <select
+                  value={sourceWallet}
+                  onChange={(e) => setSourceWallet(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2.5 focus:outline-none focus:border-white/30 font-mono"
+                >
+                  {EXTERNAL_INCOMING_SOURCES.map(s => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
                   ))}
-              </select>
+                </select>
+              ) : modalMode === 'founder_equity' && equityMode === 'injection' ? (
+                <div className="p-2.5 rounded-xl bg-black/50 border border-white/10 text-xs text-zinc-300 font-mono">
+                  Rekening Pribadi Rizky (Founder)
+                </div>
+              ) : (
+                <select
+                  value={sourceWallet}
+                  onChange={(e) => setSourceWallet(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2.5 focus:outline-none focus:border-white/30 font-mono"
+                >
+                  {BUSINESS_WALLETS.map(w => (
+                    <option key={w.id} value={w.id}>
+                      {w.name} ({formatRupiah(multiUnitBalances?.[w.unit]?.balance || 0)})
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            {/* Destination Wallet / Channel */}
+            <div>
+              <label className="text-xs font-semibold text-zinc-300 block mb-1">
+                Rekening / Tujuan Dana Masuk:
+              </label>
+              {modalMode === 'cash_out' ? (
+                <select
+                  value={destinationWallet}
+                  onChange={(e) => setDestinationWallet(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2.5 focus:outline-none focus:border-white/30 font-mono"
+                >
+                  {EXTERNAL_OUTGOING_DESTINATIONS.map(d => (
+                    <option key={d.id} value={d.id}>{d.name}</option>
+                  ))}
+                </select>
+              ) : modalMode === 'founder_equity' && equityMode === 'prive' ? (
+                <div className="p-2.5 rounded-xl bg-black/50 border border-white/10 text-xs text-zinc-300 font-mono">
+                  Rekening Pribadi Rizky (Prive)
+                </div>
+              ) : (
+                <select
+                  value={destinationWallet}
+                  onChange={(e) => setDestinationWallet(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2.5 focus:outline-none focus:border-white/30 font-mono"
+                >
+                  {BUSINESS_WALLETS
+                    .filter(w => modalMode !== 'inter_transfer' || w.id !== sourceWallet)
+                    .map(w => (
+                      <option key={w.id} value={w.id}>
+                        {w.name}
+                      </option>
+                    ))}
+                </select>
+              )}
             </div>
           </div>
 
-          {/* Amount & Settlement Status */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
-                Nominal Transaksi (Rp)
-              </label>
-              <input
-                type="number"
-                min="1000"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                required
-                className="w-full bg-ts-hitam border border-ts-border rounded-lg text-sm text-ts-krem px-3 py-2 font-mono focus:outline-none focus:border-ts-terracotta"
-              />
+          {/* Overdraft Warning Banner */}
+          {isOverdraftWarning && (
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 flex items-start gap-2.5">
+              <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold text-white block">Peringatan CFO: Saldo Kas Tidak Mencukupi!</span>
+                <span>
+                  Saldo dompet asal saat ini hanya <strong>{formatRupiah(currentSourceBalance)}</strong>. Transaksi keluar sebesar <strong>{formatRupiah(amount)}</strong> akan menyebabkan defisit kas sebesar -{formatRupiah(amount - currentSourceBalance)}.
+                </span>
+              </div>
             </div>
-
-            <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
-                Status Settlement Kas
-              </label>
-              <select
-                value={settlementStatus}
-                onChange={(e) => setSettlementStatus(e.target.value)}
-                className="w-full bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem px-3 py-2 focus:outline-none focus:border-ts-terracotta"
-              >
-                <option value="cleared">✅ Cleared (Sudah Masuk / Keluar Rekening)</option>
-                <option value="pending">⏳ Pending (Menunggu Kliring H+1 / Gateway)</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Wallets Source & Destination */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
-                Akun / Rekening Sumber
-              </label>
-              <input
-                type="text"
-                value={sourceWallet}
-                onChange={(e) => setSourceWallet(e.target.value)}
-                placeholder="Contoh: wallet_teestock / BCA Bisnis"
-                required
-                className="w-full bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem px-3 py-2 focus:outline-none focus:border-ts-terracotta font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
-                Akun / Rekening Tujuan
-              </label>
-              <input
-                type="text"
-                value={destinationWallet}
-                onChange={(e) => setDestinationWallet(e.target.value)}
-                placeholder="Contoh: wallet_multigraph / Vendor Cititex"
-                required
-                className="w-full bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem px-3 py-2 focus:outline-none focus:border-ts-terracotta font-mono"
-              />
-            </div>
-          </div>
+          )}
 
           {/* Description */}
           <div>
-            <label className="text-xs font-semibold text-slate-300 block mb-1">
+            <label className="text-xs font-semibold text-zinc-300 block mb-1">
               Uraian &amp; Keterangan Transaksi
             </label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Contoh: Pembayaran 12 pcs NSA Heavyweight 24s untuk Drop #01"
+              placeholder="Contoh: Pembelian 12 pcs NSA Heavyweight 24s untuk Drop #01"
               required
-              className="w-full bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem px-3 py-2 focus:outline-none focus:border-ts-terracotta"
+              className="w-full bg-black/50 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2.5 focus:outline-none focus:border-white/30"
             />
           </div>
 
           {/* Proof Ref & Related ID */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
+              <label className="text-xs font-semibold text-zinc-300 block mb-1">
                 No. Bukti Nota / Ref Mutasi
               </label>
               <input
@@ -1527,12 +1856,12 @@ export function LedgerPage() {
                 value={proofReceiptRef}
                 onChange={(e) => setProofReceiptRef(e.target.value)}
                 placeholder="Contoh: NOTA-CITITEX-4412"
-                className="w-full bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem px-3 py-2 focus:outline-none focus:border-ts-terracotta font-mono"
+                className="w-full bg-black/50 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2 focus:outline-none focus:border-white/30 font-mono"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">
+              <label className="text-xs font-semibold text-zinc-300 block mb-1">
                 ID Kaitan (PO / Order / Aset)
               </label>
               <input
@@ -1540,17 +1869,17 @@ export function LedgerPage() {
                 value={relatedId}
                 onChange={(e) => setRelatedId(e.target.value)}
                 placeholder="Contoh: PO-CITITEX-260901"
-                className="w-full bg-ts-hitam border border-ts-border rounded-lg text-xs text-ts-krem px-3 py-2 focus:outline-none focus:border-ts-terracotta font-mono"
+                className="w-full bg-black/50 border border-white/10 rounded-xl text-xs text-zinc-200 px-3 py-2 focus:outline-none focus:border-white/30 font-mono"
               />
             </div>
           </div>
 
           {/* Modal Action Buttons */}
-          <div className="pt-3 flex justify-end gap-2 border-t border-ts-borderDim">
+          <div className="pt-3 flex justify-end gap-2 border-t border-white/10">
             <Button type="button" variant="secondary" onClick={() => setIsModalOpen(false)}>
               Batal
             </Button>
-            <Button type="submit" variant="primary" className="font-bold">
+            <Button type="submit" variant="primary" className="bg-white text-zinc-950 font-bold hover:bg-zinc-200">
               Simpan ke Buku Kas
             </Button>
           </div>

@@ -66,6 +66,54 @@ describe('Treasury & Ledger Engine (ledgerApi.js)', () => {
       // Total Consolidated Holding Liquidity: 7M + 2M + 500K = 9.5M
       expect(balances.totalConsolidatedLiquidity).toBe(9500000);
     });
+
+    it('mendukung mutasi dengan unit all dan mengalokasikan ke dompet yang tepat', () => {
+      const txs = [
+        {
+          id: 'tx-all-1',
+          type: 'CASH_OUT',
+          category: 'operational_general',
+          amount: 150000,
+          sourceWallet: 'wallet_teestock',
+          businessUnit: 'all',
+          settlementStatus: 'cleared'
+        }
+      ];
+
+      const balances = calculateMultiUnitBalances(txs);
+      expect(balances.teestock.balance).toBe(-150000);
+    });
+  });
+
+  describe('calculateLedgerSummary() — Net Inflow & Neutral Transfers', () => {
+    it('memastikan INTER_TRANSFER tidak mengurangi saldo kas konsolidasi grup', () => {
+      const txs = [
+        {
+          id: 'tx-suntik',
+          type: 'CAPITAL_INJECTION',
+          category: 'capital_injection',
+          amount: 5000000,
+          destinationWallet: 'wallet_teestock',
+          settlementStatus: 'cleared'
+        },
+        {
+          id: 'tx-transfer',
+          type: 'INTER_TRANSFER',
+          category: 'inter_unit_transfer',
+          amount: 2000000,
+          sourceWallet: 'wallet_teestock',
+          destinationWallet: 'wallet_multigraph',
+          settlementStatus: 'cleared'
+        }
+      ];
+
+      const summary = calculateLedgerSummary(txs);
+      // Inflow = 5M, Transfer does not count as CASH_OUT
+      expect(summary.totalCashIn).toBe(5000000);
+      expect(summary.totalCashOut).toBe(0);
+      expect(summary.netCashLiquidity).toBe(5000000);
+      expect(summary.bankBalance).toBe(5000000);
+    });
   });
 
   describe('calculateUnitPnl() — Laba Rugi per Unit Bisnis', () => {

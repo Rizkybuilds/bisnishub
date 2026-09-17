@@ -234,19 +234,23 @@ export function calculateMultiUnitBalances(transactions = []) {
     }
 
     // Regular Cash In / Cash Out
-    if (tx.businessUnit === 'teestock') {
+    const targetUnit = tx.businessUnit === 'all'
+      ? (tx.type === 'CASH_IN' ? tx.destinationWallet?.replace('wallet_', '') : tx.sourceWallet?.replace('wallet_', ''))
+      : tx.businessUnit;
+
+    if (targetUnit === 'teestock') {
       if (tx.type === 'CASH_IN') {
         if (isCleared) teestockBalance += amt;
       } else if (tx.type === 'CASH_OUT') {
         if (isCleared) teestockBalance -= amt;
       }
-    } else if (tx.businessUnit === 'multigraph') {
+    } else if (targetUnit === 'multigraph') {
       if (tx.type === 'CASH_IN') {
         if (isCleared) multigraphBalance += amt;
       } else if (tx.type === 'CASH_OUT') {
         if (isCleared) multigraphBalance -= amt;
       }
-    } else if (tx.businessUnit === 'holding') {
+    } else if (targetUnit === 'holding') {
       if (tx.type === 'CASH_IN') {
         if (isCleared) holdingBalance += amt;
       } else if (tx.type === 'CASH_OUT') {
@@ -394,11 +398,13 @@ export function calculateLedgerSummary(transactions = []) {
     const src = tx.sourceAccount || tx.sourceWallet || '';
     const dst = tx.destinationAccount || tx.destinationWallet || '';
 
-    if (dst.includes('bank') || dst.includes('teestock') || dst.includes('multigraph') || dst.includes('holding')) {
-      bankBalance += (type === 'CASH_IN' || isInjection) ? amt : -amt;
-    }
-    if (src.includes('qris') || dst.includes('qris')) {
-      qrisBalance += type === 'CASH_IN' ? amt : -amt;
+    if (type !== 'INTER_TRANSFER') {
+      if (dst.includes('bank') || dst.includes('teestock') || dst.includes('multigraph') || dst.includes('holding')) {
+        bankBalance += (type === 'CASH_IN' || isInjection) ? amt : -amt;
+      }
+      if (src.includes('qris') || dst.includes('qris')) {
+        qrisBalance += type === 'CASH_IN' ? amt : -amt;
+      }
     }
   });
 
