@@ -439,8 +439,8 @@ export function CatalogPage() {
     try {
       await saveProduct(payload);
 
-      // Automated Bridge: Catat pengeluaran beli lisensi ke Pengadaan & Buku Kas jika dicentang
-      if (formDesignSource === 'flat_fee' && recordProcurementBridge && Number(formDesignCost) > 0) {
+      // Automated Bridge: Catat pengeluaran beli lisensi ke Pengadaan & Buku Kas jika dicentang (hanya produk baru)
+      if (!editingSku && formDesignSource === 'flat_fee' && recordProcurementBridge && Number(formDesignCost) > 0) {
         try {
           await addProcurement({
             itemType: 'design_license',

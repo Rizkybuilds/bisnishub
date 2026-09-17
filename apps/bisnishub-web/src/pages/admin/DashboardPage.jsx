@@ -24,10 +24,33 @@ import { formatRupiah } from '../../utils/formatters';
 import { SIZES } from '../../constants/garments';
 import { FounderBepSimulator } from '../../components/admin/FounderBepSimulator';
 import { DailyStudioRoutine } from '../../components/admin/DailyStudioRoutine';
+import { isProductBlank, getBlankPricing } from '../../constants/pricing';
 
 export function DashboardPage() {
   const { openNewOrderModal } = useOutletContext();
   const { catalog, orders, inventory, founderWealth, procurements, businessValuation, multiUnitBalances } = useAdmin();
+
+  // Helper: Dapatkan HPP per unit yang akurat untuk kaos grafis vs kaos polos
+  const getOrderUnitHpp = (order) => {
+    if (order.hpp !== undefined && order.hpp !== null && Number(order.hpp) > 0) {
+      return Number(order.hpp);
+    }
+    if (order.items && Array.isArray(order.items) && order.items.length > 0) {
+      const itemsHpp = order.items.reduce((sum, it) => {
+        const isBlank = isProductBlank(it);
+        const itHpp = isBlank 
+          ? getBlankPricing(it, it.color, order.tier || 'retail', it.size, it.qty).vendorCost
+          : 64250;
+        return sum + (itHpp * (Number(it.qty) || 1));
+      }, 0);
+      if (itemsHpp > 0) return Math.round(itemsHpp / Math.max(1, order.qty || 1));
+    }
+    const isBlank = isProductBlank(order);
+    if (isBlank) {
+      return getBlankPricing(order, order.color, order.tier || 'retail', order.size, order.qty).vendorCost;
+    }
+    return 64250;
+  };
 
   // CSV Export Handler
   const handleExportCsv = () => {
@@ -59,7 +82,8 @@ export function DashboardPage() {
     const rows = orders.map(o => {
       const isMarketplace = o.channel === 'shopee' || o.channel === 'tiktok';
       const fee = o.fee !== undefined ? o.fee : (isMarketplace ? Math.round((o.price || 0) * 0.085) : 0);
-      const hpp = (o.hpp || 64250) * (o.qty || 1);
+      const unitHpp = getOrderUnitHpp(o);
+      const hpp = unitHpp * (o.qty || 1);
       const net = (o.price || 0) - fee - hpp;
 
       return [
@@ -141,7 +165,7 @@ export function DashboardPage() {
   }, 0);
 
   const totalCogs = orders.reduce((sum, o) => {
-    const unitHpp = o.hpp || 64250;
+    const unitHpp = getOrderUnitHpp(o);
     return sum + (unitHpp * (o.qty || 1));
   }, 0);
 
@@ -573,7 +597,8 @@ export function DashboardPage() {
                 {orders.slice(0, 8).map(order => {
                   const isMarketplace = order.channel === 'shopee' || order.channel === 'tiktok';
                   const fee = order.fee !== undefined ? order.fee : (isMarketplace ? Math.round((order.price || 0) * 0.085) : 0);
-                  const hpp = (order.hpp || 64250) * (order.qty || 1);
+                  const unitHpp = getOrderUnitHpp(order);
+                  const hpp = unitHpp * (order.qty || 1);
                   const net = (order.price || 0) - fee - hpp;
 
                   return (
@@ -613,8 +638,8 @@ export function DashboardPage() {
                       <td className="py-3 px-4 text-right font-mono font-bold text-white">
                         {formatRupiah(order.price)}
                       </td>
-                      <td className="py-3 px-4 text-right font-mono font-bold text-white">
-                        +{formatRupiah(net)}
+                      <td className={`py-3 px-4 text-right font-mono font-bold ${net >= 0 ? 'text-white' : 'text-rose-400'}`}>
+                        {net >= 0 ? `+${formatRupiah(net)}` : formatRupiah(net)}
                       </td>
                     </tr>
                   );

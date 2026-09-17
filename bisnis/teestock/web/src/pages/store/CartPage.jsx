@@ -7,7 +7,9 @@ import { createPublicOrder } from '../../services/ordersApi';
 import { validateVoucher } from '../../services/vouchersApi';
 import { 
   calculateBundleDiscount, 
-  getSizeSurcharge 
+  getSizeSurcharge,
+  getBlankPricing,
+  isProductBlank
 } from '../../constants/pricing';
 import { calculateOrderWeight, calculateShippingFee } from '../../services/shippingApi';
 import { determineFulfillmentOrigin } from '../../utils/garmentStockRouting';
@@ -53,7 +55,7 @@ export function CartPage() {
   // Bundling calculations (for graphic merchandise only)
   const totalCartQty = cart.reduce((acc, item) => acc + (item.qty || 1), 0);
   const eligibleGraphicQty = cart
-    .filter(item => item.series !== 'blank' && !item.sku?.startsWith('TS-BLK-'))
+    .filter(item => !isProductBlank(item))
     .reduce((acc, item) => acc + (item.qty || 1), 0);
   const bundleDiscount = calculateBundleDiscount(eligibleGraphicQty, role);
 
@@ -99,13 +101,11 @@ export function CartPage() {
 
   // CFO Margin Guard: Ensure blank tee profit margin never drops below Rp 2.000/pcs
   const maxAllowableDiscount = cart.reduce((acc, item) => {
-    const isBlankItem = item.series === 'blank' || item.sku?.startsWith('TS-BLK-');
+    const isBlankItem = isProductBlank(item);
     if (isBlankItem) {
-      const isWhite = String(item.color).trim().toLowerCase() === 'white';
-      const vendorBase = isWhite ? 39000 : 42000;
-      const surcharge = getSizeSurcharge(item.size);
-      const floorPricePerPcs = vendorBase + 2000 + surcharge;
-      const maxDiscForThisItem = Math.max(0, ((item.price || 52000) - floorPricePerPcs) * (item.qty || 1));
+      const blankPricing = getBlankPricing(item, item.color, role, item.size, item.qty);
+      const floorPricePerPcs = blankPricing.vendorCost + 2000;
+      const maxDiscForThisItem = Math.max(0, ((item.price || blankPricing.basePrice) - floorPricePerPcs) * (item.qty || 1));
       return acc + maxDiscForThisItem;
     }
     return acc + Math.max(0, ((item.price || 99000) - 55000) * (item.qty || 1));
