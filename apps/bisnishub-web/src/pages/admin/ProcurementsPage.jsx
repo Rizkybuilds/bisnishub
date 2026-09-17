@@ -10,7 +10,13 @@ import {
   Trash2,
   Sparkles,
   Printer,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Download,
+  Eye,
+  X,
+  FileText,
+  CheckCircle2,
+  Truck
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
@@ -22,6 +28,7 @@ export function ProcurementsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterType, setFilterType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedPo, setSelectedPo] = useState(null);
 
   // 4 Founder Procurement Metrics
   const totalProcurementSpend = procurements.reduce((sum, p) => sum + (p.totalCost || 0), 0);
@@ -48,10 +55,97 @@ export function ProcurementsPage() {
     return true;
   });
 
+  // Filtered Summary for Dynamic Ribbon
+  const filteredSpend = filtered.reduce((sum, p) => sum + (p.totalCost || 0), 0);
+  const filteredPcs = filtered.reduce((sum, p) => sum + (p.qty || 0), 0);
+  const filteredAvgCost = filteredPcs > 0 ? Math.round(filteredSpend / filteredPcs) : 0;
+
+  // Wallet metadata helper
+  const getSourceInfo = (source) => {
+    switch (source) {
+      case 'business_bank':
+        return { label: 'BCA TeeStock', icon: Building2, color: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20' };
+      case 'multigraph_bank':
+        return { label: 'BCA MultiGraph', icon: Building2, color: 'bg-blue-500/10 text-blue-300 border-blue-500/20' };
+      case 'holding_treasury':
+        return { label: 'Holding Treasury', icon: Building2, color: 'bg-purple-500/10 text-purple-300 border-purple-500/20' };
+      case 'personal_pocket':
+        return { label: 'Dompet Pribadi', icon: Wallet, color: 'bg-amber-500/10 text-amber-300 border-amber-500/20' };
+      default:
+        return { label: source || 'Kas Operasional', icon: Building2, color: 'bg-white/10 text-white border-white/15' };
+    }
+  };
+
+  // CSV Exporter for BOM & Procurements
+  const handleExportCsv = () => {
+    if (!filtered || filtered.length === 0) {
+      alert('Tidak ada data pengadaan untuk diunduh.');
+      return;
+    }
+
+    const headers = [
+      'No. PO',
+      'Tanggal',
+      'Kategori Item',
+      'Nama Item / Uraian',
+      'Vendor / Supplier',
+      'Tipe Vendor',
+      'Jumlah Masuk',
+      'Satuan',
+      'Biaya Barang (Rp)',
+      'Ongkir Kargo (Rp)',
+      'Biaya Lain (Rp)',
+      'Total Nota (Rp)',
+      'Landed Cost Riil / Satuan (Rp)',
+      'Sumber Kas',
+      'Buku Kas Terhubung',
+      'Catatan / Resi'
+    ];
+
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return '""';
+      const s = String(val).replace(/"/g, '""');
+      return `"${s}"`;
+    };
+
+    const rows = filtered.map(p => {
+      const rawItemCost = p.itemCost || Math.max(0, (p.totalCost || 0) - (p.shippingCost || 0) - (p.otherCost || 0));
+      return [
+        escapeCsv(p.procurementNo || '-'),
+        escapeCsv(p.createdAt ? new Date(p.createdAt).toISOString().split('T')[0] : '-'),
+        escapeCsv(p.itemType || '-'),
+        escapeCsv(p.itemName || '-'),
+        escapeCsv(p.supplierName || '-'),
+        escapeCsv(p.vendorType === 'external_vendor' ? 'Percetakan Luar' : 'Distributor/Vendor'),
+        p.qty || 0,
+        escapeCsv(p.unitMeasure || 'pcs'),
+        rawItemCost,
+        p.shippingCost || 0,
+        p.otherCost || 0,
+        p.totalCost || 0,
+        p.realUnitCost || 0,
+        escapeCsv(getSourceInfo(p.paymentSource).label),
+        escapeCsv(p.cashTxId ? 'Ya (CASH_OUT)' : 'Tidak'),
+        escapeCsv(p.notes || '')
+      ].join(',');
+    });
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `PO-BOM-PENGADAAN-${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div>
       <AdminTopbar
-        title="Pengadaan Bahan &amp; Biaya Pokok (BOM)"
+        title="Pengadaan Bahan & Biaya Pokok (BOM)"
         subtitle="Kelola belanja grosir kaos NSA, cetak stiker vendor luar, kemasan unboxing, dan kalkulasi landed cost otomatis"
         onNewDesign={() => setIsModalOpen(true)}
       />
@@ -81,8 +175,16 @@ export function ProcurementsPage() {
               </p>
             </div>
 
-            {/* Quick Action Button */}
-            <div className="shrink-0">
+            {/* Quick Action Buttons */}
+            <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+              <button
+                onClick={handleExportCsv}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold bg-white/[0.06] hover:bg-white/10 text-white border border-white/10 transition-all flex items-center gap-2"
+                title="Ekspor CSV Data Pengadaan BOM"
+              >
+                <Download className="w-4 h-4 text-zinc-400" />
+                <span>Unduh CSV BOM</span>
+              </button>
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="px-5 py-2.5 rounded-xl text-xs font-black bg-white text-zinc-950 hover:bg-zinc-200 transition-all shadow-md flex items-center gap-2"
@@ -182,6 +284,31 @@ export function ProcurementsPage() {
           </div>
         </div>
 
+        {/* Dynamic Filter Summary Ribbon */}
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 bg-[#121215] border border-white/[0.08] rounded-xl text-xs font-mono">
+          <div className="flex items-center gap-2 text-zinc-400">
+            <span>Menampilkan <strong className="text-white font-bold">{filtered.length}</strong> dari {procurements.length} nota pengadaan</span>
+            {filterType !== 'all' && (
+              <span className="px-2 py-0.5 rounded bg-white/10 text-zinc-300 text-[10px] font-bold">
+                Kategori: {filterType}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-4 text-xs">
+            <span className="text-zinc-400">
+              Total Spend: <strong className="text-white font-bold">{formatRupiah(filteredSpend)}</strong>
+            </span>
+            <span className="text-zinc-400">
+              Total Masuk: <strong className="text-white font-bold">{filteredPcs.toLocaleString('id-ID')} pcs</strong>
+            </span>
+            {filteredPcs > 0 && (
+              <span className="text-zinc-400">
+                Landed Rata-rata: <strong className="text-emerald-400 font-bold">{formatRupiah(filteredAvgCost)}/unit</strong>
+              </span>
+            )}
+          </div>
+        </div>
+
         {/* Procurements Table */}
         <div className="bg-[#121215] border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl">
           <div className="overflow-x-auto">
@@ -209,7 +336,14 @@ export function ProcurementsPage() {
                   filtered.map(p => (
                     <tr key={p.id} className="hover:bg-white/[0.02] transition-colors">
                       <td className="py-3.5 px-4 font-mono">
-                        <div className="font-bold text-white">{p.procurementNo}</div>
+                        <button
+                          onClick={() => setSelectedPo(p)}
+                          className="font-bold text-white hover:underline text-left flex items-center gap-1 group"
+                          title="Klik untuk membuka Slip PO Digital"
+                        >
+                          <span>{p.procurementNo}</span>
+                          <Eye className="w-3 h-3 text-zinc-500 group-hover:text-white transition-colors" />
+                        </button>
                         <div className="text-[10px] text-zinc-500">
                           {new Date(p.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
                         </div>
@@ -301,29 +435,39 @@ export function ProcurementsPage() {
                       </td>
 
                       <td className="py-3.5 px-4 text-center">
-                        {p.paymentSource === 'personal_pocket' ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-zinc-400 border border-white/10">
-                            <Wallet className="w-3 h-3" /> Dompet Pribadi
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white border border-white/15 font-semibold">
-                            <Building2 className="w-3 h-3" /> BCA Bisnis
-                          </span>
-                        )}
+                        {(() => {
+                          const info = getSourceInfo(p.paymentSource);
+                          const Icon = info.icon;
+                          return (
+                            <span className={`inline-flex items-center gap-1 text-[10px] px-2.5 py-0.5 rounded-full border font-semibold ${info.color}`}>
+                              <Icon className="w-3 h-3 shrink-0" />
+                              <span>{info.label}</span>
+                            </span>
+                          );
+                        })()}
                       </td>
 
                       <td className="py-3.5 px-4 text-center">
-                        <button
-                          onClick={() => {
-                            if (confirm(`Hapus data pengadaan ${p.procurementNo}?`)) {
-                              removeProcurement(p.id);
-                            }
-                          }}
-                          className="p-1 rounded-lg text-zinc-500 hover:text-white hover:bg-white/10 transition-colors"
-                          title="Hapus Pengadaan"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex items-center justify-center gap-1">
+                          <button
+                            onClick={() => setSelectedPo(p)}
+                            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+                            title="Buka & Cetak Slip PO"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`Hapus data pengadaan ${p.procurementNo}?`)) {
+                                removeProcurement(p.id);
+                              }
+                            }}
+                            className="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                            title="Hapus Pengadaan"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -341,6 +485,317 @@ export function ProcurementsPage() {
         onClose={() => setIsModalOpen(false)}
         onSave={addProcurement}
       />
+
+      {/* Digital PO Slip & Printable Modal */}
+      {selectedPo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto animate-fadeIn">
+          <div className="bg-[#121215] border border-white/[0.12] rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl my-8 text-white relative flex flex-col max-h-[90vh]">
+            
+            {/* Modal Header Bar */}
+            <div className="p-4 px-6 border-b border-white/[0.08] flex items-center justify-between bg-black/40 shrink-0 no-print">
+              <div className="flex items-center gap-2">
+                <FileText className="w-4 h-4 text-zinc-400" />
+                <span className="text-xs font-mono font-bold text-zinc-300">
+                  SLIP PURCHASE ORDER (BOM) &bull; {selectedPo.procurementNo}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="px-3 py-1.5 rounded-lg bg-white text-zinc-950 text-xs font-bold hover:bg-zinc-200 transition-colors flex items-center gap-1.5"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Cetak Slip</span>
+                </button>
+                <button
+                  onClick={() => setSelectedPo(null)}
+                  className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Printable Slip Content */}
+            <div id="po-slip-printable" className="p-6 overflow-y-auto space-y-6 text-xs">
+              
+              {/* Slip Header */}
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-5 border-b border-white/[0.1] print-dark-invert">
+                <div>
+                  <div className="text-base font-black tracking-tight text-white uppercase">
+                    MultiGraph Printing &amp; Apparel Holding
+                  </div>
+                  <div className="text-[11px] text-zinc-400 mt-0.5">
+                    Divisi Pengadaan &amp; Bill of Materials (BOM) TeeStock
+                  </div>
+                  <div className="text-[10px] text-zinc-500 font-mono mt-1">
+                    Jl. Percetakan &amp; Konveksi No. 88, Indonesia
+                  </div>
+                </div>
+
+                <div className="sm:text-right">
+                  <div className="text-xs font-mono font-bold text-white bg-white/10 px-3 py-1 rounded-lg border border-white/20 inline-block">
+                    {selectedPo.procurementNo}
+                  </div>
+                  <div className="text-[10px] text-zinc-400 font-mono mt-1">
+                    Tanggal: {new Date(selectedPo.createdAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                  </div>
+                  <div className="mt-1 flex items-center sm:justify-end gap-1 text-[10px] font-bold text-emerald-400">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>STATUS: LUNAS &amp; DITERIMA</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Vendor & Treasury Info */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-black/40 border border-white/[0.06] print-dark-invert">
+                <div>
+                  <span className="text-[10px] font-mono text-zinc-400 block uppercase">Vendor / Supplier</span>
+                  <div className="font-bold text-white text-sm mt-0.5">{selectedPo.supplierName}</div>
+                  <div className="text-[11px] text-zinc-400 mt-0.5">
+                    {selectedPo.vendorType === 'external_vendor' ? 'Mitra Maklon / Percetakan Luar' : 'Distributor Bahan Baku Utama'}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-mono text-zinc-400 block uppercase">Sumber Pendanaan Kas</span>
+                  <div className="font-bold text-white text-sm mt-0.5 flex items-center gap-1.5">
+                    {(() => {
+                      const info = getSourceInfo(selectedPo.paymentSource);
+                      const Icon = info.icon;
+                      return (
+                        <>
+                          <Icon className="w-3.5 h-3.5 text-zinc-400" />
+                          <span>{info.label}</span>
+                        </>
+                      );
+                    })()}
+                  </div>
+                  <div className="text-[10px] font-mono text-zinc-500 mt-0.5">
+                    {selectedPo.cashTxId ? 'Tersinkronisasi otomatis dengan Buku Kas (CASH_OUT)' : 'Pengadaan Non-Kas / Terpisah'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Item Details / Matrix Breakdown */}
+              <div className="space-y-3">
+                <div className="font-mono font-bold text-zinc-300 text-xs flex items-center gap-2">
+                  <PackageCheck className="w-4 h-4 text-zinc-400" />
+                  <span>RINCIAN BARANG &amp; SPESIFIKASI</span>
+                </div>
+
+                <div className="bg-black/30 border border-white/[0.08] rounded-xl overflow-hidden print-dark-invert">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-white/[0.04] border-b border-white/[0.08] text-zinc-400 font-mono text-[10px] uppercase">
+                      <tr>
+                        <th className="py-2.5 px-3">Uraian Barang / Varian</th>
+                        <th className="py-2.5 px-3 text-center">Jumlah</th>
+                        <th className="py-2.5 px-3 text-right">Harga Beli Dasar</th>
+                        <th className="py-2.5 px-3 text-right">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/[0.05] text-zinc-200">
+                      {selectedPo.itemsBreakdown && selectedPo.itemsBreakdown.length > 0 ? (
+                        selectedPo.itemsBreakdown.map((item, idx) => (
+                          <tr key={idx}>
+                            <td className="py-2 px-3">
+                              <span className="font-medium text-white">{selectedPo.itemName}</span>
+                              <span className="text-zinc-400 ml-2 font-mono">
+                                [{item.color} - Size {item.size}]
+                              </span>
+                            </td>
+                            <td className="py-2 px-3 text-center font-mono font-bold">
+                              {item.qty} pcs
+                            </td>
+                            <td className="py-2 px-3 text-right font-mono text-zinc-400">
+                              {formatRupiah(selectedPo.itemCost ? Math.round(selectedPo.itemCost / selectedPo.qty) : Math.round((selectedPo.totalCost - (selectedPo.shippingCost || 0)) / selectedPo.qty))}
+                            </td>
+                            <td className="py-2 px-3 text-right font-mono text-white font-semibold">
+                              {formatRupiah(item.qty * (selectedPo.itemCost ? Math.round(selectedPo.itemCost / selectedPo.qty) : Math.round((selectedPo.totalCost - (selectedPo.shippingCost || 0)) / selectedPo.qty)))}
+                            </td>
+                          </tr>
+                        ))
+                      ) : selectedPo.yieldCalculation ? (
+                        <tr>
+                          <td className="py-2.5 px-3">
+                            <div className="font-medium text-white">{selectedPo.itemName}</div>
+                            <div className="text-[10px] text-zinc-400 font-mono mt-0.5">
+                              {selectedPo.yieldCalculation.sheetQty} Lembar A3+ &times; {selectedPo.yieldCalculation.yieldPerSheet} pcs/lembar (Total: {selectedPo.qty} stiker)
+                            </div>
+                          </td>
+                          <td className="py-2.5 px-3 text-center font-mono font-bold">
+                            {selectedPo.yieldCalculation.sheetQty} Lembar
+                          </td>
+                          <td className="py-2.5 px-3 text-right font-mono text-zinc-400">
+                            {formatRupiah(Math.round((selectedPo.totalCost - (selectedPo.shippingCost || 0)) / (selectedPo.yieldCalculation.sheetQty || 1)))}/lbr
+                          </td>
+                          <td className="py-2.5 px-3 text-right font-mono text-white font-semibold">
+                            {formatRupiah(selectedPo.totalCost - (selectedPo.shippingCost || 0))}
+                          </td>
+                        </tr>
+                      ) : (
+                        <tr>
+                          <td className="py-2.5 px-3 font-medium text-white">
+                            <div>{selectedPo.itemName}</div>
+                            {selectedPo.itemSku && (
+                              <div className="text-[10px] text-zinc-500 font-mono">SKU: {selectedPo.itemSku}</div>
+                            )}
+                          </td>
+                          <td className="py-2.5 px-3 text-center font-mono font-bold">
+                            {selectedPo.qty} {selectedPo.unitMeasure}
+                          </td>
+                          <td className="py-2.5 px-3 text-right font-mono text-zinc-400">
+                            {formatRupiah(Math.round((selectedPo.totalCost - (selectedPo.shippingCost || 0)) / selectedPo.qty))}
+                          </td>
+                          <td className="py-2.5 px-3 text-right font-mono text-white font-semibold">
+                            {formatRupiah(selectedPo.totalCost - (selectedPo.shippingCost || 0))}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Financial & Landed Cost Breakdown */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="space-y-2 p-3.5 rounded-xl bg-black/40 border border-white/[0.06] text-xs font-mono print-dark-invert">
+                  <span className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">
+                    Komponen Biaya Pengadaan
+                  </span>
+                  <div className="flex justify-between text-zinc-300">
+                    <span>Subtotal Bahan/Item:</span>
+                    <span>{formatRupiah(selectedPo.totalCost - (selectedPo.shippingCost || 0))}</span>
+                  </div>
+                  <div className="flex justify-between text-zinc-300">
+                    <span>Ongkos Kirim Kargo/Kurir:</span>
+                    <span>{formatRupiah(selectedPo.shippingCost || 0)}</span>
+                  </div>
+                  {selectedPo.otherCost > 0 && (
+                    <div className="flex justify-between text-zinc-300">
+                      <span>Biaya Tambahan:</span>
+                      <span>{formatRupiah(selectedPo.otherCost)}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-white/10 pt-2 flex justify-between text-white font-bold text-sm">
+                    <span>Total Pembayaran:</span>
+                    <span>{formatRupiah(selectedPo.totalCost)}</span>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 flex flex-col justify-between print-dark-invert">
+                  <div>
+                    <span className="text-[10px] uppercase font-mono font-bold block text-emerald-400">
+                      HPP Riil Per Unit (Landed Cost Masuk)
+                    </span>
+                    <div className="text-2xl font-black font-mono mt-1 text-white">
+                      {formatRupiah(selectedPo.realUnitCost)}
+                      <span className="text-xs text-zinc-400 font-normal"> / {selectedPo.unitMeasure}</span>
+                    </div>
+                    <p className="text-[10px] text-zinc-400 mt-1 leading-relaxed">
+                      Landed cost ini mencakup harga beli dasar ditambah alokasi beban ongkir cargo terbagi rata per satuan unit.
+                    </p>
+                  </div>
+                  <div className="text-[10px] font-mono text-zinc-500 pt-2">
+                    Sinkron ke Database Stok &amp; BOM Produk
+                  </div>
+                </div>
+              </div>
+
+              {/* Notes & Tracking */}
+              {selectedPo.notes && (
+                <div className="p-3 bg-black/40 border border-white/[0.06] rounded-xl text-xs print-dark-invert">
+                  <span className="text-[10px] font-mono font-bold text-zinc-400 block uppercase">
+                    Catatan PO / Resi Ekspedisi:
+                  </span>
+                  <div className="text-zinc-200 mt-1 font-mono">{selectedPo.notes}</div>
+                </div>
+              )}
+
+              {/* Signatures for Print Slip */}
+              <div className="pt-6 border-t border-white/10 grid grid-cols-2 gap-8 text-center text-xs print-dark-invert">
+                <div>
+                  <span className="text-zinc-400 block text-[10px] uppercase font-mono">Dibuat Oleh (Purchasing / Ops)</span>
+                  <div className="h-14"></div>
+                  <div className="border-t border-zinc-700 mx-auto w-36 pt-1 font-semibold text-white">
+                    Rizky / Ops Team
+                  </div>
+                </div>
+                <div>
+                  <span className="text-zinc-400 block text-[10px] uppercase font-mono">Diverifikasi (CFO / Treasury)</span>
+                  <div className="h-14"></div>
+                  <div className="border-t border-zinc-700 mx-auto w-36 pt-1 font-semibold text-white">
+                    Cabinet CFO BisnisHub
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Modal Footer Bar */}
+            <div className="p-4 px-6 border-t border-white/[0.08] bg-black/40 flex items-center justify-between shrink-0 no-print">
+              <span className="text-[10px] font-mono text-zinc-500">
+                Dokumen resmi sistem internal MultiGraph Holding
+              </span>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setSelectedPo(null)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white transition-colors"
+                >
+                  Tutup
+                </button>
+                <button
+                  onClick={() => window.print()}
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-white text-zinc-950 hover:bg-zinc-200 transition-colors flex items-center gap-1.5"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Cetak Slip PO</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Print Specific CSS */}
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          #po-slip-printable, #po-slip-printable * {
+            visibility: visible;
+          }
+          #po-slip-printable {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: auto;
+            padding: 24px;
+            background: #ffffff !important;
+            color: #000000 !important;
+            z-index: 99999;
+          }
+          #po-slip-printable .print-dark-invert {
+            background: #f4f4f5 !important;
+            color: #000000 !important;
+            border-color: #e4e4e7 !important;
+          }
+          #po-slip-printable .text-white {
+            color: #000000 !important;
+          }
+          #po-slip-printable .text-zinc-400,
+          #po-slip-printable .text-zinc-500,
+          #po-slip-printable .text-zinc-300 {
+            color: #52525b !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

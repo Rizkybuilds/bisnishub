@@ -20,9 +20,12 @@ import {
 } from 'lucide-react';
 import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { formatRupiah } from '../../utils/formatters';
+import { useAdmin } from '../../context/AdminContext';
 
 export function ProcurementIntakeModal({ isOpen, onClose, onSave }) {
   if (!isOpen) return null;
+
+  const { multiUnitBalances } = useAdmin();
 
   // Active Intake Mode: 'wholesale_tshirt' | 'sticker_outsource' | 'packaging_supplies' | 'dtf_roll'
   const [activeTab, setActiveTab] = useState('wholesale_tshirt');
@@ -1255,56 +1258,99 @@ export function ProcurementIntakeModal({ isOpen, onClose, onSave }) {
           {/* ========================================================================= */}
           {/* BOTTOM CONTROLS: PAYMENT SOURCE, CASH LEDGER INTEGRATION, & NOTES         */}
           {/* ========================================================================= */}
-          <div className="pt-4 border-t border-white/[0.08] space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-xs font-bold text-zinc-300 block mb-1">
-                  Sumber Dana Pembayaran
-                </label>
-                <select
-                  value={paymentSource}
-                  onChange={(e) => setPaymentSource(e.target.value)}
-                  className="w-full bg-[#1A1A1F] border border-white/[0.12] rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-medium"
-                >
-                  <option value="business_bank">🏦 Rekening BCA Bisnis TeeStock (Kas Operasional)</option>
-                  <option value="holding_treasury">🏛️ Holding Reserve Treasury</option>
-                  <option value="personal_pocket">💼 Dompet Ekuitas Founder (Injeksi Modal)</option>
-                </select>
-              </div>
+          {(() => {
+            const activeTotalCost = 
+              activeTab === 'wholesale_tshirt' ? wholesaleTotalInvoiced :
+              activeTab === 'sticker_outsource' ? stickerTotalCost :
+              activeTab === 'packaging_supplies' ? packagingTotalCost :
+              activeTab === 'dtf_roll' ? dtfTotalCost :
+              Number(licenseCost) || 0;
 
-              <div>
-                <label className="text-xs font-bold text-zinc-300 block mb-1">
-                  Catatan Tambahan / Nomor Resi Ekspedisi
-                </label>
-                <input
-                  type="text"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Contoh: Resi Dakota DA-8912, nota terlampir fisik"
-                  className="w-full bg-[#1A1A1F] border border-white/[0.12] rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
-                />
-              </div>
-            </div>
+            const selectedSourceBalance = paymentSource === 'business_bank'
+              ? multiUnitBalances?.teestock?.balance || 0
+              : paymentSource === 'multigraph_bank'
+                ? multiUnitBalances?.multigraph?.balance || 0
+                : paymentSource === 'holding_treasury'
+                  ? multiUnitBalances?.holding?.balance || 0
+                  : null;
 
-            {/* Toggle Auto-Record in Cash Ledger */}
-            <div className="flex items-center justify-between p-3.5 rounded-xl bg-black/40 border border-white/[0.08]">
-              <div className="flex items-center gap-2.5">
-                <input
-                  type="checkbox"
-                  id="recordCashTx"
-                  checked={recordCashTx}
-                  onChange={(e) => setRecordCashTx(e.target.checked)}
-                  className="w-4 h-4 rounded border-white/20 text-white focus:ring-0 focus:ring-offset-0 bg-[#1A1A1F]"
-                />
-                <label htmlFor="recordCashTx" className="text-xs font-bold text-white cursor-pointer select-none">
-                  Otomatis catat mutasi pengeluaran kas di Buku Kas (CASH_OUT)
-                </label>
+            const isProcurementOverdraft = recordCashTx && selectedSourceBalance !== null && activeTotalCost > selectedSourceBalance;
+
+            return (
+              <div className="pt-4 border-t border-white/[0.08] space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-zinc-300 block mb-1">
+                      Sumber Dana Pembayaran (Buku Kas)
+                    </label>
+                    <select
+                      value={paymentSource}
+                      onChange={(e) => setPaymentSource(e.target.value)}
+                      className="w-full bg-[#1A1A1F] border border-white/[0.12] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none font-medium"
+                    >
+                      <option value="business_bank">
+                        🏦 BCA Bisnis TeeStock ({formatRupiah(multiUnitBalances?.teestock?.balance || 0)})
+                      </option>
+                      <option value="multigraph_bank">
+                        📦 BCA Maklon MultiGraph ({formatRupiah(multiUnitBalances?.multigraph?.balance || 0)})
+                      </option>
+                      <option value="holding_treasury">
+                        🏛️ Holding Reserve Treasury ({formatRupiah(multiUnitBalances?.holding?.balance || 0)})
+                      </option>
+                      <option value="personal_pocket">
+                        💼 Dompet Pribadi Founder (Suntik Modal Tambahan)
+                      </option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-zinc-300 block mb-1">
+                      Catatan Tambahan / Nomor Resi Ekspedisi
+                    </label>
+                    <input
+                      type="text"
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      placeholder="Contoh: Resi Dakota DA-8912, nota terlampir fisik"
+                      className="w-full bg-[#1A1A1F] border border-white/[0.12] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Overdraft Warning Banner */}
+                {isProcurementOverdraft && (
+                  <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 flex items-start gap-2.5">
+                    <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold text-white block">Peringatan CFO: Saldo Kas Rekening Tidak Cukup!</span>
+                      <span>
+                        Saldo rekening asal saat ini hanya <strong>{formatRupiah(selectedSourceBalance)}</strong>. Pembayaran nota sebesar <strong>{formatRupiah(activeTotalCost)}</strong> akan menyebabkan saldo kas defisit sebesar -{formatRupiah(activeTotalCost - selectedSourceBalance)}.
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Toggle Auto-Record in Cash Ledger */}
+                <div className="flex items-center justify-between p-3.5 rounded-xl bg-black/40 border border-white/[0.08]">
+                  <div className="flex items-center gap-2.5">
+                    <input
+                      type="checkbox"
+                      id="recordCashTx"
+                      checked={recordCashTx}
+                      onChange={(e) => setRecordCashTx(e.target.checked)}
+                      className="w-4 h-4 rounded border-white/20 text-white focus:ring-0 focus:ring-offset-0 bg-[#1A1A1F]"
+                    />
+                    <label htmlFor="recordCashTx" className="text-xs font-bold text-white cursor-pointer select-none">
+                      Otomatis catat mutasi pengeluaran kas di Buku Kas (CASH_OUT)
+                    </label>
+                  </div>
+                  <span className="text-[10px] font-mono text-zinc-400">
+                    {recordCashTx ? '✅ Buku Kas Sinkron' : '⚠️ Hanya Update Stok Fisik'}
+                  </span>
+                </div>
               </div>
-              <span className="text-[10px] font-mono text-zinc-400">
-                {recordCashTx ? '✅ Buku Kas Sinkron' : '⚠️ Hanya Update Stok Fisik'}
-              </span>
-            </div>
-          </div>
+            );
+          })()}
 
           {/* Action Buttons */}
           <div className="pt-2 flex items-center justify-end gap-3">

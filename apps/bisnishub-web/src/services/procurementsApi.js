@@ -130,7 +130,10 @@ export async function saveProcurement(procData) {
     // Map Isolated Source Wallet & Business Unit
     let sourceWallet = 'wallet_teestock';
     let businessUnit = 'teestock';
-    if (newProc.paymentSource === 'holding_treasury') {
+    if (newProc.paymentSource === 'multigraph_bank') {
+      sourceWallet = 'wallet_multigraph';
+      businessUnit = 'multigraph';
+    } else if (newProc.paymentSource === 'holding_treasury') {
       sourceWallet = 'wallet_holding';
       businessUnit = 'holding';
     } else if (newProc.paymentSource === 'personal_pocket') {
