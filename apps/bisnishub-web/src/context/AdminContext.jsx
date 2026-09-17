@@ -308,12 +308,20 @@ export function AdminProvider({ children }) {
       setInventory(nextInv);
       syncDetail = ` (Stok ${procData.supplyId} +${supplyQty} pcs)`;
     } 
-    // E. Roll Film DTF Meteran
-    else if (procData.itemType === 'dtf_film' && procData.dtfSku) {
-      const landedMeterCost = procData.realUnitCost || procData.unitCost || 30000;
-      nextInv = restockDtfFilm(nextInv, procData.dtfSku, procData.qty, landedMeterCost, procData.itemName);
-      setInventory(nextInv);
-      syncDetail = ` (Stok Film DTF +${procData.qty} meter)`;
+    // E. Roll Film DTF Meteran & Alokasi Lembar Desain Fisik
+    else if (procData.itemType === 'dtf_film') {
+      if (procData.itemsBreakdown && procData.itemsBreakdown.length > 0) {
+        // Multi-Design Gang Sheet: Restok lembar film siap press per SKU desain
+        nextInv = restockDtfBatch(nextInv, procData.itemsBreakdown);
+        setInventory(nextInv);
+        const totalSheets = procData.itemsBreakdown.reduce((sum, b) => sum + (Number(b.qty) || 0), 0);
+        syncDetail = ` (+${totalSheets} lembar film DTF masuk stok untuk ${procData.itemsBreakdown.length} desain)`;
+      } else if (procData.dtfSku) {
+        const landedMeterCost = procData.realUnitCost || procData.unitCost || 30000;
+        nextInv = restockDtfFilm(nextInv, procData.dtfSku, procData.qty, landedMeterCost, procData.itemName);
+        setInventory(nextInv);
+        syncDetail = ` (Stok Film DTF +${procData.qty} meter)`;
+      }
     }
 
     showToast(`✅ Pengadaan ${procData.itemName} berhasil dicatat & stok otomatis terupdate!${syncDetail}`);

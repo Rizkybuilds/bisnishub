@@ -7,27 +7,28 @@ import {
   Trash2, 
   Plus, 
   Shirt, 
-  AlertTriangle,
-  ShoppingBag,
-  Handshake,
-  Palette,
-  Sparkles,
-  CheckCircle2,
-  Info,
-  DollarSign,
-  ShieldCheck,
-  Sliders,
-  Layers,
-  Tag,
-  Percent,
-  Check,
-  RefreshCw,
-  Edit3,
-  X,
-  Star,
-  Camera,
-  LayoutGrid,
-  List
+  AlertTriangle, 
+  ShoppingBag, 
+  Handshake, 
+  Palette, 
+  Sparkles, 
+  CheckCircle2, 
+  Info, 
+  DollarSign, 
+  ShieldCheck, 
+  Sliders, 
+  Layers, 
+  Tag, 
+  Percent, 
+  Check, 
+  RefreshCw, 
+  Edit3, 
+  X, 
+  Star, 
+  Camera, 
+  LayoutGrid, 
+  List,
+  Printer
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
@@ -38,6 +39,7 @@ import { Badge } from '../../components/ui/Badge';
 import { formatRupiah } from '../../utils/formatters';
 import { SERIES } from '../../constants/series';
 import { uploadToCloudinary } from '../../services/cloudinary';
+import { ProcurementIntakeModal } from '../../components/admin/ProcurementIntakeModal';
 import { 
   DTF_SERVICE_RATES, 
   GARMENT_OPTIONS, 
@@ -61,6 +63,20 @@ export function CatalogPage() {
   const [uploadingColor, setUploadingColor] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [recordProcurementBridge, setRecordProcurementBridge] = useState(true);
+  const [openDtfAfterSave, setOpenDtfAfterSave] = useState(false);
+
+  // DTF Direct Procurement Intake Modal State
+  const [isDtfModalOpen, setIsDtfModalOpen] = useState(false);
+  const [dtfProcurementDesign, setDtfProcurementDesign] = useState(null);
+
+  const handleOpenDtfProcurement = (product) => {
+    setDtfProcurementDesign({
+      sku: product.sku,
+      name: product.name,
+      preset: product.printPreset || product.printSize || 'back_a3_plus'
+    });
+    setIsDtfModalOpen(true);
+  };
 
   // Form State - Core Product
   const [editingSku, setEditingSku] = useState(null);
@@ -469,6 +485,12 @@ export function CatalogPage() {
 
       setIsModalOpen(false);
       showToast(`🎉 Sukses! Desain [${payload.sku}] terupload ke Supabase Cloud & live di etalase.`);
+
+      if (openDtfAfterSave && !isProductBlank(payload)) {
+        setTimeout(() => {
+          handleOpenDtfProcurement(payload);
+        }, 200);
+      }
     } catch (err) {
       console.error("Gagal simpan produk:", err);
       alert(`Gagal menyimpan produk ke Supabase: ${err.message}`);
@@ -704,6 +726,17 @@ export function CatalogPage() {
 
                       {/* Action Buttons */}
                       <div className="flex items-center gap-2 pt-1">
+                        {!isBlank && (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenDtfProcurement(p)}
+                            className="px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 text-xs font-bold flex items-center gap-1 min-h-[36px] transition-colors"
+                            title="Pesan cetak lembar film DTF untuk desain ini"
+                          >
+                            <Printer className="w-3.5 h-3.5" />
+                            <span>+ DTF</span>
+                          </button>
+                        )}
                         <Button size="sm" variant="secondary" onClick={() => handleOpenEdit(p)} className="flex-1 text-xs min-h-[36px]">
                           Edit Desain
                         </Button>
@@ -907,6 +940,17 @@ export function CatalogPage() {
                         </td>
                         <td className="py-3 px-4 text-center">
                           <div className="flex items-center justify-center gap-1.5">
+                            {!isBlank && (
+                              <button
+                                type="button"
+                                onClick={() => handleOpenDtfProcurement(p)}
+                                className="px-2 py-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                                title="Pesan cetak lembar film DTF untuk desain ini"
+                              >
+                                <Printer className="w-3 h-3" />
+                                <span>+ DTF</span>
+                              </button>
+                            )}
                             <Button size="sm" variant="secondary" onClick={() => handleOpenEdit(p)}>
                               Edit
                             </Button>
@@ -1831,6 +1875,26 @@ export function CatalogPage() {
             </div>
           </div>
 
+          {!isBlankModal && !editingSku && (
+            <label className="flex items-start sm:items-center gap-2.5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 cursor-pointer hover:bg-emerald-500/15 transition-all">
+              <input
+                type="checkbox"
+                checked={openDtfAfterSave}
+                onChange={(e) => setOpenDtfAfterSave(e.target.checked)}
+                className="mt-0.5 sm:mt-0 rounded text-emerald-500 focus:ring-emerald-500 h-4 w-4 bg-black/40 border-white/20"
+              />
+              <div className="flex-1">
+                <div className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
+                  <Printer className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>🚀 Langsung buka form Pengadaan untuk cetak lembar DTF perdana (Buffer Stock)</span>
+                </div>
+                <p className="text-[10px] text-zinc-400 mt-0.5 leading-relaxed">
+                  Setelah desain tersimpan, sistem otomatis membuka kalkulator roll DTF dengan SKU dan ukuran sablon desain ini terisi siap cetak.
+                </p>
+              </div>
+            </label>
+          )}
+
           <div className="pt-3 flex justify-end gap-2 border-t border-ts-borderDim">
             <Button type="button" variant="secondary" onClick={() => setIsModalOpen(false)} disabled={isSaving}>
               Batal
@@ -1841,6 +1905,18 @@ export function CatalogPage() {
           </div>
         </form>
       </Modal>
+
+      {/* Direct DTF Procurement Intake Modal */}
+      <ProcurementIntakeModal
+        isOpen={isDtfModalOpen}
+        onClose={() => {
+          setIsDtfModalOpen(false);
+          setDtfProcurementDesign(null);
+        }}
+        onSave={addProcurement}
+        initialTab="dtf_roll"
+        initialDesign={dtfProcurementDesign}
+      />
     </div>
   );
 }

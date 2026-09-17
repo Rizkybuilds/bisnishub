@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, 
   Layers, 
@@ -22,13 +22,19 @@ import { GARMENT_TYPES, SIZES } from '../../constants/garments';
 import { formatRupiah } from '../../utils/formatters';
 import { useAdmin } from '../../context/AdminContext';
 
-export function ProcurementIntakeModal({ isOpen, onClose, onSave }) {
+export function ProcurementIntakeModal({ 
+  isOpen, 
+  onClose, 
+  onSave, 
+  initialTab = 'wholesale_tshirt', 
+  initialDesign = null 
+}) {
   if (!isOpen) return null;
 
-  const { multiUnitBalances } = useAdmin();
+  const { multiUnitBalances, catalog } = useAdmin();
 
   // Active Intake Mode: 'wholesale_tshirt' | 'sticker_outsource' | 'packaging_supplies' | 'dtf_roll'
-  const [activeTab, setActiveTab] = useState('wholesale_tshirt');
+  const [activeTab, setActiveTab] = useState(initialTab || 'wholesale_tshirt');
 
   // Shared Form State
   const [paymentSource, setPaymentSource] = useState('business_bank');
@@ -231,6 +237,102 @@ export function ProcurementIntakeModal({ isOpen, onClose, onSave }) {
     },
   ];
 
+  // Multi-Design Allocated to DTF Roll State
+  const [allocatedDtfDesigns, setAllocatedDtfDesigns] = useState([]);
+  const [selectedCatalogSku, setSelectedCatalogSku] = useState('');
+  const [customDtfName, setCustomDtfName] = useState('');
+  const [customDtfSku, setCustomDtfSku] = useState('');
+  const [selectedDtfPreset, setSelectedDtfPreset] = useState('a3');
+  const [allocatedQty, setAllocatedQty] = useState(4);
+
+  // Sync initial tab and design if provided
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+    if (initialDesign && initialDesign.sku) {
+      const exists = allocatedDtfDesigns.some(d => d.sku === initialDesign.sku);
+      if (!exists) {
+        const presetId = initialDesign.preset?.includes('a4') ? 'a4' : 'a3';
+        const pObj = DTF_PRESETS.find(p => p.id === presetId) || DTF_PRESETS[0];
+        setAllocatedDtfDesigns([
+          {
+            id: `alloc-${Date.now()}`,
+            sku: initialDesign.sku,
+            name: initialDesign.name,
+            sizeId: pObj.id,
+            sizeLabel: pObj.name,
+            qty: 4,
+            metersPerPiece: 1 / pObj.gangYieldPerMeter,
+            allocatedCost: pObj.allocatedCost
+          }
+        ]);
+        setDtfMeters(Math.max(2, Math.ceil(4 / pObj.gangYieldPerMeter)));
+      }
+    }
+  }, [isOpen, initialTab, initialDesign]);
+
+  const handleAddAllocatedDesign = () => {
+    let sku = '';
+    let name = '';
+
+    if (selectedCatalogSku === 'custom' || !selectedCatalogSku) {
+      if (!customDtfName.trim()) {
+        alert('Mohon isi nama atau judul desain');
+        return;
+      }
+      sku = customDtfSku.trim().toUpperCase() || `TS-DSN-${Date.now().toString().slice(-4)}`;
+      name = customDtfName.trim();
+    } else {
+      const found = catalog?.find(p => p.sku === selectedCatalogSku);
+      if (!found) return;
+      sku = found.sku;
+      name = found.name;
+    }
+
+    const pObj = DTF_PRESETS.find(p => p.id === selectedDtfPreset) || DTF_PRESETS[0];
+    const qty = Math.max(1, Number(allocatedQty) || 1);
+
+    setAllocatedDtfDesigns(prev => {
+      const existingIdx = prev.findIndex(d => d.sku === sku && d.sizeId === pObj.id);
+      if (existingIdx >= 0) {
+        const next = [...prev];
+        next[existingIdx] = {
+          ...next[existingIdx],
+          qty: next[existingIdx].qty + qty
+        };
+        return next;
+      }
+      return [
+        ...prev,
+        {
+          id: `alloc-${Date.now()}-${Math.random()}`,
+          sku,
+          name,
+          sizeId: pObj.id,
+          sizeLabel: pObj.name,
+          qty,
+          metersPerPiece: 1 / pObj.gangYieldPerMeter,
+          allocatedCost: pObj.allocatedCost
+        }
+      ];
+    });
+
+    // Reset inputs
+    setCustomDtfName('');
+    setCustomDtfSku('');
+    setAllocatedQty(4);
+  };
+
+  const handleRemoveAllocatedDesign = (id) => {
+    setAllocatedDtfDesigns(prev => prev.filter(d => d.id !== id));
+  };
+
+  // Calculations for Multi-Design Gang Sheet
+  const totalAllocatedSheets = allocatedDtfDesigns.reduce((sum, d) => sum + (Number(d.qty) || 0), 0);
+  const totalMetersRequired = allocatedDtfDesigns.reduce((sum, d) => sum + ((Number(d.qty) || 0) * (d.metersPerPiece || 0.5)), 0);
+  const remainingRollMeters = Number(dtfMeters) - totalMetersRequired;
+
   // Custom cm Dimension Calculation
   const dtfCustomArea = (Number(dtfCalcWidth) || 0) * (Number(dtfCalcHeight) || 0);
   const dtfCustomCostPerPcs = Math.ceil((dtfCustomArea * dtfEffectiveRatePerCm2) / 100) * 100;
@@ -331,10 +433,37 @@ export function ProcurementIntakeModal({ isOpen, onClose, onSave }) {
         });
 
       } else if (activeTab === 'dtf_roll') {
+        const hasAllocations = allocatedDtfDesigns.length > 0;
+        const totalSheets = allocatedDtfDesigns.reduce((sum, d) => sum + Number(d.qty), 0);
+        
+        let itemName = `Roll Film DTF 58 cm x ${dtfMeters} m`;
+        if (hasAllocations) {
+          if (allocatedDtfDesigns.length === 1) {
+            itemName = `Cetak DTF: ${allocatedDtfDesigns[0].name} (${allocatedDtfDesigns[0].qty} lbr)`;
+          } else {
+            itemName = `Cetak DTF Gang Sheet ${dtfMeters}m (${totalSheets} lbr mix ${allocatedDtfDesigns.length} desain)`;
+          }
+        }
+
+        const itemsBreakdown = hasAllocations
+          ? allocatedDtfDesigns.map(d => ({
+              sku: d.sku,
+              name: d.name,
+              size: d.sizeLabel,
+              qty: Number(d.qty),
+              unitCost: d.allocatedCost || Math.round(dtfTotalCost / Math.max(1, totalSheets)),
+              category: 'graphic'
+            }))
+          : null;
+
+        const defaultNotes = hasAllocations
+          ? `Cetak DTF ${dtfMeters}m di ${dtfSupplier}. Alokasi: ` + allocatedDtfDesigns.map(d => `${d.qty}x ${d.sku} [${d.sizeLabel}]`).join(', ') + `. Landed: ${formatRupiah(dtfLandedPerMeter)}/m.`
+          : `Cetak DTF meteran ${dtfMeters} meter. Total biaya: ${formatRupiah(dtfTotalCost)} (Landed cost: ${formatRupiah(dtfLandedPerMeter)}/meter).`;
+
         await onSave({
           itemType: 'dtf_film',
-          dtfSku: 'DTF-ROLL-58CM',
-          itemName: `Roll Film DTF 58 cm x ${dtfMeters} m`,
+          dtfSku: hasAllocations && allocatedDtfDesigns.length === 1 ? allocatedDtfDesigns[0].sku : 'DTF-ROLL-58CM',
+          itemName,
           supplierName: dtfSupplier.trim() || 'Vendor DTF Partner',
           purchaseType: 'roll_meter',
           qty: Number(dtfMeters),
@@ -345,7 +474,8 @@ export function ProcurementIntakeModal({ isOpen, onClose, onSave }) {
           realUnitCost: dtfLandedPerMeter,
           paymentSource,
           recordCashTx,
-          notes: notes.trim() || `Cetak DTF meteran ${dtfMeters} meter. Total biaya: ${formatRupiah(dtfTotalCost)} (Landed cost: ${formatRupiah(dtfLandedPerMeter)}/meter).`
+          itemsBreakdown,
+          notes: notes.trim() || defaultNotes
         });
       } else if (activeTab === 'design_license') {
         if (!licenseItemName.trim()) {
@@ -1143,6 +1273,213 @@ export function ProcurementIntakeModal({ isOpen, onClose, onSave }) {
                     </span>
                   </div>
                 </div>
+              </div>
+
+              {/* Section 3: Multi-Design Allocator to Gang Sheet Roll (Menambah Stok Fisik Gudang) */}
+              <div className="p-4 rounded-2xl bg-[#16161A] border border-white/[0.12] space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-3">
+                  <div>
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                      <Layers className="w-4 h-4 text-emerald-400" />
+                      3. Rincian Desain yang Dicetak (Otomatis Masuk Stok Fisik)
+                    </h4>
+                    <p className="text-[11px] text-zinc-400 mt-0.5">
+                      Pilih desain dari katalog atau input desain baru. Setiap lembar yang dicatat di sini otomatis menambah stok siap press di menu <strong>Inventori</strong>.
+                    </p>
+                  </div>
+                  {totalAllocatedSheets > 0 && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                        {totalAllocatedSheets} Lembar Siap Press
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Input Add Design Row */}
+                <div className="bg-black/40 p-3.5 rounded-xl border border-white/[0.06] space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+                    
+                    {/* Design Select / Input */}
+                    <div className="sm:col-span-5">
+                      <label className="text-[11px] font-bold text-zinc-300 block mb-1">
+                        Pilih Desain Kaos
+                      </label>
+                      <select
+                        value={selectedCatalogSku}
+                        onChange={(e) => {
+                          setSelectedCatalogSku(e.target.value);
+                          if (e.target.value !== 'custom' && e.target.value) {
+                            const found = catalog?.find(p => p.sku === e.target.value);
+                            if (found) {
+                              const pId = found.printPreset?.includes('a4') ? 'a4' : 'a3';
+                              setSelectedDtfPreset(pId);
+                            }
+                          }
+                        }}
+                        className="w-full bg-[#1A1A1F] border border-white/[0.12] rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none"
+                      >
+                        <option value="">-- Pilih dari Master Katalog --</option>
+                        {catalog && catalog.filter(p => !p.sku?.startsWith('TS-BLK')).map(p => (
+                          <option key={p.sku} value={p.sku}>
+                            [{p.sku}] {p.name} ({p.printPreset || 'A3+'})
+                          </option>
+                        ))}
+                        <option value="custom">+ Input Desain Baru / Kustom Manual</option>
+                      </select>
+                    </div>
+
+                    {/* Size Preset */}
+                    <div className="sm:col-span-4">
+                      <label className="text-[11px] font-bold text-zinc-300 block mb-1">
+                        Ukuran Cetak Sablon
+                      </label>
+                      <select
+                        value={selectedDtfPreset}
+                        onChange={(e) => setSelectedDtfPreset(e.target.value)}
+                        className="w-full bg-[#1A1A1F] border border-white/[0.12] rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none"
+                      >
+                        {DTF_PRESETS.map(preset => (
+                          <option key={preset.id} value={preset.id}>
+                            {preset.name} ({preset.gangYieldPerMeter} pcs/m)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Qty Lembar */}
+                    <div className="sm:col-span-2">
+                      <label className="text-[11px] font-bold text-zinc-300 block mb-1">
+                        Jumlah Lembar
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={allocatedQty}
+                        onChange={(e) => setAllocatedQty(e.target.value)}
+                        className="w-full bg-[#1A1A1F] border border-white/[0.12] rounded-xl px-2.5 py-2 text-xs font-mono font-bold text-white focus:outline-none text-center"
+                      />
+                    </div>
+
+                    {/* Add Button */}
+                    <div className="sm:col-span-1">
+                      <button
+                        type="button"
+                        onClick={handleAddAllocatedDesign}
+                        className="w-full py-2 bg-white text-zinc-950 font-bold text-xs rounded-xl hover:bg-zinc-200 transition-colors flex items-center justify-center"
+                        title="Tambahkan desain ke roll ini"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* If custom selected, show name & sku input */}
+                  {selectedCatalogSku === 'custom' && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-white/[0.06]">
+                      <input
+                        type="text"
+                        placeholder="Nama Desain Baru (cth: Graphic Kopi Senja)"
+                        value={customDtfName}
+                        onChange={(e) => setCustomDtfName(e.target.value)}
+                        className="bg-[#1A1A1F] border border-white/[0.12] rounded-xl px-3 py-1.5 text-xs text-white"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Kode SKU (cth: TS-KOP-001)"
+                        value={customDtfSku}
+                        onChange={(e) => setCustomDtfSku(e.target.value)}
+                        className="bg-[#1A1A1F] border border-white/[0.12] rounded-xl px-3 py-1.5 text-xs text-white font-mono"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* List of Allocated Designs Table */}
+                {allocatedDtfDesigns.length > 0 ? (
+                  <div className="border border-white/[0.08] rounded-xl overflow-hidden bg-black/30">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-white/[0.04] border-b border-white/[0.08] text-zinc-400 font-mono text-[10px] uppercase">
+                        <tr>
+                          <th className="py-2.5 px-3">Desain / SKU</th>
+                          <th className="py-2.5 px-3">Ukuran Sablon</th>
+                          <th className="py-2.5 px-3 text-center">Jumlah Lembar</th>
+                          <th className="py-2.5 px-3 text-right">Kebutuhan Roll</th>
+                          <th className="py-2.5 px-3 text-right">HPP Alokasi/Lembar</th>
+                          <th className="py-2.5 px-3 text-center">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/[0.05] text-zinc-200">
+                        {allocatedDtfDesigns.map((item) => {
+                          const itemMeters = (Number(item.qty) * (item.metersPerPiece || 0.5)).toFixed(2);
+                          return (
+                            <tr key={item.id} className="hover:bg-white/[0.02]">
+                              <td className="py-2 px-3">
+                                <div className="font-bold text-white">{item.name}</div>
+                                <span className="text-[10px] font-mono text-zinc-400">{item.sku}</span>
+                              </td>
+                              <td className="py-2 px-3 text-zinc-300">
+                                {item.sizeLabel}
+                              </td>
+                              <td className="py-2 px-3 text-center font-mono font-bold text-emerald-400">
+                                {item.qty} lembar
+                              </td>
+                              <td className="py-2 px-3 text-right font-mono text-zinc-400">
+                                ~{itemMeters} meter
+                              </td>
+                              <td className="py-2 px-3 text-right font-mono text-white font-semibold">
+                                {formatRupiah(item.allocatedCost)}
+                              </td>
+                              <td className="py-2 px-3 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveAllocatedDesign(item.id)}
+                                  className="p-1 rounded text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                                  title="Hapus Alokasi"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+
+                    {/* Capacity & Roll Alignment Bar */}
+                    <div className="p-3 bg-black/50 border-t border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+                      <div className="space-y-0.5">
+                        <div className="text-zinc-300">
+                          Total Lembar: <strong className="text-white">{totalAllocatedSheets} lembar film</strong> &bull; Terpakai: <strong className="text-white">~{totalMetersRequired.toFixed(1)} meter</strong> dari {dtfMeters}m roll
+                        </div>
+                        {remainingRollMeters >= 0 ? (
+                          <div className="text-[11px] text-emerald-400">
+                            ✅ Kapasitas roll cukup (Sisa ruang ~{remainingRollMeters.toFixed(1)} meter bisa untuk stiker/necktag)
+                          </div>
+                        ) : (
+                          <div className="text-[11px] text-rose-400">
+                            ⚠️ Kebutuhan roll (~{totalMetersRequired.toFixed(1)}m) melebihi panjang roll ({dtfMeters}m)!
+                          </div>
+                        )}
+                      </div>
+
+                      {Math.ceil(totalMetersRequired) !== Number(dtfMeters) && totalMetersRequired > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setDtfMeters(Math.max(1, Math.ceil(totalMetersRequired)))}
+                          className="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 text-[11px] font-bold flex items-center gap-1 shrink-0"
+                        >
+                          <Sparkles className="w-3 h-3" />
+                          <span>Set Panjang Roll Jadi {Math.max(1, Math.ceil(totalMetersRequired))} Meter</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-xl border border-dashed border-white/10 text-center text-zinc-500 text-xs">
+                    Belum ada desain yang dialokasikan ke roll ini. Anda bisa memilih desain dari katalog di atas untuk langsung menambah stok lembaran film per SKU, atau biarkan kosong jika hanya ingin mencatat roll borongan meteran umum.
+                  </div>
+                )}
               </div>
             </div>
           )}

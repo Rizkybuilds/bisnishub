@@ -357,7 +357,7 @@ export function ProcurementsPage() {
                           <div className="mt-1.5 flex flex-wrap gap-1">
                             {p.itemsBreakdown.slice(0, 5).map((item, idx) => (
                               <span key={idx} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-zinc-300">
-                                {item.color} ({item.size}) &times;{item.qty}
+                                {item.color ? `${item.color} (${item.size})` : `${item.name || item.sku} [${item.size}]`} &times;{item.qty}
                               </span>
                             ))}
                             {p.itemsBreakdown.length > 5 && (
@@ -599,19 +599,19 @@ export function ProcurementsPage() {
                         selectedPo.itemsBreakdown.map((item, idx) => (
                           <tr key={idx}>
                             <td className="py-2 px-3">
-                              <span className="font-medium text-white">{selectedPo.itemName}</span>
+                              <span className="font-medium text-white">{item.name || selectedPo.itemName}</span>
                               <span className="text-zinc-400 ml-2 font-mono">
-                                [{item.color} - Size {item.size}]
+                                {item.color ? `[${item.color} - Size ${item.size}]` : `[${item.sku || 'SKU'} - Ukuran ${item.size}]`}
                               </span>
                             </td>
                             <td className="py-2 px-3 text-center font-mono font-bold">
-                              {item.qty} pcs
+                              {item.qty} {selectedPo.itemType === 'dtf_film' ? 'lbr' : 'pcs'}
                             </td>
                             <td className="py-2 px-3 text-right font-mono text-zinc-400">
-                              {formatRupiah(selectedPo.itemCost ? Math.round(selectedPo.itemCost / selectedPo.qty) : Math.round((selectedPo.totalCost - (selectedPo.shippingCost || 0)) / selectedPo.qty))}
+                              {formatRupiah(item.unitCost || (selectedPo.itemCost ? Math.round(selectedPo.itemCost / selectedPo.qty) : Math.round((selectedPo.totalCost - (selectedPo.shippingCost || 0)) / selectedPo.qty)))}
                             </td>
                             <td className="py-2 px-3 text-right font-mono text-white font-semibold">
-                              {formatRupiah(item.qty * (selectedPo.itemCost ? Math.round(selectedPo.itemCost / selectedPo.qty) : Math.round((selectedPo.totalCost - (selectedPo.shippingCost || 0)) / selectedPo.qty)))}
+                              {formatRupiah(item.qty * (item.unitCost || (selectedPo.itemCost ? Math.round(selectedPo.itemCost / selectedPo.qty) : Math.round((selectedPo.totalCost - (selectedPo.shippingCost || 0)) / selectedPo.qty))))}
                             </td>
                           </tr>
                         ))
