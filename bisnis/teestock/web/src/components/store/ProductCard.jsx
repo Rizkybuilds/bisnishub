@@ -214,23 +214,16 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
               </div>
             ) : (
               <div>
-                <div className="flex items-center gap-1 sm:gap-1.5">
-                  <span className="text-[9px] text-ts-muted block font-mono">
-                    {isBlank ? 'Harga Satuan' : 'Katalog Resmi'}
-                  </span>
-                  {!isBlank && (
-                    <span className="bg-ts-terracotta/15 text-ts-terracotta text-xs font-mono font-bold px-2 py-0.5 rounded">
-                      -28%
-                    </span>
-                  )}
-                </div>
+                <span className="text-[9px] text-ts-muted block font-mono">
+                  {isBlank ? 'Harga Satuan' : 'Harga Resmi'}
+                </span>
                 <div className="flex items-baseline gap-1 sm:gap-1.5">
                   <span className="font-mono text-lg font-bold text-ts-krem">
-                    {formatRupiah(effectivePrice)}
+                    {formatRupiah(product.pricePromo && product.pricePromo < effectivePrice ? product.pricePromo : effectivePrice)}
                   </span>
-                  {!isBlank && (
+                  {product.pricePromo && product.pricePromo < effectivePrice && (
                     <span className="text-sm line-through text-ts-kremMuted font-mono hidden sm:inline">
-                      {formatRupiah(product.priceAnchor || product.price_anchor || 139000)}
+                      {formatRupiah(effectivePrice)}
                     </span>
                   )}
                 </div>

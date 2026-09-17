@@ -55,18 +55,31 @@ git push origin main
 
 ## 3. Vercel Deployment Flow
 
-Web TeeStock terhubung ke Vercel:
-- **Preview Branch**: Push ke branch non-main akan memicu preview build otomatis.
-- **Production Release**: Push atau merge ke branch `main` langsung men-trigger production deployment.
+Monorepo ini mendukung 2 target project terpisah di Vercel:
 
-Jika deploy via Vercel CLI secara manual:
+### A. TeeStock Storefront (`teestockapparel.vercel.app`)
+- **Root Directory**: `.` (Root repo, mengacu ke root `vercel.json`) atau `bisnis/teestock/web`
+- **Trigger**: Push ke `main` otomatis deploy storefront ke produksi.
+
+### B. BisnisHub OS (`bisnishub-os.vercel.app` / `apps/bisnishub-web`)
+- **Root Directory**: `apps/bisnishub-web`
+- **Framework Preset**: `Vite`
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Environment Variables**:
+  - `VITE_SUPABASE_URL`
+  - `VITE_SUPABASE_ANON_KEY`
+  - `VITE_APP_ENV=production`
+  - `VITE_FOUNDER_PIN`
+  - `VITE_ADMIN_EMAILS`
+
+Jika deploy via Vercel CLI secara manual dari terminal:
 ```powershell
-# Preview deployment
-npx vercel
-
-# Production deployment
+# Deploy BisnisHub OS (dari folder apps/bisnishub-web)
+cd apps/bisnishub-web
 npx vercel --prod
 ```
+
 
 ---
 

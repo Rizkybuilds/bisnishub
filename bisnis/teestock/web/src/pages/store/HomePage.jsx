@@ -39,7 +39,6 @@ export function HomePage() {
       name: 'Raw Identity // Statement Tee',
       seriesName: 'Graphic Statement',
       priceRetail: 99000,
-      priceAnchor: 139000,
       colors: 'Hitam, Charcoal, Putih, Olive',
       filePath: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'
     };

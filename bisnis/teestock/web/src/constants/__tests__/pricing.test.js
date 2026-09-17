@@ -5,7 +5,11 @@ import {
   getBlankPricing, 
   getShippingRateByZone,
   calculateProductHPPAndARB,
-  applyARBGuard
+  applyARBGuard,
+  calculateCatalogAutoPrice,
+  GARMENT_OPTIONS,
+  DESIGN_TIERS,
+  CURATED_COLORS
 } from '../pricing';
 
 describe('TeeStock Financial & Pricing Engine', () => {
@@ -65,53 +69,103 @@ describe('TeeStock Financial & Pricing Engine', () => {
     describe('NSA 3600 (Combed 30s)', () => {
       it('menghitung harga eceran satuan (<12 pcs)', () => {
         const whiteRetail = getBlankPricing(mock3600, 'White', 'retail', 'L', 1);
-        expect(whiteRetail.unitPrice).toBe(34000);
-        expect(whiteRetail.basePrice).toBe(34000);
-        expect(whiteRetail.targetProfit).toBe(34000 - 27000); // 7.000
+        expect(whiteRetail.unitPrice).toBe(37000); // 34k vendor + 3k margin
+        expect(whiteRetail.basePrice).toBe(37000);
+        expect(whiteRetail.targetProfit).toBe(3000);
 
         const colorRetail = getBlankPricing(mock3600, 'Black', 'retail', 'L', 1);
-        expect(colorRetail.unitPrice).toBe(37000);
-        expect(colorRetail.targetProfit).toBe(37000 - 30000); // 7.000
+        expect(colorRetail.unitPrice).toBe(40000); // 37k vendor + 3k margin
+        expect(colorRetail.targetProfit).toBe(3000);
       });
 
       it('menghitung tier grosir lusinan (>=12 pcs)', () => {
         const whiteGrosir = getBlankPricing(mock3600, 'White', 'retail', 'L', 12);
-        expect(whiteGrosir.unitPrice).toBe(32000);
+        expect(whiteGrosir.unitPrice).toBe(34000); // 32k vendor + 2k margin
         expect(whiteGrosir.tier).toBe('grosir');
 
         const colorGrosir = getBlankPricing(mock3600, 'Black', 'retail', 'L', 12);
-        expect(colorGrosir.unitPrice).toBe(35000);
+        expect(colorGrosir.unitPrice).toBe(37000); // 35k vendor + 2k margin
       });
 
       it('menghitung tier partai besar (>=72 pcs)', () => {
         const whitePartai = getBlankPricing(mock3600, 'White', 'retail', 'L', 72);
-        expect(whitePartai.unitPrice).toBe(29000);
+        expect(whitePartai.unitPrice).toBe(30000); // 29k vendor + 1k margin
         expect(whitePartai.tier).toBe('partai');
 
         const colorPartai = getBlankPricing(mock3600, 'Black', 'retail', 'L', 72);
-        expect(colorPartai.unitPrice).toBe(32000);
+        expect(colorPartai.unitPrice).toBe(33000); // 32k vendor + 1k margin
       });
 
       it('menambahkan surcharge ukuran jumbo pada harga akhir', () => {
         const result2XL = getBlankPricing(mock3600, 'White', 'retail', '2XL', 1);
         expect(result2XL.surcharge).toBe(5000);
-        expect(result2XL.basePrice).toBe(34000 + 5000);
+        expect(result2XL.basePrice).toBe(37000 + 5000);
       });
     });
 
     describe('NSA 7200 (Heavyweight 24s)', () => {
-      it('menghitung harga retail standar', () => {
+      it('menghitung harga retail standar (+Rp 3.000)', () => {
         const colorRetail = getBlankPricing(mock7200, 'Black', 'retail', 'L', 1);
         expect(colorRetail.vendorCost).toBe(42000);
-        expect(colorRetail.targetProfit).toBe(10000);
-        expect(colorRetail.basePrice).toBe(52000);
+        expect(colorRetail.targetProfit).toBe(3000);
+        expect(colorRetail.basePrice).toBe(45000);
       });
 
-      it('menjamin margin lantai minimal Rp 2.000 untuk mitra reseller', () => {
+      it('menjamin margin tetap Rp 1.000 untuk mitra reseller', () => {
         const colorReseller = getBlankPricing(mock7200, 'Black', 'reseller', 'L', 1);
-        expect(colorReseller.targetProfit).toBe(2000);
-        expect(colorReseller.basePrice).toBe(44000);
-        expect(colorReseller.minFloorPrice).toBe(44000);
+        expect(colorReseller.targetProfit).toBe(1000);
+        expect(colorReseller.basePrice).toBe(43000);
+        expect(colorReseller.minFloorPrice).toBe(43000);
+      });
+    });
+
+    describe('NSA 7280 (Long Sleeve 24s)', () => {
+      const mock7280 = { sku: 'TS-BLK-7280', name: 'NSA Premium Cotton Long Sleeve 7280' };
+
+      it('menghitung harga retail standar (White 56k, Color 59k)', () => {
+        const whiteRetail = getBlankPricing(mock7280, 'White', 'retail', 'L', 1);
+        expect(whiteRetail.unitPrice).toBe(56000); // 53k + 3k
+        expect(whiteRetail.targetProfit).toBe(3000);
+
+        const colorRetail = getBlankPricing(mock7280, 'Black', 'retail', 'L', 1);
+        expect(colorRetail.unitPrice).toBe(59000); // 56k + 3k
+      });
+
+      it('menerapkan surcharge jumbo +Rp 7.000 untuk lengan panjang', () => {
+        const result2XL = getBlankPricing(mock7280, 'Black', 'retail', '2XL', 1);
+        expect(result2XL.surcharge).toBe(7000);
+        expect(result2XL.basePrice).toBe(59000 + 7000);
+      });
+    });
+
+    describe('NSA 72Y00 (Youth Kids 24s)', () => {
+      const mock72Y00 = { sku: 'TS-BLK-72Y00', name: 'NSA Youth Kids 72Y00' };
+
+      it('menghitung harga retail flat 36k (vendor 33k + margin 3k)', () => {
+        const retail = getBlankPricing(mock72Y00, 'Red', 'retail', 'M', 1);
+        expect(retail.unitPrice).toBe(36000);
+        expect(retail.targetProfit).toBe(3000);
+      });
+
+      it('menghitung harga reseller flat 34k (vendor 33k + margin 1k)', () => {
+        const reseller = getBlankPricing(mock72Y00, 'Black', 'reseller', 'M', 1);
+        expect(reseller.unitPrice).toBe(34000);
+        expect(reseller.targetProfit).toBe(1000);
+      });
+    });
+
+    describe('NSA 7250 (Ringer 24s) & NSA 7260 (Raglan 24s)', () => {
+      const mock7250 = { sku: 'TS-BLK-7250', name: 'NSA Premium Cotton Ringer 7250' };
+      const mock7260 = { sku: 'TS-BLK-7260', name: 'NSA Premium Cotton Raglan 7260' };
+
+      it('menghitung harga retail Ringer 48k (vendor 45k + margin 3k)', () => {
+        const retail = getBlankPricing(mock7250, 'White-Black', 'retail', 'L', 1);
+        expect(retail.unitPrice).toBe(48000);
+      });
+
+      it('menghitung harga retail Raglan 58k (vendor 55k + margin 3k)', () => {
+        const retail = getBlankPricing(mock7260, 'White-Black', 'retail', 'L', 1);
+        expect(retail.unitPrice).toBe(58000);
       });
     });
   });
@@ -195,6 +249,98 @@ describe('TeeStock Financial & Pricing Engine', () => {
       expect(promoCheck.finalPrice).toBe(59000);
       expect(promoCheck.isFloorClamped).toBe(true);
       expect(promoCheck.message).toContain('Diskon optimal maksimal telah diterapkan');
+    });
+  });
+
+  describe('calculateCatalogAutoPrice() — Auto-Pricing Katalog TeeStock (Piagam 17 Sept 2026)', () => {
+    it('menghitung harga anchor default Rp 99.000 (NSA 24s + A3+ + Kemasan + Signature)', () => {
+      const calc = calculateCatalogAutoPrice({
+        garmentId: 'nsa_heavyweight_24s',
+        printSizeId: 'a3_plus',
+        designValue: 16000,
+        resellerDiscountPercent: 25
+      });
+
+      // Retail = 45.000 (24s) + 35.000 (A3+) + 3.000 (kemasan) + 16.000 (desain) = 99.000
+      expect(calc.retailPrice).toBe(99000);
+      // Reseller 25% diskon = 99.000 * 0.75 = 74.250
+      expect(calc.resellerPrice).toBe(74250);
+      // Modal fisik = 42.000 + 14.500 + 3.000 + 2.000 = 61.500
+      expect(calc.physicalCogs).toBe(61500);
+      // Laba kotor retail = 99.000 - 61.500 = 37.500 (37.9%)
+      expect(calc.grossProfitRetail).toBe(37500);
+      expect(Number(calc.grossMarginRetail)).toBeCloseTo(37.9, 0);
+      // Laba kotor reseller = 74.250 - 61.500 = 12.750
+      expect(calc.grossProfitReseller).toBe(12750);
+    });
+
+    it('menghitung harga garmen NSA 30s Softstyle (Rp 94.000)', () => {
+      const calc = calculateCatalogAutoPrice({
+        garmentId: 'nsa_softstyle_30s',
+        printSizeId: 'a3_plus',
+        designValue: 16000,
+        resellerDiscountPercent: 25
+      });
+
+      // Retail = 40.000 (30s) + 35.000 (A3+) + 3.000 + 16.000 = 94.000
+      expect(calc.retailPrice).toBe(94000);
+      expect(calc.resellerPrice).toBe(70500); // 94.000 * 0.75
+    });
+
+    it('menghitung desain Minimalist A4 (Rp 75.000)', () => {
+      const calc = calculateCatalogAutoPrice({
+        garmentId: 'nsa_heavyweight_24s',
+        printSizeId: 'a4',
+        designValue: 10000,
+        resellerDiscountPercent: 20
+      });
+
+      // Retail = 45.000 (24s) + 17.000 (A4) + 3.000 + 10.000 = 75.000
+      expect(calc.retailPrice).toBe(75000);
+      expect(calc.resellerPrice).toBe(60000); // 75.000 * 0.80
+    });
+
+    it('memastikan data konstanta katalog lengkap', () => {
+      expect(GARMENT_OPTIONS.length).toBeGreaterThanOrEqual(6);
+      expect(DESIGN_TIERS.length).toBeGreaterThanOrEqual(5);
+      expect(CURATED_COLORS.length).toBeGreaterThanOrEqual(10);
+    });
+
+    it('menghitung kombinasi sablon multi-titik: Dada Logo (A6) + Punggung (A3+)', () => {
+      const calc = calculateCatalogAutoPrice({
+        garmentId: 'nsa_heavyweight_24s',
+        printPlacements: { front: 'logo', back: 'a3_plus', sleeve: 'none' },
+        designValue: 16000,
+        resellerDiscountPercent: 25
+      });
+
+      // DTF: Logo A6 (6k) + Punggung A3+ (35k) = 41.000
+      expect(calc.dtfRate).toBe(41000);
+      expect(calc.frontRate).toBe(6000);
+      expect(calc.backRate).toBe(35000);
+      // Retail: 45k + 41k + 3k + 16k = 105.000
+      expect(calc.retailPrice).toBe(105000);
+      // Reseller 25%: 105.000 * 0.75 = 78.750
+      expect(calc.resellerPrice).toBe(78750);
+      // Film DTF: 2k (A6) + 14.5k (A3+) = 16.500
+      // Physical COGS: 42k + 16.5k + 3k + 2k = 63.500
+      expect(calc.physicalCogs).toBe(63500);
+      // Laba kotor retail: 105.000 - 63.500 = 41.500 (39.5%)
+      expect(calc.grossProfitRetail).toBe(41500);
+    });
+
+    it('menghitung kombinasi 3 titik: Dada + Punggung + Lengan/Bahu', () => {
+      const calc = calculateCatalogAutoPrice({
+        garmentId: 'nsa_heavyweight_24s',
+        printPreset: 'front_a6_back_a3_plus_sleeve',
+        designValue: 16000,
+        resellerDiscountPercent: 25
+      });
+
+      // DTF: Logo A6 (6k) + Punggung A3+ (35k) + Lengan A6 (5k) = 46.000
+      expect(calc.dtfRate).toBe(46000);
+      expect(calc.retailPrice).toBe(110000);
+      expect(calc.resellerPrice).toBe(82500);
     });
   });
 });

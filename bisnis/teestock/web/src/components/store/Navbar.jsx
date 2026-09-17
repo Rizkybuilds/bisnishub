@@ -294,15 +294,6 @@ export function Navbar() {
                       <span>Portal Kemitraan</span>
                     </Link>
 
-                    {isAdmin && (
-                      <Link
-                        to="/admin"
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surfaceHover transition-colors"
-                      >
-                        <User className="w-3.5 h-3.5 text-ts-terracotta" />
-                        <span>Admin Hub</span>
-                      </Link>
-                    )}
 
                     <button
                       onClick={() => signOut()}

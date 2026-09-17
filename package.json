@@ -6,6 +6,10 @@
   "scripts": {
     "build": "npm --prefix bisnis/teestock/web run build",
     "dev": "npm --prefix bisnis/teestock/web run dev",
-    "install": "npm --prefix bisnis/teestock/web install"
+    "dev:teestock": "npm --prefix bisnis/teestock/web run dev",
+    "build:teestock": "npm --prefix bisnis/teestock/web run build",
+    "dev:bisnishub": "npm --prefix apps/bisnishub-web run dev",
+    "build:bisnishub": "npm --prefix apps/bisnishub-web run build",
+    "install:all": "npm --prefix bisnis/teestock/web install && npm --prefix apps/bisnishub-web install"
   }
 }

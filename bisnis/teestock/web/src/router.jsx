@@ -1,13 +1,8 @@
 import React, { lazy, Suspense } from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 
 // Layouts
 import { StoreLayout } from './layouts/StoreLayout';
-import { AdminLayout } from './layouts/AdminLayout';
-import { AdminProvider } from './context/AdminContext';
-
-// Auth Guard
-import { AuthGuard } from './components/admin/AuthGuard';
 
 // Eager Store Pages (Above-the-fold critical routes)
 import { HomePage } from './pages/store/HomePage';
@@ -20,7 +15,6 @@ function safeLazy(importFn) {
   return lazy(async () => {
     try {
       const module = await importFn();
-      // Clear retry counter on successful load
       try {
         sessionStorage.removeItem('chunk_reload_' + window.location.pathname);
       } catch (_) {}
@@ -58,20 +52,6 @@ const GaransiPage = safeLazy(() => import('./pages/store/GaransiPage').then(m =>
 const CreatorPage = safeLazy(() => import('./pages/store/CreatorPage').then(m => ({ default: m.CreatorPage })));
 const NotFoundPage = safeLazy(() => import('./pages/store/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
-// Lazy-loaded Admin Pages (Zero Admin Code in Initial Public Bundle)
-const LoginPage = safeLazy(() => import('./pages/admin/LoginPage').then(m => ({ default: m.LoginPage })));
-const DashboardPage = safeLazy(() => import('./pages/admin/DashboardPage').then(m => ({ default: m.DashboardPage })));
-const AdminCatalogPage = safeLazy(() => import('./pages/admin/CatalogPage').then(m => ({ default: m.CatalogPage })));
-const InventoryPage = safeLazy(() => import('./pages/admin/InventoryPage').then(m => ({ default: m.InventoryPage })));
-const KanbanPage = safeLazy(() => import('./pages/admin/KanbanPage').then(m => ({ default: m.KanbanPage })));
-const GangSheetPage = safeLazy(() => import('./pages/admin/GangSheetPage').then(m => ({ default: m.GangSheetPage })));
-const QuoterPage = safeLazy(() => import('./pages/admin/QuoterPage').then(m => ({ default: m.QuoterPage })));
-const DefectsPage = safeLazy(() => import('./pages/admin/DefectsPage').then(m => ({ default: m.DefectsPage })));
-const SettingsPage = safeLazy(() => import('./pages/admin/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const ProcurementsPage = safeLazy(() => import('./pages/admin/ProcurementsPage').then(m => ({ default: m.ProcurementsPage })));
-const LedgerPage = safeLazy(() => import('./pages/admin/LedgerPage').then(m => ({ default: m.LedgerPage })));
-const AssetsPage = safeLazy(() => import('./pages/admin/AssetsPage').then(m => ({ default: m.AssetsPage })));
-
 /**
  * Loading fallback component for Storefront routes
  */
@@ -82,24 +62,6 @@ function StoreSuspense({ children, message = 'Memuat...' }) {
         <div className="flex min-h-[50vh] flex-col items-center justify-center p-8 text-center">
           <div className="h-7 w-7 animate-spin rounded-full border-2 border-ts-terracotta border-t-transparent" />
           <p className="mt-3 font-mono text-xs uppercase tracking-wider text-ts-kremMuted">{message}</p>
-        </div>
-      }
-    >
-      {children}
-    </Suspense>
-  );
-}
-
-/**
- * Loading fallback component for Admin Hub routes
- */
-function AdminSuspense({ children }) {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-[60vh] flex-col items-center justify-center p-12 text-center">
-          <div className="h-7 w-7 animate-spin rounded-full border-2 border-ts-teal border-t-transparent" />
-          <p className="mt-3 font-mono text-xs uppercase tracking-wider text-ts-muted">Memuat Modul Admin...</p>
         </div>
       }
     >
@@ -177,39 +139,6 @@ export const router = createBrowserRouter([
         path: '*',
         element: <StoreSuspense message="Mencari Halaman..."><NotFoundPage /></StoreSuspense>
       },
-    ],
-  },
-
-  // Admin Login (publik — di luar AuthGuard)
-  {
-    path: '/admin/login',
-    element: <AdminSuspense><LoginPage /></AdminSuspense>,
-  },
-
-  // Admin Internal Hub Routes (dilindungi AuthGuard & AdminProvider)
-  {
-    path: '/admin',
-    element: (
-      <AuthGuard>
-        <AdminProvider>
-          <AdminLayout />
-        </AdminProvider>
-      </AuthGuard>
-    ),
-    children: [
-      { index: true, element: <AdminSuspense><DashboardPage /></AdminSuspense> },
-      { path: 'pengadaan', element: <AdminSuspense><ProcurementsPage /></AdminSuspense> },
-      { path: 'buku-kas', element: <AdminSuspense><LedgerPage /></AdminSuspense> },
-      { path: 'aset', element: <AdminSuspense><AssetsPage /></AdminSuspense> },
-      { path: 'katalog', element: <AdminSuspense><AdminCatalogPage /></AdminSuspense> },
-      { path: 'inventory', element: <AdminSuspense><InventoryPage /></AdminSuspense> },
-      { path: 'kanban', element: <AdminSuspense><KanbanPage /></AdminSuspense> },
-      { path: 'gangsheet', element: <AdminSuspense><GangSheetPage /></AdminSuspense> },
-      { path: 'gang-sheet', element: <Navigate to="/admin/gangsheet" replace /> },
-      { path: 'quoter', element: <AdminSuspense><QuoterPage /></AdminSuspense> },
-      { path: 'defects', element: <AdminSuspense><DefectsPage /></AdminSuspense> },
-      { path: 'settings', element: <AdminSuspense><SettingsPage /></AdminSuspense> },
-      { path: '*', element: <Navigate to="/admin" replace /> },
     ],
   },
 

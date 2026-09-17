@@ -31,6 +31,10 @@ Sebagai solopreneur yang mengelola 3 bisnis (TeeStock, MultiGraph, Titik Buta), 
 3. **Mengunci Margin Aman dengan Aturan ARB (Auto Rijek Bawah)**: Tim marketing atau sistem promo bebas bermain diskon agresif (voucher pemula, bundling, flash sale), namun sistem **menolak keras dan mengunci harga** agar tidak pernah tembus di bawah `HPP + 10% Profit Bersih`.
 4. **Memisahkan Kas Bisnis vs Dompet Pribadi** melalui modul buku kas satu pintu (Founder Admin Hub) dengan pelacakan modal masuk, belanja pengadaan, laba bersih pesanan, hingga penarikan *Prive* (gaji pemilik).
 
+> [!important] Dokumen Kesepakatan Final Founder (17 September 2026)
+> Seluruh matriks harga baku, tarif sablon DTF (A6 hingga A2), formula 4-komponen kaos katalog (Rp 99.000), dan aturan diskon reseller telah disahkan secara resmi pada:  
+> 📜 **[[bisnis/teestock/keuangan/kesepakatan-skema-harga-teestock|Piagam Kesepakatan Skema Harga & Margin Resmi TeeStock]]** yang mengacu pada data [[bisnis/teestock/riset/Katalog Harga Vendor NSA|Katalog Harga Vendor NSA]].
+
 ---
 
 ## 2. CFO & COO: Struktur HPP (Harga Pokok Penjualan) Riil

@@ -90,22 +90,27 @@ export function ProductPurchasePanel({
                 <span>Harga Mitra ({profile?.partner_tier || 'Dropship'}) • Hemat {formatRupiah(partnerSavings)}/pcs</span>
               </div>
             </div>
+          ) : product.pricePromo && product.pricePromo < currentPrice ? (
+            <div className="space-y-1">
+              <div className="flex items-baseline gap-3 flex-wrap">
+                <span className="font-mono text-3xl font-black text-ts-green">
+                  {formatRupiah(product.pricePromo)}
+                </span>
+                <span className="text-base text-ts-muted line-through font-mono">
+                  {formatRupiah(currentPrice)}
+                </span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/30">
+                  PROMO
+                </span>
+                <span className="text-xs text-ts-muted font-mono">/ pcs</span>
+              </div>
+            </div>
           ) : (
             <div className="space-y-2">
               <div className="flex items-baseline gap-3 flex-wrap">
                 <span className="font-mono text-3xl font-black text-ts-green">
                   {formatRupiah(currentPrice)}
                 </span>
-                {!isBlank && (
-                  <span className="text-base text-ts-muted line-through font-mono">
-                    {formatRupiah(139000 + priceDelta)}
-                  </span>
-                )}
-                {!isBlank && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-ts-terracotta/20 text-ts-terracotta border border-ts-terracotta/30">
-                    Hemat 28%
-                  </span>
-                )}
                 <span className="text-xs text-ts-muted font-mono">/ pcs</span>
               </div>
             </div>

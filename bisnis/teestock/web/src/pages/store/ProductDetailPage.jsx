@@ -35,7 +35,7 @@ export function ProductDetailPage() {
   const { role, profile, isPartner } = useAuth();
 
   const product = catalog.find(p => p.sku === sku);
-  const isBlank = product?.series === 'blank';
+  const isBlank = product?.series === 'blank' || product?.template === 'blank' || product?.sku?.startsWith('TS-BLK');
 
   const [selectedGarmentKey, setSelectedGarmentKey] = useState(
     product?.template === 'softstyle_30s' ? 'nsa_softstyle_30s' : 'nsa_heavyweight_24s'
@@ -210,9 +210,7 @@ export function ProductDetailPage() {
     );
   }
 
-  const is3600 = isBlank && (product.sku === 'TS-BLK-3600' || product.name?.includes('3600'));
-  const is7200 = isBlank && (product.sku === 'TS-BLK-7200' || product.name?.includes('7200'));
-  const blankPricing = (is7200 || is3600)
+  const blankPricing = isBlank
     ? getBlankPricing(product, selectedColor, role, selectedSize, qty)
     : null;
 
@@ -227,10 +225,8 @@ export function ProductDetailPage() {
     String(previewImg).includes('folded');
   const isModel = activeGalleryItem?.type === 'model' || String(previewImg).includes('model-');
 
-  const baseRetailPrice = is3600 
-    ? (blankPricing?.isWhite ? 34000 : 37000)
-    : is7200 
-    ? (blankPricing?.isWhite ? 49000 : 52000)
+  const baseRetailPrice = isBlank 
+    ? (blankPricing?.unitPrice || 45000)
     : (product.priceRetail || product.price_retail || 99000);
   
   let effectiveBasePrice = baseRetailPrice;
@@ -246,25 +242,15 @@ export function ProductDetailPage() {
     effectiveBasePrice = partnerBase;
     partnerSavings = baseRetailPrice - partnerBase;
     isPartnerDiscountApplied = true;
-  } else if (isPartner && is3600) {
-    const resellerBase = blankPricing?.unitPrice || (blankPricing?.isWhite ? 32000 : 35000);
+  } else if (isPartner && isBlank) {
+    const resellerBase = blankPricing?.unitPrice || baseRetailPrice;
     effectiveBasePrice = resellerBase;
-    partnerSavings = baseRetailPrice - resellerBase;
+    partnerSavings = Math.max(0, baseRetailPrice - resellerBase);
     isPartnerDiscountApplied = partnerSavings > 0;
-  } else if (isPartner && is7200) {
-    const resellerBase = blankPricing?.isWhite ? 41000 : 44000;
-    effectiveBasePrice = resellerBase;
-    partnerSavings = baseRetailPrice - resellerBase;
-    isPartnerDiscountApplied = true;
-  } else if (is3600 && qty >= 12) {
-    effectiveBasePrice = blankPricing?.unitPrice;
-    partnerSavings = baseRetailPrice - (blankPricing?.unitPrice || baseRetailPrice);
+  } else if (isBlank && qty >= 12) {
+    effectiveBasePrice = blankPricing?.unitPrice || baseRetailPrice;
+    partnerSavings = Math.max(0, baseRetailPrice - (blankPricing?.unitPrice || baseRetailPrice));
     isPartnerDiscountApplied = partnerSavings > 0;
-  } else if (is7200 && qty >= 12) {
-    const resellerBase = blankPricing?.isWhite ? 41000 : 44000;
-    effectiveBasePrice = resellerBase;
-    partnerSavings = baseRetailPrice - resellerBase;
-    isPartnerDiscountApplied = true;
   }
 
   let priceDelta = 0;
@@ -276,12 +262,10 @@ export function ProductDetailPage() {
     else if (selectedGarmentKey === 'nsa_polo') priceDelta = 30000;
   }
 
-  const sizeSurcharge = getSizeSurcharge(selectedSize);
-  const currentPrice = (is7200 || is3600)
-    ? (effectiveBasePrice + sizeSurcharge)
-    : (isBlank 
-      ? (baseRetailPrice + sizeSurcharge) 
-      : (effectiveBasePrice + priceDelta + sizeSurcharge));
+  const isLongSleeve = (isBlank && (product.sku === 'TS-BLK-7280' || product.name?.includes('7280') || product.name?.includes('Long Sleeve'))) ||
+    (!isBlank && selectedGarmentKey === 'nsa_longsleeve');
+  const sizeSurcharge = getSizeSurcharge(selectedSize, isLongSleeve);
+  const currentPrice = effectiveBasePrice + (isBlank ? 0 : priceDelta) + sizeSurcharge;
 
   const productSchema = {
     "@context": "https://schema.org/",

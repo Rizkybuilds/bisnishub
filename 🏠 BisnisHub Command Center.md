@@ -21,15 +21,13 @@ tags:
 > Buka peta visual interaktif arsitektur bisnis dan alur operasional:
 > 🔗 **[[🗺️ BisnisHub Ecosystem.canvas|Buka BisnisHub Ecosystem Canvas]]**
 
-| 📅 **Jurnal & Review** | 🤖 **AI Sessions & Engine** | 📁 **Templates Master** | ⚙️ **System & Panduan** |
+| 📅 **Jurnal & Review** | 🤖 **AI & Web OS** | 📁 **Templates Master** | ⚙️ **System & Storage** |
 |---|---|---|---|
-| [[catatan/harian/2026-09-14|Catatan Harian]] | `catatan/sesi/` (Log C-Suite) | [[templates/Template - Catatan Harian|T-Harian]] | [[README|README Workspace]] |
-| [[catatan/weekly-review/README|Weekly Review]] | `python main.py` (Interactive CLI) | [[templates/Template - Weekly Business Review|T-Weekly Review]] | [[GEMINI|AI Rules & Engine]] |
-| [[catatan/ide/README|Ide & Scratchpad]] | [[catatan/panduan-antigravity-obsidian|Panduan AGY + Obsidian]] | [[templates/Template - Sesi Konsultasi C-Suite|T-Konsultasi]] | [[memory/business_profile.json|Business Profile]] |
-| | | [[templates/Template - SOP Operasional|T-SOP]] | [[bisnis/teestock/operasional/struktur-folder-teestock|Konvensi Folder]] |
-| | | [[templates/Template - Riset & Benchmarking|T-Riset]] | |
-| | | [[templates/Template - Marketing & Konten Kampanye|T-Marketing]] | |
-| | | [[templates/Template - Validasi & Riset Ide|T-Validasi]] | |
+| [[catatan/harian/2026-09-14|Catatan Harian]] | **BisnisHub Web OS** (`npm run dev:bisnishub`) | [[templates/Template - Catatan Harian|T-Harian]] | [[catatan/panduan-external-ssd-1tb|External SSD 1TB (D:\)]] |
+| [[catatan/weekly-review/README|Weekly Review]] | `catatan/sesi/` (Log C-Suite) | [[templates/Template - Weekly Business Review|T-Weekly Review]] | [[catatan/piagam-co-founders-bisnishub|Piagam Co-Founders]] |
+| [[catatan/ide/README|Ide & Scratchpad]] | `python main.py` (CLI Hub) | [[templates/Template - Sesi Konsultasi C-Suite|T-Konsultasi]] | [[README|README Workspace]] |
+| | [[catatan/panduan-antigravity-obsidian|Panduan AGY + Obsidian]] | [[templates/Template - SOP Operasional|T-SOP]] | [[GEMINI|AI Rules & Engine]] |
+| | | [[templates/Template - Marketing & Konten Kampanye|T-Marketing]] | [[memory/business_profile.json|Business Profile]] |
 
 ---
 
@@ -37,7 +35,7 @@ tags:
 
 ### 1. 👕 [[bisnis/teestock/README|TeeStock]] — Apparel POD & Blanks House
 > [!success] **Status: 🟢 Launch Prep**
-> Web app live di Vercel, Direction A Lookbook aktif, in-house heat press siap beroperasi, authentic master logo terintegrasi, transaksi Midtrans production-ready.
+> Web store live di **`https://teestockapparel.vercel.app`**, Direction A Lookbook aktif, in-house heat press siap beroperasi, authentic master logo terintegrasi, transaksi Midtrans production-ready.
 
 - 🎨 **Branding & Copywriting**:
   - [[bisnis/teestock/brand/brand-guide-teestock|Brand Guide & Identitas Visual TeeStock]]
@@ -70,35 +68,60 @@ tags:
 
 ---
 
-### 3. 👁️ [[bisnis/titik-buta/README|Titik Buta]] — Project Incubator
-> [!note] **Status: 🔴 Ideation**
-> Ruang eksplorasi dan inkubasi ide bisnis baru untuk mengidentifikasi "titik buta" pasar yang belum terlayani secara optimal.
-
-- 💡 **Riset & Pengembangan**:
-  - [[bisnis/titik-buta/README|Dokumentasi & Kerangka Validasi Ide]]
-  - Gunakan template: [[templates/Template - Validasi & Riset Ide|Template Riset & Validasi Ide]]
+### 3. 📦 Neo Pack & Squeegee Studios — Sayap Kemasan & Sablon MultiGraph
+> [!note] **Status: 🟡 Supporting Pillars**
+> Unit kemasan khusus B2B (Neo Pack) dan studio sablon manual partai besar (Squeegee Studios) yang beroperasi di bawah naungan MultiGraph Holding.
 
 ---
 
-## 🤖 Virtual C-Suite Thinking Partners
+### 💡 Proyek Independen (Di Luar Sinergi BisnisHub)
+- **Titik Buta** (`bisnis/titik-buta/`): Media edukasi independen (bukan bagian dari holding percetakan).
+- **KasKita** (`bisnis/kaskita/`): Personal Finance & Community SaaS independen.
 
-Jalankan `python main.py` di terminal untuk mulai berdiskusi. Sesi otomatis tersimpan ke Obsidian di `catatan/sesi/`.
+---
 
-| Peran | Persona & Panduan | Domain Fokus |
+## 🖥️ Personal Web Operating System (BisnisHub Web OS)
+
+> [!abstract] **Pusat Komando Digital Solo Founder**
+> Aplikasi internal PWA yang dapat dibuka dari smartphone maupun laptop untuk mengendalikan 4 pilar bisnis:
+> - **Path Proyek:** `apps/bisnishub-web`
+> - **Domain Target:** `bisnishub.rizkywahyudin.com` (atau `bisnishub.rizkywahyudin.vercel.app`)
+> - **Menjalankan di Lokal:** `npm run dev:bisnishub` (Akses di browser `http://localhost:3000`)
+> - **Keamanan:** Dilengkapi Layar Kunci PIN Founder (Default: `123456`) untuk melindungi kerahasiaan data kas dan margin di tempat umum.
+
+| Modul Utama | Penanggung Jawab | Kemampuan & Fitur Kunci |
 |---|---|---|
-| 🧠 **Mentor Bisnis** | [[prompts/mentor_persona.md\|mentor_persona.md]] | Strategi menyeluruh, validasi ide, model bisnis, tantang asumsi |
-| 🔧 **CTO** | [[prompts/cto_persona.md\|cto_persona.md]] | Arsitektur teknis, Next.js/Vite, Supabase, security, API |
-| ⚙️ **COO** | [[prompts/coo_persona.md\|coo_persona.md]] | SOP, rantai pasok (supply chain), pemenuhan pesanan, QC |
-| 💰 **CFO** | [[prompts/cfo_persona.md\|cfo_persona.md]] | HPP, margin kotor/bersih, arus kas, skema bayar, unit economics |
-| 📢 **CMO** | [[prompts/cmo_persona.md\|cmo_persona.md]] | Brand voice, akuisisi pelanggan, funnel konten, conversion ads |
+| 💰 **Treasury & HPP Simulator** | CFO | Pencatatan kas masuk/keluar kilat, BOM kaos NSA 24s/30s, live margin indicator (&ge;35%). |
+| 🏭 **Database Vendor & Maklon** | COO | Kontak 1-klik WhatsApp Cititex, vendor DTF roll 58cm, toko polymailer, nomor rekening. |
+| 📦 **Kanban Alur Pesanan** | Ops | 5-tahap produksi (Bahan &rarr; DTF &rarr; Heat Press 155°C &rarr; QC Kemas &rarr; Terkirim), cetak resi thermal A6. |
+| 📢 **Marketing Hub & Swipe File** | CMO | Kalender konten 4E TikTok/Reels, hook 3 detik, template chat WA penanganan keranjang belum bayar. |
+| 💾 **External SSD 1TB (`D:\`)** | System | [[catatan/panduan-external-ssd-1tb\|Panduan Aset Master SSD]], cheat sheet penamaan file, tombol salin path cepat. |
 
 ---
 
-## ⚡ Prinsip Kerja Solopreneur
+## 🏛️ Founding C-Suite Cabinet (Co-Founders Team)
+
+> [!abstract] **Piagam Dewan Eksekutif**
+> Seluruh pilar C-Level beroperasi sebagai Co-Founders dengan komitmen *skin in the game*. Baca komitmen lengkap di:
+> 🔗 **[[catatan/piagam-co-founders-bisnishub|Piagam Co-Founders & Standar Kepemimpinan C-Suite]]**
+
+| Peran | Gelar Eksekutif | Persona & Panduan | Mandat Utama |
+|---|---|---|---|
+| 🧠 **Mentor Bisnis** | Chief Strategic Officer (CSO) | [[prompts/mentor_persona.md\|mentor_persona.md]] | Penjaga kompas, alokasi energi 60-30-10, tantang asumsi |
+| 💰 **CFO** | Chief Financial Officer | [[prompts/cfo_persona.md\|cfo_persona.md]] | Penjaga arus kas, kunci margin min 35%, eliminasi risiko rugi |
+| ⚙️ **COO** | Chief Operating Officer | [[prompts/coo_persona.md\|coo_persona.md]] | Rantai pasok, QC defect <3%, standarisasi SOP in-house DTF |
+| 📢 **CMO** | Chief Marketing Officer | [[prompts/cmo_persona.md\|cmo_persona.md]] | Mesin pertumbuhan, konversi penjualan, copywriting langsung |
+| 🔧 **CTO** | Chief Technology Officer | [[prompts/cto_persona.md\|cto_persona.md]] | Otomasi sistem, kecepatan web mobile <1.5s, reliabilitas API |
+
+---
+
+## ⚡ Prinsip Kerja Solopreneur & Dewan Co-Founders
 > [!important] **Pedoman Eksekusi Mingguan**
-> 1. **Resource Terbatas**: Utamakan otomatisasi dan lean setup daripada overhead berlebih.
-> 2. **Sinergi Antar Bisnis**: Manfaatkan kolateral percetakan MultiGraph untuk mempercantik unboxing TeeStock.
-> 3. **Actionable Minggu Ini**: Hindari rencana abstrak jangka panjang; tuntaskan langkah berikutnya yang langsung menghasilkan penjualan.
+> 1. **Radical Candor**: Berani tolak ide yang membakar kas/waktu, selalu beri alternatif konkret.
+> 2. **Cash is King**: Validasi nomor satu adalah uang transfer dari pelanggan, bukan metrik semu.
+> 3. **Proactive Armory**: Siapkan langsung draf materi jadi (copy, kode, SOP, HPP).
+> 4. **Sinergi Antar Bisnis**: Manfaatkan kolateral MultiGraph untuk kemasan TeeStock.
+> 5. **Actionable Minggu Ini**: Prioritaskan aksi terdekat yang langsung mendatangkan penjualan.
 
 ---
 

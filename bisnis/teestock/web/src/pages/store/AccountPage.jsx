@@ -178,13 +178,6 @@ export function AccountPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-          {isAdmin && (
-            <Link to="/admin">
-              <Button size="sm" variant="secondary" icon={ShieldCheck}>
-                Admin Hub
-              </Button>
-            </Link>
-          )}
           <Button size="sm" variant="outline" icon={LogOut} onClick={() => signOut()}>
             Keluar
           </Button>

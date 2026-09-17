@@ -1,0 +1,410 @@
+import React, { useState } from 'react';
+import { 
+  Settings, 
+  Cloud, 
+  Database, 
+  CheckCircle2, 
+  RefreshCw,
+  Phone,
+  Save,
+  QrCode,
+  Sparkles,
+  Trash2,
+  AlertTriangle
+} from 'lucide-react';
+import { AdminTopbar } from '../../components/admin/AdminTopbar';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { useAdmin } from '../../context/AdminContext';
+import { useStore } from '../../context/StoreContext';
+import { testSupabaseConnection } from '../../services/supabase';
+
+export function SettingsPage() {
+  const { supabaseStatus, showToast, purgeAllDemoData } = useAdmin();
+  const { storeSettings, updateStoreSettings } = useStore();
+
+  // Cloud integration states
+  const [sbUrl, setSbUrl] = useState(import.meta.env.VITE_SUPABASE_URL || '');
+  const [sbKey, setSbKey] = useState(import.meta.env.VITE_SUPABASE_ANON_KEY || '');
+  const [cldName, setCldName] = useState(import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || '');
+  const [cldKey, setCldKey] = useState(import.meta.env.VITE_CLOUDINARY_API_KEY || '');
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState(null);
+
+  // Store contact states
+  const [whatsapp, setWhatsapp] = useState(storeSettings?.storeWhatsapp || '085220274968');
+  const [shopee, setShopee] = useState(storeSettings?.shopeeUrl || 'https://shopee.co.id');
+  const [tiktok, setTiktok] = useState(storeSettings?.tiktokUrl || 'https://tiktok.com');
+  const [instagram, setInstagram] = useState(storeSettings?.instagramUrl || 'https://instagram.com');
+
+  // QRIS & Bank states
+  const [qrisName, setQrisName] = useState(storeSettings?.qrisMerchantName || 'TeeStock Apparel');
+  const [qrisNmid, setQrisNmid] = useState(storeSettings?.qrisNmid || 'ID102609070001');
+  const [qrisImageUrl, setQrisImageUrl] = useState(storeSettings?.qrisImageUrl || '');
+  const [bankName, setBankName] = useState(storeSettings?.bankName || 'BCA');
+  const [bankAccountNo, setBankAccountNo] = useState(storeSettings?.bankAccountNo || '');
+  const [bankAccountHolder, setBankAccountHolder] = useState(storeSettings?.bankAccountHolder || 'TeeStock Apparel');
+
+  const [savingQris, setSavingQris] = useState(false);
+  const [savingStore, setSavingStore] = useState(false);
+
+  const handleSaveQrisSettings = async (e) => {
+    e.preventDefault();
+    setSavingQris(true);
+    try {
+      const res = await updateStoreSettings({
+        qrisMerchantName: qrisName.trim(),
+        qrisNmid: qrisNmid.trim(),
+        qrisImageUrl: qrisImageUrl.trim(),
+        bankName: bankName.trim(),
+        bankAccountNo: bankAccountNo.trim(),
+        bankAccountHolder: bankAccountHolder.trim()
+      });
+      if (res?.success) {
+        showToast("✅ Konfigurasi QRIS & Rekening tersimpan ke Cloud Supabase!", "success");
+      } else {
+        showToast("ℹ️ Tersimpan di browser lokal (cek koneksi Cloud Supabase).", "info");
+      }
+    } catch (err) {
+      showToast("Gagal menyimpan ke cloud: " + (err.message || err), "error");
+    } finally {
+      setSavingQris(false);
+    }
+  };
+
+  const handleTestSupabase = async () => {
+    setTesting(true);
+    const res = await testSupabaseConnection();
+    setTestResult(res);
+    setTesting(false);
+    showToast(res.message, res.connected ? 'success' : 'error');
+  };
+
+  const handleSaveStoreSettings = async (e) => {
+    e.preventDefault();
+    setSavingStore(true);
+    try {
+      const res = await updateStoreSettings({
+        storeWhatsapp: whatsapp.trim(),
+        shopeeUrl: shopee.trim(),
+        tiktokUrl: tiktok.trim(),
+        instagramUrl: instagram.trim()
+      });
+      if (res?.success) {
+        showToast("✅ Profil & kontak toko tersimpan ke Cloud Supabase!", "success");
+      } else {
+        showToast("ℹ️ Tersimpan di browser lokal (cek koneksi Cloud Supabase).", "info");
+      }
+    } catch (err) {
+      showToast("Gagal menyimpan ke cloud: " + (err.message || err), "error");
+    } finally {
+      setSavingStore(false);
+    }
+  };
+
+  return (
+    <div>
+      <AdminTopbar
+        title="Pengaturan Integrasi & Toko"
+        subtitle="Kelola kontak WhatsApp toko, link marketplace, database Supabase, dan Cloudinary CDN"
+      />
+
+      <div className="p-8 space-y-6 max-w-4xl mx-auto">
+        {/* Store Profile & Contact Card */}
+        <Card className="space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-ts-borderDim">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#25D366]/20 text-[#4EFA8A] flex items-center justify-center font-bold">
+                <Phone className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-ts-krem">Profil Toko &amp; Saluran Penjualan</h3>
+                <p className="text-xs text-ts-muted">Nomor WhatsApp dan link toko untuk checkout langsung pembeli</p>
+              </div>
+            </div>
+            <span className="text-xs font-mono font-bold text-ts-green bg-ts-green/10 px-2 py-1 rounded">
+              Aktif
+            </span>
+          </div>
+
+          <form onSubmit={handleSaveStoreSettings} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Nomor WhatsApp Resmi Toko (Penerima Order)"
+                placeholder="Contoh: 085220274968"
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(e.target.value)}
+                required
+              />
+              <Input
+                label="Link Toko Shopee"
+                placeholder="https://shopee.co.id/teestock"
+                value={shopee}
+                onChange={(e) => setShopee(e.target.value)}
+              />
+              <Input
+                label="Link Profil TikTok Shop"
+                placeholder="https://tiktok.com/@teestock.id"
+                value={tiktok}
+                onChange={(e) => setTiktok(e.target.value)}
+              />
+              <Input
+                label="Link Profil Instagram"
+                placeholder="https://instagram.com/teestock.id"
+                value={instagram}
+                onChange={(e) => setInstagram(e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-ts-borderDim">
+              <Button type="submit" variant="primary" icon={Save} disabled={savingStore}>
+                {savingStore ? 'Menyimpan ke Cloud...' : 'Simpan Kontak Toko'}
+              </Button>
+            </div>
+          </form>
+        </Card>
+
+        {/* QRIS Merchant Configuration Card */}
+        <Card className="space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-ts-borderDim">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-red-600/20 text-red-400 flex items-center justify-center font-bold">
+                <QrCode className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-ts-krem">Konfigurasi Pembayaran QRIS Manual</h3>
+                <p className="text-xs text-ts-muted">Atur identitas merchant QRIS dan sistem kode unik verifikasi 3 digit</p>
+              </div>
+            </div>
+            <span className="text-xs font-mono font-bold text-ts-green bg-ts-green/10 px-2 py-1 rounded">
+              0% Gateway Fee
+            </span>
+          </div>
+
+          <form onSubmit={handleSaveQrisSettings} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Nama Merchant QRIS Terdaftar"
+                placeholder="TeeStock Apparel"
+                value={qrisName}
+                onChange={(e) => setQrisName(e.target.value)}
+                required
+              />
+              <Input
+                label="NMID QRIS (National Merchant ID)"
+                placeholder="Contoh: ID102609070001"
+                value={qrisNmid}
+                onChange={(e) => setQrisNmid(e.target.value)}
+              />
+              <div className="md:col-span-2">
+                <Input
+                  label="URL Gambar Barcode QRIS Resmi (Scannable)"
+                  placeholder="https://res.cloudinary.com/.../qris-teestock.jpg atau /qris-master.png"
+                  value={qrisImageUrl}
+                  onChange={(e) => setQrisImageUrl(e.target.value)}
+                  helperText="Upload gambar barcode QRIS Anda ke Cloudinary / hosting dan tempel URL-nya di sini agar pembeli dapat langsung scan."
+                />
+              </div>
+              <Input
+                label="Nama Bank Alternatif (Manual Transfer)"
+                placeholder="BCA / Mandiri / BNI / BRI"
+                value={bankName}
+                onChange={(e) => setBankName(e.target.value)}
+              />
+              <Input
+                label="Nomor Rekening Bank"
+                placeholder="Contoh: 1234567890"
+                value={bankAccountNo}
+                onChange={(e) => setBankAccountNo(e.target.value)}
+              />
+              <div className="md:col-span-2">
+                <Input
+                  label="Atas Nama Pemilik Rekening"
+                  placeholder="Contoh: Rizky / TeeStock Apparel"
+                  value={bankAccountHolder}
+                  onChange={(e) => setBankAccountHolder(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-ts-kremMuted space-y-1">
+              <div className="text-white font-bold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-ts-mustard" />
+                <span>Sistem Verifikasi Otomatis Kode Unik 3 Digit</span>
+              </div>
+              <p>
+                Setiap pembeli di website akan mendapatkan nominal tagihan dengan 3 digit unik acak (contoh: +342). Anda cukup mencocokkan mutasi rekening bank/e-wallet dengan kode unik pesanan di Kanban Admin tanpa perlu membayar biaya payment gateway.
+              </p>
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-ts-borderDim">
+              <Button type="submit" variant="primary" icon={Save} disabled={savingQris}>
+                {savingQris ? 'Menyimpan ke Cloud...' : 'Simpan Pengaturan QRIS'}
+              </Button>
+            </div>
+          </form>
+        </Card>
+
+        {/* Supabase Card */}
+        <Card className="space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-ts-borderDim">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-ts-teal/20 text-ts-teal flex items-center justify-center font-bold">
+                <Database className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-ts-krem">Supabase Cloud PostgreSQL</h3>
+                <p className="text-xs text-ts-muted">Database sentral transaksi, inventori, dan katalog TeeStock</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-ts-green bg-ts-green/10 px-2 py-1 rounded flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Terkoneksi (Singapore)
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <Input
+              label="Supabase Project URL"
+              value={sbUrl}
+              onChange={(e) => setSbUrl(e.target.value)}
+              readOnly
+            />
+            <Input
+              label="Supabase Public Anon Key"
+              value={sbKey}
+              type="password"
+              onChange={(e) => setSbKey(e.target.value)}
+              readOnly
+            />
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
+            <Button
+              size="sm"
+              variant="secondary"
+              icon={testing ? RefreshCw : Cloud}
+              onClick={handleTestSupabase}
+              disabled={testing}
+            >
+              {testing ? "Menguji Koneksi..." : "Uji Koneksi Supabase"}
+            </Button>
+
+            {testResult && (
+              <span className={`text-xs font-semibold ${testResult.connected ? 'text-ts-green' : 'text-ts-red'}`}>
+                {testResult.message}
+              </span>
+            )}
+          </div>
+        </Card>
+
+        {/* Cloudinary Card */}
+        <Card className="space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-ts-borderDim">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-ts-mustard/20 text-ts-mustard flex items-center justify-center font-bold">
+                <Cloud className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-ts-krem">Cloudinary Media CDN</h3>
+                <p className="text-xs text-ts-muted">Penyimpanan mockup produk dengan kompresi WebP otomatis</p>
+              </div>
+            </div>
+
+            <span className="text-xs font-mono font-bold text-ts-mustard bg-ts-mustard/10 px-2 py-1 rounded">
+              Ready
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Input
+              label="Cloud Name"
+              value={cldName}
+              readOnly
+            />
+            <Input
+              label="API Key"
+              value={cldKey}
+              readOnly
+            />
+          </div>
+
+          <div className="p-3 bg-ts-hitam/60 border border-ts-borderDim rounded-xl text-xs text-ts-muted space-y-1">
+            <div className="font-bold text-ts-krem">Petunjuk Upload Preset:</div>
+            <p>
+              Pastikan Anda telah membuat Upload Preset bertipe <strong>Unsigned</strong> bernama <code>teestock_preset</code> di dashboard Cloudinary (Settings &rarr; Upload &rarr; Add upload preset).
+            </p>
+          </div>
+        </Card>
+
+        {/* Live Clean Slate & Data Purge Card */}
+        <Card className="space-y-4 border-rose-500/30 bg-rose-950/10 col-span-1 lg:col-span-2">
+          <div className="flex items-center justify-between pb-3 border-b border-rose-500/20">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold">
+                <Trash2 className="w-5 h-5 text-rose-400" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  Mode Live & Pembersihan Data Demo (Fresh Start)
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-400">
+                    Sistem 100% Bersih
+                  </span>
+                </h3>
+                <p className="text-xs text-zinc-400">
+                  Bersihkan seluruh cache transaksi fiktif, PO pengadaan lama, aset capex demo, defect simulasi, dan antrean pesanan uji coba.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div className="p-3 bg-black/40 border border-white/10 rounded-xl space-y-1">
+              <div className="font-bold text-emerald-400 flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                Data Master Tetap Aman:
+              </div>
+              <p className="text-zinc-400 leading-relaxed">
+                Katalog produk Drop #01, varian katun NSA (24s & 30s), dan template HPP tidak akan dihapus. Anda tetap memiliki referensi produk siap jual.
+              </p>
+            </div>
+
+            <div className="p-3 bg-black/40 border border-white/10 rounded-xl space-y-1">
+              <div className="font-bold text-rose-400 flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 text-rose-400" />
+                Data Transaksi Dinolkan:
+              </div>
+              <p className="text-zinc-400 leading-relaxed">
+                PO pengadaan, mutasi kas masuk/keluar, runway cash flow, antrean order kanban, dan catatan cacat QC akan dikosongkan bersih ke 0.
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-white/5">
+            <p className="text-xs text-zinc-400 italic">
+              Gunakan tombol ini sebelum Anda mulai mencatat pesanan riil pertama atau belanja bahan perdana.
+            </p>
+            <Button
+              size="sm"
+              className="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shrink-0 shadow-lg shadow-rose-950/50"
+              onClick={() => {
+                if (window.confirm("⚠️ KONFIRMASI PEMBERSIHAN DATA:\n\nApakah Anda yakin ingin menghapus seluruh data fiktif (pengadaan, mutasi kas, aset demo, order uji coba)?\n\nSistem akan kembali ke status 100% bersih untuk operasional live.")) {
+                  purgeAllDemoData();
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 500);
+                }
+              }}
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              Bersihkan Semua Data Demo & Reset ke 0
+            </Button>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}

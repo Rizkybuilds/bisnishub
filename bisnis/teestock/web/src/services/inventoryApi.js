@@ -1,6 +1,6 @@
-import { supabase } from './supabase';
-import { INITIAL_INVENTORY_MATRIX } from '../constants/seedData';
-import { GARMENT_TYPES } from '../constants/garments';
+import { supabase } from './supabase.js';
+import { INITIAL_INVENTORY_MATRIX } from '../constants/seedData.js';
+import { GARMENT_TYPES, SIZES } from '../constants/garments.js';
 
 const LOCAL_STORAGE_KEY = 'teestock_inventory_matrix';
 
@@ -59,18 +59,18 @@ function buildMatrixFromInventoryRows(rows = []) {
     if (itemType === 'blank_tshirt') {
       // Tentukan garmentKey berdasarkan pola SKU atau nama model
       let gKey = 'nsa_softstyle_30s';
-      if (sku.includes('24S') || r.brand?.includes('24s')) gKey = 'nsa_heavyweight_24s';
-      else if (sku.includes('30S') || r.brand?.includes('30s')) gKey = 'nsa_softstyle_30s';
+      if (sku.includes('24S') || sku.includes('7200') || r.brand?.includes('24s') || r.brand?.includes('7200')) gKey = 'nsa_heavyweight_24s';
+      else if (sku.includes('30S') || sku.includes('3600') || r.brand?.includes('30s') || r.brand?.includes('3600')) gKey = 'nsa_softstyle_30s';
+      else if (sku.includes('7280') || sku.includes('LS') || r.brand?.includes('Long Sleeve')) gKey = 'nsa_longsleeve';
+      else if (sku.includes('72Y00') || sku.includes('YOUTH') || r.brand?.includes('Youth')) gKey = 'nsa_youth';
+      else if (sku.includes('7250') || r.brand?.includes('Ringer')) gKey = 'nsa_ringer';
+      else if (sku.includes('7260') || r.brand?.includes('Raglan')) gKey = 'nsa_raglan';
       else if (sku.includes('5480') || r.brand?.includes('5480')) gKey = 'nsa_heavy_longsleeve';
-      else if (sku.includes('LS') || r.brand?.includes('Long Sleeve')) gKey = 'nsa_longsleeve';
       else if (sku.includes('HOD') || r.brand?.includes('Hoodie') || sku.includes('9500')) gKey = 'nsa_hoodie';
       else if (sku.includes('POL') || r.brand?.includes('Polo') || sku.includes('8100')) gKey = 'nsa_polo';
       else if (sku.includes('5400') || r.brand?.includes('20s')) gKey = 'nsa_heavyweight_20s';
-      else if (sku.includes('7250') || r.brand?.includes('Ringer')) gKey = 'nsa_ringer';
-      else if (sku.includes('7260') || r.brand?.includes('Raglan')) gKey = 'nsa_raglan';
       else if (sku.includes('9000') || r.brand?.includes('Crewneck')) gKey = 'nsa_crewneck';
       else if (sku.includes('2700') || r.brand?.includes('Dri-Fit')) gKey = 'nsa_drifit';
-      else if (sku.includes('72Y00') || r.brand?.includes('Youth')) gKey = 'nsa_youth';
 
       if (!matrix[gKey]) matrix[gKey] = {};
       const col = r.color || 'Hitam';
@@ -162,28 +162,208 @@ export async function getInventoryMatrix() {
 }
 
 /**
- * ⚡ Update single row secara langsung ke tabel ts_inventory di Supabase
+ * ⚡ Update / Upsert single row secara langsung ke tabel ts_inventory di Supabase
+ * Menggunakan upsert (onConflict: sku_item) agar jika baris terhapus oleh user di database,
+ * sistem secara otomatis membuat ulang (auto-healing) baris tersebut di Cloud.
  */
-export async function updateDatabaseInventoryItem(skuItem, stockQty, costPerUnit) {
+export async function updateDatabaseInventoryItem(skuItem, stockQty, costPerUnit, extraMeta = {}) {
   if (!skuItem) return;
   try {
+    const qty = Math.max(0, parseInt(stockQty, 10) || 0);
     const payload = {
-      stock_qty: Math.max(0, parseInt(stockQty, 10) || 0),
+      sku_item: skuItem,
+      stock_qty: qty,
       updated_at: new Date().toISOString()
     };
     if (costPerUnit) payload.cost_per_unit = Number(costPerUnit);
 
+    // Siapkan atribut auto-healing jika baris belum ada di PostgreSQL
+    if (skuItem.startsWith('NSA-')) {
+      payload.item_type = 'blank_tshirt';
+      payload.unit_measure = 'pcs';
+      payload.supplier = 'Distributor Resmi NSA (Cititex)';
+      const parts = skuItem.split('-');
+      if (parts.length >= 4) {
+        payload.brand = parts[1] === '30S' || parts[1] === '3600' ? 'NSA Softstyle 3600' : parts[1] === '24S' || parts[1] === '7200' ? 'NSA Premium Cotton 7200' : `NSA ${parts[1]}`;
+        payload.color = extraMeta.color || parts[2];
+        payload.size = extraMeta.size || parts[parts.length - 1];
+      }
+      if (!payload.cost_per_unit) payload.cost_per_unit = 38000;
+    } else if (skuItem.startsWith('MAT-')) {
+      payload.item_type = 'supplies';
+      payload.unit_measure = skuItem.includes('ROLL') || skuItem.includes('LAKBAN') ? 'roll' : 'pcs';
+      payload.supplier = 'MultiGraph Packaging & Printing';
+      payload.brand = extraMeta.name || skuItem;
+      if (!payload.cost_per_unit) payload.cost_per_unit = 1000;
+    } else if (skuItem.startsWith('DTF-') || skuItem.startsWith('TS-')) {
+      payload.item_type = 'dtf_film';
+      payload.unit_measure = skuItem.includes('ROLL') ? 'meter' : 'lembar';
+      payload.brand = extraMeta.name || `Film DTF ${skuItem}`;
+      payload.supplier = 'Vendor DTF Partner';
+      if (!payload.cost_per_unit) payload.cost_per_unit = skuItem.includes('ROLL') ? 30000 : 12500;
+    }
+
     const { error } = await supabase
       .from('ts_inventory')
-      .update(payload)
-      .eq('sku_item', skuItem);
+      .upsert(payload, { onConflict: 'sku_item' });
 
     if (error) {
-      console.warn(`Cloud update ts_inventory notice for ${skuItem}:`, error.message);
+      console.warn(`Cloud upsert ts_inventory notice for ${skuItem}:`, error.message);
     }
   } catch (err) {
-    console.warn(`Network error updating ts_inventory for ${skuItem}:`, err.message);
+    console.warn(`Network error upserting ts_inventory for ${skuItem}:`, err.message);
   }
+}
+
+/**
+ * 🔄 Sinkronisasi penuh & inisialisasi ulang seluruh SKU ke Cloud PostgreSQL Supabase
+ * Memastikan tabel ts_inventory dan ts_settings selalu memiliki struktur master lengkap
+ * bahkan jika user pernah menghapus data di database secara manual.
+ */
+export async function syncFullInventoryToCloud() {
+  const rows = [];
+  const matrix = {
+    supplies: {
+      polymailer: 0,
+      sticker: 0,
+      care_card: 0,
+      hangtag: 0,
+      teflon_sheet: 0,
+      lakban: 0
+    },
+    dtf_films: {},
+    nsa_softstyle_30s: {},
+    nsa_heavyweight_24s: {}
+  };
+
+  // 1. Matriks Kaos Polos NSA
+  Object.entries(GARMENT_TYPES).forEach(([gKey, gObj]) => {
+    if (gKey === 'supplies') return;
+    if (!matrix[gKey]) matrix[gKey] = {};
+    const colors = gObj.colors || [];
+    const sizes = gObj.sizes || SIZES || ["S", "M", "L", "XL", "2XL", "3XL"];
+    colors.forEach(colObj => {
+      const col = colObj.name;
+      if (!matrix[gKey][col]) matrix[gKey][col] = {};
+      const isWhite = col.toLowerCase() === 'white' || col.toLowerCase() === 'putih';
+      const cost = isWhite ? (gObj.baseCostWhite || gObj.baseCost || 37000) : (gObj.baseCost || 37000);
+      sizes.forEach(sz => {
+        const cleanCol = col.toUpperCase().replace(/\s+/g, '');
+        const sku = `${gObj.code || 'NSA'}-${cleanCol}-${sz}`;
+        matrix[gKey][col][sz] = 0;
+        rows.push({
+          sku_item: sku,
+          item_type: 'blank_tshirt',
+          brand: gObj.name,
+          color: col,
+          size: sz,
+          unit_measure: 'pcs',
+          stock_qty: 0,
+          min_stock_alert: 3,
+          cost_per_unit: cost,
+          supplier: 'Distributor Resmi NSA (Cititex)'
+        });
+      });
+    });
+  });
+
+  // 2. DTF Graphic Films (Drop #01 + Roll)
+  const dtfGraphics = [
+    { sku: 'TS-STM-001', name: 'Raw Identity // Statement Tee', cost: 12500 },
+    { sku: 'TS-STM-002', name: 'Quiet Confidence // Monolith Tee', cost: 12500 },
+    { sku: 'TS-SUB-001', name: 'Tokyo Underground 94 // Bootleg Tee', cost: 12500 },
+    { sku: 'TS-SUB-002', name: 'Echoes of Concrete // Skate Archive Tee', cost: 12500 },
+    { sku: 'TS-OUT-001', name: 'Deep Forest // Expedition Tee', cost: 12500 },
+    { sku: 'TS-OUT-002', name: 'Pine Needle // Botanical Archive Tee', cost: 12500 }
+  ];
+  dtfGraphics.forEach(d => {
+    matrix.dtf_films[d.sku] = {
+      name: d.name,
+      size: 'A3 (30x40 cm)',
+      ready: 0,
+      min: 2,
+      unitCost: d.cost,
+      category: 'graphic'
+    };
+    rows.push({
+      sku_item: d.sku,
+      item_type: 'dtf_film',
+      brand: `Film DTF ${d.name}`,
+      color: 'Sablon DTF',
+      size: 'A3',
+      unit_measure: 'lembar',
+      stock_qty: 0,
+      min_stock_alert: 2,
+      cost_per_unit: d.cost,
+      supplier: 'Vendor DTF Partner'
+    });
+  });
+
+  // Roll DTF
+  matrix.dtf_films['DTF-ROLL-58CM'] = {
+    name: 'Roll Film DTF 58 cm x 100 m',
+    size: 'Roll 58 cm',
+    ready: 0,
+    min: 10,
+    unitCost: 30000,
+    category: 'roll'
+  };
+  rows.push({
+    sku_item: 'DTF-ROLL-58CM',
+    item_type: 'dtf_film',
+    brand: 'Roll Film DTF 58 cm x 100 m',
+    color: 'Transparan',
+    size: 'Roll 58 cm',
+    unit_measure: 'meter',
+    stock_qty: 0,
+    min_stock_alert: 10,
+    cost_per_unit: 30000,
+    supplier: 'Vendor DTF Partner'
+  });
+
+  // 3. Packaging & Operational Supplies
+  const suppliesList = [
+    { sku: 'MAT-POLY-30X40', brand: 'Polymailer Hitam Doff 30x40 cm', unit: 'pcs', cost: 800, min: 20 },
+    { sku: 'MAT-STICKER-VP', brand: 'Stiker Vinyl Unboxing 6x6 cm', unit: 'pcs', cost: 600, min: 25 },
+    { sku: 'MAT-CARE-A6', brand: 'Care Card & Thank You Insert A6', unit: 'pcs', cost: 400, min: 20 },
+    { sku: 'MAT-HANGTAG-01', brand: 'Hangtag Distro Kraft Tebal', unit: 'pcs', cost: 500, min: 20 },
+    { sku: 'MAT-TEFLON-SHEET', brand: 'Kertas Teflon Heat Press', unit: 'lembar', cost: 25000, min: 2 },
+    { sku: 'MAT-LAKBAN-FRAGILE', brand: 'Lakban Fragile & Bening', unit: 'roll', cost: 15000, min: 2 }
+  ];
+  suppliesList.forEach(s => {
+    rows.push({
+      sku_item: s.sku,
+      item_type: 'supplies',
+      brand: s.brand,
+      color: 'Standard',
+      size: 'Standard',
+      unit_measure: s.unit,
+      stock_qty: 0,
+      min_stock_alert: s.min,
+      cost_per_unit: s.cost,
+      supplier: 'MultiGraph Packaging & Printing'
+    });
+  });
+
+  // Kirim upsert batch ke ts_inventory per 50 rows
+  for (let i = 0; i < rows.length; i += 50) {
+    const chunk = rows.slice(i, i + 50);
+    await supabase.from('ts_inventory').upsert(chunk, { onConflict: 'sku_item' });
+  }
+
+  // Update ts_settings inventory_matrix
+  await supabase.from('ts_settings').upsert({
+    key: 'inventory_matrix',
+    value: matrix,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'key' });
+
+  // Update local storage
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(matrix));
+  }
+
+  return matrix;
 }
 
 /**
@@ -263,6 +443,37 @@ export function restockBlankGarment(matrix, garmentKey, color, size, qty = 1) {
 }
 
 /**
+ * 📦 Batch Wholesale Restock: Tambah stok banyak warna & ukuran sekaligus dalam 1 nota pengadaan
+ * itemsBreakdown: Array of { color, size, qty, unitCost, landedUnitCost }
+ */
+export function restockGarmentBatch(matrix, garmentKey, itemsBreakdown = []) {
+  if (!itemsBreakdown || itemsBreakdown.length === 0) return matrix;
+
+  const updated = JSON.parse(JSON.stringify(matrix));
+  if (!updated[garmentKey]) updated[garmentKey] = {};
+
+  const baseCost = GARMENT_TYPES[garmentKey]?.baseCost || 38000;
+
+  itemsBreakdown.forEach(item => {
+    const { color, size, qty, landedUnitCost } = item;
+    const addQty = Number(qty) || 0;
+    if (addQty <= 0 || !color || !size) return;
+
+    if (!updated[garmentKey][color]) updated[garmentKey][color] = {};
+    const current = Number(updated[garmentKey][color][size]) || 0;
+    const nextQty = current + addQty;
+    updated[garmentKey][color][size] = nextQty;
+
+    // Sinkronkan ke real database tabel ts_inventory per SKU
+    const sku = getBlankGarmentSku(garmentKey, color, size);
+    updateDatabaseInventoryItem(sku, nextQty, landedUnitCost || baseCost);
+  });
+
+  saveInventoryMatrix(updated);
+  return updated;
+}
+
+/**
  * Tambah / restok kemasan & material operasional (polymailer, sticker, hangtag, care card, dll.)
  */
 export function restockSupplyItem(matrix, supplyId, qty = 1) {
@@ -271,9 +482,54 @@ export function restockSupplyItem(matrix, supplyId, qty = 1) {
     updated.supplies = {};
   }
   const raw = updated.supplies[supplyId];
-  const current = typeof raw === 'object' && raw !== null ? Number(raw.qty || 0) : Number(raw || 0);
-  const nextQty = current + Number(qty);
-  updated.supplies[supplyId] = nextQty;
+  let nextQty = 0;
+  if (typeof raw === 'object' && raw !== null) {
+    const current = Number(raw.ready ?? raw.qty ?? 0);
+    nextQty = current + Number(qty);
+    if ('ready' in raw) {
+      raw.ready = nextQty;
+    } else {
+      raw.qty = nextQty;
+    }
+    updated.supplies[supplyId] = raw;
+  } else {
+    const current = Number(raw || 0);
+    nextQty = current + Number(qty);
+    updated.supplies[supplyId] = nextQty;
+  }
+  saveInventoryMatrix(updated);
+
+  // Sinkronkan ke real database tabel ts_inventory
+  const sku = getSupplySku(supplyId);
+  updateDatabaseInventoryItem(sku, nextQty);
+
+  return updated;
+}
+
+/**
+ * Potong stok kemasan & material operasional (polymailer, sticker, hangtag, care card, dll.)
+ */
+export function deductSupplyItem(matrix, supplyId, qty = 1) {
+  const updated = JSON.parse(JSON.stringify(matrix));
+  if (!updated.supplies) {
+    updated.supplies = {};
+  }
+  const raw = updated.supplies[supplyId];
+  let nextQty = 0;
+  if (typeof raw === 'object' && raw !== null) {
+    const current = Number(raw.ready ?? raw.qty ?? 0);
+    nextQty = Math.max(0, current - Number(qty));
+    if ('ready' in raw) {
+      raw.ready = nextQty;
+    } else {
+      raw.qty = nextQty;
+    }
+    updated.supplies[supplyId] = raw;
+  } else {
+    const current = Number(raw || 0);
+    nextQty = Math.max(0, current - Number(qty));
+    updated.supplies[supplyId] = nextQty;
+  }
   saveInventoryMatrix(updated);
 
   // Sinkronkan ke real database tabel ts_inventory

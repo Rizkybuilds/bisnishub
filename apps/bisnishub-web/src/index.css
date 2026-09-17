@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+.dark {
+  color-scheme: dark;
+  --color-bg-base: #09090B;
+  --color-bg-surface: #121215;
+  --color-bg-surface-hover: #1A1A1F;
+  --color-bg-surface-card: rgba(18, 18, 21, 0.95);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-dim: rgba(255, 255, 255, 0.04);
+  --color-border-hover: rgba(255, 255, 255, 0.20);
+  --color-text-krem: #FFFFFF;
+  --color-text-krem-light: #FFFFFF;
+  --color-text-krem-muted: #A1A1AA;
+  --color-text-muted: #71717A;
+  --color-terracotta: #FFFFFF;
+  --color-terracotta-glow: rgba(255, 255, 255, 0.12);
+  --color-mustard: #FFFFFF;
+  --color-teal: #10B981;
+}
+
+@layer base {
+  body {
+    background-color: #09090B;
+    color: #FFFFFF;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: -0.01em;
+  }
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom modern scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0F17;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Thermal A6 Print Mode (100mm x 150mm) */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #thermal-print-container, #thermal-print-container * {
+    visibility: visible;
+  }
+  #thermal-print-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100mm;
+    min-height: 145mm;
+    margin: 0;
+    padding: 12px;
+    background: white !important;
+    color: black !important;
+  }
+}
