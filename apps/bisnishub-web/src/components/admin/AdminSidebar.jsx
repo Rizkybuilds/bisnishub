@@ -18,6 +18,7 @@ import {
   Truck,
   Megaphone,
   HardDrive,
+  Users,
   Lock
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
@@ -44,6 +45,7 @@ export function AdminSidebar({ isMobileOpen = false, onCloseMobile }) {
   ];
 
   const growthNavItems = [
+    { to: '/customers', label: 'CRM Pelanggan & VIP', icon: Users, highlight: true },
     { to: '/marketing', label: 'Marketing & Swipe File', icon: Megaphone, highlight: true },
     { to: '/storage', label: 'External SSD 1TB (D:\\)', icon: HardDrive },
     { to: '/settings', label: 'Pengaturan Cloud', icon: Settings },

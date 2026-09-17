@@ -15,6 +15,7 @@ import { CatalogPage } from './pages/admin/CatalogPage';
 import { GangSheetPage } from './pages/admin/GangSheetPage';
 import { DefectsPage } from './pages/admin/DefectsPage';
 import { QuoterPage } from './pages/admin/QuoterPage';
+import { CustomersPage } from './pages/admin/CustomersPage';
 import { SettingsPage } from './pages/admin/SettingsPage';
 
 // BisnisHub Native Extensions
@@ -62,6 +63,8 @@ export const router = createBrowserRouter([
       { path: 'gang-sheet', element: <Navigate to="/gangsheet" replace /> },
       { path: 'defects', element: <DefectsPage /> },
       { path: 'quoter', element: <QuoterPage /> },
+      { path: 'customers', element: <CustomersPage /> },
+      { path: 'pelanggan', element: <Navigate to="/customers" replace /> },
       { path: 'vendors', element: <VendorsView /> },
       { path: 'marketing', element: <MarketingView /> },
       { path: 'storage', element: <StorageView /> },
@@ -78,6 +81,8 @@ export const router = createBrowserRouter([
       { path: 'admin/gangsheet', element: <Navigate to="/gangsheet" replace /> },
       { path: 'admin/defects', element: <Navigate to="/defects" replace /> },
       { path: 'admin/quoter', element: <Navigate to="/quoter" replace /> },
+      { path: 'admin/customers', element: <Navigate to="/customers" replace /> },
+      { path: 'admin/pelanggan', element: <Navigate to="/customers" replace /> },
       { path: 'admin/settings', element: <Navigate to="/settings" replace /> },
 
       { path: '*', element: <Navigate to="/" replace /> },

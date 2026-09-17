@@ -19,6 +19,7 @@ import {
   Plus, 
   Lock, 
   ExternalLink,
+  Users,
   ArrowRight,
   Command,
   X
@@ -54,6 +55,7 @@ export function CommandPalette({ isOpen, onClose, onOpenNewOrder }) {
       { id: 'nav-katalog', category: 'Navigasi Cepat', label: 'Master Katalog Desain (PIM)', shortcut: 'G M', icon: Shirt, path: '/katalog' },
       { id: 'nav-gangsheet', category: 'Navigasi Cepat', label: 'Kalkulator Gang Sheet DTF 58cm', shortcut: 'G G', icon: ScrollText, path: '/gangsheet' },
       { id: 'nav-defects', category: 'Navigasi Cepat', label: 'QC & Defect Tracker', shortcut: 'G Q', icon: AlertTriangle, path: '/defects' },
+      { id: 'nav-customers', category: 'Navigasi Cepat', label: 'CRM Pelanggan & VIP Reseller', shortcut: 'G C', icon: Users, path: '/customers' },
       { id: 'nav-quoter', category: 'Navigasi Cepat', label: 'Custom Order Quoter WA', shortcut: 'G W', icon: Calculator, path: '/quoter' },
       { id: 'nav-vendors', category: 'Navigasi Cepat', label: 'Mitra Vendor & Maklon', shortcut: 'G V', icon: Truck, path: '/vendors' },
       { id: 'nav-marketing', category: 'Navigasi Cepat', label: 'Marketing & Swipe File', shortcut: 'G S', icon: Megaphone, path: '/marketing' },
