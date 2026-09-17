@@ -528,6 +528,15 @@ export const PRINT_PRESETS = [
     isDefault: false
   },
   {
+    id: 'none',
+    name: 'Tanpa Sablon (Kaos Polos Blank)',
+    shortName: 'Polos (Tanpa DTF)',
+    placements: { front: 'none', back: 'none', sleeve: 'none' },
+    desc: 'Hanya kaos polos NSA tanpa cetak DTF (Margin flat +Rp 3rb eceran, +Rp 1rb reseller)',
+    badge: 'Kaos Polos',
+    isDefault: false
+  },
+  {
     id: 'custom',
     name: '⚙️ Kustom Titik Cetak Bebas',
     shortName: 'Kustom Zona',
@@ -573,8 +582,8 @@ export function calculateCatalogAutoPrice({
       placements = { front: 'logo', back: 'none', sleeve: 'none' };
     } else if (printSizeId === 'a4') {
       placements = { front: 'a4', back: 'none', sleeve: 'none' };
-    } else if (printSizeId === 'a3_plus_a6') {
-      placements = { front: 'logo', back: 'a3_plus', sleeve: 'none' };
+    } else if (printSizeId === 'none') {
+      placements = { front: 'none', back: 'none', sleeve: 'none' };
     } else {
       placements = { front: 'none', back: printSizeId, sleeve: 'none' };
     }
@@ -585,27 +594,46 @@ export function calculateCatalogAutoPrice({
   const backItem = PRINT_PLACEMENTS.back.find(p => p.id === placements.back) || { rate: 0, filmCost: 0 };
   const sleeveItem = PRINT_PLACEMENTS.sleeve.find(p => p.id === placements.sleeve) || { rate: 0, filmCost: 0 };
 
-  let dtfRate = frontItem.rate + backItem.rate + sleeveItem.rate;
-  let dtfFilmCost = frontItem.filmCost + backItem.filmCost + sleeveItem.filmCost;
+  const isAllNone = (placements.front === 'none' && placements.back === 'none' && placements.sleeve === 'none') || printPreset === 'none';
 
-  // Fallback safety
-  if (dtfRate === 0) {
-    dtfRate = 35000;
-    dtfFilmCost = 14500;
+  let dtfRate = 0;
+  let dtfFilmCost = 0;
+  let packagingCost = 3000;
+  let pressAndBuffer = 2000;
+
+  if (isAllNone) {
+    dtfRate = 0;
+    dtfFilmCost = 0;
+    packagingCost = 0;
+    pressAndBuffer = 0;
+  } else {
+    dtfRate = frontItem.rate + backItem.rate + sleeveItem.rate;
+    dtfFilmCost = frontItem.filmCost + backItem.filmCost + sleeveItem.filmCost;
+
+    // Fallback safety
+    if (dtfRate === 0) {
+      dtfRate = 35000;
+      dtfFilmCost = 14500;
+    }
   }
-
-  const packagingCost = 3000;
-  const pressAndBuffer = 2000;
 
   const garmentRetail = isWhite ? garment.retailPriceWhite : garment.retailPriceColor;
   const garmentVendorCost = isWhite ? garment.vendorCostWhite : garment.vendorCostColor;
 
-  const retailPrice = garmentRetail + dtfRate + packagingCost + Number(designValue || 0);
-  const resellerDiscount = Math.max(0, Math.min(100, Number(resellerDiscountPercent ?? 25)));
-  const resellerPrice = Math.round(retailPrice * (1 - resellerDiscount / 100));
+  const retailPrice = isAllNone 
+    ? garmentRetail 
+    : (garmentRetail + dtfRate + packagingCost + Number(designValue || 0));
 
-  // Modal Fisik Riil
-  const physicalCogs = garmentVendorCost + dtfFilmCost + packagingCost + pressAndBuffer;
+  const resellerDiscount = Math.max(0, Math.min(100, Number(resellerDiscountPercent ?? 25)));
+  // Sesuai Piagam Kesepakatan: Reseller kaos polos ambil margin flat +1k di atas modal vendor
+  const resellerPrice = isAllNone
+    ? (garmentVendorCost + 1000)
+    : Math.round(retailPrice * (1 - resellerDiscount / 100));
+
+  // Modal Fisik Riil (Untuk blank: murni harga beli vendor NSA)
+  const physicalCogs = isAllNone
+    ? garmentVendorCost
+    : (garmentVendorCost + dtfFilmCost + packagingCost + pressAndBuffer);
 
   return {
     retailPrice,
@@ -620,7 +648,7 @@ export function calculateCatalogAutoPrice({
     sleeveRate: sleeveItem.rate,
     packagingCost,
     pressAndBuffer,
-    designValue: Number(designValue || 0),
+    designValue: isAllNone ? 0 : Number(designValue || 0),
     resellerDiscount,
     physicalCogs,
     grossProfitRetail: retailPrice - physicalCogs,

@@ -114,12 +114,13 @@ export function CatalogPage() {
   });
 
   // Live reactive auto-pricing calculation (Zero-Manual Input)
+  const isBlankForm = formSeries === 'blank' || formSku?.startsWith('TS-BLK-');
   const autoPrice = calculateCatalogAutoPrice({
     garmentId: formPrimaryGarment,
-    printPreset: formPrintPreset,
-    printPlacements: formPrintPlacements,
-    printSizeId: formPrintSize,
-    designValue: formDesignValue,
+    printPreset: isBlankForm ? 'none' : formPrintPreset,
+    printPlacements: isBlankForm ? { front: 'none', back: 'none', sleeve: 'none' } : formPrintPlacements,
+    printSizeId: isBlankForm ? 'none' : formPrintSize,
+    designValue: isBlankForm ? 0 : formDesignValue,
     resellerDiscountPercent: formResellerDiscount,
     isWhite: false
   });
@@ -283,23 +284,24 @@ export function CatalogPage() {
   };
 
   const handleOpenEdit = (p) => {
+    const isBlank = p.series === 'blank' || p.template === 'blank' || (p.sku && p.sku.startsWith('TS-BLK-'));
     setEditingSku(p.sku);
     setFormSku(p.sku);
     setFormName(p.name);
-    setFormSeries(p.series || 'profesi');
+    setFormSeries(p.series || (isBlank ? 'blank' : 'profesi'));
     setFormNiche(p.niche || '');
     setFormFilePath(p.filePath || p.file_path || '');
 
     // Restore customization & auto-pricing specs
-    const printPreset = p.printPreset || p.print_preset || 'back_a3_plus';
-    const defaultPlacements = p.printPlacements || p.print_placements || (
+    const printPreset = isBlank ? 'none' : (p.printPreset || p.print_preset || 'back_a3_plus');
+    const defaultPlacements = isBlank ? { front: 'none', back: 'none', sleeve: 'none' } : (p.printPlacements || p.print_placements || (
       p.printSize ? (
         p.printSize === 'a3_plus_a6' ? { front: 'logo', back: 'a3_plus', sleeve: 'none' } :
         p.printSize === 'a4' ? { front: 'a4', back: 'none', sleeve: 'none' } :
         p.printSize === 'logo' || p.printSize === 'a6' ? { front: 'logo', back: 'none', sleeve: 'none' } :
         { front: 'none', back: p.printSize, sleeve: 'none' }
       ) : { front: 'none', back: 'a3_plus', sleeve: 'none' }
-    );
+    ));
     const mainSize = defaultPlacements.back !== 'none' 
       ? defaultPlacements.back 
       : (defaultPlacements.front !== 'none' ? defaultPlacements.front : (p.printSize || 'a3_plus'));
@@ -315,9 +317,9 @@ export function CatalogPage() {
       return match ? match.id : colorVal;
     });
     const vImages = p.variantImages || p.variant_images || (p.storyBehind?.variantImages) || {};
-    const dTier = p.designTier || p.design_tier || 'tier2_signature';
-    const dVal = p.designValue ?? p.design_value ?? 16000;
-    const rDisc = p.resellerDiscountPercent ?? p.reseller_discount_percent ?? 25;
+    const dTier = isBlank ? 'tier1_essential' : (p.designTier || p.design_tier || 'tier2_signature');
+    const dVal = isBlank ? 0 : (p.designValue ?? p.design_value ?? 16000);
+    const rDisc = isBlank ? 0 : (p.resellerDiscountPercent ?? p.reseller_discount_percent ?? 25);
 
     setFormPrintPreset(printPreset);
     setFormPrintPlacements(defaultPlacements);
@@ -332,10 +334,10 @@ export function CatalogPage() {
     setFormResellerDiscount(rDisc);
     setFormManualOverride(false);
 
-    setFormPriceRetail(p.priceRetail || p.price_retail || 99000);
-    setFormPriceReseller(p.priceReseller || p.price_reseller || 74250);
-    setFormCostBlank(p.costBlank || p.cost_blank || 42000);
-    setFormCostDtf(p.costDtf || p.cost_dtf || 14500);
+    setFormPriceRetail(p.priceRetail || p.price_retail || (isBlank ? 45000 : 99000));
+    setFormPriceReseller(p.priceReseller || p.price_reseller || (isBlank ? 43000 : 74250));
+    setFormCostBlank(p.costBlank ?? p.cost_blank ?? 42000);
+    setFormCostDtf(p.costDtf ?? p.cost_dtf ?? (isBlank ? 0 : 14500));
 
     const dSource = p.designSource || p.design_source || 
       (p.creatorName || p.creator_name ? 'creator_collab' : (p.licenseSource || p.designCost ? 'flat_fee' : 'in_house'));
@@ -472,24 +474,27 @@ export function CatalogPage() {
   };
 
   // Live Unit Economics & CFO Calculations for Modal
-  const costPackaging = 3500; // Polymailer, hangtag, sticker pack
-  const costOps = 1000; // Listrik & depresiasi heat press
+  const isBlankModal = formSeries === 'blank' || formSku?.startsWith('TS-BLK-');
+  const costPackaging = isBlankModal ? 0 : 3500; // Polymailer, hangtag, sticker pack
+  const costOps = isBlankModal ? 0 : 1000; // Listrik & depresiasi heat press
   const costBlankNum = Number(activeCostBlank) || 0;
-  const costDtfNum = Number(activeCostDtf) || 0;
-  const costDefectBuffer = Math.round((costBlankNum + costDtfNum) * 0.05); // 5% buffer reject
+  const costDtfNum = isBlankModal ? 0 : (Number(activeCostDtf) || 0);
+  const costDefectBuffer = isBlankModal ? 0 : Math.round((costBlankNum + costDtfNum) * 0.05); // 5% buffer reject hanya sablon
   const physicalCogs = costBlankNum + costDtfNum + costPackaging + costOps + costDefectBuffer;
 
   let designBurden = 0;
-  if (formDesignSource === 'flat_fee') {
-    const target = Math.max(1, Number(formAmortizationTarget) || 1);
-    designBurden = Math.round((Number(formDesignCost) || 0) / target);
-  } else if (formDesignSource === 'creator_collab') {
-    designBurden = Number(formRoyaltyAmount) || 0;
+  if (!isBlankModal) {
+    if (formDesignSource === 'flat_fee') {
+      const target = Math.max(1, Number(formAmortizationTarget) || 1);
+      designBurden = Math.round((Number(formDesignCost) || 0) / target);
+    } else if (formDesignSource === 'creator_collab') {
+      designBurden = Number(formRoyaltyAmount) || 0;
+    }
   }
 
   const totalCogsReal = physicalCogs + designBurden;
   const retailPriceNum = Number(activeRetailPrice) || 0;
-  const gatewayFee = Math.round(retailPriceNum * 0.02); // 2% payment gateway
+  const gatewayFee = isBlankModal ? 0 : Math.round(retailPriceNum * 0.02); // 2% payment gateway
   const netProfitRetail = retailPriceNum - totalCogsReal - gatewayFee;
   const marginRetail = retailPriceNum > 0 ? ((netProfitRetail / retailPriceNum) * 100).toFixed(1) : 0;
 
@@ -600,28 +605,31 @@ export function CatalogPage() {
                   </tr>
                 ) : (
                   filteredCatalog.map(p => {
-                    const cBlank = p.costBlank || p.cost_blank || 38000;
-                    const cDtf = p.costDtf || p.cost_dtf || 12750;
-                    const cPackaging = 3500;
-                    const cOps = 1000;
-                    const cDefect = Math.round((cBlank + cDtf) * 0.05);
+                    const isBlank = p.series === 'blank' || p.template === 'blank' || (p.sku && p.sku.startsWith('TS-BLK-'));
+                    const cBlank = Number(p.costBlank ?? p.cost_blank ?? 38000);
+                    const cDtf = isBlank ? 0 : Number(p.costDtf ?? p.cost_dtf ?? 12750);
+                    const cPackaging = isBlank ? 0 : 3500;
+                    const cOps = isBlank ? 0 : 1000;
+                    const cDefect = isBlank ? 0 : Math.round((cBlank + cDtf) * 0.05);
                     const physicalHpp = cBlank + cDtf + cPackaging + cOps + cDefect;
 
                     const pModel = p.designSource || p.design_source || 
                       (p.creatorName || p.creator_name ? 'creator_collab' : (p.licenseSource || p.designCost ? 'flat_fee' : 'in_house'));
 
                     let dBurden = 0;
-                    if (pModel === 'flat_fee') {
-                      const dCost = Number(p.designCost ?? p.design_cost ?? 0);
-                      const dTarget = Math.max(1, Number(p.amortizationTarget ?? p.amortization_target ?? 25));
-                      dBurden = Math.round(dCost / dTarget);
-                    } else if (pModel === 'creator_collab') {
-                      dBurden = Number(p.royaltyAmount ?? p.royalty_amount ?? 0);
+                    if (!isBlank) {
+                      if (pModel === 'flat_fee') {
+                        const dCost = Number(p.designCost ?? p.design_cost ?? 0);
+                        const dTarget = Math.max(1, Number(p.amortizationTarget ?? p.amortization_target ?? 25));
+                        dBurden = Math.round(dCost / dTarget);
+                      } else if (pModel === 'creator_collab') {
+                        dBurden = Number(p.royaltyAmount ?? p.royalty_amount ?? 0);
+                      }
                     }
 
                     const totalRealHpp = physicalHpp + dBurden;
-                    const retail = p.priceRetail || p.price_retail || 99000;
-                    const gateway = Math.round(retail * 0.02);
+                    const retail = Number(p.priceRetail ?? p.price_retail ?? (isBlank ? 45000 : 99000));
+                    const gateway = isBlank ? 0 : Math.round(retail * 0.02);
                     const profit = retail - totalRealHpp - gateway;
                     const margin = retail > 0 ? ((profit / retail) * 100).toFixed(1) : 0;
 
@@ -645,7 +653,8 @@ export function CatalogPage() {
                           <div className="font-bold text-sm text-ts-krem mt-0.5">{p.name}</div>
                           <div className="flex flex-wrap items-center gap-1.5 mt-1">
                             <span className="px-1.5 py-0.5 rounded bg-zinc-800 text-[9px] font-mono text-zinc-300 uppercase border border-zinc-700/60">
-                              {p.printPreset === 'back_a3_plus' ? 'Punggung A3+' :
+                              {isBlank ? 'Kaos Polos Blank' :
+                               p.printPreset === 'back_a3_plus' ? 'Punggung A3+' :
                                p.printPreset === 'front_a6_back_a3_plus' ? 'Dada A6 + Punggung A3+' :
                                p.printPreset === 'front_a4' ? 'Depan A4' :
                                p.printPreset === 'front_a4_back_a3' ? 'Depan A4 + Punggung A3' :
@@ -666,7 +675,16 @@ export function CatalogPage() {
                           </div>
                         </td>
                         <td className="py-3 px-4">
-                          {pModel === 'flat_fee' && (
+                          {isBlank ? (
+                            <div className="space-y-1">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                                <Shirt className="w-3 h-3" /> Kaos Polos NSA
+                              </span>
+                              <div className="text-[10px] text-zinc-400 font-mono">
+                                Margin Tetap: +Rp 3.000/pcs
+                              </div>
+                            </div>
+                          ) : pModel === 'flat_fee' ? (
                             <div className="space-y-1">
                               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
                                 <ShoppingBag className="w-3 h-3" /> Beli Putih ({p.licenseSource || p.license_source || 'Etsy'})
@@ -675,8 +693,7 @@ export function CatalogPage() {
                                 Amortisasi: +{formatRupiah(dBurden)}/pcs ({p.amortizationTarget || p.amortization_target || 25} pcs)
                               </div>
                             </div>
-                          )}
-                          {pModel === 'creator_collab' && (
+                          ) : pModel === 'creator_collab' ? (
                             <div className="space-y-1">
                               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
                                 <Handshake className="w-3 h-3" /> Kolab: {p.creatorName || p.creator_name || 'Kreator'}
@@ -685,8 +702,7 @@ export function CatalogPage() {
                                 {p.creatorHandle || p.creator_handle || '@kreator'} • Royalti: +{formatRupiah(dBurden)}/pcs
                               </div>
                             </div>
-                          )}
-                          {pModel === 'in_house' && (
+                          ) : (
                             <div className="space-y-1">
                               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-zinc-700/40 text-zinc-300 border border-zinc-600/40">
                                 <Palette className="w-3 h-3" /> In-House
@@ -706,22 +722,24 @@ export function CatalogPage() {
                             {formatRupiah(totalRealHpp)}
                           </div>
                           <div className="text-[10px] text-ts-muted">
-                            Fisik {formatRupiah(physicalHpp)} {dBurden > 0 && `+ Desain ${formatRupiah(dBurden)}`}
+                            {isBlank ? 'Modal Vendor NSA Cititex' : `Fisik ${formatRupiah(physicalHpp)} ${dBurden > 0 ? `+ Desain ${formatRupiah(dBurden)}` : ''}`}
                           </div>
                         </td>
                         <td className="py-3 px-4 font-mono font-extrabold text-ts-krem">
                           {formatRupiah(retail)}
                         </td>
                         <td className="py-3 px-4">
-                          <div className="font-mono font-extrabold text-ts-green">
-                            {formatRupiah(Math.round(profit))}
+                          <div className={`font-mono font-extrabold ${profit >= 0 ? 'text-ts-green' : 'text-rose-400'}`}>
+                            {profit >= 0 ? `+${formatRupiah(Math.round(profit))}` : formatRupiah(Math.round(profit))}
                           </div>
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                            Number(margin) >= 35 ? 'text-ts-green bg-ts-green/10 border border-ts-green/20' :
-                            Number(margin) >= 25 ? 'text-amber-400 bg-amber-400/10 border border-amber-400/20' :
-                            'text-rose-400 bg-rose-400/10 border border-rose-400/20'
+                            isBlank
+                              ? 'text-ts-green bg-ts-green/10 border border-ts-green/20'
+                              : Number(margin) >= 35 ? 'text-ts-green bg-ts-green/10 border border-ts-green/20' :
+                                Number(margin) >= 25 ? 'text-amber-400 bg-amber-400/10 border border-amber-400/20' :
+                                'text-rose-400 bg-rose-400/10 border border-rose-400/20'
                           }`}>
-                            {margin}%
+                            {isBlank ? `+${formatRupiah(Math.round(profit))} (${margin}%)` : `${margin}%`}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-center">
@@ -1576,16 +1594,16 @@ export function CatalogPage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
               <div className="bg-ts-hitam/50 p-2 rounded-xl border border-ts-border/40">
-                <span className="text-ts-muted block">HPP Fisik (Garmen+DTF):</span>
+                <span className="text-ts-muted block">{isBlankModal ? 'Modal Vendor NSA:' : 'HPP Fisik (Garmen+DTF):'}</span>
                 <span className="font-mono font-bold text-ts-krem">{formatRupiah(costBlankNum + costDtfNum)}</span>
               </div>
               <div className="bg-ts-hitam/50 p-2 rounded-xl border border-ts-border/40">
-                <span className="text-ts-muted block">Packaging + Ops + Defect:</span>
-                <span className="font-mono font-bold text-ts-krem">{formatRupiah(costPackaging + costOps + costDefectBuffer)}</span>
+                <span className="text-ts-muted block">{isBlankModal ? 'Packaging & Sablon:' : 'Packaging + Ops + Defect:'}</span>
+                <span className="font-mono font-bold text-ts-krem">{isBlankModal ? 'Rp 0 (Blank)' : formatRupiah(costPackaging + costOps + costDefectBuffer)}</span>
               </div>
               <div className="bg-ts-hitam/50 p-2 rounded-xl border border-ts-border/40">
                 <span className="text-ts-muted block">Beban Desain ({formDesignSource === 'creator_collab' ? 'Royalti' : 'Amortisasi'}):</span>
-                <span className="font-mono font-bold text-ts-terracotta">{formatRupiah(designBurden)}</span>
+                <span className="font-mono font-bold text-ts-terracotta">{isBlankModal ? 'Rp 0 (Blank)' : formatRupiah(designBurden)}</span>
               </div>
               <div className="bg-ts-hitam/50 p-2 rounded-xl border border-ts-border/40">
                 <span className="text-ts-muted block">Payment Gateway (2%):</span>
@@ -1600,26 +1618,37 @@ export function CatalogPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-ts-muted">Laba Bersih Retail:</span>
-                <span className="font-mono font-extrabold text-ts-green text-sm">{formatRupiah(Math.round(netProfitRetail))}</span>
+                <span className={`font-mono font-extrabold text-sm ${netProfitRetail >= 0 ? 'text-ts-green' : 'text-rose-400'}`}>
+                  {netProfitRetail >= 0 ? `+${formatRupiah(Math.round(netProfitRetail))}` : formatRupiah(Math.round(netProfitRetail))}
+                </span>
                 <span className={`text-[11px] font-extrabold px-2 py-0.5 rounded-full border ${
-                  Number(marginRetail) >= 35 ? 'text-ts-green bg-ts-green/10 border-ts-green/30' :
-                  Number(marginRetail) >= 25 ? 'text-amber-400 bg-amber-400/10 border-amber-400/30' :
-                  'text-rose-400 bg-rose-400/10 border-rose-400/30'
+                  isBlankModal
+                    ? 'text-ts-green bg-ts-green/10 border-ts-green/30'
+                    : Number(marginRetail) >= 35 ? 'text-ts-green bg-ts-green/10 border-ts-green/30' :
+                      Number(marginRetail) >= 25 ? 'text-amber-400 bg-amber-400/10 border-amber-400/30' :
+                      'text-rose-400 bg-rose-400/10 border-rose-400/30'
                 }`}>
-                  {marginRetail}%
+                  {isBlankModal ? `+${formatRupiah(Math.round(netProfitRetail))} (${marginRetail}%)` : `${marginRetail}%`}
                 </span>
               </div>
             </div>
 
             {/* CFO Guardrail Indicator Alert */}
             <div className={`p-2 rounded-xl text-[11px] flex items-center gap-2 font-medium ${
-              Number(marginRetail) >= 35 
+              isBlankModal
+                ? 'bg-ts-green/10 text-ts-green border border-ts-green/20'
+                : Number(marginRetail) >= 35 
                 ? 'bg-ts-green/10 text-ts-green border border-ts-green/20' 
                 : Number(marginRetail) >= 25 
                 ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20' 
                 : 'bg-rose-500/10 text-rose-300 border border-rose-500/20'
             }`}>
-              {Number(marginRetail) >= 35 ? (
+              {isBlankModal ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-ts-green" />
+                  <span>✅ <strong>Kaos Polos NSA:</strong> Margin tetap ritel flat +{formatRupiah(Math.round(netProfitRetail))}/pcs ({marginRetail}%) sesuai Piagam Kesepakatan. Zero beban sablon & garansi retur vendor.</span>
+                </>
+              ) : Number(marginRetail) >= 35 ? (
                 <>
                   <CheckCircle2 className="w-4 h-4 shrink-0 text-ts-green" />
                   <span>✅ <strong>Lolos Guardrail CFO:</strong> Net margin &ge; 35%. Unit economics sangat sehat untuk ekspansi brand & ads.</span>
