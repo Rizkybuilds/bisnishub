@@ -337,16 +337,140 @@ export async function updateOrderStatus(orderId, newStatus) {
   const updated = current.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
   localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(updated));
 
-  try {
-    await supabase
-      .from('ts_orders')
-      .update({ status: newStatus })
-      .eq('order_number', orderId);
-  } catch (err) {
-    console.warn("Could not update order status in Supabase:", err);
+  if (supabase) {
+    try {
+      await supabase
+        .from('ts_orders')
+        .update({ status: newStatus })
+        .eq('order_number', orderId);
+    } catch (err) {
+      console.warn("Could not update order status in Supabase:", err);
+    }
   }
 
   return updated;
+}
+
+/**
+ * 🚚 ADMIN ONLY: Perbarui nomor resi & kurir pengiriman
+ */
+export async function updateOrderTracking(orderId, trackingNo, courier = null) {
+  const cleanTracking = trackingNo ? trackingNo.trim() : null;
+  const current = await getOrders();
+  const updated = current.map(o => {
+    if (o.id === orderId) {
+      return {
+        ...o,
+        trackingNo: cleanTracking,
+        tracking_number: cleanTracking,
+        courier: courier || o.courier || 'J&T Express'
+      };
+    }
+    return o;
+  });
+
+  localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(updated));
+
+  if (supabase) {
+    try {
+      await supabase
+        .from('ts_orders')
+        .update({
+          tracking_number: cleanTracking,
+          courier: courier || undefined
+        })
+        .eq('order_number', orderId);
+    } catch (err) {
+      console.warn("Could not update order tracking in Supabase:", err);
+    }
+  }
+
+  return updated;
+}
+
+/**
+ * ❌ ADMIN ONLY: Batalkan pesanan
+ */
+export async function cancelOrder(orderId, reason = '') {
+  const current = await getOrders();
+  const updated = current.map(o => {
+    if (o.id === orderId) {
+      return {
+        ...o,
+        status: 'cancelled',
+        notes: reason ? `${o.notes ? o.notes + ' | ' : ''}Dibatalkan: ${reason}` : o.notes
+      };
+    }
+    return o;
+  });
+
+  localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(updated));
+
+  if (supabase) {
+    try {
+      await supabase
+        .from('ts_orders')
+        .update({
+          status: 'cancelled',
+          notes: reason ? `Dibatalkan: ${reason}` : undefined
+        })
+        .eq('order_number', orderId);
+    } catch (err) {
+      console.warn("Could not cancel order in Supabase:", err);
+    }
+  }
+
+  return updated;
+}
+
+/**
+ * 📊 Ekspor Antrean Pesanan ke CSV (14 Kolom Standar Fulfillment)
+ */
+export function exportOrdersCsv(orders = []) {
+  const headers = [
+    'No. Order',
+    'Tanggal',
+    'Channel',
+    'Nama Pelanggan',
+    'No. WhatsApp',
+    'Kota / Alamat',
+    'Desain / SKU',
+    'Tipe Garmen',
+    'Warna',
+    'Ukuran',
+    'Jumlah (Qty)',
+    'Total Pembayaran (IDR)',
+    'Status Kanban',
+    'No. Resi Kurir'
+  ];
+
+  const rows = orders.map(o => [
+    `"${o.id || ''}"`,
+    `"${(o.date || o.created_at || '').slice(0, 10)}"`,
+    `"${(o.channel || 'web').toUpperCase()}"`,
+    `"${(o.customer || o.customer_name || '').replace(/"/g, '""')}"`,
+    `"${o.phone || o.customer_phone || ''}"`,
+    `"${(o.city ? `${o.city} - ${o.address || ''}` : o.address || '').replace(/"/g, '""')}"`,
+    `"${(o.productName || o.sku || '').replace(/"/g, '""')}"`,
+    `"${(o.garment || '').replace(/"/g, '""')}"`,
+    `"${o.color || ''}"`,
+    `"${o.size || ''}"`,
+    o.qty || 1,
+    o.price || o.total_amount || 0,
+    `"${(o.status || 'pending').toUpperCase()}"`,
+    `"${o.trackingNo || o.tracking_number || ''}"`
+  ].join(','));
+
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `Antrean-Pesanan-TeeStock-${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 /**

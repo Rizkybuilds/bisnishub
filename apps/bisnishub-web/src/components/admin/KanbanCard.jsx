@@ -7,31 +7,45 @@ import {
   Phone, 
   MessageSquare, 
   Printer, 
-  Truck,
-  Sparkles,
-  Building2
+  Truck, 
+  Sparkles, 
+  Building2,
+  Copy,
+  Check,
+  Tag,
+  Trash2,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 import { formatRupiah } from '../../utils/formatters';
 import { generateCustomerWhatsAppText, generateUnpaidFollowUpWhatsAppText, getWhatsAppUrl } from '../../utils/whatsappTemplates';
 import { PrintWorkSlipModal } from './PrintWorkSlipModal';
 import { ShippingLabelModal } from './ShippingLabelModal';
+import { Modal } from '../ui/Modal';
 import { isFastMovingBuffer } from '../../utils/garmentStockRouting';
 import { useAdmin } from '../../context/AdminContext';
 
 export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
-  const { getDtfFilmStatus } = useAdmin();
+  const { getDtfFilmStatus, updateOrderTracking, cancelOrder } = useAdmin();
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
+  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
+
+  // Tracking Form State
+  const [courierInput, setCourierInput] = useState(order.courier || 'J&T Express');
+  const [trackingInput, setTrackingInput] = useState(order.trackingNo || '');
+  const [copiedResi, setCopiedResi] = useState(false);
+
   const isPress = order.status === 'press';
   const isStudioReady = isFastMovingBuffer(order.garment, order.color, order.size);
   const dtfStatus = getDtfFilmStatus ? getDtfFilmStatus(order.sku) : null;
 
   const channelBadges = {
-    shopee: "bg-[#EE4D2D]/20 text-[#FF6E4E] border-[#EE4D2D]/40",
+    shopee: "bg-[#EE4D2D]/15 text-[#FF6E4E] border-[#EE4D2D]/30",
     tiktok: "bg-white/10 text-white border-white/20",
-    whatsapp: "bg-[#25D366]/20 text-[#4EFA8A] border-[#25D366]/40",
-    web: "bg-ts-terracotta/20 text-[#E2885E] border-ts-terracotta/40",
-    custom: "bg-ts-mustard/20 text-[#ECC369] border-ts-mustard/40"
+    whatsapp: "bg-[#25D366]/15 text-[#4EFA8A] border-[#25D366]/30",
+    web: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+    custom: "bg-yellow-500/15 text-yellow-300 border-yellow-500/30"
   };
 
   // CFO Financial Calculation
@@ -50,34 +64,74 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
   const reviewMessage = generateCustomerWhatsAppText(order, 'review');
   const reviewWaUrl = getWhatsAppUrl(order.phone, reviewMessage);
 
+  // Copy Resi
+  const handleCopyResi = (e) => {
+    e.stopPropagation();
+    if (!order.trackingNo) return;
+    navigator.clipboard.writeText(order.trackingNo).then(() => {
+      setCopiedResi(true);
+      setTimeout(() => setCopiedResi(false), 2000);
+    });
+  };
+
+  // Save Tracking
+  const handleSaveTracking = async (e) => {
+    e.preventDefault();
+    if (updateOrderTracking) {
+      await updateOrderTracking(order.id, trackingInput, courierInput);
+    }
+    setIsTrackingModalOpen(false);
+  };
+
+  // Cancel Order
+  const handleCancelOrder = async () => {
+    if (confirm(`Batalkan pesanan ${order.id} (${order.customer})?`)) {
+      if (cancelOrder) {
+        await cancelOrder(order.id, 'Dibatalkan oleh admin');
+      }
+    }
+  };
+
+  // Contextual forward button label
+  const forwardLabels = {
+    pending: 'Verifikasi Lunas',
+    dtf: 'Siap Press',
+    press: 'Lolos QC & Pack',
+    pack: 'Serahkan Kurir'
+  };
+
   return (
     <>
-      <div className="bg-[#141312] border border-white/[0.08] rounded-2xl p-3.5 space-y-3 shadow-glass-card hover:border-white/20 transition-all duration-200">
-        {/* Header: ID & Channel */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <span className="font-mono text-xs font-bold text-ts-krem bg-white/[0.04] px-2 py-0.5 rounded border border-white/10">
+      <div className="bg-[#141312] border border-white/[0.08] rounded-2xl p-4 space-y-3.5 shadow-xl hover:border-white/20 transition-all duration-200 group">
+        {/* Header: ID, Unique Code, Tracking & Action Buttons */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="font-mono text-xs font-bold text-white bg-white/[0.04] px-2 py-0.5 rounded border border-white/10">
               {order.id}
             </span>
             {(order.unique_code || order.uniqueCode) && (
               <span 
-                className="font-mono text-[10px] font-extrabold text-ts-mustard bg-ts-mustard/20 px-1.5 py-0.5 rounded border border-ts-mustard/30"
+                className="font-mono text-[10px] font-extrabold text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded border border-amber-500/30"
                 title={`Kode Unik Verifikasi Pembayaran: +${order.unique_code || order.uniqueCode}`}
               >
                 +{order.unique_code || order.uniqueCode}
               </span>
             )}
-            {order.trackingNo && (
-              <span className="font-mono text-[10px] text-ts-muted bg-ts-surface/40 px-1.5 py-0.5 rounded truncate max-w-[90px]" title={`No. Resi: ${order.trackingNo}`}>
-                {order.trackingNo}
-              </span>
-            )}
           </div>
+
           <div className="flex items-center gap-1">
             <button
               type="button"
+              onClick={() => setIsTrackingModalOpen(true)}
+              className="p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] text-zinc-400 hover:text-white border border-white/[0.08] transition-colors cursor-pointer"
+              title="Input / Update Nomor Resi Kurir"
+            >
+              <Tag className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
               onClick={() => setIsPrintModalOpen(true)}
-              className="p-1 rounded bg-ts-surface hover:bg-ts-surfaceHover text-ts-muted hover:text-white border border-ts-border transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] text-zinc-400 hover:text-white border border-white/[0.08] transition-colors cursor-pointer"
               title="Cetak Tiket Kerja / Slip Packing"
             >
               <Printer className="w-3.5 h-3.5" />
@@ -85,22 +139,51 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
             <button
               type="button"
               onClick={() => setIsShippingModalOpen(true)}
-              className="p-1 rounded bg-ts-surface hover:bg-ts-surfaceHover text-ts-terracotta hover:text-white border border-ts-border transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] text-amber-400 hover:text-white border border-white/[0.08] transition-colors cursor-pointer"
               title="Cetak Label Pengiriman Thermal 100x150 mm"
             >
               <Truck className="w-3.5 h-3.5" />
             </button>
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${channelBadges[order.channel] || 'bg-ts-surface text-ts-muted'}`}>
-              {(order.channel || 'DIRECT').toUpperCase()}
+            <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border uppercase ${channelBadges[order.channel] || 'bg-white/[0.05] text-zinc-400 border-white/10'}`}>
+              {order.channel || 'DIRECT'}
             </span>
           </div>
         </div>
 
+        {/* Courier Tracking Ribbon (if available or empty prompt) */}
+        {order.trackingNo ? (
+          <div className="flex items-center justify-between bg-white/[0.02] border border-white/[0.06] rounded-xl px-2.5 py-1 text-[11px] font-mono">
+            <div className="flex items-center gap-1.5 truncate text-zinc-300">
+              <Truck className="w-3 h-3 text-amber-400 shrink-0" />
+              <span className="font-semibold text-white">{order.courier || 'Ekspedisi'}:</span>
+              <span className="truncate text-amber-300 font-bold">{order.trackingNo}</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleCopyResi}
+              className="inline-flex items-center gap-1 text-[10px] text-zinc-400 hover:text-white ml-2 shrink-0 cursor-pointer"
+              title="Salin No. Resi"
+            >
+              {copiedResi ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+              <span>{copiedResi ? 'Tersalin' : 'Salin'}</span>
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setIsTrackingModalOpen(true)}
+            className="w-full text-left py-1 px-2 rounded-lg border border-dashed border-white/[0.08] hover:border-white/20 text-[10px] font-mono text-zinc-500 hover:text-zinc-300 flex items-center justify-between transition-colors cursor-pointer"
+          >
+            <span>+ Belum ada nomor resi</span>
+            <span className="text-[9px] underline">Input Resi</span>
+          </button>
+        )}
+
         {/* Customer Info & WhatsApp Trigger */}
         <div className="text-xs space-y-1">
           <div className="flex items-center justify-between">
-            <div className="font-bold text-ts-krem flex items-center gap-1.5 truncate">
-              <User className="w-3 h-3 text-ts-terracotta shrink-0" /> {order.customer}
+            <div className="font-bold text-white flex items-center gap-1.5 truncate">
+              <User className="w-3 h-3 text-amber-400 shrink-0" /> {order.customer}
             </div>
 
             {/* Quick WhatsApp Action */}
@@ -109,10 +192,10 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
                 href={waUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border transition-colors shrink-0 ${
+                className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all shrink-0 cursor-pointer ${
                   isPending
                     ? 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border-amber-500/40 shadow-sm'
-                    : 'bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#4EFA8A] border-[#25D366]/40'
+                    : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-500/40'
                 }`}
                 title={isPending ? 'Kirim Follow-Up Pembayaran via WhatsApp' : 'Kirim Update Status via WhatsApp'}
               >
@@ -123,35 +206,35 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
                   </span>
                 )}
                 <MessageSquare className="w-2.5 h-2.5" />
-                <span>{isPending ? 'Follow-Up WA' : 'Kirim WA'}</span>
+                <span>{isPending ? 'Follow-Up WA' : order.status === 'shipped' ? 'Resi WA' : 'Kirim WA'}</span>
               </a>
             )}
           </div>
 
           {order.phone && (
-            <div className="text-ts-muted text-[11px] flex items-center gap-1.5 font-mono">
-              <Phone className="w-3 h-3 text-ts-muted" /> {order.phone}
+            <div className="text-zinc-400 text-[11px] flex items-center gap-1.5 font-mono">
+              <Phone className="w-3 h-3 text-zinc-500" /> {order.phone}
             </div>
           )}
         </div>
 
         {/* Product & Garment Spec */}
-        <div className="bg-ts-surface/60 rounded-lg p-2.5 border border-ts-borderDim text-xs space-y-1.5">
+        <div className="bg-[#09090B] rounded-xl p-2.5 border border-white/[0.06] text-xs space-y-1.5">
           {order.items && order.items.length > 1 ? (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-[11px]">
-                <span className="font-bold text-ts-krem">{order.items.length} Macam Item Pesanan:</span>
-                <span className="font-mono font-bold text-ts-terracotta bg-ts-terracotta/10 px-1.5 py-0.5 rounded">
+                <span className="font-bold text-white">{order.items.length} Macam Item Pesanan:</span>
+                <span className="font-mono font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
                   {order.qty} pcs total
                 </span>
               </div>
-              <div className="space-y-1 divide-y divide-ts-borderDim/50 max-h-28 overflow-y-auto pr-1 custom-scrollbar">
+              <div className="space-y-1 divide-y divide-white/[0.06] max-h-28 overflow-y-auto pr-1 custom-scrollbar">
                 {order.items.map((it, idx) => (
                   <div key={idx} className="pt-1 first:pt-0">
-                    <div className="font-semibold text-ts-krem/90 text-[11px] truncate">{it.name || it.product_name}</div>
-                    <div className="flex items-center justify-between text-[10px] text-ts-muted">
+                    <div className="font-semibold text-zinc-200 text-[11px] truncate">{it.name || it.product_name}</div>
+                    <div className="flex items-center justify-between text-[10px] text-zinc-400">
                       <span className="truncate max-w-[120px]">{it.garment}</span>
-                      <span className="font-mono text-ts-terracotta">{it.color} ({it.size}) x{it.qty}</span>
+                      <span className="font-mono text-amber-300">{it.color} ({it.size}) x{it.qty}</span>
                     </div>
                   </div>
                 ))}
@@ -159,10 +242,10 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
             </div>
           ) : (
             <>
-              <div className="font-bold text-ts-krem truncate">{order.productName || order.sku}</div>
-              <div className="flex items-center justify-between text-[11px] text-ts-muted">
-                <span className="text-ts-krem/90 font-medium truncate max-w-[140px]">{order.garment}</span>
-                <span className="font-mono font-bold text-ts-terracotta bg-ts-terracotta/10 px-1.5 py-0.2 rounded shrink-0">
+              <div className="font-bold text-white truncate">{order.productName || order.sku}</div>
+              <div className="flex items-center justify-between text-[11px] text-zinc-400">
+                <span className="text-zinc-300 font-medium truncate max-w-[140px]">{order.garment}</span>
+                <span className="font-mono font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded shrink-0">
                   {order.color} ({order.size}) x{order.qty}
                 </span>
               </div>
@@ -170,9 +253,9 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
           )}
           
           {/* Fulfillment Origin Tag (Garment & DTF Film) */}
-          <div className="space-y-1.5 pt-1.5 border-t border-ts-borderDim/50">
+          <div className="space-y-1.5 pt-1.5 border-t border-white/[0.06]">
             <div className="flex items-center justify-between text-[10px]">
-              <span className="text-ts-muted font-mono text-[9px] uppercase">Garmen:</span>
+              <span className="text-zinc-500 font-mono text-[9px] uppercase">Garmen:</span>
               {isStudioReady ? (
                 <span className="inline-flex items-center gap-1 font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-1.5 py-0.5 rounded text-[10px]" title="Tersedia di buffer stok studio (Siap Press/Pack)">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -188,7 +271,7 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
 
             {dtfStatus && (
               <div className="flex items-center justify-between text-[10px]">
-                <span className="text-ts-muted font-mono text-[9px] uppercase">Film DTF:</span>
+                <span className="text-zinc-500 font-mono text-[9px] uppercase">Film DTF:</span>
                 {dtfStatus.isReady ? (
                   <span className="inline-flex items-center gap-1 font-mono font-bold text-teal-400 bg-teal-500/10 border border-teal-500/25 px-1.5 py-0.5 rounded text-[10px]" title={`Film DTF siap di studio: ${dtfStatus.ready} lembar ready`}>
                     <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
@@ -202,9 +285,10 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
                 )}
               </div>
             )}
+
             {/* Sentra Hub Dispatch */}
             <div className="flex items-center justify-between text-[10px]">
-              <span className="text-ts-muted font-mono text-[9px] uppercase">Sentra:</span>
+              <span className="text-zinc-500 font-mono text-[9px] uppercase">Sentra:</span>
               <span className={`inline-flex items-center gap-1 font-mono font-bold px-1.5 py-0.5 rounded text-[9px] ${
                 order.origin_hub_id === 'bogor_express'
                   ? 'text-emerald-400 bg-emerald-500/15 border border-emerald-500/30'
@@ -218,11 +302,11 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
 
         {/* Embedded SOP for Heat Press */}
         {isPress && (
-          <div className="bg-ts-terracotta/15 border border-ts-terracotta/40 rounded-lg p-2 text-[11px] text-[#E2885E] space-y-1">
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-2.5 text-[11px] text-amber-300 space-y-1">
             <div className="font-bold flex items-center gap-1">
-              <Flame className="w-3.5 h-3.5 text-ts-terracotta" /> SOP Heat Press Mandiri:
+              <Flame className="w-3.5 h-3.5 text-amber-400" /> SOP Heat Press Mandiri:
             </div>
-            <div className="text-[10px] text-ts-krem/80">
+            <div className="text-[10px] text-zinc-300">
               Suhu 155°C • Tekan 15 dtk • Kupas Dingin • Press ke-2 (5 dtk)
             </div>
           </div>
@@ -234,82 +318,152 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
             href={reviewWaUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-1.5 w-full py-1 text-[10px] font-bold text-ts-mustard bg-ts-mustard/10 hover:bg-ts-mustard/20 border border-ts-mustard/30 rounded-lg transition-colors"
+            className="flex items-center justify-center gap-1.5 w-full py-1.5 text-[10px] font-bold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl transition-colors cursor-pointer"
           >
-            <Sparkles className="w-3 h-3" />
+            <Sparkles className="w-3 h-3 text-amber-400" />
             <span>Minta Ulasan Bintang 5 via WA</span>
           </a>
         )}
 
         {/* QRIS Verification Notice for Pending Orders */}
         {order.status === 'pending' && (order.unique_code || order.uniqueCode) && (
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-2 text-[11px] space-y-1">
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-2.5 text-[11px] space-y-1">
             <div className="flex items-center justify-between font-bold text-amber-300">
               <span className="flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                Cek Mutasi QRIS:
+                Cek Mutasi Rekening / QRIS:
               </span>
               <span className="font-mono text-[10px] text-zinc-950 font-black bg-amber-400 px-1.5 py-0.2 rounded">
                 +{order.unique_code || order.uniqueCode}
               </span>
             </div>
-            <div className="text-[10px] text-ts-kremMuted flex justify-between">
-              <span>Wajib Masuk:</span>
+            <div className="text-[10px] text-zinc-400 flex justify-between">
+              <span>Nominal Masuk:</span>
               <span className="font-mono text-white font-bold">{formatRupiah(order.total_payment || order.price)}</span>
             </div>
           </div>
         )}
 
         {/* CFO Financial Badge */}
-        <div className="flex items-center justify-between text-[10px] font-mono px-2 py-1 bg-ts-hitam/50 rounded border border-ts-borderDim text-ts-muted">
+        <div className="flex items-center justify-between text-[10px] font-mono px-2.5 py-1 bg-[#09090B] rounded-lg border border-white/[0.06] text-zinc-400">
           <span>Fee: <strong className="text-rose-400">-{formatRupiah(platformFee)}</strong></span>
-          <span>Net Est: <strong className={netProfit >= 0 ? "text-ts-green font-bold" : "text-rose-400 font-bold"}>+{formatRupiah(netProfit)}</strong></span>
+          <span>Net Est: <strong className={netProfit >= 0 ? "text-emerald-400 font-bold" : "text-rose-400 font-bold"}>+{formatRupiah(netProfit)}</strong></span>
         </div>
 
         {/* Footer: Price & Controls */}
-        <div className="flex items-center justify-between pt-1 border-t border-ts-borderDim">
-          <div className="font-mono text-xs font-extrabold text-ts-green">
-            {formatRupiah(order.price)}
+        <div className="flex items-center justify-between pt-1 border-t border-white/[0.08]">
+          <div className="font-mono text-xs font-black text-emerald-400">
+            {formatRupiah(order.price || order.total_amount)}
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
+            {/* Cancel Button */}
+            {order.status !== 'shipped' && order.status !== 'cancelled' && (
+              <button
+                type="button"
+                onClick={handleCancelOrder}
+                className="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                title="Batalkan Pesanan"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+
+            {/* Move Back */}
             {currentStatusIdx > 0 && (
               <button
                 type="button"
                 onClick={() => onMove(order.id, -1)}
-                className="p-1 rounded bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem border border-ts-border transition-colors"
+                className="p-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] text-zinc-300 border border-white/[0.08] transition-colors cursor-pointer min-h-[32px]"
                 title="Kembalikan ke status sebelumnya"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
               </button>
             )}
 
+            {/* Move Forward */}
             {currentStatusIdx < totalStatuses - 1 && (
               <button
                 type="button"
                 onClick={() => onMove(order.id, 1)}
-                className={`px-2 py-1 rounded text-[11px] font-bold flex items-center gap-1 shadow-sm transition-all ${
-                  order.status === 'pending' && (order.unique_code || order.uniqueCode)
-                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-glow-teal px-2.5'
-                    : 'bg-ts-terracotta hover:bg-ts-terracotta/90 text-white'
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 shadow-md transition-all cursor-pointer min-h-[32px] ${
+                  order.status === 'pending'
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black shadow-emerald-500/20'
+                    : 'bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-black shadow-amber-500/20'
                 }`}
                 title={
-                  order.status === 'pending' && (order.unique_code || order.uniqueCode)
-                    ? `Verifikasi mutasi QRIS (+${order.unique_code || order.uniqueCode}) & mulai produksi`
+                  order.status === 'pending'
+                    ? `Verifikasi mutasi QRIS (+${order.unique_code || order.uniqueCode || 0}) & mulai produksi`
                     : 'Lanjutkan status produksi'
                 }
               >
-                <span>
-                  {order.status === 'pending' && (order.unique_code || order.uniqueCode)
-                    ? 'Verifikasi Lunas'
-                    : 'Lanjut'}
-                </span>
+                <span>{forwardLabels[order.status] || 'Lanjut'}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
         </div>
       </div>
+
+      {/* Modal Input / Update Resi */}
+      <Modal
+        isOpen={isTrackingModalOpen}
+        onClose={() => setIsTrackingModalOpen(false)}
+        title={`Input / Update Nomor Resi — ${order.id}`}
+        maxWidth="max-w-md"
+      >
+        <form onSubmit={handleSaveTracking} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-zinc-300">Kurir Ekspedisi</label>
+            <select
+              value={courierInput}
+              onChange={(e) => setCourierInput(e.target.value)}
+              className="w-full bg-[#09090B] border border-white/[0.1] rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-amber-400 min-h-[44px]"
+            >
+              <option value="J&T Express">J&T Express</option>
+              <option value="JNE Express">JNE Express</option>
+              <option value="SiCepat Ekspres">SiCepat Ekspres</option>
+              <option value="Shopee Xpress">Shopee Xpress</option>
+              <option value="GoSend">GoSend (Instant/SameDay)</option>
+              <option value="GrabExpress">GrabExpress</option>
+              <option value="Anteraja">Anteraja</option>
+              <option value="Pos Indonesia">Pos Indonesia</option>
+            </select>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-zinc-300">Nomor Resi / AWB *</label>
+            <input
+              type="text"
+              placeholder="cth: JP8921829102"
+              value={trackingInput}
+              onChange={(e) => setTrackingInput(e.target.value)}
+              className="w-full bg-[#09090B] border border-white/[0.1] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 font-mono outline-none focus:border-amber-400 min-h-[44px]"
+              required
+            />
+          </div>
+
+          <p className="text-[11px] text-zinc-400">
+            Nomor resi ini akan otomatis tercantum di pesan WhatsApp ke pelanggan dan label pengiriman thermal A6.
+          </p>
+
+          <div className="pt-3 flex justify-end gap-2 border-t border-white/[0.08]">
+            <button
+              type="button"
+              onClick={() => setIsTrackingModalOpen(false)}
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-xl text-xs font-bold text-black bg-amber-400 hover:bg-amber-300 transition-colors cursor-pointer"
+            >
+              Simpan Resi
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Printable Work Slip Modal */}
       <PrintWorkSlipModal

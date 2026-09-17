@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getProducts, saveProduct as apiSaveProduct, deleteProduct as apiDeleteProduct, clearAllProducts as apiClearAllProducts } from '../services/productsApi';
-import { getOrders, saveOrder as apiSaveOrder, updateOrderStatus as apiUpdateOrderStatus } from '../services/ordersApi';
+import { 
+  getOrders, 
+  saveOrder as apiSaveOrder, 
+  updateOrderStatus as apiUpdateOrderStatus,
+  updateOrderTracking as apiUpdateOrderTracking,
+  cancelOrder as apiCancelOrder
+} from '../services/ordersApi';
 import { 
   getInventoryMatrix, 
   saveInventoryMatrix, 
@@ -93,41 +99,106 @@ export function AdminProvider({ children }) {
     const oldStatus = target.status;
     const nextStatus = statuses[nextIdx];
 
-    // Deduct stock if order advances from pending -> production (dtf or press)
+    // Deduct stock and sync cash if order advances from pending -> production (dtf or press)
     if (oldStatus === "pending" && (nextStatus === "dtf" || nextStatus === "press")) {
-      let gKey = "nsa_softstyle_30s";
-      if (target.garment?.includes("24s")) gKey = "nsa_heavyweight_24s";
-      else if (target.garment?.includes("Long")) gKey = "nsa_longsleeve";
-      else if (target.garment?.includes("Hoodie")) gKey = "nsa_hoodie";
-      else if (target.garment?.includes("Polo")) gKey = "nsa_polo";
+      // 1. Deduct inventory (with idempotency check to prevent double deduction)
+      if (!target.inventoryDeducted) {
+        let updatedInv = { ...inventory };
+        let totalDeductedGarmen = 0;
 
-      const col = target.color || "Hitam";
-      const sz = target.size || "L";
-      const qty = target.qty || 1;
+        if (target.items && target.items.length > 0) {
+          target.items.forEach(it => {
+            let gKey = "nsa_softstyle_30s";
+            if (it.garment?.includes("24s")) gKey = "nsa_heavyweight_24s";
+            else if (it.garment?.includes("Long")) gKey = "nsa_longsleeve";
+            else if (it.garment?.includes("Hoodie")) gKey = "nsa_hoodie";
+            else if (it.garment?.includes("Polo")) gKey = "nsa_polo";
 
-      // 1. Deduct blank garment
-      let updatedInv = deductStock(inventory, gKey, col, sz, qty);
+            const col = it.color || "Hitam";
+            const sz = it.size || "L";
+            const qty = Number(it.qty) || 1;
+            totalDeductedGarmen += qty;
 
-      // 2. Deduct DTF film if it's a graphic product (not a blank apparel)
-      const isBlank = target.sku?.startsWith("TS-BLK") || target.garment === "blank";
-      if (!isBlank && target.sku) {
-        updatedInv = deductDtfFilm(updatedInv, target.sku, qty);
-        showToast(`⚡ 1 lembar film DTF [${target.sku}] otomatis dipotong dari stok studio!`, 'info');
+            updatedInv = deductStock(updatedInv, gKey, col, sz, qty);
+
+            const isBlank = it.sku?.startsWith("TS-BLK") || it.garment === "blank";
+            if (!isBlank && it.sku) {
+              updatedInv = deductDtfFilm(updatedInv, it.sku, qty);
+            }
+          });
+        } else {
+          let gKey = "nsa_softstyle_30s";
+          if (target.garment?.includes("24s")) gKey = "nsa_heavyweight_24s";
+          else if (target.garment?.includes("Long")) gKey = "nsa_longsleeve";
+          else if (target.garment?.includes("Hoodie")) gKey = "nsa_hoodie";
+          else if (target.garment?.includes("Polo")) gKey = "nsa_polo";
+
+          const col = target.color || "Hitam";
+          const sz = target.size || "L";
+          const qty = Number(target.qty) || 1;
+          totalDeductedGarmen += qty;
+
+          updatedInv = deductStock(updatedInv, gKey, col, sz, qty);
+
+          const isBlank = target.sku?.startsWith("TS-BLK") || target.garment === "blank";
+          if (!isBlank && target.sku) {
+            updatedInv = deductDtfFilm(updatedInv, target.sku, qty);
+          }
+        }
+
+        // Deduct packaging supplies
+        const packQty = totalDeductedGarmen || Number(target.qty) || 1;
+        updatedInv = deductSupplyItem(updatedInv, 'polymailer', packQty);
+        updatedInv = deductSupplyItem(updatedInv, 'sticker', packQty);
+        updatedInv = deductSupplyItem(updatedInv, 'care_card', packQty);
+        updatedInv = deductSupplyItem(updatedInv, 'hangtag', packQty);
+
+        setInventory(updatedInv);
+        target.inventoryDeducted = true;
+        showToast(`📦 Stok bahan (${totalDeductedGarmen} kaos + film DTF + unboxing pack) otomatis dipotong!`, 'info');
       }
 
-      // 3. Deduct packaging supplies (Polymailer, Stiker Unboxing, Care Card, Hangtag)
-      updatedInv = deductSupplyItem(updatedInv, 'polymailer', qty);
-      updatedInv = deductSupplyItem(updatedInv, 'sticker', qty);
-      updatedInv = deductSupplyItem(updatedInv, 'care_card', qty);
-      updatedInv = deductSupplyItem(updatedInv, 'hangtag', qty);
-
-      setInventory(updatedInv);
-      showToast(`📦 Kaos polos ${target.garment} (${col} ${sz}) -${qty} pcs & paket kemasan unboxing otomatis dipotong dari stok!`, 'info');
+      // 2. Sync Cash Inflow to Cash Ledger (if not already recorded)
+      const isAlreadyRecorded = cashTransactions.some(tx => tx.relatedId === target.id);
+      if (!isAlreadyRecorded) {
+        const orderAmt = Number(target.price || target.total_amount || 0);
+        if (orderAmt > 0) {
+          const newTx = {
+            transactionNo: `TX-ORD-${target.id.slice(-6)}`,
+            date: new Date().toISOString().slice(0, 10),
+            businessUnit: 'teestock',
+            type: 'CASH_IN',
+            category: 'sales_retail',
+            amount: orderAmt,
+            sourceWallet: 'wallet_teestock',
+            destinationWallet: 'wallet_teestock',
+            relatedId: target.id,
+            proofReceiptRef: `ORDER-${target.id}`,
+            description: `Penjualan Ritel [${(target.channel || 'web').toUpperCase()}]: ${target.customer} - ${target.productName || target.sku} (${target.qty || 1} pcs)`,
+            settlementStatus: 'cleared'
+          };
+          const updatedTxs = await apiRecordCashTransaction(newTx);
+          setCashTransactions(updatedTxs);
+          showToast(`💰 Kas Masuk Rp ${orderAmt.toLocaleString('id-ID')} dicatat ke Rekening TeeStock!`, 'success');
+        }
+      }
     }
 
     const updatedOrders = await apiUpdateOrderStatus(orderId, nextStatus);
     setOrders(updatedOrders);
     showToast(`🔄 Status pesanan ${orderId} dipindahkan ke [${nextStatus.toUpperCase()}]`);
+  };
+
+  const updateOrderTracking = async (orderId, trackingNo, courier) => {
+    const updated = await apiUpdateOrderTracking(orderId, trackingNo, courier);
+    setOrders(updated);
+    showToast(`🚚 Resi untuk order ${orderId} berhasil disimpan: ${trackingNo}`);
+  };
+
+  const cancelOrder = async (orderId, reason) => {
+    const updated = await apiCancelOrder(orderId, reason);
+    setOrders(updated);
+    showToast(`❌ Pesanan ${orderId} telah dibatalkan`);
   };
 
   // Record QC Defect / Reject deduction (Strict Zero-Leakage: only valid way to deduct scrap)
@@ -561,7 +632,9 @@ export function AdminProvider({ children }) {
         addFixedAsset,
         removeFixedAsset,
         purgeAllDemoData,
-        recordDefectDeduction
+        recordDefectDeduction,
+        updateOrderTracking,
+        cancelOrder
       }}
     >
       {children}
