@@ -632,3 +632,303 @@ export function restockDtfBatch(matrix, batchItems = []) {
   saveInventoryMatrix(updated);
   return updated;
 }
+
+/**
+ * ⚖️ Stock Opname Resmi: Penyesuaian stok fisik terotorisasi dengan berita acara & audit trail
+ */
+export function adjustStockOpname(matrix, payload = {}) {
+  const {
+    itemType, // 'blank_tshirt' | 'dtf_film' | 'supplies'
+    sku,
+    garmentKey,
+    color,
+    size,
+    supplyId,
+    actualQty,
+    reason = 'Stock Opname Fisik Berkala',
+    adminName = 'Admin Studio'
+  } = payload;
+
+  const targetQty = Math.max(0, Number(actualQty) || 0);
+  const updated = JSON.parse(JSON.stringify(matrix));
+  let previousQty = 0;
+  let resolvedSku = sku;
+  let unitHpp = 0;
+
+  if (itemType === 'blank_tshirt' && garmentKey && color && size) {
+    if (!updated[garmentKey]) updated[garmentKey] = {};
+    if (!updated[garmentKey][color]) updated[garmentKey][color] = {};
+    previousQty = Number(updated[garmentKey][color][size]) || 0;
+    updated[garmentKey][color][size] = targetQty;
+    resolvedSku = resolvedSku || getBlankGarmentSku(garmentKey, color, size);
+    const gObj = GARMENT_TYPES[garmentKey] || {};
+    unitHpp = gObj.baseCost || (garmentKey.includes('24s') ? 42000 : 37000);
+  } else if (itemType === 'dtf_film' && sku) {
+    if (!updated.dtf_films) updated.dtf_films = {};
+    if (!updated.dtf_films[sku]) {
+      updated.dtf_films[sku] = { name: sku, ready: 0, min: 2, unitCost: 12000 };
+    }
+    previousQty = Number(updated.dtf_films[sku].ready) || 0;
+    updated.dtf_films[sku].ready = targetQty;
+    unitHpp = Number(updated.dtf_films[sku].unitCost) || 12000;
+  } else if (itemType === 'supplies' && supplyId) {
+    if (!updated.supplies) updated.supplies = {};
+    const raw = updated.supplies[supplyId];
+    if (typeof raw === 'object' && raw !== null) {
+      previousQty = Number(raw.ready ?? raw.qty ?? 0);
+      if ('ready' in raw) raw.ready = targetQty;
+      else raw.qty = targetQty;
+      updated.supplies[supplyId] = raw;
+      unitHpp = Number(raw.unitCost) || 800;
+    } else {
+      previousQty = Number(raw) || 0;
+      updated.supplies[supplyId] = targetQty;
+      unitHpp = supplyId === 'polymailer' ? 800 : supplyId === 'sticker' ? 600 : supplyId === 'hangtag' ? 500 : 800;
+    }
+    resolvedSku = resolvedSku || getSupplySku(supplyId);
+  }
+
+  // Simpan matriks ke memory / local storage
+  saveInventoryMatrix(updated);
+
+  // Sinkronkan ke database Supabase
+  if (resolvedSku) {
+    updateDatabaseInventoryItem(resolvedSku, targetQty, unitHpp);
+  }
+
+  // Rekam log audit trail opname ke localStorage
+  const diffQty = targetQty - previousQty;
+  const financialImpact = diffQty * unitHpp;
+  const opnameLog = {
+    id: `OPN-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+    itemType,
+    sku: resolvedSku,
+    previousQty,
+    actualQty: targetQty,
+    diffQty,
+    unitHpp,
+    financialImpact,
+    reason,
+    adminName
+  };
+
+  try {
+    const existingLogs = JSON.parse(localStorage.getItem('ts_stock_opname_logs') || '[]');
+    existingLogs.unshift(opnameLog);
+    localStorage.setItem('ts_stock_opname_logs', JSON.stringify(existingLogs.slice(0, 100)));
+  } catch (e) {
+    console.warn('Failed saving stock opname log:', e);
+  }
+
+  return {
+    updatedMatrix: updated,
+    opnameLog
+  };
+}
+
+/**
+ * 📊 Helper: Menghitung statistik eksekutif inventori (Valuasi Aset, Pcs Ready, DTF, SKU Kritis)
+ */
+export function calculateInventoryStats(matrix = {}) {
+  let totalInventoryValue = 0;
+  let totalBlankGarmentPcs = 0;
+  let blankGarmentValue = 0;
+  let totalDtfSheets = 0;
+  let totalDtfAssetValue = 0;
+  let totalSuppliesUnits = 0;
+  let suppliesValue = 0;
+  let criticalSkuCount = 0;
+  let totalSkuCount = 0;
+
+  // 1. Kaos Polos
+  Object.entries(matrix).forEach(([gKey, colData]) => {
+    if (gKey === 'supplies' || gKey === 'dtf_films') return;
+    const gObj = GARMENT_TYPES[gKey];
+    if (!gObj) return;
+    const unitHpp = gObj.baseCost || (gKey.includes('24s') ? 42000 : 37000);
+
+    Object.entries(colData || {}).forEach(([colName, szData]) => {
+      Object.entries(szData || {}).forEach(([sz, count]) => {
+        const qty = Number(count) || 0;
+        totalBlankGarmentPcs += qty;
+        blankGarmentValue += qty * unitHpp;
+        totalSkuCount += 1;
+        if (qty <= 2) {
+          criticalSkuCount += 1;
+        }
+      });
+    });
+  });
+
+  // 2. DTF Films
+  if (matrix.dtf_films) {
+    Object.entries(matrix.dtf_films).forEach(([sku, film]) => {
+      const ready = Number(film.ready) || 0;
+      const unitCost = Number(film.unitCost) || 12000;
+      const min = Number(film.min) || 2;
+      totalDtfSheets += ready;
+      totalDtfAssetValue += ready * unitCost;
+      totalSkuCount += 1;
+      if (ready <= min) {
+        criticalSkuCount += 1;
+      }
+    });
+  }
+
+  // 3. Supplies
+  if (matrix.supplies) {
+    Object.entries(matrix.supplies).forEach(([key, s]) => {
+      const count = typeof s === 'object' && s !== null
+        ? (Number(s.ready ?? s.qty) || 0)
+        : (Number(s) || 0);
+      const defaultRate = key === 'polymailer' ? 800 : key === 'sticker' ? 600 : key === 'hangtag' ? 500 : 800;
+      const unitCost = typeof s === 'object' && s?.unitCost ? Number(s.unitCost) : defaultRate;
+      const minStock = 50;
+      totalSuppliesUnits += count;
+      suppliesValue += count * unitCost;
+      totalSkuCount += 1;
+      if (count <= minStock) {
+        criticalSkuCount += 1;
+      }
+    });
+  }
+
+  totalInventoryValue = blankGarmentValue + totalDtfAssetValue + suppliesValue;
+
+  return {
+    totalInventoryValue,
+    totalBlankGarmentPcs,
+    blankGarmentValue,
+    totalDtfSheets,
+    totalDtfAssetValue,
+    totalSuppliesUnits,
+    suppliesValue,
+    criticalSkuCount,
+    totalSkuCount
+  };
+}
+
+/**
+ * 📥 Ekspor Seluruh Matriks Inventori ke File CSV (11 Kolom Standar Opname Gudang)
+ */
+export function exportInventoryCsv(matrix = {}) {
+  const rows = [];
+  rows.push([
+    'SKU Master',
+    'Tipe Item',
+    'Nama Model / Desain',
+    'Varian Warna',
+    'Ukuran',
+    'Stok Sistem',
+    'Satuan',
+    'Estimasi HPP (Rp)',
+    'Total Nilai Aset (Rp)',
+    'Batas Aman Min',
+    'Status Stok'
+  ]);
+
+  // 1. Kaos Polos
+  Object.entries(matrix).forEach(([gKey, colData]) => {
+    if (gKey === 'supplies' || gKey === 'dtf_films') return;
+    const gObj = GARMENT_TYPES[gKey];
+    if (!gObj) return;
+    const unitHpp = gObj.baseCost || (gKey.includes('24s') ? 42000 : 37000);
+
+    Object.entries(colData || {}).forEach(([colName, szData]) => {
+      Object.entries(szData || {}).forEach(([sz, count]) => {
+        const qty = Number(count) || 0;
+        const sku = getBlankGarmentSku(gKey, colName, sz);
+        const assetVal = qty * unitHpp;
+        let status = 'Aman';
+        if (qty === 0) status = 'Habis';
+        else if (qty <= 2) status = 'Menipis';
+
+        rows.push([
+          sku,
+          'Kaos Polos NSA',
+          gObj.name || gKey,
+          colName,
+          sz,
+          qty,
+          'Pcs',
+          unitHpp,
+          assetVal,
+          2,
+          status
+        ]);
+      });
+    });
+  });
+
+  // 2. DTF Films
+  if (matrix.dtf_films) {
+    Object.entries(matrix.dtf_films).forEach(([sku, film]) => {
+      const ready = Number(film.ready) || 0;
+      const unitCost = Number(film.unitCost) || 12000;
+      const min = Number(film.min) || 2;
+      const assetVal = ready * unitCost;
+      let status = 'Aman';
+      if (ready === 0) status = 'Habis';
+      else if (ready <= min) status = 'Menipis';
+
+      rows.push([
+        sku,
+        'Film DTF Siap Press',
+        film.name || sku,
+        'Full Color',
+        film.size || 'A3',
+        ready,
+        sku.includes('ROLL') ? 'Meter' : 'Lembar',
+        unitCost,
+        assetVal,
+        min,
+        status
+      ]);
+    });
+  }
+
+  // 3. Supplies
+  if (matrix.supplies) {
+    Object.entries(matrix.supplies).forEach(([key, s]) => {
+      const count = typeof s === 'object' && s !== null
+        ? (Number(s.ready ?? s.qty) || 0)
+        : (Number(s) || 0);
+      const defaultRate = key === 'polymailer' ? 800 : key === 'sticker' ? 600 : key === 'hangtag' ? 500 : 800;
+      const unitCost = typeof s === 'object' && s?.unitCost ? Number(s.unitCost) : defaultRate;
+      const sku = getSupplySku(key);
+      const assetVal = count * unitCost;
+      const minStock = 50;
+      let status = 'Aman';
+      if (count === 0) status = 'Habis';
+      else if (count <= minStock) status = 'Menipis';
+
+      rows.push([
+        sku,
+        'Kemasan & Material',
+        key.toUpperCase(),
+        '-',
+        '-',
+        count,
+        'Pcs',
+        unitCost,
+        assetVal,
+        minStock,
+        status
+      ]);
+    });
+  }
+
+  // Format to CSV string with quote escaping
+  const csvContent = '\uFEFF' + rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  const dateStr = new Date().toISOString().slice(0, 10);
+  link.setAttribute('download', `teestock_inventory_opname_${dateStr}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+

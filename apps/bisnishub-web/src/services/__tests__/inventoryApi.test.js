@@ -5,7 +5,9 @@ import {
   restockDtfFilm, 
   restockDtfBatch,
   restockBlankGarment,
-  restockSupplyItem
+  restockSupplyItem,
+  adjustStockOpname,
+  calculateInventoryStats
 } from '../inventoryApi';
 
 describe('Inventory Stock Engine (inventoryApi.js)', () => {
@@ -114,4 +116,53 @@ describe('Inventory Stock Engine (inventoryApi.js)', () => {
       expect(result.supplies.polymailer).toBe(58); // 10 + 48
     });
   });
+
+  describe('adjustStockOpname() — Penyesuaian Fisik Terotorisasi (Anti-Bocor)', () => {
+    it('menyesuaikan stok kaos polos NSA Hitam L menjadi hasil hitung fisik', () => {
+      // Mock awal: Hitam L = 10
+      const { updatedMatrix, opnameLog } = adjustStockOpname(mockMatrix, {
+        itemType: 'blank_tshirt',
+        garmentKey: 'nsa_softstyle_30s',
+        color: 'Hitam',
+        size: 'L',
+        actualQty: 8,
+        reason: 'Selisih 2 pcs display studio',
+        adminName: 'Rizky Founder'
+      });
+
+      expect(updatedMatrix.nsa_softstyle_30s.Hitam.L).toBe(8);
+      expect(opnameLog.previousQty).toBe(10);
+      expect(opnameLog.actualQty).toBe(8);
+      expect(opnameLog.diffQty).toBe(-2);
+      expect(opnameLog.reason).toBe('Selisih 2 pcs display studio');
+    });
+
+    it('menyesuaikan lembar film DTF ready dan mencatat dampak finansial', () => {
+      // Mock awal: TS-PRO-001 ready = 5, unitCost = 12000
+      const { updatedMatrix, opnameLog } = adjustStockOpname(mockMatrix, {
+        itemType: 'dtf_film',
+        sku: 'TS-PRO-001',
+        actualQty: 7,
+        reason: 'Temuan sisa potongan gang sheet'
+      });
+
+      expect(updatedMatrix.dtf_films['TS-PRO-001'].ready).toBe(7);
+      expect(opnameLog.previousQty).toBe(5);
+      expect(opnameLog.diffQty).toBe(2);
+      expect(opnameLog.financialImpact).toBe(24000); // 2 * 12000
+    });
+  });
+
+  describe('calculateInventoryStats() — Metrik Eksekutif Inventori', () => {
+    it('menghitung total pcs, valuasi aset, dan SKU kritis secara akurat', () => {
+      const stats = calculateInventoryStats(mockMatrix);
+      // Kaos: S:4, M:8, L:10, XL:6 = 28 pcs
+      expect(stats.totalBlankGarmentPcs).toBe(28);
+      // DTF: 5 lembar @ 12000 = 60000
+      expect(stats.totalDtfSheets).toBe(5);
+      expect(stats.totalDtfAssetValue).toBe(60000);
+      expect(stats.totalInventoryValue).toBeGreaterThan(60000);
+    });
+  });
 });
+

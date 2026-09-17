@@ -20,7 +20,8 @@ import {
   restockSupplyItem,
   getBlankGarmentSku,
   getSupplySku,
-  updateDatabaseInventoryItem
+  updateDatabaseInventoryItem,
+  adjustStockOpname
 } from '../services/inventoryApi';
 import { 
   getCashTransactions, 
@@ -325,6 +326,15 @@ export function AdminProvider({ children }) {
       updateDatabaseInventoryItem(sku, newQty);
       showToast(`Stok Film DTF [${sku}] diperbarui: ${newQty} lembar`);
     }
+  };
+
+  // Record official authorized stock opname adjustment (Zero-Leakage with audit log)
+  const recordStockOpname = (payload) => {
+    const { updatedMatrix, opnameLog } = adjustStockOpname(inventory, payload);
+    setInventory(updatedMatrix);
+    const diffSign = opnameLog.diffQty >= 0 ? `+${opnameLog.diffQty}` : `${opnameLog.diffQty}`;
+    showToast(`✅ Stock Opname berhasil dicatat: ${opnameLog.sku} (${diffSign} ${opnameLog.diffQty >= 0 ? 'ditemukan' : 'selisih minus'})`);
+    return { updatedMatrix, opnameLog };
   };
 
   // Helper to check DTF film readiness for a given SKU
@@ -634,7 +644,8 @@ export function AdminProvider({ children }) {
         purgeAllDemoData,
         recordDefectDeduction,
         updateOrderTracking,
-        cancelOrder
+        cancelOrder,
+        recordStockOpname
       }}
     >
       {children}
