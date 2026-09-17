@@ -372,26 +372,30 @@ export function calculateLedgerSummary(transactions = []) {
     const type = tx.type;
     const cat = tx.category;
 
-    if (type === 'CASH_IN') {
+    const isInjection = cat === 'personal_injection' || cat === 'capital_injection' || type === 'CAPITAL_INJECTION';
+    const isPrive = cat === 'owner_prive' || type === 'FOUNDER_PRIVE';
+
+    // Capital injection is cash flowing INTO the business bank/treasury
+    if (type === 'CASH_IN' || isInjection) {
       totalCashIn += amt;
-    } else if (type === 'CASH_OUT') {
+    } else if (type === 'CASH_OUT' || isPrive) {
       totalCashOut += amt;
     }
 
-    if (cat === 'personal_injection' || cat === 'capital_injection' || type === 'CAPITAL_INJECTION') {
+    if (isInjection) {
       totalInjected += amt;
     }
 
-    if (cat === 'owner_prive' || type === 'FOUNDER_PRIVE') {
+    if (isPrive) {
       totalPrive += amt;
     }
 
-    // Rough account allocation if available
+    // Account allocation
     const src = tx.sourceAccount || tx.sourceWallet || '';
     const dst = tx.destinationAccount || tx.destinationWallet || '';
 
-    if (dst.includes('bank') || dst.includes('teestock') || dst.includes('multigraph')) {
-      bankBalance += type === 'CASH_IN' ? amt : -amt;
+    if (dst.includes('bank') || dst.includes('teestock') || dst.includes('multigraph') || dst.includes('holding')) {
+      bankBalance += (type === 'CASH_IN' || isInjection) ? amt : -amt;
     }
     if (src.includes('qris') || dst.includes('qris')) {
       qrisBalance += type === 'CASH_IN' ? amt : -amt;

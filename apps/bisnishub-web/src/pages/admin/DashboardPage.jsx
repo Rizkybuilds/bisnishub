@@ -14,13 +14,21 @@ import {
   Boxes, 
   Building2, 
   ScrollText,
-  Plus
+  Plus,
+  ArrowUpRight,
+  ArrowDownRight,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle2
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
+import { Input, Select } from '../../components/ui/Input';
 import { formatRupiah } from '../../utils/formatters';
 import { SIZES } from '../../constants/garments';
 import { FounderBepSimulator } from '../../components/admin/FounderBepSimulator';
@@ -29,8 +37,68 @@ import { isProductBlank, getBlankPricing } from '../../constants/pricing';
 
 export function DashboardPage() {
   const { openNewOrderModal } = useOutletContext();
-  const { catalog, orders, inventory, founderWealth, procurements, businessValuation, multiUnitBalances } = useAdmin();
+  const { 
+    catalog, 
+    orders, 
+    inventory, 
+    founderWealth, 
+    procurements, 
+    businessValuation, 
+    multiUnitBalances,
+    recordCashTransaction,
+    showToast
+  } = useAdmin();
+
   const [channelTab, setChannelTab] = useState('all');
+
+  // Modal State for Capital Injection / Prive
+  const [isCapitalModalOpen, setIsCapitalModalOpen] = useState(false);
+  const [capitalMode, setCapitalMode] = useState('injection'); // 'injection' | 'prive'
+  const [capitalAmount, setCapitalAmount] = useState(1000000);
+  const [capitalWallet, setCapitalWallet] = useState('wallet_teestock');
+  const [capitalNotes, setCapitalNotes] = useState('');
+  const [isRoutineOpen, setIsRoutineOpen] = useState(false);
+
+  const handleOpenCapitalModal = (mode = 'injection') => {
+    setCapitalMode(mode);
+    setCapitalAmount(mode === 'injection' ? 1000000 : 500000);
+    setCapitalWallet('wallet_teestock');
+    setCapitalNotes(mode === 'injection' ? 'Suntik modal kerja operasional studio' : 'Penarikan prive founder');
+    setIsCapitalModalOpen(true);
+  };
+
+  const handleSaveCapital = async (e) => {
+    e.preventDefault();
+    const amt = Number(capitalAmount);
+    if (amt <= 0) {
+      showToast("Nominal modal harus lebih dari 0", "error");
+      return;
+    }
+
+    const isInjection = capitalMode === 'injection';
+    const targetUnit = capitalWallet.replace('wallet_', '') || 'teestock';
+
+    await recordCashTransaction({
+      transactionNo: `TX-${Date.now().toString().slice(-6)}`,
+      date: new Date().toISOString().slice(0, 10),
+      businessUnit: targetUnit,
+      type: isInjection ? 'CAPITAL_INJECTION' : 'FOUNDER_PRIVE',
+      category: isInjection ? 'capital_injection' : 'owner_prive',
+      amount: amt,
+      sourceWallet: isInjection ? 'wallet_founder' : capitalWallet,
+      destinationWallet: isInjection ? capitalWallet : 'wallet_founder',
+      description: capitalNotes.trim() || (isInjection ? 'Suntik modal kerja founder ke rekening bisnis' : 'Penarikan prive founder'),
+      proofRef: `FOUNDER-${Date.now().toString().slice(-4)}`,
+      settlementStatus: 'cleared'
+    });
+
+    showToast(
+      isInjection
+        ? `🎉 Modal ${formatRupiah(amt)} berhasil disuntikkan ke ${capitalWallet === 'wallet_teestock' ? 'Rekening TeeStock' : capitalWallet === 'wallet_multigraph' ? 'Rekening MultiGraph' : 'Kas Holding'}! Kas & Bank langsung bertambah.`
+        : `💸 Prive ${formatRupiah(amt)} berhasil dicatat keluar ke rekening pribadi founder.`
+    );
+    setIsCapitalModalOpen(false);
+  };
 
   // Helper: Dapatkan HPP per unit yang akurat untuk kaos grafis vs kaos polos
   const getOrderUnitHpp = (order) => {
@@ -184,427 +252,362 @@ export function DashboardPage() {
         onNewOrder={openNewOrderModal}
       />
 
-      <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
         {/* ⚡ EXECUTIVE QUICK ACTIONS RIBBON */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
           <button
             type="button"
             onClick={openNewOrderModal}
-            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white text-zinc-950 font-bold hover:bg-zinc-200 transition-all flex items-center gap-2 shrink-0 shadow-sm"
+            className="px-4 py-2.5 min-h-[44px] rounded-xl bg-white text-zinc-950 font-black hover:bg-zinc-200 transition-all flex items-center gap-2 shrink-0 shadow-sm"
           >
             <Plus className="w-4 h-4" />
             <span>+ Input Order</span>
           </button>
+          <button
+            type="button"
+            onClick={() => handleOpenCapitalModal('injection')}
+            className="px-4 py-2.5 min-h-[44px] rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-all flex items-center gap-2 shrink-0 font-bold"
+          >
+            <ArrowDownRight className="w-4 h-4" />
+            <span>+ Suntik Modal (Cash In)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleOpenCapitalModal('prive')}
+            className="px-4 py-2.5 min-h-[44px] rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/10 transition-all flex items-center gap-2 shrink-0 font-medium"
+          >
+            <ArrowUpRight className="w-4 h-4 text-zinc-400" />
+            <span>Tarik Prive (Cash Out)</span>
+          </button>
           <Link
             to="/pengadaan"
-            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200 hover:text-white border border-white/10 transition-all flex items-center gap-2 shrink-0 font-medium"
+            className="px-4 py-2.5 min-h-[44px] rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/10 transition-all flex items-center gap-2 shrink-0 font-medium"
           >
             <Boxes className="w-4 h-4 text-zinc-400" />
             <span>PO Bahan (BOM)</span>
           </Link>
           <Link
-            to="/buku-kas"
-            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200 hover:text-white border border-white/10 transition-all flex items-center gap-2 shrink-0 font-medium"
-          >
-            <Wallet className="w-4 h-4 text-zinc-400" />
-            <span>Buku Kas &amp; Multi-Wallet</span>
-          </Link>
-          <Link
             to="/kanban"
-            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200 hover:text-white border border-white/10 transition-all flex items-center gap-2 shrink-0 font-medium"
+            className="px-4 py-2.5 min-h-[44px] rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/10 transition-all flex items-center gap-2 shrink-0 font-medium"
           >
             <Flame className="w-4 h-4 text-zinc-400" />
             <span>Antrean Press ({pressOrders.length})</span>
           </Link>
-          <Link
-            to="/gangsheet"
-            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200 hover:text-white border border-white/10 transition-all flex items-center gap-2 shrink-0 font-medium"
-          >
-            <ScrollText className="w-4 h-4 text-zinc-400" />
-            <span>Gang Sheet 58cm</span>
-          </Link>
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent('bisnishub_open_cmd_palette'))}
-            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-zinc-400 hover:text-white border border-dashed border-white/15 transition-all flex items-center gap-2 shrink-0"
+            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-zinc-400 hover:text-white border border-dashed border-white/15 transition-all flex items-center gap-2 shrink-0 ml-auto"
           >
             <kbd className="text-[10px] font-mono font-bold bg-white/10 px-1.5 py-0.5 rounded text-zinc-300">Ctrl+K</kbd>
             <span>Spotlight</span>
           </button>
         </div>
 
-        {/* 🏛️ FOUNDER'S REAL-TIME BALANCE SHEET (NERACA KEKAYAAN BISNIS) */}
-        <div className="bg-[#0C0C0F] border border-white/10 rounded-2xl p-5 sm:p-7 space-y-6 shadow-2xl relative overflow-hidden">
-          {/* Subtle Ambient Monochrome Spotlight */}
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-white/[0.03] rounded-full blur-3xl pointer-events-none" />
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-5 relative z-10">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-white/10 text-white border border-white/15">
-                  HOLDING ENTERPRISE VALUATION
-                </span>
-                <span className="text-[10px] font-mono text-zinc-400">MultiGraph Holding</span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight mt-1.5">
-                Valuasi Ekuitas &amp; Pertumbuhan Bisnis Founder
-              </h2>
-              <p className="text-xs text-zinc-400 mt-0.5">
-                Kombinasi nilai aset kasat mata (NAV 40%), kelipatan laba bersih (SDE 2.8x 40%), dan skala omset disetahunkan (20%).
-              </p>
+        {/* 🏛️ TIER 1: TIGA PILAR NERACA EKSEKUTIF (HERO BENTO) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* 1. Kas & Likuiditas Bisnis */}
+          <div className="bg-[#121215] border border-white/[0.08] hover:border-white/20 p-5 rounded-2xl flex flex-col justify-between space-y-4 shadow-xl relative overflow-hidden transition-all">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5 text-zinc-300" /> Likuiditas Kas Konsolidasi
+              </span>
+              <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                SIAP PAKAI
+              </span>
             </div>
 
-            <div className="flex items-center gap-2.5">
-              <Link to="/buku-kas">
-                <Button variant="secondary" size="sm" className="bg-white/5 hover:bg-white/10 border-white/15 text-white font-semibold rounded-xl">
-                  <TrendingUp className="w-3.5 h-3.5 mr-1 text-white" /> Analisis Valuasi &amp; Multiple
-                </Button>
-              </Link>
-              <Link to="/pengadaan">
-                <Button variant="primary" size="sm" className="bg-white text-zinc-950 hover:bg-zinc-200 font-bold shadow-sm rounded-xl">
-                  <Boxes className="w-3.5 h-3.5 mr-1" /> + Belanja Bahan (BOM)
-                </Button>
+            <div>
+              <div className="text-[11px] text-zinc-400">Total Kas &amp; Saldo Bank</div>
+              <div className="font-mono font-black text-3xl text-white tracking-tight mt-0.5">
+                {formatRupiah(founderWealth.netCashLiquidity)}
+              </div>
+              <div className="text-[10px] text-zinc-400 font-mono mt-1.5 flex items-center gap-2 flex-wrap">
+                <span>TeeStock: <strong className="text-white">{formatRupiah(multiUnitBalances.teestock?.balance || 0)}</strong></span>
+                <span>•</span>
+                <span>Holding: <strong className="text-white">{formatRupiah(multiUnitBalances.holding?.balance || 0)}</strong></span>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-white/[0.06] flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleOpenCapitalModal('injection')}
+                className="flex-1 py-2 px-3 rounded-xl bg-white text-zinc-950 text-xs font-bold hover:bg-zinc-200 transition-all flex items-center justify-center gap-1.5 shadow-sm"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Suntik Modal</span>
+              </button>
+              <Link
+                to="/buku-kas"
+                className="py-2 px-3 rounded-xl bg-white/[0.05] hover:bg-white/10 text-xs text-zinc-300 hover:text-white border border-white/10 transition-all text-center"
+              >
+                Buku Kas &rarr;
               </Link>
             </div>
           </div>
 
-          {/* Main Equity & Total Wealth Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
-            <div className="bg-[#141418] p-5 rounded-xl border border-white/[0.08] hover:border-white/20 transition-all">
-              <span className="text-[11px] text-zinc-400 font-medium block">Total Modal Disetor Founder</span>
-              <div className="font-mono font-black text-2xl text-white mt-1.5">
-                {formatRupiah(founderWealth.totalInjected)}
+          {/* 2. Total Harta Bersih Bisnis (NAV Floor) */}
+          <div className="bg-[#121215] border border-white/[0.08] hover:border-white/20 p-5 rounded-2xl flex flex-col justify-between space-y-4 shadow-xl relative overflow-hidden transition-all">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                <Boxes className="w-3.5 h-3.5 text-zinc-300" /> Nilai Buku Harta Fisik (NAV)
+              </span>
+              <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-white/10 text-white border border-white/15">
+                LANTAI DASAR
+              </span>
+            </div>
+
+            <div>
+              <div className="text-[11px] text-zinc-400">Total Harta Kasat Mata (Kas + Stok + Mesin)</div>
+              <div className="font-mono font-black text-3xl text-white tracking-tight mt-0.5">
+                {formatRupiah(founderWealth.totalBusinessWealth)}
               </div>
-              <div className="flex items-center justify-between text-[10px] text-zinc-400 mt-2 pt-2 border-t border-white/[0.06] font-mono">
-                <span>Prive Ditarik: -{formatRupiah(founderWealth.totalPrive)}</span>
-                <span className="text-white font-bold">Net: {formatRupiah(founderWealth.netFounderEquity)}</span>
+              <div className="text-[10px] text-zinc-400 font-mono mt-1.5 flex items-center justify-between">
+                <span>Modal Disetor: {formatRupiah(founderWealth.totalInjected)}</span>
+                <span className="text-white font-bold">
+                  Net Tambah: +{formatRupiah(founderWealth.netWealthGrowth)} ({founderWealth.growthPercentage}%)
+                </span>
               </div>
             </div>
 
-            <div className="bg-gradient-to-b from-white/[0.08] to-white/[0.02] p-5 rounded-xl border border-white/30 shadow-lg shadow-white/[0.02] relative">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-white font-mono font-bold uppercase tracking-wider block">Valuasi Wajar Holding (Fair Enterprise Value)</span>
-                <span className="text-[9px] font-mono bg-white text-black font-bold px-1.5 py-0.5 rounded">TERBOBOT</span>
-              </div>
-              <div className="font-mono font-black text-3xl text-white mt-1.5 tracking-tight">
+            <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono text-zinc-400">
+              <span>Prive Ditarik: -{formatRupiah(founderWealth.totalPrive)}</span>
+              <span className="text-zinc-300">Ekuitas Net: {formatRupiah(founderWealth.netFounderEquity)}</span>
+            </div>
+          </div>
+
+          {/* 3. Valuasi Wajar Holding (Fair Enterprise Value) */}
+          <div className="bg-gradient-to-b from-white/[0.08] to-white/[0.02] border border-white/20 hover:border-white/30 p-5 rounded-2xl flex flex-col justify-between space-y-4 shadow-2xl relative overflow-hidden transition-all">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-white" /> Valuasi Wajar Holding
+              </span>
+              <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-white text-zinc-950 shadow-sm">
+                TERBOBOT
+              </span>
+            </div>
+
+            <div>
+              <div className="text-[11px] text-zinc-300">Estimasi Nilai Perusahaan (40% NAV + 40% SDE + 20% Omset)</div>
+              <div className="font-mono font-black text-3xl text-white tracking-tight mt-0.5">
                 {formatRupiah(businessValuation?.fairEnterpriseValuation || founderWealth.totalBusinessWealth)}
               </div>
-              <div className="text-[10px] text-zinc-300 mt-2 pt-2 border-t border-white/15 font-mono flex items-center justify-between">
-                <span>Multiple Ekuitas:</span>
-                <span className="font-bold text-white bg-white/10 px-1.5 py-0.5 rounded border border-white/20">+{businessValuation?.wealthGrowthRatio || '1.0'}x Modal (+{businessValuation?.wealthGrowthPercent || '0.0'}%)</span>
+              <div className="text-[10px] text-zinc-300 font-mono mt-1.5 flex items-center justify-between">
+                <span>Multiple Nilai:</span>
+                <span className="bg-white/10 px-2 py-0.5 rounded font-bold text-white border border-white/20">
+                  +{businessValuation?.wealthGrowthRatio || '1.0'}x Modal
+                </span>
               </div>
             </div>
 
-            <div className="bg-[#141418] p-5 rounded-xl border border-white/[0.08] hover:border-white/20 transition-all">
-              <span className="text-[11px] text-zinc-400 font-medium block">Nilai Buku Riil (NAV Floor Value)</span>
-              <div className="font-mono font-black text-2xl text-white mt-1.5">
-                {formatRupiah(businessValuation?.totalBookValueNAV || founderWealth.totalBusinessWealth)}
-              </div>
-              <div className="text-[10px] text-zinc-400 mt-2 pt-2 border-t border-white/[0.06] font-mono flex items-center justify-between">
-                <span>Nilai Tambah Bersih:</span>
-                <span className="text-white font-bold">+{formatRupiah(businessValuation?.totalWealthGrowth || founderWealth.netWealthGrowth)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Breakdown Wujud Harta (Asset Allocation) */}
-          <div className="space-y-3 pt-2 relative z-10">
-            <div className="text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider flex items-center justify-between">
-              <span>Alokasi Modal Riil Holding (100% Kasat Mata)</span>
-              <span className="text-[10px] text-zinc-500 font-mono">Real Balance Sheet</span>
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              {/* 1. Kas Tunai & Bank */}
-              <div className="bg-[#141418] p-4 rounded-xl border border-white/[0.08] hover:border-white/20 transition-all space-y-1">
-                <div className="flex items-center justify-between text-zinc-400 text-[11px]">
-                  <span className="flex items-center gap-1.5 font-semibold text-white">
-                    <Building2 className="w-3.5 h-3.5 text-zinc-400" /> 1. Kas &amp; Bank
-                  </span>
-                  <span className="font-mono text-zinc-500">{formatRupiah(founderWealth.netCashLiquidity)}</span>
-                </div>
-                <div className="font-mono font-black text-base text-white">
-                  {formatRupiah(founderWealth.netCashLiquidity)}
-                </div>
-                <p className="text-[10px] text-zinc-500 font-mono">Saldo likuid di rekening</p>
-              </div>
-
-              {/* 2. Kaos Polos NSA */}
-              <div className="bg-[#141418] p-4 rounded-xl border border-white/[0.08] hover:border-white/20 transition-all space-y-1">
-                <div className="flex items-center justify-between text-zinc-400 text-[11px]">
-                  <span className="flex items-center gap-1.5 font-semibold text-white">
-                    <Shirt className="w-3.5 h-3.5 text-zinc-400" /> 2. Kaos Polos NSA
-                  </span>
-                  <span className="font-mono text-zinc-500">{totalStock} pcs</span>
-                </div>
-                <div className="font-mono font-black text-base text-white">
-                  {formatRupiah(founderWealth.blankStockValue)}
-                </div>
-                <p className="text-[10px] text-zinc-500 font-mono">Stok buffer garmen studio</p>
-              </div>
-
-              {/* 3. Sablon & Kemasan (BOM) */}
-              <div className="bg-[#141418] p-4 rounded-xl border border-white/[0.08] hover:border-white/20 transition-all space-y-1">
-                <div className="flex items-center justify-between text-zinc-400 text-[11px]">
-                  <span className="flex items-center gap-1.5 font-semibold text-white">
-                    <ScrollText className="w-3.5 h-3.5 text-zinc-400" /> 3. DTF &amp; Kemasan
-                  </span>
-                  <span className="font-mono text-zinc-500">{totalDtfSheets} DTF</span>
-                </div>
-                <div className="font-mono font-black text-base text-white">
-                  {formatRupiah(founderWealth.dtfStockValue + founderWealth.packagingStockValue)}
-                </div>
-                <p className="text-[10px] text-zinc-500 font-mono">Film DTF + Polymailer + Stiker</p>
-              </div>
-
-              {/* 4. Mesin & Alat Kerja (CAPEX) */}
-              <div className="bg-[#141418] p-4 rounded-xl border border-white/[0.08] hover:border-white/20 transition-all space-y-1">
-                <div className="flex items-center justify-between text-zinc-400 text-[11px]">
-                  <span className="flex items-center gap-1.5 font-semibold text-white">
-                    <Flame className="w-3.5 h-3.5 text-zinc-400" /> 4. Mesin (CAPEX)
-                  </span>
-                  <span className="font-mono text-zinc-500">In-House</span>
-                </div>
-                <div className="font-mono font-black text-base text-white">
-                  {formatRupiah(founderWealth.fixedAssetsValue)}
-                </div>
-                <p className="text-[10px] text-zinc-500 font-mono">Mesin Heat Press 155°C</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 🎯 CFO Intelligence: Simulator Target Gaji & BEP Harian Founder */}
-        <FounderBepSimulator orders={orders} />
-
-        {/* ⚙️ COO Workflow: SOP Rutinitas Studio & Batching Time-Block */}
-        <DailyStudioRoutine />
-
-        {/* KPI Cards (Monochrome Bento Grid) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="flex items-center gap-4 bg-[#121215] border-white/[0.08] hover:border-white/20">
-            <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 text-white flex items-center justify-center shrink-0">
-              <Shirt className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-zinc-400 font-mono font-bold uppercase tracking-wider text-[10px]">Total SKU Aktif</div>
-              <div className="font-mono text-2xl font-black text-white mt-0.5">{catalog.length}</div>
-              <div className="text-[10px] text-zinc-400 font-mono font-medium">9 Series Desain</div>
-            </div>
-          </Card>
-
-          <Card className="flex items-center gap-4 bg-[#121215] border-white/[0.08] hover:border-white/20">
-            <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 text-white flex items-center justify-center shrink-0">
-              <ShoppingBag className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-zinc-400 font-mono font-bold uppercase tracking-wider text-[10px]">Pesanan Diproses</div>
-              <div className="font-mono text-2xl font-black text-white mt-0.5">{activeOrders.length}</div>
-              <div className="text-[10px] text-zinc-300 font-mono font-medium">{pressOrders.length} Siap Press Heat</div>
-            </div>
-          </Card>
-
-          <Card className="flex items-center gap-4 bg-[#121215] border-white/[0.08] hover:border-white/20">
-            <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 text-white flex items-center justify-center shrink-0">
-              <Layers className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-zinc-400 font-mono font-bold uppercase tracking-wider text-[10px]">Stok Kaos NSA</div>
-              <div className="font-mono text-2xl font-black text-white mt-0.5">{totalStock} <span className="text-sm font-normal text-zinc-500">pcs</span></div>
-              <div className="text-[10px] text-zinc-400 font-mono font-medium">{totalDtfSheets} Film DTF Ready</div>
-            </div>
-          </Card>
-
-          <Card className="flex items-center gap-4 bg-[#121215] border-white/[0.08] hover:border-white/20">
-            <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 text-white flex items-center justify-center shrink-0">
-              <TrendingUp className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-zinc-400 font-mono font-bold uppercase tracking-wider text-[10px]">Realized Net Margin</div>
-              <div className="font-mono text-2xl font-black text-white mt-0.5">{realizedMarginPct}%</div>
-              <div className="text-[10px] text-zinc-400 font-mono font-medium">Batas Aman CFO &ge; 35%</div>
-            </div>
-          </Card>
-        </div>
-
-        {/* CFO Financial Health Breakdown Panel */}
-        <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-6 space-y-4 shadow-xl">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-3">
-            <div>
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Wallet className="w-4 h-4 text-white" />
-                <span>Ringkasan Keuangan Riil (P&amp;L Multi-Channel)</span>
-              </h3>
-              <p className="text-xs text-zinc-400 mt-0.5">
-                Kalkulasi otomatis pendapatan kotor, potongan komisi platform, dan modal HPP bahan
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono px-2.5 py-1 rounded-md bg-black/60 border border-white/10 text-zinc-400">
-                Basis Data: <strong className="text-white">{orders.length} Pesanan</strong>
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-black/50 border border-white/[0.08] p-4 rounded-xl space-y-1">
-              <div className="text-xs text-zinc-400 font-mono font-medium">Total Omset Kotor</div>
-              <div className="font-mono text-xl font-black text-white">
-                {formatRupiah(totalGrossRevenue)}
-              </div>
-              <div className="text-[10px] text-zinc-500">Nilai transaksi pembeli</div>
-            </div>
-
-            <div className="bg-black/50 border border-white/[0.08] p-4 rounded-xl space-y-1">
-              <div className="text-xs text-zinc-400 font-mono font-medium">Fee E-Commerce / Gateway</div>
-              <div className="font-mono text-xl font-black text-zinc-300">
-                -{formatRupiah(totalPlatformFees)}
-              </div>
-              <div className="text-[10px] text-zinc-500 font-mono">MDR QRIS / Fee Marketplace</div>
-            </div>
-
-            <div className="bg-black/50 border border-white/[0.08] p-4 rounded-xl space-y-1">
-              <div className="text-xs text-zinc-400 font-mono font-medium">Total COGS / Modal Bahan</div>
-              <div className="font-mono text-xl font-black text-zinc-300">
-                -{formatRupiah(totalCogs)}
-              </div>
-              <div className="text-[10px] text-zinc-500 font-mono">Kaos NSA + DTF + Kemasan</div>
-            </div>
-
-            <div className="bg-white/[0.05] border border-white/25 p-4 rounded-xl space-y-1">
-              <div className="text-xs text-white font-mono font-bold">Laba Bersih Realistis (Kas)</div>
-              <div className="font-mono text-xl font-black text-white">
-                +{formatRupiah(totalNetProfit)}
-              </div>
-              <div className="text-[10px] text-zinc-300 font-mono font-bold">Margin Bersih: {realizedMarginPct}%</div>
-            </div>
-          </div>
-
-          {/* Persediaan Lancar DTF Asset Valuation */}
-          <div className="mt-4 pt-3 border-t border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs bg-black/40 px-4 py-3 rounded-xl">
-            <div className="flex items-center gap-2 text-zinc-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-white inline-block"></span>
-              <span><strong>Persediaan Film DTF Studio:</strong> {totalDtfSheets} lembar film siap press</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="font-mono text-white">
-                Nilai Aset Stok Film: <strong className="text-white font-bold">{formatRupiah(totalDtfAssetValue)}</strong>
-              </div>
-              <Link 
-                to="/inventory" 
-                className="text-white hover:underline inline-flex items-center gap-1 font-semibold text-[11px]"
-              >
-                Cek Tab Film DTF &rarr;
+            <div className="pt-2 border-t border-white/15 flex items-center justify-between text-xs text-zinc-400">
+              <span className="text-[11px]">Metode: Multiplier 2.8x Laba</span>
+              <Link to="/buku-kas" className="text-white hover:underline text-xs font-bold inline-flex items-center gap-1">
+                Detail Valuasi &rarr;
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Quick Operations Callout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Link
-            to="/kanban"
-            className="p-5 bg-[#121215] border border-white/[0.08] hover:border-white/30 rounded-2xl flex items-center justify-between transition-all group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 text-white flex items-center justify-center">
-                <Flame className="w-6 h-6" />
-              </div>
-              <div>
-                <h4 className="font-bold text-sm text-white group-hover:text-white transition-colors">
-                  Antrean Heat Press ({pressOrders.length} Pesanan)
-                </h4>
-                <p className="text-xs text-zinc-400 mt-0.5">SOP 155°C, 15 detik, kupas dingin, second press.</p>
-              </div>
-            </div>
-            <ArrowRight className="w-5 h-5 text-zinc-500 group-hover:text-white group-hover:translate-x-1 transition-all" />
-          </Link>
-
-          <Link
-            to="/gangsheet"
-            className="p-5 bg-[#121215] border border-white/[0.08] hover:border-white/30 rounded-2xl flex items-center justify-between transition-all group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 text-white flex items-center justify-center">
-                <Printer className="w-6 h-6" />
-              </div>
-              <div>
-                <h4 className="font-bold text-sm text-white group-hover:text-white transition-colors">
-                  Kalkulator Gang Sheet Roll 58cm
-                </h4>
-                <p className="text-xs text-zinc-400 mt-0.5">Tata letak meteran A3, A4, A6 &amp; hemat biaya cetak.</p>
-              </div>
-            </div>
-            <ArrowRight className="w-5 h-5 text-zinc-500 group-hover:text-white group-hover:translate-x-1 transition-all" />
-          </Link>
-        </div>
-
-        {/* Low Stock Alerts */}
-        <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 space-y-3">
+        {/* 📦 TIER 2: 4 WUJUD HARTA KASAT MATA (BALANCE SHEET ASSETS) */}
+        <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 space-y-3 shadow-xl">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-zinc-400" /> Peringatan Stok Kaos Menipis (Threshold &le; 2 pcs)
-            </h3>
-            <Link to="/admin/inventory" className="text-xs text-zinc-400 hover:text-white transition-colors font-medium">
-              Buka Matriks Stok &rarr;
-            </Link>
+            <span className="text-xs font-mono font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+              <span>Alokasi 4 Wujud Harta Bisnis</span>
+              <span className="text-[10px] text-zinc-500 font-normal">Real Balance Sheet</span>
+            </span>
+            <span className="text-[10px] text-zinc-400 font-mono">
+              Total: <strong className="text-white">{formatRupiah(founderWealth.totalBusinessWealth)}</strong>
+            </span>
           </div>
 
-          <div className="flex flex-wrap gap-2 pt-1">
-            {lowStockItems.length === 0 ? (
-              <span className="text-xs text-zinc-400 font-medium flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                Seluruh kombinasi warna &amp; ukuran kaos polos NSA berada di atas batas aman.
-              </span>
-            ) : (
-              lowStockItems.slice(0, 8).map((item, idx) => (
-                <div
-                  key={idx}
-                  className="px-3 py-1.5 rounded-lg bg-black/40 border border-white/15 text-xs flex items-center gap-2"
-                >
-                  <span className="text-zinc-300 font-medium">
-                    {item.col} ({item.sz})
-                  </span>
-                  <span className="font-mono font-bold text-white">
-                    {item.count} pcs
-                  </span>
-                </div>
-              ))
-            )}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            {/* 1. Kas & Bank */}
+            <div className="bg-black/40 p-3.5 rounded-xl border border-white/[0.06] hover:border-white/15 transition-all space-y-1">
+              <div className="flex items-center justify-between text-zinc-400 text-[11px]">
+                <span className="flex items-center gap-1.5 font-semibold text-white">
+                  <Building2 className="w-3.5 h-3.5 text-zinc-400" /> 1. Kas &amp; Bank
+                </span>
+              </div>
+              <div className="font-mono font-black text-lg text-white">
+                {formatRupiah(founderWealth.netCashLiquidity)}
+              </div>
+              <p className="text-[10px] text-zinc-500 font-mono">Saldo likuid di rekening</p>
+            </div>
+
+            {/* 2. Kaos Polos NSA */}
+            <div className="bg-black/40 p-3.5 rounded-xl border border-white/[0.06] hover:border-white/15 transition-all space-y-1">
+              <div className="flex items-center justify-between text-zinc-400 text-[11px]">
+                <span className="flex items-center gap-1.5 font-semibold text-white">
+                  <Shirt className="w-3.5 h-3.5 text-zinc-400" /> 2. Kaos Polos NSA
+                </span>
+                <span className="font-mono text-zinc-500">{totalStock} pcs</span>
+              </div>
+              <div className="font-mono font-black text-lg text-white">
+                {formatRupiah(founderWealth.blankStockValue)}
+              </div>
+              <p className="text-[10px] text-zinc-500 font-mono">Stok buffer garmen studio</p>
+            </div>
+
+            {/* 3. Sablon & Kemasan (BOM) */}
+            <div className="bg-black/40 p-3.5 rounded-xl border border-white/[0.06] hover:border-white/15 transition-all space-y-1">
+              <div className="flex items-center justify-between text-zinc-400 text-[11px]">
+                <span className="flex items-center gap-1.5 font-semibold text-white">
+                  <ScrollText className="w-3.5 h-3.5 text-zinc-400" /> 3. DTF &amp; Kemasan
+                </span>
+                <span className="font-mono text-zinc-500">{totalDtfSheets} DTF</span>
+              </div>
+              <div className="font-mono font-black text-lg text-white">
+                {formatRupiah(founderWealth.dtfStockValue + founderWealth.packagingStockValue)}
+              </div>
+              <p className="text-[10px] text-zinc-500 font-mono">Film DTF + Polymailer + Stiker</p>
+            </div>
+
+            {/* 4. Mesin & Alat Kerja (CAPEX) */}
+            <div className="bg-black/40 p-3.5 rounded-xl border border-white/[0.06] hover:border-white/15 transition-all space-y-1">
+              <div className="flex items-center justify-between text-zinc-400 text-[11px]">
+                <span className="flex items-center gap-1.5 font-semibold text-white">
+                  <Flame className="w-3.5 h-3.5 text-zinc-400" /> 4. Mesin (CAPEX)
+                </span>
+                <span className="font-mono text-zinc-500">In-House</span>
+              </div>
+              <div className="font-mono font-black text-lg text-white">
+                {formatRupiah(founderWealth.fixedAssetsValue)}
+              </div>
+              <p className="text-[10px] text-zinc-500 font-mono">Mesin Heat Press 155°C</p>
+            </div>
           </div>
         </div>
 
-        {/* Low Stock DTF Film Alerts */}
-        {lowStockDtfFilms.length > 0 && (
-          <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Printer className="w-4 h-4 text-zinc-400" /> Peringatan Stok Film DTF Menipis (&le; Batas Buffer Minimum)
-              </h3>
-              <Link to="/admin/gangsheet" className="text-xs text-zinc-400 hover:text-white transition-colors font-medium">
-                Buka Gang Sheet Planner &rarr;
+        {/* ⚙️ TIER 3: BALANCED OPERATIONAL & PERFORMANCE BENTO (2 COLUMNS) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          {/* LEFT: P&L REALISTIS & PROFIT METER (7 Cols) */}
+          <div className="lg:col-span-7 bg-[#121215] border border-white/[0.08] rounded-2xl p-5 sm:p-6 space-y-5 shadow-xl flex flex-col justify-between">
+            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+              <div>
+                <h3 className="text-sm sm:text-base font-black text-white tracking-tight uppercase flex items-center gap-2">
+                  <Wallet className="w-4 h-4 text-white" />
+                  <span>Kinerja Keuangan Riil (Multi-Channel P&amp;L)</span>
+                </h3>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  Omset kotor dikurangi potongan fee marketplace dan modal HPP bahan.
+                </p>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/60 border border-white/10 text-zinc-400 shrink-0">
+                {orders.length} Order
+              </span>
+            </div>
+
+            {/* 4 P&L Tiles */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+              <div className="bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-0.5">
+                <div className="text-[10px] text-zinc-400 font-mono">Total Omset</div>
+                <div className="font-mono font-black text-base text-white truncate">{formatRupiah(totalGrossRevenue)}</div>
+              </div>
+              <div className="bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-0.5">
+                <div className="text-[10px] text-zinc-400 font-mono">Fee Platform</div>
+                <div className="font-mono font-black text-base text-zinc-300 truncate">-{formatRupiah(totalPlatformFees)}</div>
+              </div>
+              <div className="bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-0.5">
+                <div className="text-[10px] text-zinc-400 font-mono">Modal COGS</div>
+                <div className="font-mono font-black text-base text-zinc-300 truncate">-{formatRupiah(totalCogs)}</div>
+              </div>
+              <div className="bg-white/[0.06] p-3 rounded-xl border border-white/20 space-y-0.5">
+                <div className="text-[10px] text-white font-mono font-bold">Laba Bersih</div>
+                <div className="font-mono font-black text-base text-white truncate">+{formatRupiah(totalNetProfit)}</div>
+              </div>
+            </div>
+
+            {/* Profit Margin Meter Gauge */}
+            <div className="p-3.5 rounded-xl bg-black/40 border border-white/[0.06] space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-zinc-400 font-medium">Realized Net Margin:</span>
+                <span className="font-mono font-black text-white text-sm">
+                  {realizedMarginPct}% <span className="text-[10px] text-zinc-400 font-normal">(Batas Aman CFO &ge; 35%)</span>
+                </span>
+              </div>
+              <div className="h-2.5 w-full bg-zinc-900 rounded-full overflow-hidden flex">
+                <div 
+                  className="h-full bg-white transition-all duration-500" 
+                  style={{ width: `${Math.min(100, Math.max(5, realizedMarginPct))}%` }} 
+                  title={`Net Profit: ${realizedMarginPct}%`}
+                />
+              </div>
+            </div>
+
+            {/* Operational Bottlenecks Ribbon */}
+            <div className="grid grid-cols-3 gap-2 text-xs pt-1">
+              <Link
+                to="/kanban"
+                className="p-2.5 rounded-xl bg-black/30 border border-white/[0.06] hover:border-white/20 transition-all flex items-center justify-between group"
+              >
+                <div>
+                  <div className="text-[10px] text-zinc-400 font-medium">Antrean Press</div>
+                  <div className="font-mono font-bold text-white text-sm mt-0.5">{pressOrders.length} Order</div>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-white transition-colors" />
+              </Link>
+
+              <Link
+                to="/inventory"
+                className="p-2.5 rounded-xl bg-black/30 border border-white/[0.06] hover:border-white/20 transition-all flex items-center justify-between group"
+              >
+                <div>
+                  <div className="text-[10px] text-zinc-400 font-medium">Stok Menipis</div>
+                  <div className="font-mono font-bold text-white text-sm mt-0.5">{lowStockItems.length} SKU</div>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-white transition-colors" />
+              </Link>
+
+              <Link
+                to="/gangsheet"
+                className="p-2.5 rounded-xl bg-black/30 border border-white/[0.06] hover:border-white/20 transition-all flex items-center justify-between group"
+              >
+                <div>
+                  <div className="text-[10px] text-zinc-400 font-medium">Film DTF Ready</div>
+                  <div className="font-mono font-bold text-white text-sm mt-0.5">{totalDtfSheets} Film</div>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-white transition-colors" />
               </Link>
             </div>
+          </div>
 
-            <div className="flex flex-wrap gap-2 pt-1">
-              {lowStockDtfFilms.map((film, idx) => (
-                <div
-                  key={idx}
-                  className="px-3 py-1.5 rounded-lg bg-black/40 border border-white/15 text-xs flex items-center gap-2"
-                >
-                  <span className="text-zinc-300 font-medium">
-                    [{film.sku}] {film.name}
-                  </span>
-                  <span className="font-mono font-bold text-white">
-                    {film.ready} lembar (Min: {film.min})
-                  </span>
+          {/* RIGHT: TARGET GAJI FOUNDER & ACCORDION ROUTINE (5 Cols) */}
+          <div className="lg:col-span-5 space-y-4">
+            {/* Target Gaji Simulator (1 - 10 Jt) */}
+            <FounderBepSimulator orders={orders} />
+
+            {/* Collapsible Studio Routine */}
+            <div className="bg-[#121215] border border-white/[0.08] rounded-2xl overflow-hidden shadow-xl">
+              <button
+                type="button"
+                onClick={() => setIsRoutineOpen(!isRoutineOpen)}
+                className="w-full p-4 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Flame className="w-4 h-4 text-zinc-300" />
+                  <div>
+                    <h4 className="font-bold text-xs text-white">SOP Rutinitas Harian Studio (COO)</h4>
+                    <p className="text-[10px] text-zinc-400">Batch 1: Pagi (Pre-flight), Batch 2: Siang (Press), Batch 3: Sore (Kirim)</p>
+                  </div>
                 </div>
-              ))}
+                {isRoutineOpen ? (
+                  <ChevronUp className="w-4 h-4 text-zinc-400" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-zinc-400" />
+                )}
+              </button>
+
+              {isRoutineOpen && (
+                <div className="p-4 border-t border-white/[0.08] bg-black/40 animate-in fade-in duration-200">
+                  <DailyStudioRoutine />
+                </div>
+              )}
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Recent Orders Table with Financial Visibility */}
+        {/* 📋 TIER 4: PESANAN TERBARU & TRANSPARANSI FINANSIAL */}
         <div className="bg-[#121215] border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-4 sm:p-5 border-b border-white/[0.08] flex items-center justify-between flex-wrap gap-3">
             <div>
@@ -737,6 +740,108 @@ export function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* 💵 MODAL SUNTIK MODAL / PRIVE FOUNDER */}
+      <Modal
+        isOpen={isCapitalModalOpen}
+        onClose={() => setIsCapitalModalOpen(false)}
+        title={capitalMode === 'injection' ? "Suntik Modal Pribadi (Capital Injection)" : "Tarik Prive Pribadi (Owner Prive)"}
+        maxWidth="max-w-md"
+      >
+        <form onSubmit={handleSaveCapital} className="space-y-4">
+          {/* Mode Selector */}
+          <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-black/50 border border-white/10">
+            <button
+              type="button"
+              onClick={() => setCapitalMode('injection')}
+              className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                capitalMode === 'injection'
+                  ? 'bg-white text-zinc-950 shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              + Suntik Modal (Cash In)
+            </button>
+            <button
+              type="button"
+              onClick={() => setCapitalMode('prive')}
+              className={`py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                capitalMode === 'prive'
+                  ? 'bg-white text-zinc-950 shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              - Tarik Prive (Cash Out)
+            </button>
+          </div>
+
+          {/* Amount Input with Quick Presets */}
+          <div className="space-y-2">
+            <Input
+              label="Nominal Transaksi (Rp)"
+              type="number"
+              min="10000"
+              value={capitalAmount}
+              onChange={(e) => setCapitalAmount(Number(e.target.value))}
+              required
+            />
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+              {[500000, 1000000, 2500000, 5000000, 10000000].map(val => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setCapitalAmount(val)}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all shrink-0 ${
+                    capitalAmount === val
+                      ? 'bg-white text-zinc-950 font-bold'
+                      : 'bg-white/5 text-zinc-400 hover:text-white border border-white/10'
+                  }`}
+                >
+                  {val >= 1000000 ? `${val / 1000000} Jt` : `${val / 1000}k`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Destination / Source Wallet */}
+          <Select
+            label={capitalMode === 'injection' ? "Masuk ke Rekening Bisnis:" : "Ditarik dari Rekening Bisnis:"}
+            value={capitalWallet}
+            onChange={(e) => setCapitalWallet(e.target.value)}
+          >
+            <option value="wallet_teestock">TeeStock (BCA / Mandiri Bisnis)</option>
+            <option value="wallet_multigraph">MultiGraph Holding B2B</option>
+            <option value="wallet_holding">Kas Holding / Induk</option>
+          </Select>
+
+          {/* Notes */}
+          <Input
+            label="Catatan / Keterangan"
+            placeholder="Contoh: Tambahan modal belanja bahan kaos NSA"
+            value={capitalNotes}
+            onChange={(e) => setCapitalNotes(e.target.value)}
+          />
+
+          <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-zinc-400 space-y-1">
+            <div className="text-[10px] uppercase font-bold text-zinc-300">Dampak Langsung ke Neraca:</div>
+            <div>
+              • {capitalMode === 'injection' ? 'Kas & Bank bertambah' : 'Kas & Bank berkurang'} sebesar <strong className="text-white font-mono">{formatRupiah(capitalAmount)}</strong>
+            </div>
+            <div>
+              • {capitalMode === 'injection' ? 'Total Modal Disetor bertambah' : 'Total Prive Founder bertambah'} di buku kas.
+            </div>
+          </div>
+
+          <div className="pt-2 flex justify-end gap-2 border-t border-white/10">
+            <Button type="button" variant="secondary" onClick={() => setIsCapitalModalOpen(false)}>
+              Batal
+            </Button>
+            <Button type="submit" variant="primary" className="bg-white text-zinc-950 font-bold hover:bg-zinc-200">
+              {capitalMode === 'injection' ? "Simpan Suntikan Modal" : "Simpan Penarikan Prive"}
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

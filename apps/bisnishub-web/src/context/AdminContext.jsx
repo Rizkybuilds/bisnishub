@@ -436,7 +436,10 @@ export function AdminProvider({ children }) {
   }
 
   const totalInventoryValue = blankStockValue + dtfStockValue + packagingStockValue;
-  const totalBusinessWealth = ledgerSummary.netCashLiquidity + totalInventoryValue + totalAssetsValue;
+  const effectiveCashLiquidity = multiUnitBalances.totalConsolidatedLiquidity !== undefined
+    ? multiUnitBalances.totalConsolidatedLiquidity
+    : ledgerSummary.netCashLiquidity;
+  const totalBusinessWealth = effectiveCashLiquidity + totalInventoryValue + totalAssetsValue;
   const netWealthGrowth = totalBusinessWealth - ledgerSummary.netFounderEquityInjected;
   const growthPercentage = ledgerSummary.netFounderEquityInjected > 0 
     ? ((netWealthGrowth / ledgerSummary.netFounderEquityInjected) * 100).toFixed(1) 
@@ -446,8 +449,8 @@ export function AdminProvider({ children }) {
     totalInjected: ledgerSummary.totalInjected,
     totalPrive: ledgerSummary.totalPrive,
     netFounderEquity: ledgerSummary.netFounderEquityInjected,
-    netCashLiquidity: ledgerSummary.netCashLiquidity,
-    bankBalance: ledgerSummary.bankBalance,
+    netCashLiquidity: effectiveCashLiquidity,
+    bankBalance: effectiveCashLiquidity,
     qrisBalance: ledgerSummary.qrisBalance,
     blankStockValue,
     dtfStockValue,
