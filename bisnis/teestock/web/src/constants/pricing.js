@@ -80,6 +80,25 @@ export function getSizeSurcharge(size, isLongSleeve = false) {
 }
 
 /**
+ * Validasi akurat apakah produk adalah Kaos Polos Blank atau Kaos Grafis
+ */
+export function isProductBlank(product) {
+  if (!product) return false;
+  const sku = String(product.sku || '').toUpperCase().trim();
+  if (sku.startsWith('TS-BLK-') || sku.includes('-BLK-') || sku.startsWith('BLK-')) {
+    return true;
+  }
+  const series = String(product.series || '').toLowerCase().trim();
+  if (series === 'blank') {
+    if (Number(product.costDtf ?? product.cost_dtf ?? 0) > 0) return false;
+    const preset = product.printPreset || product.print_preset;
+    if (preset && preset !== 'none') return false;
+    return true;
+  }
+  return false;
+}
+
+/**
  * Kalkulasi harga dasar kaos polos NSA (7200, 3600, 7280, 72Y00, 7250, 7260)
  * berbasis Piagam Kesepakatan & Dokumen Riset Vendor:
  * Margin: Retail +3k, Grosir +2k, Partai +1k, Reseller +1k.

@@ -9,7 +9,7 @@ import { SizeCalculatorModal } from '../../components/store/SizeCalculatorModal'
 import { formatRupiah } from '../../utils/formatters';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { SEOHead } from '../../components/common/SEOHead';
-import { getSizeSurcharge, getBlankPricing } from '../../constants/pricing';
+import { getSizeSurcharge, getBlankPricing, isProductBlank } from '../../constants/pricing';
 import { ProductReviews } from '../../components/store/ProductReviews';
 import { getFulfillmentSLA } from '../../utils/garmentStockRouting';
 import { getProductGallery } from '../../utils/productImages';
@@ -35,7 +35,7 @@ export function ProductDetailPage() {
   const { role, profile, isPartner } = useAuth();
 
   const product = catalog.find(p => p.sku === sku);
-  const isBlank = product?.series === 'blank' || product?.template === 'blank' || product?.sku?.startsWith('TS-BLK');
+  const isBlank = isProductBlank(product);
 
   const [selectedGarmentKey, setSelectedGarmentKey] = useState(
     product?.template === 'softstyle_30s' ? 'nsa_softstyle_30s' : 'nsa_heavyweight_24s'

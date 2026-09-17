@@ -112,16 +112,20 @@ function normalizeProduct(p) {
     designBurdenPerPiece = royaltyAmount;
   }
 
+  const isBlankSku = typeof p.sku === 'string' && (p.sku.startsWith('TS-BLK-') || p.sku.includes('-BLK-') || p.sku.startsWith('BLK-'));
+  const defaultSeries = isBlankSku ? 'blank' : 'statement';
+  const defaultTemplate = isBlankSku ? 'blank' : 'graphic';
+
   return {
     ...p,
     sku: p.sku,
     name: p.name,
-    series: p.series || 'blank',
-    seriesName: p.series_name ?? p.seriesName ?? (p.series === 'blank' ? 'NSA Blank Apparel' : 'Curated'),
+    series: p.series || defaultSeries,
+    seriesName: p.series_name ?? p.seriesName ?? ((p.series === 'blank' || isBlankSku) ? 'NSA Blank Apparel' : 'Curated'),
     seriesColor: p.series_color ?? p.seriesColor ?? '#EBE3D5',
     niche: p.niche || '',
     batch: p.batch || '',
-    template: p.template || 'blank',
+    template: p.template || defaultTemplate,
     status: p.status || 'active',
     filePath: p.file_path ?? p.filePath ?? '',
     file_path: p.file_path ?? p.filePath ?? '',

@@ -44,7 +44,8 @@ import {
   calculateCatalogAutoPrice,
   UNIT_COST_STANDARDS,
   PRINT_PLACEMENTS,
-  PRINT_PRESETS 
+  PRINT_PRESETS,
+  isProductBlank 
 } from '../../constants/pricing';
 
 export function CatalogPage() {
@@ -284,7 +285,7 @@ export function CatalogPage() {
   };
 
   const handleOpenEdit = (p) => {
-    const isBlank = p.series === 'blank' || p.template === 'blank' || (p.sku && p.sku.startsWith('TS-BLK-'));
+    const isBlank = isProductBlank(p);
     setEditingSku(p.sku);
     setFormSku(p.sku);
     setFormName(p.name);
@@ -605,7 +606,7 @@ export function CatalogPage() {
                   </tr>
                 ) : (
                   filteredCatalog.map(p => {
-                    const isBlank = p.series === 'blank' || p.template === 'blank' || (p.sku && p.sku.startsWith('TS-BLK-'));
+                    const isBlank = isProductBlank(p);
                     const cBlank = Number(p.costBlank ?? p.cost_blank ?? 38000);
                     const cDtf = isBlank ? 0 : Number(p.costDtf ?? p.cost_dtf ?? 12750);
                     const cPackaging = isBlank ? 0 : 3500;
