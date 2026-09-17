@@ -351,6 +351,45 @@ export function AdminProvider({ children }) {
   const addFixedAsset = async (assetData) => {
     const updated = await apiSaveFixedAsset(assetData);
     setFixedAssets(updated);
+
+    // Jika user memilih memotong kas langsung (Realisasi CAPEX)
+    if (assetData.recordCashTx && assetData.paymentSource) {
+      const sourceUnit = assetData.paymentSource === 'wallet_holding' 
+        ? 'holding' 
+        : assetData.paymentSource === 'wallet_multigraph' 
+        ? 'multigraph' 
+        : assetData.paymentSource === 'wallet_founder'
+        ? 'founder'
+        : 'teestock';
+        
+      const txCategory = assetData.paymentSource === 'wallet_founder' 
+        ? 'capital_injection' 
+        : 'capex_purchase';
+        
+      const txType = assetData.paymentSource === 'wallet_founder'
+        ? 'CAPITAL_INJECTION'
+        : 'CASH_OUT';
+        
+      const updatedTxs = await apiRecordCashTransaction({
+        transactionNo: `TX-CAPEX-${Date.now().toString().slice(-6)}`,
+        date: assetData.acquisitionDate || new Date().toISOString().slice(0, 10),
+        businessUnit: assetData.businessUnit || (sourceUnit === 'founder' ? 'holding' : sourceUnit),
+        type: txType,
+        category: txCategory,
+        amount: Number(assetData.purchaseCost),
+        sourceWallet: assetData.paymentSource,
+        destinationWallet: assetData.paymentSource,
+        relatedId: assetData.id || `asset-${Date.now()}`,
+        proofReceiptRef: `CAPEX-PO-${Date.now().toString().slice(-4)}`,
+        description: `Realisasi Pembelian Aset Tetap: ${assetData.assetName} (${(assetData.businessUnit || sourceUnit).toUpperCase()})`,
+        settlementStatus: 'cleared'
+      });
+      setCashTransactions(updatedTxs);
+      const walletLabel = WALLETS[sourceUnit]?.name || assetData.paymentSource;
+      showToast(`✅ Aset ${assetData.assetName} disimpan & Kas ${walletLabel} terpotong Rp ${Number(assetData.purchaseCost).toLocaleString('id-ID')}!`);
+      return;
+    }
+
     showToast(`✅ Aset ${assetData.assetName} berhasil disimpan!`);
   };
 
