@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useOutletContext, Link } from 'react-router-dom';
 import { 
   Shirt, 
@@ -8,12 +8,13 @@ import {
   AlertTriangle, 
   ArrowRight,
   Flame, 
-  Printer,
-  Wallet,
-  Download,
-  Boxes,
-  Building2,
-  ScrollText
+  Printer, 
+  Wallet, 
+  Download, 
+  Boxes, 
+  Building2, 
+  ScrollText,
+  Plus
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
@@ -29,6 +30,7 @@ import { isProductBlank, getBlankPricing } from '../../constants/pricing';
 export function DashboardPage() {
   const { openNewOrderModal } = useOutletContext();
   const { catalog, orders, inventory, founderWealth, procurements, businessValuation, multiUnitBalances } = useAdmin();
+  const [channelTab, setChannelTab] = useState('all');
 
   // Helper: Dapatkan HPP per unit yang akurat untuk kaos grafis vs kaos polos
   const getOrderUnitHpp = (order) => {
@@ -182,9 +184,57 @@ export function DashboardPage() {
         onNewOrder={openNewOrderModal}
       />
 
-      <div className="p-8 space-y-8 max-w-7xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+        {/* ⚡ EXECUTIVE QUICK ACTIONS RIBBON */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+          <button
+            type="button"
+            onClick={openNewOrderModal}
+            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white text-zinc-950 font-bold hover:bg-zinc-200 transition-all flex items-center gap-2 shrink-0 shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            <span>+ Input Order</span>
+          </button>
+          <Link
+            to="/pengadaan"
+            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200 hover:text-white border border-white/10 transition-all flex items-center gap-2 shrink-0 font-medium"
+          >
+            <Boxes className="w-4 h-4 text-zinc-400" />
+            <span>PO Bahan (BOM)</span>
+          </Link>
+          <Link
+            to="/buku-kas"
+            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200 hover:text-white border border-white/10 transition-all flex items-center gap-2 shrink-0 font-medium"
+          >
+            <Wallet className="w-4 h-4 text-zinc-400" />
+            <span>Buku Kas &amp; Multi-Wallet</span>
+          </Link>
+          <Link
+            to="/kanban"
+            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200 hover:text-white border border-white/10 transition-all flex items-center gap-2 shrink-0 font-medium"
+          >
+            <Flame className="w-4 h-4 text-zinc-400" />
+            <span>Antrean Press ({pressOrders.length})</span>
+          </Link>
+          <Link
+            to="/gangsheet"
+            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200 hover:text-white border border-white/10 transition-all flex items-center gap-2 shrink-0 font-medium"
+          >
+            <ScrollText className="w-4 h-4 text-zinc-400" />
+            <span>Gang Sheet 58cm</span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('bisnishub_open_cmd_palette'))}
+            className="px-3.5 py-2.5 min-h-[44px] rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-zinc-400 hover:text-white border border-dashed border-white/15 transition-all flex items-center gap-2 shrink-0"
+          >
+            <kbd className="text-[10px] font-mono font-bold bg-white/10 px-1.5 py-0.5 rounded text-zinc-300">Ctrl+K</kbd>
+            <span>Spotlight</span>
+          </button>
+        </div>
+
         {/* 🏛️ FOUNDER'S REAL-TIME BALANCE SHEET (NERACA KEKAYAAN BISNIS) */}
-        <div className="bg-[#0C0C0F] border border-white/10 rounded-2xl p-6 sm:p-7 space-y-6 shadow-2xl relative overflow-hidden">
+        <div className="bg-[#0C0C0F] border border-white/10 rounded-2xl p-5 sm:p-7 space-y-6 shadow-2xl relative overflow-hidden">
           {/* Subtle Ambient Monochrome Spotlight */}
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-white/[0.03] rounded-full blur-3xl pointer-events-none" />
           
@@ -556,26 +606,57 @@ export function DashboardPage() {
 
         {/* Recent Orders Table with Financial Visibility */}
         <div className="bg-[#121215] border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl">
-          <div className="p-5 border-b border-white/[0.08] flex items-center justify-between flex-wrap gap-3">
+          <div className="p-4 sm:p-5 border-b border-white/[0.08] flex items-center justify-between flex-wrap gap-3">
             <div>
               <h3 className="text-sm font-bold text-white">Pesanan Terbaru &amp; Margin Bersih</h3>
               <p className="text-xs text-zinc-400 mt-0.5">Daftar transaksi multi-channel beserta net fee dan estimasi laba</p>
             </div>
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={handleExportCsv}
-                className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/10 transition-all flex items-center gap-1.5"
+                className="px-3 py-1.5 min-h-[36px] rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/10 transition-all flex items-center gap-1.5"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Unduh CSV</span>
+                <span className="hidden sm:inline">Unduh CSV</span>
               </button>
               <button
+                type="button"
                 onClick={openNewOrderModal}
-                className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-zinc-950 hover:bg-zinc-200 transition-all shadow-sm flex items-center gap-1.5"
+                className="px-3.5 py-1.5 min-h-[36px] rounded-xl text-xs font-bold bg-white text-zinc-950 hover:bg-zinc-200 transition-all shadow-sm flex items-center gap-1.5"
               >
                 <span>+ Order Manual</span>
               </button>
             </div>
+          </div>
+
+          {/* Channel Filter Tabs */}
+          <div className="px-4 sm:px-5 py-2.5 bg-black/40 border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto no-scrollbar">
+            {[
+              { id: 'all', label: 'Semua', count: orders.length },
+              { id: 'shopee', label: 'Shopee', count: orders.filter(o => o.channel === 'shopee').length },
+              { id: 'tiktok', label: 'TikTok', count: orders.filter(o => o.channel === 'tiktok').length },
+              { id: 'direct', label: 'Direct WA', count: orders.filter(o => !o.channel || o.channel === 'direct' || o.channel === 'wa' || o.channel === 'manual').length },
+              { id: 'web', label: 'Web Store', count: orders.filter(o => o.channel === 'web').length },
+            ].map(tab => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setChannelTab(tab.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 shrink-0 ${
+                  channelTab === tab.id
+                    ? 'bg-white text-zinc-950 font-bold shadow-sm'
+                    : 'text-zinc-400 hover:text-white hover:bg-white/[0.06]'
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
+                  channelTab === tab.id ? 'bg-zinc-950/10 text-zinc-950 font-bold' : 'bg-white/10 text-zinc-400'
+                }`}>
+                  {tab.count}
+                </span>
+              </button>
+            ))}
           </div>
 
           <div className="overflow-x-auto">
@@ -594,56 +675,63 @@ export function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.05]">
-                {orders.slice(0, 8).map(order => {
-                  const isMarketplace = order.channel === 'shopee' || order.channel === 'tiktok';
-                  const fee = order.fee !== undefined ? order.fee : (isMarketplace ? Math.round((order.price || 0) * 0.085) : 0);
-                  const unitHpp = getOrderUnitHpp(order);
-                  const hpp = unitHpp * (order.qty || 1);
-                  const net = (order.price || 0) - fee - hpp;
+                {orders
+                  .filter(o => {
+                    if (channelTab === 'all') return true;
+                    if (channelTab === 'direct') return !o.channel || o.channel === 'direct' || o.channel === 'wa' || o.channel === 'manual';
+                    return o.channel === channelTab;
+                  })
+                  .slice(0, 10)
+                  .map(order => {
+                    const isMarketplace = order.channel === 'shopee' || order.channel === 'tiktok';
+                    const fee = order.fee !== undefined ? order.fee : (isMarketplace ? Math.round((order.price || 0) * 0.085) : 0);
+                    const unitHpp = getOrderUnitHpp(order);
+                    const hpp = unitHpp * (order.qty || 1);
+                    const net = (order.price || 0) - fee - hpp;
 
-                  return (
-                    <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="py-3 px-4 font-mono font-bold text-white">
-                        {order.id}
-                        {order.trackingNo && (
-                          <div className="text-[10px] text-zinc-500 font-normal font-mono truncate max-w-[100px]">
-                            {order.trackingNo}
-                          </div>
-                        )}
-                      </td>
-                      <td className="py-3 px-4">
-                        <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-white/[0.08] border border-white/10 text-zinc-200 uppercase">
-                          {order.channel || 'DIRECT'}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="font-bold text-white">{order.customer}</div>
-                        <div className="text-[11px] text-zinc-500 font-mono">{order.phone || '-'}</div>
-                      </td>
-                      <td className="py-3 px-4 font-medium text-zinc-200 truncate max-w-[160px]">
-                        {order.productName || order.sku}
-                      </td>
-                      <td className="py-3 px-4 text-zinc-400">
-                        {order.garment} • {order.color} ({order.size}) x{order.qty}
-                      </td>
-                      <td className="py-3 px-4 font-semibold text-zinc-300 capitalize">
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/10 text-[11px]">
-                          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-right font-mono text-zinc-400">
-                        -{formatRupiah(fee)}
-                      </td>
-                      <td className="py-3 px-4 text-right font-mono font-bold text-white">
-                        {formatRupiah(order.price)}
-                      </td>
-                      <td className={`py-3 px-4 text-right font-mono font-bold ${net >= 0 ? 'text-white' : 'text-rose-400'}`}>
-                        {net >= 0 ? `+${formatRupiah(net)}` : formatRupiah(net)}
-                      </td>
-                    </tr>
-                  );
-                })}
+                    return (
+                      <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
+                        <td className="py-3 px-4 font-mono font-bold text-white">
+                          {order.id}
+                          {order.trackingNo && (
+                            <div className="text-[10px] text-zinc-500 font-normal font-mono truncate max-w-[100px]">
+                              {order.trackingNo}
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-white/[0.08] border border-white/10 text-zinc-200 uppercase">
+                            {order.channel || 'DIRECT'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="font-bold text-white">{order.customer}</div>
+                          <div className="text-[11px] text-zinc-500 font-mono">{order.phone || '-'}</div>
+                        </td>
+                        <td className="py-3 px-4 font-medium text-zinc-200 truncate max-w-[160px]">
+                          {order.productName || order.sku}
+                        </td>
+                        <td className="py-3 px-4 text-zinc-400">
+                          {order.garment} • {order.color} ({order.size}) x{order.qty}
+                        </td>
+                        <td className="py-3 px-4 font-semibold text-zinc-300 capitalize">
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/10 text-[11px]">
+                            <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
+                            {order.status}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-right font-mono text-zinc-400">
+                          -{formatRupiah(fee)}
+                        </td>
+                        <td className="py-3 px-4 text-right font-mono font-bold text-white">
+                          {formatRupiah(order.price)}
+                        </td>
+                        <td className={`py-3 px-4 text-right font-mono font-bold ${net >= 0 ? 'text-white' : 'text-rose-400'}`}>
+                          {net >= 0 ? `+${formatRupiah(net)}` : formatRupiah(net)}
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>

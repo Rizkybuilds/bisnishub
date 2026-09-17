@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { AdminSidebar } from '../components/admin/AdminSidebar';
+import { CommandPalette } from '../components/admin/CommandPalette';
 import { Toast } from '../components/ui/Toast';
 import { Modal } from '../components/ui/Modal';
 import { Input, Select } from '../components/ui/Input';
@@ -14,6 +15,35 @@ import { SEOHead } from '../components/common/SEOHead';
 export function AdminLayout() {
   const { toast, showToast, addOrder, catalog } = useAdmin();
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  // Global Keyboard Shortcuts & Event Handlers
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Toggle Command Palette on Ctrl+K or Cmd+K
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(prev => !prev);
+      }
+    };
+
+    const handleOpenMobile = () => setIsMobileSidebarOpen(true);
+    const handleOpenCmd = () => setIsCommandPaletteOpen(true);
+    const handleOpenOrder = () => setIsOrderModalOpen(true);
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('bisnishub_open_mobile_menu', handleOpenMobile);
+    window.addEventListener('bisnishub_open_cmd_palette', handleOpenCmd);
+    window.addEventListener('bisnishub_open_order_modal', handleOpenOrder);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('bisnishub_open_mobile_menu', handleOpenMobile);
+      window.removeEventListener('bisnishub_open_cmd_palette', handleOpenCmd);
+      window.removeEventListener('bisnishub_open_order_modal', handleOpenOrder);
+    };
+  }, []);
 
   // Form Order state
   const [orderId, setOrderId] = useState(`ORD-${Date.now().toString().slice(-6)}`);
@@ -78,16 +108,32 @@ export function AdminLayout() {
   };
 
   return (
-    <div className="flex min-h-screen bg-ts-hitam text-ts-krem">
+    <div className="flex min-h-screen bg-[#09090B] text-white selection:bg-white selection:text-black">
       <ScrollRestoration />
       <SEOHead
-        title="TeeStock Operations & Production Hub"
+        title="BisnisHub OS — Operations & Production Hub"
         noindex={true}
       />
-      <AdminSidebar />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Outlet context={{ openNewOrderModal: () => setIsOrderModalOpen(true) }} />
+      <AdminSidebar 
+        isMobileOpen={isMobileSidebarOpen} 
+        onCloseMobile={() => setIsMobileSidebarOpen(false)} 
+      />
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
+        <Outlet 
+          context={{ 
+            openNewOrderModal: () => setIsOrderModalOpen(true),
+            openMobileMenu: () => setIsMobileSidebarOpen(true),
+            openCommandPalette: () => setIsCommandPaletteOpen(true)
+          }} 
+        />
       </div>
+
+      {/* Global Command Palette (Ctrl+K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onOpenNewOrder={() => setIsOrderModalOpen(true)}
+      />
 
       {toast && <Toast message={toast.message} type={toast.type} />}
 

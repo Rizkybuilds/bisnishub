@@ -25,7 +25,9 @@ import {
   Edit3,
   X,
   Star,
-  Camera
+  Camera,
+  LayoutGrid,
+  List
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
@@ -51,6 +53,7 @@ import {
 export function CatalogPage() {
   const { catalog, saveProduct, deleteProduct, clearAllCatalogProducts, showToast, addProcurement } = useAdmin();
   const [search, setSearch] = useState('');
+  const [viewMode, setViewMode] = useState('table'); // 'table' | 'grid'
   const [seriesFilter, setSeriesFilter] = useState('all');
   const [modelFilter, setModelFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -507,27 +510,37 @@ export function CatalogPage() {
         onNewDesign={handleOpenAdd}
       />
 
-      <div className="p-8 space-y-6 max-w-7xl mx-auto">
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-ts-surface border border-ts-border p-4 rounded-2xl">
-          <div className="relative w-full sm:w-80">
-            <Search className="w-4 h-4 text-ts-muted absolute left-3 top-1/2 -translate-y-1/2" />
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+        {/* Filters & View Mode Toggle */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-[#121215] border border-white/[0.08] p-3 sm:p-4 rounded-2xl">
+          <div className="relative w-full md:w-80">
+            <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Cari SKU, nama desain, kreator, lisensi..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-ts-hitam border border-ts-border rounded-xl pl-9 pr-4 py-2 text-xs text-ts-krem focus:outline-none focus:border-ts-terracotta"
+              className="w-full bg-[#09090B] border border-white/10 rounded-xl pl-9 pr-8 py-2 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-white/30 transition-colors"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-white"
+                title="Hapus filter pencarian"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-            <div className="flex flex-wrap items-center gap-2">
-              <Filter className="w-4 h-4 text-ts-muted shrink-0" />
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Filter className="w-4 h-4 text-zinc-500 shrink-0 hidden sm:block" />
               <select
                 value={seriesFilter}
                 onChange={(e) => setSeriesFilter(e.target.value)}
-                className="bg-ts-hitam border border-ts-border rounded-xl px-3 py-2 text-xs text-ts-krem focus:outline-none focus:border-ts-terracotta"
+                className="bg-[#09090B] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-white/30"
               >
                 <option value="all">Semua Series ({catalog.length})</option>
                 {SERIES.map(s => (
@@ -538,13 +551,37 @@ export function CatalogPage() {
               <select
                 value={modelFilter}
                 onChange={(e) => setModelFilter(e.target.value)}
-                className="bg-ts-hitam border border-ts-border rounded-xl px-3 py-2 text-xs text-ts-krem focus:outline-none focus:border-ts-terracotta"
+                className="bg-[#09090B] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-white/30"
               >
                 <option value="all">Semua Model Lisensi</option>
                 <option value="flat_fee">📦 Beli Putih (Flat-Fee)</option>
                 <option value="creator_collab">🤝 Kolab Kreator (Royalti)</option>
                 <option value="in_house">🎨 In-House (Bebas Royalti)</option>
               </select>
+            </div>
+
+            {/* View Mode Switcher */}
+            <div className="flex items-center p-1 bg-black/40 border border-white/10 rounded-xl shrink-0">
+              <button
+                type="button"
+                onClick={() => setViewMode('table')}
+                className={`p-1.5 rounded-lg text-xs transition-all ${
+                  viewMode === 'table' ? 'bg-white text-zinc-950 shadow-sm' : 'text-zinc-400 hover:text-white'
+                }`}
+                title="Tampilan Tabel Detail"
+              >
+                <List className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`p-1.5 rounded-lg text-xs transition-all ${
+                  viewMode === 'grid' ? 'bg-white text-zinc-950 shadow-sm' : 'text-zinc-400 hover:text-white'
+                }`}
+                title="Tampilan Visual Grid (Katalog)"
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
             </div>
 
             {catalog.length > 0 && (
@@ -555,16 +592,141 @@ export function CatalogPage() {
                 title="Hapus seluruh data desain di Master PIM"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Bersihkan Data Demo</span>
+                <span className="hidden sm:inline">Bersihkan Data Demo</span>
               </button>
             )}
           </div>
         </div>
 
-        {/* Catalog Table */}
-        <div className="bg-ts-surface border border-ts-border rounded-2xl overflow-hidden shadow-xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+        {/* Catalog Table or Visual Grid */}
+        {viewMode === 'grid' ? (
+          filteredCatalog.length === 0 ? (
+            <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-12 text-center">
+              <div className="max-w-md mx-auto space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 mx-auto">
+                  <Shirt className="w-6 h-6 text-zinc-400" />
+                </div>
+                <div className="font-bold text-sm text-white">Master Katalog Bersih (0 Produk)</div>
+                <p className="text-xs text-zinc-400">Daftarkan desain baru dengan model lisensi Beli Putih atau Kolaborasi Kreator.</p>
+                <div className="pt-2">
+                  <Button size="sm" variant="primary" icon={Plus} onClick={handleOpenAdd}>
+                    + Tambah Desain Baru
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filteredCatalog.map(p => {
+                const isBlank = isProductBlank(p);
+                const cBlank = Number(p.costBlank ?? p.cost_blank ?? 38000);
+                const cDtf = isBlank ? 0 : Number(p.costDtf ?? p.cost_dtf ?? 12750);
+                const cPackaging = isBlank ? 0 : 3500;
+                const cOps = isBlank ? 0 : 1000;
+                const cDefect = isBlank ? 0 : Math.round((cBlank + cDtf) * 0.05);
+                const physicalHpp = cBlank + cDtf + cPackaging + cOps + cDefect;
+
+                const pModel = p.designSource || p.design_source || 
+                  (p.creatorName || p.creator_name ? 'creator_collab' : (p.licenseSource || p.designCost ? 'flat_fee' : 'in_house'));
+
+                let dBurden = 0;
+                if (!isBlank) {
+                  if (pModel === 'flat_fee') {
+                    const dCost = Number(p.designCost ?? p.design_cost ?? 0);
+                    const dTarget = Math.max(1, Number(p.amortizationTarget ?? p.amortization_target ?? 25));
+                    dBurden = Math.round(dCost / dTarget);
+                  } else if (pModel === 'creator_collab') {
+                    dBurden = Number(p.royaltyAmount ?? p.royalty_amount ?? 0);
+                  }
+                }
+
+                const totalRealHpp = physicalHpp + dBurden;
+                const retail = Number(p.priceRetail ?? p.price_retail ?? (isBlank ? 45000 : 99000));
+                const gateway = isBlank ? 0 : Math.round(retail * 0.02);
+                const profit = retail - totalRealHpp - gateway;
+                const margin = retail > 0 ? ((profit / retail) * 100).toFixed(1) : 0;
+
+                return (
+                  <div key={p.sku} className="bg-[#121215] border border-white/[0.08] hover:border-white/20 rounded-2xl overflow-hidden transition-all group flex flex-col shadow-lg">
+                    {/* Image Preview */}
+                    <div className="relative aspect-square bg-[#09090B] border-b border-white/[0.08] flex items-center justify-center overflow-hidden">
+                      {p.filePath || p.file_path ? (
+                        <img
+                          src={p.filePath || p.file_path}
+                          alt={p.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <ImageIcon className="w-12 h-12 text-zinc-700" />
+                      )}
+                      {/* SKU Pill */}
+                      <div className="absolute top-2.5 left-2.5">
+                        <span className="px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-sm border border-white/20 text-[10px] font-mono font-bold text-white">
+                          {p.sku}
+                        </span>
+                      </div>
+                      {/* Model Pill */}
+                      <div className="absolute top-2.5 right-2.5">
+                        <span className="px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-sm border border-white/20 text-[10px] font-semibold text-zinc-300">
+                          {pModel === 'flat_fee' ? 'Flat-Fee' : pModel === 'creator_collab' ? 'Kolab' : 'In-House'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Info */}
+                    <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                      <div>
+                        <h4 className="font-bold text-sm text-white line-clamp-1 group-hover:text-zinc-200 transition-colors">
+                          {p.name}
+                        </h4>
+                        <p className="text-[11px] text-zinc-400 mt-0.5 capitalize">
+                          {p.series || 'Katalog'} {p.niche ? `• ${p.niche}` : ''}
+                        </p>
+                      </div>
+
+                      {/* Financial stats */}
+                      <div className="bg-black/40 border border-white/[0.06] rounded-xl p-2.5 space-y-1.5 text-xs">
+                        <div className="flex items-center justify-between text-zinc-400">
+                          <span>Harga Retail:</span>
+                          <span className="font-mono font-bold text-white">{formatRupiah(retail)}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-zinc-400 text-[11px]">
+                          <span>HPP Nyata:</span>
+                          <span className="font-mono text-zinc-300">{formatRupiah(totalRealHpp)}</span>
+                        </div>
+                        <div className="flex items-center justify-between pt-1 border-t border-white/[0.06]">
+                          <span className="text-[11px] text-zinc-400">Margin Bersih:</span>
+                          <span className={`font-mono text-xs font-bold ${Number(margin) >= 35 ? 'text-white' : Number(margin) >= 25 ? 'text-amber-400' : 'text-rose-400'}`}>
+                            +{formatRupiah(Math.round(profit))} ({margin}%)
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-2 pt-1">
+                        <Button size="sm" variant="secondary" onClick={() => handleOpenEdit(p)} className="flex-1 text-xs min-h-[36px]">
+                          Edit Desain
+                        </Button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(p.sku, p.name)}
+                          className="p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-400 hover:bg-rose-500/25 transition-colors"
+                          title="Hapus Desain"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )
+        ) : (
+          /* Catalog Table */
+          <div className="bg-[#121215] border border-white/[0.08] rounded-2xl overflow-hidden shadow-xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-ts-hitam/60 border-b border-ts-border text-ts-muted font-bold tracking-wider uppercase">
                   <th className="py-3.5 px-4">Mockup</th>
@@ -765,7 +927,8 @@ export function CatalogPage() {
             </table>
           </div>
         </div>
-      </div>
+      )}
+    </div>
 
       {/* Modal Add/Edit */}
       <Modal

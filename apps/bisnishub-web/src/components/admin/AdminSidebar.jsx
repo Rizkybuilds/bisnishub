@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 
-export function AdminSidebar() {
+export function AdminSidebar({ isMobileOpen = false, onCloseMobile }) {
   const { orders, catalog, procurements } = useAdmin();
   const activeOrdersCount = orders ? orders.filter(o => o.status !== 'shipped').length : 0;
 
@@ -57,8 +57,11 @@ export function AdminSidebar() {
           key={item.to}
           to={item.to}
           end={item.end}
+          onClick={() => {
+            if (onCloseMobile) onCloseMobile();
+          }}
           className={({ isActive }) =>
-            `group flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${
+            `group flex items-center justify-between px-3 py-2.5 min-h-[44px] rounded-xl text-xs font-semibold transition-all duration-200 ${
               isActive
                 ? 'bg-white text-zinc-950 font-bold shadow-sm shadow-white/5'
                 : 'text-zinc-400 hover:text-white hover:bg-white/[0.06]'
@@ -91,28 +94,38 @@ export function AdminSidebar() {
     })
   );
 
-  return (
-    <aside className="w-64 bg-[#09090B] border-r border-white/[0.08] flex flex-col shrink-0 h-screen sticky top-0 overflow-y-auto">
+  const sidebarContent = (
+    <>
       {/* Brand Header */}
-      <div className="p-4 border-b border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-zinc-950 font-black text-xs tracking-tighter shadow-sm">
-              BH
-            </div>
-            <div>
-              <h2 className="text-xs font-black text-white tracking-tight uppercase">BisnisHub OS</h2>
-              <p className="text-[10px] text-zinc-500 font-mono">MultiGraph Holding</p>
-            </div>
+      <div className="p-4 border-b border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-zinc-950 font-black text-xs tracking-tighter shadow-sm">
+            BH
           </div>
+          <div>
+            <h2 className="text-xs font-black text-white tracking-tight uppercase">BisnisHub OS</h2>
+            <p className="text-[10px] text-zinc-500 font-mono">MultiGraph Holding</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
           <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-white/5 text-zinc-300 border border-white/10">
             C-SUITE
           </span>
+          {onCloseMobile && (
+            <button
+              type="button"
+              onClick={onCloseMobile}
+              className="lg:hidden p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 border border-white/10 transition-colors"
+              aria-label="Tutup Menu"
+            >
+              <span className="text-xs font-mono font-bold">✕</span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="p-3 space-y-1 flex-1">
+      <nav className="p-3 space-y-1 flex-1 overflow-y-auto">
         <div className="px-3 py-1.5 text-[9px] font-mono font-bold tracking-widest text-zinc-500 uppercase flex items-center justify-between">
           <span>Keuangan &amp; Modal</span>
           <span className="text-[9px] font-mono px-1 py-0.5 rounded bg-white/5 text-zinc-400 border border-white/10">CFO</span>
@@ -138,7 +151,7 @@ export function AdminSidebar() {
           href="https://teestockapparel.vercel.app"
           target="_blank"
           rel="noreferrer"
-          className="group flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-white/[0.05] transition-all border border-dashed border-white/10 hover:border-white/20"
+          className="group flex items-center justify-between px-3 py-2.5 min-h-[44px] rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-white/[0.05] transition-all border border-dashed border-white/10 hover:border-white/20"
         >
           <div className="flex items-center gap-2">
             <ExternalLink className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white" />
@@ -162,8 +175,11 @@ export function AdminSidebar() {
 
         <button
           type="button"
-          onClick={() => window.dispatchEvent(new CustomEvent('bisnishub_lock_os'))}
-          className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-zinc-400 hover:text-rose-300 hover:bg-rose-500/10 border border-white/[0.08] hover:border-rose-500/20 transition-all group"
+          onClick={() => {
+            if (onCloseMobile) onCloseMobile();
+            window.dispatchEvent(new CustomEvent('bisnishub_lock_os'));
+          }}
+          className="w-full flex items-center justify-between px-3 py-2 min-h-[40px] rounded-xl text-[11px] font-semibold text-zinc-400 hover:text-rose-300 hover:bg-rose-500/10 border border-white/[0.08] hover:border-rose-500/20 transition-all group"
           title="Kunci layar BisnisHub OS sekarang"
         >
           <div className="flex items-center gap-2">
@@ -173,6 +189,32 @@ export function AdminSidebar() {
           <span className="text-[9px] font-mono text-zinc-500 group-hover:text-rose-400 font-bold">Lock 🔒</span>
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Sticky Sidebar */}
+      <aside className="hidden lg:flex w-64 bg-[#09090B] border-r border-white/[0.08] flex-col shrink-0 h-screen sticky top-0 overflow-hidden z-20">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile Sliding Drawer Overlay */}
+      {isMobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"
+            onClick={onCloseMobile}
+            aria-hidden="true"
+          />
+
+          {/* Drawer Panel */}
+          <aside className="relative w-72 max-w-[85vw] bg-[#09090B] border-r border-white/10 flex flex-col h-full shadow-2xl z-10 animate-in slide-in-from-left duration-200">
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
   );
 }
