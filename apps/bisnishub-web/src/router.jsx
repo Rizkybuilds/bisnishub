@@ -17,19 +17,11 @@ import { DefectsPage } from './pages/admin/DefectsPage';
 import { QuoterPage } from './pages/admin/QuoterPage';
 import { CustomersPage } from './pages/admin/CustomersPage';
 import { VendorsPage } from './pages/admin/VendorsPage';
+import { MarketingPage } from './pages/admin/MarketingPage';
 import { SettingsPage } from './pages/admin/SettingsPage';
 
 // BisnisHub Native Extensions
-import { MarketingModule } from './components/modules/MarketingModule';
 import { ExternalSsdModule } from './components/modules/ExternalSsdModule';
-
-function MarketingView() {
-  return (
-    <div className="p-4 sm:p-8 space-y-6 max-w-7xl mx-auto">
-      <MarketingModule businessFilter="all" />
-    </div>
-  );
-}
 
 function StorageView() {
   return (
@@ -59,7 +51,7 @@ export const router = createBrowserRouter([
       { path: 'pelanggan', element: <Navigate to="/customers" replace /> },
       { path: 'vendors', element: <VendorsPage /> },
       { path: 'mitra', element: <Navigate to="/vendors" replace /> },
-      { path: 'marketing', element: <MarketingView /> },
+      { path: 'marketing', element: <MarketingPage /> },
       { path: 'storage', element: <StorageView /> },
       { path: 'settings', element: <SettingsPage /> },
 
@@ -77,6 +69,7 @@ export const router = createBrowserRouter([
       { path: 'admin/customers', element: <Navigate to="/customers" replace /> },
       { path: 'admin/pelanggan', element: <Navigate to="/customers" replace /> },
       { path: 'admin/vendors', element: <Navigate to="/vendors" replace /> },
+      { path: 'admin/marketing', element: <Navigate to="/marketing" replace /> },
       { path: 'admin/settings', element: <Navigate to="/settings" replace /> },
 
       { path: '*', element: <Navigate to="/" replace /> },
