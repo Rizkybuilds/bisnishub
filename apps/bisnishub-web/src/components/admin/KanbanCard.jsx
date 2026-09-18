@@ -312,12 +312,22 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
 
         {/* Embedded SOP for Heat Press */}
         {isPress && (
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-2.5 text-[11px] text-amber-300 space-y-1">
-            <div className="font-bold flex items-center gap-1">
-              <Flame className="w-3.5 h-3.5 text-amber-400" /> SOP Heat Press Mandiri:
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-2.5 text-[11px] text-amber-300 space-y-1.5">
+            <div className="flex items-center justify-between">
+              <div className="font-bold flex items-center gap-1">
+                <Flame className="w-3.5 h-3.5 text-amber-400" /> SOP Heat Press 155°C:
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPrintModalOpen(true)}
+                className="text-[10px] font-bold text-amber-400 hover:text-amber-200 underline flex items-center gap-0.5 cursor-pointer"
+                title="Buka panduan posisi sablon & foto mockup garmen"
+              >
+                <span>Lihat Posisi & Mockup</span>
+              </button>
             </div>
             <div className="text-[10px] text-zinc-300">
-              Suhu 155°C • Tekan 15 dtk • Kupas Dingin • Press ke-2 (5 dtk)
+              Tekan 15 dtk • Wajib Kupas Dingin • Press ke-2 (5 dtk Teflon)
             </div>
           </div>
         )}
