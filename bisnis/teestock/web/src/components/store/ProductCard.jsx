@@ -174,7 +174,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
                     aria-label={`Pilih warna ${colorName}`}
                     aria-pressed={isSelected}
                     onClick={(e) => handleColorSelect(e, colorName)}
-                    className="p-1.5 -m-1 rounded-full cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ts-terracotta"
+                    className="min-w-[36px] min-h-[36px] p-1.5 -m-1 rounded-full cursor-pointer flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ts-terracotta"
                   >
                     <span
                       className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-all duration-200 inline-block shadow-sm ${
@@ -219,7 +219,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
                   {isBlank ? 'Harga Satuan' : 'Harga Resmi'}
                 </span>
                 <div className="flex items-baseline gap-1 sm:gap-1.5">
-                  <span className="font-mono text-lg font-bold text-ts-krem">
+                  <span className="font-mono text-base sm:text-lg font-bold text-ts-krem">
                     {formatRupiah(product.pricePromo && product.pricePromo < effectivePrice ? product.pricePromo : effectivePrice)}
                   </span>
                   {product.pricePromo && product.pricePromo < effectivePrice && (
@@ -235,7 +235,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
           <Link
             to={productUrl}
             aria-label={`Pilih produk ${product.name}`}
-            className="text-[9px] sm:text-[10px] font-bold px-2 sm:px-3 py-1.5 rounded-xl transition-all flex items-center gap-1 cursor-pointer bg-ts-surfaceHover border border-ts-border text-ts-krem hover:bg-zinc-950 hover:text-white dark:hover:bg-white dark:hover:text-zinc-950 dark:hover:border-white shadow-sm shrink-0"
+            className="text-[10px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all flex items-center gap-1 cursor-pointer bg-ts-surfaceHover border border-ts-border text-ts-krem hover:bg-zinc-950 hover:text-white dark:hover:bg-white dark:hover:text-zinc-950 dark:hover:border-white shadow-sm shrink-0 min-h-[36px] items-center justify-center"
           >
             <span>Pilih</span>
             <span>&rarr;</span>
