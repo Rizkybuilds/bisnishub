@@ -28,6 +28,7 @@ test.describe('Audit Menyeluruh Web TeeStock (Full System & Feature Verification
       { path: '/partner', titleSnippet: /Dropship/i },
       { path: '/care', titleSnippet: /Garansi/i },
       { path: '/garansi', titleSnippet: /Garansi/i },
+      { path: '/creator', titleSnippet: /Kreator|TeeStock/i },
       { path: '/akun', titleSnippet: /TeeStock/i },
       { path: '/bio', titleSnippet: /TeeStock/i },
       { path: '/admin/login', titleSnippet: /TeeStock/i }
@@ -127,6 +128,25 @@ test.describe('Audit Menyeluruh Web TeeStock (Full System & Feature Verification
 
     await page.goto('/garansi');
     await expect(page.locator('text=100% Garmen NSA Original Cititex')).toBeVisible({ timeout: 15000 });
+  });
+
+  test('Verifikasi Panggung Kreator, Simulator Royalti & Form (/creator)', async ({ page }) => {
+    await page.goto('/creator');
+    await expect(page.locator('text=Panggung untuk Karyamu')).toBeVisible();
+    await expect(page.locator('text=SIMULATOR ROYALTI KREATOR')).toBeVisible();
+
+    // Verify royalty simulator calculation with preset chip (80 pcs -> Rp 2.000.000)
+    const preset80 = page.locator('button:has-text("80 pcs")');
+    await expect(preset80).toBeVisible();
+    await preset80.click();
+    await expect(page.locator('text=Rp 2.000.000')).toBeVisible();
+
+    // Verify form validation prevents empty submit
+    const submitBtn = page.locator('button:has-text("Kirim Karya untuk Dikurasi")');
+    await expect(submitBtn).toBeVisible();
+    await submitBtn.click();
+    await expect(page.locator('role=alert').first()).toBeVisible();
+    await expect(page.locator('text=Nama kreator atau moniker wajib diisi')).toBeVisible();
   });
 
   test('Verifikasi Lead Capture Newsletter (/ & footer)', async ({ page }) => {
