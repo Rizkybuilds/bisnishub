@@ -18,13 +18,128 @@ import { ProductPurchasePanel } from '../../components/store/product/ProductPurc
 import { ProductSpecsAccordion } from '../../components/store/product/ProductSpecsAccordion';
 import { StickyMobileBuyBar } from '../../components/store/StickyMobileBuyBar';
 
-const SIZES_5XL_COLORS = ['black', 'white', 'navy', 'maroon', 'red', 'royal blue', 'forest green', 'carolina blue', 'caroline blue'];
+export const SIZES_5XL_COLORS = ['black', 'white', 'navy', 'maroon', 'red', 'royal blue', 'forest green', 'carolina blue', 'caroline blue'];
 
-const COLOR_CATEGORIES = {
+export const COLOR_CATEGORIES = {
   basic: ["Hitam", "Black", "Putih", "White", "Charcoal", "Sport Grey", "Sport Grey-Black", "White-Black"],
   earthy: ["Sand", "Army", "Military Green", "Forest Green", "Dark Green", "Navy", "Maroon", "Dark Chocolate", "Chestnut"],
   vibrant: ["Daisy", "Mustard", "Orange", "Gold", "Royal Blue", "Red", "Merah", "Heliconia", "Sapphire", "Purple", "Lime", "Lilac", "Aqua Sky"]
 };
+
+/**
+ * Pure helper for calculating PDP prices, partner savings, and size surcharges
+ */
+export function calculatePDPPrice({
+  product,
+  isBlank = false,
+  selectedGarmentKey = 'nsa_heavyweight_24s',
+  selectedColor = 'Hitam',
+  selectedSize = 'L',
+  qty = 1,
+  role = 'retail',
+  profile = null,
+  isPartner = false
+}) {
+  if (!product) {
+    return {
+      currentPrice: 99000,
+      baseRetailPrice: 99000,
+      effectiveBasePrice: 99000,
+      priceDelta: 0,
+      sizeSurcharge: 0,
+      partnerSavings: 0,
+      isPartnerDiscountApplied: false
+    };
+  }
+
+  const blankPricing = isBlank
+    ? getBlankPricing(product, selectedColor, role, selectedSize, qty)
+    : null;
+
+  const baseRetailPrice = isBlank
+    ? (blankPricing?.unitPrice || 45000)
+    : (product.pricePromo && product.pricePromo > 0 ? product.pricePromo : (product.priceRetail || product.price_retail || 99000));
+
+  let effectiveBasePrice = baseRetailPrice;
+  let partnerSavings = 0;
+  let isPartnerDiscountApplied = false;
+
+  if (isPartner && !isBlank) {
+    const isReseller = profile?.partner_tier === 'reseller';
+    const partnerBase = isReseller
+      ? (product.priceReseller || product.price_reseller || 65000)
+      : (product.priceDropship || product.price_dropship || 75000);
+
+    effectiveBasePrice = partnerBase;
+    partnerSavings = Math.max(0, baseRetailPrice - partnerBase);
+    isPartnerDiscountApplied = true;
+  } else if (isPartner && isBlank) {
+    const resellerBase = blankPricing?.unitPrice || baseRetailPrice;
+    effectiveBasePrice = resellerBase;
+    partnerSavings = Math.max(0, baseRetailPrice - resellerBase);
+    isPartnerDiscountApplied = partnerSavings > 0;
+  } else if (isBlank && qty >= 12) {
+    effectiveBasePrice = blankPricing?.unitPrice || baseRetailPrice;
+    partnerSavings = Math.max(0, baseRetailPrice - (blankPricing?.unitPrice || baseRetailPrice));
+    isPartnerDiscountApplied = partnerSavings > 0;
+  }
+
+  let priceDelta = 0;
+  if (!isBlank) {
+    if (selectedGarmentKey === 'nsa_heavyweight_24s') priceDelta = 0;
+    else if (selectedGarmentKey === 'nsa_softstyle_30s') priceDelta = 0;
+    else if (selectedGarmentKey === 'nsa_longsleeve') priceDelta = 12000;
+    else if (selectedGarmentKey === 'nsa_hoodie') priceDelta = 85000;
+    else if (selectedGarmentKey === 'nsa_polo') priceDelta = 30000;
+  }
+
+  const isLongSleeve = (isBlank && (product.sku === 'TS-BLK-7280' || product.name?.includes('7280') || product.name?.includes('Long Sleeve'))) ||
+    (!isBlank && selectedGarmentKey === 'nsa_longsleeve');
+  const sizeSurcharge = getSizeSurcharge(selectedSize, isLongSleeve);
+  const currentPrice = effectiveBasePrice + (isBlank ? 0 : priceDelta) + sizeSurcharge;
+
+  return {
+    currentPrice,
+    baseRetailPrice,
+    effectiveBasePrice,
+    priceDelta,
+    sizeSurcharge,
+    partnerSavings,
+    isPartnerDiscountApplied
+  };
+}
+
+/**
+ * Pure helper to resolve valid size list
+ */
+export function resolveSizeList({ product, isBlank = false, selectedColor = 'Hitam' }) {
+  if (!product) return SIZES;
+  const is3600 = isBlank && (product?.sku === 'TS-BLK-3600' || product?.name?.includes('3600') || product?.template === 'softstyle_30s');
+  if (is3600) {
+    return ['S', 'M', 'L', 'XL', '2XL'];
+  }
+  const is7200 = isBlank && (product?.sku === 'TS-BLK-7200' || product?.name?.includes('7200'));
+  if (is7200) {
+    const is5XL = SIZES_5XL_COLORS.includes(String(selectedColor).trim().toLowerCase());
+    return is5XL
+      ? ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL']
+      : ['S', 'M', 'L', 'XL', '2XL', '3XL'];
+  }
+  if (isBlank && product?.sizes) {
+    return product.sizes.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  return SIZES;
+}
+
+/**
+ * Pure helper for color category filtering
+ */
+export function filterColorsByCategory({ colorList = [], activeColorTab = 'all' }) {
+  if (activeColorTab === 'all') return colorList;
+  const catList = COLOR_CATEGORIES[activeColorTab] || [];
+  const matched = colorList.filter(c => catList.some(cat => c.toLowerCase().includes(cat.toLowerCase())));
+  return matched.length > 0 ? matched : colorList;
+}
 
 export function ProductDetailPage() {
   const { sku } = useParams();
@@ -75,27 +190,12 @@ export function ProductDetailPage() {
 
   // Filtered color list based on category tab
   const filteredColors = useMemo(() => {
-    if (activeColorTab === 'all') return colorList;
-    const catList = COLOR_CATEGORIES[activeColorTab] || [];
-    const matched = colorList.filter(c => catList.some(cat => c.toLowerCase().includes(cat.toLowerCase())));
-    return matched.length > 0 ? matched : colorList;
+    return filterColorsByCategory({ colorList, activeColorTab });
   }, [colorList, activeColorTab]);
 
   // Size list with dynamic 5XL availability for NSA 7200
   const sizeList = useMemo(() => {
-    if (isBlank && (product?.sku === 'TS-BLK-3600' || product?.name?.includes('3600'))) {
-      return ['S', 'M', 'L', 'XL', '2XL'];
-    }
-    if (isBlank && (product?.sku === 'TS-BLK-7200' || product?.name?.includes('7200'))) {
-      const is5XL = SIZES_5XL_COLORS.includes(String(selectedColor).trim().toLowerCase());
-      return is5XL 
-        ? ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL']
-        : ['S', 'M', 'L', 'XL', '2XL', '3XL'];
-    }
-    if (isBlank && product?.sizes) {
-      return product.sizes.split(',').map(s => s.trim()).filter(Boolean);
-    }
-    return SIZES;
+    return resolveSizeList({ product, isBlank, selectedColor });
   }, [isBlank, product, selectedColor]);
 
   const [selectedSize, setSelectedSize] = useState(sizeList[0] || 'L');
@@ -227,47 +327,27 @@ export function ProductDetailPage() {
     String(previewImg).includes('folded');
   const isModel = activeGalleryItem?.type === 'model' || String(previewImg).includes('model-');
 
-  const baseRetailPrice = isBlank 
-    ? (blankPricing?.unitPrice || 45000)
-    : (product.priceRetail || product.price_retail || 99000);
-  
-  let effectiveBasePrice = baseRetailPrice;
-  let partnerSavings = 0;
-  let isPartnerDiscountApplied = false;
-
-  if (isPartner && !isBlank) {
-    const isReseller = profile?.partner_tier === 'reseller';
-    const partnerBase = isReseller
-      ? (product.priceReseller || product.price_reseller || 65000)
-      : (product.priceDropship || product.price_dropship || 75000);
-    
-    effectiveBasePrice = partnerBase;
-    partnerSavings = baseRetailPrice - partnerBase;
-    isPartnerDiscountApplied = true;
-  } else if (isPartner && isBlank) {
-    const resellerBase = blankPricing?.unitPrice || baseRetailPrice;
-    effectiveBasePrice = resellerBase;
-    partnerSavings = Math.max(0, baseRetailPrice - resellerBase);
-    isPartnerDiscountApplied = partnerSavings > 0;
-  } else if (isBlank && qty >= 12) {
-    effectiveBasePrice = blankPricing?.unitPrice || baseRetailPrice;
-    partnerSavings = Math.max(0, baseRetailPrice - (blankPricing?.unitPrice || baseRetailPrice));
-    isPartnerDiscountApplied = partnerSavings > 0;
-  }
-
-  let priceDelta = 0;
-  if (!isBlank) {
-    if (selectedGarmentKey === 'nsa_heavyweight_24s') priceDelta = 0; // Standard for Originals!
-    else if (selectedGarmentKey === 'nsa_softstyle_30s') priceDelta = 0;
-    else if (selectedGarmentKey === 'nsa_longsleeve') priceDelta = 12000;
-    else if (selectedGarmentKey === 'nsa_hoodie') priceDelta = 85000;
-    else if (selectedGarmentKey === 'nsa_polo') priceDelta = 30000;
-  }
-
-  const isLongSleeve = (isBlank && (product.sku === 'TS-BLK-7280' || product.name?.includes('7280') || product.name?.includes('Long Sleeve'))) ||
-    (!isBlank && selectedGarmentKey === 'nsa_longsleeve');
-  const sizeSurcharge = getSizeSurcharge(selectedSize, isLongSleeve);
-  const currentPrice = effectiveBasePrice + (isBlank ? 0 : priceDelta) + sizeSurcharge;
+  const {
+    currentPrice,
+    baseRetailPrice,
+    effectiveBasePrice,
+    priceDelta,
+    sizeSurcharge,
+    partnerSavings,
+    isPartnerDiscountApplied
+  } = useMemo(() => {
+    return calculatePDPPrice({
+      product,
+      isBlank,
+      selectedGarmentKey,
+      selectedColor,
+      selectedSize,
+      qty,
+      role,
+      profile,
+      isPartner
+    });
+  }, [product, isBlank, selectedGarmentKey, selectedColor, selectedSize, qty, role, profile, isPartner]);
 
   const productSchema = {
     "@context": "https://schema.org/",

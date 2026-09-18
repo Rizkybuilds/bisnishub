@@ -227,10 +227,12 @@ export function ProductPurchasePanel({
               <button
                 key={colorName}
                 type="button"
+                aria-label={`Pilih warna ${colorName}`}
+                aria-pressed={isSelected}
                 onClick={() => setSelectedColor(colorName)}
-                className={`group flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs transition-all cursor-pointer ${
+                className={`group min-h-[40px] flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs transition-all cursor-pointer ${
                   isSelected
-                    ? 'border-ts-terracotta bg-ts-terracotta/15 text-ts-krem ring-1 ring-ts-terracotta/50'
+                    ? 'border-ts-terracotta bg-ts-terracotta/15 text-ts-krem ring-1 ring-ts-terracotta/50 shadow-sm'
                     : 'border-ts-border bg-ts-surface text-ts-kremMuted hover:border-ts-borderHover'
                 }`}
               >
@@ -269,10 +271,12 @@ export function ProductPurchasePanel({
               <button
                 key={size}
                 type="button"
+                aria-label={`Pilih ukuran ${size}`}
+                aria-pressed={isSelected}
                 onClick={() => setSelectedSize(size)}
-                className={`py-2.5 px-2 rounded-xl border text-center transition-all cursor-pointer ${
+                className={`min-h-[44px] min-w-[44px] py-2 px-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
                   isSelected
-                    ? 'border-ts-terracotta bg-ts-terracotta/15 text-ts-krem ring-1 ring-ts-terracotta font-bold'
+                    ? 'border-ts-terracotta bg-ts-terracotta/15 text-ts-krem ring-1 ring-ts-terracotta font-bold shadow-sm'
                     : 'border-ts-border bg-ts-surface text-ts-kremMuted hover:border-ts-borderHover'
                 }`}
               >
@@ -312,17 +316,19 @@ export function ProductPurchasePanel({
             <button
               type="button"
               onClick={() => setQty(Math.max(1, qty - 1))}
-              className="w-8 h-9 rounded-lg hover:bg-ts-surfaceHover text-ts-krem font-bold text-base cursor-pointer transition-colors"
+              aria-label="Kurangi jumlah pesanan"
+              className="w-10 h-10 min-h-[40px] min-w-[40px] rounded-lg hover:bg-ts-surfaceHover text-ts-krem font-bold text-base cursor-pointer transition-colors flex items-center justify-center"
             >
               -
             </button>
-            <span className="w-10 text-center font-mono font-bold text-sm text-ts-krem">
+            <span className="w-10 text-center font-mono font-bold text-sm text-ts-krem" aria-label={`Jumlah: ${qty}`}>
               {qty}
             </span>
             <button
               type="button"
               onClick={() => setQty(qty + 1)}
-              className="w-8 h-9 rounded-lg hover:bg-ts-surfaceHover text-ts-krem font-bold text-base cursor-pointer transition-colors"
+              aria-label="Tambah jumlah pesanan"
+              className="w-10 h-10 min-h-[40px] min-w-[40px] rounded-lg hover:bg-ts-surfaceHover text-ts-krem font-bold text-base cursor-pointer transition-colors flex items-center justify-center"
             >
               +
             </button>
@@ -333,7 +339,7 @@ export function ProductPurchasePanel({
             <Button
               variant="primary"
               size="lg"
-              className="w-full text-sm sm:text-base py-3 font-bold"
+              className="w-full text-sm sm:text-base py-3 font-bold min-h-[48px] shadow-sm active:scale-98"
               icon={isAdded ? Check : ShoppingBag}
               onClick={handleAddToCart}
             >
@@ -347,7 +353,7 @@ export function ProductPurchasePanel({
           <Button
             variant="cream"
             size="lg"
-            className="w-full text-xs sm:text-sm py-3 font-extrabold shadow-sm"
+            className="w-full text-xs sm:text-sm py-3 font-extrabold shadow-sm min-h-[48px] active:scale-98"
             onClick={handleBuyNow}
           >
             Checkout Langsung Web &rarr;

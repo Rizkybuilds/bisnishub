@@ -30,17 +30,40 @@ export function ProductImageGallery({
   setIsLightboxOpen
 }) {
   const defaultImage = product ? (product.filePath || product.file_path) : '';
+  const touchStartX = React.useRef(0);
+  const touchEndX = React.useRef(0);
+
+  const handleTouchStart = (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX.current = e.touches[0].clientX;
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    if (e.changedTouches && e.changedTouches.length > 0) {
+      touchEndX.current = e.changedTouches[0].clientX;
+      const diff = touchStartX.current - touchEndX.current;
+      // Minimum 40px swipe threshold
+      if (diff > 40 && onNextImage) {
+        onNextImage();
+      } else if (diff < -40 && onPrevImage) {
+        onPrevImage();
+      }
+    }
+  };
 
   return (
     <div className="space-y-4">
-      {/* Main Image Showcase Container */}
+      {/* Main Image Showcase Container with Touch Swipe Support */}
       <div 
-        className="w-full aspect-[3/4] bg-gradient-to-b from-ts-surface via-ts-surfaceHover/40 to-ts-surface border border-ts-border rounded-3xl overflow-hidden shadow-sm relative group cursor-zoom-in flex items-center justify-center select-none transition-colors duration-300"
+        className="w-full aspect-[3/4] bg-gradient-to-b from-ts-surface via-ts-surfaceHover/40 to-ts-surface border border-ts-border rounded-3xl overflow-hidden shadow-sm relative group cursor-zoom-in flex items-center justify-center select-none transition-colors duration-300 touch-pan-y"
         onClick={() => setIsLightboxOpen(true)}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsLightboxOpen(true); } }}
-        aria-label="Perbesar foto produk untuk melihat detail sablon dan serat kain"
+        aria-label="Perbesar foto produk untuk melihat detail sablon dan serat kain (geser untuk melihat foto lain)"
       >
         {/* Subtle Spotlight Glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_45%,rgba(255,255,255,0.04)_0%,transparent_75%)] pointer-events-none" />
