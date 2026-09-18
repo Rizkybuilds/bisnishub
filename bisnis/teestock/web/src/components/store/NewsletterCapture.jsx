@@ -98,7 +98,7 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
             <div className="p-4 rounded-2xl bg-ts-green/15 border border-ts-green/30 text-xs text-ts-green flex items-start gap-3 animate-in zoom-in-95">
               <CheckCircle2 className="w-5 h-5 shrink-0 text-ts-green mt-0.5" />
               <div className="space-y-1">
-                <p className="font-bold text-sm text-ts-krem">Kamu Terdaftar di Archive Club.</p>
+                <p className="font-bold text-sm text-ts-krem">Berhasil Terdaftar di Archive Club!</p>
                 <p className="text-xs leading-relaxed text-ts-kremMuted">{message}</p>
               </div>
             </div>
@@ -124,7 +124,7 @@ export function NewsletterCapture({ source = 'website_footer', className = '', c
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
-                    <span>Join the Club</span>
+                    <span>Dapatkan Notifikasi</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}

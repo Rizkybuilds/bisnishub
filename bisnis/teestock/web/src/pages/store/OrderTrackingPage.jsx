@@ -62,6 +62,24 @@ export function OrderTrackingPage() {
         const last4 = phoneParam.replace(/\D/g, '').slice(-4);
         setPhoneLast4(last4);
         executeSearch(orderParam, last4);
+      } else {
+        // Cek apakah pesanan ada di riwayat lokal browser pembeli sendiri (direct checkout redirect)
+        try {
+          const myOrders = JSON.parse(localStorage.getItem('teestock_my_orders') || '[]');
+          const matched = myOrders.filter(o => 
+            (o.id && o.id.toLowerCase() === orderParam.toLowerCase()) || 
+            (o.order_number && o.order_number.toLowerCase() === orderParam.toLowerCase()) ||
+            (o.parentOrderId && o.parentOrderId.toLowerCase() === orderParam.toLowerCase())
+          );
+          if (matched && matched.length > 0) {
+            const last4 = (matched[0].phone || '').replace(/\D/g, '').slice(-4);
+            if (last4) setPhoneLast4(last4);
+            setSearchResults(matched);
+            setSelectedOrderIndex(0);
+            setSearched(true);
+            return;
+          }
+        } catch (_) {}
       }
     }
   }, [searchParams]);

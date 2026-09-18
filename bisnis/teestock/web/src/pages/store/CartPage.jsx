@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, ArrowRight, CheckCircle2, Zap, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, ArrowRight, CheckCircle2, Zap, ShieldCheck, Truck } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { createPublicOrder } from '../../services/ordersApi';
@@ -458,7 +458,7 @@ export function CartPage() {
 
         <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
-            to={`/tracking?order=${orderComplete.orderId}`}
+            to={`/tracking?order=${orderComplete.orderId}${orderComplete.phone ? `&phone=${encodeURIComponent(orderComplete.phone)}` : ''}`}
             className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-ts-surface hover:bg-ts-surfaceHover text-xs font-bold text-ts-krem border border-ts-border transition-all inline-flex items-center justify-center gap-2 shadow-sm"
           >
             <Truck className="w-4 h-4 text-ts-terracotta" />
@@ -480,7 +480,7 @@ export function CartPage() {
           <ShoppingBag className="w-8 h-8" />
         </div>
         <div className="space-y-1">
-          <h2 className="text-xl sm:text-2xl font-bold text-ts-krem">Troli Belanja Masih Kosong</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-ts-krem">Troli Belanja Anda Masih Kosong</h2>
           <p className="text-xs sm:text-sm text-ts-kremMuted max-w-sm mx-auto">
             Temukan kurasi grafis bertema subkultur atau pesan kaos polos New States Apparel original sekarang.
           </p>
@@ -497,7 +497,7 @@ export function CartPage() {
             to="/polos"
             className="px-6 py-3 rounded-xl bg-ts-surface hover:bg-ts-surfaceHover text-ts-krem font-bold text-xs tracking-wider border border-ts-border transition-colors inline-flex items-center gap-2"
           >
-            <span>The Blanks (Kaos Polos NSA)</span>
+            <span>The Blanks (Katalog Kaos Polos NSA)</span>
           </Link>
         </div>
       </div>

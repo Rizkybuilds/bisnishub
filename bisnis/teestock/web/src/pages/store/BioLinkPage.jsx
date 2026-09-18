@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ShoppingBag,
   LayoutGrid,
@@ -37,9 +38,9 @@ export function BioLinkPage() {
     },
     {
       id: 'katalog',
-      label: 'Official Website Store',
-      subtitle: 'The Direct Studio Privilege // Free Vinyl Sticker Pack',
-      href: '/?utm_source=biolink&utm_medium=social&utm_campaign=website',
+      label: 'Katalog Grafis & Blank NSA',
+      subtitle: 'Official Website Store // The Direct Studio Privilege',
+      href: '/katalog?utm_source=biolink&utm_medium=social&utm_campaign=katalog',
       internal: true,
       icon: LayoutGrid,
     },

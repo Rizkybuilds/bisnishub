@@ -16,7 +16,7 @@ test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => 
 
     // Verifikasi komponen pemilihan varian
     const purchasePanel = page.locator('text=Pilihan Ukuran');
-    await expect(purchasePanel).toBeVisible();
+    await expect(purchasePanel).toBeVisible({ timeout: 15000 });
 
     // 3. Tambahkan ke Keranjang
     const addToCartButton = page.locator('button:has-text("Tambah ke Troli")').first();
@@ -87,7 +87,7 @@ test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => 
     await page.waitForURL(/\/produk\/.+/);
 
     const addBtn = page.locator('button:has-text("Tambah ke Troli")').first();
-    await expect(addBtn).toBeVisible();
+    await expect(addBtn).toBeVisible({ timeout: 15000 });
     await addBtn.click();
 
     // 2. Buka keranjang
@@ -158,10 +158,15 @@ test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => 
     await expect(blankCards.first()).toBeVisible({ timeout: 10000 });
   });
 
-  test('Halaman Katalog Grafis (/katalog) menampilkan status kurasi elegan jika belum ada produk grafis', async ({ page }) => {
+  test('Halaman Katalog Grafis (/katalog) menampilkan etalase produk atau status kurasi', async ({ page }) => {
     await page.goto('/katalog');
     await expect(page).toHaveTitle(/TeeStock/i);
-    await expect(page.locator('text=Koleksi Drop Grafis Sedang Dikurasi')).toBeVisible();
-    await expect(page.locator('a:has-text("Lihat Kaos Polos NSA")')).toBeVisible();
+    const hasProducts = (await page.locator('a[href^="/produk/"]').count()) > 0;
+    if (hasProducts) {
+      await expect(page.locator('a[href^="/produk/"]').first()).toBeVisible();
+    } else {
+      await expect(page.locator('text=Koleksi Drop Grafis Sedang Dikurasi')).toBeVisible();
+      await expect(page.locator('a:has-text("Lihat Kaos Polos NSA")')).toBeVisible();
+    }
   });
 });

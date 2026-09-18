@@ -36,6 +36,8 @@ export function ProductDetailPage() {
 
   const product = catalog.find(p => p.sku === sku);
   const isBlank = isProductBlank(product);
+  const is3600 = Boolean(isBlank && (product?.sku === 'TS-BLK-3600' || product?.name?.includes('3600') || product?.template === 'softstyle_30s'));
+  const is7200 = Boolean(isBlank && !is3600);
 
   const [selectedGarmentKey, setSelectedGarmentKey] = useState(
     product?.template === 'softstyle_30s' ? 'nsa_softstyle_30s' : 'nsa_heavyweight_24s'
