@@ -95,6 +95,7 @@ export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {
               : 'object-cover'
           }`}
           loading="lazy"
+          decoding="async"
         />
 
         {/* Top-Left SKU Chip */}

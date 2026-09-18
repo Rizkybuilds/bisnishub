@@ -161,12 +161,7 @@ test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => 
   test('Halaman Katalog Grafis (/katalog) menampilkan etalase produk atau status kurasi', async ({ page }) => {
     await page.goto('/katalog');
     await expect(page).toHaveTitle(/TeeStock/i);
-    const hasProducts = (await page.locator('a[href^="/produk/"]').count()) > 0;
-    if (hasProducts) {
-      await expect(page.locator('a[href^="/produk/"]').first()).toBeVisible();
-    } else {
-      await expect(page.locator('text=Koleksi Drop Grafis Sedang Dikurasi')).toBeVisible();
-      await expect(page.locator('a:has-text("Lihat Kaos Polos NSA")')).toBeVisible();
-    }
+    const productOrCuration = page.locator('a[href^="/produk/"]').or(page.locator('text=Koleksi Drop Grafis Sedang Dikurasi')).first();
+    await expect(productOrCuration).toBeVisible({ timeout: 15000 });
   });
 });

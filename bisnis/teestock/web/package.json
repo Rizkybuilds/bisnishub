@@ -9,7 +9,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "audit:perf": "vite build",
+    "audit:e2e": "playwright test --project=\"Desktop Chrome\" --project=\"Mobile Chrome (Pixel 7)\"",
+    "audit:weekly": "vitest run && vite build && playwright test --project=\"Desktop Chrome\" --project=\"Mobile Chrome (Pixel 7)\""
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

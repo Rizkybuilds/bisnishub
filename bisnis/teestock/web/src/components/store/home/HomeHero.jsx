@@ -115,6 +115,8 @@ export function HomeHero({
                 alt={`${featuredProduct.name} - ${heroSelectedColor}`}
                 className="w-full h-full object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.35)] dark:drop-shadow-[0_12px_24px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:scale-105"
                 loading="eager"
+                fetchpriority="high"
+                decoding="async"
               />
 
               {/* Floating Badge Top-Left: Fabric Spec */}

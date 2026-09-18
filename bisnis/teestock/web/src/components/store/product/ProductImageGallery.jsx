@@ -78,6 +78,8 @@ export function ProductImageGallery({
           <img
             src={previewImg}
             alt={`${product.name} - ${selectedColor}`}
+            fetchpriority="high"
+            decoding="async"
             className={`transition-all duration-500 group-hover:scale-105 select-none ${
               isGhostOrFolded
                 ? 'w-full h-full object-contain p-4 sm:p-6 drop-shadow-[0_16px_32px_rgba(0,0,0,0.75)]'
