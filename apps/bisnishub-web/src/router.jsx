@@ -18,18 +18,8 @@ import { QuoterPage } from './pages/admin/QuoterPage';
 import { CustomersPage } from './pages/admin/CustomersPage';
 import { VendorsPage } from './pages/admin/VendorsPage';
 import { MarketingPage } from './pages/admin/MarketingPage';
+import { StoragePage } from './pages/admin/StoragePage';
 import { SettingsPage } from './pages/admin/SettingsPage';
-
-// BisnisHub Native Extensions
-import { ExternalSsdModule } from './components/modules/ExternalSsdModule';
-
-function StorageView() {
-  return (
-    <div className="p-4 sm:p-8 space-y-6 max-w-7xl mx-auto">
-      <ExternalSsdModule />
-    </div>
-  );
-}
 
 export const router = createBrowserRouter([
   {
@@ -52,7 +42,7 @@ export const router = createBrowserRouter([
       { path: 'vendors', element: <VendorsPage /> },
       { path: 'mitra', element: <Navigate to="/vendors" replace /> },
       { path: 'marketing', element: <MarketingPage /> },
-      { path: 'storage', element: <StorageView /> },
+      { path: 'storage', element: <StoragePage /> },
       { path: 'settings', element: <SettingsPage /> },
 
       // Legacy /admin/* support for internal redirects
@@ -70,6 +60,7 @@ export const router = createBrowserRouter([
       { path: 'admin/pelanggan', element: <Navigate to="/customers" replace /> },
       { path: 'admin/vendors', element: <Navigate to="/vendors" replace /> },
       { path: 'admin/marketing', element: <Navigate to="/marketing" replace /> },
+      { path: 'admin/storage', element: <Navigate to="/storage" replace /> },
       { path: 'admin/settings', element: <Navigate to="/settings" replace /> },
 
       { path: '*', element: <Navigate to="/" replace /> },
