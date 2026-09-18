@@ -80,15 +80,15 @@ export function CartItemList({ cart, updateCartQty, removeFromCart }) {
 
               {/* Quantity Stepper & Subtotal */}
               <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 pt-2 sm:pt-0 border-t sm:border-0 border-ts-border">
-                {/* Stepper with accessible tap targets */}
+                {/* Stepper with accessible tap targets (min 44px on mobile) */}
                 <div className="flex items-center border border-ts-border rounded-xl bg-ts-surfaceHover/60 p-0.5">
                   <button
                     type="button"
                     onClick={() => updateCartQty(index, -1)}
-                    className="w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surface rounded-lg transition-colors cursor-pointer active:scale-95"
-                    aria-label="Kurangi kuantitas"
+                    className="w-11 h-11 sm:w-9 sm:h-9 min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px] flex items-center justify-center text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surface rounded-lg transition-colors cursor-pointer active:scale-95"
+                    aria-label={`Kurangi kuantitas ${item.name}`}
                   >
-                    <Minus className="w-3.5 h-3.5" />
+                    <Minus className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
                   </button>
                   <span className="w-10 text-center font-mono text-xs font-bold text-ts-krem">
                     {item.qty || 1}
@@ -96,24 +96,25 @@ export function CartItemList({ cart, updateCartQty, removeFromCart }) {
                   <button
                     type="button"
                     onClick={() => updateCartQty(index, 1)}
-                    className="w-9 h-9 sm:w-8 sm:h-8 flex items-center justify-center text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surface rounded-lg transition-colors cursor-pointer active:scale-95"
-                    aria-label="Tambah kuantitas"
+                    className="w-11 h-11 sm:w-9 sm:h-9 min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px] flex items-center justify-center text-ts-kremMuted hover:text-ts-krem hover:bg-ts-surface rounded-lg transition-colors cursor-pointer active:scale-95"
+                    aria-label={`Tambah kuantitas ${item.name}`}
                   >
-                    <Plus className="w-3.5 h-3.5" />
+                    <Plus className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
                   </button>
                 </div>
 
                 {/* Subtotal & Delete */}
-                <div className="text-right min-w-[100px]">
+                <div className="text-right min-w-[100px] flex flex-col items-end justify-center">
                   <p className="text-sm font-mono font-extrabold text-ts-krem">
                     {formatRupiah(itemTotal)}
                   </p>
                   <button
                     type="button"
                     onClick={() => removeFromCart(index)}
-                    className="inline-flex items-center gap-1 text-[11px] text-rose-500 hover:text-rose-600 mt-1 transition-colors cursor-pointer py-1 px-1.5 rounded hover:bg-rose-500/10"
+                    className="min-h-[44px] inline-flex items-center gap-1.5 text-xs text-rose-500 hover:text-rose-400 mt-1 transition-colors cursor-pointer py-1.5 px-2.5 rounded-lg hover:bg-rose-500/10 active:scale-95"
+                    aria-label={`Hapus ${item.name} dari keranjang`}
                   >
-                    <Trash2 className="w-3 h-3" />
+                    <Trash2 className="w-3.5 h-3.5" />
                     <span>Hapus</span>
                   </button>
                 </div>

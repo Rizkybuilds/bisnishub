@@ -57,8 +57,9 @@ export function CartSummaryCard({
               <button
                 type="button"
                 onClick={handleRemoveVoucher}
-                className="p-1.5 hover:bg-ts-surfaceHover rounded-lg text-ts-kremMuted hover:text-ts-krem transition-colors cursor-pointer"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-ts-surfaceHover rounded-lg text-ts-kremMuted hover:text-ts-krem transition-colors cursor-pointer"
                 title="Hapus voucher"
+                aria-label="Hapus voucher aktif"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -66,18 +67,20 @@ export function CartSummaryCard({
           ) : (
             <div className="flex gap-2">
               <input
+                id="cart-voucher-input"
                 type="text"
                 placeholder="Contoh: WELCOME10"
                 value={voucherInput}
                 onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleApplyVoucher())}
-                className="flex-1 px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover border border-ts-border text-xs font-mono uppercase text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta transition-colors"
+                aria-label="Kode voucher promosi"
+                className="flex-1 min-h-[44px] px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover border border-ts-border text-xs font-mono uppercase text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta transition-colors"
               />
               <button
                 type="button"
                 onClick={() => handleApplyVoucher()}
                 disabled={voucherLoading || !voucherInput.trim()}
-                className="px-4 py-2.5 rounded-xl bg-ts-surface border border-ts-border hover:bg-ts-surfaceHover text-xs font-bold text-ts-krem transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0 cursor-pointer shadow-sm"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl bg-ts-surface border border-ts-border hover:bg-ts-surfaceHover text-xs font-bold text-ts-krem transition-colors disabled:opacity-50 flex items-center gap-1.5 shrink-0 cursor-pointer shadow-sm active:scale-95"
               >
                 {voucherLoading ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -89,7 +92,11 @@ export function CartSummaryCard({
           )}
 
           {voucherMsg && (
-            <p className={`text-[11px] ${voucherMsg.type === 'success' ? 'text-ts-teal font-medium' : 'text-rose-500 font-medium'}`}>
+            <p
+              role="status"
+              aria-live="polite"
+              className={`text-[11px] ${voucherMsg.type === 'success' ? 'text-ts-teal font-medium' : 'text-rose-500 font-medium'}`}
+            >
               {voucherMsg.text}
             </p>
           )}

@@ -118,14 +118,15 @@ export function CheckoutShippingForm({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Nama Penerima */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-ts-kremMuted flex items-center gap-1.5">
+          <label htmlFor="checkout-customer-name" className="text-xs font-semibold text-ts-kremMuted flex items-center gap-1.5">
             <User className="w-3.5 h-3.5 text-ts-muted" />
             Nama Penerima <span className="text-rose-500">*</span>
           </label>
           <input
+            id="checkout-customer-name"
             {...register('customerName')}
             placeholder="Contoh: Rizky Pratama"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover/50 border border-ts-border text-xs text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:bg-ts-surface transition-colors"
+            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover/50 border border-ts-border text-xs text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:bg-ts-surface transition-colors"
           />
           {errors.customerName && (
             <p className="text-[11px] text-rose-500 flex items-center gap-1 font-medium">
@@ -137,14 +138,16 @@ export function CheckoutShippingForm({
 
         {/* WhatsApp */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-ts-kremMuted flex items-center gap-1.5">
+          <label htmlFor="checkout-phone" className="text-xs font-semibold text-ts-kremMuted flex items-center gap-1.5">
             <Phone className="w-3.5 h-3.5 text-ts-muted" />
             Nomor WhatsApp <span className="text-rose-500">*</span>
           </label>
           <input
+            id="checkout-phone"
             {...register('phone')}
+            type="tel"
             placeholder="081234567890"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover/50 border border-ts-border text-xs text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:bg-ts-surface transition-colors font-mono"
+            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover/50 border border-ts-border text-xs text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:bg-ts-surface transition-colors font-mono"
           />
           {errors.phone && (
             <p className="text-[11px] text-rose-500 flex items-center gap-1 font-medium">
@@ -158,13 +161,14 @@ export function CheckoutShippingForm({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Kota / Kabupaten */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-ts-kremMuted">
+          <label htmlFor="checkout-city" className="text-xs font-semibold text-ts-kremMuted">
             Kota / Kabupaten <span className="text-rose-500">*</span>
           </label>
           <input
+            id="checkout-city"
             {...register('city')}
             placeholder="Contoh: Bandung"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover/50 border border-ts-border text-xs text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:bg-ts-surface transition-colors"
+            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover/50 border border-ts-border text-xs text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:bg-ts-surface transition-colors"
           />
           {errors.city && (
             <p className="text-[11px] text-rose-500 flex items-center gap-1 font-medium">
@@ -176,13 +180,14 @@ export function CheckoutShippingForm({
 
         {/* Kecamatan */}
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-ts-kremMuted">
+          <label htmlFor="checkout-subdistrict" className="text-xs font-semibold text-ts-kremMuted">
             Kecamatan <span className="text-rose-500">*</span>
           </label>
           <input
+            id="checkout-subdistrict"
             {...register('subdistrict')}
             placeholder="Contoh: Coblong"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover/50 border border-ts-border text-xs text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:bg-ts-surface transition-colors"
+            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover/50 border border-ts-border text-xs text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:bg-ts-surface transition-colors"
           />
           {errors.subdistrict && (
             <p className="text-[11px] text-rose-500 flex items-center gap-1 font-medium">
@@ -195,14 +200,15 @@ export function CheckoutShippingForm({
 
       {/* Alamat Lengkap */}
       <div className="space-y-1.5">
-        <label className="text-xs font-semibold text-ts-kremMuted">
+        <label htmlFor="checkout-address" className="text-xs font-semibold text-ts-kremMuted">
           Alamat Jalan &amp; Nomor Rumah / Patokan <span className="text-rose-500">*</span>
         </label>
         <textarea
+          id="checkout-address"
           {...register('address')}
           rows={2}
           placeholder="Nama jalan, RT/RW, nomor rumah, nama gedung/blok, dan patokan..."
-          className="w-full px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover/50 border border-ts-border text-xs text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:bg-ts-surface transition-colors resize-none"
+          className="w-full min-h-[56px] px-3.5 py-2.5 rounded-xl bg-ts-surfaceHover/50 border border-ts-border text-xs text-ts-krem placeholder:text-ts-muted focus:outline-none focus:border-ts-terracotta focus:bg-ts-surface transition-colors resize-none"
         />
         {errors.address && (
           <p className="text-[11px] text-rose-500 flex items-center gap-1 font-medium">
@@ -274,13 +280,14 @@ export function CheckoutShippingForm({
       {/* Zona Ongkir & Pilihan Kurir */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-ts-kremMuted flex items-center gap-1.5">
+          <label htmlFor="checkout-shipping-zone" className="text-xs font-semibold text-ts-kremMuted flex items-center gap-1.5">
             <Truck className="w-3.5 h-3.5 text-ts-muted" />
             Zona Tarif Pengiriman
           </label>
           <select
+            id="checkout-shipping-zone"
             {...register('shippingZone')}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-ts-surface border border-ts-border text-xs text-ts-krem focus:outline-none focus:border-ts-terracotta transition-colors cursor-pointer shadow-sm"
+            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-ts-surface border border-ts-border text-xs text-ts-krem focus:outline-none focus:border-ts-terracotta transition-colors cursor-pointer shadow-sm"
           >
             {SHIPPING_ZONES.map((zone) => (
               <option key={zone.id} value={zone.id} className="bg-ts-surface text-ts-krem">
@@ -292,7 +299,7 @@ export function CheckoutShippingForm({
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold text-ts-kremMuted">
+            <label htmlFor="checkout-courier" className="text-xs font-semibold text-ts-kremMuted">
               Pilihan Kurir Ekspedisi
             </label>
             {fulfillmentOrigin?.isExpressHub && (
@@ -302,8 +309,9 @@ export function CheckoutShippingForm({
             )}
           </div>
           <select
+            id="checkout-courier"
             {...register('courier')}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-ts-surface border border-ts-border text-xs text-ts-krem focus:outline-none focus:border-ts-terracotta transition-colors cursor-pointer shadow-sm"
+            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-ts-surface border border-ts-border text-xs text-ts-krem focus:outline-none focus:border-ts-terracotta transition-colors cursor-pointer shadow-sm"
           >
             {getAvailableCouriers(fulfillmentOrigin?.isExpressHub).map((c) => (
               <option key={c.id} value={c.name} className="bg-ts-surface text-ts-krem">
@@ -324,7 +332,7 @@ export function CheckoutShippingForm({
           <span className="text-[11px] text-ts-kremMuted">Pilih sistem verifikasi</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Pilihan Metode Pembayaran">
           {PAYMENT_METHODS.map((method) => {
             const isSelected = selectedPaymentMethod === method.id;
             const isInstant = method.id === PAYMENT_PROVIDERS.MIDTRANS_SNAP;
@@ -332,8 +340,11 @@ export function CheckoutShippingForm({
               <button
                 key={method.id}
                 type="button"
+                role="radio"
+                aria-checked={isSelected}
+                aria-label={`Metode ${method.name}: ${method.description}`}
                 onClick={() => onPaymentMethodChange && onPaymentMethodChange(method.id)}
-                className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-2.5 relative ${
+                className={`p-4 min-h-[48px] rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-2.5 relative ${
                   isSelected
                     ? isInstant
                       ? 'bg-sky-500/10 border-sky-500 shadow-md ring-1 ring-sky-500/50'

@@ -24,6 +24,117 @@ import { CartItemList } from '../../components/store/cart/CartItemList';
 import { CheckoutShippingForm } from '../../components/store/cart/CheckoutShippingForm';
 import { CartSummaryCard } from '../../components/store/cart/CartSummaryCard';
 
+import { generateOrderNumber } from '../../utils/orderNumber';
+
+/**
+ * CFO Financial Floor: Batas maksimal diskon ritel agar net margin tidak jebol di bawah 25%
+ */
+export const CFO_MAX_DISCOUNT_PERCENT = 25;
+
+/**
+ * Hitung jumlah kaos grafis (non-blank) yang berhak atas diskon bundling
+ */
+export function calculateEligibleGraphicQty(cart = []) {
+  if (!Array.isArray(cart)) return 0;
+  return cart
+    .filter(item => !isProductBlank(item))
+    .reduce((acc, item) => acc + (item.qty || 1), 0);
+}
+
+/**
+ * CFO Margin Guard: Menghitung plafon diskon maksimum yang diperbolehkan
+ * - Kaos Polos NSA: profit margin tidak boleh turun di bawah Rp 2.000/pcs dari biaya vendor
+ * - Kaos Grafis: margin dilindungi di atas baseline HPP Rp 55.000/pcs
+ */
+export function calculateMaxAllowableDiscount(cart = [], role = 'retail') {
+  if (!Array.isArray(cart)) return 0;
+  return cart.reduce((acc, item) => {
+    const isBlankItem = isProductBlank(item);
+    if (isBlankItem) {
+      const blankPricing = getBlankPricing(item, item.color, role, item.size, item.qty);
+      const floorPricePerPcs = blankPricing.vendorCost + 2000;
+      const currentPrice = item.price || blankPricing.basePrice;
+      const maxDiscForThisItem = Math.max(0, (currentPrice - floorPricePerPcs) * (item.qty || 1));
+      return acc + maxDiscForThisItem;
+    }
+    const currentPrice = item.price || 99000;
+    return acc + Math.max(0, (currentPrice - 55000) * (item.qty || 1));
+  }, 0);
+}
+
+/**
+ * Kalkulasi diskon efektif antara bundling ritel vs voucher (non-stackable unless free shipping)
+ * Dilindungi oleh CFO margin floor
+ */
+export function calculateEffectiveDiscounts({
+  cart = [],
+  role = 'retail',
+  appliedVoucher = null,
+  voucherDiscountAmount = 0,
+  rawShippingFee = 0
+}) {
+  const eligibleGraphicQty = calculateEligibleGraphicQty(cart);
+  const bundleDiscount = calculateBundleDiscount(eligibleGraphicQty, role);
+  const isFreeShippingVoucher = appliedVoucher?.type === 'free_shipping';
+  const shippingDiscount = isFreeShippingVoucher ? Math.min(rawShippingFee, voucherDiscountAmount) : 0;
+  const shippingFee = Math.max(0, rawShippingFee - shippingDiscount);
+
+  let effectiveProductDiscount = 0;
+  let activeDiscountLabel = 'none';
+
+  if (isFreeShippingVoucher) {
+    effectiveProductDiscount = bundleDiscount;
+    activeDiscountLabel = bundleDiscount > 0 ? 'bundle' : 'none';
+  } else {
+    if (bundleDiscount > 0 && voucherDiscountAmount > 0) {
+      if (bundleDiscount >= voucherDiscountAmount) {
+        effectiveProductDiscount = bundleDiscount;
+        activeDiscountLabel = 'bundle_preferred';
+      } else {
+        effectiveProductDiscount = voucherDiscountAmount;
+        activeDiscountLabel = 'voucher_preferred';
+      }
+    } else if (bundleDiscount > 0) {
+      effectiveProductDiscount = bundleDiscount;
+      activeDiscountLabel = 'bundle';
+    } else if (voucherDiscountAmount > 0) {
+      effectiveProductDiscount = voucherDiscountAmount;
+      activeDiscountLabel = 'voucher';
+    }
+  }
+
+  // CFO Margin Floor Clamping
+  const maxAllowable = calculateMaxAllowableDiscount(cart, role);
+  effectiveProductDiscount = Math.min(effectiveProductDiscount, maxAllowable);
+
+  return {
+    bundleDiscount,
+    effectiveProductDiscount,
+    activeDiscountLabel,
+    shippingDiscount,
+    shippingFee,
+    maxAllowableDiscount: maxAllowable
+  };
+}
+
+/**
+ * Kalkulasi Grand Total Checkout
+ * - Instant Payment (Midtrans): menggunakan nominal pas
+ * - Manual QRIS: menambahkan 3-digit kode unik untuk rekonsiliasi kas otomatis
+ */
+export function calculateCartGrandTotal({
+  totalCartAmount = 0,
+  effectiveProductDiscount = 0,
+  shippingFee = 0,
+  uniqueCode = 0,
+  isInstantPayment = false
+}) {
+  if (totalCartAmount <= 0) return 0;
+  const baseGrandTotal = Math.max(0, totalCartAmount - effectiveProductDiscount) + shippingFee;
+  if (baseGrandTotal <= 0) return 0;
+  return isInstantPayment ? baseGrandTotal : baseGrandTotal + uniqueCode;
+}
+
 export function CartPage() {
   const { cart, removeFromCart, updateCartQty, clearCart, totalCartAmount, storeSettings } = useStore();
   const { user, profile, role } = useAuth();
@@ -52,14 +163,8 @@ export function CartPage() {
   // Smart Multi-Hub Origin Routing (Citayam Studio vs Bogor Express Hub)
   const fulfillmentOrigin = determineFulfillmentOrigin(cart, destinationCity, destinationSubdistrict);
 
-  // Bundling calculations (for graphic merchandise only)
+  // Bundling & Shipping calculations
   const totalCartQty = cart.reduce((acc, item) => acc + (item.qty || 1), 0);
-  const eligibleGraphicQty = cart
-    .filter(item => !isProductBlank(item))
-    .reduce((acc, item) => acc + (item.qty || 1), 0);
-  const bundleDiscount = calculateBundleDiscount(eligibleGraphicQty, role);
-
-  // Dynamic Weight-Based & Multi-Origin Shipping calculations
   const weightInfo = calculateOrderWeight(cart);
   const shippingCalculation = calculateShippingFee({
     zoneId: shippingZone,
@@ -69,54 +174,30 @@ export function CartPage() {
   });
 
   const rawShippingFee = cart.length > 0 ? shippingCalculation.shippingFee : 0;
-  const isFreeShippingVoucher = appliedVoucher?.type === 'free_shipping';
-  const shippingDiscount = isFreeShippingVoucher ? Math.min(rawShippingFee, discountAmount) : 0;
-  const shippingFee = Math.max(0, rawShippingFee - shippingDiscount);
 
-
-  // Non-stackable discount selection
-  let effectiveProductDiscount = 0;
-  let activeDiscountLabel = '';
-
-  if (isFreeShippingVoucher) {
-    effectiveProductDiscount = bundleDiscount;
-    activeDiscountLabel = bundleDiscount > 0 ? 'bundle' : 'none';
-  } else {
-    if (bundleDiscount > 0 && discountAmount > 0) {
-      if (bundleDiscount >= discountAmount) {
-        effectiveProductDiscount = bundleDiscount;
-        activeDiscountLabel = 'bundle_preferred';
-      } else {
-        effectiveProductDiscount = discountAmount;
-        activeDiscountLabel = 'voucher_preferred';
-      }
-    } else if (bundleDiscount > 0) {
-      effectiveProductDiscount = bundleDiscount;
-      activeDiscountLabel = 'bundle';
-    } else if (discountAmount > 0) {
-      effectiveProductDiscount = discountAmount;
-      activeDiscountLabel = 'voucher';
-    }
-  }
-
-  // CFO Margin Guard: Ensure blank tee profit margin never drops below Rp 2.000/pcs
-  const maxAllowableDiscount = cart.reduce((acc, item) => {
-    const isBlankItem = isProductBlank(item);
-    if (isBlankItem) {
-      const blankPricing = getBlankPricing(item, item.color, role, item.size, item.qty);
-      const floorPricePerPcs = blankPricing.vendorCost + 2000;
-      const maxDiscForThisItem = Math.max(0, ((item.price || blankPricing.basePrice) - floorPricePerPcs) * (item.qty || 1));
-      return acc + maxDiscForThisItem;
-    }
-    return acc + Math.max(0, ((item.price || 99000) - 55000) * (item.qty || 1));
-  }, 0);
-
-  effectiveProductDiscount = Math.min(effectiveProductDiscount, maxAllowableDiscount);
+  // Diskon Efektif & CFO Margin Floor Protection
+  const {
+    bundleDiscount,
+    effectiveProductDiscount,
+    activeDiscountLabel,
+    shippingDiscount,
+    shippingFee
+  } = calculateEffectiveDiscounts({
+    cart,
+    role,
+    appliedVoucher,
+    voucherDiscountAmount: discountAmount,
+    rawShippingFee
+  });
 
   const isInstantPayment = paymentMethod === PAYMENT_PROVIDERS.MIDTRANS_SNAP;
-  const baseGrandTotal = Math.max(0, totalCartAmount - effectiveProductDiscount) + shippingFee;
-  // Instant payment uses exact total, manual QRIS includes unique 3-digit code
-  const grandTotal = baseGrandTotal > 0 ? (isInstantPayment ? baseGrandTotal : baseGrandTotal + uniqueCode) : 0;
+  const grandTotal = calculateCartGrandTotal({
+    totalCartAmount,
+    effectiveProductDiscount,
+    shippingFee,
+    uniqueCode,
+    isInstantPayment
+  });
 
   const handleApplyVoucher = async (codeToApply = null) => {
     const code = codeToApply || voucherInput;
@@ -212,7 +293,7 @@ export function CartPage() {
   const handleProcessOrder = async (formData) => {
     setIsSubmitting(true);
     try {
-      const orderId = `WEB-${Date.now().toString().slice(-6)}`;
+      const orderId = generateOrderNumber('TS');
       const cleanCity = formData.city.trim();
       const cleanSubdistrict = formData.subdistrict.trim();
       const cleanAddress = formData.address.trim();
@@ -535,19 +616,22 @@ export function CartPage() {
               </h3>
               <div className="space-y-3">
                 {/* Order Bump: Kaos Polos NSA */}
-                <div className="flex items-center gap-4 p-3 rounded-xl border border-ts-borderDim hover:border-ts-borderHover transition-colors cursor-pointer group">
+                <Link
+                  to="/polos"
+                  className="flex items-center gap-4 p-3 rounded-xl border border-ts-borderDim hover:border-ts-borderHover transition-colors group cursor-pointer"
+                >
                   <div className="w-14 h-14 rounded-lg bg-ts-surface flex items-center justify-center shrink-0">
                     <span className="text-2xl">👕</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-ts-krem">Tambah Kaos Polos NSA 24s</p>
+                    <p className="text-sm font-semibold text-ts-krem group-hover:text-ts-terracotta transition-colors">Tambah Kaos Polos NSA 24s</p>
                     <p className="text-xs text-ts-kremMuted">Heavyweight Tubular • Baselayer sempurna</p>
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-sm font-mono font-bold text-ts-terracotta">+Rp 45.000</p>
-                    <button onClick={() => window.location.href = '/polos'} className="text-xs text-ts-kremMuted hover:text-ts-terracotta transition-colors font-medium mt-0.5">+ Tambah</button>
+                    <span className="text-xs text-ts-kremMuted group-hover:text-ts-terracotta transition-colors font-medium mt-0.5 inline-block">+ Tambah</span>
                   </div>
-                </div>
+                </Link>
               </div>
             </div>
           )}

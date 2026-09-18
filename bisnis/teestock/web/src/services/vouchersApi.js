@@ -51,6 +51,12 @@ const FALLBACK_VOUCHERS = [
 ];
 
 /**
+ * CFO Financial Floor: Batas maksimal diskon voucher ritel (maksimal 25%)
+ * Dilarang merancang promo yang menekan net margin di bawah 25%
+ */
+export const CFO_MAX_VOUCHER_DISCOUNT_PERCENT = 25;
+
+/**
  * Validasi kode voucher untuk keranjang belanja
  * @param {string} rawCode - Kode voucher yang dimasukkan pengguna
  * @param {number} cartTotal - Nilai total belanjaan
@@ -74,7 +80,7 @@ export async function validateVoucher(rawCode, cartTotal, userRole = 'member') {
 
     const voucher = dbVoucher || FALLBACK_VOUCHERS.find(v => v.code === code);
 
-    if (!voucher) {
+    if (!voucher || voucher.is_active === false) {
       return { valid: false, message: `Kode voucher "${code}" tidak ditemukan atau sudah tidak aktif.` };
     }
 
@@ -103,15 +109,26 @@ export async function validateVoucher(rawCode, cartTotal, userRole = 'member') {
       };
     }
 
-    // 5. Hitung besaran diskon
+    // 5. Hitung besaran diskon dengan CFO Margin Guard (Maksimal 25%)
     let discountAmount = 0;
-    if (voucher.discount_type === 'percent') {
-      discountAmount = Math.round(cartTotal * (Number(voucher.discount_value) / 100));
+    const cfoMaxDiscount = Math.floor(cartTotal * (CFO_MAX_VOUCHER_DISCOUNT_PERCENT / 100));
+
+    if (voucher.type === 'free_shipping') {
+      // Free shipping voucher: menyubsidi ongkir flat
+      discountAmount = Number(voucher.discount_value);
+    } else if (voucher.discount_type === 'percent') {
+      const safePercent = Math.min(Number(voucher.discount_value), CFO_MAX_VOUCHER_DISCOUNT_PERCENT);
+      discountAmount = Math.round(cartTotal * (safePercent / 100));
       if (voucher.max_discount && discountAmount > Number(voucher.max_discount)) {
         discountAmount = Number(voucher.max_discount);
       }
     } else {
-      discountAmount = Math.min(Number(voucher.discount_value), cartTotal);
+      // Fixed discount capped by CFO 25% floor
+      const cappedValue = cfoMaxDiscount > 0 ? Math.min(Number(voucher.discount_value), cfoMaxDiscount) : Number(voucher.discount_value);
+      discountAmount = Math.min(cappedValue, cartTotal);
+      if (voucher.max_discount && discountAmount > Number(voucher.max_discount)) {
+        discountAmount = Number(voucher.max_discount);
+      }
     }
 
     return {
@@ -125,9 +142,28 @@ export async function validateVoucher(rawCode, cartTotal, userRole = 'member') {
     // Cek fallback lokal
     const fallback = FALLBACK_VOUCHERS.find(v => v.code === code);
     if (fallback) {
-      let discountAmount = fallback.discount_type === 'percent'
-        ? Math.round(cartTotal * (fallback.discount_value / 100))
-        : Math.min(fallback.discount_value, cartTotal);
+      if (!fallback.is_active) {
+        return { valid: false, message: 'Kode voucher ini sudah tidak aktif.' };
+      }
+      if (fallback.min_order && cartTotal < Number(fallback.min_order)) {
+        return { 
+          valid: false, 
+          message: `Minimal belanja untuk voucher ini adalah Rp ${Number(fallback.min_order).toLocaleString('id-ID')}.` 
+        };
+      }
+
+      let discountAmount = 0;
+      const cfoMaxDiscount = Math.floor(cartTotal * (CFO_MAX_VOUCHER_DISCOUNT_PERCENT / 100));
+
+      if (fallback.type === 'free_shipping') {
+        discountAmount = Number(fallback.discount_value);
+      } else if (fallback.discount_type === 'percent') {
+        const safePercent = Math.min(Number(fallback.discount_value), CFO_MAX_VOUCHER_DISCOUNT_PERCENT);
+        discountAmount = Math.round(cartTotal * (safePercent / 100));
+      } else {
+        const cappedValue = cfoMaxDiscount > 0 ? Math.min(Number(fallback.discount_value), cfoMaxDiscount) : Number(fallback.discount_value);
+        discountAmount = Math.min(cappedValue, cartTotal);
+      }
 
       return {
         valid: true,
