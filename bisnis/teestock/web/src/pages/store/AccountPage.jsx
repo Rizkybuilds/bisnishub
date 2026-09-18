@@ -10,11 +10,14 @@ import {
   CheckCircle2, 
   Check, 
   Copy, 
-  LogOut,
-  Save,
-  Sparkles,
-  ShoppingBag,
-  MessageSquare
+  LogOut, 
+  Save, 
+  Sparkles, 
+  ShoppingBag, 
+  MessageSquare,
+  Clock,
+  ChevronRight,
+  AlertTriangle
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useStore } from '../../context/StoreContext';
@@ -25,6 +28,76 @@ import { getActiveVouchers } from '../../services/vouchersApi';
 import { getUserOrders } from '../../services/ordersApi';
 import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
 import { SEOHead } from '../../components/common/SEOHead';
+
+export const ORDER_STATUS_BADGES = {
+  pending: { label: 'Menunggu Konfirmasi', color: 'bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/30', step: 1 },
+  dtf: { label: 'Cetak Film DTF HD', color: 'bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/30', step: 2 },
+  press: { label: 'Heat Press 155°C', color: 'bg-ts-terracotta/20 text-ts-terracotta border-ts-terracotta/40', step: 3 },
+  pack: { label: 'QC & Studio Packing', color: 'bg-purple-500/15 text-purple-600 dark:text-purple-300 border-purple-500/30', step: 4 },
+  shipped: { label: 'Sedang Dikirim Kurir', color: 'bg-ts-teal/20 text-ts-teal border-ts-teal/40', step: 5 },
+  completed: { label: 'Pesanan Selesai', color: 'bg-ts-green/15 text-ts-green border-ts-green/30', step: 6 },
+  review: { label: 'Pesanan Selesai', color: 'bg-ts-green/15 text-ts-green border-ts-green/30', step: 6 },
+};
+
+/**
+ * Pure validator for recipient profile updates
+ */
+export function validateProfileUpdate({
+  fullName = '',
+  phone = '',
+  address = '',
+  city = '',
+  postalCode = ''
+} = {}) {
+  const errors = {};
+
+  if (!fullName || !fullName.trim()) {
+    errors.fullName = 'Nama lengkap penerima wajib diisi.';
+  }
+
+  const cleanPhone = (phone || '').trim().replace(/[\s-]/g, '');
+  const phoneRegex = /^(08|\+628|628)[0-9]{8,12}$/;
+  if (!cleanPhone) {
+    errors.phone = 'Nomor WhatsApp wajib diisi.';
+  } else if (!phoneRegex.test(cleanPhone)) {
+    errors.phone = 'Format nomor WhatsApp tidak valid (Gunakan 08xx atau 628xx, 10-14 digit).';
+  }
+
+  if (!address || !address.trim()) {
+    errors.address = 'Alamat pengiriman lengkap wajib diisi.';
+  }
+
+  if (!city || !city.trim()) {
+    errors.city = 'Kota atau kabupaten wajib diisi.';
+  }
+
+  if (postalCode && postalCode.trim() && !/^[0-9]{5}$/.test(postalCode.trim())) {
+    errors.postalCode = 'Kode pos harus berupa 5 digit angka.';
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+}
+
+/**
+ * Pure order metrics summary
+ */
+export function formatAccountOrderSummary(orders = []) {
+  const list = Array.isArray(orders) ? orders : [];
+  const total = list.length;
+  const completed = list.filter(o => o?.status === 'completed' || o?.status === 'review' || o?.status === 'shipped').length;
+  const inProgress = total - completed;
+  const totalSpent = list.reduce((sum, o) => sum + (Number(o?.price || o?.total || 0)), 0);
+
+  return {
+    totalOrders: total,
+    completedOrders: completed,
+    inProgressOrders: inProgress,
+    totalSpent
+  };
+}
 
 export function AccountPage() {
   const { user, profile, role, isAdmin, isPartner, isMember, updateProfile, signOut, openAuthModal } = useAuth();
@@ -46,6 +119,7 @@ export function AccountPage() {
   const [postalCode, setPostalCode] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMsg, setProfileMsg] = useState(null);
+  const [profileErrors, setProfileErrors] = useState({});
 
   // Vouchers state
   const [vouchers, setVouchers] = useState([]);
@@ -66,23 +140,54 @@ export function AccountPage() {
     getActiveVouchers(role).then(setVouchers);
   }, [role]);
 
-  // Fetch only this user's orders
+  // Fetch orders with local storage fallback integration
   useEffect(() => {
+    let localSaved = [];
+    try {
+      const stored = localStorage.getItem('teestock_my_orders');
+      if (stored) localSaved = JSON.parse(stored);
+    } catch (_) {}
+
     if (user) {
       setLoadingOrders(true);
       getUserOrders(user.id, profile?.phone).then(res => {
-        setUserOrders(res || []);
+        const fetched = res || [];
+        const mergedMap = new Map();
+        [...fetched, ...localSaved].forEach(item => {
+          if (item && (item.id || item.order_number)) {
+            const key = item.id || item.order_number;
+            if (!mergedMap.has(key)) {
+              mergedMap.set(key, item);
+            }
+          }
+        });
+        setUserOrders(Array.from(mergedMap.values()));
         setLoadingOrders(false);
       });
     } else {
-      setUserOrders([]);
+      setUserOrders(localSaved);
     }
   }, [user, profile?.phone]);
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();
-    setSavingProfile(true);
+    setProfileErrors({});
     setProfileMsg(null);
+
+    const validation = validateProfileUpdate({
+      fullName,
+      phone,
+      address,
+      city,
+      postalCode
+    });
+
+    if (!validation.isValid) {
+      setProfileErrors(validation.errors);
+      return;
+    }
+
+    setSavingProfile(true);
 
     const { error } = await updateProfile({
       full_name: fullName.trim(),
@@ -108,6 +213,9 @@ export function AccountPage() {
     setTimeout(() => setCopiedCode(null), 2500);
   };
 
+  const cleanWhatsapp = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
+  const orderSummary = formatAccountOrderSummary(userOrders);
+
   // If visitor (not logged in), show attractive login prompt
   if (!isMember) {
     return (
@@ -130,11 +238,11 @@ export function AccountPage() {
         </div>
 
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Button size="lg" variant="glow" onClick={() => openAuthModal()}>
+          <Button size="lg" variant="glow" onClick={() => openAuthModal()} className="min-h-[44px]">
             Masuk atau Daftar Sekarang
           </Button>
           <Link to="/katalog">
-            <Button size="lg" variant="secondary">
+            <Button size="lg" variant="secondary" className="min-h-[44px]">
               Lihat Katalog Dulu
             </Button>
           </Link>
@@ -143,12 +251,10 @@ export function AccountPage() {
     );
   }
 
-  const cleanWhatsapp = sanitizePhoneNumber(storeSettings?.storeWhatsapp || '085220274968');
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
       <SEOHead
-        title="Akun Saya & Riwayat Pesanan | TeeStock"
+        title="Akun Saya &amp; Riwayat Pesanan | TeeStock"
         noindex={true}
         canonicalPath="/akun"
       />
@@ -178,7 +284,7 @@ export function AccountPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-          <Button size="sm" variant="outline" icon={LogOut} onClick={() => signOut()}>
+          <Button size="sm" variant="outline" icon={LogOut} onClick={() => signOut()} className="min-h-[44px]">
             Keluar
           </Button>
         </div>
@@ -187,8 +293,9 @@ export function AccountPage() {
       {/* ─── Navigation Tabs ─────────────────────────────────── */}
       <div className="flex items-center gap-2 border-b border-ts-border pb-1 overflow-x-auto">
         <button
+          type="button"
           onClick={() => setActiveTab('orders')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+          className={`flex items-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
             activeTab === 'orders'
               ? 'bg-ts-terracotta text-white shadow-sm'
               : 'text-ts-muted hover:text-ts-krem hover:bg-ts-surfaceHover'
@@ -199,8 +306,9 @@ export function AccountPage() {
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab('profile')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+          className={`flex items-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
             activeTab === 'profile'
               ? 'bg-ts-terracotta text-white shadow-sm'
               : 'text-ts-muted hover:text-ts-krem hover:bg-ts-surfaceHover'
@@ -211,8 +319,9 @@ export function AccountPage() {
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab('vouchers')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+          className={`flex items-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
             activeTab === 'vouchers'
               ? 'bg-ts-terracotta text-white shadow-sm'
               : 'text-ts-muted hover:text-ts-krem hover:bg-ts-surfaceHover'
@@ -223,8 +332,9 @@ export function AccountPage() {
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab('partner')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+          className={`flex items-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
             activeTab === 'partner'
               ? 'bg-ts-terracotta text-white shadow-sm'
               : 'text-ts-muted hover:text-ts-krem hover:bg-ts-surfaceHover'
@@ -237,7 +347,29 @@ export function AccountPage() {
 
       {/* ─── TAB 1: RIWAYAT PESANAN ───────────────────────────── */}
       {activeTab === 'orders' && (
-        <div className="space-y-4 animate-in fade-in duration-300">
+        <div className="space-y-6 animate-in fade-in duration-300">
+          {/* Summary Strip */}
+          {userOrders.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-4 rounded-2xl bg-ts-surface border border-ts-border">
+                <span className="text-[10px] font-mono text-ts-kremMuted block">Total Pesanan</span>
+                <span className="text-lg font-bold text-ts-krem font-mono">{orderSummary.totalOrders} order</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-ts-surface border border-ts-border">
+                <span className="text-[10px] font-mono text-ts-kremMuted block">Sedang Diproses</span>
+                <span className="text-lg font-bold text-ts-mustard font-mono">{orderSummary.inProgressOrders} pesanan</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-ts-surface border border-ts-border">
+                <span className="text-[10px] font-mono text-ts-kremMuted block">Selesai / Terkirim</span>
+                <span className="text-lg font-bold text-emerald-400 font-mono">{orderSummary.completedOrders} pesanan</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-ts-surface border border-ts-border">
+                <span className="text-[10px] font-mono text-ts-kremMuted block">Total Belanja</span>
+                <span className="text-lg font-bold text-ts-green font-mono">{formatRupiah(orderSummary.totalSpent)}</span>
+              </div>
+            </div>
+          )}
+
           {userOrders.length === 0 ? (
             <div className="p-12 text-center rounded-3xl bg-ts-surface border border-ts-border space-y-4 shadow-sm">
               <Package className="w-12 h-12 text-ts-muted mx-auto" />
@@ -248,7 +380,7 @@ export function AccountPage() {
                 </p>
               </div>
               <Link to="/katalog">
-                <Button size="md" variant="glow" icon={ShoppingBag}>
+                <Button size="md" variant="glow" icon={ShoppingBag} className="min-h-[44px]">
                   Mulai Belanja Kaos
                 </Button>
               </Link>
@@ -256,28 +388,20 @@ export function AccountPage() {
           ) : (
             <div className="space-y-4">
               {userOrders.map((order) => {
-                const statusMap = {
-                  pending: { label: 'Menunggu Konfirmasi', color: 'bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/30' },
-                  dtf: { label: 'Cetak Film DTF HD', color: 'bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/30' },
-                  press: { label: 'Heat Press 155°C', color: 'bg-ts-terracotta/20 text-ts-terracotta border-ts-terracotta/40' },
-                  pack: { label: 'QC & Studio Packing', color: 'bg-purple-500/15 text-purple-600 dark:text-purple-300 border-purple-500/30' },
-                  shipped: { label: 'Sedang Dikirim Kurir', color: 'bg-ts-teal/20 text-ts-teal border-ts-teal/40' },
-                  review: { label: 'Pesanan Selesai', color: 'bg-ts-green/15 text-ts-green border-ts-green/30' },
-                };
-                const statusInfo = statusMap[order.status] || statusMap.pending;
+                const statusInfo = ORDER_STATUS_BADGES[order.status] || ORDER_STATUS_BADGES.pending;
 
                 return (
                   <div
-                    key={order.id}
+                    key={order.id || order.order_number}
                     className="p-5 sm:p-6 rounded-3xl bg-ts-surface border border-ts-border shadow-sm space-y-4 transition-colors"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ts-border pb-3.5">
                       <div className="flex items-center gap-3">
                         <span className="font-mono text-xs font-bold text-ts-terracotta px-2.5 py-1 rounded-lg bg-ts-terracotta/10 border border-ts-terracotta/30">
-                          {order.id}
+                          {order.id || order.order_number}
                         </span>
                         <span className="text-xs text-ts-muted">
-                          {formatDate(order.date)}
+                          {formatDate(order.date || order.created_at)}
                         </span>
                       </div>
                       <span className={`text-[11px] font-bold px-3 py-1 rounded-full border ${statusInfo.color}`}>
@@ -288,30 +412,30 @@ export function AccountPage() {
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div className="space-y-1">
                         <h4 className="text-sm font-extrabold text-ts-krem">
-                          {order.productName || order.sku || 'Kaos TeeStock'}
+                          {order.productName || order.sku || 'Kaos TeeStock Apparel'}
                         </h4>
                         <p className="text-xs text-ts-kremMuted">
-                          {order.garment || 'NSA Softstyle 30s'} • Warna: {order.color || 'Hitam'} • Ukuran: {order.size || 'L'} • Qty: {order.qty || 1} pcs
+                          {order.garment || 'NSA Heavyweight 24s'} • Warna: {order.color || 'Hitam'} • Ukuran: {order.size || 'L'} • Qty: {order.qty || 1} pcs
                         </p>
                       </div>
 
                       <div className="text-right sm:text-right shrink-0">
                         <span className="text-[10px] text-ts-muted block">Total Pembayaran</span>
                         <span className="font-mono text-base font-black text-ts-green">
-                          {formatRupiah(order.price || 99000)}
+                          {formatRupiah(order.price || order.total || 99000)}
                         </span>
                       </div>
                     </div>
 
                     <div className="pt-2 flex items-center justify-between text-xs text-ts-muted">
-                      <Link to="/tracking" className="text-ts-terracotta hover:underline font-bold flex items-center gap-1">
+                      <Link to={`/tracking?order=${encodeURIComponent(order.id || order.order_number)}`} className="text-ts-terracotta hover:underline font-bold flex items-center gap-1 min-h-[44px]">
                         <span>Lacak Progres Detail &rarr;</span>
                       </Link>
                       <a
-                        href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(`Halo TeeStock! Mau tanya update pesanan saya ${order.id}`)}`}
+                        href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(`Halo TeeStock! Mau tanya update pesanan saya ${order.id || order.order_number}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-ts-muted hover:text-ts-krem flex items-center gap-1"
+                        className="text-ts-muted hover:text-ts-krem flex items-center gap-1 min-h-[44px] px-2"
                       >
                         <MessageSquare className="w-3.5 h-3.5 text-ts-green" />
                         <span>Chat Admin</span>
@@ -327,7 +451,7 @@ export function AccountPage() {
 
       {/* ─── TAB 2: ALAMAT PENGIRIMAN ─────────────────────────── */}
       {activeTab === 'profile' && (
-        <form onSubmit={handleSaveProfile} className="max-w-2xl p-6 sm:p-8 rounded-3xl bg-ts-surface border border-ts-border shadow-sm space-y-6 animate-in fade-in duration-300 transition-colors">
+        <form noValidate onSubmit={handleSaveProfile} className="max-w-2xl p-6 sm:p-8 rounded-3xl bg-ts-surface border border-ts-border shadow-sm space-y-6 animate-in fade-in duration-300 transition-colors">
           <div className="border-b border-ts-border pb-4">
             <h3 className="text-base font-bold text-ts-krem">Informasi Penerima &amp; Alamat Pengiriman</h3>
             <p className="text-xs text-ts-kremMuted mt-0.5">
@@ -348,28 +472,38 @@ export function AccountPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
-              label="Nama Lengkap Penerima"
+              label="Nama Lengkap Penerima *"
               placeholder="Contoh: Budi Santoso"
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
+              error={profileErrors.fullName}
+              onChange={(e) => {
+                setFullName(e.target.value);
+                if (profileErrors.fullName) setProfileErrors(prev => ({ ...prev, fullName: null }));
+              }}
             />
             <Input
-              label="Nomor WhatsApp (Aktif)"
+              label="Nomor WhatsApp (Aktif) *"
               placeholder="0812-xxxx-xxxx"
+              type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
+              error={profileErrors.phone}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                if (profileErrors.phone) setProfileErrors(prev => ({ ...prev, phone: null }));
+              }}
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Input
-              label="Kota / Kabupaten"
+              label="Kota / Kabupaten *"
               placeholder="Contoh: Bandung"
               value={city}
-              onChange={(e) => setCity(e.target.value)}
-              required
+              error={profileErrors.city}
+              onChange={(e) => {
+                setCity(e.target.value);
+                if (profileErrors.city) setProfileErrors(prev => ({ ...prev, city: null }));
+              }}
             />
             <Input
               label="Provinsi"
@@ -381,24 +515,37 @@ export function AccountPage() {
               label="Kode Pos"
               placeholder="40123"
               value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)}
+              error={profileErrors.postalCode}
+              onChange={(e) => {
+                setPostalCode(e.target.value);
+                if (profileErrors.postalCode) setProfileErrors(prev => ({ ...prev, postalCode: null }));
+              }}
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-ts-krem mb-1.5">Alamat Lengkap</label>
+          <div className="space-y-1.5">
+            <label className="block text-xs font-bold text-ts-krem">Alamat Lengkap Pengiriman *</label>
             <textarea
               placeholder="Jalan, No. Rumah, RT/RW, Patokan..."
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              required
+              onChange={(e) => {
+                setAddress(e.target.value);
+                if (profileErrors.address) setProfileErrors(prev => ({ ...prev, address: null }));
+              }}
               rows={3}
-              className="w-full bg-ts-surfaceHover/50 border border-ts-border rounded-2xl p-3 text-xs text-ts-krem focus:outline-none focus:border-ts-terracotta"
+              className={`w-full bg-ts-surfaceHover/50 border rounded-2xl p-3 text-xs text-ts-krem focus:outline-none focus:border-ts-terracotta ${
+                profileErrors.address ? 'border-red-500' : 'border-ts-border'
+              }`}
             />
+            {profileErrors.address && (
+              <span className="text-[11px] text-red-400 font-mono block">
+                {profileErrors.address}
+              </span>
+            )}
           </div>
 
           <div className="pt-2 flex justify-end">
-            <Button type="submit" size="md" variant="glow" icon={Save} disabled={savingProfile}>
+            <Button type="submit" size="md" variant="glow" icon={Save} disabled={savingProfile} className="min-h-[44px]">
               {savingProfile ? 'Menyimpan...' : 'Simpan Perubahan'}
             </Button>
           </div>
@@ -442,8 +589,9 @@ export function AccountPage() {
                     {v.code}
                   </span>
                   <button
+                    type="button"
                     onClick={() => handleCopyVoucher(v.code)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white text-xs font-bold transition-all cursor-pointer"
+                    className="min-h-[44px] min-w-[110px] inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-ts-terracotta hover:bg-ts-terracotta/90 text-white text-xs font-bold transition-all cursor-pointer"
                   >
                     {copiedCode === v.code ? (
                       <>
@@ -481,16 +629,16 @@ export function AccountPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="p-4 rounded-2xl bg-ts-surfaceHover/50 border border-ts-border space-y-2">
-              <span className="text-xs font-bold text-ts-krem block">Harga Khusus Mitra</span>
+              <span className="text-xs font-bold text-ts-krem block">Harga Modal Grosir VIP</span>
               <p className="text-xs text-ts-kremMuted leading-relaxed">
-                Mendapatkan margin Rp 20.000 - Rp 30.000 per kaos dengan harga modal dropship Rp 74.000 - Rp 87.000 per pcs.
+                Mendapatkan margin Rp 24.000 - Rp 50.000 per kaos dengan modal mitra mulai Rp 65.000 - Rp 75.000 per pcs.
               </p>
             </div>
 
             <div className="p-4 rounded-2xl bg-ts-surfaceHover/50 border border-ts-border space-y-2">
               <span className="text-xs font-bold text-ts-krem block">Pengiriman White-Label</span>
               <p className="text-xs text-ts-kremMuted leading-relaxed">
-                Nama dan nomor pengirim di label paket menggunakan nama toko/brand kamu sendiri. Bebas atribut TeeStock.
+                Nama dan nomor pengirim di label paket menggunakan nama tokomu sendiri. Bebas dari atribut TeeStock.
               </p>
             </div>
           </div>
@@ -499,18 +647,25 @@ export function AccountPage() {
             <div>
               <h4 className="text-sm font-bold text-ts-krem">Ajukan Upgrade ke Akun Mitra Dropship</h4>
               <p className="text-xs text-ts-kremMuted mt-0.5">
-                Proses aktivasi manual dan kurasi selektif untuk memastikan kemitraan berkualitas.
+                Proses kurasi cepat 1x24 jam untuk pengaktifan tier harga grosir.
               </p>
             </div>
-            <a
-              href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(`Halo TeeStock! Saya ${profile?.full_name || user?.email} ingin mengajukan upgrade akun ke Mitra Dropshipper/Reseller TeeStock.`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 px-5 py-2.5 rounded-xl bg-ts-mustard hover:bg-ts-mustard/90 text-zinc-950 font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
-            >
-              <Users className="w-4 h-4" />
-              <span>Ajukan via WhatsApp</span>
-            </a>
+            <div className="flex flex-wrap gap-2">
+              <Link to="/partner" className="min-h-[44px]">
+                <Button variant="secondary" size="sm" className="min-h-[44px]">
+                  Pelajari Simulator
+                </Button>
+              </Link>
+              <a
+                href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(`Halo TeeStock! Saya ${profile?.full_name || user?.email} ingin mengajukan upgrade akun ke Mitra Dropshipper/Reseller TeeStock.`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="min-h-[44px] shrink-0 px-5 py-2.5 rounded-xl bg-ts-mustard hover:bg-ts-mustard/90 text-zinc-950 font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+              >
+                <Users className="w-4 h-4" />
+                <span>Ajukan via WhatsApp</span>
+              </a>
+            </div>
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   ShoppingBag,
@@ -19,14 +19,18 @@ import { NewsletterCapture } from '../../components/store/NewsletterCapture';
 import { SEOHead } from '../../components/common/SEOHead';
 import { TeeStockLogoIcon } from '../../components/common/TeeStockLogo';
 
-// ─── Component ────────────────────────────────────────────────────
-export function BioLinkPage() {
-  const { storeSettings } = useStore();
-  const shopeeUrl = storeSettings?.shopeeUrl || 'https://shopee.co.id/teestock.id';
-  const rawPhone = storeSettings?.storeWhatsapp || '085220274968';
-  const cleanPhone = sanitizePhoneNumber(rawPhone);
+export const ICON_MAP = {
+  Flame,
+  LayoutGrid,
+  ShoppingBag,
+  Palette,
+  Users,
+  Sparkles,
+  ExternalLink
+};
 
-  const bioLinks = [
+export function getBioLinks({ cleanPhone = '6285220274968', shopeeUrl = 'https://shopee.co.id/teestock.id' } = {}) {
+  return [
     {
       id: 'drop',
       label: 'DROP #01: RAW IDENTITY',
@@ -34,7 +38,7 @@ export function BioLinkPage() {
       href: '/katalog?utm_source=biolink&utm_medium=social&utm_campaign=drop01',
       internal: true,
       accent: true,
-      icon: Flame,
+      iconName: 'Flame',
     },
     {
       id: 'katalog',
@@ -42,7 +46,7 @@ export function BioLinkPage() {
       subtitle: 'Official Website Store // The Direct Studio Privilege',
       href: '/katalog?utm_source=biolink&utm_medium=social&utm_campaign=katalog',
       internal: true,
-      icon: LayoutGrid,
+      iconName: 'LayoutGrid',
     },
     {
       id: 'blanks',
@@ -50,7 +54,7 @@ export function BioLinkPage() {
       subtitle: 'Heavyweight 24s & Softstyle 30s tubular mulai Rp 34K',
       href: '/polos?utm_source=biolink&utm_medium=social&utm_campaign=blanks',
       internal: true,
-      icon: ShoppingBag,
+      iconName: 'ShoppingBag',
     },
     {
       id: 'custom',
@@ -58,15 +62,15 @@ export function BioLinkPage() {
       subtitle: 'Sablon satuan in-house 155°C tanpa minimum order',
       href: '/custom-order?utm_source=biolink&utm_medium=social&utm_campaign=studio',
       internal: true,
-      icon: Palette,
+      iconName: 'Palette',
     },
     {
-      id: 'reseller',
+      id: 'partner',
       label: 'Kemitraan Dropship White-Label',
       subtitle: 'Supply brand tanpa modal stok, margin 37-48%',
-      href: `https://wa.me/${cleanPhone}?text=${encodeURIComponent('Halo TeeStock, saya tertarik kemitraan dropship/reseller brand. Boleh info lebih lanjut?')}&utm_source=biolink&utm_medium=social&utm_campaign=reseller`,
-      internal: false,
-      icon: Users,
+      href: '/partner?utm_source=biolink&utm_medium=social&utm_campaign=partner',
+      internal: true,
+      iconName: 'Users',
     },
     {
       id: 'creator',
@@ -74,7 +78,7 @@ export function BioLinkPage() {
       subtitle: 'Upload karya & terima royalti Rp 25.000 / kaos',
       href: '/creator?utm_source=biolink&utm_medium=social&utm_campaign=creator',
       internal: true,
-      icon: Sparkles,
+      iconName: 'Sparkles',
     },
     {
       id: 'shopee',
@@ -82,15 +86,24 @@ export function BioLinkPage() {
       subtitle: 'Opsi transaksi via marketplace',
       href: `${shopeeUrl}?utm_source=biolink&utm_medium=social&utm_campaign=shopee`,
       internal: false,
-      icon: ExternalLink,
+      iconName: 'ExternalLink',
     },
   ];
+}
+
+export function BioLinkPage() {
+  const { storeSettings } = useStore();
+  const shopeeUrl = storeSettings?.shopeeUrl || 'https://shopee.co.id/teestock.id';
+  const rawPhone = storeSettings?.storeWhatsapp || '085220274968';
+  const cleanPhone = sanitizePhoneNumber(rawPhone);
+
+  const bioLinks = getBioLinks({ cleanPhone, shopeeUrl });
 
   const socialLinks = [
     {
       id: 'whatsapp',
       label: 'WhatsApp',
-      href: `https://wa.me/${cleanPhone}?text=Halo%20TeeStock!`,
+      href: `https://wa.me/${cleanPhone}?text=${encodeURIComponent('Halo TeeStock! Mau tanya info seputar pesanan kaos.')}`,
       icon: MessageCircle,
       color: 'hover:bg-emerald-500/20 hover:border-emerald-500/40 hover:text-emerald-400',
     },
@@ -110,12 +123,10 @@ export function BioLinkPage() {
     },
   ];
 
-  const visibleLinks = bioLinks.filter(link => !link.hidden);
-
   return (
     <div className="min-h-screen bg-ts-hitam text-ts-krem flex items-start justify-center px-4 py-8 sm:py-12">
       <SEOHead
-        title="TeeStock Apparel | Link Resmi Bio Instagram & TikTok"
+        title="TeeStock Apparel | Link Resmi Bio Instagram &amp; TikTok"
         description="Wear Your Identity. Koleksi eksklusif Drop #01, Official Website Store, Jasa Kaos Custom, dan Peluang Kemitraan Dropship TeeStock."
         canonicalPath="/bio"
       />
@@ -154,12 +165,12 @@ export function BioLinkPage() {
 
         {/* ─── Main Links ─────────────────────────────────────── */}
         <nav className="space-y-3" aria-label="Bio links">
-          {visibleLinks.map((link, index) => {
-            const Icon = link.icon;
+          {bioLinks.map((link, index) => {
+            const Icon = ICON_MAP[link.iconName] || ExternalLink;
             const isExternal = !link.internal;
 
             const baseClasses = `
-              group relative w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl
+              group relative w-full min-h-[52px] flex items-center gap-3.5 px-4 py-3.5 rounded-2xl
               border shadow-sm
               transition-all duration-200 ease-out
               hover:-translate-y-0.5 active:translate-y-0
@@ -197,7 +208,6 @@ export function BioLinkPage() {
               </>
             );
 
-            // Internal links use anchor with relative path, external links open new tab
             if (link.internal) {
               return (
                 <Link
@@ -237,7 +247,7 @@ export function BioLinkPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`
-                  flex items-center gap-2 px-4 py-2.5 rounded-xl
+                  flex items-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl
                   bg-ts-surface border border-ts-border
                   text-ts-kremMuted text-xs font-medium
                   transition-all duration-300 shadow-sm
@@ -269,7 +279,7 @@ export function BioLinkPage() {
             <span className="w-8 h-px bg-ts-border" />
           </div>
           <p className="text-[10px] text-ts-muted/60">
-            100% Original NSA · DTF HD Premium · Produksi Mandiri
+            100% Original NSA · DTF HD Premium · Produksi Mandiri Depok
           </p>
         </footer>
       </div>
