@@ -153,7 +153,7 @@ export function HomeHero({
                 <span className="text-[10px] font-mono text-ts-muted">Pilih Warna:</span>
               </div>
               
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap" role="group" aria-label="Pilihan warna spotlight">
+              <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap" role="group" aria-label="Pilihan warna spotlight">
                 {heroColors.slice(0, 6).map((colorName) => {
                   const hex = getColorHex(colorName);
                   const isSelected = heroSelectedColor === colorName;
@@ -165,26 +165,39 @@ export function HomeHero({
                       aria-label={`Pilih warna ${colorName}`}
                       aria-pressed={isSelected}
                       onClick={() => setHeroSelectedColor(colorName)}
-                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full cursor-pointer flex items-center justify-center transition-all duration-200 ${
-                        isSelected
-                          ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-surface scale-105'
-                          : 'ring-1 ring-ts-border hover:ring-ts-borderHover opacity-80 hover:opacity-100'
-                      }`}
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer p-1"
                     >
                       <span
-                        className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full inline-block shadow-sm"
-                        style={{ backgroundColor: hex }}
-                      />
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                          isSelected
+                            ? 'ring-2 ring-ts-terracotta ring-offset-2 ring-offset-ts-surface scale-105'
+                            : 'ring-1 ring-ts-border hover:ring-ts-borderHover opacity-80 hover:opacity-100'
+                        }`}
+                      >
+                        <span
+                          className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full inline-block shadow-sm"
+                          style={{ backgroundColor: hex }}
+                        />
+                      </span>
                     </button>
                   );
                 })}
               </div>
             </div>
 
+            {/* Quick Studio Ready Status & Fit Note */}
+            <div className="flex items-center justify-between text-[10px] font-mono text-ts-kremMuted px-1">
+              <span className="inline-flex items-center gap-1 text-emerald-500 font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Ready Stock Depok • H+1 Kirim</span>
+              </span>
+              <span className="text-ts-muted">Tubular Fit 24s</span>
+            </div>
+
             {/* Link to detail */}
             <Link
               to={`/produk/${featuredProduct.sku}?color=${encodeURIComponent(heroSelectedColor)}`}
-              className="w-full py-2.5 px-3 rounded-xl bg-ts-surfaceHover text-ts-krem font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all border border-ts-border hover:border-white/20"
+              className="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-ts-surfaceHover text-ts-krem font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all border border-ts-border hover:border-white/20 active:scale-98"
             >
               <span>Buka Detail &amp; Order Kaos Ini</span>
               <ArrowRight className="w-3.5 h-3.5 text-ts-krem" />

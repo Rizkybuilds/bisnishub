@@ -17,8 +17,10 @@ import { NewsletterCapture } from '../../components/store/NewsletterCapture';
 
 // Modular Home Sub-Components
 import { HomeHero } from '../../components/store/home/HomeHero';
+import { HomeTrustRibbon } from '../../components/store/home/HomeTrustRibbon';
 import { HomeThreePillars } from '../../components/store/home/HomeThreePillars';
 import { HomeCatalogShowcase } from '../../components/store/home/HomeCatalogShowcase';
+import { HomeFabricComparison } from '../../components/store/home/HomeFabricComparison';
 import { HomeCreatorTeaser } from '../../components/store/home/HomeCreatorTeaser';
 import { HomeStudioManifesto } from '../../components/store/home/HomeStudioManifesto';
 import { HomeFittingReviews } from '../../components/store/home/HomeFittingReviews';
@@ -123,17 +125,22 @@ export function HomePage() {
         heroImage={heroImage}
       />
 
-      {/* 2. EDITORIAL STUDIO TICKER */}
+      {/* 2. CUSTOMER TRUST RIBBON (4 Value Cards) */}
+      <ScrollRevealSection>
+        <HomeTrustRibbon />
+      </ScrollRevealSection>
+
+      {/* 3. EDITORIAL STUDIO TICKER */}
       <ScrollRevealSection>
         <MarqueeTicker items={tickerItems} speed={30} />
       </ScrollRevealSection>
 
-      {/* 3. THE THREE HOUSES BENTO GRID (Originals, Blanks, Atelier) */}
+      {/* 4. THE THREE HOUSES BENTO GRID (Originals, Blanks, Atelier) */}
       <ScrollRevealSection>
         <HomeThreePillars />
       </ScrollRevealSection>
 
-      {/* 4. CURATED DROP CATALOG SHOWCASE WITH CATEGORY TABS */}
+      {/* 5. CURATED DROP CATALOG SHOWCASE WITH CATEGORY TABS */}
       <ScrollRevealSection>
         <HomeCatalogShowcase
           catalog={catalog}
@@ -143,7 +150,12 @@ export function HomePage() {
         />
       </ScrollRevealSection>
 
-      {/* 5. CREATOR & ARTIST FLYWHEEL TEASER */}
+      {/* 6. NSA FABRIC GUIDE (24s Heavyweight vs 30s Softstyle) */}
+      <ScrollRevealSection>
+        <HomeFabricComparison />
+      </ScrollRevealSection>
+
+      {/* 7. CREATOR & ARTIST FLYWHEEL TEASER */}
       <ScrollRevealSection>
         <HomeCreatorTeaser />
       </ScrollRevealSection>
