@@ -22,6 +22,22 @@ dist/
 
 # Vercel
 .vercel
+**/.vercel/
+
+# Test & coverage artifacts
+playwright-report/
+**/playwright-report/
+test-results/
+**/test-results/
+
+# 21st local drafts
+.21st/
+**/.21st/
+
+# Temporary / untitled artifacts
+Untitled.*
+*.tmp
+*.bak
 
 # IDE & OS
 .vscode/
@@ -36,3 +52,4 @@ Thumbs.db
 .obsidian/workspace-mobile.json
 .obsidian/cache/
 .obsidian/backups/
+

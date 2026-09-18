@@ -18,7 +18,7 @@ tags:
 > [!abstract] Ringkasan Eksekutif
 > Dokumen ini mencatat keputusan resmi dan konsensus final antara **Rizky (Executive Sole Founder & Decision Maker)** bersama **Founding C-Suite Cabinet (Co-Founders Team)** per **17 September 2026**.
 > Seluruh sistem kalkulasi harga otomatis di [[bisnis/teestock/keuangan/skema-pricing-dan-pencatatan-keuangan|Master Skema Pricing]], aplikasi admin `bisnishub-web`, dan etalase konsumen `teestock-web` tunduk pada piagam kesepakatan ini.
-> Mengacu pada referensi data vendor resmi di [[bisnis/teestock/riset/Katalog Harga Vendor NSA|Katalog Harga Vendor NSA]].
+> Mengacu pada referensi data vendor resmi di [[bisnis/teestock/riset/katalog-harga-vendor-nsa|Katalog Harga Vendor NSA]].
 
 ---
 

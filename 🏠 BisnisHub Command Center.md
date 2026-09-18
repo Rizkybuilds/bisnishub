@@ -1,7 +1,7 @@
 ---
 title: BisnisHub Command Center
 type: dashboard
-updated: "2026-09-14"
+updated: "2026-09-18"
 tags:
   - command-center
   - dashboard
@@ -23,7 +23,7 @@ tags:
 
 | 📅 **Jurnal & Review** | 🤖 **AI & Web OS** | 📁 **Templates Master** | ⚙️ **System & Storage** |
 |---|---|---|---|
-| [[catatan/harian/2026-09-14|Catatan Harian]] | **BisnisHub Web OS** (`npm run dev:bisnishub`) | [[templates/Template - Catatan Harian|T-Harian]] | [[catatan/panduan-external-ssd-1tb|External SSD 1TB (D:\)]] |
+| [[catatan/harian/2026-09-18|Catatan Harian]] | **BisnisHub Web OS** (`npm run dev:bisnishub`) | [[templates/Template - Catatan Harian|T-Harian]] | [[catatan/panduan-external-ssd-1tb|External SSD 1TB (D:\)]] |
 | [[catatan/weekly-review/README|Weekly Review]] | `catatan/sesi/` (Log C-Suite) | [[templates/Template - Weekly Business Review|T-Weekly Review]] | [[catatan/piagam-co-founders-bisnishub|Piagam Co-Founders]] |
 | [[catatan/ide/README|Ide & Scratchpad]] | `python main.py` (CLI Hub) | [[templates/Template - Sesi Konsultasi C-Suite|T-Konsultasi]] | [[README|README Workspace]] |
 | | [[catatan/panduan-antigravity-obsidian|Panduan AGY + Obsidian]] | [[templates/Template - SOP Operasional|T-SOP]] | [[GEMINI|AI Rules & Engine]] |
@@ -43,17 +43,21 @@ tags:
   - [[bisnis/teestock/brand/rebranding-next-level-teestock|Strategi Rebranding Next Level]]
 - 💰 **Keuangan & Pricing**:
   - [[bisnis/teestock/keuangan/skema-pricing-dan-pencatatan-keuangan|Skema Pricing & HPP]]
+  - [[bisnis/teestock/keuangan/kesepakatan-skema-harga-teestock|Piagam Kesepakatan Skema Harga]]
+  - [[bisnis/teestock/keuangan/audit-finansial-komprehensif-cfo|Audit Finansial Komprehensif CFO]]
   - [[bisnis/teestock/keuangan/analisis-fee-payment-gateway-dan-margin|Analisis Fee Payment Gateway & Margin]]
 - ⚙️ **Operasional & Alur Kerja**:
+  - [[bisnis/teestock/operasional/sop-penyimpanan-film-dtf-dan-posisi-press|SOP Penyimpanan Film DTF & Heat Press]]
   - [[bisnis/teestock/operasional/rencana-operasional-teestock|Rencana Operasional TeeStock]]
   - [[bisnis/teestock/operasional/roadmap-pengembangan-teestock|Roadmap Pengembangan]]
   - [[bisnis/teestock/operasional/arsitektur-otomasi-website|Arsitektur Otomasi Website]]
   - [[bisnis/teestock/operasional/struktur-folder-teestock|Struktur Folder & Standarisasi]]
 - 🔍 **Riset & Pasar**:
+  - [[bisnis/teestock/riset/katalog-harga-vendor-nsa|Katalog Harga Vendor NSA]]
+  - [[bisnis/teestock/riset/katalog-lengkap-cititex|Katalog Blanks NSA Cititex]]
   - [[bisnis/teestock/riset/analisis-bisnis-teestock|Analisis Bisnis TeeStock]]
   - [[bisnis/teestock/riset/analisis-website-teestock|Analisis & Benchmarking Website]]
   - [[bisnis/teestock/riset/daftar-niche-teestock|Daftar Niche Potensial]]
-  - [[bisnis/teestock/riset/katalog-lengkap-cititex|Katalog Blanks NSA Cititex]]
 
 ---
 
@@ -61,8 +65,12 @@ tags:
 > [!warning] **Status: 🟡 Supporting Arm / Ideation**
 > Bertindak sebagai sayap pendukung produksi cetak kustom dan penyedia kemasan unboxing premium untuk pesanan TeeStock.
 
+- 💰 **Keuangan & Sistem**:
+  - [[bisnis/multigraph/keuangan/sistem-keuangan-multiunit-cfo|Sistem Keuangan Multi-Unit CFO]]
 - 📦 **Operasional & Kemasan**:
   - [[bisnis/multigraph/operasional/katalog-kemasan-teestock|Katalog Kemasan Unboxing TeeStock (Polymailer, Box, Hangtag, Sticker)]]
+- 🔍 **Riset & Arsitektur**:
+  - [[bisnis/multigraph/riset/arsitektur-ekosistem-multigraph|Arsitektur Ekosistem MultiGraph]]
 - 📄 **Dokumentasi & Roadmap**:
   - [[bisnis/multigraph/README|Dokumentasi Utama MultiGraph]]
 

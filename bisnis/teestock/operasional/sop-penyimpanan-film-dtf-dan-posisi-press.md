@@ -20,7 +20,7 @@ tags:
 
 ## 1. Alur Produksi End-to-End Studio (7 Langkah)
 
-Alur kerja harian founder dari pesanan masuk di [[apps/bisnishub-web/src/pages/admin/KanbanPage|BisnisHub OS]] hingga penyerahan kurir:
+Alur kerja harian founder dari pesanan masuk di [[apps/bisnishub-web/README|BisnisHub OS]] hingga penyerahan kurir:
 
 ```mermaid
 flowchart TD

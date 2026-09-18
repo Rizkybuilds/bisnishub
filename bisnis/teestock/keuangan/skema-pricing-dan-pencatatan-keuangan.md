@@ -33,7 +33,7 @@ Sebagai solopreneur yang mengelola 3 bisnis (TeeStock, MultiGraph, Titik Buta), 
 
 > [!important] Dokumen Kesepakatan Final Founder (17 September 2026)
 > Seluruh matriks harga baku, tarif sablon DTF (A6 hingga A2), formula 4-komponen kaos katalog (Rp 99.000), dan aturan diskon reseller telah disahkan secara resmi pada:  
-> 📜 **[[bisnis/teestock/keuangan/kesepakatan-skema-harga-teestock|Piagam Kesepakatan Skema Harga & Margin Resmi TeeStock]]** yang mengacu pada data [[bisnis/teestock/riset/Katalog Harga Vendor NSA|Katalog Harga Vendor NSA]].
+> 📜 **[[bisnis/teestock/keuangan/kesepakatan-skema-harga-teestock|Piagam Kesepakatan Skema Harga & Margin Resmi TeeStock]]** yang mengacu pada data [[bisnis/teestock/riset/katalog-harga-vendor-nsa|Katalog Harga Vendor NSA]].
 
 ---
 
