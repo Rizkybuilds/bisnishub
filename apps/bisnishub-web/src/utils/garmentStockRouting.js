@@ -165,7 +165,7 @@ export function getFulfillmentSLA(garmentNameOrKey = '', color = '', size = '', 
 export function aggregateVendorPickupList(orders = []) {
   // Hanya ambil pesanan yang masih dalam proses produksi (belum pack/shipped)
   const activeOrders = orders.filter(o => 
-    o.status === 'pending' || o.status === 'dtf' || o.status === 'press'
+    o.status === 'pending' || o.status === 'pending_payment' || o.status === 'dtf' || o.status === 'press'
   );
 
   const pickupMap = new Map();

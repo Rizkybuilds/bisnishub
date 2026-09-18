@@ -69,10 +69,10 @@ export function KanbanPage() {
 
       // 3. Batch Preset Filter
       if (batchPreset === 'unpaid_followup') {
-        if (order.status !== 'pending') return false;
+        if (order.status !== 'pending' && order.status !== 'pending_payment') return false;
       } else if (batchPreset === 'dtf_queue') {
         // Priority DTF queue (needs printing or pending)
-        if (order.status !== 'pending' && order.status !== 'dtf') return false;
+        if (order.status !== 'pending' && order.status !== 'pending_payment' && order.status !== 'dtf') return false;
       } else if (batchPreset === 'dark_batch') {
         const color = (order.color || '').toLowerCase();
         const isDark = color.includes('hitam') || color.includes('black') || color.includes('navy') || color.includes('charcoal');
@@ -89,16 +89,16 @@ export function KanbanPage() {
 
   // Executive KPI ribbon calculations
   const kpiStats = useMemo(() => {
-    // 1. WIP Active (pending + dtf + press + pack)
-    const wipOrders = orders.filter(o => ['pending', 'dtf', 'press', 'pack'].includes(o.status));
+    // 1. WIP Active (pending + pending_payment + dtf + press + pack)
+    const wipOrders = orders.filter(o => ['pending', 'pending_payment', 'dtf', 'press', 'pack'].includes(o.status));
     const wipCount = wipOrders.length;
-    const wipTotalVal = wipOrders.reduce((sum, o) => sum + (o.totalPrice || o.total || 0), 0);
+    const wipTotalVal = wipOrders.reduce((sum, o) => sum + (o.totalPrice || o.total || o.price || o.total_amount || 0), 0);
     const wipPcs = wipOrders.reduce((sum, o) => sum + (o.qty || 1), 0);
 
     // 2. Pending QRIS / Bayar
-    const pendingOrders = orders.filter(o => o.status === 'pending');
+    const pendingOrders = orders.filter(o => o.status === 'pending' || o.status === 'pending_payment');
     const pendingCount = pendingOrders.length;
-    const pendingVal = pendingOrders.reduce((sum, o) => sum + (o.totalPrice || o.total || 0), 0);
+    const pendingVal = pendingOrders.reduce((sum, o) => sum + (o.totalPrice || o.total || o.price || o.total_amount || 0), 0);
 
     // 3. In Production Studio (dtf + press)
     const studioOrders = orders.filter(o => ['dtf', 'press'].includes(o.status));
@@ -404,7 +404,12 @@ export function KanbanPage() {
       {/* Kanban Board Columns Container */}
       <div className="p-6 lg:p-8 overflow-x-auto flex-1 flex gap-5 items-start">
         {columns.map((col, idx) => {
-          const colOrders = filteredOrders.filter(o => o.status === col.id);
+          const colOrders = filteredOrders.filter(o => {
+            if (col.id === 'pending') {
+              return o.status === 'pending' || o.status === 'pending_payment';
+            }
+            return o.status === col.id;
+          });
           return (
             <KanbanColumn
               key={col.id}

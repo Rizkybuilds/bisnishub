@@ -59,9 +59,9 @@ export function GangSheetPage() {
   const [hangtagQty, setHangtagQty] = useState(100);
 
   // Filter orders that need DTF printing:
-  // (Either in 'dtf' status, or in 'pending' where studio film is NOT yet ready, excluding plain blanks)
+  // (Either in 'dtf' status, or in 'pending'/'pending_payment' where studio film is NOT yet ready, excluding plain blanks)
   const dtfOrders = orders.filter(o => 
-    (o.status === 'dtf' || (o.status === 'pending' && !getDtfFilmStatus(o.sku)?.isReady)) &&
+    (o.status === 'dtf' || ((o.status === 'pending' || o.status === 'pending_payment') && !getDtfFilmStatus(o.sku)?.isReady)) &&
     !o.sku?.startsWith("TS-BLK") &&
     o.garment !== "blank"
   );

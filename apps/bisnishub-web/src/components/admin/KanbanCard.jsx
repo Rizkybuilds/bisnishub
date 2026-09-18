@@ -55,7 +55,7 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
   const netProfit = (order.price || 0) - platformFee - estimatedHpp;
 
   // WhatsApp template triggers
-  const isPending = order.status === 'pending';
+  const isPending = order.status === 'pending' || order.status === 'pending_payment';
   const waMessage = isPending
     ? generateUnpaidFollowUpWhatsAppText(order)
     : generateCustomerWhatsAppText(order);
@@ -95,6 +95,7 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
   // Contextual forward button label
   const forwardLabels = {
     pending: 'Verifikasi Lunas',
+    pending_payment: 'Verifikasi Lunas',
     dtf: 'Siap Press',
     press: 'Lolos QC & Pack',
     pack: 'Serahkan Kurir'
@@ -109,6 +110,15 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
             <span className="font-mono text-xs font-bold text-white bg-white/[0.04] px-2 py-0.5 rounded border border-white/10">
               {order.id}
             </span>
+            {order.status === 'pending_payment' && (
+              <span 
+                className="font-mono text-[9px] font-bold text-amber-300 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30 flex items-center gap-1"
+                title="Pesanan baru: Menunggu verifikasi pembayaran QRIS / transfer"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                Menunggu Verifikasi
+              </span>
+            )}
             {(order.unique_code || order.uniqueCode) && (
               <span 
                 className="font-mono text-[10px] font-extrabold text-amber-400 bg-amber-500/20 px-1.5 py-0.5 rounded border border-amber-500/30"
@@ -326,7 +336,7 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
         )}
 
         {/* QRIS Verification Notice for Pending Orders */}
-        {order.status === 'pending' && (order.unique_code || order.uniqueCode) && (
+        {(order.status === 'pending' || order.status === 'pending_payment') && (order.unique_code || order.uniqueCode) && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-2.5 text-[11px] space-y-1">
             <div className="flex items-center justify-between font-bold text-amber-300">
               <span className="flex items-center gap-1">
@@ -387,12 +397,12 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
                 type="button"
                 onClick={() => onMove(order.id, 1)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 shadow-md transition-all cursor-pointer min-h-[32px] ${
-                  order.status === 'pending'
+                  (order.status === 'pending' || order.status === 'pending_payment')
                     ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black shadow-emerald-500/20'
                     : 'bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-black shadow-amber-500/20'
                 }`}
                 title={
-                  order.status === 'pending'
+                  (order.status === 'pending' || order.status === 'pending_payment')
                     ? `Verifikasi mutasi QRIS (+${order.unique_code || order.uniqueCode || 0}) & mulai produksi`
                     : 'Lanjutkan status produksi'
                 }

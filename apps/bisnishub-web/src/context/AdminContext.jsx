@@ -93,15 +93,18 @@ export function AdminProvider({ children }) {
     const target = orders.find(o => o.id === orderId);
     if (!target) return;
 
-    const currIdx = statuses.indexOf(target.status);
+    // Normalisasi index: 'pending_payment' diposisikan di index 0 ("pending")
+    const normalizedStatus = (target.status === 'pending_payment') ? 'pending' : target.status;
+    const currIdx = statuses.indexOf(normalizedStatus);
     const nextIdx = currIdx + dir;
     if (nextIdx < 0 || nextIdx >= statuses.length) return;
 
     const oldStatus = target.status;
     const nextStatus = statuses[nextIdx];
 
-    // Deduct stock and sync cash if order advances from pending -> production (dtf or press)
-    if (oldStatus === "pending" && (nextStatus === "dtf" || nextStatus === "press")) {
+    // Deduct stock and sync cash if order advances from pending/pending_payment -> production (dtf or press)
+    const isAdvancingFromPending = (oldStatus === "pending" || oldStatus === "pending_payment");
+    if (isAdvancingFromPending && (nextStatus === "dtf" || nextStatus === "press")) {
       // 1. Deduct inventory (with idempotency check to prevent double deduction)
       if (!target.inventoryDeducted) {
         let updatedInv = { ...inventory };

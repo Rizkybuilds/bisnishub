@@ -76,6 +76,8 @@ function normalizeOrderRecord(o) {
     user_id: o.user_id || null,
     notes: o.notes || '',
     productName,
+    sku: primaryItem ? primaryItem.sku : (o.sku || 'ITEM'),
+    product_sku: primaryItem ? primaryItem.sku : (o.sku || 'ITEM'),
     garment,
     color,
     size,

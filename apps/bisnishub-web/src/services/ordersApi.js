@@ -76,6 +76,8 @@ function normalizeOrderRecord(o) {
     user_id: o.user_id || null,
     notes: o.notes || '',
     productName,
+    sku: primaryItem ? primaryItem.sku : (o.sku || 'ITEM'),
+    product_sku: primaryItem ? primaryItem.sku : (o.sku || 'ITEM'),
     garment,
     color,
     size,
@@ -329,6 +331,10 @@ export async function saveOrder(order) {
   }
 }
 
+function isUuidString(val) {
+  return typeof val === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+}
+
 /**
  * 🔒 ADMIN ONLY: Perbarui status Kanban pesanan
  */
@@ -339,10 +345,10 @@ export async function updateOrderStatus(orderId, newStatus) {
 
   if (supabase) {
     try {
-      await supabase
-        .from('ts_orders')
-        .update({ status: newStatus })
-        .eq('order_number', orderId);
+      const q = isUuidString(orderId)
+        ? supabase.from('ts_orders').update({ status: newStatus }).or(`id.eq.${orderId},order_number.eq.${orderId}`)
+        : supabase.from('ts_orders').update({ status: newStatus }).eq('order_number', orderId);
+      await q;
     } catch (err) {
       console.warn("Could not update order status in Supabase:", err);
     }
@@ -373,13 +379,10 @@ export async function updateOrderTracking(orderId, trackingNo, courier = null) {
 
   if (supabase) {
     try {
-      await supabase
-        .from('ts_orders')
-        .update({
-          tracking_number: cleanTracking,
-          courier: courier || undefined
-        })
-        .eq('order_number', orderId);
+      const q = isUuidString(orderId)
+        ? supabase.from('ts_orders').update({ tracking_number: cleanTracking, courier: courier || undefined }).or(`id.eq.${orderId},order_number.eq.${orderId}`)
+        : supabase.from('ts_orders').update({ tracking_number: cleanTracking, courier: courier || undefined }).eq('order_number', orderId);
+      await q;
     } catch (err) {
       console.warn("Could not update order tracking in Supabase:", err);
     }
@@ -408,13 +411,10 @@ export async function cancelOrder(orderId, reason = '') {
 
   if (supabase) {
     try {
-      await supabase
-        .from('ts_orders')
-        .update({
-          status: 'cancelled',
-          notes: reason ? `Dibatalkan: ${reason}` : undefined
-        })
-        .eq('order_number', orderId);
+      const q = isUuidString(orderId)
+        ? supabase.from('ts_orders').update({ status: 'cancelled', notes: reason ? `Dibatalkan: ${reason}` : undefined }).or(`id.eq.${orderId},order_number.eq.${orderId}`)
+        : supabase.from('ts_orders').update({ status: 'cancelled', notes: reason ? `Dibatalkan: ${reason}` : undefined }).eq('order_number', orderId);
+      await q;
     } catch (err) {
       console.warn("Could not cancel order in Supabase:", err);
     }
