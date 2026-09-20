@@ -48,11 +48,18 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
     custom: "bg-yellow-500/15 text-yellow-300 border-yellow-500/30"
   };
 
-  // CFO Financial Calculation
+  // CFO Financial Calculation (Strict Pass-through Courier Isolation)
   const isMarketplace = order.channel === 'shopee' || order.channel === 'tiktok';
-  const platformFee = order.fee !== undefined ? order.fee : (isMarketplace ? Math.round((order.price || 0) * 0.085) : 0);
+  const shippingFee = Number(order.shipping_fee || 0);
+  const uniqueCode = Number(order.unique_code || order.uniqueCode || 0);
+  const totalAmount = Number(order.price || order.total_amount || 0);
+  const productRevenue = Number(order.subtotal) > 0 
+    ? (Number(order.subtotal) - Number(order.discount || order.discount_amount || 0)) 
+    : Math.max(0, totalAmount - shippingFee - uniqueCode);
+
+  const platformFee = order.fee !== undefined ? order.fee : (isMarketplace ? Math.round(productRevenue * 0.085) : 0);
   const estimatedHpp = (order.hpp || 64250) * (order.qty || 1);
-  const netProfit = (order.price || 0) - platformFee - estimatedHpp;
+  const netProfit = productRevenue - platformFee - estimatedHpp;
 
   // WhatsApp template triggers
   const isPending = order.status === 'pending' || order.status === 'pending_payment';
@@ -367,13 +374,27 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
         {/* CFO Financial Badge */}
         <div className="flex items-center justify-between text-[10px] font-mono px-2.5 py-1 bg-[#09090B] rounded-lg border border-white/[0.06] text-zinc-400">
           <span>Fee: <strong className="text-rose-400">-{formatRupiah(platformFee)}</strong></span>
-          <span>Net Est: <strong className={netProfit >= 0 ? "text-emerald-400 font-bold" : "text-rose-400 font-bold"}>+{formatRupiah(netProfit)}</strong></span>
+          {shippingFee > 0 && (
+            <span title="Dana titipan ongkir kurir (pass-through Rp 0 margin)">
+              Kurir: <strong className="text-amber-400 font-medium">{formatRupiah(shippingFee)}</strong>
+            </span>
+          )}
+          <span title="Laba bersih murni produk (setelah dipotong HPP & Fee, tanpa ongkir)">
+            Net: <strong className={netProfit >= 0 ? "text-emerald-400 font-bold" : "text-rose-400 font-bold"}>+{formatRupiah(netProfit)}</strong>
+          </span>
         </div>
 
         {/* Footer: Price & Controls */}
         <div className="flex items-center justify-between pt-1 border-t border-white/[0.08]">
-          <div className="font-mono text-xs font-black text-emerald-400">
-            {formatRupiah(order.price || order.total_amount)}
+          <div>
+            <div className="font-mono text-xs font-black text-emerald-400">
+              {formatRupiah(totalAmount)}
+            </div>
+            {shippingFee > 0 && (
+              <div className="font-mono text-[9px] text-zinc-500">
+                Produk: {formatRupiah(productRevenue)} + Ongkir: {formatRupiah(shippingFee)}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5">

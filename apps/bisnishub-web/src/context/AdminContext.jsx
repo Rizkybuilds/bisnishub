@@ -188,6 +188,31 @@ export function AdminProvider({ children }) {
       }
     }
 
+    // 3. If order advances to "shipped", auto-record courier shipping expense (Strict pass-through settlement)
+    if (nextStatus === "shipped") {
+      const shippingFee = Number(target.shipping_fee || 0);
+      const isShippingExpenseRecorded = cashTransactions.some(tx => tx.relatedId === `SHIP-${target.id}`);
+      if (shippingFee > 0 && !isShippingExpenseRecorded) {
+        const shippingTx = {
+          transactionNo: `TX-SHIP-${target.id.slice(-6)}`,
+          date: new Date().toISOString().slice(0, 10),
+          businessUnit: 'teestock',
+          type: 'CASH_OUT',
+          category: 'courier_shipping',
+          amount: shippingFee,
+          sourceWallet: 'wallet_teestock',
+          destinationWallet: 'wallet_teestock',
+          relatedId: `SHIP-${target.id}`,
+          proofReceiptRef: target.trackingNo || `RESI-${target.id}`,
+          description: `Ongkir Kurir [${target.courier || 'Ekspedisi'}]: ${target.customer} (${target.city || 'Tujuan'}) - Resi: ${target.trackingNo || 'Drop point'}`,
+          settlementStatus: 'cleared'
+        };
+        const updatedTxs = await apiRecordCashTransaction(shippingTx);
+        setCashTransactions(updatedTxs);
+        showToast(`🚚 Ongkir kurir Rp ${shippingFee.toLocaleString('id-ID')} otomatis dibukukan keluar ke ekspedisi!`, 'info');
+      }
+    }
+
     const updatedOrders = await apiUpdateOrderStatus(orderId, nextStatus);
     setOrders(updatedOrders);
     showToast(`🔄 Status pesanan ${orderId} dipindahkan ke [${nextStatus.toUpperCase()}]`);

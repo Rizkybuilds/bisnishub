@@ -55,6 +55,7 @@ export const TRANSACTION_CATEGORIES = [
   { id: 'unboxing_packaging', label: 'Beli Paket Kemasan MultiGraph', unit: 'teestock', type: 'CASH_OUT' },
   { id: 'press_electricity', label: 'Listrik Heat Press 155°C & Studio', unit: 'teestock', type: 'CASH_OUT' },
   { id: 'payment_fee', label: 'Fee Payment Gateway (Midtrans 1.5%)', unit: 'teestock', type: 'CASH_OUT' },
+  { id: 'courier_shipping', label: 'Biaya Kirim Ekspedisi / Kurir', unit: 'teestock', type: 'CASH_OUT' },
   
   { id: 'b2b_packaging_dp', label: 'DP Cetak Kemasan Klien B2B (50-100%)', unit: 'multigraph', type: 'CASH_IN' },
   { id: 'b2b_packaging_settle', label: 'Pelunasan Cetak Kemasan B2B', unit: 'multigraph', type: 'CASH_IN' },
@@ -302,7 +303,7 @@ export function calculateUnitPnl(transactions = [], unit = 'teestock') {
     if (tx.type === 'CASH_IN' && tx.category !== 'capital_injection') {
       revenue += amt;
     } else if (tx.type === 'CASH_OUT' || tx.type === 'INTER_TRANSFER') {
-      if (['blank_garment', 'dtf_printing', 'unboxing_packaging', 'raw_materials_packaging', 'vendor_offset_maklon', 'procurement'].includes(tx.category)) {
+      if (['blank_garment', 'dtf_printing', 'unboxing_packaging', 'raw_materials_packaging', 'vendor_offset_maklon', 'procurement', 'courier_shipping'].includes(tx.category)) {
         cogs += amt;
       } else if (['capex_purchase', 'capex_machine_savings'].includes(tx.category)) {
         capex += amt;

@@ -142,19 +142,28 @@ export function DashboardPage() {
       "Warna",
       "Ukuran",
       "Qty",
-      "Omset Kotor (Rp)",
+      "Total Bayar (Rp)",
+      "Ongkir Kurir (Rp)",
+      "Omset Produk (Rp)",
       "Fee Platform (Rp)",
       "HPP Bahan (Rp)",
-      "Laba Bersih (Rp)",
+      "Laba Bersih Produk (Rp)",
       "Status"
     ];
 
     const rows = orders.map(o => {
       const isMarketplace = o.channel === 'shopee' || o.channel === 'tiktok';
-      const fee = o.fee !== undefined ? o.fee : (isMarketplace ? Math.round((o.price || 0) * 0.085) : 0);
+      const shipping = Number(o.shipping_fee || 0);
+      const unique = Number(o.unique_code || o.uniqueCode || 0);
+      const totalAmount = Number(o.price || o.total_amount || 0);
+      const productRevenue = Number(o.subtotal) > 0 
+        ? (Number(o.subtotal) - Number(o.discount || o.discount_amount || 0)) 
+        : Math.max(0, totalAmount - shipping - unique);
+
+      const fee = o.fee !== undefined ? o.fee : (isMarketplace ? Math.round(productRevenue * 0.085) : 0);
       const unitHpp = getOrderUnitHpp(o);
       const hpp = unitHpp * (o.qty || 1);
-      const net = (o.price || 0) - fee - hpp;
+      const net = productRevenue - fee - hpp;
 
       return [
         `"${o.id || ''}"`,
@@ -169,7 +178,9 @@ export function DashboardPage() {
         `"${o.color || ''}"`,
         `"${o.size || ''}"`,
         o.qty || 1,
-        o.price || 0,
+        totalAmount,
+        shipping,
+        productRevenue,
         fee,
         hpp,
         net,
@@ -226,12 +237,31 @@ export function DashboardPage() {
     });
   }
 
-  // CFO Dynamic Financial Calculations
-  const totalGrossRevenue = orders.reduce((sum, o) => sum + (o.price || 0), 0);
+  // CFO Dynamic Financial Calculations (Strict Courier Pass-Through Isolation)
+  const totalShippingCollected = orders.reduce((sum, o) => sum + Number(o.shipping_fee || 0), 0);
+  const totalGrossCollected = orders.reduce((sum, o) => sum + Number(o.price || o.total_amount || 0), 0);
+
+  // Omset Penjualan Bersih Produk Murni (Tanpa Ongkir Kurir & Kode Unik)
+  const totalProductRevenue = orders.reduce((sum, o) => {
+    const shipping = Number(o.shipping_fee || 0);
+    const unique = Number(o.unique_code || o.uniqueCode || 0);
+    const totalAmount = Number(o.price || o.total_amount || 0);
+    const prodRev = Number(o.subtotal) > 0 
+      ? (Number(o.subtotal) - Number(o.discount || o.discount_amount || 0)) 
+      : Math.max(0, totalAmount - shipping - unique);
+    return sum + prodRev;
+  }, 0);
+
   const totalPlatformFees = orders.reduce((sum, o) => {
     if (o.fee !== undefined) return sum + o.fee;
     const isMarketplace = o.channel === 'shopee' || o.channel === 'tiktok';
-    return sum + (isMarketplace ? Math.round((o.price || 0) * 0.085) : 0);
+    const shipping = Number(o.shipping_fee || 0);
+    const unique = Number(o.unique_code || o.uniqueCode || 0);
+    const totalAmount = Number(o.price || o.total_amount || 0);
+    const prodRev = Number(o.subtotal) > 0 
+      ? (Number(o.subtotal) - Number(o.discount || o.discount_amount || 0)) 
+      : Math.max(0, totalAmount - shipping - unique);
+    return sum + (isMarketplace ? Math.round(prodRev * 0.085) : 0);
   }, 0);
 
   const totalCogs = orders.reduce((sum, o) => {
@@ -239,9 +269,10 @@ export function DashboardPage() {
     return sum + (unitHpp * (o.qty || 1));
   }, 0);
 
-  const totalNetProfit = totalGrossRevenue - totalPlatformFees - totalCogs;
-  const realizedMarginPct = totalGrossRevenue > 0 
-    ? ((totalNetProfit / totalGrossRevenue) * 100).toFixed(1) 
+  // Laba Bersih Murni Produk (Eksklusif Ongkir Kurir)
+  const totalNetProfit = totalProductRevenue - totalPlatformFees - totalCogs;
+  const realizedMarginPct = totalProductRevenue > 0 
+    ? ((totalNetProfit / totalProductRevenue) * 100).toFixed(1) 
     : 0;
 
   return (
@@ -490,7 +521,7 @@ export function DashboardPage() {
                   <span>Kinerja Keuangan Riil (Multi-Channel P&amp;L)</span>
                 </h3>
                 <p className="text-xs text-zinc-400 mt-0.5">
-                  Omset kotor dikurangi potongan fee marketplace dan modal HPP bahan.
+                  Omset produk murni (eksklusif ongkir kurir) dikurangi potongan fee dan modal HPP bahan.
                 </p>
               </div>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/60 border border-white/10 text-zinc-400 shrink-0">
@@ -501,8 +532,11 @@ export function DashboardPage() {
             {/* 4 P&L Tiles */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
               <div className="bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-0.5">
-                <div className="text-[10px] text-zinc-400 font-mono">Total Omset</div>
-                <div className="font-mono font-black text-base text-white truncate">{formatRupiah(totalGrossRevenue)}</div>
+                <div className="text-[10px] text-zinc-400 font-mono">Omset Produk</div>
+                <div className="font-mono font-black text-base text-white truncate">{formatRupiah(totalProductRevenue)}</div>
+                {totalShippingCollected > 0 && (
+                  <div className="text-[9px] text-amber-400/90 font-mono">+Ongkir {formatRupiah(totalShippingCollected)}</div>
+                )}
               </div>
               <div className="bg-black/40 p-3 rounded-xl border border-white/[0.06] space-y-0.5">
                 <div className="text-[10px] text-zinc-400 font-mono">Fee Platform</div>
@@ -513,7 +547,7 @@ export function DashboardPage() {
                 <div className="font-mono font-black text-base text-zinc-300 truncate">-{formatRupiah(totalCogs)}</div>
               </div>
               <div className="bg-white/[0.06] p-3 rounded-xl border border-white/20 space-y-0.5">
-                <div className="text-[10px] text-white font-mono font-bold">Laba Bersih</div>
+                <div className="text-[10px] text-white font-mono font-bold">Laba Bersih Produk</div>
                 <div className="font-mono font-black text-base text-white truncate">+{formatRupiah(totalNetProfit)}</div>
               </div>
             </div>
@@ -687,10 +721,17 @@ export function DashboardPage() {
                   .slice(0, 10)
                   .map(order => {
                     const isMarketplace = order.channel === 'shopee' || order.channel === 'tiktok';
-                    const fee = order.fee !== undefined ? order.fee : (isMarketplace ? Math.round((order.price || 0) * 0.085) : 0);
+                    const shipping = Number(order.shipping_fee || 0);
+                    const unique = Number(order.unique_code || order.uniqueCode || 0);
+                    const totalAmount = Number(order.price || order.total_amount || 0);
+                    const productRevenue = Number(order.subtotal) > 0 
+                      ? (Number(order.subtotal) - Number(order.discount || order.discount_amount || 0)) 
+                      : Math.max(0, totalAmount - shipping - unique);
+
+                    const fee = order.fee !== undefined ? order.fee : (isMarketplace ? Math.round(productRevenue * 0.085) : 0);
                     const unitHpp = getOrderUnitHpp(order);
                     const hpp = unitHpp * (order.qty || 1);
-                    const net = (order.price || 0) - fee - hpp;
+                    const net = productRevenue - fee - hpp;
 
                     return (
                       <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
@@ -727,10 +768,18 @@ export function DashboardPage() {
                           -{formatRupiah(fee)}
                         </td>
                         <td className="py-3 px-4 text-right font-mono font-bold text-white">
-                          {formatRupiah(order.price)}
+                          <div>{formatRupiah(totalAmount)}</div>
+                          {shipping > 0 && (
+                            <div className="text-[9px] text-amber-400 font-normal font-mono">
+                              +Ongkir {formatRupiah(shipping)}
+                            </div>
+                          )}
                         </td>
                         <td className={`py-3 px-4 text-right font-mono font-bold ${net >= 0 ? 'text-white' : 'text-rose-400'}`}>
-                          {net >= 0 ? `+${formatRupiah(net)}` : formatRupiah(net)}
+                          <div>{net >= 0 ? `+${formatRupiah(net)}` : formatRupiah(net)}</div>
+                          <div className="text-[9px] text-zinc-500 font-normal font-mono">
+                            ({productRevenue > 0 ? ((net / productRevenue) * 100).toFixed(0) : 0}% Margin)
+                          </div>
                         </td>
                       </tr>
                     );

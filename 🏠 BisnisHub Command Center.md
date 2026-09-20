@@ -27,7 +27,7 @@ tags:
 | [[catatan/weekly-review/README|Weekly Review]] | `catatan/sesi/` (Log C-Suite) | [[templates/Template - Weekly Business Review|T-Weekly Review]] | [[catatan/piagam-co-founders-bisnishub|Piagam Co-Founders]] |
 | [[catatan/ide/README|Ide & Scratchpad]] | `python main.py` (CLI Hub) | [[templates/Template - Sesi Konsultasi C-Suite|T-Konsultasi]] | [[README|README Workspace]] |
 | | [[catatan/panduan-antigravity-obsidian|Panduan AGY + Obsidian]] | [[templates/Template - SOP Operasional|T-SOP]] | [[GEMINI|AI Rules & Engine]] |
-| | | [[templates/Template - Marketing & Konten Kampanye|T-Marketing]] | [[memory/business_profile.json|Business Profile]] |
+| | [[catatan/arsitektur-ekosistem-bisnishub-teestock|Arsitektur Ekosistem]] | [[templates/Template - Marketing & Konten Kampanye|T-Marketing]] | [[memory/business_profile.json|Business Profile]] |
 
 ---
 

@@ -87,6 +87,28 @@ Workspace ini dilengkapi 4 subagent spesialis yang dapat didelegasikan via `invo
 - **Gang Sheet Standard**: Lebar roll 58 cm dengan safe margin 1.5 cm di sisi kiri dan kanan.
 - **Parameter Press**: Suhu 155°C, durasi 15 detik, tekanan 4-5 bar, metode *cold peel* (wajib dingin sebelum dikelupas), finishing press 5 detik menggunakan sheet teflon.
 
+### 4. Ecosystem Integration & Anti-Silo Guardrails (TeeStock Web ⟷ BisnisHub OS)
+- **Single Source of Truth (SSOT) Data Contract**:
+  - Dilarang membuat kalkulasi harga atau field payload pesanan secara terisolasi. Seluruh interaksi wajib mengonsumsi kontrak data baku:
+    - `subtotal`: Nilai bruto belanja produk (sebelum diskon & ongkir).
+    - `discount_amount`: Total potongan kupon/bundling produk.
+    - `shipping_fee`: Biaya kirim riil ekspedisi kurir (J&T/SiCepat/JNE).
+    - `unique_code`: Kode unik 3 digit verifikasi QRIS/transfer manual.
+    - `total_amount`: `subtotal - discount_amount + shipping_fee + unique_code`.
+- **Strict Financial Separation (Isolasi Ongkir Kurir dari Laba & Omset)**:
+  - **Net Product Revenue** = `subtotal - discount_amount`.
+  - **Beban Kurir Pass-through**: Biaya ongkir kurir (`shipping_fee`) adalah dana titipan (*pass-through escrow*, net margin = Rp 0). **Dilarang keras memasukkan ongkir kurir ke dalam omset penjualan produk, laba bersih, ataupun margin kotor!**
+  - **Net Profit Transaksi** = `Net Product Revenue - Platform Fee - Total HPP (BOM)`.
+  - **Realized Margin %** = `(Net Profit Transaksi / Net Product Revenue) * 100`.
+- **Lifecycle State Machine Standard**:
+  - `pending_payment`: Pesanan baru dibuat, menunggu verifikasi pembayaran QRIS/transfer (masuk kolom 1 Kanban BisnisHub OS dengan badge "Menunggu Verifikasi").
+  - `pending`: Pembayaran lunas terverifikasi.
+  - `dtf` / `press`: Produksi dimulai &rarr; stok fisik kaos NSA & film DTF terpotong otomatis (*idempotent*). Kas masuk dibukukan ke Ledger.
+  - `pack`: Lolos QC, siap cetak tiket kerja & label thermal A6.
+  - `shipped`: Paket diserahkan ke ekspedisi &rarr; input nomor resi, link WhatsApp resi siap kirim, dan pengeluaran ongkir kurir dibukukan.
+- **4-Pillars Feature Integration Checklist (Anti-Silo Rule)**:
+  - Setiap fitur baru wajib lolos verifikasi 4 pilar: (1) Database & RLS Supabase, (2) Integritas Finansial & HPP CFO, (3) Alur Operasional & Inventori COO, (4) Pengalaman Pengguna Mobile-First CMO.
+
 ---
 
 ## Protokol Dokumentasi Obsidian & Antigravity
