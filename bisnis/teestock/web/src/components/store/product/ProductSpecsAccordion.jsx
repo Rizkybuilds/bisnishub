@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Ruler, ShieldCheck, Truck, RotateCcw, ArrowRight, Sparkles } from 'lucide-react';
-import { NSA_7200_SIZE_CHART, NSA_3600_SIZE_CHART } from '../../../constants/garments';
+import { NSA_7200_SIZE_CHART, NSA_3600_SIZE_CHART } from '@bisnishub/shared/constants/garments';
 
 function AccordionItem({ title, icon: Icon, children, defaultOpen = false }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);

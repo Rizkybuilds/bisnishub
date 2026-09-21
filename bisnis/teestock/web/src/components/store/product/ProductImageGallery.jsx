@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { 
   Sparkles, 
   ShieldCheck, 
@@ -8,8 +8,8 @@ import {
   X,
   Tag
 } from 'lucide-react';
-import { getColorHex } from '../../../constants/colors';
-import { formatRupiah } from '../../../utils/formatters';
+import { getColorHex } from '@bisnishub/shared/constants/colors';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
 
 export function ProductImageGallery({
   product,

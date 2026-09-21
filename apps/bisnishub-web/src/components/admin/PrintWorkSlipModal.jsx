@@ -1,11 +1,11 @@
-import React from 'react';
+﻿import React from 'react';
 import { Printer, FolderArchive, Layers, Eye, CheckCircle2, Flame, AlertCircle } from 'lucide-react';
-import { Modal } from '../ui/Modal';
-import { Button } from '../ui/Button';
-import { formatDate } from '../../utils/formatters';
+import { Modal } from '@bisnishub/shared/components/ui/Modal';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { formatDate } from '@bisnishub/shared/utils/formatters';
 import { useAdmin } from '../../context/AdminContext';
-import { getCardPreviewImage } from '../../utils/productImages';
-import { PRINT_PRESETS } from '../../constants/pricing';
+import { getCardPreviewImage } from '@bisnishub/shared/utils/productImages';
+import { PRINT_PRESETS } from '@bisnishub/shared/constants/pricing';
 
 /**
  * Pemetaan lokasi rak fisik & map penyimpanan film DTF berdasarkan SKU dan seri produk

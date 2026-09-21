@@ -1,9 +1,9 @@
-/**
+﻿/**
  * Gang Sheet DTF 58 cm & Pre-Press Planning Services (TeeStock & MultiGraph OS)
  * Accurate Nesting Calculations, Executive KPIs, CSV Cut-List Manifest, and Vendor WhatsApp Dispatch
  */
 
-import { VENDOR_DTF_RATES } from '../constants/pricing.js';
+import { VENDOR_DTF_RATES } from '@bisnishub/shared/constants/pricing';
 
 /**
  * Dimensi standar artwork DTF (Lebar x Tinggi dalam cm) & Kapasitas per baris pada roll 58 cm

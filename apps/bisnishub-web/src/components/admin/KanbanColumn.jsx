@@ -1,6 +1,6 @@
-import React from 'react';
+﻿import React from 'react';
 import { KanbanCard } from './KanbanCard';
-import { formatRupiah } from '../../utils/formatters';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
 
 export function KanbanColumn({
   title,

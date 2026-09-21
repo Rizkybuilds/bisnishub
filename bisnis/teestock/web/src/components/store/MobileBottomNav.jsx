@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Home, Package, Sparkles, Truck, ShoppingBag } from 'lucide-react';
-import { useStore } from '../../context/StoreContext';
+import { useStore } from '@bisnishub/shared/context/StoreContext';
 
 export function MobileBottomNav() {
   const { totalCartItems } = useStore();

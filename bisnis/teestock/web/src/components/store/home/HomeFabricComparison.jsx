@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layers, ArrowRight, Check, Sparkles, Scale, Wind, HelpCircle } from 'lucide-react';
-import { Button } from '../../ui/Button';
+import { Button } from '@bisnishub/shared/components/ui/Button';
 
 export const FABRIC_SPECS = {
   nsa24s: {

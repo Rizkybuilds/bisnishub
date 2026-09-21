@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { 
   Check, 
   ShoppingBag, 
@@ -10,11 +10,11 @@ import {
   Clock, 
   ShieldCheck
 } from 'lucide-react';
-import { Button } from '../../ui/Button';
-import { GARMENT_TYPES } from '../../../constants/garments';
-import { getColorHex } from '../../../constants/colors';
-import { getSizeSurcharge, BUNDLE_DEALS } from '../../../constants/pricing';
-import { formatRupiah } from '../../../utils/formatters';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { GARMENT_TYPES } from '@bisnishub/shared/constants/garments';
+import { getColorHex } from '@bisnishub/shared/constants/colors';
+import { getSizeSurcharge, BUNDLE_DEALS } from '@bisnishub/shared/constants/pricing';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
 
 const COLOR_CATEGORIES = {
   basic: ["Hitam", "Black", "Putih", "White", "Charcoal", "Sport Grey", "Sport Grey-Black", "White-Black"],

@@ -1,9 +1,9 @@
-/**
+﻿/**
  * Master Catalog & PIM Services (TeeStock & MultiGraph OS)
  * Unit Economics Engine, Executive KPIs, and CSV Export
  */
 
-import { isProductBlank } from '../constants/pricing.js';
+import { isProductBlank } from '@bisnishub/shared/constants/pricing';
 
 /**
  * Kalkulasi lengkap Unit Economics & CFO Guardrails untuk sebuah produk

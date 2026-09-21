@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 import { Layers, ShoppingBag, Package, Palette, ArrowRight } from 'lucide-react';
-import { Button } from '../../ui/Button';
+import { Button } from '@bisnishub/shared/components/ui/Button';
 
 export function HomeThreePillars() {
   return (

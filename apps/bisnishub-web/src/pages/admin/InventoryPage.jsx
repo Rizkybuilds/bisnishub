@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { 
   Plus, 
   RefreshCw, 
@@ -21,7 +21,7 @@ import {
   syncFullInventoryToCloud, 
   calculateInventoryStats,
   exportInventoryCsv 
-} from '../../services/inventoryApi';
+} from '@bisnishub/shared/services/inventoryApi';
 
 export function InventoryPage() {
   const { inventory, setInventory, showToast, addProcurement } = useAdmin();

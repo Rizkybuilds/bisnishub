@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { checkoutSchema } from '../../schemas/checkoutSchema';
-import { calculateShippingFee, calculateOrderWeight } from '../shippingApi';
-import { createPaymentSession, PAYMENT_PROVIDERS } from '../paymentAdapter';
-import { calculateBundleDiscount } from '../../constants/pricing';
-import { createPublicOrder } from '../ordersApi';
+import { calculateShippingFee, calculateOrderWeight } from '@bisnishub/shared/services/shippingApi';
+import { createPaymentSession, PAYMENT_PROVIDERS } from '@bisnishub/shared/services/paymentAdapter';
+import { calculateBundleDiscount } from '@bisnishub/shared/constants/pricing';
+import { createPublicOrder } from '@bisnishub/shared/services/ordersApi';
 
-vi.mock('../supabase', () => ({
+vi.mock('@bisnishub/shared/services/supabase', () => ({
   supabase: {
     from: () => ({
       insert: vi.fn().mockResolvedValue({ data: null, error: null }),

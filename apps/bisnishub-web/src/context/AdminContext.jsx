@@ -1,12 +1,12 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getProducts, saveProduct as apiSaveProduct, deleteProduct as apiDeleteProduct, clearAllProducts as apiClearAllProducts } from '../services/productsApi';
+﻿import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getProducts, saveProduct as apiSaveProduct, deleteProduct as apiDeleteProduct, clearAllProducts as apiClearAllProducts } from '@bisnishub/shared/services/productsApi';
 import { 
   getOrders, 
   saveOrder as apiSaveOrder, 
   updateOrderStatus as apiUpdateOrderStatus,
   updateOrderTracking as apiUpdateOrderTracking,
   cancelOrder as apiCancelOrder
-} from '../services/ordersApi';
+} from '@bisnishub/shared/services/ordersApi';
 import { 
   getInventoryMatrix, 
   saveInventoryMatrix, 
@@ -22,7 +22,7 @@ import {
   getSupplySku,
   updateDatabaseInventoryItem,
   adjustStockOpname
-} from '../services/inventoryApi';
+} from '@bisnishub/shared/services/inventoryApi';
 import { 
   getCashTransactions, 
   addCashTransaction as apiAddCashTransaction,
@@ -35,11 +35,11 @@ import {
   calculateBusinessValuation,
   WALLETS,
   TRANSACTION_CATEGORIES
-} from '../services/ledgerApi';
-import { getFixedAssets, saveFixedAsset as apiSaveFixedAsset, deleteFixedAsset as apiDeleteFixedAsset, getTotalFixedAssetsValue } from '../services/assetsApi';
-import { getProcurements, saveProcurement as apiSaveProcurement, deleteProcurement as apiDeleteProcurement } from '../services/procurementsApi';
-import { GARMENT_TYPES } from '../constants/garments';
-import { testSupabaseConnection } from '../services/supabase';
+} from '@bisnishub/shared/services/ledgerApi';
+import { getFixedAssets, saveFixedAsset as apiSaveFixedAsset, deleteFixedAsset as apiDeleteFixedAsset, getTotalFixedAssetsValue } from '@bisnishub/shared/services/assetsApi';
+import { getProcurements, saveProcurement as apiSaveProcurement, deleteProcurement as apiDeleteProcurement } from '@bisnishub/shared/services/procurementsApi';
+import { GARMENT_TYPES } from '@bisnishub/shared/constants/garments';
+import { testSupabaseConnection } from '@bisnishub/shared/services/supabase';
 
 const AdminContext = createContext();
 

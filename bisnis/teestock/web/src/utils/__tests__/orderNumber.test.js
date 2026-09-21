@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { generateOrderNumber, isValidOrderNumber } from '../orderNumber';
+﻿import { describe, it, expect } from 'vitest';
+import { generateOrderNumber, isValidOrderNumber } from '@bisnishub/shared/utils/orderNumber';
 
 describe('Standardized Order Number Generator (orderNumber.js)', () => {
   it('menghasilkan nomor order berformat standar TS-YYMMDD-XXXXXX (6 hex digits)', () => {

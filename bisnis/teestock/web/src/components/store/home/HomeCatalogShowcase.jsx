@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Sparkles, 
@@ -8,7 +8,7 @@ import {
   Compass, 
   Package 
 } from 'lucide-react';
-import { Button } from '../../ui/Button';
+import { Button } from '@bisnishub/shared/components/ui/Button';
 import { ProductCard } from '../ProductCard';
 
 export function HomeCatalogShowcase({

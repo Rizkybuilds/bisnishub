@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   X, 
   Layers, 
@@ -18,8 +18,8 @@ import {
   Info,
   LayoutGrid
 } from 'lucide-react';
-import { GARMENT_TYPES, SIZES } from '../../constants/garments';
-import { formatRupiah } from '../../utils/formatters';
+import { GARMENT_TYPES, SIZES } from '@bisnishub/shared/constants/garments';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
 import { useAdmin } from '../../context/AdminContext';
 
 export function ProcurementIntakeModal({ 

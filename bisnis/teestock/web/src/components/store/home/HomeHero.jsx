@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, 
@@ -9,9 +9,9 @@ import {
   Palette, 
   CheckCircle2 
 } from 'lucide-react';
-import { Button } from '../../ui/Button';
-import { formatRupiah } from '../../../utils/formatters';
-import { getColorHex } from '../../../constants/colors';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
+import { getColorHex } from '@bisnishub/shared/constants/colors';
 
 export function HomeHero({
   featuredProduct,

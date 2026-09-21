@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { 
   Search, 
   Filter, 
@@ -37,13 +37,13 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
-import { Button } from '../../components/ui/Button';
-import { Input, Select } from '../../components/ui/Input';
-import { Modal } from '../../components/ui/Modal';
-import { Badge } from '../../components/ui/Badge';
-import { formatRupiah } from '../../utils/formatters';
-import { SERIES } from '../../constants/series';
-import { uploadToCloudinary } from '../../services/cloudinary';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { Input, Select } from '@bisnishub/shared/components/ui/Input';
+import { Modal } from '@bisnishub/shared/components/ui/Modal';
+import { Badge } from '@bisnishub/shared/components/ui/Badge';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
+import { SERIES } from '@bisnishub/shared/constants/series';
+import { uploadToCloudinary } from '@bisnishub/shared/services/cloudinary';
 import { ProcurementIntakeModal } from '../../components/admin/ProcurementIntakeModal';
 import { 
   calculateProductEconomics, 
@@ -60,7 +60,7 @@ import {
   PRINT_PLACEMENTS,
   PRINT_PRESETS,
   isProductBlank 
-} from '../../constants/pricing';
+} from '@bisnishub/shared/constants/pricing';
 
 export function CatalogPage() {
   const { catalog, inventory, saveProduct, deleteProduct, clearAllCatalogProducts, showToast, addProcurement } = useAdmin();

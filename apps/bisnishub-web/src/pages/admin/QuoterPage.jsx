@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { 
   Calculator, 
   Copy, 
@@ -30,9 +30,9 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { GARMENT_TYPES, SIZES, NSA_34_COLORS } from '../../constants/garments';
+import { Card } from '@bisnishub/shared/components/ui/Card';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { GARMENT_TYPES, SIZES, NSA_34_COLORS } from '@bisnishub/shared/constants/garments';
 import { useAdmin } from '../../context/AdminContext';
 import { 
   PRINT_POSITIONS, 

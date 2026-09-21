@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { X, Mail, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { TeeStockLogoIcon } from '../common/TeeStockLogo';
+import { useAuth } from '@bisnishub/shared/context/AuthContext';
+import { TeeStockLogoIcon } from '@bisnishub/shared/components/common/TeeStockLogo';
 
 export function AuthModal() {
   const { isAuthModalOpen, closeAuthModal, signInWithGoogle, signInWithMagicLink, authModalRedirect } = useAuth();

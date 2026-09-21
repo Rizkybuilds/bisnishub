@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, ShieldCheck } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { formatRupiah } from '../../utils/formatters';
-import { getColorHex } from '../../constants/colors';
-import { getAvailableColors, getCardPreviewImage } from '../../utils/productImages';
+import { useAuth } from '@bisnishub/shared/context/AuthContext';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
+import { getColorHex } from '@bisnishub/shared/constants/colors';
+import { getAvailableColors, getCardPreviewImage } from '@bisnishub/shared/utils/productImages';
 import { TiltCard } from './interactive/TiltCard';
 
 export function ProductCard({ product, isBlank: isBlankProp, className = '' }) {

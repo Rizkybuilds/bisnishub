@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Plus, 
@@ -15,10 +15,10 @@ import {
   Scale,
   ShieldCheck
 } from 'lucide-react';
-import { GARMENT_TYPES, SIZES } from '../../constants/garments';
+import { GARMENT_TYPES, SIZES } from '@bisnishub/shared/constants/garments';
 import { useAdmin } from '../../context/AdminContext';
-import { Button } from '../ui/Button';
-import { Modal } from '../ui/Modal';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { Modal } from '@bisnishub/shared/components/ui/Modal';
 import { StockOpnameModal } from './StockOpnameModal';
 
 export function InventoryGrid({ onOpenRestock }) {

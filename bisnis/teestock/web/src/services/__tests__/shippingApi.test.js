@@ -1,12 +1,12 @@
-import { describe, it, expect } from 'vitest';
+﻿import { describe, it, expect } from 'vitest';
 import {
   getItemWeightGrams,
   calculateOrderWeight,
   calculateBillableWeightKg,
   calculateShippingFee,
   getAvailableCouriers
-} from '../shippingApi';
-import { determineFulfillmentOrigin } from '../../utils/garmentStockRouting';
+} from '@bisnishub/shared/services/shippingApi';
+import { determineFulfillmentOrigin } from '@bisnishub/shared/utils/garmentStockRouting';
 
 
 describe('Layanan Kalkulasi Pengiriman Berbasis Berat (shippingApi)', () => {

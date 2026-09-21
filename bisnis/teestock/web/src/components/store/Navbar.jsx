@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ShoppingBag, Search, ShieldCheck, Sparkles, User, Package, Zap, LogOut, ChevronDown, Users, Menu, X, Palette, Truck } from 'lucide-react';
-import { useStore } from '../../context/StoreContext';
-import { useAuth } from '../../context/AuthContext';
-import { TeeStockLogo } from '../common/TeeStockLogo';
-import { ThemeToggle } from '../common/ThemeToggle';
-import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
+import { useStore } from '@bisnishub/shared/context/StoreContext';
+import { useAuth } from '@bisnishub/shared/context/AuthContext';
+import { TeeStockLogo } from '@bisnishub/shared/components/common/TeeStockLogo';
+import { ThemeToggle } from '@bisnishub/shared/components/common/ThemeToggle';
+import { sanitizePhoneNumber } from '@bisnishub/shared/utils/whatsappTemplates';
 
 export function Navbar() {
   const { totalCartItems, storeSettings } = useStore();

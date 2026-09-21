@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useOutletContext, Link } from 'react-router-dom';
 import { 
   Shirt, 
@@ -24,16 +24,16 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
-import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { Modal } from '../../components/ui/Modal';
-import { Input, Select } from '../../components/ui/Input';
-import { formatRupiah } from '../../utils/formatters';
-import { SIZES } from '../../constants/garments';
+import { Card } from '@bisnishub/shared/components/ui/Card';
+import { Badge } from '@bisnishub/shared/components/ui/Badge';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { Modal } from '@bisnishub/shared/components/ui/Modal';
+import { Input, Select } from '@bisnishub/shared/components/ui/Input';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
+import { SIZES } from '@bisnishub/shared/constants/garments';
 import { FounderBepSimulator } from '../../components/admin/FounderBepSimulator';
 import { DailyStudioRoutine } from '../../components/admin/DailyStudioRoutine';
-import { isProductBlank, getBlankPricing } from '../../constants/pricing';
+import { isProductBlank, getBlankPricing } from '@bisnishub/shared/constants/pricing';
 
 export function DashboardPage() {
   const { openNewOrderModal } = useOutletContext();

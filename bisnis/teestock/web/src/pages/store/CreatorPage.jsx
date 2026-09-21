@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Sparkles, 
@@ -16,14 +16,14 @@ import {
   ExternalLink,
   ArrowRight
 } from 'lucide-react';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Card } from '../../components/ui/Card';
-import { formatRupiah } from '../../utils/formatters';
-import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
-import { supabase } from '../../services/supabase';
-import { useStore } from '../../context/StoreContext';
-import { SEOHead } from '../../components/common/SEOHead';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { Input } from '@bisnishub/shared/components/ui/Input';
+import { Card } from '@bisnishub/shared/components/ui/Card';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
+import { sanitizePhoneNumber } from '@bisnishub/shared/utils/whatsappTemplates';
+import { supabase } from '@bisnishub/shared/services/supabase';
+import { useStore } from '@bisnishub/shared/context/StoreContext';
+import { SEOHead } from '@bisnishub/shared/components/common/SEOHead';
 
 export const CREATOR_ROYALTY_CONFIG = {
   royaltyPerPcs: 25000,

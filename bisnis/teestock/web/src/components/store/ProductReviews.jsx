@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Star, CheckCircle2, ThumbsUp, Plus, X, Sparkles, Filter, Shirt } from 'lucide-react';
-import { Button } from '../ui/Button';
-import { supabase } from '../../services/supabase';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { supabase } from '@bisnishub/shared/services/supabase';
 
 const INITIAL_REVIEWS = [
   {

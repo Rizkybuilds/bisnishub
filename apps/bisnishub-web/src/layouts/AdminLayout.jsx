@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { AdminSidebar } from '../components/admin/AdminSidebar';
 import { CommandPalette } from '../components/admin/CommandPalette';
-import { Toast } from '../components/ui/Toast';
-import { Modal } from '../components/ui/Modal';
-import { Input, Select } from '../components/ui/Input';
-import { Button } from '../components/ui/Button';
+import { Toast } from '@bisnishub/shared/components/ui/Toast';
+import { Modal } from '@bisnishub/shared/components/ui/Modal';
+import { Input, Select } from '@bisnishub/shared/components/ui/Input';
+import { Button } from '@bisnishub/shared/components/ui/Button';
 import { useAdmin } from '../context/AdminContext';
-import { CHANNELS } from '../constants/pricing';
-import { GARMENT_TYPES, SIZES } from '../constants/garments';
-import { formatRupiah } from '../utils/formatters';
-import { SEOHead } from '../components/common/SEOHead';
+import { CHANNELS } from '@bisnishub/shared/constants/pricing';
+import { GARMENT_TYPES, SIZES } from '@bisnishub/shared/constants/garments';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
+import { SEOHead } from '@bisnishub/shared/components/common/SEOHead';
 
 export function AdminLayout() {
   const { toast, showToast, addOrder, catalog } = useAdmin();

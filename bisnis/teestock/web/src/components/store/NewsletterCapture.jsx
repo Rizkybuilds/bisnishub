@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Mail, CheckCircle2, ArrowRight, Loader2, Sparkles } from 'lucide-react';
-import { subscribeNewsletter } from '../../services/subscribersApi';
+import { subscribeNewsletter } from '@bisnishub/shared/services/subscribersApi';
 
 export function NewsletterCapture({ source = 'website_footer', className = '', compact = false }) {
   const [email, setEmail] = useState('');

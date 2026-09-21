@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+﻿import { describe, it, expect } from 'vitest';
 import { 
   getSizeSurcharge, 
   calculateBundleDiscount, 
@@ -10,7 +10,7 @@ import {
   GARMENT_OPTIONS,
   DESIGN_TIERS,
   CURATED_COLORS
-} from '../pricing';
+} from '@bisnishub/shared/constants/pricing';
 
 describe('TeeStock Financial & Pricing Engine', () => {
   describe('getSizeSurcharge() — Surcharge Ukuran Jumbo NSA', () => {

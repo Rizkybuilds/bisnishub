@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   ShoppingBag,
@@ -13,11 +13,11 @@ import {
   Instagram,
   Sparkles,
 } from 'lucide-react';
-import { useStore } from '../../context/StoreContext';
-import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
+import { useStore } from '@bisnishub/shared/context/StoreContext';
+import { sanitizePhoneNumber } from '@bisnishub/shared/utils/whatsappTemplates';
 import { NewsletterCapture } from '../../components/store/NewsletterCapture';
-import { SEOHead } from '../../components/common/SEOHead';
-import { TeeStockLogoIcon } from '../../components/common/TeeStockLogo';
+import { SEOHead } from '@bisnishub/shared/components/common/SEOHead';
+import { TeeStockLogoIcon } from '@bisnishub/shared/components/common/TeeStockLogo';
 
 export const ICON_MAP = {
   Flame,

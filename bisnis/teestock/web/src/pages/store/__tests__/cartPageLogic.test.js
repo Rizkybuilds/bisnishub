@@ -5,15 +5,15 @@ import {
   calculateEffectiveDiscounts,
   calculateCartGrandTotal,
   CFO_MAX_DISCOUNT_PERCENT
-} from '../CartPage';
+} from '../CartPage.jsx';
 import {
   validateVoucher,
   CFO_MAX_VOUCHER_DISCOUNT_PERCENT
-} from '../../../services/vouchersApi';
-import { generateOrderNumber, isValidOrderNumber } from '../../../utils/orderNumber';
+} from '@bisnishub/shared/services/vouchersApi';
+import { generateOrderNumber, isValidOrderNumber } from '@bisnishub/shared/utils/orderNumber';
 
 // Mock Supabase to test validateVoucher against fallback presets cleanly
-vi.mock('../../../services/supabase', () => ({
+vi.mock('@bisnishub/shared/services/supabase', () => ({
   supabase: {
     from: () => ({
       select: () => ({

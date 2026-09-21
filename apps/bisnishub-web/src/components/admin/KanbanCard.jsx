@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -17,12 +17,12 @@ import {
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
-import { formatRupiah } from '../../utils/formatters';
-import { generateCustomerWhatsAppText, generateUnpaidFollowUpWhatsAppText, getWhatsAppUrl } from '../../utils/whatsappTemplates';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
+import { generateCustomerWhatsAppText, generateUnpaidFollowUpWhatsAppText, getWhatsAppUrl } from '@bisnishub/shared/utils/whatsappTemplates';
 import { PrintWorkSlipModal } from './PrintWorkSlipModal';
 import { ShippingLabelModal } from './ShippingLabelModal';
-import { Modal } from '../ui/Modal';
-import { isFastMovingBuffer } from '../../utils/garmentStockRouting';
+import { Modal } from '@bisnishub/shared/components/ui/Modal';
+import { isFastMovingBuffer } from '@bisnishub/shared/utils/garmentStockRouting';
 import { useAdmin } from '../../context/AdminContext';
 
 export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {

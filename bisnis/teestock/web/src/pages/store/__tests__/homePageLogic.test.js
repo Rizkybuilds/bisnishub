@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { getAvailableColors, getCardPreviewImage } from '../../../utils/productImages';
+﻿import { describe, it, expect } from 'vitest';
+import { getAvailableColors, getCardPreviewImage } from '@bisnishub/shared/utils/productImages';
 import { FABRIC_SPECS } from '../../../components/store/home/HomeFabricComparison';
 
 describe('HomePage Business & Data Logic (Storefront Checkpoint 1)', () => {

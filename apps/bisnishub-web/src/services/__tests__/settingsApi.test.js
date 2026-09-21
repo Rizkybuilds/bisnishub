@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+﻿import { describe, it, expect, beforeEach } from 'vitest';
 import {
   DEFAULT_STORE_SETTINGS,
   getStoreSettings,
@@ -9,7 +9,7 @@ import {
   calculateSettingsKpis,
   exportSettingsSnapshotJson,
   importSettingsSnapshotJson
-} from '../settingsApi';
+} from '@bisnishub/shared/services/settingsApi';
 
 const storageMock = (() => {
   let store = {};

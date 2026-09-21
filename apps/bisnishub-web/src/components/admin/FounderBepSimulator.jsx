@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { Target, Zap, DollarSign, TrendingUp, CheckCircle, Sparkles } from 'lucide-react';
-import { formatRupiah } from '../../utils/formatters';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
 
 const STORAGE_KEY = 'teestock_founder_bep_config';
 

@@ -1,10 +1,10 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Truck, RefreshCw, MessageSquare } from 'lucide-react';
-import { useStore } from '../../context/StoreContext';
-import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
+import { useStore } from '@bisnishub/shared/context/StoreContext';
+import { sanitizePhoneNumber } from '@bisnishub/shared/utils/whatsappTemplates';
 import { NewsletterCapture } from './NewsletterCapture';
-import { TeeStockLogo } from '../common/TeeStockLogo';
+import { TeeStockLogo } from '@bisnishub/shared/components/common/TeeStockLogo';
 
 export function Footer() {
   const { storeSettings } = useStore();

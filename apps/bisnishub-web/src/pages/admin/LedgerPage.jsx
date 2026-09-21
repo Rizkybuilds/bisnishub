@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   Wallet, 
   ArrowUpRight, 
@@ -26,12 +26,12 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
-import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { Modal } from '../../components/ui/Modal';
-import { Input, Select } from '../../components/ui/Input';
-import { formatRupiah, formatDate } from '../../utils/formatters';
+import { Card } from '@bisnishub/shared/components/ui/Card';
+import { Badge } from '@bisnishub/shared/components/ui/Badge';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { Modal } from '@bisnishub/shared/components/ui/Modal';
+import { Input, Select } from '@bisnishub/shared/components/ui/Input';
+import { formatRupiah, formatDate } from '@bisnishub/shared/utils/formatters';
 
 const BUSINESS_WALLETS = [
   { id: 'wallet_teestock', name: 'TeeStock (BCA Bisnis - Apparel Ritel)', unit: 'teestock' },

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+﻿import { describe, it, expect, vi } from 'vitest';
 import {
   calculateMultiUnitBalances,
   calculateUnitPnl,
@@ -7,7 +7,7 @@ import {
   recordInterUnitTransfer,
   calculateLedgerSummary,
   WALLETS
-} from '../ledgerApi';
+} from '@bisnishub/shared/services/ledgerApi';
 
 describe('Treasury & Ledger Engine (ledgerApi.js)', () => {
   describe('calculateMultiUnitBalances() — Multi-Wallet Isolation', () => {

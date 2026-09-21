@@ -1,12 +1,12 @@
-/**
+﻿/**
  * ⚡ TeeStock Custom Order Quoter & WhatsApp Sales Proposal Engine
  * Menghitung HPP custom garmen secara presisi, multi-posisi sablon DTF,
  * surcharge ukuran jumbo (2XL/3XL), tiering volume, kepatuhan margin CFO (>= 35%),
  * generator pesan penawaran WhatsApp direct, dan jembatan ke antrean Kanban.
  */
 
-import { GARMENT_TYPES } from '../constants/garments';
-import { PRODUCTION_COSTS, getSizeSurcharge } from '../constants/pricing';
+import { GARMENT_TYPES } from '@bisnishub/shared/constants/garments';
+import { PRODUCTION_COSTS, getSizeSurcharge } from '@bisnishub/shared/constants/pricing';
 import { normalizePhoneNumber } from './customersApi';
 
 /**

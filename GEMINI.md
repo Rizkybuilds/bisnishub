@@ -37,6 +37,7 @@ Aktifkan skill spesifik saat user meminta saran atau eksekusi domain terkait:
 - **C-Suite Leadership**: `mentor-bisnis` (strategi), `cto` (teknologi), `coo` (operasional), `cfo` (keuangan & pricing), `cmo` (marketing).
 - **Execution & Ops Engine**: `supabase-architect` (database & RLS), `business-ops-engine` (inventori & fulfillment), `whatsapp-automation` (chat & order notification), `dtf-print-ops` (gang sheet & heat press), `marketing-promo-engine` (drop promo & script WA).
 - **Web App Squad**: `web-app-architect` (sistem & flows), `fullstack-web-dev` (React/Vite/Next), `api-backend-engineer` (API & payment gateway), `web-qa-testing` (E2E Playwright & Vitest), `web-sec-perf` (OWASP & Core Web Vitals).
+- **Enterprise ERP & AI Squad**: `integrated-erp-engine` (arsitektur modul ERP, BOM & multi-unit GL), `ai-automation-engine` (OCR struk belanja, WA order parser, & Edge Functions), `ai-copilot-builder` (embedded ERP copilot, Gemini tool calling, & generative UI).
 - **Creative & Growth Squad**: `copywriter-pro` (conversion copywriting & PDP), `creative-director` (moodboard & art direction), `performance-ads-specialist` (Meta/TikTok/Shopee Ads), `content-strategist` (konten 4E & TikTok SEO), `retention-crm-expert` (unboxing experience & repeat order).
 
 
@@ -62,11 +63,14 @@ bisnis/teknis bahasa Inggris yang umum digunakan di industri.
 
 ## Subagents Otonom Tersedia
 
-Workspace ini dilengkapi 4 subagent spesialis yang dapat didelegasikan via `invoke_subagent`:
+Workspace ini dilengkapi 7 subagent spesialis yang dapat didelegasikan via `invoke_subagent`:
 1. `csuite-council`: Dewan penasihat strategis (sintesis Mentor Bisnis, CFO, COO, CMO, CTO) untuk evaluasi roadmap & pricing tanpa memakan konteks obrolan utama.
 2. `code-architect`: Senior fullstack engineer untuk implementasi React/Vite/Tailwind di `bisnis/teestock/web`, skrip SQL Supabase, Edge Functions, dan Playwright E2E.
 3. `growth-marketer`: Copywriter & growth hacker untuk batching kalender konten 30 hari, naskah PDP konversi tinggi, script WA blast, dan creative ads testing.
 4. `ops-specialist`: Spesialis DTF & logistik untuk pre-flight 300 DPI, kalkulasi gang sheet 58 cm, label thermal A6, dan alur bot WhatsApp.
+5. `erp-architect`: Senior Enterprise ERP Systems Architect untuk modul General Ledger, Supply Chain 2-tier, BOM, Kanban Produksi DTF, dan B2B Quoter Pipeline.
+6. `ai-automation-engineer`: AI & Workflow Automation Engineer untuk Gemini Multimodal OCR struk belanja, WA order auto-parser, Edge Functions, dan idempotency triggers.
+7. `ai-copilot-builder`: Embedded AI Copilot Developer untuk asisten cerdas dashboard BisnisHub OS, Gemini Tool Calling, Generative UI widgets, dan Morning Brief.
 
 ---
 
@@ -108,6 +112,25 @@ Workspace ini dilengkapi 4 subagent spesialis yang dapat didelegasikan via `invo
   - `shipped`: Paket diserahkan ke ekspedisi &rarr; input nomor resi, link WhatsApp resi siap kirim, dan pengeluaran ongkir kurir dibukukan.
 - **4-Pillars Feature Integration Checklist (Anti-Silo Rule)**:
   - Setiap fitur baru wajib lolos verifikasi 4 pilar: (1) Database & RLS Supabase, (2) Integritas Finansial & HPP CFO, (3) Alur Operasional & Inventori COO, (4) Pengalaman Pengguna Mobile-First CMO.
+
+### 5. Cross-Project Code Governance (CTO Rule)
+> Referensi lengkap: [[ARCHITECTURE]] dan [[catatan/governance-cross-project|Governance Rules]]
+
+- **Dual-App Architecture**: Ekosistem ini terdiri dari 2 web app terpisah yang berbagi 1 Supabase project dan 1 shared package:
+  - **BisnisHub OS** (`apps/bisnishub-web/`): Admin dashboard (PIN-locked, founder-only).
+  - **TeeStock WebClient** (`bisnis/teestock/web/`): Public storefront (customer-facing).
+  - **Shared Package** (`packages/shared/src/`): 36 file shared (services, constants, utils, context, UI components).
+- **Single Source of Truth**: Semua kode shared hidup di `packages/shared/src/`. Kedua app meng-import via Vite alias `@bisnishub/shared/...`. **Dilarang** menduplikasi file shared ke dalam app directory.
+- **File Ownership Tags**: Setiap file di-tag sebagai `@shared` (packages/shared/), `@admin-only` (BisnisHub), atau `@store-only` (TeeStock). Registri lengkap ada di [[ARCHITECTURE]].
+- **Import Convention**: Gunakan `import { x } from '@bisnishub/shared/services/ordersApi'` — BUKAN relative path ke packages/.
+- **Data Contract Lock**: Field kunci (`subtotal`, `discount_amount`, `shipping_fee`, `unique_code`, `total_amount`), order status enum, dan formula keuangan **tidak boleh diubah** tanpa protokol RFC + migration SQL + update simultan di kedua app.
+- **Integrity Verification**: Jalankan `scripts/sync-shared.ps1 -Verify` untuk memastikan semua file ada di shared package dan tidak ada duplikat stale.
+
+### 6. AI Automation & ERP Data Integrity Guardrail (AI & Data Rule)
+- **Traceability & Audit Trail**: Setiap mutasi data yang dipicu oleh AI (scan struk OCR, parser WhatsApp, atau rekomendasi Copilot) WAJIB mengisi field audit: `created_by: 'ai_automation'`, dengan metadata JSON `{ model: 'gemini-3.8-flash', confidence: 0.9X, source_id: '...' }`.
+- **Human-in-the-Loop Threshold**: Mutasi kas keluar $> \text{Rp 500.000}$ atau penyesuaian stok $> 10\text{ pcs}$ yang diekstrak oleh AI dilarang commit langsung ke database sebagai status final. Wajib masuk ke antrean `pending_review` dan meminta konfirmasi 1-klik founder.
+- **Idempotency Guarantee**: Semua webhook pemroses AI (Vision OCR, WhatsApp gateway) wajib memverifikasi idempotency key (hash SHA-256 berkas/pesan) untuk mencegah duplikasi pencatatan buku kas atau stok.
+- **Strict Schema Enforcement**: Semua ekstraksi AI wajib divalidasi dengan Zod schema atau JSON Schema baku sebelum dilakukan operasi database (`insert`/`update`). Dilarang melakukan write data mentah yang belum lolos parsing.
 
 ---
 

@@ -1,6 +1,6 @@
-import React from 'react';
+﻿import React from 'react';
 import { ShoppingBag, MessageSquare, ArrowRight, Check } from 'lucide-react';
-import { formatRupiah } from '../../utils/formatters';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
 
 export function StickyMobileBuyBar({
   product,

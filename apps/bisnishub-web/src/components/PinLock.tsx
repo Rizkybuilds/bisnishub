@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Lock, Shield, KeyRound, AlertCircle, Sparkles, CheckCircle2 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '@bisnishub/shared/context/AuthContext';
 
 interface PinLockProps {
   onUnlock: (authInfo?: { method: string; identifier?: string }) => void;

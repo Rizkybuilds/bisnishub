@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, Plus, Minus, Package } from 'lucide-react';
-import { formatRupiah } from '../../../utils/formatters';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
 
 export function CartItemList({ cart, updateCartQty, removeFromCart }) {
   if (!cart || cart.length === 0) return null;

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { 
   Building2, 
   Copy, 
@@ -6,9 +6,9 @@ import {
   Package, 
   MessageSquare
 } from 'lucide-react';
-import { Modal } from '../ui/Modal';
-import { Button } from '../ui/Button';
-import { aggregateVendorPickupList } from '../../utils/garmentStockRouting';
+import { Modal } from '@bisnishub/shared/components/ui/Modal';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { aggregateVendorPickupList } from '@bisnishub/shared/utils/garmentStockRouting';
 
 export function VendorPickupModal({ isOpen, onClose, orders = [] }) {
   const [copied, setCopied] = useState(false);

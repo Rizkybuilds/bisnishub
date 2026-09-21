@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Modal } from '../ui/Modal';
+﻿import React, { useState } from 'react';
+import { Modal } from '@bisnishub/shared/components/ui/Modal';
 import { Ruler, Sparkles, Check, Table } from 'lucide-react';
-import { Button } from '../ui/Button';
-import { NSA_SIZE_SPECS } from '../../constants/garments';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { NSA_SIZE_SPECS } from '@bisnishub/shared/constants/garments';
 
 export function SizeCalculatorModal({ isOpen, onClose, onSelectSize, currentSize, availableSizes }) {
   const [height, setHeight] = useState('170');

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link, useLocation } from 'react-router-dom';
 import { Search, Filter, Package, Sparkles, ArrowUpDown, X, Tag, Palette, CheckCircle2, RotateCcw } from 'lucide-react';
-import { useStore } from '../../context/StoreContext';
-import { useAuth } from '../../context/AuthContext';
-import { SERIES } from '../../constants/series';
-import { Button } from '../../components/ui/Button';
-import { SEOHead } from '../../components/common/SEOHead';
+import { useStore } from '@bisnishub/shared/context/StoreContext';
+import { useAuth } from '@bisnishub/shared/context/AuthContext';
+import { SERIES } from '@bisnishub/shared/constants/series';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { SEOHead } from '@bisnishub/shared/components/common/SEOHead';
 import { ProductCard } from '../../components/store/ProductCard';
 
 /**

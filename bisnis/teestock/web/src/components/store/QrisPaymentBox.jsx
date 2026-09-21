@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   QrCode, 
   Copy, 
@@ -12,8 +12,8 @@ import {
   Zap,
   Building2
 } from 'lucide-react';
-import { formatRupiah } from '../../utils/formatters';
-import { Button } from '../ui/Button';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
+import { Button } from '@bisnishub/shared/components/ui/Button';
 
 export function QrisPaymentBox({ 
   orderId, 

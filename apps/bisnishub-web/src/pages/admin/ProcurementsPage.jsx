@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   Plus, 
   PackageCheck, 
@@ -21,7 +21,7 @@ import {
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
 import { ProcurementIntakeModal } from '../../components/admin/ProcurementIntakeModal';
-import { formatRupiah } from '../../utils/formatters';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
 
 export function ProcurementsPage() {
   const { procurements, addProcurement, removeProcurement } = useAdmin();

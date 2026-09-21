@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { calculateLedgerSummary } from '../ledgerApi';
-import { getTotalFixedAssetsValue } from '../assetsApi';
+﻿import { describe, it, expect } from 'vitest';
+import { calculateLedgerSummary } from '@bisnishub/shared/services/ledgerApi';
+import { getTotalFixedAssetsValue } from '@bisnishub/shared/services/assetsApi';
 
 describe('Founder Finance & Wealth Engine (CFO Standard)', () => {
   describe('calculateLedgerSummary() — Pemisahan Dompet Pribadi vs Bisnis', () => {

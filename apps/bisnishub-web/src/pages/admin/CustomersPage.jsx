@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { 
   Users, 
   Wallet, 
@@ -28,9 +28,9 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { Badge } from '../../components/ui/Badge';
+import { Card } from '@bisnishub/shared/components/ui/Card';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { Badge } from '@bisnishub/shared/components/ui/Badge';
 import { 
   aggregateCustomersFromOrders, 
   calculateCustomerKpis, 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   Users, 
   TrendingUp, 
@@ -16,14 +16,14 @@ import {
   Zap,
   HelpCircle
 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useStore } from '../../context/StoreContext';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { formatRupiah } from '../../utils/formatters';
-import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
-import { supabase } from '../../services/supabase';
-import { SEOHead } from '../../components/common/SEOHead';
+import { useAuth } from '@bisnishub/shared/context/AuthContext';
+import { useStore } from '@bisnishub/shared/context/StoreContext';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { Input } from '@bisnishub/shared/components/ui/Input';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
+import { sanitizePhoneNumber } from '@bisnishub/shared/utils/whatsappTemplates';
+import { supabase } from '@bisnishub/shared/services/supabase';
+import { SEOHead } from '@bisnishub/shared/components/common/SEOHead';
 
 export const PARTNER_TIERS = {
   dropship: {

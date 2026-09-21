@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
-import { ThemeProvider } from './context/ThemeContext';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { StoreProvider } from './context/StoreContext';
+import { ThemeProvider } from '@bisnishub/shared/context/ThemeContext';
+import { AuthProvider, useAuth } from '@bisnishub/shared/context/AuthContext';
+import { StoreProvider } from '@bisnishub/shared/context/StoreContext';
 import { AdminProvider } from './context/AdminContext';
 import { PinLock } from './components/PinLock';
 

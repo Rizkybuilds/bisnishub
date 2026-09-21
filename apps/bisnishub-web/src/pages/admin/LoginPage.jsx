@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth, checkIsAdminEmail } from '../../context/AuthContext';
+import { useAuth, checkIsAdminEmail } from '@bisnishub/shared/context/AuthContext';
 import { AlertCircle, LogOut, ArrowLeft } from 'lucide-react';
 
 export function LoginPage() {

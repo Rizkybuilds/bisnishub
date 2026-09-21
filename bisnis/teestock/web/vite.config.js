@@ -7,7 +7,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@bisnishub/shared': path.resolve(__dirname, '../../../packages/shared/src'),
     },
+    dedupe: ['react', 'react-dom', 'react-router-dom', '@supabase/supabase-js', 'lucide-react'],
   },
   build: {
     rollupOptions: {
@@ -24,6 +26,12 @@ export default defineConfig({
   server: {
     port: 5173,
     open: false,
+    fs: {
+      allow: [
+        path.resolve(__dirname),
+        path.resolve(__dirname, '../../../packages/shared/src'),
+      ],
+    },
   },
   test: {
     include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}'],

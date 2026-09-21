@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { restockGarmentBatch, restockSupplyItem, restockDtfFilm } from '../inventoryApi';
-import { calculateUnitPnl, calculateMultiUnitBalances } from '../ledgerApi';
+﻿import { describe, it, expect, beforeEach } from 'vitest';
+import { restockGarmentBatch, restockSupplyItem, restockDtfFilm } from '@bisnishub/shared/services/inventoryApi';
+import { calculateUnitPnl, calculateMultiUnitBalances } from '@bisnishub/shared/services/ledgerApi';
 
 describe('Smart Procurement & Batch Inventory Intake Engine', () => {
   let mockMatrix;

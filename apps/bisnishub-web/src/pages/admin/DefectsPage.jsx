@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { 
   AlertTriangle, 
   Plus, 
@@ -19,8 +19,8 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
-import { formatRupiah, formatDate } from '../../utils/formatters';
-import { GARMENT_TYPES, SIZES, NSA_34_COLORS } from '../../constants/garments';
+import { formatRupiah, formatDate } from '@bisnishub/shared/utils/formatters';
+import { GARMENT_TYPES, SIZES, NSA_34_COLORS } from '@bisnishub/shared/constants/garments';
 import { 
   getDefects, 
   saveDefect, 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Settings, 
   Cloud, 
@@ -27,12 +27,12 @@ import {
   Laptop
 } from 'lucide-react';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
-import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import { Card } from '@bisnishub/shared/components/ui/Card';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { Input } from '@bisnishub/shared/components/ui/Input';
 import { useAdmin } from '../../context/AdminContext';
-import { useStore } from '../../context/StoreContext';
-import { testSupabaseConnection } from '../../services/supabase';
+import { useStore } from '@bisnishub/shared/context/StoreContext';
+import { testSupabaseConnection } from '@bisnishub/shared/services/supabase';
 import { 
   getAppEnvironment, 
   setAppEnvironment, 
@@ -40,7 +40,7 @@ import {
   calculateSettingsKpis,
   exportSettingsSnapshotJson,
   importSettingsSnapshotJson
-} from '../../services/settingsApi';
+} from '@bisnishub/shared/services/settingsApi';
 
 export function SettingsPage() {
   const { supabaseStatus, showToast, purgeAllDemoData } = useAdmin();

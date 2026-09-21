@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Printer, Truck } from 'lucide-react';
-import { Modal } from '../ui/Modal';
-import { Button } from '../ui/Button';
-import { formatDate } from '../../utils/formatters';
+import { Modal } from '@bisnishub/shared/components/ui/Modal';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { formatDate } from '@bisnishub/shared/utils/formatters';
 
 export function ShippingLabelModal({ isOpen, onClose, order }) {
   const [courier, setCourier] = useState(order?.courier || 'J&T Express');

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { useOutletContext, Link } from 'react-router-dom';
 import { 
   Inbox, 
@@ -21,9 +21,9 @@ import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
 import { KanbanColumn } from '../../components/admin/KanbanColumn';
 import { VendorPickupModal } from '../../components/admin/VendorPickupModal';
-import { aggregateVendorPickupList } from '../../utils/garmentStockRouting';
+import { aggregateVendorPickupList } from '@bisnishub/shared/utils/garmentStockRouting';
 import { PrintCareCardModal } from '../../components/admin/PrintCareCardModal';
-import { exportOrdersCsv } from '../../services/ordersApi';
+import { exportOrdersCsv } from '@bisnishub/shared/services/ordersApi';
 
 export function KanbanPage() {
   const { openNewOrderModal } = useOutletContext();

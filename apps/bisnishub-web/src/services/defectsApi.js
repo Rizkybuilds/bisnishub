@@ -1,5 +1,5 @@
-import { supabase } from './supabase';
-import { GARMENT_TYPES } from '../constants/garments';
+import { supabase } from '@bisnishub/shared/services/supabase';
+import { GARMENT_TYPES } from '@bisnishub/shared/constants/garments';
 
 const LOCAL_STORAGE_KEY = 'ts_defects_cache';
 

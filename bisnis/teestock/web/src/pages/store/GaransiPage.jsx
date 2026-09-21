@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   ShieldCheck, 
   RefreshCw, 
@@ -13,10 +13,10 @@ import {
   HelpCircle,
   Shirt
 } from 'lucide-react';
-import { Button } from '../../components/ui/Button';
-import { SEOHead } from '../../components/common/SEOHead';
-import { useStore } from '../../context/StoreContext';
-import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { SEOHead } from '@bisnishub/shared/components/common/SEOHead';
+import { useStore } from '@bisnishub/shared/context/StoreContext';
+import { sanitizePhoneNumber } from '@bisnishub/shared/utils/whatsappTemplates';
 
 export const SIZE_CHART_MODELS = {
   nsa_7200: {

@@ -1,0 +1,8 @@
+{
+  "name": "@bisnishub/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared services, constants, utils, context, and UI components for BisnisHub ecosystem",
+  "main": "src/index.js"
+}

@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
+﻿import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User, Phone, MapPin, Truck, AlertCircle, Package, CreditCard, Zap, QrCode, Building2 } from 'lucide-react';
 import { checkoutSchema } from '../../../schemas/checkoutSchema';
-import { SHIPPING_ZONES } from '../../../constants/pricing';
-import { formatRupiah } from '../../../utils/formatters';
-import { PAYMENT_METHODS, PAYMENT_PROVIDERS } from '../../../services/paymentAdapter';
-import { getAvailableCouriers } from '../../../services/shippingApi';
+import { SHIPPING_ZONES } from '@bisnishub/shared/constants/pricing';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
+import { PAYMENT_METHODS, PAYMENT_PROVIDERS } from '@bisnishub/shared/services/paymentAdapter';
+import { getAvailableCouriers } from '@bisnishub/shared/services/shippingApi';
 
 export function CheckoutShippingForm({
   profile,

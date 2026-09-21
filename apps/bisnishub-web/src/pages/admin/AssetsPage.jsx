@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   Flame, 
   Wrench, 
@@ -24,13 +24,13 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { AdminTopbar } from '../../components/admin/AdminTopbar';
-import { Modal } from '../../components/ui/Modal';
-import { formatRupiah } from '../../utils/formatters';
+import { Modal } from '@bisnishub/shared/components/ui/Modal';
+import { formatRupiah } from '@bisnishub/shared/utils/formatters';
 import { 
   calculateDepreciation, 
   getFixedAssetsSummary, 
   exportAssetsDepreciationCsv 
-} from '../../services/assetsApi';
+} from '@bisnishub/shared/services/assetsApi';
 
 export function AssetsPage() {
   const { 

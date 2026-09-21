@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+﻿import { describe, it, expect, beforeEach } from 'vitest';
 import { 
   deductStock, 
   deductDtfFilm, 
@@ -8,7 +8,7 @@ import {
   restockSupplyItem,
   adjustStockOpname,
   calculateInventoryStats
-} from '../inventoryApi';
+} from '@bisnishub/shared/services/inventoryApi';
 
 describe('Inventory Stock Engine (inventoryApi.js)', () => {
   let mockMatrix;

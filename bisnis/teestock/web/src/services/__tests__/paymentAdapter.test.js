@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+﻿import { describe, it, expect } from 'vitest';
 import {
   PAYMENT_PROVIDERS,
   PAYMENT_METHODS,
@@ -6,7 +6,7 @@ import {
   createPaymentSession,
   calculateSha512,
   verifyMidtransSignature
-} from '../paymentAdapter';
+} from '@bisnishub/shared/services/paymentAdapter';
 
 describe('Payment Gateway Dynamic Adapter (paymentAdapter)', () => {
   const sampleOrder = {

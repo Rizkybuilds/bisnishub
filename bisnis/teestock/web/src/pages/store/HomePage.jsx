@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { 
   Sparkles, 
   ShieldCheck, 
@@ -6,11 +6,11 @@ import {
   Zap, 
   Package 
 } from 'lucide-react';
-import { useStore } from '../../context/StoreContext';
+import { useStore } from '@bisnishub/shared/context/StoreContext';
 import { ScrollRevealSection } from '../../hooks/useScrollReveal';
-import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
-import { getAvailableColors, getCardPreviewImage } from '../../utils/productImages';
-import { SEOHead } from '../../components/common/SEOHead';
+import { sanitizePhoneNumber } from '@bisnishub/shared/utils/whatsappTemplates';
+import { getAvailableColors, getCardPreviewImage } from '@bisnishub/shared/utils/productImages';
+import { SEOHead } from '@bisnishub/shared/components/common/SEOHead';
 import { MarqueeTicker } from '../../components/store/interactive/MarqueeTicker';
 import { UnboxingShowcase } from '../../components/store/UnboxingShowcase';
 import { NewsletterCapture } from '../../components/store/NewsletterCapture';

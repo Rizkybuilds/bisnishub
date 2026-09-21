@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MessageCircle, X } from 'lucide-react';
-import { useStore } from '../../context/StoreContext';
-import { sanitizePhoneNumber } from '../../utils/whatsappTemplates';
+import { useStore } from '@bisnishub/shared/context/StoreContext';
+import { sanitizePhoneNumber } from '@bisnishub/shared/utils/whatsappTemplates';
 
 export function FloatingWhatsapp() {
   const { storeSettings } = useStore();

@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { Plus, Lock, Menu, Search } from 'lucide-react';
-import { Button } from '../ui/Button';
-import { ThemeToggle } from '../common/ThemeToggle';
+import { Button } from '@bisnishub/shared/components/ui/Button';
+import { ThemeToggle } from '@bisnishub/shared/components/common/ThemeToggle';
 
 export function AdminTopbar({ 
   title, 
