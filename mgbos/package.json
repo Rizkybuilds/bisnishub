@@ -1,0 +1,40 @@
+{
+  "name": "@mgbos/workspace",
+  "private": true,
+  "version": "0.5.4",
+  "type": "module",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": "22.23.2",
+    "pnpm": "10.34.5"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @mgbos/app dev",
+    "dev:teestock": "pnpm --filter @mgbos/teestock dev",
+    "build": "pnpm -r --if-present build",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc -p tsconfig.tools.json && pnpm -r typecheck",
+    "test": "vitest run",
+    "test:unit": "vitest run packages",
+    "test:integration": "node scripts/smoke.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "db:start": "node scripts/database.mjs start",
+    "db:stop": "node scripts/database.mjs stop",
+    "db:reset": "node scripts/database.mjs reset",
+    "db:types": "node scripts/database.mjs types",
+    "db:test": "node scripts/database.mjs test"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.6",
+    "prettier": "3.9.9",
+    "supabase": "2.117.0",
+    "typescript": "5.9.3",
+    "vitest": "5.0.1"
+  }
+}
