@@ -1,0 +1,39 @@
+:root {
+  color-scheme: dark;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #020617;
+  color: #f1f5f9;
+}
+body {
+  margin: 0;
+}
+main {
+  max-width: 800px;
+  margin: 12vh auto;
+  padding: 32px;
+}
+a {
+  color: #6ee7b7;
+  text-underline-offset: 4px;
+}
+a:focus-visible {
+  outline: 2px solid #6ee7b7;
+  outline-offset: 5px;
+}
+p {
+  color: #cbd5e1;
+  line-height: 1.7;
+}
+small {
+  color: #6ee7b7;
+}
+h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  line-height: 1.15;
+}
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 32px;
+}
