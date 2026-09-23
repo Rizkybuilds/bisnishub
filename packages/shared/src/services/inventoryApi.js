@@ -111,7 +111,7 @@ export async function getInventoryMatrix() {
       .select('*')
       .order('sku_item');
 
-    if (!error && data && data.length > 0) {
+    if (!error && data) {
       const reconstructed = buildMatrixFromInventoryRows(data);
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(reconstructed));

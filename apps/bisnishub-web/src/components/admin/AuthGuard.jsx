@@ -30,7 +30,7 @@ export function AuthGuard({ children }) {
 
   // 🛡️ BUKAN ADMIN: Tolak akses ke panel admin, kembalikan ke beranda
   if (!isAdmin) {
-    return <Navigate to="/" state={{ unauthorized: true, message: 'Akses ditolak: Halaman ini hanya untuk Administrator.' }} replace />;
+    return <Navigate to="/admin/login" state={{ unauthorized: true, message: 'Akses ditolak: Halaman ini hanya untuk Administrator.' }} replace />;
   }
 
   return children;

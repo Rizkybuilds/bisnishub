@@ -1,3 +1,4 @@
+DO $$ BEGIN RAISE EXCEPTION 'Deprecated unsafe patch. Use database/migrations/20260922_audit_hardening.sql instead.'; END $$;
 -- ==============================================================================
 -- 🏛️ BISNISHUB OS & MULTIGRAPH HOLDING: MULTI-UNIT TREASURY & CFO UPGRADE
 -- File: patch_multiunit_treasury.sql

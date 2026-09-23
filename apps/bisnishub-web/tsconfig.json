@@ -22,5 +22,6 @@
       "@bisnishub/shared/*": ["../../packages/shared/src/*"]
     }
   },
-  "include": ["src", "../../packages/shared/src"]
+  "include": ["src", "../../packages/shared/src"],
+  "exclude": ["**/*.test.*", "../../packages/shared/src/**/*.test.*"]
 }

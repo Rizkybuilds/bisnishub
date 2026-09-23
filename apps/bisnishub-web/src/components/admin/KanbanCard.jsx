@@ -26,7 +26,7 @@ import { isFastMovingBuffer } from '@bisnishub/shared/utils/garmentStockRouting'
 import { useAdmin } from '../../context/AdminContext';
 
 export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
-  const { getDtfFilmStatus, updateOrderTracking, cancelOrder } = useAdmin();
+  const { getDtfFilmStatus, updateOrderTracking, cancelOrder, confirmOrderPayment } = useAdmin();
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
   const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
@@ -85,7 +85,8 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
   const handleSaveTracking = async (e) => {
     e.preventDefault();
     if (updateOrderTracking) {
-      await updateOrderTracking(order.id, trackingInput, courierInput);
+      const saved = await updateOrderTracking(order.id, trackingInput, courierInput);
+      if (!saved) return;
     }
     setIsTrackingModalOpen(false);
   };
@@ -101,8 +102,8 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
 
   // Contextual forward button label
   const forwardLabels = {
-    pending: 'Verifikasi Lunas',
-    pending_payment: 'Verifikasi Lunas',
+    pending: 'Mulai produksi',
+    pending_payment: 'Mulai produksi',
     dtf: 'Siap Press',
     press: 'Lolos QC & Pack',
     pack: 'Serahkan Kurir'
@@ -111,7 +112,12 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
   return (
     <>
       <div className="bg-[#141312] border border-white/[0.08] rounded-2xl p-4 space-y-3.5 shadow-xl hover:border-white/20 transition-all duration-200 group">
-        {/* Header: ID, Unique Code, Tracking & Action Buttons */}
+        {order.payment_status === 'unpaid' && order.status !== 'cancelled' && !order.payment_reconciliation_required && (!order.payment_method || ['manual_qris', 'bank_transfer', 'manual_transfer'].includes(order.payment_method)) && (
+        <button type="button" className="w-full rounded border border-amber-500 p-2 text-sm text-amber-300" onClick={async () => {
+          if (window.confirm('Pastikan pembayaran penuh sebesar ' + formatRupiah(order.total_amount || order.price) + ' sudah diterima. Konfirmasi lunas?')) await confirmOrderPayment(order.id);
+        }}>Konfirmasi pembayaran lunas</button>
+      )}
+      {/* Header: ID, Unique Code, Tracking & Action Buttons */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="font-mono text-xs font-bold text-white bg-white/[0.04] px-2 py-0.5 rounded border border-white/10">
@@ -427,6 +433,7 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
               <button
                 type="button"
                 onClick={() => onMove(order.id, 1)}
+                disabled={order.payment_status !== 'paid'}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 shadow-md transition-all cursor-pointer min-h-[32px] ${
                   (order.status === 'pending' || order.status === 'pending_payment')
                     ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black shadow-emerald-500/20'
@@ -434,7 +441,7 @@ export function KanbanCard({ order, onMove, currentStatusIdx, totalStatuses }) {
                 }`}
                 title={
                   (order.status === 'pending' || order.status === 'pending_payment')
-                    ? `Verifikasi mutasi QRIS (+${order.unique_code || order.uniqueCode || 0}) & mulai produksi`
+                    ? (order.payment_status === 'paid' ? 'Mulai produksi pesanan yang sudah lunas' : 'Konfirmasi pembayaran terlebih dahulu')
                     : 'Lanjutkan status produksi'
                 }
               >

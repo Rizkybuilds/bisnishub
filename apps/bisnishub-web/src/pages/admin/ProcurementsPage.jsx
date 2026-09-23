@@ -457,13 +457,10 @@ export function ProcurementsPage() {
                             <Eye className="w-3.5 h-3.5" />
                           </button>
                           <button
-                            onClick={() => {
-                              if (confirm(`Hapus data pengadaan ${p.procurementNo}?`)) {
-                                removeProcurement(p.id);
-                              }
-                            }}
-                            className="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-                            title="Hapus Pengadaan"
+                            disabled
+                            className="p-1.5 rounded-lg text-zinc-600 cursor-not-allowed"
+                            title="Pengadaan terkait stok dan kas. Penghapusan dikunci; koreksi transaksi belum tersedia."
+                            aria-label="Penghapusan pengadaan dikunci untuk menjaga catatan stok dan kas"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>

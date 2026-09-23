@@ -87,7 +87,7 @@ export async function getCashTransactions() {
         .select('*')
         .order('transaction_date', { ascending: false });
 
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         // Filter out legacy mockup transactions
         const liveRows = data.filter(d => !d.id?.startsWith('tx-2609-00') && !d.transaction_no?.startsWith('TX-CAP-001') && !d.transaction_no?.startsWith('TX-CAPEX-001'));
         return liveRows.map(mapFromSupabase);
@@ -135,14 +135,16 @@ export async function recordCashTransaction(txData) {
 
   if (supabase) {
     try {
-      await supabase.from('ts_cash_ledger').insert([mapToSupabase(newTx)]);
+      const { error } = await supabase.from('ts_cash_ledger').insert([mapToSupabase(newTx)]);
+      if (error) throw error;
     } catch (err) {
       console.warn('Supabase recordCashTransaction warning:', err.message);
+      throw err;
     }
   }
 
   const current = await getCashTransactions();
-  const updated = [newTx, ...current];
+  const updated = current.some(tx => tx.transactionNo === newTx.transactionNo) ? current : [newTx, ...current];
   if (typeof localStorage !== 'undefined') {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   }
@@ -300,10 +302,11 @@ export function calculateUnitPnl(transactions = [], unit = 'teestock') {
 
   unitTxs.forEach(tx => {
     const amt = Number(tx.amount) || 0;
+    if (tx.settlementStatus === 'pending' || ['inter_unit_transfer', 'courier_shipping', 'shipping_escrow', 'unique_code', 'personal_injection'].includes(tx.category)) return;
     if (tx.type === 'CASH_IN' && tx.category !== 'capital_injection') {
       revenue += amt;
     } else if (tx.type === 'CASH_OUT' || tx.type === 'INTER_TRANSFER') {
-      if (['blank_garment', 'dtf_printing', 'unboxing_packaging', 'raw_materials_packaging', 'vendor_offset_maklon', 'procurement', 'courier_shipping'].includes(tx.category)) {
+      if (['blank_garment', 'dtf_printing', 'unboxing_packaging', 'raw_materials_packaging', 'vendor_offset_maklon', 'procurement'].includes(tx.category)) {
         cogs += amt;
       } else if (['capex_purchase', 'capex_machine_savings'].includes(tx.category)) {
         capex += amt;
@@ -452,16 +455,16 @@ export function calculateBusinessValuation({
   const multigraphRevenue = multigraphPnl.revenue || 0;
   const totalHoldingRevenueSample = teestockRevenue + multigraphRevenue;
   
-  // Proyeksi Annualized Revenue (Basis konservatif: minimal sample x 12 atau Rp 35.000.000 run rate awal)
-  const annualizedRevenue = Math.max(35000000, totalHoldingRevenueSample * 12);
+  // Illustrative projection from the supplied sample; no invented minimum revenue.
+  const annualizedRevenue = Math.max(0, totalHoldingRevenueSample * 12);
   const revenueMultiple = 1.5; // Multiple standar apparel & custom merchandise bootstrap
   const revenueValuation = Math.round(annualizedRevenue * revenueMultiple);
 
   // 3. SDE (Seller's Discretionary Earnings) Valuation
   const totalNetProfitSample = (teestockPnl.netProfit || 0) + (multigraphPnl.netProfit || 0);
   const founderPrive = founderWealth.totalPrive || 0;
-  // SDE tahunan = (Net Profit x 12) + Prive diskresioner pemilik
-  const annualizedSDE = Math.max(15000000, (totalNetProfitSample * 12) + (founderPrive * 2));
+  // Illustrative annual profit; withdrawals are not additional operating earnings.
+  const annualizedSDE = Math.max(0, totalNetProfitSample * 12);
   const sdeMultiple = 2.8; // Multiple UKM apparel / percetakan dengan repeat order
   const sdeValuation = Math.round(annualizedSDE * sdeMultiple);
 
@@ -474,11 +477,11 @@ export function calculateBusinessValuation({
   );
 
   // 5. Growth Metrics
-  const netFounderEquity = founderWealth.netFounderEquity || 4500000;
+  const netFounderEquity = founderWealth.netFounderEquity ?? 0;
   const totalWealthGrowth = fairEnterpriseValuation - netFounderEquity;
   const wealthGrowthRatio = netFounderEquity > 0 
     ? ((fairEnterpriseValuation / netFounderEquity)).toFixed(2) 
-    : '1.0';
+    : '0.0';
   const wealthGrowthPercent = netFounderEquity > 0
     ? (((fairEnterpriseValuation - netFounderEquity) / netFounderEquity) * 100).toFixed(1)
     : '0.0';

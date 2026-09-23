@@ -71,25 +71,30 @@ Deno.serve(async (req: Request) => {
     const supabase = getAdminClient();
     const { data: order, error: orderErr } = await supabase
       .from('ts_orders')
-      .select('id, order_number, status, total_amount, customer_phone, customer_name')
+      .select('id, order_number, status, payment_status, total_amount, customer_phone, customer_name')
       .eq('order_number', orderId)
       .maybeSingle();
 
-    if (orderErr || !order) {
+    if (orderErr) throw orderErr;
+    if (!order) {
       console.warn(`Order ${orderId} tidak ditemukan di database ts_orders.`);
-      // Return 200 to satisfy Midtrans retry policy, but log warning
+      // Ask the gateway to retry when checkout persistence is not yet visible.
       return new Response(
         JSON.stringify({ status: 'warning', message: 'Pesanan tidak ditemukan di database.' }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // 3. Idempotency Check: Jangan proses ulang order yang sudah lunas
-    const isAlreadyPaid = ['processing', 'ready_to_press', 'dtf_printed', 'completed', 'shipped'].includes(order.status);
-    if (isAlreadyPaid && (transactionStatus === 'settlement' || transactionStatus === 'capture')) {
-      console.log(`Idempotent: Order ${orderId} sudah berstatus '${order.status}'. Webhook diabaikan.`);
+    if (Number(grossAmount) !== Number(order.total_amount)) {
+      return new Response(JSON.stringify({ status: 'error', message: 'Nominal pembayaran tidak sesuai pesanan.' }), { status: 400, headers: corsHeaders });
+    }
+    if (order.payment_status === 'paid' && ['pending', 'capture', 'settlement', 'deny', 'cancel', 'expire'].includes(transactionStatus)) {
+      return new Response(JSON.stringify({ status: 'success', message: 'Pembayaran sudah dikonfirmasi.' }), { status: 200, headers: corsHeaders });
+    }
+    // A late success notification must never reopen an already refunded payment.
+    if (order.payment_status === 'refunded') {
       return new Response(
-        JSON.stringify({ status: 'success', message: 'Order sudah diproses sebelumnya.' }),
+        JSON.stringify({ status: 'success', message: 'Pembayaran sudah dikembalikan.' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -102,22 +107,28 @@ Deno.serve(async (req: Request) => {
       transactionStatus === 'settlement'
     ) {
       // Pembayaran Sah & Diterima -> Siap Dipress di Studio Citayam!
-      newStatus = 'processing';
+      newStatus = ['pending_payment', 'pending', 'processing'].includes(order.status) ? 'pending' : order.status;
     } else if (transactionStatus === 'pending') {
       newStatus = 'pending_payment';
     } else if (['deny', 'cancel', 'expire', 'refund'].includes(transactionStatus)) {
       newStatus = 'cancelled';
     }
 
-    const { error: updateErr } = await supabase
+    const { data: updatedOrder, error: updateErr } = await supabase
       .from('ts_orders')
       .update({
         status: newStatus,
+        payment_status: (transactionStatus === 'settlement' || (transactionStatus === 'capture' && fraudStatus === 'accept')) ? 'paid' : transactionStatus === 'refund' ? 'refunded' : order.payment_status,
         payment_method: paymentType || 'midtrans',
-        notes: `[Midtrans ${transactionStatus?.toUpperCase()}] TxID: ${transactionId || '-'}`,
-      })
-      .eq('id', order.id);
 
+      })
+      .eq('id', order.id)
+      .eq('status', order.status)
+      .eq('payment_status', order.payment_status)
+      .select('id')
+      .maybeSingle();
+
+    if (!updateErr && !updatedOrder) throw new Error('Order changed concurrently; retry notification');
     if (updateErr) {
       throw new Error(`Gagal memperbarui status order ${orderId}: ${updateErr.message}`);
     }

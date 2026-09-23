@@ -1,3 +1,4 @@
+DO $$ BEGIN RAISE EXCEPTION 'Deprecated unsafe patch. Use database/migrations/20260922_audit_hardening.sql instead.'; END $$;
 -- ==============================================================================
 -- 📦 BISNISHUB OS & TEESTOCK: PEMBERSIHAN DATA FIKTIF KATALOG & UPGRADE RLS PIM
 -- File: patch_clean_catalog_pim.sql

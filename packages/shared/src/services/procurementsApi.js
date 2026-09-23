@@ -4,7 +4,6 @@
  * dan kemasan (polymailer, stiker, label thermal).
  */
 import { supabase } from './supabase';
-import { addCashTransaction } from './ledgerApi';
 
 const STORAGE_KEY = 'teestock_procurements';
 
@@ -19,7 +18,7 @@ export async function getProcurements() {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         // Filter out any legacy dummy records from DB if present
         const liveRows = data.filter(d => !d.id?.startsWith('proc-00') && !d.procurement_no?.startsWith('PO-2609-00'));
         return liveRows.map(mapFromSupabase);
@@ -72,6 +71,7 @@ export async function saveProcurement(procData) {
     id: procData.id || generateUuid(),
     procurementNo: procData.procurementNo || `PO-${Date.now().toString().slice(-6)}`,
     itemType: procData.itemType || 'blank_tshirt',
+    inventoryItems: procData.inventoryItems || [],
     itemSku: procData.itemSku || '',
     itemName: procData.itemName,
     supplierName: procData.supplierName || 'Distributor NSA',
@@ -94,87 +94,25 @@ export async function saveProcurement(procData) {
   // 1. Simpan ke Supabase jika aktif
   if (supabase) {
     try {
-      await supabase.from('ts_procurements').insert([mapToSupabase(newProc)]);
+      const { error } = await supabase.from('ts_procurements').insert([mapToSupabase(newProc)]);
+      if (error) throw error;
     } catch (err) {
       console.warn('Supabase saveProcurement warning:', err.message);
+      throw err;
     }
   }
 
   // 2. Simpan ke LocalStorage
   const current = await getProcurements();
-  const updated = [newProc, ...current];
+  const updated = current.some(proc => proc.id === newProc.id) ? current : [newProc, ...current];
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 
-  // 3. Otomatis catat ke Buku Kas (CASH_OUT) jika recordCashTx aktif (default true)
-  if (procData.recordCashTx !== false) {
-    let txDesc = `Belanja: ${newProc.itemName} (${qty} ${newProc.unitMeasure} @ Rp ${unitCost.toLocaleString('id-ID')})`;
-    if (newProc.itemsBreakdown && newProc.itemsBreakdown.length > 0) {
-      txDesc = `Belanja Grosir: ${newProc.itemName} (${qty} pcs mix ukuran/warna + Ongkir Rp ${shippingCost.toLocaleString('id-ID')})`;
-    } else if (newProc.itemType === 'design_license') {
-      txDesc = `Beli Lisensi Desain: ${newProc.itemName} via ${newProc.supplierName}`;
-    } else if (newProc.itemType === 'sticker_vendor' || newProc.yieldCalculation) {
-      const sheets = newProc.yieldCalculation?.sheetQty || 1;
-      txDesc = `Cetak Stiker Luar: ${newProc.itemName} (${sheets} lbr A3+ jadi ${qty} pcs + Ongkir Rp ${shippingCost.toLocaleString('id-ID')})`;
-    }
-
-    // Map COGS Category for CFO P&L Accounting
-    let txCategory = 'blank_garment';
-    if (newProc.itemType === 'dtf_film') {
-      txCategory = 'dtf_printing';
-    } else if (newProc.itemType === 'design_license') {
-      txCategory = 'design_license';
-    } else if (newProc.itemType === 'sticker_vendor' || newProc.itemType === 'packaging' || newProc.itemType === 'supplies') {
-      txCategory = 'unboxing_packaging';
-    }
-
-    // Map Isolated Source Wallet & Business Unit
-    let sourceWallet = 'wallet_teestock';
-    let businessUnit = 'teestock';
-    if (newProc.paymentSource === 'multigraph_bank') {
-      sourceWallet = 'wallet_multigraph';
-      businessUnit = 'multigraph';
-    } else if (newProc.paymentSource === 'holding_treasury') {
-      sourceWallet = 'wallet_holding';
-      businessUnit = 'holding';
-    } else if (newProc.paymentSource === 'personal_pocket') {
-      sourceWallet = 'wallet_founder';
-      businessUnit = 'founder';
-    }
-
-    await addCashTransaction({
-      transactionNo: `TX-PO-${newProc.procurementNo.slice(-6)}`,
-      date: new Date().toISOString().slice(0, 10),
-      businessUnit,
-      type: 'CASH_OUT',
-      category: txCategory,
-      amount: totalCost,
-      sourceWallet,
-      destinationWallet: newProc.supplierName,
-      sourceAccount: newProc.paymentSource,
-      destinationAccount: newProc.supplierName,
-      relatedId: newProc.procurementNo,
-      proofReceiptRef: newProc.procurementNo,
-      description: txDesc,
-      isPersonalWallet: newProc.paymentSource === 'personal_pocket'
-    });
-  }
-
+  // The database procurement trigger owns cash posting.
   return updated;
 }
 
-export async function deleteProcurement(id) {
-  if (supabase) {
-    try {
-      await supabase.from('ts_procurements').delete().eq('id', id);
-    } catch (err) {
-      console.warn('Supabase deleteProcurement warning:', err.message);
-    }
-  }
-
-  const current = await getProcurements();
-  const updated = current.filter(p => p.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-  return updated;
+export async function deleteProcurement() {
+  throw new Error('Pengadaan sudah tercatat pada stok dan kas. Penghapusan dinonaktifkan sampai proses koreksi tersedia.');
 }
 
 function mapFromSupabase(row) {
@@ -182,6 +120,7 @@ function mapFromSupabase(row) {
     id: row.id,
     procurementNo: row.procurement_no,
     itemType: row.item_type,
+    inventoryItems: row.inventory_items || [],
     itemSku: row.item_sku,
     itemName: row.item_name,
     supplierName: row.supplier_name,
@@ -205,6 +144,7 @@ function mapToSupabase(item) {
     id: isUuid ? item.id : undefined,
     procurement_no: item.procurementNo,
     item_type: item.itemType,
+    inventory_items: item.inventoryItems,
     item_sku: item.itemSku,
     item_name: item.itemName,
     supplier_name: item.supplierName,

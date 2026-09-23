@@ -41,8 +41,6 @@ export function AuthProvider({ children }) {
     }
 
     const currentUser = currentSession?.user;
-    const userEmail = currentUser?.email?.toLowerCase().trim();
-    const isAdminEmail = checkIsAdminEmail(userEmail);
 
     try {
       const { data, error } = await supabase
@@ -51,17 +49,19 @@ export function AuthProvider({ children }) {
         .eq('id', userId)
         .maybeSingle();
 
+      if (error) throw error;
+
       if (data) {
-        const resolved = isAdminEmail ? { ...data, role: 'admin' } : data;
+        const resolved = data;
         setProfile(resolved);
         return resolved;
       }
 
-      // Jika data profil belum ada di DB, buat profil default (hanya whitelist yang jadi admin)
+      // Clients can only create member profiles; administrators are assigned on the server.
       const defaultProfile = {
         id: userId,
         full_name: currentUser?.user_metadata?.full_name || currentUser?.user_metadata?.name || currentUser?.email?.split('@')[0] || 'Member',
-        role: isAdminEmail ? 'admin' : 'member',
+        role: 'member',
         avatar_url: currentUser?.user_metadata?.avatar_url || currentUser?.user_metadata?.picture || null,
       };
 
@@ -81,7 +81,7 @@ export function AuthProvider({ children }) {
       const fallback = {
         id: userId,
         full_name: currentSession?.user?.email?.split('@')[0] || 'Member',
-        role: isAdminEmail ? 'admin' : 'member',
+        role: 'member',
       };
       setProfile(fallback);
       return fallback;
@@ -89,34 +89,33 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    // 1. Cek active session saat pertama kali mount
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+    let active = true;
+    let revision = 0;
+    const acceptSession = (currentSession) => {
+      if (!active) return;
+      const currentRevision = ++revision;
       setSession(currentSession);
       const currentUser = currentSession?.user ?? null;
       setUser(currentUser);
+      setProfile(null);
+      setLoading(!!currentUser);
       if (currentUser) {
-        fetchProfile(currentUser.id, currentSession).finally(() => setLoading(false));
-      } else {
-        setLoading(false);
+        // Run outside Supabase's auth callback lock.
+        setTimeout(() => {
+          if (!active || revision !== currentRevision) return;
+          fetchProfile(currentUser.id, currentSession).finally(() => {
+            if (active && revision === currentRevision) setLoading(false);
+          });
+        }, 0);
       }
-    });
-
-    // 2. Dengarkan perubahan state auth (login, logout, refresh token)
+    };
+    supabase.auth.getSession().then(({ data: { session: currentSession }, error }) => {
+      if (revision === 0) acceptSession(error ? null : currentSession);
+    }).catch(() => { if (revision === 0) acceptSession(null); });
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, newSession) => {
-        setSession(newSession);
-        const currentUser = newSession?.user ?? null;
-        setUser(currentUser);
-        if (currentUser) {
-          await fetchProfile(currentUser.id, newSession);
-        } else {
-          setProfile(null);
-        }
-        setLoading(false);
-      }
+      (_event, newSession) => acceptSession(newSession)
     );
-
-    return () => subscription.unsubscribe();
+    return () => { active = false; revision++; subscription.unsubscribe(); };
   }, [fetchProfile]);
 
   /**
@@ -209,9 +208,7 @@ export function AuthProvider({ children }) {
   };
 
   // Helper roles
-  const userEmail = user?.email?.toLowerCase().trim();
-  const isAdminEmail = checkIsAdminEmail(userEmail);
-  const currentRole = (isAdminEmail || profile?.role === 'admin') ? 'admin' : (profile?.role || (user ? 'member' : 'visitor'));
+  const currentRole = user && session ? (profile?.id === user.id ? profile.role : 'member') : 'visitor';
   const isAdmin = currentRole === 'admin';
   const isPartner = currentRole === 'partner';
   const isMember = !!user;

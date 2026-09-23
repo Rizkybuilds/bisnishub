@@ -1,10 +1,10 @@
 ﻿import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth, checkIsAdminEmail } from '@bisnishub/shared/context/AuthContext';
+import { useAuth } from '@bisnishub/shared/context/AuthContext';
 import { AlertCircle, LogOut, ArrowLeft } from 'lucide-react';
 
 export function LoginPage() {
-  const { isAuthenticated, isAdmin, user, signOut, loading, signInWithMagicLink } = useAuth();
+  const { isAuthenticated, isAdmin, user, signOut, loading, signInWithMagicLink, signInWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
   const [errorMsg, setErrorMsg] = useState('');
@@ -24,13 +24,6 @@ export function LoginPage() {
     }
 
     const cleanEmail = email.trim().toLowerCase();
-
-    // 🛡️ Pre-validation Whitelist Admin
-    if (!checkIsAdminEmail(cleanEmail)) {
-      setErrorMsg('Email ini tidak terdaftar dalam whitelist Admin TeeStock. Hubungi pemilik sistem.');
-      setStatus('error');
-      return;
-    }
 
     setStatus('sending');
     setErrorMsg('');
@@ -128,6 +121,10 @@ export function LoginPage() {
           ) : (
             /* Login Form */
             <form onSubmit={handleSubmit} className="space-y-4">
+              <button type="button" className="w-full rounded-lg border p-3" onClick={async () => {
+                try { const { error } = await signInWithGoogle(window.location.origin + '/admin/login'); if (error) throw error; }
+                catch (error) { setErrorMsg(error.message); setStatus('error'); }
+              }}>Masuk dengan Google</button>
               <div>
                 <label
                   htmlFor="email"

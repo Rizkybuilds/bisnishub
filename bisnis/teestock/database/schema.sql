@@ -1,3 +1,5 @@
+-- DEVELOPMENT RESET ONLY. Never run against production.
+DO $$ BEGIN IF current_setting('bisnishub.allow_reset', true) IS DISTINCT FROM 'yes' THEN RAISE EXCEPTION 'Destructive reset disabled. Use versioned migrations for existing databases.'; END IF; END $$;
 -- ====================================================================
 -- TEESTOCK APPAREL — MASTER CONSOLIDATED DATABASE SCHEMA
 -- Project: Unified Business Hub (Prefix: ts_ untuk TeeStock)

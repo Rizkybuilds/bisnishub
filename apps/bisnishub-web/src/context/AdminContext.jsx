@@ -39,7 +39,7 @@ import {
 import { getFixedAssets, saveFixedAsset as apiSaveFixedAsset, deleteFixedAsset as apiDeleteFixedAsset, getTotalFixedAssetsValue } from '@bisnishub/shared/services/assetsApi';
 import { getProcurements, saveProcurement as apiSaveProcurement, deleteProcurement as apiDeleteProcurement } from '@bisnishub/shared/services/procurementsApi';
 import { GARMENT_TYPES } from '@bisnishub/shared/constants/garments';
-import { testSupabaseConnection } from '@bisnishub/shared/services/supabase';
+import { supabase, testSupabaseConnection } from '@bisnishub/shared/services/supabase';
 
 const AdminContext = createContext();
 
@@ -80,6 +80,7 @@ export function AdminProvider({ children }) {
         setSupabaseStatus(sbStatus);
       } catch (err) {
         console.error("Admin context init error:", err);
+        showToast('Data operasional gagal dimuat. Muat ulang halaman sebelum melakukan transaksi.', 'error');
       } finally {
         setLoading(false);
       }
@@ -89,145 +90,62 @@ export function AdminProvider({ children }) {
 
   // Move status of an order (Kanban)
   const advanceOrderStatus = async (orderId, dir) => {
-    const statuses = ["pending", "dtf", "press", "pack", "shipped"];
-    const target = orders.find(o => o.id === orderId);
-    if (!target) return;
-
-    // Normalisasi index: 'pending_payment' diposisikan di index 0 ("pending")
-    const normalizedStatus = (target.status === 'pending_payment') ? 'pending' : target.status;
-    const currIdx = statuses.indexOf(normalizedStatus);
-    const nextIdx = currIdx + dir;
-    if (nextIdx < 0 || nextIdx >= statuses.length) return;
-
-    const oldStatus = target.status;
-    const nextStatus = statuses[nextIdx];
-
-    // Deduct stock and sync cash if order advances from pending/pending_payment -> production (dtf or press)
-    const isAdvancingFromPending = (oldStatus === "pending" || oldStatus === "pending_payment");
-    if (isAdvancingFromPending && (nextStatus === "dtf" || nextStatus === "press")) {
-      // 1. Deduct inventory (with idempotency check to prevent double deduction)
-      if (!target.inventoryDeducted) {
-        let updatedInv = { ...inventory };
-        let totalDeductedGarmen = 0;
-
-        if (target.items && target.items.length > 0) {
-          target.items.forEach(it => {
-            let gKey = "nsa_softstyle_30s";
-            if (it.garment?.includes("24s")) gKey = "nsa_heavyweight_24s";
-            else if (it.garment?.includes("Long")) gKey = "nsa_longsleeve";
-            else if (it.garment?.includes("Hoodie")) gKey = "nsa_hoodie";
-            else if (it.garment?.includes("Polo")) gKey = "nsa_polo";
-
-            const col = it.color || "Hitam";
-            const sz = it.size || "L";
-            const qty = Number(it.qty) || 1;
-            totalDeductedGarmen += qty;
-
-            updatedInv = deductStock(updatedInv, gKey, col, sz, qty);
-
-            const isBlank = it.sku?.startsWith("TS-BLK") || it.garment === "blank";
-            if (!isBlank && it.sku) {
-              updatedInv = deductDtfFilm(updatedInv, it.sku, qty);
-            }
-          });
-        } else {
-          let gKey = "nsa_softstyle_30s";
-          if (target.garment?.includes("24s")) gKey = "nsa_heavyweight_24s";
-          else if (target.garment?.includes("Long")) gKey = "nsa_longsleeve";
-          else if (target.garment?.includes("Hoodie")) gKey = "nsa_hoodie";
-          else if (target.garment?.includes("Polo")) gKey = "nsa_polo";
-
-          const col = target.color || "Hitam";
-          const sz = target.size || "L";
-          const qty = Number(target.qty) || 1;
-          totalDeductedGarmen += qty;
-
-          updatedInv = deductStock(updatedInv, gKey, col, sz, qty);
-
-          const isBlank = target.sku?.startsWith("TS-BLK") || target.garment === "blank";
-          if (!isBlank && target.sku) {
-            updatedInv = deductDtfFilm(updatedInv, target.sku, qty);
-          }
-        }
-
-        // Deduct packaging supplies
-        const packQty = totalDeductedGarmen || Number(target.qty) || 1;
-        updatedInv = deductSupplyItem(updatedInv, 'polymailer', packQty);
-        updatedInv = deductSupplyItem(updatedInv, 'sticker', packQty);
-        updatedInv = deductSupplyItem(updatedInv, 'care_card', packQty);
-        updatedInv = deductSupplyItem(updatedInv, 'hangtag', packQty);
-
-        setInventory(updatedInv);
-        target.inventoryDeducted = true;
-        showToast(`📦 Stok bahan (${totalDeductedGarmen} kaos + film DTF + unboxing pack) otomatis dipotong!`, 'info');
+    const stages = ['pending', 'dtf', 'press', 'pack', 'shipped'];
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return;
+    const next = stages[stages.indexOf(order.status) + dir];
+    if (!next) return;
+    try {
+      const materials = [];
+      let total = 0;
+      for (const item of order.items || []) {
+        const garment = GARMENT_TYPES && Object.keys(GARMENT_TYPES).find(k => GARMENT_TYPES[k].name === item.garment);
+        const key = garment || (item.garment?.includes('24s') ? 'nsa_heavyweight_24s' : item.garment?.includes('Long') ? 'nsa_longsleeve' : item.garment?.includes('Hoodie') ? 'nsa_hoodie' : item.garment?.includes('Polo') ? 'nsa_polo' : 'nsa_softstyle_30s');
+        const qty = Number(item.qty);
+        if (!Number.isInteger(qty) || qty <= 0) throw new Error('Jumlah barang tidak valid');
+        total += qty;
+        materials.push({ sku: getBlankGarmentSku(key, item.color, item.size), qty });
+        if (!item.sku?.startsWith('TS-BLK') && item.garment !== 'blank') materials.push({ sku: item.sku, qty });
       }
+      for (const supply of ['polymailer','sticker','care_card','hangtag']) materials.push({ sku: getSupplySku(supply), qty: total });
+      setOrders(await apiUpdateOrderStatus(orderId, next, materials));
+      setInventory(await getInventoryMatrix());
+      showToast('Status dan stok pesanan berhasil diperbarui.');
+    } catch (error) { showToast(error.message || 'Gagal memperbarui pesanan.', 'error'); }
+  };
 
-      // 2. Sync Cash Inflow to Cash Ledger (if not already recorded)
-      const isAlreadyRecorded = cashTransactions.some(tx => tx.relatedId === target.id);
-      if (!isAlreadyRecorded) {
-        const orderAmt = Number(target.price || target.total_amount || 0);
-        if (orderAmt > 0) {
-          const newTx = {
-            transactionNo: `TX-ORD-${target.id.slice(-6)}`,
-            date: new Date().toISOString().slice(0, 10),
-            businessUnit: 'teestock',
-            type: 'CASH_IN',
-            category: 'sales_retail',
-            amount: orderAmt,
-            sourceWallet: 'wallet_teestock',
-            destinationWallet: 'wallet_teestock',
-            relatedId: target.id,
-            proofReceiptRef: `ORDER-${target.id}`,
-            description: `Penjualan Ritel [${(target.channel || 'web').toUpperCase()}]: ${target.customer} - ${target.productName || target.sku} (${target.qty || 1} pcs)`,
-            settlementStatus: 'cleared'
-          };
-          const updatedTxs = await apiRecordCashTransaction(newTx);
-          setCashTransactions(updatedTxs);
-          showToast(`💰 Kas Masuk Rp ${orderAmt.toLocaleString('id-ID')} dicatat ke Rekening TeeStock!`, 'success');
-        }
-      }
-    }
-
-    // 3. If order advances to "shipped", auto-record courier shipping expense (Strict pass-through settlement)
-    if (nextStatus === "shipped") {
-      const shippingFee = Number(target.shipping_fee || 0);
-      const isShippingExpenseRecorded = cashTransactions.some(tx => tx.relatedId === `SHIP-${target.id}`);
-      if (shippingFee > 0 && !isShippingExpenseRecorded) {
-        const shippingTx = {
-          transactionNo: `TX-SHIP-${target.id.slice(-6)}`,
-          date: new Date().toISOString().slice(0, 10),
-          businessUnit: 'teestock',
-          type: 'CASH_OUT',
-          category: 'courier_shipping',
-          amount: shippingFee,
-          sourceWallet: 'wallet_teestock',
-          destinationWallet: 'wallet_teestock',
-          relatedId: `SHIP-${target.id}`,
-          proofReceiptRef: target.trackingNo || `RESI-${target.id}`,
-          description: `Ongkir Kurir [${target.courier || 'Ekspedisi'}]: ${target.customer} (${target.city || 'Tujuan'}) - Resi: ${target.trackingNo || 'Drop point'}`,
-          settlementStatus: 'cleared'
-        };
-        const updatedTxs = await apiRecordCashTransaction(shippingTx);
-        setCashTransactions(updatedTxs);
-        showToast(`🚚 Ongkir kurir Rp ${shippingFee.toLocaleString('id-ID')} otomatis dibukukan keluar ke ekspedisi!`, 'info');
-      }
-    }
-
-    const updatedOrders = await apiUpdateOrderStatus(orderId, nextStatus);
-    setOrders(updatedOrders);
-    showToast(`🔄 Status pesanan ${orderId} dipindahkan ke [${nextStatus.toUpperCase()}]`);
+  const confirmOrderPayment = async (orderId) => {
+    try {
+      const { error } = await supabase.rpc('confirm_manual_payment', { p_order_number: orderId });
+      if (error) throw error;
+      setOrders(await getOrders());
+      setCashTransactions(await getCashTransactions());
+      showToast('Pembayaran lunas dikonfirmasi.');
+    } catch (error) { showToast(error.message || 'Gagal mengonfirmasi pembayaran.', 'error'); }
   };
 
   const updateOrderTracking = async (orderId, trackingNo, courier) => {
+    try {
     const updated = await apiUpdateOrderTracking(orderId, trackingNo, courier);
     setOrders(updated);
     showToast(`🚚 Resi untuk order ${orderId} berhasil disimpan: ${trackingNo}`);
+    return true;
+    } catch (err) {
+      showToast(err.message || 'Resi gagal disimpan. Coba lagi.', 'error');
+      return false;
+    }
   };
 
   const cancelOrder = async (orderId, reason) => {
+    try {
     const updated = await apiCancelOrder(orderId, reason);
     setOrders(updated);
     showToast(`❌ Pesanan ${orderId} telah dibatalkan`);
+    return true;
+    } catch (err) {
+      showToast(err.message || 'Pembatalan gagal. Coba lagi.', 'error');
+      return false;
+    }
   };
 
   // Record QC Defect / Reject deduction (Strict Zero-Leakage: only valid way to deduct scrap)
@@ -391,64 +309,37 @@ export function AdminProvider({ children }) {
 
   // 1. Procurements actions & Real-Time Inventory Stock Synchronization
   const addProcurement = async (procData) => {
-    const updated = await apiSaveProcurement(procData);
-    setProcurements(updated);
-    const updatedTxs = await getCashTransactions();
-    setCashTransactions(updatedTxs);
-
-    // 📦 SINKRONISASI OTOMATIS KE INVENTORI STOK FISIK
-    let nextInv = { ...inventory };
-    let syncDetail = '';
-
-    // A. Wholesale Garment Batch (Multi-warna & Multi-ukuran)
-    if (procData.itemType === 'blank_tshirt' && procData.itemsBreakdown && procData.itemsBreakdown.length > 0) {
-      nextInv = restockGarmentBatch(nextInv, procData.garmentKey, procData.itemsBreakdown);
-      setInventory(nextInv);
-      syncDetail = ` (${procData.qty} pcs mix warna & ukuran masuk stok)`;
-    } 
-    // B. Wholesale Garment Single Item (Fallback)
-    else if (procData.itemType === 'blank_tshirt' && procData.garmentKey && procData.color && procData.size) {
-      nextInv = restockBlankGarment(nextInv, procData.garmentKey, procData.color, procData.size, procData.qty);
-      setInventory(nextInv);
-      syncDetail = ` (Stok ${procData.color} ${procData.size} +${procData.qty} pcs)`;
-    } 
-    // C. Outsourced Sticker (Vendor Luar A3+ Lembaran ke Pcs Jadi)
-    else if (procData.itemType === 'sticker_vendor' || (procData.itemType === 'packaging' && procData.supplyId === 'sticker')) {
-      const stickerQty = Number(procData.qty) || 0;
-      nextInv = restockSupplyItem(nextInv, 'sticker', stickerQty);
-      setInventory(nextInv);
-      syncDetail = ` (+${stickerQty} pcs stiker unboxing masuk stok)`;
-    }
-    // D. Polymailer & Packaging Supplies (Multi-Satuan Lusin/Pack/Pcs)
-    else if ((procData.itemType === 'packaging' || procData.itemType === 'supplies') && procData.supplyId) {
-      const supplyQty = Number(procData.qty) || 0;
-      nextInv = restockSupplyItem(nextInv, procData.supplyId, supplyQty);
-      setInventory(nextInv);
-      syncDetail = ` (Stok ${procData.supplyId} +${supplyQty} pcs)`;
-    } 
-    // E. Roll Film DTF Meteran & Alokasi Lembar Desain Fisik
-    else if (procData.itemType === 'dtf_film') {
-      if (procData.itemsBreakdown && procData.itemsBreakdown.length > 0) {
-        // Multi-Design Gang Sheet: Restok lembar film siap press per SKU desain
-        nextInv = restockDtfBatch(nextInv, procData.itemsBreakdown);
-        setInventory(nextInv);
-        const totalSheets = procData.itemsBreakdown.reduce((sum, b) => sum + (Number(b.qty) || 0), 0);
-        syncDetail = ` (+${totalSheets} lembar film DTF masuk stok untuk ${procData.itemsBreakdown.length} desain)`;
-      } else if (procData.dtfSku) {
-        const landedMeterCost = procData.realUnitCost || procData.unitCost || 30000;
-        nextInv = restockDtfFilm(nextInv, procData.dtfSku, procData.qty, landedMeterCost, procData.itemName);
-        setInventory(nextInv);
-        syncDetail = ` (Stok Film DTF +${procData.qty} meter)`;
-      }
-    }
-
-    showToast(`✅ Pengadaan ${procData.itemName} berhasil dicatat & stok otomatis terupdate!${syncDetail}`);
+    const inventoryItems = [];
+    const cost = Number(procData.realUnitCost ?? ((Number(procData.totalCost) || Number(procData.qty)*Number(procData.unitCost)+Number(procData.shippingCost || 0))/Number(procData.qty)));
+    const add = (sku, qty, unitCost=cost) => inventoryItems.push({sku,qty:Number(qty),unit_cost:Number(unitCost)});
+    if (procData.itemType === 'blank_tshirt' && procData.garmentKey) {
+      const rows = procData.itemsBreakdown?.length ? procData.itemsBreakdown : [procData];
+      for (const row of rows) add(getBlankGarmentSku(procData.garmentKey,row.color,row.size),row.qty,row.landedUnitCost ?? cost);
+    } else if (procData.itemType === 'sticker_vendor') {
+      add(getSupplySku('sticker'),procData.qty);
+    } else if (procData.supplyId) {
+      add(getSupplySku(procData.supplyId),procData.qty);
+    } else if (procData.itemType === 'dtf_film') {
+      if (procData.itemsBreakdown?.length) for (const row of procData.itemsBreakdown) add(row.sku,row.qty,row.unitCost ?? cost);
+      else if (procData.dtfSku) add(procData.dtfSku,procData.qty);
+    } else if (procData.itemSku && procData.itemType !== 'design_license') add(procData.itemSku,procData.qty);
+    try {
+      setProcurements(await apiSaveProcurement({...procData,inventoryItems}));
+      const [stock, transactions] = await Promise.all([getInventoryMatrix(),getCashTransactions()]);
+      setInventory(stock);
+      setCashTransactions(transactions);
+      showToast('Pengadaan, stok, dan pengeluaran berhasil dicatat.');
+    } catch (error) { showToast(error.message || 'Pengadaan gagal disimpan.', 'error'); throw error; }
   };
 
   const removeProcurement = async (id) => {
+    try {
     const updated = await apiDeleteProcurement(id);
     setProcurements(updated);
     showToast(`🗑️ Data pengadaan berhasil dihapus`);
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
   };
 
   // 2. Cash Ledger actions
@@ -663,6 +554,7 @@ export function AdminProvider({ children }) {
         showToast,
         toast,
         advanceOrderStatus,
+        confirmOrderPayment,
         addOrder,
         saveProduct,
         deleteProduct,

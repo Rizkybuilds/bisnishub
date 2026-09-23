@@ -1,3 +1,4 @@
+DO $$ BEGIN RAISE EXCEPTION 'Deprecated unsafe patch. Use database/migrations/20260922_audit_hardening.sql instead.'; END $$;
 -- ==============================================================================
 -- 🔒 PATCH KEAMANAN & AKSES KANBAN ORDERS (BISNISHUB OS & TEESTOCK STOREFRONT)
 -- Memberikan hak kelola pesanan terpadu untuk dashboard BisnisHub OS (Public/Anon)

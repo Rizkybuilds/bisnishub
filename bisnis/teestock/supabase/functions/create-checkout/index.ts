@@ -252,7 +252,8 @@ Deno.serve(async (req: Request) => {
     const verifiedOrderItems: any[] = [];
 
     for (const item of items) {
-      const qty = Math.max(1, Math.min(100, Number(item.qty || item.quantity) || 1));
+      const qty = Number(item.qty ?? item.quantity ?? 1);
+      if (!Number.isInteger(qty) || qty < 1 || qty > 100) throw new Error('Jumlah barang harus bilangan bulat antara 1 dan 100.');
       const sku = String(item.sku || item.product_sku || item.id || '').trim();
       const dbProduct = productMap.get(sku);
 
@@ -380,7 +381,7 @@ Deno.serve(async (req: Request) => {
     const totalDiscount = bundleDiscount + voucherDiscount;
 
     // 6. Kalkulasi Ongkir Otoritatif di Server (Zero Trust pada shipping.fee client)
-    const matchedZone = detectShippingZone(customerCity, shipping.zoneId);
+    const matchedZone = detectShippingZone(customerCity);
     const billableKg = calculateBillableKg(totalOrderGrams);
     const courierKey = String(shipping.courierId || shipping.courier || 'jnt').toLowerCase();
     const courierMultiplier = COURIER_MULTIPLIERS[courierKey] || 1.0;
@@ -560,6 +561,10 @@ Deno.serve(async (req: Request) => {
       customer_address: customerAddress,
       channel: 'web',
       tier: 'retail',
+      subtotal: calculatedSubtotal,
+      shipping_fee: authoritativeShippingFee,
+      unique_code: uniqueCode,
+      payment_method: paymentMethod,
       total_amount: grandTotal,
       discount_amount: totalDiscount,
       voucher_code: validatedVoucherCode,

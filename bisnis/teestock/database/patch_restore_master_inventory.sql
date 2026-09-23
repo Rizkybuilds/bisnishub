@@ -1,3 +1,4 @@
+DO $$ BEGIN RAISE EXCEPTION 'Deprecated unsafe patch. Use database/migrations/20260922_audit_hardening.sql instead.'; END $$;
 -- ====================================================================
 -- BISNISHUB & TEESTOCK APPAREL — MASTER INVENTORY INITIALIZATION & HEALING
 -- Target: Cloud Supabase PostgreSQL (ts_inventory & ts_settings)

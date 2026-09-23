@@ -58,7 +58,11 @@ function normalizeOrderRecord(o) {
     address: o.customer_address || o.address || '',
     channel: o.channel || 'web',
     tier: o.tier || 'retail',
-    status: o.status || 'pending',
+    status: o.status === 'processing' ? 'pending' : (o.status || 'pending'),
+    payment_status: o.payment_status || 'unpaid',
+    payment_method: o.payment_method,
+    payment_reconciliation_required: o.payment_reconciliation_required === true,
+    inventoryDeducted: !!o.inventory_deducted,
     price: Number(o.total_amount || o.price || 0),
     total_amount: Number(o.total_amount || o.price || 0),
     subtotal: Number(o.subtotal || 0),
@@ -105,24 +109,13 @@ function normalizeOrderRecord(o) {
  * Memuat relasi ts_orders dengan ts_order_items
  */
 export async function getOrders() {
-  try {
-    const { data, error } = await supabase
-      .from('ts_orders')
-      .select('*, ts_order_items(*)')
-      .order('created_at', { ascending: false });
-
-    if (error || !data || data.length === 0) {
-      const cached = localStorage.getItem(LOCAL_STORAGE_ADMIN_KEY);
-      return cached ? JSON.parse(cached) : [];
-    }
-
-    const normalized = data.map(normalizeOrderRecord);
-    localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(normalized));
-    return normalized;
-  } catch (err) {
-    const cached = localStorage.getItem(LOCAL_STORAGE_ADMIN_KEY);
-    return cached ? JSON.parse(cached) : [];
-  }
+  const { data, error } = await supabase.from('ts_orders')
+    .select('*, ts_order_items(*)').order('created_at', { ascending: false });
+  if (error) throw error;
+  if (!Array.isArray(data)) throw new Error('Daftar pesanan belum dapat dimuat. Coba lagi.');
+  const normalized = data.map(normalizeOrderRecord);
+  try { localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(normalized)); } catch {}
+  return normalized;
 }
 
 /**
@@ -338,89 +331,35 @@ function isUuidString(val) {
 /**
  * 🔒 ADMIN ONLY: Perbarui status Kanban pesanan
  */
-export async function updateOrderStatus(orderId, newStatus) {
-  const current = await getOrders();
-  const updated = current.map(o => o.id === orderId ? { ...o, status: newStatus } : o);
-  localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(updated));
-
-  if (supabase) {
-    try {
-      const q = isUuidString(orderId)
-        ? supabase.from('ts_orders').update({ status: newStatus }).or(`id.eq.${orderId},order_number.eq.${orderId}`)
-        : supabase.from('ts_orders').update({ status: newStatus }).eq('order_number', orderId);
-      await q;
-    } catch (err) {
-      console.warn("Could not update order status in Supabase:", err);
-    }
-  }
-
-  return updated;
+export async function updateOrderStatus(orderId, newStatus, materials = []) {
+  const { error } = await supabase.rpc('transition_order', { p_order_number: orderId, p_status: newStatus, p_materials: materials });
+  if (error) throw error;
+  return getOrders();
 }
 
 /**
  * 🚚 ADMIN ONLY: Perbarui nomor resi & kurir pengiriman
  */
 export async function updateOrderTracking(orderId, trackingNo, courier = null) {
-  const cleanTracking = trackingNo ? trackingNo.trim() : null;
-  const current = await getOrders();
-  const updated = current.map(o => {
-    if (o.id === orderId) {
-      return {
-        ...o,
-        trackingNo: cleanTracking,
-        tracking_number: cleanTracking,
-        courier: courier || o.courier || 'J&T Express'
-      };
-    }
-    return o;
-  });
-
-  localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(updated));
-
-  if (supabase) {
-    try {
-      const q = isUuidString(orderId)
-        ? supabase.from('ts_orders').update({ tracking_number: cleanTracking, courier: courier || undefined }).or(`id.eq.${orderId},order_number.eq.${orderId}`)
-        : supabase.from('ts_orders').update({ tracking_number: cleanTracking, courier: courier || undefined }).eq('order_number', orderId);
-      await q;
-    } catch (err) {
-      console.warn("Could not update order tracking in Supabase:", err);
-    }
-  }
-
-  return updated;
+  const payload = { tracking_number: trackingNo?.trim() || null };
+  if (courier) payload.courier = courier;
+  const query = supabase.from('ts_orders').update(payload);
+  const filter = isUuidString(orderId) ? query.eq('id', orderId) : query.eq('order_number', orderId);
+  const { data, error } = await filter.select('id').maybeSingle();
+  if (error) throw error;
+  if (!data) throw new Error('Pesanan tidak ditemukan atau akses ditolak.');
+  return getOrders();
 }
 
 /**
  * ❌ ADMIN ONLY: Batalkan pesanan
  */
 export async function cancelOrder(orderId, reason = '') {
-  const current = await getOrders();
-  const updated = current.map(o => {
-    if (o.id === orderId) {
-      return {
-        ...o,
-        status: 'cancelled',
-        notes: reason ? `${o.notes ? o.notes + ' | ' : ''}Dibatalkan: ${reason}` : o.notes
-      };
-    }
-    return o;
+  const { error } = await supabase.rpc('cancel_unpaid_order', {
+    p_order_number: orderId, p_reason: reason
   });
-
-  localStorage.setItem(LOCAL_STORAGE_ADMIN_KEY, JSON.stringify(updated));
-
-  if (supabase) {
-    try {
-      const q = isUuidString(orderId)
-        ? supabase.from('ts_orders').update({ status: 'cancelled', notes: reason ? `Dibatalkan: ${reason}` : undefined }).or(`id.eq.${orderId},order_number.eq.${orderId}`)
-        : supabase.from('ts_orders').update({ status: 'cancelled', notes: reason ? `Dibatalkan: ${reason}` : undefined }).eq('order_number', orderId);
-      await q;
-    } catch (err) {
-      console.warn("Could not cancel order in Supabase:", err);
-    }
-  }
-
-  return updated;
+  if (error) throw error;
+  return getOrders();
 }
 
 /**

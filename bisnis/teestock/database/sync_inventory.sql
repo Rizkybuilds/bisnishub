@@ -1,3 +1,4 @@
+DO $$ BEGIN RAISE EXCEPTION 'Deprecated unsafe patch. Use database/migrations/20260922_audit_hardening.sql instead.'; END $$;
 -- ====================================================================
 -- TEESTOCK APPAREL & FOUNDER HUB — SINKRONISASI REAL DATABASE INVENTORI
 -- Target Supabase: https://supabase.com/dashboard/project/tovslowsopqtuxmrogeu/sql/new
