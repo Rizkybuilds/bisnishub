@@ -1,113 +1,50 @@
 ---
 name: web-qa-testing
 description: >-
-  Strategi pengujian web app end-to-end (Playwright), unit & component testing
-  (Vitest, React Testing Library), audit alur checkout e-commerce, mock network (MSW),
-  validasi responsivitas multi-device, dan skenario regresi edge-case.
+  Merancang dan menjalankan pengujian berbasis risiko untuk aplikasi legacy dan
+  MGBOS: UI, domain, otorisasi, transaksi, database, dan regresi. Gunakan untuk
+  validasi perubahan atau audit kualitas dengan bukti lokal dan CI yang terpisah.
 argument-hint: "[e2e, test, playwright, vitest, qa, or regression]"
 ---
 
-# Web QA & Testing Specialist — E2E & Component Test Engineer
+# Web QA & Business Integrity Testing
 
-Skill spesialis untuk menjamin keandalan aplikasi web melalui pengujian otomatis (*automated testing*), audit skenario kritis pengguna, dan pencegahan regresi kode (*zero broken checkouts*).
+Choose tests by the failure being prevented and the actual workspace. Do not enforce a fixed unit/integration/E2E percentage or count formatting tests as transaction assurance.
 
----
+## Inspect before running
 
-## 1. Piramida Testing Aplikasi Web Lean
+Read applicable `AGENTS.md`, package scripts, test configuration, changed code and existing fixtures. Record target environment and revision or working-tree scope. Never point transactional tests at production by default.
 
-Untuk tim solopreneur atau startup cepat, jangan habiskan waktu membuat ratusan unit test untuk komponen presentasional sederhana. Gunakan rasio 70/20/10:
+- **MGBOS:** `mgbos/`, not root `apps/mgbos/`. Follow foundation/prerequisite gates. Read canonical specifications and the affected migration, domain, authorization and validation code.
+- **Legacy storefront:** `bisnis/teestock/web`; inspect its Vitest/Playwright scripts and actual routes/selectors.
+- **Legacy admin:** `apps/bisnishub-web`; inspect its test/build/database scripts. Check shared-code consumers when `packages/shared` changes.
 
-```
-        ▲
-       / \      10% E2E Smoke Test (Playwright)
-      /   \     Alur Uang & Transaksi Kritis
-     /-----\
-    /       \   20% Integration Tests
-   /         \  Formulir, Custom Hooks, API Client
-  /-----------\
- /             \ 70% Unit & Utility Tests (Vitest)
-/               \ Perhitungan HPP, Diskon, Formatter Rupiah, Validasi
------------------
-```
+## Select meaningful coverage
 
----
+| Risk | Evidence to seek |
+| --- | --- |
+| Price, tax, discount, HPP, margin | Exact expected calculations, rounding boundaries, zero/negative inputs, safe integer bounds and shipping treatment |
+| Critical state change | Allowed and forbidden transitions, immutable snapshots, authorized actor and persisted effects |
+| Access control | Anonymous, ordinary user, relevant roles and cross-organization resource attempts through the real access boundary |
+| Payment or webhook | Invalid signatures/totals, duplicate and concurrent events, ordering, atomic ledger/allocation effects and recovery |
+| Inventory/production | Reservation versus consumption, insufficient stock, concurrent updates, QC effects and rollback |
+| Migration | Clean reproducibility where authorized, upgrade of representative existing data, constraints, grants/RLS and genuine generated types |
+| UI/checkout | Keyboard/focus, responsive layout, validation, slow/failing requests and complete persisted outcome |
 
-## 2. End-to-End (E2E) Test dengan Playwright
+A disabled submit button is not server idempotency. An enabled pay button is not a completed checkout. Use stable observed selectors and realistic fixtures; verify the intended order/payment result rather than merely successful navigation.
 
-Fokuskan pengujian E2E pada skenario **"Golden Path" (Jalur Utama Konversi Penjualan)**:
+## Workspace checks
 
-```typescript
-// tests/checkout-flow.spec.ts
-import { test, expect } from '@playwright/test';
+For MGBOS application changes, use the pinned Node/pnpm versions in its package files and run `pnpm check`, production HTTP smoke checks through `pnpm test:integration`, and applicable database checks. Inspect each script's prerequisites before running. `pnpm check` does not include hosted CI, database tests or the production HTTP smoke script.
 
-test.describe('E-Commerce Checkout Flow', () => {
-  test('Pengguna dapat memilih produk, menambah ke keranjang, dan mencapai halaman pembayaran', async ({ page }) => {
-    // 1. Kunjungi halaman katalog
-    await page.goto('/catalog');
-    await expect(page).toHaveTitle(/Katalog Produk/);
+Database verification must use the local MGBOS wrappers and a Docker-compatible runtime. Reset only for authorized reproducibility or an explicit request; it destroys local development data. If runtime or prerequisites are missing, report database checks as blocked, not passed. Read historical runbooks alongside current migrations.
 
-    // 2. Klik produk pertama dan pilih ukuran
-    await page.locator('[data-testid="product-card"]').first().click();
-    await page.locator('button:has-text("L")').click();
+For legacy applications, run the actual existing package scripts for the affected app and shared consumers. Mocked database tests do not prove deployed RLS or payment behavior; explain the coverage boundary.
 
-    // 3. Tambahkan ke keranjang
-    await page.locator('button:has-text("Tambah ke Keranjang")').click();
-    await expect(page.locator('[data-testid="cart-count"]')).toHaveText('1');
+For documentation or Skill-only changes, check instructions, references, metadata and diff. Do not run the application suite or add tests that merely match prose.
 
-    // 4. Buka laci keranjang dan klik Checkout
-    await page.locator('[data-testid="cart-button"]').click();
-    await page.locator('button:has-text("Checkout Sekarang")').click();
+## Reporting
 
-    // 5. Isi formulir pengiriman
-    await page.fill('input[name="customerName"]', 'Budi Santoso');
-    await page.fill('input[name="whatsappNumber"]', '081234567890');
-    await page.fill('textarea[name="shippingAddress"]', 'Jl. Merdeka No. 45, Kebayoran Baru, Jakarta Selatan');
+Distinguish NOT RUN, BLOCKED, FAIL and PASS. Separate tests defined from tests executed; local checks from hosted CI; build artifacts from deployment. Include command, environment, result and material limitations without exposing secrets.
 
-    // 6. Validasi bahwa tombol bayar aktif
-    const payBtn = page.locator('button[type="submit"]');
-    await expect(payBtn).toBeEnabled();
-  });
-});
-```
-
----
-
-## 3. Unit Testing Perhitungan Transaksi Finansial (Vitest)
-
-Semua fungsi kalkulator harga, diskon, dan ongkir wajib diuji terhadap kondisi pembulatan dan batas nilai:
-
-```typescript
-// src/shared/lib/__tests__/pricing.test.ts
-import { describe, it, expect } from 'vitest';
-import { calculateCartTotal, formatRupiah } from '../pricing';
-
-describe('Kalkulasi Nilai Keranjang Belanja', () => {
-  it('menghitung total harga dengan kupon diskon persentase secara tepat', () => {
-    const items = [
-      { id: '1', price: 120000, quantity: 2 }, // 240.000
-      { id: '2', price: 95000, quantity: 1 }   // 95.000
-    ];
-    const discountPercent = 10; // 10% dari 335.000 = 33.500
-    const shippingFee = 15000;
-
-    const result = calculateCartTotal(items, discountPercent, shippingFee);
-    expect(result.subtotal).toBe(335000);
-    expect(result.discountAmount).toBe(33500);
-    expect(result.grandTotal).toBe(316500);
-  });
-
-  it('memformat angka rupiah dengan benar', () => {
-    expect(formatRupiah(135000)).toBe('Rp 135.000');
-    expect(formatRupiah(0)).toBe('Rp 0');
-  });
-});
-```
-
----
-
-## 4. Checklist QA Rilis Produk Web (Pre-Flight QA)
-- [ ] **Alur Checkout Keranjang Kosong**: Pastikan tombol checkout non-aktif atau mengarahkan kembali ke katalog jika keranjang 0 item.
-- [ ] **Form Error Handling**: Pastikan nomor WhatsApp yang tidak sesuai format Indonesia (`08...` atau `628...`) menampilkan peringatan merah sebelum disubmit.
-- [ ] **Mobile Responsiveness**: Uji tampilan pada viewport 375px (iPhone SE) dan 414px (iPhone Pro Max) — tidak boleh ada overflow horizontal.
-- [ ] **Network Slow 3G Emulation**: Pastikan skeleton loading tampil dengan rapi dan tombol submit tidak bisa diklik dua kali (*double click prevention*).
-- [ ] **Console Error Audit**: Buka DevTools Console, pastikan 0 pesan error merah yang tidak tertangani saat navigasi antar rute.
+After required checks pass, repeat or broaden only for new changes, failures or an unresolved risk. Preserve unrelated work and test data. Do not infer acceptance from a README badge, historical totals or existing later-slice code.

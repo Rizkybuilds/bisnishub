@@ -1,110 +1,49 @@
 ---
 name: git-deploy-ops
 description: >-
-  SOP dan panduan deployment Vercel untuk TeeStock web, Git commit branching,
-  dan migrasi Supabase CLI. Gunakan saat merilis fitur baru, deploy ke produksi,
-  atau menjalankan migrasi database.
+  Menyiapkan dan memverifikasi Git, PR, rilis aplikasi, Edge Functions, dan
+  migrasi sesuai target legacy atau MGBOS. Gunakan untuk pekerjaan rilis dan
+  deployment yang diminta, dengan batas database lokal MGBOS tetap berlaku.
 argument-hint: "[deploy, migrate, or release]"
 ---
 
-# Git & Deployment Ops Runbook — BisnisHub
+# Git, Release & Migration Operations
 
-Panduan standar untuk version control, deployment web (Vercel), dan migrasi database (Supabase) untuk solopreneur.
+Prepare and verify a release for the explicitly selected application and environment. Do not infer a deployment request from an implementation, review or Skill-maintenance request.
 
----
+## Identify the target
 
-## 1. Pre-Deployment Checklist (TeeStock Web)
+- Inspect Git status, current branch/remotes, package scripts, deployment files and applicable `AGENTS.md`. Preserve unrelated tracked and untracked work.
+- **Legacy storefront:** `bisnis/teestock/web`; **legacy admin:** `apps/bisnishub-web`. Verify live project linkage and build root before deployment; saved domain names and historical CLI examples are not current target evidence.
+- **MGBOS:** `mgbos/`, with its own pnpm workspace and local Supabase. Root `dev:mgbos`/`build:mgbos` currently target the Vite prototype `apps/mgbos/`; inspect scripts rather than using their labels as workspace identity.
+- Root `supabase` links to legacy TeeStock. MGBOS commands must never traverse it. MGBOS instructions forbid remote resets, production schema changes, production seeding and hard-delete of history.
 
-Sebelum melakukan push atau deployment ke produksi:
+## Prepare a reviewable change
 
-1. **Lint & Build Test**:
-   ```powershell
-   cd c:\Users\Rizky\bisnishub\bisnis\teestock\web
-   npm run build
-   ```
-   *Pastikan tidak ada error kompilasi TypeScript atau Vite bundler.*
+Use an isolated branch/worktree when needed. Default new branch names to `codex/` unless the user specifies otherwise. Stage only explicit files in scope, inspect the staged diff and preserve existing staged work. Do not use blanket staging or push to main as a default recipe.
 
-2. **E2E Checkout Test (Playwright)**:
-   ```powershell
-   npx playwright test tests/checkout.spec.js
-   ```
+Use the selected workspace's dependency manager and lockfile. Read CI definitions and required checks; report local and hosted results separately. A local build does not certify the database or deployment.
 
-3. **Verifikasi Environment Variables**:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-   - `VITE_MIDTRANS_CLIENT_KEY`
+For MGBOS application changes, follow its `pnpm check`, production smoke and applicable local database gates. For legacy changes, use the inspected app scripts and affected shared consumers. Instruction-only maintenance uses focused document/Skill validation.
 
----
+Before a requested release, prepare the exact artifact, target, validation evidence and recovery path. Existing user authorization persists; ask only when a required target/approval remains genuinely missing, after the result is concrete and reviewable.
 
-## 2. Git Workflow Standar
+## Deploy and verify within authorized scope
 
-Gunakan konvensi commit ringkas:
-- `feat(web): <fitur baru>`
-- `fix(web): <perbaikan bug>`
-- `feat(db): <migrasi tabel/rls baru>`
-- `docs(obsidian): <catatan riset/sop>`
+Confirm the selected project, environment, branch/commit and configuration names without exposing secret values. Do not assume Vite configuration applies to Next.js or that a browser-visible PIN establishes server authorization.
 
-```powershell
-git status
-git add .
-git commit -m "feat(web): add quick order drawer mobile"
-git push origin main
-```
+Deploy the scoped component through its verified project workflow. Verify deployed identity, health, relevant user flow and logs. Distinguish an editor upload, a build, an accepted deployment and a working endpoint. If creating a PR, attach it to the task using the available app tool.
 
----
+## Database and Edge Functions
 
-## 3. Vercel Deployment Flow
+For MGBOS, use only its local scripts with the actual runbook and migrations. Reset is for authorized local reproducibility or an explicit reset request, never a generic release step.
 
-Monorepo ini mendukung 2 target project terpisah di Vercel:
+For separately authorized legacy production SQL, confirm the exact project and migration history, create and restore-test a structural/data snapshot, apply the reviewed migration, then validate preserved rows, RPC behavior, authorization and relevant transaction flows. Use new migrations; do not edit applied history or choose a SQL directory solely from an old example.
 
-### A. TeeStock Storefront (`teestockapparel.vercel.app`)
-- **Root Directory**: `.` (Root repo, mengacu ke root `vercel.json`) atau `bisnis/teestock/web`
-- **Trigger**: Push ke `main` otomatis deploy storefront ke produksi.
+Deploy an Edge Function only to the verified project within the requested scope; then check endpoint and logs. Do not batch unrelated function releases.
 
-### B. BisnisHub OS (`bisnishub-os.vercel.app` / `apps/bisnishub-web`)
-- **Root Directory**: `apps/bisnishub-web`
-- **Framework Preset**: `Vite`
-- **Build Command**: `npm run build`
-- **Output Directory**: `dist`
-- **Environment Variables**:
-  - `VITE_SUPABASE_URL`
-  - `VITE_SUPABASE_ANON_KEY`
-  - `VITE_APP_ENV=production`
-  - `VITE_FOUNDER_PIN`
-  - `VITE_ADMIN_EMAILS`
+## Recovery and completion
 
-Jika deploy via Vercel CLI secara manual dari terminal:
-```powershell
-# Deploy BisnisHub OS (dari folder apps/bisnishub-web)
-cd apps/bisnishub-web
-npx vercel --prod
-```
+Choose a known compatible application artifact for rollback and consider schema compatibility. Prefer forward repair migrations for data changes. Do not provide destructive DROP statements as a universal database rollback strategy, and do not restore over newer transactions without an explicit recovery plan.
 
-
----
-
-## 4. Supabase Database & Edge Functions Workflow
-
-Direktori: `c:\Users\Rizky\bisnishub\bisnis\teestock\supabase`
-
-### A. Migrasi Skema SQL
-- Selalu simpan file DDL di `bisnis/teestock/database/migrations/` dengan penamaan bertanggal: `YYYYMMDD_nama_migrasi.sql`.
-- Gunakan transaksi SQL (`BEGIN; ... COMMIT;`) agar jika gagal tidak merusak status database.
-
-### B. Deploy Supabase Edge Functions
-```powershell
-# Deploy fungsi webhook payment
-supabase functions deploy midtrans-webhook --project-ref <PROJECT_ID>
-
-# Deploy fungsi notifikasi whatsapp
-supabase functions deploy wa-notify --project-ref <PROJECT_ID>
-```
-
----
-
-## 5. Rollback Strategy (Emergency)
-
-1. **Web App Rollback (Vercel)**:
-   Buka Vercel Dashboard -> Deployments -> Pilih deployment sebelumnya yang stabil -> Klik **Promote to Production** (instan < 5 detik).
-2. **Database Rollback**:
-   Siapkan script undo untuk setiap migrasi (misal: `DROP TABLE IF EXISTS ...`, `DROP POLICY ...`).
+Report changed/released components, revision, checks actually run, target, deployment verification and unresolved failures. If work ends at preparation or a blocked gate, say so explicitly.

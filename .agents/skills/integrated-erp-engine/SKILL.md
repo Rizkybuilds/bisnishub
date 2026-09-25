@@ -9,114 +9,38 @@ description: >-
 argument-hint: "[ledger, inventory, procurement, production, bom, or erp-architecture]"
 ---
 
-# Integrated ERP Engine — Arsitektur & Rekayasa ERP Terintegrasi
+# Integrated ERP Engine
 
-Skill spesialis untuk merancang, mengaudit, dan mengimplementasikan sistem **Enterprise Resource Planning (ERP)** yang terintegrasi secara modular, kokoh, dan tanpa silo pada ekosistem **MultiGraph Printing & Apparel Holding (BisnisHub OS & TeeStock)**.
+Design or implement cross-module business behavior: quotation, orders, inventory, procurement, production, invoicing and ledger. Use database or backend specialists only for the affected implementation boundary.
 
----
+## Resolve the workspace
 
-## 1. Peta Modul ERP Terintegrasi (BisnisHub OS Matrix)
+Read root `AGENTS.md` and inspect the target implementation before proposing contracts.
 
-Sistem ERP BisnisHub dirancang dengan arsitektur **Hub & Spoke** modular yang berpusat pada **Single Source of Truth (SSOT)** database Supabase PostgreSQL:
+- **MGBOS:** `mgbos/`. Read its `AGENTS.md`, `README.md`, `docs/architecture/README.md`, `docs/product/README.md` and the applicable engineering report. Follow links to the canonical data model and state machines. Check the prerequisite gates before starting another slice.
+- **Legacy:** `apps/bisnishub-web`, `bisnis/teestock/web`, and `packages/shared/src`. Inspect actual callers, migrations and tests. Preserve existing contracts unless changing them is explicitly in scope.
+- `apps/mgbos/` is the Vite prototype. Root `supabase` belongs to legacy TeeStock and is never the MGBOS database target.
 
-```
-                      ┌─────────────────────────────────────────┐
-                      │          EXECUTIVE DASHBOARD            │
-                      │  KPIs, Real-time Runway, Net Margin %   │
-                      └────────────────────┬────────────────────┘
-                                           │
-         ┌─────────────────────────────────┼─────────────────────────────────┐
-         │                                 │                                 │
-         ▼                                 ▼                                 ▼
-┌──────────────────┐             ┌──────────────────┐             ┌──────────────────┐
-│  TREASURY & GL   │             │   SUPPLY CHAIN   │             │ PRODUCTION / MFG │
-│ Multi-Unit Ledger│◄───────────►│Procurement & JIT │◄───────────►│ DTF Gang Sheet   │
-│ Cash Flow Engine │  Jurnal PO  │ NSA Buffer Stock │  Auto-Deduct│ Heat Press SOP   │
-│ HPP & BOM Engine │  & HPP COGS │ Vendor Scorecard │  Stok Kaos  │ QC Defect Audit  │
-└────────┬─────────┘             └────────┬─────────┘             └────────┬─────────┘
-         │                                │                                │
-         │ Kas Masuk                      │ Alokasi Bahan                  │ Work Slip &
-         │ Piutang B2B                    │ Garmen NSA                     │ Tiket Cetak
-         ▼                                ▼                                ▼
-┌────────────────────────────────────────────────────────────────────────────────────┐
-│                  OMNICHANNEL ORDER MANAGEMENT SYSTEM (OMS)                         │
-│ • State Machine: [pending_payment] ➔ [pending] ➔ [dtf/press] ➔ [pack] ➔ [shipped]  │
-│ • Kontrak Data SSOT: subtotal, discount, shipping_fee (escrow), unique_code, total │
-│ • Multi-Channel: Storefront TeeStock, B2B Quoter Custom, WhatsApp Direct Sales     │
-└────────────────────────────────────────┬───────────────────────────────────────────┘
-                                         │
-                                         ▼
-┌────────────────────────────────────────────────────────────────────────────────────┐
-│                    CRM, CUSTOMER PORTAL & B2B QUOTER                               │
-│ • B2B RFQ Quoter: Kalkulasi bertingkat (Tier NSA + Sablon DTF + Packaging)         │
-│ • Customer 360: Riwayat belanja, repeat rate, loyalty tier, auto WhatsApp follow-up│
-└────────────────────────────────────────────────────────────────────────────────────┘
-```
+## MGBOS contracts
 
----
+- Keep business rules in pure `packages/domain`; use public package exports. Database authority is PostgreSQL, with validated and authorized server commands for critical mutations.
+- Model quotation, order, invoice, payment, production, QC and shipment lifecycles separately according to canonical specifications. A payment event is not automatically a production transition.
+- Preserve sent quote versions and historical snapshots. Order creation must use the selected immutable commercial version, not mutable current pricing.
+- Use integer rupiah and the established BigInt/serialization contract. Define rounding and bounds explicitly; do not coerce large amounts into unsafe JavaScript numbers.
+- Distinguish quoted, committed and actual costs. Preserve pass-through shipping treatment and trace each margin input to its source; do not introduce fixed platform fees, defect percentages or deposit rates as universal rules.
+- Enforce stock reservation, consumption, payment allocation and ledger effects at their specified business events. Couple required database effects atomically; retain audit and transactional outbox behavior where specified.
+- Make replay and concurrent commands safe. Identity, organization and brand access must come from authorized context, not trusted request fields alone.
+- AI and n8n may propose or orchestrate actions; they do not authoritatively mutate business states outside the command boundary.
 
-## 2. Standar Arsitektur Data & Anti-Silo Data Contract
+## Legacy contracts
 
-### A. Prinsip Zero-Silo Database
-1. **Dilarang Isolated State**: Fitur baru dilarang membuat tabel atau state terpisah yang tidak terhubung dengan `orders`, `ledger`, atau `inventory`.
-2. **Double-Entry Balance Guarantee**: Setiap mutasi kas di modul mana pun (Procurement, Order, Defect Waste, atau Operasional) **wajib mendokumentasikan debit/kredit** di `ts_ledger_entries` dengan unit bisnis yang jelas (`teestock`, `multigraph`, `holding`, `founder`).
-3. **Atomic Stock-Order Coupling**: Pemotongan inventori bahan baku (kaos polos NSA & film DTF) wajib terjadi secara **atomik** saat order berpindah dari `pending` ke `dtf`/`press`.
+- Names such as `ts_orders` or `ts_ledger_entries` are legacy clues, not mandatory dependencies for every module. Verify the real schema and account model before using them.
+- Verify transitions and payment guards in the current code. Do not infer cash receipt from a Kanban move, or convert legacy status labels directly into MGBOS states.
+- Check existing shared calculations before changing HPP, shipping, transfers or profit. Avoid copying formulas into parallel UI implementations.
+- Vendor schedules, reorder points, DTF dimensions and margin/deposit policies must come from current business sources. Keep assumptions visible when no confirmed value exists.
 
-### B. Kontrak Keuangan Baku (CFO Non-Negotiable)
-```typescript
-// Rumus Standar Pendapatan & Laba ERP
-export interface ERPFinancialContract {
-  gross_sales: number;       // Gross pesanan sebelum diskon & ongkir
-  discount_amount: number;   // Total diskon voucher / bundling
-  net_revenue: number;       // gross_sales - discount_amount (Omset Riil)
-  shipping_escrow: number;   // Dana titipan kurir ekspedisi (NET MARGIN = Rp 0)
-  cogs_bom: number;          // HPP Kaos NSA + Tinta DTF + Kemasan + Defect Buffer
-  platform_fee: number;      // Biaya gateway / QRIS / admin
-  gross_profit: number;      // net_revenue - cogs_bom
-  net_transaction_profit: number; // gross_profit - platform_fee
-  realized_margin_pct: number;    // (net_transaction_profit / net_revenue) * 100
-}
-```
+## Delivery and verification
 
-> [!CAUTION]
-> **Larangan Keras:** Dilarang memasukkan `shipping_escrow` (ongkir kurir) ke dalam perhitungan laba kotor, laba bersih, ataupun omset penjualan! Ongkir kurir adalah pass-through.
+Map the trigger, authorized actor, prior state, resulting state, financial/stock effects and retry behavior before implementing a critical command. Validate failed authorization, invalid transitions, repeated requests, concurrent effects and rollback where relevant.
 
----
-
-## 3. Modul Kunci & Spesifikasi Teknis ERP
-
-### Modul 1: Multi-Unit Treasury & General Ledger (`ts_ledger_entries`)
-- **4 Rekening Dompet Utama**:
-  - `teestock`: Kas operasional retail apparel & merch.
-  - `multigraph`: Kas operasional percetakan komersial B2B & packaging.
-  - `holding`: Dana cadangan dividen & investasi ekspansi.
-  - `founder`: Rekening pribadi / prive founder (terisolasi dari kas operasional).
-- **Automated Settlement**: Fitur auto-alokasi kas setiap transaksi lunas (misal: 10% dividen holding, 5% buffer defect, 85% reinvestasi modal kerja).
-
-### Modul 2: Procurement & 2-Tier Supply Chain
-- **Tier 1 (Buffer Studio)**: Fast-moving SKU (NSA 24s Black/White M, L, XL). Reorder point otomatis saat stok $\le 3$ pcs.
-- **Tier 2 (JIT Cititex)**: Virtual inventory ditarik harian jam 15.00 WIB sesuai order lunas.
-- **Landed Cost Engine**: HPP pembelian garmen menghitung: `Harga Beli Distributor + Alokasi Ongkir Masuk / Total Pcs`.
-
-### Modul 3: Bill of Materials (BOM) & Produksi DTF
-- **Komposisi BOM Standar 1 Kaos Grafis**:
-  - 1 pcs Kaos Polos NSA (Heavyweight / Softstyle)
-  - Cetakan DTF (cm² area desain x tarif per meter lari 58 cm)
-  - 1 set Kemasan: Polymailer matte + Hangtag + Sticker Pack (Rp 3.500)
-  - Buffer Defect Produksi: 5% dari total HPP bahan
-- **Gang Sheet Optimization**: Roll lebar 58 cm, safe print margin 55 cm. Auto-nesting efisiensi $\ge 88\%$.
-
-### Modul 4: B2B Quoter ke Order Pipeline
-- Alur instan dari penawaran custom:
-  $$\text{Draft Penawaran (Quoter)} \longrightarrow \text{Kirim PDF/WA} \longrightarrow \text{Client Approve (DP 50\%)} \longrightarrow \text{Convert to Order Kanban} \longrightarrow \text{Alokasi Stok}$$
-
----
-
-## 4. Checklist Evaluasi Modul ERP Baru
-
-Sebelum meluncurkan atau menyetujui fitur modul ERP baru, verifikasi:
-- [ ] Apakah model database menggunakan foreign key ke `ts_orders`, `ts_inventory`, atau `ts_ledger`?
-- [ ] Apakah fungsi mutasi data dibungkus dalam Supabase RPC transaction untuk mencegah data yatim (*orphan records*)?
-- [ ] Apakah formula keuangan mengikuti aturan isolasi ongkir kurir?
-- [ ] Apakah aksi-aksi status order idempotent (tidak memotong stok ganda jika webhook re-trigger)?
-- [ ] Apakah audit log tersimpan dengan identitas pembuat (User / AI Automation)?
+Use the workspace's required checks and risk-based tests. Report implementation, executed checks and unresolved gates separately. For an architecture-only task, deliver the contract and decisions without implying it was implemented or deployed.

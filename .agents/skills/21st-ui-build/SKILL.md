@@ -5,56 +5,28 @@ description: Build or substantially change production UI using the current proje
 
 # Build project-aware UI
 
-Preserve the product's identity while using 21st supply to accelerate implementation.
+Implement the requested page or component using its workspace's existing design and business contracts. Use `21st-ui-explore` only when the user wants alternative directions; use `21st-ui-review` for review-only requests.
 
-## Workflow
+## Establish project context
 
-1. Read `.21st/design.json` and `.21st/DESIGN.md`. If neither exists, run
-   `21st init --design-context`.
-2. Inspect the target route, its closest components, project instructions, and
-   existing tokens. Treat explicit project facts as stronger than generic taste.
-3. Search before generating:
+Read applicable AGENTS, inspect the route, neighboring components, package files and actual token sources. MGBOS Next.js work belongs in `mgbos/`; root `apps/mgbos/` is the Vite prototype. Preserve each application's stack and imports.
 
-   ```bash
-   21st search "<specific UI need>" --context auto
-   ```
+Read `.21st/design.json` and `.21st/DESIGN.md` in the relevant workspace if present. Missing 21st files do not mean the project lacks a design system. Inspect existing CSS and components before initializing anything. Do not overwrite or create competing design sources just to satisfy a tool.
 
-4. Reuse installed project primitives first. Retrieve or install a 21st result
-   only when it reduces duplication or materially improves the result.
-5. If no result fits, check MCP `get_usage.aiGenerationEnabled` or run
-   `21st usage` and read the `21st AI generation` line. CLI 1.17.1+ also supports
-   `21st usage --json`. Only when AI is explicitly enabled, generate
-   project-aware alternatives using available AI credits:
+## Implement
 
-   ```bash
-   21st generate "<goal and constraints>" --context auto --variants 3
-   ```
+1. Reuse installed primitives and established layout patterns. Use `design-system` for token contracts and `ui-styling` for focused CSS/component implementation only when needed.
+2. When an external component/reference would improve the result, use available 21st catalog search before hosted generation. Read `21st-cli-use` for catalog operations and verify installed CLI help before using its flags. Keep searches scoped to the target interface.
+3. If tools or network are unavailable, continue from inspected local components and state that 21st references were unavailable. Do not invent search results or install dependencies merely to run a review.
+4. Use hosted generation only after checking current account capability and available credits through the exposed usage tool or installed CLI. Read `21st-ai` when generation is actually needed. Lack of hosted access does not block local implementation.
+5. Integrate selected code into the real framework and contracts. Keep Next.js server/client boundaries and MGBOS command authorization intact. Do not move critical mutations into browser code to make a mockup work.
+6. Preserve semantics, keyboard access, focus, reduced motion, responsive layout and loading/empty/error states. Use real copy and data where available; label fixtures in previews and never present them as live business results.
+7. Run required workspace checks and inspect the relevant runtime states. If available, use the verified 21st review command as an additional check; it does not replace runtime or accessibility verification.
 
-   Otherwise, implement alternatives with your own coding agent, grounded in
-   `21st search` and `21st get` (MCP: `search` and `get_component`). Do not call
-   or suggest hosted `generate` or `iterate_generation` without AI access.
+## Scope and handoff
 
-6. Implement the selected direction in the project's real framework. Do not
-   paste sketch HTML when the project expects React components, tokens, or
-   established APIs.
-7. Preserve responsive behavior, keyboard interaction, visible focus,
-   semantics, reduced motion, loading states, empty states, and error states.
-8. Run the project's checks and `21st review <changed paths>`. Apply only safe,
-   deterministic fixes automatically.
+Preserve identity, density, typography and existing behavior unless the user requests a change. A request to implement a known direction does not require presenting three alternatives first.
 
-## Design rules
+Record a selected durable design decision in the existing appropriate project source, using its established schema. Do not force an invented `decisions` field into an unknown configuration format.
 
-- Prefer project tokens over new arbitrary values.
-- Prefer existing components over parallel lookalikes.
-- Preserve established density, radii, typography, iconography, and layout
-  rhythm unless the user explicitly requests a redesign.
-- Use real product copy and states when available.
-- Avoid decorative gradients, excessive cards, glass effects, huge headlines,
-  and animation unless supported by the project or requested.
-- Never claim a component, token, or capability exists without inspecting it.
-
-## Handoff
-
-Report the direction used, reused 21st/project components, files changed, and
-verification performed. Record a durable visual choice in
-`.21st/design.json` under `decisions` when the user selects a new direction.
+Report changed files, components reused, checks actually performed and unverified states. Implementation permission does not imply permission to publish components/themes or deploy the application.

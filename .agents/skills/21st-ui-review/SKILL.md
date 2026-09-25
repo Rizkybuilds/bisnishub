@@ -5,45 +5,22 @@ description: Review existing UI against the project's design context, accessibil
 
 # Review UI with evidence
 
-Separate deterministic defects from subjective design recommendations.
+Review the requested interface against its real design context and user flows. Separate reproducible defects from subjective recommendations.
 
-## Workflow
+## Inspect and verify
 
-1. Read `.21st/design.json`, project instructions, and the relevant source.
-2. Run the deterministic review first:
+1. Read applicable AGENTS, relevant source, existing tokens and `.21st` context when present. Select the correct workspace; do not review the Vite prototype as evidence for MGBOS Next.js behavior.
+2. Inspect runtime states when available: normal, loading, empty, error, validation and relevant permissions. Clearly separate code-inspected findings from browser-verified findings.
+3. Use the installed 21st review capability if available and verify its command/options first. If unavailable, continue with source and runtime inspection and disclose the limitation. A tool warning is a candidate finding, not proof.
+4. Check semantic controls, accessible names, keyboard/focus behavior, responsive overflow, zoom, contrast, reduced motion and feedback. Match tests to the actual component and supported platforms.
+5. Confirm token or component drift against established project sources. Use `ui-ux-pro-max` for focused guidance when a specific interaction remains uncertain; generic style rankings do not override product requirements.
 
-   ```bash
-   21st review <path>
-   21st review <path> --json
-   ```
+## Fix boundaries
 
-3. Inspect the actual component composition and runtime states. Validate claims
-   against code rather than inferring behavior from names.
-4. Group findings into:
-   - deterministic defects;
-   - design-system drift;
-   - accessibility and interaction defects;
-   - responsive risks;
-   - subjective product/design recommendations.
-5. Prioritize by user impact and include exact file and line attribution.
-6. Use `21st review <path> --fix` only for deterministic, low-ambiguity fixes.
-   Never silently redesign, change brand identity, or alter product behavior.
-7. Run relevant project tests after fixes and rerun review to prove resolution.
+A review-only request produces findings without modifying files. When fixes are requested, apply scoped, high-confidence corrections, inspect the diff and verify the affected state. Use automatic fix tooling only after inspecting what it changes. Do not silently redesign identity, alter business states or refactor unrelated components.
 
-## Review priorities
-
-- semantic controls and accessible names;
-- keyboard access, focus visibility, and dialog/menu behavior;
-- image alternatives and meaningful labels;
-- touch target size and disabled/loading states;
-- responsive overflow and fixed-width assumptions;
-- reduced-motion handling;
-- hardcoded visual values that conflict with project tokens;
-- duplicate primitives instead of existing components;
-- inconsistent typography, radius, spacing, shadows, and icons;
-- fake data, placeholder copy, or missing empty/error states.
+For changes, run required workspace checks plus relevant interaction verification. Do not claim full accessibility conformance from a static scan or a screenshot.
 
 ## Output
 
-Lead with actionable findings ordered by severity. Keep subjective suggestions
-clearly labeled. If no issue is proven, say so and state what was inspected.
+Lead with actionable findings ordered by user impact. Include the affected file/line, trigger, consequence and supporting evidence. Mark subjective suggestions and unverified responsive/runtime risks explicitly. If no issue is proven, state the inspected scope and remaining limits.

@@ -1,10 +1,12 @@
 ---
 name: ui-ux-pro-max
-description: "UI/UX design intelligence for web, mobile, and desktop. This skill should be used when designing, building, reviewing, or fixing interfaces, including pages, components, design systems, accessibility, interaction, responsive layout, typography, color, charts, and stack-specific UI implementation. Searchable local data: 79 searchable styles (50 active), 192 product palettes and reasoning profiles, 74 font pairings, 119 UX guidelines, 105 icons, 17 GSAP presets, 25 chart types, and 22 stacks."
+description: Search local UI/UX guidance for a specific interaction, accessibility, typography, chart or stack question. Use as focused support for project UI work; existing tokens and product contracts take precedence over generated style recommendations.
 ---
 # ui-ux-pro-max
 
-UI/UX design intelligence for web, mobile, and desktop. This skill should be used when designing, building, reviewing, or fixing interfaces, including pages, components, design systems, accessibility, interaction, responsive layout, typography, color, charts, and stack-specific UI implementation. Searchable local data: 79 searchable styles (50 active), 192 product palettes and reasoning profiles, 74 font pairings, 119 UX guidelines, 105 icons, 17 GSAP presets, 25 chart types, and 22 stacks.
+Use the local search corpus to resolve a concrete UI question. For BisnisHub, `21st-ui-explore`, `21st-ui-build` or `21st-ui-review` owns the requested workflow; this Skill supports it only when focused guidance adds value.
+
+Read applicable AGENTS and inspect the target application's tokens, components and installed stack first. MGBOS and the legacy Vite prototype are separate workspaces. Search results are recommendations, not authorization to change identity, install libraries or replace the existing design system.
 
 # Prerequisites
 
@@ -14,9 +16,9 @@ The bundled scripts require Python 3 (standard library only — no third-party p
 python3 --version || python --version
 ```
 
-If Python is not installed, **do not install it yourself**. Stop and ask the user to install Python 3 using their preferred method (e.g. from [python.org](https://www.python.org/downloads/) or their OS package manager), then continue once it is available. Never run package-manager or system-modifying commands (`sudo`, `brew`, `apt`, `winget`, etc.) on the user's machine for this skill.
+If Python is unavailable, continue from inspected project sources and relevant written guidance, and disclose that local search was not run. Install a runtime only when needed and within the user's scope; missing optional search must not block an otherwise feasible UI task.
 
-If the user prefers not to install Python, skip the CLI searches and rely on the Quick Reference sections above.
+If the user prefers not to install Python, skip the CLI searches and rely on the relevant guidance below.
 
 > **Note:** On Windows, use `python` instead of `python3` to run scripts (e.g., `python scripts/search.py` instead of `python3 scripts/search.py`).
 
@@ -28,10 +30,10 @@ Use this skill when the user requests any of the following:
 
 | Scenario | Trigger Examples | Start From |
 |----------|-----------------|------------|
-| **New project / page** | "做一个 landing page"、"Build a dashboard" | Step 1 → Step 2 (design system) |
+| **New project / page** | "做一个 landing page"、"Build a dashboard" | Inspect existing system; Step 2 only for a new visual direction |
 | **New component** | "Create a pricing card"、"Fix modal focus" | Step 3 (one focused domain search) |
 | **Choose style / color / font** | "What style fits a fintech app?"、"推荐配色" | Step 2 (design system) |
-| **Review existing UI** | "Review this page for UX issues"、"检查无障碍" | Quick Reference checklist above |
+| **Review existing UI** | "Review this page for UX issues"、"检查无障碍" | relevant checklist below |
 | **Fix a UI bug** | "Button hover is broken"、"Layout shifts on load" | Quick Reference → relevant section |
 | **Improve / optimize** | "Reduce React list rerenders"、"Fix mobile touch targets" | Step 3 (explicit `react`, `ux`, or `web` domain) |
 | **Implement dark mode** | "Add dark mode support" | Step 3 (domain: style "dark mode") |
@@ -44,7 +46,7 @@ Follow this workflow:
 
 Choose the smallest search mode that matches the request:
 
-1. **New project/page or system-wide visual direction** → use `--design-system`.
+1. **New visual system or requested system-wide direction** → use `--design-system`; a new page in an established app normally uses its existing system plus a focused search.
 2. **Targeted concern or component bug** → use one explicit `--domain`.
 3. **Known implementation stack** → use `--stack`; add a separate domain search only for a distinct design concern.
 
@@ -93,14 +95,14 @@ python3 .agents/skills/ui-ux-pro-max/scripts/search.py "beauty spa wellness serv
 
 ### Step 2b: Persist Design System (Master + Overrides Pattern)
 
-After verifying the design system, save it for **hierarchical retrieval across sessions** with `--persist` and an explicit project root:
+Persist a new design proposal only when creating or revising a design system is in scope and no established source already owns the decision. Inspect the output destination first; do not create a competing master for an ordinary page. When appropriate, use `--persist` with an explicit project root:
 
 ```bash
 python3 .agents/skills/ui-ux-pro-max/scripts/search.py "<query>" --design-system --persist -p "Project Name" --output-dir "<project-root>"
 ```
 
 This creates:
-- `design-system/<project-slug>/MASTER.md` — Global Source of Truth with all design rules
+- `design-system/<project-slug>/MASTER.md` — Generated design proposal; authoritative only after adoption by the project
 - `design-system/<project-slug>/pages/` — Folder for page-specific overrides
 
 **With page-specific override:**
@@ -116,14 +118,14 @@ If Master already exists, a new page file is created without changing Master. Ex
 **How hierarchical retrieval works:**
 1. Read `design-system/<project-slug>/MASTER.md`
 2. When building a specific page (e.g., "Checkout"), check `design-system/<project-slug>/pages/checkout.md`
-3. If the page file exists, its rules **override** the Master file; otherwise use Master exclusively
+3. If the page file exists, apply its intentional page-specific decisions while preserving project instructions and adopted token contracts; otherwise use the adopted Master
 
 **Context-aware retrieval prompt:**
 ```
 I am building the [Page Name] page. Please read design-system/[project-slug]/MASTER.md.
 Also check if design-system/[project-slug]/pages/[page-name].md exists.
 If the page file exists, prioritize its rules.
-If not, use the Master rules exclusively.
+If not, use the adopted Master together with the existing project constraints.
 Now, generate the code...
 ```
 
@@ -281,7 +283,7 @@ python3 .agents/skills/ui-ux-pro-max/scripts/search.py "fintech crypto" --design
 
 - Keep one dominant intent and 2–5 meaningful terms per query: `"keyboard focus modal"`, not a full audit checklist
 - Retry once with a narrower phrase or explicit domain/stack; do not cycle through unrelated keywords
-- Use `--design-system` for a new project/page; use `--domain` for a focused concern
+- Use `--design-system` for a new visual system; use existing tokens and `--domain` for a new page or focused concern
 - Add `--stack <stack>` for implementation-specific guidance when the target stack is known
 
 ### Common Sticking Points
@@ -289,19 +291,19 @@ python3 .agents/skills/ui-ux-pro-max/scripts/search.py "fintech crypto" --design
 | Problem | What to Do |
 |---------|------------|
 | Can't decide on style/color | Verify the category, then retry once with one product and one tone |
-| Dark mode contrast issues | Quick Reference §6: `color-dark-mode` + `color-accessible-pairs` |
-| Animations feel unnatural | Quick Reference §7: `spring-physics` + `easing` + `exit-faster-than-enter` |
-| Form UX is poor | Quick Reference §8: `inline-validation` + `error-clarity` + `focus-management` |
-| Navigation feels confusing | Quick Reference §9: `nav-hierarchy` + `bottom-nav-limit` + `back-behavior` |
-| Layout breaks on small screens | Quick Reference §5: `mobile-first` + `breakpoint-consistency` |
-| Performance / jank | Quick Reference §3: `virtualize-lists` + `main-thread-budget` + `debounce-throttle` |
+| Dark mode contrast issues | Focused color search: `color-dark-mode` + `color-accessible-pairs` |
+| Animations feel unnatural | Focused motion search: `spring-physics` + `easing` + `exit-faster-than-enter` |
+| Form UX is poor | Focused form search: `inline-validation` + `error-clarity` + `focus-management` |
+| Navigation feels confusing | Focused navigation search: `nav-hierarchy` + `bottom-nav-limit` + `back-behavior` |
+| Layout breaks on small screens | Focused layout search: `mobile-first` + `breakpoint-consistency` |
+| Performance / jank | Focused performance search: `virtualize-lists` + `main-thread-budget` + `debounce-throttle` |
 
 ### Pre-Delivery Checklist
 
 For web/desktop work, apply the relevant Quick Reference sections and focused searches. The device, Dynamic Type, touch-target, and safe-area checks below apply only to native/mobile app UI.
 
 - Run focused searches only for concerns present in the interface, for example `"keyboard focus modal" --domain ux`
-- Run through Quick Reference **§1–§3** (CRITICAL + HIGH) as a final review
+- Review the relevant accessibility, interaction and layout checks below
 - Test on 375px (small phone) and landscape orientation
 - Verify behavior with **reduced-motion** enabled and **Dynamic Type** at largest size
 - Check dark mode contrast independently (don't assume light mode values work)

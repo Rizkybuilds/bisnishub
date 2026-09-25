@@ -5,54 +5,26 @@ description: Explore and compare multiple meaningfully different UI directions g
 
 # Explore grounded UI directions
 
-Create real choices without abandoning the project's visual identity.
+Create comparable alternatives when the user asks for options or has not chosen a visual direction. Do not insert a mandatory exploration stage into a straightforward implementation request.
 
-## Workflow
+## Ground the alternatives
 
-1. Read `.21st/design.json` and the relevant product UI. If context is missing,
-   run `21st init --design-context`.
-2. Search 21st for multiple relevant references before generating:
+Read applicable AGENTS and inspect the target workspace, relevant screens, content, tokens and components. Use existing `.21st` context when present; do not initialize over an established design system. MGBOS and the legacy Vite prototype are separate targets.
 
-   ```bash
-   21st search "<interface and product context>" --context auto
-   ```
+Keep the product task, required content, business states and accessibility requirements consistent across options. Vary meaningful choices such as hierarchy, density, navigation or interaction, not only color. Follow the user's requested number; otherwise two or three alternatives are usually enough.
 
-3. Define three named directions. Each direction must differ on at least two
-   meaningful axes such as hierarchy, information density, navigation model,
-   content emphasis, interaction pattern, or composition. Color-only variants
-   do not count.
-4. Keep shared constraints fixed: real stack, tokens, brand assets, required
-   content, accessibility, and responsive behavior.
-5. Create comparable previews. Check MCP `get_usage.aiGenerationEnabled` or
-   run `21st usage` and read the `21st AI generation` line. CLI 1.17.1+ also
-   supports `21st usage --json`. Only when AI is explicitly enabled, use hosted
-   generation with available AI credits:
+## Produce comparable previews
 
-   ```bash
-   21st generate "<goal plus fixed constraints>" --context auto --variants 3
-   ```
+- Use local components and inspectable references. When available and useful, search the 21st catalog; use `21st-cli-use` and verify supported CLI flags before execution.
+- Use hosted generation only with verified access and available credits; read `21st-ai` for that workflow. If unavailable, create local previews and report the reference limitation.
+- Keep fixtures visibly separate from real operational data. Use the actual stack when previews will be integrated; do not connect exploratory actions to live transactions.
+- Put previews in a clearly scoped location that does not replace existing routes or assets without a requested implementation.
+- Show consistent viewport/content for each direction, explain the user effect and tradeoff, and recommend the best fit.
 
-   Otherwise, implement the previews with your own coding agent, grounded in
-   `21st search` and `21st get` (MCP: `search` and `get_component`). Do not call
-   or suggest hosted `generate` or `iterate_generation` without AI access.
+## Selection and preservation
 
-6. Present the options together when the host supports a picker. Otherwise give
-   each option a preview/deep link and a compact comparison.
-7. Recommend one direction with concrete tradeoffs, but let the user choose.
-8. After selection, remove abandoned local variants and record the decision in
-   `.21st/design.json`.
+An exploration-only request ends with reviewable options; it does not authorize production integration. If the user already selected a direction or authorized a best-judgment choice, proceed within that scope without asking again.
 
-## Direction contract
+Record the chosen direction in the existing project design source using its supported format. Retain alternatives unless cleanup was requested or they are disposable files created solely for this task and are no longer needed; never remove pre-existing drafts.
 
-For every direction provide:
-
-- a short, descriptive name;
-- the core idea and intended user effect;
-- the 21st/project references used;
-- what stays consistent with the project;
-- two or more meaningful differences;
-- accessibility or responsive risks;
-- the best-fit scenario.
-
-Do not generate random style mutations. Every difference must support a product
-or usability hypothesis that a user can evaluate.
+Deliver previews with their locations, a concise comparison, reference provenance and any untested interaction or responsive behavior.

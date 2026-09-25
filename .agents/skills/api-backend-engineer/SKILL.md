@@ -8,149 +8,43 @@ description: >-
 argument-hint: "[api, endpoint, webhook, payment, shipping, or auth]"
 ---
 
-# API & Backend Engineer — Serverless, Payment & Integration Specialist
+# API & Backend Engineer
 
-Skill spesialis untuk merancang endpoint API backend, Edge Functions, integrasi sistem pembayaran Indonesia, kurir logistik, dan webhook gateway yang tangguh (*fault-tolerant*).
+Implement server commands, endpoints, webhooks and provider adapters without changing unrelated business contracts.
 
----
+## Locate the contract
 
-## 1. Arsitektur API Standar (Format Respon & Error Handling)
+- Read applicable `AGENTS.md`, the caller, validation schema, domain rule and existing tests before choosing an API shape.
+- **MGBOS:** work in `mgbos/`; use the existing application command boundary and package exports. Domain code stays independent of provider SDKs; adapters belong in the integration boundary.
+- **Legacy:** inspect the actual Vite callers and TeeStock Edge Functions. Do not replace existing response formats with a universal envelope or introduce tRPC/another framework without a requirement.
+- Check MGBOS prerequisite gates and relevant reports before adding a new slice. This Skill does not authorize production changes.
 
-Setiap endpoint API harus mengembalikan struktur payload seragam (*JSend standard*):
+## Commands and access
 
-```typescript
-// Sukses
-{
-  "status": "success",
-  "data": { ... },
-  "meta": { "timestamp": "2026-09-09T12:00:00Z" }
-}
+Validate untrusted input and authenticate/authorize the actor and resource on the server. Derive tenant/brand scope from trusted membership. UI visibility is not authorization.
 
-// Gagal
-{
-  "status": "error",
-  "message": "Deskripsi error yang jelas dan ramah pengguna",
-  "code": "INVALID_COUPON_CODE",
-  "details": [ ... ] // Optional validation errors
-}
-```
+Load authoritative prices, order snapshots and outstanding balances server-side. Never accept client totals as proof of a payable amount. Match the workspace's exact money and serialization contract, with explicit safe conversion at provider boundaries.
 
----
+Route critical mutations through the established transactional command. Return stable caller-compatible errors without secrets or internal SQL. Use rate limits and timeouts appropriate to the endpoint and existing infrastructure; do not impose a universal limit on all traffic.
 
-## 2. Integrasi Payment Gateway Indonesia (Midtrans / QRIS)
+## Payments and webhooks
 
-### Pola Pembuatan Transaksi (Snap Token)
-```typescript
-import midtransClient from 'midtrans-client';
+1. Inspect the installed adapter and current official provider documentation for signature, raw-body, status, amount/currency and retry requirements. Do not reuse a remembered endpoint, algorithm or SDK version without verification.
+2. Select sandbox/production using explicit validated configuration; a production application build alone is not authorization to charge live payments.
+3. Authenticate the webhook and bind it to the expected merchant, transaction and order/invoice. Compare authoritative amount and currency before applying financial effects.
+4. Implement durable idempotency with an appropriate provider/event key and atomic financial effects. A pre-read followed by an unguarded write is not sufficient under concurrency.
+5. Handle repeated, delayed and out-of-order events through the canonical state machine. Payment, order and fulfillment statuses remain distinct.
+6. Acknowledge according to provider requirements after durable processing or durable enqueue. Retry transient failures without repeating charges, stock deductions or ledger entries.
+7. Store only needed audit fields with correlation identifiers; redact credentials, signatures and unnecessary personal data. Do not blanket-log raw payment payloads.
 
-const snap = new midtransClient.Snap({
-  isProduction: process.env.NODE_ENV === 'production',
-  serverKey: process.env.MIDTRANS_SERVER_KEY!,
-  clientKey: process.env.MIDTRANS_CLIENT_KEY!
-});
+## Shipping and other integrations
 
-export async function createPaymentTransaction(order: {
-  id: string;
-  grossAmount: number;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-}) {
-  const parameter = {
-    transaction_details: {
-      order_id: order.id,
-      gross_amount: order.grossAmount
-    },
-    customer_details: {
-      first_name: order.customerName,
-      email: order.customerEmail,
-      phone: order.customerPhone
-    },
-    enabled_payments: ['gopay', 'shopeepay', 'qris', 'bca_va', 'mandiri_va', 'bni_va']
-  };
+Use the selected provider's current contract, validated destination and actual configured package dimensions/weight. Do not hardcode historical API URLs, minimum billable weights or apparel weight assumptions as universal rules.
 
-  const transaction = await snap.createTransaction(parameter);
-  return {
-    token: transaction.token,
-    redirectUrl: transaction.redirect_url
-  };
-}
-```
+Set timeouts, bounded retries and error mapping. Retry mutations only with verified idempotency; surface ambiguous outcomes for reconciliation. Test locally with fixtures/sandbox data before an authorized live integration check.
 
-### Validasi Webhook & Proteksi Idempotensi (Wajib!)
-> [!CAUTION]
-> Vendor payment gateway akan mengirim webhook berulang kali jika jaringan tidak stabil (*retry mechanism*). Tanpa kunci idempotensi (*idempotency key*) dan validasi signature, saldo dapat terproses ganda!
+## Completion evidence
 
-```typescript
-import crypto from 'crypto';
+Test invalid identity/signature, unauthorized resources, tampered totals, duplicate and concurrent requests, out-of-order events and provider failures relevant to the change. Confirm application and database effects, not only HTTP success.
 
-export function verifyMidtransSignature(
-  orderId: string,
-  statusCode: string,
-  grossAmount: string,
-  signatureKey: string,
-  serverKey: string
-): boolean {
-  const hash = crypto
-    .createHash('sha512')
-    .update(`${orderId}${statusCode}${grossAmount}${serverKey}`)
-    .digest('hex');
-
-  return hash === signatureKey;
-}
-```
-
----
-
-## 3. Integrasi Logistik & Ongkir (RajaOngkir / Biteship)
-
-Pola perhitungan ongkir dinamis berdasarkan berat garmen apparel (misal: 1 kaos NSA 24s ≈ 200–220 gram):
-
-```typescript
-export async function calculateShippingRates({
-  originCityId,
-  destinationCityId,
-  totalWeightGrams,
-  couriers = ['jne', 'sicepat', 'jnt']
-}: {
-  originCityId: string;
-  destinationCityId: string;
-  totalWeightGrams: number;
-  couriers?: string[];
-}) {
-  // Pastikan berat minimal dihitung 1.000 gram (kebijakan kurir nasional)
-  const billableWeight = Math.max(1000, totalWeightGrams);
-
-  const results = await Promise.all(
-    couriers.map(async (courier) => {
-      const response = await fetch('https://api.rajaongkir.com/starter/cost', {
-        method: 'POST',
-        headers: {
-          'key': process.env.RAJAONGKIR_API_KEY!,
-          'content-type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-          origin: originCityId,
-          destination: destinationCityId,
-          weight: billableWeight.toString(),
-          courier: courier
-        })
-      });
-      return response.json();
-    })
-  );
-
-  return results;
-}
-```
-
----
-
-## 4. Keamanan Endpoint & Rate Limiting
-
-1. **Autentikasi Bearer JWT / Supabase Auth:**
-   Validasi token pengguna sebelum mengeksekusi operasi database yang bersifat mutatif.
-2. **Rate Limiting:**
-   Terapkan pembatasan request pada endpoint publik (terutama checkout, cek ongkir, dan login): maksimal 10 request per menit per IP untuk mencegah scraping bot dan denial of service.
-3. **Audit Log:**
-   Catat setiap webhook masuk ke tabel audit log (`core_audit_logs`) lengkap dengan status, payload raw, dan timestamp.
+Report endpoint/command contracts, changed files, tests executed and remaining integration or deployment steps. Loaded source code is not a deployed function; verify the endpoint and logs after an authorized deployment.

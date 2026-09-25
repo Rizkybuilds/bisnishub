@@ -9,212 +9,40 @@ description: >-
 argument-hint: "[schema, rls, query, or migration]"
 ---
 
-# Supabase Architect Skill — Solopreneur Cloud Database
+# Supabase Architect
 
-Skill spesialis untuk merancang, mengamankan, dan mengoptimalkan arsitektur database **Supabase (PostgreSQL)** dalam ekosistem multi-bisnis lean solopreneur.
+Design schema, migrations, RLS, database functions and query behavior for the selected BisnisHub workspace. Establish database identity before any mutation.
 
----
+## Select the database boundary
 
-## 1. Prinsip Desain: Multi-Business Single Project
+- **MGBOS:** read `mgbos/AGENTS.md`, architecture sources, `mgbos/package.json`, relevant migrations/tests and `mgbos/scripts/database.mjs`. Use only the workspace's local wrapper commands from `mgbos/`. Never follow root `supabase` or use a remote project for MGBOS work.
+- **Legacy TeeStock:** inspect `bisnis/teestock/supabase`, existing migration history and consumers before selecting a migration directory or command. Historical SQL under `bisnis/teestock/database` is not proof it is the active migration source.
+- Read applicable reports as historical evidence. If an old runbook describes infrastructure-only bootstrap but later migrations exist, preserve those migrations and derive the current schema from them; do not reset to the bootstrap description.
 
-Untuk menghemat biaya operasional solopreneur (memaksimalkan kuota gratis Supabase 500 MB), seluruh bisnis dikelola dalam 1 project PostgreSQL terpadu dengan konvensi namespace prefix yang ketat:
+## Schema and transaction design
 
-| Bisnis | Prefix Tabel | Contoh Tabel | Domain Bisnis |
-|---|:---:|---|---|
-| **TeeStock** | `ts_` | `ts_products`, `ts_orders`, `ts_inventory` | Apparel POD & Merch House |
-| **MultiGraph** | `mg_` | `mg_orders`, `mg_paper_stocks`, `mg_b2b_clients` | Printing & Packaging Collateral |
-| **Titik Buta** | `tb_` | `tb_projects`, `tb_leads` | Ideation / Future Ventures |
-| **Shared / Core** | `core_` | `core_settings`, `core_audit_logs` | Autentikasi & Config Global |
+- Use canonical MGBOS `app`/`internal` boundaries and business model; do not impose legacy `ts_`, `mg_` or `tb_` prefixes or add unrelated business units.
+- For legacy changes, preserve its existing names and numeric contract unless an explicit migration requires change. Do not automatically port schema conventions between workspaces.
+- MGBOS money uses integer rupiah. Match database, validation and domain representations, including JSON serialization and safe bounds.
+- Define constraints, foreign keys, uniqueness and indexes from actual invariants and query patterns. Do not blanket-cascade historical transactions.
+- Critical related changes belong in an atomic database command. Enforce valid transitions, snapshot immutability, concurrency control and idempotency at the database boundary as required.
+- External deliveries must not make an uncommitted transaction appear complete. Use the specified outbox/event mechanism; report missing implementation rather than claiming delivery guarantees.
 
----
+## Authorization and data exposure
 
-## 2. Standar Skema & Struktur Relasi (Master Pattern)
+- Inspect grants, schema exposure, RLS, function execution permissions and caller identity together. RLS alone is not proof a command is authorized.
+- Public catalog reads and order creation are different permissions. Do not add blanket guest order INSERT policies or accept user-controlled role/organization fields as authority.
+- Use the established trusted role and membership checks. Test anonymous, ordinary authenticated, privileged and cross-organization callers as applicable; service-role tests cannot establish ordinary-user isolation.
+- For privileged functions, constrain search_path, qualify objects, validate the actor and restrict execute grants. Do not solve access failures by broadly granting privileges.
+- Keep service credentials server-side. Missing environment configuration must not fall back to a hardcoded production URL or project key.
+- Views and RPC output must enforce the intended exposure boundary, including sensitive pricing and customer data.
 
-### A. Pola Produk & Unit Economics (PIM)
-Setiap entitas produk wajib terikat dengan tabel *unit economics* untuk memastikan kalkulasi margin selalu akurat:
+## Migration and evidence
 
-```sql
--- Master Katalog Produk
-CREATE TABLE IF NOT EXISTS ts_products (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  sku VARCHAR(50) UNIQUE NOT NULL,
-  title VARCHAR(255) NOT NULL,
-  series VARCHAR(50) NOT NULL, -- e.g. 'Tech', 'Outdoor', 'Origins'
-  category VARCHAR(50) NOT NULL, -- 'Originals', 'Blanks', 'Studio'
-  description TEXT,
-  garment_type VARCHAR(100) DEFAULT 'NSA Heavyweight 24s',
-  price_retail NUMERIC(12, 2) NOT NULL,
-  price_anchor NUMERIC(12, 2), -- Harga coret (misal Rp 139.000)
-  price_dropship NUMERIC(12, 2) NOT NULL,
-  price_reseller NUMERIC(12, 2) NOT NULL,
-  is_active BOOLEAN DEFAULT true,
-  images TEXT[] DEFAULT '{}',
-  created_at TIMESTAMPTZ DEFAULT now(),
-  updated_at TIMESTAMPTZ DEFAULT now()
-);
+Create a new migration for schema changes; never rewrite applied SQL. Generate types from the real target local database through the existing generator, never by hand.
 
--- Rincian HPP (COGS) Dinamis
-CREATE TABLE IF NOT EXISTS ts_unit_economics (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  product_id UUID REFERENCES ts_products(id) ON DELETE CASCADE,
-  cost_blank NUMERIC(12, 2) NOT NULL DEFAULT 38000,
-  cost_dtf NUMERIC(12, 2) NOT NULL DEFAULT 10000,
-  cost_press_electric NUMERIC(12, 2) NOT NULL DEFAULT 1500,
-  cost_packaging NUMERIC(12, 2) NOT NULL DEFAULT 2000,
-  cost_overhead NUMERIC(12, 2) NOT NULL DEFAULT 1500,
-  updated_at TIMESTAMPTZ DEFAULT now()
-);
-```
+For MGBOS reproducibility checks, inspect the local runbook and wrappers, confirm the local target, then use the applicable `db:start`, `db:reset`, `db:test` and `db:types` scripts. Reset destroys local data and is only for an authorized reproducibility check or explicit reset request. Do not reset merely to inspect schema or edit instructions.
 
-### B. Business Intelligence View (Auto-Calculated Margin)
-Selalu gunakan PostgreSQL View agar aplikasi frontend tidak menghitung ulang margin kotor/bersih di sisi klien:
+MGBOS forbids remote resets and production schema changes. For separately authorized legacy production changes, establish the exact project, create a structural/data snapshot and restore-test it before SQL; then verify preserved rows, policies, functions and critical flows. A successful SQL response is not sufficient evidence. Prefer a forward repair migration over destructive undo of financial history.
 
-```sql
-CREATE OR REPLACE VIEW ts_view_catalog_summary AS
-SELECT 
-  p.id,
-  p.sku,
-  p.title,
-  p.series,
-  p.price_retail,
-  p.price_dropship,
-  p.price_reseller,
-  (ue.cost_blank + ue.cost_dtf + ue.cost_press_electric + ue.cost_packaging + ue.cost_overhead) AS total_cogs,
-  -- Laba Bersih Direct Order (0% Platform Fee)
-  (p.price_retail - (ue.cost_blank + ue.cost_dtf + ue.cost_press_electric + ue.cost_packaging + ue.cost_overhead)) AS net_profit_direct,
-  -- Laba Bersih Marketplace (Estimasi Potongan Fee 11%)
-  ROUND(p.price_retail * 0.89 - (ue.cost_blank + ue.cost_dtf + ue.cost_press_electric + ue.cost_packaging + ue.cost_overhead), 2) AS net_profit_marketplace,
-  p.is_active
-FROM ts_products p
-LEFT JOIN ts_unit_economics ue ON p.id = ue.product_id;
-```
-
----
-
-## 3. Template Kebijakan RLS (Row Level Security)
-
-Keamanan adalah prioritas. Semua tabel wajib mengaktifkan `ALTER TABLE ... ENABLE ROW LEVEL SECURITY;`.
-
-### Role-Based Access Pattern:
-1. **Public/Guest:** Hanya dapat membaca katalog produk aktif (`is_active = true`), mendaftar newsletter, dan membuat pesanan baru (`INSERT`).
-2. **Authenticated Member:** Dapat membaca riwayat pesanan sendiri dan mengubah alamat profil sendiri.
-3. **Admin / Service Role:** Akses penuh (`ALL`) untuk manajemen katalog, stok gudang, dan dashboard keuangan.
-
-```sql
--- Aktifkan RLS
-ALTER TABLE ts_products ENABLE ROW LEVEL SECURITY;
-ALTER TABLE ts_orders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE ts_user_profiles ENABLE ROW LEVEL SECURITY;
-
--- Policy 1: Publik dapat melihat produk aktif
-CREATE POLICY "Public can view active products" 
-ON ts_products FOR SELECT 
-TO anon, authenticated 
-USING (is_active = true);
-
--- Policy 2: Admin memiliki akses total (Cek Claim app_metadata->>'role' = 'admin')
-CREATE POLICY "Admin full access on products" 
-ON ts_products FOR ALL 
-TO authenticated 
-USING (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin')
-WITH CHECK (auth.jwt() -> 'app_metadata' ->> 'role' = 'admin');
-
--- Policy 3: User hanya melihat pesanannya sendiri
-CREATE POLICY "Users view own orders" 
-ON ts_orders FOR SELECT 
-TO authenticated 
-USING (auth.uid() = user_id);
-
--- Policy 4: Tamu/Guest boleh membuat pesanan baru
-CREATE POLICY "Guests and Users can create orders" 
-ON ts_orders FOR INSERT 
-TO anon, authenticated 
-WITH CHECK (true);
-```
-
----
-
-## 4. Pola Database Trigger & Webhook Otomasi
-
-### Trigger 1: Auto Sync Profile dari `auth.users`
-Saat user registrasi via email/Google, otomatis buat baris profil di `ts_user_profiles`:
-
-```sql
-CREATE OR REPLACE FUNCTION public.handle_new_user() 
-RETURNS TRIGGER AS $$
-BEGIN
-  INSERT INTO public.ts_user_profiles (id, full_name, email, role)
-  VALUES (
-    NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', 'Customer'),
-    NEW.email,
-    'member'
-  );
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE OR REPLACE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-```
-
-### Trigger 2: Webhook Trigger ke n8n / WA Gateway
-Kirim payload instan ke endpoint eksternal saat status order berubah menjadi `PAID`:
-
-```sql
--- Aktifkan pg_net extension jika diperlukan, atau manfaatkan Supabase Database Webhooks
--- melalui Dashboard -> Database -> Webhooks -> Event: ts_orders UPDATE
--- Filter: NEW.status = 'paid' AND OLD.status != 'paid'
-```
-
----
-
-## 5. Standar Integrasi Supabase di Frontend React
-
-Gunakan pola arsitektur aman dengan proteksi koneksi offline:
-
-```javascript
-import { createClient } from '@supabase/supabase-js';
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://tovslowsopqtuxmrogeu.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'YOUR_ANON_KEY';
-
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-});
-
-// Helper query aman dengan penanganan error terstandarisasi
-export async function fetchCatalogProducts(series = null) {
-  try {
-    let query = supabase
-      .from('ts_products')
-      .select('*, ts_unit_economics(*)')
-      .eq('is_active', true)
-      .order('created_at', { ascending: false });
-
-    if (series && series !== 'Semua') {
-      query = query.eq('series', series);
-    }
-
-    const { data, error } = await query;
-    if (error) throw error;
-    return { data, error: null };
-  } catch (err) {
-    console.error('Database query failed:', err.message);
-    return { data: [], error: err.message };
-  }
-}
-```
-
----
-
-## 6. Checklist Verifikasi Database
-- [ ] Apakah tabel baru menggunakan prefix yang sesuai (`ts_`, `mg_`, `tb_`)?
-- [ ] Apakah RLS sudah diaktifkan dan diverifikasi menggunakan akun non-admin?
-- [ ] Apakah seluruh foreign key memiliki aturan `ON DELETE` yang jelas (`CASCADE` atau `SET NULL`)?
-- [ ] Apakah index sudah dibuat untuk kolom yang sering di-filter (`sku`, `status`, `created_at`, `user_id`)?
-- [ ] Apakah file master schema.sql telah diperbarui setelah ada migrasi baru?
+Report the migration, target environment, checks actually executed, isolation results, type generation and any blocked checks. Use the QA Skill for a broader regression plan when needed.
