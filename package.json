@@ -10,6 +10,9 @@
     "build:teestock": "npm --prefix bisnis/teestock/web run build",
     "dev:bisnishub": "npm --prefix apps/bisnishub-web run dev",
     "build:bisnishub": "npm --prefix apps/bisnishub-web run build",
-    "install:all": "npm --prefix bisnis/teestock/web install && npm --prefix apps/bisnishub-web install"
+    "dev:mgbos": "npm --prefix apps/mgbos run dev",
+    "build:mgbos": "npm --prefix apps/mgbos run build",
+    "install:mgbos": "npm --prefix apps/mgbos install",
+    "install:all": "npm --prefix bisnis/teestock/web install && npm --prefix apps/bisnishub-web install && npm --prefix apps/mgbos install"
   }
 }
