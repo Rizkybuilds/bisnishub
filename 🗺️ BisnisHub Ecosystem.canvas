@@ -1,232 +1,31 @@
 {
-  "nodes": [
-    {
-      "id": "founder_center",
-      "type": "text",
-      "text": "## 🚀 Solo Founder\n**BisnisHub Command Center**\n\n- Mengelola 3 portofolio bisnis\n- Mengarahkan strategi & eksekusi\n- Didukung Virtual C-Suite",
-      "x": -50,
-      "y": -50,
-      "width": 300,
-      "height": 180,
-      "color": "4"
-    },
-    {
-      "id": "group_csuite",
-      "type": "group",
-      "label": "🤖 Virtual C-Suite Team (Thinking Partners)",
-      "x": -680,
-      "y": -320,
-      "width": 560,
-      "height": 660,
-      "color": "5"
-    },
-    {
-      "id": "role_mentor",
-      "type": "text",
-      "text": "### 🧠 Mentor Bisnis\n- Strategi holistik\n- Validasi ide & positioning\n- Sparring partner solopreneur",
-      "x": -650,
-      "y": -260,
-      "width": 240,
-      "height": 130,
-      "color": "4"
-    },
-    {
-      "id": "role_cto",
-      "type": "text",
-      "text": "### 🔧 CTO\n- Arsitektur sistem web\n- Integrasi Supabase & Midtrans\n- Keamanan data & otomasi",
-      "x": -650,
-      "y": -100,
-      "width": 240,
-      "height": 130,
-      "color": "5"
-    },
-    {
-      "id": "role_coo",
-      "type": "text",
-      "text": "### ⚙️ COO\n- SOP produksi & heat press\n- Rantai pasok & logistik buffer\n- Quality control & packing",
-      "x": -650,
-      "y": 60,
-      "width": 240,
-      "height": 130,
-      "color": "2"
-    },
-    {
-      "id": "role_cfo",
-      "type": "text",
-      "text": "### 💰 CFO\n- HPP & struktur pricing\n- Analisis fee payment gateway\n- Arus kas & profit margin",
-      "x": -380,
-      "y": -180,
-      "width": 230,
-      "height": 130,
-      "color": "3"
-    },
-    {
-      "id": "role_cmo",
-      "type": "text",
-      "text": "### 📢 CMO\n- Brand blueprint & persona\n- Konversi copywriting e-commerce\n- Kampanye peluncuran & sosmed",
-      "x": -380,
-      "y": -20,
-      "width": 230,
-      "height": 130,
-      "color": "1"
-    },
-    {
-      "id": "group_bisnis",
-      "type": "group",
-      "label": "🏢 Portofolio 3 Bisnis",
-      "x": 350,
-      "y": -320,
-      "width": 640,
-      "height": 660,
-      "color": "2"
-    },
-    {
-      "id": "biz_teestock",
-      "type": "text",
-      "text": "### 👕 TeeStock\n**Status: 🟢 Launch Prep**\n\n- Apparel POD & Blanks House\n- Web catalog live & Midtrans ready\n- In-house heat press 155°C active\n- NSA 3600 & 7200 blanks",
-      "x": 380,
-      "y": -260,
-      "width": 270,
-      "height": 190,
-      "color": "5"
-    },
-    {
-      "id": "biz_multigraph",
-      "type": "text",
-      "text": "### 🖨️ MultiGraph\n**Status: 🟡 Supporting Arm**\n\n- Printing & Packaging Collateral\n- Suplai hangtag, polymailer, box\n- Kolateral unboxing premium TeeStock",
-      "x": 380,
-      "y": -40,
-      "width": 270,
-      "height": 160,
-      "color": "3"
-    },
-    {
-      "id": "biz_titikbuta",
-      "type": "text",
-      "text": "### 👁️ Titik Buta\n**Status: 🔴 Ideation**\n\n- Project Incubator solopreneur\n- Menggali blind spots pasar\n- Validasi problem-solution fit",
-      "x": 380,
-      "y": 150,
-      "width": 270,
-      "height": 150,
-      "color": "6"
-    },
-    {
-      "id": "sinergi_note",
-      "type": "text",
-      "text": "### 🤝 Sinergi Ekosistem\nMultiGraph memproduksi kemasan unboxing dan merchandise untuk pelanggan TeeStock, menekan biaya vendor luar dan menambah nilai estetika produk.",
-      "x": 680,
-      "y": -150,
-      "width": 280,
-      "height": 180,
-      "color": "2"
-    },
-    {
-      "id": "group_tech",
-      "type": "group",
-      "label": "⚙️ Operational & Tech Stack",
-      "x": -250,
-      "y": 280,
-      "width": 800,
-      "height": 260,
-      "color": "4"
-    },
-    {
-      "id": "stack_web",
-      "type": "text",
-      "text": "### 🌐 Frontend & Web\n- React / Vite / Tailwind\n- Serverless Hosting (Vercel)\n- Responsive E-Commerce UI",
-      "x": -220,
-      "y": 340,
-      "width": 230,
-      "height": 160,
-      "color": "5"
-    },
-    {
-      "id": "stack_backend",
-      "type": "text",
-      "text": "### 🗄️ Backend & Data\n- Supabase PostgreSQL\n- Row Level Security (RLS)\n- Midtrans & QRIS Webhooks",
-      "x": 40,
-      "y": 340,
-      "width": 230,
-      "height": 160,
-      "color": "4"
-    },
-    {
-      "id": "stack_production",
-      "type": "text",
-      "text": "### 🖨️ Produksi In-House\n- DTF Gang Sheet Roll (58cm)\n- Heat Press 155°C 15s\n- Buffer Stok Blanks Kaos NSA",
-      "x": 290,
-      "y": 340,
-      "width": 230,
-      "height": 160,
-      "color": "2"
-    }
-  ],
-  "edges": [
-    {
-      "id": "e_founder_csuite",
-      "fromNode": "founder_center",
-      "fromSide": "left",
-      "toNode": "role_mentor",
-      "toSide": "right",
-      "label": "Konsultasi C-Suite"
-    },
-    {
-      "id": "e_founder_teestock",
-      "fromNode": "founder_center",
-      "fromSide": "right",
-      "toNode": "biz_teestock",
-      "toSide": "left",
-      "label": "Bisnis Prioritas"
-    },
-    {
-      "id": "e_founder_multigraph",
-      "fromNode": "founder_center",
-      "fromSide": "right",
-      "toNode": "biz_multigraph",
-      "toSide": "left"
-    },
-    {
-      "id": "e_founder_titikbuta",
-      "fromNode": "founder_center",
-      "fromSide": "right",
-      "toNode": "biz_titikbuta",
-      "toSide": "left"
-    },
-    {
-      "id": "e_multigraph_teestock",
-      "fromNode": "biz_multigraph",
-      "fromSide": "right",
-      "toNode": "sinergi_note",
-      "toSide": "bottom"
-    },
-    {
-      "id": "e_sinergi_teestock",
-      "fromNode": "sinergi_note",
-      "fromSide": "top",
-      "toNode": "biz_teestock",
-      "toSide": "right",
-      "label": "Pasokan Kemasan"
-    },
-    {
-      "id": "e_teestock_web",
-      "fromNode": "biz_teestock",
-      "fromSide": "bottom",
-      "toNode": "stack_web",
-      "toSide": "top"
-    },
-    {
-      "id": "e_teestock_backend",
-      "fromNode": "biz_teestock",
-      "fromSide": "bottom",
-      "toNode": "stack_backend",
-      "toSide": "top"
-    },
-    {
-      "id": "e_teestock_production",
-      "fromNode": "biz_teestock",
-      "fromSide": "bottom",
-      "toNode": "stack_production",
-      "toSide": "top"
-    }
-  ]
+	"nodes":[
+		{"id":"group_bisnis","type":"group","x":350,"y":-320,"width":640,"height":660,"color":"2","label":"🏢 Portofolio 3 Bisnis"},
+		{"id":"group_csuite","type":"group","x":-680,"y":-320,"width":560,"height":660,"color":"5","label":"🤖 Virtual C-Suite Team (Thinking Partners)"},
+		{"id":"group_tech","type":"group","x":-250,"y":280,"width":800,"height":260,"color":"4","label":"⚙️ Operational & Tech Stack"},
+		{"id":"founder_center","type":"text","text":"## 🚀 Solo Founder\n**BisnisHub Command Center**\n\n- Mengelola 3 portofolio bisnis\n- Mengarahkan strategi & eksekusi\n- Didukung Virtual C-Suite","x":-50,"y":-50,"width":300,"height":180,"color":"4"},
+		{"id":"role_cto","type":"text","text":"### 🔧 CTO\n- Arsitektur sistem web\n- Integrasi Supabase & Midtrans\n- Keamanan data & otomasi","x":-650,"y":-100,"width":240,"height":130,"color":"5"},
+		{"id":"role_coo","type":"text","text":"### ⚙️ COO\n- SOP produksi & heat press\n- Rantai pasok & logistik buffer\n- Quality control & packing","x":-650,"y":60,"width":240,"height":130,"color":"2"},
+		{"id":"role_cfo","type":"text","text":"### 💰 CFO\n- HPP & struktur pricing\n- Analisis fee payment gateway\n- Arus kas & profit margin","x":-380,"y":-180,"width":230,"height":130,"color":"3"},
+		{"id":"role_cmo","type":"text","text":"### 📢 CMO\n- Brand blueprint & persona\n- Konversi copywriting e-commerce\n- Kampanye peluncuran & sosmed","x":-380,"y":-20,"width":230,"height":130,"color":"1"},
+		{"id":"stack_backend","type":"text","text":"### 🗄️ Backend & Data\n- Supabase PostgreSQL\n- Row Level Security (RLS)\n- Midtrans & QRIS Webhooks","x":40,"y":340,"width":230,"height":160,"color":"4"},
+		{"id":"biz_teestock","type":"text","text":"### 👕 TeeStock\n**Status: 🟢 Launch Prep**\n\n- Apparel POD & Blanks House\n- Web catalog live & Midtrans ready\n- In-house heat press 155°C active\n- NSA 3600 & 7200 blanks","x":380,"y":-260,"width":270,"height":190,"color":"5"},
+		{"id":"biz_multigraph","type":"text","text":"### 🖨️ MultiGraph\n**Status: 🟡 Supporting Arm**\n\n- Printing & Packaging Collateral\n- Suplai hangtag, polymailer, box\n- Kolateral unboxing premium TeeStock","x":380,"y":-40,"width":270,"height":160,"color":"3"},
+		{"id":"stack_production","type":"text","text":"### 🖨️ Produksi In-House\n- DTF Gang Sheet Roll (58cm)\n- Heat Press 155°C 15s\n- Buffer Stok Blanks Kaos NSA","x":290,"y":340,"width":230,"height":160,"color":"2"},
+		{"id":"role_mentor","type":"text","text":"### 🧠 Mentor Bisnis\n- Strategi holistik\n- Validasi ide & positioning\n- Sparring partner solopreneur","x":-650,"y":-260,"width":240,"height":130,"color":"4"},
+		{"id":"sinergi_note","type":"text","text":"### 🤝 Sinergi Ekosistem\nMultiGraph memproduksi kemasan unboxing dan merchandise untuk pelanggan TeeStock, menekan biaya vendor luar dan menambah nilai estetika produk.","x":680,"y":-140,"width":280,"height":180,"color":"2"},
+		{"id":"biz_titikbuta","type":"text","text":"### 👁️ Titik Buta\n**Status: 🔴 Ideation**\n\n- Project Incubator solopreneur\n- Menggali blind spots pasar\n- Validasi problem-solution fit","x":380,"y":160,"width":270,"height":150,"color":"6"},
+		{"id":"stack_web","type":"text","text":"### 🌐 Frontend & Web\n- React / Vite / Tailwind\n- Serverless Hosting (Vercel)\n- Responsive E-Commerce UI","x":-220,"y":340,"width":230,"height":160,"color":"5"}
+	],
+	"edges":[
+		{"id":"e_founder_csuite","fromNode":"founder_center","fromSide":"left","toNode":"role_mentor","toSide":"right","label":"Konsultasi C-Suite"},
+		{"id":"e_founder_teestock","fromNode":"founder_center","fromSide":"right","toNode":"biz_teestock","toSide":"left","label":"Bisnis Prioritas"},
+		{"id":"e_founder_multigraph","fromNode":"founder_center","fromSide":"right","toNode":"biz_multigraph","toSide":"left"},
+		{"id":"e_founder_titikbuta","fromNode":"founder_center","fromSide":"right","toNode":"biz_titikbuta","toSide":"left"},
+		{"id":"e_multigraph_teestock","fromNode":"biz_multigraph","fromSide":"right","toNode":"sinergi_note","toSide":"bottom"},
+		{"id":"e_sinergi_teestock","fromNode":"sinergi_note","fromSide":"top","toNode":"biz_teestock","toSide":"right","label":"Pasokan Kemasan"},
+		{"id":"e_teestock_web","fromNode":"biz_teestock","fromSide":"bottom","toNode":"stack_web","toSide":"top"},
+		{"id":"e_teestock_backend","fromNode":"biz_teestock","fromSide":"bottom","toNode":"stack_backend","toSide":"top"},
+		{"id":"e_teestock_production","fromNode":"biz_teestock","fromSide":"bottom","toNode":"stack_production","toSide":"top"}
+	]
 }

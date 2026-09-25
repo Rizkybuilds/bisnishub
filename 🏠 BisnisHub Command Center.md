@@ -1,7 +1,7 @@
 ---
 title: BisnisHub Command Center
 type: dashboard
-updated: "2026-09-18"
+updated: "2026-09-24"
 tags:
   - command-center
   - dashboard
@@ -11,31 +11,62 @@ tags:
 
 # 🏠 BisnisHub Command Center
 
-> [!abstract] **Visi Solopreneur**
-> Mengelola dan mengakselerasi **3 bisnis** secara sinergis menggunakan kekuatan automasi teknologi, strategi ramping (lean), dan dukungan **Virtual C-Suite Team**.
+> [!abstract] **Visi Eksekutif 2 Pilar Bisnis**
+> Mengelola dan mengakselerasi **2 Pilar Bisnis Inti** yang saling memperkuat (*Double Flywheel Model*):
+> 1. **MultiGraph Group** (Holding Industri Percetakan, Apparel, & Kemasan — Client #0).
+> 2. **RizkyBuild** (Personal Brand Distribution Engine, AI Automation Services, & Micro-SaaS).
 
 ---
 
 ## 🗺️ Peta Visual & Navigasi Cepat
+
 > [!tip] **Obsidian Visual Canvas**
 > Buka peta visual interaktif arsitektur bisnis dan alur operasional:
 > 🔗 **[[🗺️ BisnisHub Ecosystem.canvas|Buka BisnisHub Ecosystem Canvas]]**
 
-| 📅 **Jurnal & Review** | 🤖 **AI & Web OS** | 📁 **Templates Master** | ⚙️ **System & Storage** |
+| 📅 **Jurnal & Review** | 🤖 **AI & Web OS** | 📁 **Templates Master** | ⚙️ **System & Knowledge** |
 |---|---|---|---|
-| [[catatan/harian/2026-09-18|Catatan Harian]] | **BisnisHub Web OS** (`npm run dev:bisnishub`) | [[templates/Template - Catatan Harian|T-Harian]] | [[catatan/panduan-external-ssd-1tb|External SSD 1TB (D:\)]] |
-| [[catatan/weekly-review/README|Weekly Review]] | `catatan/sesi/` (Log C-Suite) | [[templates/Template - Weekly Business Review|T-Weekly Review]] | [[catatan/piagam-co-founders-bisnishub|Piagam Co-Founders]] |
-| [[catatan/ide/README|Ide & Scratchpad]] | `python main.py` (CLI Hub) | [[templates/Template - Sesi Konsultasi C-Suite|T-Konsultasi]] | [[README|README Workspace]] |
-| | [[catatan/panduan-antigravity-obsidian|Panduan AGY + Obsidian]] | [[templates/Template - SOP Operasional|T-SOP]] | [[GEMINI|AI Rules & Engine]] |
-| | [[catatan/arsitektur-ekosistem-bisnishub-teestock|Arsitektur Ekosistem]] | [[templates/Template - Marketing & Konten Kampanye|T-Marketing]] | [[memory/business_profile.json|Business Profile]] |
+| [[catatan/harian/2026-09-18|Catatan Harian]] | 🌟 **MGBOS Next.js (Port 3101)** (`cd mgbos && pnpm dev`) | [[templates/Template - Catatan Harian|T-Harian]] | [[catatan/panduan-external-ssd-1tb|External SSD 1TB (D:\)]] |
+| [[catatan/weekly-review/README|Weekly Review]] | 🛍️ **TeeStock Store (Port 5173)** (`npm run dev:teestock`) | [[templates/Template - Weekly Business Review|T-Weekly Review]] | [[catatan/piagam-co-founders-bisnishub|Piagam Co-Founders]] |
+| [[catatan/ide/README|Ide & Scratchpad]] | 🌟 **MGBOS Vite Proto (Port 3001)** (`npm run dev:mgbos`) | [[templates/Template - Sesi Konsultasi C-Suite|T-Konsultasi]] | [[catatan/sesi/README|Arsip Blueprint MGBOS]] |
+| [[catatan/mgbos-master-roadmap-tracker|MGBOS Roadmap]] | 🛡️ **BisnisHub Admin (Port 3000)** (`npm run dev:bisnishub`) | [[templates/Template - SOP Operasional|T-SOP]] | [[README|README Workspace]] |
+| | 🚀 **RizkyBuild Hub** ([[bisnis/rizkybuild/README\|RizkyBuild]]) | [[templates/Template - Marketing & Konten Kampanye|T-Marketing]] | [[GEMINI|AI Rules & Engine]] |
+| | [[catatan/arsitektur-ekosistem-bisnishub-teestock|Arsitektur Ekosistem]] | | [[memory/business_profile.json|Business Profile]] |
 
 ---
 
-## 🏢 Portfolio 3 Bisnis
+## ⚡ The Double Flywheel: Hubungan 2 Pilar Utama
 
-### 1. 👕 [[bisnis/teestock/README|TeeStock]] — Apparel POD & Blanks House
-> [!success] **Status: 🟢 Launch Prep**
-> Web store live di **`https://teestockapparel.vercel.app`**, Direction A Lookbook aktif, in-house heat press siap beroperasi, authentic master logo terintegrasi, transaksi Midtrans production-ready.
+```text
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       DOUBLE FLYWHEEL ECOSYSTEM                             │
+├──────────────────────────────────────┬──────────────────────────────────────┤
+│ PILAR 1: MULTIGRAPH GROUP            │ PILAR 2: RIZKYBUILD                  │
+│ (Holding Industri & Client #0)       │ (AI Builder, Distribution, & SaaS)   │
+├──────────────────────────────────────┼──────────────────────────────────────┤
+│ • MultiGraph, TeeStock, NeoPack,     │ • Personal Brand & Distribution      │
+│   Pack Point, Squeegee Studios       │ • AI Automation & Implementation     │
+│ • Kas masuk dari retail & sablon     │ • Digital Products, Tools & SaaS     │
+│ • Menyediakan "Real Business Problem"│ • Mengubah solusi nyata jadi konten  │
+│   untuk diselesaikan di MGBOS        │   dan produk terstandardisasi        │
+└──────────────────────────────────────┴──────────────────────────────────────┘
+                   ▲                                      │
+                   │                                      ▼
+                   └── [1 Pekerjaan Memberikan 3× Leverage] ──┘
+                       1. Business Asset (dipakai di MGBOS)
+                       2. Content Asset (studi kasus nyata)
+                       3. Product Asset (arsitektur untuk klien)
+```
+
+---
+
+## 🏢 PILAR 1: MultiGraph Group Holding
+
+Pusat komando ekosistem manufaktur fisik, percetakan, apparel, dan packaging:
+
+### 1. 👕 [[bisnis/teestock/README|TeeStock]] — Apparel POD, Blanks House & Custom Atelier
+> [!success] **Status: 🟢 Launch Prep & Pilot MVP MGBOS**
+> Web store live di **`https://teestockapparel.vercel.app`**, in-house heat press siap produksi, pilot kustom Custom Atelier B2B.
 
 - 🎨 **Branding & Copywriting**:
   - [[bisnis/teestock/brand/brand-guide-teestock|Brand Guide & Identitas Visual TeeStock]]
@@ -57,53 +88,65 @@ tags:
   - [[bisnis/teestock/riset/katalog-lengkap-cititex|Katalog Blanks NSA Cititex]]
   - [[bisnis/teestock/riset/analisis-bisnis-teestock|Analisis Bisnis TeeStock]]
   - [[bisnis/teestock/riset/analisis-website-teestock|Analisis & Benchmarking Website]]
-  - [[bisnis/teestock/riset/daftar-niche-teestock|Daftar Niche Potensial]]
 
 ---
 
-### 2. 🖨️ [[bisnis/multigraph/README|MultiGraph]] — Printing Business & Collateral
-> [!warning] **Status: 🟡 Supporting Arm / Ideation**
-> Bertindak sebagai sayap pendukung produksi cetak kustom dan penyedia kemasan unboxing premium untuk pesanan TeeStock.
+### 2. 🖨️ [[bisnis/multigraph/README|MultiGraph]] — Printing Business & Packaging Collateral
+> [!warning] **Status: 🟡 Supporting Arm / Commercial B2B**
+> Sayap pendukung produksi cetak kustom, kemasan unboxing premium, dan cetak umum komersial.
 
-- 💰 **Keuangan & Sistem**:
-  - [[bisnis/multigraph/keuangan/sistem-keuangan-multiunit-cfo|Sistem Keuangan Multi-Unit CFO]]
-- 📦 **Operasional & Kemasan**:
-  - [[bisnis/multigraph/operasional/katalog-kemasan-teestock|Katalog Kemasan Unboxing TeeStock (Polymailer, Box, Hangtag, Sticker)]]
-- 🔍 **Riset & Arsitektur**:
-  - [[bisnis/multigraph/riset/arsitektur-ekosistem-multigraph|Arsitektur Ekosistem MultiGraph]]
-- 📄 **Dokumentasi & Roadmap**:
-  - [[bisnis/multigraph/README|Dokumentasi Utama MultiGraph]]
+- 💰 **Keuangan**: [[bisnis/multigraph/keuangan/sistem-keuangan-multiunit-cfo|Sistem Keuangan Multi-Unit CFO]]
+- 📦 **Operasional**: [[bisnis/multigraph/operasional/katalog-kemasan-teestock|Katalog Kemasan Unboxing TeeStock]]
+- 🔍 **Riset**: [[bisnis/multigraph/riset/arsitektur-ekosistem-multigraph|Arsitektur Ekosistem MultiGraph]]
 
 ---
 
-### 3. 📦 Neo Pack & Squeegee Studios — Sayap Kemasan & Sablon MultiGraph
-> [!note] **Status: 🟡 Supporting Pillars**
-> Unit kemasan khusus B2B (Neo Pack) dan studio sablon manual partai besar (Squeegee Studios) yang beroperasi di bawah naungan MultiGraph Holding.
+### 3. 📦 Neo Pack, Pack Point, & Squeegee Studios
+- **NeoPack & Pack Point**: Spesialis solusi kemasan ritel, folding box makanan, dan master corrugated carton.
+- **Squeegee Studios**: Studio sablon manual (*screen printing*) partai besar plastisol & discharge.
 
 ---
 
-### 💡 Proyek Independen (Di Luar Sinergi BisnisHub)
-- **Titik Buta** (`bisnis/titik-buta/`): Media edukasi independen (bukan bagian dari holding percetakan).
-- **KasKita** (`bisnis/kaskita/`): Personal Finance & Community SaaS independen.
+## 🚀 PILAR 2: RizkyBuild (AI Builder, Services & SaaS)
+
+> [!abstract] **Personal Brand as Distribution Engine**
+> Dokumentasi proses belajar, membangun, dan mengimplementasikan AI untuk problem nyata menjadi service dan software.
+
+- 📖 **Master Blueprint & Riset**:
+  - [[bisnis/rizkybuild/README|Hub Utama RizkyBuild]]
+  - [[bisnis/rizkybuild/riset/01-ai-builder-business-blueprint-v1|AI Builder Business Blueprint v1]]
+  - [[bisnis/rizkybuild/riset/02-icp-dan-problem-map-v0.1|ICP & Problem Map v0.1 (Service Wedges)]]
+- 🪜 **The Product Ladder**:
+  - **Level 0 (Free):** Konten Build in Public (TikTok, Reels, YouTube).
+  - **Level 1 (Templates):** n8n workflows & prompt systems (Rp 49k–499k).
+  - **Level 2 (Productized Service):** WhatsApp Lead Qualification & Instant Quoter Bot (Rp 1 jt–5 jt).
+  - **Level 3 (AI Implementation):** Full Business Automation Sprint (Rp 5 jt–30 jt+).
+  - **Level 4 (Retainer):** Maintenance & infrastructure support.
+  - **Level 5 (Micro-SaaS):** Recurring software platform.
 
 ---
 
-## 🖥️ Personal Web Operating System (BisnisHub Web OS)
+## 🖥️ Operating Systems Ekosistem (MGBOS & BisnisHub Web)
 
 > [!abstract] **Pusat Komando Digital Solo Founder**
-> Aplikasi internal PWA yang dapat dibuka dari smartphone maupun laptop untuk mengendalikan 4 pilar bisnis:
-> - **Path Proyek:** `apps/bisnishub-web`
-> - **Domain Target:** `bisnishub.rizkywahyudin.com` (atau `bisnishub.rizkywahyudin.vercel.app`)
-> - **Menjalankan di Lokal:** `npm run dev:bisnishub` (Akses di browser `http://localhost:3000`)
-> - **Keamanan:** Dilengkapi Layar Kunci PIN Founder (Default: `123456`) untuk melindungi kerahasiaan data kas dan margin di tempat umum.
-
-| Modul Utama | Penanggung Jawab | Kemampuan & Fitur Kunci |
-|---|---|---|
-| 💰 **Treasury & HPP Simulator** | CFO | Pencatatan kas masuk/keluar kilat, BOM kaos NSA 24s/30s, live margin indicator (&ge;35%). |
-| 🏭 **Database Vendor & Maklon** | COO | Kontak 1-klik WhatsApp Cititex, vendor DTF roll 58cm, toko polymailer, nomor rekening. |
-| 📦 **Kanban Alur Pesanan** | Ops | 5-tahap produksi (Bahan &rarr; DTF &rarr; Heat Press 155°C &rarr; QC Kemas &rarr; Terkirim), cetak resi thermal A6. |
-| 📢 **Marketing Hub & Swipe File** | CMO | Kalender konten 4E TikTok/Reels, hook 3 detik, template chat WA penanganan keranjang belum bayar. |
-| 💾 **External SSD 1TB (`D:\`)** | System | [[catatan/panduan-external-ssd-1tb\|Panduan Aset Master SSD]], cheat sheet penamaan file, tombol salin path cepat. |
+> Ekosistem internal untuk mengendalikan holding multi-brand dan operasional harian:
+> 
+> 1. 🌟 **MGBOS Next.js Monorepo (Official MGBOS 0.5.4)**:
+>    - **Path Proyek:** `mgbos/`
+>    - **Menjalankan di Lokal:** `cd mgbos && pnpm dev` (Port **3101**)
+>    - **Public Shell:** `cd mgbos && pnpm dev:teestock` (Port **3102**)
+>    - **Database:** Supabase Lokal Terisolasi (Postgres 17, Ports 55431–55439)
+>    - **Dokumentasi:** [[mgbos/README|MGBOS Master Guide]], [[mgbos/docs/architecture/README|Arsitektur]], [[mgbos/docs/product/README|Spesifikasi Produk]]
+> 
+> 2. 🌟 **MGBOS Core Prototype (Vite 6)**:
+>    - **Path Proyek:** `apps/mgbos`
+>    - **Menjalankan di Lokal:** `npm run dev:mgbos` (Port **3001**)
+>    - **Fokus:** Referensi UI Shell interaktif dan placeholder rute MGBOS-005 s.d MGBOS-016.
+> 
+> 3. 🛡️ **BisnisHub Admin Legacy (PWA Fallback)**:
+>    - **Path Proyek:** `apps/bisnishub-web`
+>    - **Menjalankan di Lokal:** `npm run dev:bisnishub` (Port **3000**)
+>    - **Keamanan:** Layar Kunci PIN Founder (Default: `123456`).
 
 ---
 
@@ -123,26 +166,13 @@ tags:
 
 ---
 
-## ⚡ Prinsip Kerja Solopreneur & Dewan Co-Founders
-> [!important] **Pedoman Eksekusi Mingguan**
-> 1. **Radical Candor**: Berani tolak ide yang membakar kas/waktu, selalu beri alternatif konkret.
-> 2. **Cash is King**: Validasi nomor satu adalah uang transfer dari pelanggan, bukan metrik semu.
-> 3. **Proactive Armory**: Siapkan langsung draf materi jadi (copy, kode, SOP, HPP).
-> 4. **Sinergi Antar Bisnis**: Manfaatkan kolateral MultiGraph untuk kemasan TeeStock.
-> 5. **Actionable Minggu Ini**: Prioritaskan aksi terdekat yang langsung mendatangkan penjualan.
-
----
-
 ## 📊 Dynamic Dataview Hub (Auto-Query Obsidian)
 
-> [!tip] **Otomasi Tampilan dengan Plugin Dataview**
-> Blok berikut otomatis memunculkan dokumen terbaru saat Anda mengaktifkan plugin **Dataview** di Obsidian.
-
-### 🤖 5 Sesi Konsultasi C-Suite Terakhir
+### 🤖 5 Sesi Konsultasi C-Suite & Blueprint Terakhir
 ```dataview
-TABLE role_label AS "Peran AI", business_label AS "Bisnis", date AS "Waktu"
+TABLE date AS "Tanggal", kategori AS "Kategori", status AS "Status"
 FROM "catatan/sesi"
-SORT file.ctime DESC
+SORT date DESC
 LIMIT 5
 ```
 

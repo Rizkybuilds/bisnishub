@@ -116,10 +116,11 @@ Workspace ini dilengkapi 7 subagent spesialis yang dapat didelegasikan via `invo
 ### 5. Cross-Project Code Governance (CTO Rule)
 > Referensi lengkap: [[ARCHITECTURE]] dan [[catatan/governance-cross-project|Governance Rules]]
 
-- **Dual-App Architecture**: Ekosistem ini terdiri dari 2 web app terpisah yang berbagi 1 Supabase project dan 1 shared package:
-  - **BisnisHub OS** (`apps/bisnishub-web/`): Admin dashboard (PIN-locked, founder-only).
-  - **TeeStock WebClient** (`bisnis/teestock/web/`): Public storefront (customer-facing).
-  - **Shared Package** (`packages/shared/src/`): 36 file shared (services, constants, utils, context, UI components).
+- **Triad-App Architecture**: Ekosistem ini terdiri dari 3 web app terpisah yang berbagi 1 Supabase project dan 1 shared package:
+  - **MGBOS Core** (`apps/mgbos/`): MultiGraph Business OS (Port 3001, Clean Slate Strict TypeScript, Multi-Brand Holding).
+  - **BisnisHub Admin** (`apps/bisnishub-web/`): Admin dashboard legacy & operational fallback (Port 3000, PIN-locked).
+  - **TeeStock WebClient** (`bisnis/teestock/web/`): Public storefront customer-facing (Port 5173).
+  - **Shared Package** (`packages/shared/src/`): Single Source of Truth (UI components, services, utils, context, dan domain logic `src/domain/`).
 - **Single Source of Truth**: Semua kode shared hidup di `packages/shared/src/`. Kedua app meng-import via Vite alias `@bisnishub/shared/...`. **Dilarang** menduplikasi file shared ke dalam app directory.
 - **File Ownership Tags**: Setiap file di-tag sebagai `@shared` (packages/shared/), `@admin-only` (BisnisHub), atau `@store-only` (TeeStock). Registri lengkap ada di [[ARCHITECTURE]].
 - **Import Convention**: Gunakan `import { x } from '@bisnishub/shared/services/ordersApi'` — BUKAN relative path ke packages/.

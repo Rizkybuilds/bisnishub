@@ -19,4 +19,12 @@ Direktori ini adalah ruang aman bagi founder untuk melakukan *brain dump*, menca
 > 🔗 [[templates/Template - Validasi & Riset Ide|Template Riset & Validasi Ide]]
 
 ---
+
+## 📋 Daftar Coretan & Ide Terdaftar
+
+| Nama Ide | Kategori | Status | Tautan Catatan |
+|---|---|---|---|
+| **GitBeats** | CLI / Audio Synthwave | Coretan Awal | [[catatan/ide/gitbeats-cli-synthwave\|GitBeats CLI]] |
+
+---
 *Navigasi: [[🏠 BisnisHub Command Center|Kembali ke Command Center]]*

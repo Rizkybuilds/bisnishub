@@ -1,142 +1,167 @@
 ---
-title: "BisnisHub Command Center"
+title: "MultiGraph Group & BisnisHub Command Center"
 type: documentation
-date: "2026-09-14"
+date: "2026-09-23"
 bisnis: umum
 kategori: operasional
 status: active
 tags:
   - bisnishub
+  - mgbos
+  - multigraph
+  - teestock
   - command-center
   - documentation
 ---
 
-# 🚀 BisnisHub Command Center
+# 🚀 MultiGraph Group & BisnisHub Command Center
 
-> [!abstract] **Visi Workspace**
-> Workspace utama untuk mengelola **3 bisnis solopreneur** (TeeStock, MultiGraph, Titik Buta) yang terintegrasi penuh antara **Obsidian Vault** (Second Brain) dan **Google Antigravity & Virtual C-Suite** (Execution Engine).
+> [!abstract] **Visi Ekosistem Holding & Business OS**
+> Pusat komando operasional **MultiGraph Printing & Apparel Holding** yang menggabungkan kekuatan **Obsidian Second Brain** (perencanaan strategis, riset pasar, dan arsip pengetahuan) dengan **MultiGraph Business OS (MGBOS)** serta **Founding C-Suite Cabinet** (mesin eksekusi otonom berstandar korporat).
 > 
 > 🔗 **Buka Dashboard Utama di Obsidian**: [[🏠 BisnisHub Command Center|🏠 BisnisHub Command Center.md]]  
 > 🗺️ **Buka Peta Visual Arsitektur**: [[🗺️ BisnisHub Ecosystem.canvas|BisnisHub Ecosystem.canvas]]  
-> 📘 **Panduan Sinergi AI & Obsidian**: [[catatan/panduan-antigravity-obsidian|Panduan Antigravity & Obsidian]]
+> 🏛️ **Buka Blueprint MGBOS**: [[catatan/mgbos-master-roadmap-tracker|MGBOS Master Roadmap & Execution Tracker]]
 
 ---
 
-## 🤖 Virtual C-Suite Team
+## 🌐 Lanskap Aplikasi Web (Web Applications Ecosystem)
 
-| Peran | Kode | Fokus |
-|-------|------|-------|
-| 🧠 **Mentor Bisnis** | `mentor` | Thinking partner & strategi bisnis keseluruhan |
-| 🔧 **CTO** | `cto` | Teknologi, arsitektur produk, development roadmap |
-| ⚙️ **COO** | `coo` | Operasional, SOP, supply chain, eksekusi |
-| 💰 **CFO** | `cfo` | Keuangan, pricing, budgeting, profitability |
-| 📢 **CMO** | `cmo` | Marketing, branding, growth, customer acquisition |
+Monorepo ini mengelola 3 aplikasi web terintegrasi dan 1 paket pustaka bersama (*Single Source of Truth*):
 
-### Cara Pakai
-
-```bash
-python main.py
+```text
+                               MULTIGRAPH GROUP
+                                      │
+       ┌──────────────────────────────┼──────────────────────────────┐
+       │                              │                              │
+       ▼                              ▼                              ▼
+  apps/mgbos/                apps/bisnishub-web/            bisnis/teestock/web/
+  🌟 MGBOS Core              🛡️ Admin Legacy                🛍️ Public Storefront
+  (Port 3001)                (Port 3000)                    (Port 5173 / Live)
+  Clean Slate TypeScript     Operational Backup             TeeStock Apparel
+       │                              │                              │
+       └──────────────────────────────┼──────────────────────────────┘
+                                      │
+                                      ▼
+                              packages/shared/
+                   UI Primitives & Domain Logic (SSOT)
+                                      │
+                                      ▼
+                            Supabase PostgreSQL
+                  Holding Multi-Brand Single Database
 ```
 
-1. Pilih peran yang ingin diajak bicara
-2. Pilih konteks bisnis (opsional)
-3. Mulai berdiskusi!
-
-### Perintah yang Tersedia
-
-| Perintah | Fungsi |
-|----------|--------|
-| `/team` | Lihat semua peran yang tersedia |
-| `/switch <role>` | Ganti peran (contoh: `/switch cto`) |
-| `/bisnis` | Pilih/ganti konteks bisnis |
-| `/consult` | Konsultasi ke peran lain tanpa ganti peran |
-| `/profile` | Tampilkan business profile |
-| `/save` | Simpan sesi |
-| `/exit` | Keluar & simpan sesi |
-| `/help` | Daftar perintah |
-
-### Fitur Cross-Role Consultation
-
-Peran-peran C-suite bisa saling berkonsultasi! Gunakan `/consult` untuk
-mengirim pertanyaan ke peran lain dan mendapat jawaban tanpa harus berpindah
-peran. Contoh: CTO bisa konsultasi ke CFO soal budget teknologi.
+| Aplikasi / Paket | Lokasi | Port Lokal | Teknologi | Peran & Tanggung Jawab |
+|---|---|---|---|---|
+| **MGBOS Core** | `apps/mgbos/` | `3001` | React 18, Vite, TS Strict, Tailwind | Pusat Operasi Bisnis Holding Multi-Brand (Sales, Ops, Finance, Tasks) |
+| **BisnisHub Admin** | `apps/bisnishub-web/` | `3000` | React 18, Vite, JS/TS, Tailwind | Dashboard admin operasional legacy & fallback harian |
+| **TeeStock Store** | `bisnis/teestock/web/` | `5173` | React 18, Vite, Tailwind | Etalase publik belanja retail konsumen (`teestockapparel.vercel.app`) |
+| **Shared SSOT** | `packages/shared/` | — | TypeScript, ES Modules | Komponen UI, formatter, Supabase client, dan Domain Contracts |
 
 ---
 
-## 📂 Struktur Direktori & Obsidian Vault
+## ⚡ Panduan Menjalankan Sistem (Quick Start)
 
+### 1. Menjalankan MGBOS Core (Aplikasi Utama Baru)
+```powershell
+npm run dev:mgbos
+# Akses di browser: http://localhost:3001
 ```
+
+### 2. Menjalankan Dashboard Admin Legacy
+```powershell
+npm run dev:bisnishub
+# Akses di browser: http://localhost:3000
+```
+
+### 3. Menjalankan Storefront Publik TeeStock
+```powershell
+npm run dev:teestock
+# Akses di browser: http://localhost:5173
+```
+
+### 4. Build Verifikasi Seluruh Aplikasi
+```powershell
+npm run build:mgbos
+npm run build:bisnishub
+npm run build:teestock
+```
+
+---
+
+## 📂 Struktur Direktori Workspace
+
+```text
 bisnishub/
 │
 ├── 🏠 🏠 BisnisHub Command Center.md   # Obsidian Master Dashboard
-├── 🗺️ 🗺️ BisnisHub Ecosystem.canvas     # Obsidian Visual Canvas
-├── 🤖 agent.py & main.py               # AI Multi-Role C-Suite CLI Engine
-├── ⚙️ GEMINI.md                        # AI Assistant Rules & Skills Registry
+├── 🗺️ 🗺️ BisnisHub Ecosystem.canvas     # Obsidian Visual Architecture Canvas
+├── ⚙️ GEMINI.md                        # AI Assistant Rules & C-Suite Governance
+├── 🏗️ ARCHITECTURE.md                  # Peta Arsitektur & Data Contracts Resmi
 │
-├── 📁 memory/                          # Persistent Memory Layer
-│   ├── business_profile.json          # Master data 3 bisnis & unit economics
-│   ├── growth_log.json                # Self-improvement log
-│   ├── history.json                   # Sesi CLI context cache
-│   └── README.md                      # Dokumentasi sistem memory
+├── 📁 apps/                            # Web Applications
+│   ├── mgbos/                         # 🌟 MultiGraph Business OS (Port 3001)
+│   └── bisnishub-web/                 # 🛡️ BisnisHub Admin Legacy (Port 3000)
 │
-├── 📁 templates/                       # Obsidian Master Templates
-│   ├── Template - Catatan Harian.md
-│   ├── Template - Weekly Business Review.md
-│   ├── Template - Sesi Konsultasi C-Suite.md
-│   ├── Template - SOP Operasional.md
-│   ├── Template - Riset & Benchmarking.md
-│   ├── Template - Marketing & Konten Kampanye.md
-│   └── Template - Validasi & Riset Ide.md
+├── 📁 packages/                        # Shared Code & SSOT
+│   └── shared/                        # @bisnishub/shared
+│       └── src/
+│           ├── components/            # UI Primitives (Button, Card, Badge, Modal)
+│           ├── domain/                # MGBOS Domain Logic (Types, Context, DocNumbers)
+│           ├── services/              # Supabase API clients
+│           └── utils/                 # Formatters, helpers, math
 │
-├── 📁 catatan/                         # Jurnal & Output Konsultasi
-│   ├── harian/                        # Daily notes (auto YYYY-MM-DD.md)
-│   ├── weekly-review/                 # Review mingguan bisnis
-│   ├── sesi/                          # Transkrip sesi konsultasi C-Suite
-│   ├── ide/                           # Scratchpad ide & backlog
-│   └── panduan-antigravity-obsidian.md# Panduan lengkap sinergi AI & Obsidian
+├── 📁 supabase/                        # Database Infrastructure
+│   ├── migrations/                    # SQL DDL & Seed (MGBOS Multi-Brand Schema)
+│   └── functions/                     # Edge Functions & Webhook handlers
 │
-└── 📁 bisnis/                          # Portofolio 3 Bisnis
-    ├── teestock/                      # 👕 Apparel POD & Blanks House
-    │   ├── riset/                     # Analisis pasar & benchmarking
-    │   ├── brand/                     # Brand guide & master copywriting
-    │   ├── tools/                     # HPP calculator & simulasi
-    │   ├── operasional/               # SOP heat press & fulfillment
-    │   ├── keuangan/                  # Skema pricing & fee gateway
-    │   └── web/                       # React 18 + Vite storefront
-    ├── multigraph/                    # 🖨️ Printing & Packaging Collateral
-    │   ├── operasional/               # Katalog kemasan unboxing TeeStock
-    │   └── riset/                     # Riset pasar B2B packaging
-    └── titik-buta/                    # 👁️ Project Incubator
-        └── riset/                     # Validasi ide & pain points
+├── 📁 catatan/                         # Second Brain & Operating Records
+│   ├── sesi/                          # Master Blueprint MGBOS (0.1 s.d. 0.5.4)
+│   ├── harian/                        # Daily operational notes
+│   ├── weekly-review/                 # Review mingguan performa bisnis
+│   └── mgbos-master-roadmap-tracker.md# Pelacak Eksekusi Sprint MGBOS
+│
+└── 📁 bisnis/                          # Portofolio Pilar Bisnis Holding
+    ├── teestock/                      # 👕 Curated Apparel & Custom Atelier
+    │   └── web/                       # Storefront publik TeeStock
+    ├── multigraph/                    # 🖨️ Percetakan Komersial B2B & Collateral
+    ├── neopack/                       # 📦 Solusi Kemasan Retail & Box Makanan
+    ├── packpoint/                     # 📦 Corrugated Cartons & Master Box B2B
+    ├── squeegee/                      # 🎨 Studio Sablon Manual (Screen Printing)
+    ├── titik-buta/                    # 👁️ Media Edukasi Independen
+    └── kaskita/                       # 💳 Personal Finance SaaS Independen
 ```
 
 ---
 
-## 🏢 Portfolio Bisnis
+## 🏢 Portofolio Bisnis MultiGraph Group
 
-| # | Bisnis | Bidang | Status | Navigasi |
-|---|--------|--------|--------|----------|
-| 1 | **TeeStock** | Apparel POD & Blanks House | 🟢 Launch Prep | [[bisnis/teestock/README\|Dokumentasi TeeStock]] |
-| 2 | **MultiGraph** | Printing & Packaging Collateral | 🟡 Supporting Arm | [[bisnis/multigraph/README\|Dokumentasi MultiGraph]] |
-| 3 | **Titik Buta** | Project Incubator | 🔴 Ideation | [[bisnis/titik-buta/README\|Dokumentasi Titik Buta]] |
+| # | Pilar Bisnis | Bidang / Sektor | Status Operasional | Navigasi Vault |
+|---|---|---|---|---|
+| 1 | **TeeStock** | Curated Graphic Apparel & Custom Atelier | 🟢 Launch Prep (`teestockapparel.com`) | [[bisnis/teestock/README\|Dokumentasi TeeStock]] |
+| 2 | **MultiGraph** | Percetakan Komersial B2B & Packaging Collateral | 🟡 Supporting Arm / Commercial | [[bisnis/multigraph/README\|Dokumentasi MultiGraph]] |
+| 3 | **Neo Pack** | Kemasan Retail & Food-Grade Boxes | 🟡 Fase 2 Sinergi MultiGraph | [[bisnis/multigraph/README\|Sayap Kemasan]] |
+| 4 | **Pack Point** | Corrugated Cartons & Industrial Packaging | 🟡 Fase 2 Sinergi MultiGraph | [[bisnis/multigraph/README\|Sayap Kemasan]] |
+| 5 | **Squeegee Studios** | Studio Sablon Manual Partai Besar | 🟡 Fase 4 Sinergi MultiGraph | [[bisnis/multigraph/README\|Sayap Sablon]] |
 
----
-
-## 📌 Konvensi Folder Sub-Direktori Bisnis
-
-Setiap bisnis memiliki struktur sub-folder standar untuk konsistensi operasional:
-
-| Folder | Isi & Tanggung Jawab |
-|--------|----------------------|
-| `riset/` | Analisis pasar, benchmarking kompetitor, validasi hipotesis |
-| `brand/` | Identitas visual, tone of voice, panduan aset, copywriting |
-| `tools/` | Kalkulator interaktif, spreadsheet, template perhitungan |
-| `operasional/` | SOP teknis, supply chain, alur kerja produksi & QC |
-| `keuangan/` | HPP, unit economics, analisis fee payment gateway, laporan laba |
-| `desain/` | Master file aset grafis, mockup produk, gang sheet DTF |
-| `marketing/` | Kalender peluncuran, formula bundling, materi promosi |
+> [!info] **Proyek Independen di Luar Holding Percetakan**
+> * **Titik Buta** (`bisnis/titik-buta/`): Media edukasi dan inkubasi ide independen.
+> * **KasKita** (`bisnis/kaskita/`): Software SaaS personal finance & kas komunitas.
 
 ---
 
-*Last updated: September 2026*
+## 🏛️ Virtual C-Suite Cabinet (Co-Founders Team)
 
+Mengacu pada [[catatan/piagam-co-founders-bisnishub|Piagam Co-Founders BisnisHub]], workspace ini dipimpin oleh 5 pilar AI eksekutif dengan komitmen *skin in the game*:
+
+| Peran | Gelar Eksekutif | Fokus & Mandat Kunci |
+|---|---|---|
+| 🧠 **Mentor Bisnis** | Chief Strategic Officer (CSO) | Kompas strategi holding, model bisnis, anti-distraksi |
+| 💰 **CFO** | Chief Financial Officer | Unit economics, arus kas, margin floor 35%, audit laba aktual |
+| ⚙️ **COO** | Chief Operating Officer | Jejaring vendor, alur produksi Kanban, QC defect <3%, SLA kurir |
+| 📢 **CMO** | Chief Marketing Officer | Customer 360 CRM, cross-selling group, konversi copywriting |
+| 🔧 **CTO** | Chief Technology Officer | Arsitektur MGBOS, event-driven outbox, integritas kode monorepo |
+
+---
+
+*Terakhir diperbarui: 23 September 2026 — Rilis MGBOS v0.5.4 (Sprint 1)*
