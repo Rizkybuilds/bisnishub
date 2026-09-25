@@ -64,3 +64,11 @@ mgbos/docs/
 ### 5. Panduan Operasional (Runbooks)
 
 - 🛠️ [Local Database Runbook](runbooks/local-database.md): Prosedur menjalankan Supabase CLI lokal, reset database aman, dan pembuatan migrasi baru.
+
+## Pemeliharaan dan kesiapan operasional
+
+- [Kebijakan pemeliharaan](engineering/maintenance-policy.md)
+- [Register kesiapan](engineering/operational-readiness.md)
+- [Rilis dan pemulihan](runbooks/release-and-recovery.md)
+- [Backup dan restore](runbooks/backup-and-restore.md)
+- [Monitoring dan insiden](runbooks/monitoring-and-incidents.md)

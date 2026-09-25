@@ -1,24 +1,28 @@
 # Local Supabase runbook
 
-Run from mgbos/, with Node/pnpm versions from README and a running Docker-compatible runtime.
-The CLI is pinned as a project dev dependency. No global Supabase CLI is required.
+Run only from `mgbos/` with pinned Node/pnpm and a Docker-compatible runtime. Use the workspace CLI, never the root legacy Supabase link.
 
-1. pnpm install --frozen-lockfile
-2. pnpm db:start
-3. pnpm db:reset (destroys only local MGBOS development data)
-4. pnpm db:test
-5. pnpm db:types
-6. pnpm db:stop when finished (preserves local data)
+## Normal startup: preserve data
 
-Project ID: mgbos-foundation. API 55431, database 55432, shadow database 55430, Studio 55433.
-Auth signup is disabled. No application auth flow exists yet. Storage has no business buckets.
-app/internal schemas are not exposed through the API. No business tables or permissions are added.
-Only default Supabase services plus the infrastructure schema migration are expected.
+1. `pnpm install --frozen-lockfile`
+2. `pnpm db:start`
+3. Compare local migration history with `supabase/migrations/` before using new features. Startup does not prove pending migrations were applied.
+4. Run applicable `pnpm db:test` checks. Tests must isolate/roll back fixtures; inspect custom verification scripts for persistent writes before running them.
+5. `pnpm db:types` after a verified schema change; inspect the generated diff.
+6. `pnpm db:stop` when finished; this preserves local data.
 
-Create new timestamped SQL migrations here; do not copy legacy migrations or edit applied SQL.
-Review SQL, reset the local database, run tests, then regenerate types.
-Generated types are derived from a real database and must never be fabricated.
-Before MGBOS-002, certify all of these checks on this host or in CI.
-If Docker is missing, report the database gate as blocked rather than silently skipping it.
+If host pnpm differs, use `npm exec --yes --package=pnpm@10.34.5 -- pnpm <command>` from this workspace.
 
-Reference: [Supabase local development](https://supabase.com/docs/guides/local-development).
+## Upgrade and reproducibility
+
+Create new timestamped migrations; never edit applied SQL or fabricate generated types. Verify local project identity, migration history, pending SQL and data preservation before applying changes. Use a reviewed local-only procedure; do not substitute remote push/link commands.
+
+Reset is **not** normal startup or upgrade. `pnpm db:reset` destroys local MGBOS data; use only for an explicit reset request or scoped reproducibility checks on disposable data. Preserve needed data and verify the target first. CI may reset its disposable database. Test upgrades as well as clean reconstruction when changing business schema.
+
+## Current configuration and evidence
+
+Project: `mgbos-foundation`. API 55431, database 55432, shadow database 55430, Studio 55433. Verify against `supabase/config.toml` when configuration changes.
+
+Authentication and business migrations now exist. The local API lists `app`, but not `internal`. Exposure does not grant authorization: verify grants, RLS and server commands independently. Never expose service credentials to browsers.
+
+Inspect actual migrations and local history for current scope. Docker failure or unapplied migrations means verification is incomplete, not waived. Follow [maintenance policy](../engineering/maintenance-policy.md) and [backup guidance](backup-and-restore.md).

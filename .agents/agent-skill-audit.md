@@ -108,3 +108,7 @@ Validasi:
 - Baseline P2 mencakup 956 path, termasuk enam salinan personal untuk tiga Skill `21st-ui-*`. Pemeriksaan sebelum pembaruan laporan hanya menemukan delapan file Skill/referensi yang memang ditargetkan; pemeriksaan akhir juga mencakup root AGENTS dan laporan ini.
 
 Agent runtime Implementer/Reviewer belum dibuat. Paket berikutnya yang tidak memerlukan konfigurasi runtime baru adalah penyelarasan `cfo`, `coo`, `business-ops-engine` dan `dtf-print-ops`.
+
+## MGBOS maintenance policy update — 2026-09-25
+
+Added workspace maintenance gates and linked release/recovery, backup/restore, monitoring/incident runbooks with an operational evidence register. Corrected the obsolete local database runbook and removed reset from routine startup. No runtime agent, Skill copy synchronization, deployment, backup service or automation was created. Hosted CI, branch protection, staging, backup and restore readiness remain unverified; documentation is not acceptance evidence. Validation scope: local links, instruction consistency and focused diff; no application or database mutation.

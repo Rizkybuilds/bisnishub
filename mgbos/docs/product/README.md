@@ -1,5 +1,11 @@
 # MultiGraph Business OS — Product Specification & Pilot MVP Guide
 
+## Rencana lanjutan TeeStock
+
+[Strategi curated-first](teestock-curated-strategy.md) menetapkan Curated Originals sebagai prioritas berdasarkan model bisnis, branding, pricing dan operasional TeeStock.
+
+[Rencana pengembangan retail dan custom TeeStock](teestock-development-plan.md) memuat prioritas lanjutan, dependensi, koeksistensi storefront, kontrak transaksi dan kriteria penerimaan. Ini rencana, bukan bukti implementasi. Spesifikasi Custom Atelier di bawah tetap menjadi rujukan pilot terdahulu.
+
 > **Kategori:** Spesifikasi Produk, Desain Layar, & Alur Bisnis  
 > **Status:** Active / Pilot Specification  
 > **Rujukan Utama:** [[catatan/sesi/2026-09-23 - MGBOS 0.5 — TeeStock Pilot MVP|MGBOS 0.5]] & [[catatan/sesi/2026-09-23 - MGBOS 0.5.1|MGBOS 0.5.1 Custom Atelier]]

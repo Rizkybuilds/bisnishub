@@ -37,3 +37,11 @@ Distinguish implementation, tests defined, tests executed, hosted CI and deploym
 For application changes, run pnpm check, production smoke tests and applicable database checks. For instruction-only changes, validate scope, references and instruction consistency; do not reset databases or run application deployments for documentation maintenance. Report failures honestly.
 Critical business rules require tests. Preserve unrelated work. No broad refactors.
 Architecture changes require an ADR and explicit scope. Add dependencies only for a concrete requirement.
+
+## Maintenance and operational readiness
+
+Follow [maintenance policy](docs/engineering/maintenance-policy.md) for all changes and its linked runbooks for release, backup and incident work. These documents do not authorize remote actions or override the local-only database boundary.
+For transaction changes, test authorization, organization isolation, invalid states, money boundaries, duplicate requests, failure atomicity and concurrency where relevant. Test the application command boundary, not only domain functions or SQL.
+Keep implementation, local verification, hosted CI, deployment and operational acceptance as separate evidence states tied to a revision. Fix blockers affecting money, access, data integrity or recovery before expanding the affected flow.
+Before operational use, require verified environment isolation, backup and restore evidence, monitoring ownership and a recovery plan. Written procedures do not prove services are configured.
+Update affected module status and runbooks with each change. Documentation-only maintenance requires link, consistency and focused diff checks, not database mutations or deployments.

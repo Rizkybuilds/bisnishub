@@ -136,3 +136,7 @@ Lihat dokumentasi lengkap di:
 - 🛍️ [Spesifikasi Produk Custom Atelier](docs/product/README.md)
 - ⚙️ [Standar Rekayasa & CI](docs/engineering/README.md)
 - 🛡️ [Local Database Runbook](docs/runbooks/local-database.md)
+
+## 9. Maintenance and operational readiness
+
+Follow the [maintenance policy](docs/engineering/maintenance-policy.md) and [readiness register](docs/engineering/operational-readiness.md). Release, backup/restore and incident procedures are linked there. Written policy is not evidence of configured services or production readiness; the local-only database boundary remains in force.
