@@ -1,0 +1,117 @@
+.quotation-sheet {
+  background: white;
+  color: #172b3a;
+  max-width: 850px;
+  margin: 28px auto;
+  padding: 40px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.quotation-sheet h1 {
+  font-size: 30px;
+  color: #123f52;
+  margin-bottom: 4px;
+}
+.quotation-sheet h2 {
+  font-size: 19px;
+}
+.quotation-sheet section {
+  margin-block: 26px;
+}
+.quotation-sheet article {
+  border-top: 1px solid #cbd5e1;
+  padding-block: 12px;
+}
+.quotation-sheet p {
+  white-space: pre-wrap;
+}
+.quotation-sheet footer {
+  border-top: 1px solid #cbd5e1;
+  padding-top: 15px;
+  font-size: 12px;
+}
+.quotation-notice {
+  border-bottom: 3px solid #123f52;
+  padding-bottom: 12px;
+  font-weight: 700;
+}
+.quotation-totals dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.quotation-totals dd {
+  margin: 0;
+  text-align: right;
+}
+.quotation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+.quotation-actions button,
+.quotation-actions a {
+  font: inherit;
+  border: 1px solid #123f52;
+  border-radius: 4px;
+  background: white;
+  color: #123f52;
+  padding: 8px;
+  cursor: pointer;
+}
+.quotation-actions p,
+.quotation-actions details {
+  flex-basis: 100%;
+}
+.quotation-actions textarea {
+  width: 100%;
+  padding: 12px;
+  font: inherit;
+}
+.quotation-actions :focus-visible {
+  outline: 3px solid #007ca0;
+  outline-offset: 3px;
+}
+@media (max-width: 600px) {
+  .quotation-sheet {
+    margin: 0;
+    padding: 20px;
+  }
+  .quotation-totals dl {
+    grid-template-columns: 1fr;
+  }
+  .quotation-totals dd {
+    text-align: left;
+    margin-bottom: 8px;
+  }
+}
+@page {
+  size: A4;
+  margin: 18mm;
+}
+@media print {
+  body {
+    background: white !important;
+  }
+  .quotation-sheet {
+    margin: 0;
+    padding: 0;
+    max-width: none;
+  }
+  .quotation-actions {
+    display: none !important;
+  }
+  .quotation-sheet h2,
+  .quotation-sheet h3 {
+    break-after: avoid;
+  }
+  .quotation-totals {
+    break-inside: avoid;
+  }
+  .quotation-sheet p {
+    orphans: 3;
+    widows: 3;
+  }
+}

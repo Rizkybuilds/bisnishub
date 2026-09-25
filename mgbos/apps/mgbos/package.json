@@ -1,0 +1,26 @@
+{
+  "name": "@mgbos/app",
+  "version": "0.5.4",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1 --port 3101",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1 --port 3101",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
+    "@mgbos/auth": "workspace:*",
+    "@mgbos/config": "workspace:*",
+    "@mgbos/database": "workspace:*",
+    "@mgbos/domain": "workspace:*",
+    "@mgbos/validation": "workspace:*",
+    "next": "16.3.6",
+    "pdf-lib": "1.17.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-hook-form": "^7.88.0",
+    "server-only": "0.0.1"
+  }
+}
