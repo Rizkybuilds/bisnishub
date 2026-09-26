@@ -14,6 +14,20 @@ export const ORDER_STATUSES = [
 
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
+export const ORDER_TYPES = ['CUSTOM_B2B', 'RETAIL_DIRECT'] as const;
+
+export type OrderType = (typeof ORDER_TYPES)[number];
+
+export function formatOrderTypeLabel(type: OrderType): string {
+  switch (type) {
+    case 'RETAIL_DIRECT':
+      return 'Penjualan Ritel Langsung (POS)';
+    case 'CUSTOM_B2B':
+    default:
+      return 'Custom Atelier (B2B)';
+  }
+}
+
 export const ACCEPTANCE_METHODS = [
   'WHATSAPP',
   'EMAIL',
@@ -105,5 +119,58 @@ export function validateOrderFinancials(
     grandTotal,
     estimatedGrossProfit,
     shippingTotal, // pass-through escrow
+  };
+}
+
+export interface RetailOrderItemCalculationInput {
+  quantity: number;
+  unitPrice: bigint;
+  discountTotal?: bigint;
+  costPrice?: bigint;
+}
+
+export function calculateRetailOrderTotals(
+  items: RetailOrderItemCalculationInput[],
+  shippingCost: bigint = 0n,
+) {
+  let subtotal = 0n;
+  let discountTotal = 0n;
+  let estimatedCostTotal = 0n;
+
+  for (const item of items) {
+    if (item.quantity <= 0) {
+      throw new Error('Kuantiti item harus lebih besar dari 0');
+    }
+    if (item.unitPrice < 0n) {
+      throw new Error('Harga satuan tidak boleh negatif');
+    }
+
+    const itemGross = BigInt(item.quantity) * item.unitPrice;
+    const itemDisc = item.discountTotal ?? 0n;
+
+    if (itemDisc < 0n || itemDisc > itemGross) {
+      throw new Error('Diskon tidak boleh melebihi subtotal kotor item');
+    }
+
+    subtotal += itemGross;
+    discountTotal += itemDisc;
+
+    if (item.costPrice && item.costPrice > 0n) {
+      estimatedCostTotal += BigInt(item.quantity) * item.costPrice;
+    }
+  }
+
+  const netProductRevenue = subtotal - discountTotal;
+  const grandTotal = netProductRevenue + shippingCost;
+  const estimatedGrossProfit = netProductRevenue - estimatedCostTotal;
+
+  return {
+    subtotal,
+    discountTotal,
+    netProductRevenue,
+    shippingCost,
+    grandTotal,
+    estimatedCostTotal,
+    estimatedGrossProfit,
   };
 }

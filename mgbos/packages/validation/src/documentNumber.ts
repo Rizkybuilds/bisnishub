@@ -9,6 +9,10 @@ export const canonicalDocumentTypes = [
   'PO',
   'PAY',
   'SHIP',
+  'DO',
+  'LED',
+  'GR',
+  'VB',
 ] as const;
 
 export const documentTypeSchema = z

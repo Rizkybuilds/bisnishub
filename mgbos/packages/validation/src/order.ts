@@ -47,3 +47,43 @@ export const createOrderFromQuoteSchema = z.object({
 export type CreateOrderFromQuoteInput = z.infer<
   typeof createOrderFromQuoteSchema
 >;
+
+export const retailOrderItemInputSchema = z.object({
+  inventoryItemId: z.string().uuid('ID inventory item tidak valid'),
+  quantity: z.number().int().min(1, 'Kuantiti minimal 1 unit'),
+  unitPrice: z
+    .string()
+    .regex(/^\d+$/, 'Harga satuan harus angka bulat positif'),
+  discountTotal: z
+    .string()
+    .regex(/^\d+$/, 'Diskon harus berupa angka')
+    .optional()
+    .default('0'),
+  notes: z.string().max(500).optional().nullable(),
+});
+
+export type RetailOrderItemInput = z.infer<typeof retailOrderItemInputSchema>;
+
+export const createRetailOrderSchema = z.object({
+  brandId: z.string().uuid().optional(),
+  customerAccountId: z.string().uuid('ID akun customer tidak valid'),
+  items: z
+    .array(retailOrderItemInputSchema)
+    .min(1, 'Minimal pilih 1 produk/item ritel'),
+  shippingAddress: shippingAddressSnapshotSchema.optional().nullable(),
+  shippingCost: z
+    .string()
+    .regex(/^\d+$/, 'Biaya kirim harus berupa angka')
+    .optional()
+    .default('0'),
+  notes: z.string().max(2000).optional().nullable(),
+  autoPay: z.boolean().optional().default(false),
+  paymentMethod: z
+    .enum(['CASH', 'QRIS', 'BANK_TRANSFER', 'PAYMENT_GATEWAY', 'OTHER'])
+    .optional()
+    .default('CASH'),
+  paymentReference: z.string().max(100).optional().nullable(),
+  paymentBank: z.string().max(50).optional().nullable(),
+});
+
+export type CreateRetailOrderInput = z.infer<typeof createRetailOrderSchema>;

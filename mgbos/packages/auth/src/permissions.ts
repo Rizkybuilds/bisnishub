@@ -4,6 +4,8 @@ export type MgbosRole =
   'OWNER' | 'ADMIN' | 'SALES' | 'OPERATIONS' | 'FINANCE' | 'QC';
 
 export type MgbosPermission =
+  | 'designs:read'
+  | 'designs:write'
   | 'leads:create'
   | 'leads:read'
   | 'leads:qualify'
@@ -41,7 +43,19 @@ export type MgbosPermission =
   | 'payments:record'
   | 'payments:revert'
   | 'ledger:read'
-  | 'ledger:manage_cost';
+  | 'ledger:manage_cost'
+  | 'shipments:read'
+  | 'shipments:create'
+  | 'shipments:dispatch'
+  | 'shipments:cancel'
+  | 'inventory:read'
+  | 'inventory:create'
+  | 'inventory:mutate'
+  | 'inventory:opname'
+  | 'procurement:read'
+  | 'procurement:create'
+  | 'procurement:receive'
+  | 'procurement:pay';
 
 /**
  * Authoritative role-to-permission mapping for MultiGraph Business OS.
@@ -50,6 +64,8 @@ export type MgbosPermission =
  */
 export const ROLE_PERMISSIONS: Record<MgbosRole, readonly MgbosPermission[]> = {
   OWNER: [
+    'designs:read',
+    'designs:write',
     'quotes:approve',
     'quotes:accept',
     'leads:create',
@@ -88,8 +104,22 @@ export const ROLE_PERMISSIONS: Record<MgbosRole, readonly MgbosPermission[]> = {
     'payments:revert',
     'ledger:read',
     'ledger:manage_cost',
+    'shipments:read',
+    'shipments:create',
+    'shipments:dispatch',
+    'shipments:cancel',
+    'inventory:read',
+    'inventory:create',
+    'inventory:mutate',
+    'inventory:opname',
+    'procurement:read',
+    'procurement:create',
+    'procurement:receive',
+    'procurement:pay',
   ],
   ADMIN: [
+    'designs:read',
+    'designs:write',
     'quotes:accept',
     'leads:create',
     'leads:read',
@@ -127,6 +157,18 @@ export const ROLE_PERMISSIONS: Record<MgbosRole, readonly MgbosPermission[]> = {
     'payments:revert',
     'ledger:read',
     'ledger:manage_cost',
+    'shipments:read',
+    'shipments:create',
+    'shipments:dispatch',
+    'shipments:cancel',
+    'inventory:read',
+    'inventory:create',
+    'inventory:mutate',
+    'inventory:opname',
+    'procurement:read',
+    'procurement:create',
+    'procurement:receive',
+    'procurement:pay',
   ],
   SALES: [
     'quotes:accept',
@@ -154,6 +196,9 @@ export const ROLE_PERMISSIONS: Record<MgbosRole, readonly MgbosPermission[]> = {
     'invoices:create',
     'payments:read',
     'ledger:read',
+    'shipments:read',
+    'inventory:read',
+    'procurement:read',
   ],
   OPERATIONS: [
     'leads:read',
@@ -174,6 +219,17 @@ export const ROLE_PERMISSIONS: Record<MgbosRole, readonly MgbosPermission[]> = {
     'payments:read',
     'ledger:read',
     'ledger:manage_cost',
+    'shipments:read',
+    'shipments:create',
+    'shipments:dispatch',
+    'shipments:cancel',
+    'inventory:read',
+    'inventory:create',
+    'inventory:mutate',
+    'inventory:opname',
+    'procurement:read',
+    'procurement:create',
+    'procurement:receive',
   ],
   FINANCE: [
     'leads:read',
@@ -193,6 +249,15 @@ export const ROLE_PERMISSIONS: Record<MgbosRole, readonly MgbosPermission[]> = {
     'payments:revert',
     'ledger:read',
     'ledger:manage_cost',
+    'shipments:read',
+    'shipments:create',
+    'shipments:dispatch',
+    'inventory:read',
+    'inventory:mutate',
+    'inventory:opname',
+    'procurement:read',
+    'procurement:create',
+    'procurement:pay',
   ],
   QC: [
     'leads:read',
@@ -206,6 +271,10 @@ export const ROLE_PERMISSIONS: Record<MgbosRole, readonly MgbosPermission[]> = {
     'invoices:read',
     'payments:read',
     'ledger:read',
+    'shipments:read',
+    'inventory:read',
+    'procurement:read',
+    'procurement:receive',
   ],
 };
 

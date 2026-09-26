@@ -15,3 +15,6 @@ export * from './qc';
 export * from './invoice';
 export * from './payment';
 export * from './ledger';
+export * from './shipment';
+export * from './inventory';
+export * from './procurement';
