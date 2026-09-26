@@ -92,6 +92,12 @@ export default async function AppLayout({
           <div>
             <div className="sidebar-section-title">Navigasi Utama</div>
             <nav className="sidebar-nav">
+              {session.activeBrand.code === 'TS' &&
+                hasPermission(session.role.code, 'designs:read') && (
+                  <Link href="/designs" className="sidebar-link">
+                    Library Desain · DEMO
+                  </Link>
+                )}
               <Link href="/dashboard" className="sidebar-link active">
                 <span>🏠 Command Center</span>
               </Link>
@@ -179,6 +185,54 @@ export default async function AppLayout({
                 <div className="sidebar-link">
                   <span>Vendor Network</span>
                   <span className="nav-badge">MGBOS-013</span>
+                </div>
+              )}
+              {hasPermission(session.role.code, 'shipments:read') ? (
+                <Link href="/shipments" className="sidebar-link">
+                  <span>Fulfillment &amp; DO</span>
+                  <span
+                    className="nav-badge"
+                    style={{ background: '#052e16', color: '#4ade80' }}
+                  >
+                    ACTIVE
+                  </span>
+                </Link>
+              ) : (
+                <div className="sidebar-link">
+                  <span>Fulfillment &amp; DO</span>
+                  <span className="nav-badge">MGBOS-017</span>
+                </div>
+              )}
+              {hasPermission(session.role.code, 'inventory:read') ? (
+                <Link href="/inventory" className="sidebar-link">
+                  <span>Persediaan &amp; Stok</span>
+                  <span
+                    className="nav-badge"
+                    style={{ background: '#052e16', color: '#4ade80' }}
+                  >
+                    ACTIVE
+                  </span>
+                </Link>
+              ) : (
+                <div className="sidebar-link">
+                  <span>Persediaan &amp; Stok</span>
+                  <span className="nav-badge">MGBOS-018</span>
+                </div>
+              )}
+              {hasPermission(session.role.code, 'procurement:read') ? (
+                <Link href="/procurement" className="sidebar-link">
+                  <span>Pengadaan &amp; PO</span>
+                  <span
+                    className="nav-badge"
+                    style={{ background: '#052e16', color: '#4ade80' }}
+                  >
+                    ACTIVE
+                  </span>
+                </Link>
+              ) : (
+                <div className="sidebar-link">
+                  <span>Pengadaan &amp; PO</span>
+                  <span className="nav-badge">MGBOS-019</span>
                 </div>
               )}
             </nav>

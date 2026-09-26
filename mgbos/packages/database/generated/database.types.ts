@@ -400,6 +400,118 @@ export type Database = {
           },
         ]
       }
+      design_asset_versions: {
+        Row: {
+          asset_id: string
+          created_at: string
+          created_by: string
+          id: string
+          placement: string
+          request_id: string
+          request_payload: Json
+          story: string
+          theme: string
+          title: string
+          version_number: number
+        }
+        Insert: {
+          asset_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          placement: string
+          request_id: string
+          request_payload: Json
+          story: string
+          theme: string
+          title: string
+          version_number: number
+        }
+        Update: {
+          asset_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          placement?: string
+          request_id?: string
+          request_payload?: Json
+          story?: string
+          theme?: string
+          title?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "design_asset_versions_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "design_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "design_asset_versions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      design_assets: {
+        Row: {
+          brand_id: string
+          code: string
+          created_at: string
+          current_version: number
+          id: string
+          is_demo: boolean
+          organization_id: string
+          status: string
+        }
+        Insert: {
+          brand_id: string
+          code: string
+          created_at?: string
+          current_version?: number
+          id?: string
+          is_demo?: boolean
+          organization_id: string
+          status?: string
+        }
+        Update: {
+          brand_id?: string
+          code?: string
+          created_at?: string
+          current_version?: number
+          id?: string
+          is_demo?: boolean
+          organization_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "design_assets_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "design_assets_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "design_current_version_fk"
+            columns: ["id", "current_version"]
+            isOneToOne: false
+            referencedRelation: "design_asset_versions"
+            referencedColumns: ["asset_id", "version_number"]
+          },
+        ]
+      }
       document_sequences: {
         Row: {
           brand_id: string
@@ -534,6 +646,394 @@ export type Database = {
           },
           {
             foreignKeyName: "financial_ledger_entries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goods_receipt_items: {
+        Row: {
+          created_at: string
+          goods_receipt_id: string
+          id: string
+          inventory_item_id: string
+          notes: string | null
+          purchase_order_item_id: string
+          quantity_accepted: number
+          quantity_rejected: number
+          rejection_reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          goods_receipt_id: string
+          id?: string
+          inventory_item_id: string
+          notes?: string | null
+          purchase_order_item_id: string
+          quantity_accepted: number
+          quantity_rejected?: number
+          rejection_reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          goods_receipt_id?: string
+          id?: string
+          inventory_item_id?: string
+          notes?: string | null
+          purchase_order_item_id?: string
+          quantity_accepted?: number
+          quantity_rejected?: number
+          rejection_reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goods_receipt_items_goods_receipt_id_fkey"
+            columns: ["goods_receipt_id"]
+            isOneToOne: false
+            referencedRelation: "goods_receipts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goods_receipt_items_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goods_receipt_items_purchase_order_item_id_fkey"
+            columns: ["purchase_order_item_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_order_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goods_receipts: {
+        Row: {
+          brand_id: string | null
+          created_at: string
+          id: string
+          location_code: string
+          notes: string | null
+          organization_id: string
+          purchase_order_id: string
+          receipt_number: string
+          received_by_user_id: string
+          received_date: string
+          vendor_delivery_note_number: string | null
+        }
+        Insert: {
+          brand_id?: string | null
+          created_at?: string
+          id?: string
+          location_code?: string
+          notes?: string | null
+          organization_id: string
+          purchase_order_id: string
+          receipt_number: string
+          received_by_user_id: string
+          received_date?: string
+          vendor_delivery_note_number?: string | null
+        }
+        Update: {
+          brand_id?: string | null
+          created_at?: string
+          id?: string
+          location_code?: string
+          notes?: string | null
+          organization_id?: string
+          purchase_order_id?: string
+          receipt_number?: string
+          received_by_user_id?: string
+          received_date?: string
+          vendor_delivery_note_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goods_receipts_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goods_receipts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goods_receipts_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goods_receipts_received_by_user_id_fkey"
+            columns: ["received_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_items: {
+        Row: {
+          attributes: Json
+          brand_id: string | null
+          category: string
+          cost_price: number
+          created_at: string
+          id: string
+          is_active: boolean
+          min_stock_alert: number
+          name: string
+          organization_id: string
+          sku: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          attributes?: Json
+          brand_id?: string | null
+          category: string
+          cost_price?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          min_stock_alert?: number
+          name: string
+          organization_id: string
+          sku: string
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          attributes?: Json
+          brand_id?: string | null
+          category?: string
+          cost_price?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          min_stock_alert?: number
+          name?: string
+          organization_id?: string
+          sku?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_items_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_levels: {
+        Row: {
+          bin_location: string | null
+          created_at: string
+          id: string
+          inventory_item_id: string
+          location_code: string
+          organization_id: string
+          quantity_on_hand: number
+          quantity_reserved: number
+          updated_at: string
+        }
+        Insert: {
+          bin_location?: string | null
+          created_at?: string
+          id?: string
+          inventory_item_id: string
+          location_code?: string
+          organization_id: string
+          quantity_on_hand?: number
+          quantity_reserved?: number
+          updated_at?: string
+        }
+        Update: {
+          bin_location?: string | null
+          created_at?: string
+          id?: string
+          inventory_item_id?: string
+          location_code?: string
+          organization_id?: string
+          quantity_on_hand?: number
+          quantity_reserved?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_levels_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_levels_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_mutations: {
+        Row: {
+          actor_id: string
+          created_at: string
+          id: string
+          inventory_item_id: string
+          location_code: string
+          mutation_type: string
+          notes: string | null
+          organization_id: string
+          quantity_change: number
+          quantity_on_hand_after: number
+          quantity_reserved_after: number
+          reference_id: string | null
+          reference_type: string | null
+        }
+        Insert: {
+          actor_id: string
+          created_at?: string
+          id?: string
+          inventory_item_id: string
+          location_code?: string
+          mutation_type: string
+          notes?: string | null
+          organization_id: string
+          quantity_change: number
+          quantity_on_hand_after: number
+          quantity_reserved_after: number
+          reference_id?: string | null
+          reference_type?: string | null
+        }
+        Update: {
+          actor_id?: string
+          created_at?: string
+          id?: string
+          inventory_item_id?: string
+          location_code?: string
+          mutation_type?: string
+          notes?: string | null
+          organization_id?: string
+          quantity_change?: number
+          quantity_on_hand_after?: number
+          quantity_reserved_after?: number
+          reference_id?: string | null
+          reference_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_mutations_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_mutations_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_mutations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_reservations: {
+        Row: {
+          created_at: string
+          id: string
+          inventory_item_id: string
+          location_code: string
+          order_id: string
+          order_item_id: string | null
+          organization_id: string
+          quantity: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inventory_item_id: string
+          location_code?: string
+          order_id: string
+          order_item_id?: string | null
+          organization_id: string
+          quantity: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inventory_item_id?: string
+          location_code?: string
+          order_id?: string
+          order_item_id?: string | null
+          organization_id?: string
+          quantity?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_reservations_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_reservations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "order_financial_summaries"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "inventory_reservations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_reservations_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_reservations_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -988,6 +1488,7 @@ export type Database = {
           description: string
           discount_total: number
           id: string
+          inventory_item_id: string | null
           order_id: string
           position: number
           quantity: number
@@ -1001,6 +1502,7 @@ export type Database = {
           description: string
           discount_total?: number
           id?: string
+          inventory_item_id?: string | null
           order_id: string
           position?: number
           quantity: number
@@ -1014,6 +1516,7 @@ export type Database = {
           description?: string
           discount_total?: number
           id?: string
+          inventory_item_id?: string | null
           order_id?: string
           position?: number
           quantity?: number
@@ -1023,6 +1526,13 @@ export type Database = {
           unit_price?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "order_items_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "order_items_order_id_fkey"
             columns: ["order_id"]
@@ -1055,16 +1565,17 @@ export type Database = {
           grand_total: number
           id: string
           order_number: string
+          order_type: string
           organization_id: string
           payment_terms_snapshot: Json
           request_id: string
           request_payload: Json
           shipping_address_snapshot: Json
           shipping_total: number
-          source_quote_id: string
-          source_quote_version_id: string
-          source_requirement_id: string
-          source_requirement_version_id: string
+          source_quote_id: string | null
+          source_quote_version_id: string | null
+          source_requirement_id: string | null
+          source_requirement_version_id: string | null
           status: string
           subtotal: number
           updated_at: string
@@ -1084,16 +1595,17 @@ export type Database = {
           grand_total: number
           id?: string
           order_number: string
+          order_type?: string
           organization_id: string
           payment_terms_snapshot: Json
           request_id: string
           request_payload?: Json
           shipping_address_snapshot: Json
           shipping_total: number
-          source_quote_id: string
-          source_quote_version_id: string
-          source_requirement_id: string
-          source_requirement_version_id: string
+          source_quote_id?: string | null
+          source_quote_version_id?: string | null
+          source_requirement_id?: string | null
+          source_requirement_version_id?: string | null
           status?: string
           subtotal: number
           updated_at?: string
@@ -1113,16 +1625,17 @@ export type Database = {
           grand_total?: number
           id?: string
           order_number?: string
+          order_type?: string
           organization_id?: string
           payment_terms_snapshot?: Json
           request_id?: string
           request_payload?: Json
           shipping_address_snapshot?: Json
           shipping_total?: number
-          source_quote_id?: string
-          source_quote_version_id?: string
-          source_requirement_id?: string
-          source_requirement_version_id?: string
+          source_quote_id?: string | null
+          source_quote_version_id?: string | null
+          source_requirement_id?: string | null
+          source_requirement_version_id?: string | null
           status?: string
           subtotal?: number
           updated_at?: string
@@ -1760,6 +2273,156 @@ export type Database = {
           },
         ]
       }
+      purchase_order_items: {
+        Row: {
+          created_at: string
+          id: string
+          inventory_item_id: string
+          notes: string | null
+          organization_id: string
+          purchase_order_id: string
+          quantity_ordered: number
+          quantity_received: number
+          subtotal: number
+          unit_cost: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inventory_item_id: string
+          notes?: string | null
+          organization_id: string
+          purchase_order_id: string
+          quantity_ordered: number
+          quantity_received?: number
+          subtotal?: number
+          unit_cost?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inventory_item_id?: string
+          notes?: string | null
+          organization_id?: string
+          purchase_order_id?: string
+          quantity_ordered?: number
+          quantity_received?: number
+          subtotal?: number
+          unit_cost?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_order_items_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_order_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_order_items_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      purchase_orders: {
+        Row: {
+          brand_id: string | null
+          created_at: string
+          created_by_user_id: string
+          expected_delivery_date: string | null
+          id: string
+          notes: string | null
+          order_date: string
+          organization_id: string
+          payment_terms: string
+          po_number: string
+          shipping_cost: number
+          status: string
+          subtotal: number
+          tax_amount: number
+          total_amount: number
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          brand_id?: string | null
+          created_at?: string
+          created_by_user_id: string
+          expected_delivery_date?: string | null
+          id?: string
+          notes?: string | null
+          order_date?: string
+          organization_id: string
+          payment_terms?: string
+          po_number: string
+          shipping_cost?: number
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          total_amount?: number
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          brand_id?: string | null
+          created_at?: string
+          created_by_user_id?: string
+          expected_delivery_date?: string | null
+          id?: string
+          notes?: string | null
+          order_date?: string
+          organization_id?: string
+          payment_terms?: string
+          po_number?: string
+          shipping_cost?: number
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          total_amount?: number
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_orders_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_orders_created_by_user_id_fkey"
+            columns: ["created_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_orders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_orders_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       qc_inspections: {
         Row: {
           checklist_snapshot: Json
@@ -2382,6 +3045,212 @@ export type Database = {
           },
         ]
       }
+      shipment_audit: {
+        Row: {
+          action: string
+          actor_id: string
+          created_at: string
+          id: string
+          metadata: Json
+          organization_id: string
+          shipment_id: string
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          organization_id: string
+          shipment_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          organization_id?: string
+          shipment_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipment_audit_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipment_audit_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipment_audit_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shipment_items: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          order_item_id: string
+          quantity: number
+          shipment_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_item_id: string
+          quantity: number
+          shipment_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_item_id?: string
+          quantity?: number
+          shipment_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipment_items_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipment_items_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shipments: {
+        Row: {
+          actual_shipping_cost: number
+          brand_id: string
+          courier_name: string
+          courier_service: string | null
+          created_at: string
+          created_by_user_id: string
+          customer_account_id: string
+          delivered_date: string | null
+          dispatch_date: string | null
+          id: string
+          notes: string | null
+          order_id: string
+          organization_id: string
+          package_count: number
+          package_weight_grams: number | null
+          shipment_number: string
+          shipping_address_snapshot: Json
+          status: string
+          tracking_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          actual_shipping_cost?: number
+          brand_id: string
+          courier_name: string
+          courier_service?: string | null
+          created_at?: string
+          created_by_user_id: string
+          customer_account_id: string
+          delivered_date?: string | null
+          dispatch_date?: string | null
+          id?: string
+          notes?: string | null
+          order_id: string
+          organization_id: string
+          package_count?: number
+          package_weight_grams?: number | null
+          shipment_number: string
+          shipping_address_snapshot?: Json
+          status?: string
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          actual_shipping_cost?: number
+          brand_id?: string
+          courier_name?: string
+          courier_service?: string | null
+          created_at?: string
+          created_by_user_id?: string
+          customer_account_id?: string
+          delivered_date?: string | null
+          dispatch_date?: string | null
+          id?: string
+          notes?: string | null
+          order_id?: string
+          organization_id?: string
+          package_count?: number
+          package_weight_grams?: number | null
+          shipment_number?: string
+          shipping_address_snapshot?: Json
+          status?: string
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipments_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_created_by_user_id_fkey"
+            columns: ["created_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_customer_account_id_fkey"
+            columns: ["customer_account_id"]
+            isOneToOne: false
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "order_financial_summaries"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "shipments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           archived_at: string | null
@@ -2417,6 +3286,165 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      vendor_bill_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by_user_id: string
+          id: string
+          notes: string | null
+          organization_id: string
+          paid_at: string
+          payment_method: string
+          payment_number: string
+          reference_number: string | null
+          source_account_number: string | null
+          source_bank: string | null
+          vendor_bill_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by_user_id: string
+          id?: string
+          notes?: string | null
+          organization_id: string
+          paid_at?: string
+          payment_method: string
+          payment_number: string
+          reference_number?: string | null
+          source_account_number?: string | null
+          source_bank?: string | null
+          vendor_bill_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by_user_id?: string
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          paid_at?: string
+          payment_method?: string
+          payment_number?: string
+          reference_number?: string | null
+          source_account_number?: string | null
+          source_bank?: string | null
+          vendor_bill_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_bill_payments_created_by_user_id_fkey"
+            columns: ["created_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_bill_payments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_bill_payments_vendor_bill_id_fkey"
+            columns: ["vendor_bill_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_bills: {
+        Row: {
+          amount_paid: number
+          balance_due: number
+          bill_date: string
+          bill_number: string
+          brand_id: string | null
+          created_at: string
+          due_date: string | null
+          id: string
+          notes: string | null
+          organization_id: string
+          paid_at: string | null
+          purchase_order_id: string
+          status: string
+          total_amount: number
+          updated_at: string
+          vendor_id: string
+          vendor_invoice_number: string | null
+        }
+        Insert: {
+          amount_paid?: number
+          balance_due: number
+          bill_date?: string
+          bill_number: string
+          brand_id?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          organization_id: string
+          paid_at?: string | null
+          purchase_order_id: string
+          status?: string
+          total_amount: number
+          updated_at?: string
+          vendor_id: string
+          vendor_invoice_number?: string | null
+        }
+        Update: {
+          amount_paid?: number
+          balance_due?: number
+          bill_date?: string
+          bill_number?: string
+          brand_id?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          paid_at?: string | null
+          purchase_order_id?: string
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          vendor_id?: string
+          vendor_invoice_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_bills_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_bills_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_bills_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_bills_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       vendor_rate_cards: {
         Row: {
@@ -2628,6 +3656,24 @@ export type Database = {
         }
         Returns: string
       }
+      cancel_shipment: {
+        Args: {
+          p_actor_id: string
+          p_organization_id: string
+          p_reason: string
+          p_shipment_id: string
+        }
+        Returns: Json
+      }
+      consume_inventory_for_order: {
+        Args: {
+          p_actor_id: string
+          p_notes?: string
+          p_order_id: string
+          p_organization_id: string
+        }
+        Returns: Json
+      }
       convert_lead_to_customer: {
         Args: {
           p_actor_id?: string
@@ -2654,6 +3700,38 @@ export type Database = {
           p_primary_email?: string
           p_primary_phone?: string
           p_tax_id?: string
+        }
+        Returns: Json
+      }
+      create_delivery_order: {
+        Args: {
+          p_actor_id: string
+          p_courier_name: string
+          p_courier_service?: string
+          p_items?: Json
+          p_notes?: string
+          p_order_id: string
+          p_organization_id: string
+          p_package_count?: number
+          p_package_weight_grams?: number
+        }
+        Returns: Json
+      }
+      create_inventory_item: {
+        Args: {
+          p_actor_id: string
+          p_attributes?: Json
+          p_bin_location?: string
+          p_brand_id?: string
+          p_category?: string
+          p_cost_price?: number
+          p_initial_stock?: number
+          p_location_code?: string
+          p_min_stock_alert?: number
+          p_name?: string
+          p_organization_id: string
+          p_sku?: string
+          p_unit?: string
         }
         Returns: Json
       }
@@ -2716,6 +3794,20 @@ export type Database = {
         }
         Returns: Json
       }
+      create_purchase_order: {
+        Args: {
+          p_actor_id: string
+          p_brand_id: string
+          p_expected_delivery_date?: string
+          p_items: Json
+          p_notes?: string
+          p_organization_id: string
+          p_payment_terms?: string
+          p_shipping_cost?: number
+          p_vendor_id: string
+        }
+        Returns: Json
+      }
       create_requirement_with_initial_version: {
         Args: {
           p_actor_id?: string
@@ -2730,6 +3822,24 @@ export type Database = {
           p_target_date?: string
           p_title: string
           p_unit?: string
+        }
+        Returns: Json
+      }
+      create_retail_order: {
+        Args: {
+          p_actor_id: string
+          p_auto_pay?: boolean
+          p_brand_id: string
+          p_customer_account_id: string
+          p_items: Json
+          p_notes?: string
+          p_organization_id: string
+          p_payment_bank?: string
+          p_payment_method?: string
+          p_payment_reference?: string
+          p_request_id?: string
+          p_shipping_address?: Json
+          p_shipping_cost?: number
         }
         Returns: Json
       }
@@ -2750,6 +3860,17 @@ export type Database = {
         }
         Returns: string
       }
+      dispatch_shipment: {
+        Args: {
+          p_actor_id: string
+          p_actual_shipping_cost?: number
+          p_notes?: string
+          p_organization_id: string
+          p_shipment_id: string
+          p_tracking_number?: string
+        }
+        Returns: Json
+      }
       generate_document_number: {
         Args: {
           p_brand_id: string
@@ -2758,6 +3879,10 @@ export type Database = {
           p_pad_length?: number
           p_year?: number
         }
+        Returns: string
+      }
+      inventory_actor_role: {
+        Args: { p_actor_id: string; p_organization_id: string }
         Returns: string
       }
       invoice_actor_role: {
@@ -2800,6 +3925,16 @@ export type Database = {
         }
         Returns: string
       }
+      mark_shipment_delivered: {
+        Args: {
+          p_actor_id: string
+          p_delivered_date?: string
+          p_notes?: string
+          p_organization_id: string
+          p_shipment_id: string
+        }
+        Returns: Json
+      }
       next_document_sequence: {
         Args: {
           p_brand_id: string
@@ -2809,8 +3944,37 @@ export type Database = {
         }
         Returns: number
       }
+      pay_vendor_bill: {
+        Args: {
+          p_actor_id: string
+          p_amount: number
+          p_notes?: string
+          p_organization_id: string
+          p_payment_method?: string
+          p_reference_number?: string
+          p_source_account_number?: string
+          p_source_bank?: string
+          p_vendor_bill_id: string
+        }
+        Returns: Json
+      }
       payment_actor_role: {
         Args: { p_actor: string; p_org: string }
+        Returns: string
+      }
+      perform_stock_opname: {
+        Args: {
+          p_actor_id: string
+          p_actual_physical_count: number
+          p_inventory_item_id: string
+          p_location_code?: string
+          p_organization_id: string
+          p_reason?: string
+        }
+        Returns: Json
+      }
+      procurement_actor_role: {
+        Args: { p_actor_id: string; p_organization_id: string }
         Returns: string
       }
       production_actor_role: {
@@ -2821,6 +3985,18 @@ export type Database = {
         Args: { p_actor: string; p_org: string }
         Returns: string
       }
+      receive_purchase_order_items: {
+        Args: {
+          p_actor_id: string
+          p_items: Json
+          p_location_code?: string
+          p_notes?: string
+          p_organization_id: string
+          p_purchase_order_id: string
+          p_vendor_delivery_note?: string
+        }
+        Returns: Json
+      }
       record_actual_job_cost: {
         Args: {
           p_actor_id: string
@@ -2828,6 +4004,20 @@ export type Database = {
           p_job_id: string
           p_notes?: string
           p_organization_id: string
+        }
+        Returns: Json
+      }
+      record_inventory_mutation: {
+        Args: {
+          p_actor_id: string
+          p_inventory_item_id: string
+          p_location_code?: string
+          p_mutation_type: string
+          p_notes?: string
+          p_organization_id: string
+          p_quantity: number
+          p_reference_id?: string
+          p_reference_type?: string
         }
         Returns: Json
       }
@@ -2868,6 +4058,25 @@ export type Database = {
         }
         Returns: Json
       }
+      release_inventory_reservation: {
+        Args: {
+          p_actor_id: string
+          p_order_id: string
+          p_organization_id: string
+          p_reason?: string
+        }
+        Returns: Json
+      }
+      reserve_inventory_for_order: {
+        Args: {
+          p_actor_id: string
+          p_items: Json
+          p_notes?: string
+          p_order_id: string
+          p_organization_id: string
+        }
+        Returns: Json
+      }
       revert_payment: {
         Args: {
           p_actor_id: string
@@ -2876,6 +4085,17 @@ export type Database = {
           p_reason: string
         }
         Returns: Json
+      }
+      save_demo_design: {
+        Args: {
+          p_actor: string
+          p_asset: string
+          p_data: Json
+          p_expected: number
+          p_org: string
+          p_request: string
+        }
+        Returns: string
       }
       save_quote_version: {
         Args: {
@@ -2896,6 +4116,10 @@ export type Database = {
           p_valid_until: string
         }
         Returns: Json
+      }
+      shipment_actor_role: {
+        Args: { p_actor_id: string; p_organization_id: string }
+        Returns: string
       }
       transition_lead_status: {
         Args: {

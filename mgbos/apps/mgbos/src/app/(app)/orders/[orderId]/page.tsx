@@ -18,6 +18,12 @@ import {
   MarginHealthBadge,
   RecordActualCostModal,
 } from '../../ledger/components';
+import {
+  CreateShipmentModal,
+  ShipmentStatusBadge,
+} from '../../shipments/components';
+import { ShipmentRow, ShipmentItemRow } from '../../shipments/data';
+import { COURIER_LABELS, CourierName } from '@mgbos/domain';
 
 export default async function OrderDetailPage({
   params,
@@ -99,6 +105,55 @@ export default async function OrderDetailPage({
   const netProductRevenue =
     BigInt(order.subtotal) - BigInt(order.discount_total);
 
+  const canReadShipments = hasPermission(
+    ctx.session.role.code,
+    'shipments:read',
+  );
+  const canCreateShipment = hasPermission(
+    ctx.session.role.code,
+    'shipments:create',
+  );
+
+  const shipments = canReadShipments
+    ? await readRows<ShipmentRow>(
+        `shipments?order_id=eq.${order.id}&select=*&order=created_at.asc`,
+        ctx,
+      )
+    : [];
+
+  const shipmentItems =
+    canReadShipments && shipments.length > 0
+      ? await readRows<ShipmentItemRow>(
+          `shipment_items?shipment_id=in.(${shipments.map((s) => s.id).join(',')})&select=*`,
+          ctx,
+        )
+      : [];
+
+  const activeShipmentIds = new Set(
+    shipments.filter((s) => s.status !== 'CANCELLED').map((s) => s.id),
+  );
+
+  const shippedMap: Record<string, number> = {};
+  for (const si of shipmentItems) {
+    if (activeShipmentIds.has(si.shipment_id)) {
+      shippedMap[si.order_item_id] =
+        (shippedMap[si.order_item_id] ?? 0) + si.quantity;
+    }
+  }
+
+  const itemsForShipment = items.map((i) => ({
+    id: i.id,
+    description: i.description,
+    quantity: i.quantity,
+    previouslyShipped: shippedMap[i.id] ?? 0,
+  }));
+
+  const totalShippedItems = Object.values(shippedMap).reduce(
+    (a, b) => a + b,
+    0,
+  );
+  const totalOrderedItems = items.reduce((a, b) => a + b.quantity, 0);
+
   return (
     <div>
       <div
@@ -119,9 +174,34 @@ export default async function OrderDetailPage({
       >
         <div>
           <div
-            style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              flexWrap: 'wrap',
+            }}
           >
             <h1 style={{ margin: 0 }}>{order.order_number}</h1>
+            <span
+              style={{
+                display: 'inline-block',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                padding: '3px 8px',
+                borderRadius: '4px',
+                background:
+                  order.order_type === 'RETAIL_DIRECT' ? '#042f2e' : '#1e293b',
+                color:
+                  order.order_type === 'RETAIL_DIRECT' ? '#2dd4bf' : '#94a3b8',
+                border: `1px solid ${
+                  order.order_type === 'RETAIL_DIRECT' ? '#0d9488' : '#334155'
+                }`,
+              }}
+            >
+              {order.order_type === 'RETAIL_DIRECT'
+                ? '⚡ Ritel Langsung (POS)'
+                : '🏢 Kontrak B2B Custom'}
+            </span>
             <span
               className="badge"
               style={{
@@ -145,8 +225,10 @@ export default async function OrderDetailPage({
           </div>
           <p style={{ color: '#94a3b8', margin: '4px 0 0' }}>
             Dikonfirmasi pada{' '}
-            {new Date(order.confirmed_at).toLocaleString('id-ID')} · Kontrak
-            Komersial Sah
+            {new Date(order.confirmed_at).toLocaleString('id-ID')} ·{' '}
+            {order.order_type === 'RETAIL_DIRECT'
+              ? 'Penjualan Ritel Langsung Kasir (POS)'
+              : 'Kontrak Komersial B2B Sah'}
           </p>
         </div>
       </div>
@@ -205,6 +287,24 @@ export default async function OrderDetailPage({
                           <div style={{ fontWeight: 600, color: '#f8fafc' }}>
                             {item.description}
                           </div>
+                          {item.inventory_item_id && (
+                            <div
+                              style={{
+                                fontSize: '0.75rem',
+                                color: '#2dd4bf',
+                                marginTop: '3px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                background: '#042f2e',
+                                padding: '1px 6px',
+                                borderRadius: '3px',
+                                border: '1px solid #0d9488',
+                              }}
+                            >
+                              📦 Item Persediaan Langsung
+                            </div>
+                          )}
                           {sizes && (
                             <div
                               style={{
@@ -631,6 +731,185 @@ export default async function OrderDetailPage({
                               }}
                             >
                               Detail
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
+          )}
+
+          {canReadShipments && (
+            <section className="card" style={{ marginTop: '1.5rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '1rem',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem',
+                }}
+              >
+                <div>
+                  <h2 style={{ margin: 0 }}>
+                    Surat Jalan &amp; Pengiriman (Delivery Orders)
+                  </h2>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: '#94a3b8',
+                      marginTop: '2px',
+                    }}
+                  >
+                    Fulfillment Progress: {totalShippedItems} /{' '}
+                    {totalOrderedItems} pcs (
+                    {totalOrderedItems > 0
+                      ? Math.round(
+                          (totalShippedItems / totalOrderedItems) * 100,
+                        )
+                      : 0}
+                    % Shipped)
+                  </div>
+                </div>
+
+                {canCreateShipment && order.status !== 'CANCELLED' && (
+                  <CreateShipmentModal
+                    orderId={order.id}
+                    orderNumber={order.order_number}
+                    items={itemsForShipment}
+                    defaultCourier="JNT"
+                    defaultService="REGULER"
+                  />
+                )}
+              </div>
+
+              {shipments.length === 0 ? (
+                <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: 0 }}>
+                  Belum ada Surat Jalan (DO) diterbitkan untuk pesanan ini.
+                  Gunakan tombol di atas untuk membuat Surat Jalan dan
+                  mengalokasikan kuantitas kirim.
+                </p>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table
+                    className="data-table"
+                    style={{ width: '100%', borderCollapse: 'collapse' }}
+                  >
+                    <thead>
+                      <tr
+                        style={{
+                          borderBottom: '1px solid #334155',
+                          textAlign: 'left',
+                          color: '#94a3b8',
+                          fontSize: '0.85rem',
+                        }}
+                      >
+                        <th style={{ padding: '8px 10px' }}>NO. SURAT JALAN</th>
+                        <th style={{ padding: '8px 10px' }}>
+                          KURIR / EKSPEDISI
+                        </th>
+                        <th style={{ padding: '8px 10px' }}>NO. RESI (AWB)</th>
+                        <th style={{ padding: '8px 10px' }}>STATUS</th>
+                        <th style={{ padding: '8px 10px' }}>KOLI / BERAT</th>
+                        <th style={{ padding: '8px 10px' }}>TANGGAL</th>
+                        <th
+                          style={{ padding: '8px 10px', textAlign: 'center' }}
+                        >
+                          AKSI
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {shipments.map((s) => (
+                        <tr
+                          key={s.id}
+                          style={{ borderBottom: '1px solid #1e293b' }}
+                        >
+                          <td style={{ padding: '10px', fontWeight: 600 }}>
+                            <Link
+                              href={`/shipments/${s.id}`}
+                              style={{
+                                color: '#38bdf8',
+                                fontFamily: 'monospace',
+                              }}
+                            >
+                              {s.shipment_number}
+                            </Link>
+                          </td>
+                          <td style={{ padding: '10px' }}>
+                            <span style={{ fontWeight: 600 }}>
+                              {COURIER_LABELS[s.courier_name as CourierName] ??
+                                s.courier_name}
+                            </span>
+                            {s.courier_service && (
+                              <span
+                                style={{
+                                  display: 'block',
+                                  fontSize: '0.75rem',
+                                  color: '#94a3b8',
+                                }}
+                              >
+                                {s.courier_service}
+                              </span>
+                            )}
+                          </td>
+                          <td style={{ padding: '10px' }}>
+                            {s.tracking_number ? (
+                              <code
+                                style={{
+                                  backgroundColor: '#1e293b',
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  color: '#38bdf8',
+                                }}
+                              >
+                                {s.tracking_number}
+                              </code>
+                            ) : (
+                              <span
+                                style={{
+                                  color: '#64748b',
+                                  fontStyle: 'italic',
+                                  fontSize: '0.8rem',
+                                }}
+                              >
+                                Belum diserahkan
+                              </span>
+                            )}
+                          </td>
+                          <td style={{ padding: '10px' }}>
+                            <ShipmentStatusBadge status={s.status} />
+                          </td>
+                          <td style={{ padding: '10px', fontSize: '0.85rem' }}>
+                            {s.package_count} koli
+                            {s.package_weight_grams
+                              ? ` (${s.package_weight_grams / 1000} kg)`
+                              : ''}
+                          </td>
+                          <td
+                            style={{
+                              padding: '10px',
+                              color: '#94a3b8',
+                              fontSize: '0.8rem',
+                            }}
+                          >
+                            {new Date(s.created_at).toLocaleDateString('id-ID')}
+                          </td>
+                          <td style={{ padding: '10px', textAlign: 'center' }}>
+                            <Link
+                              href={`/shipments/${s.id}`}
+                              className="btn-secondary"
+                              style={{
+                                padding: '3px 8px',
+                                fontSize: '0.75rem',
+                                textDecoration: 'none',
+                              }}
+                            >
+                              Kelola / Cetak
                             </Link>
                           </td>
                         </tr>

@@ -16,12 +16,13 @@ const commands = {
   stop: ['stop'],
   reset: ['db', 'reset', '--local'],
   test: ['test', 'db', '--local'],
+  migrate: ['migration', 'up', '--local'],
   types: ['gen', 'types', 'typescript', '--local', '--schema', 'app,internal'],
 };
 const [command, ...extra] = process.argv.slice(2);
 if (!Object.hasOwn(commands, command ?? '') || extra.length) {
   console.error(
-    'Use start, stop, reset, test, or types without extra arguments. Only the local MGBOS database is supported.',
+    'Use start, stop, reset, test, migrate, or types without extra arguments. Only the local MGBOS database is supported.',
   );
   process.exit(1);
 }

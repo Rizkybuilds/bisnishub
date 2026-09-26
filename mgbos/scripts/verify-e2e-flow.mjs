@@ -761,9 +761,774 @@ assert.ok(
 assert.ok(summary.realized_margin_pct >= 35, 'Margin health >= 35%');
 assert.equal(summary.margin_health, 'HEALTHY');
 
+// 8. Fulfillment, Delivery Orders (DO) & Logistics Tracking (MGBOS-017 / TS-PLAN-06)
+console.log(
+  '\n8. Fulfillment, Delivery Orders (DO) & Logistics Tracking (MGBOS-017)...',
+);
+
+// 8.1 Create Partial Delivery Order 1 (35 pcs)
+console.log('   Creating partial Delivery Order 1 (35 pcs) via J&T Express...');
+const do1Res = await rpc('create_delivery_order', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_order_id: orderRes.order_id,
+  p_courier_name: 'JNT',
+  p_courier_service: 'CARGO',
+  p_items: [
+    {
+      order_item_id: orderItem.id,
+      quantity: 35,
+      notes: 'Batch 1 - Siap kirim awal (35 pcs)',
+    },
+  ],
+  p_package_weight_grams: 7000,
+  p_package_count: 1,
+  p_notes: 'Pengiriman batch pertama 35 pcs',
+});
+console.log(
+  `   DO 1 Created: ${do1Res.shipment_number} (Status: ${do1Res.status})`,
+);
+assert.match(do1Res.shipment_number, /^TS-DO-\d{4}-\d{6}$/);
+assert.equal(do1Res.status, 'READY_TO_DISPATCH');
+
+// 8.2 Ceiling Guard: Attempting to create DO with 30 pcs (when only 25 remain)
+console.log(
+  '   Testing shipment ceiling guard (exceeding remaining unshipped quota)...',
+);
+let overShipmentBlocked = false;
+try {
+  await rpc('create_delivery_order', {
+    p_organization_id: org.id,
+    p_actor_id: founder.id,
+    p_order_id: orderRes.order_id,
+    p_courier_name: 'JNE',
+    p_items: [
+      {
+        order_item_id: orderItem.id,
+        quantity: 30, // 35 + 30 = 65 > 60!
+      },
+    ],
+  });
+} catch (err) {
+  overShipmentBlocked = true;
+  console.log('   Over-shipment correctly blocked:', err.message);
+  assert.ok(err.message.includes('exceeds remaining unshipped quota'));
+}
+assert.ok(
+  overShipmentBlocked,
+  'Over-shipment must be rejected by ceiling guard',
+);
+
+// 8.3 Create Delivery Order 2 for remaining 25 pcs
+console.log('   Creating Delivery Order 2 for remaining 25 pcs...');
+const do2Res = await rpc('create_delivery_order', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_order_id: orderRes.order_id,
+  p_courier_name: 'JNT',
+  p_courier_service: 'REGULER',
+  p_items: [
+    {
+      order_item_id: orderItem.id,
+      quantity: 25,
+    },
+  ],
+  p_package_weight_grams: 5000,
+  p_package_count: 1,
+  p_notes: 'Pengiriman batch kedua pelunasan 25 pcs',
+});
+console.log(
+  `   DO 2 Created: ${do2Res.shipment_number} (Status: ${do2Res.status})`,
+);
+assert.match(do2Res.shipment_number, /^TS-DO-\d{4}-\d{6}$/);
+
+// 8.4 Dispatch Shipment 1 (Serah terima kurir & booking ongkir pass-through)
+console.log(
+  '   Dispatching DO 1 with tracking number and actual shipping cost...',
+);
+const dispatchRes = await rpc('dispatch_shipment', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_shipment_id: do1Res.shipment_id,
+  p_tracking_number: 'JNT-E2E-77889900',
+  p_actual_shipping_cost: 65000,
+  p_notes: 'Diserahkan ke kurir J&T Cargo penjemput',
+});
+console.log(
+  `   DO 1 Dispatched: ${dispatchRes.shipment_number} (Status: ${dispatchRes.status}, Resi: ${dispatchRes.tracking_number})`,
+);
+assert.equal(dispatchRes.status, 'DISPATCHED');
+assert.equal(dispatchRes.tracking_number, 'JNT-E2E-77889900');
+
+// Verify Courier Expense Disbursed in Financial Ledger
+const courierLedgerEntries = await queryTable(
+  'financial_ledger_entries',
+  `order_id=eq.${orderRes.order_id}&entry_type=eq.COURIER_EXPENSE_DISBURSED`,
+);
+assert.equal(
+  courierLedgerEntries.length,
+  1,
+  'Courier expense disbursed entry created in ledger',
+);
+assert.equal(courierLedgerEntries[0].category, 'PASS_THROUGH_SHIPPING');
+assert.equal(courierLedgerEntries[0].direction, 'DEBIT');
+assert.equal(Number(courierLedgerEntries[0].amount), 65000);
+console.log(
+  `   Verified Courier Ledger Entry: ${courierLedgerEntries[0].entry_number} (Rp 65.000 Pass-Through DEBIT)`,
+);
+
+// 8.5 Mark Shipment Delivered
+console.log('   Confirming delivery of DO 1...');
+const deliveredRes = await rpc('mark_shipment_delivered', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_shipment_id: do1Res.shipment_id,
+  p_notes: 'Diterima oleh Pak Slamet (Security)',
+});
+console.log(
+  `   DO 1 Delivered: ${deliveredRes.shipment_number} (Status: ${deliveredRes.status})`,
+);
+assert.equal(deliveredRes.status, 'DELIVERED');
+
+// 8.6 Verify Immutability of Delivered Shipment
+console.log('   Testing Delivered Shipment Immutability Guard...');
+let deliveredMutationBlocked = false;
+try {
+  const patchRes = await fetch(
+    `${endpoint}/shipments?id=eq.${do1Res.shipment_id}`,
+    {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ courier_name: 'TAMPERED_COURIER' }),
+    },
+  );
+  if (!patchRes.ok) {
+    deliveredMutationBlocked = true;
+    console.log(
+      '   PATCH blocked as expected with HTTP status:',
+      patchRes.status,
+    );
+  }
+} catch {
+  deliveredMutationBlocked = true;
+}
+assert.ok(
+  deliveredMutationBlocked,
+  'Delivered shipment modification must be blocked by immutability trigger',
+);
+
+// ============================================================================
+// 9. SPRINT 7: INVENTORY, SKU VARIAN & MULTI-LOCATION ALLOCATION ENGINE
+// ============================================================================
+console.log('\n--- 9. Inventory, SKU Variants & Stock Allocation Engine ---');
+
+// 9.1 Create Master Inventory Items
+console.log('   Registering Master SKU Blank Garment & DTF Material...');
+const blankItemRes = await rpc('create_inventory_item', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_brand_id: brand.id,
+  p_sku: 'TS-NSA-7200-WHT-XL',
+  p_name: 'Kaos Polos NSA 7200 White XL',
+  p_category: 'BLANK_GARMENT',
+  p_unit: 'pcs',
+  p_attributes: { color: 'White', size: 'XL', brand: 'NSA 7200' },
+  p_cost_price: 39000,
+  p_min_stock_alert: 10,
+  p_initial_stock: 60,
+  p_location_code: 'MAIN_WORKSHOP',
+  p_bin_location: 'BIN-W1',
+});
+console.log(
+  `   Blank Garment Item Created: ${blankItemRes.sku} (ID: ${blankItemRes.inventory_item_id})`,
+);
+assert.equal(blankItemRes.sku, 'TS-NSA-7200-WHT-XL');
+assert.equal(blankItemRes.quantity_on_hand, 60);
+
+const dtfItemRes = await rpc('create_inventory_item', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_brand_id: brand.id,
+  p_sku: 'MAT-DTF-INK-CYAN-1L',
+  p_name: 'Tinta DTF Cyan 1 Liter Bottle',
+  p_category: 'PRINT_MATERIAL',
+  p_unit: 'bottle',
+  p_cost_price: 350000,
+  p_min_stock_alert: 2,
+  p_initial_stock: 5,
+  p_location_code: 'MAIN_WORKSHOP',
+  p_bin_location: 'CHEM-R1',
+});
+console.log(`   DTF Material Item Created: ${dtfItemRes.sku}`);
+
+// 9.2 Inbound Purchase Mutation (+40 units blanks)
+console.log('   Recording Inbound Purchase Restock (+40 pcs)...');
+const inboundRes = await rpc('record_inventory_mutation', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_inventory_item_id: blankItemRes.inventory_item_id,
+  p_mutation_type: 'INBOUND_PURCHASE',
+  p_quantity: 40,
+  p_location_code: 'MAIN_WORKSHOP',
+  p_reference_type: 'PO',
+  p_notes: 'Penerimaan restock NSA 40 pcs dari distributor',
+});
+console.log(
+  `   Inbound Restock Recorded: Fisik = ${inboundRes.quantity_on_hand}, Tersedia = ${inboundRes.quantity_available}`,
+);
+assert.equal(inboundRes.quantity_on_hand, 100);
+assert.equal(inboundRes.quantity_available, 100);
+
+// 9.3 Stock Reservation for Order
+console.log(`   Reserving 50 pcs for Order ${orderRes.order_number}...`);
+const reserveRes = await rpc('reserve_inventory_for_order', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_order_id: orderRes.order_id,
+  p_items: [
+    {
+      inventory_item_id: blankItemRes.inventory_item_id,
+      quantity: 50,
+      location_code: 'MAIN_WORKSHOP',
+    },
+  ],
+  p_notes: 'Reservasi bahan kaos polos untuk produksi pesanan',
+});
+console.log(
+  `   Stock Reservation Created: Status = ${reserveRes.status}, Reserved Items = ${reserveRes.reserved_items_count}`,
+);
+assert.equal(reserveRes.status, 'RESERVED');
+
+// Verify stock level: on-hand = 100, reserved = 50, available = 50
+const [levelAfterReserve] = await queryTable(
+  'inventory_levels',
+  `inventory_item_id=eq.${blankItemRes.inventory_item_id}`,
+);
+assert.equal(levelAfterReserve.quantity_on_hand, 100);
+assert.equal(levelAfterReserve.quantity_reserved, 50);
+console.log('   Level verified: On-Hand = 100, Reserved = 50, Available = 50');
+
+// 9.4 Anti-Overselling Guard (Try to reserve 60 pcs when only 50 available)
+console.log(
+  '   Testing Anti-Overselling Guard (Requesting 60 pcs over 50 available)...',
+);
+let oversellBlocked = false;
+try {
+  await rpc('reserve_inventory_for_order', {
+    p_organization_id: org.id,
+    p_actor_id: founder.id,
+    p_order_id: orderRes.order_id,
+    p_items: [
+      {
+        inventory_item_id: blankItemRes.inventory_item_id,
+        quantity: 60,
+        location_code: 'MAIN_WORKSHOP',
+      },
+    ],
+  });
+} catch (err) {
+  oversellBlocked = true;
+  assert.ok(
+    err.message.includes('Stok tidak mencukupi'),
+    `Unexpected error message: ${err.message}`,
+  );
+  console.log(
+    `   Anti-Overselling Guard successfully blocked request: "${err.message}"`,
+  );
+}
+assert.ok(
+  oversellBlocked,
+  'Anti-overselling must block excessive reservations',
+);
+
+// 9.5 Consume Reserved Inventory for Production
+console.log('   Consuming 50 reserved units for production print...');
+const consumeRes = await rpc('consume_inventory_for_order', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_order_id: orderRes.order_id,
+  p_notes: 'Pemakaian fisik 50 pcs kaos polos untuk proses sablon & press',
+});
+console.log(`   Stock Consumed: Status = ${consumeRes.status}`);
+assert.equal(consumeRes.status, 'CONSUMED');
+
+const [levelAfterConsume] = await queryTable(
+  'inventory_levels',
+  `inventory_item_id=eq.${blankItemRes.inventory_item_id}`,
+);
+assert.equal(levelAfterConsume.quantity_on_hand, 50);
+assert.equal(levelAfterConsume.quantity_reserved, 0);
+console.log(
+  '   Level verified after consumption: On-Hand = 50, Reserved = 0, Available = 50',
+);
+
+// 9.6 Perform Stock Opname Adjustment
+console.log(
+  '   Performing Stock Opname (Physical count: 48 pcs, -2 variance)...',
+);
+const opnameRes = await rpc('perform_stock_opname', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_inventory_item_id: blankItemRes.inventory_item_id,
+  p_actual_physical_count: 48,
+  p_location_code: 'MAIN_WORKSHOP',
+  p_reason: 'Audit mingguan gudang: 2 pcs reject cacat jahitan distributor',
+});
+console.log(
+  `   Stock Opname Recorded: Fisik = ${opnameRes.adjusted_on_hand}, Selisih = ${opnameRes.difference}`,
+);
+assert.equal(opnameRes.adjusted_on_hand, 48);
+assert.equal(opnameRes.difference, -2);
+
+// 9.7 Verify Immutability of Inventory Mutation Ledger
+console.log('   Testing Inventory Mutation Ledger Immutability Guard...');
+let mutationTamperBlocked = false;
+try {
+  const patchRes = await fetch(
+    `${endpoint}/inventory_mutations?inventory_item_id=eq.${blankItemRes.inventory_item_id}`,
+    {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ notes: 'TAMPERED_MUTATION' }),
+    },
+  );
+  if (!patchRes.ok) {
+    mutationTamperBlocked = true;
+    console.log(
+      '   PATCH blocked as expected with HTTP status:',
+      patchRes.status,
+    );
+  }
+} catch {
+  mutationTamperBlocked = true;
+}
+assert.ok(
+  mutationTamperBlocked,
+  'Inventory mutation ledger must be strictly immutable and append-only',
+);
+
+// ============================================================================
+// 10. SPRINT 8: PROCUREMENT, PURCHASE ORDERS & VENDOR BILLS ENGINE
+// ============================================================================
+console.log('\n--- 10. Procurement, Purchase Orders & Vendor Bills Engine ---');
+
+// 10.1 Register Supplier Vendor
+console.log('   Registering Garment Supplier Vendor...');
+const vendorCode = `VEND-NSA-${Date.now().toString().slice(-4)}`;
+const vendorId = await rpc('create_vendor', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_name: 'PT Distributor Kain Indonesia',
+  p_code: vendorCode,
+  p_category: 'GARMENT_SUPPLIER',
+  p_payment_terms: 'NET_30',
+  p_contact_person: 'Pak Budi',
+  p_phone: '081234567890',
+});
+console.log(`   Vendor Registered: ID ${vendorId} (${vendorCode})`);
+
+// 10.2 Create Purchase Order (100 units @ Rp 38.000 + Rp 50.000 shipping = Rp 3.850.000)
+console.log('   Creating Purchase Order for 100 pcs NSA blanks...');
+const poRes = await rpc('create_purchase_order', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_brand_id: brand.id,
+  p_vendor_id: vendorId,
+  p_items: [
+    {
+      inventory_item_id: blankItemRes.inventory_item_id,
+      quantity: 100,
+      unit_cost: 38000,
+      notes: 'Kaos polos NSA 7200 White XL',
+    },
+  ],
+  p_shipping_cost: 50000,
+  p_expected_delivery_date: new Date(Date.now() + 7 * 86400000)
+    .toISOString()
+    .split('T')[0],
+  p_payment_terms: 'NET_30',
+  p_notes: 'PO Pengadaan restock bahan E2E verification',
+});
+console.log(
+  `   PO Created: ${poRes.po_number} (Status: ${poRes.status}, Total: Rp ${Number(poRes.total_amount).toLocaleString('id-ID')})`,
+);
+assert.match(poRes.po_number, /^TS-PO-\d{4}-\d{6}$/);
+assert.equal(poRes.status, 'ORDERED');
+assert.equal(Number(poRes.total_amount), 3850000);
+
+// Query PO Line Item ID
+const [poItem] = await queryTable(
+  'purchase_order_items',
+  `purchase_order_id=eq.${poRes.purchase_order_id}&limit=1`,
+);
+assert.ok(poItem, 'Purchase order line item exists');
+assert.equal(poItem.quantity_ordered, 100);
+assert.equal(poItem.quantity_received, 0);
+
+// 10.3 Partial Goods Receipt (60 pcs)
+console.log('   Receiving Partial Batch 1 (60 pcs)...');
+const gr1Res = await rpc('receive_purchase_order_items', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_purchase_order_id: poRes.purchase_order_id,
+  p_items: [
+    {
+      purchase_order_item_id: poItem.id,
+      quantity_accepted: 60,
+      quantity_rejected: 0,
+    },
+  ],
+  p_vendor_delivery_note: 'SJ-NSA-99881',
+  p_location_code: 'MAIN_WORKSHOP',
+  p_notes: 'Penerimaan Batch 1 (60 pcs)',
+});
+console.log(
+  `   GR 1 Recorded: ${gr1Res.receipt_number} (PO Status: ${gr1Res.po_status})`,
+);
+assert.match(gr1Res.receipt_number, /^TS-GR-\d{4}-\d{6}$/);
+assert.equal(gr1Res.po_status, 'PARTIALLY_RECEIVED');
+
+// Verify Stock Incremented (48 previous + 60 = 108)
+const [levelAfterGr1] = await queryTable(
+  'inventory_levels',
+  `inventory_item_id=eq.${blankItemRes.inventory_item_id}`,
+);
+assert.equal(levelAfterGr1.quantity_on_hand, 108);
+console.log('   Stock Level verified: On-Hand = 108 (48 opname + 60 GR)');
+
+// Verify Vendor Bill Auto-Created
+const [vendorBill] = await queryTable(
+  'vendor_bills',
+  `purchase_order_id=eq.${poRes.purchase_order_id}`,
+);
+assert.ok(vendorBill, 'Vendor bill auto-generated');
+assert.match(vendorBill.bill_number, /^TS-VB-\d{4}-\d{6}$/);
+assert.equal(Number(vendorBill.total_amount), 3850000);
+assert.equal(Number(vendorBill.balance_due), 3850000);
+assert.equal(vendorBill.status, 'OPEN');
+console.log(
+  `   Vendor Bill Auto-Created: ${vendorBill.bill_number} (Status: OPEN, Sisa Hutang: Rp 3.850.000)`,
+);
+
+// 10.4 Ceiling Guard on Receipt: Attempt to receive 50 pcs (when remaining is 40)
+console.log(
+  '   Testing Goods Receipt Ceiling Guard (exceeding remaining quota)...',
+);
+let grCeilingBlocked = false;
+try {
+  await rpc('receive_purchase_order_items', {
+    p_organization_id: org.id,
+    p_actor_id: founder.id,
+    p_purchase_order_id: poRes.purchase_order_id,
+    p_items: [
+      {
+        purchase_order_item_id: poItem.id,
+        quantity_accepted: 50,
+      },
+    ],
+  });
+} catch (err) {
+  grCeilingBlocked = true;
+  console.log(`   Ceiling Guard successfully blocked: "${err.message}"`);
+  assert.ok(err.message.includes('melebihi sisa pesanan PO'));
+}
+assert.ok(
+  grCeilingBlocked,
+  'Goods receipt ceiling guard must block excessive receipt',
+);
+
+// 10.5 Full Goods Receipt (Remaining 40 pcs)
+console.log('   Receiving Batch 2 Pelunasan (Remaining 40 pcs)...');
+const gr2Res = await rpc('receive_purchase_order_items', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_purchase_order_id: poRes.purchase_order_id,
+  p_items: [
+    {
+      purchase_order_item_id: poItem.id,
+      quantity_accepted: 40,
+      quantity_rejected: 0,
+    },
+  ],
+  p_vendor_delivery_note: 'SJ-NSA-99882',
+  p_location_code: 'MAIN_WORKSHOP',
+  p_notes: 'Penerimaan Batch 2 Pelunasan (40 pcs)',
+});
+console.log(
+  `   GR 2 Recorded: ${gr2Res.receipt_number} (PO Status: ${gr2Res.po_status})`,
+);
+assert.equal(gr2Res.po_status, 'RECEIVED');
+
+const [levelAfterGr2] = await queryTable(
+  'inventory_levels',
+  `inventory_item_id=eq.${blankItemRes.inventory_item_id}`,
+);
+assert.equal(levelAfterGr2.quantity_on_hand, 148);
+console.log('   Stock Level verified: On-Hand = 148 (Full 100 pcs received)');
+
+// 10.6 Vendor Bill Payment & Outbound Cash Ledger Emission
+console.log('   Paying Vendor Bill (Termin 1: Rp 2.000.000)...');
+const payBill1Res = await rpc('pay_vendor_bill', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_vendor_bill_id: vendorBill.id,
+  p_amount: 2000000,
+  p_payment_method: 'BANK_TRANSFER',
+  p_source_bank: 'BCA',
+  p_source_account_number: '7770123899',
+  p_reference_number: 'TRX-VEND-E2E-001',
+  p_notes: 'Pembayaran termin 1 pengadaan bahan',
+});
+console.log(
+  `   Termin 1 Paid: Status = ${payBill1Res.status}, Sisa = Rp ${Number(payBill1Res.balance_due).toLocaleString('id-ID')}`,
+);
+assert.equal(payBill1Res.status, 'PARTIALLY_PAID');
+assert.equal(Number(payBill1Res.balance_due), 1850000);
+
+// Verify Ledger Emission for Vendor Material Payment
+const [billLedgerEntry] = await queryTable(
+  'financial_ledger_entries',
+  `reference_id=eq.${vendorBill.id}&entry_type=eq.VENDOR_MATERIAL_PAYMENT`,
+);
+assert.ok(billLedgerEntry, 'Outbound vendor payment ledger entry found');
+assert.equal(billLedgerEntry.direction, 'CREDIT');
+assert.equal(billLedgerEntry.category, 'CASH_MOVEMENT');
+assert.equal(Number(billLedgerEntry.amount), 2000000);
+console.log(
+  `   Ledger Outbound Cash verified: ${billLedgerEntry.entry_number} (Rp 2.000.000 CREDIT)`,
+);
+
+// Full Settlement Payment (Remaining Rp 1.850.000)
+console.log('   Settling Remaining Vendor Bill (Rp 1.850.000 LUNAS)...');
+const payBill2Res = await rpc('pay_vendor_bill', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_vendor_bill_id: vendorBill.id,
+  p_amount: 1850000,
+  p_payment_method: 'BANK_TRANSFER',
+  p_source_bank: 'BCA',
+  p_notes: 'Pelunasan sisa tagihan bahan',
+});
+console.log(
+  `   Full Settlement Paid: Status = ${payBill2Res.status}, Sisa = Rp ${Number(payBill2Res.balance_due).toLocaleString('id-ID')}`,
+);
+assert.equal(payBill2Res.status, 'PAID');
+assert.equal(Number(payBill2Res.balance_due), 0);
+
+// ============================================================================
+// 11. SPRINT 9: FAST RETAIL ORDERING & POS DIRECT CHECKOUT (MGBOS-020 / TS-PLAN-09)
+// ============================================================================
+console.log('\n--- 11. Fast Retail Ordering & POS Direct Checkout ---');
+
+// 11.1 Check Available Stock Before Retail Order
+const [levelBeforeRetail] = await queryTable(
+  'inventory_levels',
+  `inventory_item_id=eq.${blankItemRes.inventory_item_id}&location_code=eq.MAIN_WORKSHOP`,
+);
+assert.ok(levelBeforeRetail, 'Inventory level found before retail order');
+const availableBefore =
+  levelBeforeRetail.quantity_on_hand - levelBeforeRetail.quantity_reserved;
+console.log(
+  `   Stock Before Retail: On-Hand = ${levelBeforeRetail.quantity_on_hand}, Reserved = ${levelBeforeRetail.quantity_reserved}, Available = ${availableBefore}`,
+);
+
+// 11.2 Test Anti-Overselling Guard (Order qty exceeds available stock)
+console.log(
+  `   Testing Anti-Overselling Guard (ordering 999 pcs when available is ${availableBefore})...`,
+);
+let retailOversellBlocked = false;
+try {
+  await rpc('create_retail_order', {
+    p_organization_id: org.id,
+    p_actor_id: founder.id,
+    p_brand_id: brand.id,
+    p_customer_account_id: customer.id,
+    p_items: [
+      {
+        inventory_item_id: blankItemRes.inventory_item_id,
+        quantity: 999,
+        unit_price: 75000,
+        discount_total: 0,
+        notes: 'Greedy retail order',
+      },
+    ],
+    p_shipping_cost: 0,
+    p_auto_pay: false,
+  });
+} catch (err) {
+  retailOversellBlocked = true;
+  console.log(
+    `   Anti-Overselling Guard successfully blocked: "${err.message}"`,
+  );
+  assert.ok(
+    err.message.includes('Stok persediaan tidak mencukupi') ||
+      err.message.includes('tidak mencukupi'),
+  );
+}
+assert.ok(
+  retailOversellBlocked,
+  'Anti-overselling guard must block order exceeding available stock',
+);
+
+// 11.3 Create Fast Retail Order with POS Instant Payment (QRIS)
+console.log(
+  '   Placing Fast Retail Direct Order with Immediate QRIS Payment...',
+);
+const retailOrderRes = await rpc('create_retail_order', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_brand_id: brand.id,
+  p_customer_account_id: customer.id,
+  p_items: [
+    {
+      inventory_item_id: blankItemRes.inventory_item_id,
+      quantity: 10,
+      unit_price: 75000,
+      discount_total: 50000,
+      notes: '10 pcs NSA White XL Retail Promo',
+    },
+  ],
+  p_shipping_address: {
+    recipient_name: 'Budi Santoso (Store Pickup)',
+    phone: '081234567890',
+    street: 'Jl. Merdeka No. 45',
+    city: 'Bandung',
+    province: 'Jawa Barat',
+    courier_service: 'INSTANT_PICKUP',
+  },
+  p_shipping_cost: 15000,
+  p_notes: 'Pesanan ritel langsung kasir POS dengan diskon promo',
+  p_auto_pay: true,
+  p_payment_method: 'QRIS',
+  p_payment_reference: 'QRIS-POS-E2E-99881',
+});
+
+console.log(
+  `   Retail Order Created: ${retailOrderRes.order_number} (Order ID: ${retailOrderRes.order_id})`,
+);
+assert.match(retailOrderRes.order_number, /^TS-O-\d{4}-\d{6}$/);
+assert.ok(
+  retailOrderRes.invoice_id,
+  'Auto-issued commercial invoice generated',
+);
+assert.match(retailOrderRes.invoice_number, /^TS-INV-\d{4}-\d{6}$/);
+assert.ok(retailOrderRes.payment_id, 'POS payment auto-recorded');
+assert.match(retailOrderRes.payment_number, /^TS-PAY-\d{4}-\d{6}$/);
+assert.equal(retailOrderRes.is_paid, true);
+
+// 11.4 Verify Order Contract Structure
+const [retailOrder] = await queryTable(
+  'orders',
+  `id=eq.${retailOrderRes.order_id}`,
+);
+assert.ok(retailOrder, 'Retail order contract found');
+assert.equal(retailOrder.order_type, 'RETAIL_DIRECT');
+assert.equal(retailOrder.source_quote_id, null);
+assert.equal(retailOrder.source_quote_version_id, null);
+assert.equal(retailOrder.status, 'CONFIRMED');
+assert.equal(Number(retailOrder.subtotal), 750000);
+assert.equal(Number(retailOrder.discount_total), 50000);
+assert.equal(Number(retailOrder.shipping_total), 15000);
+assert.equal(Number(retailOrder.grand_total), 715000);
+console.log(
+  `   Order Contract verified: Type = ${retailOrder.order_type}, Grand Total = Rp ${Number(retailOrder.grand_total).toLocaleString('id-ID')}`,
+);
+
+// Verify Order Item has direct inventory_item_id link
+const [retailOrderItem] = await queryTable(
+  'order_items',
+  `order_id=eq.${retailOrderRes.order_id}`,
+);
+assert.ok(retailOrderItem, 'Retail order item found');
+assert.equal(retailOrderItem.inventory_item_id, blankItemRes.inventory_item_id);
+assert.equal(retailOrderItem.quantity, 10);
+assert.equal(Number(retailOrderItem.unit_price), 75000);
+assert.equal(Number(retailOrderItem.discount_total), 50000);
+assert.equal(Number(retailOrderItem.subtotal), 700000);
+console.log('   Order Item verified: direct inventory_item_id link intact');
+
+// 11.5 Verify Stock Reservation
+const [reservation] = await queryTable(
+  'inventory_reservations',
+  `order_id=eq.${retailOrderRes.order_id}`,
+);
+assert.ok(reservation, 'Inventory reservation created for retail order');
+assert.equal(reservation.inventory_item_id, blankItemRes.inventory_item_id);
+assert.equal(reservation.quantity, 10);
+assert.equal(reservation.status, 'ACTIVE');
+
+const [levelAfterRetail] = await queryTable(
+  'inventory_levels',
+  `inventory_item_id=eq.${blankItemRes.inventory_item_id}&location_code=eq.MAIN_WORKSHOP`,
+);
+assert.equal(
+  levelAfterRetail.quantity_reserved,
+  levelBeforeRetail.quantity_reserved + 10,
+);
+const availableAfter =
+  levelAfterRetail.quantity_on_hand - levelAfterRetail.quantity_reserved;
+assert.equal(availableAfter, availableBefore - 10);
+console.log(
+  `   Stock Reservation verified: 10 units reserved, Available reduced to ${availableAfter}`,
+);
+
+// 11.6 Verify Auto-Issued Commercial Invoice
+const [retailInvoice] = await queryTable(
+  'invoices',
+  `id=eq.${retailOrderRes.invoice_id}`,
+);
+assert.ok(retailInvoice, 'Retail commercial invoice found');
+assert.equal(retailInvoice.invoice_type, 'FULL_PAYMENT');
+assert.equal(retailInvoice.status, 'PAID');
+assert.equal(Number(retailInvoice.amount_total), 715000);
+assert.equal(Number(retailInvoice.amount_paid), 715000);
+assert.equal(Number(retailInvoice.balance_due), 0);
+console.log(
+  `   Invoice verified: ${retailInvoice.invoice_number} (Status: PAID, Balance Due: Rp 0)`,
+);
+
+// 11.7 Verify POS Payment Settlement
+const [posPayment] = await queryTable(
+  'payments',
+  `id=eq.${retailOrderRes.payment_id}`,
+);
+assert.ok(posPayment, 'POS payment record found');
+assert.equal(posPayment.status, 'CONFIRMED');
+assert.equal(posPayment.payment_method, 'QRIS');
+assert.equal(Number(posPayment.amount), 715000);
+assert.equal(posPayment.reference_number, 'QRIS-POS-E2E-99881');
+console.log(
+  `   POS Payment verified: ${posPayment.payment_number} (QRIS Rp 715.000 LUNAS)`,
+);
+
+// 11.8 Verify Financial Ledger Emission
+const [retailOrderLedger] = await queryTable(
+  'financial_ledger_entries',
+  `reference_id=eq.${retailOrderRes.order_id}&entry_type=eq.ORDER_COMMITTED`,
+);
+assert.ok(retailOrderLedger, 'Order committed ledger entry found');
+assert.equal(retailOrderLedger.direction, 'CREDIT');
+// Strict Financial Separation: ORDER_COMMITTED records Net Product Revenue (subtotal - discount = 700.000), isolating shipping fee
+assert.equal(Number(retailOrderLedger.amount), 700000);
+
+const [retailPaymentLedger] = await queryTable(
+  'financial_ledger_entries',
+  `reference_id=eq.${retailOrderRes.payment_id}&entry_type=eq.PAYMENT_RECEIVED`,
+);
+assert.ok(retailPaymentLedger, 'Payment received ledger entry found');
+assert.equal(retailPaymentLedger.direction, 'DEBIT');
+assert.equal(retailPaymentLedger.category, 'CASH_MOVEMENT');
+assert.equal(Number(retailPaymentLedger.amount), 715000);
+console.log(
+  `   Ledger Entries verified: ORDER_COMMITTED (${retailOrderLedger.entry_number}, Rp 700.000 Net Revenue) & PAYMENT_RECEIVED (${retailPaymentLedger.entry_number}, Rp 715.000 Cash)`,
+);
+
 console.log('\n--- ALL E2E VERIFICATION CHECKS PASSED SUCCESSFULLY! ---');
 console.log('Summary of Generated Entities:');
 console.log(`- Order Contract:     ${orderRes.order_number}`);
+console.log(
+  `- Retail POS Order:   ${retailOrderRes.order_number} (Status: CONFIRMED, PAID)`,
+);
 console.log(`- Production Job:     ${job1Res.job_number}`);
 console.log(`- QC Rework Doc:      ${qcReworkRes.inspection_number}`);
 console.log(`- QC Pass Doc:        ${qcPassRes.inspection_number}`);
@@ -771,14 +1536,45 @@ console.log(`- DP Invoice:         ${dpInvRes.invoice_number} (Status: PAID)`);
 console.log(
   `- Final Invoice:      ${finalInvRes.invoice_number} (Status: ISSUED)`,
 );
+console.log(
+  `- Retail Invoice:     ${retailInvoice.invoice_number} (Status: PAID)`,
+);
 console.log(`- Payment 1 (Partial):${pay1Res.payment_number}`);
 console.log(`- Payment 2 (Lunas):  ${pay2Res.payment_number}`);
 console.log(
   `- Payment 3 (Revert): ${pay3Res.payment_number} (Status: REVERSED)`,
 );
+console.log(`- POS QRIS Payment:   ${posPayment.payment_number} (Rp 715.000)`);
 console.log(
   `- Cost Settled:       Rp ${Number(actualCostRes.actual_cost).toLocaleString('id-ID')} (Status: Settled)`,
 );
 console.log(
   `- Realized Margin:    ${summary.realized_margin_pct}% (${summary.margin_health})`,
+);
+console.log(
+  `- Delivery Order 1:   ${do1Res.shipment_number} (Status: DELIVERED, Resi: ${dispatchRes.tracking_number})`,
+);
+console.log(
+  `- Delivery Order 2:   ${do2Res.shipment_number} (Status: READY_TO_DISPATCH)`,
+);
+console.log(
+  `- Inventory SKU 1:    ${blankItemRes.sku} (Fisik: 48, Nilai: Rp ${Number(48 * 39000).toLocaleString('id-ID')})`,
+);
+console.log(
+  `- Inventory SKU 2:    ${dtfItemRes.sku} (Fisik: 5, Nilai: Rp ${Number(5 * 350000).toLocaleString('id-ID')})`,
+);
+console.log(
+  `- Purchase Order:     ${poRes.po_number} (Status: ${gr2Res.po_status}, Total: Rp ${Number(poRes.total_amount).toLocaleString('id-ID')})`,
+);
+console.log(
+  `- Goods Receipt 1:    ${gr1Res.receipt_number} (+60 pcs diterima)`,
+);
+console.log(
+  `- Goods Receipt 2:    ${gr2Res.receipt_number} (+40 pcs diterima, LENGKAP)`,
+);
+console.log(
+  `- Vendor Bill:        ${vendorBill.bill_number} (Status: ${payBill2Res.status}, LUNAS Kas Keluar)`,
+);
+console.log(
+  `- Outbound Cash Entry:${billLedgerEntry.entry_number} (Rp ${Number(billLedgerEntry.amount).toLocaleString('id-ID')} CREDIT)`,
 );
