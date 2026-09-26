@@ -10,18 +10,18 @@ Termasuk: library, koleksi, versi file, bukti hak, review, mockup, resep minimum
 
 ## Model informasi
 
-| Objek | Kontrak minimum |
-| --- | --- |
-| Design asset | ID organisasi/brand, kode, judul, tema, cerita, sumber, pencipta/referensi partner, status dan arsip |
-| Versi desain (extension) | Nomor versi, file master privat/reference, checksum, format/pixel, ukuran cetak fisik, placement, profil produksi, pembuat/waktu; versi yang sudah direferensikan tidak ditimpa |
-| Bukti hak (extension) | Referensi dokumen privat, jenis sumber, ruang penggunaan yang ditinjau, batas/tanggal jika ada, reviewer/waktu dan alasan; metadata sendiri bukan pengesahan otomatis |
-| Asset/file | Pisahkan file dari design asset sesuai kanonikal; storage key, MIME terverifikasi, ukuran, checksum dan akses. Preview tidak memberi akses master atau bukti kontrak |
-| Koleksi (extension) | Nama/cerita, urutan desain, periode opsional; bukan stok atau klaim limited edition otomatis |
-| Catalog item | Jenis PRODUCT/CONFIGURABLE_PRODUCT sesuai kanonikal, brand, kode/nama, versi desain, deskripsi, pricing mode, status |
-| Variant | SKU unik dalam organisasi, warna, ukuran, blank reference, active flag; mockup yang sesuai. Keputusan scope uniqueness ditulis eksplisit dalam migrasi |
-| Recipe minimum (extension) | Blank, transfer per placement, kemasan dengan satuan per item/per paket; versioned. Jangan menghitung kemasan paket sekali untuk setiap item |
-| Price book version (extension) | IDR integer, harga dan komponen biaya bersumber, tanggal efektif, channel/tier bila berlaku, reviewer; nilai belum diketahui bukan nol |
-| Review/audit | Aktor dari sesi, revisi yang diperiksa, hasil/alasan/waktu; append-only |
+| Objek                          | Kontrak minimum                                                                                                                                                                 |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Design asset                   | ID organisasi/brand, kode, judul, tema, cerita, sumber, pencipta/referensi partner, status dan arsip                                                                            |
+| Versi desain (extension)       | Nomor versi, file master privat/reference, checksum, format/pixel, ukuran cetak fisik, placement, profil produksi, pembuat/waktu; versi yang sudah direferensikan tidak ditimpa |
+| Bukti hak (extension)          | Referensi dokumen privat, jenis sumber, ruang penggunaan yang ditinjau, batas/tanggal jika ada, reviewer/waktu dan alasan; metadata sendiri bukan pengesahan otomatis           |
+| Asset/file                     | Pisahkan file dari design asset sesuai kanonikal; storage key, MIME terverifikasi, ukuran, checksum dan akses. Preview tidak memberi akses master atau bukti kontrak            |
+| Koleksi (extension)            | Nama/cerita, urutan desain, periode opsional; bukan stok atau klaim limited edition otomatis                                                                                    |
+| Catalog item                   | Jenis PRODUCT/CONFIGURABLE_PRODUCT sesuai kanonikal, brand, kode/nama, versi desain, deskripsi, pricing mode, status                                                            |
+| Variant                        | SKU unik dalam organisasi, warna, ukuran, blank reference, active flag; mockup yang sesuai. Keputusan scope uniqueness ditulis eksplisit dalam migrasi                          |
+| Recipe minimum (extension)     | Blank, transfer per placement, kemasan dengan satuan per item/per paket; versioned. Jangan menghitung kemasan paket sekali untuk setiap item                                    |
+| Price book version (extension) | IDR integer, harga dan komponen biaya bersumber, tanggal efektif, channel/tier bila berlaku, reviewer; nilai belum diketahui bukan nol                                          |
+| Review/audit                   | Aktor dari sesi, revisi yang diperiksa, hasil/alasan/waktu; append-only                                                                                                         |
 
 Hak penggunaan dan file sensitif mengikuti organisasi/brand. Produk curated adalah kombinasi desain-versi dan spesifikasi jual; bukan jumlah stok baru. Stock blank, film dan barang jadi tetap objek berbeda pada paket inventory.
 
