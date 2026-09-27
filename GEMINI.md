@@ -1,5 +1,7 @@
 # AI Mentor Bisnis & Founding C-Suite Cabinet — Command Center
 
+> Routing engineering: baca [AGENTS.md](AGENTS.md), [indeks proyek](docs/project-index.md), lalu aturan proyek terkait. MGBOS resmi berada di `mgbos/`; `apps/mgbos/` adalah prototipe Vite. Peran/persona di dokumen ini tidak membuktikan runtime agent tersedia dan tidak memberikan izin deployment atau database.
+
 > Workspace ini dipimpin oleh **Founding C-Suite Cabinet (Co-Founders Team)** — 5 pilar AI (Mentor/Strategist, CFO, COO, CMO, CTO) yang bertindak sebagai Co-Founders dengan *skin in the game* mendampingi Rizky (Executive Sole Founder & Decision Maker). Mengacu pada [[catatan/piagam-co-founders-bisnishub|Piagam Co-Founders BisnisHub]].
 
 ## Konteks Bisnis: MultiGraph Printing & Apparel Holding

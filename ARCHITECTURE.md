@@ -15,8 +15,10 @@ tags:
 
 # 🏗️ ARCHITECTURE — MultiGraph Business OS & Web Apps Ecosystem
 
+> Scope clarification, 2026-09-27: topology dan ownership di bawah adalah dokumentasi legacy/prototipe. Diagram single-project Supabase tidak berlaku untuk MGBOS Next.js resmi. Untuk peta repo terkini gunakan [indeks proyek](docs/project-index.md); untuk MGBOS gunakan [arsitektur workspace](mgbos/docs/architecture/README.md). Paket `packages/shared/` di bawah bukan paket domain MGBOS resmi.
+
 > [!abstract]
-> Dokumen ini adalah **peta arsitektur resmi** ekosistem perangkat lunak **MultiGraph Group**. Mengatur relasi antara **MGBOS Core** (operating system bisnis baru), **BisnisHub Admin Legacy** (admin operasional darurat), **TeeStock WebClient** (public storefront), dan **@bisnishub/shared** (single source of truth). Tujuannya: **mencegah duplikasi kode, menjamin konsistensi kontrak data, dan memperjelas hak kepemilikan file**.
+> Dokumen ini mempertahankan **peta arsitektur legacy/prototipe** ekosistem perangkat lunak **MultiGraph Group**. Mengatur relasi antara **MGBOS Core** (operating system bisnis baru), **BisnisHub Admin Legacy** (admin operasional darurat), **TeeStock WebClient** (public storefront), dan **@bisnishub/shared** (single source of truth). Tujuannya: **mencegah duplikasi kode, menjamin konsistensi kontrak data, dan memperjelas hak kepemilikan file**.
 
 ---
 

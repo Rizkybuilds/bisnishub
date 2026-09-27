@@ -11,6 +11,8 @@ tags:
 
 # 🏠 BisnisHub Command Center
 
+Peta software dan perintah terkini: [indeks proyek](docs/project-index.md) dan [README](README.md).
+
 > [!abstract] **Visi Eksekutif 2 Pilar Bisnis**
 > Mengelola dan mengakselerasi **2 Pilar Bisnis Inti** yang saling memperkuat (*Double Flywheel Model*):
 > 1. **MultiGraph Group** (Holding Industri Percetakan, Apparel, & Kemasan — Client #0).
@@ -28,7 +30,7 @@ tags:
 |---|---|---|---|
 | [[catatan/harian/2026-09-18|Catatan Harian]] | 🌟 **MGBOS Next.js (Port 3101)** (`cd mgbos && pnpm dev`) | [[templates/Template - Catatan Harian|T-Harian]] | [[catatan/panduan-external-ssd-1tb|External SSD 1TB (D:\)]] |
 | [[catatan/weekly-review/README|Weekly Review]] | 🛍️ **TeeStock Store (Port 5173)** (`npm run dev:teestock`) | [[templates/Template - Weekly Business Review|T-Weekly Review]] | [[catatan/piagam-co-founders-bisnishub|Piagam Co-Founders]] |
-| [[catatan/ide/README|Ide & Scratchpad]] | 🌟 **MGBOS Vite Proto (Port 3001)** (`npm run dev:mgbos`) | [[templates/Template - Sesi Konsultasi C-Suite|T-Konsultasi]] | [[catatan/sesi/README|Arsip Blueprint MGBOS]] |
+| [[catatan/ide/README|Ide & Scratchpad]] | 🌟 **MGBOS Vite Proto (Port 3001)** (`npm run dev:mgbos-prototype`) | [[templates/Template - Sesi Konsultasi C-Suite|T-Konsultasi]] | [[catatan/sesi/README|Arsip Blueprint MGBOS]] |
 | [[catatan/mgbos-master-roadmap-tracker|MGBOS Roadmap]] | 🛡️ **BisnisHub Admin (Port 3000)** (`npm run dev:bisnishub`) | [[templates/Template - SOP Operasional|T-SOP]] | [[README|README Workspace]] |
 | | 🚀 **RizkyBuild Hub** ([[bisnis/rizkybuild/README\|RizkyBuild]]) | [[templates/Template - Marketing & Konten Kampanye|T-Marketing]] | [[GEMINI|AI Rules & Engine]] |
 | | [[catatan/arsitektur-ekosistem-bisnishub-teestock|Arsitektur Ekosistem]] | | [[memory/business_profile.json|Business Profile]] |
@@ -140,7 +142,7 @@ Pusat komando ekosistem manufaktur fisik, percetakan, apparel, dan packaging:
 > 
 > 2. 🌟 **MGBOS Core Prototype (Vite 6)**:
 >    - **Path Proyek:** `apps/mgbos`
->    - **Menjalankan di Lokal:** `npm run dev:mgbos` (Port **3001**)
+>    - **Menjalankan di Lokal:** `npm run dev:mgbos-prototype` (Port **3001**)
 >    - **Fokus:** Referensi UI Shell interaktif dan placeholder rute MGBOS-005 s.d MGBOS-016.
 > 
 > 3. 🛡️ **BisnisHub Admin Legacy (PWA Fallback)**:

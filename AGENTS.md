@@ -6,6 +6,10 @@ Existing `apps/mgbos/` is a Vite prototype, not the new Next.js workspace.
 Root `supabase` is a link to TeeStock's existing Supabase directory. Never use it for MGBOS work.
 Keep legacy application, deployment configuration, migrations and business notes unchanged unless explicitly in scope.
 
+## Repository navigation
+
+Read [project index](docs/project-index.md) and [directory ownership](docs/engineering/repository-layout.md) before choosing a target. `projects/` is a future migration plan, not an active code location. Root `*:mgbos` scripts target official Next.js; `*:mgbos-prototype` target legacy Vite. Keep business notes and each system's database/toolchain boundaries separate.
+
 ## Agent and skill maintenance
 
 Project-owned skills live in `.agents/skills/`. For creating, updating or auditing agent instructions and skills, read `.agents/skills/agent-skill-maintainer/SKILL.md`.
