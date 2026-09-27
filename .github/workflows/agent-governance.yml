@@ -1,0 +1,55 @@
+name: Agent Governance
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: agent-governance-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  agent-governance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r scripts/governance/requirements.txt
+      - run: python scripts/governance/validate-agent-governance.py
+      - run: python -m unittest discover -s scripts/governance -p 'test_*.py'
+  migration-immutability:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: mgbos/.node-version
+      - run: node --test scripts/governance/migration-immutability.test.mjs
+      - name: Compare existing migrations against trusted event base
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BASE: ${{ github.event.before }}
+          PUSH_HEAD: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$EVENT_NAME" in
+            pull_request) base="$PR_BASE"; head="$PR_HEAD" ;;
+            push) base="$PUSH_BASE"; head="$PUSH_HEAD" ;;
+            workflow_dispatch) base="$(git rev-parse HEAD^)"; head="$(git rev-parse HEAD)" ;;
+            *) echo "Unsupported event; no comparison base" >&2; exit 1 ;;
+          esac
+          node scripts/governance/check-migration-immutability.mjs --base "$base" --head "$head"

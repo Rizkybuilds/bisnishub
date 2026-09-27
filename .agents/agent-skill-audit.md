@@ -112,3 +112,11 @@ Agent runtime Implementer/Reviewer belum dibuat. Paket berikutnya yang tidak mem
 ## MGBOS maintenance policy update — 2026-09-25
 
 Added workspace maintenance gates and linked release/recovery, backup/restore, monitoring/incident runbooks with an operational evidence register. Corrected the obsolete local database runbook and removed reset from routine startup. No runtime agent, Skill copy synchronization, deployment, backup service or automation was created. Hosted CI, branch protection, staging, backup and restore readiness remain unverified; documentation is not acceptance evidence. Validation scope: local links, instruction consistency and focused diff; no application or database mutation.
+
+## MGBOS Engineering Control Plane — 2026-09-27
+
+Added five provider-neutral role contracts in `.agents/roles/`, three project skills (`mgbos-change-planner`, `mgbos-business-integrity-auditor`, `mgbos-pr-reviewer`), and 18 synthetic behavioral cases in `.agents/evals/`. These explicitly loaded contracts do not register or launch provider runtimes. The skill catalog now has 42 entrypoints.
+
+The AI automation/copilot and web security/performance entrypoints now separate canonical MGBOS command/state/Next.js guidance from historical legacy references. Preserved `argument-hint` remains a bundled-validator compatibility limitation; three new skills pass directly and three revised skills pass only in normalized temporary copies. The project validator explicitly reports that exception.
+
+Separate governance and migration-immutability jobs supplement the unchanged MGBOS Foundation workflow. See the [implementation report](../mgbos/docs/engineering/agent-system/implementation-report.md) for executed checks, manual scenario review, CRLF formatting caveat and PR #3 recommendation. Structural CI, manual instruction review, independent agent evaluation, hosted application/database CI and deployment are distinct evidence states. No provider configuration, branch protection, application behavior or database was changed by this package.
