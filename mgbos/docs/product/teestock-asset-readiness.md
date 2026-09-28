@@ -6,17 +6,17 @@ Tanggal: 2026-09-25. Audit baca filesystem/source lokal; tidak membaca database 
 
 **Belum ada desain curated yang dapat disahkan siap dijual dari bukti lokal yang ditemukan.** Ini kekurangan bukti, bukan kesimpulan bahwa TeeStock tidak memiliki desain. Pemilihan enam desain aktual tetap terbuka; jangan mengisi slot menggunakan data demo atau ide tema.
 
-| Kelompok | Bukti | Penilaian / tindakan |
-| --- | --- | --- |
-| Identitas brand | Logo PNG/JPG/SVG di `bisnis/teestock/brand/`, logo/icon/OG image di `web/public/` | Aset identitas tersedia; bukan master cetak curated. Belum dilakukan QA visual atau audit hak atas file |
-| Raw Identity / TS-STM-001 | Fallback dalam `web/src/pages/store/HomePage.jsx`; foto Unsplash | Contoh tampilan, bukan kandidat koleksi terverifikasi |
-| SKU TS-STM, TS-SUB, TS-OUT dan lainnya | Daftar `LEGACY_SEED_SKUS` di `packages/shared/src/services/productsApi.js` | Source menyebutnya demo/mockup; keluarkan dari seleksi sampai ada bukti produk nyata |
-| Produk live | Source membaca `ts_products`; juga mempunyai fallback localStorage | Memerlukan export baca terbatas atau akses katalog yang diverifikasi; belum diinventaris sebagai record nyata |
-| Blank supplier | `bisnis/teestock/tools/cititex_catalog_full.json`: 29 record, termasuk 7200 dan 3600 | Referensi bahan, bukan stok tersedia atau desain milik TeeStock. Harga/suplai perlu diperbarui saat dipakai |
-| Film/master artwork | Path `D:/bisnishub-drive/teestock` yang disebut dokumentasi tidak ditemukan pada host ini | Lokasi master perlu ditentukan; belum ada bukti PNG siap cetak/PSD/AI pada pencarian lokal yang relevan |
-| Bukti hak penggunaan | SOP kurasi/lisensi tersedia | SOP bukan bukti pembelian/kontrak untuk suatu desain. Bukti per desain belum ditemukan |
-| Mockup per warna | Adapter mendukung `variant_images` dan metadata `story_behind` | Kemampuan kode tersedia; belum membuktikan file mockup milik setiap produk tersedia |
-| Harga | Piagam 17 September dan `packages/shared/src/constants/pricing.js` | Perlu rekonsiliasi price book per produk; konstanta fee tidak diperlakukan sebagai tarif layanan terkini |
+| Kelompok                               | Bukti                                                                                     | Penilaian / tindakan                                                                                          |
+| -------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Identitas brand                        | Logo PNG/JPG/SVG di `bisnis/teestock/brand/`, logo/icon/OG image di `web/public/`         | Aset identitas tersedia; bukan master cetak curated. Belum dilakukan QA visual atau audit hak atas file       |
+| Raw Identity / TS-STM-001              | Fallback dalam `web/src/pages/store/HomePage.jsx`; foto Unsplash                          | Contoh tampilan, bukan kandidat koleksi terverifikasi                                                         |
+| SKU TS-STM, TS-SUB, TS-OUT dan lainnya | Daftar `LEGACY_SEED_SKUS` di `packages/shared/src/services/productsApi.js`                | Source menyebutnya demo/mockup; keluarkan dari seleksi sampai ada bukti produk nyata                          |
+| Produk live                            | Source membaca `ts_products`; juga mempunyai fallback localStorage                        | Memerlukan export baca terbatas atau akses katalog yang diverifikasi; belum diinventaris sebagai record nyata |
+| Blank supplier                         | `bisnis/teestock/tools/cititex_catalog_full.json`: 29 record, termasuk 7200 dan 3600      | Referensi bahan, bukan stok tersedia atau desain milik TeeStock. Harga/suplai perlu diperbarui saat dipakai   |
+| Film/master artwork                    | Path `D:/bisnishub-drive/teestock` yang disebut dokumentasi tidak ditemukan pada host ini | Lokasi master perlu ditentukan; belum ada bukti PNG siap cetak/PSD/AI pada pencarian lokal yang relevan       |
+| Bukti hak penggunaan                   | SOP kurasi/lisensi tersedia                                                               | SOP bukan bukti pembelian/kontrak untuk suatu desain. Bukti per desain belum ditemukan                        |
+| Mockup per warna                       | Adapter mendukung `variant_images` dan metadata `story_behind`                            | Kemampuan kode tersedia; belum membuktikan file mockup milik setiap produk tersedia                           |
+| Harga                                  | Piagam 17 September dan `packages/shared/src/constants/pricing.js`                        | Perlu rekonsiliasi price book per produk; konstanta fee tidak diperlakukan sebagai tarif layanan terkini      |
 
 Pencarian memakai daftar file relevan di TeeStock dan repo tanpa memasuki link Supabase root atau bisnis di luar scope. Remote URL tidak diunduh. Manifest [aset lokal](teestock-local-assets.csv) memuat ukuran dan checksum untuk identitas file, bukan sertifikasi lisensi atau kualitas cetak.
 

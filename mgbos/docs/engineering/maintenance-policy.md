@@ -15,13 +15,13 @@ Kesalahan uang, akses tidak sah, kehilangan data atau pemulihan yang tidak terbu
 
 ## Status bukti
 
-| Status | Bukti minimum |
-| --- | --- |
-| Direncanakan | Kebutuhan dan kriteria penerimaan |
-| Diimplementasikan | Kode/migrasi dengan identitas revisi |
-| Terverifikasi lokal | Hasil pemeriksaan bertanggal untuk revisi tersebut |
-| Terverifikasi CI | Tautan run sukses pada revisi tersebut |
-| Dirilis | Target, revisi deployment dan pemeriksaan endpoint |
+| Status               | Bukti minimum                                                        |
+| -------------------- | -------------------------------------------------------------------- |
+| Direncanakan         | Kebutuhan dan kriteria penerimaan                                    |
+| Diimplementasikan    | Kode/migrasi dengan identitas revisi                                 |
+| Terverifikasi lokal  | Hasil pemeriksaan bertanggal untuk revisi tersebut                   |
+| Terverifikasi CI     | Tautan run sukses pada revisi tersebut                               |
+| Dirilis              | Target, revisi deployment dan pemeriksaan endpoint                   |
 | Diterima operasional | Alur pengguna lolos, pemilik, backup/restore dan monitoring terbukti |
 
 Laporan lama, jumlah test atau label dashboard bukan bukti readiness terkini. Jangan menyatakan sprint siap produksi jika gate wajib belum terbukti.
@@ -34,13 +34,13 @@ Verifikasi branch protection dan required checks di layanan Git; YAML tidak memb
 
 ## Ritme perawatan saat operasional
 
-| Waktu | Kegiatan dan bukti |
-| --- | --- |
-| Harian | Tinjau error penting, umur backup, saldo tidak konsisten dan pekerjaan tertahan |
-| Setiap perubahan/rilis | Pengujian sesuai risiko, bukti revisi, dokumentasi dan pemeriksaan pascarilis |
-| Mingguan | Tinjau bug, pekerjaan otomatis gagal, piutang, biaya layanan dan kapasitas |
-| Bulanan | Tinjau akses, dependency/security advisory, patch dan latihan restore |
-| Setelah insiden/infrastruktur berubah | Tinjau pemulihan, runbook dan pengujian regresi |
+| Waktu                                 | Kegiatan dan bukti                                                              |
+| ------------------------------------- | ------------------------------------------------------------------------------- |
+| Harian                                | Tinjau error penting, umur backup, saldo tidak konsisten dan pekerjaan tertahan |
+| Setiap perubahan/rilis                | Pengujian sesuai risiko, bukti revisi, dokumentasi dan pemeriksaan pascarilis   |
+| Mingguan                              | Tinjau bug, pekerjaan otomatis gagal, piutang, biaya layanan dan kapasitas      |
+| Bulanan                               | Tinjau akses, dependency/security advisory, patch dan latihan restore           |
+| Setelah insiden/infrastruktur berubah | Tinjau pemulihan, runbook dan pengujian regresi                                 |
 
 Ini kewajiban proses, bukan jadwal otomatis yang sudah aktif. Pembaruan dependency dibuat terpisah dengan lockfile dan pengujian; prioritaskan kerentanan menurut dampak dan keterpaparan.
 

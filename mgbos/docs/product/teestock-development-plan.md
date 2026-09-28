@@ -27,14 +27,14 @@ Rizky mengonfirmasi penjualan aktif **gabungan retail dan custom**, lalu memberi
 
 ### Keputusan produk sebelum paket terkait dimulai
 
-| Pertanyaan | Dampak keputusan | Pemilik |
-| --- | --- | --- |
-| Gabungan retail/custom sudah dikonfirmasi; subjenis retail, kanal dan order/pcs per minggu belum | Besaran pilot, kebutuhan import dan kapasitas | Rizky |
-| Tiga hambatan harian dan waktu yang terbuang | Menentukan paket paling bernilai setelah gate dasar | Rizky |
-| Stok/hub/vendor yang benar-benar digunakan | Cakupan stok dan pengadaan; jangan aktifkan multi-hub fiktif | Rizky |
-| Kebijakan DP, pelunasan, pembatalan, cacat dan pengiriman | Guard pelepasan produksi/pengiriman dan refund | Rizky |
-| Anggaran layanan dan waktu review/pengujian per minggu | Tahap aktivasi layanan serta kecepatan pelaksanaan | Rizky |
-| Sistem pemilik order, pembayaran dan stok saat ini | Strategi koeksistensi dan cutover tanpa double posting | Rizky + pelaksana teknis |
+| Pertanyaan                                                                                       | Dampak keputusan                                             | Pemilik                  |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------ |
+| Gabungan retail/custom sudah dikonfirmasi; subjenis retail, kanal dan order/pcs per minggu belum | Besaran pilot, kebutuhan import dan kapasitas                | Rizky                    |
+| Tiga hambatan harian dan waktu yang terbuang                                                     | Menentukan paket paling bernilai setelah gate dasar          | Rizky                    |
+| Stok/hub/vendor yang benar-benar digunakan                                                       | Cakupan stok dan pengadaan; jangan aktifkan multi-hub fiktif | Rizky                    |
+| Kebijakan DP, pelunasan, pembatalan, cacat dan pengiriman                                        | Guard pelepasan produksi/pengiriman dan refund               | Rizky                    |
+| Anggaran layanan dan waktu review/pengujian per minggu                                           | Tahap aktivasi layanan serta kecepatan pelaksanaan           | Rizky                    |
+| Sistem pemilik order, pembayaran dan stok saat ini                                               | Strategi koeksistensi dan cutover tanpa double posting       | Rizky + pelaksana teknis |
 
 Jawaban belum tersedia tidak menghalangi inventarisasi dan desain; jangan mengunci nominal, SLA, pembelian layanan atau migrasi transaksi berdasarkan asumsi.
 
@@ -46,11 +46,11 @@ Ukur baseline sebelum pilot: waktu administrasi per order, jumlah input ulang, o
 
 ## 4. Alur produk yang diprioritaskan
 
-| Lini | Alur minimum | Batas tahap awal |
-| --- | --- | --- |
-| Custom Atelier | Inquiry → spesifikasi/artwork → penawaran → persetujuan → order → invoice/pembayaran sesuai kebijakan → bahan/produksi → QC → pengiriman → penutupan | Tidak membuat editor desain atau gang sheet otomatis |
-| Kaos polos | Produk/varian → order retail → pembayaran → reservasi → picking/packing → pengiriman | Tidak memaksa lead/penawaran/SPK cetak untuk barang tanpa proses cetak |
-| Desain katalog | SKU/varian + versi artwork → order → bahan/film → press → QC → pengiriman | Tidak menganggap produk cetak selalu mempunyai stok barang jadi |
+| Lini           | Alur minimum                                                                                                                                         | Batas tahap awal                                                       |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Custom Atelier | Inquiry → spesifikasi/artwork → penawaran → persetujuan → order → invoice/pembayaran sesuai kebijakan → bahan/produksi → QC → pengiriman → penutupan | Tidak membuat editor desain atau gang sheet otomatis                   |
+| Kaos polos     | Produk/varian → order retail → pembayaran → reservasi → picking/packing → pengiriman                                                                 | Tidak memaksa lead/penawaran/SPK cetak untuk barang tanpa proses cetak |
+| Desain katalog | SKU/varian + versi artwork → order → bahan/film → press → QC → pengiriman                                                                            | Tidak menganggap produk cetak selalu mempunyai stok barang jadi        |
 
 Pembayaran, produksi, QC dan pengiriman memiliki lifecycle terpisah. Kebijakan yang diatur owner mengendalikan kesiapan kerja; uang masuk tidak otomatis menandakan barang selesai. Gunakan satu model order dengan jalur komersial sesuai jenis penjualan, tanpa membuat transaksi penawaran palsu untuk retail.
 
@@ -58,22 +58,22 @@ Pembayaran, produksi, QC dan pengiriman memiliki lifecycle terpisah. Kebijakan y
 
 ID `TS-PLAN-*` adalah identitas rencana, bukan nomor engineering yang sudah disetujui. Tetapkan nomor implementasi berikutnya setelah memeriksa backlog agar tidak bentrok dengan perubahan yang berjalan. Ukuran S/M/L menyatakan kompleksitas relatif: S satu area terbatas, M lintas beberapa komponen, L lintas transaksi/migrasi/integrasi. Estimasi kalender ditetapkan setelah discovery; jangan menjalankan lebih dari satu paket implementasi aktif untuk kapasitas solopreneur.
 
-| Paket | Prioritas / ukuran | Hasil konkret | Dependensi dan syarat selesai |
-| --- | --- | --- | --- |
-| TS-PLAN-01 Baseline operasional | P0 / S | Peta kanal, lini, data, pemilik sistem, contoh alur dan baseline waktu | Review 3–5 contoh transaksi yang disamarkan; semua asumsi kritis memiliki status/pemilik |
-| TS-PLAN-02 Stabilitas transaksi | P0 / L | Audit ulang uang/otorisasi/retry, state machine, upgrade migrasi; perbaikan temuan kritis; dokumentasi selaras | 01; regresi lewat server command/UI, konkurensi relevan dan database lulus; CI pada revisi yang sama terkonfirmasi |
-| TS-PLAN-03 Kesiapan lingkungan | P0 / M | Rencana staging, konfigurasi billing, target RPO/RTO, backup/restore, monitoring dan recovery | Dapat didesain bersama 02; aktivasi sesuai scope; semua bukti register wajib sebelum transaksi nyata |
-| TS-PLAN-14 Library desain & produk curated | P1 / L | Koleksi, sumber/bukti hak, versi artwork, sampel, varian/placement, mockup, price book dan resep minimum | 01/02; publikasi ditolak jika hak atau kelayakan produksi belum diperiksa; order mengunci versi; master digital dibedakan dari stok fisik |
-| TS-PLAN-04 Meja kerja owner | P1 / M | Antrean tindakan dengan tenggat, prioritas, alasan dan tautan sumber; filter TeeStock; detail order terpadu | 02; jumlah berasal dari query keseluruhan scope/periode, bukan penjumlahan 100 baris terakhir; tidak menggandakan status transaksi |
-| TS-PLAN-05 Artwork dan persetujuan | P1 / M | File berversi, akses aman, revisi yang disetujui pelanggan, catatan persetujuan dan checklist preflight | 02; versi yang diproduksi dapat ditelusuri, file internal tidak terbuka publik; revisi tidak menimpa persetujuan lama |
-| TS-PLAN-06 Pengiriman dan penutupan | P1 / L | Shipment/item/qty, kirim parsial, resi manual, label A6, serah-terima, gagal/retur dan guard penutupan order | 02 + kebijakan owner; uji partial, over-shipment, resi duplikat, batal sebelum kirim, delivered berulang; biaya kurir aktual terpisah |
-| TS-PLAN-07 Item, varian dan stok minimum | P1 / L | SKU kaos ukuran/warna/bahan, film dan kemasan; lokasi aktif; mutasi, reservasi, pelepasan, pemakaian, cacat dan stock opname beralasan | 01/02; dua order bersamaan tidak memakai unit stok sama; persediaan vendor dicatat sebagai informasi, bukan stok milik sendiri |
-| TS-PLAN-08 Pengadaan dan kas keluar | P1 / L | Kebutuhan bahan → permintaan vendor/PO sederhana → penerimaan parsial → tagihan/biaya → pembayaran vendor; tautan order/SPK | 07; receipt/payment retry aman, biaya tidak tercatat dua kali, penerimaan cacat dan saldo utang dapat ditelusuri |
-| TS-PLAN-09 Order retail cepat | P1 / L | Order multi-item dari SKU dan harga tersimpan, diskon berwenang, invoice/pembayaran, reservasi; rute polos vs cetak | 07 dan 02; tidak diwajibkan penawaran manual untuk tiap kaos; stok bersama custom/retail tidak oversell; snapshot historis aman |
-| TS-PLAN-10 Pembatalan, retur dan refund | P1 / L | Kasus keluhan, item/qty alasan, penerimaan balik dan disposisi stok, kewajiban refund, bukti kas keluar | 06/07 + aturan owner; refund parsial tidak melebihi hak, retry aman, tidak menghapus pembayaran asli atau menyamakan reversal dengan refund |
-| TS-PLAN-11 Penghubung storefront | P2 / L | Pemetaan ID eksternal, staging import, dry-run, validasi, idempotensi, rekonsiliasi dan status integrasi | 09/10 + ADR koeksistensi; replay tidak membuat order/payment ganda; cutover per cohort, pemilik data jelas; scope legacy terpisah |
-| TS-PLAN-12 HPP dan profit tepercaya | P1 / M | Biaya bahan, film, vendor, kemasan, fee dan cacat yang terverifikasi; biaya sementara vs final; export rekonsiliasi | 08/10; tidak double-count estimasi/komitmen/aktual, ongkir direkonsiliasi, biaya belum lengkap diberi label provisional |
-| TS-PLAN-13 Otomasi terbatas | P2 / M | Reminder internal dan draft pesan; kemudian satu integrasi terbukti bernilai | Pilot stabil + command idempotent/outbox yang diuji; kegagalan/retry dan audit terlihat, tidak kirim otomatis tanpa scope/izin |
+| Paket                                      | Prioritas / ukuran | Hasil konkret                                                                                                                          | Dependensi dan syarat selesai                                                                                                               |
+| ------------------------------------------ | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| TS-PLAN-01 Baseline operasional            | P0 / S             | Peta kanal, lini, data, pemilik sistem, contoh alur dan baseline waktu                                                                 | Review 3–5 contoh transaksi yang disamarkan; semua asumsi kritis memiliki status/pemilik                                                    |
+| TS-PLAN-02 Stabilitas transaksi            | P0 / L             | Audit ulang uang/otorisasi/retry, state machine, upgrade migrasi; perbaikan temuan kritis; dokumentasi selaras                         | 01; regresi lewat server command/UI, konkurensi relevan dan database lulus; CI pada revisi yang sama terkonfirmasi                          |
+| TS-PLAN-03 Kesiapan lingkungan             | P0 / M             | Rencana staging, konfigurasi billing, target RPO/RTO, backup/restore, monitoring dan recovery                                          | Dapat didesain bersama 02; aktivasi sesuai scope; semua bukti register wajib sebelum transaksi nyata                                        |
+| TS-PLAN-14 Library desain & produk curated | P1 / L             | Koleksi, sumber/bukti hak, versi artwork, sampel, varian/placement, mockup, price book dan resep minimum                               | 01/02; publikasi ditolak jika hak atau kelayakan produksi belum diperiksa; order mengunci versi; master digital dibedakan dari stok fisik   |
+| TS-PLAN-04 Meja kerja owner                | P1 / M             | Antrean tindakan dengan tenggat, prioritas, alasan dan tautan sumber; filter TeeStock; detail order terpadu                            | 02; jumlah berasal dari query keseluruhan scope/periode, bukan penjumlahan 100 baris terakhir; tidak menggandakan status transaksi          |
+| TS-PLAN-05 Artwork dan persetujuan         | P1 / M             | File berversi, akses aman, revisi yang disetujui pelanggan, catatan persetujuan dan checklist preflight                                | 02; versi yang diproduksi dapat ditelusuri, file internal tidak terbuka publik; revisi tidak menimpa persetujuan lama                       |
+| TS-PLAN-06 Pengiriman dan penutupan        | P1 / L             | Shipment/item/qty, kirim parsial, resi manual, label A6, serah-terima, gagal/retur dan guard penutupan order                           | 02 + kebijakan owner; uji partial, over-shipment, resi duplikat, batal sebelum kirim, delivered berulang; biaya kurir aktual terpisah       |
+| TS-PLAN-07 Item, varian dan stok minimum   | P1 / L             | SKU kaos ukuran/warna/bahan, film dan kemasan; lokasi aktif; mutasi, reservasi, pelepasan, pemakaian, cacat dan stock opname beralasan | 01/02; dua order bersamaan tidak memakai unit stok sama; persediaan vendor dicatat sebagai informasi, bukan stok milik sendiri              |
+| TS-PLAN-08 Pengadaan dan kas keluar        | P1 / L             | Kebutuhan bahan → permintaan vendor/PO sederhana → penerimaan parsial → tagihan/biaya → pembayaran vendor; tautan order/SPK            | 07; receipt/payment retry aman, biaya tidak tercatat dua kali, penerimaan cacat dan saldo utang dapat ditelusuri                            |
+| TS-PLAN-09 Order retail cepat              | P1 / L             | Order multi-item dari SKU dan harga tersimpan, diskon berwenang, invoice/pembayaran, reservasi; rute polos vs cetak                    | 07 dan 02; tidak diwajibkan penawaran manual untuk tiap kaos; stok bersama custom/retail tidak oversell; snapshot historis aman             |
+| TS-PLAN-10 Pembatalan, retur dan refund    | P1 / L             | Kasus keluhan, item/qty alasan, penerimaan balik dan disposisi stok, kewajiban refund, bukti kas keluar                                | 06/07 + aturan owner; refund parsial tidak melebihi hak, retry aman, tidak menghapus pembayaran asli atau menyamakan reversal dengan refund |
+| TS-PLAN-11 Penghubung storefront           | P2 / L             | Pemetaan ID eksternal, staging import, dry-run, validasi, idempotensi, rekonsiliasi dan status integrasi                               | 09/10 + ADR koeksistensi; replay tidak membuat order/payment ganda; cutover per cohort, pemilik data jelas; scope legacy terpisah           |
+| TS-PLAN-12 HPP dan profit tepercaya        | P1 / M             | Biaya bahan, film, vendor, kemasan, fee dan cacat yang terverifikasi; biaya sementara vs final; export rekonsiliasi                    | 08/10; tidak double-count estimasi/komitmen/aktual, ongkir direkonsiliasi, biaya belum lengkap diberi label provisional                     |
+| TS-PLAN-13 Otomasi terbatas                | P2 / M             | Reminder internal dan draft pesan; kemudian satu integrasi terbukti bernilai                                                           | Pilot stabil + command idempotent/outbox yang diuji; kegagalan/retry dan audit terlihat, tidak kirim otomatis tanpa scope/izin              |
 
 Paket 06 dan 07 dapat diprioritaskan ulang menurut hambatan: pengiriman mendahului jika fulfillment manual bermasalah; stok mendahului jika oversell/pengadaan paling mengganggu. Paket 12 harus mulai dengan aturan biaya sejak 02; penyempurnaan penuh bergantung data 08/10. Refund minimum yang aman menjadi syarat pilot berbayar; retur lengkap dapat ditambahkan sesuai cakupan pilot.
 
@@ -81,15 +81,15 @@ Paket 06 dan 07 dapat diprioritaskan ulang menurut hambatan: pengiriman mendahul
 
 Setiap paket transaksi wajib merinci trigger, aktor, kondisi awal, hasil, dampak uang/stok, retry, audit dan kegagalan. Tabel berikut adalah kebutuhan yang diusulkan, bukan nama fungsi/tabel baru yang sudah final.
 
-| Tindakan | Guard utama | Efek atomik dan penanganan ulang |
-| --- | --- | --- |
-| Konfirmasi order retail | Aktor berwenang, varian/harga/qty sah, external ID unik | Snapshot item/harga, reservasi sesuai kebijakan, audit; request sama memberi hasil sama |
-| Reservasi/pemakaian bahan | Scope lokasi dan organisasi sesuai; tersedia cukup; status order/SPK sah | Mutasi/reservasi terkait sumber; kegagalan tidak menyisakan saldo setengah berubah |
-| Terima pembelian | Qty diterima tidak melebihi kebijakan PO; cacat dipisahkan | Receipt dan stok baik/karantina; retry receipt tidak menambah stok dua kali |
-| Lepas untuk produksi | Artwork disetujui jika perlu; kebutuhan bahan dan aturan pembayaran terpenuhi | Kesiapan produksi tercatat dengan sumber; pengecualian owner beralasan, bukan status pembayaran palsu |
-| Dispatch shipment | Qty siap/QC sesuai, belum dikirim, alamat tersimpan, kebijakan pembayaran terpenuhi | Alokasi item pengiriman dan audit; batas total per item; status kurir dipetakan ke kanonikal |
-| Refund | Pembayaran asli terkonfirmasi, hak refund tersisa, otorisasi finance/owner | Catatan kas keluar dan kewajiban/refund terkait; original payment tetap historis; retry aman |
-| Tutup order | Pemenuhan selesai atau sisa dibatalkan sah, saldo/kewajiban diselesaikan, biaya lengkap | Penutupan dapat ditelusuri; tidak menutup hanya karena satu shipment delivered |
+| Tindakan                  | Guard utama                                                                             | Efek atomik dan penanganan ulang                                                                      |
+| ------------------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Konfirmasi order retail   | Aktor berwenang, varian/harga/qty sah, external ID unik                                 | Snapshot item/harga, reservasi sesuai kebijakan, audit; request sama memberi hasil sama               |
+| Reservasi/pemakaian bahan | Scope lokasi dan organisasi sesuai; tersedia cukup; status order/SPK sah                | Mutasi/reservasi terkait sumber; kegagalan tidak menyisakan saldo setengah berubah                    |
+| Terima pembelian          | Qty diterima tidak melebihi kebijakan PO; cacat dipisahkan                              | Receipt dan stok baik/karantina; retry receipt tidak menambah stok dua kali                           |
+| Lepas untuk produksi      | Artwork disetujui jika perlu; kebutuhan bahan dan aturan pembayaran terpenuhi           | Kesiapan produksi tercatat dengan sumber; pengecualian owner beralasan, bukan status pembayaran palsu |
+| Dispatch shipment         | Qty siap/QC sesuai, belum dikirim, alamat tersimpan, kebijakan pembayaran terpenuhi     | Alokasi item pengiriman dan audit; batas total per item; status kurir dipetakan ke kanonikal          |
+| Refund                    | Pembayaran asli terkonfirmasi, hak refund tersisa, otorisasi finance/owner              | Catatan kas keluar dan kewajiban/refund terkait; original payment tetap historis; retry aman          |
+| Tutup order               | Pemenuhan selesai atau sisa dibatalkan sah, saldo/kewajiban diselesaikan, biaya lengkap | Penutupan dapat ditelusuri; tidak menutup hanya karena satu shipment delivered                        |
 
 Lifecycle pengiriman mengikuti sumber kanonikal: `DRAFT → READY → DISPATCHED → IN_TRANSIT → DELIVERED`, dengan `FAILED`, `RETURNED`, `CANCELLED` sebagai pengecualian. Detail edge/guard dibuktikan pada spesifikasi paket. Dokumen ringkasan arsitektur yang memakai nama berbeda tidak boleh diam-diam mengganti kanonikal; selesaikan konflik dan catat keputusan terlebih dahulu.
 

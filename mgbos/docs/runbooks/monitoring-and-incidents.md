@@ -4,15 +4,15 @@ Kontrak ini harus dikonfigurasi dan diuji sebelum diklaim aktif. Pemilik keputus
 
 ## Sinyal minimum
 
-| Sinyal | Tindakan |
-| --- | --- |
-| Health/login gagal berulang, error meningkat | Periksa revisi, database dan konfigurasi |
-| Latensi/kapasitas memburuk | Bandingkan baseline; periksa query dan storage |
-| Backup gagal/terlambat | Eskalasi; jangan menganggap recovery tersedia |
-| Pembayaran, alokasi dan saldo invoice tidak cocok | Batasi alur terdampak dan rekonsiliasi |
-| Transaksi ganda/akses lintas organisasi | Insiden kritis; containment dan pemeriksaan dampak |
-| Job/integrasi tertunda, retry berulang | Periksa penyebab; retry hanya bila idempotensi terbukti |
-| Produksi tertahan, invoice jatuh tempo, biaya belum lengkap | Antrean tindak lanjut bisnis |
+| Sinyal                                                      | Tindakan                                                |
+| ----------------------------------------------------------- | ------------------------------------------------------- |
+| Health/login gagal berulang, error meningkat                | Periksa revisi, database dan konfigurasi                |
+| Latensi/kapasitas memburuk                                  | Bandingkan baseline; periksa query dan storage          |
+| Backup gagal/terlambat                                      | Eskalasi; jangan menganggap recovery tersedia           |
+| Pembayaran, alokasi dan saldo invoice tidak cocok           | Batasi alur terdampak dan rekonsiliasi                  |
+| Transaksi ganda/akses lintas organisasi                     | Insiden kritis; containment dan pemeriksaan dampak      |
+| Job/integrasi tertunda, retry berulang                      | Periksa penyebab; retry hanya bila idempotensi terbukti |
+| Produksi tertahan, invoice jatuh tempo, biaya belum lengkap | Antrean tindak lanjut bisnis                            |
 
 Sebelum aktivasi, tetapkan ambang, interval, kanal, penerima dan uji alarm/pemulihan. Deduplikasi peringatan. Log memuat waktu, lingkungan, revisi dan correlation ID tanpa token, password atau data pribadi berlebihan. Tetapkan akses dan retensi log.
 
