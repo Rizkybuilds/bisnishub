@@ -3,10 +3,14 @@ name: PR Gate
 on:
   pull_request:
     branches: [ "main" ]
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+permissions:
+  contents: read
 
 jobs:
   pr-gate:
-    name: PR Gate Checks
+    name: pr-gate
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
@@ -38,20 +42,23 @@ jobs:
           echo "PR body is not empty."
 
       - name: Verify Scope Isolation
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          # Get list of changed files
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
+          set -euo pipefail
+          git diff --name-only -z "$PR_BASE_SHA...$PR_HEAD_SHA" > "$RUNNER_TEMP/pr-changed-files"
           
           MGBOS_FILES=0
           NON_MGBOS_FILES=0
           
-          for file in $CHANGED_FILES; do
+          while IFS= read -r -d '' file; do
             if [[ "$file" == mgbos/* ]] || [[ "$file" == .github/workflows/mgbos-* ]]; then
               MGBOS_FILES=1
             else
               NON_MGBOS_FILES=1
             fi
-          done
+          done < "$RUNNER_TEMP/pr-changed-files"
           
           if [[ $MGBOS_FILES -eq 1 && $NON_MGBOS_FILES -eq 1 ]]; then
             echo "Error: Scope isolation violation."
