@@ -13,6 +13,7 @@ export { readRows };
 export interface OrderRow {
   id: string;
   order_number: string;
+  order_type: 'CUSTOM_B2B' | 'RETAIL_DIRECT';
   status: string;
   currency: string;
   subtotal: string;
@@ -44,8 +45,8 @@ export interface OrderRow {
     notes?: string;
     order_notes?: string;
   };
-  source_quote_id: string;
-  source_quote_version_id: string;
+  source_quote_id: string | null;
+  source_quote_version_id: string | null;
   confirmed_at: string;
   created_at: string;
 }
@@ -54,6 +55,7 @@ export interface OrderItemRow {
   id: string;
   order_id: string;
   position: number;
+  inventory_item_id?: string | null;
   description: string;
   quantity: number;
   unit: string;
@@ -75,3 +77,15 @@ export interface OrderAuditRow {
 
 export const rupiah = (value: string | bigint | number) =>
   'Rp ' + BigInt(value).toLocaleString('id-ID');
+
+export interface RetailItemOption {
+  id: string;
+  sku: string;
+  name: string;
+  unit: string;
+  category: string;
+  cost_price: string;
+  quantity_on_hand: number;
+  quantity_reserved: number;
+  quantity_available: number;
+}

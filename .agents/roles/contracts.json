@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "workspace": "mgbos/",
+  "policy": "mgbos/docs/engineering/agent-system/permission-matrix.md",
+  "roles": [
+    {
+      "id": "planner",
+      "name": "Planner",
+      "contract": ".agents/roles/planner.md",
+      "skills": ["mgbos-change-planner"],
+      "capabilities": ["read-repository", "write-plan"],
+      "handoffTo": ["engineer"]
+    },
+    {
+      "id": "engineer",
+      "name": "Engineer",
+      "contract": ".agents/roles/engineer.md",
+      "skills": [],
+      "capabilities": [
+        "read-repository",
+        "write-scoped-files",
+        "run-local-checks"
+      ],
+      "handoffTo": ["auditor", "qa"]
+    },
+    {
+      "id": "auditor",
+      "name": "Auditor",
+      "contract": ".agents/roles/auditor.md",
+      "skills": ["mgbos-business-integrity-auditor", "mgbos-pr-reviewer"],
+      "capabilities": ["read-repository", "write-review"],
+      "handoffTo": ["engineer", "qa"]
+    },
+    {
+      "id": "qa",
+      "name": "QA",
+      "contract": ".agents/roles/qa.md",
+      "skills": ["web-qa-testing"],
+      "capabilities": [
+        "read-repository",
+        "write-test-artifacts",
+        "run-local-checks"
+      ],
+      "handoffTo": ["engineer", "release-operator"]
+    },
+    {
+      "id": "release-operator",
+      "name": "Release Operator",
+      "contract": ".agents/roles/release-operator.md",
+      "skills": ["git-deploy-ops"],
+      "capabilities": ["read-repository", "write-release-plan"],
+      "handoffTo": ["engineer"]
+    }
+  ]
+}

@@ -48,8 +48,10 @@ flowchart LR
     S3["Sprint 3: Quoter & HPP<br/>(MGBOS-008 ~ 010)<br/>🟢 COMPLETED"]
     S4["Sprint 4: Ops & Routing<br/>(MGBOS-011 ~ 013)<br/>🟢 COMPLETED"]
     S5["Sprint 5: Cash & Ledger<br/>(MGBOS-014 ~ 016)<br/>🟢 COMPLETED"]
+    S6["Sprint 6: Fulfillment & DO<br/>(MGBOS-017 / TS-PLAN-06)<br/>🟢 COMPLETED"]
+    S7["Sprint 7: Inventory & Stock<br/>(MGBOS-018 / TS-PLAN-07)<br/>🟢 COMPLETED"]
 
-    S1 --> S2 --> S3 --> S4 --> S5
+    S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7
 ```
 
 ---
@@ -161,6 +163,89 @@ flowchart LR
   - View analitis performa pesanan `app.order_financial_summaries` dengan isolasi ongkir kurir (`courier_shipping_margin` = Rp 0), perhitungan The Cost Trilogy (Estimasi vs Komitmen vs Aktual), dan klasifikasi tingkat kesehatan margin (`HEALTHY`, `MODERATE`, `LOW_MARGIN`, `CRITICAL`).
   - Integrasi antarmuka: `/ledger`, modul Cost Trilogy pada `/orders/[orderId]`, dan modal pelunasan biaya produksi aktual di `/production/[jobId]`.
   - Laporan eksekusi: `mgbos/docs/engineering/mgbos-016-report.md`.
+
+---
+
+### 🟢 Sprint 6: Fulfillment, Delivery Orders (Surat Jalan), Courier Tracking & Thermal Label A6 (COMPLETED)
+*Target: Pemenuhan pesanan barang, alokasi pengiriman bertahap, serah terima kurir ekspedisi, pelacakan nomor resi, pengeluaran ongkir kurir pass-through, dan cetak label thermal A6.*
+
+- [x] **MGBOS-017 / TS-PLAN-06**: Fulfillment, Delivery Orders & Courier Logistics
+  - Skema tabel pengiriman & surat jalan: `app.shipments`, `app.shipment_items`, `app.shipment_audit`.
+  - Penomoran kanonikal dokumen: `{BRAND}-DO-{YEAR}-{SEQUENCE}` (e.g. `TS-DO-2026-000001`).
+  - Stored Procedures teruji:
+    - `app.create_delivery_order`: Alokasi pengiriman dengan batasan kuota pesanan (Ceiling Guard).
+    - `app.dispatch_shipment`: Input nomor resi (AWB) dan otomatisasi pengeluaran ongkir riil `COURIER_EXPENSE_DISBURSED` (`PASS_THROUGH_SHIPPING`, `DEBIT`) ke `app.financial_ledger_entries`.
+    - `app.mark_shipment_delivered`: Konfirmasi paket diterima dan penguncian permanen (Immutable Guard).
+    - `app.cancel_shipment`: Pembatalan pengiriman dan pelepasan kembali kuota barang.
+  - Template Cetak Operasional:
+    - Surat Jalan A4 Resmi (Kop Brand Holding, 3 kolom tanda tangan: Gudang, Kurir, Penerima).
+    - Label Thermal A6 (100x150mm) dengan header ekspedisi tebal, simulated barcode, highlight kota tujuan, dan ringkasan isi paket.
+  - Integrasi antarmuka: `/shipments`, `/shipments/[shipmentId]`, modul pengiriman pada `/orders/[orderId]`, dan navigasi sidebar `Fulfillment & DO`.
+  - Laporan eksekusi: `mgbos/docs/engineering/mgbos-017-report.md`.
+
+---
+
+### 🟢 Sprint 7: Inventory, SKU Variants & Multi-Location Stock Allocation Engine (COMPLETED)
+*Target: Master SKU persediaan bahan baku garmen & cetak, alokasi multi-lokasi workshop, reservasi stok pesanan otomatis anti-overselling, konsumsi bahan produksi, stock opname fisik, dan buku mutasi append-only.*
+
+- [x] **MGBOS-018 / TS-PLAN-07**: Inventory, SKU Variants & Stock Allocation Engine
+  - Skema tabel persediaan & mutasi: `app.inventory_items`, `app.inventory_levels`, `app.inventory_mutations`, `app.inventory_reservations`.
+  - Master SKU & Kategori: Kaos Polos (`BLANK_GARMENT`), Bahan Cetak DTF (`PRINT_MATERIAL`), Kemasan (`PACKAGING`), Barang Jadi (`FINISHED_GOOD`), dan Lainnya (`OTHER`).
+  - Nilai HPP & Aset Berbasis Zero-Float Arithmetic (`bigint` integer rupiah).
+  - Multi-Lokasi & Bin Rack: Pemetaan stok fisik per workshop dan rak gudang.
+  - Stored Procedures teruji:
+    - `app.create_inventory_item`: Pendaftaran master SKU baru, inisialisasi level stok, dan pencatatan mutasi saldo awal.
+    - `app.record_inventory_mutation`: Pencatatan mutasi masuk (PO restock), afkir/rusak (scrap defect), dan pengeluaran manual.
+    - `app.reserve_inventory_for_order`: Reservasi stok otomatis saat pesanan dibuat dengan **Anti-Overselling Guard** (mengunci ketersediaan real-time `quantity_on_hand - quantity_reserved` via `FOR UPDATE`).
+    - `app.release_inventory_reservation`: Pelepasan reservasi stok saat pesanan dibatalkan/dimodifikasi.
+    - `app.consume_inventory_for_order`: Pemakaian fisik bahan garmen saat naik cetak & press DTF (mengurangi on-hand dan mengosongkan reservasi).
+    - `app.perform_stock_opname`: Penyesuaian selisih hitung fisik berkala dengan alasan wajib.
+  - Guardrail Integritas: Database trigger `app.trg_inventory_mutation_guard` mengunci buku mutasi menjadi strictly append-only (menolak `UPDATE` dan `DELETE`).
+  - Integrasi antarmuka: `/inventory`, `/inventory/[itemId]`, modal pendaftaran SKU, modal mutasi masuk/keluar, modal opname fisik, dan navigasi sidebar `Persediaan & Stok`.
+  - Laporan eksekusi: `mgbos/docs/engineering/mgbos-018-report.md`.
+
+---
+
+### 🟢 Sprint 8: Procurement, Purchase Orders (PO), Goods Receipt & Vendor Bills (COMPLETED)
+*Target: Alur pengadaan bahan baku ke supplier/vendor, penerimaan fisik gudang (Goods Receipt) dengan Ceiling Guard dan restock inventori otomatis, serta pencatatan tagihan vendor (Vendor Bills) dan pelunasan kas keluar holding terintegrasi ke Buku Kas.*
+
+- [x] **MGBOS-019 / TS-PLAN-08**: Procurement, Purchase Orders (PO), Goods Receipt & Vendor Bills
+  - Skema tabel pengadaan & tagihan vendor: `app.purchase_orders`, `app.purchase_order_items`, `app.goods_receipts`, `app.goods_receipt_items`, `app.vendor_bills`, `app.vendor_bill_payments`.
+  - Penomoran kanonikal dokumen baku:
+    - Purchase Order: `{BRAND}-PO-{YEAR}-{SEQUENCE}` (e.g. `TS-PO-2026-000001`).
+    - Goods Receipt: `{BRAND}-GR-{YEAR}-{SEQUENCE}` (e.g. `TS-GR-2026-000001`).
+    - Vendor Bill: `{BRAND}-VB-{YEAR}-{SEQUENCE}` (e.g. `TS-VB-2026-000001`).
+  - Stored Procedures teruji:
+    - `app.create_purchase_order`: Penerbitan PO resmi ke vendor/supplier bahan dengan kalkulasi Zero-Float bigint, penetapan lead time pengiriman, dan otomatisasi pembuatan tagihan vendor awal status `OPEN`.
+    - `app.receive_purchase_order_items`: Penerimaan fisik gudang bertahap/penuh dengan **Over-Receipt Ceiling Guard** (menolak penerimaan melebihi sisa kuota PO), pencatatan nomor surat jalan vendor, status transisi PO (`PARTIALLY_RECEIVED` $\to$ `RECEIVED`), dan **Restock Otomatis** (menaikkan `quantity_on_hand` serta membukukan `INBOUND_PURCHASE` di ledger mutasi inventori).
+    - `app.pay_vendor_bill`: Pembayaran tagihan vendor via kas holding dengan guardrail anti-overpayment, transisi status tagihan (`PARTIALLY_PAID` $\to$ `PAID` / LUNAS), dan **Emisi Kas Keluar Terpadu** (`VENDOR_MATERIAL_PAYMENT`, `CREDIT`, `CASH_MOVEMENT`) ke `app.financial_ledger_entries`.
+  - Integrasi antarmuka: `/procurement`, `/procurement/[poId]`, modal penerbitan PO (`<CreatePurchaseOrderModal>`), modal penerimaan barang gudang (`<ReceiveGoodsReceiptModal>`), modal bayar tagihan kas keluar (`<PayVendorBillModal>`), dan navigasi sidebar `Pengadaan & PO`.
+  - Laporan eksekusi: `mgbos/docs/engineering/mgbos-019-report.md`.
+
+---
+
+### 🟢 Sprint 9: Fast Retail Ordering & POS Direct Checkout (COMPLETED)
+*Target: Pemesanan cepat ritel untuk kaos polos (blanks) & merchandise langsung dari katalog master inventori tanpa melalui alur panjang inquiry/penawaran B2B, dilengkapi reservasi stok instan, auto-issue faktur komersial, dan penyelesaian kasir POS terpadu.*
+
+- [x] **MGBOS-020 / TS-PLAN-09**: Fast Retail Ordering & Direct POS Checkout
+  - Skema pesanan ritel & link langsung SKU master:
+    - Kolom `order_type` (`CUSTOM_B2B` vs `RETAIL_DIRECT`) pada `app.orders` dengan relaksasi source quote khusus pesanan ritel.
+    - Kolom `inventory_item_id` pada `app.order_items` untuk keterlacakan instan ke master SKU bahan dan merchandise.
+  - Stored Procedure atomik teruji:
+    - `app.create_retail_order`: Pembuatan kontrak pesanan resmi ritel kanonikal `{BRAND}-O-{YEAR}-{SEQUENCE}` tanpa quote versioning.
+    - **Anti-Overselling Guard Terpadu**: Reservasi stok fisik otomatis (`app.inventory_reservations` + status `ACTIVE`); menolak transaksi dan membatalkan pesanan secara atomik jika kuota fisik tidak mencukupi.
+    - **Auto-Issued Faktur Komersial**: Penerbitan invoice otomatis `{BRAND}-INV-{YEAR}-{SEQUENCE}` berstatus `ISSUED` / `PAID` dengan konformitas integritas `check(subtotal = unit_price * quantity)`.
+    - **POS Direct Checkout (`auto_pay = true`)**: Pencatatan pembayaran instan `{BRAND}-PAY-{YEAR}-{SEQUENCE}` (Cash, QRIS, Bank Transfer) yang langsung melunasi faktur (`balance_due = 0`) dan memicu emisi kas masuk (`PAYMENT_RECEIVED`, `DEBIT`, `CASH_MOVEMENT`) ke Buku Kas Analitikal.
+    - **Strict Financial Separation Guard**: Pembukuan `ORDER_COMMITTED` untuk Net Product Revenue (`subtotal - discount_total`), dengan biaya ongkir kurir terisolasi sebagai dana titipan pass-through (margin = Rp 0) sesuai CFO Rule.
+  - Integrasi antarmuka:
+    - Modal Kasir Ritel POS (`<RetailOrderCreateModal>`) di header `/orders` dengan indikator stok tersedia real-time, multi-item line builder, perhitungan diskon & ongkir dinamis, dan kalkulasi preview margin CFO.
+    - Badge pembeda status `⚡ Ritel (POS)` vs `🏢 B2B Custom` pada tabel direktori `/orders` dan kartu header `/orders/[orderId]`.
+    - Tag item inventori langsung `📦 Item Persediaan Langsung` pada tabel rincian pesanan.
+  - Pengujian & Bukti Kualitas:
+    - pgTAP: `supabase/tests/fast_retail_ordering.test.sql` (19 assertions lolos, total 379 tests).
+    - Unit Vitest: 48 test files, 223 tests lolos.
+    - E2E Script: Section 11 di `scripts/verify-e2e-flow.mjs` lolos 100%.
+    - Laporan eksekusi: `mgbos/docs/engineering/mgbos-020-report.md`.
 
 ---
 

@@ -1,107 +1,29 @@
 ---
 name: web-sec-perf
-description: >-
-  Audit keamanan aplikasi web sesuai standar OWASP (sanitasi input, proteksi XSS,
-  CSRF, CSP, pengelolaan environment variables aman) serta optimasi performa Core Web Vitals
-  (LCP, CLS, INP), code-splitting, bundle analysis, optimasi aset gambar, dan technical SEO.
+description: Audit or improve web security and measured performance in the selected BisnisHub application. Use Next.js command, session and caching boundaries for MGBOS; preserve clearly scoped Vite and React legacy guidance.
 argument-hint: "[security, performance, lcp, seo, owasp, or audit]"
 ---
 
-# Web Security & Performance Engineer — SecOps & Core Web Vitals
+# Web Security and Performance
 
-Skill spesialis untuk mengamankan aplikasi web dari celah kerentanan berbahaya (standar OWASP) dan mengoptimalkan performa rendering hingga mencapai skor hijau di Google PageSpeed Insights / Core Web Vitals.
+Audit or improve the explicitly targeted application. Read root AGENTS and inspect its framework/configuration first. Review-only requests produce findings; apply fixes when requested and keep them within scope.
 
----
+## MGBOS: Next.js
 
-## 1. Protokol Keamanan Web (OWASP Hardening)
+Read `mgbos/AGENTS.md`, the relevant app package/configuration, server actions, auth/validation packages and schema policies. Check the actual implementation rather than assuming framework defaults prove safety.
 
-### A. Proteksi Kebocoran Kunci Rahasia (*Zero Secret Leakage*)
-> [!CAUTION]
-> Jangan pernah mengekspos `SUPABASE_SERVICE_ROLE_KEY`, `MIDTRANS_SERVER_KEY`, atau API key dengan hak administrator ke dalam variabel client yang diawali `VITE_` atau `NEXT_PUBLIC_`! Kunci tersebut dapat dibaca siapa saja lewat DevTools Network / Source Code.
+- Audit server commands for authentication, server-derived organization/actor, authorization, validation and state guards. Check direct RPC/RLS/grants and privileged function boundaries too; UI visibility is not access control. Route transaction semantics to `mgbos-business-integrity-auditor`.
+- Keep credentials server-only, using the existing config boundaries. Never place service-role, payment server or AI keys in `NEXT_PUBLIC_*`, browser bundles, logs or generated artifacts. Public Supabase configuration still requires correct RLS and permissions.
+- Check session/cookie handling, CSRF/origin protection for the actual mutation surface, redirects, uploads, XSS and tenant-specific caching. Do not cache private ERP data as a public response. Validate both authorized and denied paths.
+- Derive CSP and security headers from actual Next.js rendering, scripts, assets and approved integrations. Do not copy a universal `unsafe-inline` policy or disable camera uploads/checkout features accidentally. Test required flows with the proposed headers; generic headers are not evidence of security.
+- Use App Router/server components and route-level loading boundaries already in the app. Measure before adding client components or dynamic imports. Do not introduce React Router into MGBOS. Verify current installed Next.js image/font APIs before edits.
+- Measure a repeatable production build with device/network context. Inspect LCP asset loading, CLS sizing and INP work; compare before/after observations. Preserve image quality and accessibility; avoid blanket conversion or invented percentage savings. Treat lab results and field data as different evidence.
+- SEO metadata, sitemap and indexing apply to public storefront pages. Internal authenticated ERP pages must not be exposed/indexed merely to improve SEO scores.
 
-Gunakan aturan ketat berikut:
-* **Client Env (Aman terekspos):** `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (dilindungi oleh Row Level Security PostgreSQL).
-* **Server-Only Env (Rahasia mutlak):** `MIDTRANS_SERVER_KEY`, `DATABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (hanya boleh diakses di backend Node.js atau Edge Functions).
+## Legacy: Vite/React
 
-### B. Header Keamanan HTTP (Security Headers)
-Terapkan header ini pada konfigurasi hosting (`vercel.json`, `netlify.toml`, atau Web Server):
-```json
-{
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' https://app.midtrans.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
-        }
-      ]
-    }
-  ]
-}
-```
+Only for an explicitly selected legacy target, consult [legacy examples](references/legacy-examples.md) after reading its router, env and hosting files. The previous `VITE_*`, React Router and hosting snippets are context, not MGBOS implementation guidance. The historical CSP is not a secure default; rederive and test it. Secret keys must never use either `VITE_*` or `NEXT_PUBLIC_*` prefixes.
 
----
+## Completion
 
-## 2. Optimasi Core Web Vitals (Mengejar Skor 90+ di Mobile)
-
-### A. Largest Contentful Paint (LCP < 2.5s)
-Elemen terbesar di atas lipatan layar (*above-the-fold*), seperti Hero Banner:
-1. **Preload Gambar Hero**:
-   ```html
-   <link rel="preload" as="image" href="/assets/hero-banner.webp" type="image/webp" />
-   ```
-2. **Format Gambar Modern**: Konversi semua aset PNG/JPG ke WebP atau AVIF dengan kompresi kualitas 80–85% (menghemat 60–80% bobot transfer).
-3. **Hindari Lazy Loading pada Hero Banner**: Atribut `loading="lazy"` hanya untuk gambar di bawah layar lipatan (*below-the-fold*).
-
-### B. Cumulative Layout Shift (CLS < 0.1)
-Mencegah tampilan melompat atau bergeser saat elemen baru selesai dimuat:
-1. Selalu sertakan `width` dan `height` atau class rasio aspek pada tag gambar:
-   ```html
-   <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100">
-     <img src="..." alt="..." className="h-full w-full object-cover" />
-   </div>
-   ```
-2. Sediakan skeleton loader dengan dimensi tinggi yang persis sama dengan kartu produk asli.
-
-### C. Interaction to Next Paint (INP < 200ms)
-1. Gunakan teknik *debounce* pada input pencarian (300–400ms) agar thread utama JavaScript tidak terkunci saat pengguna mengetik cepat.
-2. Gunakan `React.startTransition` untuk pembaruan state yang bukan prioritas kritis.
-
----
-
-## 3. Optimasi Ukuran Bundle (Code-Splitting)
-
-Gunakan *Dynamic Import* untuk halaman yang jarang dibuka (misal: Halaman Checkout, Syarat & Ketentuan, atau Dashboard Admin):
-
-```tsx
-import { lazy, Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
-
-const CatalogPage = lazy(() => import('@/features/catalog/CatalogPage'));
-const CheckoutPage = lazy(() => import('@/features/checkout/CheckoutPage'));
-const AdminDashboard = lazy(() => import('@/features/admin/DashboardPage'));
-
-export function AppRoutes() {
-  return (
-    <Suspense fallback={<div className="flex h-screen items-center justify-center">Memuat...</div>}>
-      <Routes>
-        <Route path="/" element={<CatalogPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-      </Routes>
-    </Suspense>
-  );
-}
-```
-
----
-
-## 4. Checklist Technical SEO & Social Sharing
-- [ ] Tag `<title>` dan `<meta name="description">` dinamis per halaman produk.
-- [ ] OpenGraph metadata (`og:image`, `og:title`, `og:description`, `og:url`) agar preview kartu di WhatsApp dan Twitter tampil memikat saat link dibagikan.
-- [ ] File `robots.txt` dan `sitemap.xml` terindeks dengan benar di root domain.
+Findings include path, trigger, impact and evidence; changes include focused regression checks and measured performance results where relevant. Follow applicable workspace checks and report missing evidence. No production scan, deployment, global config change or remote database mutation is implied by an audit request.

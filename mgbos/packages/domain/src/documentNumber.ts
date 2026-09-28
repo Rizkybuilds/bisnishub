@@ -14,7 +14,10 @@ export const CANONICAL_DOCUMENT_TYPES = [
   'PO', // Purchase Order
   'PAY', // Payment
   'SHIP', // Shipment
+  'DO', // Delivery Order (Surat Jalan)
   'LED', // Financial Ledger Entry
+  'GR', // Goods Receipt (Penerimaan Barang)
+  'VB', // Vendor Bill (Tagihan Vendor)
 ] as const;
 
 export type CanonicalDocumentType = (typeof CANONICAL_DOCUMENT_TYPES)[number];
@@ -31,9 +34,19 @@ export const DOCUMENT_TYPE_ALIASES: Record<string, CanonicalDocumentType> = {
   PRODUCTION_JOB: 'J',
   PURCHASE_ORDER: 'PO',
   PAYMENT: 'PAY',
-  SHIPMENT: 'SHIP',
+  SHIPMENT: 'DO',
+  SHIP: 'DO',
+  DO: 'DO',
+  DELIVERY_ORDER: 'DO',
+  SURAT_JALAN: 'DO',
   LEDGER: 'LED',
   LED: 'LED',
+  GOODS_RECEIPT: 'GR',
+  GR: 'GR',
+  PENERIMAAN_BARANG: 'GR',
+  VENDOR_BILL: 'VB',
+  VB: 'VB',
+  TAGIHAN_VENDOR: 'VB',
 };
 
 export interface DocumentNumberComponents {

@@ -3,6 +3,8 @@ import {
   markQuoteAcceptedSchema,
   shippingAddressSnapshotSchema,
   createOrderFromQuoteSchema,
+  createRetailOrderSchema,
+  retailOrderItemInputSchema,
 } from './order';
 
 describe('Order Validation Schemas (MGBOS-011)', () => {
@@ -60,6 +62,71 @@ describe('Order Validation Schemas (MGBOS-011)', () => {
         },
       };
       expect(createOrderFromQuoteSchema.safeParse(valid).success).toBe(true);
+    });
+  });
+
+  describe('createRetailOrderSchema (MGBOS-020)', () => {
+    it('validates direct retail order with auto-pay', () => {
+      const valid = {
+        customerAccountId: '99999999-0000-4000-8000-000000000001',
+        items: [
+          {
+            inventoryItemId: '99999999-0000-4000-8000-000000000002',
+            quantity: 5,
+            unitPrice: '75000',
+            discountTotal: '0',
+          },
+        ],
+        shippingCost: '15000',
+        autoPay: true,
+        paymentMethod: 'QRIS',
+        paymentReference: 'QRIS-REF-12345',
+      };
+      expect(createRetailOrderSchema.safeParse(valid).success).toBe(true);
+    });
+
+    it('rejects retail order without any item', () => {
+      const invalid = {
+        customerAccountId: '99999999-0000-4000-8000-000000000001',
+        items: [],
+      };
+      expect(createRetailOrderSchema.safeParse(invalid).success).toBe(false);
+    });
+
+    it('rejects invalid quantity or negative unit price in line item', () => {
+      const invalid = {
+        customerAccountId: '99999999-0000-4000-8000-000000000001',
+        items: [
+          {
+            inventoryItemId: '99999999-0000-4000-8000-000000000002',
+            quantity: 0,
+            unitPrice: '75000',
+          },
+        ],
+      };
+      expect(createRetailOrderSchema.safeParse(invalid).success).toBe(false);
+    });
+  });
+
+  describe('retailOrderItemInputSchema', () => {
+    it('validates a valid line item input', () => {
+      const valid = {
+        inventoryItemId: '99999999-0000-4000-8000-000000000002',
+        quantity: 5,
+        unitPrice: '85000',
+        discountTotal: '5000',
+        notes: 'Size L Black',
+      };
+      expect(retailOrderItemInputSchema.safeParse(valid).success).toBe(true);
+    });
+
+    it('rejects item with invalid UUID or non-positive quantity', () => {
+      const invalid = {
+        inventoryItemId: 'invalid-id',
+        quantity: -1,
+        unitPrice: '85000',
+      };
+      expect(retailOrderItemInputSchema.safeParse(invalid).success).toBe(false);
     });
   });
 });

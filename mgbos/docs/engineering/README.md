@@ -10,3 +10,5 @@ These existing notes are the source of truth. Links preserve the originals witho
 
 - [Maintenance policy](maintenance-policy.md)
 - [Operational readiness register](operational-readiness.md)
+
+- [Agent-system workflow, roles and governance gates](agent-system/README.md)

@@ -45,3 +45,8 @@ For transaction changes, test authorization, organization isolation, invalid sta
 Keep implementation, local verification, hosted CI, deployment and operational acceptance as separate evidence states tied to a revision. Fix blockers affecting money, access, data integrity or recovery before expanding the affected flow.
 Before operational use, require verified environment isolation, backup and restore evidence, monitoring ownership and a recovery plan. Written procedures do not prove services are configured.
 Update affected module status and runbooks with each change. Documentation-only maintenance requires link, consistency and focused diff checks, not database mutations or deployments.
+
+## Agent workflow and governance
+
+Use [agent-system workflow](docs/engineering/agent-system/workflow.md), [role contracts](docs/engineering/agent-system/roles.md), [risk classes](docs/engineering/agent-system/risk-classification.md) and [evidence model](docs/engineering/agent-system/evidence-model.md) for planning, implementation, audit, QA and release preparation.
+Apply the highest relevant risk class. Role changes do not expand permissions; self-review is not independent review. Preserve current Foundation checks and use the separate governance/migration guards in [release gates](docs/engineering/agent-system/release-gates.md). The guards neither authorize remote actions nor replace application/database acceptance evidence.

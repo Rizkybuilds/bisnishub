@@ -10,9 +10,15 @@
     "build:teestock": "npm --prefix bisnis/teestock/web run build",
     "dev:bisnishub": "npm --prefix apps/bisnishub-web run dev",
     "build:bisnishub": "npm --prefix apps/bisnishub-web run build",
-    "dev:mgbos": "npm --prefix apps/mgbos run dev",
-    "build:mgbos": "npm --prefix apps/mgbos run build",
-    "install:mgbos": "npm --prefix apps/mgbos install",
-    "install:all": "npm --prefix bisnis/teestock/web install && npm --prefix apps/bisnishub-web install && npm --prefix apps/mgbos install"
+    "dev:mgbos": "npm exec --yes --package=pnpm@10.34.5 -- pnpm --dir mgbos dev",
+    "build:mgbos": "npm exec --yes --package=pnpm@10.34.5 -- pnpm --dir mgbos build",
+    "install:mgbos": "npm exec --yes --package=pnpm@10.34.5 -- pnpm --dir mgbos install --frozen-lockfile",
+    "install:all": "npm run install:legacy && npm run install:mgbos",
+    "dev:mgbos-prototype": "npm --prefix apps/mgbos run dev",
+    "build:mgbos-prototype": "npm --prefix apps/mgbos run build",
+    "install:mgbos-prototype": "npm --prefix apps/mgbos install",
+    "dev:mgbos:teestock": "npm exec --yes --package=pnpm@10.34.5 -- pnpm --dir mgbos dev:teestock",
+    "check:mgbos": "npm exec --yes --package=pnpm@10.34.5 -- pnpm --dir mgbos check",
+    "install:legacy": "npm --prefix bisnis/teestock/web install && npm --prefix apps/bisnishub-web install && npm --prefix apps/mgbos install"
   }
 }

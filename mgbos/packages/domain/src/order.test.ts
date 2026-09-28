@@ -3,6 +3,8 @@ import {
   validateOrderTransition,
   validateOrderFinancials,
   ORDER_MONEY_MAX,
+  formatOrderTypeLabel,
+  calculateRetailOrderTotals,
 } from './order';
 
 describe('Order Domain Logic (MGBOS-011)', () => {
@@ -78,6 +80,49 @@ describe('Order Domain Logic (MGBOS-011)', () => {
       expect(() =>
         validateOrderFinancials(ORDER_MONEY_MAX, 0n, 100n, 500n),
       ).toThrow('Grand total melebihi kapasitas integer batas maksimum');
+    });
+  });
+
+  describe('Retail Direct Calculations', () => {
+    it('calculates retail multi-item order totals correctly', () => {
+      const items = [
+        {
+          quantity: 2,
+          unitPrice: 75000n,
+          discountTotal: 10000n,
+          costPrice: 40000n,
+        },
+        {
+          quantity: 3,
+          unitPrice: 85000n,
+          discountTotal: 0n,
+          costPrice: 45000n,
+        },
+      ];
+      const shipping = 20000n;
+
+      const result = calculateRetailOrderTotals(items, shipping);
+      // Item 1: 2 * 75.000 = 150.000, disc: 10.000, cost: 80.000
+      // Item 2: 3 * 85.000 = 255.000, disc: 0, cost: 135.000
+      // Subtotal = 405.000
+      // Discount = 10.000
+      // Net Revenue = 395.000
+      // Grand Total = 395.000 + 20.000 = 415.000
+      // Cost = 215.000
+      // Gross Profit = 395.000 - 215.000 = 180.000
+      expect(result.subtotal).toBe(405000n);
+      expect(result.discountTotal).toBe(10000n);
+      expect(result.netProductRevenue).toBe(395000n);
+      expect(result.grandTotal).toBe(415000n);
+      expect(result.estimatedCostTotal).toBe(215000n);
+      expect(result.estimatedGrossProfit).toBe(180000n);
+    });
+
+    it('formats order type labels correctly', () => {
+      expect(formatOrderTypeLabel('RETAIL_DIRECT')).toBe(
+        'Penjualan Ritel Langsung (POS)',
+      );
+      expect(formatOrderTypeLabel('CUSTOM_B2B')).toBe('Custom Atelier (B2B)');
     });
   });
 });

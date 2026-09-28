@@ -17,7 +17,8 @@ describe('Document Number Domain Logic', () => {
     expect(normalizeDocumentType('production_job')).toBe('J');
     expect(normalizeDocumentType('purchase_order')).toBe('PO');
     expect(normalizeDocumentType('payment')).toBe('PAY');
-    expect(normalizeDocumentType('shipment')).toBe('SHIP');
+    expect(normalizeDocumentType('shipment')).toBe('DO');
+    expect(normalizeDocumentType('delivery_order')).toBe('DO');
     expect(normalizeDocumentType('custom')).toBe('CUSTOM');
   });
 

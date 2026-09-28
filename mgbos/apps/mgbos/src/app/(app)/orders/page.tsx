@@ -1,5 +1,16 @@
 import Link from 'next/link';
-import { orderContext, readRows, OrderRow, rupiah } from './data';
+import { hasPermission } from '@mgbos/auth';
+import {
+  orderContext,
+  readRows,
+  OrderRow,
+  rupiah,
+  RetailItemOption,
+} from './data';
+import {
+  RetailOrderCreateModal,
+  CustomerOption,
+} from './RetailOrderCreateModal';
 
 export default async function OrdersPage() {
   const ctx = await orderContext();
@@ -14,6 +25,71 @@ export default async function OrdersPage() {
       ctx,
     )
   )[0];
+
+  const canCreateOrder = hasPermission(ctx.session.role.code, 'orders:create');
+
+  let customers: CustomerOption[] = [];
+  let inventoryItems: RetailItemOption[] = [];
+
+  if (canCreateOrder) {
+    const [fetchedCustomers, rawItems, levels] = await Promise.all([
+      readRows<CustomerOption>(
+        `customer_accounts?organization_id=eq.${ctx.session.organization.id}&status=eq.ACTIVE&select=id,display_name,primary_phone&order=display_name.asc`,
+        ctx,
+      ),
+      readRows<{
+        id: string;
+        sku: string;
+        name: string;
+        unit: string;
+        category: string;
+        cost_price: string;
+        is_active: boolean;
+      }>(
+        `inventory_items?organization_id=eq.${ctx.session.organization.id}&is_active=eq.true&order=sku.asc`,
+        ctx,
+      ),
+      readRows<{
+        inventory_item_id: string;
+        quantity_on_hand: number;
+        quantity_reserved: number;
+      }>(
+        `inventory_levels?organization_id=eq.${ctx.session.organization.id}`,
+        ctx,
+      ),
+    ]);
+
+    customers = fetchedCustomers;
+
+    const levelsByItemId = new Map<
+      string,
+      { onHand: number; reserved: number }
+    >();
+    for (const lvl of levels) {
+      const current = levelsByItemId.get(lvl.inventory_item_id) ?? {
+        onHand: 0,
+        reserved: 0,
+      };
+      current.onHand += lvl.quantity_on_hand;
+      current.reserved += lvl.quantity_reserved;
+      levelsByItemId.set(lvl.inventory_item_id, current);
+    }
+
+    inventoryItems = rawItems.map((item) => {
+      const lvl = levelsByItemId.get(item.id) ?? { onHand: 0, reserved: 0 };
+      return {
+        id: item.id,
+        sku: item.sku,
+        name: item.name,
+        unit: item.unit,
+        category: item.category,
+        cost_price: item.cost_price,
+        quantity_on_hand: lvl.onHand,
+        quantity_reserved: lvl.reserved,
+        quantity_available: Math.max(0, lvl.onHand - lvl.reserved),
+      };
+    });
+  }
 
   const orders = brand
     ? await readRows<OrderRow>(
@@ -30,15 +106,24 @@ export default async function OrdersPage() {
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: '1.5rem',
+          flexWrap: 'wrap',
+          gap: '1rem',
         }}
       >
         <div>
           <h1 style={{ margin: 0 }}>Kontrak Pesanan (Order Contracts)</h1>
           <p style={{ color: '#94a3b8', margin: '4px 0 0' }}>
-            {ctx.session.activeBrand.name} · Komitmen komersial resmi yang
-            dibekukan dari penawaran harga yang disetujui (ACCEPTED).
+            {ctx.session.activeBrand.name} · Komitmen komersial resmi (B2B
+            Kontrak &amp; Penjualan Ritel Langsung POS).
           </p>
         </div>
+        {canCreateOrder && brand && (
+          <RetailOrderCreateModal
+            brandId={brand.id}
+            customers={customers}
+            inventoryItems={inventoryItems}
+          />
+        )}
       </div>
 
       <section className="card">
@@ -60,8 +145,8 @@ export default async function OrdersPage() {
               harga yang telah disetujui pelanggan di menu{' '}
               <Link href="/quotes" style={{ color: '#38bdf8' }}>
                 Penawaran &amp; HPP
-              </Link>
-              .
+              </Link>{' '}
+              atau dibuat langsung melalui kasir ritel (POS).
             </p>
           </div>
         ) : (
@@ -99,6 +184,34 @@ export default async function OrdersPage() {
                       >
                         {o.order_number}
                       </Link>
+                      <div style={{ marginTop: '4px' }}>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            fontSize: '0.7rem',
+                            fontWeight: 600,
+                            padding: '1px 6px',
+                            borderRadius: '3px',
+                            background:
+                              o.order_type === 'RETAIL_DIRECT'
+                                ? '#042f2e'
+                                : '#1e293b',
+                            color:
+                              o.order_type === 'RETAIL_DIRECT'
+                                ? '#2dd4bf'
+                                : '#94a3b8',
+                            border: `1px solid ${
+                              o.order_type === 'RETAIL_DIRECT'
+                                ? '#0d9488'
+                                : '#334155'
+                            }`,
+                          }}
+                        >
+                          {o.order_type === 'RETAIL_DIRECT'
+                            ? '⚡ Ritel (POS)'
+                            : '🏢 B2B Custom'}
+                        </span>
+                      </div>
                     </td>
                     <td style={{ padding: '12px' }}>
                       <div style={{ fontWeight: 500, color: '#f1f5f9' }}>

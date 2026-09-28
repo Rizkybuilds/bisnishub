@@ -1,167 +1,60 @@
 ---
-title: "MultiGraph Group & BisnisHub Command Center"
-type: documentation
-date: "2026-09-23"
+title: BisnisHub repository guide
+date: "2026-09-27"
 bisnis: umum
 kategori: operasional
 status: active
-tags:
-  - bisnishub
-  - mgbos
-  - multigraph
-  - teestock
-  - command-center
-  - documentation
 ---
 
-# 🚀 MultiGraph Group & BisnisHub Command Center
+# BisnisHub
 
-> [!abstract] **Visi Ekosistem Holding & Business OS**
-> Pusat komando operasional **MultiGraph Printing & Apparel Holding** yang menggabungkan kekuatan **Obsidian Second Brain** (perencanaan strategis, riset pasar, dan arsip pengetahuan) dengan **MultiGraph Business OS (MGBOS)** serta **Founding C-Suite Cabinet** (mesin eksekusi otonom berstandar korporat).
-> 
-> 🔗 **Buka Dashboard Utama di Obsidian**: [[🏠 BisnisHub Command Center|🏠 BisnisHub Command Center.md]]  
-> 🗺️ **Buka Peta Visual Arsitektur**: [[🗺️ BisnisHub Ecosystem.canvas|BisnisHub Ecosystem.canvas]]  
-> 🏛️ **Buka Blueprint MGBOS**: [[catatan/mgbos-master-roadmap-tracker|MGBOS Master Roadmap & Execution Tracker]]
+Satu repositori untuk proyek software, dokumentasi bisnis dan pengetahuan kerja. Setiap sistem memiliki batas kode, dependency dan database sendiri; satu repo tidak berarti satu database atau satu proses deployment.
 
----
+Mulai dari [indeks proyek](docs/project-index.md), [aturan direktori](docs/engineering/repository-layout.md), dan [AGENTS.md](AGENTS.md). Untuk bisnis dan perencanaan, buka [[🏠 BisnisHub Command Center]] serta folder `bisnis/` dan `catatan/`.
 
-## 🌐 Lanskap Aplikasi Web (Web Applications Ecosystem)
+## Proyek software saat ini
 
-Monorepo ini mengelola 3 aplikasi web terintegrasi dan 1 paket pustaka bersama (*Single Source of Truth*):
+| Sistem                             | Lokasi resmi             | Perintah dari root                             |
+| ---------------------------------- | ------------------------ | ---------------------------------------------- |
+| MGBOS internal, Next.js            | `mgbos/apps/mgbos/`      | `npm run dev:mgbos`                            |
+| Storefront Next.js dalam MGBOS     | `mgbos/apps/teestock/`   | `npm run dev:mgbos:teestock`                   |
+| Storefront TeeStock existing, Vite | `bisnis/teestock/web/`   | `npm run dev:teestock`                         |
+| Admin existing, Vite               | `apps/bisnishub-web/`    | `npm run dev:bisnishub`                        |
+| Prototipe MGBOS lama, Vite         | `apps/mgbos/`            | `npm run dev:mgbos-prototype`                  |
+| KasKita mobile, Expo               | `bisnis/kaskita/mobile/` | `npm --prefix bisnis/kaskita/mobile run start` |
 
-```text
-                               MULTIGRAPH GROUP
-                                      │
-       ┌──────────────────────────────┼──────────────────────────────┐
-       │                              │                              │
-       ▼                              ▼                              ▼
-  apps/mgbos/                apps/bisnishub-web/            bisnis/teestock/web/
-  🌟 MGBOS Core              🛡️ Admin Legacy                🛍️ Public Storefront
-  (Port 3001)                (Port 3000)                    (Port 5173 / Live)
-  Clean Slate TypeScript     Operational Backup             TeeStock Apparel
-       │                              │                              │
-       └──────────────────────────────┼──────────────────────────────┘
-                                      │
-                                      ▼
-                              packages/shared/
-                   UI Primitives & Domain Logic (SSOT)
-                                      │
-                                      ▼
-                            Supabase PostgreSQL
-                  Holding Multi-Brand Single Database
-```
+Keberadaan aplikasi bukan bukti kesiapan produksi. Target hosting dan hasil CI harus diverifikasi pada revisi yang akan dirilis.
 
-| Aplikasi / Paket | Lokasi | Port Lokal | Teknologi | Peran & Tanggung Jawab |
-|---|---|---|---|---|
-| **MGBOS Core** | `apps/mgbos/` | `3001` | React 18, Vite, TS Strict, Tailwind | Pusat Operasi Bisnis Holding Multi-Brand (Sales, Ops, Finance, Tasks) |
-| **BisnisHub Admin** | `apps/bisnishub-web/` | `3000` | React 18, Vite, JS/TS, Tailwind | Dashboard admin operasional legacy & fallback harian |
-| **TeeStock Store** | `bisnis/teestock/web/` | `5173` | React 18, Vite, Tailwind | Etalase publik belanja retail konsumen (`teestockapparel.vercel.app`) |
-| **Shared SSOT** | `packages/shared/` | — | TypeScript, ES Modules | Komponen UI, formatter, Supabase client, dan Domain Contracts |
+## Instalasi dan pemeriksaan
 
----
+MGBOS menggunakan Node dan pnpm yang dipin di [manifest workspace](mgbos/package.json). Alias root menggunakan pnpm 10.34.5 melalui npm exec; pengambilan pnpm pertama kali dapat memerlukan jaringan.
 
-## ⚡ Panduan Menjalankan Sistem (Quick Start)
-
-### 1. Menjalankan MGBOS Core (Aplikasi Utama Baru)
-```powershell
-npm run dev:mgbos
-# Akses di browser: http://localhost:3001
-```
-
-### 2. Menjalankan Dashboard Admin Legacy
-```powershell
-npm run dev:bisnishub
-# Akses di browser: http://localhost:3000
-```
-
-### 3. Menjalankan Storefront Publik TeeStock
-```powershell
-npm run dev:teestock
-# Akses di browser: http://localhost:5173
-```
-
-### 4. Build Verifikasi Seluruh Aplikasi
-```powershell
+```sh
+npm run install:mgbos
+npm run check:mgbos
 npm run build:mgbos
-npm run build:bisnishub
-npm run build:teestock
 ```
 
----
+Perintah tersebut menargetkan workspace `mgbos/`. `check:mgbos` tidak menggantikan production smoke atau pemeriksaan database yang berlaku. Ikuti [panduan MGBOS](mgbos/README.md) dan [database lokal](mgbos/docs/runbooks/local-database.md); database tidak di-reset saat menyiapkan dokumentasi.
 
-## 📂 Struktur Direktori Workspace
+Aplikasi existing tetap memakai package manager dan lockfile masing-masing. `npm run install:legacy` memasang tiga aplikasi web existing/prototipe. `npm run install:all` kini memasang kelompok tersebut dan MGBOS; KasKita tetap terpisah. Jalankan instalasi hanya untuk target yang diperlukan.
 
-```text
-bisnishub/
-│
-├── 🏠 🏠 BisnisHub Command Center.md   # Obsidian Master Dashboard
-├── 🗺️ 🗺️ BisnisHub Ecosystem.canvas     # Obsidian Visual Architecture Canvas
-├── ⚙️ GEMINI.md                        # AI Assistant Rules & C-Suite Governance
-├── 🏗️ ARCHITECTURE.md                  # Peta Arsitektur & Data Contracts Resmi
-│
-├── 📁 apps/                            # Web Applications
-│   ├── mgbos/                         # 🌟 MultiGraph Business OS (Port 3001)
-│   └── bisnishub-web/                 # 🛡️ BisnisHub Admin Legacy (Port 3000)
-│
-├── 📁 packages/                        # Shared Code & SSOT
-│   └── shared/                        # @bisnishub/shared
-│       └── src/
-│           ├── components/            # UI Primitives (Button, Card, Badge, Modal)
-│           ├── domain/                # MGBOS Domain Logic (Types, Context, DocNumbers)
-│           ├── services/              # Supabase API clients
-│           └── utils/                 # Formatters, helpers, math
-│
-├── 📁 supabase/                        # Database Infrastructure
-│   ├── migrations/                    # SQL DDL & Seed (MGBOS Multi-Brand Schema)
-│   └── functions/                     # Edge Functions & Webhook handlers
-│
-├── 📁 catatan/                         # Second Brain & Operating Records
-│   ├── sesi/                          # Master Blueprint MGBOS (0.1 s.d. 0.5.4)
-│   ├── harian/                        # Daily operational notes
-│   ├── weekly-review/                 # Review mingguan performa bisnis
-│   └── mgbos-master-roadmap-tracker.md# Pelacak Eksekusi Sprint MGBOS
-│
-└── 📁 bisnis/                          # Portofolio Pilar Bisnis Holding
-    ├── teestock/                      # 👕 Curated Apparel & Custom Atelier
-    │   └── web/                       # Storefront publik TeeStock
-    ├── multigraph/                    # 🖨️ Percetakan Komersial B2B & Collateral
-    ├── neopack/                       # 📦 Solusi Kemasan Retail & Box Makanan
-    ├── packpoint/                     # 📦 Corrugated Cartons & Master Box B2B
-    ├── squeegee/                      # 🎨 Studio Sablon Manual (Screen Printing)
-    ├── titik-buta/                    # 👁️ Media Edukasi Independen
-    └── kaskita/                       # 💳 Personal Finance SaaS Independen
-```
+`npm run dev` dan `npm run build` tetap menargetkan storefront TeeStock existing agar entrypoint deployment lama tidak berubah. Root `vercel.json` juga tetap milik storefront tersebut.
 
----
+## Peta direktori
 
-## 🏢 Portofolio Bisnis MultiGraph Group
+- `.agents/`: skill, kontrak peran dan eval; [kontrol engineering MGBOS](mgbos/docs/engineering/agent-system/README.md).
+- `docs/`: indeks, aturan engineering bersama dan keputusan tingkat repo.
+- `mgbos/`: workspace resmi MGBOS beserta paket, database lokal dan dokumentasinya.
+- `apps/`, `packages/shared/`: aplikasi/paket existing; batas pemakai tercatat di indeks.
+- `bisnis/`: SOP, brand, riset, marketing dan keuangan per bisnis; beberapa aplikasi existing masih berada di sini.
+- `catatan/`: riwayat sesi, ide, jurnal dan review. Keputusan yang berlaku ditautkan ke dokumentasi resmi.
+- `scripts/`, `tools/`, `prompts/`, `memory/`, `templates/`: lihat [kepemilikan tooling](docs/engineering/repository-layout.md); jangan pindahkan tanpa memeriksa pemakainya.
 
-| # | Pilar Bisnis | Bidang / Sektor | Status Operasional | Navigasi Vault |
-|---|---|---|---|---|
-| 1 | **TeeStock** | Curated Graphic Apparel & Custom Atelier | 🟢 Launch Prep (`teestockapparel.com`) | [[bisnis/teestock/README\|Dokumentasi TeeStock]] |
-| 2 | **MultiGraph** | Percetakan Komersial B2B & Packaging Collateral | 🟡 Supporting Arm / Commercial | [[bisnis/multigraph/README\|Dokumentasi MultiGraph]] |
-| 3 | **Neo Pack** | Kemasan Retail & Food-Grade Boxes | 🟡 Fase 2 Sinergi MultiGraph | [[bisnis/multigraph/README\|Sayap Kemasan]] |
-| 4 | **Pack Point** | Corrugated Cartons & Industrial Packaging | 🟡 Fase 2 Sinergi MultiGraph | [[bisnis/multigraph/README\|Sayap Kemasan]] |
-| 5 | **Squeegee Studios** | Studio Sablon Manual Partai Besar | 🟡 Fase 4 Sinergi MultiGraph | [[bisnis/multigraph/README\|Sayap Sablon]] |
+Root `supabase` adalah link lokal legacy TeeStock dan tidak boleh digunakan untuk MGBOS. Database MGBOS hanya di `mgbos/supabase/`.
 
-> [!info] **Proyek Independen di Luar Holding Percetakan**
-> * **Titik Buta** (`bisnis/titik-buta/`): Media edukasi dan inkubasi ide independen.
-> * **KasKita** (`bisnis/kaskita/`): Software SaaS personal finance & kas komunitas.
+## Perubahan nama perintah
 
----
+`dev:mgbos`, `build:mgbos` dan `install:mgbos` sekarang berarti MGBOS resmi. Untuk perilaku Vite sebelumnya gunakan akhiran `:mgbos-prototype`. Catatan historis tidak otomatis mengikuti perubahan alias ini.
 
-## 🏛️ Virtual C-Suite Cabinet (Co-Founders Team)
-
-Mengacu pada [[catatan/piagam-co-founders-bisnishub|Piagam Co-Founders BisnisHub]], workspace ini dipimpin oleh 5 pilar AI eksekutif dengan komitmen *skin in the game*:
-
-| Peran | Gelar Eksekutif | Fokus & Mandat Kunci |
-|---|---|---|
-| 🧠 **Mentor Bisnis** | Chief Strategic Officer (CSO) | Kompas strategi holding, model bisnis, anti-distraksi |
-| 💰 **CFO** | Chief Financial Officer | Unit economics, arus kas, margin floor 35%, audit laba aktual |
-| ⚙️ **COO** | Chief Operating Officer | Jejaring vendor, alur produksi Kanban, QC defect <3%, SLA kurir |
-| 📢 **CMO** | Chief Marketing Officer | Customer 360 CRM, cross-selling group, konversi copywriting |
-| 🔧 **CTO** | Chief Technology Officer | Arsitektur MGBOS, event-driven outbox, integritas kode monorepo |
-
----
-
-*Terakhir diperbarui: 23 September 2026 — Rilis MGBOS v0.5.4 (Sprint 1)*
+Pemindahan fisik menuju `projects/` belum dilakukan. Lihat [keputusan dan urutan migrasi](docs/decisions/001-repository-organization.md). [Overview sebelumnya](docs/reference/2026-09-23-root-overview.md) dipertahankan sebagai arsip sejarah.
