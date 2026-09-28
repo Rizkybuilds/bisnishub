@@ -1,0 +1,64 @@
+name: PR Gate
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  pr-gate:
+    name: PR Gate Checks
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify PR Title format
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          # Regex for conventional commits (e.g., feat(mgbos):, fix:, docs(scope):, etc.)
+          if [[ ! "$PR_TITLE" =~ ^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?:\ .*$ ]]; then
+            echo "Error: PR title '$PR_TITLE' does not follow Conventional Commits format."
+            echo "Example: feat(mgbos): add new login page"
+            exit 1
+          fi
+          echo "PR title is valid."
+
+      - name: Verify PR Body is not empty
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          # Check if body is empty or only contains whitespace
+          if [[ -z "${PR_BODY//[[:space:]]/}" ]]; then
+            echo "Error: PR body cannot be empty. Please provide a description of the changes."
+            exit 1
+          fi
+          echo "PR body is not empty."
+
+      - name: Verify Scope Isolation
+        run: |
+          # Get list of changed files
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
+          
+          MGBOS_FILES=0
+          NON_MGBOS_FILES=0
+          
+          for file in $CHANGED_FILES; do
+            if [[ "$file" == mgbos/* ]] || [[ "$file" == .github/workflows/mgbos-* ]]; then
+              MGBOS_FILES=1
+            else
+              NON_MGBOS_FILES=1
+            fi
+          done
+          
+          if [[ $MGBOS_FILES -eq 1 && $NON_MGBOS_FILES -eq 1 ]]; then
+            echo "Error: Scope isolation violation."
+            echo "Your PR modifies files inside 'mgbos/' (or its CI workflows) AND unrelated files simultaneously."
+            echo "Please separate your changes into different Pull Requests."
+            exit 1
+          fi
+          
+          echo "Scope isolation check passed."
+
