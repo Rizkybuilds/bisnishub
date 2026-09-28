@@ -6,8 +6,8 @@ import { before, after, beforeEach, afterEach, test } from 'node:test';
 const db = new PGlite();
 const root = new URL('../../../', import.meta.url);
 const migration = ['20260922_audit_hardening.sql', '20260923_transaction_guards.sql']
-  .map(name => readFileSync(new URL(`bisnis/teestock/database/migrations/${name}`, root), 'utf8')).join('\n');
-const schema = readFileSync(new URL('bisnis/teestock/database/schema.sql', root), 'utf8');
+  .map(name => readFileSync(new URL(`bisnis/teestock/archive/database/migrations/${name}`, root), 'utf8')).join('\n');
+const schema = readFileSync(new URL('bisnis/teestock/archive/database/schema.sql', root), 'utf8');
 const admin = '00000000-0000-4000-8000-000000000001';
 const member = '00000000-0000-4000-8000-000000000002';
 const newcomer = '00000000-0000-4000-8000-000000000003';

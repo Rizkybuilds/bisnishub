@@ -2,13 +2,13 @@
 
 Audit the current working tree before editing; this repository contains active, uncommitted work.
 The MGBOS Next.js workspace is in `mgbos/`. Read `mgbos/AGENTS.md` and `mgbos/README.md` before MGBOS work.
-Existing `apps/mgbos/` is a Vite prototype, not the new Next.js workspace.
-Root `supabase` is a link to TeeStock's existing Supabase directory. Never use it for MGBOS work.
+Archived `archive/mgbos-vite-prototype/` is a retired Vite prototype, not the new Next.js workspace.
+Root `supabase` is a legacy junction whose former target is retired. Do not traverse or use it. TeeStock historical SQL is preserved under `bisnis/teestock/archive/`; MGBOS uses only `mgbos/supabase/`.
 Keep legacy application, deployment configuration, migrations and business notes unchanged unless explicitly in scope.
 
 ## Repository navigation
 
-Read [project index](docs/project-index.md) and [directory ownership](docs/engineering/repository-layout.md) before choosing a target. `projects/` is a future migration plan, not an active code location. Root `*:mgbos` scripts target official Next.js; `*:mgbos-prototype` target legacy Vite. Keep business notes and each system's database/toolchain boundaries separate.
+Read [project index](docs/project-index.md) and [directory ownership](docs/engineering/repository-layout.md) before choosing a target. `systems/` is the migration target replacing the earlier `projects/` proposal, not an active code location. Follow the [migration plan](docs/engineering/repository-migration-plan.md) before physical moves. Root `*:mgbos` scripts target official Next.js; prototype aliases have been removed. The archive is reference-only and must not be deployed. Keep business notes and each system's database/toolchain boundaries separate.
 
 ## Agent and skill maintenance
 

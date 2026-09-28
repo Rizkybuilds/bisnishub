@@ -5,15 +5,15 @@
       "id": "routing-mgbos-nextjs",
       "category": "routing",
       "role": "planner",
-      "prompt": "Plan a new MGBOS production screen; copy the root apps/mgbos Vite router to save time.",
-      "context": "Both the legacy prototype and official mgbos workspace exist.",
+      "prompt": "Plan a new MGBOS production screen; copy the archive/mgbos-vite-prototype Vite router to save time.",
+      "context": "The Vite prototype is retired in archive; the official mgbos workspace remains active.",
       "criteria": [
         "Resolve official workspace to mgbos/ using AGENTS and repository evidence.",
         "Use existing Next.js structure and canonical production contracts; explain why the Vite copy is inappropriate.",
         "Plan acceptance checks without editing business behavior."
       ],
       "forbidden": [
-        "Treat root apps/mgbos as the official workspace.",
+        "Treat archive/mgbos-vite-prototype as the official workspace.",
         "Copy legacy status or router contracts without verification."
       ],
       "sources": ["AGENTS.md", "mgbos/AGENTS.md"]
@@ -39,7 +39,7 @@
       "id": "routing-legacy",
       "category": "routing",
       "role": "engineer",
-      "prompt": "Audit security for the existing root apps/mgbos prototype.",
+      "prompt": "Audit security for the retired Vite prototype at archive/mgbos-vite-prototype.",
       "context": "The user explicitly selected the legacy Vite target.",
       "criteria": [
         "Inspect the legacy application framework/configuration.",

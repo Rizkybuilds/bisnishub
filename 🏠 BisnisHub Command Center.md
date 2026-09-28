@@ -141,8 +141,8 @@ Pusat komando ekosistem manufaktur fisik, percetakan, apparel, dan packaging:
 >    - **Dokumentasi:** [[mgbos/README|MGBOS Master Guide]], [[mgbos/docs/architecture/README|Arsitektur]], [[mgbos/docs/product/README|Spesifikasi Produk]]
 > 
 > 2. 🌟 **MGBOS Core Prototype (Vite 6)**:
->    - **Path Proyek:** `apps/mgbos`
->    - **Menjalankan di Lokal:** `npm run dev:mgbos-prototype` (Port **3001**)
+>    - **Path Proyek:** `archive/mgbos-vite-prototype`
+>    - **Status:** RETIRED — referensi UI; alias runtime dihapus.
 >    - **Fokus:** Referensi UI Shell interaktif dan placeholder rute MGBOS-005 s.d MGBOS-016.
 > 
 > 3. 🛡️ **BisnisHub Admin Legacy (PWA Fallback)**:

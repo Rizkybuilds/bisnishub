@@ -15,8 +15,8 @@ Choose tests by the failure being prevented and the actual workspace. Do not enf
 
 Read applicable `AGENTS.md`, package scripts, test configuration, changed code and existing fixtures. Record target environment and revision or working-tree scope. Never point transactional tests at production by default.
 
-- **MGBOS:** `mgbos/`, not root `apps/mgbos/`. Follow foundation/prerequisite gates. Read canonical specifications and the affected migration, domain, authorization and validation code.
-- **Legacy storefront:** `bisnis/teestock/web`; inspect its Vitest/Playwright scripts and actual routes/selectors.
+- **MGBOS:** `mgbos/`, not archived `archive/mgbos-vite-prototype/`. Follow foundation/prerequisite gates. Read canonical specifications and the affected migration, domain, authorization and validation code.
+- **Retired storefront:** `bisnis/teestock/archive/web`; historical reference only. Do not run its E2E against live services. **Legacy admin** tests may read archived SQL as local fixtures.
 - **Legacy admin:** `apps/bisnishub-web`; inspect its test/build/database scripts. Check shared-code consumers when `packages/shared` changes.
 
 ## Select meaningful coverage

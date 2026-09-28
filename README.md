@@ -18,9 +18,8 @@ Mulai dari [indeks proyek](docs/project-index.md), [aturan direktori](docs/engin
 | ---------------------------------- | ------------------------ | ---------------------------------------------- |
 | MGBOS internal, Next.js            | `mgbos/apps/mgbos/`      | `npm run dev:mgbos`                            |
 | Storefront Next.js dalam MGBOS     | `mgbos/apps/teestock/`   | `npm run dev:mgbos:teestock`                   |
-| Storefront TeeStock existing, Vite | `bisnis/teestock/web/`   | `npm run dev:teestock`                         |
+| Storefront TeeStock lama (retired) | `bisnis/teestock/archive/web/` | Arsip referensi; tidak dijalankan/dideploy |
 | Admin existing, Vite               | `apps/bisnishub-web/`    | `npm run dev:bisnishub`                        |
-| Prototipe MGBOS lama, Vite         | `apps/mgbos/`            | `npm run dev:mgbos-prototype`                  |
 | KasKita mobile, Expo               | `bisnis/kaskita/mobile/` | `npm --prefix bisnis/kaskita/mobile run start` |
 
 Keberadaan aplikasi bukan bukti kesiapan produksi. Target hosting dan hasil CI harus diverifikasi pada revisi yang akan dirilis.
@@ -37,7 +36,7 @@ npm run build:mgbos
 
 Perintah tersebut menargetkan workspace `mgbos/`. `check:mgbos` tidak menggantikan production smoke atau pemeriksaan database yang berlaku. Ikuti [panduan MGBOS](mgbos/README.md) dan [database lokal](mgbos/docs/runbooks/local-database.md); database tidak di-reset saat menyiapkan dokumentasi.
 
-Aplikasi existing tetap memakai package manager dan lockfile masing-masing. `npm run install:legacy` memasang tiga aplikasi web existing/prototipe. `npm run install:all` kini memasang kelompok tersebut dan MGBOS; KasKita tetap terpisah. Jalankan instalasi hanya untuk target yang diperlukan.
+Aplikasi existing tetap memakai package manager dan lockfile masing-masing. `npm run install:legacy` memasang storefront dan admin existing. `npm run install:all` kini memasang kelompok tersebut dan MGBOS; KasKita tetap terpisah. Jalankan instalasi hanya untuk target yang diperlukan.
 
 `npm run dev` dan `npm run build` tetap menargetkan storefront TeeStock existing agar entrypoint deployment lama tidak berubah. Root `vercel.json` juga tetap milik storefront tersebut.
 
@@ -55,6 +54,6 @@ Root `supabase` adalah link lokal legacy TeeStock dan tidak boleh digunakan untu
 
 ## Perubahan nama perintah
 
-`dev:mgbos`, `build:mgbos` dan `install:mgbos` sekarang berarti MGBOS resmi. Untuk perilaku Vite sebelumnya gunakan akhiran `:mgbos-prototype`. Catatan historis tidak otomatis mengikuti perubahan alias ini.
+`dev:mgbos`, `build:mgbos` dan `install:mgbos` sekarang berarti MGBOS resmi. Prototype Vite dipensiunkan ke [arsip](archive/mgbos-vite-prototype/README.md); alias `*:mgbos-prototype` dihapus. Catatan historis tidak otomatis mengikuti perubahan alias ini.
 
-Pemindahan fisik menuju `projects/` belum dilakukan. Lihat [keputusan dan urutan migrasi](docs/decisions/001-repository-organization.md). [Overview sebelumnya](docs/reference/2026-09-23-root-overview.md) dipertahankan sebagai arsip sejarah.
+Prototype sudah dipindahkan ke `archive/mgbos-vite-prototype/`. Pemindahan sistem aktif menuju `systems/` belum dilakukan. Target ini menggantikan usulan `projects/`; lihat [keputusan](docs/decisions/001-repository-organization.md) dan [rencana migrasi bertahap](docs/engineering/repository-migration-plan.md). [Overview sebelumnya](docs/reference/2026-09-23-root-overview.md) dipertahankan sebagai arsip sejarah.

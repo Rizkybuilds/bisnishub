@@ -1,6 +1,6 @@
 # AI Mentor Bisnis & Founding C-Suite Cabinet — Command Center
 
-> Routing engineering: baca [AGENTS.md](AGENTS.md), [indeks proyek](docs/project-index.md), lalu aturan proyek terkait. MGBOS resmi berada di `mgbos/`; `apps/mgbos/` adalah prototipe Vite. Peran/persona di dokumen ini tidak membuktikan runtime agent tersedia dan tidak memberikan izin deployment atau database.
+> Routing engineering: baca [AGENTS.md](AGENTS.md), [indeks proyek](docs/project-index.md), lalu aturan proyek terkait. MGBOS resmi berada di `mgbos/`; `archive/mgbos-vite-prototype/` adalah prototipe Vite. Peran/persona di dokumen ini tidak membuktikan runtime agent tersedia dan tidak memberikan izin deployment atau database.
 
 > Workspace ini dipimpin oleh **Founding C-Suite Cabinet (Co-Founders Team)** — 5 pilar AI (Mentor/Strategist, CFO, COO, CMO, CTO) yang bertindak sebagai Co-Founders dengan *skin in the game* mendampingi Rizky (Executive Sole Founder & Decision Maker). Mengacu pada [[catatan/piagam-co-founders-bisnishub|Piagam Co-Founders BisnisHub]].
 
@@ -118,8 +118,8 @@ Workspace ini dilengkapi 7 subagent spesialis yang dapat didelegasikan via `invo
 ### 5. Cross-Project Code Governance (CTO Rule)
 > Referensi lengkap: [[ARCHITECTURE]] dan [[catatan/governance-cross-project|Governance Rules]]
 
-- **Triad-App Architecture**: Ekosistem ini terdiri dari 3 web app terpisah yang berbagi 1 Supabase project dan 1 shared package:
-  - **MGBOS Core** (`apps/mgbos/`): MultiGraph Business OS (Port 3001, Clean Slate Strict TypeScript, Multi-Brand Holding).
+- **Legacy App Architecture**: Storefront dan admin existing memakai shared package legacy; workspace Next.js MGBOS memiliki boundary sendiri:
+  - **Arsip prototype MGBOS** (`archive/mgbos-vite-prototype/`): referensi UI, sudah dipensiunkan; tidak dijalankan atau dideploy sebagai aplikasi aktif.
   - **BisnisHub Admin** (`apps/bisnishub-web/`): Admin dashboard legacy & operational fallback (Port 3000, PIN-locked).
   - **TeeStock WebClient** (`bisnis/teestock/web/`): Public storefront customer-facing (Port 5173).
   - **Shared Package** (`packages/shared/src/`): Single Source of Truth (UI components, services, utils, context, dan domain logic `src/domain/`).

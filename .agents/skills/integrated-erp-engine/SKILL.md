@@ -19,7 +19,7 @@ Read root `AGENTS.md` and inspect the target implementation before proposing con
 
 - **MGBOS:** `mgbos/`. Read its `AGENTS.md`, `README.md`, `docs/architecture/README.md`, `docs/product/README.md` and the applicable engineering report. Follow links to the canonical data model and state machines. Check the prerequisite gates before starting another slice.
 - **Legacy:** `apps/bisnishub-web`, `bisnis/teestock/web`, and `packages/shared/src`. Inspect actual callers, migrations and tests. Preserve existing contracts unless changing them is explicitly in scope.
-- `apps/mgbos/` is the Vite prototype. Root `supabase` belongs to legacy TeeStock and is never the MGBOS database target.
+- `archive/mgbos-vite-prototype/` is the Vite prototype. Root `supabase` belongs to legacy TeeStock and is never the MGBOS database target.
 
 ## MGBOS contracts
 
@@ -44,3 +44,7 @@ Read root `AGENTS.md` and inspect the target implementation before proposing con
 Map the trigger, authorized actor, prior state, resulting state, financial/stock effects and retry behavior before implementing a critical command. Validate failed authorization, invalid transitions, repeated requests, concurrent effects and rollback where relevant.
 
 Use the workspace's required checks and risk-based tests. Report implementation, executed checks and unresolved gates separately. For an architecture-only task, deliver the contract and decisions without implying it was implemented or deployed.
+
+## TeeStock retirement — 2026-09-28
+
+The old TeeStock storefront and SQL are preserved under `bisnis/teestock/archive/`. They are reference-only, not an active implementation or deployment target. Resolve active work through `docs/project-index.md`; historical examples do not authorize restarting the archive.

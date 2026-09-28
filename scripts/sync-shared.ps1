@@ -7,7 +7,7 @@
 .DESCRIPTION
     Post-Phase 2 verification script. Checks:
     1. All 36 shared files exist in packages/shared/src/
-    2. No duplicate copies remain in apps/bisnishub-web/src/ or bisnis/teestock/web/src/
+    2. No duplicate copies remain in apps/bisnishub-web/src/ or bisnis/teestock/archive/web/src/
 
 .EXAMPLE
     .\sync-shared.ps1 -Verify
@@ -23,7 +23,7 @@ $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $PSScriptRoot
 $SharedSrc = Join-Path $Root 'packages\shared\src'
 $BHSrc = Join-Path $Root 'apps\bisnishub-web\src'
-$TSSrc = Join-Path $Root 'bisnis\teestock\web\src'
+$TSSrc = Join-Path $Root 'bisnis\teestock\archive\web\src'
 
 $sharedFiles = @(
     'services/supabase.js',

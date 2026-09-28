@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => {
-  test('Alur Lengkap Transaksi: Katalog -> PDP -> Keranjang -> Voucher -> Checkout QRIS -> Tracking Status', async ({ page }) => {
-    // 1. Kunjungi Halaman Katalog Kaos Polos NSA Original (Real Supabase Catalog)
+  test('Alur Lengkap Transaksi: Katalog -> PDP -> Keranjang -> Voucher -> Checkout QRIS -> Tracking Status', async ({ page, backend }) => {
+    // Synthetic catalog; every network request is controlled by the fixture.
     await page.goto('/polos');
     await expect(page).toHaveTitle(/TeeStock/i);
 
@@ -60,6 +60,10 @@ test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => 
     await expect(page.locator('text=Pesanan Berhasil Dicatat!')).toBeVisible({ timeout: 10000 });
     await expect(page.locator('text=Nominal Transfer Persis')).toBeVisible();
     await expect(page.locator('text=Verifikasi Otomatis via Kode Unik')).toBeVisible();
+    expect(backend.checkouts).toHaveLength(1);
+    expect(backend.checkouts[0].customer.phone).toBe('081234567890');
+    expect(backend.checkouts[0].items[0].sku).toBe('E2E-BLK-3600');
+    expect(backend.checkouts[0].paymentMethod).toBe('manual_qris');
 
     // Verifikasi Tombol Konfirmasi WhatsApp & Tombol Lacak Pesanan
     const waConfirmBtn = page.locator('a:has-text("Saya Sudah Bayar")');
@@ -76,9 +80,10 @@ test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => 
     await expect(page.locator('h1:has-text("Lacak Status Pesanan")')).toBeVisible();
     await expect(page.locator('text=Nomor Pesanan:')).toBeVisible();
     await expect(page.locator('text=Order Diterima')).toBeVisible();
+    expect(backend.tracking).toEqual([{ orderNumber: 'TS-E2E-1', phoneLast4: '7890' }]);
   });
 
-  test('Validasi form mencegah submission jika nomor HP tidak valid', async ({ page }) => {
+  test('Validasi form mencegah submission jika nomor HP tidak valid', async ({ page, backend }) => {
     // 1. Kunjungi katalog polos dan masukkan produk ke troli
     await page.goto('/polos');
     const product = page.locator('a[href^="/produk/"]').first();
@@ -107,9 +112,10 @@ test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => 
     // Verifikasi pesan error nomor WhatsApp
     const errorMessage = page.locator('text=Nomor WhatsApp tidak valid');
     await expect(errorMessage).toBeVisible();
+    expect(backend.checkouts).toHaveLength(0);
   });
 
-  test('Customer Journey Studio Custom Order (/custom-order)', async ({ page }) => {
+  test('Customer Journey Studio Custom Order (/custom-order)', async ({ page, backend }) => {
     await page.goto('/custom-order');
     await expect(page).toHaveTitle(/Custom Sablon/i);
 
@@ -138,6 +144,8 @@ test.describe('Jalur Emas E-Commerce TeeStock (Golden Customer Journey)', () => 
     // Verifikasi konfirmasi diterima
     await expect(page.locator('text=Permintaan Custom Diterima!')).toBeVisible({ timeout: 10000 });
     await expect(page.locator('a:has-text("Konfirmasi Order ke WhatsApp Studio")')).toBeVisible();
+    expect(backend.checkouts).toHaveLength(1);
+    expect(backend.checkouts[0].customer.name).toBe('Komunitas Motor Bandung');
   });
 
   test('Customer Journey Bio Link TikTok & Instagram (/bio)', async ({ page }) => {
