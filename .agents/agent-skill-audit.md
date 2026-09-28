@@ -124,3 +124,7 @@ Separate governance and migration-immutability jobs supplement the unchanged MGB
 ## Repository navigation — 2026-09-27
 
 Root README now routes official MGBOS separately from Vite prototype and legacy applications. Shared directory policy and project index live under `docs/`; project business contracts remain in their existing workspaces. Root/GEMINI routing, the Obsidian dashboard command references and git-deploy-ops were aligned with explicit MGBOS/prototype aliases. Prompts and memory remain in place because the existing Python loader depends on them. Physical project relocation and provider runtime registration are not part of this navigation phase.
+
+## Prototype retirement routing — 2026-09-28
+
+Vite prototype retired with owner confirmation to `archive/mgbos-vite-prototype/`. Updated five project skill routing references, two synthetic routing cases, root/Next.js navigation and removed root prototype execution aliases. Official MGBOS stays at `mgbos/`; archive is reference-only. Personal/plugin skills unchanged. See [migration evidence](../docs/engineering/repository-migration-wave-1.md). No new runtime role or permission introduced; structural validation is not an executed behavioral evaluation.

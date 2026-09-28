@@ -9,7 +9,7 @@ Implement the requested page or component using its workspace's existing design 
 
 ## Establish project context
 
-Read applicable AGENTS, inspect the route, neighboring components, package files and actual token sources. MGBOS Next.js work belongs in `mgbos/`; root `apps/mgbos/` is the Vite prototype. Preserve each application's stack and imports.
+Read applicable AGENTS, inspect the route, neighboring components, package files and actual token sources. MGBOS Next.js work belongs in `mgbos/`; archived `archive/mgbos-vite-prototype/` is the Vite prototype. Preserve each application's stack and imports.
 
 Read `.21st/design.json` and `.21st/DESIGN.md` in the relevant workspace if present. Missing 21st files do not mean the project lacks a design system. Inspect existing CSS and components before initializing anything. Do not overwrite or create competing design sources just to satisfy a tool.
 
@@ -30,3 +30,7 @@ Preserve identity, density, typography and existing behavior unless the user req
 Record a selected durable design decision in the existing appropriate project source, using its established schema. Do not force an invented `decisions` field into an unknown configuration format.
 
 Report changed files, components reused, checks actually performed and unverified states. Implementation permission does not imply permission to publish components/themes or deploy the application.
+
+## TeeStock retirement — 2026-09-28
+
+The old TeeStock storefront and SQL are preserved under `bisnis/teestock/archive/`. They are reference-only, not an active implementation or deployment target. Resolve active work through `docs/project-index.md`; historical examples do not authorize restarting the archive.

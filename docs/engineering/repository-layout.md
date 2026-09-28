@@ -17,7 +17,7 @@ Berlaku untuk organisasi repo, bukan pengganti aturan bisnis masing-masing siste
 | `templates/`                        | Template reusable, bukan hasil pengerjaan suatu proyek                                                |
 | `assets/`                           | Aset lintas proyek; aset khusus aplikasi tetap dekat consumer                                         |
 | `scripts/`                          | Perintah pemeliharaan dan pemeriksaan repo                                                            |
-| `tools/`                            | Tool existing yang harus diaudit sebelum migrasi ke `tooling/`                                        |
+| `tools/`                            | Program dengan lifecycle sendiri; target asisten Python adalah `tools/assistant/` setelah audit      |
 | `prompts/`, `memory/`               | Data/input asisten Python existing; dibaca `agent.py`, bukan pengganti AGENTS atau skill              |
 | `scratch/`                          | Artefak existing yang belum dipromosikan; jangan jalankan skrip data tanpa audit target               |
 | `.temp/`                            | Scratch baru yang diabaikan Git; bukan lokasi satu-satunya hasil kerja penting                        |
@@ -31,6 +31,8 @@ Simpan satu keputusan resmi di tempat pemiliknya. Catatan sesi menautkan keputus
 Direktori kode baru memakai lowercase-kebab-case. Jangan mengganti nama catatan, canvas atau aset lama secara massal: backlink, embed dan consumer harus diperiksa. Simpan output build/cache secara lokal melalui ignore yang sesuai; jangan hapus file tracked hanya karena namanya tampak sementara.
 
 ## Dependency dan database
+
+Target migrasi software adalah `systems/`, menggantikan usulan `projects/`. Lokasi aktif tetap mengikuti indeks proyek sampai masing-masing tahap [rencana migrasi](repository-migration-plan.md) selesai. `bisnis/` diarahkan menjadi pengetahuan bisnis; aplikasi existing di dalamnya tetap aktif selama transisi. Jangan membuat folder kosong untuk runtime JARVIS atau sistem lain yang belum diimplementasikan.
 
 Satu Git repo dapat memuat beberapa workspace instalasi. Saat ini MGBOS tetap memakai pnpm/lockfile sendiri; aplikasi existing memakai npm/lockfile masing-masing. Tidak ada root pnpm workspace baru pada tahap ini.
 

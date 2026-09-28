@@ -16,7 +16,8 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: [['html', { open: 'never' }], ['list']],
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://127.0.0.1:43190',
+    serviceWorkers: 'block',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure'
@@ -36,9 +37,13 @@ export default defineConfig({
     }
   ],
   webServer: {
-    command: process.platform === 'win32' ? 'npm.cmd run dev' : 'npm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
+    command: 'node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 43190 --strictPort',
+    url: 'http://127.0.0.1:43190',
+    reuseExistingServer: false,
+    env: {
+      VITE_SUPABASE_URL: 'http://127.0.0.1:43192',
+      VITE_SUPABASE_ANON_KEY: 'e2e-synthetic-key-not-a-credential'
+    },
     timeout: 120 * 1000
   }
 });

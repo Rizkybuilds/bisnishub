@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 test.describe('Audit Menyeluruh Web TeeStock (Full System & Feature Verification)', () => {
   test('Audit Konsol & Responsivitas Semua Halaman Publik Utama (Zero Console Errors)', async ({ page }) => {
@@ -149,7 +149,7 @@ test.describe('Audit Menyeluruh Web TeeStock (Full System & Feature Verification
     await expect(page.locator('text=Nama kreator atau moniker wajib diisi')).toBeVisible();
   });
 
-  test('Verifikasi Lead Capture Newsletter (/ & footer)', async ({ page }) => {
+  test('Verifikasi Lead Capture Newsletter (/ & footer)', async ({ page, backend }) => {
     await page.goto('/');
     const emailInput = page.locator('input[type="email"]').first();
     await expect(emailInput).toBeVisible();
@@ -159,7 +159,9 @@ test.describe('Audit Menyeluruh Web TeeStock (Full System & Feature Verification
     await expect(submitBtn).toBeVisible();
     await submitBtn.click();
 
-    await expect(page.locator('text=WELCOME10').or(page.locator('text=Berhasil Terdaftar'))).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Selamat datang di lingkaran', { exact: false })).toBeVisible();
+    expect(backend.subscribers).toHaveLength(1);
+    expect(backend.subscribers[0].email).toBe('test-visitor@teestock.id');
   });
 
   test('Verifikasi Navigasi Mobile Drawer di Layar HP (375px)', async ({ page }) => {

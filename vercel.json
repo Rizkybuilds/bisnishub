@@ -1,7 +1,7 @@
 {
-  "buildCommand": "npm --prefix bisnis/teestock/web run build",
+  "buildCommand": "node scripts/retired-storefront.mjs",
   "outputDirectory": "bisnis/teestock/web/dist",
-  "installCommand": "npm --prefix bisnis/teestock/web install",
+  "installCommand": "node scripts/retired-storefront.mjs",
   "framework": "vite",
   "rewrites": [
     {

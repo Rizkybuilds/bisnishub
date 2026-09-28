@@ -35,7 +35,7 @@ for(const p of snapshot.policies) {
 }
 console.log('Snapshot restored:',Object.fromEntries(Object.entries(snapshot.data).map(([k,v])=>[k,v.length])));
 for(const name of ['20260922_audit_hardening.sql','20260923_transaction_guards.sql']) {
- await db.exec(readFileSync(new URL(`../../../bisnis/teestock/database/migrations/${name}`,import.meta.url),'utf8'));
+ await db.exec(readFileSync(new URL(`../../../bisnis/teestock/archive/database/migrations/${name}`,import.meta.url),'utf8'));
  console.log('Applied locally:',name);
 }
 for(const [table,rows] of Object.entries(snapshot.data)) assert.equal((await db.query(`SELECT count(*)::int n FROM public.${ident(table)}`)).rows[0].n,rows.length);

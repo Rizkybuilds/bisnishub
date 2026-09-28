@@ -15,6 +15,8 @@ tags:
 
 # 🏗️ ARCHITECTURE — MultiGraph Business OS & Web Apps Ecosystem
 
+> Peta historis legacy. Sejak 28 September 2026, prototype `apps/mgbos/` dipensiunkan ke [arsip](archive/mgbos-vite-prototype/README.md). Diagram/path lama di bawah adalah histori; lokasi aktif mengikuti [indeks proyek](docs/project-index.md).
+
 > Scope clarification, 2026-09-27: topology dan ownership di bawah adalah dokumentasi legacy/prototipe. Diagram single-project Supabase tidak berlaku untuk MGBOS Next.js resmi. Untuk peta repo terkini gunakan [indeks proyek](docs/project-index.md); untuk MGBOS gunakan [arsitektur workspace](mgbos/docs/architecture/README.md). Paket `packages/shared/` di bawah bukan paket domain MGBOS resmi.
 
 > [!abstract]
