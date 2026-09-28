@@ -29,3 +29,7 @@ Replacing the Vite prototype would overwrite work that has not been committed.
 Developers first cd into mgbos. The legacy prototype remains separate and operational.
 This is a workspace inside the existing Git repository, not a nested Git repository or separate remote.
 Future consolidation requires its own migration task. No MGBOS-002–004 implementation is reused or certified here.
+
+## Follow-up - 2026-09-28
+
+The legacy Vite prototype was retired with owner confirmation and moved to `archive/mgbos-vite-prototype/`. Its former operational status above is historical; official MGBOS remains at `mgbos/`. See the [migration report](../../../docs/engineering/repository-migration-wave-1.md).

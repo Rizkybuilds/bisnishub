@@ -63,9 +63,9 @@ mgbos/
 > [!important]
 > **Selalu jalankan perintah MGBOS di dalam direktori `mgbos/` (`cd mgbos`).**
 >
-> - Direktori `apps/mgbos/` di root repositori adalah **Vite prototype** terdahulu yang tetap dipertahankan sebagai referensi UI (Port 3001).
+> - Direktori `archive/mgbos-vite-prototype/` adalah **arsip prototype Vite** yang dipensiunkan pada 28 September 2026. Hanya referensi UI; alias runtime root sudah dihapus.
 > - Workspace `mgbos/` ini adalah **fondasi Next.js resmi** (Port 3101/3102).
-> - Workspace ini memiliki database Supabase lokal terisolasi dan **dilarang keras menyentuh `../supabase`** (link database TeeStock live).
+> - Workspace ini memiliki database Supabase lokal terisolasi dan **dilarang keras menyentuh `../supabase`** (junction legacy yang sudah tidak aktif; jangan ditelusuri).
 
 ---
 
