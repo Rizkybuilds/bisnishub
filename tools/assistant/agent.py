@@ -5,12 +5,12 @@ from datetime import datetime
 from dotenv import load_dotenv
 from anthropic import Anthropic
 
-load_dotenv()
-
-BASE_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).resolve().parent
+REPOSITORY_ROOT = BASE_DIR.parents[1]
+load_dotenv(REPOSITORY_ROOT / ".env")
 PROMPTS_DIR = BASE_DIR / "prompts"
 MEMORY_DIR = BASE_DIR / "memory"
-NOTES_SESSION_DIR = BASE_DIR / "catatan" / "sesi"
+NOTES_SESSION_DIR = REPOSITORY_ROOT / "catatan" / "sesi"
 
 PROFILE_FILE = MEMORY_DIR / "business_profile.json"
 

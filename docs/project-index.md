@@ -1,31 +1,23 @@
 # Indeks proyek BisnisHub
 
-Diperiksa dari struktur dan manifest lokal pada 2026-09-27. Owner keputusan repo: Rizky. Penanggung jawab teknis/operasional per sistem perlu ditetapkan sebelum rilis; tabel ini tidak mengklaim layanan telah terverifikasi live.
+Lokasi diperiksa 29 September 2026. Indeks ini adalah locator, bukan sertifikasi produksi.
 
-| Sistem            | Lokasi                      | Batas dependency/data                                                                  | Status berdasarkan repo                                     |
-| ----------------- | --------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| MGBOS resmi       | [mgbos](../systems/mgbos/README.md) | pnpm workspace; `systems/mgbos/packages/`; `systems/mgbos/supabase/` terisolasi                        | Next.js; gate ada, readiness dinilai per revisi             |
-| TeeStock lama (retired) | `bisnis/teestock/archive/web/` | SQL dan Supabase di `bisnis/teestock/archive/`; arsip referensi | Tidak dijalankan atau dideploy; konfirmasi owner 2026-09-28 |
-| Admin existing    | `apps/bisnishub-web/`       | npm lockfile sendiri; paket/data legacy terkait TeeStock                               | Implementasi existing, bukan aplikasi MGBOS Next.js         |
-| MGBOS prototype (retired) | `archive/mgbos-vite-prototype/`               | npm lockfile sendiri; kontrak legacy                                                   | Arsip referensi; tidak dijalankan/dideploy sebagai aplikasi aktif          |
-| KasKita           | `systems/kaskita/apps/mobile/`    | npm lockfile sendiri; `systems/kaskita/supabase/`                                       | Expo; proyek independen dari holding percetakan             |
-| Shared legacy     | `packages/shared/`          | Layanan/UI untuk aplikasi existing/prototipe; bukan `@mgbos/domain`                    | Perubahan harus memeriksa seluruh consumer                  |
-| Asisten Python    | `main.py`, `agent.py`       | `requirements.txt`; membaca `prompts/` dan `memory/` relatif file                      | Tool existing; runtime/layanan eksternal belum diverifikasi |
+| Sistem / sumber | Lokasi | Batas dan status |
+| --- | --- | --- |
+| MGBOS | [systems/mgbos](../systems/mgbos/README.md) | Next.js, pnpm workspace dan Supabase lokal sendiri |
+| JARVIS | [charter dan spesifikasi](../systems/jarvis/docs/charter.md) | Arsitektur tertulis; runtime belum diverifikasi |
+| KasKita | `systems/kaskita/apps/mobile/`, `systems/kaskita/supabase/` | Expo/npm dan database independen |
+| Asisten Python | [tools/assistant](../tools/assistant/README.md) | CLI existing; persona/memory milik tool, ekspor ke catatan root |
+| TeeStock V1 / shared | [archive/teestock-v1](../archive/teestock-v1/README.md) | Retired; admin dihapus pada `05e8b18`; tanpa alias runtime |
+| Prototype MGBOS Vite | `archive/mgbos-vite-prototype/` | Retired; referensi saja |
 
-## Dokumen bisnis
+## Navigasi dan authority
 
-Folder yang tersedia: `bisnis/multigraph/`, `bisnis/teestock/`, `bisnis/rizkybuild/`, `bisnis/titik-buta/`, `bisnis/kaskita/`. Titik Buta dan KasKita tetap proyek independen. Jangan membuat folder atau aplikasi baru hanya karena nama brand muncul di roadmap.
+- Aturan repository: [directory ownership](engineering/repository-layout.md) dan [ADR-001](decisions/001-repository-organization.md).
+- Authority dokumen: [constitution](governance/documentation-constitution.md) dan [canonical source map](governance/canonical-source-map.md).
+- MGBOS: baca AGENTS workspace dan spesifikasi milik sistem sebelum implementasi.
+- JARVIS: baca charter dan kontrak yang relevan; jangan menganggap dokumen ACTIVE sebagai bukti runtime tersedia.
+- Business knowledge: `bisnis/multigraph/`, `bisnis/teestock/`, `bisnis/rizkybuild/`; Titik Buta dan KasKita tetap independen.
+- `catatan/sesi/` mempertahankan sejarah. Sumber transitional tetap mengikuti source map; cleanup tidak otomatis mempromosikan atau menghapus spesifikasi.
 
-`catatan/sesi/` menyimpan histori diskusi dan beberapa sumber spesifikasi yang masih dirujuk MGBOS. Jangan memindahkan atau mengganti status sumber tersebut hanya demi merapikan navigasi. Keputusan baru ditulis di dokumen pemiliknya dan ditautkan dari catatan.
-
-## Routing pekerjaan
-
-- Implementasi MGBOS: baca root AGENTS, `systems/mgbos/AGENTS.md`, README, spesifikasi dan test terkait.
-- Legacy storefront/admin/prototype: periksa manifest, consumer shared, konfigurasi hosting dan target data aktual. Aturan MGBOS tidak otomatis menggantikan kontrak legacy.
-- Skill/peran: `.agents/skills/agent-skill-maintainer/SKILL.md`; nama skill khusus proyek menggunakan prefix seperti `mgbos-`.
-- Bisnis: pilih folder bisnis dan specialist sesuai kebutuhan; jangan mengubah kode dari permintaan diskusi strategi.
-- Pengaturan bersama: [aturan direktori](engineering/repository-layout.md) dan [keputusan migrasi](decisions/001-repository-organization.md).
-
-README adalah pintu masuk; indeks ini adalah peta lokasi; spesifikasi/detail teknis tetap dimiliki proyek. Data target di sini tidak mengizinkan deployment atau mutasi database.
-
-Target berikutnya adalah `systems/`, sesuai [ADR-001](decisions/001-repository-organization.md) dan [rencana migrasi](engineering/repository-migration-plan.md). MGBOS berada di `systems/mgbos/` dan KasKita di `systems/kaskita/`; lokasi sistem lain mengikuti tabel aktif.
+Peta lokasi tidak mengizinkan deployment, aktivasi ulang archive, atau mutasi database.

@@ -40,3 +40,13 @@ Turborepo atau penyatuan semua package manager tidak ditambahkan. Konsolidasi to
 Perubahan ini menetapkan tujuan dan urutan kerja, bukan memindahkan aplikasi. Tidak menyatukan package manager, mengubah domain MGBOS, menghapus konfigurasi hosting atau membuat runtime JARVIS. Riwayat sesi dipertahankan; spesifikasi aktif baru dipromosikan dengan pemetaan sumber dan pembaruan seluruh referensi. `tools/` tetap nama resmi tooling; tidak ada migrasi ke `tooling/`.
 
 Tahap 1 selesai secara lokal: 14 file prototype dipertahankan identik di `archive/mgbos-vite-prototype/`; root install legacy hanya mencakup storefront/admin. Lihat [bukti pramigrasi dan retirement](../engineering/repository-migration-wave-1.md).
+
+## Update 29 September 2026
+
+Lokasi aktual mengikuti [indeks proyek](../project-index.md). MGBOS dan KasKita
+berada di `systems/`; JARVIS sudah memiliki spesifikasi di direktori sistemnya.
+Asisten Python berada di `tools/assistant/`. Admin lama dihapus oleh owner dan
+sisa implementasi legacy diarsipkan di root `archive/teestock-v1/`.
+`install:all`, `install:legacy`, dan alias admin sudah dihapus; root dev/build
+menargetkan MGBOS, sementara root Vercel tetap menolak deployment.
+Pernyataan tahapan sebelumnya di atas adalah histori keputusan.

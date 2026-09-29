@@ -139,3 +139,18 @@ Aplikasi dan Supabase KasKita dipindahkan ke `systems/kaskita/` sebagai satu uni
 ## Update 29 September 2026 — MGBOS relocation
 
 The official workspace has moved to `systems/mgbos/` with its runtime, database and toolchain boundaries preserved. Root aliases, CI, instructions and links follow that location. Existing historical path statements above describe earlier stages; the project index records the current layout. Verification is recorded in the relocation report. Owner has also retired the legacy admin/shared runtime; subsequent cleanup archives that implementation and moves the Python assistant without modifying business notes.
+
+## Update 29 September 2026 — struktur utama
+
+MGBOS berada di `systems/mgbos/`; JARVIS kini memiliki dokumentasi arsitektur
+milik owner di `systems/jarvis/docs/`. Admin lama telah dihapus owner pada
+`05e8b18`. Sisa storefront/shared/SQL dipisahkan ke `archive/teestock-v1/`,
+asisten Python ke `tools/assistant/`, dan tipe KasKita yang tertinggal ke
+`systems/kaskita/shared/`. Root aliases legacy dihapus. Sumber bisnis dan
+catatan sesi dipertahankan.
+
+[Bukti cleanup](repository-cleanup-2026-09-29.md) membedakan hasil lokal dari
+integrasi main/CI. Promosi semantic dokumen dan rename internal app menjadi
+backoffice tetap perubahan terpisah; tidak mengubah dokumen arsitektur owner
+secara otomatis saat cleanup fisik. Lokasi internal `apps/mgbos/` tetap valid
+sebagai anak workspace `systems/mgbos/`.

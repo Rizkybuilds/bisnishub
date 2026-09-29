@@ -33,4 +33,4 @@ Report changed files, components reused, checks actually performed and unverifie
 
 ## TeeStock retirement — 2026-09-28
 
-The old TeeStock storefront and SQL are preserved under `bisnis/teestock/archive/`. They are reference-only, not an active implementation or deployment target. Resolve active work through `docs/project-index.md`; historical examples do not authorize restarting the archive.
+The old TeeStock storefront and SQL are preserved under `archive/teestock-v1/`. They are reference-only, not an active implementation or deployment target. Resolve active work through `docs/project-index.md`; historical examples do not authorize restarting the archive.

@@ -3,12 +3,12 @@
 Audit the current working tree before editing; this repository contains active, uncommitted work.
 The MGBOS Next.js workspace is in `systems/mgbos/`. Read `systems/mgbos/AGENTS.md` and `systems/mgbos/README.md` before MGBOS work.
 Archived `archive/mgbos-vite-prototype/` is a retired Vite prototype, not the new Next.js workspace.
-Root `supabase` is a legacy junction whose former target is retired. Do not traverse or use it. TeeStock historical SQL is preserved under `bisnis/teestock/archive/`; MGBOS uses only `systems/mgbos/supabase/`.
-Keep legacy application, deployment configuration, migrations and business notes unchanged unless explicitly in scope.
+The obsolete root `supabase` junction has been removed. Do not recreate or use a root database fallback. TeeStock historical SQL is preserved under `archive/teestock-v1/`; MGBOS uses only `systems/mgbos/supabase/`.
+Legacy storefront/shared code is retired under `archive/teestock-v1/`; the old admin was removed. Do not restore runtime aliases or use archive SQL. Preserve business notes and session history.
 
 ## Repository navigation
 
-Read [project index](docs/project-index.md) and [directory ownership](docs/engineering/repository-layout.md) before choosing a target. `systems/` replaces the earlier `projects/` proposal. KasKita now lives at `systems/kaskita/`; other systems remain at the active locations in the project index. Follow the [migration plan](docs/engineering/repository-migration-plan.md) before physical moves. Root `*:mgbos` scripts target official Next.js; prototype aliases have been removed. The archive is reference-only and must not be deployed. Keep business notes and each system's database/toolchain boundaries separate.
+Read [project index](docs/project-index.md) and [directory ownership](docs/engineering/repository-layout.md) before choosing a target. `systems/` replaces the earlier `projects/` proposal. MGBOS lives at `systems/mgbos/`, JARVIS specifications at `systems/jarvis/docs/`, and independent KasKita at `systems/kaskita/`. The Python assistant is in `tools/assistant/` and is not the JARVIS runtime. Follow the [migration plan](docs/engineering/repository-migration-plan.md) before physical moves. Root `*:mgbos` scripts target official Next.js; prototype aliases have been removed. The archive is reference-only and must not be deployed. Keep business notes and each system's database/toolchain boundaries separate.
 
 ## Agent and skill maintenance
 
@@ -32,3 +32,7 @@ Skill examples do not authorize staging unrelated work, pushing to main, deployi
 For MGBOS change planning use `mgbos-change-planner`; for transaction integrity audits use `mgbos-business-integrity-auditor`; for PR/diff review use `mgbos-pr-reviewer`.
 Read [agent-system workflow](systems/mgbos/docs/engineering/agent-system/workflow.md) and the selected [role contract](systems/mgbos/docs/engineering/agent-system/roles.md). The provider-neutral contracts in `.agents/roles/` are explicitly loaded instructions, not automatic runtime registration or permission grants.
 Governance/CI changes require the focused validators and negative tests documented in [release gates](systems/mgbos/docs/engineering/agent-system/release-gates.md). `.agents/evals/` is a behavioral baseline; structural validation alone is not an executed agent evaluation.
+
+## Repository integrity
+
+Run `npm run check:repository` after directory changes. Business knowledge stays in `bisnis/`; runtime code belongs to its system/tool, and retired code to root `archive/`. Read the documentation constitution and canonical source map under `docs/governance/` for authority routing. Specification status does not prove implementation or deployment.

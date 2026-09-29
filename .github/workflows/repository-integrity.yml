@@ -1,0 +1,21 @@
+name: Repository Integrity
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  repository-integrity:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/governance/check_repository_layout.py
+      - run: python -m unittest discover -s scripts/governance -p 'test_repository_layout.py'
+      - run: python -m unittest discover -s tools/assistant -p 'test_*.py'

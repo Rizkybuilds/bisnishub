@@ -2,18 +2,16 @@
   "name": "bisnishub",
   "version": "1.0.0",
   "private": true,
-  "description": "BisnisHub Monorepo & TeeStock Apparel Platform",
+  "description": "MultiGraph systems, business knowledge and engineering governance",
   "scripts": {
     "build": "npm run build:mgbos",
     "dev": "npm run dev:mgbos",
-    "dev:bisnishub": "npm --prefix apps/bisnishub-web run dev",
-    "build:bisnishub": "npm --prefix apps/bisnishub-web run build",
     "dev:mgbos": "npm exec --yes --package=pnpm@10.34.5 -- pnpm --dir systems/mgbos dev",
     "build:mgbos": "npm exec --yes --package=pnpm@10.34.5 -- pnpm --dir systems/mgbos build",
     "install:mgbos": "npm exec --yes --package=pnpm@10.34.5 -- pnpm --dir systems/mgbos install --frozen-lockfile",
-    "install:all": "npm run install:legacy && npm run install:mgbos",
     "dev:mgbos:teestock": "npm exec --yes --package=pnpm@10.34.5 -- pnpm --dir systems/mgbos dev:teestock",
     "check:mgbos": "npm exec --yes --package=pnpm@10.34.5 -- pnpm --dir systems/mgbos check",
-    "install:legacy": "npm --prefix apps/bisnishub-web install"
+    "assistant": "python tools/assistant/main.py",
+    "check:repository": "python scripts/governance/check_repository_layout.py"
   }
 }
