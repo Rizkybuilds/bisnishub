@@ -9,7 +9,7 @@ Implement the requested page or component using its workspace's existing design 
 
 ## Establish project context
 
-Read applicable AGENTS, inspect the route, neighboring components, package files and actual token sources. MGBOS Next.js work belongs in `mgbos/`; archived `archive/mgbos-vite-prototype/` is the Vite prototype. Preserve each application's stack and imports.
+Read applicable AGENTS, inspect the route, neighboring components, package files and actual token sources. MGBOS Next.js work belongs in `systems/mgbos/`; archived `archive/mgbos-vite-prototype/` is the Vite prototype. Preserve each application's stack and imports.
 
 Read `.21st/design.json` and `.21st/DESIGN.md` in the relevant workspace if present. Missing 21st files do not mean the project lacks a design system. Inspect existing CSS and components before initializing anything. Do not overwrite or create competing design sources just to satisfy a tool.
 

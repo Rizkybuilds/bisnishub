@@ -14,7 +14,7 @@ Translate an approved business process into usable inventory, procurement, produ
 Read applicable AGENTS and the target business SOPs before choosing status names or data fields.
 
 - **Legacy TeeStock:** inspect actual application states, stock/payment guards and `bisnis/teestock/operasional/`. The film storage/press SOP is a local process reference, not proof every order or vendor follows the same process.
-- **MGBOS:** use `mgbos/` canonical specifications, relevant ADRs and implementation. Read ADR-012 for vendor/QC context and the applicable state-machine sources. Do not port legacy `ts_*` tables or a single combined Kanban status into MGBOS.
+- **MGBOS:** use `systems/mgbos/` canonical specifications, relevant ADRs and implementation. Read ADR-012 for vendor/QC context and the applicable state-machine sources. Do not port legacy `ts_*` tables or a single combined Kanban status into MGBOS.
 - Keep payment authorization, order commitment, production readiness, QC release and shipping handoff separate. Resolve specification/code discrepancies explicitly instead of silently selecting whichever label is convenient.
 
 ## Inventory and procurement

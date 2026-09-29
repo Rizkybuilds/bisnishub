@@ -1,6 +1,6 @@
 # Spesifikasi Library Desain & Produk Curated
 
-Status: spesifikasi untuk ditinjau sebelum implementasi, 2026-09-25. Paket TS-PLAN-14. Mengikuti [strategi curated](teestock-curated-strategy.md), [inventaris bukti](teestock-asset-readiness.md) dan kontrak `design_assets`, `catalog_items`, `catalog_variants`, `catalog_options` dalam [model data kanonikal](<../../../catatan/sesi/2026-09-23 - MGBOS 0.2.1 Logical Data Model.md>). Nama extension dan status di bawah adalah usulan, bukan skema yang sudah diterapkan. Tidak membuat backend katalog kedua di legacy.
+Status: spesifikasi untuk ditinjau sebelum implementasi, 2026-09-25. Paket TS-PLAN-14. Mengikuti [strategi curated](teestock-curated-strategy.md), [inventaris bukti](teestock-asset-readiness.md) dan kontrak `design_assets`, `catalog_items`, `catalog_variants`, `catalog_options` dalam [model data kanonikal](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.2.1 Logical Data Model.md>). Nama extension dan status di bawah adalah usulan, bukan skema yang sudah diterapkan. Tidak membuat backend katalog kedua di legacy.
 
 ## Hasil pengguna dan batas
 

@@ -10,7 +10,7 @@ Database schema migration, triggers for automatic canonical document numbering, 
 
 ## Implemented Scope
 
-Following [MGBOS 0.5.4](../../../catatan/sesi/2026-09-23%20-%20MGBOS%200.5.4.md), [MGBOS 0.5.1](../../../catatan/sesi/2026-09-23%20-%20MGBOS%200.5.1.md), [MGBOS 0.3](../../../catatan/sesi/2026-09-23%20-%20MGBOS%200.3%20%E2%80%94%20Business%20State%20Machines.md), and [MGBOS 0.2.1](../../../catatan/sesi/2026-09-23%20-%20MGBOS%200.2.1%20Logical%20Data%20Model.md):
+Following [MGBOS 0.5.4](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.5.4.md>), [MGBOS 0.5.1](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.5.1.md>), [MGBOS 0.3](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.3 — Business State Machines.md>), and [MGBOS 0.2.1](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.2.1 Logical Data Model.md>):
 
 ### 1. Database Schema (`mgbos/supabase/migrations/20260924040000_leads_pipeline.sql`)
 

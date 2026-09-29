@@ -10,7 +10,7 @@ Audit or improve the explicitly targeted application. Read root AGENTS and inspe
 
 ## MGBOS: Next.js
 
-Read `mgbos/AGENTS.md`, the relevant app package/configuration, server actions, auth/validation packages and schema policies. Check the actual implementation rather than assuming framework defaults prove safety.
+Read `systems/mgbos/AGENTS.md`, the relevant app package/configuration, server actions, auth/validation packages and schema policies. Check the actual implementation rather than assuming framework defaults prove safety.
 
 - Audit server commands for authentication, server-derived organization/actor, authorization, validation and state guards. Check direct RPC/RLS/grants and privileged function boundaries too; UI visibility is not access control. Route transaction semantics to `mgbos-business-integrity-auditor`.
 - Keep credentials server-only, using the existing config boundaries. Never place service-role, payment server or AI keys in `NEXT_PUBLIC_*`, browser bundles, logs or generated artifacts. Public Supabase configuration still requires correct RLS and permissions.

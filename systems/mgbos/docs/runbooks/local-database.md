@@ -1,6 +1,6 @@
 # Local Supabase runbook
 
-Run only from `mgbos/` with pinned Node/pnpm and a Docker-compatible runtime. Use the workspace CLI, never the root legacy Supabase link.
+Run only from `systems/mgbos/` with pinned Node/pnpm and a Docker-compatible runtime. Use the workspace CLI, never the root legacy Supabase link.
 
 ## Normal startup: preserve data
 

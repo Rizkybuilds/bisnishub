@@ -16,6 +16,6 @@ Defaults below are process boundaries. Actual enforcement depends on the runtime
 | Remote/production DB mutation or root Supabase for MGBOS | Prohibited           | Prohibited                 | Prohibited             | Prohibited                 | Prohibited                                  |
 | Expose secrets or customer data in artifacts             | Prohibited           | Prohibited                 | Prohibited             | Prohibited                 | Prohibited                                  |
 
-Local database commands must run within `mgbos/` and verify target identity. Worktree isolation does not create an isolated database: check for a shared local stack before any destructive reproducibility run. Routine instruction maintenance never needs database reset.
+Local database commands must run within `systems/mgbos/` and verify target identity. Worktree isolation does not create an isolated database: check for a shared local stack before any destructive reproducibility run. Routine instruction maintenance never needs database reset.
 
 Use existing authorization without requesting it again. Where an external action lacks authorization, finish the concrete, reviewable preparation first and ask only for that action. Missing tools, environment identity or required evidence remains a blocker regardless of approval. Reviewers cannot waive money, access, historical integrity or recovery gates.

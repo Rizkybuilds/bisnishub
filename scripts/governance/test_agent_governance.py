@@ -17,14 +17,14 @@ class GovernanceValidationTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         # Copy only text source fixtures and their references; never follow the legacy Supabase link.
-        for relative in (".agents", "docs", "mgbos/docs", "mgbos/packages", ".github/workflows"):
+        for relative in (".agents", "docs", "systems/mgbos/docs", "systems/mgbos/packages", ".github/workflows"):
             source = governance.ROOT / relative
             for path in source.rglob("*"):
                 if path.is_file() and path.suffix in {".md", ".json", ".ts", ".yml"} and "node_modules" not in path.parts:
                     dest = self.root / path.relative_to(governance.ROOT)
                     dest.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copyfile(path, dest)
-        for relative in ("README.md", "AGENTS.md", "mgbos/AGENTS.md", "mgbos/README.md"):
+        for relative in ("README.md", "AGENTS.md", "systems/mgbos/AGENTS.md", "systems/mgbos/README.md"):
             shutil.copyfile(governance.ROOT / relative, self.root / relative)
 
     def edit_json(self, relative, update):

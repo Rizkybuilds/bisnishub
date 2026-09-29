@@ -19,7 +19,7 @@ Urutan prioritas: kebenaran transaksi dan kesiapan operasional; fondasi item/sto
 - Aplikasi publik Next.js baru masih berupa shell. Source storefront legacy memiliki katalog, detail produk, custom order, keranjang dan tracking; keberadaan source tidak membuktikan seluruh layanan live sehat.
 - Paket AI dan integrasi baru masih kerangka. Jangan mengasumsikan WhatsApp, bank, kurir atau gateway sudah tersambung.
 - [Register kesiapan](../engineering/operational-readiness.md) masih memerlukan bukti CI, staging, backup/restore, monitoring dan target pemulihan.
-- Dokumen [operasional TeeStock](../../../bisnis/teestock/operasional/rencana-operasional-teestock.md) dan [roadmap TeeStock](../../../bisnis/teestock/operasional/roadmap-pengembangan-teestock.md) menggambarkan blank apparel, desain katalog, custom, buffer/JIT dan produksi press. Harga, stok, mesin, kapasitas, lokasi, SLA dan profil vendor di sana adalah konteks historis yang perlu dikonfirmasi.
+- Dokumen [operasional TeeStock](../../../../bisnis/teestock/archive/operasional/rencana-operasional-teestock.md) dan [roadmap TeeStock](../../../../bisnis/teestock/archive/operasional/roadmap-pengembangan-teestock.md) menggambarkan blank apparel, desain katalog, custom, buffer/JIT dan produksi press. Harga, stok, mesin, kapasitas, lokasi, SLA dan profil vendor di sana adalah konteks historis yang perlu dikonfirmasi.
 
 ### Asumsi kerja sementara
 
@@ -139,6 +139,6 @@ Deliverable paket pertama: peta alur aktual, 3–5 contoh transaksi disamarkan, 
 - [Kebijakan pemeliharaan](../engineering/maintenance-policy.md)
 - [Register kesiapan](../engineering/operational-readiness.md)
 - [Spesifikasi pilot sebelumnya](README.md)
-- [State machine kanonikal](<../../../catatan/sesi/2026-09-23 - MGBOS 0.3 — Business State Machines.md>)
+- [State machine kanonikal](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.3 — Business State Machines.md>)
 
 Dokumen ini menambah rencana prioritas TeeStock tanpa mengganti kontrak transaksi yang berlaku. Tidak ada perubahan kode, migrasi, layanan eksternal atau deployment dalam penyusunan rencana ini.

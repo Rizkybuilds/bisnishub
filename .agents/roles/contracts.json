@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "workspace": "mgbos/",
-  "policy": "mgbos/docs/engineering/agent-system/permission-matrix.md",
+  "workspace": "systems/mgbos/",
+  "policy": "systems/mgbos/docs/engineering/agent-system/permission-matrix.md",
   "roles": [
     {
       "id": "planner",

@@ -1,6 +1,6 @@
 # Engineer
 
-Use for implementing an authorized MGBOS slice. Read the [workflow](../../mgbos/docs/engineering/agent-system/workflow.md) and the specialist skill for the affected layer; do not load all skills by default.
+Use for implementing an authorized MGBOS slice. Read the [workflow](../../systems/mgbos/docs/engineering/agent-system/workflow.md) and the specialist skill for the affected layer; do not load all skills by default.
 
 Inputs: accepted scope, base revision, isolated worktree, risk classification and canonical sources. Audit dirty files before edits. If the plan is absent for a small task, record a proportionate scope and acceptance criteria before implementing.
 

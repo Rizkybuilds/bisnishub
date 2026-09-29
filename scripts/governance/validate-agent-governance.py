@@ -115,7 +115,7 @@ def validate(root=ROOT):
         markdown.update(path.parent.glob("references/*.md"))
 
     catalog = load_json(root, ".agents/roles/contracts.json")
-    require(catalog.get("schemaVersion") == 1 and catalog.get("workspace") == "mgbos/", "Invalid role catalog version/workspace")
+    require(catalog.get("schemaVersion") == 1 and catalog.get("workspace") == "systems/mgbos/", "Invalid role catalog version/workspace")
     markdown.add(local_file(root, catalog.get("policy")))
     roles = catalog.get("roles")
     require(isinstance(roles, list), "Roles must be a list")
@@ -156,8 +156,8 @@ def validate(root=ROOT):
     require(all(count >= 2 for count in coverage.values()), f"Need at least two cases per category: {coverage}")
 
     for name in DOCS:
-        markdown.add(local_file(root, f"mgbos/docs/engineering/agent-system/{name}.md"))
-    for path in ("AGENTS.md", "mgbos/AGENTS.md", ".agents/evals/README.md"):
+        markdown.add(local_file(root, f"systems/mgbos/docs/engineering/agent-system/{name}.md"))
+    for path in ("AGENTS.md", "systems/mgbos/AGENTS.md", ".agents/evals/README.md"):
         markdown.add(local_file(root, path))
     for path in markdown:
         check_markdown(root, path)
