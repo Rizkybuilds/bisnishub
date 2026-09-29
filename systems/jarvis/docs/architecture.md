@@ -28,19 +28,19 @@ last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
   - charter.md
-  - ../docs/governance/documentation-constitution.md
-  - ../docs/governance/canonical-source-map.md
-  - ../docs/governance/cross-system-risk-classification.md
-  - ../docs/governance/autonomy-levels.md
-  - ../docs/governance/approval-policy.md
-  - ../docs/governance/evidence-provenance-model.md
-  - ../docs/architecture/master-system-blueprint.md
-  - ../docs/architecture/system-boundaries.md
-  - ../docs/architecture/architectural-laws.md
-  - ../mgbos/docs/architecture/permission-authorization-model.md
-  - ../mgbos/docs/architecture/command-event-model.md
+  - ../../../docs/governance/documentation-constitution.md
+  - ../../../docs/governance/canonical-source-map.md
+  - ../../../docs/governance/cross-system-risk-classification.md
+  - ../../../docs/governance/autonomy-levels.md
+  - ../../../docs/governance/approval-policy.md
+  - ../../../docs/governance/evidence-provenance-model.md
+  - ../../../docs/architecture/master-system-blueprint.md
+  - ../../../docs/architecture/system-boundaries.md
+  - ../../../docs/architecture/architectural-laws.md
+  - ../../mgbos/docs/architecture/permission-authorization-model.md
+  - ../../mgbos/docs/architecture/command-event-model.md
 supersedes:
-  - ../catatan/sesi/2026-09-27 - JARVIS Architecture v0.1.md
+  - ../../../catatan/sesi/2026-09-27 - JARVIS Architecture v0.1.md
 implementation_status: NOT_IMPLEMENTED
 target_runtime_location: systems/jarvis/
 ---

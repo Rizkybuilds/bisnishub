@@ -21,11 +21,11 @@ depends_on:
   - ../governance/canonical-source-map.md
   - master-system-blueprint.md
   - system-boundaries.md
-  - ../../mgbos/docs/architecture/README.md
-  - ../../mgbos/docs/adr/002-postgresql-system-of-record.md
-  - ../../mgbos/docs/adr/004-n8n-orchestrator.md
-  - ../../mgbos/docs/adr/005-transactional-outbox.md
-  - ../../mgbos/docs/adr/006-ai-gateway.md
+  - ../../systems/mgbos/docs/architecture/README.md
+  - ../../systems/mgbos/docs/adr/002-postgresql-system-of-record.md
+  - ../../systems/mgbos/docs/adr/004-n8n-orchestrator.md
+  - ../../systems/mgbos/docs/adr/005-transactional-outbox.md
+  - ../../systems/mgbos/docs/adr/006-ai-gateway.md
 supersedes: null
 ---
 

@@ -31,19 +31,19 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - charter.md
-  - architecture.md
-  - core-runtime-specification.md
-  - tool-capability-architecture.md
+  - ../charter.md
+  - ../architecture.md
+  - ../core-runtime.md
+  - tool-capability.md
   - model-gateway-routing.md
   - entity-identity-resolution.md
   - execution-verification-recovery.md
   - observability-audit-incident.md
-  - ../docs/governance/cross-system-risk-classification.md
-  - ../docs/governance/autonomy-levels.md
-  - ../docs/governance/approval-policy.md
-  - ../mgbos/docs/architecture/permission-authorization-model.md
-  - ../mgbos/docs/engineering/maintenance-policy.md
+  - ../../../../docs/governance/cross-system-risk-classification.md
+  - ../../../../docs/governance/autonomy-levels.md
+  - ../../../../docs/governance/approval-policy.md
+  - ../../../mgbos/docs/architecture/permission-authorization-model.md
+  - ../../../mgbos/docs/engineering/maintenance-policy.md
 supersedes: null
 implementation_status: PARTIALLY_DEFINED_NOT_OPERATIONALLY_VERIFIED
 target_runtime_location: systems/jarvis/

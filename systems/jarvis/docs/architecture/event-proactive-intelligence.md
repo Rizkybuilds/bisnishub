@@ -26,22 +26,22 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - charter.md
-  - architecture.md
-  - core-runtime-specification.md
-  - tool-capability-architecture.md
-  - memory-architecture.md
+  - ../charter.md
+  - ../architecture.md
+  - ../core-runtime.md
+  - tool-capability.md
+  - memory.md
   - entity-identity-resolution.md
   - agent-registry.md
   - skill-registry.md
   - model-gateway-routing.md
-  - ../docs/governance/cross-system-risk-classification.md
-  - ../docs/governance/autonomy-levels.md
-  - ../docs/governance/approval-policy.md
-  - ../docs/governance/evidence-provenance-model.md
-  - ../mgbos/docs/architecture/command-event-model.md
-  - ../mgbos/docs/adr/004-n8n-orchestrator.md
-  - ../mgbos/docs/adr/005-transactional-outbox.md
+  - ../../../../docs/governance/cross-system-risk-classification.md
+  - ../../../../docs/governance/autonomy-levels.md
+  - ../../../../docs/governance/approval-policy.md
+  - ../../../../docs/governance/evidence-provenance-model.md
+  - ../../../mgbos/docs/architecture/command-event-model.md
+  - ../../../mgbos/docs/adr/004-n8n-orchestrator.md
+  - ../../../mgbos/docs/adr/005-transactional-outbox.md
 supersedes: null
 implementation_status: NOT_IMPLEMENTED
 target_runtime_location: systems/jarvis/

@@ -15,3 +15,12 @@ for (const root of ['mgbos/', 'systems/mgbos/']) {
 test('non-MGBOS maintenance remains independently scoped', () => {
   assert.deepEqual(checkScope(['apps/bisnishub-web/a.ts', 'archive/old.ts']), []);
 });
+
+test('MGBOS prose may accompany cross-system repository maintenance', () => {
+  assert.deepEqual(checkScope(['systems/mgbos/docs/architecture/model.md', 'systems/jarvis/docs/charter.md', 'tools/assistant/main.py']), []);
+});
+for (const mgbos of ['systems/mgbos/docs/helper.mjs', 'systems/mgbos/AGENTS.md', 'systems/mgbos/apps/mgbos/page.tsx', '.github/workflows/mgbos-foundation.yml']) {
+  test(`documentation does not hide isolated change: ${mgbos}`, () => {
+    assert.deepEqual(checkScope([mgbos, 'systems/mgbos/docs/model.md', 'systems/kaskita/app.ts']), ['systems/kaskita/app.ts']);
+  });
+}

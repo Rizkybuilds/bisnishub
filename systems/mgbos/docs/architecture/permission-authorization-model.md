@@ -22,11 +22,11 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - ../../../docs/governance/documentation-constitution.md
-  - ../../../docs/governance/canonical-source-map.md
-  - ../../../docs/architecture/master-system-blueprint.md
-  - ../../../docs/architecture/system-boundaries.md
-  - ../../../docs/architecture/architectural-laws.md
+  - ../../../../docs/governance/documentation-constitution.md
+  - ../../../../docs/governance/canonical-source-map.md
+  - ../../../../docs/architecture/master-system-blueprint.md
+  - ../../../../docs/architecture/system-boundaries.md
+  - ../../../../docs/architecture/architectural-laws.md
   - canonical-data-model.md
   - business-state-machines.md
   - business-invariants.md
@@ -697,26 +697,26 @@ cash payment
 
 # 28. Role Matrix — Current Baseline
 
-| Capability Area | OWNER | ADMIN | SALES | OPERATIONS | FINANCE | QC |
-|---|---:|---:|---:|---:|---:|---:|
-| Lead/customer | ✓ | ✓ | ✓ | — | — | — |
-| Requirement create | ✓ | ✓ | ✓ | — | — | — |
-| Requirement revise | ✓ | ✓ | ✓ | ✓ | — | — |
-| Quote | ✓ | ✓ | ✓ | — | — | — |
-| Pricing override | ✓ | — | — | — | — | — |
-| Retail order | ✓ | ✓ | ✓ | ✓ | — | — |
-| Production | ✓ | ✓ | — | ✓ | — | limited |
-| Vendor | ✓ | ✓ | — | ✓ | — | — |
-| QC | ✓ | ✓ | — | ✓ | — | ✓ |
-| Invoice preparation | ✓ | ✓ | ✓ | — | ✓ | — |
-| Formal invoice | ✓ | ✓ | — | — | ✓ | — |
-| Payment | ✓ | ✓ | — | — | ✓ | — |
-| Inventory reserve | ✓ | ✓ | ✓ | ✓ | — | — |
-| Inventory adjustment | ✓ | ✓ | — | ✓ | — | — |
-| Shipment | ✓ | ✓ | — | ✓ | ✓ | — |
-| Purchase order | ✓ | ✓ | — | ✓ | ✓ | — |
-| Goods receipt | ✓ | ✓ | — | ✓ | — | — |
-| Vendor payment | ✓ | ✓ | — | — | ✓ | — |
+| Capability Area      | OWNER | ADMIN | SALES | OPERATIONS | FINANCE |      QC |
+| -------------------- | ----: | ----: | ----: | ---------: | ------: | ------: |
+| Lead/customer        |     ✓ |     ✓ |     ✓ |          — |       — |       — |
+| Requirement create   |     ✓ |     ✓ |     ✓ |          — |       — |       — |
+| Requirement revise   |     ✓ |     ✓ |     ✓ |          ✓ |       — |       — |
+| Quote                |     ✓ |     ✓ |     ✓ |          — |       — |       — |
+| Pricing override     |     ✓ |     — |     — |          — |       — |       — |
+| Retail order         |     ✓ |     ✓ |     ✓ |          ✓ |       — |       — |
+| Production           |     ✓ |     ✓ |     — |          ✓ |       — | limited |
+| Vendor               |     ✓ |     ✓ |     — |          ✓ |       — |       — |
+| QC                   |     ✓ |     ✓ |     — |          ✓ |       — |       ✓ |
+| Invoice preparation  |     ✓ |     ✓ |     ✓ |          — |       ✓ |       — |
+| Formal invoice       |     ✓ |     ✓ |     — |          — |       ✓ |       — |
+| Payment              |     ✓ |     ✓ |     — |          — |       ✓ |       — |
+| Inventory reserve    |     ✓ |     ✓ |     ✓ |          ✓ |       — |       — |
+| Inventory adjustment |     ✓ |     ✓ |     — |          ✓ |       — |       — |
+| Shipment             |     ✓ |     ✓ |     — |          ✓ |       ✓ |       — |
+| Purchase order       |     ✓ |     ✓ |     — |          ✓ |       ✓ |       — |
+| Goods receipt        |     ✓ |     ✓ |     — |          ✓ |       — |       — |
+| Vendor payment       |     ✓ |     ✓ |     — |          — |       ✓ |       — |
 
 This table documents current implementation semantics.
 
@@ -2602,19 +2602,19 @@ All violate this specification.
 
 # 122. Canonical Responsibility Matrix
 
-| Concept | Answers | Canonical Owner |
-|---|---|---|
-| Authentication | Who are you? | Auth system |
-| User | Who is the business actor? | MGBOS |
-| Membership | Which organization? | MGBOS |
-| Role | Organizational responsibility | MGBOS |
-| Capability | What operation may be attempted? | MGBOS authorization |
-| Risk | How consequential? | Cross-system governance |
-| Approval | Who must approve this instance? | Governance / business policy |
-| Command | What change is requested? | MGBOS |
-| Business Rule | Is the requested change valid? | MGBOS domain |
-| Database Privilege | What can technical credential access? | Infrastructure |
-| Autonomy | How independently may AI execute? | Cross-system governance |
+| Concept            | Answers                               | Canonical Owner              |
+| ------------------ | ------------------------------------- | ---------------------------- |
+| Authentication     | Who are you?                          | Auth system                  |
+| User               | Who is the business actor?            | MGBOS                        |
+| Membership         | Which organization?                   | MGBOS                        |
+| Role               | Organizational responsibility         | MGBOS                        |
+| Capability         | What operation may be attempted?      | MGBOS authorization          |
+| Risk               | How consequential?                    | Cross-system governance      |
+| Approval           | Who must approve this instance?       | Governance / business policy |
+| Command            | What change is requested?             | MGBOS                        |
+| Business Rule      | Is the requested change valid?        | MGBOS domain                 |
+| Database Privilege | What can technical credential access? | Infrastructure               |
+| Autonomy           | How independently may AI execute?     | Cross-system governance      |
 
 ---
 

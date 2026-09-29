@@ -22,20 +22,20 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - ../docs/governance/documentation-constitution.md
-  - ../docs/governance/canonical-source-map.md
-  - ../docs/governance/cross-system-risk-classification.md
-  - ../docs/governance/autonomy-levels.md
-  - ../docs/governance/approval-policy.md
-  - ../docs/governance/evidence-provenance-model.md
-  - ../docs/architecture/master-system-blueprint.md
-  - ../docs/architecture/system-boundaries.md
-  - ../docs/architecture/architectural-laws.md
-  - ../mgbos/docs/architecture/permission-authorization-model.md
-  - ../mgbos/docs/architecture/command-event-model.md
-  - ../mgbos/docs/adr/002-postgresql-system-of-record.md
-  - ../mgbos/docs/adr/004-n8n-orchestrator.md
-  - ../mgbos/docs/adr/006-ai-gateway.md
+  - ../../../docs/governance/documentation-constitution.md
+  - ../../../docs/governance/canonical-source-map.md
+  - ../../../docs/governance/cross-system-risk-classification.md
+  - ../../../docs/governance/autonomy-levels.md
+  - ../../../docs/governance/approval-policy.md
+  - ../../../docs/governance/evidence-provenance-model.md
+  - ../../../docs/architecture/master-system-blueprint.md
+  - ../../../docs/architecture/system-boundaries.md
+  - ../../../docs/architecture/architectural-laws.md
+  - ../../mgbos/docs/architecture/permission-authorization-model.md
+  - ../../mgbos/docs/architecture/command-event-model.md
+  - ../../mgbos/docs/adr/002-postgresql-system-of-record.md
+  - ../../mgbos/docs/adr/004-n8n-orchestrator.md
+  - ../../mgbos/docs/adr/006-ai-gateway.md
 supersedes: null
 ---
 

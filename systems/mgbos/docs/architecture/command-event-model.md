@@ -24,11 +24,11 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - ../../../docs/governance/documentation-constitution.md
-  - ../../../docs/governance/canonical-source-map.md
-  - ../../../docs/architecture/master-system-blueprint.md
-  - ../../../docs/architecture/system-boundaries.md
-  - ../../../docs/architecture/architectural-laws.md
+  - ../../../../docs/governance/documentation-constitution.md
+  - ../../../../docs/governance/canonical-source-map.md
+  - ../../../../docs/architecture/master-system-blueprint.md
+  - ../../../../docs/architecture/system-boundaries.md
+  - ../../../../docs/architecture/architectural-laws.md
   - canonical-data-model.md
   - business-state-machines.md
   - business-invariants.md
@@ -347,25 +347,24 @@ event behavior
 Target logical envelope:
 
 ```yaml id="jkagha"
-command_id: "uuid"
-command_name: "mgbos.payment.record"
+command_id: 'uuid'
+command_name: 'mgbos.payment.record'
 command_version: 1
 
-organization_id: "uuid"
+organization_id: 'uuid'
 
 actor:
   type: HUMAN
-  principal_id: "uuid"
+  principal_id: 'uuid'
 
-idempotency_key: "uuid"
+idempotency_key: 'uuid'
 
-correlation_id: "uuid"
+correlation_id: 'uuid'
 causation_id: null
 
-issued_at: "2026-09-29T10:00:00Z"
+issued_at: '2026-09-29T10:00:00Z'
 
-payload:
-  ...
+payload: ...
 ```
 
 This envelope describes semantic intent.
@@ -734,12 +733,12 @@ Synchronous command result SHOULD return enough information to identify the resu
 Example:
 
 ```yaml id="2i0iww"
-command_id: "..."
+command_id: '...'
 status: SUCCEEDED
 
 result:
-  order_id: "..."
-  order_number: "TS-O-2026-000001"
+  order_id: '...'
+  order_number: 'TS-O-2026-000001'
 
 idempotent_replay: false
 ```
@@ -875,29 +874,29 @@ Consumers should understand business meaning without knowing database implementa
 Target:
 
 ```yaml id="l952zv"
-event_id: "uuid"
-event_name: "mgbos.payment.recorded"
+event_id: 'uuid'
+event_name: 'mgbos.payment.recorded'
 event_version: 1
 
-organization_id: "uuid"
+organization_id: 'uuid'
 
 aggregate:
   type: payment
-  id: "uuid"
+  id: 'uuid'
 
-occurred_at: "2026-09-29T10:01:04Z"
+occurred_at: '2026-09-29T10:01:04Z'
 
 actor:
   type: HUMAN
-  principal_id: "uuid"
+  principal_id: 'uuid'
 
-correlation_id: "uuid"
-causation_id: "uuid"
+correlation_id: 'uuid'
+causation_id: 'uuid'
 
 payload:
-  payment_id: "uuid"
+  payment_id: 'uuid'
   invoice_ids:
-    - "uuid"
+    - 'uuid'
   amount: 10000000
   currency: IDR
 ```
@@ -960,7 +959,7 @@ Example:
 ```yaml id="61so90"
 aggregate:
   type: shipment
-  id: "..."
+  id: '...'
 ```
 
 Consumers SHOULD NOT infer identity solely from human document number.
@@ -1187,16 +1186,15 @@ The event remains recoverable after commit.
 Logical future record:
 
 ```yaml id="i10g5j"
-id: "uuid"
-event_id: "uuid"
+id: 'uuid'
+event_id: 'uuid'
 
-event_name: "mgbos.order.created"
+event_name: 'mgbos.order.created'
 event_version: 1
 
-organization_id: "uuid"
+organization_id: 'uuid'
 
-payload:
-  ...
+payload: ...
 
 status: PENDING
 
@@ -1205,7 +1203,7 @@ next_attempt_at: null
 published_at: null
 last_error: null
 
-created_at: "..."
+created_at: '...'
 ```
 
 Exact physical schema belongs to implementation.
@@ -1642,7 +1640,7 @@ actor:
 
 authorized_by:
   type: HUMAN
-  principal_id: "..."
+  principal_id: '...'
 ```
 
 This supports trustworthy audit.
@@ -3231,17 +3229,17 @@ These responsibilities MUST remain distinct.
 
 # 154. Canonical Responsibility Matrix
 
-| Concept | Purpose | Owns Business Truth? |
-|---|---|---:|
-| Command | Request mutation | No |
-| Domain Rule | Decide validity | Semantic authority |
-| Database Transaction | Commit truth | Yes |
-| Audit | Accountability history | Historical evidence |
-| Business Event | Announce fact | Historical fact |
-| Outbox | Reliable delivery | No |
-| n8n | Orchestrate reaction | No |
-| JARVIS | Reason/react/request | No |
-| External Webhook | External signal | External scope only |
+| Concept              | Purpose                | Owns Business Truth? |
+| -------------------- | ---------------------- | -------------------: |
+| Command              | Request mutation       |                   No |
+| Domain Rule          | Decide validity        |   Semantic authority |
+| Database Transaction | Commit truth           |                  Yes |
+| Audit                | Accountability history |  Historical evidence |
+| Business Event       | Announce fact          |      Historical fact |
+| Outbox               | Reliable delivery      |                   No |
+| n8n                  | Orchestrate reaction   |                   No |
+| JARVIS               | Reason/react/request   |                   No |
+| External Webhook     | External signal        |  External scope only |
 
 ---
 

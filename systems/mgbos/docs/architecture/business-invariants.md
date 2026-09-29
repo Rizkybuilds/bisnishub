@@ -23,11 +23,11 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - ../../../docs/governance/documentation-constitution.md
-  - ../../../docs/governance/canonical-source-map.md
-  - ../../../docs/architecture/master-system-blueprint.md
-  - ../../../docs/architecture/system-boundaries.md
-  - ../../../docs/architecture/architectural-laws.md
+  - ../../../../docs/governance/documentation-constitution.md
+  - ../../../../docs/governance/canonical-source-map.md
+  - ../../../../docs/architecture/master-system-blueprint.md
+  - ../../../../docs/architecture/system-boundaries.md
+  - ../../../../docs/architecture/architectural-laws.md
   - canonical-data-model.md
   - business-state-machines.md
   - README.md

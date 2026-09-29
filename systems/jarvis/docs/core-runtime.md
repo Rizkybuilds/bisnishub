@@ -29,14 +29,14 @@ review_cadence: quarterly
 depends_on:
   - charter.md
   - architecture.md
-  - ../docs/governance/cross-system-risk-classification.md
-  - ../docs/governance/autonomy-levels.md
-  - ../docs/governance/approval-policy.md
-  - ../docs/governance/evidence-provenance-model.md
-  - ../mgbos/docs/architecture/permission-authorization-model.md
-  - ../mgbos/docs/architecture/command-event-model.md
+  - ../../../docs/governance/cross-system-risk-classification.md
+  - ../../../docs/governance/autonomy-levels.md
+  - ../../../docs/governance/approval-policy.md
+  - ../../../docs/governance/evidence-provenance-model.md
+  - ../../mgbos/docs/architecture/permission-authorization-model.md
+  - ../../mgbos/docs/architecture/command-event-model.md
 supersedes:
-  - ../catatan/sesi/2026-09-27 - JARVIS v0.2 - Core Runtime Specification.md
+  - ../../../catatan/sesi/2026-09-27 - JARVIS v0.2 - Core Runtime Specification.md
 implementation_status: NOT_IMPLEMENTED
 target_runtime_location: systems/jarvis/
 first_vertical_slice: business.morning_briefing

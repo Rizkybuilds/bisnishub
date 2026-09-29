@@ -25,8 +25,8 @@ depends_on:
   - ../architecture/master-system-blueprint.md
   - ../architecture/system-boundaries.md
   - ../architecture/architectural-laws.md
-  - ../../mgbos/docs/architecture/permission-authorization-model.md
-  - ../../mgbos/docs/architecture/command-event-model.md
+  - ../../systems/mgbos/docs/architecture/permission-authorization-model.md
+  - ../../systems/mgbos/docs/architecture/command-event-model.md
 supersedes: null
 ---
 

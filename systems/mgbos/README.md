@@ -37,7 +37,7 @@ MGBOS menggunakan arsitektur **Modular Monolith** dengan batasan paket yang sang
 ```text
 systems/mgbos/
 ├── apps/
-│   ├── systems/mgbos/           --> Internal Operating System Shell (Next.js 16, Port 3101)
+│   ├── mgbos/           --> Internal Operating System Shell (Next.js 16, Port 3101)
 │   └── teestock/        --> Public Storefront & Custom Atelier Shell (Next.js 16, Port 3102)
 │
 ├── packages/

@@ -7,7 +7,11 @@ import path from 'node:path';
 const coordination = /^(?:AGENTS\.md|README\.md|GEMINI\.md|package\.json|\.gitignore|\.github\/CODEOWNERS|\.github\/workflows\/(?:agent-governance|repository-integrity)\.yml|scripts\/governance\/[^/]+|docs\/(?:project-index\.md|engineering\/[^/]+|decisions\/[^/]+)|\.agents\/(?:skills|roles|evals)\/.*)$/;
 export function checkScope(files) {
   const isMgbos = (file) => /^(?:mgbos\/|systems\/mgbos\/|\.github\/workflows\/mgbos-)/.test(file);
-  if (!files.some(isMgbos)) return [];
+  // Documentation can describe several systems in one PR. Runtime, workspace
+  // instructions and workflow changes still require MGBOS scope isolation.
+  // Do not exempt executable files merely because they are under docs/.
+  const isDocumentation = (file) => /^(?:mgbos|systems\/mgbos)\/(?:README\.md|docs\/.*\.md)$/.test(file);
+  if (!files.some((file) => isMgbos(file) && !isDocumentation(file))) return [];
   return files.filter((file) => !isMgbos(file) && !coordination.test(file));
 }
 

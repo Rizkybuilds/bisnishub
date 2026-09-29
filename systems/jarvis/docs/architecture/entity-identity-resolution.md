@@ -24,22 +24,22 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - charter.md
-  - architecture.md
-  - core-runtime-specification.md
-  - memory-architecture.md
-  - tool-capability-architecture.md
-  - ../docs/governance/evidence-provenance-model.md
-  - ../docs/architecture/system-boundaries.md
-  - ../mgbos/docs/architecture/canonical-data-model.md
-  - ../mgbos/docs/architecture/permission-authorization-model.md
+  - ../charter.md
+  - ../architecture.md
+  - ../core-runtime.md
+  - memory.md
+  - tool-capability.md
+  - ../../../../docs/governance/evidence-provenance-model.md
+  - ../../../../docs/architecture/system-boundaries.md
+  - ../../../mgbos/docs/architecture/canonical-data-model.md
+  - ../../../mgbos/docs/architecture/permission-authorization-model.md
 supersedes: null
 implementation_status: NOT_IMPLEMENTED
 implementation_basis:
-  - ../mgbos/supabase/migrations/20260924000000_organization_foundation.sql
-  - ../mgbos/supabase/migrations/20260924010000_auth_owner_membership.sql
-  - ../mgbos/supabase/migrations/20260924030000_customer_foundation.sql
-  - ../mgbos/supabase/migrations/20260925130000_vendor_network_and_qc.sql
+  - ../../../mgbos/supabase/migrations/20260924000000_organization_foundation.sql
+  - ../../../mgbos/supabase/migrations/20260924010000_auth_owner_membership.sql
+  - ../../../mgbos/supabase/migrations/20260924030000_customer_foundation.sql
+  - ../../../mgbos/supabase/migrations/20260925130000_vendor_network_and_qc.sql
 target_runtime_location: systems/jarvis/
 ---
 

@@ -32,9 +32,9 @@ depends_on:
   - ../architecture/master-system-blueprint.md
   - ../architecture/system-boundaries.md
   - ../architecture/architectural-laws.md
-  - ../../mgbos/docs/architecture/command-event-model.md
-  - ../../mgbos/docs/architecture/business-invariants.md
-  - ../../mgbos/docs/engineering/agent-system/evidence-model.md
+  - ../../systems/mgbos/docs/architecture/command-event-model.md
+  - ../../systems/mgbos/docs/architecture/business-invariants.md
+  - ../../systems/mgbos/docs/engineering/agent-system/evidence-model.md
 supersedes: null
 ---
 

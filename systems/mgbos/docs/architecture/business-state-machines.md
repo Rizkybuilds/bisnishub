@@ -19,15 +19,15 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - ../../../docs/governance/documentation-constitution.md
-  - ../../../docs/governance/canonical-source-map.md
-  - ../../../docs/architecture/master-system-blueprint.md
-  - ../../../docs/architecture/system-boundaries.md
-  - ../../../docs/architecture/architectural-laws.md
+  - ../../../../docs/governance/documentation-constitution.md
+  - ../../../../docs/governance/canonical-source-map.md
+  - ../../../../docs/architecture/master-system-blueprint.md
+  - ../../../../docs/architecture/system-boundaries.md
+  - ../../../../docs/architecture/architectural-laws.md
   - canonical-data-model.md
   - README.md
 supersedes:
-  - ../../../catatan/sesi/2026-09-23 - MGBOS 0.3 — Business State Machines.md
+  - ../../../../catatan/sesi/2026-09-23 - MGBOS 0.3 — Business State Machines.md
 implementation_basis:
   - ../../supabase/migrations/
 implementation_through: MGBOS-020
@@ -2589,23 +2589,23 @@ notifications with material consequence
 
 # 111. State Ownership Summary
 
-| Domain | Canonical State Owner |
-|---|---|
-| Lead | `leads.status` |
-| Requirement | `requirements.status` |
-| Quote | `quote_versions.status` |
-| Order | `orders.status` |
-| Production | `production_jobs.status` |
+| Domain                | Canonical State Owner           |
+| --------------------- | ------------------------------- |
+| Lead                  | `leads.status`                  |
+| Requirement           | `requirements.status`           |
+| Quote                 | `quote_versions.status`         |
+| Order                 | `orders.status`                 |
+| Production            | `production_jobs.status`        |
 | Production Assignment | `production_assignments.status` |
-| QC | `qc_inspections.result` |
-| Invoice | `invoices.status` |
-| Payment | `payments.status` |
-| Shipment | `shipments.status` |
-| Purchase Order | `purchase_orders.status` |
-| Vendor Bill | `vendor_bills.status` |
+| QC                    | `qc_inspections.result`         |
+| Invoice               | `invoices.status`               |
+| Payment               | `payments.status`               |
+| Shipment              | `shipments.status`              |
+| Purchase Order        | `purchase_orders.status`        |
+| Vendor Bill           | `vendor_bills.status`           |
 | Inventory Reservation | `inventory_reservations.status` |
-| Vendor availability | `vendors.status` |
-| Membership | `organization_members.status` |
+| Vendor availability   | `vendors.status`                |
+| Membership            | `organization_members.status`   |
 
 ---
 

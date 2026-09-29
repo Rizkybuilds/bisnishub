@@ -27,14 +27,14 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - charter.md
-  - architecture.md
-  - core-runtime-specification.md
-  - tool-capability-architecture.md
-  - ../docs/governance/evidence-provenance-model.md
-  - ../docs/governance/documentation-constitution.md
-  - ../docs/architecture/architectural-laws.md
-  - ../mgbos/docs/architecture/canonical-data-model.md
+  - ../charter.md
+  - ../architecture.md
+  - ../core-runtime.md
+  - tool-capability.md
+  - ../../../../docs/governance/evidence-provenance-model.md
+  - ../../../../docs/governance/documentation-constitution.md
+  - ../../../../docs/architecture/architectural-laws.md
+  - ../../../mgbos/docs/architecture/canonical-data-model.md
 supersedes: null
 implementation_status: NOT_IMPLEMENTED
 target_runtime_location: systems/jarvis/

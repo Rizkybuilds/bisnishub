@@ -19,16 +19,16 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - ../../../docs/governance/documentation-constitution.md
-  - ../../../docs/governance/canonical-source-map.md
-  - ../../../docs/architecture/master-system-blueprint.md
-  - ../../../docs/architecture/system-boundaries.md
-  - ../../../docs/architecture/architectural-laws.md
+  - ../../../../docs/governance/documentation-constitution.md
+  - ../../../../docs/governance/canonical-source-map.md
+  - ../../../../docs/architecture/master-system-blueprint.md
+  - ../../../../docs/architecture/system-boundaries.md
+  - ../../../../docs/architecture/architectural-laws.md
   - README.md
   - ../adr/002-postgresql-system-of-record.md
 supersedes:
-  - ../../../catatan/sesi/2026-09-23 - MGBOS 0.2 — Canonical Data Model v0.1.md
-  - ../../../catatan/sesi/2026-09-23 - MGBOS 0.2.1 Logical Data Model.md
+  - ../../../../catatan/sesi/2026-09-23 - MGBOS 0.2 — Canonical Data Model v0.1.md
+  - ../../../../catatan/sesi/2026-09-23 - MGBOS 0.2.1 Logical Data Model.md
 implementation_basis:
   - ../../supabase/migrations/
 implementation_through: MGBOS-020
@@ -2496,41 +2496,41 @@ MARGIN / BUSINESS ANALYTICS
 
 # 104. Data Ownership Summary
 
-| Domain | Canonical Entity Owner |
-|---|---|
-| Organization | `organizations` |
-| Brand | `brands` |
-| Business Line | `business_lines` |
-| Channel | `channels` |
-| Human identity | `users` |
-| Membership | `organization_members` |
-| Customer | `customer_accounts` |
-| Contact | `customer_contacts` |
-| Customer-brand relation | `customer_brand_relationships` |
-| Lead | `leads` |
-| Requirement | `requirements` |
-| Requirement history | `requirement_versions` |
-| Quote identity | `quotes` |
-| Commercial quote snapshot | `quote_versions` |
-| Contract | `orders` |
-| Contract line | `order_items` |
-| Production work | `production_jobs` |
-| Production assignment | `production_assignments` |
-| Vendor | `vendors` |
-| QC | `qc_inspections` |
-| Receivable | `invoices` |
-| Incoming cash | `payments` |
-| Payment application | `payment_allocations` |
-| Analytical finance | `financial_ledger_entries` |
-| Shipment | `shipments` |
-| SKU/stock identity | `inventory_items` |
-| Stock balance | `inventory_levels` |
-| Stock history | `inventory_mutations` |
-| Reserved stock | `inventory_reservations` |
-| Purchasing commitment | `purchase_orders` |
-| Physical purchase receipt | `goods_receipts` |
-| Vendor payable | `vendor_bills` |
-| Vendor cash-out | `vendor_bill_payments` |
+| Domain                    | Canonical Entity Owner         |
+| ------------------------- | ------------------------------ |
+| Organization              | `organizations`                |
+| Brand                     | `brands`                       |
+| Business Line             | `business_lines`               |
+| Channel                   | `channels`                     |
+| Human identity            | `users`                        |
+| Membership                | `organization_members`         |
+| Customer                  | `customer_accounts`            |
+| Contact                   | `customer_contacts`            |
+| Customer-brand relation   | `customer_brand_relationships` |
+| Lead                      | `leads`                        |
+| Requirement               | `requirements`                 |
+| Requirement history       | `requirement_versions`         |
+| Quote identity            | `quotes`                       |
+| Commercial quote snapshot | `quote_versions`               |
+| Contract                  | `orders`                       |
+| Contract line             | `order_items`                  |
+| Production work           | `production_jobs`              |
+| Production assignment     | `production_assignments`       |
+| Vendor                    | `vendors`                      |
+| QC                        | `qc_inspections`               |
+| Receivable                | `invoices`                     |
+| Incoming cash             | `payments`                     |
+| Payment application       | `payment_allocations`          |
+| Analytical finance        | `financial_ledger_entries`     |
+| Shipment                  | `shipments`                    |
+| SKU/stock identity        | `inventory_items`              |
+| Stock balance             | `inventory_levels`             |
+| Stock history             | `inventory_mutations`          |
+| Reserved stock            | `inventory_reservations`       |
+| Purchasing commitment     | `purchase_orders`              |
+| Physical purchase receipt | `goods_receipts`               |
+| Vendor payable            | `vendor_bills`                 |
+| Vendor cash-out           | `vendor_bill_payments`         |
 
 ---
 
