@@ -32,4 +32,8 @@ Future consolidation requires its own migration task. No MGBOS-002–004 impleme
 
 ## Follow-up - 2026-09-28
 
-The legacy Vite prototype was retired with owner confirmation and moved to `archive/mgbos-vite-prototype/`. Its former operational status above is historical; official MGBOS remains at `mgbos/`. See the [migration report](../../../docs/engineering/repository-migration-wave-1.md).
+The legacy Vite prototype was retired with owner confirmation and moved to `archive/mgbos-vite-prototype/`. Its former operational status above is historical; official MGBOS remains at `mgbos/`. See the [migration report](../../../../docs/engineering/repository-migration-wave-1.md).
+
+## Follow-up - 2026-09-29
+
+The workspace location is superseded by [ADR-015](015-system-directory.md): `systems/mgbos/`. Earlier path statements above are historical.

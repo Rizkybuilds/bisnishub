@@ -8,7 +8,7 @@
 ## 📚 Struktur Navigasi Dokumentasi MGBOS
 
 ```text
-mgbos/docs/
+systems/mgbos/docs/
 ├── architecture/      --> Arsitektur Sistem, Model Data, State Machines, & Outbox
 ├── product/           --> Spesifikasi Produk Custom Atelier MVP 0.5, User Flow & Screens
 ├── engineering/       --> Audit Repositori, Inventori File, & Completion Reports

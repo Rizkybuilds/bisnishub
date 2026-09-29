@@ -25,7 +25,7 @@ node --test scripts/governance/migration-immutability.test.mjs
 node scripts/governance/check-migration-immutability.mjs --base origin/main
 ```
 
-The migration guard protects every file already present under `mgbos/supabase/migrations/` at the base commit, including metadata/mode changes. This conservative policy does not guess which migrations were deployed. Additive migrations are allowed; semantic SQL safety remains a database/review gate. Local default compares base to the Git index and working tree (including untracked migrations); CI supplies an explicit head commit.
+The migration guard protects every file already present under `systems/mgbos/supabase/migrations/` at the base commit, including metadata/mode changes. This conservative policy does not guess which migrations were deployed. Additive migrations are allowed; semantic SQL safety remains a database/review gate. Local default compares base to the Git index and working tree (including untracked migrations); CI supplies an explicit head commit.
 
 Pull requests compare the actual base SHA with head SHA, not only a merge-base that could miss a concurrent migration edit. Pushes compare event `before` with `after`; dispatch compares HEAD with its first parent and is not a replacement for PR review. Checkout fetches full history. Missing or all-zero base fails closed. Never use `pull_request_target` to run untrusted change code with elevated credentials.
 

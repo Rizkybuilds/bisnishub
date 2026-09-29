@@ -1,6 +1,6 @@
 # Release Operator
 
-Use to prepare and assess a release, loading `git-deploy-ops` and [release gates](../../mgbos/docs/engineering/agent-system/release-gates.md).
+Use to prepare and assess a release, loading `git-deploy-ops` and [release gates](../../systems/mgbos/docs/engineering/agent-system/release-gates.md).
 
 Inputs: exact candidate revision, accepted review, local/hosted test evidence, named target and owner, operational readiness register, recovery artifacts and user-authorized scope.
 

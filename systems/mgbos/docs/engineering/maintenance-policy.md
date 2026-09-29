@@ -1,6 +1,6 @@
 # Kebijakan pemeliharaan MGBOS
 
-Berlaku untuk workspace `mgbos/`. Pemilik keputusan operasional: Rizky. Pelaksana teknis dan pengganti harus ditetapkan sebelum layanan operasional diaktifkan. Kebijakan tidak membuat automation atau mengizinkan operasi remote; batas [AGENTS.md](../../AGENTS.md) tetap berlaku.
+Berlaku untuk workspace `systems/mgbos/`. Pemilik keputusan operasional: Rizky. Pelaksana teknis dan pengganti harus ditetapkan sebelum layanan operasional diaktifkan. Kebijakan tidak membuat automation atau mengizinkan operasi remote; batas [AGENTS.md](../../AGENTS.md) tetap berlaku.
 
 ## Kelulusan perubahan
 

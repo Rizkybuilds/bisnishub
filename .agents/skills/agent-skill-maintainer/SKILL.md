@@ -10,7 +10,7 @@ Maintain reusable instructions grounded in the current BisnisHub repository. Kee
 ## Establish scope
 
 - Inspect Git status and the affected files before editing. Preserve existing uncommitted content; use a baseline or focused diff to distinguish this task's changes.
-- Read root `AGENTS.md`. For MGBOS instructions, also read `mgbos/AGENTS.md`, its README, relevant canonical sources and engineering reports.
+- Read root `AGENTS.md`. For MGBOS instructions, also read `systems/mgbos/AGENTS.md`, its README, relevant canonical sources and engineering reports.
 - Inspect `.agents/skills/` for an existing owner of the workflow. Read `.agents/agent-skill-audit.md` from the repository root when resolving catalog conflicts; recheck its dated findings against actual files.
 - Keep project skills in `.agents/skills/`. Personal and plugin skills are separate installations; a matching name is a possible routing ambiguity, not permission to edit or delete those copies.
 - Use shared `AGENTS.md` for durable repository rules, a Skill for a repeatable workflow, and supported runtime configuration for a separately requested Agent. A persona document alone does not register an Agent.

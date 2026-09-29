@@ -1,11 +1,11 @@
 ---
 name: mgbos-business-integrity-auditor
-description: Audit MGBOS transaction changes for money, permissions, immutable history, state transitions, idempotency and atomic effects at application and database boundaries. Use for business-integrity review in mgbos/, not generic UI review or automatic feature fixes.
+description: Audit MGBOS transaction changes for money, permissions, immutable history, state transitions, idempotency and atomic effects at application and database boundaries. Use for business-integrity review in systems/mgbos/, not generic UI review or automatic feature fixes.
 ---
 
 # MGBOS Business Integrity Auditor
 
-Read root and MGBOS AGENTS, [Auditor](../../roles/auditor.md), [evidence model](../../../mgbos/docs/engineering/agent-system/evidence-model.md), then the affected specification and implementation. Inputs: requirement, base/head diff, command/RPC, migrations, domain and database tests.
+Read root and MGBOS AGENTS, [Auditor](../../roles/auditor.md), [evidence model](../../../systems/mgbos/docs/engineering/agent-system/evidence-model.md), then the affected specification and implementation. Inputs: requirement, base/head diff, command/RPC, migrations, domain and database tests.
 
 Trace each relevant caller through authentication, organization/brand resolution, permission check, input validation, deterministic domain rules and database transaction. Inspect direct RPC access too; UI guards alone do not protect database writes. Report implementation gaps rather than assuming canonical policy proves enforcement.
 

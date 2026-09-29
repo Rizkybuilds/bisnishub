@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 defaults:
   run:
-    working-directory: mgbos
+    working-directory: systems/mgbos
 env:
   NEXT_TELEMETRY_DISABLED: "1"
 jobs:
@@ -26,9 +26,9 @@ jobs:
           version: 10.34.5
       - uses: actions/setup-node@v4
         with:
-          node-version-file: mgbos/.node-version
+          node-version-file: systems/mgbos/.node-version
           cache: pnpm
-          cache-dependency-path: mgbos/pnpm-lock.yaml
+          cache-dependency-path: systems/mgbos/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
       - name: Production HTTP smoke tests
@@ -64,9 +64,9 @@ jobs:
           version: 10.34.5
       - uses: actions/setup-node@v4
         with:
-          node-version-file: mgbos/.node-version
+          node-version-file: systems/mgbos/.node-version
           cache: pnpm
-          cache-dependency-path: mgbos/pnpm-lock.yaml
+          cache-dependency-path: systems/mgbos/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: node scripts/lint-migrations.mjs
       - run: pnpm db:start
@@ -81,6 +81,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: mgbos-database-types
-          path: mgbos/packages/database/generated/database.types.ts
+          path: systems/mgbos/packages/database/generated/database.types.ts
       - if: always()
         run: pnpm db:stop

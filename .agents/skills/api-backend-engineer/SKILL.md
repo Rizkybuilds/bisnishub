@@ -15,7 +15,7 @@ Implement server commands, endpoints, webhooks and provider adapters without cha
 ## Locate the contract
 
 - Read applicable `AGENTS.md`, the caller, validation schema, domain rule and existing tests before choosing an API shape.
-- **MGBOS:** work in `mgbos/`; use the existing application command boundary and package exports. Domain code stays independent of provider SDKs; adapters belong in the integration boundary.
+- **MGBOS:** work in `systems/mgbos/`; use the existing application command boundary and package exports. Domain code stays independent of provider SDKs; adapters belong in the integration boundary.
 - **Legacy:** inspect the actual Vite callers and TeeStock Edge Functions. Do not replace existing response formats with a universal envelope or introduce tRPC/another framework without a requirement.
 - Check MGBOS prerequisite gates and relevant reports before adding a new slice. This Skill does not authorize production changes.
 

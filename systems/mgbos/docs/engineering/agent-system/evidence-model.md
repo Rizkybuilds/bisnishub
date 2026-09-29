@@ -14,6 +14,6 @@ For findings include path/line, trigger, consequence, severity and a reproducer 
 
 ## Behavioral evaluation
 
-The [eval baseline](../../../../.agents/evals/README.md) contains prompts and observable rubric criteria. Structural CI validates the case format and references. It does not execute any LLM or prove the agent behaved correctly. Manual instruction review, executed agent evaluation and automated regression tests must be reported separately.
+The [eval baseline](../../../../../.agents/evals/README.md) contains prompts and observable rubric criteria. Structural CI validates the case format and references. It does not execute any LLM or prove the agent behaved correctly. Manual instruction review, executed agent evaluation and automated regression tests must be reported separately.
 
 An executed eval record needs the baseline revision, runtime settings, case ID, transcript/artifact path, each criterion's observed evidence, forbidden behavior checks and pass/fail/blocked. Any prohibited action fails the case even if the final prose sounds correct. Do not score a case passed by matching keywords or by reading the expected answer alone.

@@ -9,6 +9,6 @@ Provider-neutral working contracts for Codex, Antigravity, Hermes, Claude Code o
 - [Evidence model](evidence-model.md)
 - [Release gates and CI](release-gates.md)
 - [Implementation and validation report](implementation-report.md)
-- [Behavioral eval baseline](../../../../.agents/evals/README.md)
+- [Behavioral eval baseline](../../../../../.agents/evals/README.md)
 
 Existing [maintenance policy](../maintenance-policy.md), [readiness register](../operational-readiness.md), architecture decisions and MGBOS AGENTS remain authoritative. Contracts route work; they do not certify that all application controls are already implemented.

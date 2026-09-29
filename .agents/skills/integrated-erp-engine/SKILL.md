@@ -17,7 +17,7 @@ Design or implement cross-module business behavior: quotation, orders, inventory
 
 Read root `AGENTS.md` and inspect the target implementation before proposing contracts.
 
-- **MGBOS:** `mgbos/`. Read its `AGENTS.md`, `README.md`, `docs/architecture/README.md`, `docs/product/README.md` and the applicable engineering report. Follow links to the canonical data model and state machines. Check the prerequisite gates before starting another slice.
+- **MGBOS:** `systems/mgbos/`. Read its `AGENTS.md`, `README.md`, `docs/architecture/README.md`, `docs/product/README.md` and the applicable engineering report. Follow links to the canonical data model and state machines. Check the prerequisite gates before starting another slice.
 - **Legacy:** `apps/bisnishub-web`, `bisnis/teestock/web`, and `packages/shared/src`. Inspect actual callers, migrations and tests. Preserve existing contracts unless changing them is explicitly in scope.
 - `archive/mgbos-vite-prototype/` is the Vite prototype. Root `supabase` belongs to legacy TeeStock and is never the MGBOS database target.
 

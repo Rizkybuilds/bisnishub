@@ -4,7 +4,7 @@ Diperiksa dari struktur dan manifest lokal pada 2026-09-27. Owner keputusan repo
 
 | Sistem            | Lokasi                      | Batas dependency/data                                                                  | Status berdasarkan repo                                     |
 | ----------------- | --------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| MGBOS resmi       | [mgbos](../mgbos/README.md) | pnpm workspace; `mgbos/packages/`; `mgbos/supabase/` terisolasi                        | Next.js; gate ada, readiness dinilai per revisi             |
+| MGBOS resmi       | [mgbos](../systems/mgbos/README.md) | pnpm workspace; `systems/mgbos/packages/`; `systems/mgbos/supabase/` terisolasi                        | Next.js; gate ada, readiness dinilai per revisi             |
 | TeeStock lama (retired) | `bisnis/teestock/archive/web/` | SQL dan Supabase di `bisnis/teestock/archive/`; arsip referensi | Tidak dijalankan atau dideploy; konfirmasi owner 2026-09-28 |
 | Admin existing    | `apps/bisnishub-web/`       | npm lockfile sendiri; paket/data legacy terkait TeeStock                               | Implementasi existing, bukan aplikasi MGBOS Next.js         |
 | MGBOS prototype (retired) | `archive/mgbos-vite-prototype/`               | npm lockfile sendiri; kontrak legacy                                                   | Arsip referensi; tidak dijalankan/dideploy sebagai aplikasi aktif          |
@@ -20,7 +20,7 @@ Folder yang tersedia: `bisnis/multigraph/`, `bisnis/teestock/`, `bisnis/rizkybui
 
 ## Routing pekerjaan
 
-- Implementasi MGBOS: baca root AGENTS, `mgbos/AGENTS.md`, README, spesifikasi dan test terkait.
+- Implementasi MGBOS: baca root AGENTS, `systems/mgbos/AGENTS.md`, README, spesifikasi dan test terkait.
 - Legacy storefront/admin/prototype: periksa manifest, consumer shared, konfigurasi hosting dan target data aktual. Aturan MGBOS tidak otomatis menggantikan kontrak legacy.
 - Skill/peran: `.agents/skills/agent-skill-maintainer/SKILL.md`; nama skill khusus proyek menggunakan prefix seperti `mgbos-`.
 - Bisnis: pilih folder bisnis dan specialist sesuai kebutuhan; jangan mengubah kode dari permintaan diskusi strategi.
@@ -28,4 +28,4 @@ Folder yang tersedia: `bisnis/multigraph/`, `bisnis/teestock/`, `bisnis/rizkybui
 
 README adalah pintu masuk; indeks ini adalah peta lokasi; spesifikasi/detail teknis tetap dimiliki proyek. Data target di sini tidak mengizinkan deployment atau mutasi database.
 
-Target berikutnya adalah `systems/`, sesuai [ADR-001](decisions/001-repository-organization.md) dan [rencana migrasi](engineering/repository-migration-plan.md). KasKita sudah berada di `systems/kaskita/`; lokasi sistem lain mengikuti tabel aktif dan belum otomatis dipindahkan.
+Target berikutnya adalah `systems/`, sesuai [ADR-001](decisions/001-repository-organization.md) dan [rencana migrasi](engineering/repository-migration-plan.md). MGBOS berada di `systems/mgbos/` dan KasKita di `systems/kaskita/`; lokasi sistem lain mengikuti tabel aktif.
