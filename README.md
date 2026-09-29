@@ -20,7 +20,7 @@ Mulai dari [indeks proyek](docs/project-index.md), [aturan direktori](docs/engin
 | Storefront Next.js dalam MGBOS     | `mgbos/apps/teestock/`   | `npm run dev:mgbos:teestock`                   |
 | Storefront TeeStock lama (retired) | `bisnis/teestock/archive/web/` | Arsip referensi; tidak dijalankan/dideploy |
 | Admin existing, Vite               | `apps/bisnishub-web/`    | `npm run dev:bisnishub`                        |
-| KasKita mobile, Expo               | `bisnis/kaskita/mobile/` | `npm --prefix bisnis/kaskita/mobile run start` |
+| KasKita mobile, Expo               | `systems/kaskita/apps/mobile/` | `npm --prefix systems/kaskita/apps/mobile run start` |
 
 Keberadaan aplikasi bukan bukti kesiapan produksi. Target hosting dan hasil CI harus diverifikasi pada revisi yang akan dirilis.
 

@@ -88,3 +88,7 @@ Dokumentasi KasKita distandarisasi untuk memenuhi kebutuhan tim pengembang, desa
 
 ---
 *Dikelola di bawah panduan:* `[[GEMINI.md]]`
+
+## Lokasi kode setelah migrasi 28 September 2026
+
+Aplikasi Expo: [`systems/kaskita/apps/mobile/`](../../systems/kaskita/apps/mobile/). Supabase khusus KasKita: [`systems/kaskita/supabase/`](../../systems/kaskita/supabase/). Dokumen bisnis tetap di folder ini. Baca [panduan runtime](../../systems/kaskita/README.md); jangan menggunakan database TeeStock atau MGBOS.

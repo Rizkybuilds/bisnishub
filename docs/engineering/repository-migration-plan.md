@@ -131,3 +131,7 @@ Owner mengonfirmasi retirement prototype; audit dan hasil aktual dicatat di [lap
 ## Keputusan lanjutan owner — 28 September 2026
 
 Owner mengonfirmasi TeeStock lama sudah dipensiunkan dan dipertahankan sebagai arsip. Karena itu rencana relokasi runtime TeeStock pada tahap 2 diganti dengan pengarsipan di `bisnis/teestock/archive/`; bukan aktivasi ulang di `systems/teestock-v1/`. Admin/shared tetap di lokasi aktifnya. Lokasi MGBOS, KasKita dan asisten Python belum dipindahkan; tahap berikutnya tetap mengikuti acceptance masing-masing. Hasil kelanjutan dicatat di [laporan retirement TeeStock](repository-migration-teestock-retirement.md).
+
+## Implementasi tahap 3 — KasKita
+
+Aplikasi dan Supabase KasKita dipindahkan ke `systems/kaskita/` sebagai satu unit. Source, assets, lockfile, SQL, dan metadata lokal diverifikasi dengan hash sebelum/sesudah. Lihat [laporan tahap 3](repository-migration-wave-3.md) untuk bukti dan batas pengujian perangkat. Tahap 4 MGBOS belum dimulai.

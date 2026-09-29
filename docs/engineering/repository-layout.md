@@ -45,3 +45,7 @@ Database dan credentials mengikuti sistem, bukan root repo. Root Supabase legacy
 Worktree adalah checkout sementara branch dari repo yang sama. Ia dapat berada di luar folder utama; itu bukan proyek atau repo baru. Semua sumber tetap dilacak dalam commit dan masuk ke checkout utama melalui integrasi branch yang ditinjau. Jangan menyalin file lintas checkout secara manual atau menghapus checkout yang masih dipakai.
 
 Perubahan pada branch belum otomatis tersedia di branch lain. Catat lokasi kerja, branch, commit dan status integrasi dalam laporan. Konfigurasi provider tetap menunjuk aturan bersama; jangan menyalin kebijakan yang berbeda ke tiap provider.
+
+## KasKita setelah tahap 3
+
+`systems/kaskita/apps/mobile/` dan `systems/kaskita/supabase/` adalah lokasi runtime aktif KasKita. `bisnis/kaskita/` tetap berisi pengetahuan bisnis. Sistem lainnya tidak otomatis ikut berpindah.

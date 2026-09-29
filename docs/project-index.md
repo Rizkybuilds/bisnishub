@@ -8,7 +8,7 @@ Diperiksa dari struktur dan manifest lokal pada 2026-09-27. Owner keputusan repo
 | TeeStock lama (retired) | `bisnis/teestock/archive/web/` | SQL dan Supabase di `bisnis/teestock/archive/`; arsip referensi | Tidak dijalankan atau dideploy; konfirmasi owner 2026-09-28 |
 | Admin existing    | `apps/bisnishub-web/`       | npm lockfile sendiri; paket/data legacy terkait TeeStock                               | Implementasi existing, bukan aplikasi MGBOS Next.js         |
 | MGBOS prototype (retired) | `archive/mgbos-vite-prototype/`               | npm lockfile sendiri; kontrak legacy                                                   | Arsip referensi; tidak dijalankan/dideploy sebagai aplikasi aktif          |
-| KasKita           | `bisnis/kaskita/mobile/`    | npm lockfile sendiri; `bisnis/kaskita/supabase/`                                       | Expo; proyek independen dari holding percetakan             |
+| KasKita           | `systems/kaskita/apps/mobile/`    | npm lockfile sendiri; `systems/kaskita/supabase/`                                       | Expo; proyek independen dari holding percetakan             |
 | Shared legacy     | `packages/shared/`          | Layanan/UI untuk aplikasi existing/prototipe; bukan `@mgbos/domain`                    | Perubahan harus memeriksa seluruh consumer                  |
 | Asisten Python    | `main.py`, `agent.py`       | `requirements.txt`; membaca `prompts/` dan `memory/` relatif file                      | Tool existing; runtime/layanan eksternal belum diverifikasi |
 
@@ -28,4 +28,4 @@ Folder yang tersedia: `bisnis/multigraph/`, `bisnis/teestock/`, `bisnis/rizkybui
 
 README adalah pintu masuk; indeks ini adalah peta lokasi; spesifikasi/detail teknis tetap dimiliki proyek. Data target di sini tidak mengizinkan deployment atau mutasi database.
 
-Target berikutnya adalah `systems/`, sesuai [ADR-001](decisions/001-repository-organization.md) dan [rencana migrasi](engineering/repository-migration-plan.md). Tabel lokasi aktif di atas belum berubah; penetapan target bukan pemindahan fisik.
+Target berikutnya adalah `systems/`, sesuai [ADR-001](decisions/001-repository-organization.md) dan [rencana migrasi](engineering/repository-migration-plan.md). KasKita sudah berada di `systems/kaskita/`; lokasi sistem lain mengikuti tabel aktif dan belum otomatis dipindahkan.
