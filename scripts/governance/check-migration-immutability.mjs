@@ -3,7 +3,7 @@ import { existsSync, lstatSync, readdirSync, realpathSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const migrationDir = "mgbos/supabase/migrations";
+const migrationDirs = ["mgbos/supabase/migrations", "systems/mgbos/supabase/migrations"];
 
 function git(cwd, args) {
   return execFileSync("git", args, {
@@ -27,7 +27,7 @@ function commit(cwd, ref) {
 }
 
 function tree(cwd, sha) {
-  const records = git(cwd, ["ls-tree", "-r", "-z", sha, "--", migrationDir])
+  const records = git(cwd, ["ls-tree", "-r", "-z", sha, "--", ...migrationDirs])
     .split("\0")
     .filter(Boolean);
   return new Map(
@@ -54,8 +54,7 @@ function ensureDirectory(cwd, directory) {
 
 function workingTree(cwd) {
   const result = new Map();
-  if (!existsSync(join(cwd, migrationDir))) return result;
-  ensureDirectory(cwd, migrationDir);
+
   function visit(directory) {
     for (const entry of readdirSync(join(cwd, directory), {
       withFileTypes: true,
@@ -78,12 +77,33 @@ function workingTree(cwd) {
       result.set(path, { mode: "100644", type: "blob", oid });
     }
   }
-  visit(migrationDir);
+  for (const migrationDir of migrationDirs) {
+    if (!existsSync(join(cwd, migrationDir))) continue;
+    ensureDirectory(cwd, migrationDir);
+    visit(migrationDir);
+  }
   return result;
+}
+
+function canonical(entries, violations) {
+  const roots = new Set();
+  const normalized = new Map();
+  for (const [path, entry] of entries) {
+    const root = migrationDirs.find((dir) => path.startsWith(`${dir}/`));
+    if (!root) throw new Error(`Unknown migration root: ${path}`);
+    roots.add(root);
+    const name = path.slice(root.length + 1);
+    if (normalized.has(name)) violations.push(`${name}: duplicate migration across roots`);
+    normalized.set(name, entry);
+  }
+  if (roots.size > 1) violations.push("Migration history must live in one canonical root; split/duplicate roots are forbidden");
+  return normalized;
 }
 
 function compare(base, head) {
   const violations = [];
+  base = canonical(base, violations);
+  head = canonical(head, violations);
   for (const [path, old] of base) {
     const next = head.get(path);
     if (!next) violations.push(`${path}: deleted or renamed`);
@@ -122,7 +142,7 @@ export function checkMigrations({ cwd = process.cwd(), base, head }) {
     "--stage",
     "-z",
     "--",
-    migrationDir,
+    ...migrationDirs,
   ])
     .split("\0")
     .filter(Boolean)) {
