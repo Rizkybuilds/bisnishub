@@ -8,7 +8,7 @@ Keep legacy application, deployment configuration, migrations and business notes
 
 ## Repository navigation
 
-Read [project index](docs/project-index.md) and [directory ownership](docs/engineering/repository-layout.md) before choosing a target. `systems/` is the migration target replacing the earlier `projects/` proposal, not an active code location. Follow the [migration plan](docs/engineering/repository-migration-plan.md) before physical moves. Root `*:mgbos` scripts target official Next.js; prototype aliases have been removed. The archive is reference-only and must not be deployed. Keep business notes and each system's database/toolchain boundaries separate.
+Read [project index](docs/project-index.md) and [directory ownership](docs/engineering/repository-layout.md) before choosing a target. `systems/` replaces the earlier `projects/` proposal. KasKita now lives at `systems/kaskita/`; other systems remain at the active locations in the project index. Follow the [migration plan](docs/engineering/repository-migration-plan.md) before physical moves. Root `*:mgbos` scripts target official Next.js; prototype aliases have been removed. The archive is reference-only and must not be deployed. Keep business notes and each system's database/toolchain boundaries separate.
 
 ## Agent and skill maintenance
 
