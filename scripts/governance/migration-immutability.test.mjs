@@ -47,6 +47,52 @@ test("unchanged and additive migrations pass in commit and working-tree modes", 
   assert.deepEqual(checkMigrations({ ...f, head: "HEAD" }).violations, []);
 });
 
+function relocate(f) {
+  const parent = join(f.cwd, "systems/mgbos/supabase");
+  mkdirSync(parent, { recursive: true });
+  const dir = join(parent, "migrations");
+  renameSync(f.dir, dir);
+  return dir;
+}
+
+test("whole-root relocation preserves history and rollback remains protected", (t) => {
+  const f = fixture(t);
+  const dir = relocate(f);
+  f.git("add", "-A");
+  assert.deepEqual(checkMigrations(f).violations, []);
+  f.git("commit", "-qm", "relocate");
+  assert.deepEqual(checkMigrations({ ...f, head: "HEAD" }).violations, []);
+  assert.deepEqual(checkMigrations({ cwd: f.cwd, base: "HEAD", head: f.base }).violations, []);
+  const relocatedBase = f.git("rev-parse", "HEAD");
+  writeFileSync(join(dir, "20260102000000_new.sql"), "select 2;\n");
+  f.git("add", "-A");
+  assert.deepEqual(checkMigrations({ ...f, base: relocatedBase }).violations, []);
+  writeFileSync(join(dir, "20260101000000_initial.sql"), "select 9;\n");
+  assert.ok(checkMigrations({ ...f, base: relocatedBase }).violations.length);
+});
+
+for (const change of ["edit", "delete", "rename", "mode", "duplicate", "split", "hidden-index"]) {
+  test(`relocation rejects ${change}`, (t) => {
+    const f = fixture(t);
+    const dir = relocate(f);
+    const moved = join(dir, "20260101000000_initial.sql");
+    if (change === "edit") writeFileSync(moved, "select 9;\n");
+    if (change === "delete") rmSync(moved);
+    if (change === "rename") renameSync(moved, join(dir, "renamed.sql"));
+    if (["duplicate", "split"].includes(change)) {
+      mkdirSync(f.dir, { recursive: true });
+      writeFileSync(join(f.dir, change === "duplicate" ? "20260101000000_initial.sql" : "20260102000000_other.sql"), "select 1;\n");
+    }
+    if (change === "hidden-index") writeFileSync(moved, "select 8;\n");
+    f.git("add", "-A");
+    if (change === "mode") f.git("update-index", "--chmod=+x", "systems/mgbos/supabase/migrations/20260101000000_initial.sql");
+    if (change === "hidden-index") writeFileSync(moved, "select 1;\n");
+    assert.ok(checkMigrations(f).violations.length > 0);
+    f.git("commit", "-qm", change);
+    assert.ok(checkMigrations({ ...f, head: "HEAD" }).violations.length > 0);
+  });
+}
+
 for (const change of ["edit", "delete", "rename", "mode"]) {
   test(`existing migration ${change} fails`, (t) => {
     const f = fixture(t);
