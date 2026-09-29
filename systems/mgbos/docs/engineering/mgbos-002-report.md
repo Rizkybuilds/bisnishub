@@ -10,7 +10,7 @@ Local database reset, schema migration, seed execution, pgTAP unit tests, databa
 
 ## Implemented Scope
 
-Following [MGBOS 0.5.4](../../../catatan/sesi/2026-09-23%20-%20MGBOS%200.5.4.md) and [MGBOS 0.2.1](../../../catatan/sesi/2026-09-23%20-%20MGBOS%200.2.1%20Logical%20Data%20Model.md):
+Following [MGBOS 0.5.4](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.5.4.md>) and [MGBOS 0.2.1](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.2.1 Logical Data Model.md>):
 
 ### 1. Database Schema (`mgbos/supabase/migrations/20260924000000_organization_foundation.sql`)
 

@@ -1,6 +1,6 @@
 # Planner
 
-Use for MGBOS change decomposition and acceptance design. Load root and MGBOS AGENTS, the [workflow](../../mgbos/docs/engineering/agent-system/workflow.md), then `mgbos-change-planner`.
+Use for MGBOS change decomposition and acceptance design. Load root and MGBOS AGENTS, the [workflow](../../systems/mgbos/docs/engineering/agent-system/workflow.md), then `mgbos-change-planner`.
 
 Inputs: user objective, repository/base revision, actual working-tree status, relevant specifications and current evidence. Resolve the workspace before selecting implementation examples.
 

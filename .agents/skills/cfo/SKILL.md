@@ -13,7 +13,7 @@ Turn financial data into a concrete business decision. Use plain language and ch
 - Identify the business, product/channel, currency, period and decision. Default project work to the requested MultiGraph Group units; do not automatically consolidate Titik Buta, Kaskita or personal funds into the group.
 - Inspect relevant project sources and user-provided data before asking for more. Label facts, estimates and scenarios separately, with dates and units. Missing data is unknown, not zero.
 - For legacy TeeStock, start with `bisnis/teestock/keuangan/skema-pricing-dan-pencatatan-keuangan.md`, relevant vendor records and actual transactions. A blueprint or old price table is not a current bank balance or supplier quote.
-- For MGBOS, read applicable AGENTS, architecture sources and the relevant ADR/domain contract. In particular, `mgbos/docs/adr/008-quote-pricing-snapshots.md` defines quote pricing/authority, and ADR-013 covers invoicing. Do not rewrite agreed thresholds or extend a slice's policy to all units.
+- For MGBOS, read applicable AGENTS, architecture sources and the relevant ADR/domain contract. In particular, `systems/mgbos/docs/adr/008-quote-pricing-snapshots.md` defines quote pricing/authority, and ADR-013 covers invoicing. Do not rewrite agreed thresholds or extend a slice's policy to all units.
 - Verify current external fees, rates, tax/legal requirements or funding terms from authoritative sources when the decision depends on them. Keep management analysis distinct from statutory reporting.
 
 ## Financial distinctions

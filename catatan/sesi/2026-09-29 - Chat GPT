@@ -1,0 +1,2514 @@
+Nah, sekarang alasannya menjadi sangat kuat: **MGBOS + JARVIS + Agent System bukan proyek teknologi sampingan. Itu adalah strategi organisasi MultiGraph untuk mengompensasi keterbatasan modal, headcount, waktu, dan kemampuan founder.**
+
+Karena itu dokumentasinya harus dirancang seolah-olah kita sedang mendesain **perusahaan digital-native yang tenaga kerjanya terdiri dari manusia + software + automation + AI**.
+
+Gue akan membuat satu arsitektur dokumentasi induk seperti ini.
+
+---
+
+# 1. Pisahkan 4 hal yang sering tercampur
+
+Sebelum bicara file, kita kunci dulu definisinya:
+
+```text
+MGBOS
+= Business Operating System
+= fakta, transaksi, workflow, rules, database
+
+JARVIS
+= Intelligence & Management Layer
+= memahami kondisi, merencanakan, mengawasi, mengingatkan
+
+AGENT
+= Digital role / specialist
+= CFO, COO, CMO, Sales, Content, Procurement, dll.
+
+SKILL
+= kemampuan reusable
+= analyze_cashflow()
+= qualify_lead()
+= create_content_plan()
+= compare_vendor()
+
+TOOL
+= capability ke dunia luar
+= baca database
+= kirim WhatsApp
+= publish content
+= create invoice
+= baca marketplace
+```
+
+Sehingga:
+
+```text
+RIZKY
+   ↓
+JARVIS
+   ↓
+AGENTS
+   ↓
+SKILLS
+   ↓
+TOOLS
+   ↓
+MGBOS / EXTERNAL SYSTEMS
+```
+
+Ini harus menjadi model canonical kita.
+
+---
+
+# 2. Struktur dokumentasi induk
+
+Gue menyarankan satu root seperti:
+
+```text
+docs/
+│
+├── 00-foundation/
+├── 01-mgbos/
+├── 02-jarvis/
+├── 03-agents/
+├── 04-skills/
+├── 05-tools-integrations/
+├── 06-data-knowledge-memory/
+├── 07-automation/
+├── 08-governance-policy/
+├── 09-security/
+├── 10-observability-evals/
+├── 11-operating-model/
+├── 12-runbooks/
+├── 13-roadmap/
+├── 14-adrs/
+└── 15-templates/
+```
+
+Tapi masing-masing punya fungsi berbeda.
+
+---
+
+# 3. `00-foundation/` — dokumen paling penting
+
+Ini harus dibuat **sebelum kita memperbesar sistem**.
+
+```text
+00-foundation/
+├── 00-master-blueprint.md
+├── 01-system-constitution.md
+├── 02-vision-and-objectives.md
+├── 03-target-operating-model.md
+├── 04-system-boundaries.md
+├── 05-human-ai-responsibility-model.md
+├── 06-autonomy-philosophy.md
+├── 07-risk-principles.md
+└── 08-system-map.md
+```
+
+### `00-master-blueprint.md`
+
+Dokumen tertinggi.
+
+Menjelaskan keseluruhan:
+
+```text
+Founder
+↓
+JARVIS
+↓
+Agents
+↓
+Skills
+↓
+Tools
+↓
+MGBOS
+↓
+Business Operations
+```
+
+Semua dokumen lain direferensikan dari sini.
+
+---
+
+### `01-system-constitution.md`
+
+Ini seperti konstitusi.
+
+Harus menjawab:
+
+- apa tujuan sistem;
+- apa yang tidak boleh dilakukan;
+- siapa ultimate authority;
+- bagaimana AI digunakan;
+- kapan manusia wajib masuk;
+- apa yang dianggap authoritative fact;
+- bagaimana keputusan dan bukti dicatat.
+
+Contoh prinsip:
+
+> AI may reason.  
+> Rules enforce.  
+> Systems of record own facts.  
+> Humans retain authority over high-impact decisions.
+
+---
+
+### `03-target-operating-model.md`
+
+Ini sangat penting untuk visi lo.
+
+Dokumentasikan bentuk organisasi target:
+
+```text
+Rizky
+Founder / Capital Allocator
+        │
+      JARVIS
+        │
+ ┌──────┼──────┐
+CFO    COO     CMO
+ │      │       │
+Finance Ops   Growth
+```
+
+Kemudian:
+
+```text
+Human
+AI
+Automation
+Software
+Vendor
+```
+
+siapa melakukan apa.
+
+---
+
+# 4. `01-mgbos/` — otak transaksi bisnis
+
+MGBOS harus didokumentasikan sebagai **System of Record MultiGraph**.
+
+```text
+01-mgbos/
+├── 00-mgbos-charter.md
+├── 01-product-vision.md
+├── 02-domain-map.md
+├── 03-canonical-data-model.md
+├── 04-business-state-machines.md
+├── 05-command-model.md
+├── 06-event-model.md
+├── 07-permission-model.md
+├── 08-customer-domain.md
+├── 09-sales-crm-domain.md
+├── 10-quotation-domain.md
+├── 11-order-domain.md
+├── 12-finance-domain.md
+├── 13-procurement-domain.md
+├── 14-vendor-domain.md
+├── 15-inventory-domain.md
+├── 16-production-domain.md
+├── 17-quality-domain.md
+├── 18-fulfillment-domain.md
+├── 19-product-catalog-domain.md
+├── 20-pricing-costing-domain.md
+├── 21-reporting-analytics.md
+├── 22-notification-domain.md
+├── 23-api-contracts.md
+├── 24-integration-architecture.md
+├── 25-ai-boundaries.md
+└── 26-mgbos-maturity-model.md
+```
+
+Ini bukan cuma technical docs.
+
+Misalnya `vendor-domain.md` harus menjelaskan business logic:
+
+```text
+Vendor
+│
+├── capability
+├── price
+├── minimum order
+├── lead time
+├── quality score
+├── on-time score
+├── capacity
+├── dispute history
+└── status
+```
+
+Sedangkan `pricing-costing-domain.md` mendefinisikan:
+
+```text
+Estimated Cost
+Committed Cost
+Actual Cost
+Margin
+Markup
+Discount
+Shipping
+Tax
+Vendor Cost
+Production Cost
+```
+
+AI tidak boleh membuat definisi sendiri.
+
+---
+
+# 5. `02-jarvis/` — AI Chief of Staff
+
+Ini layer yang menurut gue akan paling terasa buat kehidupan lo.
+
+```text
+02-jarvis/
+├── 00-jarvis-charter.md
+├── 01-jarvis-architecture.md
+├── 02-core-runtime.md
+├── 03-intent-router.md
+├── 04-context-builder.md
+├── 05-planner.md
+├── 06-supervisor.md
+├── 07-policy-engine.md
+├── 08-execution-engine.md
+├── 09-verification-engine.md
+├── 10-evidence-engine.md
+├── 11-decision-inbox.md
+├── 12-alerting-system.md
+├── 13-escalation-system.md
+├── 14-briefing-engine.md
+├── 15-delegation-engine.md
+├── 16-model-routing.md
+├── 17-context-management.md
+├── 18-failure-recovery.md
+└── 19-jarvis-maturity-model.md
+```
+
+Ada empat dokumen yang menurut gue sangat krusial.
+
+### `decision-inbox.md`
+
+Semua keputusan founder masuk sini.
+
+Contoh:
+
+```text
+Decision
+Vendor B vs Vendor C
+
+Impact
+Rp12.500.000 production value
+
+Recommendation
+Vendor B
+
+Reason
+lower defect rate
+better SLA
+margin remains above floor
+
+Confidence
+High
+
+Risk
+Medium
+
+Actions
+[APPROVE]
+[REJECT]
+[ASK JARVIS]
+[DEFER]
+```
+
+---
+
+### `briefing-engine.md`
+
+Mendefinisikan:
+
+**Morning Briefing**
+
+**Weekly Business Review**
+
+**Monthly Strategic Review**
+
+Jadi lo tidak perlu mencari masalah.
+
+Sistem yang membawa masalah ke lo.
+
+---
+
+### `escalation-system.md`
+
+Contohnya:
+
+```text
+Normal
+→ system handles
+
+Anomaly
+→ specialist agent
+
+Material anomaly
+→ JARVIS
+
+High impact
+→ Founder
+```
+
+---
+
+# 6. `03-agents/` — organisasi digital MultiGraph
+
+Jangan langsung membuat 100 agents.
+
+Bikin **Agent Registry** dulu.
+
+```text
+03-agents/
+├── 00-agent-architecture.md
+├── 01-agent-registry.md
+├── 02-agent-contract.md
+├── 03-agent-lifecycle.md
+├── 04-agent-communication.md
+├── 05-agent-delegation.md
+├── 06-agent-permissions.md
+├── 07-agent-escalation.md
+├── 08-agent-evaluation.md
+│
+└── roles/
+    ├── chief-of-staff-agent.md
+    ├── cfo-agent.md
+    ├── coo-agent.md
+    ├── cmo-agent.md
+    ├── sales-agent.md
+    ├── customer-service-agent.md
+    ├── procurement-agent.md
+    ├── vendor-manager-agent.md
+    ├── inventory-agent.md
+    ├── production-agent.md
+    ├── finance-agent.md
+    ├── content-strategist-agent.md
+    ├── content-production-agent.md
+    ├── research-agent.md
+    └── engineering-agent.md
+```
+
+Setiap agent harus punya kontrak yang sama.
+
+Misalnya CFO Agent:
+
+```text
+ROLE
+CFO
+
+MISSION
+Protect financial health.
+
+INPUTS
+Ledger
+Orders
+Receivables
+Payables
+Cash
+
+RESPONSIBILITIES
+Cashflow monitoring
+Margin analysis
+Budgeting
+Financial alerts
+
+CAN
+Read financial records
+Analyze
+Forecast
+Recommend
+
+CANNOT
+Transfer money
+Change bank destination
+Approve major expenditure
+
+ESCALATE WHEN
+Cash runway < threshold
+Margin anomaly
+Large overdue invoice
+
+KPIs
+Forecast accuracy
+Detected anomalies
+False alerts
+```
+
+Kalau tidak ada dokumen seperti ini, agent akhirnya cuma menjadi prompt panjang yang tidak konsisten.
+
+---
+
+# 7. `04-skills/` — perpustakaan kemampuan
+
+Agent jangan dibuat terlalu pintar sendiri.
+
+Kemampuan harus dipisahkan menjadi skill reusable.
+
+```text
+04-skills/
+├── 00-skill-system.md
+├── 01-skill-registry.md
+├── 02-skill-contract.md
+├── 03-skill-lifecycle.md
+├── 04-skill-versioning.md
+├── 05-skill-testing.md
+│
+├── finance/
+├── operations/
+├── sales/
+├── marketing/
+├── content/
+├── procurement/
+├── vendor/
+├── customer-service/
+├── management/
+└── engineering/
+```
+
+Contoh:
+
+```text
+finance/
+├── analyze-cashflow.md
+├── analyze-margin.md
+├── detect-cost-anomaly.md
+├── forecast-cash.md
+└── reconcile-payment.md
+```
+
+Marketing:
+
+```text
+marketing/
+├── analyze-campaign.md
+├── generate-campaign-plan.md
+├── segment-customer.md
+└── recommend-budget.md
+```
+
+Content:
+
+```text
+content/
+├── generate-product-description.md
+├── create-content-brief.md
+├── repurpose-content.md
+└── analyze-content-performance.md
+```
+
+---
+
+# 8. Skill Contract
+
+Setiap skill harus punya format canonical.
+
+Misalnya:
+
+```text
+SKILL NAME
+compare_vendor
+
+PURPOSE
+Compare approved production vendors.
+
+INPUT
+product
+quantity
+deadline
+customer location
+
+DATA SOURCES
+MGBOS vendor database
+historical performance
+
+OUTPUT
+ranked recommendation
+
+RULES
+Never recommend suspended vendor.
+Margin must stay above minimum.
+Deadline must be achievable.
+
+FAILURE CONDITION
+Incomplete pricing
+Stale vendor capacity
+
+EVIDENCE
+Show source data used.
+
+RISK LEVEL
+R1
+
+REQUIRES APPROVAL
+No, until purchase order creation.
+```
+
+Ini akan menjadi fondasi agent reliability.
+
+---
+
+# 9. `05-tools-integrations/`
+
+Skill berpikir.
+
+Tool bertindak.
+
+```text
+05-tools-integrations/
+├── 00-tool-architecture.md
+├── 01-tool-registry.md
+├── 02-tool-contract.md
+├── 03-authentication.md
+├── 04-idempotency.md
+├── 05-rate-limits.md
+├── 06-retry-policy.md
+├── 07-webhook-standard.md
+│
+├── mgbos/
+├── whatsapp/
+├── email/
+├── marketplace/
+├── social-media/
+├── payment/
+├── shipping/
+├── accounting/
+└── github/
+```
+
+Contoh canonical tool:
+
+```text
+mgbos.customer.read
+mgbos.order.read
+mgbos.order.update
+
+whatsapp.message.send
+
+marketplace.order.read
+
+social.content.publish
+```
+
+Bukan tool bernama:
+
+```text
+handle_customer
+```
+
+karena itu terlalu abstrak.
+
+---
+
+# 10. `06-data-knowledge-memory/`
+
+Ini penting sekali supaya AI tidak halusinasi.
+
+```text
+06-data-knowledge-memory/
+├── 00-information-architecture.md
+├── 01-source-of-truth.md
+├── 02-data-provenance.md
+├── 03-data-freshness.md
+├── 04-knowledge-hierarchy.md
+├── 05-memory-architecture.md
+├── 06-working-memory.md
+├── 07-episodic-memory.md
+├── 08-semantic-memory.md
+├── 09-preference-memory.md
+├── 10-evidence-memory.md
+└── 11-retention-policy.md
+```
+
+Kita harus punya hierarki:
+
+```text
+FACT
+→ MGBOS / authoritative DB
+
+CODE
+→ Git
+
+POLICY
+→ canonical docs
+
+FILES
+→ document storage
+
+AI MEMORY
+→ context, preference, observations
+
+VECTOR DATABASE
+→ retrieval aid
+```
+
+AI memory **bukan sumber fakta transaksi**.
+
+---
+
+# 11. `07-automation/`
+
+Ini untuk n8n dan automation layer.
+
+```text
+07-automation/
+├── 00-automation-philosophy.md
+├── 01-automation-registry.md
+├── 02-workflow-standard.md
+├── 03-trigger-model.md
+├── 04-retry-policy.md
+├── 05-failure-handling.md
+├── 06-human-approval.md
+├── 07-idempotency.md
+├── 08-scheduling.md
+└── workflows/
+```
+
+Setiap workflow harus punya:
+
+```text
+Trigger
+Input
+Rules
+Actions
+Failure
+Retry
+Owner
+Approval
+Evidence
+Audit
+```
+
+---
+
+# 12. `08-governance-policy/`
+
+Ini yang menjaga AI lo tidak kebablasan.
+
+```text
+08-governance-policy/
+├── 00-governance-model.md
+├── 01-risk-classification.md
+├── 02-autonomy-levels.md
+├── 03-approval-policy.md
+├── 04-decision-rights.md
+├── 05-spending-authority.md
+├── 06-data-access-policy.md
+├── 07-external-communication-policy.md
+├── 08-change-management.md
+└── 09-audit-policy.md
+```
+
+Misalnya kita gunakan:
+
+```text
+R0 informational
+R1 read-only
+R2 reversible action
+R3 meaningful business action
+R4 sensitive operation
+R5 financial/security critical
+```
+
+Dan:
+
+```text
+L0 Observe
+L1 Recommend
+L2 Prepare
+L3 Execute with approval
+L4 Autonomous within policy
+```
+
+Maka setiap skill/tool punya:
+
+```text
+Risk = R3
+Autonomy = maximum L2
+```
+
+Super jelas.
+
+---
+
+# 13. `09-security/`
+
+Jangan nunggu bisnis besar.
+
+```text
+09-security/
+├── 00-security-model.md
+├── 01-identity-access.md
+├── 02-secret-management.md
+├── 03-agent-security.md
+├── 04-tool-security.md
+├── 05-financial-security.md
+├── 06-customer-data.md
+├── 07-backup-recovery.md
+├── 08-incident-response.md
+└── 09-threat-model.md
+```
+
+Karena AI dengan akses:
+
+```text
+email
+customer
+bank
+database
+social
+supplier
+```
+
+bisa menjadi liability besar kalau permission model buruk.
+
+---
+
+# 14. `10-observability-evals/`
+
+Ini yang sering dilupakan.
+
+AI system tidak cukup:
+
+> “Kelihatannya jalan.”
+
+Kita harus bisa mengukur.
+
+```text
+10-observability-evals/
+├── 00-observability.md
+├── 01-agent-evaluation.md
+├── 02-skill-evaluation.md
+├── 03-workflow-reliability.md
+├── 04-hallucination-monitoring.md
+├── 05-cost-monitoring.md
+├── 06-latency-monitoring.md
+├── 07-model-performance.md
+├── 08-human-override-rate.md
+├── 09-decision-quality.md
+└── 10-eval-datasets.md
+```
+
+Contoh KPI penting:
+
+```text
+AI recommendation acceptance rate
+
+false alert rate
+
+human override rate
+
+automation success %
+
+cost per automated transaction
+
+human minutes/order
+
+orders/employee
+
+revenue/founder-hour
+```
+
+Dua KPI terakhir menurut gue sangat penting bagi visi lo.
+
+---
+
+# 15. `11-operating-model/`
+
+Ini bukan software.
+
+Ini **cara perusahaan benar-benar dijalankan**.
+
+```text
+11-operating-model/
+├── 00-company-operating-model.md
+├── 01-founder-operating-system.md
+├── 02-management-cadence.md
+├── 03-daily-operations.md
+├── 04-weekly-review.md
+├── 05-monthly-review.md
+├── 06-quarterly-strategy-review.md
+├── 07-decision-process.md
+├── 08-escalation-process.md
+└── 09-continuous-improvement.md
+```
+
+Tujuan akhirnya:
+
+### Daily
+
+JARVIS → briefing.
+
+### Weekly
+
+JARVIS → business review.
+
+### Monthly
+
+JARVIS + agents → management review.
+
+### Quarterly
+
+Lo → capital allocation dan strategy.
+
+---
+
+# 16. `12-runbooks/`
+
+Ketika ada masalah, lo tidak mau berpikir dari nol.
+
+```text
+12-runbooks/
+├── customer-complaint.md
+├── vendor-delay.md
+├── production-failure.md
+├── payment-failure.md
+├── inventory-stockout.md
+├── ai-agent-failure.md
+├── automation-failure.md
+├── security-incident.md
+├── website-outage.md
+└── data-recovery.md
+```
+
+Misalnya:
+
+```text
+Vendor terlambat
+↓
+detect
+↓
+check severity
+↓
+find alternate vendor
+↓
+calculate impact
+↓
+notify customer if required
+↓
+escalate
+```
+
+---
+
+# 17. `13-roadmap/`
+
+Jangan cuma punya satu roadmap panjang.
+
+```text
+13-roadmap/
+├── 00-master-roadmap.md
+├── 01-mgbos-roadmap.md
+├── 02-jarvis-roadmap.md
+├── 03-agent-roadmap.md
+├── 04-skill-roadmap.md
+├── 05-automation-roadmap.md
+└── 06-ai-maturity-roadmap.md
+```
+
+---
+
+# 18. Maturity roadmap yang gue sarankan
+
+### Stage 0 — Digital Foundation
+
+```text
+MGBOS
+database
+orders
+customer
+finance
+vendor
+```
+
+Belum perlu AI canggih.
+
+---
+
+### Stage 1 — Observability
+
+Sistem tahu:
+
+> Apa yang sedang terjadi?
+
+```text
+dashboard
+alerts
+reporting
+business health
+```
+
+---
+
+### Stage 2 — Intelligence
+
+JARVIS mulai menjawab:
+
+> Kenapa ini terjadi?
+
+```text
+analysis
+anomaly detection
+recommendations
+```
+
+---
+
+### Stage 3 — Decision Support
+
+```text
+Problem
+↓
+Options
+↓
+Impact
+↓
+Recommendation
+↓
+Founder decision
+```
+
+Ini menurut gue target besar pertama lo.
+
+---
+
+### Stage 4 — AI Operators
+
+Agents mulai melakukan:
+
+```text
+CS
+content
+reporting
+lead qualification
+vendor comparison
+follow-up
+```
+
+---
+
+### Stage 5 — Controlled Execution
+
+```text
+AI
+↓
+policy
+↓
+approval
+↓
+execute
+```
+
+---
+
+### Stage 6 — Bounded Autonomy
+
+Untuk aktivitas aman:
+
+```text
+AI
+↓
+policy
+↓
+execute
+↓
+verify
+↓
+audit
+```
+
+Tidak lagi perlu approval lo setiap kali.
+
+---
+
+### Stage 7 — AI-Native Enterprise
+
+Akhirnya:
+
+```text
+EVENT
+↓
+JARVIS
+↓
+PLAN
+↓
+AGENT
+↓
+SKILL
+↓
+POLICY
+↓
+TOOL
+↓
+MGBOS
+↓
+VERIFY
+↓
+LEARN
+```
+
+Dan hanya exception yang sampai ke Rizky.
+
+---
+
+# 19. `14-adrs/` juga wajib
+
+Architectural Decision Record.
+
+Contohnya:
+
+```text
+ADR-001
+MGBOS is authoritative system of record.
+
+ADR-002
+JARVIS cannot directly mutate financial records.
+
+ADR-003
+n8n is orchestration, not business database.
+
+ADR-004
+All high-impact AI actions require evidence.
+
+ADR-005
+Money uses integer Rupiah.
+
+ADR-006
+AI providers must remain replaceable.
+```
+
+Ini kelihatannya sepele.
+
+Padahal 3 tahun lagi ketika sistem besar, ADR menyelamatkan kita dari pertanyaan:
+
+> “Kenapa dulu kita bikin begini?”
+
+---
+
+# 20. Terakhir `15-templates/`
+
+Supaya sistem dokumentasinya scalable.
+
+```text
+15-templates/
+├── agent-template.md
+├── skill-template.md
+├── tool-template.md
+├── workflow-template.md
+├── policy-template.md
+├── adr-template.md
+├── runbook-template.md
+├── eval-template.md
+└── system-spec-template.md
+```
+
+Jadi setiap kali bikin sesuatu baru, strukturnya konsisten.
+
+---
+
+# Yang gue TIDAK mau kita lakukan
+
+Jangan langsung menghasilkan 150 markdown kosong.
+
+Kita akan punya **documentation backlog**, tetapi mengerjakannya berdasarkan dependency.
+
+Urutan yang menurut gue paling benar sekarang adalah:
+
+### MGBOS/JARVIS Foundation v0.1
+
+Buat dulu sekitar **12 dokumen canonical**:
+
+```text
+1. Master System Blueprint
+2. System Constitution
+3. Target Operating Model
+4. Human–AI Responsibility Model
+5. System Boundaries
+6. MGBOS Charter
+7. MGBOS Domain Map
+8. JARVIS Charter
+9. JARVIS Architecture
+10. Agent Architecture
+11. Skill Architecture
+12. Risk & Autonomy Model
+```
+
+Setelah 12 ini matang, baru:
+
+### v0.2 — Business Core
+
+```text
+Data model
+State machines
+Commands
+Events
+Vendor
+Orders
+Finance
+Production
+Inventory
+Customer
+```
+
+Kemudian:
+
+### v0.3 — Intelligence Core
+
+```text
+Intent
+Context
+Planner
+Supervisor
+Policy
+Verification
+Evidence
+Decision Inbox
+Briefing
+```
+
+Kemudian:
+
+### v0.4 — Digital Workforce
+
+```text
+CFO
+COO
+CMO
+Sales
+CS
+Procurement
+Content
+```
+
+Kemudian:
+
+### v0.5 — Controlled Automation
+
+```text
+Tools
+Workflows
+Approvals
+Integrations
+Monitoring
+```
+
+Baru setelah itu:
+
+### v1.0 — Founder-by-Exception Operating System
+
+Target finalnya sederhana:
+
+> **MultiGraph bisa bertambah kompleks tanpa complexity tersebut berpindah seluruhnya ke kepala founder.**
+
+Jadi MGBOS menyimpan realitas bisnis.
+
+JARVIS memahami realitas itu.
+
+Agents mengerjakan fungsi organisasi.
+
+Skills memberi mereka kemampuan.
+
+Tools membuat mereka dapat bertindak.
+
+Policies membatasi tindakan.
+
+Evals mengecek apakah mereka bekerja dengan benar.
+
+Dan **lo berada paling atas sebagai pemilik, bukan menjadi bottleneck operasional.**
+
+Menurut gue ini layak kita jadikan proyek besar berikutnya: **MGBOS + JARVIS Master Architecture v1**, lalu kita bedah dokumentasinya satu per satu sampai benar-benar menjadi blueprint implementasi, bukan sekadar konsep.
+
+___________________________________________________________________________________________________________________________________________________
+
+Sudah gue baca **seluruh 10 catatan sesi tanggal 27-09-2026** di repo, bukan hanya JARVIS Architecture. Gue juga bandingkan dengan dokumentasi MGBOS yang sekarang sudah canonical di `main`. Kesimpulannya: banyak hal yang tadi mau kita “rancang dari awal” sebenarnya **sudah pernah lo pikirkan cukup jauh**. Jadi langkah kita seharusnya bukan menambah blueprint baru secara acak, melainkan **mengonsolidasikan, merapikan hierarchy, menutup gap, lalu menjadikannya Master Architecture yang benar-benar executable.**
+
+Yang gue baca mencakup catatan model AI, diskusi JARVIS, governance & operations, infrastructure, repository restructuring, Governance Blueprint, JARVIS Architecture v0.1, JARVIS Core Runtime v0.2, MGBOS Control Plane, dan penutup sesi tanggal 27.
+
+### Insight terbesar: visi lo sebenarnya sudah konsisten
+
+Benang merah seluruh catatan itu adalah:
+
+```text
+RIZKY
+│
+│ Ultimate Authority
+│
+▼
+JARVIS
+│
+│ Intelligence / Management / Orchestration
+│
+├── Agents
+│
+├── Skills
+│
+├── Model Router
+│
+├── Memory
+│
+├── Policy
+│
+└── Tools
+       │
+       ▼
+MGBOS + External Systems
+       │
+       ▼
+Business Reality
+```
+
+Dan prinsip yang paling penting sudah tertulis sangat jelas di [JARVIS Architecture v0.1](https://github.com/Rizkybuilds/bisnishub/blob/main/catatan/sesi/2026-09-27%20-%20JARVIS%20Architecture%20v0.1.md):
+
+> **AI reasons; authoritative systems own facts.**
+
+Itu menurut gue harus menjadi **hukum tertinggi arsitektur kita**.
+
+MGBOS bukan AI.
+
+JARVIS bukan database bisnis.
+
+Agent bukan aplikasi.
+
+Skill bukan agent.
+
+Tool bukan skill.
+
+Model AI bahkan bukan JARVIS.
+
+Model hanyalah **compute intelligence yang bisa diganti**.
+
+---
+
+## Dan sekarang gue jauh lebih paham kenapa lo kekeh “system first”
+
+Catatan tanggal 27 sebenarnya sudah menjawab kekhawatiran lo hari ini.
+
+Lo tidak sedang mengatakan:
+
+> “Gue pengen bikin AI keren dulu sebelum bisnis.”
+
+Lo sebenarnya mengatakan:
+
+> **“Gue adalah solo founder dengan modal manusia terbatas. Jadi gue harus membangun organizational leverage sebelum volume bisnis melebihi kemampuan gue.”**
+
+Itu perbedaannya besar.
+
+Dengan kata lain:
+
+```text
+Traditional startup
+
+Revenue grows
+↓
+Work increases
+↓
+Hire people
+↓
+Payroll increases
+↓
+Management complexity increases
+```
+
+Sedangkan visi lo:
+
+```text
+Revenue grows
+↓
+Work increases
+↓
+Software absorbs repetition
+↓
+Automation absorbs workflow
+↓
+AI absorbs cognitive work
+↓
+Human handles exceptions
+↓
+Headcount grows much slower
+```
+
+Jadi MGBOS/JARVIS bukan over-engineering **kalau kita disiplin mengembangkannya berdasarkan workflow bisnis nyata**.
+
+---
+
+# Ada 4 sistem berbeda yang harus kita pisahkan
+
+Ini menurut gue perlu diperjelas dari dokumentasi sebelumnya.
+
+### 1. MGBOS — Business Operating System
+
+MGBOS adalah:
+
+> **authoritative business control plane.**
+
+Dia tahu:
+
+```text
+Customer
+Lead
+Quotation
+Order
+Invoice
+Payment
+Ledger
+Inventory
+Vendor
+Purchase
+Production
+QC
+Shipment
+Margin
+```
+
+Dan aturan bisnis seperti:
+
+```text
+margin floor
+state transition
+payment status
+inventory reservation
+authorization
+```
+
+dikerjakan **secara deterministic**, bukan diserahkan ke LLM.
+
+Ini juga sudah menjadi canonical architecture di [MGBOS Architecture Constitution](https://github.com/Rizkybuilds/bisnishub/blob/main/mgbos/docs/architecture/README.md).
+
+---
+
+### 2. JARVIS — Management Intelligence System
+
+JARVIS membaca dunia tersebut dan menjawab:
+
+```text
+Apa yang terjadi?
+
+Kenapa?
+
+Apa yang penting?
+
+Apa yang abnormal?
+
+Apa yang sebaiknya dilakukan?
+
+Siapa yang harus mengerjakannya?
+
+Boleh dieksekusi otomatis atau tidak?
+
+Apakah hasilnya benar?
+```
+
+Jadi kalau MGBOS adalah:
+
+**business nervous system + factual memory**
+
+JARVIS adalah:
+
+**executive brain + management layer.**
+
+---
+
+### 3. Agents — Digital Organization
+
+Catatan lo tanggal 27 juga sudah benar membedakan:
+
+> **Agent = WHO**
+
+Misalnya:
+
+```text
+CFO Agent
+COO Agent
+CMO Agent
+Sales Agent
+Customer Service Agent
+Procurement Agent
+Content Agent
+Engineering Agent
+Auditor
+```
+
+Tapi agent jangan dibuat menjadi monster.
+
+CFO tidak punya 100 kemampuan hardcoded.
+
+Dia menggunakan Skills.
+
+---
+
+### 4. Skills — Organizational Knowledge
+
+> **Skill = HOW**
+
+Contohnya:
+
+```text
+analyze_cashflow
+compare_vendor
+qualify_lead
+prepare_quotation
+detect_margin_anomaly
+create_content_brief
+analyze_campaign
+forecast_inventory
+```
+
+Kemudian Skill memakai:
+
+> **Tool = WHAT CAN ACT/READ**
+
+```text
+mgbos.order.read
+mgbos.vendor.read
+mgbos.quote.create
+email.message.send
+social.content.publish
+github.pull_request.read
+```
+
+Jadi arsitektur canonical kita seharusnya:
+
+```text
+JARVIS
+  │
+  ▼
+AGENT
+  │
+  ▼
+SKILL
+  │
+  ▼
+TOOL
+  │
+  ▼
+AUTHORITATIVE SYSTEM
+```
+
+Bukan agent langsung bebas melakukan apa saja.
+
+---
+
+# Catatan 27 juga sudah punya Risk & Autonomy Model yang bagus
+
+Ini gue rasa jangan kita desain ulang.
+
+Sudah ada:
+
+```text
+R0 — Informational
+R1 — Read-only
+R2 — Reversible low-impact mutation
+R3 — Significant operational mutation
+R4 — Sensitive / high impact
+R5 — Money / Security / Production critical
+```
+
+Kemudian axis berbeda:
+
+```text
+L0 — Observe
+L1 — Recommend
+L2 — Prepare
+L3 — Execute with approval
+L4 — Execute automatically within policy
+```
+
+Dan insight paling pentingnya:
+
+> **Risk ≠ Autonomy.**
+
+Sebuah capability bisa R3 tetapi suatu hari L4 setelah mempunyai bukti reliability tinggi.
+
+Sedangkan capability R5 tertentu mungkin **tidak pernah kita izinkan L4**.
+
+Itu sangat bagus.
+
+---
+
+# Konsep “ACC-ACC aja” ternyata juga sudah terdefinisi
+
+Bahkan dokumentasi tanggal 27 secara eksplisit menyebut **Decision Inbox / Approval Center**.
+
+Jadi experience yang lo inginkan bukan:
+
+```text
+100 notification
+100 chat
+100 spreadsheet
+```
+
+Melainkan:
+
+```text
+JARVIS
+
+3 Need Attention
+2 Awaiting Approval
+14 Running Automations
+0 Critical Incident
+
+----------------------
+
+Decision
+
+Vendor A / Vendor B
+
+Recommendation:
+Vendor B
+
+Financial impact:
+-Rp450.000
+
+Margin:
+27.8%
+
+Risk:
+Medium
+
+Evidence:
+Order xxx
+Vendor history xxx
+
+[APPROVE]
+[REJECT]
+[EDIT]
+[ASK JARVIS]
+```
+
+Menurut gue **ini harus menjadi UX North Star MGBOS/JARVIS**.
+
+Lo bukan mengoperasikan sistem.
+
+Lo mengelola:
+
+> **exceptions + approvals + strategy.**
+
+---
+
+# Ada satu konsep penting lagi yang hampir gue lewatkan tadi: Autonomy Promotion
+
+Di [Governance & Operations Blueprint](https://github.com/Rizkybuilds/bisnishub/blob/main/catatan/sesi/2026-09-27%20-%20Governance%20%26%20Operations%20Blueprint.md), sudah ada konsep:
+
+> **Autonomy is earned, not granted.**
+
+Contohnya:
+
+```text
+social.post.publish
+
+L1 Recommend
+↓
+100 successful execution
+
+L2 Prepare
+↓
+high approval rate
+
+L3 Execute after approval
+↓
+low error + reliable
+
+L4 Automatic
+```
+
+Ini menurut gue harus menjadi salah satu pillar utama sistem kita.
+
+Artinya **tidak ada “turn on autonomous agent”**.
+
+Capability naik level sedikit demi sedikit berdasarkan evidence.
+
+---
+
+# JARVIS v0.2 ternyata juga sudah sangat konkret
+
+Ini bukan cuma ide lagi.
+
+Di [JARVIS v0.2 Core Runtime Specification](https://github.com/Rizkybuilds/bisnishub/blob/main/catatan/sesi/2026-09-27%20-%20JARVIS%20v0.2%20-%20Core%20Runtime%20Specification.md), targetnya sudah jelas:
+
+> **Read-only intelligent runtime**
+
+Vertical slice pertama:
+
+> **Morning Business Briefing**
+
+Dan roadmap-nya:
+
+```text
+JARVIS-001
+Workspace foundation
+
+JARVIS-002
+Contracts + runtime state machine
+
+JARVIS-003
+Model Gateway + Intent Router
+
+JARVIS-004
+Tool Registry + Policy Engine
+
+JARVIS-005
+MGBOS read tools
+
+JARVIS-006
+GitHub read tools
+
+JARVIS-007
+Planner + Execution Engine
+
+JARVIS-008
+Verification + Evidence
+
+JARVIS-009
+Morning Business Briefing
+
+JARVIS-010
+Observability + E2E
+```
+
+Ini **masih menurut gue urutan yang sangat sehat**.
+
+Dan sangat sesuai dengan percakapan kita sekarang.
+
+Jangan mulai:
+
+```text
+AI CFO
+AI COO
+AI CMO
+AI CS
+AI Content
+```
+
+dulu.
+
+Buktikan dulu:
+
+```text
+Rizky:
+"Jarvis, briefing pagi."
+
+↓
+
+JARVIS:
+understands intent
+builds context
+queries MGBOS
+queries systems
+verifies freshness
+detects exception
+prioritizes
+shows evidence
+returns briefing
+```
+
+Secara structural **tanpa write access**.
+
+Begitu ini reliable, kita baru punya fondasi intelligence yang benar.
+
+---
+
+# Architectural Laws-nya juga sudah kuat
+
+Menurut gue 10 hukum ini kita pertahankan hampir apa adanya:
+
+```text
+1. Authoritative facts live outside the LLM.
+
+2. Agents never gain authority merely
+   because they can reason about a task.
+
+3. Every external mutation has
+   an explicit tool contract.
+
+4. High-risk actions require stronger
+   permission and evidence.
+
+5. Memory is context,
+   not transactional truth.
+
+6. Business invariants remain inside
+   authoritative business systems.
+
+7. Tool execution must be observable
+   and verifiable.
+
+8. Provider implementation
+   must be replaceable.
+
+9. Autonomy is earned capability-by-capability,
+   not granted globally.
+
+10. When state is uncertain,
+    JARVIS reports uncertainty
+    instead of inventing success.
+```
+
+Ini sudah hampir seperti **JARVIS Constitution**.
+
+---
+
+# Memory juga sudah dirancang dengan benar
+
+Bukan satu vector database berisi semuanya.
+
+Catatan 27 sudah membedakan:
+
+```text
+Working Memory
+Episodic Memory
+Semantic Memory
+Preference Memory
+Evidence Memory
+```
+
+Dan rule-nya:
+
+```text
+AI Memory
+≠
+Business Fact
+```
+
+Misalnya:
+
+```text
+Memory:
+"Customer A biasanya minta rush order."
+
+MGBOS:
+Customer A invoice #102 = PAID
+```
+
+Yang kedua harus diverifikasi dari authoritative data.
+
+Dan gue sangat setuju dengan catatan:
+
+> **Vector search adalah retrieval optimization, bukan source of truth.**
+
+---
+
+# Provider AI juga jangan menjadi architecture
+
+Catatan Model AI tanggal 27 punya insight arsitektural yang benar:
+
+```text
+FAST
+BALANCED
+DEEP
+CRITIC
+CREATIVE
+VISION
+VOICE
+```
+
+bukan:
+
+```text
+if finance → Model X
+if content → Model Y
+```
+
+Model harus dipilih oleh **Model Router**.
+
+Kalau besok provider berubah:
+
+```text
+BALANCED
+Model A
+↓
+Model B
+```
+
+JARVIS tidak perlu dibangun ulang.
+
+Satu catatan penting: **nama/model/provider spesifik di dokumen tanggal 27 gue anggap sebagai snapshot/provisional, bukan canonical truth**. Saat nanti kita menentukan Model Registry aktual, kita verifikasi ulang model yang benar-benar tersedia, harga, capability, dan hasil eval pada saat implementasi.
+
+Yang canonical adalah **profile/routing architecture-nya**, bukan nama modelnya.
+
+---
+
+# Infrastructure note juga masuk akal
+
+Catatan infrastructure memilih pendekatan hybrid:
+
+```text
+Managed Database
++
+Cloud VPS
++
+Object Storage
++
+Eventually Home Lab
+```
+
+Dan secara filosofis:
+
+```text
+Managed Supabase
+→ business database
+
+VPS
+→ JARVIS
+→ workers
+→ n8n
+
+Object Storage
+→ media/files
+
+Home Server
+→ future lab / non-critical compute
+```
+
+Dengan prinsip:
+
+> jangan infrastructure-by-imagination.
+
+Tidak perlu:
+
+```text
+Kubernetes
+Kafka
+Temporal
+Redis cluster
+GPU server
+Neo4j
+50 microservices
+```
+
+dari hari pertama.
+
+Ini cocok banget buat kondisi modal lo.
+
+---
+
+# Engineering Agent System ternyata sudah sebagian dipromosikan
+
+Ini penting.
+
+Catatan `MGBOS Control Plane` tanggal 27 sudah tidak sepenuhnya hanya catatan lagi.
+
+Saat gue cek repo sekarang, sudah ada canonical:
+
+[MGBOS Engineering Control Plane](https://github.com/Rizkybuilds/bisnishub/blob/main/mgbos/docs/engineering/agent-system/README.md)
+
+yang mendefinisikan kontrak provider-neutral untuk:
+
+```text
+Planner
+Engineer
+Auditor
+QA
+Release
+```
+
+dan sudah punya:
+
+```text
+workflow
+roles
+permission matrix
+risk classification
+evidence model
+release gates
+eval baseline
+```
+
+Jadi bagian **AI Software Factory** sudah mulai matang.
+
+Bahkan `main` sekarang sudah bergerak lagi; commit terbaru yang gue lihat adalah **29 September 2026**, `ffa5aae...`, terkait guard relokasi MGBOS dan coordinated scope. Artinya repository restructuring yang dibahas tanggal 27 juga sedang benar-benar dieksekusi sekarang, bukan sekadar ide.
+
+---
+
+# Tetapi gue menemukan satu masalah dokumentasi penting
+
+Ada beberapa level dokumen yang sekarang tercampur:
+
+```text
+SESSION NOTES
+        │
+        ├── ide
+        ├── research
+        ├── keputusan
+        └── draft architecture
+             │
+             ▼
+CANONICAL DOCS
+```
+
+Saat ini beberapa konsep masih menjadikan `catatan/sesi/` sebagai rujukan architecture canonical.
+
+Contohnya MGBOS Architecture Constitution sendiri masih menunjuk ke catatan sesi 23 September.
+
+Tanggal 27 sebenarnya sudah memperingatkan ini:
+
+> `catatan/` tidak boleh menjadi source of truth selamanya.
+
+Gue **sangat setuju**.
+
+Catatan harus menjadi:
+
+```text
+Historical reasoning / session record
+```
+
+bukan tempat JARVIS atau coding agent mengambil aturan produksi selamanya.
+
+---
+
+# Jadi gue revisi rencana dokumentasi kita
+
+Sebelumnya gue menyarankan kita membuat banyak dokumen baru.
+
+Setelah membaca semuanya, **gue tidak akan melakukan itu mentah-mentah lagi.**
+
+Kita punya pekerjaan berbeda:
+
+```text
+DISCOVER
+↓
+AUDIT
+↓
+CONSOLIDATE
+↓
+PROMOTE
+↓
+CANONICALIZE
+↓
+IMPLEMENT
+↓
+EVALUATE
+```
+
+Bukan:
+
+```text
+write another blueprint
+↓
+write another blueprint
+↓
+write another blueprint
+```
+
+---
+
+# Arsitektur dokumentasi yang menurut gue sekarang paling tepat
+
+Kita membutuhkan **empat canonical systems**:
+
+```text
+MGBOS
+Business System
+
+JARVIS
+Intelligence System
+
+DIGITAL WORKFORCE
+Agents + Skills + Tools
+
+GOVERNANCE
+Permission + Risk + Evidence + Operations
+```
+
+Dengan satu dokumen di paling atas:
+
+```text
+AI-Native MultiGraph Operating Architecture
+```
+
+yang menjelaskan hubungan keempatnya.
+
+Mental model-nya:
+
+```text
+                  RIZKY
+            Ultimate Authority
+                   │
+                   ▼
+              JARVIS CORE
+     Intelligence / Management Layer
+                   │
+          ┌────────┼─────────┐
+          │        │         │
+       AGENTS    MEMORY    EVENTS
+          │
+        SKILLS
+          │
+         TOOLS
+          │
+     POLICY / RISK
+          │
+          ▼
+                MGBOS
+         Business Control Plane
+          │       │        │
+        Data    Rules    Commands
+          │       │        │
+          └───────┼────────┘
+                  ▼
+             REAL BUSINESS
+                  │
+       ┌──────────┼──────────┐
+       ▼          ▼          ▼
+    Customer    Vendor    Production
+```
+
+Itu menurut gue sekarang sudah menjadi **arsitektur inti yang sangat jelas**.
+
+---
+
+Yang masih benar-benar perlu kita desain mendalam selanjutnya justru bukan lagi “apa itu JARVIS?”. Itu sudah cukup jelas.
+
+Gap penting kita sekarang adalah **canonical identity/entity graph, data contracts & schema versioning, scheduling/time semantics, notification governance, provenance model, knowledge lifecycle, prompt-injection boundary, durable workflow/reconciliation, exception queue, separation of duties, AI release lifecycle, dan Founder Command Center/Decision Inbox specification**.
+
+Nah, **itu** yang belum matang sepenuhnya.
+
+Jadi setelah membaca tanggal 27, arah gue sekarang lebih tegas:
+
+> **Jangan reset arsitektur. Jangan buat blueprint tandingan. Kita jadikan hasil 23–27 September sebagai historical design input, audit terhadap repo aktual, lalu kita bangun satu Canonical MGBOS–JARVIS Master Architecture yang menghapus overlap dan menutup gap.**
+
+Menurut gue setelah ini kita sudah siap mulai dari **Documentation Architecture & Canonical Source Map** dulu—menentukan persis dokumen mana yang harus menjadi source of truth, mana yang historical, mana yang perlu digabung, mana yang perlu dibuat baru, dan dependency antar dokumennya.
+
+___________________________________________________________________________________________________________________________________________________
+
+Ya. Menurut gue yang kita butuhkan sekarang bukan “banyak dokumen”, tapi **sistem dokumentasi yang menjaga proyek tetap waras saat MGBOS, JARVIS, agent, skill, automation, dan bisnisnya makin kompleks**.
+
+Prinsip utamanya:
+
+> **Dokumentasi harus menjawab 5 hal: apa yang benar, siapa yang berwenang, bagaimana sistem bekerja, bagaimana perubahan dilakukan, dan bagaimana kita tahu sistem masih sehat.**
+
+Jadi gue sarankan kita bikin **Documentation Architecture v1** dengan hirarki yang jelas, bukan sekadar kumpulan markdown.
+
+## Struktur dokumentasi utama
+
+```text
+docs/
+├── 00-governance/
+├── 01-architecture/
+├── 02-mgbos/
+├── 03-jarvis/
+├── 04-agents/
+├── 05-skills/
+├── 06-tools-integrations/
+├── 07-data-memory-knowledge/
+├── 08-automation/
+├── 09-security-risk/
+├── 10-observability-evals/
+├── 11-operations/
+├── 12-runbooks/
+├── 13-roadmaps/
+├── 14-adrs/
+├── 15-standards/
+└── 16-templates/
+```
+
+Yang penting bukan nama foldernya, tapi **fungsi dan authority setiap dokumen**.
+
+### Dokumen yang menurut gue wajib kita punya
+
+1. **`00-governance/documentation-constitution.md`**  
+   Menentukan aturan dokumentasi: mana canonical, mana draft, mana historical, siapa owner, kapan direview, bagaimana supersede/deprecate, dan larangan menjadikan `catatan/sesi/` sebagai source of truth produksi.
+
+2. **`00-governance/canonical-source-map.md`**  
+   Ini salah satu dokumen terpenting. Isinya peta:
+   ```text
+   MGBOS architecture → docs/architecture/...
+   Risk model → docs/09-security-risk/...
+   JARVIS runtime → docs/03-jarvis/...
+   Agent roles → docs/04-agents/...
+   ```
+   Jadi manusia maupun AI tahu **dokumen mana yang authoritative**.
+
+3. **`00-governance/document-lifecycle.md`**  
+   Status:
+   ```text
+   DRAFT
+   REVIEW
+   ACTIVE
+   SUPERSEDED
+   DEPRECATED
+   ARCHIVED
+   ```
+   Dengan aturan transisinya.
+
+4. **`01-architecture/master-system-blueprint.md`**  
+   Gambaran besar:
+   ```text
+   Rizky
+   → JARVIS
+   → Agents
+   → Skills
+   → Tools
+   → MGBOS / external systems
+   → business reality
+   ```
+
+5. **`01-architecture/system-boundaries.md`**  
+   Menjelaskan batas jelas antara:
+   - MGBOS
+   - JARVIS
+   - agent
+   - skill
+   - tool
+   - n8n
+   - external integrations
+   - AI models
+
+6. **`01-architecture/architectural-laws.md`**  
+   Promosikan 10 hukum JARVIS yang sudah kita punya: authoritative facts outside LLM, autonomy earned, memory bukan transactional truth, dsb.
+
+7. **`01-architecture/target-operating-model.md`**  
+   Bagaimana bisnis dijalankan:
+   ```text
+   Founder
+   ↓
+   Decision Inbox
+   ↓
+   JARVIS
+   ↓
+   Digital Workforce
+   ↓
+   MGBOS
+   ```
+
+8. **`02-mgbos/mgbos-charter.md`**  
+   Definisi MGBOS, tujuan, non-goals, source of truth, dan domain ownership.
+
+9. **`02-mgbos/domain-map.md`**  
+   Customer, CRM, quote, order, vendor, procurement, inventory, production, QC, finance, fulfillment.
+
+10. **`02-mgbos/canonical-data-model.md`**  
+    Promosikan isi penting dari catatan lama ke source of truth baru.
+
+11. **`02-mgbos/state-machines.md`**  
+    Commercial, financial, production, QC, fulfillment lifecycle.
+
+12. **`02-mgbos/command-event-model.md`**  
+    Command, authorization, transaction, outbox, event, audit.
+
+13. **`02-mgbos/business-invariants.md`**  
+    Aturan yang tidak boleh dilanggar oleh AI maupun developer:
+    - uang integer Rupiah
+    - margin floor
+    - immutable snapshots
+    - tenant isolation
+    - separation of states
+    - shipping treatment
+    - idempotency
+
+14. **`02-mgbos/integration-contracts.md`**  
+    Kontrak MGBOS dengan JARVIS, n8n, marketplace, payment, shipping, WhatsApp, dsb.
+
+15. **`03-jarvis/jarvis-charter.md`**  
+    Definisi JARVIS sebagai intelligence layer, bukan source of truth.
+
+16. **`03-jarvis/core-runtime.md`**  
+    Intent → Context → Plan → Policy → Tool → Verify → Evidence → Response.
+
+17. **`03-jarvis/decision-inbox.md`**  
+    UX dan data contract untuk approval, reject, edit, defer, ask-JARVIS.
+
+18. **`03-jarvis/briefing-engine.md`**  
+    Morning briefing, weekly review, monthly review, strategic review.
+
+19. **`03-jarvis/escalation-model.md`**  
+    Normal → agent → JARVIS → founder.
+
+20. **`03-jarvis/model-routing.md`**  
+    FAST / BALANCED / DEEP / CRITIC / VISION / VOICE, bukan hardcoded provider.
+
+21. **`03-jarvis/failure-recovery.md`**  
+    Partial failure, stale data, unavailable provider, tool timeout, retry, reconciliation.
+
+22. **`04-agents/agent-architecture.md`**  
+    Agent = role + responsibility + permission, bukan kumpulan prompt.
+
+23. **`04-agents/agent-registry.md`**  
+    Daftar agent aktif, status, owner, version, permission, risk.
+
+24. **`04-agents/agent-contract.md`**  
+    Template wajib untuk setiap agent:
+    mission, inputs, outputs, can/cannot, escalation, metrics.
+
+25. **`04-agents/roles/`**  
+    CFO, COO, CMO, Sales, CS, Procurement, Content, Engineering, Auditor, dsb.
+
+26. **`05-skills/skill-architecture.md`**  
+    Skill = capability reusable.
+
+27. **`05-skills/skill-registry.md`**  
+    Status skill, version, risk, allowed tools, required evidence.
+
+28. **`05-skills/skill-contract.md`**  
+    Input, output, rules, failure conditions, permission, risk, approval.
+
+29. **`06-tools-integrations/tool-registry.md`**  
+    Semua capability nyata:
+    ```text
+    mgbos.order.read
+    mgbos.vendor.read
+    social.content.publish
+    email.message.send
+    ```
+
+30. **`06-tools-integrations/tool-contract.md`**  
+    Auth, input schema, output schema, risk, idempotency, retry, environment, owner.
+
+31. **`07-data-memory-knowledge/source-of-truth.md`**  
+    Menentukan:
+    ```text
+    business facts → MGBOS
+    code → Git
+    policy → canonical docs
+    memory → context
+    vectors → retrieval aid
+    ```
+
+32. **`07-data-memory-knowledge/entity-identity-model.md`**  
+    Ini gap penting. Rizky, MultiGraph, TeeStock, vendor, customer, order, campaign, repo harus punya identity stabil.
+
+33. **`07-data-memory-knowledge/provenance-model.md`**  
+    Setiap fakta harus tahu asalnya:
+    MGBOS, search, inference, memory, external tool, human input.
+
+34. **`07-data-memory-knowledge/memory-architecture.md`**  
+    Working, episodic, semantic, preference, evidence memory.
+
+35. **`07-data-memory-knowledge/knowledge-lifecycle.md`**  
+    DRAFT / ACTIVE / SUPERSEDED / ARCHIVED untuk SOP/knowledge.
+
+36. **`08-automation/automation-architecture.md`**  
+    n8n/orchestrator bukan system of record.
+
+37. **`08-automation/workflow-registry.md`**  
+    Daftar semua automation dengan trigger, owner, risk, status, environment.
+
+38. **`08-automation/durable-workflow.md`**  
+    Retry, duplicate event, idempotency, reconciliation, timeout, partial success.
+
+39. **`09-security-risk/risk-classification.md`**  
+    R0–R5.
+
+40. **`09-security-risk/autonomy-levels.md`**  
+    L0–L4.
+
+41. **`09-security-risk/approval-policy.md`**  
+    Action apa yang wajib approval founder.
+
+42. **`09-security-risk/permission-model.md`**  
+    Human + agent + skill + tool + environment.
+
+43. **`09-security-risk/prompt-injection-boundary.md`**  
+    Email, website, PDF, GitHub issue, customer message = untrusted input.
+
+44. **`09-security-risk/data-classification.md`**  
+    PUBLIC / INTERNAL / CONFIDENTIAL / RESTRICTED.
+
+45. **`09-security-risk/separation-of-duties.md`**  
+    Agent pembuat PO tidak otomatis boleh approve pembayaran.
+
+46. **`09-security-risk/kill-switch.md`**  
+    Global + granular autonomy shutdown.
+
+47. **`10-observability-evals/observability-standard.md`**  
+    Trace, tool call, latency, cost, failure, decision, approval.
+
+48. **`10-observability-evals/agent-evals.md`**  
+    Behavioral regression untuk agent.
+
+49. **`10-observability-evals/skill-evals.md`**  
+    Test capability, permission, forbidden behavior.
+
+50. **`10-observability-evals/model-evals.md`**  
+    Eval sebelum model baru dipromosikan.
+
+51. **`10-observability-evals/quality-metrics.md`**  
+    Approval rate, override rate, false alert rate, cost/task, failure rate.
+
+52. **`11-operations/founder-operating-system.md`**  
+    Bagaimana lo menjalankan perusahaan sehari-hari dengan sistem.
+
+53. **`11-operations/management-cadence.md`**  
+    Daily / weekly / monthly / quarterly.
+
+54. **`11-operations/exception-queue.md`**  
+    `NEEDS_HUMAN`, `AMBIGUOUS`, `NEEDS_RECONCILIATION`.
+
+55. **`11-operations/business-continuity.md`**  
+    Apa yang terjadi jika JARVIS/AI mati.
+
+56. **`12-runbooks/`**  
+    Vendor delay, payment mismatch, stockout, failed automation, AI failure, security incident, data restore, website outage.
+
+57. **`13-roadmaps/master-roadmap.md`**  
+    MGBOS + JARVIS + AI workforce roadmap.
+
+58. **`13-roadmaps/maturity-model.md`**  
+    Observe → Recommend → Prepare → Approve → Execute → Autonomous.
+
+59. **`14-adrs/`**  
+    Keputusan arsitektur permanen:
+    - MGBOS system of record
+    - n8n orchestration only
+    - provider neutral
+    - integer Rupiah
+    - autonomy earned
+    - no direct AI DB mutation
+
+60. **`15-standards/`**  
+    Naming, versioning, schema versioning, API conventions, event envelope, tool naming, logging standard, time semantics, timezone rules.
+
+61. **`16-templates/`**  
+    Agent, skill, tool, workflow, runbook, ADR, eval, incident, decision record.
+
+---
+
+## Tapi jangan bikin 61 dokumen sekaligus
+
+Gue akan membaginya menjadi **4 wave**.
+
+### Wave 1 — Canonical Foundation
+
+Ini prioritas sekarang.
+
+```text
+documentation-constitution.md
+canonical-source-map.md
+master-system-blueprint.md
+system-boundaries.md
+architectural-laws.md
+target-operating-model.md
+mgbos-charter.md
+jarvis-charter.md
+risk-classification.md
+autonomy-levels.md
+```
+
+Targetnya: semua orang dan AI tahu **apa sistem ini dan aturan fundamentalnya**.
+
+### Wave 2 — Execution Contracts
+
+```text
+agent-architecture
+agent-contract
+skill-architecture
+skill-contract
+tool-registry
+tool-contract
+permission-model
+approval-policy
+source-of-truth
+provenance-model
+```
+
+Targetnya: AI mulai bisa bekerja tanpa ambiguity.
+
+### Wave 3 — Reliability & Operations
+
+```text
+observability
+evals
+durable-workflow
+exception-queue
+business-continuity
+prompt-injection
+kill-switch
+runbooks
+```
+
+Targetnya: sistem mulai layak dipercaya.
+
+### Wave 4 — Scale & Autonomy
+
+```text
+model routing
+autonomy promotion
+knowledge lifecycle
+entity graph
+AI release lifecycle
+cost governance
+advanced agent roles
+advanced memory
+```
+
+Targetnya: sistem bisa scale tanpa kehilangan kontrol.
+
+---
+
+## Satu aturan dokumentasi yang menurut gue wajib
+
+Setiap dokumen canonical harus punya header seperti ini:
+
+```text
+Status: ACTIVE
+Owner: Rizky
+System: JARVIS
+Version: 1.0
+Last Reviewed: 2026-09-29
+Review Cadence: Quarterly
+Supersedes: ...
+Depends On: ...
+Authoritative For: ...
+```
+
+Jadi AI tidak cuma membaca isi, tetapi juga tahu **apakah dokumen itu masih berlaku**.
+
+---
+
+## Dan `catatan/sesi/` tetap kita pertahankan
+
+Jangan dihapus.
+
+Fungsinya berubah menjadi:
+
+```text
+catatan/sesi/
+= historical reasoning
+= design discussion
+= research
+= decision context
+```
+
+Tetapi setiap kali ada keputusan penting:
+
+```text
+Session Note
+↓
+Decision
+↓
+Canonical Doc / ADR
+```
+
+Jadi tidak ada lagi aturan penting yang hanya hidup di percakapan lama.
+
+---
+
+## Bentuk akhirnya
+
+Gue ingin suatu hari agent baru bisa masuk ke repo dan hanya perlu membaca:
+
+```text
+README
+↓
+Canonical Source Map
+↓
+System Blueprint
+↓
+Relevant system docs
+↓
+Agent / Skill / Tool contracts
+↓
+ADR
+```
+
+tanpa harus mengetahui sejarah seluruh repo.
+
+Kalau ini tercapai, proyek lo akan jauh lebih tahan terhadap **AI agent baru, developer baru, perubahan model, perubahan teknologi, dan bahkan lo sendiri yang mungkin lupa kenapa keputusan tertentu dibuat setahun lalu**.
+
+Menurut gue langkah paling tepat selanjutnya adalah kita buat **Documentation Governance & Canonical Source Map v1** dulu, karena itu akan menentukan bagaimana seluruh dokumentasi MGBOS, JARVIS, Agent, Skill, dan Governance disusun selanjutnya.

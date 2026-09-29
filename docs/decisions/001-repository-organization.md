@@ -6,7 +6,7 @@ Tanggal: 2026-09-27; diperbarui 2026-09-28. Status: tahap navigasi diterapkan; t
 
 Pertahankan satu repositori untuk portofolio software dan pengetahuan bisnis. Pisahkan kepemilikan sistem, dokumen bisnis dan tooling. Tahap sekarang memperbaiki README, indeks, aturan bersama dan alias perintah; lokasi aplikasi, database, lockfile, CI Foundation serta hosting tetap utuh.
 
-MGBOS masih berada di `mgbos/` sesuai [ADR-007](../../mgbos/docs/adr/007-workspace-coexistence.md). Target `systems/` menggantikan usulan awal `projects/` berdasarkan pembahasan 27 September dan kelanjutan perencanaan 28 September. Target bukan lokasi aktif; pelaksanaan mengikuti [rencana migrasi](../engineering/repository-migration-plan.md). ADR-007 tetap berlaku sampai tahap pemindahan MGBOS selesai.
+MGBOS masih berada di `mgbos/` sesuai [ADR-007](../../systems/mgbos/docs/adr/007-workspace-coexistence.md). Target `systems/` menggantikan usulan awal `projects/` berdasarkan pembahasan 27 September dan kelanjutan perencanaan 28 September. Target bukan lokasi aktif; pelaksanaan mengikuti [rencana migrasi](../engineering/repository-migration-plan.md). ADR-007 tetap berlaku sampai tahap pemindahan MGBOS selesai.
 
 | Lokasi sekarang                                  | Tujuan yang direncanakan                              | Dependensi sebelum pindah                                                                              |
 | ------------------------------------------------ | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |

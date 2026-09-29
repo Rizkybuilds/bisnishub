@@ -18,7 +18,7 @@ Tanggal: 2026-09-25. Audit baca filesystem/source lokal; tidak membaca database 
 | Mockup per warna                       | Adapter mendukung `variant_images` dan metadata `story_behind`                            | Kemampuan kode tersedia; belum membuktikan file mockup milik setiap produk tersedia                           |
 | Harga                                  | Piagam 17 September dan `packages/shared/src/constants/pricing.js`                        | Perlu rekonsiliasi price book per produk; konstanta fee tidak diperlakukan sebagai tarif layanan terkini      |
 
-Pencarian memakai daftar file relevan di TeeStock dan repo tanpa memasuki link Supabase root atau bisnis di luar scope. Remote URL tidak diunduh. Manifest [aset lokal](teestock-local-assets.csv) memuat ukuran dan checksum untuk identitas file, bukan sertifikasi lisensi atau kualitas cetak.
+Pencarian memakai daftar file relevan di TeeStock dan repo tanpa memasuki link Supabase root atau bisnis di luar scope. Remote URL tidak diunduh. Manifest `teestock-local-assets.csv` disebut pada audit awal, tetapi tidak tersedia dalam checkout terverifikasi 29 September 2026; isi dan checksum manifest belum dapat dikonfirmasi.
 
 ## Risiko mapping source lama
 

@@ -1,6 +1,6 @@
 # QA
 
-Use for evidence-based verification. Load `web-qa-testing` and the [evidence model](../../mgbos/docs/engineering/agent-system/evidence-model.md).
+Use for evidence-based verification. Load `web-qa-testing` and the [evidence model](../../systems/mgbos/docs/engineering/agent-system/evidence-model.md).
 
 Inputs: exact revision, acceptance criteria, risk matrix, implementation diff and declared environment. May write scoped test artifacts and run authorized local tests. Tests that reset data need an identified disposable MGBOS target; no tests against root Supabase, shared live data or real customer messaging/payment endpoints.
 

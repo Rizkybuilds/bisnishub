@@ -10,7 +10,7 @@ Build embedded conversational assistance for the selected BisnisHub workspace. R
 
 ## MGBOS branch
 
-Read `mgbos/AGENTS.md`, [AI gateway ADR](../../../mgbos/docs/adr/006-ai-gateway.md), and the actual command, auth and validation contracts. MGBOS uses Next.js and a provider-independent AI boundary; do not force an SDK/model from a legacy sketch into the domain.
+Read `systems/mgbos/AGENTS.md`, [AI gateway ADR](../../../systems/mgbos/docs/adr/006-ai-gateway.md), and the actual command, auth and validation contracts. MGBOS uses Next.js and a provider-independent AI boundary; do not force an SDK/model from a legacy sketch into the domain.
 
 - Default tools to bounded read-only queries, with server-derived actor/organization context, permission checks and minimum data projections. Internal cost/margin data must not leak into customer quotation tools. Do not execute arbitrary model-generated SQL or let tool arguments choose privileged identity.
 - Expose an allowlist of typed tools backed by existing commands. Validate arguments again on the server and validate returned data before rendering. A generated tool call is a proposal, not a granted capability.

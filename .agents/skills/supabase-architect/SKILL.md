@@ -15,7 +15,7 @@ Design schema, migrations, RLS, database functions and query behavior for the se
 
 ## Select the database boundary
 
-- **MGBOS:** read `mgbos/AGENTS.md`, architecture sources, `mgbos/package.json`, relevant migrations/tests and `mgbos/scripts/database.mjs`. Use only the workspace's local wrapper commands from `mgbos/`. Never follow root `supabase` or use a remote project for MGBOS work.
+- **MGBOS:** read `systems/mgbos/AGENTS.md`, architecture sources, `systems/mgbos/package.json`, relevant migrations/tests and `systems/mgbos/scripts/database.mjs`. Use only the workspace's local wrapper commands from `systems/mgbos/`. Never follow root `supabase` or use a remote project for MGBOS work.
 - **Legacy TeeStock:** inspect `bisnis/teestock/supabase`, existing migration history and consumers before selecting a migration directory or command. Historical SQL under `bisnis/teestock/database` is not proof it is the active migration source.
 - Read applicable reports as historical evidence. If an old runbook describes infrastructure-only bootstrap but later migrations exist, preserve those migrations and derive the current schema from them; do not reset to the bootstrap description.
 

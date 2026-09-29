@@ -36,7 +36,7 @@ Target migrasi software adalah `systems/`, menggantikan usulan `projects/`. Loka
 
 Satu Git repo dapat memuat beberapa workspace instalasi. Saat ini MGBOS tetap memakai pnpm/lockfile sendiri; aplikasi existing memakai npm/lockfile masing-masing. Tidak ada root pnpm workspace baru pada tahap ini.
 
-Shared code mengikuti consumer dan kontrak pemiliknya. `packages/shared/` adalah legacy; `mgbos/packages/` milik MGBOS. Jangan mengekstrak paket global tanpa kebutuhan nyata lintas sistem.
+Shared code mengikuti consumer dan kontrak pemiliknya. `packages/shared/` adalah legacy; `systems/mgbos/packages/` milik MGBOS. Jangan mengekstrak paket global tanpa kebutuhan nyata lintas sistem.
 
 Database dan credentials mengikuti sistem, bukan root repo. Root Supabase legacy tidak boleh menjadi fallback MGBOS. Worktree Git juga tidak otomatis mengisolasi stack database lokal.
 

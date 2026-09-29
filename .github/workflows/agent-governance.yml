@@ -34,7 +34,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
-          node-version-file: mgbos/.node-version
+          node-version-file: systems/mgbos/.node-version
       - run: node --test scripts/governance/migration-immutability.test.mjs
       - name: Compare existing migrations against trusted event base
         env:

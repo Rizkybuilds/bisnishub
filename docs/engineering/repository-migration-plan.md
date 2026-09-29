@@ -10,7 +10,7 @@ Audit awal: checkout `C:/Users/Rizky/bisnishub`, base `ba4a6d2` pada `main`, wor
 
 Sumber pembahasan: seluruh 10 catatan dalam `catatan/sesi/` bertanggal 2026-09-27, terutama catatan riset/restructure directory, MGBOS Control Plane, JARVIS Architecture v0.1, JARVIS v0.2, serta penutup sesi. Catatan adalah konteks desain, bukan bukti kesiapan layanan. Angka pengujian, branch protection, harga/model/provider dan status PR historis tidak dinyatakan sebagai kondisi terkini.
 
-Scope tahap ini: rencana, ADR dan navigasi root. Risiko R0 menurut [klasifikasi aktif](../../mgbos/docs/engineering/agent-system/risk-classification.md), tanpa perubahan kewenangan. Klasifikasi tiap migrasi ditentukan ulang dari diff; pemindahan CI/guard bukan sekadar perubahan dokumentasi. Skala R0–R5 dalam blueprint JARVIS tidak menggantikan skala engineering aktif R0–R3.
+Scope tahap ini: rencana, ADR dan navigasi root. Risiko R0 menurut [klasifikasi aktif](../../systems/mgbos/docs/engineering/agent-system/risk-classification.md), tanpa perubahan kewenangan. Klasifikasi tiap migrasi ditentukan ulang dari diff; pemindahan CI/guard bukan sekadar perubahan dokumentasi. Skala R0–R5 dalam blueprint JARVIS tidak menggantikan skala engineering aktif R0–R3.
 
 ## Peta perpindahan
 
@@ -79,7 +79,7 @@ Acceptance: `npm ci`, `npx tsc --noEmit`, ekspor Expo untuk platform yang depend
 
 Prasyarat khusus: rancangan dan negative tests untuk guard relokasi, audit seluruh path CI/roles/skills/docs, ADR-007 dan environment lokal. Pisahkan perubahan guard persiapan dari move bila dibutuhkan, tetapi perlindungan path lama harus tetap aktif selama transisi.
 
-Pindahkan workspace utuh, tanpa rename app/package atau perubahan domain. Acceptance: toolchain pin tetap; `pnpm install --frozen-lockfile`, `pnpm check`, production HTTP smoke dengan kedua server berjalan, `pnpm test:integration`, serta database replay/pgTAP/reproducible types pada target disposable lokal yang telah diidentifikasi. Jalankan guard positif/negatif dan kedua hosted workflow pada revision baru. Ikuti [release gates](../../mgbos/docs/engineering/agent-system/release-gates.md); tidak ada exemption migration immutability.
+Pindahkan workspace utuh, tanpa rename app/package atau perubahan domain. Acceptance: toolchain pin tetap; `pnpm install --frozen-lockfile`, `pnpm check`, production HTTP smoke dengan kedua server berjalan, `pnpm test:integration`, serta database replay/pgTAP/reproducible types pada target disposable lokal yang telah diidentifikasi. Jalankan guard positif/negatif dan kedua hosted workflow pada revision baru. Ikuti [release gates](../../systems/mgbos/docs/engineering/agent-system/release-gates.md); tidak ada exemption migration immutability.
 
 ### 5 — Asisten Python
 
@@ -135,3 +135,7 @@ Owner mengonfirmasi TeeStock lama sudah dipensiunkan dan dipertahankan sebagai a
 ## Implementasi tahap 3 — KasKita
 
 Aplikasi dan Supabase KasKita dipindahkan ke `systems/kaskita/` sebagai satu unit. Source, assets, lockfile, SQL, dan metadata lokal diverifikasi dengan hash sebelum/sesudah. Lihat [laporan tahap 3](repository-migration-wave-3.md) untuk bukti dan batas pengujian perangkat. Tahap 4 MGBOS belum dimulai.
+
+## Update 29 September 2026 — MGBOS relocation
+
+The official workspace has moved to `systems/mgbos/` with its runtime, database and toolchain boundaries preserved. Root aliases, CI, instructions and links follow that location. Existing historical path statements above describe earlier stages; the project index records the current layout. Verification is recorded in the relocation report. Owner has also retired the legacy admin/shared runtime; subsequent cleanup archives that implementation and moves the Python assistant without modifying business notes.

@@ -1,9 +1,9 @@
 # Bisnis Hub agent routing
 
 Audit the current working tree before editing; this repository contains active, uncommitted work.
-The MGBOS Next.js workspace is in `mgbos/`. Read `mgbos/AGENTS.md` and `mgbos/README.md` before MGBOS work.
+The MGBOS Next.js workspace is in `systems/mgbos/`. Read `systems/mgbos/AGENTS.md` and `systems/mgbos/README.md` before MGBOS work.
 Archived `archive/mgbos-vite-prototype/` is a retired Vite prototype, not the new Next.js workspace.
-Root `supabase` is a legacy junction whose former target is retired. Do not traverse or use it. TeeStock historical SQL is preserved under `bisnis/teestock/archive/`; MGBOS uses only `mgbos/supabase/`.
+Root `supabase` is a legacy junction whose former target is retired. Do not traverse or use it. TeeStock historical SQL is preserved under `bisnis/teestock/archive/`; MGBOS uses only `systems/mgbos/supabase/`.
 Keep legacy application, deployment configuration, migrations and business notes unchanged unless explicitly in scope.
 
 ## Repository navigation
@@ -30,5 +30,5 @@ Skill examples do not authorize staging unrelated work, pushing to main, deployi
 ## MGBOS engineering control plane
 
 For MGBOS change planning use `mgbos-change-planner`; for transaction integrity audits use `mgbos-business-integrity-auditor`; for PR/diff review use `mgbos-pr-reviewer`.
-Read [agent-system workflow](mgbos/docs/engineering/agent-system/workflow.md) and the selected [role contract](mgbos/docs/engineering/agent-system/roles.md). The provider-neutral contracts in `.agents/roles/` are explicitly loaded instructions, not automatic runtime registration or permission grants.
-Governance/CI changes require the focused validators and negative tests documented in [release gates](mgbos/docs/engineering/agent-system/release-gates.md). `.agents/evals/` is a behavioral baseline; structural validation alone is not an executed agent evaluation.
+Read [agent-system workflow](systems/mgbos/docs/engineering/agent-system/workflow.md) and the selected [role contract](systems/mgbos/docs/engineering/agent-system/roles.md). The provider-neutral contracts in `.agents/roles/` are explicitly loaded instructions, not automatic runtime registration or permission grants.
+Governance/CI changes require the focused validators and negative tests documented in [release gates](systems/mgbos/docs/engineering/agent-system/release-gates.md). `.agents/evals/` is a behavioral baseline; structural validation alone is not an executed agent evaluation.

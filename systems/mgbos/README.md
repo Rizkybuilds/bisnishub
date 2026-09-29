@@ -35,9 +35,9 @@ MGBOS tidak dibangun di atas asumsi abstrak. MGBOS berfungsi ganda sebagai **Lab
 MGBOS menggunakan arsitektur **Modular Monolith** dengan batasan paket yang sangat ketat:
 
 ```text
-mgbos/
+systems/mgbos/
 ├── apps/
-│   ├── mgbos/           --> Internal Operating System Shell (Next.js 16, Port 3101)
+│   ├── systems/mgbos/           --> Internal Operating System Shell (Next.js 16, Port 3101)
 │   └── teestock/        --> Public Storefront & Custom Atelier Shell (Next.js 16, Port 3102)
 │
 ├── packages/
@@ -58,14 +58,14 @@ mgbos/
 
 ---
 
-## 3. Location and Workspace Coexistence (ADR-007)
+## 3. Location and Workspace Coexistence (ADR-015)
 
 > [!important]
-> **Selalu jalankan perintah MGBOS di dalam direktori `mgbos/` (`cd mgbos`).**
+> **Selalu jalankan perintah MGBOS di dalam direktori `systems/mgbos/` (`cd systems/mgbos`).**
 >
 > - Direktori `archive/mgbos-vite-prototype/` adalah **arsip prototype Vite** yang dipensiunkan pada 28 September 2026. Hanya referensi UI; alias runtime root sudah dihapus.
-> - Workspace `mgbos/` ini adalah **fondasi Next.js resmi** (Port 3101/3102).
-> - Workspace ini memiliki database Supabase lokal terisolasi dan **dilarang keras menyentuh `../supabase`** (junction legacy yang sudah tidak aktif; jangan ditelusuri).
+> - Workspace `systems/mgbos/` ini adalah **fondasi Next.js resmi** (Port 3101/3102).
+> - Workspace ini memiliki database Supabase lokal terisolasi dan **dilarang keras menyentuh root repository `supabase`** (junction legacy yang sudah tidak aktif; jangan ditelusuri).
 
 ---
 
@@ -82,7 +82,7 @@ mgbos/
 Dari root repositori Bisnis Hub:
 
 ```sh
-cd mgbos
+cd systems/mgbos
 pnpm install --frozen-lockfile
 pnpm db:start
 pnpm dev
@@ -140,3 +140,5 @@ Lihat dokumentasi lengkap di:
 ## 9. Maintenance and operational readiness
 
 Follow the [maintenance policy](docs/engineering/maintenance-policy.md) and [readiness register](docs/engineering/operational-readiness.md). Release, backup/restore and incident procedures are linked there. Written policy is not evidence of configured services or production readiness; the local-only database boundary remains in force.
+
+The current workspace location follows [ADR-015](docs/adr/015-system-directory.md).
