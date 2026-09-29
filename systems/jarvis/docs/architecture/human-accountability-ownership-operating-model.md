@@ -30,15 +30,15 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - ../docs/governance/documentation-constitution.md
-  - ../docs/governance/cross-system-risk-classification.md
-  - ../docs/governance/autonomy-levels.md
-  - ../docs/governance/approval-policy.md
-  - charter.md
-  - architecture.md
+  - ../../../../docs/governance/documentation-constitution.md
+  - ../../../../docs/governance/cross-system-risk-classification.md
+  - ../../../../docs/governance/autonomy-levels.md
+  - ../../../../docs/governance/approval-policy.md
+  - ../charter.md
+  - ../architecture.md
   - agent-registry.md
   - skill-registry.md
-  - tool-capability-architecture.md
+  - tool-capability.md
   - execution-verification-recovery.md
   - observability-audit-incident.md
   - security-secrets-environment.md

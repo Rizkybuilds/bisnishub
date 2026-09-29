@@ -27,10 +27,10 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - charter.md
-  - architecture.md
-  - core-runtime-specification.md
-  - memory-architecture.md
+  - ../charter.md
+  - ../architecture.md
+  - ../core-runtime.md
+  - memory.md
   - agent-registry.md
   - skill-registry.md
   - model-gateway-routing.md
@@ -41,9 +41,9 @@ depends_on:
   - data-privacy-retention.md
   - ai-evaluation-regression-autonomy-promotion.md
   - lifecycle-versioning-deprecation.md
-  - ../docs/governance/evidence-provenance-model.md
-  - ../docs/governance/autonomy-levels.md
-  - ../docs/governance/approval-policy.md
+  - ../../../../docs/governance/evidence-provenance-model.md
+  - ../../../../docs/governance/autonomy-levels.md
+  - ../../../../docs/governance/approval-policy.md
 supersedes: null
 implementation_status: PARTIALLY_DEFINED_NOT_IMPLEMENTED
 target_runtime_location: systems/jarvis/

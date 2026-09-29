@@ -26,15 +26,15 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - charter.md
-  - architecture.md
-  - core-runtime-specification.md
-  - ../docs/governance/cross-system-risk-classification.md
-  - ../docs/governance/autonomy-levels.md
-  - ../docs/governance/approval-policy.md
-  - ../docs/governance/evidence-provenance-model.md
-  - ../mgbos/docs/architecture/permission-authorization-model.md
-  - ../mgbos/docs/architecture/command-event-model.md
+  - ../charter.md
+  - ../architecture.md
+  - ../core-runtime.md
+  - ../../../../docs/governance/cross-system-risk-classification.md
+  - ../../../../docs/governance/autonomy-levels.md
+  - ../../../../docs/governance/approval-policy.md
+  - ../../../../docs/governance/evidence-provenance-model.md
+  - ../../../mgbos/docs/architecture/permission-authorization-model.md
+  - ../../../mgbos/docs/architecture/command-event-model.md
 supersedes: null
 implementation_status: NOT_IMPLEMENTED
 target_runtime_location: systems/jarvis/

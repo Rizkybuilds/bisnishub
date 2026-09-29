@@ -32,22 +32,22 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - charter.md
-  - architecture.md
-  - core-runtime-specification.md
+  - ../charter.md
+  - ../architecture.md
+  - ../core-runtime.md
   - agent-registry.md
   - skill-registry.md
   - model-gateway-routing.md
-  - tool-capability-architecture.md
+  - tool-capability.md
   - execution-verification-recovery.md
   - observability-audit-incident.md
   - security-secrets-environment.md
   - data-privacy-retention.md
-  - ../docs/governance/cross-system-risk-classification.md
-  - ../docs/governance/autonomy-levels.md
-  - ../docs/governance/approval-policy.md
-  - ../docs/governance/evidence-provenance-model.md
-  - ../mgbos/docs/engineering/agent-system/evidence-model.md
+  - ../../../../docs/governance/cross-system-risk-classification.md
+  - ../../../../docs/governance/autonomy-levels.md
+  - ../../../../docs/governance/approval-policy.md
+  - ../../../../docs/governance/evidence-provenance-model.md
+  - ../../../mgbos/docs/engineering/agent-system/evidence-model.md
 supersedes: null
 implementation_status: PARTIALLY_DEFINED_NOT_IMPLEMENTED
 current_reference_baseline:

@@ -30,19 +30,19 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - charter.md
-  - architecture.md
-  - core-runtime-specification.md
+  - ../charter.md
+  - ../architecture.md
+  - ../core-runtime.md
   - execution-verification-recovery.md
   - observability-audit-incident.md
   - security-secrets-environment.md
   - data-privacy-retention.md
   - event-proactive-intelligence.md
-  - ../docs/governance/evidence-provenance-model.md
-  - ../mgbos/docs/runbooks/backup-and-restore.md
-  - ../mgbos/docs/runbooks/release-and-recovery.md
-  - ../mgbos/docs/runbooks/monitoring-and-incidents.md
-  - ../mgbos/docs/engineering/operational-readiness.md
+  - ../../../../docs/governance/evidence-provenance-model.md
+  - ../../../mgbos/docs/runbooks/backup-and-restore.md
+  - ../../../mgbos/docs/runbooks/release-and-recovery.md
+  - ../../../mgbos/docs/runbooks/monitoring-and-incidents.md
+  - ../../../mgbos/docs/engineering/operational-readiness.md
 supersedes: null
 implementation_status: PARTIALLY_DEFINED_NOT_OPERATIONALLY_VERIFIED
 target_runtime_location: systems/jarvis/

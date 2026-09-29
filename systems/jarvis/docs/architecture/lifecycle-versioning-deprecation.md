@@ -28,14 +28,14 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - charter.md
-  - architecture.md
-  - core-runtime-specification.md
+  - ../charter.md
+  - ../architecture.md
+  - ../core-runtime.md
   - agent-registry.md
   - skill-registry.md
-  - tool-capability-architecture.md
+  - tool-capability.md
   - model-gateway-routing.md
-  - memory-architecture.md
+  - memory.md
   - event-proactive-intelligence.md
   - execution-verification-recovery.md
   - observability-audit-incident.md
@@ -43,7 +43,7 @@ depends_on:
   - data-privacy-retention.md
   - ai-evaluation-regression-autonomy-promotion.md
   - cost-resource-finops.md
-  - ../docs/governance/documentation-constitution.md
+  - ../../../../docs/governance/documentation-constitution.md
 supersedes: null
 implementation_status: PARTIALLY_DEFINED_NOT_IMPLEMENTED
 target_runtime_location: systems/jarvis/

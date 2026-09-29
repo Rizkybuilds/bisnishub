@@ -32,18 +32,18 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - charter.md
-  - architecture.md
-  - core-runtime-specification.md
-  - memory-architecture.md
+  - ../charter.md
+  - ../architecture.md
+  - ../core-runtime.md
+  - memory.md
   - entity-identity-resolution.md
   - model-gateway-routing.md
   - event-proactive-intelligence.md
   - observability-audit-incident.md
   - security-secrets-environment.md
-  - ../docs/governance/evidence-provenance-model.md
-  - ../mgbos/docs/engineering/maintenance-policy.md
-  - ../mgbos/docs/runbooks/backup-and-restore.md
+  - ../../../../docs/governance/evidence-provenance-model.md
+  - ../../../mgbos/docs/engineering/maintenance-policy.md
+  - ../../../mgbos/docs/runbooks/backup-and-restore.md
 supersedes: null
 implementation_status: PARTIALLY_DEFINED_NOT_IMPLEMENTED
 target_runtime_location: systems/jarvis/

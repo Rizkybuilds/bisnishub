@@ -30,21 +30,21 @@ authoritative_for:
 last_reviewed: 2026-09-29
 review_cadence: quarterly
 depends_on:
-  - charter.md
-  - architecture.md
-  - core-runtime-specification.md
+  - ../charter.md
+  - ../architecture.md
+  - ../core-runtime.md
   - model-gateway-routing.md
   - agent-registry.md
   - skill-registry.md
-  - tool-capability-architecture.md
+  - tool-capability.md
   - execution-verification-recovery.md
   - observability-audit-incident.md
   - security-secrets-environment.md
   - data-privacy-retention.md
   - ai-evaluation-regression-autonomy-promotion.md
-  - ../docs/governance/cross-system-risk-classification.md
-  - ../docs/governance/autonomy-levels.md
-  - ../docs/governance/approval-policy.md
+  - ../../../../docs/governance/cross-system-risk-classification.md
+  - ../../../../docs/governance/autonomy-levels.md
+  - ../../../../docs/governance/approval-policy.md
 supersedes: null
 implementation_status: NOT_IMPLEMENTED
 target_runtime_location: systems/jarvis/
