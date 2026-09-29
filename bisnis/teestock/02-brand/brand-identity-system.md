@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Brand Identity System"
+date: "2026-09-27"
+bisnis: teestock
+kategori: brand
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/brand
+  - teestock/canonical
+  - teestock/brand
 document_id: "TS-BRD-003"
 version: "1.0"
-status: "CANONICAL"
 category: "brand"
 business: "teestock"
 last_updated: "2026-09-27"
+path: "02-brand/brand-identity-system.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -13,10 +22,15 @@ depends_on:
   - "TS-BRD-002"
 ---
 
+
 # TeeStock Brand Identity System v1.0
 
-> **Canonical Visual Identity Framework**  
+> [!info] **Canonical Visual Identity Framework  **
 > Dokumen ini mendefinisikan bagaimana TeeStock harus terlihat secara konsisten di seluruh Commerce, Services, Programs, digital product, packaging, operational communication, dan hubungan dengan TeeStock Originals.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]]
+
 
 Dokumen ini mengatur **sistem**, bukan sekadar logo.
 
@@ -1799,12 +1813,12 @@ Execution tidak boleh mendefinisikan ulang strategy.
 
 Dokumen berikut menggunakan Brand Identity System:
 
-1. `02-brand/voice-and-copy-system.md`
-2. `03-commerce/commerce-overview.md`
-3. `05-originals/originals-master-plan.md`
-4. `05-originals/label-governance.md`
-5. `09-marketing/content-engine.md`
-6. `10-product-tech/website-information-architecture.md`
+1. [[bisnis/teestock/02-brand/voice-and-copy-system|voice-and-copy-system.md]]
+2. [[bisnis/teestock/03-commerce/commerce-overview|commerce-overview.md]]
+3. [[bisnis/teestock/05-originals/originals-master-plan|originals-master-plan.md]]
+4. [[bisnis/teestock/05-originals/label-governance|label-governance.md]]
+5. [[bisnis/teestock/09-marketing/content-engine|content-engine.md]]
+6. [[bisnis/teestock/10-product-tech/website-information-architecture|website-information-architecture.md]]
 7. UI design system,
 8. packaging specifications,
 9. photography guidelines,

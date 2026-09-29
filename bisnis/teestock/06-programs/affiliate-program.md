@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Affiliate Program"
+date: "2026-09-28"
+bisnis: teestock
+kategori: marketing
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/marketing
+  - teestock/canonical
+  - teestock/programs
 document_id: "TS-PRG-005"
 version: "1.0"
-status: "CANONICAL"
 category: "programs"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "06-programs/affiliate-program.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -19,10 +28,15 @@ depends_on:
   - "TS-PRG-003"
 ---
 
+
 # TeeStock Affiliate Program v1.0
 
-> **Canonical TeeStock Performance Referral Framework**  
+> [!abstract] **Canonical TeeStock Performance Referral Framework  **
 > Dokumen ini mendefinisikan affiliate eligibility, referral links/codes, attribution, eligible conversion, commission base, payout, self-referral, fraud, coupon abuse, creator/affiliate stacking, service-lead referral, lifecycle, economics, automation, metrics, dan scale gates untuk TeeStock Affiliate Program.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/06-programs/programs-overview|TS-PRG-001: TeeStock Programs Overview]] • [[bisnis/teestock/06-programs/creator-program|TS-PRG-002: TeeStock Creator Program]] • [[bisnis/teestock/06-programs/reseller-program|TS-PRG-003: TeeStock Reseller Program]]
+
 
 ---
 
@@ -2387,16 +2401,16 @@ TRACK PERFORMANCE. REWARD REAL VALUE.
 
 Dokumen berikut harus follow Affiliate Program:
 
-1. `07-operations/operating-model.md`
-2. `08-finance/unit-economics.md`
-3. `08-finance/pricing-framework.md`
-4. `08-finance/treasury-policy.md`
-5. `09-marketing/channel-strategy.md`
-6. `10-product-tech/commerce-platform.md`
-7. `10-product-tech/automation-architecture.md`
-8. `11-data-mgbos/canonical-data-model.md`
-9. `11-data-mgbos/event-model.md`
-10. `12-legal-ip/customer-commerce-policy.md`
-11. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/07-operations/operating-model|operating-model.md]]
+2. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+3. [[bisnis/teestock/08-finance/pricing-framework|pricing-framework.md]]
+4. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+5. [[bisnis/teestock/09-marketing/channel-strategy|channel-strategy.md]]
+6. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+7. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+8. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+9. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+10. [[bisnis/teestock/12-legal-ip/customer-commerce-policy|customer-commerce-policy.md]]
+11. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 TeeStock Affiliate Program boleh berkembang menjadi scalable performance distribution network, tetapi growth hanya boleh mengikuti reliable attribution, explicit commission rules, controlled fraud risk, accurate payout, healthy contribution economics, dan evidence bahwa affiliate demand benar-benar menambah value bagi ecosystem TeeStock.

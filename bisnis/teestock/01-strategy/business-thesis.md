@@ -1,20 +1,34 @@
 ---
 title: "TeeStock Business Thesis"
+date: "2026-09-27"
+bisnis: teestock
+kategori: riset
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/riset
+  - teestock/canonical
+  - teestock/strategy
 document_id: "TS-STR-001"
 version: "1.0"
-status: "CANONICAL"
 category: "strategy"
 business: "teestock"
 last_updated: "2026-09-27"
+path: "01-strategy/business-thesis.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
 ---
 
+
 # TeeStock Business Thesis v1.0
 
-> **Canonical Strategic Thesis**  
+> [!abstract] **Canonical Strategic Thesis  **
 > Dokumen ini menjelaskan mengapa TeeStock layak dibangun, di mana sumber nilai ekonominya, bagaimana setiap domain saling memperkuat, risiko strategis utamanya, dan hipotesis apa yang harus dibuktikan sebelum TeeStock berkembang ke tahap berikutnya.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]]
+
 
 ---
 
@@ -1728,11 +1742,11 @@ MORE DEMAND
 
 Dokumen berikutnya yang harus diturunkan dari Business Thesis:
 
-1. `01-strategy/business-model.md`
-2. `01-strategy/ecosystem-architecture.md`
-3. `01-strategy/growth-strategy.md`
-4. `02-brand/master-brand-strategy.md`
-5. `02-brand/brand-architecture.md`
-6. `14-roadmap/master-roadmap.md`
+1. [[bisnis/teestock/01-strategy/business-model|business-model.md]]
+2. [[bisnis/teestock/01-strategy/ecosystem-architecture|ecosystem-architecture.md]]
+3. [[bisnis/teestock/01-strategy/growth-strategy|growth-strategy.md]]
+4. [[bisnis/teestock/02-brand/master-brand-strategy|master-brand-strategy.md]]
+5. [[bisnis/teestock/02-brand/brand-architecture|brand-architecture.md]]
+6. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
 
 Business Model harus menjelaskan **bagaimana thesis ini menghasilkan revenue dan value secara konkret**, tanpa mengubah core strategic logic yang ditetapkan di sini.

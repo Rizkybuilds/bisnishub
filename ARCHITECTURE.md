@@ -3,7 +3,7 @@ title: "Architecture Map — MultiGraph Business OS & Ekosistem Web Apps"
 date: "2026-09-23"
 bisnis: umum
 kategori: catatan
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - bisnis/multigraph
@@ -17,7 +17,7 @@ tags:
 
 > Peta historis legacy. Sejak 28 September 2026, prototype `apps/mgbos/` dipensiunkan ke [arsip](archive/mgbos-vite-prototype/README.md). Diagram/path lama di bawah adalah histori; lokasi aktif mengikuti [indeks proyek](docs/project-index.md).
 
-> Scope clarification, 2026-09-27: topology dan ownership di bawah adalah dokumentasi legacy/prototipe. Diagram single-project Supabase tidak berlaku untuk MGBOS Next.js resmi. Untuk peta repo terkini gunakan [indeks proyek](docs/project-index.md); untuk MGBOS gunakan [arsitektur workspace](mgbos/docs/architecture/README.md). Paket `packages/shared/` di bawah bukan paket domain MGBOS resmi.
+> Scope clarification, 2026-09-27: topology dan ownership di bawah adalah dokumentasi legacy/prototipe. Diagram single-project Supabase tidak berlaku untuk MGBOS Next.js resmi. Untuk peta repo terkini gunakan [indeks proyek](docs/project-index.md); untuk MGBOS gunakan [arsitektur workspace](systems/mgbos/docs/architecture/README.md). Paket `packages/shared/` di bawah bukan paket domain MGBOS resmi.
 
 > [!abstract]
 > Dokumen ini mempertahankan **peta arsitektur legacy/prototipe** ekosistem perangkat lunak **MultiGraph Group**. Mengatur relasi antara **MGBOS Core** (operating system bisnis baru), **BisnisHub Admin Legacy** (admin operasional darurat), **TeeStock WebClient** (public storefront), dan **@bisnishub/shared** (single source of truth). Tujuannya: **mencegah duplikasi kode, menjamin konsistensi kontrak data, dan memperjelas hak kepemilikan file**.

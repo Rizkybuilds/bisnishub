@@ -1,17 +1,28 @@
 ---
 title: "TeeStock Master Definition"
+date: "2026-09-27"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/foundation
 document_id: "TS-FND-001"
 version: "1.0"
-status: "CANONICAL"
 category: "foundation"
 business: "teestock"
 last_updated: "2026-09-27"
+path: "00-foundation/teestock-master-definition.md"
 ---
+
 
 # TeeStock Master Definition v1.0
 
-> **Canonical Foundation Document**  
+> [!abstract] **Canonical Foundation Document  **
 > Dokumen ini mendefinisikan apa itu TeeStock, apa yang dikerjakan TeeStock, bagaimana TeeStock menciptakan nilai, serta batas strategis yang harus dijaga dalam seluruh pengembangan bisnis, brand, produk, teknologi, dan operasional.
+
 
 ---
 
@@ -1263,11 +1274,11 @@ You create it. We make it.
 
 Setelah dokumen ini ditetapkan sebagai canonical, dokumen berikutnya harus diturunkan darinya:
 
-1. `00-foundation/glossary.md`
-2. `01-strategy/business-thesis.md`
-3. `01-strategy/business-model.md`
-4. `01-strategy/ecosystem-architecture.md`
-5. `02-brand/brand-architecture.md`
-6. `README.md`
+1. [[bisnis/teestock/00-foundation/glossary|glossary.md]]
+2. [[bisnis/teestock/01-strategy/business-thesis|business-thesis.md]]
+3. [[bisnis/teestock/01-strategy/business-model|business-model.md]]
+4. [[bisnis/teestock/01-strategy/ecosystem-architecture|ecosystem-architecture.md]]
+5. [[bisnis/teestock/02-brand/brand-architecture|brand-architecture.md]]
+6. [[bisnis/teestock/README|README.md]]
 
 Tidak ada dokumen turunan yang boleh mengubah definisi fundamental TeeStock tanpa memperbarui dokumen ini dan Decision Register.

@@ -1,11 +1,20 @@
 ---
 title: "TeeStock KPI Framework"
+date: "2026-09-28"
+bisnis: teestock
+kategori: riset
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/riset
+  - teestock/canonical
+  - teestock/metrics-experiments
 document_id: "TS-MET-001"
 version: "1.0"
-status: "CANONICAL"
 category: "metrics-experiments"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "13-metrics-experiments/kpi-framework.md"
 depends_on:
   - "TS-STR-002"
   - "TS-STR-004"
@@ -21,9 +30,14 @@ depends_on:
   - "TS-DAT-006"
 ---
 
+
 # TeeStock KPI Framework v1.0
 
-> **Canonical TeeStock Performance Measurement, KPI Hierarchy, Metric Ownership & Management-Control Framework**
+> [!tip] **Canonical TeeStock Performance Measurement, KPI Hierarchy, Metric Ownership & Management-Control Framework**
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/08-finance/financial-model|TS-FIN-001: TeeStock Financial Model]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]] • [[bisnis/teestock/08-finance/treasury-policy|TS-FIN-005: TeeStock Treasury Policy]] • [[bisnis/teestock/09-marketing/go-to-market|TS-MKT-001: TeeStock Go-To-Market Strategy]] • [[bisnis/teestock/09-marketing/audience-segmentation|TS-MKT-002: TeeStock Audience Segmentation]] • [[bisnis/teestock/09-marketing/content-engine|TS-MKT-003: TeeStock Content Engine]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/07-operations/quality-control|TS-OPS-004: TeeStock Quality Control System]] • [[bisnis/teestock/07-operations/inventory-system|TS-OPS-005: TeeStock Inventory System]] • [[bisnis/teestock/11-data-mgbos/analytics-model|TS-DAT-006: TeeStock Analytics Model]]
+
 
 Dokumen ini mendefinisikan North Star, company-level KPIs, business-line KPIs, functional KPIs, operational metrics, metric ownership, formulas, targets, thresholds, alerting, review cadence, drill-down logic, data quality, and future MGBOS/Jarvis performance intelligence.
 
@@ -3745,10 +3759,10 @@ MGBOS SHOULD CONNECT KPI → THRESHOLD → OWNER → ACTION → DECISION.
 
 Dokumen berikut harus follow KPI Framework:
 
-1. `13-metrics-experiments/experimentation-framework.md`
-2. `13-metrics-experiments/decision-thresholds.md`
-3. `14-roadmap/master-roadmap.md`
-4. `14-roadmap/capability-roadmap.md`
-5. `14-roadmap/current-quarter.md`
+1. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+2. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+3. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+4. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
+5. [[bisnis/teestock/14-roadmap/current-quarter|current-quarter.md]]
 
 TeeStock KPI Framework boleh berkembang dari small canonical KPI set menjadi semantic metric registry, automated performance reviews, forecasting, anomaly detection, experiment measurement, driver trees, dan akhirnya Jarvis-powered management intelligence untuk seluruh MultiGraph Group. Tetapi sophistication hanya boleh bertambah setelah metric definitions, ownership, targets, thresholds, data lineage, and management actions sudah disiplin dan dapat dipercaya.

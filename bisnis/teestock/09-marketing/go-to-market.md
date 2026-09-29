@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Go-To-Market Strategy"
+date: "2026-09-28"
+bisnis: teestock
+kategori: marketing
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/marketing
+  - teestock/canonical
+  - teestock/marketing
 document_id: "TS-MKT-001"
 version: "1.0"
-status: "CANONICAL"
 category: "marketing"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "09-marketing/go-to-market.md"
 depends_on:
   - "TS-FND-001"
   - "TS-STR-001"
@@ -24,10 +33,15 @@ depends_on:
   - "TS-FIN-005"
 ---
 
+
 # TeeStock Go-To-Market Strategy v1.0
 
-> **Canonical TeeStock Market Entry, Demand Creation & Growth Deployment Framework**  
+> [!info] **Canonical TeeStock Market Entry, Demand Creation & Growth Deployment Framework  **
 > Dokumen ini mendefinisikan market-entry sequence, beachhead audiences, demand wedges, offer ladders, acquisition loops, launch strategy, creator-led distribution, service-led acquisition, organic and paid growth, demand validation, geographic expansion, Originals distribution, GTM economics, dan progressive marketing automation TeeStock.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/06-programs/programs-overview|TS-PRG-001: TeeStock Programs Overview]] • [[bisnis/teestock/08-finance/financial-model|TS-FIN-001: TeeStock Financial Model]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]] • [[bisnis/teestock/08-finance/pricing-framework|TS-FIN-003: TeeStock Pricing Framework]] • [[bisnis/teestock/08-finance/treasury-policy|TS-FIN-005: TeeStock Treasury Policy]]
+
 
 ---
 
@@ -3330,19 +3344,19 @@ AUTOMATE REPEATABLE GTM, NOT RANDOM ACTIVITY.
 
 Dokumen berikut harus follow Go-To-Market Strategy:
 
-1. `09-marketing/audience-segmentation.md`
-2. `09-marketing/content-engine.md`
-3. `09-marketing/channel-strategy.md`
-4. `09-marketing/retention-and-community.md`
-5. `10-product-tech/website-information-architecture.md`
-6. `10-product-tech/commerce-platform.md`
-7. `10-product-tech/automation-architecture.md`
-8. `11-data-mgbos/canonical-data-model.md`
-9. `11-data-mgbos/event-model.md`
-10. `11-data-mgbos/mgbos-integration.md`
-11. `13-metrics-experiments/kpi-framework.md`
-12. `13-metrics-experiments/experimentation-framework.md`
-13. `13-metrics-experiments/decision-thresholds.md`
-14. `14-roadmap/master-roadmap.md`
+1. [[bisnis/teestock/09-marketing/audience-segmentation|audience-segmentation.md]]
+2. [[bisnis/teestock/09-marketing/content-engine|content-engine.md]]
+3. [[bisnis/teestock/09-marketing/channel-strategy|channel-strategy.md]]
+4. [[bisnis/teestock/09-marketing/retention-and-community|retention-and-community.md]]
+5. [[bisnis/teestock/10-product-tech/website-information-architecture|website-information-architecture.md]]
+6. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+7. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+8. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+9. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+11. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+12. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+13. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+14. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
 
 TeeStock Go-To-Market boleh berkembang menjadi multi-channel, creator-led, performance-driven, lifecycle-aware, dan AI-assisted growth system, tetapi scale hanya boleh mengikuti evidence dari audience fit, conversion, contribution, repeat behavior, operational capacity, dan reliable measurement.

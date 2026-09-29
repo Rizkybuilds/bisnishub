@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Collection Framework"
+date: "2026-09-28"
+bisnis: teestock
+kategori: brand
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/brand
+  - teestock/canonical
+  - teestock/originals
 document_id: "TS-ORG-003"
 version: "1.0"
-status: "CANONICAL"
 category: "originals"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "05-originals/collection-framework.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -20,10 +29,15 @@ depends_on:
   - "TS-ORG-002"
 ---
 
+
 # TeeStock Collection Framework v1.0
 
-> **Canonical Originals Collection System**  
+> [!abstract] **Canonical Originals Collection System  **
 > Dokumen ini mendefinisikan anatomy, purpose, narrative, product architecture, SKU budget, sampling, launch model, merchandising, content, inventory, economics, experimentation, post-launch review, lifecycle, dan decision rules untuk setiap TeeStock Originals Collection.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/02-brand/brand-identity-system|TS-BRD-003: TeeStock Brand Identity System]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/03-commerce/catalog-merchandising-system|TS-COM-004: TeeStock Catalog & Merchandising System]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/05-originals/brand-incubation-framework|TS-ORG-002: TeeStock Brand Incubation Framework]]
+
 
 ---
 
@@ -2367,20 +2381,20 @@ LEARNING BEFORE VANITY.
 
 Dokumen berikut harus follow Collection Framework:
 
-1. `05-originals/label-governance.md`
+1. [[bisnis/teestock/05-originals/label-governance|label-governance.md]]
 2. `05-originals/collections/`
 3. `05-originals/labels/`
-4. `07-operations/production-system.md`
-5. `07-operations/inventory-system.md`
-6. `08-finance/financial-model.md`
-7. `08-finance/unit-economics.md`
-8. `09-marketing/content-engine.md`
-9. `09-marketing/channel-strategy.md`
-10. `09-marketing/retention-and-community.md`
-11. `10-product-tech/commerce-platform.md`
-12. `11-data-mgbos/canonical-data-model.md`
-13. `11-data-mgbos/event-model.md`
-14. `13-metrics-experiments/kpi-framework.md`
-15. `13-metrics-experiments/experimentation-framework.md`
+4. [[bisnis/teestock/07-operations/production-system|production-system.md]]
+5. [[bisnis/teestock/07-operations/inventory-system|inventory-system.md]]
+6. [[bisnis/teestock/08-finance/financial-model|financial-model.md]]
+7. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+8. [[bisnis/teestock/09-marketing/content-engine|content-engine.md]]
+9. [[bisnis/teestock/09-marketing/channel-strategy|channel-strategy.md]]
+10. [[bisnis/teestock/09-marketing/retention-and-community|retention-and-community.md]]
+11. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+12. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+13. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+14. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+15. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
 
 Collection boleh memiliki expression kreatif dan launch model yang berbeda, tetapi seluruh Collection Originals harus mempunyai canonical brief, controlled product scope, measurable hypothesis, post-launch review, dan explicit lifecycle decision.

@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Cost Accounting"
+date: "2026-09-28"
+bisnis: teestock
+kategori: keuangan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/keuangan
+  - teestock/canonical
+  - teestock/finance
 document_id: "TS-FIN-004"
 version: "1.0"
-status: "CANONICAL"
 category: "finance"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "08-finance/cost-accounting.md"
 depends_on:
   - "TS-FIN-001"
   - "TS-FIN-002"
@@ -19,10 +28,15 @@ depends_on:
   - "TS-OPS-008"
 ---
 
+
 # TeeStock Cost Accounting v1.0
 
-> **Canonical TeeStock Cost Measurement, Attribution & Variance Framework**  
+> [!important] **Canonical TeeStock Cost Measurement, Attribution & Variance Framework  **
 > Dokumen ini mendefinisikan cost objects, cost components, direct/indirect cost, variable/fixed cost, landed cost, material cost, BOM/recipe costing, production cost, labor cost, partner/MultiGraph transfer cost, WIP, inventory cost, fulfillment cost, return/rework/scrap cost, project costing, shared-cost allocation, standard vs actual cost, variance analysis, dan cost lineage untuk management decision-making TeeStock.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/08-finance/financial-model|TS-FIN-001: TeeStock Financial Model]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]] • [[bisnis/teestock/08-finance/pricing-framework|TS-FIN-003: TeeStock Pricing Framework]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/07-operations/sourcing-and-vendors|TS-OPS-002: TeeStock Sourcing & Vendors]] • [[bisnis/teestock/07-operations/production-system|TS-OPS-003: TeeStock Production System]] • [[bisnis/teestock/07-operations/quality-control|TS-OPS-004: TeeStock Quality Control System]] • [[bisnis/teestock/07-operations/inventory-system|TS-OPS-005: TeeStock Inventory System]] • [[bisnis/teestock/07-operations/order-fulfillment|TS-OPS-006: TeeStock Order Fulfillment System]] • [[bisnis/teestock/07-operations/returns-and-warranty|TS-OPS-008: TeeStock Returns & Warranty System]]
+
 
 ---
 
@@ -3033,15 +3047,15 @@ COST DATA MUST FEED PRICING.
 
 Dokumen berikut harus follow Cost Accounting:
 
-1. `08-finance/treasury-policy.md`
-2. `09-marketing/go-to-market.md`
-3. `09-marketing/channel-strategy.md`
-4. `10-product-tech/automation-architecture.md`
-5. `11-data-mgbos/canonical-data-model.md`
-6. `11-data-mgbos/entity-hierarchy.md`
-7. `11-data-mgbos/event-model.md`
-8. `11-data-mgbos/mgbos-integration.md`
-9. `13-metrics-experiments/kpi-framework.md`
-10. `13-metrics-experiments/decision-thresholds.md`
+1. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+2. [[bisnis/teestock/09-marketing/go-to-market|go-to-market.md]]
+3. [[bisnis/teestock/09-marketing/channel-strategy|channel-strategy.md]]
+4. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+5. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+6. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+7. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+8. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+9. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+10. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
 
 TeeStock Cost Accounting boleh berkembang menjadi real-time integrated cost engine, tetapi sophistication hanya boleh dibangun setelah purchasing, inventory, production, fulfillment, program payouts, returns, dan project execution menghasilkan reliable transactional cost data.

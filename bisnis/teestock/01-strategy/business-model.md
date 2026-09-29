@@ -1,21 +1,35 @@
 ---
 title: "TeeStock Business Model"
+date: "2026-09-27"
+bisnis: teestock
+kategori: riset
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/riset
+  - teestock/canonical
+  - teestock/strategy
 document_id: "TS-STR-002"
 version: "1.0"
-status: "CANONICAL"
 category: "strategy"
 business: "teestock"
 last_updated: "2026-09-27"
+path: "01-strategy/business-model.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
   - "TS-STR-001"
 ---
 
+
 # TeeStock Business Model v1.0
 
-> **Canonical Business Model Document**  
+> [!abstract] **Canonical Business Model Document  **
 > Dokumen ini mendefinisikan bagaimana TeeStock menciptakan, menyampaikan, dan menangkap nilai melalui Commerce, Services, Originals, dan Programs.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]]
+
 
 ---
 
@@ -1820,14 +1834,14 @@ dalam satu ecosystem.
 
 Dokumen berikut harus diturunkan dari Business Model:
 
-1. `01-strategy/ecosystem-architecture.md`
-2. `01-strategy/growth-strategy.md`
-3. `03-commerce/commerce-overview.md`
-4. `04-services/services-overview.md`
-5. `05-originals/originals-master-plan.md`
-6. `06-programs/programs-overview.md`
-7. `08-finance/financial-model.md`
-8. `08-finance/unit-economics.md`
-9. `11-data-mgbos/canonical-data-model.md`
+1. [[bisnis/teestock/01-strategy/ecosystem-architecture|ecosystem-architecture.md]]
+2. [[bisnis/teestock/01-strategy/growth-strategy|growth-strategy.md]]
+3. [[bisnis/teestock/03-commerce/commerce-overview|commerce-overview.md]]
+4. [[bisnis/teestock/04-services/services-overview|services-overview.md]]
+5. [[bisnis/teestock/05-originals/originals-master-plan|originals-master-plan.md]]
+6. [[bisnis/teestock/06-programs/programs-overview|programs-overview.md]]
+7. [[bisnis/teestock/08-finance/financial-model|financial-model.md]]
+8. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+9. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
 
 Dokumen turunan boleh menambahkan detail tetapi tidak boleh mengubah pembagian fundamental antara Commerce, Services, Originals, dan Programs tanpa perubahan formal terhadap dokumen ini.

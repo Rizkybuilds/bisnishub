@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Pricing Framework"
+date: "2026-09-28"
+bisnis: teestock
+kategori: keuangan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/keuangan
+  - teestock/canonical
+  - teestock/finance
 document_id: "TS-FIN-003"
 version: "1.0"
-status: "CANONICAL"
 category: "finance"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "08-finance/pricing-framework.md"
 depends_on:
   - "TS-FIN-001"
   - "TS-FIN-002"
@@ -18,10 +27,15 @@ depends_on:
   - "TS-PRG-005"
 ---
 
+
 # TeeStock Pricing Framework v1.0
 
-> **Canonical TeeStock Pricing, Quoting & Commercial Guardrail Framework**  
+> [!important] **Canonical TeeStock Pricing, Quoting & Commercial Guardrail Framework  **
 > Dokumen ini mendefinisikan pricing architecture, price books, retail pricing, wholesale/reseller pricing, B2B account pricing, service quotation, value-based pricing, cost-based pricing, markup vs margin, price floors, discount authority, promotional pricing, volume tiers, rush fees, customization premiums, channel pricing, price testing, dan pricing automation melalui MGBOS.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/08-finance/financial-model|TS-FIN-001: TeeStock Financial Model]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/06-programs/reseller-program|TS-PRG-003: TeeStock Reseller Program]] • [[bisnis/teestock/06-programs/affiliate-program|TS-PRG-005: TeeStock Affiliate Program]]
+
 
 ---
 
@@ -2860,17 +2874,17 @@ AI MAY RECOMMEND. POLICY DEFINES THE BOUNDARY.
 
 Dokumen berikut harus follow Pricing Framework:
 
-1. `08-finance/cost-accounting.md`
-2. `08-finance/treasury-policy.md`
-3. `09-marketing/go-to-market.md`
-4. `09-marketing/channel-strategy.md`
-5. `09-marketing/audience-segmentation.md`
-6. `10-product-tech/commerce-platform.md`
-7. `10-product-tech/automation-architecture.md`
-8. `11-data-mgbos/canonical-data-model.md`
-9. `11-data-mgbos/event-model.md`
-10. `11-data-mgbos/mgbos-integration.md`
-11. `13-metrics-experiments/experimentation-framework.md`
-12. `13-metrics-experiments/decision-thresholds.md`
+1. [[bisnis/teestock/08-finance/cost-accounting|cost-accounting.md]]
+2. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+3. [[bisnis/teestock/09-marketing/go-to-market|go-to-market.md]]
+4. [[bisnis/teestock/09-marketing/channel-strategy|channel-strategy.md]]
+5. [[bisnis/teestock/09-marketing/audience-segmentation|audience-segmentation.md]]
+6. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+7. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+8. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+9. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+11. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+12. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
 
 TeeStock Pricing Framework boleh berkembang menjadi configuration-aware, experiment-driven, capacity-aware, dan AI-assisted pricing system, tetapi advanced pricing hanya boleh berdiri di atas reliable unit economics, disciplined price books, explicit margin floors, controlled discount authority, versioned quotes, dan clear commercial strategy.

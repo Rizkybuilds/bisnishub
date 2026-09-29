@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Reseller Program"
+date: "2026-09-28"
+bisnis: teestock
+kategori: marketing
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/marketing
+  - teestock/canonical
+  - teestock/programs
 document_id: "TS-PRG-003"
 version: "1.0"
-status: "CANONICAL"
 category: "programs"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "06-programs/reseller-program.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -19,10 +28,15 @@ depends_on:
   - "TS-PRG-001"
 ---
 
+
 # TeeStock Reseller Program v1.0
 
-> **Canonical TeeStock Reseller Participation Framework**  
+> [!abstract] **Canonical TeeStock Reseller Participation Framework  **
 > Dokumen ini mendefinisikan reseller eligibility, commercial model, wholesale pricing, reseller margin, product access, dropship, white-label boundaries, customer ownership, channel rules, account pricing, ordering, fulfillment, territory, tiers, lifecycle, automation, metrics, dan governance untuk TeeStock Reseller Program.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/03-commerce/teestock-essentials|TS-COM-003: TeeStock Essentials]] • [[bisnis/teestock/04-services/supply|TS-SVC-006: TeeStock Supply]] • [[bisnis/teestock/06-programs/programs-overview|TS-PRG-001: TeeStock Programs Overview]]
+
 
 ---
 
@@ -2290,18 +2304,18 @@ DISTRIBUTION WITHOUT LOSING CONTROL.
 
 Dokumen berikut harus follow Reseller Program:
 
-1. `06-programs/partner-program.md`
-2. `06-programs/affiliate-program.md`
-3. `07-operations/inventory-system.md`
-4. `07-operations/order-fulfillment.md`
-5. `08-finance/unit-economics.md`
-6. `08-finance/pricing-framework.md`
-7. `08-finance/treasury-policy.md`
-8. `10-product-tech/partner-platform.md`
-9. `10-product-tech/automation-architecture.md`
-10. `11-data-mgbos/canonical-data-model.md`
-11. `11-data-mgbos/entity-hierarchy.md`
-12. `12-legal-ip/customer-commerce-policy.md`
-13. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/06-programs/partner-program|partner-program.md]]
+2. [[bisnis/teestock/06-programs/affiliate-program|affiliate-program.md]]
+3. [[bisnis/teestock/07-operations/inventory-system|inventory-system.md]]
+4. [[bisnis/teestock/07-operations/order-fulfillment|order-fulfillment.md]]
+5. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+6. [[bisnis/teestock/08-finance/pricing-framework|pricing-framework.md]]
+7. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+8. [[bisnis/teestock/10-product-tech/partner-platform|partner-platform.md]]
+9. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+10. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+11. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+12. [[bisnis/teestock/12-legal-ip/customer-commerce-policy|customer-commerce-policy.md]]
+13. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 Reseller Program boleh berkembang menjadi distribution network yang lebih luas, tetapi growth harus selalu mengikuti stable product availability, clear price books, channel governance, healthy contribution, controlled credit risk, dan explicit reseller/customer relationship boundaries.

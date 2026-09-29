@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Quality Control System"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/operations
 document_id: "TS-OPS-004"
 version: "1.0"
-status: "CANONICAL"
 category: "operations"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "07-operations/quality-control.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -20,10 +29,15 @@ depends_on:
   - "TS-OPS-003"
 ---
 
+
 # TeeStock Quality Control System v1.0
 
-> **Canonical TeeStock Quality Assurance & Quality Control Framework**  
+> [!tip] **Canonical TeeStock Quality Assurance & Quality Control Framework  **
 > Dokumen ini mendefinisikan quality standards, incoming inspection, in-process checks, final QC, sampling, defect classification, quarantine, nonconformance, rework, reproduction, supplier/partner attribution, root-cause analysis, corrective action, traceability, customer-quality feedback, dan progressive automation untuk seluruh ecosystem TeeStock.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/03-commerce/teestock-essentials|TS-COM-003: TeeStock Essentials]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/04-services/custom|TS-SVC-002: TeeStock Custom]] • [[bisnis/teestock/04-services/business|TS-SVC-003: TeeStock Business]] • [[bisnis/teestock/04-services/fulfill|TS-SVC-007: TeeStock Fulfill]] • [[bisnis/teestock/06-programs/partner-program|TS-PRG-004: TeeStock Partner Program]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/07-operations/sourcing-and-vendors|TS-OPS-002: TeeStock Sourcing & Vendors]] • [[bisnis/teestock/07-operations/production-system|TS-OPS-003: TeeStock Production System]]
+
 
 ---
 
@@ -2334,17 +2348,17 @@ BUILD QUALITY INTO THE PROCESS.
 
 Dokumen berikut harus follow Quality Control System:
 
-1. `07-operations/inventory-system.md`
-2. `07-operations/order-fulfillment.md`
-3. `07-operations/customer-service.md`
-4. `07-operations/returns-and-warranty.md`
-5. `08-finance/unit-economics.md`
-6. `08-finance/cost-accounting.md`
-7. `10-product-tech/automation-architecture.md`
-8. `11-data-mgbos/canonical-data-model.md`
-9. `11-data-mgbos/event-model.md`
-10. `11-data-mgbos/mgbos-integration.md`
-11. `13-metrics-experiments/kpi-framework.md`
-12. `13-metrics-experiments/decision-thresholds.md`
+1. [[bisnis/teestock/07-operations/inventory-system|inventory-system.md]]
+2. [[bisnis/teestock/07-operations/order-fulfillment|order-fulfillment.md]]
+3. [[bisnis/teestock/07-operations/customer-service|customer-service.md]]
+4. [[bisnis/teestock/07-operations/returns-and-warranty|returns-and-warranty.md]]
+5. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+6. [[bisnis/teestock/08-finance/cost-accounting|cost-accounting.md]]
+7. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+8. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+9. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+11. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+12. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
 
 TeeStock Quality System boleh berkembang menjadi semakin statistical dan automated, tetapi advanced QC hanya boleh dibangun di atas product specifications, defect taxonomy, traceability, reliable QC records, root-cause discipline, dan clear release authority.

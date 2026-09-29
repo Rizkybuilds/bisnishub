@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Supply"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/services
 document_id: "TS-SVC-006"
 version: "1.0"
-status: "CANONICAL"
 category: "services"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "04-services/supply.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -20,10 +29,15 @@ depends_on:
   - "TS-SVC-005"
 ---
 
+
 # TeeStock Supply v1.0
 
-> **Canonical TeeStock Supply Service Strategy**  
+> [!abstract] **Canonical TeeStock Supply Service Strategy  **
 > Dokumen ini mendefinisikan positioning, customer, product scope, wholesale logic, MOQ, pricing tiers, procurement, inventory allocation, account pricing, supplier dependency, working capital, fulfillment, automation, metrics, dan boundaries untuk TeeStock Supply.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/03-commerce/teestock-essentials|TS-COM-003: TeeStock Essentials]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/04-services/business|TS-SVC-003: TeeStock Business]] • [[bisnis/teestock/04-services/studio|TS-SVC-005: TeeStock Studio]]
+
 
 ---
 
@@ -1876,17 +1890,17 @@ RELIABILITY BEFORE EXPANSION.
 
 Dokumen berikut harus follow TeeStock Supply Strategy:
 
-1. `04-services/fulfill.md`
-2. `07-operations/sourcing-and-vendors.md`
-3. `07-operations/inventory-system.md`
-4. `07-operations/order-fulfillment.md`
-5. `08-finance/unit-economics.md`
-6. `08-finance/pricing-framework.md`
-7. `08-finance/treasury-policy.md`
-8. `10-product-tech/partner-platform.md`
-9. `10-product-tech/automation-architecture.md`
-10. `11-data-mgbos/canonical-data-model.md`
-11. `11-data-mgbos/sku-and-id-convention.md`
-12. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/04-services/fulfill|fulfill.md]]
+2. [[bisnis/teestock/07-operations/sourcing-and-vendors|sourcing-and-vendors.md]]
+3. [[bisnis/teestock/07-operations/inventory-system|inventory-system.md]]
+4. [[bisnis/teestock/07-operations/order-fulfillment|order-fulfillment.md]]
+5. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+6. [[bisnis/teestock/08-finance/pricing-framework|pricing-framework.md]]
+7. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+8. [[bisnis/teestock/10-product-tech/partner-platform|partner-platform.md]]
+9. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+10. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+11. [[bisnis/teestock/11-data-mgbos/sku-and-id-convention|sku-and-id-convention.md]]
+12. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 TeeStock Supply boleh berkembang menjadi procurement dan wholesale infrastructure yang lebih besar, tetapi pertumbuhannya harus selalu mengikuti demand, working-capital discipline, supplier reliability, dan shared product/inventory architecture TeeStock.

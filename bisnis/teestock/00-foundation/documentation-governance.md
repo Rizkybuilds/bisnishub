@@ -1,21 +1,34 @@
 ---
 title: "TeeStock Documentation Governance"
+date: "2026-09-28"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/foundation
 document_id: "TS-FND-003"
 version: "1.0"
-status: "CANONICAL"
 category: "foundation"
 business: "teestock"
-path: "bisnis/teestock/00-foundation/documentation-governance.md"
 last_updated: "2026-09-28"
+path: "00-foundation/documentation-governance.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
   - "TS-ROOT-001"
 ---
 
+
 # TeeStock Documentation Governance v1.0
 
-> **Canonical TeeStock Documentation Ownership, Lifecycle, Change Control & Source-of-Truth Governance Framework**
+> [!abstract] **Canonical TeeStock Documentation Ownership, Lifecycle, Change Control & Source-of-Truth Governance Framework**
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/README|TS-ROOT-001: TeeStock Canonical Business Blueprint — README]]
+
 
 Dokumen ini mendefinisikan bagaimana seluruh dokumentasi bisnis TeeStock dibuat, diberi status, direview, diubah, digantikan, diarsipkan, dan dijaga agar tetap menjadi satu coherent operating knowledge base.
 
@@ -888,7 +901,7 @@ Canonical:
 
 # 73. README Governance
 
-Root `README.md`:
+Root [[bisnis/teestock/README|README.md]]:
 
 ```text
 NAVIGATES
@@ -916,7 +929,7 @@ Then README should be corrected.
 
 # 75. Glossary Governance
 
-`glossary.md` governs shared business terminology.
+[[bisnis/teestock/00-foundation/glossary|glossary.md]] governs shared business terminology.
 
 ---
 
@@ -1255,7 +1268,7 @@ changes materially.
 
 # 106. Roadmap Documents
 
-`current-quarter.md` is expected to expire naturally at quarter end.
+[[bisnis/teestock/14-roadmap/current-quarter|current-quarter.md]] is expected to expire naturally at quarter end.
 
 ---
 

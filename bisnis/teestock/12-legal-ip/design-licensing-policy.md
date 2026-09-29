@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Design Licensing Policy"
+date: "2026-09-28"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/legal-ip
 document_id: "TS-LEG-002"
 version: "1.0"
-status: "CANONICAL"
 category: "legal-ip"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "12-legal-ip/design-licensing-policy.md"
 depends_on:
   - "TS-LEG-001"
   - "TS-COM-002"
@@ -17,10 +26,15 @@ depends_on:
   - "TS-DAT-001"
 ---
 
+
 # TeeStock Design Licensing Policy v1.0
 
-> **Canonical TeeStock Artwork, Design, Creative Asset Licensing & Commercial-Rights Framework**  
+> [!warning] **Canonical TeeStock Artwork, Design, Creative Asset Licensing & Commercial-Rights Framework  **
 > Dokumen ini mendefinisikan license types, licensors, licensees, ownership boundaries, exclusivity, scope, product rights, territory, channels, duration, modification, sublicensing, royalty, minimum guarantees, commissioned artwork, creator licensing, stock assets, fonts, photography, derivative works, renewal, termination, sell-off rights, reporting, audits, rights recordation, dan hubungan License → Product → Order → Earning di TeeStock.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/12-legal-ip/ip-policy|TS-LEG-001: TeeStock Intellectual Property Policy]] • [[bisnis/teestock/03-commerce/teestock-selects|TS-COM-002: TeeStock Selects]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/06-programs/creator-program|TS-PRG-002: TeeStock Creator Program]] • [[bisnis/teestock/10-product-tech/creator-platform|TS-TEC-004: TeeStock Creator Platform]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]] • [[bisnis/teestock/08-finance/treasury-policy|TS-FIN-005: TeeStock Treasury Policy]] • [[bisnis/teestock/11-data-mgbos/canonical-data-model|TS-DAT-001: TeeStock Canonical Data Model]]
+
 
 ---
 
@@ -3021,12 +3035,12 @@ MGBOS SHOULD KNOW WHICH PRODUCTS DEPEND ON WHICH RIGHTS.
 
 Dokumen berikut harus follow Design Licensing Policy:
 
-1. `12-legal-ip/creator-agreement-framework.md`
-2. `12-legal-ip/trademark-framework.md`
-3. `12-legal-ip/customer-commerce-policy.md`
-4. `13-metrics-experiments/kpi-framework.md`
-5. `13-metrics-experiments/decision-thresholds.md`
-6. `14-roadmap/master-roadmap.md`
-7. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/12-legal-ip/creator-agreement-framework|creator-agreement-framework.md]]
+2. [[bisnis/teestock/12-legal-ip/trademark-framework|trademark-framework.md]]
+3. [[bisnis/teestock/12-legal-ip/customer-commerce-policy|customer-commerce-policy.md]]
+4. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+5. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+6. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+7. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Design Licensing Policy boleh berkembang dari structured creator/artwork licensing menjadi automated royalty ledger, license portfolio management, official recordation workflows, multi-territory rights management, dan AI-assisted licensing administration, tetapi scale hanya boleh meningkat dengan mempertahankan clear licensor authority, explicit asset scope, precise commercial rights, historical royalty integrity, expiry controls, post-termination rules, and auditable Product → License → Transaction → Earning lineage.

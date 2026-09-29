@@ -1,59 +1,50 @@
----
-title: BisnisHub repository guide
-date: "2026-09-27"
-bisnis: umum
-kategori: operasional
-status: active
----
-
 # BisnisHub
 
-Satu repositori untuk proyek software, dokumentasi bisnis dan pengetahuan kerja. Setiap sistem memiliki batas kode, dependency dan database sendiri; satu repo tidak berarti satu database atau satu proses deployment.
+Repositori bersama untuk MGBOS, rancangan JARVIS, pengetahuan bisnis MultiGraph
+Group dan alat pendukung. Setiap sistem memiliki kode, dependency, data dan
+dokumentasinya sendiri.
 
-Mulai dari [indeks proyek](docs/project-index.md), [aturan direktori](docs/engineering/repository-layout.md), dan [AGENTS.md](AGENTS.md). Untuk bisnis dan perencanaan, buka [[🏠 BisnisHub Command Center]] serta folder `bisnis/` dan `catatan/`.
+Mulai dari [indeks proyek](docs/project-index.md), [aturan direktori](docs/engineering/repository-layout.md),
+[peta sumber kanonikal](docs/governance/canonical-source-map.md), dan [AGENTS.md](AGENTS.md).
 
-## Proyek software saat ini
+| Bagian | Lokasi | Status |
+| --- | --- | --- |
+| MGBOS | [systems/mgbos](systems/mgbos/README.md) | Implementasi Next.js; validasi kesiapan per revisi |
+| JARVIS | [systems/jarvis/docs](systems/jarvis/docs/charter.md) | Dokumentasi arsitektur; belum ada runtime yang diverifikasi |
+| KasKita | `systems/kaskita/` | Sistem independen di luar holding |
+| Asisten Python | [tools/assistant](tools/assistant/README.md) | CLI existing, terpisah dari JARVIS |
+| Pengetahuan bisnis | `bisnis/` | Brand, SOP, riset, keuangan dan perencanaan |
+| Catatan sesi | `catatan/` | Histori, termasuk dokumentasi 27 September |
+| Implementasi retired | [archive](archive/teestock-v1/README.md) | Referensi; bukan dependency atau deployment aktif |
 
-| Sistem                             | Lokasi resmi             | Perintah dari root                             |
-| ---------------------------------- | ------------------------ | ---------------------------------------------- |
-| MGBOS internal, Next.js            | `systems/mgbos/apps/mgbos/`      | `npm run dev:mgbos`                            |
-| Storefront Next.js dalam MGBOS     | `systems/mgbos/apps/teestock/`   | `npm run dev:mgbos:teestock`                   |
-| Storefront TeeStock lama (retired) | `bisnis/teestock/archive/web/` | Arsip referensi; tidak dijalankan/dideploy |
-| Admin existing, Vite               | `apps/bisnishub-web/`    | `npm run dev:bisnishub`                        |
-| KasKita mobile, Expo               | `systems/kaskita/apps/mobile/` | `npm --prefix systems/kaskita/apps/mobile run start` |
-
-Keberadaan aplikasi bukan bukti kesiapan produksi. Target hosting dan hasil CI harus diverifikasi pada revisi yang akan dirilis.
-
-## Instalasi dan pemeriksaan
-
-MGBOS menggunakan Node dan pnpm yang dipin di [manifest workspace](systems/mgbos/package.json). Alias root menggunakan pnpm 10.34.5 melalui npm exec; pengambilan pnpm pertama kali dapat memerlukan jaringan.
+## Menjalankan dan memeriksa
 
 ```sh
 npm run install:mgbos
+npm run dev:mgbos
+npm run dev:mgbos:teestock
 npm run check:mgbos
-npm run build:mgbos
+npm run check:repository
 ```
 
-Perintah tersebut menargetkan workspace `systems/mgbos/`. `check:mgbos` tidak menggantikan production smoke atau pemeriksaan database yang berlaku. Ikuti [panduan MGBOS](systems/mgbos/README.md) dan [database lokal](systems/mgbos/docs/runbooks/local-database.md); database tidak di-reset saat menyiapkan dokumentasi.
+Alias MGBOS memakai pnpm 10.34.5 di `systems/mgbos/`. Node mengikuti pin workspace.
+`npm run dev` dan `npm run build` juga menargetkan MGBOS. Pemeriksaan aplikasi
+tidak menggantikan HTTP smoke, database gates atau kesiapan operasional.
 
-Aplikasi existing tetap memakai package manager dan lockfile masing-masing. `npm run install:legacy` memasang storefront dan admin existing. `npm run install:all` kini memasang kelompok tersebut dan MGBOS; KasKita tetap terpisah. Jalankan instalasi hanya untuk target yang diperlukan.
+Python: `python tools/assistant/main.py`; dependency dimiliki tool tersebut.
+KasKita tetap menggunakan npm/lockfile sendiri. Tidak ada root pnpm workspace
+atau instalasi gabungan seluruh sistem.
 
-`npm run dev` dan `npm run build` menargetkan MGBOS resmi. Root `vercel.json` menolak deployment storefront lama; deployment MGBOS harus memakai target workspace yang terverifikasi.
+## Kepemilikan
 
-## Peta direktori
+- `systems/`: software dan dokumentasi milik sistem.
+- `docs/`: governance, arsitektur lintas sistem dan keputusan repositori.
+- `.agents/`: skill, kontrak peran dan baseline evaluasi engineering.
+- `bisnis/`: pengetahuan bisnis; `catatan/`: histori.
+- `tools/`: program mandiri; `scripts/`: pemeliharaan/pemeriksaan/setup repositori.
+- `archive/`: implementasi yang dipensiunkan; `templates/` dan `assets/`: materi bersama.
 
-- `.agents/`: skill, kontrak peran dan eval; [kontrol engineering MGBOS](systems/mgbos/docs/engineering/agent-system/README.md).
-- `docs/`: indeks, aturan engineering bersama dan keputusan tingkat repo.
-- `systems/mgbos/`: workspace resmi MGBOS beserta paket, database lokal dan dokumentasinya.
-- `apps/`, `packages/shared/`: aplikasi/paket existing; batas pemakai tercatat di indeks.
-- `bisnis/`: SOP, brand, riset, marketing dan keuangan per bisnis; beberapa aplikasi existing masih berada di sini.
-- `catatan/`: riwayat sesi, ide, jurnal dan review. Keputusan yang berlaku ditautkan ke dokumentasi resmi.
-- `scripts/`, `tools/`, `prompts/`, `memory/`, `templates/`: lihat [kepemilikan tooling](docs/engineering/repository-layout.md); jangan pindahkan tanpa memeriksa pemakainya.
-
-Root `supabase` adalah link lokal legacy TeeStock dan tidak boleh digunakan untuk MGBOS. Database MGBOS hanya di `systems/mgbos/supabase/`.
-
-## Perubahan nama perintah
-
-`dev:mgbos`, `build:mgbos` dan `install:mgbos` sekarang berarti MGBOS resmi. Prototype Vite dipensiunkan ke [arsip](archive/mgbos-vite-prototype/README.md); alias `*:mgbos-prototype` dihapus. Catatan historis tidak otomatis mengikuti perubahan alias ini.
-
-Prototype sudah dipindahkan ke `archive/mgbos-vite-prototype/`. MGBOS dan KasKita sudah berada di `systems/`. Target ini menggantikan usulan `projects/`; lihat [keputusan](docs/decisions/001-repository-organization.md) dan [rencana migrasi bertahap](docs/engineering/repository-migration-plan.md). [Overview sebelumnya](docs/reference/2026-09-23-root-overview.md) dipertahankan sebagai arsip sejarah.
+Root Supabase legacy tidak boleh digunakan. Database MGBOS hanya di
+`systems/mgbos/supabase/`. Root Vercel sengaja menolak deployment; konfigurasi
+hosting baru memerlukan target rilis yang diverifikasi. Cleanup tidak mengubah
+database atau deployment remote.

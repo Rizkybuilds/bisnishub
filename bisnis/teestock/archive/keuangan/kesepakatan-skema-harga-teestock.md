@@ -3,7 +3,7 @@ title: "Piagam Kesepakatan Skema Harga & Margin Resmi TeeStock"
 date: "2026-09-17"
 bisnis: teestock
 kategori: keuangan
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - keuangan

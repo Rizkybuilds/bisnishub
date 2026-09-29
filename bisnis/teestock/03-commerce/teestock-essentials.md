@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Essentials"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/commerce
 document_id: "TS-COM-003"
 version: "1.0"
-status: "CANONICAL"
 category: "commerce"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "03-commerce/teestock-essentials.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -20,10 +29,15 @@ depends_on:
   - "TS-COM-001"
 ---
 
+
 # TeeStock Essentials v1.0
 
-> **Canonical TeeStock Essentials Strategy**  
+> [!abstract] **Canonical TeeStock Essentials Strategy  **
 > Dokumen ini mendefinisikan positioning, product architecture, garment platform, fit system, quality standard, assortment, SKU strategy, inventory model, pricing logic, lifecycle, dan hubungan TeeStock Essentials dengan Selects, Custom, Merch, Originals, serta TeeStock Supply.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/02-brand/brand-identity-system|TS-BRD-003: TeeStock Brand Identity System]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]]
+
 
 ---
 
@@ -2175,18 +2189,18 @@ CONSUMER ESSENTIALS ≠ B2B SUPPLY.
 
 Dokumen berikut harus mengikuti TeeStock Essentials Strategy:
 
-1. `03-commerce/catalog-merchandising-system.md`
-2. `03-commerce/product-taxonomy.md`
-3. `04-services/custom.md`
-4. `04-services/merch.md`
-5. `04-services/supply.md`
-6. `05-originals/originals-master-plan.md`
-7. `07-operations/sourcing-and-vendors.md`
-8. `07-operations/production-system.md`
-9. `07-operations/inventory-system.md`
-10. `08-finance/unit-economics.md`
-11. `08-finance/pricing-framework.md`
-12. `11-data-mgbos/canonical-data-model.md`
-13. `11-data-mgbos/sku-and-id-convention.md`
+1. [[bisnis/teestock/03-commerce/catalog-merchandising-system|catalog-merchandising-system.md]]
+2. [[bisnis/teestock/03-commerce/product-taxonomy|product-taxonomy.md]]
+3. [[bisnis/teestock/04-services/custom|custom.md]]
+4. [[bisnis/teestock/04-services/merch|merch.md]]
+5. [[bisnis/teestock/04-services/supply|supply.md]]
+6. [[bisnis/teestock/05-originals/originals-master-plan|originals-master-plan.md]]
+7. [[bisnis/teestock/07-operations/sourcing-and-vendors|sourcing-and-vendors.md]]
+8. [[bisnis/teestock/07-operations/production-system|production-system.md]]
+9. [[bisnis/teestock/07-operations/inventory-system|inventory-system.md]]
+10. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+11. [[bisnis/teestock/08-finance/pricing-framework|pricing-framework.md]]
+12. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+13. [[bisnis/teestock/11-data-mgbos/sku-and-id-convention|sku-and-id-convention.md]]
 
 Setiap product yang memakai garment platform TeeStock harus tetap mereferensikan canonical base garment record agar specification, cost, inventory, dan quality tidak terfragmentasi.

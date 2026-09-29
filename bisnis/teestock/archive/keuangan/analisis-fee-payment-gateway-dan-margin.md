@@ -3,7 +3,7 @@ title: "Analisis Fee Payment Gateway & Margin TeeStock"
 date: "2026-09-14"
 bisnis: teestock
 kategori: keuangan
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - keuangan

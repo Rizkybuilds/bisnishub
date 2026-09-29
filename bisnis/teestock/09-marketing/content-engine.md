@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Content Engine"
+date: "2026-09-28"
+bisnis: teestock
+kategori: marketing
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/marketing
+  - teestock/canonical
+  - teestock/marketing
 document_id: "TS-MKT-003"
 version: "1.0"
-status: "CANONICAL"
 category: "marketing"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "09-marketing/content-engine.md"
 depends_on:
   - "TS-BRD-001"
   - "TS-BRD-003"
@@ -19,10 +28,15 @@ depends_on:
   - "TS-FIN-002"
 ---
 
+
 # TeeStock Content Engine v1.0
 
-> **Canonical TeeStock Content Strategy, Production & Distribution Framework**  
+> [!info] **Canonical TeeStock Content Strategy, Production & Distribution Framework  **
 > Dokumen ini mendefinisikan bagaimana TeeStock mengubah audience insight, products, services, brand ideas, customer proof, creator participation, market questions, dan operational knowledge menjadi repeatable content yang membangun awareness, trust, demand, conversion, retention, dan market intelligence.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-identity-system|TS-BRD-003: TeeStock Brand Identity System]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/09-marketing/go-to-market|TS-MKT-001: TeeStock Go-To-Market Strategy]] • [[bisnis/teestock/09-marketing/audience-segmentation|TS-MKT-002: TeeStock Audience Segmentation]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/06-programs/creator-program|TS-PRG-002: TeeStock Creator Program]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]]
+
 
 ---
 
@@ -3321,17 +3335,17 @@ SYSTEM BEFORE CONTENT VOLUME.
 
 Dokumen berikut harus follow Content Engine:
 
-1. `09-marketing/channel-strategy.md`
-2. `09-marketing/retention-and-community.md`
-3. `10-product-tech/website-information-architecture.md`
-4. `10-product-tech/commerce-platform.md`
-5. `10-product-tech/creator-platform.md`
-6. `10-product-tech/automation-architecture.md`
-7. `11-data-mgbos/canonical-data-model.md`
-8. `11-data-mgbos/event-model.md`
-9. `11-data-mgbos/analytics-model.md`
-10. `13-metrics-experiments/kpi-framework.md`
-11. `13-metrics-experiments/experimentation-framework.md`
-12. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/09-marketing/channel-strategy|channel-strategy.md]]
+2. [[bisnis/teestock/09-marketing/retention-and-community|retention-and-community.md]]
+3. [[bisnis/teestock/10-product-tech/website-information-architecture|website-information-architecture.md]]
+4. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+5. [[bisnis/teestock/10-product-tech/creator-platform|creator-platform.md]]
+6. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+7. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+8. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+9. [[bisnis/teestock/11-data-mgbos/analytics-model|analytics-model.md]]
+10. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+11. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+12. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Content Engine boleh berkembang menjadi multi-channel, creator-powered, data-driven, dan AI-assisted content operation, tetapi scale hanya boleh mengikuti clear audience strategy, reliable content workflows, reusable asset systems, rights governance, measurable outcomes, dan brand-consistent human judgment.

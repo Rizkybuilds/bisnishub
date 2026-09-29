@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Commerce Overview"
+date: "2026-09-27"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/commerce
 document_id: "TS-COM-001"
 version: "1.0"
-status: "CANONICAL"
 category: "commerce"
 business: "teestock"
 last_updated: "2026-09-27"
+path: "03-commerce/commerce-overview.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -19,10 +28,15 @@ depends_on:
   - "TS-BRD-004"
 ---
 
+
 # TeeStock Commerce Overview v1.0
 
-> **Canonical Commerce Strategy Document**  
+> [!abstract] **Canonical Commerce Strategy Document  **
 > Dokumen ini mendefinisikan bagaimana TeeStock Commerce bekerja sebagai consumer-facing retail engine, bagaimana Selects dan Essentials berhubungan dengan Originals, bagaimana assortment dikelola, bagaimana produk dijual melalui berbagai channel, serta bagaimana Commerce menghasilkan revenue sekaligus market intelligence bagi ecosystem TeeStock.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/02-brand/brand-identity-system|TS-BRD-003: TeeStock Brand Identity System]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]]
+
 
 ---
 
@@ -2079,16 +2093,16 @@ LEARNING BEFORE SCALE.
 
 Dokumen berikut harus mengikuti Commerce Overview:
 
-1. `03-commerce/teestock-selects.md`
-2. `03-commerce/teestock-essentials.md`
-3. `03-commerce/catalog-merchandising-system.md`
-4. `03-commerce/product-taxonomy.md`
-5. `07-operations/inventory-system.md`
-6. `07-operations/order-fulfillment.md`
-7. `08-finance/pricing-framework.md`
-8. `09-marketing/channel-strategy.md`
-9. `10-product-tech/commerce-platform.md`
-10. `11-data-mgbos/canonical-data-model.md`
-11. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/03-commerce/teestock-selects|teestock-selects.md]]
+2. [[bisnis/teestock/03-commerce/teestock-essentials|teestock-essentials.md]]
+3. [[bisnis/teestock/03-commerce/catalog-merchandising-system|catalog-merchandising-system.md]]
+4. [[bisnis/teestock/03-commerce/product-taxonomy|product-taxonomy.md]]
+5. [[bisnis/teestock/07-operations/inventory-system|inventory-system.md]]
+6. [[bisnis/teestock/07-operations/order-fulfillment|order-fulfillment.md]]
+7. [[bisnis/teestock/08-finance/pricing-framework|pricing-framework.md]]
+8. [[bisnis/teestock/09-marketing/channel-strategy|channel-strategy.md]]
+9. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+10. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+11. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 Commerce implementation boleh berubah, tetapi distinction antara Commerce, Selects, Essentials, Originals, dan Collaborations harus tetap mengikuti dokumen canonical ini.

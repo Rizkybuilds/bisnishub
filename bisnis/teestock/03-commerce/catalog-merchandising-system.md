@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Catalog & Merchandising System"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/commerce
 document_id: "TS-COM-004"
 version: "1.0"
-status: "CANONICAL"
 category: "commerce"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "03-commerce/catalog-merchandising-system.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -16,10 +25,15 @@ depends_on:
   - "TS-COM-003"
 ---
 
+
 # TeeStock Catalog & Merchandising System v1.0
 
-> **Canonical Catalog & Merchandising Framework**  
+> [!abstract] **Canonical Catalog & Merchandising Framework  **
 > Dokumen ini mendefinisikan bagaimana seluruh produk TeeStock disusun, dikategorikan, ditemukan, dibandingkan, ditampilkan, diprioritaskan, dipromosikan, diuji, dan dihentikan di dalam Commerce tanpa mengubah struktur bisnis canonical TeeStock.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/03-commerce/teestock-selects|TS-COM-002: TeeStock Selects]] • [[bisnis/teestock/03-commerce/teestock-essentials|TS-COM-003: TeeStock Essentials]]
+
 
 ---
 
@@ -2155,14 +2169,14 @@ CLARITY BEFORE CATALOG SIZE.
 
 Dokumen berikut harus mengikuti Catalog & Merchandising System:
 
-1. `03-commerce/product-taxonomy.md`
-2. `09-marketing/channel-strategy.md`
-3. `09-marketing/go-to-market.md`
-4. `10-product-tech/website-information-architecture.md`
-5. `10-product-tech/commerce-platform.md`
-6. `11-data-mgbos/canonical-data-model.md`
-7. `11-data-mgbos/event-model.md`
-8. `13-metrics-experiments/kpi-framework.md`
-9. `13-metrics-experiments/experimentation-framework.md`
+1. [[bisnis/teestock/03-commerce/product-taxonomy|product-taxonomy.md]]
+2. [[bisnis/teestock/09-marketing/channel-strategy|channel-strategy.md]]
+3. [[bisnis/teestock/09-marketing/go-to-market|go-to-market.md]]
+4. [[bisnis/teestock/10-product-tech/website-information-architecture|website-information-architecture.md]]
+5. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+6. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+7. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+8. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+9. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
 
 Catalog presentation boleh berubah sesuai channel dan campaign, tetapi Product identity, ownership, taxonomy, pricing truth, dan availability harus tetap berasal dari canonical system.

@@ -3,7 +3,7 @@ title: "Perencanaan Audit & Upgrade Komprehensif TeeStock Web Client"
 date: "2026-09-18"
 bisnis: teestock
 kategori: operasional
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - kategori/operasional

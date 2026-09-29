@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Programs Overview"
+date: "2026-09-28"
+bisnis: teestock
+kategori: marketing
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/marketing
+  - teestock/canonical
+  - teestock/programs
 document_id: "TS-PRG-001"
 version: "1.0"
-status: "CANONICAL"
 category: "programs"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "06-programs/programs-overview.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -21,10 +30,15 @@ depends_on:
   - "TS-ORG-001"
 ---
 
+
 # TeeStock Programs Overview v1.0
 
-> **Canonical TeeStock Participation & Distribution Program Architecture**  
+> [!abstract] **Canonical TeeStock Participation & Distribution Program Architecture  **
 > Dokumen ini mendefinisikan purpose, architecture, participant types, lifecycle, eligibility, incentives, attribution, economics, governance, automation, data model, dan boundaries untuk seluruh TeeStock Programs.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/04-services/merch|TS-SVC-004: TeeStock Merch]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]]
+
 
 ---
 
@@ -2374,20 +2388,20 @@ AUTOMATE RULES, ESCALATE EXCEPTIONS.
 
 Dokumen berikut harus follow Programs Overview:
 
-1. `06-programs/creator-program.md`
-2. `06-programs/reseller-program.md`
-3. `06-programs/partner-program.md`
-4. `06-programs/affiliate-program.md`
-5. `08-finance/pricing-framework.md`
-6. `08-finance/treasury-policy.md`
-7. `10-product-tech/creator-platform.md`
-8. `10-product-tech/partner-platform.md`
-9. `10-product-tech/automation-architecture.md`
-10. `11-data-mgbos/canonical-data-model.md`
-11. `11-data-mgbos/entity-hierarchy.md`
-12. `11-data-mgbos/event-model.md`
-13. `12-legal-ip/design-licensing-policy.md`
-14. `12-legal-ip/creator-agreement-framework.md`
-15. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/06-programs/creator-program|creator-program.md]]
+2. [[bisnis/teestock/06-programs/reseller-program|reseller-program.md]]
+3. [[bisnis/teestock/06-programs/partner-program|partner-program.md]]
+4. [[bisnis/teestock/06-programs/affiliate-program|affiliate-program.md]]
+5. [[bisnis/teestock/08-finance/pricing-framework|pricing-framework.md]]
+6. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+7. [[bisnis/teestock/10-product-tech/creator-platform|creator-platform.md]]
+8. [[bisnis/teestock/10-product-tech/partner-platform|partner-platform.md]]
+9. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+10. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+11. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+12. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+13. [[bisnis/teestock/12-legal-ip/design-licensing-policy|design-licensing-policy.md]]
+14. [[bisnis/teestock/12-legal-ip/creator-agreement-framework|creator-agreement-framework.md]]
+15. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 TeeStock Programs boleh berkembang menjadi participant network dan platform yang lebih besar, tetapi setiap Program harus tetap memiliki explicit value exchange, controlled eligibility, traceable attribution, healthy economics, reliable payout, dan clear lifecycle governance.

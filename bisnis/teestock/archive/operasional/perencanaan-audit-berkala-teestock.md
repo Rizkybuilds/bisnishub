@@ -3,7 +3,7 @@ title: "Master Framework & SOP Audit Berkala Web App TeeStock"
 date: "2026-09-18"
 bisnis: teestock
 kategori: operasional
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - kategori/operasional

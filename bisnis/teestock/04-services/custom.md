@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Custom"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/services
 document_id: "TS-SVC-002"
 version: "1.0"
-status: "CANONICAL"
 category: "services"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "04-services/custom.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -18,10 +27,15 @@ depends_on:
   - "TS-SVC-001"
 ---
 
+
 # TeeStock Custom v1.0
 
-> **Canonical TeeStock Custom Service Strategy**  
+> [!abstract] **Canonical TeeStock Custom Service Strategy  **
 > Dokumen ini mendefinisikan positioning, customer, scope, offering, workflow, pricing logic, artwork handling, revisions, production, quality, SLA, automation, data model, metrics, dan service boundaries untuk TeeStock Custom.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/teestock-essentials|TS-COM-003: TeeStock Essentials]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]]
+
 
 ---
 
@@ -2046,18 +2060,18 @@ QUALITY BEFORE DEADLINE PROMISE.
 
 Dokumen berikut harus follow TeeStock Custom Strategy:
 
-1. `04-services/business.md`
-2. `04-services/studio.md`
-3. `07-operations/production-system.md`
-4. `07-operations/quality-control.md`
-5. `07-operations/inventory-system.md`
-6. `07-operations/order-fulfillment.md`
-7. `08-finance/unit-economics.md`
-8. `08-finance/pricing-framework.md`
-9. `10-product-tech/automation-architecture.md`
-10. `11-data-mgbos/canonical-data-model.md`
-11. `11-data-mgbos/event-model.md`
-12. `12-legal-ip/customer-commerce-policy.md`
-13. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/04-services/business|business.md]]
+2. [[bisnis/teestock/04-services/studio|studio.md]]
+3. [[bisnis/teestock/07-operations/production-system|production-system.md]]
+4. [[bisnis/teestock/07-operations/quality-control|quality-control.md]]
+5. [[bisnis/teestock/07-operations/inventory-system|inventory-system.md]]
+6. [[bisnis/teestock/07-operations/order-fulfillment|order-fulfillment.md]]
+7. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+8. [[bisnis/teestock/08-finance/pricing-framework|pricing-framework.md]]
+9. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+10. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+11. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+12. [[bisnis/teestock/12-legal-ip/customer-commerce-policy|customer-commerce-policy.md]]
+13. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 TeeStock Custom boleh berkembang menjadi lebih otomatis dan lebih fleksibel, tetapi setiap expansion harus tetap mempertahankan productized-service principle dan menggunakan canonical garment, artwork, order, production, serta pricing systems.

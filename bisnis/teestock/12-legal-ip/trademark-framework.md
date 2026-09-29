@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Trademark Framework"
+date: "2026-09-28"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/legal-ip
 document_id: "TS-LEG-004"
 version: "1.0"
-status: "CANONICAL"
 category: "legal-ip"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "12-legal-ip/trademark-framework.md"
 depends_on:
   - "TS-LEG-001"
   - "TS-LEG-002"
@@ -18,9 +27,14 @@ depends_on:
   - "TS-DAT-005"
 ---
 
+
 # TeeStock Trademark Framework v1.0
 
-> **Canonical TeeStock Brand Name, Trademark Clearance, Filing, Portfolio & Usage Governance Framework**
+> [!warning] **Canonical TeeStock Brand Name, Trademark Clearance, Filing, Portfolio & Usage Governance Framework**
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/12-legal-ip/ip-policy|TS-LEG-001: TeeStock Intellectual Property Policy]] • [[bisnis/teestock/12-legal-ip/design-licensing-policy|TS-LEG-002: TeeStock Design Licensing Policy]] • [[bisnis/teestock/12-legal-ip/creator-agreement-framework|TS-LEG-003: TeeStock Creator Agreement Framework]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/05-originals/label-governance|TS-ORG-004: TeeStock Label Governance]] • [[bisnis/teestock/11-data-mgbos/canonical-data-model|TS-DAT-001: TeeStock Canonical Data Model]] • [[bisnis/teestock/11-data-mgbos/mgbos-integration|TS-DAT-005: TeeStock MGBOS Integration]]
+
 
 Dokumen ini mendefinisikan bagaimana TeeStock menciptakan, mengevaluasi, mengadopsi, mendaftarkan, menggunakan, melisensikan, memonitor, memperpanjang, mempertahankan, dan menghentikan penggunaan nama merek, logo, label, collection marks, dan commercial identifiers.
 
@@ -3064,11 +3078,11 @@ MGBOS SHOULD KNOW THE STATUS, OWNER, SCOPE, TERRITORY, AND DEADLINES OF EVERY ST
 
 Dokumen berikut harus follow Trademark Framework:
 
-1. `12-legal-ip/customer-commerce-policy.md`
-2. `13-metrics-experiments/kpi-framework.md`
-3. `13-metrics-experiments/experimentation-framework.md`
-4. `13-metrics-experiments/decision-thresholds.md`
-5. `14-roadmap/master-roadmap.md`
-6. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/12-legal-ip/customer-commerce-policy|customer-commerce-policy.md]]
+2. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+3. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+4. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+5. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+6. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Trademark Framework boleh berkembang dari simple PDKI search + filing registry menjadi multi-brand trademark portfolio, automated renewal monitoring, conflict watch assistance, trademark licensing, dan akhirnya multi-jurisdiction IP portfolio management untuk MultiGraph Group. Tetapi portfolio complexity hanya boleh bertambah sambil mempertahankan deliberate ownership, documented clearance, exact filing scope, current legal status, reliable deadlines, historical evidence, dan human/legal authority untuk keputusan material.

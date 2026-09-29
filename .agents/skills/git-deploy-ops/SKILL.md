@@ -14,9 +14,9 @@ Prepare and verify a release for the explicitly selected application and environ
 ## Identify the target
 
 - Inspect Git status, current branch/remotes, package scripts, deployment files and applicable `AGENTS.md`. Preserve unrelated tracked and untracked work.
-- **Retired storefront:** `bisnis/teestock/archive/web`; reference only, do not deploy. **Legacy admin:** `apps/bisnishub-web`; retained separately. Verify project linkage before any authorized admin release.
+- **Retired storefront:** `archive/teestock-v1/apps/storefront`; reference only, do not deploy. **Legacy admin:** removed in commit `05e8b18`; do not run or deploy it.
 - **MGBOS:** `systems/mgbos/`, with its own pnpm workspace and local Supabase. Root `dev:mgbos`/`build:mgbos` target this official workspace; legacy `archive/mgbos-vite-prototype/` is retired and has no root runtime aliases. Do not deploy the archive. Inspect scripts and the project index before release operations.
-- Root `supabase` is an obsolete legacy junction; do not traverse it. TeeStock SQL remains in `bisnis/teestock/archive/`. MGBOS commands must never traverse it. MGBOS instructions forbid remote resets, production schema changes, production seeding and hard-delete of history.
+- The obsolete root `supabase` junction was removed; do not recreate or use it. TeeStock SQL remains in `archive/teestock-v1/`. MGBOS commands must never traverse it. MGBOS instructions forbid remote resets, production schema changes, production seeding and hard-delete of history.
 
 ## Prepare a reviewable change
 

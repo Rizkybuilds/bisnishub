@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Customer Commerce Policy"
+date: "2026-09-28"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/legal-ip
 document_id: "TS-LEG-005"
 version: "1.0"
-status: "CANONICAL"
 category: "legal-ip"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "12-legal-ip/customer-commerce-policy.md"
 depends_on:
   - "TS-LEG-001"
   - "TS-LEG-002"
@@ -25,9 +34,14 @@ depends_on:
   - "TS-DAT-004"
 ---
 
+
 # TeeStock Customer Commerce Policy v1.0
 
-> **Canonical TeeStock Customer Transaction, Order, Payment, Production, Delivery, Cancellation, Return, Refund & Commerce-Term Governance Framework**
+> [!warning] **Canonical TeeStock Customer Transaction, Order, Payment, Production, Delivery, Cancellation, Return, Refund & Commerce-Term Governance Framework**
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/12-legal-ip/ip-policy|TS-LEG-001: TeeStock Intellectual Property Policy]] • [[bisnis/teestock/12-legal-ip/design-licensing-policy|TS-LEG-002: TeeStock Design Licensing Policy]] • [[bisnis/teestock/12-legal-ip/creator-agreement-framework|TS-LEG-003: TeeStock Creator Agreement Framework]] • [[bisnis/teestock/12-legal-ip/trademark-framework|TS-LEG-004: TeeStock Trademark Framework]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/03-commerce/catalog-merchandising-system|TS-COM-004: TeeStock Catalog & Merchandising System]] • [[bisnis/teestock/04-services/custom|TS-SVC-002: TeeStock Custom]] • [[bisnis/teestock/04-services/business|TS-SVC-003: TeeStock Business]] • [[bisnis/teestock/04-services/merch|TS-SVC-004: TeeStock Merch]] • [[bisnis/teestock/07-operations/order-fulfillment|TS-OPS-006: TeeStock Order Fulfillment System]] • [[bisnis/teestock/07-operations/customer-service|TS-OPS-007: TeeStock Customer Service System]] • [[bisnis/teestock/07-operations/returns-and-warranty|TS-OPS-008: TeeStock Returns & Warranty System]] • [[bisnis/teestock/08-finance/pricing-framework|TS-FIN-003: TeeStock Pricing Framework]] • [[bisnis/teestock/08-finance/treasury-policy|TS-FIN-005: TeeStock Treasury Policy]] • [[bisnis/teestock/10-product-tech/commerce-platform|TS-TEC-003: TeeStock Commerce Platform]] • [[bisnis/teestock/11-data-mgbos/event-model|TS-DAT-004: TeeStock Event Model]]
+
 
 Dokumen ini mendefinisikan prinsip dan rules canonical yang mengatur hubungan transaksi antara TeeStock dan customer melalui Website, marketplace, assisted sales, Custom, Business, Merch, dan future commerce channels.
 
@@ -2917,11 +2931,11 @@ MGBOS SHOULD KNOW WHICH TERMS APPLIED TO EVERY MATERIAL CUSTOMER TRANSACTION.
 
 Dokumen berikut harus follow Customer Commerce Policy:
 
-1. `13-metrics-experiments/kpi-framework.md`
-2. `13-metrics-experiments/experimentation-framework.md`
-3. `13-metrics-experiments/decision-thresholds.md`
-4. `14-roadmap/master-roadmap.md`
-5. `14-roadmap/capability-roadmap.md`
-6. `14-roadmap/current-quarter.md`
+1. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+2. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+3. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+4. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+5. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
+6. [[bisnis/teestock/14-roadmap/current-quarter|current-quarter.md]]
 
 TeeStock Customer Commerce Policy boleh berkembang dari documented Terms + manual customer-resolution workflows menjadi policy-driven self-service cancellation, returns, refunds, automated customer notifications, B2B contract workflows, and eventually multi-jurisdiction commerce-policy orchestration. Tetapi automation hanya boleh meningkat dengan mempertahankan clear customer expectations, applicable mandatory rights, versioned transaction terms, human escalation, reliable financial records, and traceable Order → Approval → Fulfillment → Return → Refund lineage.

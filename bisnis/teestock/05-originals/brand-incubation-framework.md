@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Brand Incubation Framework"
+date: "2026-09-28"
+bisnis: teestock
+kategori: brand
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/brand
+  - teestock/canonical
+  - teestock/originals
 document_id: "TS-ORG-002"
 version: "1.0"
-status: "CANONICAL"
 category: "originals"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "05-originals/brand-incubation-framework.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -17,10 +26,15 @@ depends_on:
   - "TS-ORG-001"
 ---
 
+
 # TeeStock Brand Incubation Framework v1.0
 
-> **Canonical Originals Incubation & Validation System**  
+> [!abstract] **Canonical Originals Incubation & Validation System  **
 > Dokumen ini mendefinisikan bagaimana insight berubah menjadi concept, capsule, validated collection, label candidate, dan akhirnya Independent Label melalui structured experimentation, evidence gates, resource allocation, decision rules, dan portfolio governance.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/03-commerce/teestock-selects|TS-COM-002: TeeStock Selects]] • [[bisnis/teestock/03-commerce/catalog-merchandising-system|TS-COM-004: TeeStock Catalog & Merchandising System]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]]
+
 
 ---
 
@@ -2497,20 +2511,20 @@ DIVERSIFY LEARNING. CONCENTRATE SCALING.
 
 Dokumen berikut harus follow Brand Incubation Framework:
 
-1. `05-originals/collection-framework.md`
-2. `05-originals/label-governance.md`
+1. [[bisnis/teestock/05-originals/collection-framework|collection-framework.md]]
+2. [[bisnis/teestock/05-originals/label-governance|label-governance.md]]
 3. `05-originals/collections/`
 4. `05-originals/labels/`
-5. `08-finance/financial-model.md`
-6. `09-marketing/audience-segmentation.md`
-7. `09-marketing/content-engine.md`
-8. `09-marketing/retention-and-community.md`
-9. `11-data-mgbos/canonical-data-model.md`
-10. `11-data-mgbos/event-model.md`
-11. `12-legal-ip/ip-policy.md`
-12. `12-legal-ip/trademark-framework.md`
-13. `13-metrics-experiments/kpi-framework.md`
-14. `13-metrics-experiments/experimentation-framework.md`
-15. `13-metrics-experiments/decision-thresholds.md`
+5. [[bisnis/teestock/08-finance/financial-model|financial-model.md]]
+6. [[bisnis/teestock/09-marketing/audience-segmentation|audience-segmentation.md]]
+7. [[bisnis/teestock/09-marketing/content-engine|content-engine.md]]
+8. [[bisnis/teestock/09-marketing/retention-and-community|retention-and-community.md]]
+9. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+11. [[bisnis/teestock/12-legal-ip/ip-policy|ip-policy.md]]
+12. [[bisnis/teestock/12-legal-ip/trademark-framework|trademark-framework.md]]
+13. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+14. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+15. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
 
 Setiap Concept dan Label boleh memiliki karakter kreatif yang berbeda, tetapi keputusan `PROMOTE`, `ITERATE`, `PAUSE`, dan `ARCHIVE` harus tetap mengikuti evidence-driven incubation framework ini.
