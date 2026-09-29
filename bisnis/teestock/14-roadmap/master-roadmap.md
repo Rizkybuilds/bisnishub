@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Master Roadmap"
+date: "2026-09-28"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/roadmap
 document_id: "TS-RDM-001"
 version: "1.0"
-status: "CANONICAL"
 category: "roadmap"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "14-roadmap/master-roadmap.md"
 depends_on:
   - "TS-FND-001"
   - "TS-STR-001"
@@ -28,9 +37,14 @@ depends_on:
   - "TS-MET-003"
 ---
 
+
 # TeeStock Master Roadmap v1.0
 
-> **Canonical TeeStock Business, Capability, Technology, Automation & AI Execution Roadmap**
+> [!abstract] **Canonical TeeStock Business, Capability, Technology, Automation & AI Execution Roadmap**
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/06-programs/programs-overview|TS-PRG-001: TeeStock Programs Overview]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/08-finance/financial-model|TS-FIN-001: TeeStock Financial Model]] • [[bisnis/teestock/09-marketing/go-to-market|TS-MKT-001: TeeStock Go-To-Market Strategy]] • [[bisnis/teestock/10-product-tech/digital-product-vision|TS-TEC-001: TeeStock Digital Product Vision]] • [[bisnis/teestock/11-data-mgbos/canonical-data-model|TS-DAT-001: TeeStock Canonical Data Model]] • [[bisnis/teestock/12-legal-ip/ip-policy|TS-LEG-001: TeeStock Intellectual Property Policy]] • [[bisnis/teestock/13-metrics-experiments/kpi-framework|TS-MET-001: TeeStock KPI Framework]] • [[bisnis/teestock/13-metrics-experiments/experimentation-framework|TS-MET-002: TeeStock Experimentation Framework]] • [[bisnis/teestock/13-metrics-experiments/decision-thresholds|TS-MET-003: TeeStock Decision Thresholds]]
+
 
 Dokumen ini menyatukan seluruh canonical architecture TeeStock menjadi urutan pengembangan bisnis dari founder-led asset-light operation menuju structured business system, integrated MGBOS, automation, AI-assisted operations, dan akhirnya governed agentic enterprise.
 
@@ -3931,9 +3945,9 @@ Canonical high-level sequence:
 
 Dokumen berikut harus follow Master Roadmap:
 
-1. `14-roadmap/capability-roadmap.md`
-2. `14-roadmap/current-quarter.md`
+1. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
+2. [[bisnis/teestock/14-roadmap/current-quarter|current-quarter.md]]
 
-`capability-roadmap.md` harus menerjemahkan Stage 0–8 menjadi maturity matrix per capability—Sales, Commerce, Production, Partner, Inventory, Finance, Marketing, Creator, Data, MGBOS, Automation, AI, Security, Infrastructure, dan Organization—agar kita dapat menilai secara objektif **TeeStock sekarang berada di level mana dan apa exact capability gap menuju level berikutnya**.
+[[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]] harus menerjemahkan Stage 0–8 menjadi maturity matrix per capability—Sales, Commerce, Production, Partner, Inventory, Finance, Marketing, Creator, Data, MGBOS, Automation, AI, Security, Infrastructure, dan Organization—agar kita dapat menilai secara objektif **TeeStock sekarang berada di level mana dan apa exact capability gap menuju level berikutnya**.
 
-`current-quarter.md` kemudian menjadi execution layer yang hanya mengambil prioritas dari Master Roadmap + Capability Roadmap, sehingga quarterly planning tidak berubah menjadi daftar ide acak.
+[[bisnis/teestock/14-roadmap/current-quarter|current-quarter.md]] kemudian menjadi execution layer yang hanya mengambil prioritas dari Master Roadmap + Capability Roadmap, sehingga quarterly planning tidak berubah menjadi daftar ide acak.

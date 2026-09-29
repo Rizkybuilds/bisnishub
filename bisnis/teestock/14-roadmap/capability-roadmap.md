@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Capability Roadmap"
+date: "2026-09-28"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/roadmap
 document_id: "TS-RDM-002"
 version: "1.0"
-status: "CANONICAL"
 category: "roadmap"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "14-roadmap/capability-roadmap.md"
 depends_on:
   - "TS-RDM-001"
   - "TS-OPS-001"
@@ -19,9 +28,14 @@ depends_on:
   - "TS-MET-003"
 ---
 
+
 # TeeStock Capability Roadmap v1.0
 
-> **Canonical TeeStock Business Capability Maturity, Gap Assessment & Build-Sequence Framework**
+> [!abstract] **Canonical TeeStock Business Capability Maturity, Gap Assessment & Build-Sequence Framework**
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/14-roadmap/master-roadmap|TS-RDM-001: TeeStock Master Roadmap]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/08-finance/financial-model|TS-FIN-001: TeeStock Financial Model]] • [[bisnis/teestock/09-marketing/go-to-market|TS-MKT-001: TeeStock Go-To-Market Strategy]] • [[bisnis/teestock/10-product-tech/digital-product-vision|TS-TEC-001: TeeStock Digital Product Vision]] • [[bisnis/teestock/10-product-tech/automation-architecture|TS-TEC-006: TeeStock Automation Architecture]] • [[bisnis/teestock/11-data-mgbos/canonical-data-model|TS-DAT-001: TeeStock Canonical Data Model]] • [[bisnis/teestock/11-data-mgbos/mgbos-integration|TS-DAT-005: TeeStock MGBOS Integration]] • [[bisnis/teestock/13-metrics-experiments/kpi-framework|TS-MET-001: TeeStock KPI Framework]] • [[bisnis/teestock/13-metrics-experiments/decision-thresholds|TS-MET-003: TeeStock Decision Thresholds]]
+
 
 Dokumen ini menerjemahkan TeeStock Master Roadmap menjadi maturity architecture per capability sehingga TeeStock dapat menentukan secara objektif:
 
@@ -3907,9 +3921,9 @@ AUTONOMOUS FINANCE
 
 Dokumen berikutnya:
 
-1. `14-roadmap/current-quarter.md`
+1. [[bisnis/teestock/14-roadmap/current-quarter|current-quarter.md]]
 
-`current-quarter.md` harus mengubah Master Roadmap + Capability Roadmap menjadi **execution plan konkret untuk satu quarter**, dengan:
+[[bisnis/teestock/14-roadmap/current-quarter|current-quarter.md]] harus mengubah Master Roadmap + Capability Roadmap menjadi **execution plan konkret untuk satu quarter**, dengan:
 
 ```text
 OBJECTIVES

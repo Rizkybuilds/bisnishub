@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Production System"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/operations
 document_id: "TS-OPS-003"
 version: "1.0"
-status: "CANONICAL"
 category: "operations"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "07-operations/production-system.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -20,10 +29,15 @@ depends_on:
   - "TS-OPS-002"
 ---
 
+
 # TeeStock Production System v1.0
 
-> **Canonical TeeStock Production Execution Framework**  
+> [!tip] **Canonical TeeStock Production Execution Framework  **
 > Dokumen ini mendefinisikan bagaimana TeeStock mengubah production demand menjadi controlled Production Jobs dan Work Orders melalui production recipes, material planning, routing, scheduling, capacity, WIP, batch traceability, output control, scrap, rework, costing, quality handoff, dan production closure.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/04-services/custom|TS-SVC-002: TeeStock Custom]] • [[bisnis/teestock/04-services/business|TS-SVC-003: TeeStock Business]] • [[bisnis/teestock/04-services/merch|TS-SVC-004: TeeStock Merch]] • [[bisnis/teestock/04-services/fulfill|TS-SVC-007: TeeStock Fulfill]] • [[bisnis/teestock/06-programs/partner-program|TS-PRG-004: TeeStock Partner Program]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/07-operations/sourcing-and-vendors|TS-OPS-002: TeeStock Sourcing & Vendors]]
+
 
 ---
 
@@ -2918,16 +2932,16 @@ DATA BEFORE AI SCHEDULING.
 
 Dokumen berikut harus follow Production System:
 
-1. `07-operations/quality-control.md`
-2. `07-operations/inventory-system.md`
-3. `07-operations/order-fulfillment.md`
-4. `08-finance/unit-economics.md`
-5. `08-finance/cost-accounting.md`
-6. `10-product-tech/automation-architecture.md`
-7. `11-data-mgbos/canonical-data-model.md`
-8. `11-data-mgbos/entity-hierarchy.md`
-9. `11-data-mgbos/event-model.md`
-10. `11-data-mgbos/mgbos-integration.md`
-11. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/07-operations/quality-control|quality-control.md]]
+2. [[bisnis/teestock/07-operations/inventory-system|inventory-system.md]]
+3. [[bisnis/teestock/07-operations/order-fulfillment|order-fulfillment.md]]
+4. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+5. [[bisnis/teestock/08-finance/cost-accounting|cost-accounting.md]]
+6. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+7. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+8. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+9. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+11. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 TeeStock Production System boleh berkembang menjadi distributed and highly automated production network, tetapi hanya setelah product specifications, Recipes, BOM, Work Orders, material control, QC, production costing, dan executor performance benar-benar menjadi reliable operational truth.

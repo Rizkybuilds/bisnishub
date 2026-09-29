@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Digital Product Vision"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/product-tech
 document_id: "TS-TEC-001"
 version: "1.0"
-status: "CANONICAL"
 category: "product-tech"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "10-product-tech/digital-product-vision.md"
 depends_on:
   - "TS-FND-001"
   - "TS-STR-003"
@@ -23,10 +32,15 @@ depends_on:
   - "TS-MKT-005"
 ---
 
+
 # TeeStock Digital Product Vision v1.0
 
-> **Canonical TeeStock Digital Product, Platform & Experience Vision**  
+> [!abstract] **Canonical TeeStock Digital Product, Platform & Experience Vision  **
 > Dokumen ini mendefinisikan bagaimana TeeStock membangun digital experience untuk customers, businesses, creators, partners, internal operators, dan future AI agents melalui shared identity, commerce, self-service, workflow, data, APIs, events, automation, dan MGBOS.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/06-programs/programs-overview|TS-PRG-001: TeeStock Programs Overview]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/09-marketing/go-to-market|TS-MKT-001: TeeStock Go-To-Market Strategy]] • [[bisnis/teestock/09-marketing/audience-segmentation|TS-MKT-002: TeeStock Audience Segmentation]] • [[bisnis/teestock/09-marketing/channel-strategy|TS-MKT-004: TeeStock Channel Strategy]] • [[bisnis/teestock/09-marketing/retention-and-community|TS-MKT-005: TeeStock Retention & Community]]
+
 
 ---
 
@@ -2804,18 +2818,18 @@ PLATFORMIZATION MUST BE EARNED.
 
 Dokumen berikut harus follow Digital Product Vision:
 
-1. `10-product-tech/website-information-architecture.md`
-2. `10-product-tech/commerce-platform.md`
-3. `10-product-tech/creator-platform.md`
-4. `10-product-tech/partner-platform.md`
-5. `10-product-tech/automation-architecture.md`
-6. `11-data-mgbos/canonical-data-model.md`
-7. `11-data-mgbos/entity-hierarchy.md`
-8. `11-data-mgbos/sku-and-id-convention.md`
-9. `11-data-mgbos/event-model.md`
-10. `11-data-mgbos/mgbos-integration.md`
-11. `11-data-mgbos/analytics-model.md`
-12. `14-roadmap/master-roadmap.md`
-13. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/10-product-tech/website-information-architecture|website-information-architecture.md]]
+2. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+3. [[bisnis/teestock/10-product-tech/creator-platform|creator-platform.md]]
+4. [[bisnis/teestock/10-product-tech/partner-platform|partner-platform.md]]
+5. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+6. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+7. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+8. [[bisnis/teestock/11-data-mgbos/sku-and-id-convention|sku-and-id-convention.md]]
+9. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+11. [[bisnis/teestock/11-data-mgbos/analytics-model|analytics-model.md]]
+12. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+13. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Digital Product boleh berkembang dari simple commerce website menjadi full apparel commerce, service, creator, partner, MGBOS, automation, dan AI operating ecosystem, tetapi setiap lapisan baru hanya boleh ditambahkan ketika underlying business process, data model, economics, permissions, dan operational demand sudah cukup matang.

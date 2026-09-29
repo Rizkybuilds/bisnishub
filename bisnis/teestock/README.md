@@ -1,17 +1,30 @@
 ---
 title: "TeeStock Canonical Business Blueprint — README"
+date: "2026-09-28"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/root
 document_id: "TS-ROOT-001"
 version: "1.0"
-status: "CANONICAL"
 category: "root"
 business: "teestock"
-path: "bisnis/teestock/README.md"
 last_updated: "2026-09-28"
+path: "README.md"
 ---
+
 
 # TeeStock Canonical Business Blueprint
 
-> **Root Navigation, Canonical Knowledge Map & Business Operating Architecture**
+> [!abstract] **Root Navigation, Canonical Knowledge Map & Business Operating Architecture**
+> - **Pusat Komando:** `bisnis/teestock/` | **Status:** `CANONICAL` (100% Active)
+> - **Holding & Ekosistem:** MultiGraph Printing & Apparel Holding
+> - **Executive Founder:** Rizky (Executive Sole Founder & C-Suite Cabinet)
+> - **Fokus Operasional:** The Autonomous Everyday Curated Graphic Apparel House
 
 Repository path:
 
@@ -504,6 +517,32 @@ WORKFLOW
 These may evolve rapidly from operational learning.
 
 ---
+
+
+---
+
+# 21.1. Master Navigation Index (Obsidian Interactive Map)
+
+> [!tip] **Klik tautan dokumen untuk membuka langsung di Obsidian Workspace atau Graph View**
+
+| Subsystem | Folder | Total Docs | Canonical Documents | Kategori |
+|---|---|:---:|---|---|
+| **00. Foundation** | `00-foundation/` | 4 | [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001]], [[bisnis/teestock/00-foundation/glossary|TS-FND-002]], [[bisnis/teestock/00-foundation/documentation-governance|TS-FND-003]], [[bisnis/teestock/00-foundation/decision-register|TS-FND-004]] | `catatan` |
+| **01. Strategy** | `01-strategy/` | 4 | [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001]], [[bisnis/teestock/01-strategy/business-model|TS-STR-002]], [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003]], [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004]] | `riset` |
+| **02. Brand** | `02-brand/` | 4 | [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001]], [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002]], [[bisnis/teestock/02-brand/brand-identity-system|TS-BRD-003]], [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004]] | `brand` |
+| **03. Commerce** | `03-commerce/` | 5 | [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001]], [[bisnis/teestock/03-commerce/teestock-selects|TS-COM-002]], [[bisnis/teestock/03-commerce/teestock-essentials|TS-COM-003]], [[bisnis/teestock/03-commerce/catalog-merchandising-system|TS-COM-004]], [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005]] | `operasional` |
+| **04. Services** | `04-services/` | 7 | [[bisnis/teestock/04-services/services-overview|TS-SVC-001]], [[bisnis/teestock/04-services/custom|TS-SVC-002]], [[bisnis/teestock/04-services/business|TS-SVC-003]], [[bisnis/teestock/04-services/merch|TS-SVC-004]], [[bisnis/teestock/04-services/studio|TS-SVC-005]], [[bisnis/teestock/04-services/supply|TS-SVC-006]], [[bisnis/teestock/04-services/fulfill|TS-SVC-007]] | `operasional` |
+| **05. Originals** | `05-originals/` | 4 | [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001]], [[bisnis/teestock/05-originals/brand-incubation-framework|TS-ORG-002]], [[bisnis/teestock/05-originals/collection-framework|TS-ORG-003]], [[bisnis/teestock/05-originals/label-governance|TS-ORG-004]] | `brand` |
+| **06. Programs** | `06-programs/` | 5 | [[bisnis/teestock/06-programs/programs-overview|TS-PRG-001]], [[bisnis/teestock/06-programs/creator-program|TS-PRG-002]], [[bisnis/teestock/06-programs/reseller-program|TS-PRG-003]], [[bisnis/teestock/06-programs/partner-program|TS-PRG-004]], [[bisnis/teestock/06-programs/affiliate-program|TS-PRG-005]] | `marketing` |
+| **07. Operations** | `07-operations/` | 8 | [[bisnis/teestock/07-operations/operating-model|TS-OPS-001]], [[bisnis/teestock/07-operations/sourcing-and-vendors|TS-OPS-002]], [[bisnis/teestock/07-operations/production-system|TS-OPS-003]], [[bisnis/teestock/07-operations/quality-control|TS-OPS-004]], [[bisnis/teestock/07-operations/inventory-system|TS-OPS-005]], [[bisnis/teestock/07-operations/order-fulfillment|TS-OPS-006]], [[bisnis/teestock/07-operations/customer-service|TS-OPS-007]], [[bisnis/teestock/07-operations/returns-and-warranty|TS-OPS-008]] | `operasional` |
+| **08. Finance** | `08-finance/` | 5 | [[bisnis/teestock/08-finance/financial-model|TS-FIN-001]], [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002]], [[bisnis/teestock/08-finance/pricing-framework|TS-FIN-003]], [[bisnis/teestock/08-finance/cost-accounting|TS-FIN-004]], [[bisnis/teestock/08-finance/treasury-policy|TS-FIN-005]] | `keuangan` |
+| **09. Marketing** | `09-marketing/` | 5 | [[bisnis/teestock/09-marketing/go-to-market|TS-MKT-001]], [[bisnis/teestock/09-marketing/audience-segmentation|TS-MKT-002]], [[bisnis/teestock/09-marketing/content-engine|TS-MKT-003]], [[bisnis/teestock/09-marketing/channel-strategy|TS-MKT-004]], [[bisnis/teestock/09-marketing/retention-and-community|TS-MKT-005]] | `marketing` |
+| **10. Product Tech** | `10-product-tech/` | 6 | [[bisnis/teestock/10-product-tech/digital-product-vision|TS-TEC-001]], [[bisnis/teestock/10-product-tech/website-information-architecture|TS-TEC-002]], [[bisnis/teestock/10-product-tech/commerce-platform|TS-TEC-003]], [[bisnis/teestock/10-product-tech/creator-platform|TS-TEC-004]], [[bisnis/teestock/10-product-tech/partner-platform|TS-TEC-005]], [[bisnis/teestock/10-product-tech/automation-architecture|TS-TEC-006]] | `operasional` |
+| **11. Data & MGBOS** | `11-data-mgbos/` | 6 | [[bisnis/teestock/11-data-mgbos/canonical-data-model|TS-DAT-001]], [[bisnis/teestock/11-data-mgbos/entity-hierarchy|TS-DAT-002]], [[bisnis/teestock/11-data-mgbos/sku-and-id-convention|TS-DAT-003]], [[bisnis/teestock/11-data-mgbos/event-model|TS-DAT-004]], [[bisnis/teestock/11-data-mgbos/mgbos-integration|TS-DAT-005]], [[bisnis/teestock/11-data-mgbos/analytics-model|TS-DAT-006]] | `operasional` |
+| **12. Legal & IP** | `12-legal-ip/` | 5 | [[bisnis/teestock/12-legal-ip/ip-policy|TS-LEG-001]], [[bisnis/teestock/12-legal-ip/design-licensing-policy|TS-LEG-002]], [[bisnis/teestock/12-legal-ip/creator-agreement-framework|TS-LEG-003]], [[bisnis/teestock/12-legal-ip/trademark-framework|TS-LEG-004]], [[bisnis/teestock/12-legal-ip/customer-commerce-policy|TS-LEG-005]] | `catatan` |
+| **13. Metrics & Exp** | `13-metrics-experiments/` | 3 | [[bisnis/teestock/13-metrics-experiments/kpi-framework|TS-MET-001]], [[bisnis/teestock/13-metrics-experiments/experimentation-framework|TS-MET-002]], [[bisnis/teestock/13-metrics-experiments/decision-thresholds|TS-MET-003]] | `riset` |
+| **14. Roadmap** | `14-roadmap/` | 3 | [[bisnis/teestock/14-roadmap/master-roadmap|TS-RDM-001]], [[bisnis/teestock/14-roadmap/capability-roadmap|TS-RDM-002]], [[bisnis/teestock/14-roadmap/current-quarter|TS-RDM-003]] | `catatan` |
+| **Total** | **15 Folder** | **74 Docs** | **Seluruh arsitektur terindeks dan terhubung 100%** | |
 
 # 22. Canonical Document Index
 

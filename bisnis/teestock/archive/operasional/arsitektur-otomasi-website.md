@@ -3,7 +3,7 @@ title: "Arsitektur Otomasi & Alur Data Web TeeStock"
 date: "2026-09-14"
 bisnis: teestock
 kategori: operasional
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - operasional

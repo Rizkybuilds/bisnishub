@@ -1,12 +1,20 @@
 ---
 title: "TeeStock Decision Register"
+date: "2026-09-28"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/foundation
 document_id: "TS-FND-004"
 version: "1.0"
-status: "CANONICAL"
 category: "foundation"
 business: "teestock"
-path: "bisnis/teestock/00-foundation/decision-register.md"
 last_updated: "2026-09-28"
+path: "00-foundation/decision-register.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -14,9 +22,14 @@ depends_on:
   - "TS-ROOT-001"
 ---
 
+
 # TeeStock Decision Register v1.0
 
-> **Canonical TeeStock Strategic, Architectural, Operational & Governance Decision Memory**
+> [!abstract] **Canonical TeeStock Strategic, Architectural, Operational & Governance Decision Memory**
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/00-foundation/documentation-governance|TS-FND-003: TeeStock Documentation Governance]] • [[bisnis/teestock/README|TS-ROOT-001: TeeStock Canonical Business Blueprint — README]]
+
 
 Dokumen ini menyimpan keputusan material TeeStock beserta konteks, alasan, alternatif, evidence, dampak, owner, status, dan konsekuensinya terhadap bisnis, sistem, data, operasi, automation, dan AI.
 
@@ -1823,7 +1836,7 @@ Decision:
 
 # 160. Decision Register Governance
 
-Material decision additions/changes follow TS-FND-003 Documentation Governance.
+Material decision additions/changes follow [[bisnis/teestock/00-foundation/documentation-governance|TS-FND-003: Documentation Governance]].
 
 ---
 

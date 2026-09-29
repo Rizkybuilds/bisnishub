@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Partner Platform"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/product-tech
 document_id: "TS-TEC-005"
 version: "1.0"
-status: "CANONICAL"
 category: "product-tech"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "10-product-tech/partner-platform.md"
 depends_on:
   - "TS-TEC-001"
   - "TS-TEC-003"
@@ -21,10 +30,15 @@ depends_on:
   - "TS-FIN-005"
 ---
 
+
 # TeeStock Partner Platform v1.0
 
-> **Canonical TeeStock Partner Network, Capability, Work Order & External Operations Platform Framework**  
+> [!abstract] **Canonical TeeStock Partner Network, Capability, Work Order & External Operations Platform Framework  **
 > Dokumen ini mendefinisikan partner identity, supplier/production/logistics/specialist relationships, capability registry, rate cards, capacity, Work Orders, specifications, files, confirmations, execution status, QC, SLA, claims, invoices, performance scorecards, routing, partner portal, automation, dan future AI-assisted partner orchestration.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/10-product-tech/digital-product-vision|TS-TEC-001: TeeStock Digital Product Vision]] • [[bisnis/teestock/10-product-tech/commerce-platform|TS-TEC-003: TeeStock Commerce Platform]] • [[bisnis/teestock/10-product-tech/creator-platform|TS-TEC-004: TeeStock Creator Platform]] • [[bisnis/teestock/06-programs/partner-program|TS-PRG-004: TeeStock Partner Program]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/07-operations/sourcing-and-vendors|TS-OPS-002: TeeStock Sourcing & Vendors]] • [[bisnis/teestock/07-operations/production-system|TS-OPS-003: TeeStock Production System]] • [[bisnis/teestock/07-operations/quality-control|TS-OPS-004: TeeStock Quality Control System]] • [[bisnis/teestock/07-operations/order-fulfillment|TS-OPS-006: TeeStock Order Fulfillment System]] • [[bisnis/teestock/07-operations/returns-and-warranty|TS-OPS-008: TeeStock Returns & Warranty System]] • [[bisnis/teestock/08-finance/cost-accounting|TS-FIN-004: TeeStock Cost Accounting]] • [[bisnis/teestock/08-finance/treasury-policy|TS-FIN-005: TeeStock Treasury Policy]]
+
 
 ---
 
@@ -3190,16 +3204,16 @@ AI MAY RECOMMEND. POLICY DETERMINES ELIGIBILITY.
 
 Dokumen berikut harus follow Partner Platform:
 
-1. `10-product-tech/automation-architecture.md`
-2. `11-data-mgbos/canonical-data-model.md`
-3. `11-data-mgbos/entity-hierarchy.md`
-4. `11-data-mgbos/sku-and-id-convention.md`
-5. `11-data-mgbos/event-model.md`
-6. `11-data-mgbos/mgbos-integration.md`
-7. `11-data-mgbos/analytics-model.md`
-8. `12-legal-ip/creator-agreement-framework.md`
-9. `13-metrics-experiments/kpi-framework.md`
-10. `13-metrics-experiments/decision-thresholds.md`
-11. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+2. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+3. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+4. [[bisnis/teestock/11-data-mgbos/sku-and-id-convention|sku-and-id-convention.md]]
+5. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+6. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+7. [[bisnis/teestock/11-data-mgbos/analytics-model|analytics-model.md]]
+8. [[bisnis/teestock/12-legal-ip/creator-agreement-framework|creator-agreement-framework.md]]
+9. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+10. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+11. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Partner Platform boleh berkembang dari structured vendor management menjadi capacity-aware, portal-enabled, multi-partner execution network dengan rule-based dan AI-assisted routing, tetapi orchestration hanya boleh meningkat setelah partner identity, capabilities, rates, Work Orders, QC, cost, capacity, and performance data sudah menjadi reliable operating truth.

@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Originals Master Plan"
+date: "2026-09-28"
+bisnis: teestock
+kategori: brand
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/brand
+  - teestock/canonical
+  - teestock/originals
 document_id: "TS-ORG-001"
 version: "1.0"
-status: "CANONICAL"
 category: "originals"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "05-originals/originals-master-plan.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -24,10 +33,15 @@ depends_on:
   - "TS-SVC-005"
 ---
 
+
 # TeeStock Originals Master Plan v1.0
 
-> **Canonical Originals & Consumer IP Strategy**  
+> [!abstract] **Canonical Originals & Consumer IP Strategy  **
 > Dokumen ini mendefinisikan bagaimana TeeStock menciptakan, menguji, mengembangkan, mengoperasikan, mengukur, mempromosikan, menskalakan, dan menghentikan consumer intellectual property melalui Collections dan Independent Labels.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/02-brand/brand-identity-system|TS-BRD-003: TeeStock Brand Identity System]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/03-commerce/teestock-selects|TS-COM-002: TeeStock Selects]] • [[bisnis/teestock/03-commerce/catalog-merchandising-system|TS-COM-004: TeeStock Catalog & Merchandising System]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/04-services/studio|TS-SVC-005: TeeStock Studio]]
+
 
 ---
 
@@ -2753,21 +2767,21 @@ OWN THE IP. PROVE THE DEMAND. EARN THE AUTONOMY.
 
 Dokumen berikut harus follow Originals Master Plan:
 
-1. `05-originals/brand-incubation-framework.md`
-2. `05-originals/collection-framework.md`
-3. `05-originals/label-governance.md`
+1. [[bisnis/teestock/05-originals/brand-incubation-framework|brand-incubation-framework.md]]
+2. [[bisnis/teestock/05-originals/collection-framework|collection-framework.md]]
+3. [[bisnis/teestock/05-originals/label-governance|label-governance.md]]
 4. `05-originals/collections/`
 5. `05-originals/labels/`
-6. `09-marketing/audience-segmentation.md`
-7. `09-marketing/content-engine.md`
-8. `09-marketing/retention-and-community.md`
-9. `10-product-tech/commerce-platform.md`
-10. `11-data-mgbos/canonical-data-model.md`
-11. `11-data-mgbos/event-model.md`
-12. `12-legal-ip/ip-policy.md`
-13. `12-legal-ip/trademark-framework.md`
-14. `13-metrics-experiments/kpi-framework.md`
-15. `13-metrics-experiments/experimentation-framework.md`
-16. `13-metrics-experiments/decision-thresholds.md`
+6. [[bisnis/teestock/09-marketing/audience-segmentation|audience-segmentation.md]]
+7. [[bisnis/teestock/09-marketing/content-engine|content-engine.md]]
+8. [[bisnis/teestock/09-marketing/retention-and-community|retention-and-community.md]]
+9. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+10. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+11. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+12. [[bisnis/teestock/12-legal-ip/ip-policy|ip-policy.md]]
+13. [[bisnis/teestock/12-legal-ip/trademark-framework|trademark-framework.md]]
+14. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+15. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+16. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
 
 TeeStock Originals boleh menghasilkan collections, labels, collaborations, dan pada masa depan independent consumer brands, tetapi seluruh progression harus mengikuti evidence, IP ownership, healthy economics, dan autonomy ladder yang didefinisikan di dokumen canonical ini.

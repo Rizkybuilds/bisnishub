@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Financial Model"
+date: "2026-09-28"
+bisnis: teestock
+kategori: keuangan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/keuangan
+  - teestock/canonical
+  - teestock/finance
 document_id: "TS-FIN-001"
 version: "1.0"
-status: "CANONICAL"
 category: "finance"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "08-finance/financial-model.md"
 depends_on:
   - "TS-FND-001"
   - "TS-STR-001"
@@ -22,10 +31,15 @@ depends_on:
   - "TS-OPS-008"
 ---
 
+
 # TeeStock Financial Model v1.0
 
-> **Canonical TeeStock Financial Architecture & Management Economics Framework**  
+> [!important] **Canonical TeeStock Financial Architecture & Management Economics Framework  **
 > Dokumen ini mendefinisikan revenue architecture, cost structure, contribution margin, operating expenses, working capital, inventory economics, receivables, payables, cash conversion, business-line P&L, shared-cost allocation, internal transfer economics, capital allocation, runway, planning, dan financial data integration untuk TeeStock.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/06-programs/programs-overview|TS-PRG-001: TeeStock Programs Overview]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/07-operations/inventory-system|TS-OPS-005: TeeStock Inventory System]] • [[bisnis/teestock/07-operations/order-fulfillment|TS-OPS-006: TeeStock Order Fulfillment System]] • [[bisnis/teestock/07-operations/returns-and-warranty|TS-OPS-008: TeeStock Returns & Warranty System]]
+
 
 ---
 
@@ -3636,18 +3650,18 @@ GROWTH MUST EVENTUALLY PRODUCE CASH AND CONTRIBUTION.
 
 Dokumen berikut harus follow Financial Model:
 
-1. `08-finance/unit-economics.md`
-2. `08-finance/pricing-framework.md`
-3. `08-finance/cost-accounting.md`
-4. `08-finance/treasury-policy.md`
-5. `09-marketing/go-to-market.md`
-6. `09-marketing/channel-strategy.md`
-7. `10-product-tech/commerce-platform.md`
-8. `10-product-tech/automation-architecture.md`
-9. `11-data-mgbos/canonical-data-model.md`
-10. `11-data-mgbos/event-model.md`
-11. `11-data-mgbos/mgbos-integration.md`
-12. `13-metrics-experiments/kpi-framework.md`
-13. `13-metrics-experiments/decision-thresholds.md`
+1. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+2. [[bisnis/teestock/08-finance/pricing-framework|pricing-framework.md]]
+3. [[bisnis/teestock/08-finance/cost-accounting|cost-accounting.md]]
+4. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+5. [[bisnis/teestock/09-marketing/go-to-market|go-to-market.md]]
+6. [[bisnis/teestock/09-marketing/channel-strategy|channel-strategy.md]]
+7. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+8. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+9. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+11. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+12. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+13. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
 
 TeeStock Financial Model boleh berkembang menjadi integrated planning, forecasting, automated reconciliation, dan AI-assisted capital allocation system, tetapi financial sophistication hanya boleh dibangun di atas reliable transaction data, inventory truth, traceable costs, controlled payouts, disciplined cash management, dan consistent management definitions.

@@ -3,7 +3,7 @@ title: "Audit Finansial Komprehensif & Evaluasi Posisi Kas — CFO Executive Rep
 date: "2026-09-17"
 bisnis: teestock
 kategori: keuangan
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - bisnis/multigraph

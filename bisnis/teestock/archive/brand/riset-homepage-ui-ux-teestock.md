@@ -3,7 +3,7 @@ title: "Riset & Strategi Homepage TeeStock (Branding, UI & UX)"
 date: "2026-09-14"
 bisnis: teestock
 kategori: brand
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - brand

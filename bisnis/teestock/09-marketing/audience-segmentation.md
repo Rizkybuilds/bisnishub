@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Audience Segmentation"
+date: "2026-09-28"
+bisnis: teestock
+kategori: marketing
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/marketing
+  - teestock/canonical
+  - teestock/marketing
 document_id: "TS-MKT-002"
 version: "1.0"
-status: "CANONICAL"
 category: "marketing"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "09-marketing/audience-segmentation.md"
 depends_on:
   - "TS-FND-001"
   - "TS-STR-001"
@@ -20,10 +29,15 @@ depends_on:
   - "TS-FIN-002"
 ---
 
+
 # TeeStock Audience Segmentation v1.0
 
-> **Canonical TeeStock Audience, Customer, Account & Participant Segmentation Framework**  
+> [!info] **Canonical TeeStock Audience, Customer, Account & Participant Segmentation Framework  **
 > Dokumen ini mendefinisikan audience segmentation berdasarkan Jobs-to-be-Done, commercial intent, behavioral signals, lifecycle, account characteristics, economic value, operational complexity, buying triggers, objections, negative fit, dan cross-domain roles untuk Commerce, Services, Originals, Programs, Content, CRM, Website, Pricing, dan MGBOS.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/06-programs/programs-overview|TS-PRG-001: TeeStock Programs Overview]] • [[bisnis/teestock/09-marketing/go-to-market|TS-MKT-001: TeeStock Go-To-Market Strategy]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]]
+
 
 ---
 
@@ -3277,19 +3291,19 @@ AI MAY DISCOVER PATTERNS. HUMANS DEFINE CANONICAL SEGMENTS.
 
 Dokumen berikut harus follow Audience Segmentation:
 
-1. `09-marketing/content-engine.md`
-2. `09-marketing/channel-strategy.md`
-3. `09-marketing/retention-and-community.md`
-4. `10-product-tech/website-information-architecture.md`
-5. `10-product-tech/commerce-platform.md`
-6. `10-product-tech/creator-platform.md`
-7. `10-product-tech/partner-platform.md`
-8. `10-product-tech/automation-architecture.md`
-9. `11-data-mgbos/canonical-data-model.md`
-10. `11-data-mgbos/entity-hierarchy.md`
-11. `11-data-mgbos/event-model.md`
-12. `11-data-mgbos/analytics-model.md`
-13. `13-metrics-experiments/kpi-framework.md`
-14. `13-metrics-experiments/experimentation-framework.md`
+1. [[bisnis/teestock/09-marketing/content-engine|content-engine.md]]
+2. [[bisnis/teestock/09-marketing/channel-strategy|channel-strategy.md]]
+3. [[bisnis/teestock/09-marketing/retention-and-community|retention-and-community.md]]
+4. [[bisnis/teestock/10-product-tech/website-information-architecture|website-information-architecture.md]]
+5. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+6. [[bisnis/teestock/10-product-tech/creator-platform|creator-platform.md]]
+7. [[bisnis/teestock/10-product-tech/partner-platform|partner-platform.md]]
+8. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+9. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+11. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+12. [[bisnis/teestock/11-data-mgbos/analytics-model|analytics-model.md]]
+13. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+14. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
 
 TeeStock Audience Segmentation boleh berkembang menjadi dynamic, behavior-driven, value-aware, dan AI-assisted segmentation system, tetapi sophistication hanya boleh dibangun setelah canonical identity, customer roles, jobs, lifecycle, transaction history, dan first-party behavioral signals cukup reliable.

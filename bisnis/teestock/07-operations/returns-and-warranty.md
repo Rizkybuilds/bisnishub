@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Returns & Warranty System"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/operations
 document_id: "TS-OPS-008"
 version: "1.0"
-status: "CANONICAL"
 category: "operations"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "07-operations/returns-and-warranty.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -21,10 +30,15 @@ depends_on:
   - "TS-OPS-007"
 ---
 
+
 # TeeStock Returns & Warranty System v1.0
 
-> **Canonical TeeStock Returns, Exchange, Refund & Product Claim Framework**  
+> [!tip] **Canonical TeeStock Returns, Exchange, Refund & Product Claim Framework  **
 > Dokumen ini mendefinisikan return eligibility, exchanges, defect claims, warranty-like remedies, Return objects, inspections, dispositions, restocking, rework, refunds, replacement, personalized-product handling, shipping responsibility, abuse controls, supplier/partner recovery, accounting linkage, dan customer-policy boundaries.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/04-services/custom|TS-SVC-002: TeeStock Custom]] • [[bisnis/teestock/04-services/business|TS-SVC-003: TeeStock Business]] • [[bisnis/teestock/04-services/merch|TS-SVC-004: TeeStock Merch]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/07-operations/quality-control|TS-OPS-004: TeeStock Quality Control System]] • [[bisnis/teestock/07-operations/inventory-system|TS-OPS-005: TeeStock Inventory System]] • [[bisnis/teestock/07-operations/order-fulfillment|TS-OPS-006: TeeStock Order Fulfillment System]] • [[bisnis/teestock/07-operations/customer-service|TS-OPS-007: TeeStock Customer Service System]]
+
 
 ---
 
@@ -1983,7 +1997,7 @@ Exact thresholds for:
 - product hold,
 - supplier review
 
-belong in `decision-thresholds.md`.
+belong in [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]].
 
 ---
 
@@ -2776,20 +2790,20 @@ FAIR RESOLUTION. CONTROLLED ECONOMICS. STRUCTURED LEARNING.
 
 Dokumen berikut harus follow Returns & Warranty System:
 
-1. `08-finance/financial-model.md`
-2. `08-finance/unit-economics.md`
-3. `08-finance/pricing-framework.md`
-4. `08-finance/cost-accounting.md`
-5. `08-finance/treasury-policy.md`
-6. `09-marketing/retention-and-community.md`
-7. `10-product-tech/commerce-platform.md`
-8. `10-product-tech/automation-architecture.md`
-9. `11-data-mgbos/canonical-data-model.md`
-10. `11-data-mgbos/entity-hierarchy.md`
-11. `11-data-mgbos/event-model.md`
-12. `11-data-mgbos/mgbos-integration.md`
-13. `12-legal-ip/customer-commerce-policy.md`
-14. `13-metrics-experiments/kpi-framework.md`
-15. `13-metrics-experiments/decision-thresholds.md`
+1. [[bisnis/teestock/08-finance/financial-model|financial-model.md]]
+2. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+3. [[bisnis/teestock/08-finance/pricing-framework|pricing-framework.md]]
+4. [[bisnis/teestock/08-finance/cost-accounting|cost-accounting.md]]
+5. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+6. [[bisnis/teestock/09-marketing/retention-and-community|retention-and-community.md]]
+7. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+8. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+9. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+11. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+12. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+13. [[bisnis/teestock/12-legal-ip/customer-commerce-policy|customer-commerce-policy.md]]
+14. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+15. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
 
 TeeStock Returns & Warranty System boleh berkembang menjadi self-service, highly automated reverse-logistics operation, tetapi automation hanya boleh berdiri di atas clear customer policy, canonical Return objects, reliable inspection, controlled refund authority, inventory disposition, liability attribution, dan root-cause feedback.

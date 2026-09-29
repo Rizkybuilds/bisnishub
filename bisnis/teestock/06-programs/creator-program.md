@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Creator Program"
+date: "2026-09-28"
+bisnis: teestock
+kategori: marketing
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/marketing
+  - teestock/canonical
+  - teestock/programs
 document_id: "TS-PRG-002"
 version: "1.0"
-status: "CANONICAL"
 category: "programs"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "06-programs/creator-program.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -20,10 +29,15 @@ depends_on:
   - "TS-PRG-001"
 ---
 
+
 # TeeStock Creator Program v1.0
 
-> **Canonical TeeStock Creator Participation Framework**  
+> [!abstract] **Canonical TeeStock Creator Participation Framework  **
 > Dokumen ini mendefinisikan creator eligibility, artwork submission, licensing, review, royalty, co-drop, creator merchandising, attribution, payout, lifecycle, tiers, performance review, IP governance, automation, metrics, dan boundaries untuk TeeStock Creator Program.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/teestock-selects|TS-COM-002: TeeStock Selects]] • [[bisnis/teestock/04-services/merch|TS-SVC-004: TeeStock Merch]] • [[bisnis/teestock/04-services/studio|TS-SVC-005: TeeStock Studio]] • [[bisnis/teestock/06-programs/programs-overview|TS-PRG-001: TeeStock Programs Overview]]
+
 
 ---
 
@@ -2467,19 +2481,19 @@ CLEAR RIGHTS. CLEAR ECONOMICS. CLEAR RELATIONSHIP.
 
 Dokumen berikut harus follow Creator Program:
 
-1. `06-programs/reseller-program.md`
-2. `06-programs/partner-program.md`
-3. `06-programs/affiliate-program.md`
-4. `07-operations/production-system.md`
-5. `08-finance/unit-economics.md`
-6. `08-finance/treasury-policy.md`
-7. `10-product-tech/creator-platform.md`
-8. `10-product-tech/automation-architecture.md`
-9. `11-data-mgbos/canonical-data-model.md`
-10. `11-data-mgbos/event-model.md`
-11. `12-legal-ip/ip-policy.md`
-12. `12-legal-ip/design-licensing-policy.md`
-13. `12-legal-ip/creator-agreement-framework.md`
-14. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/06-programs/reseller-program|reseller-program.md]]
+2. [[bisnis/teestock/06-programs/partner-program|partner-program.md]]
+3. [[bisnis/teestock/06-programs/affiliate-program|affiliate-program.md]]
+4. [[bisnis/teestock/07-operations/production-system|production-system.md]]
+5. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+6. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+7. [[bisnis/teestock/10-product-tech/creator-platform|creator-platform.md]]
+8. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+9. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+11. [[bisnis/teestock/12-legal-ip/ip-policy|ip-policy.md]]
+12. [[bisnis/teestock/12-legal-ip/design-licensing-policy|design-licensing-policy.md]]
+13. [[bisnis/teestock/12-legal-ip/creator-agreement-framework|creator-agreement-framework.md]]
+14. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 Creator Program boleh berkembang menjadi creator network dan self-service platform yang lebih besar, tetapi scale hanya boleh mengikuti strong curation, clear IP rights, reliable attribution, accurate royalty accounting, healthy contribution economics, dan enough operational capacity untuk memperlakukan creator secara profesional.

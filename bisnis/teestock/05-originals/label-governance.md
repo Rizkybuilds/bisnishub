@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Label Governance"
+date: "2026-09-28"
+bisnis: teestock
+kategori: brand
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/brand
+  - teestock/canonical
+  - teestock/originals
 document_id: "TS-ORG-004"
 version: "1.0"
-status: "CANONICAL"
 category: "originals"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "05-originals/label-governance.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -21,10 +30,15 @@ depends_on:
   - "TS-ORG-003"
 ---
 
+
 # TeeStock Label Governance v1.0
 
-> **Canonical Independent Label Governance Framework**  
+> [!abstract] **Canonical Independent Label Governance Framework  **
 > Dokumen ini mendefinisikan kapan sebuah Originals concept dapat disebut Independent Label, bagaimana autonomy diberikan, bagaimana hubungan Label dengan TeeStock bekerja, siapa yang memiliki IP, bagaimana P&L dikelola, kapan Label memperoleh domain/social/team sendiri, bagaimana approval rights dibagi, serta kapan Label harus dipertahankan, dipause, diarsipkan, atau di-spin-out.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/02-brand/brand-identity-system|TS-BRD-003: TeeStock Brand Identity System]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/05-originals/brand-incubation-framework|TS-ORG-002: TeeStock Brand Incubation Framework]] • [[bisnis/teestock/05-originals/collection-framework|TS-ORG-003: TeeStock Collection Framework]]
+
 
 ---
 
@@ -2588,17 +2602,17 @@ Dokumen berikut harus follow Label Governance:
 
 1. `05-originals/collections/`
 2. `05-originals/labels/`
-3. `08-finance/financial-model.md`
-4. `08-finance/cost-accounting.md`
-5. `09-marketing/audience-segmentation.md`
-6. `09-marketing/content-engine.md`
-7. `09-marketing/retention-and-community.md`
-8. `10-product-tech/commerce-platform.md`
-9. `11-data-mgbos/canonical-data-model.md`
-10. `11-data-mgbos/entity-hierarchy.md`
-11. `12-legal-ip/ip-policy.md`
-12. `12-legal-ip/trademark-framework.md`
-13. `13-metrics-experiments/kpi-framework.md`
-14. `13-metrics-experiments/decision-thresholds.md`
+3. [[bisnis/teestock/08-finance/financial-model|financial-model.md]]
+4. [[bisnis/teestock/08-finance/cost-accounting|cost-accounting.md]]
+5. [[bisnis/teestock/09-marketing/audience-segmentation|audience-segmentation.md]]
+6. [[bisnis/teestock/09-marketing/content-engine|content-engine.md]]
+7. [[bisnis/teestock/09-marketing/retention-and-community|retention-and-community.md]]
+8. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+9. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+11. [[bisnis/teestock/12-legal-ip/ip-policy|ip-policy.md]]
+12. [[bisnis/teestock/12-legal-ip/trademark-framework|trademark-framework.md]]
+13. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+14. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
 
 Setiap Label boleh memiliki belief, identity, product language, content system, dan customer-facing experience sendiri, tetapi seluruh Label tetap tunduk pada portfolio governance, IP ownership, economic discipline, shared-data principles, dan autonomy framework TeeStock.

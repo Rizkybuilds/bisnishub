@@ -3,7 +3,7 @@ title: "SOP Penyimpanan Film DTF & Panduan Presisi Posisi Heat Press"
 date: "2026-09-18"
 bisnis: teestock
 kategori: operasional
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - kategori/operasional

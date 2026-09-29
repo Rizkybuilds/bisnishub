@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Automation Architecture"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/product-tech
 document_id: "TS-TEC-006"
 version: "1.0"
-status: "CANONICAL"
 category: "product-tech"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "10-product-tech/automation-architecture.md"
 depends_on:
   - "TS-TEC-001"
   - "TS-TEC-003"
@@ -19,10 +28,15 @@ depends_on:
   - "TS-MKT-005"
 ---
 
+
 # TeeStock Automation Architecture v1.0
 
-> **Canonical TeeStock Workflow, Rules, Integration, AI Agent & Orchestration Architecture**  
+> [!abstract] **Canonical TeeStock Workflow, Rules, Integration, AI Agent & Orchestration Architecture  **
 > Dokumen ini mendefinisikan event-driven automation, workflow engine, deterministic rules, job queues, approvals, retries, idempotency, human-in-the-loop, exception management, n8n boundaries, integrations, AI agents, model routing, permissions, observability, failure recovery, and progressive Jarvis/MGBOS orchestration.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/10-product-tech/digital-product-vision|TS-TEC-001: TeeStock Digital Product Vision]] • [[bisnis/teestock/10-product-tech/commerce-platform|TS-TEC-003: TeeStock Commerce Platform]] • [[bisnis/teestock/10-product-tech/creator-platform|TS-TEC-004: TeeStock Creator Platform]] • [[bisnis/teestock/10-product-tech/partner-platform|TS-TEC-005: TeeStock Partner Platform]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/07-operations/production-system|TS-OPS-003: TeeStock Production System]] • [[bisnis/teestock/07-operations/order-fulfillment|TS-OPS-006: TeeStock Order Fulfillment System]] • [[bisnis/teestock/08-finance/treasury-policy|TS-FIN-005: TeeStock Treasury Policy]] • [[bisnis/teestock/09-marketing/content-engine|TS-MKT-003: TeeStock Content Engine]] • [[bisnis/teestock/09-marketing/retention-and-community|TS-MKT-005: TeeStock Retention & Community]]
+
 
 ---
 
@@ -4167,16 +4181,16 @@ AUTONOMY MUST BE EARNED THROUGH RELIABILITY.
 
 Dokumen berikut harus follow Automation Architecture:
 
-1. `11-data-mgbos/canonical-data-model.md`
-2. `11-data-mgbos/entity-hierarchy.md`
-3. `11-data-mgbos/sku-and-id-convention.md`
-4. `11-data-mgbos/event-model.md`
-5. `11-data-mgbos/mgbos-integration.md`
-6. `11-data-mgbos/analytics-model.md`
-7. `13-metrics-experiments/kpi-framework.md`
-8. `13-metrics-experiments/experimentation-framework.md`
-9. `13-metrics-experiments/decision-thresholds.md`
-10. `14-roadmap/master-roadmap.md`
-11. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+2. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+3. [[bisnis/teestock/11-data-mgbos/sku-and-id-convention|sku-and-id-convention.md]]
+4. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+5. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+6. [[bisnis/teestock/11-data-mgbos/analytics-model|analytics-model.md]]
+7. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+8. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+9. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+10. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+11. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Automation Architecture boleh berkembang dari n8n-based point automation menjadi event-driven workflow system, specialist AI-agent architecture, dan akhirnya Jarvis-orchestrated exception-based business operation, tetapi autonomous execution hanya boleh meningkat setelah canonical data, permissions, deterministic rules, approvals, observability, recovery mechanisms, and measurable agent reliability sudah matang.

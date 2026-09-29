@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Inventory System"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/operations
 document_id: "TS-OPS-005"
 version: "1.0"
-status: "CANONICAL"
 category: "operations"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "07-operations/inventory-system.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -21,10 +30,15 @@ depends_on:
   - "TS-OPS-004"
 ---
 
+
 # TeeStock Inventory System v1.0
 
-> **Canonical TeeStock Inventory, Stock Ledger & Availability Framework**  
+> [!tip] **Canonical TeeStock Inventory, Stock Ledger & Availability Framework  **
 > Dokumen ini mendefinisikan inventory ownership, stock locations, inventory states, stock ledger, reservation, allocation, availability, inbound, WIP, finished goods, customer-owned stock, partner-held stock, stock count, adjustments, safety stock, reorder logic, dead stock, multi-channel availability, valuation linkage, dan progressive automation untuk seluruh ecosystem TeeStock.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/03-commerce/teestock-essentials|TS-COM-003: TeeStock Essentials]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/04-services/supply|TS-SVC-006: TeeStock Supply]] • [[bisnis/teestock/04-services/fulfill|TS-SVC-007: TeeStock Fulfill]] • [[bisnis/teestock/06-programs/reseller-program|TS-PRG-003: TeeStock Reseller Program]] • [[bisnis/teestock/06-programs/partner-program|TS-PRG-004: TeeStock Partner Program]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/07-operations/sourcing-and-vendors|TS-OPS-002: TeeStock Sourcing & Vendors]] • [[bisnis/teestock/07-operations/production-system|TS-OPS-003: TeeStock Production System]] • [[bisnis/teestock/07-operations/quality-control|TS-OPS-004: TeeStock Quality Control System]]
+
 
 ---
 
@@ -3267,19 +3281,19 @@ INVENTORY IS CASH IN PHYSICAL FORM.
 
 Dokumen berikut harus follow Inventory System:
 
-1. `07-operations/order-fulfillment.md`
-2. `07-operations/customer-service.md`
-3. `07-operations/returns-and-warranty.md`
-4. `08-finance/financial-model.md`
-5. `08-finance/unit-economics.md`
-6. `08-finance/cost-accounting.md`
-7. `08-finance/treasury-policy.md`
-8. `10-product-tech/commerce-platform.md`
-9. `10-product-tech/automation-architecture.md`
-10. `11-data-mgbos/canonical-data-model.md`
-11. `11-data-mgbos/entity-hierarchy.md`
-12. `11-data-mgbos/event-model.md`
-13. `11-data-mgbos/mgbos-integration.md`
-14. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/07-operations/order-fulfillment|order-fulfillment.md]]
+2. [[bisnis/teestock/07-operations/customer-service|customer-service.md]]
+3. [[bisnis/teestock/07-operations/returns-and-warranty|returns-and-warranty.md]]
+4. [[bisnis/teestock/08-finance/financial-model|financial-model.md]]
+5. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+6. [[bisnis/teestock/08-finance/cost-accounting|cost-accounting.md]]
+7. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+8. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+9. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+10. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+11. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+12. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+13. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+14. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 TeeStock Inventory System boleh berkembang menjadi multi-location, barcode-enabled, forecast-driven, dan highly automated, tetapi automation hanya boleh berdiri di atas canonical SKUs, accurate movement ledger, clear ownership, reliable reservations, disciplined receiving, quality holds, dan trustworthy physical counts.

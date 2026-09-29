@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Order Fulfillment System"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/operations
 document_id: "TS-OPS-006"
 version: "1.0"
-status: "CANONICAL"
 category: "operations"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "07-operations/order-fulfillment.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -21,10 +30,15 @@ depends_on:
   - "TS-OPS-005"
 ---
 
+
 # TeeStock Order Fulfillment System v1.0
 
-> **Canonical TeeStock Order Fulfillment & Shipping Framework**  
+> [!tip] **Canonical TeeStock Order Fulfillment & Shipping Framework  **
 > Dokumen ini mendefinisikan fulfillment readiness, order release, picking, verification, packing, packaging, shipment creation, carrier selection, multi-channel fulfillment, made-to-order handoff, split shipment, tracking, failed delivery, return-to-sender, fulfillment exceptions, SLA, accuracy, custody, metrics, dan progressive automation.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/04-services/custom|TS-SVC-002: TeeStock Custom]] • [[bisnis/teestock/04-services/business|TS-SVC-003: TeeStock Business]] • [[bisnis/teestock/04-services/merch|TS-SVC-004: TeeStock Merch]] • [[bisnis/teestock/04-services/fulfill|TS-SVC-007: TeeStock Fulfill]] • [[bisnis/teestock/06-programs/reseller-program|TS-PRG-003: TeeStock Reseller Program]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/07-operations/production-system|TS-OPS-003: TeeStock Production System]] • [[bisnis/teestock/07-operations/quality-control|TS-OPS-004: TeeStock Quality Control System]] • [[bisnis/teestock/07-operations/inventory-system|TS-OPS-005: TeeStock Inventory System]]
+
 
 ---
 
@@ -2701,18 +2715,18 @@ DELIVER THE PROMISE, NOT JUST THE PACKAGE.
 
 Dokumen berikut harus follow Order Fulfillment System:
 
-1. `07-operations/customer-service.md`
-2. `07-operations/returns-and-warranty.md`
-3. `08-finance/financial-model.md`
-4. `08-finance/unit-economics.md`
-5. `08-finance/cost-accounting.md`
-6. `09-marketing/retention-and-community.md`
-7. `10-product-tech/commerce-platform.md`
-8. `10-product-tech/automation-architecture.md`
-9. `11-data-mgbos/canonical-data-model.md`
-10. `11-data-mgbos/entity-hierarchy.md`
-11. `11-data-mgbos/event-model.md`
-12. `11-data-mgbos/mgbos-integration.md`
-13. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/07-operations/customer-service|customer-service.md]]
+2. [[bisnis/teestock/07-operations/returns-and-warranty|returns-and-warranty.md]]
+3. [[bisnis/teestock/08-finance/financial-model|financial-model.md]]
+4. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+5. [[bisnis/teestock/08-finance/cost-accounting|cost-accounting.md]]
+6. [[bisnis/teestock/09-marketing/retention-and-community|retention-and-community.md]]
+7. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+8. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+9. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+11. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+12. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+13. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 TeeStock Fulfillment boleh berkembang menjadi multi-carrier, multi-client, barcode-enabled, multi-hub, dan highly automated operation, tetapi automation hanya boleh dibangun di atas reliable inventory allocation, clear fulfillment readiness, disciplined verification, canonical shipments, tracking visibility, and structured exception handling.

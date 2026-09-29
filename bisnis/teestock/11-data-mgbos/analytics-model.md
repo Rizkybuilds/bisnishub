@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Analytics Model"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/data-mgbos
 document_id: "TS-DAT-006"
 version: "1.0"
-status: "CANONICAL"
 category: "data-mgbos"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "11-data-mgbos/analytics-model.md"
 depends_on:
   - "TS-DAT-001"
   - "TS-DAT-002"
@@ -20,10 +29,15 @@ depends_on:
   - "TS-TEC-006"
 ---
 
+
 # TeeStock Analytics Model v1.0
 
-> **Canonical TeeStock Metrics, Facts, Dimensions, Semantic Layer & Decision-Intelligence Framework**  
+> [!abstract] **Canonical TeeStock Metrics, Facts, Dimensions, Semantic Layer & Decision-Intelligence Framework  **
 > Dokumen ini mendefinisikan analytical facts, dimensions, metric definitions, semantic layer, revenue and contribution analytics, customer and cohort analysis, product, channel, creator, partner, production, inventory, finance, cash, attribution, forecasting, experiments, dashboards, data freshness, lineage, data quality, and future AI/Jarvis analytical access.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/11-data-mgbos/canonical-data-model|TS-DAT-001: TeeStock Canonical Data Model]] • [[bisnis/teestock/11-data-mgbos/entity-hierarchy|TS-DAT-002: TeeStock Entity Hierarchy]] • [[bisnis/teestock/11-data-mgbos/sku-and-id-convention|TS-DAT-003: TeeStock SKU & ID Convention]] • [[bisnis/teestock/11-data-mgbos/event-model|TS-DAT-004: TeeStock Event Model]] • [[bisnis/teestock/11-data-mgbos/mgbos-integration|TS-DAT-005: TeeStock MGBOS Integration]] • [[bisnis/teestock/08-finance/financial-model|TS-FIN-001: TeeStock Financial Model]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]] • [[bisnis/teestock/08-finance/cost-accounting|TS-FIN-004: TeeStock Cost Accounting]] • [[bisnis/teestock/09-marketing/go-to-market|TS-MKT-001: TeeStock Go-To-Market Strategy]] • [[bisnis/teestock/09-marketing/retention-and-community|TS-MKT-005: TeeStock Retention & Community]] • [[bisnis/teestock/10-product-tech/automation-architecture|TS-TEC-006: TeeStock Automation Architecture]]
+
 
 ---
 
@@ -3952,15 +3966,15 @@ IF THE NUMBER CANNOT BE TRACED, IT SHOULD NOT DRIVE A HIGH-CONFIDENCE DECISION.
 
 Dokumen berikut harus follow Analytics Model:
 
-1. `12-legal-ip/ip-policy.md`
-2. `12-legal-ip/design-licensing-policy.md`
-3. `12-legal-ip/creator-agreement-framework.md`
-4. `12-legal-ip/trademark-framework.md`
-5. `12-legal-ip/customer-commerce-policy.md`
-6. `13-metrics-experiments/kpi-framework.md`
-7. `13-metrics-experiments/experimentation-framework.md`
-8. `13-metrics-experiments/decision-thresholds.md`
-9. `14-roadmap/master-roadmap.md`
-10. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/12-legal-ip/ip-policy|ip-policy.md]]
+2. [[bisnis/teestock/12-legal-ip/design-licensing-policy|design-licensing-policy.md]]
+3. [[bisnis/teestock/12-legal-ip/creator-agreement-framework|creator-agreement-framework.md]]
+4. [[bisnis/teestock/12-legal-ip/trademark-framework|trademark-framework.md]]
+5. [[bisnis/teestock/12-legal-ip/customer-commerce-policy|customer-commerce-policy.md]]
+6. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+7. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+8. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+9. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+10. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Analytics Model boleh berkembang dari canonical reporting views menjadi governed semantic layer, warehouse, experimentation system, forecasting platform, anomaly detection, dan akhirnya Jarvis-powered business intelligence untuk seluruh MultiGraph Group, tetapi analytical complexity hanya boleh bertambah setelah metric definitions, grain, canonical IDs, historical context, source lineage, data quality, and decision ownership menjadi reliable.

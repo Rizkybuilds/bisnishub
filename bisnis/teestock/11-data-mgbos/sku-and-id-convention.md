@@ -1,11 +1,20 @@
 ---
 title: "TeeStock SKU & ID Convention"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/data-mgbos
 document_id: "TS-DAT-003"
 version: "1.0"
-status: "CANONICAL"
 category: "data-mgbos"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "11-data-mgbos/sku-and-id-convention.md"
 depends_on:
   - "TS-DAT-001"
   - "TS-DAT-002"
@@ -15,10 +24,15 @@ depends_on:
   - "TS-TEC-005"
 ---
 
+
 # TeeStock SKU & ID Convention v1.0
 
-> **Canonical TeeStock Identifier, SKU, Business Number & External Reference Framework**  
+> [!abstract] **Canonical TeeStock Identifier, SKU, Business Number & External Reference Framework  **
 > Dokumen ini mendefinisikan internal IDs, human-readable business numbers, SKU conventions, entity prefixes, sequences, version identifiers, external system mappings, barcode readiness, environment separation, archival behavior, collision prevention, and identifier governance untuk TeeStock dan future MultiGraph Business OS.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/11-data-mgbos/canonical-data-model|TS-DAT-001: TeeStock Canonical Data Model]] • [[bisnis/teestock/11-data-mgbos/entity-hierarchy|TS-DAT-002: TeeStock Entity Hierarchy]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/10-product-tech/commerce-platform|TS-TEC-003: TeeStock Commerce Platform]] • [[bisnis/teestock/10-product-tech/creator-platform|TS-TEC-004: TeeStock Creator Platform]] • [[bisnis/teestock/10-product-tech/partner-platform|TS-TEC-005: TeeStock Partner Platform]]
+
 
 ---
 
@@ -3591,13 +3605,13 @@ MGBOS SHOULD RESOLVE EVERY HUMAN, MACHINE, AND EXTERNAL REFERENCE TO ONE CANONIC
 
 Dokumen berikut harus follow SKU & ID Convention:
 
-1. `11-data-mgbos/event-model.md`
-2. `11-data-mgbos/mgbos-integration.md`
-3. `11-data-mgbos/analytics-model.md`
-4. `12-legal-ip/ip-policy.md`
-5. `13-metrics-experiments/kpi-framework.md`
-6. `13-metrics-experiments/decision-thresholds.md`
-7. `14-roadmap/master-roadmap.md`
-8. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+2. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+3. [[bisnis/teestock/11-data-mgbos/analytics-model|analytics-model.md]]
+4. [[bisnis/teestock/12-legal-ip/ip-policy|ip-policy.md]]
+5. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+6. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+7. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+8. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock SKU & ID Convention boleh berkembang menjadi enterprise-wide identifier, barcode, lot, batch, serialized-unit, and multi-business-unit reference architecture untuk seluruh MultiGraph Group, tetapi identifier complexity hanya boleh bertambah ketika operational traceability, retail requirements, warehouse scale, atau cross-business coordination benar-benar membutuhkannya.

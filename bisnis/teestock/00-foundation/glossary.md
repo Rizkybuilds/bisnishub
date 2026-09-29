@@ -1,19 +1,33 @@
 ---
 title: "TeeStock Glossary"
+date: "2026-09-27"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/foundation
 document_id: "TS-FND-002"
 version: "1.0"
-status: "CANONICAL"
 category: "foundation"
 business: "teestock"
 last_updated: "2026-09-27"
+path: "00-foundation/glossary.md"
 depends_on:
   - "TS-FND-001"
 ---
 
+
 # TeeStock Glossary v1.0
 
-> **Canonical Terminology Reference**  
+> [!abstract] **Canonical Terminology Reference  **
 > Dokumen ini mendefinisikan istilah resmi yang digunakan di seluruh ecosystem TeeStock.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]]
+
 
 Semua dokumentasi, aplikasi, database, AI agent, automation, dashboard, dan komunikasi internal harus menggunakan istilah sesuai definisi dalam dokumen ini.
 
@@ -1803,7 +1817,7 @@ Metric utama yang merepresentasikan value creation jangka panjang.
 
 Belum ditetapkan secara permanen dalam Glossary.
 
-Harus ditentukan melalui `kpi-framework.md`.
+Harus ditentukan melalui [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]].
 
 ---
 
@@ -2422,10 +2436,10 @@ Glossary harus berkembang bersama TeeStock, tetapi perubahan istilah fundamental
 
 Dokumen berikut wajib menggunakan terminology dari Glossary ini:
 
-- `01-strategy/business-thesis.md`
-- `01-strategy/business-model.md`
-- `01-strategy/ecosystem-architecture.md`
-- `02-brand/brand-architecture.md`
+- [[bisnis/teestock/01-strategy/business-thesis|business-thesis.md]]
+- [[bisnis/teestock/01-strategy/business-model|business-model.md]]
+- [[bisnis/teestock/01-strategy/ecosystem-architecture|ecosystem-architecture.md]]
+- [[bisnis/teestock/02-brand/brand-architecture|brand-architecture.md]]
 - seluruh dokumen Commerce,
 - seluruh dokumen Services,
 - seluruh dokumen Originals,

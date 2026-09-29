@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Creator Agreement Framework"
+date: "2026-09-28"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/legal-ip
 document_id: "TS-LEG-003"
 version: "1.0"
-status: "CANONICAL"
 category: "legal-ip"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "12-legal-ip/creator-agreement-framework.md"
 depends_on:
   - "TS-LEG-001"
   - "TS-LEG-002"
@@ -17,10 +26,15 @@ depends_on:
   - "TS-DAT-004"
 ---
 
+
 # TeeStock Creator Agreement Framework v1.0
 
-> **Canonical TeeStock Creator Contract, Rights, Economics & Participation Governance Framework**  
+> [!warning] **Canonical TeeStock Creator Contract, Rights, Economics & Participation Governance Framework  **
 > Dokumen ini mendefinisikan arsitektur kontraktual Creator Program TeeStock: creator identity, participation type, deliverables, IP ownership, licensing, commissioned work, collaborations, attribution, approvals, royalty, fees, earnings, payouts, returns, reversals, confidentiality, prohibited content, representations, warranties, suspension, termination, sell-off, disputes, offboarding, structured agreement data, dan translation of contractual terms into MGBOS rules.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/12-legal-ip/ip-policy|TS-LEG-001: TeeStock Intellectual Property Policy]] • [[bisnis/teestock/12-legal-ip/design-licensing-policy|TS-LEG-002: TeeStock Design Licensing Policy]] • [[bisnis/teestock/06-programs/creator-program|TS-PRG-002: TeeStock Creator Program]] • [[bisnis/teestock/10-product-tech/creator-platform|TS-TEC-004: TeeStock Creator Platform]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]] • [[bisnis/teestock/08-finance/treasury-policy|TS-FIN-005: TeeStock Treasury Policy]] • [[bisnis/teestock/11-data-mgbos/canonical-data-model|TS-DAT-001: TeeStock Canonical Data Model]] • [[bisnis/teestock/11-data-mgbos/event-model|TS-DAT-004: TeeStock Event Model]]
+
 
 ---
 
@@ -3030,12 +3044,12 @@ MGBOS SHOULD ENFORCE THE AGREEMENT, NOT INVENT IT.
 
 Dokumen berikut harus follow Creator Agreement Framework:
 
-1. `12-legal-ip/trademark-framework.md`
-2. `12-legal-ip/customer-commerce-policy.md`
-3. `13-metrics-experiments/kpi-framework.md`
-4. `13-metrics-experiments/experimentation-framework.md`
-5. `13-metrics-experiments/decision-thresholds.md`
-6. `14-roadmap/master-roadmap.md`
-7. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/12-legal-ip/trademark-framework|trademark-framework.md]]
+2. [[bisnis/teestock/12-legal-ip/customer-commerce-policy|customer-commerce-policy.md]]
+3. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+4. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+5. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+6. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+7. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Creator Agreement Framework boleh berkembang dari standardized Creator Program + Artwork License schedules menjadi creator self-service contracting, automated earnings, e-signature, contract lifecycle management, AI-assisted term extraction, dan multi-jurisdiction creator relationships, tetapi complexity hanya boleh meningkat sambil mempertahankan explicit rights, understandable economics, historical integrity, creator transparency, human legal authority, and reliable Agreement → Rule → Transaction → Earning lineage.

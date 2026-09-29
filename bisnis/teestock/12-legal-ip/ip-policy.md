@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Intellectual Property Policy"
+date: "2026-09-28"
+bisnis: teestock
+kategori: catatan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/catatan
+  - teestock/canonical
+  - teestock/legal-ip
 document_id: "TS-LEG-001"
 version: "1.0"
-status: "CANONICAL"
 category: "legal-ip"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "12-legal-ip/ip-policy.md"
 depends_on:
   - "TS-FND-001"
   - "TS-BRD-002"
@@ -19,10 +28,15 @@ depends_on:
   - "TS-DAT-005"
 ---
 
+
 # TeeStock Intellectual Property Policy v1.0
 
-> **Canonical TeeStock IP Ownership, Rights Clearance, Provenance & Commercial-Use Governance Framework**  
+> [!warning] **Canonical TeeStock IP Ownership, Rights Clearance, Provenance & Commercial-Use Governance Framework  **
 > Dokumen ini mendefinisikan ownership, licensing, artwork provenance, creator rights, customer-supplied assets, commissioned work, collaborations, Originals, trademarks, industrial designs, AI-assisted assets, publication gates, takedowns, disputes, evidence, rights registry, MGBOS controls, dan lifecycle governance untuk seluruh intellectual property yang dibuat, diterima, digunakan, diproduksi, dipasarkan, atau dikomersialkan melalui TeeStock.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/03-commerce/teestock-selects|TS-COM-002: TeeStock Selects]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/06-programs/creator-program|TS-PRG-002: TeeStock Creator Program]] • [[bisnis/teestock/10-product-tech/creator-platform|TS-TEC-004: TeeStock Creator Platform]] • [[bisnis/teestock/11-data-mgbos/canonical-data-model|TS-DAT-001: TeeStock Canonical Data Model]] • [[bisnis/teestock/11-data-mgbos/entity-hierarchy|TS-DAT-002: TeeStock Entity Hierarchy]] • [[bisnis/teestock/11-data-mgbos/event-model|TS-DAT-004: TeeStock Event Model]] • [[bisnis/teestock/11-data-mgbos/mgbos-integration|TS-DAT-005: TeeStock MGBOS Integration]]
+
 
 ---
 
@@ -3471,13 +3485,13 @@ TEEStock OWNS THE RESPONSIBILITY TO OPERATE A CONTROLLED RIGHTS PROCESS.
 
 Dokumen berikut harus follow Intellectual Property Policy:
 
-1. `12-legal-ip/design-licensing-policy.md`
-2. `12-legal-ip/creator-agreement-framework.md`
-3. `12-legal-ip/trademark-framework.md`
-4. `12-legal-ip/customer-commerce-policy.md`
-5. `13-metrics-experiments/kpi-framework.md`
-6. `13-metrics-experiments/decision-thresholds.md`
-7. `14-roadmap/master-roadmap.md`
-8. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/12-legal-ip/design-licensing-policy|design-licensing-policy.md]]
+2. [[bisnis/teestock/12-legal-ip/creator-agreement-framework|creator-agreement-framework.md]]
+3. [[bisnis/teestock/12-legal-ip/trademark-framework|trademark-framework.md]]
+4. [[bisnis/teestock/12-legal-ip/customer-commerce-policy|customer-commerce-policy.md]]
+5. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+6. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+7. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+8. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Intellectual Property Policy boleh berkembang menjadi multi-jurisdiction rights registry, automated rights-expiry control, portfolio protection, trademark/design management, dan AI-assisted IP administration untuk seluruh MultiGraph Group, tetapi scale hanya boleh meningkat dengan mempertahankan provenance, documented authority, use-specific clearance, human/legal escalation, historical evidence, and enforceable MGBOS controls.

@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Experimentation Framework"
+date: "2026-09-28"
+bisnis: teestock
+kategori: riset
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/riset
+  - teestock/canonical
+  - teestock/metrics-experiments
 document_id: "TS-MET-002"
 version: "1.0"
-status: "CANONICAL"
 category: "metrics-experiments"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "13-metrics-experiments/experimentation-framework.md"
 depends_on:
   - "TS-MET-001"
   - "TS-DAT-004"
@@ -17,9 +26,14 @@ depends_on:
   - "TS-TEC-006"
 ---
 
+
 # TeeStock Experimentation Framework v1.0
 
-> **Canonical TeeStock Hypothesis, Experiment Design, Pilot, Measurement, Rollout & Organizational Learning Framework**
+> [!tip] **Canonical TeeStock Hypothesis, Experiment Design, Pilot, Measurement, Rollout & Organizational Learning Framework**
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/13-metrics-experiments/kpi-framework|TS-MET-001: TeeStock KPI Framework]] • [[bisnis/teestock/11-data-mgbos/event-model|TS-DAT-004: TeeStock Event Model]] • [[bisnis/teestock/11-data-mgbos/analytics-model|TS-DAT-006: TeeStock Analytics Model]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/09-marketing/go-to-market|TS-MKT-001: TeeStock Go-To-Market Strategy]] • [[bisnis/teestock/09-marketing/content-engine|TS-MKT-003: TeeStock Content Engine]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]] • [[bisnis/teestock/10-product-tech/automation-architecture|TS-TEC-006: TeeStock Automation Architecture]]
+
 
 Dokumen ini mendefinisikan bagaimana TeeStock merancang, menjalankan, mengukur, menghentikan, memperluas, mendokumentasikan, dan mempelajari eksperimen pada Product, Commerce, Pricing, Marketing, Operations, Creator, Partner, Automation, AI, dan business-model assumptions.
 
@@ -3271,9 +3285,9 @@ AI MAY HELP DESIGN AND ANALYZE EXPERIMENTS. GOVERNED HUMANS OWN MATERIAL BUSINES
 
 Dokumen berikut harus follow Experimentation Framework:
 
-1. `13-metrics-experiments/decision-thresholds.md`
-2. `14-roadmap/master-roadmap.md`
-3. `14-roadmap/capability-roadmap.md`
-4. `14-roadmap/current-quarter.md`
+1. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+2. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+3. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
+4. [[bisnis/teestock/14-roadmap/current-quarter|current-quarter.md]]
 
 TeeStock Experimentation Framework boleh berkembang dari simple documented pilots menjadi controlled A/B testing, feature flags, automated exposure tracking, AI evaluation suites, automated rollout guardrails, dan akhirnya Jarvis-assisted organizational learning system. Namun sophistication hanya boleh bertambah setelah hypothesis discipline, canonical metrics, exposure tracking, decision rules, negative-result preservation, and management accountability sudah menjadi kebiasaan operasi.

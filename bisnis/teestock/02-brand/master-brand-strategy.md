@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Master Brand Strategy"
+date: "2026-09-27"
+bisnis: teestock
+kategori: brand
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/brand
+  - teestock/canonical
+  - teestock/brand
 document_id: "TS-BRD-001"
 version: "1.0"
-status: "CANONICAL"
 category: "brand"
 business: "teestock"
 last_updated: "2026-09-27"
+path: "02-brand/master-brand-strategy.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -15,10 +24,15 @@ depends_on:
   - "TS-STR-004"
 ---
 
+
 # TeeStock Master Brand Strategy v1.0
 
-> **Canonical Master Brand Strategy**  
+> [!info] **Canonical Master Brand Strategy  **
 > Dokumen ini mendefinisikan siapa TeeStock sebagai master brand, bagaimana TeeStock harus dipersepsikan, siapa yang dilayani, nilai apa yang dibawa, dan bagaimana seluruh Commerce, Services, Originals, serta Programs harus tetap terasa sebagai bagian dari satu brand ecosystem.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]]
+
 
 ---
 
@@ -1465,12 +1479,12 @@ LESS FRICTION.
 
 Dokumen berikut harus mengikuti Master Brand Strategy:
 
-1. `02-brand/brand-architecture.md`
-2. `02-brand/brand-identity-system.md`
-3. `02-brand/voice-and-copy-system.md`
-4. `03-commerce/commerce-overview.md`
-5. `04-services/services-overview.md`
-6. `05-originals/originals-master-plan.md`
+1. [[bisnis/teestock/02-brand/brand-architecture|brand-architecture.md]]
+2. [[bisnis/teestock/02-brand/brand-identity-system|brand-identity-system.md]]
+3. [[bisnis/teestock/02-brand/voice-and-copy-system|voice-and-copy-system.md]]
+4. [[bisnis/teestock/03-commerce/commerce-overview|commerce-overview.md]]
+5. [[bisnis/teestock/04-services/services-overview|services-overview.md]]
+6. [[bisnis/teestock/05-originals/originals-master-plan|originals-master-plan.md]]
 7. seluruh customer-facing copy,
 8. packaging,
 9. storefront design,

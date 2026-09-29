@@ -3,7 +3,7 @@ title: "Strategi Branding Inklusif TeeStock (Model Threadless / Cotton Bureau)"
 date: "2026-09-14"
 bisnis: teestock
 kategori: brand
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - brand

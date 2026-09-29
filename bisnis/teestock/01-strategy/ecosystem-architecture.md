@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Ecosystem Architecture"
+date: "2026-09-27"
+bisnis: teestock
+kategori: riset
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/riset
+  - teestock/canonical
+  - teestock/strategy
 document_id: "TS-STR-003"
 version: "1.0"
-status: "CANONICAL"
 category: "strategy"
 business: "teestock"
 last_updated: "2026-09-27"
+path: "01-strategy/ecosystem-architecture.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -13,10 +22,15 @@ depends_on:
   - "TS-STR-002"
 ---
 
+
 # TeeStock Ecosystem Architecture v1.0
 
-> **Canonical Ecosystem Architecture Document**  
+> [!abstract] **Canonical Ecosystem Architecture Document  **
 > Dokumen ini mendefinisikan hubungan struktural antara MultiGraph Group, TeeStock, Commerce, Services, Originals, Programs, shared infrastructure, external partners, dan MGBOS.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]]
+
 
 ---
 
@@ -1745,15 +1759,15 @@ makes everything observable, manageable, and automatable.
 
 Dokumen berikut harus mengikuti ecosystem architecture ini:
 
-1. `01-strategy/growth-strategy.md`
-2. `02-brand/brand-architecture.md`
-3. `03-commerce/commerce-overview.md`
-4. `04-services/services-overview.md`
-5. `05-originals/originals-master-plan.md`
-6. `06-programs/programs-overview.md`
-7. `07-operations/operating-model.md`
-8. `10-product-tech/digital-product-vision.md`
-9. `11-data-mgbos/canonical-data-model.md`
-10. `11-data-mgbos/mgbos-integration.md`
+1. [[bisnis/teestock/01-strategy/growth-strategy|growth-strategy.md]]
+2. [[bisnis/teestock/02-brand/brand-architecture|brand-architecture.md]]
+3. [[bisnis/teestock/03-commerce/commerce-overview|commerce-overview.md]]
+4. [[bisnis/teestock/04-services/services-overview|services-overview.md]]
+5. [[bisnis/teestock/05-originals/originals-master-plan|originals-master-plan.md]]
+6. [[bisnis/teestock/06-programs/programs-overview|programs-overview.md]]
+7. [[bisnis/teestock/07-operations/operating-model|operating-model.md]]
+8. [[bisnis/teestock/10-product-tech/digital-product-vision|digital-product-vision.md]]
+9. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
 
 Tidak ada domain baru yang boleh ditambahkan ke TeeStock tanpa classification yang jelas terhadap architecture ini.

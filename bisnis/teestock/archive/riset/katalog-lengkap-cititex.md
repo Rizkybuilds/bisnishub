@@ -3,7 +3,7 @@ title: "Katalog Lengkap & Harga Blanks NSA Cititex"
 date: "2026-09-14"
 bisnis: teestock
 kategori: riset
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - riset

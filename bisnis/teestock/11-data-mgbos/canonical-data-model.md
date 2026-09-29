@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Canonical Data Model"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/data-mgbos
 document_id: "TS-DAT-001"
 version: "1.0"
-status: "CANONICAL"
 category: "data-mgbos"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "11-data-mgbos/canonical-data-model.md"
 depends_on:
   - "TS-FND-001"
   - "TS-STR-003"
@@ -19,10 +28,15 @@ depends_on:
   - "TS-TEC-006"
 ---
 
+
 # TeeStock Canonical Data Model v1.0
 
-> **Canonical TeeStock Business Entity, Relationship & Data-Truth Framework**  
+> [!abstract] **Canonical TeeStock Business Entity, Relationship & Data-Truth Framework  **
 > Dokumen ini mendefinisikan canonical business entities, identifiers, relationships, ownership, lifecycle, source-of-truth boundaries, historical integrity, cross-domain references, data lineage, and shared semantics yang menjadi fondasi MGBOS, TeeStock applications, integrations, analytics, automation, dan AI.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/08-finance/financial-model|TS-FIN-001: TeeStock Financial Model]] • [[bisnis/teestock/10-product-tech/digital-product-vision|TS-TEC-001: TeeStock Digital Product Vision]] • [[bisnis/teestock/10-product-tech/commerce-platform|TS-TEC-003: TeeStock Commerce Platform]] • [[bisnis/teestock/10-product-tech/creator-platform|TS-TEC-004: TeeStock Creator Platform]] • [[bisnis/teestock/10-product-tech/partner-platform|TS-TEC-005: TeeStock Partner Platform]] • [[bisnis/teestock/10-product-tech/automation-architecture|TS-TEC-006: TeeStock Automation Architecture]]
+
 
 ---
 
@@ -4234,16 +4248,16 @@ MGBOS CONTROLS THE BUSINESS THROUGH CANONICAL OBJECTS.
 
 Dokumen berikut harus follow Canonical Data Model:
 
-1. `11-data-mgbos/entity-hierarchy.md`
-2. `11-data-mgbos/sku-and-id-convention.md`
-3. `11-data-mgbos/event-model.md`
-4. `11-data-mgbos/mgbos-integration.md`
-5. `11-data-mgbos/analytics-model.md`
-6. `12-legal-ip/ip-policy.md`
-7. `13-metrics-experiments/kpi-framework.md`
-8. `13-metrics-experiments/experimentation-framework.md`
-9. `13-metrics-experiments/decision-thresholds.md`
-10. `14-roadmap/master-roadmap.md`
-11. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+2. [[bisnis/teestock/11-data-mgbos/sku-and-id-convention|sku-and-id-convention.md]]
+3. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+4. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+5. [[bisnis/teestock/11-data-mgbos/analytics-model|analytics-model.md]]
+6. [[bisnis/teestock/12-legal-ip/ip-policy|ip-policy.md]]
+7. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+8. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+9. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+10. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+11. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Canonical Data Model boleh berkembang menjadi integrated operational graph untuk seluruh MultiGraph Group, multi-brand commerce, partner network, creator ecosystem, analytics, automation, dan Jarvis AI orchestration, tetapi expansion hanya boleh dilakukan dengan mempertahankan stable identity, semantic clarity, historical integrity, domain ownership, explicit relationships, dan traceable business truth.

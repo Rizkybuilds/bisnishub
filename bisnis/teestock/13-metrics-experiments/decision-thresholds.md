@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Decision Thresholds"
+date: "2026-09-28"
+bisnis: teestock
+kategori: riset
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/riset
+  - teestock/canonical
+  - teestock/metrics-experiments
 document_id: "TS-MET-003"
 version: "1.0"
-status: "CANONICAL"
 category: "metrics-experiments"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "13-metrics-experiments/decision-thresholds.md"
 depends_on:
   - "TS-MET-001"
   - "TS-MET-002"
@@ -20,9 +29,14 @@ depends_on:
   - "TS-TEC-006"
 ---
 
+
 # TeeStock Decision Thresholds v1.0
 
-> **Canonical TeeStock Threshold, Guardrail, Escalation, Stop-Loss & Decision-Gate Framework**
+> [!tip] **Canonical TeeStock Threshold, Guardrail, Escalation, Stop-Loss & Decision-Gate Framework**
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/13-metrics-experiments/kpi-framework|TS-MET-001: TeeStock KPI Framework]] • [[bisnis/teestock/13-metrics-experiments/experimentation-framework|TS-MET-002: TeeStock Experimentation Framework]] • [[bisnis/teestock/08-finance/financial-model|TS-FIN-001: TeeStock Financial Model]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]] • [[bisnis/teestock/08-finance/pricing-framework|TS-FIN-003: TeeStock Pricing Framework]] • [[bisnis/teestock/08-finance/treasury-policy|TS-FIN-005: TeeStock Treasury Policy]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/07-operations/quality-control|TS-OPS-004: TeeStock Quality Control System]] • [[bisnis/teestock/07-operations/inventory-system|TS-OPS-005: TeeStock Inventory System]] • [[bisnis/teestock/11-data-mgbos/analytics-model|TS-DAT-006: TeeStock Analytics Model]] • [[bisnis/teestock/10-product-tech/automation-architecture|TS-TEC-006: TeeStock Automation Architecture]]
+
 
 Dokumen ini mendefinisikan bagaimana TeeStock menentukan kapan sebuah metric membutuhkan perhatian, approval, intervention, escalation, stop-loss, pause, rollback, scale, reorder, repricing, atau perubahan keputusan melalui configurable threshold rules di MGBOS.
 
@@ -3345,8 +3359,8 @@ MGBOS SHOULD CONNECT METRIC → THRESHOLD → OWNER → ACTION → EXCEPTION →
 
 Dokumen berikut harus follow Decision Thresholds:
 
-1. `14-roadmap/master-roadmap.md`
-2. `14-roadmap/capability-roadmap.md`
-3. `14-roadmap/current-quarter.md`
+1. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+2. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
+3. [[bisnis/teestock/14-roadmap/current-quarter|current-quarter.md]]
 
 TeeStock Decision Thresholds boleh berkembang dari simple rule-based warning and approval gates menjadi forecast-aware cash controls, dynamic reorder points, statistical process controls, anomaly detection, risk-based agent autonomy, dan akhirnya Jarvis-driven exception management. Namun automation hanya boleh meningkat setelah threshold semantics, business ownership, data reliability, override governance, and post-action accountability sudah matang.

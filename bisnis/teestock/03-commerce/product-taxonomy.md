@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Product Taxonomy"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/commerce
 document_id: "TS-COM-005"
 version: "1.0"
-status: "CANONICAL"
 category: "commerce"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "03-commerce/product-taxonomy.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -18,10 +27,15 @@ depends_on:
   - "TS-COM-004"
 ---
 
+
 # TeeStock Product Taxonomy v1.0
 
-> **Canonical Product Classification & Entity Framework**  
+> [!abstract] **Canonical Product Classification & Entity Framework  **
 > Dokumen ini mendefinisikan bagaimana TeeStock membedakan Product Family, Garment Platform, Product, Artwork, Collection, Variant, SKU, Bundle, Service Configuration, dan sellable offering agar seluruh Commerce, Services, Originals, inventory, finance, fulfillment, dan MGBOS menggunakan struktur data yang sama.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/03-commerce/teestock-selects|TS-COM-002: TeeStock Selects]] • [[bisnis/teestock/03-commerce/teestock-essentials|TS-COM-003: TeeStock Essentials]] • [[bisnis/teestock/03-commerce/catalog-merchandising-system|TS-COM-004: TeeStock Catalog & Merchandising System]]
+
 
 ---
 
@@ -2677,20 +2691,20 @@ STRUCTURE BEFORE AUTOMATION.
 
 Dokumen berikut harus follow Product Taxonomy:
 
-1. `04-services/services-overview.md`
-2. `04-services/custom.md`
-3. `04-services/merch.md`
-4. `04-services/supply.md`
-5. `05-originals/originals-master-plan.md`
-6. `07-operations/sourcing-and-vendors.md`
-7. `07-operations/production-system.md`
-8. `07-operations/inventory-system.md`
-9. `07-operations/order-fulfillment.md`
-10. `08-finance/unit-economics.md`
-11. `10-product-tech/commerce-platform.md`
-12. `11-data-mgbos/canonical-data-model.md`
-13. `11-data-mgbos/entity-hierarchy.md`
-14. `11-data-mgbos/sku-and-id-convention.md`
-15. `11-data-mgbos/event-model.md`
+1. [[bisnis/teestock/04-services/services-overview|services-overview.md]]
+2. [[bisnis/teestock/04-services/custom|custom.md]]
+3. [[bisnis/teestock/04-services/merch|merch.md]]
+4. [[bisnis/teestock/04-services/supply|supply.md]]
+5. [[bisnis/teestock/05-originals/originals-master-plan|originals-master-plan.md]]
+6. [[bisnis/teestock/07-operations/sourcing-and-vendors|sourcing-and-vendors.md]]
+7. [[bisnis/teestock/07-operations/production-system|production-system.md]]
+8. [[bisnis/teestock/07-operations/inventory-system|inventory-system.md]]
+9. [[bisnis/teestock/07-operations/order-fulfillment|order-fulfillment.md]]
+10. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+11. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+12. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+13. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+14. [[bisnis/teestock/11-data-mgbos/sku-and-id-convention|sku-and-id-convention.md]]
+15. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
 
 Technical schema boleh lebih detail daripada dokumen ini, tetapi tidak boleh menghilangkan distinction fundamental antara Garment Platform, Product, Artwork, Variant, SKU, Configuration, Collection, dan Label.

@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Partner Program"
+date: "2026-09-28"
+bisnis: teestock
+kategori: marketing
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/marketing
+  - teestock/canonical
+  - teestock/programs
 document_id: "TS-PRG-004"
 version: "1.0"
-status: "CANONICAL"
 category: "programs"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "06-programs/partner-program.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -18,10 +27,15 @@ depends_on:
   - "TS-PRG-001"
 ---
 
+
 # TeeStock Partner Program v1.0
 
-> **Canonical TeeStock Operational Partner Network Framework**  
+> [!abstract] **Canonical TeeStock Operational Partner Network Framework  **
 > Dokumen ini mendefinisikan partner types, qualification, capability registry, rate cards, SLA, quality governance, work-order routing, capacity, confidentiality, scorecards, preferred/backup status, incident handling, economics, automation, dan MGBOS integration untuk TeeStock Partner Program.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/04-services/supply|TS-SVC-006: TeeStock Supply]] • [[bisnis/teestock/04-services/fulfill|TS-SVC-007: TeeStock Fulfill]] • [[bisnis/teestock/06-programs/programs-overview|TS-PRG-001: TeeStock Programs Overview]]
+
 
 ---
 
@@ -2683,20 +2697,20 @@ OWN WHAT MATTERS. PARTNER WHAT CAN BE RELIABLY EXTERNALIZED.
 
 Dokumen berikut harus follow Partner Program:
 
-1. `06-programs/affiliate-program.md`
-2. `07-operations/operating-model.md`
-3. `07-operations/sourcing-and-vendors.md`
-4. `07-operations/production-system.md`
-5. `07-operations/quality-control.md`
-6. `07-operations/inventory-system.md`
-7. `07-operations/order-fulfillment.md`
-8. `08-finance/cost-accounting.md`
-9. `08-finance/treasury-policy.md`
-10. `10-product-tech/partner-platform.md`
-11. `10-product-tech/automation-architecture.md`
-12. `11-data-mgbos/canonical-data-model.md`
-13. `11-data-mgbos/entity-hierarchy.md`
-14. `11-data-mgbos/event-model.md`
-15. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/06-programs/affiliate-program|affiliate-program.md]]
+2. [[bisnis/teestock/07-operations/operating-model|operating-model.md]]
+3. [[bisnis/teestock/07-operations/sourcing-and-vendors|sourcing-and-vendors.md]]
+4. [[bisnis/teestock/07-operations/production-system|production-system.md]]
+5. [[bisnis/teestock/07-operations/quality-control|quality-control.md]]
+6. [[bisnis/teestock/07-operations/inventory-system|inventory-system.md]]
+7. [[bisnis/teestock/07-operations/order-fulfillment|order-fulfillment.md]]
+8. [[bisnis/teestock/08-finance/cost-accounting|cost-accounting.md]]
+9. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+10. [[bisnis/teestock/10-product-tech/partner-platform|partner-platform.md]]
+11. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+12. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+13. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+14. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+15. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 TeeStock Partner Program boleh berkembang menjadi distributed capability network yang makin otomatis, tetapi scale hanya boleh mengikuti qualified partners, canonical specifications, reliable Work Orders, measured quality, visible capacity, traceable economics, dan clear accountability.

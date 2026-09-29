@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Retention & Community"
+date: "2026-09-28"
+bisnis: teestock
+kategori: marketing
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/marketing
+  - teestock/canonical
+  - teestock/marketing
 document_id: "TS-MKT-005"
 version: "1.0"
-status: "CANONICAL"
 category: "marketing"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "09-marketing/retention-and-community.md"
 depends_on:
   - "TS-MKT-001"
   - "TS-MKT-002"
@@ -22,10 +31,15 @@ depends_on:
   - "TS-FIN-002"
 ---
 
+
 # TeeStock Retention & Community v1.0
 
-> **Canonical TeeStock Customer Lifecycle, Retention, Loyalty, Referral & Community Framework**  
+> [!info] **Canonical TeeStock Customer Lifecycle, Retention, Loyalty, Referral & Community Framework  **
 > Dokumen ini mendefinisikan post-purchase lifecycle, repeat purchase, reorder, customer lifecycle, retention triggers, loyalty logic, review loops, referrals, win-back, lapse/churn, community participation, creator/community flywheels, relationship economics, lifecycle automation, CRM orchestration, dan MGBOS integration.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/09-marketing/go-to-market|TS-MKT-001: TeeStock Go-To-Market Strategy]] • [[bisnis/teestock/09-marketing/audience-segmentation|TS-MKT-002: TeeStock Audience Segmentation]] • [[bisnis/teestock/09-marketing/content-engine|TS-MKT-003: TeeStock Content Engine]] • [[bisnis/teestock/09-marketing/channel-strategy|TS-MKT-004: TeeStock Channel Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/06-programs/programs-overview|TS-PRG-001: TeeStock Programs Overview]] • [[bisnis/teestock/07-operations/customer-service|TS-OPS-007: TeeStock Customer Service System]] • [[bisnis/teestock/07-operations/returns-and-warranty|TS-OPS-008: TeeStock Returns & Warranty System]] • [[bisnis/teestock/08-finance/financial-model|TS-FIN-001: TeeStock Financial Model]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]]
+
 
 ---
 
@@ -3362,18 +3376,18 @@ AI MAY RECOMMEND NEXT ACTION. CUSTOMER TRUST SETS THE BOUNDARY.
 
 Dokumen berikut harus follow Retention & Community:
 
-1. `10-product-tech/digital-product-vision.md`
-2. `10-product-tech/website-information-architecture.md`
-3. `10-product-tech/commerce-platform.md`
-4. `10-product-tech/creator-platform.md`
-5. `10-product-tech/partner-platform.md`
-6. `10-product-tech/automation-architecture.md`
-7. `11-data-mgbos/canonical-data-model.md`
-8. `11-data-mgbos/entity-hierarchy.md`
-9. `11-data-mgbos/event-model.md`
-10. `11-data-mgbos/analytics-model.md`
-11. `13-metrics-experiments/kpi-framework.md`
-12. `13-metrics-experiments/experimentation-framework.md`
-13. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/10-product-tech/digital-product-vision|digital-product-vision.md]]
+2. [[bisnis/teestock/10-product-tech/website-information-architecture|website-information-architecture.md]]
+3. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+4. [[bisnis/teestock/10-product-tech/creator-platform|creator-platform.md]]
+5. [[bisnis/teestock/10-product-tech/partner-platform|partner-platform.md]]
+6. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+7. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+8. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+9. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/analytics-model|analytics-model.md]]
+11. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+12. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
+13. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Retention & Community boleh berkembang menjadi automated lifecycle, loyalty, referral, creator/community, dan AI-assisted relationship system, tetapi sophistication hanya boleh dibangun setelah customer experience, identity, behavioral events, lifecycle states, reorder logic, consent, and relationship economics cukup reliable.

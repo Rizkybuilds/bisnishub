@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Studio"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/services
 document_id: "TS-SVC-005"
 version: "1.0"
-status: "CANONICAL"
 category: "services"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "04-services/studio.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -23,10 +32,15 @@ depends_on:
   - "TS-SVC-004"
 ---
 
+
 # TeeStock Studio v1.0
 
-> **Canonical TeeStock Studio Service Strategy**  
+> [!abstract] **Canonical TeeStock Studio Service Strategy  **
 > Dokumen ini mendefinisikan positioning, scope, creative services, internal vs external operating model, brief, concept development, revision, production-readiness, creative ownership, pricing, workflow, quality, automation, metrics, dan boundaries untuk TeeStock Studio.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/02-brand/brand-identity-system|TS-BRD-003: TeeStock Brand Identity System]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/teestock-selects|TS-COM-002: TeeStock Selects]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/04-services/custom|TS-SVC-002: TeeStock Custom]] • [[bisnis/teestock/04-services/business|TS-SVC-003: TeeStock Business]] • [[bisnis/teestock/04-services/merch|TS-SVC-004: TeeStock Merch]]
+
 
 ---
 
@@ -1837,17 +1851,17 @@ CREATIVE SYSTEM BEFORE CREATIVE CHAOS.
 
 Dokumen berikut harus follow TeeStock Studio Strategy:
 
-1. `04-services/supply.md`
-2. `04-services/fulfill.md`
-3. `05-originals/originals-master-plan.md`
-4. `05-originals/brand-incubation-framework.md`
-5. `06-programs/creator-program.md`
-6. `07-operations/production-system.md`
-7. `07-operations/quality-control.md`
-8. `09-marketing/content-engine.md`
-9. `10-product-tech/automation-architecture.md`
-10. `11-data-mgbos/canonical-data-model.md`
-11. `12-legal-ip/design-licensing-policy.md`
-12. `12-legal-ip/creator-agreement-framework.md`
+1. [[bisnis/teestock/04-services/supply|supply.md]]
+2. [[bisnis/teestock/04-services/fulfill|fulfill.md]]
+3. [[bisnis/teestock/05-originals/originals-master-plan|originals-master-plan.md]]
+4. [[bisnis/teestock/05-originals/brand-incubation-framework|brand-incubation-framework.md]]
+5. [[bisnis/teestock/06-programs/creator-program|creator-program.md]]
+6. [[bisnis/teestock/07-operations/production-system|production-system.md]]
+7. [[bisnis/teestock/07-operations/quality-control|quality-control.md]]
+8. [[bisnis/teestock/09-marketing/content-engine|content-engine.md]]
+9. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+10. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+11. [[bisnis/teestock/12-legal-ip/design-licensing-policy|design-licensing-policy.md]]
+12. [[bisnis/teestock/12-legal-ip/creator-agreement-framework|creator-agreement-framework.md]]
 
 TeeStock Studio boleh berkembang menjadi capability yang lebih sophisticated, tetapi scope baru harus tetap memiliki hubungan langsung dengan apparel, merchandise, consumer product, atau ecosystem TeeStock.

@@ -3,7 +3,7 @@ title: "Playbook Peluncuran Fase Awal (Drop #01) — TeeStock & MultiGraph"
 date: "2026-09-16"
 bisnis: teestock
 kategori: marketing
-status: active
+status: archived
 tags:
   - bisnis/teestock
   - kategori/marketing

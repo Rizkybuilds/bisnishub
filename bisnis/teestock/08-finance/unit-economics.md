@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Unit Economics"
+date: "2026-09-28"
+bisnis: teestock
+kategori: keuangan
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/keuangan
+  - teestock/canonical
+  - teestock/finance
 document_id: "TS-FIN-002"
 version: "1.0"
-status: "CANONICAL"
 category: "finance"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "08-finance/unit-economics.md"
 depends_on:
   - "TS-FIN-001"
   - "TS-STR-002"
@@ -22,10 +31,15 @@ depends_on:
   - "TS-OPS-008"
 ---
 
+
 # TeeStock Unit Economics v1.0
 
-> **Canonical TeeStock Transaction-Level Economics Framework**  
+> [!important] **Canonical TeeStock Transaction-Level Economics Framework  **
 > Dokumen ini mendefinisikan unit of analysis, order economics, product economics, service economics, contribution margin layers, channel cost, payment fee, fulfillment cost, royalty, affiliate commission, discount, acquisition cost, returns, rework, shipping subsidy, customer profitability, margin floors, break-even logic, dan unit-economics integration dengan MGBOS.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/08-finance/financial-model|TS-FIN-001: TeeStock Financial Model]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/03-commerce/teestock-selects|TS-COM-002: TeeStock Selects]] • [[bisnis/teestock/03-commerce/teestock-essentials|TS-COM-003: TeeStock Essentials]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/05-originals/originals-master-plan|TS-ORG-001: TeeStock Originals Master Plan]] • [[bisnis/teestock/06-programs/creator-program|TS-PRG-002: TeeStock Creator Program]] • [[bisnis/teestock/06-programs/reseller-program|TS-PRG-003: TeeStock Reseller Program]] • [[bisnis/teestock/06-programs/affiliate-program|TS-PRG-005: TeeStock Affiliate Program]] • [[bisnis/teestock/07-operations/production-system|TS-OPS-003: TeeStock Production System]] • [[bisnis/teestock/07-operations/order-fulfillment|TS-OPS-006: TeeStock Order Fulfillment System]] • [[bisnis/teestock/07-operations/returns-and-warranty|TS-OPS-008: TeeStock Returns & Warranty System]]
+
 
 ---
 
@@ -3058,18 +3072,18 @@ CAPITAL AND CAPACITY MATTER ALONGSIDE MARGIN.
 
 Dokumen berikut harus follow Unit Economics:
 
-1. `08-finance/pricing-framework.md`
-2. `08-finance/cost-accounting.md`
-3. `08-finance/treasury-policy.md`
-4. `09-marketing/go-to-market.md`
-5. `09-marketing/channel-strategy.md`
-6. `09-marketing/retention-and-community.md`
-7. `10-product-tech/commerce-platform.md`
-8. `10-product-tech/automation-architecture.md`
-9. `11-data-mgbos/canonical-data-model.md`
-10. `11-data-mgbos/event-model.md`
-11. `11-data-mgbos/mgbos-integration.md`
-12. `13-metrics-experiments/kpi-framework.md`
-13. `13-metrics-experiments/decision-thresholds.md`
+1. [[bisnis/teestock/08-finance/pricing-framework|pricing-framework.md]]
+2. [[bisnis/teestock/08-finance/cost-accounting|cost-accounting.md]]
+3. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+4. [[bisnis/teestock/09-marketing/go-to-market|go-to-market.md]]
+5. [[bisnis/teestock/09-marketing/channel-strategy|channel-strategy.md]]
+6. [[bisnis/teestock/09-marketing/retention-and-community|retention-and-community.md]]
+7. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+8. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+9. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+10. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+11. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+12. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+13. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
 
 TeeStock Unit Economics boleh berkembang menjadi real-time margin engine dan AI-assisted commercial optimization layer, tetapi advanced optimization hanya boleh dibangun setelah direct cost, transaction fees, fulfillment, payouts, returns, acquisition, dan actual-vs-expected economics benar-benar reliable.

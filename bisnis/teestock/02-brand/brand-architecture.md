@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Brand Architecture"
+date: "2026-09-27"
+bisnis: teestock
+kategori: brand
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/brand
+  - teestock/canonical
+  - teestock/brand
 document_id: "TS-BRD-002"
 version: "1.0"
-status: "CANONICAL"
 category: "brand"
 business: "teestock"
 last_updated: "2026-09-27"
+path: "02-brand/brand-architecture.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -16,10 +25,15 @@ depends_on:
   - "TS-BRD-001"
 ---
 
+
 # TeeStock Brand Architecture v1.0
 
-> **Canonical Brand Architecture Document**  
+> [!info] **Canonical Brand Architecture Document  **
 > Dokumen ini mendefinisikan bagaimana seluruh brand, business line, commerce line, program, collection, collaboration, dan independent label di dalam TeeStock harus dinamai, ditampilkan, dihubungkan, dan dikembangkan.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-thesis|TS-STR-001: TeeStock Business Thesis]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]]
+
 
 ---
 
@@ -2203,17 +2217,17 @@ TEEStock TRUST BEFORE BRAND PROLIFERATION.
 
 Dokumen berikut harus mengikuti Brand Architecture ini:
 
-1. `02-brand/brand-identity-system.md`
-2. `02-brand/voice-and-copy-system.md`
-3. `03-commerce/commerce-overview.md`
-4. `03-commerce/teestock-selects.md`
-5. `03-commerce/teestock-essentials.md`
-6. `04-services/services-overview.md`
-7. `05-originals/originals-master-plan.md`
-8. `05-originals/brand-incubation-framework.md`
-9. `05-originals/label-governance.md`
-10. `06-programs/programs-overview.md`
-11. `10-product-tech/website-information-architecture.md`
-12. `11-data-mgbos/entity-hierarchy.md`
+1. [[bisnis/teestock/02-brand/brand-identity-system|brand-identity-system.md]]
+2. [[bisnis/teestock/02-brand/voice-and-copy-system|voice-and-copy-system.md]]
+3. [[bisnis/teestock/03-commerce/commerce-overview|commerce-overview.md]]
+4. [[bisnis/teestock/03-commerce/teestock-selects|teestock-selects.md]]
+5. [[bisnis/teestock/03-commerce/teestock-essentials|teestock-essentials.md]]
+6. [[bisnis/teestock/04-services/services-overview|services-overview.md]]
+7. [[bisnis/teestock/05-originals/originals-master-plan|originals-master-plan.md]]
+8. [[bisnis/teestock/05-originals/brand-incubation-framework|brand-incubation-framework.md]]
+9. [[bisnis/teestock/05-originals/label-governance|label-governance.md]]
+10. [[bisnis/teestock/06-programs/programs-overview|programs-overview.md]]
+11. [[bisnis/teestock/10-product-tech/website-information-architecture|website-information-architecture.md]]
+12. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
 
 Setiap proposal brand baru harus terlebih dahulu diklasifikasikan terhadap architecture ini sebelum diberikan nama, identity, domain, atau akun sosial.

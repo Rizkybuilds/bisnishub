@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Commerce Platform"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/product-tech
 document_id: "TS-TEC-003"
 version: "1.0"
-status: "CANONICAL"
 category: "product-tech"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "10-product-tech/commerce-platform.md"
 depends_on:
   - "TS-TEC-001"
   - "TS-TEC-002"
@@ -21,10 +30,15 @@ depends_on:
   - "TS-MKT-005"
 ---
 
+
 # TeeStock Commerce Platform v1.0
 
-> **Canonical TeeStock Commerce Engine, Transaction & Order-Orchestration Framework**  
+> [!abstract] **Canonical TeeStock Commerce Engine, Transaction & Order-Orchestration Framework  **
 > Dokumen ini mendefinisikan catalog, product presentation, pricing, promotions, inventory availability, cart, checkout, order lifecycle, payment, allocation, preorder, made-to-order, returns integration, channel normalization, merchandising, search, customer account, order history, and shared commerce capabilities untuk TeeStock.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/10-product-tech/digital-product-vision|TS-TEC-001: TeeStock Digital Product Vision]] • [[bisnis/teestock/10-product-tech/website-information-architecture|TS-TEC-002: TeeStock Website Information Architecture]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/03-commerce/catalog-merchandising-system|TS-COM-004: TeeStock Catalog & Merchandising System]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/07-operations/inventory-system|TS-OPS-005: TeeStock Inventory System]] • [[bisnis/teestock/07-operations/order-fulfillment|TS-OPS-006: TeeStock Order Fulfillment System]] • [[bisnis/teestock/07-operations/returns-and-warranty|TS-OPS-008: TeeStock Returns & Warranty System]] • [[bisnis/teestock/08-finance/unit-economics|TS-FIN-002: TeeStock Unit Economics]] • [[bisnis/teestock/08-finance/pricing-framework|TS-FIN-003: TeeStock Pricing Framework]] • [[bisnis/teestock/09-marketing/channel-strategy|TS-MKT-004: TeeStock Channel Strategy]] • [[bisnis/teestock/09-marketing/retention-and-community|TS-MKT-005: TeeStock Retention & Community]]
+
 
 ---
 
@@ -3297,16 +3311,16 @@ AI MAY ASSIST DISCOVERY. DETERMINISTIC SYSTEMS CONTROL TRANSACTIONS.
 
 Dokumen berikut harus follow Commerce Platform:
 
-1. `10-product-tech/creator-platform.md`
-2. `10-product-tech/partner-platform.md`
-3. `10-product-tech/automation-architecture.md`
-4. `11-data-mgbos/canonical-data-model.md`
-5. `11-data-mgbos/entity-hierarchy.md`
-6. `11-data-mgbos/sku-and-id-convention.md`
-7. `11-data-mgbos/event-model.md`
-8. `11-data-mgbos/mgbos-integration.md`
-9. `11-data-mgbos/analytics-model.md`
-10. `13-metrics-experiments/kpi-framework.md`
-11. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/10-product-tech/creator-platform|creator-platform.md]]
+2. [[bisnis/teestock/10-product-tech/partner-platform|partner-platform.md]]
+3. [[bisnis/teestock/10-product-tech/automation-architecture|automation-architecture.md]]
+4. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+5. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
+6. [[bisnis/teestock/11-data-mgbos/sku-and-id-convention|sku-and-id-convention.md]]
+7. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+8. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+9. [[bisnis/teestock/11-data-mgbos/analytics-model|analytics-model.md]]
+10. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+11. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Commerce Platform boleh berkembang menjadi multi-channel, creator-enabled, multi-label, inventory-aware, capacity-aware, dan AI-assisted commerce engine, tetapi complexity hanya boleh bertambah setelah canonical product, pricing, inventory, payment, order, returns, dan channel mappings sudah menjadi reliable transactional truth.

@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Merch"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/services
 document_id: "TS-SVC-004"
 version: "1.0"
-status: "CANONICAL"
 category: "services"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "04-services/merch.md"
 depends_on:
   - "TS-FND-001"
   - "TS-FND-002"
@@ -21,10 +30,15 @@ depends_on:
   - "TS-SVC-003"
 ---
 
+
 # TeeStock Merch v1.0
 
-> **Canonical TeeStock Merch Service Strategy**  
+> [!abstract] **Canonical TeeStock Merch Service Strategy  **
 > Dokumen ini mendefinisikan positioning, creator/brand account model, merch program architecture, product development, storefront, IP ownership, pricing, revenue share, royalty, payout, inventory modes, fulfillment, launch workflow, analytics, automation, metrics, dan boundaries untuk TeeStock Merch.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/00-foundation/glossary|TS-FND-002: TeeStock Glossary]] • [[bisnis/teestock/01-strategy/business-model|TS-STR-002: TeeStock Business Model]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/01-strategy/growth-strategy|TS-STR-004: TeeStock Growth Strategy]] • [[bisnis/teestock/02-brand/master-brand-strategy|TS-BRD-001: TeeStock Master Brand Strategy]] • [[bisnis/teestock/02-brand/brand-architecture|TS-BRD-002: TeeStock Brand Architecture]] • [[bisnis/teestock/02-brand/voice-and-copy-system|TS-BRD-004: TeeStock Voice & Copy System]] • [[bisnis/teestock/03-commerce/commerce-overview|TS-COM-001: TeeStock Commerce Overview]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/04-services/services-overview|TS-SVC-001: TeeStock Services Overview]] • [[bisnis/teestock/04-services/business|TS-SVC-003: TeeStock Business]]
+
 
 ---
 
@@ -2169,21 +2183,21 @@ PARTNER TRUST BEFORE AUTOMATION.
 
 Dokumen berikut harus follow TeeStock Merch Strategy:
 
-1. `04-services/studio.md`
-2. `04-services/supply.md`
-3. `04-services/fulfill.md`
-4. `06-programs/creator-program.md`
-5. `07-operations/production-system.md`
-6. `07-operations/inventory-system.md`
-7. `07-operations/order-fulfillment.md`
-8. `08-finance/unit-economics.md`
-9. `08-finance/pricing-framework.md`
-10. `08-finance/treasury-policy.md`
-11. `10-product-tech/creator-platform.md`
-12. `10-product-tech/commerce-platform.md`
-13. `11-data-mgbos/canonical-data-model.md`
-14. `11-data-mgbos/event-model.md`
-15. `12-legal-ip/creator-agreement-framework.md`
-16. `13-metrics-experiments/kpi-framework.md`
+1. [[bisnis/teestock/04-services/studio|studio.md]]
+2. [[bisnis/teestock/04-services/supply|supply.md]]
+3. [[bisnis/teestock/04-services/fulfill|fulfill.md]]
+4. [[bisnis/teestock/06-programs/creator-program|creator-program.md]]
+5. [[bisnis/teestock/07-operations/production-system|production-system.md]]
+6. [[bisnis/teestock/07-operations/inventory-system|inventory-system.md]]
+7. [[bisnis/teestock/07-operations/order-fulfillment|order-fulfillment.md]]
+8. [[bisnis/teestock/08-finance/unit-economics|unit-economics.md]]
+9. [[bisnis/teestock/08-finance/pricing-framework|pricing-framework.md]]
+10. [[bisnis/teestock/08-finance/treasury-policy|treasury-policy.md]]
+11. [[bisnis/teestock/10-product-tech/creator-platform|creator-platform.md]]
+12. [[bisnis/teestock/10-product-tech/commerce-platform|commerce-platform.md]]
+13. [[bisnis/teestock/11-data-mgbos/canonical-data-model|canonical-data-model.md]]
+14. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+15. [[bisnis/teestock/12-legal-ip/creator-agreement-framework|creator-agreement-framework.md]]
+16. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 TeeStock Merch boleh berevolusi menjadi creator-commerce platform, tetapi platformization hanya dilakukan setelah manual managed-merch operation menunjukkan recurring demand, repeatable economics, reliable fulfillment, dan enough creator volume untuk membenarkan infrastructure tambahan.

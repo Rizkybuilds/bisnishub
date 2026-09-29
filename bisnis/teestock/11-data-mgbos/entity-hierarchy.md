@@ -1,11 +1,20 @@
 ---
 title: "TeeStock Entity Hierarchy"
+date: "2026-09-28"
+bisnis: teestock
+kategori: operasional
+status: active
+tags:
+  - bisnis/teestock
+  - kategori/operasional
+  - teestock/canonical
+  - teestock/data-mgbos
 document_id: "TS-DAT-002"
 version: "1.0"
-status: "CANONICAL"
 category: "data-mgbos"
 business: "teestock"
 last_updated: "2026-09-28"
+path: "11-data-mgbos/entity-hierarchy.md"
 depends_on:
   - "TS-DAT-001"
   - "TS-FND-001"
@@ -15,10 +24,15 @@ depends_on:
   - "TS-TEC-001"
 ---
 
+
 # TeeStock Entity Hierarchy v1.0
 
-> **Canonical TeeStock Entity Ownership, Parent-Child, Containment & Relationship Hierarchy**  
+> [!abstract] **Canonical TeeStock Entity Ownership, Parent-Child, Containment & Relationship Hierarchy  **
 > Dokumen ini mendefinisikan hierarchy, parent-child relationships, ownership boundaries, containment rules, association patterns, cross-domain references, and object-scoping principles untuk seluruh canonical entities TeeStock dan future MultiGraph Business OS.
+>
+> [!info] **Dependencies & Data Flow (SSOT)**
+> [[bisnis/teestock/11-data-mgbos/canonical-data-model|TS-DAT-001: TeeStock Canonical Data Model]] • [[bisnis/teestock/00-foundation/teestock-master-definition|TS-FND-001: TeeStock Master Definition]] • [[bisnis/teestock/01-strategy/ecosystem-architecture|TS-STR-003: TeeStock Ecosystem Architecture]] • [[bisnis/teestock/03-commerce/product-taxonomy|TS-COM-005: TeeStock Product Taxonomy]] • [[bisnis/teestock/07-operations/operating-model|TS-OPS-001: TeeStock Operating Model]] • [[bisnis/teestock/10-product-tech/digital-product-vision|TS-TEC-001: TeeStock Digital Product Vision]]
+
 
 ---
 
@@ -3919,14 +3933,14 @@ MGBOS SHOULD NEVER NEED TO GUESS HOW ENTITIES CONNECT.
 
 Dokumen berikut harus follow Entity Hierarchy:
 
-1. `11-data-mgbos/sku-and-id-convention.md`
-2. `11-data-mgbos/event-model.md`
-3. `11-data-mgbos/mgbos-integration.md`
-4. `11-data-mgbos/analytics-model.md`
-5. `12-legal-ip/ip-policy.md`
-6. `13-metrics-experiments/kpi-framework.md`
-7. `13-metrics-experiments/decision-thresholds.md`
-8. `14-roadmap/master-roadmap.md`
-9. `14-roadmap/capability-roadmap.md`
+1. [[bisnis/teestock/11-data-mgbos/sku-and-id-convention|sku-and-id-convention.md]]
+2. [[bisnis/teestock/11-data-mgbos/event-model|event-model.md]]
+3. [[bisnis/teestock/11-data-mgbos/mgbos-integration|mgbos-integration.md]]
+4. [[bisnis/teestock/11-data-mgbos/analytics-model|analytics-model.md]]
+5. [[bisnis/teestock/12-legal-ip/ip-policy|ip-policy.md]]
+6. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
+7. [[bisnis/teestock/13-metrics-experiments/decision-thresholds|decision-thresholds.md]]
+8. [[bisnis/teestock/14-roadmap/master-roadmap|master-roadmap.md]]
+9. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Entity Hierarchy boleh berkembang menjadi cross-business, multi-brand, multi-portal, dan AI-navigable enterprise relationship graph untuk MultiGraph Group, tetapi setiap expansion harus menjaga explicit ownership, bounded scope, stable identity, valid cardinality, historical lineage, dan separation yang tegas antara hierarchy, association, classification, view, dan event.
