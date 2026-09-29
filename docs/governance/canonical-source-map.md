@@ -182,11 +182,15 @@ docs/project-index.md
 
 No other architecture document may override current physical routing.
 
+Location paths were refreshed on 2026-09-30 after MGBOS relocation merged in
+PR #14 (`b05079e`). This location review does not certify implementation of the
+architecture specifications or change their semantic ownership.
+
 Example:
 
 ```text
 MGBOS current runtime
-→ mgbos/
+→ systems/mgbos/
 
 KasKita current runtime
 → systems/kaskita/
@@ -210,7 +214,7 @@ MGBOS
 Current system location:
 
 ```text
-mgbos/
+systems/mgbos/
 ```
 
 MGBOS owns:
@@ -240,14 +244,14 @@ JARVIS, n8n, AI models, UI state, spreadsheets, and external messages MUST NOT b
 
 | Concept | Current Source | Status |
 |---|---|---|
-| MGBOS workspace identity | `mgbos/README.md` | CANONICAL |
-| MGBOS documentation index | `mgbos/docs/README.md` | CANONICAL navigation |
-| MGBOS engineering instructions | `mgbos/AGENTS.md` | CANONICAL instruction |
-| MGBOS architecture constitution | `mgbos/docs/architecture/README.md` | CANONICAL |
-| Product/pilot specification | `mgbos/docs/product/README.md` | CANONICAL within product scope |
-| Engineering governance/index | `mgbos/docs/engineering/README.md` | CANONICAL within engineering scope |
-| Operational runbooks | `mgbos/docs/runbooks/` | CANONICAL procedures |
-| Architecture decisions | `mgbos/docs/adr/` | ACCEPTED decision records |
+| MGBOS workspace identity | `systems/mgbos/README.md` | CANONICAL |
+| MGBOS documentation index | `systems/mgbos/docs/README.md` | CANONICAL navigation |
+| MGBOS engineering instructions | `systems/mgbos/AGENTS.md` | CANONICAL instruction |
+| MGBOS architecture constitution | `systems/mgbos/docs/architecture/README.md` | CANONICAL |
+| Product/pilot specification | `systems/mgbos/docs/product/README.md` | CANONICAL within product scope |
+| Engineering governance/index | `systems/mgbos/docs/engineering/README.md` | CANONICAL within engineering scope |
+| Operational runbooks | `systems/mgbos/docs/runbooks/` | CANONICAL procedures |
+| Architecture decisions | `systems/mgbos/docs/adr/` | ACCEPTED decision records |
 
 ---
 
@@ -283,7 +287,7 @@ Workspace Coexistence
 These ADRs are located under:
 
 ```text
-mgbos/docs/adr/
+systems/mgbos/docs/adr/
 ```
 
 and are authoritative decision records within their declared scope.
@@ -299,7 +303,7 @@ ADR existence does not replace the corresponding system specification.
 Canonical foundational decision:
 
 ```text
-mgbos/docs/adr/002-postgresql-system-of-record.md
+systems/mgbos/docs/adr/002-postgresql-system-of-record.md
 ```
 
 Rule:
@@ -331,7 +335,7 @@ They do not independently establish transactional truth.
 Current normative knowledge is distributed across:
 
 ```text
-mgbos/docs/architecture/README.md
+systems/mgbos/docs/architecture/README.md
 +
 implemented schema/migrations
 +
@@ -389,7 +393,7 @@ catatan/sesi/2026-09-23 - MGBOS 0.3 — Business State Machines.md
 Current summarized source:
 
 ```text
-mgbos/docs/architecture/README.md
+systems/mgbos/docs/architecture/README.md
 ```
 
 Classification:
@@ -427,9 +431,9 @@ procurement lifecycle
 Business invariants currently exist across:
 
 ```text
-mgbos/AGENTS.md
-mgbos/docs/architecture/README.md
-mgbos/docs/adr/
+systems/mgbos/AGENTS.md
+systems/mgbos/docs/architecture/README.md
+systems/mgbos/docs/adr/
 database constraints
 domain implementation
 transaction tests
@@ -468,7 +472,7 @@ This is a high-priority documentation consolidation item.
 Primary product specification:
 
 ```text
-mgbos/docs/product/README.md
+systems/mgbos/docs/product/README.md
 ```
 
 Current role:
@@ -480,10 +484,10 @@ CANONICAL within pilot/product scope
 Specific TeeStock product strategy and future development are owned by:
 
 ```text
-mgbos/docs/product/teestock-curated-strategy.md
-mgbos/docs/product/teestock-development-plan.md
-mgbos/docs/product/teestock-design-library-spec.md
-mgbos/docs/product/teestock-asset-readiness.md
+systems/mgbos/docs/product/teestock-curated-strategy.md
+systems/mgbos/docs/product/teestock-development-plan.md
+systems/mgbos/docs/product/teestock-design-library-spec.md
+systems/mgbos/docs/product/teestock-asset-readiness.md
 ```
 
 Roadmaps and development plans represent intended direction, not implementation proof.
@@ -511,9 +515,9 @@ MGBOS Engineering Governance
 Important sources:
 
 ```text
-mgbos/docs/engineering/README.md
-mgbos/docs/engineering/maintenance-policy.md
-mgbos/docs/engineering/operational-readiness.md
+systems/mgbos/docs/engineering/README.md
+systems/mgbos/docs/engineering/maintenance-policy.md
+systems/mgbos/docs/engineering/operational-readiness.md
 ```
 
 Classification:
@@ -539,7 +543,7 @@ and MUST NOT be interpreted as production certification.
 Canonical entry point:
 
 ```text
-mgbos/docs/engineering/agent-system/README.md
+systems/mgbos/docs/engineering/agent-system/README.md
 ```
 
 Canonical related documents:
@@ -622,11 +626,11 @@ Repository skill availability and production runtime registration are separate c
 Current canonical runbooks:
 
 ```text
-mgbos/docs/runbooks/local-database.md
-mgbos/docs/runbooks/windows-database-prerequisites.md
-mgbos/docs/runbooks/backup-and-restore.md
-mgbos/docs/runbooks/monitoring-and-incidents.md
-mgbos/docs/runbooks/release-and-recovery.md
+systems/mgbos/docs/runbooks/local-database.md
+systems/mgbos/docs/runbooks/windows-database-prerequisites.md
+systems/mgbos/docs/runbooks/backup-and-restore.md
+systems/mgbos/docs/runbooks/monitoring-and-incidents.md
+systems/mgbos/docs/runbooks/release-and-recovery.md
 ```
 
 These documents define procedure.
@@ -636,7 +640,7 @@ They do not prove that corresponding production infrastructure exists.
 For readiness evidence, consult:
 
 ```text
-mgbos/docs/engineering/operational-readiness.md
+systems/mgbos/docs/engineering/operational-readiness.md
 ```
 
 ---
@@ -646,9 +650,9 @@ mgbos/docs/engineering/operational-readiness.md
 Implementation reports:
 
 ```text
-mgbos/docs/engineering/mgbos-001-report.md
+systems/mgbos/docs/engineering/mgbos-001-report.md
 ...
-mgbos/docs/engineering/mgbos-020-report.md
+systems/mgbos/docs/engineering/mgbos-020-report.md
 ```
 
 Classification:
@@ -682,7 +686,7 @@ and must be reconciled.
 MGBOS architectural decision:
 
 ```text
-mgbos/docs/adr/004-n8n-orchestrator.md
+systems/mgbos/docs/adr/004-n8n-orchestrator.md
 ```
 
 Canonical principle:
@@ -716,7 +720,7 @@ order state
 Current accepted MGBOS decision:
 
 ```text
-mgbos/docs/adr/006-ai-gateway.md
+systems/mgbos/docs/adr/006-ai-gateway.md
 ```
 
 Canonical principle:
@@ -962,7 +966,7 @@ There are currently two related but different bodies of risk material.
 MGBOS engineering agents have canonical risk classification at:
 
 ```text
-mgbos/docs/engineering/agent-system/risk-classification.md
+systems/mgbos/docs/engineering/agent-system/risk-classification.md
 ```
 
 This source is authoritative for:
@@ -1326,9 +1330,9 @@ risk semantics
 Relevant current evidence locations include:
 
 ```text
-mgbos/docs/engineering/mgbos-*-report.md
-mgbos/docs/engineering/operational-readiness.md
-mgbos/docs/engineering/agent-system/implementation-report.md
+systems/mgbos/docs/engineering/mgbos-*-report.md
+systems/mgbos/docs/engineering/operational-readiness.md
+systems/mgbos/docs/engineering/agent-system/implementation-report.md
 docs/engineering/repository-migration-*.md
 CI runs
 tests
@@ -1508,7 +1512,7 @@ mgbos.architecture.constitution
 remains conceptually stable even if:
 
 ```text
-mgbos/
+systems/mgbos/
 ```
 
 later becomes:
@@ -1576,7 +1580,7 @@ Read:
 AGENTS.md
 docs/project-index.md
 DOC-002
-mgbos/AGENTS.md
+systems/mgbos/AGENTS.md
 relevant payment specification
 related ADR
 engineering control plane

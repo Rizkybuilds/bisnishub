@@ -1177,7 +1177,7 @@ Software development agents exist in a separate control plane.
 Canonical current implementation:
 
 ```text id="lpljt7"
-mgbos/docs/engineering/agent-system/
+systems/mgbos/docs/engineering/agent-system/
 +
 .agents/
 ```
