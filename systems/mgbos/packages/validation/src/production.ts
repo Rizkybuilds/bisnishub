@@ -4,12 +4,16 @@ import {
   PRODUCTION_JOB_STATUSES,
   PRODUCTION_JOB_PRIORITIES,
   EXECUTOR_TYPES,
+  PRODUCTION_ASSIGNMENT_STATUSES,
 } from '@mgbos/domain';
 
 export const productionJobTypeSchema = z.enum(PRODUCTION_JOB_TYPES);
 export const productionJobStatusSchema = z.enum(PRODUCTION_JOB_STATUSES);
 export const productionJobPrioritySchema = z.enum(PRODUCTION_JOB_PRIORITIES);
 export const executorTypeSchema = z.enum(EXECUTOR_TYPES);
+export const productionAssignmentStatusSchema = z.enum(
+  PRODUCTION_ASSIGNMENT_STATUSES,
+);
 
 export const productionJobItemSchema = z.object({
   order_item_id: z.string().uuid('ID item pesanan tidak valid'),
@@ -51,15 +55,95 @@ export type TransitionProductionJobInput = z.infer<
   typeof transitionProductionJobSchema
 >;
 
-export const assignProductionJobSchema = z.object({
-  jobId: z.string().uuid('ID job tidak valid'),
-  executorType: executorTypeSchema,
-  vendorName: z.string().max(200).optional().nullable(),
-  assignedBrandId: z.string().uuid().optional().nullable(),
-  assignedCost: z.coerce.bigint().nonnegative().default(0n),
-  notes: z.string().max(1000).optional().nullable(),
-});
+export const assignProductionJobSchema = z
+  .object({
+    jobId: z.string().uuid('ID job tidak valid'),
+    executorType: executorTypeSchema,
+    vendorId: z.string().uuid('ID vendor tidak valid').optional().nullable(),
+    vendorName: z.string().max(200).optional().nullable(),
+    assignedBrandId: z
+      .string()
+      .uuid('ID brand tidak valid')
+      .optional()
+      .nullable(),
+    assignedCost: z.coerce
+      .bigint()
+      .nonnegative('Biaya komitmen tidak boleh negatif')
+      .default(0n),
+    notes: z.string().max(1000).optional().nullable(),
+  })
+  .refine(
+    (data) => {
+      if (data.executorType === 'INTERNAL') {
+        return !!data.assignedBrandId;
+      }
+      if (data.executorType === 'VENDOR') {
+        return (
+          !!data.vendorId ||
+          (!!data.vendorName && data.vendorName.trim().length >= 2)
+        );
+      }
+      return true;
+    },
+    {
+      message:
+        'Pelaksana wajib ditentukan: pilih unit brand internal atau mitra vendor',
+      path: ['executorType'],
+    },
+  );
 
 export type AssignProductionJobInput = z.infer<
   typeof assignProductionJobSchema
 >;
+
+export const acceptProductionAssignmentSchema = z.object({
+  assignmentId: z.string().uuid('ID penugasan tidak valid'),
+});
+
+export type AcceptProductionAssignmentInput = z.infer<
+  typeof acceptProductionAssignmentSchema
+>;
+
+export const declineProductionAssignmentSchema = z.object({
+  assignmentId: z.string().uuid('ID penugasan tidak valid'),
+  reason: z
+    .string()
+    .min(3, 'Alasan penolakan minimal 3 karakter')
+    .max(1000, 'Alasan penolakan maksimal 1000 karakter')
+    .optional()
+    .nullable(),
+});
+
+export type DeclineProductionAssignmentInput = z.infer<
+  typeof declineProductionAssignmentSchema
+>;
+
+export const cancelProductionAssignmentSchema = z.object({
+  assignmentId: z.string().uuid('ID penugasan tidak valid'),
+  reason: z
+    .string()
+    .min(3, 'Alasan pembatalan minimal 3 karakter')
+    .max(1000, 'Alasan pembatalan maksimal 1000 karakter')
+    .optional()
+    .nullable(),
+});
+
+export type CancelProductionAssignmentInput = z.infer<
+  typeof cancelProductionAssignmentSchema
+>;
+
+export const reassignProductionJobSchema = assignProductionJobSchema.and(
+  z.object({
+    reason: z
+      .string()
+      .min(3, 'Alasan penugasan ulang minimal 3 karakter')
+      .max(1000, 'Alasan penugasan ulang maksimal 1000 karakter')
+      .optional()
+      .nullable(),
+  }),
+);
+
+export type ReassignProductionJobInput = z.infer<
+  typeof reassignProductionJobSchema
+>;
+

@@ -11,7 +11,8 @@ import {
   rupiah,
 } from '../data';
 import { JobTransitionButton } from '../JobTransitionButton';
-import { JobAssignForm } from '../JobAssignForm';
+import { JobAssignForm, VendorOption } from '../JobAssignForm';
+import { AssignmentStatusActions } from '../AssignmentStatusActions';
 import { QcInspectionModal } from '../QcInspectionModal';
 
 interface JobItemJoined {
@@ -33,6 +34,12 @@ interface AssignmentJoined extends ProductionAssignmentRow {
     id: string;
     code: string;
     name: string;
+  } | null;
+  vendors?: {
+    id: string;
+    code: string;
+    name: string;
+    category: string;
   } | null;
 }
 
@@ -67,7 +74,7 @@ export default async function ProductionJobDetailPage({
   );
 
   const assignments = await readRows<AssignmentJoined>(
-    `production_assignments?production_job_id=eq.${job.id}&select=*,brands(id,code,name)&order=assigned_at.desc`,
+    `production_assignments?production_job_id=eq.${job.id}&select=*,brands(id,code,name),vendors(id,code,name,category)&order=assigned_at.desc`,
     ctx,
   );
 
@@ -84,6 +91,45 @@ export default async function ProductionJobDetailPage({
     `brands?organization_id=eq.${ctx.session.organization.id}&status=eq.ACTIVE&select=id,code,name&order=code.asc`,
     ctx,
   );
+
+  const activeVendors = await readRows<{
+    id: string;
+    code: string;
+    name: string;
+    category: string;
+    status: string;
+    lead_time_days: number;
+  }>(
+    `vendors?organization_id=eq.${ctx.session.organization.id}&status=eq.ACTIVE&select=id,code,name,category,status,lead_time_days&order=name.asc`,
+    ctx,
+  );
+
+  const vendorIds = activeVendors.map((v) => v.id);
+  const activeRateCards =
+    vendorIds.length > 0
+      ? await readRows<{
+          id: string;
+          vendor_id: string;
+          service_code: string;
+          description: string;
+          unit: string;
+          unit_cost: string;
+          min_order_quantity: number;
+        }>(
+          `vendor_rate_cards?vendor_id=in.(${vendorIds.join(',')})&is_active=eq.true&select=id,vendor_id,service_code,description,unit,unit_cost,min_order_quantity`,
+          ctx,
+        )
+      : [];
+
+  const vendorsWithOptions: VendorOption[] = activeVendors.map((v) => ({
+    id: v.id,
+    code: v.code,
+    name: v.name,
+    category: v.category,
+    status: v.status,
+    leadTimeDays: v.lead_time_days,
+    rateCards: activeRateCards.filter((rc) => rc.vendor_id === v.id),
+  }));
 
   const canUpdate = hasPermission(ctx.session.role.code, 'production:update');
   const canAssign = hasPermission(ctx.session.role.code, 'production:assign');
@@ -220,6 +266,28 @@ export default async function ProductionJobDetailPage({
             )}
           </p>
         </div>
+
+        <div>
+          <Link
+            href={`/production/${job.id}/spk`}
+            target="_blank"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: '#0284c7',
+              color: '#ffffff',
+              padding: '8px 14px',
+              borderRadius: '6px',
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              textDecoration: 'none',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+            }}
+          >
+            📄 Cetak / Lihat SPK &rarr;
+          </Link>
+        </div>
       </div>
 
       <div
@@ -331,8 +399,22 @@ export default async function ProductionJobDetailPage({
                   </div>
                   <span
                     style={{
-                      background: '#064e3b',
-                      color: '#4ade80',
+                      background:
+                        latestAssignment.status === 'ACCEPTED'
+                          ? '#064e3b'
+                          : latestAssignment.status === 'ASSIGNED'
+                            ? '#1e3a8a'
+                            : latestAssignment.status === 'DECLINED'
+                              ? '#7c2d12'
+                              : '#374151',
+                      color:
+                        latestAssignment.status === 'ACCEPTED'
+                          ? '#4ade80'
+                          : latestAssignment.status === 'ASSIGNED'
+                            ? '#93c5fd'
+                            : latestAssignment.status === 'DECLINED'
+                              ? '#fdba74'
+                              : '#9ca3af',
                       padding: '2px 8px',
                       borderRadius: '4px',
                       fontSize: '0.75rem',
@@ -353,7 +435,11 @@ export default async function ProductionJobDetailPage({
                 >
                   {latestAssignment.executor_type === 'INTERNAL'
                     ? `Unit Internal: ${latestAssignment.brands?.name ?? 'Brand Holding'} (${latestAssignment.brands?.code ?? ''})`
-                    : `Mitra Vendor: ${latestAssignment.vendor_name}`}
+                    : `Mitra Vendor: ${latestAssignment.vendors?.name ?? latestAssignment.vendor_name}${
+                        latestAssignment.vendors?.category
+                          ? ` · ${latestAssignment.vendors.category}`
+                          : ''
+                      }`}
                 </div>
 
                 <div
@@ -403,6 +489,36 @@ export default async function ProductionJobDetailPage({
                     </>
                   )}
                 </div>
+
+                <AssignmentStatusActions
+                  assignmentId={latestAssignment.id}
+                  status={latestAssignment.status}
+                  jobStatus={job.status}
+                  canUpdate={canUpdate}
+                />
+
+                <div
+                  style={{
+                    marginTop: '10px',
+                    paddingTop: '8px',
+                    borderTop: '1px solid #1e293b',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  <Link
+                    href={`/production/${job.id}/spk`}
+                    target="_blank"
+                    style={{
+                      fontSize: '0.85rem',
+                      color: '#38bdf8',
+                      textDecoration: 'none',
+                      fontWeight: 600,
+                    }}
+                  >
+                    📄 Buka Lembar SPK Pelaksana Ini &rarr;
+                  </Link>
+                </div>
               </div>
             ) : (
               <div>
@@ -412,27 +528,186 @@ export default async function ProductionJobDetailPage({
               </div>
             )}
 
-            {canAssign &&
-              (job.status === 'READY' || job.status === 'ASSIGNED') && (
-                <div style={{ marginTop: '1rem' }}>
-                  <h3
+            {canAssign && job.status === 'READY' && (
+              <div style={{ marginTop: '1rem' }}>
+                <h3
+                  style={{
+                    fontSize: '0.95rem',
+                    color: '#38bdf8',
+                    marginBottom: '0.5rem',
+                  }}
+                >
+                  {latestAssignment
+                    ? 'Tugaskan Pelaksana Baru (Reassign)'
+                    : 'Tugaskan Pelaksana Sekarang'}
+                </h3>
+                <JobAssignForm
+                  jobId={job.id}
+                  brands={holdingBrands}
+                  vendors={vendorsWithOptions}
+                  defaultEstimatedCost={job.estimated_cost}
+                  isReassignment={false}
+                />
+              </div>
+            )}
+
+            {canAssign && job.status === 'ASSIGNED' && (
+              <details
+                style={{
+                  marginTop: '1rem',
+                  background: '#0f172a',
+                  padding: '0.75rem',
+                  borderRadius: '6px',
+                  border: '1px solid #334155',
+                }}
+              >
+                <summary
+                  style={{
+                    fontSize: '0.85rem',
+                    color: '#38bdf8',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                  }}
+                >
+                  🔄 Alihkan / Tugaskan Ulang Pelaksana (Reassign Langsung)
+                </summary>
+                <div style={{ marginTop: '0.75rem' }}>
+                  <p
                     style={{
-                      fontSize: '0.95rem',
-                      color: '#38bdf8',
-                      marginBottom: '0.5rem',
+                      fontSize: '0.8rem',
+                      color: '#94a3b8',
+                      margin: '0 0 0.5rem',
                     }}
                   >
-                    {latestAssignment
-                      ? 'Tugaskan Ulang Pelaksana'
-                      : 'Tugaskan Pelaksana Sekarang'}
-                  </h3>
+                    Form ini akan membatalkan penugasan aktif saat ini dan
+                    membuat penugasan baru secara atomik.
+                  </p>
                   <JobAssignForm
                     jobId={job.id}
                     brands={holdingBrands}
+                    vendors={vendorsWithOptions}
                     defaultEstimatedCost={job.estimated_cost}
+                    isReassignment={true}
                   />
                 </div>
-              )}
+              </details>
+            )}
+
+            {/* Riwayat Penugasan Historis (AC-06) */}
+            {assignments.length > 1 && (
+              <div
+                style={{
+                  marginTop: '1.5rem',
+                  borderTop: '1px solid #1e293b',
+                  paddingTop: '1rem',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '0.9rem',
+                    color: '#94a3b8',
+                    marginBottom: '0.75rem',
+                  }}
+                >
+                  Riwayat Penugasan Sebelumnya ({assignments.length - 1})
+                </h3>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5rem',
+                  }}
+                >
+                  {assignments.slice(1).map((pastAssign) => (
+                    <div
+                      key={pastAssign.id}
+                      style={{
+                        background: '#0f172a',
+                        padding: '0.75rem',
+                        borderRadius: '6px',
+                        border: '1px solid #1e293b',
+                        fontSize: '0.85rem',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <span style={{ fontWeight: 600, color: '#e2e8f0' }}>
+                          {pastAssign.executor_type === 'INTERNAL'
+                            ? `Unit Internal: ${pastAssign.brands?.name ?? 'Brand Holding'}`
+                            : `Mitra Vendor: ${pastAssign.vendors?.name ?? pastAssign.vendor_name}`}
+                        </span>
+                        <span
+                          style={{
+                            background:
+                              pastAssign.status === 'DECLINED'
+                                ? '#7c2d12'
+                                : '#374151',
+                            color:
+                              pastAssign.status === 'DECLINED'
+                                ? '#fdba74'
+                                : '#9ca3af',
+                            padding: '1px 6px',
+                            borderRadius: '3px',
+                            fontSize: '0.7rem',
+                            fontWeight: 700,
+                          }}
+                        >
+                          {pastAssign.status}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          marginTop: '4px',
+                          color: '#64748b',
+                          fontSize: '0.75rem',
+                        }}
+                      >
+                        <span>
+                          Biaya: {rupiah(pastAssign.assigned_cost)}
+                        </span>
+                        <span>
+                          {new Date(pastAssign.assigned_at).toLocaleString(
+                            'id-ID',
+                          )}
+                        </span>
+                      </div>
+                      {pastAssign.notes && (
+                        <div
+                          style={{
+                            marginTop: '4px',
+                            color: '#94a3b8',
+                            fontSize: '0.8rem',
+                            fontStyle: 'italic',
+                          }}
+                        >
+                          {pastAssign.notes}
+                        </div>
+                      )}
+                      <div style={{ marginTop: '6px', textAlign: 'right' }}>
+                        <Link
+                          href={`/production/${job.id}/spk?assignmentId=${pastAssign.id}`}
+                          target="_blank"
+                          style={{
+                            fontSize: '0.75rem',
+                            color: '#93c5fd',
+                            textDecoration: 'none',
+                          }}
+                        >
+                          📄 Lihat SPK Arsip Penugasan Ini &rarr;
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {job.status === 'PLANNED' && (
               <p

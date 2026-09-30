@@ -253,7 +253,7 @@ AI does not become authoritative merely because reasoning quality is high.
 
 Canonical:
 
-> **JARVIS reasons; authoritative systems own facts.**
+> **AI reasons; authoritative systems own facts.** (JARVIS reasons; authoritative systems own facts.)
 
 Therefore JARVIS may say:
 

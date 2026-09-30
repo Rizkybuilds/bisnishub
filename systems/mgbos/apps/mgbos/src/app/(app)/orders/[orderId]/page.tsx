@@ -23,7 +23,8 @@ import {
   ShipmentStatusBadge,
 } from '../../shipments/components';
 import { ShipmentRow, ShipmentItemRow } from '../../shipments/data';
-import { COURIER_LABELS, CourierName } from '@mgbos/domain';
+import { COURIER_LABELS, CourierName, OrderStatus } from '@mgbos/domain';
+import { OrderStatusActions } from '../OrderStatusActions';
 
 export default async function OrderDetailPage({
   params,
@@ -154,6 +155,23 @@ export default async function OrderDetailPage({
   );
   const totalOrderedItems = items.reduce((a, b) => a + b.quantity, 0);
 
+  const openJobsCount = jobs.filter(
+    (j) => j.status !== 'COMPLETED' && j.status !== 'CANCELLED',
+  ).length;
+
+  const openShipmentsCount = shipments.filter(
+    (s) => s.status !== 'DELIVERED' && s.status !== 'CANCELLED',
+  ).length;
+
+  const unpaidInvoicesCount = invoices.filter(
+    (inv) =>
+      inv.status !== 'PAID' &&
+      inv.status !== 'VOID' &&
+      inv.status !== 'CANCELLED',
+  ).length;
+
+  const canUpdateOrder = hasPermission(ctx.session.role.code, 'orders:update');
+
   return (
     <div>
       <div
@@ -231,6 +249,16 @@ export default async function OrderDetailPage({
               : 'Kontrak Komersial B2B Sah'}
           </p>
         </div>
+
+        <OrderStatusActions
+          orderId={order.id}
+          orderNumber={order.order_number}
+          currentStatus={order.status as OrderStatus}
+          canUpdateOrder={canUpdateOrder}
+          openJobsCount={openJobsCount}
+          openShipmentsCount={openShipmentsCount}
+          unpaidInvoicesCount={unpaidInvoicesCount}
+        />
       </div>
 
       <div

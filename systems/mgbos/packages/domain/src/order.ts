@@ -51,6 +51,80 @@ export const VALID_ORDER_TRANSITIONS: Record<
   CANCELLED: [],
 };
 
+export function getAllowedOrderTransitions(
+  status: OrderStatus,
+): readonly OrderStatus[] {
+  return VALID_ORDER_TRANSITIONS[status] ?? [];
+}
+
+export function isOrderTerminalState(status: OrderStatus): boolean {
+  return status === 'COMPLETED' || status === 'CANCELLED';
+}
+
+export interface OrderCompletionGuardInput {
+  openProductionJobsCount: number;
+  openShipmentsCount: number;
+  unpaidInvoicesCount: number;
+}
+
+export interface OrderCompletionGuardResult {
+  eligible: boolean;
+  blockingReasons: string[];
+}
+
+/**
+ * Pure domain evaluation of whether an ACTIVE order satisfies authoritative
+ * operational obligations (production, fulfillment, financial settlement)
+ * to advance to COMPLETED.
+ */
+export function evaluateOrderCompletionEligibility(
+  input: OrderCompletionGuardInput,
+): OrderCompletionGuardResult {
+  const blockingReasons: string[] = [];
+
+  if (input.openProductionJobsCount > 0) {
+    blockingReasons.push(
+      `Masih ada ${input.openProductionJobsCount} pekerjaan produksi (SPK) yang belum selesai`,
+    );
+  }
+
+  if (input.openShipmentsCount > 0) {
+    blockingReasons.push(
+      `Masih ada ${input.openShipmentsCount} surat jalan / pengiriman yang belum terkirim`,
+    );
+  }
+
+  if (input.unpaidInvoicesCount > 0) {
+    blockingReasons.push(
+      `Masih ada ${input.unpaidInvoicesCount} faktur komersial yang belum lunas`,
+    );
+  }
+
+  return {
+    eligible: blockingReasons.length === 0,
+    blockingReasons,
+  };
+}
+
+export function formatOrderStatusLabel(status: OrderStatus): string {
+  switch (status) {
+    case 'DRAFT':
+      return 'Draf';
+    case 'CONFIRMED':
+      return 'Terkonfirmasi (Kontrak Sah)';
+    case 'ACTIVE':
+      return 'Sedang Berjalan (Aktif)';
+    case 'ON_HOLD':
+      return 'Ditahan (On Hold)';
+    case 'COMPLETED':
+      return 'Selesai (Completed)';
+    case 'CANCELLED':
+      return 'Dibatalkan (Cancelled)';
+    default:
+      return status;
+  }
+}
+
 /**
  * Validates state machine progression for an order commercial lifecycle.
  */

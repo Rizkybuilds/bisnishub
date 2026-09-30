@@ -766,6 +766,42 @@ console.log(
   '\n8. Fulfillment, Delivery Orders (DO) & Logistics Tracking (MGBOS-017)...',
 );
 
+// 8.0 Fulfillment Readiness Guard (P0-05): Verify Job 2 ON_HOLD blocks DO creation
+console.log('   Testing fulfillment readiness guard (blocked by Job 2 ON_HOLD)...');
+let doBlockedByOnHold = false;
+try {
+  await rpc('create_delivery_order', {
+    p_organization_id: org.id,
+    p_actor_id: founder.id,
+    p_order_id: orderRes.order_id,
+    p_courier_name: 'JNT',
+    p_items: [
+      {
+        order_item_id: orderItem.id,
+        quantity: 35,
+      },
+    ],
+  });
+} catch (err) {
+  doBlockedByOnHold = true;
+  console.log('   Delivery Order creation blocked as expected:', err.message);
+  assert.ok(
+    err.message.includes('ON_HOLD') || err.message.includes('READY_FOR_HANDOFF'),
+    `Unexpected error message: ${err.message}`,
+  );
+}
+assert.ok(doBlockedByOnHold, 'Delivery Order must be blocked while Job 2 is ON_HOLD');
+
+// Cancel rejected packaging job so it no longer blocks fulfillment (AC-07)
+console.log('   Cancelling rejected packaging Job 2 so fulfillment can proceed...');
+await rpc('transition_production_job_status', {
+  p_organization_id: org.id,
+  p_actor_id: founder.id,
+  p_job_id: job2Res.job_id,
+  p_to_status: 'CANCELLED',
+  p_reason: 'Packaging scrapped after QC rejection',
+});
+
 // 8.1 Create Partial Delivery Order 1 (35 pcs)
 console.log('   Creating partial Delivery Order 1 (35 pcs) via J&T Express...');
 const do1Res = await rpc('create_delivery_order', {
@@ -924,11 +960,14 @@ console.log('\n--- 9. Inventory, SKU Variants & Stock Allocation Engine ---');
 
 // 9.1 Create Master Inventory Items
 console.log('   Registering Master SKU Blank Garment & DTF Material...');
+const skuSuffix = Date.now().toString().slice(-6);
+const blankSku = `TS-NSA-7200-WHT-XL-${skuSuffix}`;
+const dtfSku = `MAT-DTF-INK-CYAN-1L-${skuSuffix}`;
 const blankItemRes = await rpc('create_inventory_item', {
   p_organization_id: org.id,
   p_actor_id: founder.id,
   p_brand_id: brand.id,
-  p_sku: 'TS-NSA-7200-WHT-XL',
+  p_sku: blankSku,
   p_name: 'Kaos Polos NSA 7200 White XL',
   p_category: 'BLANK_GARMENT',
   p_unit: 'pcs',
@@ -942,14 +981,14 @@ const blankItemRes = await rpc('create_inventory_item', {
 console.log(
   `   Blank Garment Item Created: ${blankItemRes.sku} (ID: ${blankItemRes.inventory_item_id})`,
 );
-assert.equal(blankItemRes.sku, 'TS-NSA-7200-WHT-XL');
+assert.equal(blankItemRes.sku, blankSku);
 assert.equal(blankItemRes.quantity_on_hand, 60);
 
 const dtfItemRes = await rpc('create_inventory_item', {
   p_organization_id: org.id,
   p_actor_id: founder.id,
   p_brand_id: brand.id,
-  p_sku: 'MAT-DTF-INK-CYAN-1L',
+  p_sku: dtfSku,
   p_name: 'Tinta DTF Cyan 1 Liter Bottle',
   p_category: 'PRINT_MATERIAL',
   p_unit: 'bottle',

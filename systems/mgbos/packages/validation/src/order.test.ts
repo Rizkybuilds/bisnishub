@@ -5,6 +5,7 @@ import {
   createOrderFromQuoteSchema,
   createRetailOrderSchema,
   retailOrderItemInputSchema,
+  transitionOrderStatusSchema,
 } from './order';
 
 describe('Order Validation Schemas (MGBOS-011)', () => {
@@ -129,4 +130,53 @@ describe('Order Validation Schemas (MGBOS-011)', () => {
       expect(retailOrderItemInputSchema.safeParse(invalid).success).toBe(false);
     });
   });
+
+  describe('transitionOrderStatusSchema (P0-02)', () => {
+    it('validates a valid order transition payload', () => {
+      const valid = {
+        orderId: '99999999-0000-4000-8000-000000000001',
+        targetStatus: 'ACTIVE',
+        reason: 'Mulai proses manufaktur',
+      };
+      const result = transitionOrderStatusSchema.safeParse(valid);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.targetStatus).toBe('ACTIVE');
+      }
+    });
+
+    it('accepts transition payload without optional reason', () => {
+      const valid = {
+        orderId: '99999999-0000-4000-8000-000000000001',
+        targetStatus: 'COMPLETED',
+      };
+      expect(transitionOrderStatusSchema.safeParse(valid).success).toBe(true);
+    });
+
+    it('rejects invalid order UUID', () => {
+      const invalid = {
+        orderId: 'not-a-uuid',
+        targetStatus: 'ACTIVE',
+      };
+      expect(transitionOrderStatusSchema.safeParse(invalid).success).toBe(false);
+    });
+
+    it('rejects invalid order status string', () => {
+      const invalid = {
+        orderId: '99999999-0000-4000-8000-000000000001',
+        targetStatus: 'SHIPPED_OUT', // not a canonical status
+      };
+      expect(transitionOrderStatusSchema.safeParse(invalid).success).toBe(false);
+    });
+
+    it('rejects reason exceeding 1000 characters', () => {
+      const invalid = {
+        orderId: '99999999-0000-4000-8000-000000000001',
+        targetStatus: 'CANCELLED',
+        reason: 'a'.repeat(1001),
+      };
+      expect(transitionOrderStatusSchema.safeParse(invalid).success).toBe(false);
+    });
+  });
 });
+

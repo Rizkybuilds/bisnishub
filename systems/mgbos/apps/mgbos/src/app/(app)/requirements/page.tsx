@@ -1,5 +1,10 @@
 import Link from 'next/link';
-import { atelierMissingInformation } from '@mgbos/domain';
+import {
+  atelierMissingInformation,
+  isLeadEligibleForRequirement,
+  mapLeadToRequirementPrefill,
+  type LeadStatus,
+} from '@mgbos/domain';
 import { customAtelierSchema } from '@mgbos/validation';
 import { hasPermission } from '@mgbos/auth';
 import {
@@ -8,7 +13,7 @@ import {
   type RequirementRow,
   type VersionRow,
 } from './data';
-import { RequirementForm } from './RequirementForm';
+import { RequirementForm, type RequirementPrefill } from './RequirementForm';
 import { AtelierSummary } from './AtelierSummary';
 export const metadata = { title: 'Kebutuhan Pesanan — MGBOS' };
 const labels: Record<string, string> = {
@@ -21,7 +26,7 @@ const labels: Record<string, string> = {
 export default async function RequirementsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ id?: string; leadId?: string }>;
 }) {
   const ctx = await requirementContext();
   const params = await searchParams;
@@ -56,12 +61,12 @@ export default async function RequirementsPage({
   const can = (permission: Parameters<typeof hasPermission>[1]) =>
     hasPermission(ctx.session.role.code, permission);
   const leads = can('requirements:create')
-    ? await readRows<{ id: string; title: string }>(
+    ? await readRows<{ id: string; title: string; lead_number?: string }>(
         'leads?organization_id=eq.' +
           ctx.session.organization.id +
           '&brand_id=eq.' +
           brand.id +
-          '&select=id,title&order=created_at.desc&limit=100',
+          '&select=id,title,lead_number&order=created_at.desc&limit=100',
         ctx,
       )
     : [];
@@ -73,6 +78,124 @@ export default async function RequirementsPage({
         ctx,
       )
     : [];
+
+  let prefill: RequirementPrefill | undefined = undefined;
+  let leadNotice:
+    | {
+        type: 'error' | 'warning' | 'info';
+        message: string;
+        linkedRequirements?: Array<{
+          id: string;
+          requirement_number: string;
+          title: string;
+          status: string;
+        }>;
+      }
+    | undefined = undefined;
+
+  if (params.leadId && can('requirements:create')) {
+    const leadRows = await readRows<{
+      id: string;
+      lead_number: string;
+      title: string;
+      raw_inquiry: string | null;
+      estimated_quantity: number | null;
+      estimated_budget: string | null;
+      status: string;
+      customer_account_id: string | null;
+    }>(
+      'leads?organization_id=eq.' +
+        ctx.session.organization.id +
+        '&brand_id=eq.' +
+        brand.id +
+        '&id=eq.' +
+        encodeURIComponent(params.leadId) +
+        '&select=id,lead_number,title,raw_inquiry,estimated_quantity,estimated_budget,status,customer_account_id',
+      ctx,
+    );
+    const lead = leadRows[0];
+    if (!lead) {
+      leadNotice = {
+        type: 'error',
+        message:
+          'Lead tidak ditemukan pada organisasi atau brand aktif saat ini (akses ditolak atau data tidak valid).',
+      };
+    } else if (!isLeadEligibleForRequirement(lead.status as LeadStatus)) {
+      leadNotice = {
+        type: 'warning',
+        message: `Lead ${lead.lead_number} belum memenuhi syarat kualifikasi (status: ${lead.status}). Hanya lead QUALIFIED atau CONVERTED yang dapat dilanjutkan ke kebutuhan pesanan.`,
+      };
+    } else {
+      try {
+        prefill = mapLeadToRequirementPrefill({
+          id: lead.id,
+          title: lead.title,
+          rawInquiry: lead.raw_inquiry,
+          estimatedQuantity: lead.estimated_quantity,
+          estimatedBudget: lead.estimated_budget,
+          customerAccountId: lead.customer_account_id,
+          status: lead.status as LeadStatus,
+        });
+
+        const existingLinked = rows.filter((r) => r.lead_id === lead.id);
+        if (existingLinked.length > 0) {
+          leadNotice = {
+            type: 'info',
+            message: `Lead ${lead.lead_number} sudah memiliki ${existingLinked.length} kebutuhan terkait sebelumnya. Form di bawah telah diprefill jika Anda ingin membuat kebutuhan baru atau revisi tambahan.`,
+            linkedRequirements: existingLinked.map((el) => ({
+              id: el.id,
+              requirement_number: el.requirement_number,
+              title: el.title,
+              status: labels[el.status] ?? el.status,
+            })),
+          };
+        }
+      } catch (err: unknown) {
+        leadNotice = {
+          type: 'error',
+          message:
+            err instanceof Error ? err.message : 'Gagal memproses data lead.',
+        };
+      }
+    }
+  }
+
+  const leadChoices = leads.map((l) => ({
+    id: l.id,
+    label: l.lead_number ? `${l.lead_number} — ${l.title}` : l.title,
+  }));
+  if (
+    prefill?.leadId &&
+    prefill?.title &&
+    !leadChoices.some((c) => c.id === prefill.leadId)
+  ) {
+    leadChoices.unshift({ id: prefill.leadId, label: prefill.title });
+  }
+
+  const customerChoices = customers.map((c) => ({
+    id: c.id,
+    label: c.display_name,
+  }));
+  if (
+    prefill?.customerAccountId &&
+    !customerChoices.some((c) => c.id === prefill.customerAccountId)
+  ) {
+    const custRows = await readRows<{ id: string; display_name: string }>(
+      'customer_accounts?organization_id=eq.' +
+        ctx.session.organization.id +
+        '&id=eq.' +
+        encodeURIComponent(prefill.customerAccountId) +
+        '&select=id,display_name',
+      ctx,
+    );
+    if (custRows[0]) {
+      customerChoices.unshift({
+        id: custRows[0].id,
+        label: custRows[0].display_name,
+      });
+    }
+  }
+
   return (
     <div>
       <h1>Kebutuhan pesanan</h1>
@@ -80,30 +203,78 @@ export default async function RequirementsPage({
         {ctx.session.activeBrand.name} · Catat spesifikasi, simpan revisi, dan
         kunci versi yang menjadi acuan.
       </p>
+      {leadNotice && (
+        <div
+          role={leadNotice.type === 'error' ? 'alert' : 'status'}
+          style={{
+            padding: '12px 16px',
+            borderRadius: '8px',
+            marginBottom: '16px',
+            border:
+              leadNotice.type === 'error'
+                ? '1px solid #dc2626'
+                : leadNotice.type === 'warning'
+                  ? '1px solid #d97706'
+                  : '1px solid #0284c7',
+            background:
+              leadNotice.type === 'error'
+                ? '#450a0a'
+                : leadNotice.type === 'warning'
+                  ? '#451a03'
+                  : '#082f49',
+            color:
+              leadNotice.type === 'error'
+                ? '#fca5a5'
+                : leadNotice.type === 'warning'
+                  ? '#fde68a'
+                  : '#bae6fd',
+          }}
+        >
+          <div
+            style={{
+              fontWeight: 600,
+              marginBottom: leadNotice.linkedRequirements?.length ? '6px' : 0,
+            }}
+          >
+            {leadNotice.message}
+          </div>
+          {leadNotice.linkedRequirements &&
+            leadNotice.linkedRequirements.length > 0 && (
+              <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                {leadNotice.linkedRequirements.map((lr) => (
+                  <li key={lr.id}>
+                    <Link
+                      href={`/requirements?id=${lr.id}`}
+                      style={{ color: '#38bdf8', textDecoration: 'underline' }}
+                    >
+                      {lr.requirement_number} — {lr.title} ({lr.status})
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+        </div>
+      )}
       {can('requirements:create') && (
-        <details className="card">
+        <details className="card" open={Boolean(prefill)}>
           <summary>Tambah kebutuhan baru</summary>
           <RequirementForm
             operation="create"
-            leads={leads.map((l) => ({ id: l.id, label: l.title }))}
-            customers={customers.map((c) => ({
-              id: c.id,
-              label: c.display_name,
-            }))}
+            prefill={prefill}
+            leads={leadChoices}
+            customers={customerChoices}
           />
         </details>
       )}
       {ctx.session.activeBrand.code === 'TS' && can('requirements:create') && (
-        <details className="card">
+        <details className="card" open={Boolean(prefill)}>
           <summary>Tambah Custom Atelier TeeStock</summary>
           <RequirementForm
             operation="create"
             atelier
-            leads={leads.map((l) => ({ id: l.id, label: l.title }))}
-            customers={customers.map((c) => ({
-              id: c.id,
-              label: c.display_name,
-            }))}
+            prefill={prefill}
+            leads={leadChoices}
+            customers={customerChoices}
           />
         </details>
       )}

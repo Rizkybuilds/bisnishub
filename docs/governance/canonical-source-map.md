@@ -1318,6 +1318,8 @@ Never silently pick one.
 
 # 56. Evidence Does Not Rewrite Authority
 
+> **Implementation evidence does not override semantic architecture.**
+
 An implementation report saying:
 
 ```text

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { formatLeadStatus, getLeadStatusBadgeColor } from '@mgbos/domain';
 import { LeadDetailModal, type LeadDetailData } from './LeadDetailModal';
 
@@ -344,25 +345,55 @@ export function LeadListTable({
                         textAlign: 'right',
                       }}
                     >
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedLead(lead);
-                        }}
+                      <div
                         style={{
-                          background: '#1e293b',
-                          border: '1px solid #334155',
-                          color: '#38bdf8',
-                          padding: '4px 10px',
-                          borderRadius: '4px',
-                          fontSize: '0.75rem',
-                          cursor: 'pointer',
-                          fontWeight: 600,
+                          display: 'flex',
+                          gap: '6px',
+                          justifyContent: 'flex-end',
+                          alignItems: 'center',
                         }}
                       >
-                        Detail &rarr;
-                      </button>
+                        {(lead.status === 'QUALIFIED' ||
+                          lead.status === 'CONVERTED') && (
+                          <Link
+                            href={`/requirements?leadId=${lead.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                              background: '#0284c7',
+                              border: '1px solid #38bdf8',
+                              color: '#f8fafc',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              fontSize: '0.75rem',
+                              textDecoration: 'none',
+                              fontWeight: 600,
+                              whiteSpace: 'nowrap',
+                            }}
+                            title="Lanjutkan membuat kebutuhan pesanan"
+                          >
+                            + Kebutuhan
+                          </Link>
+                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedLead(lead);
+                          }}
+                          style={{
+                            background: '#1e293b',
+                            border: '1px solid #334155',
+                            color: '#38bdf8',
+                            padding: '4px 10px',
+                            borderRadius: '4px',
+                            fontSize: '0.75rem',
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                          }}
+                        >
+                          Detail &rarr;
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
