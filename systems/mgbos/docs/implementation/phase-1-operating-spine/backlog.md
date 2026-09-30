@@ -2025,10 +2025,10 @@ P0-04  DONE
 P0-05  DONE
 P0-06  DONE
 P0-07  DONE
-P0-08  READY
+P0-08  DONE
 ```
 
-P0-01 through P0-07 have completed implementation and regression verification. P0-08 is unblocked and ready for operator acceptance testing.
+All Phase 1 operating spine milestones (P0-01 through P0-08) are complete, verified, and certified. Phase 1 is officially CLOSED. See `operator-acceptance-test.md` and `completion-report.md`.
 
 ---
 
