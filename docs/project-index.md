@@ -16,7 +16,7 @@ Lokasi diperiksa 30 September 2026. Indeks ini adalah locator, bukan sertifikasi
 - Aturan repository: [directory ownership](engineering/repository-layout.md) dan [ADR-001](decisions/001-repository-organization.md).
 - Authority dokumen: [constitution](governance/documentation-constitution.md) dan [canonical source map](governance/canonical-source-map.md).
 - Operating model: [Solo-Founder Operating System](operating-model/solo-founder-operating-system.md) (prinsip *founder-by-exception* dan alokasi beban).
-- Roadmap peluncuran: [Solo-Founder Launch Roadmap](roadmaps/solo-founder-launch-roadmap.md) (sekuens eksekusi paralel September → akhir November 2026).
+- Roadmap peluncuran: [Solo-Founder Launch Roadmap](roadmaps/solo-founder-launch-roadmap.md) (sekuens eksekusi bertahap menuju launch September → akhir November 2026).
 - MGBOS: [Master Index](../systems/mgbos/docs/README.md), [Architecture Index](../systems/mgbos/docs/architecture/README.md), dan [Implementation Index](../systems/mgbos/docs/implementation/README.md) (fokus aktif [Phase 1 Operating Spine](../systems/mgbos/docs/implementation/phase-1-operating-spine/README.md)); baca AGENTS workspace dan spesifikasi milik sistem sebelum implementasi.
 - JARVIS: baca charter dan kontrak yang relevan; jangan menganggap dokumen ACTIVE sebagai bukti runtime tersedia.
 - Business knowledge: `bisnis/multigraph/`, `bisnis/teestock/`, `bisnis/rizkybuild/`; Titik Buta dan KasKita tetap independen.

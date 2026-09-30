@@ -67,9 +67,15 @@ async function insertRow(table, row) {
 }
 
 const runSuffix = Date.now().toString().slice(-6);
-console.log(`\n================================================================`);
-console.log(`🚀 STARTING CLEAN HAPPY-PATH E2E VERIFICATION [Run: ${runSuffix}]`);
-console.log(`================================================================\n`);
+console.log(
+  `\n================================================================`,
+);
+console.log(
+  `🚀 STARTING CLEAN HAPPY-PATH E2E VERIFICATION [Run: ${runSuffix}]`,
+);
+console.log(
+  `================================================================\n`,
+);
 
 // ----------------------------------------------------------------------------
 // 0. Context & Master Data Lookup
@@ -89,7 +95,10 @@ const [founder] = await queryTable('users', 'email=eq.founder@multigraph.id');
 assert.ok(founder, 'Founder user must exist');
 console.log(`✓ Actor User: ${founder.name} (${founder.email})`);
 
-const channels = await queryTable('channels', `organization_id=eq.${org.id}&code=eq.WHATSAPP`);
+const channels = await queryTable(
+  'channels',
+  `organization_id=eq.${org.id}&code=eq.WHATSAPP`,
+);
 assert.ok(channels.length > 0, 'WhatsApp lead channel must exist');
 const channelId = channels[0].id;
 console.log(`✓ Lead Channel: WHATSAPP (${channelId})`);
@@ -111,7 +120,8 @@ const [createdLead] = await insertRow('leads', {
   company_name: `Komunitas Motor Bandung ${runSuffix}`,
   email: leadEmail,
   phone: '081234567890',
-  raw_inquiry: 'Halo, mau pesan kaos sablon DTF 50 pcs untuk acara anniversary komunitas.',
+  raw_inquiry:
+    'Halo, mau pesan kaos sablon DTF 50 pcs untuk acara anniversary komunitas.',
   estimated_quantity: 50,
   estimated_budget: 6000000,
   status: 'NEW',
@@ -119,9 +129,14 @@ const [createdLead] = await insertRow('leads', {
 
 assert.ok(createdLead, 'Lead must be inserted');
 assert.ok(createdLead.id, 'Lead ID must be generated');
-assert.ok(createdLead.lead_number, 'Lead number must be generated automatically');
+assert.ok(
+  createdLead.lead_number,
+  'Lead number must be generated automatically',
+);
 assert.equal(createdLead.status, 'NEW', 'Initial lead status must be NEW');
-console.log(`✓ Lead Created: ${createdLead.lead_number} (ID: ${createdLead.id})`);
+console.log(
+  `✓ Lead Created: ${createdLead.lead_number} (ID: ${createdLead.id})`,
+);
 
 console.log('   Qualifying Lead via transition_lead_status...');
 await rpc('transition_lead_status', {
@@ -130,14 +145,25 @@ await rpc('transition_lead_status', {
   p_target_status: 'QUALIFIED',
   p_qualification_result: 'QUALIFIED',
   p_qualification_score: 95,
-  p_qualification_notes: 'Budget terverifikasi, jumlah 50 pcs, desain siap cetak.',
+  p_qualification_notes:
+    'Budget terverifikasi, jumlah 50 pcs, desain siap cetak.',
   p_actor_id: founder.id,
 });
 
 const [qualifiedLead] = await queryTable('leads', `id=eq.${createdLead.id}`);
-assert.equal(qualifiedLead.status, 'QUALIFIED', 'Lead status must be QUALIFIED');
-assert.equal(qualifiedLead.qualification_score, 95, 'Qualification score must be 95');
-console.log(`✓ Lead Qualified: Status = ${qualifiedLead.status} (Score: ${qualifiedLead.qualification_score})`);
+assert.equal(
+  qualifiedLead.status,
+  'QUALIFIED',
+  'Lead status must be QUALIFIED',
+);
+assert.equal(
+  qualifiedLead.qualification_score,
+  95,
+  'Qualification score must be 95',
+);
+console.log(
+  `✓ Lead Qualified: Status = ${qualifiedLead.status} (Score: ${qualifiedLead.qualification_score})`,
+);
 
 // ----------------------------------------------------------------------------
 // 2. Atomic Customer Account Conversion (AC-02)
@@ -151,17 +177,33 @@ const convertRes = await rpc('convert_lead_to_customer', {
 });
 
 assert.ok(convertRes.success, 'Conversion must succeed');
-assert.ok(convertRes.customer_account_id, 'Customer Account ID must be returned');
+assert.ok(
+  convertRes.customer_account_id,
+  'Customer Account ID must be returned',
+);
 const customerAccountId = convertRes.customer_account_id;
 
 const [convertedLead] = await queryTable('leads', `id=eq.${createdLead.id}`);
-assert.equal(convertedLead.status, 'CONVERTED', 'Lead status must transition to CONVERTED');
-assert.equal(convertedLead.customer_account_id, customerAccountId, 'Lead must link to customer account');
+assert.equal(
+  convertedLead.status,
+  'CONVERTED',
+  'Lead status must transition to CONVERTED',
+);
+assert.equal(
+  convertedLead.customer_account_id,
+  customerAccountId,
+  'Lead must link to customer account',
+);
 
-const [customerAcc] = await queryTable('customer_accounts', `id=eq.${customerAccountId}`);
+const [customerAcc] = await queryTable(
+  'customer_accounts',
+  `id=eq.${customerAccountId}`,
+);
 assert.ok(customerAcc, 'Customer account must exist');
 assert.equal(customerAcc.status, 'ACTIVE', 'Customer account must be ACTIVE');
-console.log(`✓ Customer Account Created & Linked: ${customerAcc.display_name} (ID: ${customerAccountId})`);
+console.log(
+  `✓ Customer Account Created & Linked: ${customerAcc.display_name} (ID: ${customerAccountId})`,
+);
 
 // ----------------------------------------------------------------------------
 // 3. Requirement Formulation & Progression to READY
@@ -209,7 +251,9 @@ const reqRes = await rpc('create_requirement_with_initial_version', {
 assert.ok(reqRes.requirement_id, 'Requirement ID must be returned');
 assert.ok(reqRes.version_id, 'Requirement initial version ID must be returned');
 assert.equal(reqRes.version_number, 1, 'Initial version number must be 1');
-console.log(`✓ Requirement Created: ID ${reqRes.requirement_id} (Version: ${reqRes.version_id})`);
+console.log(
+  `✓ Requirement Created: ID ${reqRes.requirement_id} (Version: ${reqRes.version_id})`,
+);
 
 console.log('   Advancing Requirement to READY...');
 await rpc('transition_requirement_status', {
@@ -219,7 +263,10 @@ await rpc('transition_requirement_status', {
   p_actor_id: founder.id,
 });
 
-const [readyReq] = await queryTable('requirements', `id=eq.${reqRes.requirement_id}`);
+const [readyReq] = await queryTable(
+  'requirements',
+  `id=eq.${reqRes.requirement_id}`,
+);
 assert.equal(readyReq.status, 'READY', 'Requirement must reach READY status');
 console.log(`✓ Requirement Status: ${readyReq.status}`);
 
@@ -279,14 +326,23 @@ await rpc('mark_quote_accepted', {
   p_notes: 'Disetujui via WhatsApp oleh Pak Hendra',
 });
 
-const [acceptedQuote] = await queryTable('quote_versions', `id=eq.${quoteRes.version_id}`);
-assert.equal(acceptedQuote.status, 'ACCEPTED', 'Quote version status must be ACCEPTED');
+const [acceptedQuote] = await queryTable(
+  'quote_versions',
+  `id=eq.${quoteRes.version_id}`,
+);
+assert.equal(
+  acceptedQuote.status,
+  'ACCEPTED',
+  'Quote version status must be ACCEPTED',
+);
 console.log(`✓ Quote Status: ${acceptedQuote.status}`);
 
 // ----------------------------------------------------------------------------
 // 5. Authoritative Order Creation & Transition to ACTIVE
 // ----------------------------------------------------------------------------
-console.log('\n--- Phase 5: Authoritative Order Creation & Transition to ACTIVE ---');
+console.log(
+  '\n--- Phase 5: Authoritative Order Creation & Transition to ACTIVE ---',
+);
 const orderReqId = crypto.randomUUID();
 const orderRes = await rpc('create_order_from_quote', {
   p_organization_id: org.id,
@@ -303,15 +359,36 @@ const orderRes = await rpc('create_order_from_quote', {
 
 assert.ok(orderRes.order_id, 'Order ID must be returned');
 assert.ok(orderRes.order_number, 'Order number must be generated');
-console.log(`✓ Order Contract Created: ${orderRes.order_number} (ID: ${orderRes.order_id})`);
+console.log(
+  `✓ Order Contract Created: ${orderRes.order_number} (ID: ${orderRes.order_id})`,
+);
 
 const [initialOrder] = await queryTable('orders', `id=eq.${orderRes.order_id}`);
-assert.equal(initialOrder.status, 'CONFIRMED', 'Initial order status must be CONFIRMED');
-assert.equal(initialOrder.source_quote_id, quoteRes.quote_id, 'Order must link to source quote');
-assert.equal(initialOrder.source_quote_version_id, quoteRes.version_id, 'Order must link to source quote version');
-assert.equal(initialOrder.source_requirement_id, reqRes.requirement_id, 'Order must link to source requirement');
+assert.equal(
+  initialOrder.status,
+  'CONFIRMED',
+  'Initial order status must be CONFIRMED',
+);
+assert.equal(
+  initialOrder.source_quote_id,
+  quoteRes.quote_id,
+  'Order must link to source quote',
+);
+assert.equal(
+  initialOrder.source_quote_version_id,
+  quoteRes.version_id,
+  'Order must link to source quote version',
+);
+assert.equal(
+  initialOrder.source_requirement_id,
+  reqRes.requirement_id,
+  'Order must link to source requirement',
+);
 
-const orderItems = await queryTable('order_items', `order_id=eq.${orderRes.order_id}`);
+const orderItems = await queryTable(
+  'order_items',
+  `order_id=eq.${orderRes.order_id}`,
+);
 assert.equal(orderItems.length, 1, 'Order must have exactly 1 item');
 const orderItem = orderItems[0];
 assert.equal(orderItem.quantity, 50, 'Order item quantity must be 50');
@@ -325,7 +402,11 @@ const activeTransition = await rpc('transition_order_status', {
   p_reason: 'DP commitment verified, proceeding to active production',
 });
 
-assert.equal(activeTransition.new_status, 'ACTIVE', 'Order status must transition to ACTIVE');
+assert.equal(
+  activeTransition.new_status,
+  'ACTIVE',
+  'Order status must transition to ACTIVE',
+);
 console.log(`✓ Order Status: ${activeTransition.new_status}`);
 
 // ----------------------------------------------------------------------------
@@ -343,7 +424,9 @@ const dpInvRes = await rpc('create_invoice_for_order', {
 });
 
 assert.ok(dpInvRes.invoice_id, 'DP Invoice ID must be generated');
-console.log(`✓ DP Invoice Created: ${dpInvRes.invoice_number} (Amount: Rp 3.000.000)`);
+console.log(
+  `✓ DP Invoice Created: ${dpInvRes.invoice_number} (Amount: Rp 3.000.000)`,
+);
 
 console.log('   Issuing DP Invoice...');
 await rpc('issue_invoice', {
@@ -370,15 +453,26 @@ const pay1Res = await rpc('record_payment_and_allocate', {
 });
 
 assert.ok(pay1Res.payment_id, 'Payment ID must be returned');
-const [dpInvoice] = await queryTable('invoices', `id=eq.${dpInvRes.invoice_id}`);
+const [dpInvoice] = await queryTable(
+  'invoices',
+  `id=eq.${dpInvRes.invoice_id}`,
+);
 assert.equal(dpInvoice.status, 'PAID', 'DP Invoice must be PAID');
-assert.equal(dpInvoice.balance_due, 0, 'DP Invoice balance due must be 0 (LUNAS)');
-console.log(`✓ DP Payment Settled: ${pay1Res.payment_number} -> Invoice ${dpInvoice.invoice_number} is PAID`);
+assert.equal(
+  dpInvoice.balance_due,
+  0,
+  'DP Invoice balance due must be 0 (LUNAS)',
+);
+console.log(
+  `✓ DP Payment Settled: ${pay1Res.payment_number} -> Invoice ${dpInvoice.invoice_number} is PAID`,
+);
 
 // ----------------------------------------------------------------------------
 // 7. Production Job Creation & Vendor-Backed Assignment (AC-03, AC-04)
 // ----------------------------------------------------------------------------
-console.log('\n--- Phase 7: Production Job & Canonical Vendor Assignment (AC-03, AC-04) ---');
+console.log(
+  '\n--- Phase 7: Production Job & Canonical Vendor Assignment (AC-03, AC-04) ---',
+);
 const jobRes = await rpc('create_production_job', {
   p_organization_id: org.id,
   p_actor_id: founder.id,
@@ -397,7 +491,9 @@ const jobRes = await rpc('create_production_job', {
 });
 
 assert.ok(jobRes.job_id, 'Production Job ID must be returned');
-console.log(`✓ Production Job Created: ${jobRes.job_number} (status: ${jobRes.status})`);
+console.log(
+  `✓ Production Job Created: ${jobRes.job_number} (status: ${jobRes.status})`,
+);
 
 console.log('   Advancing Job to READY status...');
 await rpc('transition_production_job_status', {
@@ -448,10 +544,19 @@ const assignmentId = await rpc('assign_production_job', {
 });
 
 assert.ok(assignmentId, 'Assignment ID must be returned');
-const [jobAssigned] = await queryTable('production_jobs', `id=eq.${jobRes.job_id}`);
+const [jobAssigned] = await queryTable(
+  'production_jobs',
+  `id=eq.${jobRes.job_id}`,
+);
 assert.equal(jobAssigned.status, 'ASSIGNED', 'Job status must be ASSIGNED');
-assert.equal(jobAssigned.committed_cost, 1200000, 'Job committed cost must be Rp 1.200.000');
-console.log(`✓ Job Assigned: Status = ${jobAssigned.status}, Committed Cost = Rp 1.200.000`);
+assert.equal(
+  jobAssigned.committed_cost,
+  1200000,
+  'Job committed cost must be Rp 1.200.000',
+);
+console.log(
+  `✓ Job Assigned: Status = ${jobAssigned.status}, Committed Cost = Rp 1.200.000`,
+);
 
 console.log('   Vendor Accepts Assignment (AC-04 / P0-04)...');
 const acceptRes = await rpc('accept_production_assignment', {
@@ -460,10 +565,23 @@ const acceptRes = await rpc('accept_production_assignment', {
   p_assignment_id: assignmentId,
 });
 
-assert.equal(acceptRes.status, 'ACCEPTED', 'Assignment status must be ACCEPTED');
-const [jobAfterAccept] = await queryTable('production_jobs', `id=eq.${jobRes.job_id}`);
-assert.equal(jobAfterAccept.status, 'ACCEPTED', 'Job status must sync to ACCEPTED');
-console.log(`✓ Assignment Accepted: Status = ${acceptRes.status}, Job Status = ${jobAfterAccept.status}`);
+assert.equal(
+  acceptRes.status,
+  'ACCEPTED',
+  'Assignment status must be ACCEPTED',
+);
+const [jobAfterAccept] = await queryTable(
+  'production_jobs',
+  `id=eq.${jobRes.job_id}`,
+);
+assert.equal(
+  jobAfterAccept.status,
+  'ACCEPTED',
+  'Job status must sync to ACCEPTED',
+);
+console.log(
+  `✓ Assignment Accepted: Status = ${acceptRes.status}, Job Status = ${jobAfterAccept.status}`,
+);
 
 // ----------------------------------------------------------------------------
 // 8. Shop Floor Progression & QC Inspection PASS
@@ -503,7 +621,9 @@ const qcRes = await rpc('record_qc_inspection', {
 
 assert.ok(qcRes.inspection_id, 'QC inspection ID must be generated');
 assert.equal(qcRes.result, 'PASS', 'QC inspection result must be PASS');
-console.log(`✓ QC Inspection Recorded: ${qcRes.inspection_number} -> Result: ${qcRes.result}`);
+console.log(
+  `✓ QC Inspection Recorded: ${qcRes.inspection_number} -> Result: ${qcRes.result}`,
+);
 
 console.log('   Advancing Job to READY_FOR_HANDOFF...');
 await rpc('transition_production_job_status', {
@@ -513,14 +633,23 @@ await rpc('transition_production_job_status', {
   p_to_status: 'READY_FOR_HANDOFF',
 });
 
-const [handoffJob] = await queryTable('production_jobs', `id=eq.${jobRes.job_id}`);
-assert.equal(handoffJob.status, 'READY_FOR_HANDOFF', 'Job must reach READY_FOR_HANDOFF');
+const [handoffJob] = await queryTable(
+  'production_jobs',
+  `id=eq.${jobRes.job_id}`,
+);
+assert.equal(
+  handoffJob.status,
+  'READY_FOR_HANDOFF',
+  'Job must reach READY_FOR_HANDOFF',
+);
 console.log(`✓ Job Ready for Fulfillment: Status = ${handoffJob.status}`);
 
 // ----------------------------------------------------------------------------
 // 9. Governed Fulfillment, Delivery Order (DO) & Logistics (AC-05)
 // ----------------------------------------------------------------------------
-console.log('\n--- Phase 9: Governed Fulfillment & Shipment Delivery (AC-05) ---');
+console.log(
+  '\n--- Phase 9: Governed Fulfillment & Shipment Delivery (AC-05) ---',
+);
 console.log('   Creating Delivery Order (DO) for 50 pcs...');
 const doRes = await rpc('create_delivery_order', {
   p_organization_id: org.id,
@@ -540,8 +669,14 @@ const doRes = await rpc('create_delivery_order', {
 });
 
 assert.ok(doRes.shipment_id, 'Shipment ID must be generated');
-assert.equal(doRes.status, 'READY_TO_DISPATCH', 'DO initial status must be READY_TO_DISPATCH');
-console.log(`✓ Delivery Order Created: ${doRes.shipment_number} (Status: ${doRes.status})`);
+assert.equal(
+  doRes.status,
+  'READY_TO_DISPATCH',
+  'DO initial status must be READY_TO_DISPATCH',
+);
+console.log(
+  `✓ Delivery Order Created: ${doRes.shipment_number} (Status: ${doRes.status})`,
+);
 
 console.log('   Dispatching Shipment with tracking courier resi...');
 const resiNumber = `JNT-HAPPY-${runSuffix}`;
@@ -554,9 +689,19 @@ const dispatchRes = await rpc('dispatch_shipment', {
   p_notes: 'Diserahkan ke kurir J&T Express',
 });
 
-assert.equal(dispatchRes.status, 'DISPATCHED', 'Shipment status must be DISPATCHED');
-assert.equal(dispatchRes.tracking_number, resiNumber, 'Tracking number must be recorded');
-console.log(`✓ Shipment Dispatched: Resi = ${dispatchRes.tracking_number} (Status: ${dispatchRes.status})`);
+assert.equal(
+  dispatchRes.status,
+  'DISPATCHED',
+  'Shipment status must be DISPATCHED',
+);
+assert.equal(
+  dispatchRes.tracking_number,
+  resiNumber,
+  'Tracking number must be recorded',
+);
+console.log(
+  `✓ Shipment Dispatched: Resi = ${dispatchRes.tracking_number} (Status: ${dispatchRes.status})`,
+);
 
 console.log('   Confirming Shipment Delivery to Customer...');
 const deliveredRes = await rpc('mark_shipment_delivered', {
@@ -566,7 +711,11 @@ const deliveredRes = await rpc('mark_shipment_delivered', {
   p_notes: 'Paket diterima langsung oleh Pak Hendra dalam kondisi baik.',
 });
 
-assert.equal(deliveredRes.status, 'DELIVERED', 'Shipment status must be DELIVERED');
+assert.equal(
+  deliveredRes.status,
+  'DELIVERED',
+  'Shipment status must be DELIVERED',
+);
 console.log(`✓ Shipment Delivered: Status = ${deliveredRes.status}`);
 
 // ----------------------------------------------------------------------------
@@ -584,7 +733,9 @@ const finalInvRes = await rpc('create_invoice_for_order', {
 });
 
 assert.ok(finalInvRes.invoice_id, 'Final Invoice ID must be generated');
-console.log(`✓ Final Invoice Created: ${finalInvRes.invoice_number} (Amount: Rp 3.050.000)`);
+console.log(
+  `✓ Final Invoice Created: ${finalInvRes.invoice_number} (Amount: Rp 3.050.000)`,
+);
 
 console.log('   Issuing Final Invoice...');
 await rpc('issue_invoice', {
@@ -611,10 +762,19 @@ const pay2Res = await rpc('record_payment_and_allocate', {
 });
 
 assert.ok(pay2Res.payment_id, 'Settlement Payment ID must be returned');
-const [finalInvoice] = await queryTable('invoices', `id=eq.${finalInvRes.invoice_id}`);
+const [finalInvoice] = await queryTable(
+  'invoices',
+  `id=eq.${finalInvRes.invoice_id}`,
+);
 assert.equal(finalInvoice.status, 'PAID', 'Final Invoice must be PAID');
-assert.equal(finalInvoice.balance_due, 0, 'Final Invoice balance due must be 0 (LUNAS)');
-console.log(`✓ Final Settlement Paid: ${pay2Res.payment_number} -> Invoice ${finalInvoice.invoice_number} is PAID`);
+assert.equal(
+  finalInvoice.balance_due,
+  0,
+  'Final Invoice balance due must be 0 (LUNAS)',
+);
+console.log(
+  `✓ Final Settlement Paid: ${pay2Res.payment_number} -> Invoice ${finalInvoice.invoice_number} is PAID`,
+);
 
 // ----------------------------------------------------------------------------
 // 11. Settle Actual Production Cost & Complete Production Job
@@ -626,7 +786,8 @@ const actualCostRes = await rpc('record_actual_job_cost', {
   p_actor_id: founder.id,
   p_job_id: jobRes.job_id,
   p_actual_cost: '1150000',
-  p_notes: 'Faktur vendor diverifikasi: hemat Rp 50.000 dari komitmen Rp 1.200.000',
+  p_notes:
+    'Faktur vendor diverifikasi: hemat Rp 50.000 dari komitmen Rp 1.200.000',
 });
 assert.equal(String(actualCostRes.actual_cost), '1150000');
 
@@ -638,10 +799,19 @@ await rpc('transition_production_job_status', {
   p_to_status: 'COMPLETED',
 });
 
-const [completedJob] = await queryTable('production_jobs', `id=eq.${jobRes.job_id}`);
+const [completedJob] = await queryTable(
+  'production_jobs',
+  `id=eq.${jobRes.job_id}`,
+);
 assert.equal(completedJob.status, 'COMPLETED', 'Job must be COMPLETED');
-assert.equal(completedJob.actual_cost, 1150000, 'Actual cost must be settled to Rp 1.150.000');
-console.log(`✓ Job Completed: Status = ${completedJob.status}, Actual Cost = Rp 1.150.000`);
+assert.equal(
+  completedJob.actual_cost,
+  1150000,
+  'Actual cost must be settled to Rp 1.150.000',
+);
+console.log(
+  `✓ Job Completed: Status = ${completedJob.status}, Actual Cost = Rp 1.150.000`,
+);
 
 // ----------------------------------------------------------------------------
 // 12. Authoritative Order Completion (AC-06)
@@ -656,60 +826,148 @@ const completeTransition = await rpc('transition_order_status', {
   p_reason: 'Seluruh barang terkirim dan seluruh tagihan telah lunas',
 });
 
-assert.equal(completeTransition.new_status, 'COMPLETED', 'Order status must transition to COMPLETED');
+assert.equal(
+  completeTransition.new_status,
+  'COMPLETED',
+  'Order status must transition to COMPLETED',
+);
 const [finalOrder] = await queryTable('orders', `id=eq.${orderRes.order_id}`);
-assert.equal(finalOrder.status, 'COMPLETED', 'Order record status must be COMPLETED');
-console.log(`✓ Order Successfully COMPLETED: ${finalOrder.order_number} (Status: ${finalOrder.status})`);
+assert.equal(
+  finalOrder.status,
+  'COMPLETED',
+  'Order record status must be COMPLETED',
+);
+console.log(
+  `✓ Order Successfully COMPLETED: ${finalOrder.order_number} (Status: ${finalOrder.status})`,
+);
 
 // ----------------------------------------------------------------------------
 // 13. Financial Ledger & Realized Margin Verification (AC-07)
 // ----------------------------------------------------------------------------
-console.log('\n--- Phase 13: Financial Ledger & Realized Margin Verification (AC-07) ---');
-const summaries = await queryTable('order_financial_summaries', `order_id=eq.${orderRes.order_id}`);
+console.log(
+  '\n--- Phase 13: Financial Ledger & Realized Margin Verification (AC-07) ---',
+);
+const summaries = await queryTable(
+  'order_financial_summaries',
+  `order_id=eq.${orderRes.order_id}`,
+);
 assert.equal(summaries.length, 1, 'Financial summary for order must exist');
 const summary = summaries[0];
 
 console.log('   Order Financial Summary:');
-console.log(`   - Net Product Revenue:   Rp ${Number(summary.net_product_revenue).toLocaleString('id-ID')}`);
-console.log(`   - Courier Shipping Fee:  Rp ${Number(summary.courier_shipping_fee).toLocaleString('id-ID')}`);
-console.log(`   - Order Grand Total:     Rp ${Number(summary.grand_total).toLocaleString('id-ID')}`);
-console.log(`   - Estimated Cost (BOM):  Rp ${Number(summary.estimated_cost).toLocaleString('id-ID')}`);
-console.log(`   - Committed Cost (SPK):  Rp ${Number(summary.committed_cost).toLocaleString('id-ID')}`);
-console.log(`   - Actual Cost (Settled): Rp ${Number(summary.actual_cost).toLocaleString('id-ID')}`);
-console.log(`   - Realized Gross Profit: Rp ${Number(summary.realized_gross_profit).toLocaleString('id-ID')}`);
+console.log(
+  `   - Net Product Revenue:   Rp ${Number(summary.net_product_revenue).toLocaleString('id-ID')}`,
+);
+console.log(
+  `   - Courier Shipping Fee:  Rp ${Number(summary.courier_shipping_fee).toLocaleString('id-ID')}`,
+);
+console.log(
+  `   - Order Grand Total:     Rp ${Number(summary.grand_total).toLocaleString('id-ID')}`,
+);
+console.log(
+  `   - Estimated Cost (BOM):  Rp ${Number(summary.estimated_cost).toLocaleString('id-ID')}`,
+);
+console.log(
+  `   - Committed Cost (SPK):  Rp ${Number(summary.committed_cost).toLocaleString('id-ID')}`,
+);
+console.log(
+  `   - Actual Cost (Settled): Rp ${Number(summary.actual_cost).toLocaleString('id-ID')}`,
+);
+console.log(
+  `   - Realized Gross Profit: Rp ${Number(summary.realized_gross_profit).toLocaleString('id-ID')}`,
+);
 console.log(`   - Realized Margin %:     ${summary.realized_margin_pct}%`);
-console.log(`   - Shipping Margin:       Rp ${Number(summary.courier_shipping_margin).toLocaleString('id-ID')}`);
+console.log(
+  `   - Shipping Margin:       Rp ${Number(summary.courier_shipping_margin).toLocaleString('id-ID')}`,
+);
 console.log(`   - Margin Health Tier:    ${summary.margin_health}`);
 
 // Assertions on financial invariants
-assert.equal(Number(summary.net_product_revenue), 6000000, 'Product revenue must be Rp 6.000.000');
-assert.equal(Number(summary.courier_shipping_fee), 50000, 'Courier fee must be Rp 50.000');
-assert.equal(Number(summary.grand_total), 6050000, 'Grand total must be Rp 6.050.000');
-assert.equal(Number(summary.actual_cost), 1150000, 'Actual cost must be settled at Rp 1.150.000');
-assert.equal(Number(summary.realized_gross_profit), 4850000, 'Realized gross profit must be Rp 4.850.000');
-assert.ok(Number(summary.realized_margin_pct) >= 80, 'Realized margin % must be >= 80%');
-assert.equal(Number(summary.courier_shipping_margin), 0, 'Shipping margin must be strictly Rp 0 pass-through');
+assert.equal(
+  Number(summary.net_product_revenue),
+  6000000,
+  'Product revenue must be Rp 6.000.000',
+);
+assert.equal(
+  Number(summary.courier_shipping_fee),
+  50000,
+  'Courier fee must be Rp 50.000',
+);
+assert.equal(
+  Number(summary.grand_total),
+  6050000,
+  'Grand total must be Rp 6.050.000',
+);
+assert.equal(
+  Number(summary.actual_cost),
+  1150000,
+  'Actual cost must be settled at Rp 1.150.000',
+);
+assert.equal(
+  Number(summary.realized_gross_profit),
+  4850000,
+  'Realized gross profit must be Rp 4.850.000',
+);
+assert.ok(
+  Number(summary.realized_margin_pct) >= 80,
+  'Realized margin % must be >= 80%',
+);
+assert.equal(
+  Number(summary.courier_shipping_margin),
+  0,
+  'Shipping margin must be strictly Rp 0 pass-through',
+);
 assert.equal(summary.margin_health, 'HEALTHY', 'Margin health must be HEALTHY');
 
 // Verify financial ledger entries
-const ledgerEntries = await queryTable('financial_ledger_entries', `order_id=eq.${orderRes.order_id}`);
-assert.ok(ledgerEntries.length >= 6, 'Must have at least 6 financial ledger entries');
-console.log(`✓ Financial Ledger Entries Verified: ${ledgerEntries.length} immutable entries recorded`);
+const ledgerEntries = await queryTable(
+  'financial_ledger_entries',
+  `order_id=eq.${orderRes.order_id}`,
+);
+assert.ok(
+  ledgerEntries.length >= 6,
+  'Must have at least 6 financial ledger entries',
+);
+console.log(
+  `✓ Financial Ledger Entries Verified: ${ledgerEntries.length} immutable entries recorded`,
+);
 
-console.log(`\n================================================================`);
+console.log(
+  `\n================================================================`,
+);
 console.log(`🎉 ALL HAPPY-PATH E2E VERIFICATIONS PASSED SUCCESSFULLY! (P0-07)`);
 console.log(`================================================================`);
 console.log(`Summary of Journey Artifacts:`);
-console.log(`- Lead:             ${createdLead.lead_number} -> ${qualifiedLead.status} -> ${convertedLead.status}`);
-console.log(`- Customer Account: ${customerAcc.display_name} (${customerAccountId})`);
-console.log(`- Requirement:      ${readyReq.requirement_number} (READY, 50 pcs DTF Combed 24s)`);
-console.log(`- Quote Contract:   Version ${quoteRes.version_id} (ACCEPTED, Rp 6.050.000)`);
+console.log(
+  `- Lead:             ${createdLead.lead_number} -> ${qualifiedLead.status} -> ${convertedLead.status}`,
+);
+console.log(
+  `- Customer Account: ${customerAcc.display_name} (${customerAccountId})`,
+);
+console.log(
+  `- Requirement:      ${readyReq.requirement_number} (READY, 50 pcs DTF Combed 24s)`,
+);
+console.log(
+  `- Quote Contract:   Version ${quoteRes.version_id} (ACCEPTED, Rp 6.050.000)`,
+);
 console.log(`- Order Contract:   ${finalOrder.order_number} (COMPLETED)`);
-console.log(`- DP Invoice:       ${dpInvoice.invoice_number} (PAID, Rp 3.000.000)`);
-console.log(`- Final Invoice:    ${finalInvoice.invoice_number} (PAID, Rp 3.050.000)`);
-console.log(`- Production Job:   ${completedJob.job_number} (COMPLETED, Actual Cost Rp 1.150.000)`);
+console.log(
+  `- DP Invoice:       ${dpInvoice.invoice_number} (PAID, Rp 3.000.000)`,
+);
+console.log(
+  `- Final Invoice:    ${finalInvoice.invoice_number} (PAID, Rp 3.050.000)`,
+);
+console.log(
+  `- Production Job:   ${completedJob.job_number} (COMPLETED, Actual Cost Rp 1.150.000)`,
+);
 console.log(`- Vendor Mitra:     ${vendorName} (${vendorId})`);
 console.log(`- QC Inspection:    ${qcRes.inspection_number} (${qcRes.result})`);
-console.log(`- Delivery Order:   ${doRes.shipment_number} (DELIVERED, Resi: ${resiNumber})`);
-console.log(`- Realized Profit:  Rp 4.850.000 (${summary.realized_margin_pct}% - HEALTHY)`);
-console.log(`================================================================\n`);
+console.log(
+  `- Delivery Order:   ${doRes.shipment_number} (DELIVERED, Resi: ${resiNumber})`,
+);
+console.log(
+  `- Realized Profit:  Rp 4.850.000 (${summary.realized_margin_pct}% - HEALTHY)`,
+);
+console.log(
+  `================================================================\n`,
+);

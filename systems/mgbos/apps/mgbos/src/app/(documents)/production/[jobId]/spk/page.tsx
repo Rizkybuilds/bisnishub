@@ -1,6 +1,9 @@
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
-import { loadWorkOrder, DocumentAccessError } from '@/lib/workOrder/load.server';
+import {
+  loadWorkOrder,
+  DocumentAccessError,
+} from '@/lib/workOrder/load.server';
 import { workOrderVendorMessage, type WorkOrderDocument } from '@mgbos/domain';
 import { WorkOrderActions } from './WorkOrderActions';
 import './spk.css';
@@ -38,7 +41,9 @@ export default async function WorkOrderPage({
             ? error.message
             : 'Terjadi kendala saat memuat dokumen.'}
         </p>
-        <Link href={`/production/${jobId}`}>Kembali ke Detail Job Produksi</Link>
+        <Link href={`/production/${jobId}`}>
+          Kembali ke Detail Job Produksi
+        </Link>
       </main>
     );
   }
@@ -90,17 +95,19 @@ export default async function WorkOrderPage({
             <h3>Pemberi Perintah Kerja</h3>
             <div className="party-name">{doc.issuer.organizationName}</div>
             <p>Unit Brand: {doc.issuer.brandName}</p>
-            <p>No. Kontrak Pesanan: <strong>{doc.orderNumber}</strong></p>
-            <p>ID Job Produksi: <strong>{doc.jobNumber}</strong></p>
+            <p>
+              No. Kontrak Pesanan: <strong>{doc.orderNumber}</strong>
+            </p>
+            <p>
+              ID Job Produksi: <strong>{doc.jobNumber}</strong>
+            </p>
           </div>
 
           <div className="spk-party">
             <h3>Penerima Tugas / Pelaksana</h3>
             <div className="party-name">{doc.executor.name}</div>
             {doc.executor.code && <p>Kode Mitra: {doc.executor.code}</p>}
-            {doc.executor.category && (
-              <p>Kategori: {doc.executor.category}</p>
-            )}
+            {doc.executor.category && <p>Kategori: {doc.executor.category}</p>}
             {doc.executor.contactPerson && (
               <p>Kontak PIC: {doc.executor.contactPerson}</p>
             )}
@@ -187,7 +194,10 @@ export default async function WorkOrderPage({
               >
                 TOTAL KUANTITAS PRODUKSI:
               </td>
-              <td className="qty-col" style={{ fontSize: '1rem', color: '#0284c7' }}>
+              <td
+                className="qty-col"
+                style={{ fontSize: '1rem', color: '#0284c7' }}
+              >
                 {doc.totalQuantity} pcs
               </td>
             </tr>
@@ -208,7 +218,8 @@ export default async function WorkOrderPage({
                 marginTop: '2px',
               }}
             >
-              🔒 Biaya komitmen disepakati per-SPK dan menjadi dasar verifikasi faktur vendor.
+              🔒 Biaya komitmen disepakati per-SPK dan menjadi dasar verifikasi
+              faktur vendor.
             </div>
           </div>
           <div className="cost-value">
@@ -238,7 +249,9 @@ export default async function WorkOrderPage({
             padding: '14px 18px',
           }}
         >
-          <h3 style={{ margin: '0 0 8px', fontSize: '0.9rem', color: '#334155' }}>
+          <h3
+            style={{ margin: '0 0 8px', fontSize: '0.9rem', color: '#334155' }}
+          >
             Referensi File &amp; Lampiran Artwork
           </h3>
           <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '0.85rem' }}>
@@ -269,17 +282,13 @@ export default async function WorkOrderPage({
       <section className="spk-sign-off-grid">
         <div className="spk-sign-box">
           <div className="sign-role">Pemberi Perintah Kerja</div>
-          <div className="sign-name">
-            ( {doc.issuer.organizationName} )
-          </div>
+          <div className="sign-name">( {doc.issuer.organizationName} )</div>
           <div className="sign-date">Tanggal: _______________</div>
         </div>
 
         <div className="spk-sign-box">
           <div className="sign-role">Penerima Tugas / Pelaksana</div>
-          <div className="sign-name">
-            ( {doc.executor.name} )
-          </div>
+          <div className="sign-name">( {doc.executor.name} )</div>
           <div className="sign-date">Tanggal: _______________</div>
         </div>
 
@@ -292,7 +301,8 @@ export default async function WorkOrderPage({
 
       <footer className="spk-footer">
         <div>
-          MGBOS Phase 1 Governed Work Order · Dokumen sah instruksi lantai produksi.
+          MGBOS Phase 1 Governed Work Order · Dokumen sah instruksi lantai
+          produksi.
         </div>
         <div>Halaman 1 dari 1</div>
       </footer>

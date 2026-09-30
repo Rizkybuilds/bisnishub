@@ -1140,33 +1140,40 @@ navigation/source-map update where required
 
 ---
 
-# 50. Current Canonical-Ready but Unpersisted Documents
+# 50. Persisted Canonical Documents
 
-Current conversation has produced canonical-ready drafts including:
+The canonical documentation architecture has been persisted to the repository:
 
 ```text
 Solo-Founder Operating System v1.0
+(bisnis/operating-model/solo-founder-operating-system.md)
 
 MGBOS Domain Map & Capability Ownership v1.0
+(systems/mgbos/docs/architecture/domain-map-capability-ownership.md)
 
 Solo-Founder Implementation Roadmap v1.0
+(docs/roadmap/solo-founder-roadmap.md)
 
 Phase 1 Operating Spine Implementation Plan v1.0
+(systems/mgbos/docs/implementation/phase-1-operating-spine/README.md)
 
 Phase 1A Current MGBOS Operating-Spine Audit v1.0
+(systems/mgbos/docs/implementation/phase-1-operating-spine/current-operating-spine-audit.md)
 
 JARVIS Command Center & Decision Experience Architecture v1.0
+(systems/jarvis/docs/architecture/command-center-experience.md)
 
 JARVIS Integration, API & Interoperability Architecture v1.0
+(systems/jarvis/docs/architecture/integration-and-interoperability.md)
 ```
 
-Until persisted, classification:
+Classification:
 
 ```text
-ACTIVE-READY DRAFT
+ACTIVE
 ```
 
-not repository authority.
+Full repository authority within their designated scopes.
 
 ---
 

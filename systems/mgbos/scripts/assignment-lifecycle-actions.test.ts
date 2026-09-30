@@ -61,7 +61,10 @@ describe('Production Assignment Lifecycle Actions (P0-04)', () => {
       expect(res.success).toBe(true);
       expect(fetch).toHaveBeenCalledTimes(1);
 
-      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [
+        string,
+        RequestInit,
+      ];
       expect(url).toContain('/rpc/accept_production_assignment');
       const body = JSON.parse(init.body as string);
       expect(body).toEqual({
@@ -147,7 +150,10 @@ describe('Production Assignment Lifecycle Actions (P0-04)', () => {
       expect(res.success).toBe(true);
       expect(fetch).toHaveBeenCalledTimes(1);
 
-      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [
+        string,
+        RequestInit,
+      ];
       expect(url).toContain('/rpc/decline_production_assignment');
       const body = JSON.parse(init.body as string);
       expect(body).toEqual({
@@ -203,7 +209,10 @@ describe('Production Assignment Lifecycle Actions (P0-04)', () => {
       });
 
       expect(res.success).toBe(true);
-      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [
+        string,
+        RequestInit,
+      ];
       expect(url).toContain('/rpc/cancel_production_assignment');
       const body = JSON.parse(init.body as string);
       expect(body.p_reason).toBe('Order dibatalkan customer');
@@ -215,7 +224,9 @@ describe('Production Assignment Lifecycle Actions (P0-04)', () => {
       vi.stubGlobal(
         'fetch',
         vi.fn().mockResolvedValue(
-          new Response(JSON.stringify('new-assignment-uuid-456'), { status: 200 }),
+          new Response(JSON.stringify('new-assignment-uuid-456'), {
+            status: 200,
+          }),
         ),
       );
 
@@ -230,7 +241,10 @@ describe('Production Assignment Lifecycle Actions (P0-04)', () => {
       expect(res.success).toBe(true);
       expect(res.jobId).toBe(validJobId);
 
-      const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      const [url, init] = vi.mocked(fetch).mock.calls[0] as [
+        string,
+        RequestInit,
+      ];
       expect(url).toContain('/rpc/reassign_production_job');
       const body = JSON.parse(init.body as string);
       expect(body).toEqual({
@@ -246,7 +260,9 @@ describe('Production Assignment Lifecycle Actions (P0-04)', () => {
         p_reason: 'Alihkan ke vendor cadangan',
       });
       expect(mocks.invalidate).toHaveBeenCalledWith('/production');
-      expect(mocks.invalidate).toHaveBeenCalledWith(`/production/${validJobId}`);
+      expect(mocks.invalidate).toHaveBeenCalledWith(
+        `/production/${validJobId}`,
+      );
     });
   });
 });

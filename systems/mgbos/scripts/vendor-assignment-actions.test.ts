@@ -34,9 +34,11 @@ describe('Vendor-Backed Production Assignment Action (P0-03)', () => {
     });
     vi.stubGlobal(
       'fetch',
-      vi.fn().mockResolvedValue(
-        new Response(JSON.stringify('assignment-uuid-123'), { status: 200 }),
-      ),
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(JSON.stringify('assignment-uuid-123'), { status: 200 }),
+        ),
     );
   });
 
@@ -77,7 +79,9 @@ describe('Vendor-Backed Production Assignment Action (P0-03)', () => {
     expect(fetch).toHaveBeenCalledTimes(1);
 
     const [url, options] = vi.mocked(fetch).mock.calls[0] ?? [];
-    expect(url).toBe('http://127.0.0.1:55431/rest/v1/rpc/assign_production_job');
+    expect(url).toBe(
+      'http://127.0.0.1:55431/rest/v1/rpc/assign_production_job',
+    );
 
     const body = JSON.parse(String(options?.body));
     expect(body.p_organization_id).toBe('trusted-org-uuid');

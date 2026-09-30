@@ -1,12 +1,12 @@
 begin;
-select plan(16);
+select plan(15);
 
 -- Setup test context
 create temporary table test_ctx as select
-  (select id from app.organizations where code='multigraph-group') org,
-  (select id from app.brands where code='TS') brand,
-  (select id from app.users where email='founder@multigraph.id') owner_actor,
-  (select id from app.customer_accounts where status='ACTIVE' limit 1) customer;
+  (select id from app.organizations where code='multigraph-group') as org,
+  (select id from app.brands where code='TS') as brand,
+  (select id from app.users where email='founder@multigraph.id') as owner_actor,
+  (select id from app.customer_accounts where status='ACTIVE' limit 1) as customer;
 
 -- Create an active vendor and an inactive vendor in this org
 insert into app.vendors (
@@ -22,8 +22,8 @@ insert into app.vendors (
 from test_ctx;
 
 -- Create a cross-org vendor in a secondary org
-insert into app.organizations (id, code, name) values
-  ('99999999-0000-4000-8000-000000000099', 'other-group', 'Other Group Holding');
+insert into app.organizations (id, code, legal_name, display_name) values
+  ('99999999-0000-4000-8000-000000000099', 'other-group', 'Other Group Holding', 'Other Group');
 
 insert into app.vendors (
   id, organization_id, code, name, category, status, lead_time_days
@@ -32,7 +32,6 @@ insert into app.vendors (
 );
 
 -- Create a test order and production job in READY status
-create temporary table test_order as
 insert into app.orders (
   id, organization_id, brand_id, customer_account_id,
   order_type, order_number, status, currency,
@@ -42,23 +41,20 @@ insert into app.orders (
   created_by_user_id, request_id
 ) select
   '88888888-0000-4000-8000-000000000001', org, brand, customer,
-  'CUSTOM_B2B', 'TS-O-2026-VND01', 'ACTIVE', 'IDR',
+  'RETAIL_DIRECT', 'TS-O-2026-VND01', 'ACTIVE', 'IDR',
   1000000, 0, 50000, 1050000, 500000, 500000,
   '{"display_name": "Test Client"}'::jsonb,
   '{"recipient_name": "Budi", "phone": "0812345", "street": "Jl. Test", "city": "Jakarta"}'::jsonb,
   '{"notes": "Terms"}'::jsonb,
   owner_actor, '77777777-0000-4000-8000-000000000001'
-from test_ctx
-returning *;
+from test_ctx;
 
-create temporary table test_job as
 insert into app.production_jobs (
   id, organization_id, brand_id, order_id, job_number, job_type, title, status, estimated_cost, created_by_user_id
 ) select
   '55555555-0000-4000-8000-000000000001', org, brand, '88888888-0000-4000-8000-000000000001',
   'TS-J-2026-000001', 'PRINTING', 'Cetak DTF Kaos 50 pcs', 'READY', 450000, owner_actor
-from test_ctx
-returning *;
+from test_ctx;
 
 -- 1. Inactive Vendor Guard (AC-03)
 select throws_ok(
@@ -160,14 +156,12 @@ select is(
 
 -- 5. Internal Assignment Compatibility (AC-06)
 -- Create a second job for internal assignment
-create temporary table test_job_internal as
 insert into app.production_jobs (
   id, organization_id, brand_id, order_id, job_number, job_type, title, status, estimated_cost, created_by_user_id
 ) select
   '55555555-0000-4000-8000-000000000002', org, brand, '88888888-0000-4000-8000-000000000001',
   'TS-J-2026-000002', 'GARMENT', 'Cutting and Sewing Combed 24s', 'READY', 300000, owner_actor
-from test_ctx
-returning *;
+from test_ctx;
 
 create temporary table test_assignment_internal as
 select app.assign_production_job(

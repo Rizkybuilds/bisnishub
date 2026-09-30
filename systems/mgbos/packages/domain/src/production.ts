@@ -164,7 +164,8 @@ export function validateProductionAssignment(
   if (input.assignedCost < 0n || input.assignedCost > PRODUCTION_MONEY_MAX) {
     return {
       valid: false,
-      reason: 'Biaya komitmen pengerjaan tidak boleh negatif atau melebihi batas maksimum',
+      reason:
+        'Biaya komitmen pengerjaan tidak boleh negatif atau melebihi batas maksimum',
     };
   }
 
@@ -242,4 +243,3 @@ export function canAssignProductionJob(
 
   return { allowed: true };
 }
-

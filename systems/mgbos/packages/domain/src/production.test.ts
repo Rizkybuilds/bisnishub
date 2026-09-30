@@ -149,4 +149,3 @@ describe('Production Job Domain Logic (MGBOS-012)', () => {
     });
   });
 });
-

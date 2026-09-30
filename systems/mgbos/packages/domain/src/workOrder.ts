@@ -134,9 +134,12 @@ const rupiah = (val: bigint | string | number | null | undefined): string => {
   return 'Rp ' + b.toLocaleString('id-ID');
 };
 
-const cleanText = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
+const cleanText = (v: unknown): string =>
+  typeof v === 'string' ? v.trim() : '';
 const toRecord = (v: unknown): Record<string, unknown> =>
-  v && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : {};
+  v && typeof v === 'object' && !Array.isArray(v)
+    ? (v as Record<string, unknown>)
+    : {};
 
 /**
  * Technical specification extractor for shop-floor & vendor execution.
@@ -152,10 +155,13 @@ export function extractTechnicalSpecifications(
   // Schema-specific parser for custom atelier
   if (spec.schemaCode === 'teestock.custom_atelier.v1') {
     const garment = toRecord(spec.garment);
-    if (cleanText(garment.type)) lines.push(`Pakaian: ${cleanText(garment.type)}`);
+    if (cleanText(garment.type))
+      lines.push(`Pakaian: ${cleanText(garment.type)}`);
     if (cleanText(garment.fit)) lines.push(`Fit: ${cleanText(garment.fit)}`);
-    if (cleanText(garment.material)) lines.push(`Bahan: ${cleanText(garment.material)}`);
-    if (cleanText(garment.color)) lines.push(`Warna: ${cleanText(garment.color)}`);
+    if (cleanText(garment.material))
+      lines.push(`Bahan: ${cleanText(garment.material)}`);
+    if (cleanText(garment.color))
+      lines.push(`Warna: ${cleanText(garment.color)}`);
     if (typeof garment.gsm === 'number') lines.push(`GSM: ${garment.gsm}`);
     if (cleanText(garment.blankPreference))
       lines.push(`Blank: ${cleanText(garment.blankPreference)}`);
@@ -179,7 +185,9 @@ export function extractTechnicalSpecifications(
         const artwork = cleanText(d.artworkReference)
           ? ` · Ref File: ${cleanText(d.artworkReference)}`
           : '';
-        const decNotes = cleanText(d.notes) ? ` · Catatan: ${cleanText(d.notes)}` : '';
+        const decNotes = cleanText(d.notes)
+          ? ` · Catatan: ${cleanText(d.notes)}`
+          : '';
         lines.push(`Dekorasi: ${loc} · ${method}${dim}${artwork}${decNotes}`);
       }
     }
@@ -251,16 +259,20 @@ export function buildWorkOrderDocument(
   } else if (assignment.executorType === 'INTERNAL') {
     executor = {
       type: 'INTERNAL',
-      name: assignment.brand?.name ?? issuer.brandName ?? 'Unit Produksi Internal',
+      name:
+        assignment.brand?.name ?? issuer.brandName ?? 'Unit Produksi Internal',
       code: assignment.brand?.code ?? issuer.brandCode ?? null,
       category: 'In-House Studio',
     };
   } else {
     // External Vendor
     const v = assignment.vendor;
+    const vendorName = isHistorical
+      ? (assignment.vendorName ?? v?.name ?? 'Mitra Vendor Eksternal')
+      : (v?.name ?? assignment.vendorName ?? 'Mitra Vendor Eksternal');
     executor = {
       type: 'VENDOR',
-      name: v?.name ?? assignment.vendorName ?? 'Mitra Vendor Eksternal',
+      name: vendorName,
       code: v?.code ?? null,
       category: v?.category ?? null,
       contactPerson: v?.contactPerson ?? null,
@@ -273,7 +285,8 @@ export function buildWorkOrderDocument(
   // Format notice
   let notice: string;
   if (!assignment) {
-    notice = 'DRAF SPK — Job produksi ini belum memiliki penugasan pelaksana aktif.';
+    notice =
+      'DRAF SPK — Job produksi ini belum memiliki penugasan pelaksana aktif.';
   } else if (isHistorical) {
     notice = `DOKUMEN HISTORIS — Penugasan ini berstatus ${assignment.status} dan bukan penugasan aktif saat ini. Diterbitkan untuk arsip audit.`;
   } else if (assignment.status === 'ACCEPTED') {
@@ -333,9 +346,10 @@ export function buildWorkOrderDocument(
     }
   }
 
-  const spkNumber = assignment?.id && isHistorical
-    ? `SPK-${job.jobNumber}-${assignment.id.slice(0, 8)}`
-    : `SPK-${job.jobNumber}`;
+  const spkNumber =
+    assignment?.id && isHistorical
+      ? `SPK-${job.jobNumber}-${assignment.id.slice(0, 8)}`
+      : `SPK-${job.jobNumber}`;
 
   const formattedIssuedAt = new Intl.DateTimeFormat('id-ID', {
     dateStyle: 'medium',
@@ -395,14 +409,18 @@ export function workOrderVendorMessage(doc: WorkOrderDocument): string {
     `Pelaksana: *${doc.executor.name}*${doc.executor.code ? ` [${doc.executor.code}]` : ''}`,
     doc.executor.phone ? `Kontak: ${doc.executor.phone}` : '',
     doc.assignment ? `Status Penugasan: *${doc.assignment.status}*` : '',
-    doc.assignment ? `Biaya Komitmen Pengerjaan: *${doc.assignment.assignedCostFormatted}*` : '',
+    doc.assignment
+      ? `Biaya Komitmen Pengerjaan: *${doc.assignment.assignedCostFormatted}*`
+      : '',
     `Tenggat Penyelesaian: *${doc.targetDeadline}*`,
     '',
     `*Rincian Item Pengerjaan (Total: ${doc.totalQuantity} pcs):*`,
   ].filter(Boolean);
 
   doc.items.forEach((item, idx) => {
-    lines.push(`${idx + 1}. *${item.description}* — ${item.quantity} ${item.unit}`);
+    lines.push(
+      `${idx + 1}. *${item.description}* — ${item.quantity} ${item.unit}`,
+    );
     if (item.specifications.length > 0) {
       item.specifications.forEach((spec) => lines.push(`   • ${spec}`));
     }

@@ -81,7 +81,9 @@ describe('Order Lifecycle Server Action (transitionOrderStatusAction, P0-02)', (
 
     expect(fetch).toHaveBeenCalledTimes(1);
     const [url, options] = vi.mocked(fetch).mock.calls[0] ?? [];
-    expect(url).toBe('http://127.0.0.1:55431/rest/v1/rpc/transition_order_status');
+    expect(url).toBe(
+      'http://127.0.0.1:55431/rest/v1/rpc/transition_order_status',
+    );
     const body = JSON.parse(String(options?.body));
 
     expect(body.p_organization_id).toBe('trusted-org-uuid');

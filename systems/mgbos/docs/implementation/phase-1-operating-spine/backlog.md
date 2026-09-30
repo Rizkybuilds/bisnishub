@@ -2015,20 +2015,20 @@ Do not use percentage-complete.
 
 ---
 
-# 103. Initial Status
+# 103. Current Status
 
 ```text
-P0-01  READY
-P0-02  BLOCKED_BY P0-01 execution sequence
-P0-03  BLOCKED_BY P0-02 execution sequence
-P0-04  BLOCKED_BY P0-03
-P0-05  BLOCKED_BY P0-04
-P0-06  BLOCKED_BY P0-03/P0-04
-P0-07  BLOCKED_BY P0-01...P0-06
-P0-08  BLOCKED_BY P0-07
+P0-01  DONE
+P0-02  DONE
+P0-03  DONE
+P0-04  DONE
+P0-05  DONE
+P0-06  DONE
+P0-07  DONE
+P0-08  READY
 ```
 
-These are planning dependencies, not necessarily schema dependencies.
+P0-01 through P0-07 have completed implementation and regression verification. P0-08 is unblocked and ready for operator acceptance testing.
 
 ---
 

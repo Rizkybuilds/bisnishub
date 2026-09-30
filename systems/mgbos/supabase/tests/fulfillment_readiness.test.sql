@@ -1,12 +1,12 @@
 begin;
-select plan(12);
+select plan(15);
 
 -- Setup test context
 create temporary table test_ctx as select
-  (select id from app.organizations where code='multigraph-group') org,
-  (select id from app.brands where code='TS') brand,
-  (select id from app.users where email='founder@multigraph.id') owner_actor,
-  (select id from app.customer_accounts where status='ACTIVE' limit 1) customer;
+  (select id from app.organizations where code='multigraph-group') as org,
+  (select id from app.brands where code='TS') as brand,
+  (select id from app.users where email='founder@multigraph.id') as owner_actor,
+  (select id from app.customer_accounts where status='ACTIVE' limit 1) as customer;
 
 -- Create test order with two order items
 insert into app.orders (
@@ -18,7 +18,7 @@ insert into app.orders (
   created_by_user_id, request_id
 ) select
   '88888888-0000-4000-8000-000000000020', org, brand, customer,
-  'CUSTOM_B2B', 'TS-O-2026-FR01', 'ACTIVE', 'IDR',
+  'RETAIL_DIRECT', 'TS-O-2026-FR01', 'ACTIVE', 'IDR',
   2000000, 0, 50000, 2050000, 1000000, 1000000,
   '{"display_name": "Readiness Client"}'::jsonb,
   '{"recipient_name": "Andi", "phone": "0812345", "street": "Jl. Merdeka 10", "city": "Bandung"}'::jsonb,
@@ -27,18 +27,18 @@ insert into app.orders (
 from test_ctx;
 
 insert into app.order_items (
-  id, organization_id, order_id, item_type, description, quantity, unit_price, subtotal, total_cost
-) select
-  '33333333-0000-4000-8000-000000000001', org, '88888888-0000-4000-8000-000000000020',
-  'CUSTOM_GARMENT', 'Kaos Sablon Depan Belakang (50 pcs)', 50, 25000, 1250000, 600000
-from test_ctx;
+  id, order_id, position, description, quantity, unit, unit_price, subtotal, specification_snapshot
+) values (
+  '33333333-0000-4000-8000-000000000001', '88888888-0000-4000-8000-000000000020',
+  1, 'Kaos Sablon Depan Belakang (50 pcs)', 50, 'PCS', 25000, 1250000, '{}'::jsonb
+);
 
 insert into app.order_items (
-  id, organization_id, order_id, item_type, description, quantity, unit_price, subtotal, total_cost
-) select
-  '33333333-0000-4000-8000-000000000002', org, '88888888-0000-4000-8000-000000000020',
-  'CUSTOM_GARMENT', 'Tote Bag Kanvas Custom (30 pcs)', 30, 25000, 750000, 400000
-from test_ctx;
+  id, order_id, position, description, quantity, unit, unit_price, subtotal, specification_snapshot
+) values (
+  '33333333-0000-4000-8000-000000000002', '88888888-0000-4000-8000-000000000020',
+  2, 'Tote Bag Kanvas Custom (30 pcs)', 30, 'PCS', 25000, 750000, '{}'::jsonb
+);
 
 -- Create Job 1 for Item 1 in IN_PRODUCTION
 insert into app.production_jobs (
@@ -86,15 +86,24 @@ select throws_ok(
   'Job in AWAITING_QC blocks delivery order creation (AC-03)'
 );
 
--- 3. AC-04: Record QC REWORK -> Still blocked
-update app.production_jobs
-set status = 'REWORK'
-where id = '55555555-0000-4000-8000-000000000021';
+-- F3: Cannot transition directly from AWAITING_QC to READY_FOR_HANDOFF without QC PASS inspection
+select throws_ok(
+  $q$select app.transition_production_job_status(
+    p_organization_id => (select org from test_ctx),
+    p_actor_id => (select owner_actor from test_ctx),
+    p_job_id => '55555555-0000-4000-8000-000000000021',
+    p_to_status => 'READY_FOR_HANDOFF'
+  )$q$,
+  'P0001',
+  NULL,
+  'Direct transition to READY_FOR_HANDOFF without QC PASS inspection is rejected (F3)'
+);
 
+-- 3. AC-04: Record QC REWORK -> Still blocked
 insert into app.qc_inspections (
-  id, organization_id, production_job_id, inspector_id, inspection_number, result, sample_size, defect_count
+  id, organization_id, production_job_id, inspector_id, inspection_number, result, sample_size, defect_count, inspected_at
 ) select
-  '66666666-0000-4000-8000-000000000021', org, '55555555-0000-4000-8000-000000000021', owner_actor, 'TS-QC-2026-FR0001', 'REWORK', 5, 2
+  '66666666-0000-4000-8000-000000000021', org, '55555555-0000-4000-8000-000000000021', owner_actor, 'TS-QC-2026-FR0001', 'REWORK', 5, 2, now() - interval '10 minutes'
 from test_ctx;
 
 select throws_ok(
@@ -110,15 +119,11 @@ select throws_ok(
   'Job in REWORK blocks delivery order creation (AC-04)'
 );
 
--- 4. AC-05: Record QC REJECTED / ON_HOLD -> Still blocked
-update app.production_jobs
-set status = 'ON_HOLD'
-where id = '55555555-0000-4000-8000-000000000021';
-
+-- 4. AC-05: Record QC REJECTED -> Still blocked
 insert into app.qc_inspections (
-  id, organization_id, production_job_id, inspector_id, inspection_number, result, sample_size, defect_count
+  id, organization_id, production_job_id, inspector_id, inspection_number, result, sample_size, defect_count, inspected_at
 ) select
-  '66666666-0000-4000-8000-000000000022', org, '55555555-0000-4000-8000-000000000021', owner_actor, 'TS-QC-2026-FR0002', 'REJECTED', 5, 5
+  '66666666-0000-4000-8000-000000000022', org, '55555555-0000-4000-8000-000000000021', owner_actor, 'TS-QC-2026-FR0002', 'REJECTED', 5, 5, now() - interval '5 minutes'
 from test_ctx;
 
 select throws_ok(
@@ -131,20 +136,21 @@ select throws_ok(
   ) from test_ctx$q$,
   'P0001',
   NULL,
-  'Job ON_HOLD / REJECTED blocks delivery order creation (AC-05)'
+  'Job REJECTED blocks delivery order creation (AC-05)'
 );
 
 -- 5. AC-01: Pass QC and advance to READY_FOR_HANDOFF -> Can be shipped!
+insert into app.qc_inspections (
+  id, organization_id, production_job_id, inspector_id, inspection_number, result, sample_size, defect_count, inspected_at
+) select
+  '66666666-0000-4000-8000-000000000023', org, '55555555-0000-4000-8000-000000000021', owner_actor, 'TS-QC-2026-FR0003', 'PASS', 5, 0, now()
+from test_ctx;
+
 update app.production_jobs
 set status = 'READY_FOR_HANDOFF'
 where id = '55555555-0000-4000-8000-000000000021';
 
-insert into app.qc_inspections (
-  id, organization_id, production_job_id, inspector_id, inspection_number, result, sample_size, defect_count, inspected_at
-) select
-  '66666666-0000-4000-8000-000000000023', org, '55555555-0000-4000-8000-000000000021', owner_actor, 'TS-QC-2026-FR0003', 'PASS', 5, 0, now() + interval '1 minute'
-from test_ctx;
-
+-- Create delivery order partial 30 pcs
 create temporary table do_1 as select app.create_delivery_order(
   p_organization_id => org,
   p_actor_id => owner_actor,
@@ -173,35 +179,49 @@ select throws_ok(
   'Exceeding remaining unshipped quota (30 + 25 > 50) is blocked by ceiling guard (AC-06)'
 );
 
--- 7. AC-07: Add a CANCELLED job for Item 1 -> does not block shipment of remaining 20 pcs
-insert into app.production_jobs (
-  id, organization_id, brand_id, order_id, job_number, job_type, title, status, estimated_cost, created_by_user_id
-) select
-  '55555555-0000-4000-8000-000000000022', org, brand, '88888888-0000-4000-8000-000000000020',
-  'TS-J-2026-FR-CAN', 'PRINTING', 'Job Cadangan Dibatalkan', 'CANCELLED', 200000, owner_actor
-from test_ctx;
-
-insert into app.production_job_items (
-  id, production_job_id, order_item_id, quantity
-) values (
-  '44444444-0000-4000-8000-000000000022', '55555555-0000-4000-8000-000000000022', '33333333-0000-4000-8000-000000000001', 20
+-- F2: Duplicate item in payload exceeding remaining quota (15 + 15 = 30 > 20 remaining) is blocked
+select throws_ok(
+  $q$select app.create_delivery_order(
+    p_organization_id => org,
+    p_actor_id => owner_actor,
+    p_order_id => '88888888-0000-4000-8000-000000000020',
+    p_courier_name => 'JNT',
+    p_items => '[
+      {"order_item_id": "33333333-0000-4000-8000-000000000001", "quantity": 15},
+      {"order_item_id": "33333333-0000-4000-8000-000000000001", "quantity": 15}
+    ]'::jsonb
+  ) from test_ctx$q$,
+  'P0001',
+  NULL,
+  'Duplicate items in payload exceeding remaining quota (15 + 15 > 20) are blocked atomically (F2)'
 );
 
-create temporary table do_2 as select app.create_delivery_order(
+-- Verify rejection leaves no shipment residue
+select is(
+  (select count(*)::integer from app.shipments where order_id = '88888888-0000-4000-8000-000000000020'),
+  1,
+  'No orphan shipment header created from rejected duplicate item request'
+);
+
+-- F2: Duplicate item in payload WITHIN remaining quota (10 + 10 = 20 <= 20 remaining) succeeds!
+create temporary table do_dup_valid as select app.create_delivery_order(
   p_organization_id => org,
   p_actor_id => owner_actor,
   p_order_id => '88888888-0000-4000-8000-000000000020',
   p_courier_name => 'JNT',
-  p_items => '[{"order_item_id": "33333333-0000-4000-8000-000000000001", "quantity": 20}]'::jsonb
+  p_items => '[
+    {"order_item_id": "33333333-0000-4000-8000-000000000001", "quantity": 10},
+    {"order_item_id": "33333333-0000-4000-8000-000000000001", "quantity": 10}
+  ]'::jsonb
 ) as res from test_ctx;
 
 select is(
-  (select (res->>'status') from do_2),
+  (select (res->>'status') from do_dup_valid),
   'READY_TO_DISPATCH',
-  'Cancelled irrelevant job does not block fulfillment of remaining quantity (AC-07)'
+  'Duplicate items in payload within remaining quota (10 + 10 = 20) succeed cleanly (F2)'
 );
 
--- 8. AC-08: Item 2 has an unfinished job (PLANNED) -> Attempting to ship Item 2 is blocked
+-- 7. AC-08: Item 2 has an unfinished job (PLANNED) -> Attempting to ship Item 2 is blocked
 insert into app.production_jobs (
   id, organization_id, brand_id, order_id, job_number, job_type, title, status, estimated_cost, created_by_user_id
 ) select
@@ -228,7 +248,7 @@ select throws_ok(
   'Item 2 with unfinished PLANNED job is blocked from shipment (AC-08)'
 );
 
--- 9. AC-09: Operator receives descriptive blocker error message
+-- 8. AC-09: Operator receives descriptive blocker error message (POSIX regex string)
 select throws_matching(
   $q$select app.create_delivery_order(
     p_organization_id => org,
@@ -237,11 +257,11 @@ select throws_matching(
     p_courier_name => 'JNT',
     p_items => '[{"order_item_id": "33333333-0000-4000-8000-000000000002", "quantity": 30}]'::jsonb
   ) from test_ctx$q$,
-  /Production job TS-J-2026-FR0002 .* is currently PLANNED \(required: READY_FOR_HANDOFF or COMPLETED\)/,
+  'Production job TS-J-2026-FR0002 .* is currently PLANNED \(required: READY_FOR_HANDOFF or COMPLETED\)',
   'Blocker message explicitly specifies job number and status (AC-09)'
 );
 
--- 10. AC-10: Delivered shipment immutability
+-- 9. AC-10: Delivered shipment immutability
 select ok(
   (select count(*) from app.shipments where id = (select (res->>'shipment_id')::uuid from do_1)) = 1,
   'Shipment 1 successfully created'
@@ -257,11 +277,10 @@ select app.dispatch_shipment(
 ) from test_ctx;
 
 -- Mark Delivered
-select app.transition_shipment_status(
+select app.mark_shipment_delivered(
   p_organization_id => org,
   p_actor_id => owner_actor,
   p_shipment_id => (select (res->>'shipment_id')::uuid from do_1),
-  p_to_status => 'DELIVERED',
   p_notes => 'Diterima oleh pemesan'
 ) from test_ctx;
 
@@ -281,4 +300,5 @@ select throws_ok(
   'Delivered shipment cannot be modified (AC-10)'
 );
 
+select * from finish();
 rollback;

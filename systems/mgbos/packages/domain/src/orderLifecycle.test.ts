@@ -18,7 +18,9 @@ describe('Authoritative Order Lifecycle Domain Service (P0-02)', () => {
       // CONFIRMED transitions
       expect(validateOrderTransition('CONFIRMED', 'ACTIVE').valid).toBe(true);
       expect(validateOrderTransition('CONFIRMED', 'ON_HOLD').valid).toBe(true);
-      expect(validateOrderTransition('CONFIRMED', 'CANCELLED').valid).toBe(true);
+      expect(validateOrderTransition('CONFIRMED', 'CANCELLED').valid).toBe(
+        true,
+      );
 
       // ACTIVE transitions
       expect(validateOrderTransition('ACTIVE', 'ON_HOLD').valid).toBe(true);
@@ -37,7 +39,9 @@ describe('Authoritative Order Lifecycle Domain Service (P0-02)', () => {
       expect(validateOrderTransition('DRAFT', 'ON_HOLD').valid).toBe(false);
 
       // Cannot skip directly from CONFIRMED to COMPLETED
-      expect(validateOrderTransition('CONFIRMED', 'COMPLETED').valid).toBe(false);
+      expect(validateOrderTransition('CONFIRMED', 'COMPLETED').valid).toBe(
+        false,
+      );
 
       // Cannot go backwards from ACTIVE to CONFIRMED or DRAFT
       expect(validateOrderTransition('ACTIVE', 'CONFIRMED').valid).toBe(false);
@@ -55,10 +59,24 @@ describe('Authoritative Order Lifecycle Domain Service (P0-02)', () => {
     });
 
     it('provides accurate allowed transitions via getAllowedOrderTransitions', () => {
-      expect(getAllowedOrderTransitions('DRAFT')).toEqual(['CONFIRMED', 'CANCELLED']);
-      expect(getAllowedOrderTransitions('CONFIRMED')).toEqual(['ACTIVE', 'ON_HOLD', 'CANCELLED']);
-      expect(getAllowedOrderTransitions('ACTIVE')).toEqual(['ON_HOLD', 'COMPLETED', 'CANCELLED']);
-      expect(getAllowedOrderTransitions('ON_HOLD')).toEqual(['ACTIVE', 'CANCELLED']);
+      expect(getAllowedOrderTransitions('DRAFT')).toEqual([
+        'CONFIRMED',
+        'CANCELLED',
+      ]);
+      expect(getAllowedOrderTransitions('CONFIRMED')).toEqual([
+        'ACTIVE',
+        'ON_HOLD',
+        'CANCELLED',
+      ]);
+      expect(getAllowedOrderTransitions('ACTIVE')).toEqual([
+        'ON_HOLD',
+        'COMPLETED',
+        'CANCELLED',
+      ]);
+      expect(getAllowedOrderTransitions('ON_HOLD')).toEqual([
+        'ACTIVE',
+        'CANCELLED',
+      ]);
       expect(getAllowedOrderTransitions('COMPLETED')).toEqual([]);
       expect(getAllowedOrderTransitions('CANCELLED')).toEqual([]);
     });
@@ -111,7 +129,9 @@ describe('Authoritative Order Lifecycle Domain Service (P0-02)', () => {
       });
 
       expect(result.eligible).toBe(false);
-      expect(result.blockingReasons[0]).toContain('2 pekerjaan produksi (SPK) yang belum selesai');
+      expect(result.blockingReasons[0]).toContain(
+        '2 pekerjaan produksi (SPK) yang belum selesai',
+      );
     });
 
     it('blocks completion when open shipments remain', () => {
@@ -122,7 +142,9 @@ describe('Authoritative Order Lifecycle Domain Service (P0-02)', () => {
       });
 
       expect(result.eligible).toBe(false);
-      expect(result.blockingReasons[0]).toContain('1 surat jalan / pengiriman yang belum terkirim');
+      expect(result.blockingReasons[0]).toContain(
+        '1 surat jalan / pengiriman yang belum terkirim',
+      );
     });
 
     it('blocks completion when unpaid invoices remain', () => {
@@ -133,7 +155,9 @@ describe('Authoritative Order Lifecycle Domain Service (P0-02)', () => {
       });
 
       expect(result.eligible).toBe(false);
-      expect(result.blockingReasons[0]).toContain('3 faktur komersial yang belum lunas');
+      expect(result.blockingReasons[0]).toContain(
+        '3 faktur komersial yang belum lunas',
+      );
     });
 
     it('accumulates multiple blocking reasons when multiple obligations remain', () => {
@@ -151,11 +175,15 @@ describe('Authoritative Order Lifecycle Domain Service (P0-02)', () => {
   describe('Order Status Labels', () => {
     it('formats human-readable labels for all order statuses', () => {
       expect(formatOrderStatusLabel('DRAFT')).toBe('Draf');
-      expect(formatOrderStatusLabel('CONFIRMED')).toBe('Terkonfirmasi (Kontrak Sah)');
+      expect(formatOrderStatusLabel('CONFIRMED')).toBe(
+        'Terkonfirmasi (Kontrak Sah)',
+      );
       expect(formatOrderStatusLabel('ACTIVE')).toBe('Sedang Berjalan (Aktif)');
       expect(formatOrderStatusLabel('ON_HOLD')).toBe('Ditahan (On Hold)');
       expect(formatOrderStatusLabel('COMPLETED')).toBe('Selesai (Completed)');
-      expect(formatOrderStatusLabel('CANCELLED')).toBe('Dibatalkan (Cancelled)');
+      expect(formatOrderStatusLabel('CANCELLED')).toBe(
+        'Dibatalkan (Cancelled)',
+      );
     });
   });
 });

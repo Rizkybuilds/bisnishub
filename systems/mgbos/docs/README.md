@@ -657,11 +657,11 @@ P0-04 Assignment acceptance
 
 P0-05 Fulfillment readiness
 
-P0-08 Work Order artifact
+P0-06 Governed Work Order / SPK Artifact
 
-Clean E2E
+P0-07 Clean Happy-Path E2E Verification
 
-Operator Acceptance Test
+P0-08 Operator Acceptance Test
 ```
 
 The backlog is:

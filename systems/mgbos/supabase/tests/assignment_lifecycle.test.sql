@@ -1,12 +1,12 @@
 begin;
-select plan(16);
+select plan(20);
 
 -- Setup test context
 create temporary table test_ctx as select
-  (select id from app.organizations where code='multigraph-group') org,
-  (select id from app.brands where code='TS') brand,
-  (select id from app.users where email='founder@multigraph.id') owner_actor,
-  (select id from app.customer_accounts where status='ACTIVE' limit 1) customer;
+  (select id from app.organizations where code='multigraph-group') as org,
+  (select id from app.brands where code='TS') as brand,
+  (select id from app.users where email='founder@multigraph.id') as owner_actor,
+  (select id from app.customer_accounts where status='ACTIVE' limit 1) as customer;
 
 -- Create an active vendor
 insert into app.vendors (
@@ -32,7 +32,7 @@ insert into app.orders (
   created_by_user_id, request_id
 ) select
   '88888888-0000-4000-8000-000000000010', org, brand, customer,
-  'CUSTOM_B2B', 'TS-O-2026-AL01', 'ACTIVE', 'IDR',
+  'RETAIL_DIRECT', 'TS-O-2026-AL01', 'ACTIVE', 'IDR',
   1000000, 0, 50000, 1050000, 500000, 500000,
   '{"display_name": "Test Client"}'::jsonb,
   '{"recipient_name": "Budi", "phone": "0812345", "street": "Jl. Test", "city": "Jakarta"}'::jsonb,
@@ -79,16 +79,16 @@ select throws_ok(
   'Conflicting second active assignment is rejected (AC-09)'
 );
 
--- 3. AC-10: Unauthorized actor rejected
+-- 3. AC-10: Unauthorized actor rejected (fail-closed F1)
 select throws_ok(
   $q$select app.accept_production_assignment(
-    p_organization_id => org,
+    p_organization_id => (select org from test_ctx),
     p_actor_id => '00000000-0000-0000-0000-000000000000',
     p_assignment_id => (select assign_id from assign_1)
-  ) from test_ctx$q$,
+  )$q$,
   'P0001',
-  NULL,
-  'Unauthorized actor is rejected for accept_production_assignment (AC-10)'
+  'Active organization membership required',
+  'Unauthorized actor is rejected for accept_production_assignment (fail-closed)'
 );
 
 -- 4. AC-01, AC-02, AC-03, AC-04: Accept assignment
@@ -128,7 +128,7 @@ select is(
   'Duplicate acceptance is safe and returns already_accepted=true (AC-12)'
 );
 
--- 6. Decline when ACCEPTED should be rejected (cannot decline after accepted)
+-- 6. Decline when ACCEPTED should be rejected
 select throws_ok(
   $q$select app.decline_production_assignment(
     p_organization_id => org,
@@ -215,7 +215,8 @@ create temporary table reassign_res as select app.reassign_production_job(
   p_vendor_id => '11111111-0000-4000-8000-000000000011',
   p_assigned_cost => 780000,
   p_notes => 'Alihkan ke Vendor Cadangan Garment',
-  p_reason => 'Reassigning after vendor decline'
+  p_reason => 'Reassigning after vendor decline',
+  p_request_id => '44444444-0000-4000-8000-000000000099'::uuid
 ) as new_assign_id from test_ctx;
 
 select ok(
@@ -229,4 +230,83 @@ select is(
   'New assignment points to reallocated vendor'
 );
 
+-- 10. F6 Idempotency Regression Tests
+-- 10a: Same request_id and identical payload returns the exact same assignment ID
+create temporary table reassign_retry as select app.reassign_production_job(
+  p_organization_id => org,
+  p_actor_id => owner_actor,
+  p_job_id => '55555555-0000-4000-8000-000000000010',
+  p_executor_type => 'VENDOR',
+  p_vendor_id => '11111111-0000-4000-8000-000000000011',
+  p_assigned_cost => 780000,
+  p_notes => 'Alihkan ke Vendor Cadangan Garment',
+  p_reason => 'Reassigning after vendor decline',
+  p_request_id => '44444444-0000-4000-8000-000000000099'::uuid
+) as retry_assign_id from test_ctx;
+
+select is(
+  (select retry_assign_id from reassign_retry),
+  (select new_assign_id from reassign_res),
+  'Idempotent retry with same request_id returns existing assignment ID without recreating (F6)'
+);
+
+-- 10b: Same request_id with different payload raises conflict
+select throws_ok(
+  $q$select app.reassign_production_job(
+    p_organization_id => (select org from test_ctx),
+    p_actor_id => (select owner_actor from test_ctx),
+    p_job_id => '55555555-0000-4000-8000-000000000010',
+    p_executor_type => 'VENDOR',
+    p_vendor_id => '11111111-0000-4000-8000-000000000011',
+    p_assigned_cost => 999999,
+    p_request_id => '44444444-0000-4000-8000-000000000099'::uuid
+  )$q$,
+  'P0001',
+  'Idempotent request conflict: request_id has already been used with different payload',
+  'Replay with altered payload is rejected (F6)'
+);
+
+-- 10c: Stale expected_assignment_id is rejected
+select throws_ok(
+  $q$select app.reassign_production_job(
+    p_organization_id => (select org from test_ctx),
+    p_actor_id => (select owner_actor from test_ctx),
+    p_job_id => '55555555-0000-4000-8000-000000000010',
+    p_executor_type => 'VENDOR',
+    p_vendor_id => '11111111-0000-4000-8000-000000000010',
+    p_assigned_cost => 800000,
+    p_expected_assignment_id => '00000000-0000-0000-0000-000000000000'::uuid
+  )$q$,
+  'P0001',
+  NULL,
+  'Stale expected_assignment_id is rejected (F6)'
+);
+
+-- 10d: Vendor accepts the reassignment
+select app.accept_production_assignment(
+  p_organization_id => (select org from test_ctx),
+  p_actor_id => (select owner_actor from test_ctx),
+  p_assignment_id => (select new_assign_id from reassign_res)
+);
+
+-- Idempotent retry after acceptance must not cancel the accepted assignment
+create temporary table reassign_after_accept as select app.reassign_production_job(
+  p_organization_id => org,
+  p_actor_id => owner_actor,
+  p_job_id => '55555555-0000-4000-8000-000000000010',
+  p_executor_type => 'VENDOR',
+  p_vendor_id => '11111111-0000-4000-8000-000000000011',
+  p_assigned_cost => 780000,
+  p_notes => 'Alihkan ke Vendor Cadangan Garment',
+  p_reason => 'Reassigning after vendor decline',
+  p_request_id => '44444444-0000-4000-8000-000000000099'::uuid
+) as after_accept_id from test_ctx;
+
+select is(
+  (select status from app.production_assignments where id = (select new_assign_id from reassign_res)),
+  'ACCEPTED',
+  'Idempotent retry after vendor acceptance does NOT cancel accepted assignment (F6)'
+);
+
+select * from finish();
 rollback;

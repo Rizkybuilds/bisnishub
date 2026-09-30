@@ -138,7 +138,7 @@ The following documents are the current dedicated canonical architecture specifi
 | Business integrity rules | `business-invariants.md` | ACTIVE |
 | Commands, events and integration mutation boundary | `command-event-model.md` | ACTIVE |
 | Identity, roles and authorization | `permission-authorization-model.md` | ACTIVE |
-| Domain/capability ownership and expansion | `domain-map-capability-ownership.md` | ACTIVE-READY / target until persisted |
+| Domain/capability ownership and expansion | `domain-map-capability-ownership.md` | ACTIVE |
 
 ---
 
@@ -593,7 +593,7 @@ Permission cannot make an invalid business operation valid.
 
 # 22. Domain Map & Capability Ownership
 
-Canonical target:
+Canonical source:
 
 ```text
 domain-map-capability-ownership.md

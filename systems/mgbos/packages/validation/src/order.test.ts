@@ -158,7 +158,9 @@ describe('Order Validation Schemas (MGBOS-011)', () => {
         orderId: 'not-a-uuid',
         targetStatus: 'ACTIVE',
       };
-      expect(transitionOrderStatusSchema.safeParse(invalid).success).toBe(false);
+      expect(transitionOrderStatusSchema.safeParse(invalid).success).toBe(
+        false,
+      );
     });
 
     it('rejects invalid order status string', () => {
@@ -166,7 +168,9 @@ describe('Order Validation Schemas (MGBOS-011)', () => {
         orderId: '99999999-0000-4000-8000-000000000001',
         targetStatus: 'SHIPPED_OUT', // not a canonical status
       };
-      expect(transitionOrderStatusSchema.safeParse(invalid).success).toBe(false);
+      expect(transitionOrderStatusSchema.safeParse(invalid).success).toBe(
+        false,
+      );
     });
 
     it('rejects reason exceeding 1000 characters', () => {
@@ -175,8 +179,9 @@ describe('Order Validation Schemas (MGBOS-011)', () => {
         targetStatus: 'CANCELLED',
         reason: 'a'.repeat(1001),
       };
-      expect(transitionOrderStatusSchema.safeParse(invalid).success).toBe(false);
+      expect(transitionOrderStatusSchema.safeParse(invalid).success).toBe(
+        false,
+      );
     });
   });
 });
-

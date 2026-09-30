@@ -131,11 +131,16 @@ export function OrderStatusActions({
               background: '#0284c7',
               color: '#ffffff',
             };
-            label = currentStatus === 'ON_HOLD' ? '▶️ Lanjutkan Pesanan' : '🚀 Aktifkan Pesanan';
+            label =
+              currentStatus === 'ON_HOLD'
+                ? '▶️ Lanjutkan Pesanan'
+                : '🚀 Aktifkan Pesanan';
           } else if (target === 'COMPLETED') {
             btnStyle = {
               ...btnStyle,
-              background: completionEligibility.eligible ? '#16a34a' : '#065f46',
+              background: completionEligibility.eligible
+                ? '#16a34a'
+                : '#065f46',
               color: '#ffffff',
             };
             label = '✅ Selesaikan Pesanan';
@@ -215,7 +220,13 @@ export function OrderStatusActions({
                 <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#f8fafc' }}>
                   Perbarui Status Pesanan
                 </h3>
-                <p style={{ margin: '3px 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>
+                <p
+                  style={{
+                    margin: '3px 0 0',
+                    fontSize: '0.8rem',
+                    color: '#94a3b8',
+                  }}
+                >
                   {orderNumber} · {currentStatus} &rarr;{' '}
                   <span style={{ color: '#38bdf8', fontWeight: 600 }}>
                     {targetStatus}
@@ -319,8 +330,8 @@ export function OrderStatusActions({
                         </span>
                       ) : (
                         <span style={{ color: '#f87171' }}>
-                          ✗ Masih ada {unpaidInvoicesCount} faktur komersial yang
-                          belum lunas
+                          ✗ Masih ada {unpaidInvoicesCount} faktur komersial
+                          yang belum lunas
                         </span>
                       )}
                     </li>
@@ -336,8 +347,8 @@ export function OrderStatusActions({
                         borderRadius: '4px',
                       }}
                     >
-                      Peringatan: Pesanan belum memenuhi kewajiban operasional di
-                      atas. Sistem akan menolak penyelesaian sampai semua
+                      Peringatan: Pesanan belum memenuhi kewajiban operasional
+                      di atas. Sistem akan menolak penyelesaian sampai semua
                       kewajiban terselesaikan.
                     </div>
                   )}

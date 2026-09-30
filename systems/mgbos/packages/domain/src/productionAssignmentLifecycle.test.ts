@@ -7,48 +7,78 @@ import {
 describe('Production Assignment Lifecycle Domain Service (P0-04)', () => {
   describe('validateProductionAssignmentTransition', () => {
     it('allows ASSIGNED -> ACCEPTED transition (AC-01, AC-02)', () => {
-      const result = validateProductionAssignmentTransition('ASSIGNED', 'ACCEPTED');
+      const result = validateProductionAssignmentTransition(
+        'ASSIGNED',
+        'ACCEPTED',
+      );
       expect(result.valid).toBe(true);
       expect(result.isDuplicate).toBeFalsy();
     });
 
     it('allows ASSIGNED -> DECLINED transition (AC-05)', () => {
-      const result = validateProductionAssignmentTransition('ASSIGNED', 'DECLINED');
+      const result = validateProductionAssignmentTransition(
+        'ASSIGNED',
+        'DECLINED',
+      );
       expect(result.valid).toBe(true);
     });
 
     it('allows ASSIGNED -> CANCELLED transition', () => {
-      const result = validateProductionAssignmentTransition('ASSIGNED', 'CANCELLED');
+      const result = validateProductionAssignmentTransition(
+        'ASSIGNED',
+        'CANCELLED',
+      );
       expect(result.valid).toBe(true);
     });
 
     it('allows ACCEPTED -> CANCELLED transition before shop-floor execution', () => {
-      const result = validateProductionAssignmentTransition('ACCEPTED', 'CANCELLED');
+      const result = validateProductionAssignmentTransition(
+        'ACCEPTED',
+        'CANCELLED',
+      );
       expect(result.valid).toBe(true);
     });
 
     it('treats duplicate acceptance as safe / idempotent (AC-12)', () => {
-      const result = validateProductionAssignmentTransition('ACCEPTED', 'ACCEPTED');
+      const result = validateProductionAssignmentTransition(
+        'ACCEPTED',
+        'ACCEPTED',
+      );
       expect(result.valid).toBe(true);
       expect(result.isDuplicate).toBe(true);
     });
 
     it('rejects ACCEPTED -> DECLINED', () => {
-      const result = validateProductionAssignmentTransition('ACCEPTED', 'DECLINED');
+      const result = validateProductionAssignmentTransition(
+        'ACCEPTED',
+        'DECLINED',
+      );
       expect(result.valid).toBe(false);
       expect(result.reason).toContain('tidak valid dalam state machine');
     });
 
     it('rejects terminal DECLINED state transitions', () => {
-      expect(validateProductionAssignmentTransition('DECLINED', 'ACCEPTED').valid).toBe(false);
-      expect(validateProductionAssignmentTransition('DECLINED', 'ASSIGNED').valid).toBe(false);
-      expect(validateProductionAssignmentTransition('DECLINED', 'CANCELLED').valid).toBe(false);
+      expect(
+        validateProductionAssignmentTransition('DECLINED', 'ACCEPTED').valid,
+      ).toBe(false);
+      expect(
+        validateProductionAssignmentTransition('DECLINED', 'ASSIGNED').valid,
+      ).toBe(false);
+      expect(
+        validateProductionAssignmentTransition('DECLINED', 'CANCELLED').valid,
+      ).toBe(false);
     });
 
     it('rejects terminal CANCELLED state transitions', () => {
-      expect(validateProductionAssignmentTransition('CANCELLED', 'ACCEPTED').valid).toBe(false);
-      expect(validateProductionAssignmentTransition('CANCELLED', 'ASSIGNED').valid).toBe(false);
-      expect(validateProductionAssignmentTransition('CANCELLED', 'DECLINED').valid).toBe(false);
+      expect(
+        validateProductionAssignmentTransition('CANCELLED', 'ACCEPTED').valid,
+      ).toBe(false);
+      expect(
+        validateProductionAssignmentTransition('CANCELLED', 'ASSIGNED').valid,
+      ).toBe(false);
+      expect(
+        validateProductionAssignmentTransition('CANCELLED', 'DECLINED').valid,
+      ).toBe(false);
     });
   });
 
@@ -70,7 +100,9 @@ describe('Production Assignment Lifecycle Domain Service (P0-04)', () => {
     });
 
     it('blocks assignment if job status is IN_PRODUCTION or later', () => {
-      expect(canAssignProductionJob('IN_PRODUCTION', false).allowed).toBe(false);
+      expect(canAssignProductionJob('IN_PRODUCTION', false).allowed).toBe(
+        false,
+      );
       expect(canAssignProductionJob('AWAITING_QC', false).allowed).toBe(false);
       expect(canAssignProductionJob('COMPLETED', false).allowed).toBe(false);
       expect(canAssignProductionJob('CANCELLED', false).allowed).toBe(false);

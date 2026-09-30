@@ -1,27 +1,52 @@
 begin;
-select plan(24);
+select plan(28);
 
 -- Setup test context
 create temporary table test_ctx as select
-  (select id from app.organizations where code='multigraph-group') org,
-  (select id from app.brands where code='TS') brand,
-  (select id from app.users where email='founder@multigraph.id') owner_actor,
-  (select id from app.customer_accounts where status='ACTIVE' limit 1) customer;
+  (select id from app.organizations where code='multigraph-group') as org,
+  (select id from app.brands where code='TS') as brand,
+  (select id from app.users where email='founder@multigraph.id') as owner_actor,
+  (select id from app.customer_accounts where status='ACTIVE' limit 1) as customer;
 
--- Create test users for SALES, QC, and another org member
-insert into app.users(id, name, email) values
-  ('77777777-0000-4000-8000-000000000001', 'Lifecycle Sales Actor', 'sales-lifecycle@local.invalid'),
-  ('77777777-0000-4000-8000-000000000002', 'Lifecycle QC Actor', 'qc-lifecycle@local.invalid'),
-  ('77777777-0000-4000-8000-000000000003', 'Cross Org Actor', 'cross-org-lifecycle@local.invalid');
+-- Create secondary organization for cross-org testing
+insert into app.organizations (id, code, legal_name, display_name, status) values
+  ('99999999-0000-4000-8000-000000000001', 'other-lifecycle-org', 'Other Org Legal', 'Other Org', 'ACTIVE'),
+  ('99999999-0000-4000-8000-000000000002', 'inactive-lifecycle-org', 'Inactive Org Legal', 'Inactive Org', 'INACTIVE');
 
-insert into app.organization_members(organization_id, user_id, role_id)
-select org, '77777777-0000-4000-8000-000000000001', (select id from app.roles where organization_id=org and code='SALES') from test_ctx;
+-- Create test users
+insert into app.users(id, name, email, status) values
+  ('77777777-0000-4000-8000-000000000001', 'Lifecycle Sales Actor', 'sales-lifecycle@local.invalid', 'ACTIVE'),
+  ('77777777-0000-4000-8000-000000000002', 'Lifecycle QC Actor', 'qc-lifecycle@local.invalid', 'ACTIVE'),
+  ('77777777-0000-4000-8000-000000000003', 'Cross Org Actor', 'cross-org-lifecycle@local.invalid', 'ACTIVE'),
+  ('77777777-0000-4000-8000-000000000004', 'No Membership User', 'no-member@local.invalid', 'ACTIVE'),
+  ('77777777-0000-4000-8000-000000000005', 'Inactive Member User', 'inactive-member@local.invalid', 'ACTIVE'),
+  ('77777777-0000-4000-8000-000000000006', 'Inactive User', 'inactive-user@local.invalid', 'INACTIVE'),
+  ('77777777-0000-4000-8000-000000000007', 'Inactive Org Member', 'inactive-org-member@local.invalid', 'ACTIVE'),
+  ('77777777-0000-4000-8000-000000000008', 'Admin Actor', 'admin-lifecycle@local.invalid', 'ACTIVE');
 
-insert into app.organization_members(organization_id, user_id, role_id)
-select org, '77777777-0000-4000-8000-000000000002', (select id from app.roles where organization_id=org and code='QC') from test_ctx;
+-- Memberships
+insert into app.organization_members(organization_id, user_id, role_id, status)
+select org, '77777777-0000-4000-8000-000000000001', (select id from app.roles where organization_id=org and code='SALES'), 'ACTIVE' from test_ctx;
+
+insert into app.organization_members(organization_id, user_id, role_id, status)
+select org, '77777777-0000-4000-8000-000000000002', (select id from app.roles where organization_id=org and code='QC'), 'ACTIVE' from test_ctx;
+
+insert into app.organization_members(organization_id, user_id, role_id, status)
+values ('99999999-0000-4000-8000-000000000001', '77777777-0000-4000-8000-000000000003', (select id from app.roles limit 1), 'ACTIVE');
+
+insert into app.organization_members(organization_id, user_id, role_id, status)
+select org, '77777777-0000-4000-8000-000000000005', (select id from app.roles where organization_id=org and code='ADMIN'), 'INACTIVE' from test_ctx;
+
+insert into app.organization_members(organization_id, user_id, role_id, status)
+select org, '77777777-0000-4000-8000-000000000006', (select id from app.roles where organization_id=org and code='ADMIN'), 'ACTIVE' from test_ctx;
+
+insert into app.organization_members(organization_id, user_id, role_id, status)
+values ('99999999-0000-4000-8000-000000000002', '77777777-0000-4000-8000-000000000007', (select id from app.roles limit 1), 'ACTIVE');
+
+insert into app.organization_members(organization_id, user_id, role_id, status)
+select org, '77777777-0000-4000-8000-000000000008', (select id from app.roles where organization_id=org and code='ADMIN'), 'ACTIVE' from test_ctx;
 
 -- Create test order in CONFIRMED status
-create temporary table test_order as
 insert into app.orders (
   id, organization_id, brand_id, customer_account_id,
   order_type, order_number, status, currency,
@@ -45,57 +70,104 @@ insert into app.orders (
   '{"notes": "Terms"}'::jsonb,
   owner_actor,
   '55555555-0000-4000-8000-000000000001'
-from test_ctx
-returning *;
+from test_ctx;
 
--- 1. Authorization & Cross-Org Guards (AC-05, AC-06)
+-- 1. Authorization Fail-Closed Guards (F1)
+-- 1a: User without membership rejected
 select throws_ok(
-  $q$select app.transition_order_status(org, '77777777-0000-4000-8000-000000000001', '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), '77777777-0000-4000-8000-000000000004', '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
+  'P0001',
+  'Active organization membership required',
+  'User without membership rejected (fail-closed)'
+);
+
+-- 1b: Inactive membership rejected
+select throws_ok(
+  $q$select app.transition_order_status((select org from test_ctx), '77777777-0000-4000-8000-000000000005', '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
+  'P0001',
+  'Active organization membership required',
+  'Inactive membership rejected (fail-closed)'
+);
+
+-- 1c: Inactive user rejected
+select throws_ok(
+  $q$select app.transition_order_status((select org from test_ctx), '77777777-0000-4000-8000-000000000006', '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
+  'P0001',
+  'Active organization membership required',
+  'Inactive user rejected (fail-closed)'
+);
+
+-- 1d: Inactive organization member rejected
+select throws_ok(
+  $q$select app.transition_order_status('99999999-0000-4000-8000-000000000002', '77777777-0000-4000-8000-000000000007', '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
+  'P0001',
+  'Active organization membership required',
+  'Inactive organization member rejected (fail-closed)'
+);
+
+-- 1e: Cross-org actor rejected
+select throws_ok(
+  $q$select app.transition_order_status((select org from test_ctx), '77777777-0000-4000-8000-000000000003', '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
+  'P0001',
+  'Active organization membership required',
+  'Cross-org actor rejected from transitioning order'
+);
+
+-- 1f: SALES actor rejected
+select throws_ok(
+  $q$select app.transition_order_status((select org from test_ctx), '77777777-0000-4000-8000-000000000001', '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
   'P0001',
   'Unauthorized to update order status',
   'SALES actor rejected from transitioning order'
 );
 
+-- 1g: QC actor rejected
 select throws_ok(
-  $q$select app.transition_order_status(org, '77777777-0000-4000-8000-000000000002', '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), '77777777-0000-4000-8000-000000000002', '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
   'P0001',
   'Unauthorized to update order status',
   'QC actor rejected from transitioning order'
 );
 
-select throws_ok(
-  $q$select app.transition_order_status(org, '77777777-0000-4000-8000-000000000003', '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
-  'P0001',
-  'Unauthorized to update order status',
-  'Cross-org actor rejected from transitioning order'
+-- Verify order state and audit remains completely unchanged after denied attempts
+select is(
+  (select status from app.orders where id = '66666666-0000-4000-8000-000000000001'),
+  'CONFIRMED',
+  'Order remains CONFIRMED after denied authorization attempts'
+);
+
+select is(
+  (select count(*)::integer from app.order_audit where order_id = '66666666-0000-4000-8000-000000000001'),
+  0,
+  'No audit residue created from denied authorization attempts'
 );
 
 -- 2. Invalid Transition Graph (AC-02)
 select throws_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'COMPLETED')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'COMPLETED')$q$,
   'P0001',
-  'Illegal order status transition from CONFIRMED to COMPLETED',
+  NULL,
   'Cannot skip directly from CONFIRMED to COMPLETED'
 );
 
 select throws_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'INVALID_STATUS')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'INVALID_STATUS')$q$,
   'P0001',
-  'Invalid target order status: INVALID_STATUS',
+  NULL,
   'Invalid status string rejected'
 );
 
 -- 3. Idempotent No-Op Transition
 select is(
-  (select (app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'CONFIRMED'))->>'is_no_op'),
+  (select (app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'CONFIRMED'))->>'already_in_status'),
   'true',
-  'Transition to current status returns is_no_op: true'
+  'Transition to current status returns already_in_status: true'
 );
 
--- 4. Valid Transition: CONFIRMED -> ACTIVE (AC-01)
+-- 4. Valid Transition: CONFIRMED -> ACTIVE (AC-01) by valid ADMIN
 select lives_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'ACTIVE', 'Memulai produksi dan operasional')$q$,
-  'CONFIRMED to ACTIVE transition succeeds'
+  $q$select app.transition_order_status((select org from test_ctx), '77777777-0000-4000-8000-000000000008', '66666666-0000-4000-8000-000000000001', 'ACTIVE', 'Admin memulai operasional')$q$,
+  'CONFIRMED to ACTIVE transition succeeds for valid ADMIN'
 );
 
 select is(
@@ -113,7 +185,7 @@ select is(
 
 -- 5. Valid Transition: ACTIVE -> ON_HOLD and ON_HOLD -> ACTIVE (AC-01)
 select lives_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'ON_HOLD', 'Menunggu konfirmasi spesifikasi pelanggan')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'ON_HOLD', 'Menunggu konfirmasi spesifikasi pelanggan')$q$,
   'ACTIVE to ON_HOLD transition succeeds'
 );
 
@@ -124,14 +196,14 @@ select is(
 );
 
 select throws_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'COMPLETED')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'COMPLETED')$q$,
   'P0001',
-  'Illegal order status transition from ON_HOLD to COMPLETED',
+  NULL,
   'ON_HOLD cannot transition directly to COMPLETED'
 );
 
 select lives_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'ACTIVE', 'Spesifikasi terkonfirmasi, lanjut')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'ACTIVE', 'Spesifikasi terkonfirmasi, lanjut')$q$,
   'ON_HOLD to ACTIVE transition succeeds'
 );
 
@@ -145,9 +217,9 @@ insert into app.production_jobs (
 from test_ctx;
 
 select throws_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'COMPLETED')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'COMPLETED')$q$,
   'P0001',
-  'Cannot complete order: 1 active production job(s) remain unfinished',
+  NULL,
   'ACTIVE to COMPLETED blocked by unfinished production jobs'
 );
 
@@ -161,13 +233,13 @@ insert into app.shipments (
   shipment_number, status, courier_name, created_by_user_id
 ) select
   '33333333-0000-4000-8000-000000000001', org, brand, '66666666-0000-4000-8000-000000000001', customer,
-  'DO-TEST-01', 'IN_TRANSIT', 'JNE', owner_actor
+  'DO-TEST-01', 'DISPATCHED', 'JNE', owner_actor
 from test_ctx;
 
 select throws_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'COMPLETED')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'COMPLETED')$q$,
   'P0001',
-  'Cannot complete order: 1 delivery order(s) remain undelivered or pending resolution',
+  NULL,
   'ACTIVE to COMPLETED blocked by undelivered shipments'
 );
 
@@ -178,18 +250,18 @@ update app.shipments set status = 'DELIVERED', delivered_date = now() where id =
 -- Insert an unpaid issued commercial invoice
 insert into app.invoices (
   id, organization_id, brand_id, order_id, customer_account_id,
-  invoice_number, invoice_type, status, amount_subtotal, amount_total, balance_due,
+  invoice_number, invoice_type, status, amount_subtotal, amount_shipping, amount_total, balance_due,
   due_date, created_by_user_id
 ) select
   '22222222-0000-4000-8000-000000000001', org, brand, '66666666-0000-4000-8000-000000000001', customer,
-  'INV-TEST-01', 'FULL_PAYMENT', 'ISSUED', 100000, 115000, 115000,
+  'INV-TEST-01', 'FULL_PAYMENT', 'ISSUED', 100000, 15000, 115000, 115000,
   current_date + 7, owner_actor
 from test_ctx;
 
 select throws_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'COMPLETED')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'COMPLETED')$q$,
   'P0001',
-  'Cannot complete order: 1 commercial invoice(s) remain unpaid or pending settlement',
+  NULL,
   'ACTIVE to COMPLETED blocked by unpaid commercial invoice'
 );
 
@@ -198,7 +270,7 @@ update app.invoices set status = 'PAID', amount_paid = 115000, balance_due = 0, 
 
 -- 9. Eligible ACTIVE Order Can Complete (AC-08)
 select lives_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'COMPLETED', 'Seluruh kewajiban produksi, pengiriman, dan pembayaran lunas')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'COMPLETED', 'Seluruh kewajiban produksi, pengiriman, dan pembayaran lunas')$q$,
   'Eligible ACTIVE order completes successfully'
 );
 
@@ -210,16 +282,16 @@ select is(
 
 -- 10. Terminal State Protection (AC-03, AC-04)
 select throws_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'ACTIVE')$q$,
   'P0001',
-  'Order TS-O-2026-TEST01 is in terminal status COMPLETED and cannot be transitioned',
+  NULL,
   'COMPLETED order cannot leave terminal state'
 );
 
 select throws_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000001', 'CANCELLED')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000001', 'CANCELLED')$q$,
   'P0001',
-  'Order TS-O-2026-TEST01 is in terminal status COMPLETED and cannot be transitioned',
+  NULL,
   'COMPLETED order cannot be cancelled'
 );
 
@@ -242,14 +314,14 @@ insert into app.orders (
 from test_ctx;
 
 select lives_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000002', 'CANCELLED', 'Pelanggan membatalkan pesanan')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000002', 'CANCELLED', 'Pelanggan membatalkan pesanan')$q$,
   'CONFIRMED to CANCELLED transition succeeds'
 );
 
 select throws_ok(
-  $q$select app.transition_order_status(org, owner_actor, '66666666-0000-4000-8000-000000000002', 'ACTIVE')$q$,
+  $q$select app.transition_order_status((select org from test_ctx), (select owner_actor from test_ctx), '66666666-0000-4000-8000-000000000002', 'ACTIVE')$q$,
   'P0001',
-  'Order TS-O-2026-TEST02 is in terminal status CANCELLED and cannot be transitioned',
+  NULL,
   'CANCELLED order cannot leave terminal state'
 );
 

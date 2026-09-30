@@ -767,7 +767,9 @@ console.log(
 );
 
 // 8.0 Fulfillment Readiness Guard (P0-05): Verify Job 2 ON_HOLD blocks DO creation
-console.log('   Testing fulfillment readiness guard (blocked by Job 2 ON_HOLD)...');
+console.log(
+  '   Testing fulfillment readiness guard (blocked by Job 2 ON_HOLD)...',
+);
 let doBlockedByOnHold = false;
 try {
   await rpc('create_delivery_order', {
@@ -786,14 +788,20 @@ try {
   doBlockedByOnHold = true;
   console.log('   Delivery Order creation blocked as expected:', err.message);
   assert.ok(
-    err.message.includes('ON_HOLD') || err.message.includes('READY_FOR_HANDOFF'),
+    err.message.includes('ON_HOLD') ||
+      err.message.includes('READY_FOR_HANDOFF'),
     `Unexpected error message: ${err.message}`,
   );
 }
-assert.ok(doBlockedByOnHold, 'Delivery Order must be blocked while Job 2 is ON_HOLD');
+assert.ok(
+  doBlockedByOnHold,
+  'Delivery Order must be blocked while Job 2 is ON_HOLD',
+);
 
 // Cancel rejected packaging job so it no longer blocks fulfillment (AC-07)
-console.log('   Cancelling rejected packaging Job 2 so fulfillment can proceed...');
+console.log(
+  '   Cancelling rejected packaging Job 2 so fulfillment can proceed...',
+);
 await rpc('transition_production_job_status', {
   p_organization_id: org.id,
   p_actor_id: founder.id,

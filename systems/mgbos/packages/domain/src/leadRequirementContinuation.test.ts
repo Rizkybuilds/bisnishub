@@ -130,9 +130,7 @@ describe('P0-01: Lead to Requirement Continuation', () => {
         estimatedQuantity: 0,
         status: 'QUALIFIED',
       };
-      expect(
-        mapLeadToRequirementPrefill(zeroQtyLead).quantity,
-      ).toBeUndefined();
+      expect(mapLeadToRequirementPrefill(zeroQtyLead).quantity).toBeUndefined();
     });
   });
 

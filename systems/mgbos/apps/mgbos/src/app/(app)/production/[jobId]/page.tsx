@@ -669,9 +669,7 @@ export default async function ProductionJobDetailPage({
                           fontSize: '0.75rem',
                         }}
                       >
-                        <span>
-                          Biaya: {rupiah(pastAssign.assigned_cost)}
-                        </span>
+                        <span>Biaya: {rupiah(pastAssign.assigned_cost)}</span>
                         <span>
                           {new Date(pastAssign.assigned_at).toLocaleString(
                             'id-ID',

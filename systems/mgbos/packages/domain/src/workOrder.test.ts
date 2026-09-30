@@ -16,7 +16,8 @@ describe('Work Order / SPK Domain Service (P0-06)', () => {
       status: 'READY',
       priority: 'HIGH',
       targetCompletionDate: '2026-10-05',
-      notes: 'Gunakan tinta plastisol high-density. Jangan sampai curing underbake.',
+      notes:
+        'Gunakan tinta plastisol high-density. Jangan sampai curing underbake.',
       createdAt: '2026-09-30T10:00:00Z',
     },
     order: {
@@ -99,12 +100,12 @@ describe('Work Order / SPK Domain Service (P0-06)', () => {
       expect(specs).toContain('Warna: Jet Black / Pure White');
       expect(specs).toContain('GSM: 235');
       expect(specs).toContain('Breakdown Ukuran: S: 10, M: 15, L: 15, XL: 10');
-      expect(specs.some((s) => s.includes('Dekorasi: Back · DTF (28cm x 35cm)'))).toBe(
-        true,
-      );
-      expect(specs.some((s) => s.includes('Dekorasi: Left Chest · DTF (8cm x 4cm)'))).toBe(
-        true,
-      );
+      expect(
+        specs.some((s) => s.includes('Dekorasi: Back · DTF (28cm x 35cm)')),
+      ).toBe(true);
+      expect(
+        specs.some((s) => s.includes('Dekorasi: Left Chest · DTF (8cm x 4cm)')),
+      ).toBe(true);
       expect(specs).toContain(
         'Kustomisasi: Neck label woven damask sewn inside collar',
       );
@@ -186,12 +187,16 @@ describe('Work Order / SPK Domain Service (P0-06)', () => {
       expect(doc.instructions[1]).toContain('Tolong prioritaskan');
 
       // File references extracted from artwork refs
-      expect(doc.fileReferences.some((f) => f.name === 'artwork_drop1_back_print.pdf')).toBe(
-        true,
-      );
-      expect(doc.fileReferences.some((f) => f.name === 'artwork_drop1_chest_logo.ai')).toBe(
-        true,
-      );
+      expect(
+        doc.fileReferences.some(
+          (f) => f.name === 'artwork_drop1_back_print.pdf',
+        ),
+      ).toBe(true);
+      expect(
+        doc.fileReferences.some(
+          (f) => f.name === 'artwork_drop1_chest_logo.ai',
+        ),
+      ).toBe(true);
 
       // Notice
       expect(doc.notice).toContain('SPK RESMI');
@@ -254,6 +259,24 @@ describe('Work Order / SPK Domain Service (P0-06)', () => {
       expect(doc.spkNumber).toContain('declined');
       expect(doc.notice).toContain('DOKUMEN HISTORIS');
       expect(doc.notice).toContain('DECLINED');
+    });
+
+    it('preserves historical snapshot vendorName when vendor master is renamed (F7)', () => {
+      const sourceWithRenamedVendor: WorkOrderSource = {
+        ...baseSource,
+        assignment: {
+          ...baseSource.assignment!,
+          vendorName: 'Original Vendor Name A (Snapshot)',
+          vendor: {
+            ...baseSource.assignment!.vendor!,
+            name: 'Renamed Vendor Master B (Live)',
+          },
+        },
+        isLatestAssignment: false,
+      };
+
+      const doc = buildWorkOrderDocument(sourceWithRenamedVendor);
+      expect(doc.executor.name).toBe('Original Vendor Name A (Snapshot)');
     });
   });
 

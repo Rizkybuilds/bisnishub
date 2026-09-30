@@ -97,9 +97,7 @@ export function JobAssignForm({
           type === 'INTERNAL' && assignedBrandId ? assignedBrandId : null,
         vendorId: type === 'VENDOR' && vendorId ? vendorId : null,
         vendorName:
-          type === 'VENDOR'
-            ? vendorName || selectedVendor?.name || null
-            : null,
+          type === 'VENDOR' ? vendorName || selectedVendor?.name || null : null,
         assignedCost: BigInt(assignedCost || '0'),
         notes: notes || null,
       });
@@ -214,7 +212,8 @@ export function JobAssignForm({
               >
                 {vendors.map((v) => (
                   <option key={v.id} value={v.id}>
-                    {v.name} ({v.code}) · {v.category} · Lead time ~{v.leadTimeDays ?? 3} hari
+                    {v.name} ({v.code}) · {v.category} · Lead time ~
+                    {v.leadTimeDays ?? 3} hari
                   </option>
                 ))}
               </select>
@@ -226,79 +225,91 @@ export function JobAssignForm({
               />
 
               {/* Rate Card Reference Assistance (P0-03 Section 39) */}
-              {selectedVendor?.rateCards && selectedVendor.rateCards.length > 0 && (
-                <div
-                  style={{
-                    marginTop: '0.75rem',
-                    background: '#020617',
-                    padding: '0.75rem',
-                    borderRadius: '6px',
-                    border: '1px solid #1e293b',
-                  }}
-                >
+              {selectedVendor?.rateCards &&
+                selectedVendor.rateCards.length > 0 && (
                   <div
                     style={{
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      color: '#38bdf8',
-                      marginBottom: '6px',
+                      marginTop: '0.75rem',
+                      background: '#020617',
+                      padding: '0.75rem',
+                      borderRadius: '6px',
+                      border: '1px solid #1e293b',
                     }}
                   >
-                    📋 Referensi Kartu Tarif Vendor (Rate Cards):
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    {selectedVendor.rateCards.map((rc) => (
-                      <div
-                        key={rc.id}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          fontSize: '0.8rem',
-                          color: '#cbd5e1',
-                          background: '#0f172a',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                        }}
-                      >
-                        <div>
-                          <strong>{rc.service_code}</strong>: {rc.description} &mdash;{' '}
-                          <span style={{ color: '#4ade80' }}>
-                            Rp {Number(rc.unit_cost).toLocaleString('id-ID')} / {rc.unit}
-                          </span>{' '}
-                          <span style={{ color: '#64748b', fontSize: '0.75rem' }}>
-                            (Min: {rc.min_order_quantity})
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setAssignedCostValue(rc.unit_cost)}
+                    <div
+                      style={{
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        color: '#38bdf8',
+                        marginBottom: '6px',
+                      }}
+                    >
+                      📋 Referensi Kartu Tarif Vendor (Rate Cards):
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '6px',
+                      }}
+                    >
+                      {selectedVendor.rateCards.map((rc) => (
+                        <div
+                          key={rc.id}
                           style={{
-                            fontSize: '0.72rem',
-                            padding: '3px 8px',
-                            background: '#0284c7',
-                            color: '#ffffff',
-                            border: 'none',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '0.8rem',
+                            color: '#cbd5e1',
+                            background: '#0f172a',
+                            padding: '4px 8px',
                             borderRadius: '4px',
-                            cursor: 'pointer',
                           }}
                         >
-                          Pakai Dasar Ini
-                        </button>
-                      </div>
-                    ))}
+                          <div>
+                            <strong>{rc.service_code}</strong>: {rc.description}{' '}
+                            &mdash;{' '}
+                            <span style={{ color: '#4ade80' }}>
+                              Rp {Number(rc.unit_cost).toLocaleString('id-ID')}{' '}
+                              / {rc.unit}
+                            </span>{' '}
+                            <span
+                              style={{ color: '#64748b', fontSize: '0.75rem' }}
+                            >
+                              (Min: {rc.min_order_quantity})
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setAssignedCostValue(rc.unit_cost)}
+                            style={{
+                              fontSize: '0.72rem',
+                              padding: '3px 8px',
+                              background: '#0284c7',
+                              color: '#ffffff',
+                              border: 'none',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Pakai Dasar Ini
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.72rem',
+                        color: '#64748b',
+                        marginTop: '6px',
+                      }}
+                    >
+                      * Rate card sebagai bantuan kalkulasi; operator tetap
+                      mengonfirmasi nilai komitmen akhir di bawah.
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      fontSize: '0.72rem',
-                      color: '#64748b',
-                      marginTop: '6px',
-                    }}
-                  >
-                    * Rate card sebagai bantuan kalkulasi; operator tetap mengonfirmasi nilai komitmen akhir di bawah.
-                  </div>
-                </div>
-              )}
+                )}
 
               <div style={{ marginTop: '0.5rem' }}>
                 <button
@@ -383,7 +394,7 @@ export function JobAssignForm({
           placeholder="cth. Deadline pengerjaan 3 hari, file pre-flight siap di folder cetak"
         />
       </div>
- 
+
       {isReassignment && (
         <div style={{ marginTop: '0.75rem' }}>
           <label

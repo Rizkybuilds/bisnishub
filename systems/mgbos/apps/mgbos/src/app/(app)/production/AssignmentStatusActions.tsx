@@ -22,7 +22,9 @@ export function AssignmentStatusActions({
   const [isPending, startTransition] = useTransition();
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
-  const [activeModal, setActiveModal] = useState<'NONE' | 'DECLINE' | 'CANCEL'>('NONE');
+  const [activeModal, setActiveModal] = useState<'NONE' | 'DECLINE' | 'CANCEL'>(
+    'NONE',
+  );
   const [reasonInput, setReasonInput] = useState('');
 
   if (!canUpdate) return null;
@@ -31,9 +33,10 @@ export function AssignmentStatusActions({
     setActionError(null);
     setActionSuccess(null);
     startTransition(async () => {
-      const res: ProductionActionResult = await acceptProductionAssignmentAction({
-        assignmentId,
-      });
+      const res: ProductionActionResult =
+        await acceptProductionAssignmentAction({
+          assignmentId,
+        });
       if (res.error) {
         setActionError(res.error);
       } else {
@@ -51,14 +54,17 @@ export function AssignmentStatusActions({
     setActionError(null);
     setActionSuccess(null);
     startTransition(async () => {
-      const res: ProductionActionResult = await declineProductionAssignmentAction({
-        assignmentId,
-        reason: reasonInput.trim(),
-      });
+      const res: ProductionActionResult =
+        await declineProductionAssignmentAction({
+          assignmentId,
+          reason: reasonInput.trim(),
+        });
       if (res.error) {
         setActionError(res.error);
       } else {
-        setActionSuccess('Penugasan berhasil ditolak. Job kembali ke status READY.');
+        setActionSuccess(
+          'Penugasan berhasil ditolak. Job kembali ke status READY.',
+        );
         setActiveModal('NONE');
         setReasonInput('');
       }
@@ -74,14 +80,17 @@ export function AssignmentStatusActions({
     setActionError(null);
     setActionSuccess(null);
     startTransition(async () => {
-      const res: ProductionActionResult = await cancelProductionAssignmentAction({
-        assignmentId,
-        reason: reasonInput.trim(),
-      });
+      const res: ProductionActionResult =
+        await cancelProductionAssignmentAction({
+          assignmentId,
+          reason: reasonInput.trim(),
+        });
       if (res.error) {
         setActionError(res.error);
       } else {
-        setActionSuccess('Penugasan berhasil dibatalkan. Job kembali ke status READY.');
+        setActionSuccess(
+          'Penugasan berhasil dibatalkan. Job kembali ke status READY.',
+        );
         setActiveModal('NONE');
         setReasonInput('');
       }

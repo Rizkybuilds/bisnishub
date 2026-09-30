@@ -76,9 +76,13 @@ describe('Governed Work Order / SPK Artifact Loader (P0-06)', () => {
       vi.fn().mockImplementation((url: string) => {
         // Return empty array for cross-org lookup
         if (url.includes('production_jobs?')) {
-          return Promise.resolve(new Response(JSON.stringify([]), { status: 200 }));
+          return Promise.resolve(
+            new Response(JSON.stringify([]), { status: 200 }),
+          );
         }
-        return Promise.resolve(new Response(JSON.stringify([]), { status: 200 }));
+        return Promise.resolve(
+          new Response(JSON.stringify([]), { status: 200 }),
+        );
       }),
     );
 
@@ -92,155 +96,164 @@ describe('Governed Work Order / SPK Artifact Loader (P0-06)', () => {
   });
 
   it('loads and generates complete governed SPK artifact (AC-03 to AC-08, AC-11)', async () => {
-    const fetchMock = vi.fn().mockImplementation((url: string, options?: RequestInit) => {
-      // Assert that all requests are read-only (AC-11: no mutations)
-      expect(options?.method === undefined || options?.method === 'GET').toBe(
-        true,
-      );
-
-      if (url.includes('production_jobs?')) {
-        expect(url).toContain(`organization_id=eq.${validSession.organization.id}`);
-        return Promise.resolve(
-          new Response(
-            JSON.stringify([
-              {
-                id: validJobId,
-                organization_id: validSession.organization.id,
-                job_number: 'JOB-202609-001',
-                title: 'Sablon DTF Apparel Batch 1',
-                job_type: 'PRINTING',
-                status: 'ASSIGNED',
-                priority: 'HIGH',
-                target_completion_date: '2026-10-04',
-                notes: 'Gunakan pet film kualitas super dan press 160C 15 detik.',
-                created_at: '2026-09-30T10:00:00Z',
-                order_id: validOrderId,
-                brand_id: validBrandId,
-                specification: {},
-              },
-            ]),
-            { status: 200 },
-          ),
+    const fetchMock = vi
+      .fn()
+      .mockImplementation((url: string, options?: RequestInit) => {
+        // Assert that all requests are read-only (AC-11: no mutations)
+        expect(options?.method === undefined || options?.method === 'GET').toBe(
+          true,
         );
-      }
 
-      if (url.includes('orders?')) {
-        expect(url).toContain(`organization_id=eq.${validSession.organization.id}`);
-        return Promise.resolve(
-          new Response(
-            JSON.stringify([
-              {
-                id: validOrderId,
-                order_number: 'ORD-202609-001',
-                brand_id: validBrandId,
-              },
-            ]),
-            { status: 200 },
-          ),
-        );
-      }
+        if (url.includes('production_jobs?')) {
+          expect(url).toContain(
+            `organization_id=eq.${validSession.organization.id}`,
+          );
+          return Promise.resolve(
+            new Response(
+              JSON.stringify([
+                {
+                  id: validJobId,
+                  organization_id: validSession.organization.id,
+                  job_number: 'JOB-202609-001',
+                  title: 'Sablon DTF Apparel Batch 1',
+                  job_type: 'PRINTING',
+                  status: 'ASSIGNED',
+                  priority: 'HIGH',
+                  target_completion_date: '2026-10-04',
+                  notes:
+                    'Gunakan pet film kualitas super dan press 160C 15 detik.',
+                  created_at: '2026-09-30T10:00:00Z',
+                  order_id: validOrderId,
+                  brand_id: validBrandId,
+                  specification: {},
+                },
+              ]),
+              { status: 200 },
+            ),
+          );
+        }
 
-      if (url.includes('brands?')) {
-        return Promise.resolve(
-          new Response(
-            JSON.stringify([
-              {
-                id: validBrandId,
-                code: 'TSK',
-                name: 'TeeStock Brand',
-              },
-            ]),
-            { status: 200 },
-          ),
-        );
-      }
+        if (url.includes('orders?')) {
+          expect(url).toContain(
+            `organization_id=eq.${validSession.organization.id}`,
+          );
+          return Promise.resolve(
+            new Response(
+              JSON.stringify([
+                {
+                  id: validOrderId,
+                  order_number: 'ORD-202609-001',
+                  brand_id: validBrandId,
+                },
+              ]),
+              { status: 200 },
+            ),
+          );
+        }
 
-      if (url.includes('production_assignments?')) {
-        return Promise.resolve(
-          new Response(
-            JSON.stringify([
-              {
-                id: validAssignId1,
-                production_job_id: validJobId,
-                executor_type: 'VENDOR',
-                assigned_brand_id: null,
-                vendor_id: validVendorId,
-                vendor_name: 'Mitra DTF Express',
-                assigned_cost: '650000',
-                status: 'ASSIGNED',
-                assigned_at: '2026-09-30T10:15:00Z',
-                accepted_at: null,
-                notes: 'Tolong kerjakan duluan sebelum siang.',
-              },
-            ]),
-            { status: 200 },
-          ),
-        );
-      }
+        if (url.includes('brands?')) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify([
+                {
+                  id: validBrandId,
+                  code: 'TSK',
+                  name: 'TeeStock Brand',
+                },
+              ]),
+              { status: 200 },
+            ),
+          );
+        }
 
-      if (url.includes('vendors?')) {
-        return Promise.resolve(
-          new Response(
-            JSON.stringify([
-              {
-                id: validVendorId,
-                code: 'VND-DTF-01',
-                name: 'Mitra DTF Express Bandung',
-                category: 'PRINT_STUDIO',
-                contact_person: 'Kang Asep',
-                phone: '081234567890',
-                email: 'asep@dtfexpress.id',
-                address: 'Jl. Industri Grafika No. 12',
-              },
-            ]),
-            { status: 200 },
-          ),
-        );
-      }
+        if (url.includes('production_assignments?')) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify([
+                {
+                  id: validAssignId1,
+                  production_job_id: validJobId,
+                  executor_type: 'VENDOR',
+                  assigned_brand_id: null,
+                  vendor_id: validVendorId,
+                  vendor_name: 'Mitra DTF Express',
+                  assigned_cost: '650000',
+                  status: 'ASSIGNED',
+                  assigned_at: '2026-09-30T10:15:00Z',
+                  accepted_at: null,
+                  notes: 'Tolong kerjakan duluan sebelum siang.',
+                },
+              ]),
+              { status: 200 },
+            ),
+          );
+        }
 
-      if (url.includes('production_job_items?')) {
-        return Promise.resolve(
-          new Response(
-            JSON.stringify([
-              {
-                id: 'job-item-1',
-                quantity: 40,
-                notes: '20 M, 20 L',
-                order_items: {
-                  id: 'order-item-1',
-                  description: 'Kaos Combed 24s Hitam',
-                  unit: 'pcs',
-                  specification_snapshot: {
-                    schemaCode: 'teestock.custom_atelier.v1',
-                    garment: {
-                      type: 'T-Shirt',
-                      fit: 'Regular',
-                      material: 'Cotton Combed 24s',
-                      color: 'Black',
-                      gsm: 185,
-                      blankPreference: 'Koze Comfort',
-                    },
-                    sizes: { M: 20, L: 20 },
-                    decorations: [
-                      {
-                        location: 'Front',
-                        method: 'DTF',
-                        widthCm: 25,
-                        heightCm: 30,
-                        artworkReference: 'artwork_kaos_front.png',
+        if (url.includes('vendors?')) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify([
+                {
+                  id: validVendorId,
+                  code: 'VND-DTF-01',
+                  name: 'Mitra DTF Express Bandung',
+                  category: 'PRINT_STUDIO',
+                  contact_person: 'Kang Asep',
+                  phone: '081234567890',
+                  email: 'asep@dtfexpress.id',
+                  address: 'Jl. Industri Grafika No. 12',
+                },
+              ]),
+              { status: 200 },
+            ),
+          );
+        }
+
+        if (url.includes('production_job_items?')) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify([
+                {
+                  id: 'job-item-1',
+                  quantity: 40,
+                  notes: '20 M, 20 L',
+                  order_items: {
+                    id: 'order-item-1',
+                    description: 'Kaos Combed 24s Hitam',
+                    unit: 'pcs',
+                    specification_snapshot: {
+                      schemaCode: 'teestock.custom_atelier.v1',
+                      garment: {
+                        type: 'T-Shirt',
+                        fit: 'Regular',
+                        material: 'Cotton Combed 24s',
+                        color: 'Black',
+                        gsm: 185,
+                        blankPreference: 'Koze Comfort',
                       },
-                    ],
+                      sizes: { M: 20, L: 20 },
+                      decorations: [
+                        {
+                          location: 'Front',
+                          method: 'DTF',
+                          widthCm: 25,
+                          heightCm: 30,
+                          artworkReference: 'artwork_kaos_front.png',
+                        },
+                      ],
+                    },
                   },
                 },
-              },
-            ]),
-            { status: 200 },
-          ),
-        );
-      }
+              ]),
+              { status: 200 },
+            ),
+          );
+        }
 
-      return Promise.resolve(new Response(JSON.stringify([]), { status: 200 }));
-    });
+        return Promise.resolve(
+          new Response(JSON.stringify([]), { status: 200 }),
+        );
+      });
 
     vi.stubGlobal('fetch', fetchMock);
 
@@ -266,15 +279,15 @@ describe('Governed Work Order / SPK Artifact Loader (P0-06)', () => {
     const item = doc.items[0]!;
     expect(item.description).toBe('Kaos Combed 24s Hitam');
     expect(item.quantity).toBe(40);
-    expect(item.specifications.some((s) => s.includes('Cotton Combed 24s'))).toBe(
-      true,
-    );
+    expect(
+      item.specifications.some((s) => s.includes('Cotton Combed 24s')),
+    ).toBe(true);
     expect(item.specifications.some((s) => s.includes('M: 20, L: 20'))).toBe(
       true,
     );
-    expect(item.specifications.some((s) => s.includes('DTF (25cm x 30cm)'))).toBe(
-      true,
-    );
+    expect(
+      item.specifications.some((s) => s.includes('DTF (25cm x 30cm)')),
+    ).toBe(true);
 
     // AC-06: Correct deadline shown
     expect(doc.targetDeadline).toBe('2026-10-04');
@@ -343,7 +356,9 @@ describe('Governed Work Order / SPK Artifact Loader (P0-06)', () => {
         if (url.includes('brands?')) {
           return Promise.resolve(
             new Response(
-              JSON.stringify([{ id: validBrandId, code: 'TSK', name: 'TeeStock' }]),
+              JSON.stringify([
+                { id: validBrandId, code: 'TSK', name: 'TeeStock' },
+              ]),
               { status: 200 },
             ),
           );
@@ -427,7 +442,9 @@ describe('Governed Work Order / SPK Artifact Loader (P0-06)', () => {
           );
         }
 
-        return Promise.resolve(new Response(JSON.stringify([]), { status: 200 }));
+        return Promise.resolve(
+          new Response(JSON.stringify([]), { status: 200 }),
+        );
       }),
     );
 

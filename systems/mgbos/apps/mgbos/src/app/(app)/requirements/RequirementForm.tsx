@@ -178,7 +178,9 @@ export function RequirementForm({
                 name="targetBudget"
                 inputMode="numeric"
                 pattern="[0-9]+"
-                defaultValue={version?.target_budget ?? prefill?.targetBudget ?? ''}
+                defaultValue={
+                  version?.target_budget ?? prefill?.targetBudget ?? ''
+                }
               />
             </div>
             <div>
