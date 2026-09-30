@@ -1,31 +1,34 @@
 ---
 canonical_id: docs.governance.canonical-source-map
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: repository
-document_class: registry
-effective_from: 2026-09-29
+document_class: canonical-registry
+effective_from: 2026-09-30
 authoritative_for:
   - canonical source routing
   - semantic ownership routing
   - documentation authority lookup
   - transitional documentation tracking
+  - repository authority boundaries
+  - business-versus-system documentation boundaries
   - canonicalization backlog
-last_reviewed: 2026-09-29
+last_reviewed: 2026-09-30
 review_cadence: monthly
 depends_on:
   - documentation-constitution.md
   - ../project-index.md
   - ../engineering/repository-layout.md
   - ../decisions/001-repository-organization.md
-supersedes: null
-repository_snapshot: ffa5aae85af7cc644233d14fba43bdf9dc3afcfc
+supersedes:
+  - docs.governance.canonical-source-map@1.0
+repository_snapshot: 9aa8a698b9b9daab6103a9e4139cd08adbb09fb4
 ---
 
-# DOC-002 — BisnisHub Canonical Source Map
+# DOC-002 — BisnisHub Canonical Source Map v1.1
 
 ## 1. Purpose
 
@@ -33,491 +36,488 @@ Canonical Source Map adalah registry authority untuk repository BisnisHub.
 
 Dokumen ini menjawab:
 
-> **Jika manusia atau AI membutuhkan kebenaran tentang suatu konsep, sumber mana yang harus dibaca dan siapa semantic owner-nya?**
+> **Kalau manusia atau AI membutuhkan kebenaran tentang suatu konsep, sumber mana yang harus dipercaya?**
 
-Canonical Source Map bukan pengganti specification.
+Canonical Source Map tidak menggantikan specification.
 
-Ia merupakan **router menuju specification yang benar**.
-
-Tujuan utamanya adalah mencegah manusia dan AI harus:
-
-```text
-search hundreds of files
-        ↓
-compare filenames
-        ↓
-guess which document is current
-```
-
-Target state:
+Ia menentukan:
 
 ```text
 QUESTION
    ↓
-CANONICAL SOURCE MAP
-   ↓
 SEMANTIC OWNER
    ↓
-AUTHORITATIVE DOCUMENT
+CANONICAL SOURCE
    ↓
-ADR / EVIDENCE when required
+IMPLEMENTATION / EVIDENCE
+when current runtime reality matters
 ```
 
 ---
 
 # 2. Constitutional Dependency
 
-DOC-002 tunduk pada:
+Source Map tunduk pada:
 
 ```text
-docs.governance.documentation-constitution
+docs/governance/documentation-constitution.md
 ```
 
-Jika Source Map dan Documentation Constitution bertentangan mengenai aturan authority, Documentation Constitution memiliki constitutional precedence.
+Jika terjadi konflik:
 
-Source Map menentukan **routing authority**.
+```text
+Documentation Constitution
+>
+Canonical Source Map
+>
+lower-level documentation
+```
 
-Constitution menentukan **cara authority bekerja**.
+Constitution menentukan:
+
+```text
+HOW AUTHORITY WORKS
+```
+
+Source Map menentukan:
+
+```text
+WHERE AUTHORITY LIVES
+```
 
 ---
 
-# 3. Source Status Vocabulary
+# 3. Core Rule
 
-DOC-002 menggunakan status berikut.
+> **One normative concept, one canonical semantic owner per scope.**
 
-## CANONICAL
+Dua dokumen boleh sama-sama canonical jika scope-nya berbeda.
 
-Sumber authoritative yang berlaku saat ini dalam semantic scope-nya.
+Contoh:
 
-## TRANSITIONAL_AUTHORITY
+```text
+TeeStock Pricing Framework
+→ canonical for TeeStock commercial pricing policy
 
-Sumber lama yang masih diperlukan oleh ACTIVE documentation karena normative material belum sepenuhnya dipromosikan.
+MGBOS Quote Model
+→ canonical for transactional quote representation
+```
 
-Status ini adalah documentation debt.
+Keduanya tidak bersaing karena ownership-nya berbeda.
 
-## OPERATIONAL_REGISTRY
+---
 
-Mencatat current operational state atau evidence inventory.
+# 4. Source Classification
 
-Authoritative terhadap registry tersebut, tetapi bukan architecture specification.
+Repository menggunakan:
 
-## EVIDENCE
+```text
+CANONICAL
 
-Membuktikan implementation, test, release, atau operational result.
+TRANSITIONAL_AUTHORITY
 
-Tidak mendefinisikan intended architecture.
+OPERATIONAL_REGISTRY
 
-## PLANNED_CANONICAL
+EVIDENCE
 
-Semantic owner sudah diketahui tetapi canonical specification belum tersedia.
+PLANNED_CANONICAL
 
-Tidak boleh digunakan seolah-olah sudah menjadi specification aktif.
+DESIGN_INPUT
 
-## DESIGN_INPUT
+HISTORICAL
 
-Research atau architecture discussion yang dapat digunakan untuk menyusun canonical documentation.
+LEGACY
+
+ARCHIVED
+```
+
+---
+
+# 5. CANONICAL
+
+Current normative authority dalam scope yang dinyatakan.
+
+---
+
+# 6. TRANSITIONAL_AUTHORITY
+
+Legacy/historical source yang masih diperlukan karena material normatif belum sepenuhnya dipromosikan.
+
+Ini adalah:
+
+```text
+DOCUMENTATION DEBT
+```
+
+dan harus dikurangi secara bertahap.
+
+---
+
+# 7. OPERATIONAL_REGISTRY
+
+Mencatat current inventory/state/configuration.
+
+Contoh:
+
+```text
+project index
+integration inventory
+runtime registry
+```
+
+Registry tidak otomatis menjadi architecture law.
+
+---
+
+# 8. EVIDENCE
+
+Membuktikan:
+
+```text
+implementation
+
+test result
+
+release
+
+runtime behavior
+
+operational outcome
+```
+
+Evidence tidak otomatis mengubah intended architecture.
+
+---
+
+# 9. PLANNED_CANONICAL
+
+Semantic owner diketahui, tetapi canonical source belum tersedia.
+
+---
+
+# 10. DESIGN_INPUT
+
+Research, brainstorming, discussion, historical architecture proposal.
 
 Tidak authoritative.
 
-## HISTORICAL
-
-Dipertahankan untuk provenance dan reasoning history.
-
-## LEGACY
-
-Milik architecture atau implementation yang sudah dipensiunkan atau sedang ditinggalkan.
-
 ---
 
-# 4. Fundamental Routing Rule
+# 11. HISTORICAL
 
-Source selection MUST mengikuti urutan:
+Preserved for:
 
 ```text
-Identify concept
-      ↓
-Find semantic owner in DOC-002
-      ↓
-Read CANONICAL source
-      ↓
-Read related ADR when architectural rationale matters
-      ↓
-Read implementation/evidence if current reality must be verified
-      ↓
-Use transitional/historical material only if required
+provenance
+
+rationale
+
+decision history
 ```
 
-Search result tidak menentukan authority.
-
-Filename tidak menentukan authority.
-
-Document length tidak menentukan authority.
+Tidak mengatur current behavior.
 
 ---
 
-# 5. Repository-Level Authority Map
+# 12. LEGACY
 
-| Concept | Semantic Owner | Canonical Source | Status |
-|---|---|---|---|
-| Documentation governance | Repository Governance | `docs/governance/documentation-constitution.md` | CANONICAL |
-| Canonical source routing | Repository Governance | `docs/governance/canonical-source-map.md` | CANONICAL |
-| Active software-system locations | Repository Governance | `docs/project-index.md` | CANONICAL |
-| Repository directory ownership | Repository Engineering Governance | `docs/engineering/repository-layout.md` | CANONICAL |
-| Repository organization decision | Repository Governance | `docs/decisions/001-repository-organization.md` | CANONICAL |
-| Repository migration strategy | Repository Engineering Governance | `docs/engineering/repository-migration-plan.md` | CANONICAL for migration plan |
-| Migration implementation evidence | Repository Engineering | `docs/engineering/repository-migration-*.md` | EVIDENCE |
-| Root agent routing | Repository Engineering | `AGENTS.md` | CANONICAL instruction |
-| Repository introduction/navigation | Repository | `README.md` | CANONICAL navigation |
-| Legacy ecosystem architecture | Historical Repository Architecture | `ARCHITECTURE.md` | LEGACY / HISTORICAL |
+Source dari architecture/runtime lama yang masih mungkin memiliki consumer.
 
 ---
 
-# 6. Physical Location Authority
+# 13. ARCHIVED
 
-Current active system locations are determined by:
+Retired reference.
+
+Tidak mempunyai current authority.
+
+---
+
+# 14. Fundamental Routing Rule
+
+Saat mencari authority:
 
 ```text
-docs/project-index.md
+1. Read CANONICAL source.
+
+2. Read runtime implementation/evidence
+   if current behavior must be verified.
+
+3. Consult DESIGN_INPUT/HISTORICAL
+   only for rationale or unpromoted material.
 ```
 
-No other architecture document may override current physical routing.
-
-Location paths were refreshed on 2026-09-30 after MGBOS relocation merged in
-PR #14 (`b05079e`). This location review does not certify implementation of the
-architecture specifications or change their semantic ownership.
-
-Example:
+Do not determine authority from:
 
 ```text
-MGBOS current runtime
-→ systems/mgbos/
+search ranking
 
-KasKita current runtime
-→ systems/kaskita/
+file length
 
-retired MGBOS prototype
-→ archive/mgbos-vite-prototype/
+file age
+
+folder depth
+
+latest chat
+
+AI confidence
 ```
-
-A TARGET relocation described by an ADR or migration plan does not become current merely because the plan exists.
 
 ---
 
-# 7. MGBOS — System Ownership
+# 15. Repository Authority Domains
 
-Canonical semantic owner:
+BisnisHub memiliki empat authority domains utama:
+
+```text
+ROOT GOVERNANCE
+
+BUSINESS KNOWLEDGE
+
+SYSTEM SEMANTICS
+
+ENGINEERING CONTROL
+```
+
+---
+
+# 16. Root Governance
+
+Physical location:
+
+```text
+docs/
+```
+
+Owns:
+
+```text
+cross-system governance
+
+cross-system architecture
+
+repository standards
+
+cross-business operating rules
+
+repository decisions
+```
+
+---
+
+# 17. Business Knowledge
+
+Physical location:
+
+```text
+bisnis/<business>/
+```
+
+Owns:
+
+```text
+business definition
+
+strategy
+
+brand
+
+commercial policy
+
+operating requirements
+
+finance policy
+
+marketing
+
+legal/IP business requirements
+
+business roadmap
+
+business KPIs
+```
+
+---
+
+# 18. System Semantics
+
+Physical location:
+
+```text
+systems/<system>/
+```
+
+Owns:
+
+```text
+runtime semantics
+
+data contracts
+
+state machines
+
+system invariants
+
+system permissions
+
+system implementation boundaries
+```
+
+---
+
+# 19. Engineering Control
+
+Physical location:
+
+```text
+.agents/
++
+system engineering documentation
+```
+
+Owns:
+
+```text
+software planning
+
+implementation workflow
+
+review
+
+testing
+
+release
+```
+
+It does not own business truth.
+
+---
+
+# 20. Repository-Level Canonical Sources
+
+| Concept | Owner | Canonical Source |
+|---|---|---|
+| Documentation authority | Repository Governance | `docs/governance/documentation-constitution.md` |
+| Source routing | Repository Governance | `docs/governance/canonical-source-map.md` |
+| Active project locations | Repository Governance | `docs/project-index.md` |
+| Directory ownership | Repository Engineering | `docs/engineering/repository-layout.md` |
+| Repository organization | Repository Governance | `docs/decisions/001-repository-organization.md` |
+| Ecosystem architecture | Cross-System Architecture | `docs/architecture/master-system-blueprint.md` |
+| System boundaries | Cross-System Architecture | `docs/architecture/system-boundaries.md` |
+| Architecture laws | Cross-System Architecture | `docs/architecture/architectural-laws.md` |
+| Cross-system risk | Cross-System Governance | `docs/governance/cross-system-risk-classification.md` |
+| Autonomy | Cross-System Governance | `docs/governance/autonomy-levels.md` |
+| Approval | Cross-System Governance | `docs/governance/approval-policy.md` |
+| Evidence/provenance | Cross-System Governance | `docs/governance/evidence-provenance-model.md` |
+
+---
+
+# 21. Active System Locations
+
+Current repository routing:
 
 ```text
 MGBOS
+→ systems/mgbos/
+
+JARVIS documentation
+→ systems/jarvis/docs/
+
+KasKita
+→ systems/kaskita/
+
+Engineering assistant
+→ tools/assistant/
+
+TeeStock V1
+→ archive/teestock-v1/
+
+MGBOS Vite prototype
+→ archive/mgbos-vite-prototype/
 ```
 
-Current system location:
+`docs/project-index.md` remains locator authority for active locations.
+
+---
+
+# 22. MGBOS Semantic Ownership
+
+MGBOS is canonical semantic owner for governed business-system truth including:
 
 ```text
-systems/mgbos/
-```
+transactional business entities
 
-MGBOS owns:
-
-```text
 business state
-business entities
+
 business invariants
-transaction rules
-commercial lifecycle
-financial lifecycle
-production lifecycle
-inventory semantics
-vendor semantics
-procurement semantics
-fulfillment semantics
-money semantics
+
+commercial transactions
+
+financial transactions
+
+production state
+
+inventory
+
+procurement
+
+fulfillment
+
 business commands
-business events
-```
 
-JARVIS, n8n, AI models, UI state, spreadsheets, and external messages MUST NOT become competing authorities for these concepts.
+business event contracts
+
+authorization semantics
+
+transactional integrity
+```
 
 ---
 
-# 8. MGBOS Primary Navigation
+# 23. MGBOS Business Truth
 
-| Concept | Current Source | Status |
-|---|---|---|
-| MGBOS workspace identity | `systems/mgbos/README.md` | CANONICAL |
-| MGBOS documentation index | `systems/mgbos/docs/README.md` | CANONICAL navigation |
-| MGBOS engineering instructions | `systems/mgbos/AGENTS.md` | CANONICAL instruction |
-| MGBOS architecture constitution | `systems/mgbos/docs/architecture/README.md` | CANONICAL |
-| Product/pilot specification | `systems/mgbos/docs/product/README.md` | CANONICAL within product scope |
-| Engineering governance/index | `systems/mgbos/docs/engineering/README.md` | CANONICAL within engineering scope |
-| Operational runbooks | `systems/mgbos/docs/runbooks/` | CANONICAL procedures |
-| Architecture decisions | `systems/mgbos/docs/adr/` | ACCEPTED decision records |
-
----
-
-# 9. MGBOS Architecture Decisions
-
-The following accepted ADRs define important MGBOS architectural choices.
-
-## Foundational Architecture
-
-```text
-ADR-001
-Modular Monolith
-
-ADR-002
-PostgreSQL as System of Record
-
-ADR-003
-Supabase
-
-ADR-004
-n8n as Orchestrator
-
-ADR-005
-Transactional Outbox
-
-ADR-006
-Provider-Independent AI Gateway
-
-ADR-007
-Workspace Coexistence
-```
-
-These ADRs are located under:
-
-```text
-systems/mgbos/docs/adr/
-```
-
-and are authoritative decision records within their declared scope.
-
-Later ADRs define specific product/domain decisions such as quotations, order snapshots, production jobs, vendor/QC, invoicing, and design-library behavior.
-
-ADR existence does not replace the corresponding system specification.
-
----
-
-# 10. MGBOS Business Truth
-
-Canonical foundational decision:
+Foundational authority:
 
 ```text
 systems/mgbos/docs/adr/002-postgresql-system-of-record.md
 ```
 
-Rule:
+Canonical principle:
 
-> Canonical transactional facts and business integrity live in PostgreSQL through the MGBOS domain/database architecture.
+> **PostgreSQL/MGBOS owns authoritative transactional business truth.**
 
-Therefore the following are NOT authoritative business state:
-
-```text
-AI output
-JARVIS memory
-n8n workflow memory
-browser state
-spreadsheet copy
-WhatsApp text
-frontend component state
-session note
-vector database
-```
-
-They may contain observations or proposals.
-
-They do not independently establish transactional truth.
-
----
-
-# 11. MGBOS Canonical Data Model
-
-Current normative knowledge is distributed across:
+Therefore the following cannot become competing SoR:
 
 ```text
-systems/mgbos/docs/architecture/README.md
-+
-implemented schema/migrations
-+
-accepted ADRs
-+
-historical MGBOS design sources
-```
+JARVIS Memory
 
-The detailed historical model remains referenced through:
+n8n
 
-```text
-catatan/sesi/2026-09-23 - MGBOS 0.2 — Canonical Data Model v0.1.md
+spreadsheet
 
-catatan/sesi/2026-09-23 - MGBOS 0.2.1 Logical Data Model.md
-```
+LLM output
 
-Current classification:
+frontend state
 
-```text
-TRANSITIONAL_AUTHORITY
-```
-
-Reason:
-
-ACTIVE MGBOS documentation still references these historical specifications.
-
-Target:
-
-> Promote normative entity semantics into a dedicated MGBOS canonical specification.
-
-Until promotion is complete, any contradiction MUST be resolved against:
-
-```text
-accepted ADR
-+
-current MGBOS architecture
-+
-current schema/migrations
-+
-verified implementation
-```
-
-rather than blindly trusting the older session note.
-
----
-
-# 12. MGBOS State Machines
-
-Historical detailed source:
-
-```text
-catatan/sesi/2026-09-23 - MGBOS 0.3 — Business State Machines.md
-```
-
-Current summarized source:
-
-```text
-systems/mgbos/docs/architecture/README.md
-```
-
-Classification:
-
-```text
-architecture summary
-→ CANONICAL
-
-historical detailed specification
-→ TRANSITIONAL_AUTHORITY
-```
-
-Target canonical owner:
-
-```text
-MGBOS specification layer
-```
-
-The eventual dedicated specification SHOULD own the complete lifecycle semantics for:
-
-```text
-commercial
-financial
-production
-quality
-fulfillment
-inventory-related lifecycle
-procurement lifecycle
+WhatsApp messages
 ```
 
 ---
 
-# 13. MGBOS Business Invariants
+# 24. MGBOS Canonical Architecture Sources
 
-Business invariants currently exist across:
-
-```text
-systems/mgbos/AGENTS.md
-systems/mgbos/docs/architecture/README.md
-systems/mgbos/docs/adr/
-database constraints
-domain implementation
-transaction tests
-```
-
-Examples include:
+Dedicated canonical specs now exist:
 
 ```text
-Integer / BigInt Rupiah
-Rules Before AI
-immutable transaction snapshots
-isolated lifecycle state machines
-authorized command boundaries
-transactional outbox
-shipping pass-through isolation
-idempotency
-tenant / organization isolation
-```
+systems/mgbos/docs/architecture/canonical-data-model.md
 
-Current classification:
+systems/mgbos/docs/architecture/business-state-machines.md
 
-```text
-CANONICAL BUT DISTRIBUTED
-```
+systems/mgbos/docs/architecture/business-invariants.md
 
-Target:
+systems/mgbos/docs/architecture/command-event-model.md
 
-> Consolidate normative business invariants into one dedicated MGBOS specification while keeping implementation enforcement distributed.
-
-This is a high-priority documentation consolidation item.
-
----
-
-# 14. MGBOS Product Authority
-
-Primary product specification:
-
-```text
-systems/mgbos/docs/product/README.md
-```
-
-Current role:
-
-```text
-CANONICAL within pilot/product scope
-```
-
-Specific TeeStock product strategy and future development are owned by:
-
-```text
-systems/mgbos/docs/product/teestock-curated-strategy.md
-systems/mgbos/docs/product/teestock-development-plan.md
-systems/mgbos/docs/product/teestock-design-library-spec.md
-systems/mgbos/docs/product/teestock-asset-readiness.md
-```
-
-Roadmaps and development plans represent intended direction, not implementation proof.
-
-Implementation status must be checked against:
-
-```text
-engineering reports
-source code
-tests
-database migrations
-CI/evidence
-```
-
----
-
-# 15. MGBOS Engineering Authority
-
-Primary owner:
-
-```text
-MGBOS Engineering Governance
-```
-
-Important sources:
-
-```text
-systems/mgbos/docs/engineering/README.md
-systems/mgbos/docs/engineering/maintenance-policy.md
-systems/mgbos/docs/engineering/operational-readiness.md
+systems/mgbos/docs/architecture/permission-authorization-model.md
 ```
 
 Classification:
@@ -526,128 +526,63 @@ Classification:
 CANONICAL
 ```
 
-The maintenance policy determines engineering/release-process expectations.
+---
 
-The operational readiness document is an:
+# 25. Sep-23 MGBOS Design Notes
+
+Historical sources such as:
 
 ```text
-OPERATIONAL_REGISTRY
+MGBOS 0.2 Canonical Data Model
+
+MGBOS 0.2.1 Logical Data Model
+
+MGBOS 0.3 Business State Machines
+
+MGBOS 0.4 System Architecture
 ```
 
-and MUST NOT be interpreted as production certification.
+are now:
+
+```text
+HISTORICAL / DESIGN PROVENANCE
+```
+
+for concepts already promoted.
+
+They MUST NOT override current dedicated canonical specifications.
 
 ---
 
-# 16. MGBOS Engineering Control Plane
+# 26. MGBOS Documentation Debt
 
-Canonical entry point:
-
-```text
-systems/mgbos/docs/engineering/agent-system/README.md
-```
-
-Canonical related documents:
+Current:
 
 ```text
-workflow.md
-roles.md
-permission-matrix.md
-risk-classification.md
-evidence-model.md
-release-gates.md
+systems/mgbos/docs/README.md
 ```
 
-Supporting runtime role contracts:
+and:
 
 ```text
-.agents/roles/
+systems/mgbos/docs/architecture/README.md
 ```
 
-Behavioral baseline:
+still reference Sep-23 notes as primary/detailed authority.
+
+This is:
 
 ```text
-.agents/evals/
+DOCUMENTATION_DRIFT
 ```
 
-Classification:
-
-```text
-CANONICAL for MGBOS software-development agent governance
-```
-
-Important boundary:
-
-> These sources govern engineering agents. They do not define JARVIS runtime business agents.
+and should be corrected during the closure sprint.
 
 ---
 
-# 17. Engineering Skills
+# 27. MGBOS Implementation Evidence
 
-Project-owned skill library:
-
-```text
-.agents/skills/
-```
-
-Current authority:
-
-```text
-CANONICAL instruction source for repository/project engineering skills
-```
-
-Skill semantics remain scoped by:
-
-```text
-AGENTS.md
-target workspace instructions
-relevant system specifications
-```
-
-A skill example MUST NOT override MGBOS domain truth.
-
-The existence of skills such as:
-
-```text
-cfo
-cmo
-coo
-business-ops-engine
-content-strategist
-```
-
-does NOT automatically register those skills as JARVIS runtime workers.
-
-Repository skill availability and production runtime registration are separate concerns.
-
----
-
-# 18. MGBOS Operational Runbooks
-
-Current canonical runbooks:
-
-```text
-systems/mgbos/docs/runbooks/local-database.md
-systems/mgbos/docs/runbooks/windows-database-prerequisites.md
-systems/mgbos/docs/runbooks/backup-and-restore.md
-systems/mgbos/docs/runbooks/monitoring-and-incidents.md
-systems/mgbos/docs/runbooks/release-and-recovery.md
-```
-
-These documents define procedure.
-
-They do not prove that corresponding production infrastructure exists.
-
-For readiness evidence, consult:
-
-```text
-systems/mgbos/docs/engineering/operational-readiness.md
-```
-
----
-
-# 19. MGBOS Implementation Evidence
-
-Implementation reports:
+Files such as:
 
 ```text
 systems/mgbos/docs/engineering/mgbos-001-report.md
@@ -655,17 +590,722 @@ systems/mgbos/docs/engineering/mgbos-001-report.md
 systems/mgbos/docs/engineering/mgbos-020-report.md
 ```
 
-Classification:
+are:
 
 ```text
 EVIDENCE
 ```
 
-They describe implementation and verification at specific revisions/times.
+They prove implementation at specific repository revisions.
 
-They MUST NOT redefine architecture or business semantics merely because implementation differs.
+They do not own business semantics.
 
-A mismatch creates:
+---
+
+# 28. MGBOS Product Documentation
+
+Current:
+
+```text
+systems/mgbos/docs/product/
+```
+
+owns product/pilot implementation specification for MGBOS applications.
+
+It may describe:
+
+```text
+screen requirements
+
+pilot UX
+
+application behavior
+```
+
+but does not replace business strategy under:
+
+```text
+bisnis/teestock/
+```
+
+---
+
+# 29. MGBOS Engineering Control Plane
+
+Current canonical engineering sources:
+
+```text
+systems/mgbos/docs/engineering/
+
+systems/mgbos/docs/engineering/agent-system/
+
+.agents/
+```
+
+These govern:
+
+```text
+software implementation
+```
+
+not JARVIS runtime business agents.
+
+---
+
+# 30. JARVIS Current Authority
+
+DOC-002 v1.0 stated that JARVIS did not yet have a canonical documentation tree.
+
+That statement is obsolete.
+
+JARVIS now has canonical documentation at:
+
+```text
+systems/jarvis/docs/
+```
+
+---
+
+# 31. JARVIS Primary Canonical Sources
+
+```text
+systems/jarvis/docs/charter.md
+
+systems/jarvis/docs/architecture.md
+
+systems/jarvis/docs/core-runtime.md
+```
+
+Classification:
+
+```text
+CANONICAL SPECIFICATION
+```
+
+---
+
+# 32. JARVIS Architecture Sources
+
+Canonical architecture currently includes:
+
+```text
+agent-registry.md
+
+skill-registry.md
+
+tool-capability.md
+
+memory.md
+
+model-gateway-routing.md
+
+entity-identity-resolution.md
+
+event-proactive-intelligence.md
+
+execution-verification-recovery.md
+
+observability-audit-incident.md
+
+security-secrets-environment.md
+
+data-privacy-retention.md
+
+backup-disaster-recovery-business-continuity.md
+
+ai-evaluation-regression-autonomy-promotion.md
+
+cost-resource-finops.md
+
+lifecycle-versioning-deprecation.md
+
+feedback-learning-continuous-improvement.md
+
+human-accountability-ownership-operating-model.md
+```
+
+under:
+
+```text
+systems/jarvis/docs/architecture/
+```
+
+---
+
+# 33. JARVIS Specification ≠ Runtime
+
+Current canonical docs may be:
+
+```text
+ACTIVE
+```
+
+while runtime remains:
+
+```text
+NOT_IMPLEMENTED
+```
+
+or:
+
+```text
+PARTIALLY_IMPLEMENTED
+```
+
+depending on component.
+
+Never infer runtime existence from documentation status alone.
+
+---
+
+# 34. Sep-27 JARVIS Notes
+
+Sources under:
+
+```text
+catatan/sesi/2026-09-27*
+```
+
+are now primarily:
+
+```text
+HISTORICAL DESIGN INPUT
+```
+
+for promoted JARVIS concepts.
+
+They remain useful for rationale and unpromoted ideas.
+
+---
+
+# 35. Engineering Agents vs JARVIS Agents
+
+`.agents/`
+
+owns:
+
+```text
+software engineering roles / skills
+```
+
+JARVIS Agent Registry owns:
+
+```text
+runtime business/intelligence agents
+```
+
+They are different systems.
+
+A similarly named role does not create shared authority.
+
+---
+
+# 36. TeeStock Business Authority
+
+Canonical TeeStock business knowledge lives under:
+
+```text
+bisnis/teestock/
+```
+
+TeeStock owns:
+
+```text
+business definition
+
+strategy
+
+brand
+
+commerce
+
+services
+
+Originals
+
+Programs
+
+operations policy
+
+finance policy
+
+marketing
+
+legal/IP business policy
+
+metrics
+
+experiments
+
+business roadmap
+```
+
+---
+
+# 37. TeeStock Canonical Scope
+
+A TeeStock document may legitimately be:
+
+```text
+CANONICAL
+```
+
+within:
+
+```text
+TEEStock BUSINESS SCOPE
+```
+
+without becoming globally canonical for MGBOS or JARVIS.
+
+---
+
+# 38. Business Truth vs System Truth
+
+Canonical distinction:
+
+```text
+TEEStock
+"What does the business need?"
+
+MGBOS
+"How is operational truth represented and governed?"
+
+JARVIS
+"What does that truth mean and what deserves attention?"
+```
+
+---
+
+# 39. TeeStock `11-data-mgbos`
+
+Current directory:
+
+```text
+bisnis/teestock/11-data-mgbos/
+```
+
+contains valuable models and requirements.
+
+However its authority must be interpreted as:
+
+```text
+TEEStock BUSINESS DATA /
+SYSTEM REQUIREMENTS
+```
+
+not:
+
+```text
+canonical MGBOS implementation
+```
+
+---
+
+# 40. TeeStock Data Model
+
+Current:
+
+```text
+bisnis/teestock/11-data-mgbos/canonical-data-model.md
+```
+
+is authoritative for:
+
+```text
+TeeStock conceptual business-domain requirements
+```
+
+It is NOT authoritative for:
+
+```text
+MGBOS database schema
+
+MGBOS shared state machines
+
+MGBOS invariants
+
+MGBOS transactions
+```
+
+---
+
+# 41. TeeStock Event Model
+
+Current:
+
+```text
+bisnis/teestock/11-data-mgbos/event-model.md
+```
+
+defines:
+
+```text
+TeeStock business-event requirements / candidates
+```
+
+Actual MGBOS business-event contracts are owned by:
+
+```text
+systems/mgbos/docs/architecture/command-event-model.md
+```
+
+---
+
+# 42. TeeStock MGBOS Integration
+
+Current:
+
+```text
+bisnis/teestock/11-data-mgbos/mgbos-integration.md
+```
+
+owns:
+
+```text
+TeeStock integration requirements
+```
+
+It does NOT replace MGBOS architecture.
+
+---
+
+# 43. Future TeeStock Directory Target
+
+Preferred future semantic naming:
+
+```text
+bisnis/teestock/11-system-requirements/
+```
+
+Possible mapping:
+
+```text
+canonical-data-model.md
+→ business-domain-requirements.md
+
+entity-hierarchy.md
+→ entity-requirements.md
+
+event-model.md
+→ event-requirements.md
+
+mgbos-integration.md
+→ mgbos-integration-requirements.md
+```
+
+This is a controlled migration target.
+
+It is NOT permission for blind rename.
+
+---
+
+# 44. TeeStock State-Machine Conflict
+
+Several TeeStock docs currently describe simplified states for:
+
+```text
+Lead
+
+Order
+
+Payment
+
+Production
+```
+
+that are also owned canonically by MGBOS.
+
+Resolution:
+
+> **For MGBOS-owned transactional entities, MGBOS canonical state machines win.**
+
+TeeStock may preserve:
+
+```text
+business shorthand
+
+journey stages
+
+roadmap milestones
+```
+
+but must not define competing transactional state semantics.
+
+---
+
+# 45. TeeStock Roadmap
+
+Current quarter authority:
+
+```text
+bisnis/teestock/14-roadmap/current-quarter.md
+```
+
+owns:
+
+```text
+TEEStock Q4 business execution priority
+```
+
+within its time window.
+
+It does not certify implementation.
+
+---
+
+# 46. Current TeeStock Q4 Priority
+
+Current primary outcome:
+
+```text
+Lead-to-Cash
++
+Order-to-Fulfillment
+```
+
+through a repeatable operating spine.
+
+This remains aligned with the current implementation program.
+
+---
+
+# 47. `catatan/` Authority
+
+Default:
+
+```text
+DESIGN_INPUT
+
+HISTORICAL
+
+RESEARCH
+
+SESSION MEMORY
+```
+
+A chat/session note does not become canonical merely because it contains a good design.
+
+---
+
+# 48. Promotion Rule
+
+Canonicalization flow:
+
+```text
+SESSION / RESEARCH
+        ↓
+AUDIT
+        ↓
+IDENTIFY SEMANTIC OWNER
+        ↓
+WRITE / REVISE CANONICAL SOURCE
+        ↓
+REVIEW
+        ↓
+PERSIST TO CANONICAL PATH
+        ↓
+UPDATE SOURCE MAP / INDEX
+```
+
+---
+
+# 49. ChatGPT Drafts
+
+A finished document drafted in conversation is:
+
+```text
+ACTIVE-READY
+```
+
+until persisted.
+
+It becomes repository:
+
+```text
+ACTIVE
+```
+
+only after:
+
+```text
+approved content
++
+canonical path
++
+repository persistence
++
+navigation/source-map update where required
+```
+
+---
+
+# 50. Persisted Canonical Documents
+
+The canonical documentation architecture has been persisted to the repository:
+
+```text
+Solo-Founder Operating System v1.0
+(bisnis/operating-model/solo-founder-operating-system.md)
+
+MGBOS Domain Map & Capability Ownership v1.0
+(systems/mgbos/docs/architecture/domain-map-capability-ownership.md)
+
+Solo-Founder Implementation Roadmap v1.0
+(docs/roadmap/solo-founder-roadmap.md)
+
+Phase 1 Operating Spine Implementation Plan v1.0
+(systems/mgbos/docs/implementation/phase-1-operating-spine/README.md)
+
+Phase 1A Current MGBOS Operating-Spine Audit v1.0
+(systems/mgbos/docs/implementation/phase-1-operating-spine/current-operating-spine-audit.md)
+
+JARVIS Command Center & Decision Experience Architecture v1.0
+(systems/jarvis/docs/architecture/command-center-experience.md)
+
+JARVIS Integration, API & Interoperability Architecture v1.0
+(systems/jarvis/docs/architecture/integration-and-interoperability.md)
+```
+
+Classification:
+
+```text
+ACTIVE
+```
+
+Full repository authority within their designated scopes.
+
+---
+
+# 51. Architecture Program State
+
+Correct current state:
+
+```text
+CONTROLLED_CANONICALIZATION
+```
+
+not:
+
+```text
+UNLIMITED ARCHITECTURE EXPANSION
+```
+
+and not:
+
+```text
+TOTAL DOCUMENTATION FREEZE
+```
+
+---
+
+# 52. Controlled Canonicalization Means
+
+We SHOULD:
+
+```text
+close known authority gaps
+
+resolve conflicting sources
+
+promote mature design
+
+repair indexes
+
+create implementation docs needed by current work
+```
+
+We SHOULD NOT:
+
+```text
+invent speculative subsystems
+
+create empty documentation trees
+
+write future docs without consumer
+```
+
+---
+
+# 53. Current Closure Priority
+
+Priority documentation closure:
+
+```text
+P0
+Canonical Source Map
+
+P0
+MGBOS Documentation Index
+
+P0
+MGBOS Architecture Index
+
+P0
+Solo-Founder Operating System
+
+P0
+MGBOS Domain Map & Capability Ownership
+
+P0
+Solo-Founder Launch Roadmap
+
+P0
+Phase 1 Operating Spine docs
+
+P0
+TeeStock ↔ MGBOS authority cleanup
+```
+
+Then:
+
+```text
+P1
+Cross-System Time & Scheduling Semantics
+
+P1
+Cross-System Data Classification
+```
+
+---
+
+# 54. Deferred Documentation
+
+Do not create merely to fill a directory:
+
+```text
+generic API standards
+
+advanced notification governance
+
+JARVIS Memory operations
+
+creator runbooks
+
+royalty operations
+
+multi-business command-center runbooks
+```
+
+until there is a real consumer.
+
+---
+
+# 55. Runtime Truth vs Documentation Truth
+
+Canonical docs define:
+
+```text
+INTENDED / GOVERNED BEHAVIOR
+```
+
+Code/runtime defines:
+
+```text
+CURRENT IMPLEMENTED BEHAVIOR
+```
+
+If they differ:
 
 ```text
 IMPLEMENTATION_DRIFT
@@ -677,1072 +1317,407 @@ or:
 DOCUMENTATION_DRIFT
 ```
 
-and must be reconciled.
+must be identified.
+
+Never silently pick one.
 
 ---
 
-# 20. n8n Authority
+# 56. Evidence Does Not Rewrite Authority
 
-MGBOS architectural decision:
+> **Implementation evidence does not override semantic architecture.**
+
+An implementation report saying:
 
 ```text
-systems/mgbos/docs/adr/004-n8n-orchestrator.md
+"feature implemented"
 ```
 
-Canonical principle:
+does not permit implementation to redefine canonical semantics.
 
-> n8n is an orchestration runtime, not the business system of record.
-
-n8n MAY:
+If implementation legitimately changes architecture:
 
 ```text
-react to events
-coordinate integrations
-invoke authorized commands
-schedule workflows
-handle external orchestration
-```
-
-n8n MUST NOT independently redefine:
-
-```text
-business truth
-payment state
-inventory state
-financial truth
-order state
+update canonical source deliberately.
 ```
 
 ---
 
-# 21. AI Gateway Authority
+# 57. Physical Business Reality
 
-Current accepted MGBOS decision:
-
-```text
-systems/mgbos/docs/adr/006-ai-gateway.md
-```
-
-Canonical principle:
-
-> AI capabilities interact through provider-independent boundaries, validation, authorization, and approval policy.
-
-This ADR governs MGBOS AI integration principles.
-
-It does not define the full future JARVIS architecture.
-
----
-
-# 22. JARVIS Current Authority State
-
-JARVIS currently has extensive design material but no implemented canonical system documentation tree.
-
-Therefore:
-
-```text
-JARVIS architecture
-→ NOT YET FULLY CANONICALIZED
-```
-
-No session note may be treated as permanent production authority merely because it is detailed.
-
----
-
-# 23. JARVIS Design Inputs
-
-Primary design inputs:
-
-```text
-catatan/sesi/2026-09-27 - JARVIS Architecture v0.1.md
-
-catatan/sesi/2026-09-27 - JARVIS v0.2 - Core Runtime Specification.md
-
-catatan/sesi/2026-09-27 - Chat GPT diskusi pann Jarvis Architecture.md
-
-catatan/sesi/2026-09-27 - Governance & Operations Blueprint.md
-
-catatan/sesi/2026-09-27 - Chat GPT sesi Governance & Operations.md
-
-catatan/sesi/2026-09-27 - Chat GPT Sesi Model AI.md
-
-catatan/sesi/2026-09-27 - Chat GPT sesi INFRASTRUCTURE
-```
-
-Classification:
-
-```text
-DESIGN_INPUT
-```
-
-These sources are valuable architectural provenance.
-
-They are not final canonical runtime specifications.
-
----
-
-# 24. JARVIS Logical Ownership
-
-Even before physical runtime implementation exists, the following semantic ownership is established conceptually:
-
-```text
-JARVIS
-
-owns:
-
-intent interpretation
-context construction
-planning
-reasoning orchestration
-tool selection
-policy coordination
-execution coordination
-verification
-evidence synthesis
-runtime memory
-model routing
-runtime business agents
-proactive intelligence
-briefing
-decision support
-```
-
-This ownership does NOT imply these capabilities are implemented.
-
-Current implementation maturity:
-
-```text
-NOT YET VERIFIED / NOT YET IMPLEMENTED as canonical runtime
-```
-
-unless future evidence states otherwise.
-
----
-
-# 25. JARVIS Physical Documentation Location
-
-No empty runtime/system directory should be created merely to satisfy documentation planning.
-
-Current repository governance explicitly discourages placeholder runtime systems before implementation.
-
-Therefore DOC-002 records JARVIS using:
-
-```text
-logical canonical ownership
-```
-
-until a real JARVIS system workspace is created.
-
-When implementation begins, the physical location MUST be registered in:
-
-```text
-docs/project-index.md
-```
-
-and this Source Map MUST be updated.
-
----
-
-# 26. JARVIS Canonicalization Backlog
-
-The following JARVIS concepts require future dedicated canonical sources:
-
-```text
-JARVIS Charter
-JARVIS Architecture
-Core Runtime
-Intent Router
-Context Builder
-Planner
-Supervisor
-Policy Engine
-Execution Engine
-Verification Engine
-Evidence Model
-Decision Inbox
-Briefing Engine
-Escalation Model
-Model Routing
-Memory Architecture
-Event Intelligence
-Failure & Recovery
-```
-
-Until each canonical source exists, relevant session notes remain DESIGN_INPUT only.
-
----
-
-# 27. Runtime Business Agents
-
-Potential agents such as:
-
-```text
-CFO Agent
-COO Agent
-CMO Agent
-Sales Agent
-Customer Service Agent
-Procurement Agent
-Vendor Agent
-Content Agent
-Research Agent
-```
-
-currently have:
-
-```text
-NO CANONICAL RUNTIME REGISTRY
-```
-
-They MUST NOT be assumed active simply because similar `.agents/skills/` exist.
-
-Target semantic owner:
-
-```text
-JARVIS Runtime Agent System
-```
-
-Status:
-
-```text
-PLANNED_CANONICAL
-```
-
----
-
-# 28. Runtime Skills
-
-Future business runtime skills may include:
-
-```text
-analyze_cashflow
-analyze_margin
-compare_vendor
-qualify_lead
-prepare_quotation
-forecast_inventory
-create_content_brief
-analyze_campaign
-```
-
-Current canonical runtime skill system:
-
-```text
-NOT ESTABLISHED
-```
-
-Do not confuse future JARVIS runtime skills with current repository engineering skills.
-
----
-
-# 29. Runtime Tool Registry
-
-Future JARVIS tool capability IDs SHOULD use capability-oriented naming.
+MGBOS record is not automatically physical reality.
 
 Examples:
 
 ```text
-mgbos.order.read
-mgbos.vendor.read
-mgbos.payment.record
-github.pull_request.read
-email.message.send
-social.content.publish
-```
+production completed
 
-Current full JARVIS Tool Registry:
-
-```text
-NOT ESTABLISHED
-```
-
-Tool-provider implementation MUST remain secondary to capability identity.
-
----
-
-# 30. General Risk Classification
-
-There are currently two related but different bodies of risk material.
-
-MGBOS engineering agents have canonical risk classification at:
-
-```text
-systems/mgbos/docs/engineering/agent-system/risk-classification.md
-```
-
-This source is authoritative for:
-
-```text
-MGBOS engineering-change risk
-```
-
-It is NOT automatically the root risk semantics for all future JARVIS business actions.
-
-General cross-system business/AI risk semantics remain:
-
-```text
-PLANNED_CANONICAL
-```
-
-Design input exists in the JARVIS/Governance session materials.
-
-A root governance specification must later define the shared R0–R5 semantics.
-
----
-
-# 31. Autonomy Levels
-
-General autonomy semantics such as:
-
-```text
-L0 Observe
-L1 Recommend
-L2 Prepare
-L3 Execute with approval
-L4 Execute within policy
-```
-
-currently exist as:
-
-```text
-DESIGN_INPUT
-```
-
-They are not yet a dedicated root canonical specification.
-
-Target owner:
-
-```text
-Cross-System Governance
-```
-
-A subsystem MAY later classify a capability using those levels.
-
-A subsystem MUST NOT redefine their root meaning.
-
----
-
-# 32. Approval Governance
-
-Founder approval and future Decision Inbox semantics currently exist primarily in JARVIS/Governance design notes.
-
-Status:
-
-```text
-PLANNED_CANONICAL
-```
-
-Future owner:
-
-```text
-JARVIS + Cross-System Governance boundary
-```
-
-General approval semantics belong to governance.
-
-Decision Inbox behavior belongs to JARVIS.
-
-Specific business-command authorization remains owned by MGBOS.
-
----
-
-# 33. Memory Authority
-
-Future JARVIS memory may contain:
-
-```text
-working memory
-episodic memory
-semantic memory
-preference memory
-evidence references
-```
-
-Canonical business facts remain outside AI memory.
-
-Rule already supported by MGBOS architecture:
-
-```text
-AI memory ≠ transactional truth
-```
-
-Full JARVIS memory architecture:
-
-```text
-PLANNED_CANONICAL
-```
-
----
-
-# 34. Model Strategy
-
-The 27 September model-selection discussion is classified:
-
-```text
-DESIGN_INPUT / TIME-SENSITIVE RESEARCH
-```
-
-Specific model names, prices, and provider capabilities MUST NOT become permanent architecture by copy-paste.
-
-Canonical future architecture should define profiles such as:
-
-```text
-FAST
-BALANCED
-DEEP
-CRITIC
-CREATIVE
-VISION
-VOICE
-```
-
-Operational provider/model mapping should live in a versioned Model Registry and be driven by current evaluation data.
-
----
-
-# 35. Infrastructure Strategy
-
-The 27 September infrastructure discussion is:
-
-```text
-DESIGN_INPUT / TIME-SENSITIVE RESEARCH
-```
-
-Conceptual principles may later be promoted, such as:
-
-```text
-separate business database from AI runtime
-avoid premature infrastructure complexity
-isolate production from home/lab infrastructure
-use managed services where operational risk justifies them
-```
-
-Specific vendors, plans, prices, and hardware recommendations are not architectural law unless accepted through appropriate canonical infrastructure documentation or ADR.
-
----
-
-# 36. Business Knowledge Ownership
-
-Business knowledge lives under:
-
-```text
-bisnis/<business>/
-```
-
-Current major business knowledge domains include:
-
-```text
-bisnis/multigraph/
-bisnis/teestock/
-bisnis/rizkybuild/
-bisnis/titik-buta/
-bisnis/kaskita/
-```
-
-Business knowledge and executable systems are separate ownership domains.
-
-Example:
-
-```text
-TeeStock business strategy
-→ bisnis/teestock/
-
-TeeStock runtime application
-→ current system location from project index
-```
-
-The presence of a business folder does not imply a software runtime exists.
-
----
-
-# 37. Independent Projects
-
-Current repository governance establishes that:
-
-```text
-KasKita
-Titik Buta
-```
-
-must not automatically be treated as MultiGraph Group business units merely because they share the repository.
-
-Current KasKita runtime location:
-
-```text
-systems/kaskita/
-```
-
-Its software authority remains project-specific.
-
-MGBOS governance does not automatically apply to KasKita.
-
----
-
-# 38. Legacy Systems
-
-Legacy systems currently include:
-
-```text
-archive/mgbos-vite-prototype/
-bisnis/teestock/archive/web/
-packages/shared/
-apps/bisnishub-web/
-```
-
-Their exact active/retired state MUST be resolved through:
-
-```text
-docs/project-index.md
-```
-
-Legacy contracts MUST NOT be imported into MGBOS or JARVIS merely because filenames or concepts appear similar.
-
----
-
-# 39. Root Historical Architecture
-
-`ARCHITECTURE.md` is explicitly historical/legacy.
-
-Classification:
-
-```text
-LEGACY / HISTORICAL
-```
-
-It MUST NOT override:
-
-```text
-docs/project-index.md
-MGBOS architecture
-current repository ADRs
-current system-specific specifications
-```
-
----
-
-# 40. `catatan/` Authority
-
-Default classification of:
-
-```text
-catatan/
-```
-
-is:
-
-```text
-HISTORICAL / RESEARCH / DESIGN_INPUT
-```
-
-unless another ACTIVE document explicitly declares a temporary transitional dependency.
-
-Important examples:
-
-```text
-catatan/sesi/
-catatan/ide/
-catatan/harian/
-catatan/weekly-review/
-```
-
-These directories preserve organizational memory.
-
-They do not automatically create project authority.
-
----
-
-# 41. Historical MGBOS Roadmaps
-
-Files such as:
-
-```text
-catatan/mgbos-master-roadmap-tracker.md
-```
-
-may contain valuable historical planning.
-
-They MUST NOT override current MGBOS implementation, engineering reports, ADRs, or architecture.
-
-Classification:
-
-```text
-HISTORICAL ROADMAP
-```
-
-unless explicitly promoted.
-
----
-
-# 42. External Systems and Provider Facts
-
-For external systems:
-
-```text
-payment gateway
-marketplace
-shipping provider
-GitHub
-email
-social platform
-AI provider
-```
-
-the external provider may be authoritative for its own external state.
-
-Example:
-
-```text
-Payment provider:
-transaction acknowledged
-
-GitHub:
-CI run completed
-
-Courier:
 shipment delivered
+
+vendor accepted
 ```
 
-Internal interpretation and business-state mutation remain governed by the relevant BisnisHub authoritative system.
+may require external observation/evidence.
 
 ---
 
-# 43. Evidence Authority
+# 58. External Providers
 
-Evidence can prove:
+Provider may be authoritative for provider-side facts.
+
+Examples:
 
 ```text
-what ran
-what passed
-what failed
-what was approved
-what was deployed
-what provider returned
+carrier tracking
+
+payment-provider transaction state
+
+GitHub CI result
 ```
 
-Evidence cannot independently redefine:
+Internal business interpretation remains owned by relevant BisnisHub system.
+
+---
+
+# 59. n8n Authority
+
+Canonical:
 
 ```text
-business semantics
-architecture
-permission policy
-risk semantics
+n8n
+=
+orchestration
 ```
 
-Relevant current evidence locations include:
+not:
 
 ```text
-systems/mgbos/docs/engineering/mgbos-*-report.md
-systems/mgbos/docs/engineering/operational-readiness.md
-systems/mgbos/docs/engineering/agent-system/implementation-report.md
-docs/engineering/repository-migration-*.md
-CI runs
-tests
-migrations
+system of record
+
+business-rule owner
+
+JARVIS reasoning core
 ```
 
 ---
 
-# 44. Canonicalization Priority Registry
+# 60. AI Authority
 
-The following documents/concepts should be promoted in this order.
-
-## Foundation — ACTIVE / Current Work
+AI may:
 
 ```text
-DOC-001 Documentation Constitution
-DOC-002 Canonical Source Map
+classify
+
+summarize
+
+recommend
+
+draft
+
+analyze
 ```
 
-## P0 — Cross-System Architecture
+AI output is not automatically:
 
 ```text
-DOC-003 Master System Blueprint
-DOC-004 System Boundaries
-DOC-005 Architectural Laws
+business truth
+
+approval
+
+permission
+
+transaction
 ```
 
-## P1 — MGBOS Consolidation
+---
+
+# 61. Source Selection Examples
+
+## Change MGBOS Order transition
+
+Read:
 
 ```text
-MGBOS Canonical Data Model
-MGBOS Business State Machines
-MGBOS Business Invariants
-MGBOS Command & Event Model
+Documentation Constitution
+
+Canonical Source Map
+
+MGBOS State Machines
+
+MGBOS Invariants
+
+Command & Event Model
+
+Permission Model
+
+current implementation/tests
 ```
 
-## P1 — JARVIS Foundation
+---
+
+# 62. Change TeeStock Pricing Strategy
+
+Read:
+
+```text
+TeeStock Finance
+
+Pricing Framework
+
+Unit Economics
+
+MGBOS quote semantics only
+if implementation impact exists
+```
+
+---
+
+# 63. Build JARVIS Morning Briefing
+
+Read:
 
 ```text
 JARVIS Charter
+
 JARVIS Architecture
-JARVIS Core Runtime
-```
 
-## P2 — Governance
+Core Runtime
 
-```text
-General Risk Classification
-Autonomy Levels
-Permission Model
-Approval Policy
-Evidence & Provenance Principles
-```
-
-## P2 — Digital Workforce
-
-```text
-Runtime Agent Architecture
-Runtime Agent Registry
-Skill Architecture
-Skill Registry
 Tool Architecture
-Tool Registry
-```
 
-## P3 — Intelligence & Reliability
+Evidence
 
-```text
-Memory Architecture
-Entity Identity Model
-Provenance Model
-Automation Architecture
-Durable Workflow Model
-Observability
-AI Evaluation
-Failure & Recovery
-Business Continuity
-```
+MGBOS read contracts
 
-## P4 — Founder Operating Layer
-
-```text
-Decision Inbox
-Founder Command Center
-Briefing Engine
-Escalation Model
-Management Cadence
-Exception Queue
+TeeStock operating context
 ```
 
 ---
 
-# 45. Canonicalization Does Not Equal Implementation
+# 64. Documentation Placement Rule
 
-Creating:
-
-```text
-JARVIS Architecture v1.0
-```
-
-does not mean JARVIS exists operationally.
-
-Creating:
+Use:
 
 ```text
-CFO Agent Contract
+cross-system governance
+→ docs/
+
+MGBOS semantics
+→ systems/mgbos/docs/
+
+JARVIS semantics
+→ systems/jarvis/docs/
+
+TeeStock business knowledge
+→ bisnis/teestock/
+
+historical discussions
+→ catatan/
+
+retired material
+→ archive/
 ```
-
-does not mean CFO Agent is running.
-
-Creating:
-
-```text
-Backup Policy
-```
-
-does not mean backup is configured.
-
-Therefore every canonical specification must remain distinguishable from implementation evidence.
 
 ---
 
-# 46. Promotion Procedure
+# 65. Canonical Navigation Rule
 
-When a historical source is promoted:
-
-```text
-Identify normative content
-        ↓
-Compare with current reality
-        ↓
-Resolve contradiction
-        ↓
-Extract canonical semantics
-        ↓
-Create/update canonical source
-        ↓
-Create ADR if decision warrants it
-        ↓
-Update DOC-002
-        ↓
-Mark old source as provenance
-```
-
-Historical files SHOULD generally remain preserved.
-
-They become provenance rather than operational authority.
-
----
-
-# 47. Relocation Procedure
-
-When a system moves physically:
-
-```text
-system relocation
-        ↓
-update docs/project-index.md
-        ↓
-update AGENTS routing
-        ↓
-update relevant CI/scripts
-        ↓
-update active document paths
-        ↓
-update DOC-002
-```
-
-Canonical IDs SHOULD survive relocation.
+Every canonical document SHOULD have a parent navigation source.
 
 Example:
 
 ```text
-mgbos.architecture.constitution
-```
-
-remains conceptually stable even if:
-
-```text
-systems/mgbos/
-```
-
-later becomes:
-
-```text
-systems/mgbos/
+systems/mgbos/docs/architecture/domain-map-capability-ownership.md
+        ↑
+systems/mgbos/docs/architecture/README.md
+        ↑
+systems/mgbos/docs/README.md
+        ↑
+systems/mgbos/README.md
 ```
 
 ---
 
-# 48. Missing Source Behavior
+# 66. Current Known Documentation Drift
 
-If DOC-002 says:
+Known drift as of repository snapshot:
 
-```text
-PLANNED_CANONICAL
-```
+### A. Canonical Source Map v1.0
 
-AI or human MUST NOT silently choose a session note and pretend a canonical source exists.
+Still claims JARVIS lacks canonical docs.
 
-Correct behavior:
+Resolved by this v1.1.
 
-```text
-canonical specification not yet established
-```
+### B. MGBOS Docs Index
 
-Then use design inputs transparently only when necessary.
+Still routes detailed architecture to Sep-23 notes.
 
----
+Must be revised next.
 
-# 49. Authority Conflict Behavior
+### C. MGBOS Architecture README
 
-If two sources both appear ACTIVE and claim the same semantic ownership:
+Still describes Sep-23 notes as primary canonical architecture sources.
 
-```text
-AUTHORITY_CONFLICT
-```
+Must be revised after Docs Index or together with it.
 
-must be raised.
+### D. TeeStock Data & MGBOS
 
-Do not resolve through:
+Terminology creates potential competing authority.
 
-```text
-newer filename
-longer document
-higher detail
-AI preference
-```
+Needs controlled cleanup.
 
-Resolve through DOC-001 conflict procedure.
+### E. Canonical-ready chat docs
+
+Several approved-ready documents are not persisted.
+
+Need controlled promotion.
 
 ---
 
-# 50. Minimum Reading Rule
-
-A human or AI SHOULD read only the sources necessary for the current task.
-
-Example:
+# 67. Current Authority Model
 
 ```text
-Task:
-MGBOS payment change
-
-Read:
-AGENTS.md
-docs/project-index.md
-DOC-002
-systems/mgbos/AGENTS.md
-relevant payment specification
-related ADR
-engineering control plane
-relevant implementation/tests
+                       BISNISHUB
+                           │
+              CROSS-SYSTEM GOVERNANCE
+                           │
+        ┌──────────────────┼──────────────────┐
+        ▼                  ▼                  ▼
+    BUSINESS             MGBOS              JARVIS
+    KNOWLEDGE         BUSINESS TRUTH      INTELLIGENCE
+        │                  │                  │
+    TeeStock          transactions        reasoning
+    MultiGraph        state               planning
+    others            invariants          memory
+        │                  │                  │
+        └──────────────────┼──────────────────┘
+                           ▼
+                    BUSINESS REALITY
 ```
 
-There is no requirement to load all BisnisHub documentation.
-
-This reduces:
+Parallel engineering control:
 
 ```text
-context pollution
-conflicting historical information
-AI token cost
-reasoning noise
+.agents/
+   ↓
+software implementation
 ```
 
 ---
 
-# 51. Source Map Maintenance Trigger
-
-DOC-002 MUST be reconsidered when any of the following occurs:
+# 68. TeeStock–MGBOS–JARVIS Mental Model
 
 ```text
-system relocation
-new canonical specification
-document supersession
-new system created
-system retired
-semantic ownership changes
-new root governance introduced
-major ADR changes authority
-historical source fully promoted
-```
+TEEStock
+defines:
+"What business are we trying to run?"
 
-Routine implementation that does not change authority does not require DOC-002 modification.
+        ↓
 
----
-
-# 52. Review Cadence
-
-Default:
-
-```text
-Monthly
-```
-
-and additionally after structural repository changes.
-
-Missed review does not automatically invalidate DOC-002.
-
-However because Source Map controls routing, stale paths or ownership should be corrected promptly.
-
----
-
-# 53. Current High-Priority Documentation Debt
-
-As of the repository snapshot recorded in this document, the largest documentation debts are:
-
-```text
-1. Detailed MGBOS canonical data model still depends partly on session notes.
-
-2. Detailed MGBOS state-machine specification still depends partly on session notes.
-
-3. MGBOS business invariants remain distributed across several canonical and implementation sources.
-
-4. JARVIS architecture is mature as design input but not yet promoted into canonical documentation.
-
-5. General cross-system risk/autonomy semantics are not yet separated cleanly from engineering-agent risk semantics.
-
-6. Runtime business Agent / Skill / Tool registries do not yet exist.
-
-7. Several future governance concepts remain only inside 27 September design discussions.
-```
-
-These debts are expected and do not invalidate current MGBOS operation.
-
-They define the documentation work ahead.
-
----
-
-# 54. Canonical Authority Summary
-
-The current mental model is:
-
-```text
-                    BISNISHUB
-                       │
-          Repository Governance
-                       │
-        ┌──────────────┼──────────────┐
-        ▼              ▼              ▼
-     MGBOS          JARVIS        Other Systems
-        │              │
-   CANONICAL       DESIGN INPUT
-   + ACTIVE        → canonicalization
-   runtime              │
-        │               │
-        └──────┬────────┘
-               ▼
-       Cross-System Governance
-               │
-       Agents / Skills / Tools
-               │
-       Automation / Integrations
-```
-
-More precisely:
-
-```text
 MGBOS
-→ business truth
+defines:
+"What facts, transactions and operational states govern it?"
+
+        ↓
 
 JARVIS
-→ future intelligence/orchestration authority
-
-Engineering Control Plane
-→ software-change governance
-
-Repository Governance
-→ cross-system documentation/repository authority
-
-Business folders
-→ business knowledge
-
-catatan/
-→ organizational memory and provenance
+defines:
+"What does the current reality mean and what deserves attention?"
 ```
 
 ---
 
-# 55. North Star
+# 69. Canonical Authority Summary
 
-DOC-002 succeeds when a new human or AI can ask:
+```text
+docs/
+→ cross-system governance
 
-> “Apa source of truth untuk pembayaran?”
+bisnis/teestock/
+→ TeeStock business truth
 
-and navigate directly to MGBOS.
+systems/mgbos/
+→ business-system transactional truth
 
-Or:
+systems/jarvis/
+→ intelligence architecture
 
-> “Siapa yang mendefinisikan bagaimana JARVIS memilih tool?”
+.agents/
+→ software engineering control plane
 
-and determine whether a canonical JARVIS Tool Architecture exists.
+catatan/
+→ provenance / design input
 
-Or:
-
-> “Apakah catatan 27 September tentang AI models masih authoritative?”
-
-and answer:
-
-> Tidak. Itu design input/time-sensitive research; model routing architecture dan operational Model Registry harus menjadi canonical sources tersendiri.
-
-The Source Map exists so authority is **resolved, not guessed**.
+archive/
+→ retired sources
+```
 
 ---
 
-# 56. Final Principle
+# 70. Current Canonicalization Backlog
 
-> **Repository search finds information.  
-> Canonical Source Map finds authority.**
+After this document is persisted, recommended next sequence:
 
-BisnisHub may eventually contain thousands of files.
+```text
+1.
+systems/mgbos/docs/README.md
+→ MGBOS Documentation Index v2
 
-The number of files must never determine how difficult it is to find the truth.
+2.
+systems/mgbos/docs/architecture/README.md
+→ MGBOS Architecture Index v2
+
+3.
+docs/operating-model/solo-founder-operating-system.md
+
+4.
+systems/mgbos/docs/architecture/
+domain-map-capability-ownership.md
+
+5.
+docs/roadmaps/
+solo-founder-launch-roadmap.md
+
+6.
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
+
+7.
+TeeStock system-requirement authority cleanup
+
+8.
+Cross-System Time & Scheduling Semantics
+
+9.
+Cross-System Data Classification
+```
+
+---
+
+# 71. Completion Condition
+
+Canonical Source Map is healthy when a competent human or AI can answer:
+
+```text
+Where does this concept belong?
+
+Which document owns it?
+
+Which implementation proves it?
+
+Is this source current, historical or merely design input?
+
+Does another document conflict with it?
+```
+
+without guessing.
+
+---
+
+# 72. Final Principle
+
+> **Search finds information. Canonical Source Map determines authority.**
+
+And:
+
+> **Business documentation defines the business. MGBOS defines governed business-system truth. JARVIS reasons over that truth. Engineering implements it. Historical notes explain how we got there.**

@@ -396,7 +396,8 @@ Defines the digital product and technology architecture.
 
 ## `11-data-mgbos/`
 
-Defines canonical business data, events, integration, analytics, and MGBOS.
+Defines TeeStock business/system requirements and future capability requirements.
+*Authority boundary:* Contains commercial domain requirements and integration needs; does **not** override canonical MGBOS entities, states, invariants, commands, permissions, or transaction semantics (refer to `systems/mgbos/docs/architecture/`).
 
 ## `12-legal-ip/`
 
@@ -960,10 +961,24 @@ TS-DAT-005 — MGBOS Integration
 TS-DAT-006 — Analytics Model
 ```
 
+Authority Notice:
+
+> [!IMPORTANT]
+> `bisnis/teestock/11-data-mgbos/` contains TeeStock business/system requirements and future capability requirements.
+> It does **NOT** override canonical MGBOS:
+> - entities
+> - states
+> - invariants
+> - commands
+> - permissions
+> - transaction semantics.
+>
+> For canonical MGBOS architecture, data models, state machines, and invariants, refer to [systems/mgbos/docs/architecture/](../../systems/mgbos/docs/architecture/README.md).
+
 Status:
 
 ```text
-COMPLETE
+COMPLETE (Business Requirements Authority)
 ```
 
 ---
@@ -1574,6 +1589,8 @@ treasury-policy.md
 ↓
 10-product-tech/automation-architecture.md
 ```
+
+> Note: The documents above define TeeStock business and system requirements. For canonical software architecture, database contracts, invariants, and state machines, refer to [systems/mgbos/docs/architecture/](../../systems/mgbos/docs/architecture/README.md).
 
 ---
 

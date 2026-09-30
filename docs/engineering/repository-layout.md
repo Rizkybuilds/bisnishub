@@ -7,6 +7,9 @@ Berlaku untuk organisasi repo, bukan pengganti aturan bisnis masing-masing siste
 | Lokasi                              | Pemilik dan fungsi                                                                                    |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | Root README / AGENTS                | Navigasi, batas bersama dan routing; hindari menyalin semua spesifikasi                               |
+| `docs/governance/`                  | Konstitusi dokumentasi, canonical source map, dan tata kelola lintas sistem                          |
+| `docs/operating-model/`             | Model operasi solo-founder, alokasi beban kerja, dan prinsip founder-by-exception                    |
+| `docs/roadmaps/`                    | Roadmap kanonikal eksekusi lintas sistem menuju peluncuran terkendali                                |
 | `docs/engineering/`                 | Kebijakan lintas proyek                                                                               |
 | `docs/decisions/`                   | Keputusan tingkat repository                                                                          |
 | `<proyek>/docs/`                    | Arsitektur, ADR, spesifikasi, runbook dan bukti milik sistem                                          |

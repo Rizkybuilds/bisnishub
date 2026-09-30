@@ -42,7 +42,7 @@ Nama yang sama ditemukan di `.agents/skills/` proyek, `C:/Users/Rizky/.agents/sk
 ## Hasil paket P0
 
 - [Instruksi root](../AGENTS.md): routing maintenance, pembatasan workspace, contoh legacy, pemilihan UI dan cakupan otorisasi.
-- [Instruksi MGBOS](../mgbos/AGENTS.md): konteks batas tahap, syarat bukti gate dan pemeriksaan proporsional untuk perubahan instruksi.
+- [Instruksi MGBOS](../systems/mgbos/AGENTS.md): konteks batas tahap, syarat bukti gate dan pemeriksaan proporsional untuk perubahan instruksi.
 - [Skill Maintainer](skills/agent-skill-maintainer/SKILL.md): audit, pemilihan artefak, pembaruan dan validasi dengan pemicu yang spesifik.
 - Laporan ini: inventaris lengkap nama Skill proyek dan backlog konflik.
 
@@ -119,7 +119,7 @@ Added five provider-neutral role contracts in `.agents/roles/`, three project sk
 
 The AI automation/copilot and web security/performance entrypoints now separate canonical MGBOS command/state/Next.js guidance from historical legacy references. Preserved `argument-hint` remains a bundled-validator compatibility limitation; three new skills pass directly and three revised skills pass only in normalized temporary copies. The project validator explicitly reports that exception.
 
-Separate governance and migration-immutability jobs supplement the unchanged MGBOS Foundation workflow. See the [implementation report](../mgbos/docs/engineering/agent-system/implementation-report.md) for executed checks, manual scenario review, CRLF formatting caveat and PR #3 recommendation. Structural CI, manual instruction review, independent agent evaluation, hosted application/database CI and deployment are distinct evidence states. No provider configuration, branch protection, application behavior or database was changed by this package.
+Separate governance and migration-immutability jobs supplement the unchanged MGBOS Foundation workflow. See the [implementation report](../systems/mgbos/docs/engineering/agent-system/implementation-report.md) for executed checks, manual scenario review, CRLF formatting caveat and PR #3 recommendation. Structural CI, manual instruction review, independent agent evaluation, hosted application/database CI and deployment are distinct evidence states. No provider configuration, branch protection, application behavior or database was changed by this package.
 
 ## Repository navigation — 2026-09-27
 
