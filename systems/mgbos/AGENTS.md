@@ -34,7 +34,7 @@ Do not copy the legacy prototype's simulated identity, brand switcher or prematu
 Do not start MGBOS-002 until MGBOS-001 checks, including local database and CI, are verified.
 This foundation gate remains an acceptance requirement for subsequent work. When a prerequisite is unverified, report the missing evidence and limit work to the authorized audit, maintenance or gate remediation; do not infer a waiver from existing code or README status.
 Distinguish implementation, tests defined, tests executed, hosted CI and deployment. Reports record prior evidence; verify current results before claiming a gate passes.
-For application changes, run pnpm check, production smoke tests and applicable database checks. For instruction-only changes, validate scope, references and instruction consistency; do not reset databases or run application deployments for documentation maintenance. Report failures honestly.
+For application changes, run pnpm check, production smoke tests and applicable database checks. For instruction-only changes, validate scope, references and instruction consistency; do not reset databases or run application deployments for documentation maintenance. PR titles must use `type(scope): description`, and runtime PRs must remain system-scoped under `systems/mgbos/**`. Preflight with `node scripts/governance/check-pr-scope.mjs <base-sha> <head-sha>` from root and `pnpm check` from `systems/mgbos/`. Report failures honestly.
 Critical business rules require tests. Preserve unrelated work. No broad refactors.
 Architecture changes require an ADR and explicit scope. Add dependencies only for a concrete requirement.
 
