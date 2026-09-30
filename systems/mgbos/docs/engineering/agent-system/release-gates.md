@@ -30,3 +30,20 @@ The migration guard protects every file already present under `systems/mgbos/sup
 Pull requests compare the actual base SHA with head SHA, not only a merge-base that could miss a concurrent migration edit. Pushes compare event `before` with `after`; dispatch compares HEAD with its first parent and is not a replacement for PR review. Checkout fetches full history. Missing or all-zero base fails closed. Never use `pull_request_target` to run untrusted change code with elevated credentials.
 
 Changing a guard or workflow requires human review of its diff and negative tests; these scripts cannot defend against their own malicious replacement. Require reviews/branch protection in GitHub as a separately authorized configuration task. No bypass flag or retroactive rewrite exemption is supplied.
+
+## Pull request preflight and gate criteria
+
+Before opening or updating an MGBOS PR, agents must ensure:
+
+1. **PR Title Format:** Must follow Conventional Commits format (`type(scope): description`), e.g., `fix(mgbos): harden Phase 1 operating spine`.
+2. **PR Body:** Must not be empty.
+3. **Scope Isolation:** MGBOS runtime changes must remain strictly system-scoped (`systems/mgbos/**`). Do not mix cross-system documentation, roadmaps, or other systems into an MGBOS runtime PR.
+4. **Local Preflight Commands:**
+   ```sh
+   # Scope isolation and PR gate verification (from repository root):
+   node --test scripts/governance/pr-scope.test.mjs
+   node scripts/governance/check-pr-scope.mjs <base-sha> <head-sha>
+
+   # Application verification (from systems/mgbos):
+   pnpm check
+   ```
