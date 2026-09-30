@@ -18,13 +18,17 @@ authoritative_for:
   - mgbos-versus-automation boundaries
   - external-provider capability boundaries
   - domain expansion sequencing
-  - solo-founder operating-spine prioritization
+  - mgbos capability prioritization under solo-founder operating constraints
 last_reviewed: 2026-09-30
 review_cadence: monthly-during-q4-2026
 depends_on:
   - ../../../../docs/governance/documentation-constitution.md
   - ../../../../docs/governance/canonical-source-map.md
   - ../../../../docs/architecture/master-system-blueprint.md
+  - ../../../../docs/architecture/system-boundaries.md
+  - ../../../../docs/architecture/architectural-laws.md
+  - ../../../../docs/operating-model/solo-founder-operating-system.md
+  - README.md
   - canonical-data-model.md
   - business-state-machines.md
   - business-invariants.md
@@ -45,11 +49,11 @@ implementation_status: PARTIALLY_IMPLEMENTED
 
 Dokumen ini menjawab:
 
-> **Capability bisnis mana yang harus dimiliki MGBOS, mana yang tetap menjadi TeeStock business knowledge, mana yang menjadi tanggung jawab JARVIS, mana yang cukup diotomatisasi, dan mana yang tetap dimiliki provider/partner eksternal?**
+> **Capability bisnis mana yang harus dimiliki MGBOS, mana yang tetap menjadi business knowledge, mana yang menjadi tanggung jawab JARVIS, mana yang cukup diotomatisasi, dan mana yang tetap dimiliki provider atau partner eksternal?**
 
-Tujuannya adalah mencegah dua kegagalan sekaligus:
+Tujuannya adalah mencegah dua kegagalan:
 
-```text id="4o7d3u"
+```text
 UNDERBUILD
 → founder tetap menjadi operating system
 
@@ -66,15 +70,19 @@ OVERBUILD
 
 ---
 
-# 3. Second Principle
+# 3. Business Requirements Do Not Automatically Become Entities
 
 > **Business requirements may pull MGBOS forward. They do not automatically become MGBOS entities.**
 
+Business documentation menjelaskan kebutuhan.
+
+MGBOS menentukan representasi sistem paling kecil yang tetap benar.
+
 ---
 
-# 4. Third Principle
+# 4. Founder-Leverage Principle
 
-> **Every new MGBOS domain must remove operational ambiguity, protect business integrity, or materially reduce founder burden.**
+> **Every new MGBOS capability must remove operational ambiguity, protect business integrity, or materially reduce founder burden.**
 
 ---
 
@@ -82,19 +90,13 @@ OVERBUILD
 
 MGBOS SHOULD own concepts requiring:
 
-```text id="woqqau"
+```text
 persistent operational identity
-
 transactional integrity
-
 state transitions
-
 financial consequences
-
 cross-workflow coordination
-
 auditability
-
 shared operational truth
 ```
 
@@ -104,41 +106,30 @@ shared operational truth
 
 Examples:
 
-```text id="wqbrwg"
+```text
 brand philosophy
-
 creative direction
-
 campaign narrative
-
 market research
-
 strategic thesis
-
 content ideas
-
 temporary experiments
 ```
 
-unless operational requirements later justify structured representation.
+unless future operations justify structured representation.
 
 ---
 
 # 7. Capability Classification
 
-Every capability uses one of:
+Every domain or capability uses one of:
 
-```text id="1xap60"
+```text
 CURRENT
-
 PARTIAL
-
 NEXT
-
 DEFERRED
-
 EXPERIMENTAL
-
 OUTSIDE_MGBOS
 ```
 
@@ -146,57 +137,51 @@ OUTSIDE_MGBOS
 
 # 8. CURRENT
 
-Canonical implementation already exists materially in MGBOS.
+The capability is materially represented and operationally implemented in current MGBOS.
+
+`CURRENT` does not automatically mean every workflow around it is launch-complete.
 
 ---
 
 # 9. PARTIAL
 
-Core semantics exist, but capability is incomplete for the intended operating workflow.
+The capability materially exists, but intended workflow, lifecycle, integration, or operator usability remains incomplete.
 
 ---
 
 # 10. NEXT
 
-Capability has strong near-term operational justification and belongs in the next implementation horizon.
+Strong near-term operational justification exists and the capability belongs in the next implementation horizon.
 
 ---
 
 # 11. DEFERRED
 
-Potentially useful, but current evidence does not justify implementation yet.
+Potentially valuable, but current evidence does not justify implementation.
 
 ---
 
 # 12. EXPERIMENTAL
 
-Prototype or provisional implementation exists without mature canonical production semantics.
+A provisional implementation or prototype exists without mature production semantics.
 
 ---
 
 # 13. OUTSIDE_MGBOS
 
-Another system/domain is the proper owner.
+Another system or domain is the proper semantic owner.
 
 ---
 
-# 14. Capability Ownership Vocabulary
+# 14. Primary Capability Owners
 
-Primary owners:
-
-```text id="znwd55"
-TEEStock BUSINESS
-
+```text
+BUSINESS LAYER
 MGBOS
-
 JARVIS
-
 AUTOMATION
-
 EXTERNAL PROVIDER
-
 PRODUCTION / LOGISTICS PARTNER
-
 CROSS-SYSTEM GOVERNANCE
 ```
 
@@ -204,12 +189,12 @@ CROSS-SYSTEM GOVERNANCE
 
 # 15. Fundamental Ownership Model
 
-```text id="7z22qx"
-TEEStock
+```text
+BUSINESS
 defines what the business needs
 
 MGBOS
-holds operational business truth
+holds governed operational truth
 
 JARVIS
 interprets and coordinates that truth
@@ -218,7 +203,7 @@ AUTOMATION
 executes deterministic repetition
 
 PROVIDERS
-own their external system facts
+own provider-side facts
 
 PARTNERS
 perform physical work
@@ -226,35 +211,38 @@ perform physical work
 
 ---
 
-# 16. Domain Map — Current Core
+# 16. Current Core Domain Map
 
-| Domain                  | MGBOS Status                | Primary Owner | Near-Term Importance |
-| ----------------------- | --------------------------- | ------------- | -------------------- |
-| Organization / Identity | CURRENT                     | MGBOS         | Critical             |
-| Customer                | CURRENT                     | MGBOS         | Critical             |
-| Lead / CRM              | CURRENT                     | MGBOS         | Critical             |
-| Requirement             | CURRENT                     | MGBOS         | Critical             |
-| Quotation               | CURRENT                     | MGBOS         | Critical             |
-| Order                   | CURRENT / PARTIAL lifecycle | MGBOS         | Critical             |
-| Production              | CURRENT                     | MGBOS         | Critical             |
-| Vendor                  | CURRENT                     | MGBOS         | Critical             |
-| Quality Control         | CURRENT                     | MGBOS         | Critical             |
-| Invoice                 | CURRENT                     | MGBOS         | Critical             |
-| Payment                 | CURRENT                     | MGBOS         | Critical             |
-| Inventory               | CURRENT                     | MGBOS         | High                 |
-| Procurement             | CURRENT                     | MGBOS         | High                 |
-| Vendor Bills            | CURRENT                     | MGBOS         | High                 |
-| Fulfillment / Shipment  | CURRENT                     | MGBOS         | High                 |
-| Order Financial Summary | CURRENT                     | MGBOS         | High                 |
-| Design Library          | EXPERIMENTAL                | MGBOS         | Low near-term        |
+| Domain | MGBOS Status | Primary Owner | Near-Term Importance |
+|---|---|---|---|
+| Organization / Identity | CURRENT | MGBOS | Critical |
+| Customer | CURRENT | MGBOS | Critical |
+| Lead / CRM | CURRENT / PARTIAL workflow integration | MGBOS | Critical |
+| Requirement | CURRENT | MGBOS | Critical |
+| Quotation | CURRENT | MGBOS | Critical |
+| Order | CURRENT / PARTIAL lifecycle | MGBOS | Critical |
+| Production Job | CURRENT | MGBOS | Critical |
+| Production Assignment | CURRENT / PARTIAL operational integration | MGBOS | Critical |
+| Vendor | CURRENT / PARTIAL assignment integration | MGBOS | Critical |
+| Quality Control | CURRENT | MGBOS | Critical |
+| Invoice | CURRENT | MGBOS | Critical |
+| Payment | CURRENT | MGBOS | Critical |
+| Fulfillment / Shipment | CURRENT / PARTIAL readiness guard | MGBOS | Critical |
+| Cost / Margin | CURRENT | MGBOS | Critical |
+| Inventory | CURRENT | MGBOS | High |
+| Procurement | CURRENT | MGBOS | High |
+| Goods Receipt | CURRENT | MGBOS | High |
+| Vendor Bills | CURRENT | MGBOS | High |
+| Order Financial Summary | CURRENT | MGBOS | High |
+| Design Library | EXPERIMENTAL | MGBOS | Low near-term |
 
 ---
 
-# 17. This Core Already Covers Most of the First Spine
+# 17. Current Core Covers Most of the First Operating Spine
 
-Current MGBOS can already represent much of:
+Current MGBOS can already materially represent:
 
-```text id="8n1k28"
+```text
 LEAD
  ↓
 REQUIREMENT
@@ -262,31 +250,31 @@ REQUIREMENT
 QUOTE
  ↓
 ORDER
- ↓
-PAYMENT
- ↓
+ ├────────────► INVOICE / PAYMENT
+ │
+ ▼
 PRODUCTION
+ ↓
+ASSIGNMENT
  ↓
 QC
  ↓
-FULFILLMENT
+SHIPMENT
  ↓
 COST / MARGIN
 ```
 
-Therefore Q4 should primarily:
+Therefore near-term work should primarily:
 
-```text id="24qgpi"
+```text
 CONNECT
-
 HARDEN
-
+RECONCILE
 SIMPLIFY
-
 SURFACE
 ```
 
-before introducing many new root entities.
+before adding many new root entities.
 
 ---
 
@@ -294,139 +282,134 @@ before introducing many new root entities.
 
 Status:
 
-```text id="4xlg3x"
+```text
 CURRENT
 ```
 
 MGBOS owns:
 
-```text id="13banp"
+```text
 organization
-
 brand
-
 business line
-
 channel
-
 user
-
 membership
-
 role relationships
 ```
 
 ---
 
-# 19. Person vs Customer Contact
+# 19. Generic Person
 
-TeeStock future model introduces generic:
+Current MGBOS already has:
 
-```text id="iqqd6l"
-PERSON
-```
-
-Current MGBOS has:
-
-```text id="waau0z"
+```text
 customer_contacts
 ```
 
-For current TeeStock operating spine:
+A generic:
 
-```text id="v68zqc"
-DO NOT add generic Person yet.
+```text
+Person
 ```
 
----
+is:
 
-# 20. Generic Person Promotion Trigger
-
-Consider a generic Person identity only when one individual must reliably participate across multiple roles such as:
-
-```text id="0q2ghl"
-customer contact
-
-creator
-
-partner contact
-
-employee/operator
-
-affiliate
-```
-
-and duplication becomes operationally harmful.
-
-Status:
-
-```text id="ul11g8"
+```text
 DEFERRED
 ```
 
 ---
 
-# 21. Customer Domain
+# 20. Person Promotion Trigger
 
-Status:
+Promote only when one individual repeatedly needs stable identity across roles such as:
 
-```text id="w28zt1"
-CURRENT
+```text
+customer contact
+creator
+partner contact
+employee
+affiliate
 ```
 
-Current model already separates:
-
-```text id="wa1dd1"
-customer account
-
-contact
-
-address
-
-brand relationship
-```
-
-This is sufficient for initial TeeStock B2B/custom operations.
+and duplication becomes operationally harmful.
 
 ---
 
-# 22. Lead Domain
+# 21. Customer
 
 Status:
 
-```text id="3t4eoa"
+```text
 CURRENT
 ```
 
-Current MGBOS lead is the canonical inbound commercial inquiry.
+Current model already represents:
+
+```text
+customer account
+customer contact
+address
+customer-brand relationship
+```
+
+This is sufficient for initial custom/B2B operations.
+
+---
+
+# 22. Lead
+
+Status:
+
+```text
+CURRENT / PARTIAL WORKFLOW INTEGRATION
+```
+
+Lead is the canonical inbound commercial inquiry.
+
+Core entity/lifecycle capability exists.
+
+Current operator-flow gap:
+
+```text
+QUALIFIED LEAD
+    ↓
+manual navigation/context reconstruction
+    ↓
+REQUIREMENT
+```
+
+Near-term objective:
+
+```text
+Lead
+→ governed continuation
+→ Requirement
+```
+
+without adding Opportunity.
 
 ---
 
 # 23. Opportunity
 
-TeeStock Q4 asks for:
-
-```text id="0z7dxp"
-OPPORTUNITY
-```
-
-Current MGBOS explicitly does NOT implement it.
+Current MGBOS explicitly does not implement Opportunity.
 
 Status:
 
-```text id="nu1wz8"
+```text
 DEFERRED / EVIDENCE REQUIRED
 ```
-
-for initial operating spine.
 
 ---
 
 # 24. Why Opportunity Is Deferred
 
-Initial pipeline can use:
+Current pipeline can use:
 
-```text id="76joq9"
+```text
 LEAD
  ↓
 QUALIFIED
@@ -436,568 +419,473 @@ REQUIREMENT
 QUOTE
 ```
 
-without a separate Opportunity entity.
+with lower complexity.
 
 ---
 
 # 25. Opportunity Promotion Trigger
 
-Create Opportunity when real operation demonstrates need for:
+Introduce Opportunity only when real operations demonstrate recurring need for:
 
-```text id="7xwyg7"
-multiple commercial attempts under one sales pursuit
-
-multiple quotes for different solution paths
-
+```text
+multiple commercial attempts under one pursuit
+multiple solution paths
 pipeline forecasting independent of Lead
-
-sales ownership beyond Lead lifecycle
-
-long-running deal management
+long-running deal ownership
+sales management beyond Lead lifecycle
 ```
 
 ---
 
-# 26. Lead-to-Quote Simplicity Wins Now
-
-For a solo founder:
-
-```text id="fdth6m"
-fewer entities
-+
-clear pipeline
-```
-
-is currently preferable.
-
----
-
-# 27. Requirement Domain
+# 26. Requirement
 
 Status:
 
-```text id="sv5is6"
+```text
 CURRENT
 ```
 
-This is especially important for TeeStock because custom apparel requirements are often incomplete and changing.
+Requirement is especially valuable for custom work where customer inputs are incomplete and frequently revised.
 
 ---
 
-# 28. Requirement Is a High-Leverage Entity
+# 27. Requirement Removes Hidden State
 
-It removes requirement state from:
+Requirement should move specification truth out of:
 
-```text id="6rmkis"
+```text
 WhatsApp
-
 founder memory
-
-random notes
+temporary notes
 ```
 
 ---
 
-# 29. Structured Requirement Extensions
+# 28. Structured Requirement Extensions
 
-Use schema-versioned structured specifications for:
+Prefer schema-versioned structured specifications for:
 
-```text id="7daj23"
+```text
 garment
-
 printing
-
 embroidery
-
 packaging
-
 merchandise
 ```
 
-before introducing dozens of specialized database tables.
+before creating many specialized generic tables.
 
 ---
 
-# 30. Quote Domain
+# 29. Quote
 
 Status:
 
-```text id="zv64ft"
+```text
 CURRENT
 ```
 
-Already supports:
+Current capability includes:
 
-```text id="87jkyo"
+```text
 versioning
-
 line items
-
 estimated costs
-
-price approvals
-
+pricing approval
 requirement snapshots
 ```
 
-This is a core solo-founder leverage capability.
-
 ---
 
-# 31. Pricing Ownership
+# 30. Pricing Ownership
 
-TeeStock owns:
+Business layer owns:
 
-```text id="th751m"
+```text
 pricing strategy
-
-commercial guardrails
-
+commercial policy
 discount philosophy
 ```
 
 MGBOS owns:
 
-```text id="ajh2eh"
-quote calculation
-
+```text
+quote representation
+calculation
 snapshot
-
-approval
-
-enforcement
-
+approval enforcement
 audit
 ```
 
 ---
 
-# 32. Order Domain
+# 31. Order
 
 Status:
 
-```text id="29n81k"
-CURRENT
+```text
+CURRENT / PARTIAL LIFECYCLE
 ```
 
-but generic transition enforcement remains:
-
-```text id="bb2s47"
-PARTIAL
-```
-
-according to current canonical state-machine specification.
+Order represents commercial commitment.
 
 ---
 
-# 33. Order Is Commercial Commitment
+# 32. Order Lifecycle Gap
 
-Do not overload Order with:
+Current canonical state vocabulary exists, but authoritative transition enforcement remains incomplete.
 
-```text id="yviu7s"
-production status
-
-payment status
-
-shipping status
-
-QC status
-```
-
-Those remain independent domains.
+Near-term implementation must make Order lifecycle trustworthy.
 
 ---
 
-# 34. Project Domain
+# 33. Order Must Not Become a Mega-State
 
-TeeStock Q4 proposes:
+Do not collapse:
 
-```text id="q3n1ga"
-PROJECT
+```text
+payment
+production
+QC
+shipment
 ```
 
-for complex service work.
+into Order status.
 
-Current MGBOS has no canonical Project entity.
+These remain independent lifecycles.
+
+---
+
+# 34. Project
 
 Status:
 
-```text id="qxzwwo"
+```text
 DEFERRED / CONDITIONAL NEXT
 ```
 
----
+Current custom work may be sufficiently represented by:
 
-# 35. Initial Project Substitution
-
-For simple custom jobs:
-
-```text id="jd4qtu"
-REQUIREMENT
+```text
+Requirement
 +
-QUOTE
+Quote
 +
-ORDER
+Order
 +
-PRODUCTION JOB(S)
+Production Jobs
 ```
 
-can represent the work sufficiently.
-
 ---
 
-# 36. Project Promotion Trigger
+# 35. Project Promotion Trigger
 
-Create Project when one customer initiative routinely requires:
+Create Project when one initiative routinely requires:
 
-```text id="hcfovf"
+```text
 multiple Orders
-
 multiple Production Jobs
-
 multiple delivery phases
-
-non-billable tasks
-
-complex milestone coordination
-
-persistent coordination independent of one Order
+non-billable coordination
+independent milestones
+persistent coordination beyond one Order
 ```
 
 ---
 
-# 37. Avoid Project-as-Container Syndrome
-
-Do not create Project merely because:
-
-```text id="sehepe"
-"projects sound enterprise."
-```
-
----
-
-# 38. Production Domain
+# 36. Production Job
 
 Status:
 
-```text id="yd8xhq"
+```text
 CURRENT
 ```
 
-Production Job already gives internal operational identity.
+Production Job owns executable physical-work coordination.
 
 ---
 
-# 39. Production Job Role
+# 37. Production Job Should Answer
 
-Production Job should answer:
-
-```text id="zf8h1f"
-What work must be produced?
-
+```text
+What needs to be produced?
 For which Order?
-
-What items?
-
+Which items?
 What state?
-
-Who is handling it?
-
-What is blocking it?
+What deadline?
+What blocks completion?
 ```
 
 ---
 
-# 40. Work Order
-
-TeeStock Q4 strongly wants:
-
-```text id="oh07di"
-WORK ORDER
-```
-
-for partner production.
-
-Current MGBOS has:
-
-```text id="xwtd5q"
-production_assignments
-
-production jobs
-
-purchase orders
-```
-
-but no independent canonical Work Order entity.
-
----
-
-# 41. Work Order Decision
+# 38. Production Assignment
 
 Status:
 
-```text id="o55wft"
-NEXT AS OPERATIONAL ARTIFACT
-NOT NECESSARILY NEW ROOT ENTITY
+```text
+CURRENT / PARTIAL OPERATIONAL INTEGRATION
 ```
+
+Current entity:
+
+```text
+production_assignments
+```
+
+exists materially.
+
+---
+
+# 39. Current Assignment Gaps
+
+Current operating-flow gaps include:
+
+```text
+vendor identity not consistently used in normal assignment flow
+assignment acknowledgement not fully coordinated
+assignment ACCEPTED may diverge from job ACCEPTED
+decline / reassignment flow needs hardening
+```
+
+Therefore this is not a missing domain.
+
+It is a current domain needing integration.
+
+---
+
+# 40. Assignment Ownership
+
+Production Assignment should own:
+
+```text
+who is expected to execute the job
+commercial assignment context
+partner acknowledgement
+assignment lifecycle
+```
+
+Production Job continues to own physical work lifecycle.
+
+---
+
+# 41. Work Order
+
+Status:
+
+```text
+NEXT AS GOVERNED OPERATIONAL ARTIFACT
+P0 OPERATING-SPINE CLOSURE
+```
+
+It is not yet justified as a new root entity.
 
 ---
 
 # 42. Initial Work Order Model
 
-Generate a governed Work Order from:
+Generate Work Order / SPK from:
 
-```text id="yj59ad"
-PRODUCTION JOB
+```text
+Production Job
 +
-PRODUCTION ASSIGNMENT
+Production Assignment
 +
-PARTNER / VENDOR
+Vendor
 +
-REQUIREMENT SNAPSHOT
+Requirement / specification snapshot
 +
-DELIVERY REQUIREMENT
+deadline
++
+committed cost
++
+handoff instructions
 ```
 
 ---
 
-# 43. Why
+# 43. Work Order Principle
 
-What matters first is:
-
-> **No critical production commitment exists only in chat.**
-
-The system does not initially need another aggregate if existing entities already provide the required identity and lifecycle.
+> **No critical external production commitment should exist only in chat.**
 
 ---
 
 # 44. Work Order Promotion Trigger
 
-Create a first-class Work Order entity only if it develops independent:
+Create first-class Work Order entity only if it develops independent:
 
-```text id="gu5x91"
+```text
 revision lifecycle
-
 acceptance lifecycle
-
 partial completion
-
 pricing
-
 billing
-
 multiple assignments
-
-evidence history
+independent evidence history
 ```
 
-that cannot cleanly belong to Production Assignment or PO.
+that cannot cleanly belong to existing aggregates.
 
 ---
 
-# 45. Vendor Domain
+# 45. Vendor
 
 Status:
 
-```text id="as0ish"
-CURRENT
+```text
+CURRENT / PARTIAL ASSIGNMENT INTEGRATION
 ```
 
-Current MGBOS:
+Current MGBOS has:
 
-```text id="pow66k"
-vendor
-
-rate card
-
-production assignment
-
-QC relationship
+```text
+vendors
+vendor_rate_cards
+production assignment relationships
 ```
-
-already captures much of TeeStock's near-term partner need.
 
 ---
 
-# 46. Partner Domain
-
-TeeStock future model uses broader:
-
-```text id="d9uq1a"
-PARTNER
-```
+# 46. Generic Partner
 
 Status:
 
-```text id="9b495h"
+```text
 DEFERRED GENERALIZATION
 ```
 
----
+For current physical production and supply work:
 
-# 47. Initial Rule
-
-For physical production/supplier partners:
-
-```text id="dk5gf7"
-VENDOR
+```text
+Vendor
 ```
 
-is currently sufficient.
+is sufficient.
 
 ---
 
-# 48. Partner Generalization Trigger
+# 47. Partner Generalization Trigger
 
-Consider a broader Partner abstraction when system must support significantly different relationships such as:
+Promote a broader Partner abstraction only when materially different relationships must share one common model:
 
-```text id="tc9dqk"
+```text
 production vendor
-
 fulfillment partner
-
-technology partner
-
 creator partner
-
+technology partner
 channel partner
-
 affiliate organization
 ```
 
-under one shared relationship framework.
-
 ---
 
-# 49. Partner Capability
-
-Capability data is high-value even before generic Partner exists.
+# 48. Vendor Capability
 
 Status:
 
-```text id="kxsb98"
-NEXT
-```
-
-Examples:
-
-```text id="7djts1"
-DTF
-
-screen printing
-
-embroidery
-
-cut-and-sew
-
-packaging
-
-fulfillment
-```
-
----
-
-# 50. Vendor Capability Goal
-
-System should eventually know:
-
-```text id="m8sp85"
-what vendor can do
-
-current rate basis
-
-typical lead time
-
-quality performance
-
-capacity observations
-```
-
-so founder memory is not the routing engine.
-
----
-
-# 51. Vendor Capacity
-
-Status:
-
-```text id="f671s2"
+```text
 PARTIAL / NEXT
 ```
 
-Exact real-time capacity may initially be:
+Current baseline already exists through:
 
-```text id="ytxufn"
-manual observation
+```text
+vendor categories
+vendor rate cards
+vendor relationships
 ```
-
-rather than sophisticated scheduling engine.
 
 ---
 
-# 52. Do Not Invent Capacity Precision
+# 49. Vendor Capability — NEXT Scope
 
-Avoid false data such as:
+Add structure only where operationally useful:
 
-```text id="89ooxh"
-73.8% vendor utilization
+```text
+capability taxonomy
+capability-specific lead time
+quality observations
+reliability observations
+capacity observations
 ```
-
-unless measurement actually supports it.
 
 ---
 
-# 53. Quality Domain
+# 50. Vendor Capacity
 
 Status:
 
-```text id="pzx3x9"
-CURRENT
+```text
+PARTIAL / NEXT
 ```
 
-QC records belong to MGBOS operational truth.
+Initial representation may remain manual observation.
+
+Avoid sophisticated scheduling until real demand justifies it.
 
 ---
 
-# 54. QC Evidence
+# 51. No Fake Precision
 
-Future useful evidence includes:
+Do not invent metrics such as:
 
-```text id="si3bhc"
-inspection result
+```text
+Vendor utilization = 73.8%
+```
 
-defect category
+without measurement that supports them.
 
+---
+
+# 52. Quality Control
+
+Status:
+
+```text
+CURRENT
+```
+
+QC inspection records belong to MGBOS operational truth.
+
+---
+
+# 53. QC Evidence
+
+Useful evidence may include:
+
+```text
+result
+defect classification
+notes
 photo/file reference
-
-rework
-
+rework context
 rejection reason
 ```
 
-according to real workflow need.
+when real workflow needs justify it.
 
 ---
 
-# 55. Customer Finance
+# 54. Invoice
 
-Invoices:
+Status:
 
-```text id="dd2ffh"
+```text
 CURRENT
 ```
 
-Payments:
+Invoices represent customer receivables separately from Order state.
 
-```text id="9aqzua"
+---
+
+# 55. Payment
+
+Status:
+
+```text
 CURRENT
 ```
 
-Allocations:
-
-```text id="og9zve"
-CURRENT
-```
+Payment and Payment Allocation are current authoritative financial entities.
 
 ---
 
@@ -1005,23 +893,13 @@ CURRENT
 
 Status:
 
-```text id="tmn68u"
+```text
 PARTIAL
 ```
 
-MGBOS has transaction/financial primitives, but founder-level:
+Transactional primitives exist.
 
-```text id="n64wt3"
-available cash
-
-receivables
-
-payables
-
-near-term cash obligations
-```
-
-needs a deliberately designed read model.
+Founder-level consolidated visibility still needs deliberate read models.
 
 ---
 
@@ -1029,33 +907,31 @@ needs a deliberately designed read model.
 
 Status:
 
-```text id="uc4ad7"
+```text
 NEXT
 ```
 
-High-leverage examples:
+Examples:
 
-```text id="2rvpn1"
+```text
 cash summary
-
 AR aging
-
 AP obligations
-
-order margin exceptions
-
-quote-vs-actual cost variance
+margin exceptions
+estimated-vs-actual cost variance
 ```
+
+These are projections/read models, not new transaction aggregates.
 
 ---
 
 # 58. Treasury Policy
 
-TeeStock owns policy.
+Business layer owns policy.
 
-MGBOS provides authoritative numbers and enforcement where appropriate.
+MGBOS supplies authoritative business facts and enforcement where appropriate.
 
-JARVIS may analyze.
+JARVIS may analyze those facts.
 
 ---
 
@@ -1063,213 +939,191 @@ JARVIS may analyze.
 
 Status:
 
-```text id="67tzj4"
+```text
 CURRENT
 ```
 
 Current entities include:
 
-```text id="ig4wio"
-purchase orders
-
-purchase-order items
-
-vendor bills
-
-vendor bill payments
+```text
+purchase_orders
+purchase_order_items
+vendor_bills
+vendor_bill_payments
 ```
 
 ---
 
 # 60. Goods Receipt
 
-TeeStock future requirements reference:
+Status:
 
-```text id="4dn3lh"
-GOODS RECEIPT
+```text
+CURRENT
 ```
 
-Current canonical model should be checked per implemented schema before treating this as active root entity.
+Current entities:
 
-Classification:
+```text
+goods_receipts
+goods_receipt_items
+```
 
-```text id="f90obe"
-PARTIAL / NEXT WHEN PROCUREMENT FLOW REQUIRES
+Current receiving capability includes governed purchase-order receiving.
+
+Goods Receipt represents physical-to-digital confirmation that purchased goods were actually received.
+
+---
+
+# 61. Goods Receipt Is Evidence, Not a Long Lifecycle
+
+Goods Receipt does not require a rich mutable lifecycle.
+
+Procurement lifecycle remains primarily on:
+
+```text
+Purchase Order
+```
+
+for states such as:
+
+```text
+ORDERED
+PARTIALLY_RECEIVED
+RECEIVED
 ```
 
 ---
 
-# 61. Inventory
+# 62. Inventory
 
 Status:
 
-```text id="ceyuw7"
+```text
 CURRENT
 ```
 
 Current MGBOS supports:
 
-```text id="hqgo75"
+```text
 inventory items
-
 levels
-
 mutations
-
 reservations
 ```
 
 ---
 
-# 62. Inventory Is Not Product Catalog
+# 63. Inventory Item Is Not Product
 
-Important distinction:
+Canonical distinction:
 
-```text id="0iz1wj"
+```text
 INVENTORY ITEM
 ≠
 PRODUCT
 ```
 
-Current MGBOS can track stock without yet implementing TeeStock's complete future commerce catalog.
+MGBOS can track stock without a full generic Product catalog.
 
 ---
 
-# 63. Product Domain
-
-TeeStock future model defines:
-
-```text id="r2hj80"
-PRODUCT
-VARIANT
-SKU
-```
-
-Current MGBOS does not have a mature generic Product master.
+# 64. Product / Variant / SKU
 
 Status:
 
-```text id="fnkqv1"
+```text
 DEFERRED / LAUNCH-SCOPE DEPENDENT
 ```
 
----
-
-# 64. Custom Services Do Not Require Full Product Catalog
-
-For:
-
-```text id="hxn3bl"
-Custom
-
-Business
-
-Merch
-
-Studio
-```
-
-current Requirement + Quote line-item snapshots may be sufficient initially.
+For current custom-service operations, Requirement + Quote + Order snapshots may be sufficient.
 
 ---
 
-# 65. Commerce Launch Changes This
+# 65. When Product Becomes NEXT
 
-If TeeStock launches:
+If TeeStock launches stable retail commerce such as:
 
-```text id="cw84cy"
+```text
 Selects
-
 Essentials
-
-standard retail products
+standardized stocked products
 ```
 
-with repeatable SKUs, Product/Variant/SKU becomes:
+then:
 
-```text id="6wyyr2"
-NEXT
+```text
+Product
+Variant
+SKU
 ```
+
+may become NEXT.
 
 ---
 
 # 66. Product Promotion Trigger
 
-Implement when TeeStock needs:
+Implement when the business requires:
 
-```text id="11je3n"
+```text
 reusable sellable identity
-
 channel listings
-
-SKU-level analytics
-
+SKU analytics
 standard pricing
-
 catalog navigation
-
-inventory linked to stable SKU
+inventory tied to stable SKU identity
 ```
 
 ---
 
-# 67. Catalog Domain
+# 67. Catalog
 
 Status:
 
-```text id="61hs0c"
+```text
 DEFERRED
 ```
 
-until multi-product commerce requires persistent merchandising structure.
+Catalog is not needed merely because the business sells something.
+
+It becomes justified when persistent merchandising structure creates operational value.
 
 ---
 
-# 68. Catalog Is Not Order Truth
+# 68. Order History Remains Snapshot-Based
 
-Even later:
+Even after Product exists:
 
-```text id="nij4q2"
+```text
 ORDER ITEM
 ```
 
-remains contractual snapshot.
+remains historical commercial truth.
 
-Changing Product later must not rewrite historical Order.
+Changing Product must not rewrite historical Order meaning.
 
 ---
 
 # 69. Garment Platform
 
-TeeStock may need reusable blank/garment specifications.
-
 Status:
 
-```text id="wl578z"
+```text
 DEFERRED / PRODUCT-DOMAIN SUBMODEL
 ```
 
-Build when product standardization begins creating duplicated specifications.
+Promote only when repeatable apparel products create substantial duplicated specifications.
 
 ---
 
 # 70. BOM / Recipe
 
-Future TeeStock model proposes:
-
-```text id="352git"
-BOM
-
-RECIPE
-```
-
 Status:
 
-```text id="7czsk4"
+```text
 DEFERRED
 ```
-
-for now.
 
 ---
 
@@ -1277,121 +1131,104 @@ for now.
 
 Implement when:
 
-```text id="6xs613"
+```text
 standard products repeatedly consume known materials/processes
-
-costing requires reusable composition
-
+reusable costing structure becomes valuable
 inventory consumption needs structured derivation
-
-production recipes are stable enough
+production recipes stabilize
 ```
 
 ---
 
 # 72. Do Not Build Manufacturing ERP Early
 
-Custom production can continue using:
+Custom jobs can continue using:
 
-```text id="veibqr"
+```text
 requirement snapshots
-
 quote cost components
-
-production job data
-
-actual cost
+production jobs
+committed costs
+actual costs
 ```
 
-until repeated structure justifies BOM.
+until repeated structure justifies BOM complexity.
 
 ---
 
-# 73. Fulfillment
-
-Shipment domain:
-
-```text id="jzcw9z"
-CURRENT
-```
-
-External carrier remains owner of carrier-side facts.
-
-MGBOS owns internal shipment interpretation/state.
-
----
-
-# 74. Return / Refund Domain
-
-TeeStock commerce framework requires future:
-
-```text id="mzncoc"
-returns
-
-refunds
-
-replacement
-```
-
-Current MGBOS has financial reversal primitives but not a full commerce Returns domain.
+# 73. Shipment / Fulfillment
 
 Status:
 
-```text id="vwvzzr"
+```text
+CURRENT / PARTIAL FULFILLMENT-READINESS GUARD
+```
+
+MGBOS owns internal shipment business state.
+
+Carrier owns carrier-side tracking facts.
+
+---
+
+# 74. Current Fulfillment Gap
+
+Shipment quantity controls exist.
+
+However the operating spine still needs a stronger guard proving:
+
+```text
+required production ready
++
+required QC cleared
+```
+
+before fulfillment.
+
+This is a P0 integrity issue.
+
+---
+
+# 75. Return / Refund
+
+Status:
+
+```text
 DEFERRED UNTIL RETAIL COMMERCE NEED
 ```
 
+Current financial reversal primitives are not a complete Returns domain.
+
 ---
 
-# 75. Customer Case
-
-TeeStock Q4 requests:
-
-```text id="2acbsi"
-CUSTOMER CASE
-```
+# 76. Customer Case
 
 Status:
 
-```text id="8d70w5"
+```text
 NEXT-LITE
 ```
 
-because founder-by-exception needs durable abnormal customer issues.
+Useful categories include:
 
----
-
-# 76. Customer Case Purpose
-
-Examples:
-
-```text id="sdimx1"
+```text
 complaint
-
-customer change request
-
+scope-change request
 refund request
-
-delivery issue
-
+delivery problem
 quality complaint
 ```
 
 ---
 
-# 77. Customer Case Must Not Replace Domain State
+# 77. Customer Case Does Not Replace Domain State
 
 Example:
 
-```text id="s66ayl"
-case = payment dispute
+```text
+Customer Case = payment dispute
 ```
 
-does not replace:
-
-```text id="m2z7x4"
-payment state
-```
+does not replace authoritative Payment state.
 
 ---
 
@@ -1399,32 +1236,28 @@ payment state
 
 Status:
 
-```text id="gsg7ex"
+```text
 NEXT
+P1 FOUNDER-CONTROL CAPABILITY
 ```
 
-This is one of the highest-leverage missing capabilities.
+Operational Exception is likely the highest-leverage capability **after the operating spine itself is trustworthy**.
 
 ---
 
 # 79. Exception Purpose
 
-Persistent explicit record for:
+Persistent explicit representation for abnormal conditions such as:
 
-```text id="193wno"
+```text
 production late
-
 payment mismatch
-
 vendor no-response
-
 missing artwork
-
 QC failure
-
-integration failure
-
-margin exception requiring attention
+shipment problem
+automation failure
+margin exception
 ```
 
 ---
@@ -1433,21 +1266,21 @@ margin exception requiring attention
 
 Example:
 
-```text id="w9rwmy"
-production job:
+```text
+Production Job:
 IN_PRODUCTION
 
-exception:
+Operational Exception:
 PARTNER_LATE
 ```
 
-This preserves domain truth while surfacing abnormality.
+Both can be true simultaneously.
 
 ---
 
-# 81. Exception ≠ Incident
+# 81. Exception ≠ Technical Incident
 
-Operational business exception and technical/system incident remain distinct.
+A business operational exception and technical/system incident remain distinct concepts.
 
 ---
 
@@ -1457,65 +1290,59 @@ MGBOS owns persistent business exception facts.
 
 JARVIS may:
 
-```text id="8nob7k"
+```text
 detect
-
 prioritize
-
+summarize
 explain
-
-recommend.
+recommend
 ```
 
 ---
 
-# 83. This Is Critical for Founder-by-Exception
+# 83. Founder-by-Exception Principle
 
-Without an Exception domain:
+Once the spine is trustworthy:
 
-```text id="b9hwkg"
-Rizky must search for problems.
-```
+```text
+NORMAL WORK
+→ stays quiet
 
-With it:
+ABNORMAL WORK
+→ becomes explicit
 
-```text id="n8j2r1"
-problems find Rizky.
+MATERIAL EXCEPTION
+→ reaches founder
 ```
 
 ---
 
 # 84. Artwork
 
-Current design-library implementation:
+Current Design Library capability is:
 
-```text id="jm60cx"
+```text
 EXPERIMENTAL
 ```
 
-TeeStock future model treats Artwork as important across Custom, Creator, Originals.
+For custom production, simpler artwork/version linkage may become useful earlier than a full asset platform.
 
 ---
 
-# 85. Artwork Near-Term Scope
+# 85. Artwork Near-Term Need
 
-For custom production:
+Potential near-term scope:
 
-```text id="vych3q"
+```text
 file reference
-
 version
-
 approval status
-
 production linkage
 ```
 
-can become useful relatively early.
+Status:
 
-Classification:
-
-```text id="zv590g"
+```text
 PARTIAL / NEXT WHEN REAL JOBS REQUIRE
 ```
 
@@ -1523,73 +1350,45 @@ PARTIAL / NEXT WHEN REAL JOBS REQUIRE
 
 # 86. Do Not Overbuild DAM
 
-Avoid full enterprise:
-
-```text id="lzr7qu"
-Digital Asset Management
-```
-
-until actual asset volume demands it.
+Avoid building a full enterprise Digital Asset Management system until volume justifies it.
 
 ---
 
 # 87. IP Rights
 
-TeeStock's legal/IP system requires:
-
-```text id="d9t8k8"
-rights basis
-
-license
-
-creator agreement
-
-usage scope
-
-expiry
-```
-
 Status:
 
-```text id="l57ysz"
+```text
 DEFERRED
 ```
 
-for core launch unless copyrighted/creator assets become central immediately.
+for core launch unless creator/copyrighted assets become central immediately.
 
 ---
 
-# 88. IP Rule Remains Business Policy
+# 88. IP Policy Still Applies
 
-Even before structured implementation:
+Even without full structured system:
 
 > **No documented rights basis. No commercial use.**
-
-must remain enforced operationally.
 
 ---
 
 # 89. Creator Domain
 
-Future entities include:
+Future concepts include:
 
-```text id="88xvs5"
-CREATOR
-
-CREATOR PRODUCT
-
-AGREEMENT
-
-ROYALTY
-
-EARNING
-
-PAYOUT
+```text
+Creator
+Agreement
+Royalty
+Earning
+Payout
 ```
 
 Status:
 
-```text id="b3kk2z"
+```text
 DEFERRED
 ```
 
@@ -1597,70 +1396,57 @@ DEFERRED
 
 # 90. Why Creator Is Deferred
 
-TeeStock Q4 itself prioritizes:
+Current priority remains:
 
-```text id="suwjrh"
+```text
 Lead-to-Cash
++
 Order-to-Fulfillment
 ```
 
-before Creator marketplace infrastructure.
+before creator-economy infrastructure.
 
 ---
 
-# 91. Creator Pilot Rule
+# 91. Creator Pilot
 
-A controlled creator experiment may initially use:
+A small controlled pilot may initially use:
 
-```text id="xrs1yq"
+```text
 manual agreement
-
-documented product attribution
-
-manual earnings calculation with evidence
+documented attribution
+manual financial reconciliation with evidence
 ```
 
-before building generalized Creator Ledger.
+before generalized Creator Ledger architecture.
 
 ---
 
-# 92. Creator Domain Promotion Trigger
+# 92. Creator Promotion Trigger
 
-Implement once creator transactions become:
+Implement when creator economics become:
 
-```text id="hjdvnx"
+```text
 recurring
-
-material
-
 multi-creator
-
-financially meaningful
-
-too risky for manual reconciliation
+financially material
+difficult or risky to reconcile manually
 ```
 
 ---
 
 # 93. Programs
 
-TeeStock programs include:
+TeeStock Programs such as:
 
-```text id="kmp6pa"
+```text
 Creator
-
 Reseller
-
 Affiliate
-
 Partner
 ```
 
-Program strategy remains:
-
-```text id="jxf3xz"
-TEEStock BUSINESS
-```
+remain primarily Business Layer concepts.
 
 ---
 
@@ -1668,57 +1454,49 @@ TEEStock BUSINESS
 
 Status:
 
-```text id="d3c8u8"
+```text
 DEFERRED
 ```
 
-until each program proves demand and repeatability.
+until a program proves repeated operational need.
 
 ---
 
 # 95. Reseller
 
-Could initially be represented using:
+May initially use:
 
-```text id="ygmjkc"
-customer relationship
-
-price policy
-
+```text
+customer relationships
+pricing policy
 channel metadata
 ```
 
-without dedicated Reseller platform.
+without dedicated platform/domain.
 
 ---
 
 # 96. Affiliate
 
-External affiliate platform or lightweight attribution MAY be sufficient before MGBOS domain investment.
-
 Status:
 
-```text id="5u29qb"
-OUTSIDE / DEFERRED
+```text
+OUTSIDE_MGBOS / DEFERRED
 ```
 
-until economics justify internalization.
+External or lightweight attribution may be sufficient initially.
 
 ---
 
-# 97. Marketing Domain
+# 97. Marketing
 
-TeeStock owns:
+Business Layer owns:
 
-```text id="0ru0ib"
+```text
 audience
-
 campaign strategy
-
-content
-
+content strategy
 channel strategy
-
 brand
 ```
 
@@ -1728,41 +1506,29 @@ brand
 
 Status:
 
-```text id="anwh1e"
+```text
 DEFERRED
 ```
 
-MGBOS does not need to become a full marketing automation system yet.
+MGBOS should not become a generic marketing automation platform prematurely.
 
 ---
 
-# 99. Campaign
+# 99. Campaign Domain
 
-Persistent Campaign entity becomes useful when:
+Promote only when reliable linkage across:
 
-```text id="vs4vgt"
+```text
 spend
-
 content
-
-leads
-
-orders
-
+lead
+order
+revenue
 contribution
-
-experiment attribution
+experiment
 ```
 
-need reliable cross-channel linkage.
-
-Until then:
-
-```text id="bw2ovz"
-business knowledge + external tools
-```
-
-are sufficient.
+becomes operationally necessary.
 
 ---
 
@@ -1770,8 +1536,10 @@ are sufficient.
 
 Content planning/generation primarily belongs to:
 
-```text id="3jv2q7"
-JARVIS / future Content System
+```text
+Business Layer
++
+JARVIS / future content system
 ```
 
 not MGBOS transactional core.
@@ -1780,41 +1548,35 @@ not MGBOS transactional core.
 
 # 101. MGBOS Content Responsibility
 
-Only operational business linkage if needed:
+MGBOS may store operational linkage only where needed:
 
-```text id="852prk"
-campaign ID
-
+```text
+campaign reference
 promotion code
-
-attribution
-
-commercial result
+source/channel attribution
+commercial result linkage
 ```
 
 ---
 
 # 102. Analytics
 
-Analytics consumes MGBOS truth.
+Analytics consumes business truth.
 
-It does not own business truth.
+It does not own transactional truth.
 
 ---
 
-# 103. TeeStock KPI Layer
+# 103. KPI Ownership
 
-TeeStock KPI Framework owns definitions such as:
+Business Layer owns KPI definitions.
 
-```text id="7dc47x"
-CM4
+Examples:
 
-On-Time Fulfillment
-
-Repeat Contribution
-
+```text
 Quote Win Rate
-
+On-Time Fulfillment
+Repeat Contribution
 Sell-Through
 ```
 
@@ -1822,97 +1584,67 @@ Sell-Through
 
 # 104. MGBOS Analytics Responsibility
 
-MGBOS SHOULD provide trusted data/read models needed to calculate them.
+MGBOS should provide trusted data and read models needed to calculate business KPIs.
 
 ---
 
-# 105. KPI Calculation
-
-Some KPI computation may live in:
-
-```text id="mzlasb"
-analytics/read-model layer
-```
-
-rather than transactional aggregates.
-
----
-
-# 106. Experiment Domain
-
-TeeStock Experimentation Framework owns experiment semantics.
-
----
-
-# 107. Experiment Runtime
+# 105. Experiment Domain
 
 Status:
 
-```text id="rm5vin"
+```text
 DEFERRED
 ```
 
-as MGBOS root domain.
+as an MGBOS root domain.
 
-Initially experiments can remain documentation + analytics IDs.
+Experiments may initially live in documentation plus lightweight attribution.
 
 ---
 
-# 108. Experiment Promotion Trigger
+# 106. Experiment Promotion Trigger
 
-Implement structured Experiment entity when TeeStock runs enough parallel experiments that:
+Promote when:
 
-```text id="zreoc5"
+```text
 assignment
-
 exposure
-
-decision rule
-
+decision rules
 results
-
 version history
 ```
 
-become hard to govern manually.
+become difficult to govern manually.
 
 ---
 
-# 109. Automation
+# 107. Automation
 
-Automation does NOT become a MGBOS business domain merely because n8n executes it.
+Automation is not a business domain merely because n8n executes a workflow.
 
 ---
 
-# 110. Automation Owner
+# 108. Automation Ownership
 
-```text id="fxjn3f"
-AUTOMATION
+Automation owns:
+
+```text
+scheduling
+routing
+retry
+notification
+integration coordination
 ```
 
-owns workflow execution mechanics.
-
-MGBOS owns business state changed by those workflows.
+MGBOS owns authoritative business state affected by those workflows.
 
 ---
 
-# 111. Automation Registry
+# 109. n8n
 
-Future persistent workflow metadata may belong to:
+n8n is:
 
-```text id="20to4j"
-JARVIS/platform operational layer
-```
-
-rather than business transactional schema.
-
----
-
-# 112. n8n
-
-n8n:
-
-```text id="7msiim"
+```text
 scheduler
 router
 integration orchestrator
@@ -1920,265 +1652,305 @@ integration orchestrator
 
 not:
 
-```text id="52cdxb"
+```text
 Lead owner
 Order owner
 Payment owner
+Production owner
 ```
 
 ---
 
-# 113. JARVIS Domain
+# 110. JARVIS
 
 JARVIS owns cognitive capabilities such as:
 
-```text id="gs00zp"
+```text
 Morning Briefing
-
 priority analysis
-
 requirement extraction
-
 vendor recommendation
-
 risk analysis
-
-business summaries
-
+summary
 decision preparation
 ```
 
 ---
 
-# 114. JARVIS Does Not Need New Business Entities for Most of These
+# 111. Cognitive Capability Usually Does Not Need New Business Entity
 
-It can reason through:
+JARVIS can operate over:
 
-```text id="9m538g"
+```text
 MGBOS read models
-
 canonical business docs
-
-bounded Memory
+bounded memory
+external evidence
 ```
+
+without creating new MGBOS aggregates.
 
 ---
 
-# 115. Founder Control Layer
+# 112. Founder Control Layer
 
-Business operational state stays in MGBOS.
+Target:
 
-Founder attention projection may be:
-
-```text id="2c6hop"
-MGBOS read model
+```text
+MGBOS deterministic read model
 +
 JARVIS analysis
 ```
 
+not AI reconstructing business truth from raw messages.
+
 ---
 
-# 116. Example
+# 113. Example
 
-```text id="9owwhs"
+```text
 MGBOS:
 Production Job PJ-104
 status = IN_PRODUCTION
 deadline = tomorrow
 
-Exception:
+MGBOS Exception:
 PARTNER_LATE
 
 JARVIS:
-"This is your highest operational risk today."
+"This is the highest operational risk today."
 ```
 
-Three separate semantics.
+Three different semantics.
 
 ---
 
-# 117. External Payment Provider
+# 114. External Payment Provider
 
-External provider owns:
+Provider owns:
 
-```text id="29mgu6"
-provider transaction fact
+```text
+provider-side transaction fact
 ```
 
 MGBOS owns:
 
-```text id="9fmjdd"
+```text
 business payment record
-
-allocation
-
-invoice effect.
+payment allocation
+invoice effect
 ```
 
 ---
 
-# 118. Logistics Provider
+# 115. Logistics Provider
 
 Carrier owns:
 
-```text id="o6i55t"
-carrier tracking state
+```text
+carrier tracking observations
 ```
 
 MGBOS owns:
 
-```text id="qqm8m1"
-Shipment business state.
+```text
+Shipment business state
 ```
 
 ---
 
-# 119. Marketplace
+# 116. Marketplace
 
 Marketplace may own:
 
-```text id="vd6fja"
-marketplace listing
-
-marketplace-side order state
+```text
+listing state
+marketplace order state
 ```
 
-MGBOS owns normalized internal Order once accepted into business operation.
+MGBOS owns normalized internal business Order after accepted intake.
 
 Status:
 
-```text id="ye2ja8"
+```text
 DEFERRED INTEGRATION
 ```
 
 ---
 
-# 120. Production Partner
+# 117. Production Partner
 
-Partner owns real physical production progress.
+Production partner owns real physical execution.
 
-MGBOS stores verified observations needed for business operation.
+MGBOS stores governed observations required for business coordination.
 
 ---
 
-# 121. Physical Reality Rule
+# 118. Physical Reality Rule
 
-```text id="k7d8o0"
+```text
 MGBOS record
 ≠
 physical reality automatically
 ```
 
-Production completion requires observation/evidence.
+Physical completion requires trusted observation/evidence.
 
 ---
 
-# 122. Domain Boundary Matrix
+# 119. Domain Boundary Matrix
 
-| Capability          |     Business Layer |        MGBOS |              JARVIS |       Automation |          External |
-| ------------------- | -----------------: | -----------: | ------------------: | ---------------: | ----------------: |
-| Business strategy   |          **Owner** |            — |              Assist |                — |                 — |
-| Brand               |          **Owner** | Context only |              Assist |                — |                 — |
-| Customer identity   |        Requirement |    **Owner** |                Read |             Sync |  External sources |
-| Lead                |             Policy |    **Owner** |     Qualify/analyze |    Capture/route |          Channels |
-| Requirement         |         Definition |    **Owner** |       Extract/draft |            Route |          Customer |
-| Quote               |     Pricing policy |    **Owner** |       Draft/analyze |         Reminder |          Customer |
-| Order               |  Commercial policy |    **Owner** |             Analyze |          Trigger |          Channels |
-| Payment             |     Finance policy |    **Owner** |             Analyze | Reconcile/notify |  Payment provider |
-| Production          |   Operating policy |    **Owner** |       Risk analysis |         Reminder |           Partner |
-| QC                  |     Quality policy |    **Owner** |           Summarize |            Route |  Partner/operator |
-| Shipment            |     Service policy |    **Owner** |             Analyze |           Notify |           Courier |
-| Inventory           |       Stock policy |    **Owner** |            Forecast |    Reorder alert |          Supplier |
-| Procurement         | Procurement policy |    **Owner** |           Recommend |         Reminder |            Vendor |
-| Exceptions          |             Policy |    **Owner** |          Prioritize |           Detect |                 — |
-| Content             |    Brand/marketing |    Link only | **Cognitive owner** | Publish/schedule |          Channels |
-| AI Memory           |                  — |    Not truth |           **Owner** |                — | Provider optional |
-| Model routing       |                  — |            — |           **Owner** |                — |       AI provider |
-| Physical production |          Standards |        Track |             Analyze |       Coordinate | **Partner owner** |
+| Capability | Business Layer | MGBOS | JARVIS | Automation | External |
+|---|---|---|---|---|---|
+| Business strategy | Owner | — | Assist | — | — |
+| Brand | Owner | Context only | Assist | — | — |
+| Customer identity | Requirements | **Owner** | Read | Sync | External sources |
+| Lead | Policy | **Owner** | Analyze | Capture/route | Channels |
+| Requirement | Definition | **Owner** | Extract/draft | Route | Customer |
+| Quote | Pricing policy | **Owner** | Analyze/draft | Reminder | Customer |
+| Order | Commercial policy | **Owner** | Analyze | Trigger | Channel |
+| Invoice | Finance policy | **Owner** | Analyze | Reminder | Customer |
+| Payment | Finance policy | **Owner** | Analyze | Reconcile/notify | Payment provider |
+| Production | Operating policy | **Owner** | Risk analysis | Reminder | Partner |
+| Assignment | Vendor policy | **Owner** | Recommend | Notify | Partner |
+| QC | Quality policy | **Owner** | Summarize | Route | Operator/partner |
+| Shipment | Service policy | **Owner** | Analyze | Notify | Courier |
+| Inventory | Stock policy | **Owner** | Forecast | Alerts | Supplier |
+| Procurement | Procurement policy | **Owner** | Recommend | Reminder | Vendor |
+| Goods Receipt | Receiving policy | **Owner** | Analyze | Notify | Supplier/receiver |
+| Operational Exception | Exception policy | **Owner** | Prioritize | Detect | — |
+| Content | Brand/marketing | Link only | Cognitive assist | Publish/schedule | Channels |
+| AI Memory | — | Not truth | **Owner** | — | Provider optional |
+| Model routing | — | — | **Owner** | — | AI provider |
+| Physical production | Standards | Track | Analyze | Coordinate | **Partner owner** |
 
 ---
 
-# 123. Q4 Capability Priorities
+# 120. P0 — Operating Spine Must Work
 
-## P0 — Must Work Before Launch Scale
+Before launch scale, the following must be trustworthy:
 
-```text id="qrsa5m"
+```text
 Customer
-
 Lead
-
 Requirement
-
 Quote
-
 Order
-
-Payment
-
+Invoice / Payment
 Production
-
+Production Assignment
 Vendor
-
 QC
-
-Fulfillment
-
+Shipment
 Cost / Margin
 ```
 
-Mostly current.
+Most exist.
 
-Work should emphasize integration and operational usability.
-
----
-
-# 124. P0 Main Development Theme
-
-> **Do not add many new domains. Make the current spine actually usable end-to-end.**
+The work is integration and hardening.
 
 ---
 
-# 125. P1 — Founder Leverage
+# 121. P0 Operating-Spine Closure Tasks
 
-Highest-value additions:
+Current implementation priorities:
 
-```text id="ku2n3f"
-Operational Exception
+```text
+1. Lead → Requirement continuation
 
-Customer Case Lite
+2. Authoritative Order lifecycle
 
-Vendor Capability
+3. Vendor identity → Production Assignment
 
-Finance Read Models
+4. Assignment acceptance / decline / reassignment
 
-Operations Read Models
+5. Production/QC → Fulfillment readiness
 
-Founder Control View
+6. Governed Work Order / SPK artifact
 
-Work Order projection/artifact
+7. Clean Lead → Margin E2E
+
+8. Operator Acceptance Test
 ```
 
 ---
 
-# 126. P2 — Repeatable Automation
+# 122. Why These Come Before Exception
 
-After P0/P1:
+Operational Exception is valuable only when underlying authoritative state is sufficiently reliable.
 
-```text id="sbxjfg"
+If the spine itself can produce contradictory state:
+
+```text
+exception detection
+```
+
+becomes less trustworthy.
+
+Therefore:
+
+```text
+SPINE INTEGRITY
+        ↓
+EXCEPTION MANAGEMENT
+```
+
+---
+
+# 123. P1 — Founder Control Layer
+
+After P0:
+
+```text
+Operational Exception
+Founder Read Models
+Customer Case Lite
+Vendor Capability expansion
+Finance attention views
+Operations attention views
+```
+
+---
+
+# 124. Highest-Leverage Post-Spine Capability
+
+> **Operational Exception Management**
+
+because founder-by-exception requires the system to surface abnormality rather than forcing Rizky to search for problems.
+
+---
+
+# 125. P1 Founder Read Models
+
+Examples:
+
+```text
+Sales Attention
+Quote Attention
+Payment Attention
+Production Attention
+Shipment Attention
+Margin Attention
+```
+
+These are read projections.
+
+They are not systems of record.
+
+---
+
+# 126. P2 — Deterministic Automation
+
+After stable workflow exists:
+
+```text
 lead capture
-
-qualification assistance
-
+qualification support
 quote follow-up
-
-payment reminder
-
-production deadline alert
-
-partner acknowledgement
-
-shipment update
-
+payment reminders
+vendor acknowledgement reminders
+production deadline alerts
+shipment updates
 exception routing
 ```
 
@@ -2188,37 +1960,30 @@ exception routing
 
 Then:
 
-```text id="qpv0z7"
+```text
 Morning Briefing
-
 Exception Summary
-
 Sales Pipeline Summary
-
 Cash Summary
-
 Production Risk Analysis
-
 Vendor Recommendation
+Requirement Extraction
 ```
+
+Initial scope should remain read/analyze/recommend/draft.
 
 ---
 
 # 128. P4 — Commerce Expansion
 
-Only when launch strategy needs standardized retail catalog:
+When retail launch demands it:
 
-```text id="70c9cy"
+```text
 Product
-
 Variant
-
 SKU
-
 Catalog
-
 Channel Listing
-
 Return / Refund
 ```
 
@@ -2226,56 +1991,46 @@ Return / Refund
 
 # 129. P5 — Network Expansion
 
-After core transactions are proven:
+Later:
 
-```text id="mwprkf"
+```text
 Creator
-
+Agreement
 Royalty
-
 Earning
-
 Payout
-
 Affiliate
-
 Reseller
-
-broader Partner domain
+broader Partner model
 ```
 
 ---
 
-# 130. P6 — Advanced Operating Intelligence
+# 130. P6 — Advanced Intelligence
 
-Later:
+Later-stage candidates:
 
-```text id="e3uo49"
+```text
 capacity optimization
-
 demand forecasting
-
 marketing attribution
-
-automated procurement
-
-advanced treasury
-
+advanced procurement automation
+treasury optimization
 cross-business intelligence
 ```
 
 ---
 
-# 131. Entity Introduction Gate
+# 131. New Root Entity Gate
 
-No new root entity should be introduced until it answers:
+Before creating a root entity answer:
 
-```text id="qj51pz"
-What real recurring thing does it identify?
+```text
+What recurring real-world thing does it identify?
 
-What lifecycle does it own?
+Does it have independent lifecycle?
 
-What cannot be represented safely today?
+What current representation fails?
 
 What founder burden does it remove?
 
@@ -2284,53 +2039,40 @@ What other entities depend on it?
 Does it require independent audit/history?
 ```
 
----
+If answers are weak:
 
-# 132. Entity Rejection Rule
-
-If the only argument is:
-
-```text id="bi9l87"
-"future businesses might need it"
-```
-
-default:
-
-```text id="ur402c"
+```text
 DEFER
 ```
 
 ---
 
-# 133. Capability Introduction Gate
-
-A capability can be implemented without a new entity.
+# 132. Capability Does Not Equal Entity
 
 Examples:
 
-```text id="oz93wa"
+```text
 Work Order
-→ generated artifact
+→ generated artifact first
 
 Morning Briefing
-→ read projection
+→ read projection + JARVIS
 
 Vendor recommendation
-→ JARVIS Skill
+→ JARVIS skill
 
-payment reminder
-→ automation
+Payment reminder
+→ deterministic automation
+
+Founder Home
+→ read model / UI
 ```
-
-This distinction prevents schema inflation.
 
 ---
 
-# 134. Domain Promotion Flow
+# 133. Domain Promotion Flow
 
-Canonical:
-
-```text id="8j8j9a"
+```text
 BUSINESS NEED
      ↓
 REPEATED REAL USE
@@ -2339,53 +2081,75 @@ CAPABILITY GAP
      ↓
 DOMAIN ANALYSIS
      ↓
-DO WE NEED NEW ENTITY?
-     ↓
-NO ─────────► Tool / View / Workflow / Artifact
-YES
- ↓
-CANONICAL SPEC
- ↓
-MIGRATION
- ↓
-IMPLEMENTATION
- ↓
-EVIDENCE
+DO WE NEED A NEW ENTITY?
+     │
+     ├── NO
+     │    ↓
+     │  View / Tool / Workflow / Artifact
+     │
+     └── YES
+          ↓
+      CANONICAL SPEC
+          ↓
+       MIGRATION
+          ↓
+     IMPLEMENTATION
+          ↓
+        EVIDENCE
 ```
 
 ---
 
-# 135. TeeStock Is Requirement Reservoir
+# 134. TeeStock Documentation Is a Requirements Reservoir
 
-TeeStock's extensive data model should be interpreted as:
+The current TeeStock model should be interpreted as:
 
-```text id="5gj15h"
-future business capability map
+```text
+business capability map
++
+future requirements reservoir
 ```
 
-not automatic database backlog.
+not automatic MGBOS database backlog.
+
+---
+
+# 135. TeeStock `11-data-mgbos` Authority
+
+Current paths remain valid until controlled migration:
+
+```text
+bisnis/teestock/11-data-mgbos/
+```
+
+But semantic interpretation is:
+
+```text
+TEEStock business/system requirements
+```
+
+not:
+
+```text
+MGBOS canonical implementation authority
+```
+
+MGBOS architecture wins for MGBOS-owned entities, states, invariants, commands, and transactions.
 
 ---
 
 # 136. Why TeeStock Documentation Is Valuable
 
-It reveals future pressures early:
+It reveals likely future pressures including:
 
-```text id="k3aqvb"
+```text
 commerce
-
 creator economy
-
 IP
-
 royalties
-
 partners
-
 catalog
-
 marketing attribution
-
 customer support
 ```
 
@@ -2395,29 +2159,21 @@ without requiring immediate implementation.
 
 # 137. MGBOS Must Remain Reusable
 
-Avoid hardcoding:
-
-```text id="s1ycfu"
-TeeStock-only apparel logic
-```
-
-into shared MGBOS core unless architecture proves it belongs there.
+Avoid hardcoding apparel-specific business detail into generic shared domains.
 
 ---
 
 # 138. Business-Specific Extensions
 
-Apparel-specific data may live in:
+Apparel-specific semantics may live in:
 
-```text id="7p9ju4"
-requirement schema
-
-domain extension
-
+```text
+Requirement specification
 TeeStock application layer
+business-specific extension
 ```
 
-while generic concepts remain shared.
+while generic entities remain reusable.
 
 ---
 
@@ -2425,27 +2181,21 @@ while generic concepts remain shared.
 
 Generic:
 
-```text id="cg489e"
+```text
 Requirement
-
 Quote
-
 Order
-
 Production Job
 ```
 
 TeeStock-specific:
 
-```text id="fa611t"
-garment fabric
-
+```text
+fabric
 GSM
-
 print placement
-
-print dimensions
-
+print dimension
+decoration method
 color breakdown
 ```
 
@@ -2453,374 +2203,301 @@ color breakdown
 
 # 140. No Giant Universal Schema
 
-Avoid adding columns such as:
+Do not add fields such as:
 
-```text id="xj6fux"
+```text
 gsm
-
 ink_type
-
 embroidery_thread
-
 paper_size
-
 lamination
 ```
 
-to generic MGBOS Order.
-
-Use governed domain specifications.
+to generic Order merely to support every business.
 
 ---
 
-# 141. Shared Domain Test
+# 141. Shared-Domain Test
 
 A concept belongs in shared MGBOS when it:
 
-```text id="jl8yom"
+```text
 has stable semantics
-
-appears across multiple workflows/businesses
-
+appears across workflows/businesses
 requires central integrity
-
 benefits from canonical identity
 ```
 
 ---
 
-# 142. TeeStock Extension Test
+# 142. Business-Extension Test
 
-Keep business-specific when:
+Keep a concept business-specific when:
 
-```text id="nro5wd"
-meaning is apparel-specific
-
-lifecycle remains inside TeeStock
-
-no shared integrity requirement exists.
+```text
+meaning is domain-specific
+lifecycle remains local to one business
+no shared integrity requirement exists
 ```
 
 ---
 
 # 143. JARVIS Ownership Test
 
-Capability belongs primarily to JARVIS when its output is:
+A capability primarily belongs to JARVIS when the primary output is:
 
-```text id="2v0oyw"
+```text
 interpretation
-
 recommendation
-
 ranking
-
 summary
-
 draft
-
 prediction
 ```
 
-rather than business fact.
+rather than authoritative business fact.
 
 ---
 
 # 144. Automation Ownership Test
 
-Capability belongs to deterministic automation when it is:
+Use deterministic automation when work is:
 
-```text id="61e4nd"
+```text
 triggered
-
 repeatable
-
 low ambiguity
-
-rule-defined.
+rule-defined
 ```
 
 ---
 
 # 145. Provider Ownership Test
 
-Provider remains owner when fact exists only inside the external system, such as:
+Provider remains authority for provider-side facts such as:
 
-```text id="t4cc14"
+```text
 courier scan
-
-provider transaction acknowledgment
-
-GitHub CI run
+provider transaction acknowledgement
+CI run
 ```
+
+Internal business interpretation belongs to the relevant BisnisHub system.
 
 ---
 
 # 146. Founder Burden Mapping
 
-Near-term capability → burden removed:
-
-| Capability                 | Founder burden removed               |
-| -------------------------- | ------------------------------------ |
-| Lead capture               | copy/register inquiry manually       |
-| Requirement structure      | remembering missing customer data    |
-| Quote engine               | repeated pricing preparation         |
-| Vendor capability registry | remembering who can produce what     |
-| Work Order artifact        | production coordination through chat |
-| Exception tracking         | manually searching for problems      |
-| Cash/AR view               | manually reconciling finance status  |
-| Production risk view       | checking every job individually      |
-| Reminder automation        | remembering follow-ups/deadlines     |
-| Morning Briefing           | opening many systems every morning   |
-
----
-
-# 147. Highest-Leverage Missing Capability
-
-From the TeeStock + Solo-Founder audit:
-
-```text id="1zzj3k"
-OPERATIONAL EXCEPTION MANAGEMENT
-```
-
-is likely more valuable near-term than Opportunity, Project, Creator, or Catalog abstractions.
+| Capability | Founder burden removed |
+|---|---|
+| Lead → Requirement continuity | reconstructing inquiry context |
+| Requirement structure | remembering missing requirements |
+| Quote engine | repetitive pricing preparation |
+| Order lifecycle | mentally tracking overall commitment |
+| Vendor-backed assignment | remembering who is executing |
+| Assignment acknowledgement | manually confirming vendor acceptance |
+| Work Order artifact | reconstructing production instructions from chat |
+| Fulfillment readiness guard | manually deciding whether shipment is safe |
+| Operational Exception | searching for problems |
+| Cash/AR view | manually reconciling finance |
+| Production attention view | checking jobs individually |
+| Reminder automation | remembering follow-ups |
+| Morning Briefing | opening many screens every morning |
 
 ---
 
-# 148. Why
+# 147. Immediate Highest-Leverage Gaps
 
-Current MGBOS knows:
+Current evidence identifies:
 
-```text id="r72jyh"
-states
-```
-
-but founder needs:
-
-```text id="2ci0sl"
-what is abnormal right now?
+```text
+1. Operating-spine integration gaps
+2. Work Order communication
+3. Operational Exception
+4. Founder Read Models
+5. Vendor capability enrichment
 ```
 
 ---
 
-# 149. Second Highest-Leverage Gap
+# 148. Opportunity Revisit
 
-```text id="8m0fzv"
-FOUNDER READ MODELS
-```
+Measure later:
 
-Examples:
+```text
+How many qualified leads need multiple commercial pursuits?
 
-```text id="vsa9zc"
-Sales attention
+How many active pursuits need tracking independent of Lead?
 
-Production attention
-
-Cash attention
-
-Order health
-
-Vendor attention
-```
-
----
-
-# 150. Third High-Leverage Gap
-
-```text id="hecqdw"
-VENDOR CAPABILITY / ROUTING KNOWLEDGE
-```
-
-because partner production is central to TeeStock's asset-light model.
-
----
-
-# 151. Fourth High-Leverage Gap
-
-```text id="nnvx1u"
-WORK ORDER COMMUNICATION
-```
-
-because outsourced production must leave founder chat/memory.
-
----
-
-# 152. Capability Order Recommendation
-
-Before adding Opportunity/Project/Product:
-
-```text id="o6n0y7"
-1. Harden current spine
-
-2. Add Exception capability
-
-3. Add founder read models
-
-4. Add vendor capability information
-
-5. Generate Work Orders
-
-6. Automate routine reminders
-
-7. Add JARVIS read intelligence
-```
-
----
-
-# 153. Opportunity Revisit
-
-After real lead volume exists, measure:
-
-```text id="ul3051"
-How many qualified leads require multiple quote cycles?
-
-How many active pursuits need pipeline tracking independent of Lead?
-
-Does Lead → Requirement → Quote become confusing?
+Does Lead → Requirement → Quote become operationally confusing?
 ```
 
 Then decide.
 
 ---
 
-# 154. Project Revisit
+# 149. Project Revisit
 
-After real custom jobs exist, measure:
+Measure:
 
-```text id="l90qv7"
+```text
 How often does one engagement span multiple Orders?
 
-Do we need milestones independent of Order?
+Are independent milestones required?
 
-Do we need one coordination umbrella?
+Is a coordination umbrella genuinely missing?
 ```
 
 Then decide.
 
 ---
 
-# 155. Product Domain Revisit
+# 150. Product Revisit
 
-After commerce scope is locked:
+Measure:
 
-```text id="jk1ysx"
-How many reusable standardized products/SKUs launch?
+```text
+How many stable repeatable products/SKUs exist?
 
-Do inventory and channels need stable shared Product identity?
+Do channels and inventory need one shared Product identity?
 ```
 
 Then decide.
 
 ---
 
-# 156. Creator Domain Revisit
+# 151. Creator Revisit
 
-After creator pilot:
+Measure:
 
-```text id="v57gug"
+```text
 Are creator earnings recurring?
 
-Are manual calculations becoming risky?
+Are multiple creators active?
 
-Do agreements/royalties require durable lifecycle?
+Is manual financial reconciliation becoming risky?
 ```
 
 Then decide.
 
 ---
 
-# 157. Architecture Debt We Should Fix
+# 152. Current Recommended Capability Order
 
-Some active TeeStock documents currently define simplified state vocabularies for entities owned by MGBOS.
+```text
+1. Connect Lead → Requirement
 
-Rule:
+2. Complete authoritative Order lifecycle
 
-```text id="8ia7z3"
-MGBOS canonical state machines win.
+3. Connect Vendor → Production Assignment
+
+4. Reconcile Assignment acknowledgement/reassignment
+
+5. Enforce Production/QC → Fulfillment readiness
+
+6. Generate governed Work Order / SPK
+
+7. Prove clean Lead → Margin E2E
+
+8. Run Operator Acceptance Test
+
+9. Add Operational Exception
+
+10. Add Founder Read Models
+
+11. Enrich Vendor Capability
+
+12. Automate routine deterministic work
+
+13. Add JARVIS Lite read intelligence
 ```
-
-TeeStock documents should eventually reference them.
 
 ---
 
-# 158. Roadmap Shorthand Is Allowed
+# 153. State-Machine Authority
 
-TeeStock may write:
+Some TeeStock business docs use simplified lifecycle terminology.
 
-```text id="qkw8nx"
-"Lead → Quote → Order → Production"
+For MGBOS-owned transactional entities:
+
+```text
+MGBOS Business State Machines
+```
+
+are authoritative.
+
+---
+
+# 154. Roadmap Shorthand Is Allowed
+
+TeeStock may use:
+
+```text
+Lead → Quote → Order → Production
 ```
 
 as business shorthand.
 
-It should not define competing database state machines.
+It must not become a competing database lifecycle definition.
 
 ---
 
-# 159. Q4 Roadmap Reconciliation
+# 155. Q4 Roadmap Reconciliation
 
-TeeStock Q4 currently asks for:
+TeeStock Q4 requests concepts such as:
 
-```text id="m3c8gd"
+```text
 Opportunity
-
 Project
-
 Work Order
-
 Customer Case
-
 Exception
 ```
 
-This Domain Map refines that into:
+This Domain Map refines them into:
 
-```text id="pyd3jh"
+```text
 Opportunity
-→ defer pending evidence
+→ DEFERRED / EVIDENCE REQUIRED
 
 Project
-→ defer pending complexity
+→ DEFERRED / CONDITIONAL
 
 Work Order
-→ next as artifact/projection first
+→ NEXT / P0 artifact first
 
 Customer Case
-→ next-lite
+→ NEXT-LITE / P1
 
 Operational Exception
-→ next/high priority
+→ NEXT / P1 highest-leverage post-spine
 ```
 
 ---
 
-# 160. This Is Not Rejecting TeeStock Roadmap
+# 156. This Does Not Reject TeeStock Roadmap
 
-It is applying:
+It applies the rule:
 
-```text id="wq9g0e"
-BUILD CAPABILITY
-BEFORE COMPLEXITY
-```
-
-from TeeStock's own operating principles.
+> **Build the capability before adding unnecessary structural complexity.**
 
 ---
 
-# 161. Q4 Core Target Remains
+# 157. Q4 Core Target
 
-```text id="d1rgfm"
+```text
 LEAD-TO-CASH
 +
 ORDER-TO-FULFILLMENT
 ```
 
+remains unchanged.
+
 ---
 
-# 162. Canonical Q4 Spine
+# 158. Canonical Q4 System Spine
 
-Recommended actual system spine:
-
-```text id="r89s1m"
+```text
 LEAD
  ↓
 REQUIREMENT
@@ -2844,364 +2521,363 @@ SHIPMENT
 ACTUAL COST / MARGIN
 ```
 
-Alongside:
+Later cross-cutting:
 
-```text id="gybd08"
-EXCEPTION
+```text
+OPERATIONAL EXCEPTION
 ```
-
-as cross-cutting attention mechanism.
 
 ---
 
-# 163. Founder View
+# 159. Founder Control Projection
 
-Derived read model:
+Target deterministic view:
 
-```text id="hx50hk"
+```text
 TODAY
-├── Leads requiring action
-├── Quotes awaiting customer
-├── Orders blocked
-├── Payment issues
-├── Production at risk
-├── QC failures
-├── Shipments late
-└── Margin exceptions
+
+Leads requiring action
+Quotes waiting
+Orders blocked
+Payment problems
+Production at risk
+QC failures
+Shipments late
+Margin exceptions
 ```
 
 ---
 
-# 164. JARVIS View
+# 160. JARVIS Consumption Model
 
-JARVIS consumes that reality:
+JARVIS consumes trusted projections and evidence.
 
-```text id="d90s16"
-"3 items need your attention."
+It should output:
+
+```text
+"These 3 things need your attention."
 ```
 
-It does not reconstruct truth from raw chat/history.
+rather than reconstructing truth from raw chats.
 
 ---
 
-# 165. Near-Term Domain Development Freeze
+# 161. Near-Term Domain Development Freeze
 
-Until operating spine is validated:
+Until the spine is validated:
 
-```text id="8dbsmb"
+```text
 DO NOT IMPLEMENT
 ```
 
-unless evidence forces it:
+without strong new evidence:
 
-```text id="vbz9ph"
+```text
 Opportunity
-
 generic Project
-
 full Product/Catalog
-
 Creator/Royalty
-
 Affiliate
-
-Marketing Campaign domain
-
 generic Partner super-domain
-
+Marketing Campaign domain
 advanced BOM/Recipe
 ```
 
 ---
 
-# 166. Exception to Freeze
+# 162. Freeze Exception
 
-A deferred domain may be promoted immediately if:
+A deferred domain may be promoted if it becomes:
 
-```text id="cgcs7q"
-real launch blocker
-
-integrity risk
-
-founder burden cannot otherwise be addressed
-
-business model explicitly requires it.
+```text
+a real launch blocker
+a business-integrity risk
+an irreducible founder burden
+a hard requirement of the selected business model
 ```
 
 ---
 
-# 167. Definition of Done — Core Spine
+# 163. Definition of Done — Core Spine
 
-Before expanding domains:
+Before significant domain expansion:
 
-```text id="c1sdsd"
-one synthetic lead
-can flow end-to-end
+```text
+one Lead
+can continue into Requirement
 
-one quote can be accepted
+one Quote
+can be accepted
 
-one order can be tracked
+one Order
+can progress through governed lifecycle
 
-one payment can be recorded
+one Payment
+can be recorded and allocated
 
-one production job can be assigned
+one Production Job
+can be assigned to a Vendor
 
-one QC result can be captured
+one Assignment
+can be acknowledged
 
-one shipment can complete
+one QC result
+can govern readiness
 
-one actual margin can be inspected
+one Shipment
+can complete safely
+
+one Actual Margin
+can be inspected
+
+one Order
+can complete
 ```
 
 ---
 
-# 168. Definition of Done — Founder Leverage
+# 164. Definition of Done — Founder Leverage
 
-System can answer:
+The system can answer:
 
-```text id="xfm3fb"
+```text
 What needs action?
-
 What is late?
-
 What is blocked?
-
 What is unpaid?
-
 What is risky?
-
 What needs Rizky?
 ```
 
-without manual database investigation.
+without database investigation.
 
 ---
 
-# 169. Definition of Done — Partner Coordination
+# 165. Definition of Done — Partner Coordination
 
-For a real outsourced job:
+For outsourced work:
 
-```text id="6y3upx"
-partner
-
+```text
+vendor
 scope
-
 specification
-
 deadline
-
-rate basis
-
+commercial basis
 acknowledgement
-
 status
-
 QC
 ```
 
-are system-visible.
+are visible in governed system data/artifacts.
 
 ---
 
-# 170. Definition of Done — Automation
+# 166. Definition of Done — Automation
 
-At least selected routine operations no longer require founder memory.
+Selected routine actions no longer require founder memory.
 
 Examples:
 
-```text id="xw2anj"
+```text
 quote follow-up
-
 payment reminder
-
+vendor acknowledgement reminder
 production deadline alert
-
 shipment notification
 ```
 
 ---
 
-# 171. Definition of Done — JARVIS Lite
+# 167. Definition of Done — JARVIS Lite
 
-JARVIS can read:
+JARVIS reads trusted MGBOS projections and can produce:
 
-```text id="q4t8zv"
-trusted MGBOS projections
+```text
+Morning Briefing
+Exception Summary
+Recommendation
+Draft
 ```
 
-and produce:
-
-```text id="0a7u3p"
-business briefing
-
-exception summary
-
-recommendation
-```
-
-without mutation.
+without becoming a mutation authority.
 
 ---
 
-# 172. Current Capability Heatmap
+# 168. Current Capability Heatmap
 
-```text id="x81ycj"
-                    NOW      NEXT      LATER
+```text
+                              NOW        NEXT
 
-Customer             ███
-Lead                 ███
-Requirement          ███
-Quote                ███
-Order                ██▒
-Payment              ███
-Production           ███
-Vendor               ███
-QC                   ███
-Inventory            ███
-Procurement          ███
-Shipment             ███
+Customer                     ███
+Lead                         ██▒  → continuity
+Requirement                  ███
+Quote                        ███
+Order                        ██▒  → lifecycle
+Payment                      ███
+Production                   ███
+Production Assignment        ██▒  → vendor/acceptance
+Vendor                       ██▒  → integration
+QC                           ███
+Shipment                     ██▒  → readiness
+Inventory                    ███
+Procurement                  ███
+Goods Receipt                ███
+Vendor Bills                 ███
+Cost / Margin                ███
 
-Exception                      ███
-Customer Case                  ██▒
-Vendor Capability              ██▒
-Founder Read Models            ███
-Work Order Artifact            ███
-Automation                     ██▒
-JARVIS Lite                    ██▒
+Work Order Artifact                     ███ P0
+Operational Exception                   ███ P1
+Founder Read Models                     ███ P1
+Vendor Capability Expansion             ██▒ P1
+Customer Case Lite                      ██▒ P1
+Automation                              ██▒ P2
+JARVIS Lite                             ██▒ P3
 
-Opportunity                              ▒
-Project                                  ▒
-Product/Catalog                          ▒
-Returns                                  ▒
-Creator                                  ▒
-Royalty                                  ▒
-Affiliate                                ▒
-Advanced Partner                         ▒
-BOM / Recipe                             ▒
+Opportunity                                      ▒
+Project                                          ▒
+Product / Catalog                                ▒
+Returns                                          ▒
+Creator / Royalty                                ▒
+Affiliate                                        ▒
+Advanced Partner                                 ▒
+BOM / Recipe                                     ▒
+```
+
+Legend:
+
+```text
+███ materially established
+██▒ materially present but incomplete for target workflow
+▒   deferred / future
 ```
 
 ---
 
-# 173. Architectural Invariants
+# 169. Architectural Invariants
 
 1. MGBOS grows from demonstrated operational need.
-2. TeeStock business documentation does not automatically define MGBOS schema.
-3. CURRENT means materially implemented in active MGBOS.
-4. Future concepts are not represented as current truth.
-5. A capability does not always require a new root entity.
-6. Existing aggregates should be reused before creating new ones.
-7. Lead → Requirement → Quote is sufficient until Opportunity proves necessary.
-8. Order + Production Jobs are sufficient until Project proves necessary.
-9. Work Order should begin as governed operational artifact unless independent lifecycle proves necessary.
-10. Vendor is sufficient for physical production partners until broader Partner abstraction proves necessary.
-11. Full Product/Variant/SKU domain is not required for custom-service operations.
-12. Product domain becomes important when repeatable commerce requires stable product identity.
-13. Creator/Royalty infrastructure is deferred until real creator economics exist.
-14. Business exceptions deserve explicit persistent representation.
-15. Exceptions do not replace domain state.
-16. Customer cases and internal operational exceptions remain conceptually separate.
-17. Founder read models are projections, not sources of truth.
-18. JARVIS recommendations are not transactional truth.
-19. Automation cannot own business state.
-20. External provider facts require internal interpretation.
-21. Physical reality requires observation/evidence.
-22. Business-specific specifications should not pollute shared schemas unnecessarily.
-23. Generic shared abstractions require stable cross-workflow meaning.
-24. Domain complexity must earn itself through operating leverage.
-25. The Q4 operating spine takes precedence over speculative platform breadth.
+2. Business documentation does not automatically define MGBOS schema.
+3. `CURRENT` means materially represented in active MGBOS.
+4. `CURRENT` does not automatically mean operationally complete.
+5. Future concepts must not be represented as current truth.
+6. A capability does not always require a new entity.
+7. Existing aggregates should be reused before creating new ones.
+8. Lead → Requirement → Quote is sufficient until Opportunity proves necessary.
+9. Order + Production Jobs are sufficient until Project proves necessary.
+10. Work Order begins as governed artifact unless independent lifecycle proves otherwise.
+11. Vendor remains sufficient for physical partners until broader Partner abstraction proves necessary.
+12. Goods Receipt is already a current physical receipt capability.
+13. Full Product/Variant/SKU is not required for custom-service operations.
+14. Product domain becomes important when stable commerce requires reusable product identity.
+15. Creator/Royalty infrastructure is deferred until creator economics are real and recurring.
+16. Operational Exception should follow a trustworthy operating spine.
+17. Exception does not replace domain state.
+18. Customer Case and Operational Exception remain conceptually distinct.
+19. Founder read models are projections, not sources of truth.
+20. JARVIS recommendations are not transactional truth.
+21. Automation cannot own business state.
+22. External provider facts require internal interpretation.
+23. Physical reality requires observation/evidence.
+24. Business-specific specifications should not unnecessarily pollute generic schemas.
+25. Generic abstractions require stable repeated meaning.
+26. Domain complexity must earn itself through operating leverage.
+27. Current operating-spine integrity takes precedence over speculative breadth.
 
 ---
 
-# 174. Canonical Domain Model
+# 170. Canonical Ownership Map
 
-```text id="9o7wiw"
-                     BUSINESS LAYER
-                         TeeStock
-                            │
-              requirements / policies
-                            │
-                            ▼
-                         MGBOS
-             authoritative operating truth
-                            │
-       ┌────────────────────┼─────────────────────┐
-       │                    │                     │
-       ▼                    ▼                     ▼
-    CURRENT              NEXT                 DEFERRED
- Customer             Exception             Opportunity
- Lead                 Read Models           Project
- Requirement          Vendor Capability     Product/Catalog
- Quote                Work Order            Creator/Royalty
- Order                Customer Case Lite    Affiliate
- Payment                                    Advanced Partner
- Production                                 BOM/Recipe
- QC
- Shipment
- Inventory
- Procurement
+```text
+                  BUSINESS LAYER
+                       │
+          requirements / policies
+                       │
+                       ▼
+                     MGBOS
+          governed operational truth
+                       │
+       ┌───────────────┼────────────────┐
+       │               │                │
+       ▼               ▼                ▼
+    CURRENT          NEXT            DEFERRED
+       │               │                │
+Customer          Work Order        Opportunity
+Lead              Exception         Project
+Requirement       Read Models       Product/Catalog
+Quote             Customer Case     Creator/Royalty
+Order             Vendor Capability Affiliate
+Production                           Advanced Partner
+Assignment                           BOM/Recipe
+Vendor
+QC
+Invoice/Payment
+Shipment
+Inventory
+Procurement
+Goods Receipt
+Cost/Margin
        │
-       └────────────────────┬─────────────────────┘
-                            ▼
-                         JARVIS
-                 intelligence / decisions
-                            │
-                            ▼
-                       AUTOMATION
-                            │
-                            ▼
-                PROVIDERS / PARTNERS
+       └───────────────┬────────────────┘
+                       ▼
+                    JARVIS
+              intelligence / decisions
+                       │
+                       ▼
+                  AUTOMATION
+                       │
+                       ▼
+              PROVIDERS / PARTNERS
 ```
 
 ---
 
-# 175. Implementation North Star
+# 171. Implementation North Star
 
-The next question is no longer:
+The question is not:
 
-> **“Apa lagi entity TeeStock yang bisa kita masukkan?”**
+> **What additional TeeStock entities can we add?**
 
-It becomes:
+The question is:
 
-> **“Dengan domain yang sudah ada, bisakah satu order nyata berjalan end-to-end tanpa Rizky menjadi manual router?”**
-
-If the answer is:
-
-```text id="cwb56s"
-NO
-```
-
-fix the spine first.
+> **Can one real order move end-to-end through the domains we already have without Rizky becoming the manual router between them?**
 
 If:
 
-```text id="g5iqkj"
+```text
+NO
+```
+
+fix the spine.
+
+If:
+
+```text
 YES
 ```
 
-then expand based on actual bottlenecks.
+expand only where repeated real operating evidence justifies it.
 
 ---
 
-# 176. Final Principle
+# 172. Final Principle
 
 > **MGBOS should be exactly as complex as necessary to keep the business simple for the founder.**
 
-The wrong direction:
+Wrong:
 
-```text id="jlvbg3"
-TEEStock has 80 future concepts
+```text
+future business concepts
         ↓
-build 80 entities
+implement all entities
         ↓
-huge ERP
+large ERP
         ↓
-solo founder maintains software
-instead of business
+founder maintains software complexity
 ```
 
-The desired direction:
+Desired:
 
-```text id="arobq0"
+```text
 REAL BUSINESS FLOW
         ↓
 REPEATED OPERATIONAL NEED

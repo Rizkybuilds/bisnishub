@@ -1,0 +1,1795 @@
+Gue asumsikan **“AntiGraphity” yang lo maksud adalah Google Antigravity**. Kalau iya, format kerja yang paling cocok memang **satu task implementation per prompt**, karena Antigravity dirancang untuk agentic coding yang bisa membaca workspace, menjalankan terminal, browser, test, dan memverifikasi hasil. :chatgpt-content-reference{index="0"}
+
+Ada satu prinsip yang gue mau kunci dulu:
+
+> **Dokumentasi disimpan berdasarkan siapa yang memiliki authority atas konsep tersebut, bukan berdasarkan siapa yang sedang memakai dokumennya.**
+
+Jadi TeeStock tidak menyimpan canonical MGBOS state machine. MGBOS tidak menyimpan strategi brand TeeStock. JARVIS tidak menyimpan business truth. Catatan sesi tidak menjadi canonical architecture.
+
+Berikut target directory yang menurut gue paling sehat.
+
+# BisnisHub — Ideal Documentation & Repository Directory Architecture v1.0
+
+## 1. Target Repository
+
+```text
+bisnishub/
+│
+├── README.md
+├── AGENTS.md
+│
+├── docs/
+│   ├── README.md
+│   │
+│   ├── governance/
+│   │   ├── documentation-constitution.md
+│   │   ├── canonical-source-map.md
+│   │   ├── cross-system-risk-classification.md
+│   │   ├── autonomy-levels.md
+│   │   ├── approval-policy.md
+│   │   ├── evidence-provenance-model.md
+│   │   ├── data-classification-information-handling.md
+│   │   ├── time-scheduling-semantics.md
+│   │   ├── notification-governance.md
+│   │   └── knowledge-lifecycle-governance.md
+│   │
+│   ├── architecture/
+│   │   ├── master-system-blueprint.md
+│   │   ├── system-boundaries.md
+│   │   ├── architectural-laws.md
+│   │   └── interoperability-principles.md
+│   │
+│   ├── operating-model/
+│   │   ├── solo-founder-operating-system.md
+│   │   └── future-organization-operating-model.md
+│   │
+│   ├── standards/
+│   │   ├── identity-id-conventions.md
+│   │   ├── api-contract-conventions.md
+│   │   ├── schema-versioning.md
+│   │   ├── error-semantics.md
+│   │   ├── money-conventions.md
+│   │   └── date-time-conventions.md
+│   │
+│   ├── decisions/
+│   │   ├── README.md
+│   │   └── XXX-cross-system-decision.md
+│   │
+│   ├── roadmaps/
+│   │   ├── README.md
+│   │   ├── solo-founder-launch-roadmap.md
+│   │   └── ecosystem-capability-roadmap.md
+│   │
+│   ├── runbooks/
+│   │   └── cross-system/
+│   │
+│   └── templates/
+│       ├── canonical-document-template.md
+│       ├── adr-template.md
+│       ├── implementation-plan-template.md
+│       ├── implementation-audit-template.md
+│       ├── runbook-template.md
+│       └── incident-review-template.md
+│
+├── systems/
+│   │
+│   ├── mgbos/
+│   │   ├── README.md
+│   │   ├── AGENTS.md
+│   │   │
+│   │   ├── apps/
+│   │   ├── packages/
+│   │   ├── supabase/
+│   │   ├── scripts/
+│   │   ├── automation/
+│   │   │
+│   │   └── docs/
+│   │       ├── README.md
+│   │       │
+│   │       ├── architecture/
+│   │       │   ├── README.md
+│   │       │   ├── domain-map-capability-ownership.md
+│   │       │   ├── canonical-data-model.md
+│   │       │   ├── business-state-machines.md
+│   │       │   ├── business-invariants.md
+│   │       │   ├── command-event-model.md
+│   │       │   ├── permission-authorization-model.md
+│   │       │   └── integration-boundaries.md
+│   │       │
+│   │       ├── implementation/
+│   │       │   ├── README.md
+│   │       │   │
+│   │       │   ├── phase-1-operating-spine/
+│   │       │   │   ├── README.md
+│   │       │   │   ├── operating-spine-plan.md
+│   │       │   │   ├── current-operating-spine-audit.md
+│   │       │   │   ├── backlog.md
+│   │       │   │   ├── synthetic-scenarios.md
+│   │       │   │   ├── operator-acceptance-test.md
+│   │       │   │   └── completion-report.md
+│   │       │   │
+│   │       │   ├── phase-2-founder-control/
+│   │       │   │   ├── README.md
+│   │       │   │   ├── implementation-plan.md
+│   │       │   │   ├── backlog.md
+│   │       │   │   └── completion-report.md
+│   │       │   │
+│   │       │   ├── phase-3-automation/
+│   │       │   ├── phase-4-jarvis-lite/
+│   │       │   └── phase-5-launch-readiness/
+│   │       │
+│   │       ├── product/
+│   │       │   ├── README.md
+│   │       │   ├── teestock-development-plan.md
+│   │       │   ├── teestock-asset-readiness.md
+│   │       │   └── ...
+│   │       │
+│   │       ├── adr/
+│   │       │   ├── README.md
+│   │       │   └── 001-*.md
+│   │       │
+│   │       ├── engineering/
+│   │       │   ├── README.md
+│   │       │   ├── maintenance-policy.md
+│   │       │   ├── operational-readiness.md
+│   │       │   │
+│   │       │   ├── agent-system/
+│   │       │   │   └── ...
+│   │       │   │
+│   │       │   └── reports/
+│   │       │       ├── mgbos-001-report.md
+│   │       │       ├── mgbos-002-report.md
+│   │       │       └── ...
+│   │       │
+│   │       ├── runbooks/
+│   │       │   ├── local-database.md
+│   │       │   ├── backup-and-restore.md
+│   │       │   ├── monitoring-and-incidents.md
+│   │       │   └── release-and-recovery.md
+│   │       │
+│   │       └── evidence/
+│   │           ├── README.md
+│   │           ├── phase-1/
+│   │           ├── phase-2/
+│   │           └── releases/
+│   │
+│   ├── jarvis/
+│   │   ├── README.md
+│   │   ├── src/
+│   │   ├── registries/
+│   │   ├── prompts/
+│   │   ├── evals/
+│   │   │
+│   │   └── docs/
+│   │       ├── README.md
+│   │       ├── charter.md
+│   │       ├── architecture.md
+│   │       ├── core-runtime.md
+│   │       │
+│   │       ├── architecture/
+│   │       │   ├── agent-registry.md
+│   │       │   ├── skill-registry.md
+│   │       │   ├── tool-capability.md
+│   │       │   ├── memory.md
+│   │       │   ├── model-gateway-routing.md
+│   │       │   ├── entity-identity-resolution.md
+│   │       │   ├── event-proactive-intelligence.md
+│   │       │   ├── execution-verification-recovery.md
+│   │       │   ├── observability-audit-incident.md
+│   │       │   ├── security-secrets-environment.md
+│   │       │   ├── data-privacy-retention.md
+│   │       │   ├── backup-disaster-recovery-business-continuity.md
+│   │       │   ├── ai-evaluation-regression-autonomy-promotion.md
+│   │       │   ├── cost-resource-finops.md
+│   │       │   ├── lifecycle-versioning-deprecation.md
+│   │       │   ├── feedback-learning-continuous-improvement.md
+│   │       │   ├── human-accountability-ownership-operating-model.md
+│   │       │   ├── command-center-decision-experience.md
+│   │       │   └── integration-api-interoperability.md
+│   │       │
+│   │       ├── implementation/
+│   │       │   ├── jarvis-lite/
+│   │       │   └── future/
+│   │       │
+│   │       ├── evaluations/
+│   │       ├── runbooks/
+│   │       ├── adr/
+│   │       └── evidence/
+│   │
+│   └── kaskita/
+│       └── ...
+│
+├── bisnis/
+│   │
+│   ├── teestock/
+│   │   ├── README.md
+│   │   │
+│   │   ├── 00-foundation/
+│   │   │   ├── teestock-master-definition.md
+│   │   │   ├── documentation-governance.md
+│   │   │   ├── decision-register.md
+│   │   │   └── glossary.md
+│   │   │
+│   │   ├── 01-strategy/
+│   │   │   ├── business-thesis.md
+│   │   │   ├── business-model.md
+│   │   │   ├── ecosystem-architecture.md
+│   │   │   └── growth-strategy.md
+│   │   │
+│   │   ├── 02-brand/
+│   │   ├── 03-commerce/
+│   │   ├── 04-services/
+│   │   ├── 05-originals/
+│   │   ├── 06-programs/
+│   │   ├── 07-operations/
+│   │   ├── 08-finance/
+│   │   ├── 09-marketing/
+│   │   ├── 10-product-tech/
+│   │   │
+│   │   ├── 11-system-requirements/
+│   │   │   ├── README.md
+│   │   │   ├── business-domain-requirements.md
+│   │   │   ├── entity-requirements.md
+│   │   │   ├── event-requirements.md
+│   │   │   ├── mgbos-integration-requirements.md
+│   │   │   ├── analytics-requirements.md
+│   │   │   └── sku-id-business-conventions.md
+│   │   │
+│   │   ├── 12-legal-ip/
+│   │   ├── 13-metrics-experiments/
+│   │   ├── 14-roadmap/
+│   │   │   ├── master-roadmap.md
+│   │   │   ├── capability-roadmap.md
+│   │   │   └── current-quarter.md
+│   │   │
+│   │   ├── 15-runbooks/
+│   │   │   ├── sales/
+│   │   │   ├── operations/
+│   │   │   ├── production/
+│   │   │   ├── customer-service/
+│   │   │   └── finance/
+│   │   │
+│   │   └── archive/
+│   │
+│   ├── multigraph/
+│   ├── rizkybuild/
+│   └── ...
+│
+├── .agents/
+│   ├── README.md
+│   ├── roles/
+│   ├── skills/
+│   ├── workflows/
+│   └── policies/
+│
+├── tools/
+│
+├── catatan/
+│   ├── README.md
+│   ├── sesi/
+│   │   └── YYYY-MM-DD - *.md
+│   ├── riset/
+│   └── scratch/
+│
+└── archive/
+    ├── teestock-v1/
+    ├── mgbos-prototypes/
+    └── retired/
+```
+
+# 2. Authority Rules
+
+## `/docs/`
+
+Hanya untuk konsep yang berlaku lintas sistem atau lintas bisnis.
+
+Contoh:
+
+```text
+Documentation Constitution
+Canonical Source Map
+Master System Blueprint
+Architectural Laws
+Risk
+Autonomy
+Approval
+Evidence
+Data Classification
+Time Semantics
+Notification Governance
+Solo-Founder Operating Model
+```
+
+Rule:
+
+```text
+CROSS-SYSTEM
+→ /docs/
+```
+
+---
+
+# 3. `/systems/<system>/docs/`
+
+Untuk konsep yang hanya dimiliki satu sistem.
+
+Contoh MGBOS:
+
+```text
+Data Model
+State Machines
+Invariants
+Commands
+Permissions
+Domain Map
+```
+
+Contoh JARVIS:
+
+```text
+Agent Registry
+Skill Registry
+Memory
+Model Gateway
+Runtime
+Evaluation
+Execution
+```
+
+Rule:
+
+```text
+SYSTEM SEMANTICS
+→ /systems/<system>/docs/
+```
+
+---
+
+# 4. `/bisnis/<business>/`
+
+Untuk kebenaran bisnis.
+
+Contoh TeeStock:
+
+```text
+Business Model
+Brand
+Services
+Commerce
+Originals
+Programs
+Operating Policy
+Pricing Policy
+Marketing Strategy
+Legal/IP Requirements
+KPI
+Roadmap
+```
+
+Rule:
+
+```text
+WHAT THE BUSINESS WANTS / MEANS
+→ /bisnis/<business>/
+```
+
+---
+
+# 5. TeeStock `11-data-mgbos`
+
+Idealnya secara bertahap diganti menjadi:
+
+```text
+11-system-requirements/
+```
+
+karena nama:
+
+```text
+11-data-mgbos/
+```
+
+mudah membuat kesan bahwa TeeStock memiliki canonical MGBOS model.
+
+Isi lama:
+
+```text
+canonical-data-model.md
+entity-hierarchy.md
+event-model.md
+mgbos-integration.md
+```
+
+idealnya dipromosikan menjadi:
+
+```text
+business-domain-requirements.md
+entity-requirements.md
+event-requirements.md
+mgbos-integration-requirements.md
+```
+
+Artinya:
+
+```text
+TEEStock:
+"I need this."
+
+MGBOS:
+"This is how the system canonically implements it."
+```
+
+---
+
+# 6. Implementation Planning
+
+Implementation plan jangan ditempatkan di business roadmap.
+
+Simpan dekat sistem yang akan mengimplementasikannya.
+
+Contoh:
+
+```text
+systems/mgbos/docs/implementation/
+```
+
+Karena:
+
+```text
+TeeStock roadmap
+= what business needs next
+
+MGBOS implementation plan
+= how software will provide it
+```
+
+---
+
+# 7. Phase Structure
+
+Setiap implementation phase idealnya mempunyai:
+
+```text
+README.md
+implementation-plan.md
+audit.md
+backlog.md
+test-scenarios.md
+acceptance-test.md
+completion-report.md
+```
+
+Tidak semuanya harus langsung dibuat.
+
+Hanya buat ketika dibutuhkan.
+
+---
+
+# 8. Engineering Reports
+
+Current:
+
+```text
+systems/mgbos/docs/engineering/mgbos-001-report.md
+...
+```
+
+masih valid.
+
+Ideal target:
+
+```text
+systems/mgbos/docs/engineering/reports/
+```
+
+supaya root `engineering/` tidak penuh ratusan file.
+
+Tidak perlu buru-buru pindah kalau referensinya banyak.
+
+---
+
+# 9. Evidence
+
+Bedakan:
+
+```text
+PLAN
+```
+
+dari:
+
+```text
+PROOF
+```
+
+Ideal:
+
+```text
+systems/mgbos/docs/evidence/
+```
+
+untuk:
+
+```text
+test results
+acceptance evidence
+release evidence
+screenshots/reference
+certification result
+```
+
+Jangan jadikan implementation report sebagai architecture authority.
+
+---
+
+# 10. Runbooks
+
+System operational runbooks:
+
+```text
+systems/<system>/docs/runbooks/
+```
+
+Business SOP:
+
+```text
+bisnis/<business>/15-runbooks/
+```
+
+Contoh:
+
+```text
+MGBOS database restore
+→ systems/mgbos/docs/runbooks/
+
+Cara menangani customer complaint TeeStock
+→ bisnis/teestock/15-runbooks/customer-service/
+```
+
+---
+
+# 11. ADR
+
+Keputusan arsitektur sistem:
+
+```text
+systems/mgbos/docs/adr/
+```
+
+atau:
+
+```text
+systems/jarvis/docs/adr/
+```
+
+Keputusan yang mengikat semua sistem:
+
+```text
+docs/decisions/
+```
+
+---
+
+# 12. Session Notes
+
+Semua:
+
+```text
+catatan/sesi/
+```
+
+status default:
+
+```text
+HISTORICAL
+DESIGN_INPUT
+```
+
+Bukan canonical.
+
+Setelah keputusan matang:
+
+```text
+session note
+↓
+promote
+↓
+canonical doc
+```
+
+Catatan lama tetap dipertahankan sebagai provenance.
+
+---
+
+# 13. Archive
+
+Retired implementation/document:
+
+```text
+/archive/
+```
+
+Business-specific historical document:
+
+```text
+/bisnis/teestock/archive/
+```
+
+Jangan hapus history hanya demi directory terlihat bersih.
+
+---
+
+# 14. Machine-Readable Runtime Files
+
+Jangan taruh runtime registry sebagai markdown documentation.
+
+Contoh nanti:
+
+```text
+systems/jarvis/registries/
+    agents/
+    skills/
+    tools/
+    models/
+```
+
+Documentation menjelaskan kontraknya.
+
+Registry machine-readable menjalankannya.
+
+---
+
+# 15. Prompt Runtime
+
+Production JARVIS prompts nanti:
+
+```text
+systems/jarvis/prompts/
+```
+
+bukan:
+
+```text
+docs/
+```
+
+Docs menjelaskan prompt governance.
+
+Prompt file adalah runtime component.
+
+---
+
+# 16. Antigravity Prompts
+
+Prompt implementation Antigravity tidak perlu menjadi canonical documentation.
+
+Idealnya task bersumber dari:
+
+```text
+canonical docs
++
+implementation backlog
+```
+
+Prompt itu hanya:
+
+```text
+execution instruction
+```
+
+Kalau ingin menyimpan task history, gunakan:
+
+```text
+catatan/agent-runs/
+```
+
+atau task system Antigravity/GitHub.
+
+Jangan membuat:
+
+```text
+docs/prompts/task-001.md
+docs/prompts/task-002.md
+...
+```
+
+sampai repository penuh prompt sementara.
+
+---
+
+# 17. Placement Dokumen yang Baru Kita Buat
+
+## Solo-Founder Operating System
+
+```text
+docs/operating-model/
+solo-founder-operating-system.md
+```
+
+Canonical ID:
+
+```text
+bisnishub.operating-model.solo-founder-os
+```
+
+---
+
+## MGBOS Domain Map & Capability Ownership
+
+```text
+systems/mgbos/docs/architecture/
+domain-map-capability-ownership.md
+```
+
+---
+
+## Solo-Founder Implementation Roadmap
+
+```text
+docs/roadmaps/
+solo-founder-launch-roadmap.md
+```
+
+Karena roadmap ini mengoordinasikan:
+
+```text
+TeeStock
+MGBOS
+Automation
+JARVIS
+Founder
+```
+
+---
+
+## Phase 1 Implementation Plan
+
+```text
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
+operating-spine-plan.md
+```
+
+---
+
+## Phase 1A Audit
+
+```text
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
+current-operating-spine-audit.md
+```
+
+---
+
+## Phase 1 Backlog
+
+```text
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
+backlog.md
+```
+
+---
+
+## Synthetic Business Tests
+
+```text
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
+synthetic-scenarios.md
+```
+
+---
+
+## Operator Acceptance Test
+
+```text
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
+operator-acceptance-test.md
+```
+
+---
+
+## Phase Completion Report
+
+```text
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
+completion-report.md
+```
+
+---
+
+# 18. Future Phase Placement
+
+```text
+systems/mgbos/docs/implementation/
+
+├── phase-1-operating-spine/
+├── phase-2-founder-control/
+├── phase-3-automation/
+├── phase-4-jarvis-lite/
+└── phase-5-launch-readiness/
+```
+
+Important nuance:
+
+Phase 4 implementation yang benar-benar JARVIS-specific nantinya juga punya detail di:
+
+```text
+systems/jarvis/docs/implementation/jarvis-lite/
+```
+
+Sedangkan MGBOS phase doc hanya menjelaskan dependency/integration dari sisi MGBOS.
+
+---
+
+# 19. Documentation Dependency Direction
+
+```text
+ROOT GOVERNANCE
+      ↓
+SYSTEM ARCHITECTURE
+      ↓
+BUSINESS REQUIREMENTS
+      ↓
+IMPLEMENTATION PLAN
+      ↓
+CODE
+      ↓
+TEST / EVIDENCE
+      ↓
+COMPLETION REPORT
+```
+
+Not:
+
+```text
+completion report
+→ becomes architecture
+```
+
+---
+
+# 20. Directory Decision Rule
+
+Saat ragu menaruh dokumen, tanyakan:
+
+```text
+Apakah konsep ini berlaku ke semua sistem?
+→ docs/
+
+Apakah hanya mengatur MGBOS?
+→ systems/mgbos/docs/
+
+Apakah hanya mengatur JARVIS?
+→ systems/jarvis/docs/
+
+Apakah mendefinisikan TeeStock sebagai bisnis?
+→ bisnis/teestock/
+
+Apakah hanya catatan diskusi?
+→ catatan/
+
+Apakah sudah retired?
+→ archive/
+```
+
+---
+
+# 21. End State
+
+Target akhirnya bukan repository dengan dokumentasi terbanyak.
+
+Target:
+
+```text
+ONE CONCEPT
+     ↓
+ONE OWNER
+     ↓
+ONE CANONICAL LOCATION
+     ↓
+CLEAR IMPLEMENTATION
+     ↓
+CLEAR EVIDENCE
+```
+
+Dengan struktur ini, AI maupun manusia dapat menjawab:
+
+```text
+"Kalau gue mau mengubah X,
+dokumen mana yang harus gue percaya?"
+```
+
+tanpa membaca seluruh repository.
+
+Ada satu perubahan penting yang gue sarankan: **jangan langsung merombak semua path sekaligus.** Terapkan struktur target di atas secara bertahap. File aktif yang tidak menimbulkan ambiguity boleh tetap dulu; yang paling penting kita benahi adalah dokumen baru dan lokasi yang memang menciptakan authority conflict.
+
+Untuk implementasinya, pola paling aman dengan Antigravity adalah **1 prompt = 1 bounded engineering task**. Jangan kasih “implement semua P0” dalam satu prompt. Dengan begitu drift lebih mudah dilihat dan rollback lebih gampang.
+
+# Google Antigravity — MGBOS Phase 1 Implementation Prompt Pack
+
+## MASTER RULE — Tempelkan ke Setiap Task Besar
+
+```text
+You are implementing MultiGraph Business OS (MGBOS) inside the BisnisHub repository.
+
+Repository:
+Rizkybuilds/bisnishub
+
+Working system:
+systems/mgbos
+
+Before changing code:
+
+1. Read the root AGENTS.md.
+2. Read systems/mgbos/AGENTS.md.
+3. Inspect the current implementation before proposing changes.
+4. Read the relevant canonical documentation under:
+   - docs/governance/
+   - docs/architecture/
+   - systems/mgbos/docs/architecture/
+   - systems/mgbos/docs/implementation/
+5. Treat current canonical documents as authority over historical session notes.
+6. Do not redesign MGBOS from scratch.
+7. Reuse existing entities, RPCs, domain services, validation, permissions and UI patterns wherever possible.
+8. Do not introduce new infrastructure unless strictly necessary.
+9. Do not introduce new root business entities unless explicitly required by the task.
+10. Never modify an already-applied historical migration to change behavior. Create a new forward migration.
+11. Preserve:
+    - organization isolation
+    - RLS
+    - RBAC
+    - integer IDR money semantics
+    - immutable historical snapshots
+    - Cost Trilogy
+    - audit history
+    - command-based mutations
+    - idempotency where already supported
+12. Do not use direct frontend table mutation for governed business state.
+13. Do not let n8n or AI own business truth.
+14. Do not add speculative abstractions.
+15. Keep the implementation compatible with the existing modular monolith.
+
+For every task:
+
+A. Audit current behavior.
+B. State what already exists.
+C. State the smallest required change.
+D. Implement it.
+E. Add or update domain tests.
+F. Add or update validation tests.
+G. Add or update permission tests if authority changes.
+H. Add pgTAP/database tests for database business rules.
+I. Update the relevant E2E scenario.
+J. Run the full MGBOS verification suite.
+K. Run both production builds.
+L. Review your own diff for:
+   - state corruption
+   - cross-org leakage
+   - financial integrity
+   - stale UI assumptions
+   - duplicate economic effects
+   - missing audit evidence
+M. Do not claim completion if verification did not actually run.
+
+At the end provide:
+
+IMPLEMENTED
+FILES CHANGED
+MIGRATION
+TESTS RUN
+VERIFICATION RESULT
+KNOWN LIMITATIONS
+NEXT DEPENDENCY
+
+Do not continue into the next backlog item.
+Stop after this task is fully verified.
+```
+
+---
+
+# PROMPT 0 — Documentation Directory Alignment
+
+```text
+Task:
+Align BisnisHub documentation directories with the approved target documentation architecture.
+
+Do not change application behavior.
+
+Objectives:
+
+1. Inspect current repository documentation paths first.
+2. Create missing navigation README files where useful.
+3. Create the following target directories if they do not exist:
+
+docs/operating-model/
+docs/roadmaps/
+docs/standards/
+docs/templates/
+
+systems/mgbos/docs/implementation/
+systems/mgbos/docs/implementation/phase-1-operating-spine/
+systems/mgbos/docs/engineering/reports/
+systems/mgbos/docs/evidence/
+
+4. Do not blindly move existing canonical documents that already have many references.
+5. Move or create only documents explicitly approved for the new structure.
+6. Preserve Git history where possible.
+7. Repair relative documentation links affected by any move.
+8. Search the repository for stale references after changes.
+9. Do not move historical session notes into canonical folders.
+10. Do not change code or database migrations.
+
+Approved new canonical placements:
+
+docs/operating-model/solo-founder-operating-system.md
+
+systems/mgbos/docs/architecture/domain-map-capability-ownership.md
+
+docs/roadmaps/solo-founder-launch-roadmap.md
+
+systems/mgbos/docs/implementation/phase-1-operating-spine/operating-spine-plan.md
+
+systems/mgbos/docs/implementation/phase-1-operating-spine/current-operating-spine-audit.md
+
+Do not invent missing document content.
+If source content does not exist in the repository yet, report it instead of fabricating it.
+
+Verification:
+- all internal Markdown links affected by the changes resolve
+- no duplicate canonical document is created
+- canonical IDs remain unique
+- git diff is documentation-only
+
+Return a directory-change report and stop.
+```
+
+---
+
+# PROMPT 1 — P0-01 Lead → Requirement Continuation
+
+```text
+Task:
+Implement P0-01 — Lead → Requirement Continuation for MGBOS.
+
+Problem:
+
+The Lead domain already exists and is mature.
+The Requirement aggregate already supports lead_id and customer_account_id.
+
+However, the normal operator workflow still requires manual navigation between Leads and Requirements.
+
+Goal:
+
+A qualified/converted Lead should be able to continue into Requirement creation without Rizky manually reconstructing context.
+
+Required behavior:
+
+1. Inspect current Lead and Requirement implementation before coding.
+2. Reuse existing Lead, Customer and Requirement entities.
+3. Do NOT create Opportunity.
+4. Add a clear "Create / Continue to Requirement" action from the appropriate Lead state.
+5. Prefill the Requirement creation flow with available trusted Lead context:
+   - lead_id
+   - customer_account_id if linked
+   - title / inquiry context
+   - estimated quantity
+   - estimated budget where semantically compatible
+6. User must be able to review/edit the values before creating the Requirement.
+7. Missing information must remain missing. Do not invent values.
+8. Preserve organization and brand boundaries.
+9. Requirement creation must continue through the existing authoritative Requirement command/RPC.
+10. Prevent accidental duplicate continuation where appropriate, or make an existing Requirement visible if one already references the Lead.
+11. Do not automatically mark Lead CONVERTED unless current canonical conversion semantics justify it.
+12. Preserve current Lead state machine rules.
+
+Add tests for:
+
+- qualified Lead can continue to Requirement
+- Lead context is prefilled correctly
+- missing values remain null/empty
+- cross-organization Lead cannot be used
+- invalid/unqualified state cannot bypass canonical rules
+- existing linked Requirement is discoverable
+- Requirement retains lead_id linkage
+
+Update the Phase 1 happy-path E2E scenario so the test begins with Lead rather than an already-existing Customer/Requirement where practical.
+
+Run the full verification suite.
+
+Stop after P0-01.
+```
+
+---
+
+# PROMPT 2 — P0-02 Authoritative Order Lifecycle
+
+```text
+Task:
+Implement P0-02 — Authoritative Order Lifecycle Enforcement.
+
+Problem:
+
+MGBOS already defines Order statuses:
+
+DRAFT
+CONFIRMED
+ACTIVE
+ON_HOLD
+COMPLETED
+CANCELLED
+
+The domain package already contains valid transition semantics.
+
+However, the current database/application implementation does not have a complete authoritative Order transition command.
+
+Goal:
+
+Make orders.status trustworthy as the commercial lifecycle of the Order.
+
+Requirements:
+
+1. Audit all existing order creation, production, invoicing, payment and shipment logic before changing behavior.
+2. Add a forward migration.
+3. Implement authoritative Order transition command(s).
+4. Prefer explicit semantic commands or one strongly guarded transition_order_status RPC.
+5. Use row locking for material transitions.
+6. Enforce organization membership and RBAC.
+7. Emit append-only order audit evidence.
+8. Do not allow arbitrary direct status mutation from UI.
+9. Preserve independent:
+   - invoice/payment state
+   - production state
+   - QC state
+   - shipment state
+
+Required lifecycle:
+
+CONFIRMED → ACTIVE
+CONFIRMED → ON_HOLD
+CONFIRMED → CANCELLED
+
+ACTIVE → ON_HOLD
+ACTIVE → COMPLETED
+ACTIVE → CANCELLED where business rules permit
+
+ON_HOLD → ACTIVE
+ON_HOLD → CANCELLED
+
+COMPLETED and CANCELLED are terminal.
+
+Completion must not be a cosmetic button.
+
+Design a conservative completion guard using currently available authoritative data.
+
+At minimum evaluate:
+
+- required production completion
+- required QC readiness/pass
+- fulfillment/delivery obligations
+- financial obligations according to current payment policy
+
+If an exact final policy is ambiguous, implement the safest launch-grade conservative rule and document it.
+
+Add UI controls to Order detail using existing patterns.
+
+Add tests for:
+
+- valid transitions
+- invalid transitions
+- terminal-state protection
+- unauthorized roles
+- cross-org access
+- completion blocked by unfinished production
+- completion blocked by invalid fulfillment
+- completion successful when obligations are satisfied
+- order audit entries
+- idempotent repeat where appropriate
+
+Update E2E happy path so the Order progresses through the lifecycle and finishes COMPLETED.
+
+Do not modify production/payment/shipment state merely to make Order transitions pass.
+
+Stop after P0-02.
+```
+
+---
+
+# PROMPT 3 — P0-03 Vendor-backed Production Assignment
+
+```text
+Task:
+Implement P0-03 — Vendor-backed Production Assignment.
+
+Problem:
+
+MGBOS already has:
+
+app.vendors
+app.vendor_rate_cards
+production_assignments.vendor_id
+
+But the current normal production assignment UI still primarily accepts a free-text vendor_name.
+
+Goal:
+
+Use canonical Vendor identity for external production assignments.
+
+Requirements:
+
+1. Audit production assignment migration, RPC, domain, validation, auth and UI.
+2. Do not create a new Partner entity.
+3. Extend the production assignment command to accept vendor_id for VENDOR execution.
+4. Verify the Vendor:
+   - belongs to the same organization
+   - is ACTIVE
+   - is valid for the operation
+5. Preserve a human-readable vendor snapshot/name if useful for historical display, but vendor_id is the primary identity.
+6. Update JobAssignForm to use the Vendor Directory.
+7. Display useful vendor context:
+   - name
+   - category
+   - lead time
+   - relevant rate cards where available
+8. Do not pretend rate cards are current quotations if they are not.
+9. Rate card may assist committed-cost entry, but human confirmation remains required.
+10. Internal execution using assigned_brand_id must continue to work.
+11. Preserve committed Cost Trilogy semantics.
+
+Tests:
+
+- valid active vendor assignment
+- inactive vendor rejected
+- cross-org vendor rejected
+- unknown vendor rejected
+- INTERNAL assignment unaffected
+- vendor_id persisted
+- committed_cost persisted correctly
+- UI receives active Vendor choices
+- historical assignment remains readable
+
+Update E2E custom-order happy path to assign at least one Production Job to a real Vendor record rather than a free-text vendor.
+
+Stop after P0-03.
+```
+
+---
+
+# PROMPT 4 — P0-04 Assignment Acceptance & Reassignment Semantics
+
+```text
+Task:
+Implement P0-04 — Production Assignment Acceptance Consistency.
+
+Problem:
+
+production_assignments has:
+
+ASSIGNED
+ACCEPTED
+DECLINED
+CANCELLED
+
+while Production Job also has:
+
+ASSIGNED
+ACCEPTED
+IN_PRODUCTION
+...
+
+Current flows can allow Production Job status to become ACCEPTED while the related Assignment remains ASSIGNED.
+
+Goal:
+
+Eliminate contradictory assignment/job state.
+
+Canonical interpretation:
+
+Production Assignment owns whether the assigned executor accepted the assignment.
+
+Production Job owns the physical work lifecycle.
+
+Requirements:
+
+1. Audit current assignment/job state behavior and tests first.
+2. Define the smallest consistent coordination model.
+3. Add guarded commands for:
+   - accept assignment
+   - decline assignment
+   - cancel/reassign where valid
+4. Assignment acceptance must update:
+   - assignment.status
+   - accepted_at
+   - audit evidence
+5. Coordinate Production Job transition atomically where appropriate.
+6. Declining an assignment should leave the Production Job safely assignable again, normally READY.
+7. Do not lose previous declined/cancelled assignment history.
+8. Reassignment creates new historical evidence rather than rewriting the old assignment.
+9. Prevent two simultaneously active conflicting assignments.
+10. Preserve committed cost semantics. Reassignment must not silently corrupt previous committed-cost history.
+11. UI must make:
+    - waiting for acknowledgement
+    - accepted
+    - declined
+    - needs reassignment
+   obvious.
+
+Tests:
+
+- assignment accepted
+- accepted_at recorded
+- job/assignment states stay consistent
+- decline returns job to safe state
+- reassignment works
+- old assignment remains historical
+- unauthorized acceptance rejected
+- duplicate acceptance safe
+- cross-org rejected
+
+Update E2E scenario to explicitly exercise assignment acceptance before IN_PRODUCTION.
+
+Stop after P0-04.
+```
+
+---
+
+# PROMPT 5 — P0-05 Fulfillment Readiness Guard
+
+```text
+Task:
+Implement P0-05 — Fulfillment Readiness Guard.
+
+Problem:
+
+Shipment quantity ceilings are strong, but an Order may currently create a delivery order even when required production/QC work is not actually ready for handoff.
+
+The existing broad E2E flow demonstrates this risk by allowing shipment work while another production job is ON_HOLD after QC rejection.
+
+Goal:
+
+Prevent accidental fulfillment before physical work is legitimately releasable.
+
+Requirements:
+
+1. Audit Shipment, Production Job, QC and Order Item relationships.
+2. Do not build a factory planning engine.
+3. Implement the smallest conservative launch-grade readiness rule.
+4. Shipment creation must verify that the quantities being shipped are eligible for fulfillment.
+5. For v1, prefer a conservative rule if exact item/job mapping is insufficient.
+6. Required production must be READY_FOR_HANDOFF or COMPLETED.
+7. Required QC must not be unresolved REWORK/REJECTED/ON_HOLD.
+8. CANCELLED jobs must be handled explicitly and must not incorrectly block work they no longer represent.
+9. Partial fulfillment must remain possible only when readiness can be proven safely.
+10. Return clear operator-facing errors explaining what blocks fulfillment.
+11. Do not auto-change production status to satisfy shipment creation.
+
+Tests:
+
+- shipment allowed when required work is ready
+- shipment blocked when production incomplete
+- shipment blocked by QC rework
+- shipment blocked by rejected/on-hold job
+- quantity ceiling continues to work
+- partial fulfillment behaves safely
+- delivered immutability remains intact
+- cross-org checks remain intact
+
+Update E2E:
+- clean happy path must pass QC before shipment
+- negative scenario must prove shipment is rejected while production is blocked
+
+Stop after P0-05.
+```
+
+---
+
+# PROMPT 6 — P0-08 Governed Work Order / SPK Artifact
+
+```text
+Task:
+Implement P0-08 — Governed Work Order / SPK Artifact.
+
+Goal:
+
+A production commitment sent to a Vendor must no longer require reconstructing instructions from WhatsApp.
+
+Important:
+
+Do NOT create a new WorkOrder aggregate unless current data proves it is necessary.
+
+Start as a generated governed document/projection from existing canonical data.
+
+Sources:
+
+Production Job
+Production Assignment
+Vendor
+Order
+Order Items
+Requirement / specification snapshot
+committed cost
+target completion date
+
+Create a printable/shareable internal Work Order/SPK view.
+
+Minimum content:
+
+- SPK / Work Order reference
+- Production Job number
+- Order number
+- Vendor
+- customer reference where appropriate
+- job type
+- quantity
+- exact governed specification
+- artwork/file references
+- deadline
+- committed cost/rate where appropriate
+- delivery/handoff instructions
+- issue timestamp
+- issuer identity
+- current assignment identity
+
+Security:
+
+- do not expose internal data unnecessarily
+- no public unauthenticated URL
+- no secrets
+- use explicit output allowlist
+
+Behavior:
+
+- generated from frozen/current governed sources
+- does not mutate Production state
+- printing/downloading does not imply vendor acceptance
+- historical assignments should remain distinguishable
+
+Add:
+- authenticated document route
+- print-friendly rendering
+- PDF only if consistent with existing quotation-document architecture and easy to reuse safely
+
+Tests:
+- access control
+- cross-org denial
+- correct Vendor
+- correct specification
+- correct committed cost
+- no accidental sensitive fields
+- historical assignment accuracy
+
+Stop after P0-08.
+```
+
+---
+
+# PROMPT 7 — P0-06 Clean TeeStock Custom Happy-Path E2E
+
+```text
+Task:
+Create a focused TeeStock Custom/B2B happy-path E2E verification scenario.
+
+Do not delete the existing broad verify-e2e-flow.mjs regression test.
+
+Create a separate focused scenario whose only purpose is proving one coherent business transaction.
+
+Flow:
+
+Lead
+→ qualify
+→ convert/link Customer
+→ Requirement
+→ READY
+→ Quote
+→ SENT
+→ ACCEPTED
+→ Order
+→ ACTIVE
+→ Invoice / DP
+→ Payment
+→ Production Job
+→ Vendor Assignment
+→ Assignment ACCEPTED
+→ IN_PRODUCTION
+→ QC PASS
+→ READY_FOR_HANDOFF / COMPLETED
+→ Shipment
+→ DELIVERED
+→ Final Payment
+→ Actual Cost
+→ Order COMPLETED
+→ Realized Margin
+
+Assertions must include:
+
+- canonical IDs
+- organization isolation
+- correct snapshots
+- money equality
+- no over-invoicing
+- payment allocation
+- production state
+- vendor identity
+- assignment state
+- QC evidence
+- shipment eligibility
+- delivery
+- actual cost settlement
+- realized margin
+- final Order completion
+
+Use realistic TeeStock fixture data.
+
+Do not inject intentional failure cases into this happy-path scenario.
+
+Put failure cases in separate tests.
+
+The script must exit non-zero on any failed assertion.
+
+Document exactly how to run it locally.
+
+Stop after this task.
+```
+
+---
+
+# PROMPT 8 — Phase 1 Negative Scenario Pack
+
+```text
+Task:
+Build the Phase 1 negative/business-exception scenario test pack.
+
+Keep these scenarios separate from the clean happy path.
+
+Required scenarios:
+
+SIM-002 Requirement revision
+SIM-003 Low-margin quote requiring approval
+SIM-004 Partial payment
+SIM-005 Vendor decline/reassignment
+SIM-006 QC rework
+SIM-007 QC rejection
+SIM-008 Shipment blocked before production readiness
+SIM-009 Actual cost exceeds estimate
+SIM-010 Invalid state transition
+SIM-011 Duplicate material command
+SIM-012 Payment reversal
+
+Each scenario must:
+
+1. set up only the state it needs
+2. make one business problem explicit
+3. assert the expected safe behavior
+4. assert history/evidence preservation
+5. assert that no unintended economic duplicate occurred
+
+Do not implement Operational Exception domain yet.
+This task validates current business behavior and creates evidence for Phase 2 Exception design.
+
+Run the complete test suite afterward.
+
+Stop after this task.
+```
+
+---
+
+# PROMPT 9 — P0-07 Operator Acceptance Test
+
+```text
+Task:
+Perform and document a Phase 1 operator acceptance test through the normal MGBOS application surfaces.
+
+Goal:
+
+Prove that a founder/operator can run the TeeStock Custom happy path without:
+
+- direct SQL
+- Supabase dashboard edits
+- developer console state changes
+- manual financial arithmetic
+- hidden spreadsheet state
+
+Use the application UI for the journey:
+
+Lead
+→ Requirement
+→ Quote
+→ Order
+→ Invoice/Payment
+→ Production
+→ Vendor Assignment
+→ QC
+→ Shipment
+→ Cost/Margin
+→ Order Completion
+
+Before testing:
+
+1. build the application
+2. reset/seed local database using the documented workflow
+3. start required local services
+4. use only normal authenticated application functionality
+
+Record:
+
+- every step
+- route/screen used
+- action used
+- result
+- friction observed
+- missing navigation
+- duplicated entry
+- confusing terminology
+- manual memory dependency
+
+Classify findings:
+
+BLOCKER
+HIGH
+MEDIUM
+LOW
+
+Do not fix findings during the first test pass.
+
+First produce the acceptance report.
+
+After the report is complete:
+- fix only BLOCKER findings in the same task if they are small and clearly scoped
+- otherwise stop and report the required follow-up tasks
+
+Success condition:
+
+A competent operator can finish the transaction without understanding the database implementation.
+
+Stop after the acceptance report and permitted blocker fixes.
+```
+
+---
+
+# PROMPT 10 — Phase 1 Final Certification
+
+```text
+Task:
+Certify Phase 1 — TeeStock End-to-End Operating Spine.
+
+Do not add new features unless required to resolve an actual failed acceptance gate.
+
+Read:
+
+- canonical MGBOS architecture
+- Phase 1 implementation plan
+- Phase 1A operating-spine audit
+- Phase 1 backlog
+- happy-path E2E evidence
+- negative scenario evidence
+- operator acceptance test
+
+Run:
+
+- formatting
+- lint
+- strict typecheck
+- all Vitest tests
+- all pgTAP/database tests
+- clean TeeStock happy-path E2E
+- negative scenario pack
+- both production builds
+
+Verify specifically:
+
+Lead → Requirement continuity
+Order lifecycle
+Vendor-backed assignment
+Assignment acceptance consistency
+QC
+Fulfillment readiness
+Invoice/payment integrity
+Cost Trilogy
+Realized margin
+Order completion
+cross-organization isolation
+RBAC
+audit evidence
+
+Then classify each Phase 1 acceptance gate:
+
+PASS
+PASS_WITH_KNOWN_LIMITATION
+FAIL
+
+Do not use completion percentages.
+
+Produce:
+
+systems/mgbos/docs/implementation/phase-1-operating-spine/completion-report.md
+
+The report must contain:
+
+- repository commit
+- implementation summary
+- test evidence
+- acceptance evidence
+- known limitations
+- deferred scope
+- explicit statement whether Phase 1 is ready to close
+- explicit statement whether Phase 2 Founder Control Layer may begin
+
+If any BLOCKER remains:
+Phase 1 = NOT COMPLETE.
+
+Stop after certification.
+```
+
+### Cara gue sarankan lo pakai Antigravity
+
+Jangan mulai dari Prompt 1 dulu. Urutannya sekarang:
+
+```text
+Prompt 0
+Documentation directory alignment
+        ↓
+Prompt 1
+Lead → Requirement
+        ↓
+Prompt 2
+Order lifecycle
+        ↓
+Prompt 3
+Vendor identity
+        ↓
+Prompt 4
+Assignment acceptance
+        ↓
+Prompt 5
+Fulfillment guard
+        ↓
+Prompt 6
+Work Order
+        ↓
+Prompt 7
+Clean E2E
+        ↓
+Prompt 8
+Negative scenarios
+        ↓
+Prompt 9
+Operator acceptance
+        ↓
+Prompt 10
+Phase 1 certification
+```
+
+Satu hal penting: **jangan copy seluruh MASTER RULE + seluruh sepuluh prompt sekaligus ke satu agent.** Berikan MASTER RULE + **satu prompt task**. Selesaikan, review hasilnya, commit, baru lanjut task berikutnya.
+
+Dengan pola ini, pembagian kerja kita jadi sangat jelas:
+
+```text
+GUE
+↓
+architecture
+canonical docs
+audit
+task definition
+review direction
+
+ANTIGRAVITY
+↓
+inspect repo
+code
+migration
+tests
+browser verification
+implementation report
+
+LO
+↓
+approve direction
+review outcome
+make business decisions
+```
+
+Itu menurut gue workflow paling masuk akal buat kondisi lo sebagai solo founder: **lo tidak perlu coding detail, gue tidak perlu memegang IDE, dan Antigravity menjadi engineering executor yang bekerja berdasarkan spec yang terkontrol.**
