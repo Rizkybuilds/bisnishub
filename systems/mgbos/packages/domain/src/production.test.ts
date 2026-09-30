@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   validateProductionJobTransition,
   validateProductionJobCosts,
+  validateProductionAssignment,
   PRODUCTION_MONEY_MAX,
 } from './production';
 
@@ -97,6 +98,54 @@ describe('Production Job Domain Logic (MGBOS-012)', () => {
       expect(() =>
         validateProductionJobCosts(PRODUCTION_MONEY_MAX + 1n),
       ).toThrow();
+    });
+  });
+
+  describe('Production Assignment Invariants (P0-03)', () => {
+    it('validates canonical external vendor assignment with vendorId', () => {
+      const result = validateProductionAssignment({
+        executorType: 'VENDOR',
+        vendorId: '00000000-0000-4000-8000-000000000001',
+        assignedCost: 500000n,
+      });
+      expect(result.valid).toBe(true);
+    });
+
+    it('validates canonical internal assignment with assignedBrandId', () => {
+      const result = validateProductionAssignment({
+        executorType: 'INTERNAL',
+        assignedBrandId: '00000000-0000-4000-8000-000000000002',
+        assignedCost: 350000n,
+      });
+      expect(result.valid).toBe(true);
+    });
+
+    it('rejects internal assignment missing assignedBrandId', () => {
+      const result = validateProductionAssignment({
+        executorType: 'INTERNAL',
+        assignedCost: 350000n,
+      });
+      expect(result.valid).toBe(false);
+      expect(result.reason).toContain('Unit brand internal wajib ditentukan');
+    });
+
+    it('rejects vendor assignment missing both vendorId and vendorName', () => {
+      const result = validateProductionAssignment({
+        executorType: 'VENDOR',
+        assignedCost: 500000n,
+      });
+      expect(result.valid).toBe(false);
+      expect(result.reason).toContain('Identitas vendor');
+    });
+
+    it('rejects negative assigned cost', () => {
+      const result = validateProductionAssignment({
+        executorType: 'VENDOR',
+        vendorId: '00000000-0000-4000-8000-000000000001',
+        assignedCost: -100n,
+      });
+      expect(result.valid).toBe(false);
+      expect(result.reason).toContain('tidak boleh negatif');
     });
   });
 });

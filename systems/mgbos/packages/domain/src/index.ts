@@ -18,3 +18,4 @@ export * from './ledger';
 export * from './shipment';
 export * from './inventory';
 export * from './procurement';
+export * from './workOrder';

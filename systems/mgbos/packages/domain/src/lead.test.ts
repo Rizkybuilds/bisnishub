@@ -5,6 +5,8 @@ import {
   evaluateLeadQualification,
   formatLeadStatus,
   formatDisqualificationReason,
+  isLeadEligibleForRequirement,
+  mapLeadToRequirementPrefill,
 } from './lead';
 
 describe('Lead Domain Model & State Machine (MGBOS-006)', () => {
@@ -80,5 +82,78 @@ describe('Lead Domain Model & State Machine (MGBOS-006)', () => {
     expect(formatDisqualificationReason('SPAM')).toBe(
       'Spam / Bot / Promosi Ilegal',
     );
+  });
+
+  describe('Lead to Requirement Continuation (P0-01)', () => {
+    it('determines lead requirement continuation eligibility correctly', () => {
+      // Eligible
+      expect(isLeadEligibleForRequirement('QUALIFIED')).toBe(true);
+      expect(isLeadEligibleForRequirement('CONVERTED')).toBe(true);
+
+      // Ineligible
+      expect(isLeadEligibleForRequirement('NEW')).toBe(false);
+      expect(isLeadEligibleForRequirement('CONTACTED')).toBe(false);
+      expect(isLeadEligibleForRequirement('QUALIFYING')).toBe(false);
+      expect(isLeadEligibleForRequirement('DISQUALIFIED')).toBe(false);
+      expect(isLeadEligibleForRequirement('LOST')).toBe(false);
+    });
+
+    it('maps eligible lead to requirement prefill data with all fields', () => {
+      const prefill = mapLeadToRequirementPrefill({
+        id: '123e4567-e89b-12d3-a456-426614174000',
+        title: 'Pesanan Kaos Komunitas 150 pcs',
+        rawInquiry: 'Halo kami mau pesan kaos katun combed 24s sablon DTF',
+        estimatedQuantity: 150,
+        estimatedBudget: 12000000n,
+        customerAccountId: '223e4567-e89b-12d3-a456-426614174001',
+        status: 'QUALIFIED',
+      });
+
+      expect(prefill).toEqual({
+        leadId: '123e4567-e89b-12d3-a456-426614174000',
+        title: 'Pesanan Kaos Komunitas 150 pcs',
+        summary: 'Halo kami mau pesan kaos katun combed 24s sablon DTF',
+        quantity: 150,
+        targetBudget: '12000000',
+        customerAccountId: '223e4567-e89b-12d3-a456-426614174001',
+      });
+    });
+
+    it('preserves missing/optional fields as empty or undefined without inventing data', () => {
+      const prefill = mapLeadToRequirementPrefill({
+        id: '123e4567-e89b-12d3-a456-426614174000',
+        title: 'Inquiry Kaos Polos',
+        rawInquiry: null,
+        estimatedQuantity: null,
+        estimatedBudget: null,
+        customerAccountId: null,
+        status: 'CONVERTED',
+      });
+
+      expect(prefill.leadId).toBe('123e4567-e89b-12d3-a456-426614174000');
+      expect(prefill.title).toBe('Inquiry Kaos Polos');
+      expect(prefill.summary).toBe('');
+      expect(prefill.quantity).toBeUndefined();
+      expect(prefill.targetBudget).toBeUndefined();
+      expect(prefill.customerAccountId).toBeUndefined();
+    });
+
+    it('throws error when attempting to map an ineligible lead', () => {
+      expect(() =>
+        mapLeadToRequirementPrefill({
+          id: '123e4567-e89b-12d3-a456-426614174000',
+          title: 'Unqualified Lead',
+          status: 'QUALIFYING',
+        }),
+      ).toThrowError(/not eligible for Requirement continuation/);
+
+      expect(() =>
+        mapLeadToRequirementPrefill({
+          id: '123e4567-e89b-12d3-a456-426614174000',
+          title: 'Disqualified Lead',
+          status: 'DISQUALIFIED',
+        }),
+      ).toThrowError(/not eligible for Requirement continuation/);
+    });
   });
 });

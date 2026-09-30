@@ -8,10 +8,19 @@ export interface Choice {
   id: string;
   label: string;
 }
+export interface RequirementPrefill {
+  leadId?: string;
+  customerAccountId?: string;
+  title?: string;
+  summary?: string;
+  quantity?: number;
+  targetBudget?: string;
+}
 export function RequirementForm({
   operation,
   requirementId,
   version,
+  prefill,
   leads = [],
   customers = [],
   targetStatus,
@@ -20,6 +29,7 @@ export function RequirementForm({
   operation: 'create' | 'revise' | 'lock' | 'transition';
   requirementId?: string;
   version?: VersionRow;
+  prefill?: RequirementPrefill;
   leads?: Choice[];
   customers?: Choice[];
   targetStatus?: string;
@@ -87,9 +97,15 @@ export function RequirementForm({
             required
             minLength={2}
             maxLength={255}
+            defaultValue={prefill?.title ?? ''}
           />
           <label htmlFor={prefix + 'lead'}>Inquiry terkait (opsional)</label>
-          <select className="form-input" id={prefix + 'lead'} name="leadId">
+          <select
+            className="form-input"
+            id={prefix + 'lead'}
+            name="leadId"
+            defaultValue={prefill?.leadId ?? ''}
+          >
             <option value="">Tanpa inquiry</option>
             {leads.map((x) => (
               <option key={x.id} value={x.id}>
@@ -102,6 +118,7 @@ export function RequirementForm({
             className="form-input"
             id={prefix + 'customer'}
             name="customerAccountId"
+            defaultValue={prefill?.customerAccountId ?? ''}
           >
             <option value="">Belum ditentukan</option>
             {customers.map((x) => (
@@ -122,7 +139,7 @@ export function RequirementForm({
             rows={4}
             required
             minLength={2}
-            defaultValue={version?.summary}
+            defaultValue={version?.summary ?? prefill?.summary ?? ''}
           />
           <div className="requirement-grid">
             <div>
@@ -136,7 +153,7 @@ export function RequirementForm({
                 min="1"
                 max="2147483647"
                 step="1"
-                defaultValue={version?.quantity ?? ''}
+                defaultValue={version?.quantity ?? prefill?.quantity ?? ''}
               />
             </div>
             <div>
@@ -161,7 +178,9 @@ export function RequirementForm({
                 name="targetBudget"
                 inputMode="numeric"
                 pattern="[0-9]+"
-                defaultValue={version?.target_budget ?? ''}
+                defaultValue={
+                  version?.target_budget ?? prefill?.targetBudget ?? ''
+                }
               />
             </div>
             <div>

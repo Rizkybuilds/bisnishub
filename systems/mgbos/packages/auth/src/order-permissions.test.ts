@@ -22,5 +22,8 @@ describe('Order & Acceptance Permissions Matrix (MGBOS-011)', () => {
     expect(hasPermission('OWNER', 'orders:update')).toBe(true);
     expect(hasPermission('ADMIN', 'orders:update')).toBe(true);
     expect(hasPermission('SALES', 'orders:update')).toBe(false);
+    expect(hasPermission('OPERATIONS', 'orders:update')).toBe(false);
+    expect(hasPermission('FINANCE', 'orders:update')).toBe(false);
+    expect(hasPermission('QC', 'orders:update')).toBe(false);
   });
 });

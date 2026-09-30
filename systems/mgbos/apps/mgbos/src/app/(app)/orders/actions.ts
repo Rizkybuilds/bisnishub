@@ -5,6 +5,7 @@ import { checkPermission } from '@mgbos/auth';
 import {
   createOrderFromQuoteSchema,
   createRetailOrderSchema,
+  transitionOrderStatusSchema,
 } from '@mgbos/validation';
 import { orderContext } from './data';
 
@@ -202,6 +203,92 @@ export async function createRetailOrderAction(
     return {
       error:
         'Koneksi gagal. Coba lagi; idempotent token akan mencegah pesanan ganda.',
+    };
+  }
+}
+
+export interface TransitionOrderStatusResult {
+  success?: boolean;
+  error?: string;
+  orderId?: string;
+  orderNumber?: string;
+  previousStatus?: string;
+  newStatus?: string;
+  isNoOp?: boolean;
+}
+
+export async function transitionOrderStatusAction(
+  input: unknown,
+): Promise<TransitionOrderStatusResult> {
+  try {
+    const ctx = await orderContext();
+    const permission = checkPermission(ctx.session, 'orders:update');
+    if (!permission.allowed) return { error: permission.error };
+
+    const parsed = transitionOrderStatusSchema.safeParse(input);
+    if (!parsed.success) {
+      return {
+        error:
+          parsed.error.issues[0]?.message ?? 'Periksa input status pesanan.',
+      };
+    }
+
+    const d = parsed.data;
+
+    const response = await fetch(
+      ctx.endpoint + '/rpc/transition_order_status',
+      {
+        method: 'POST',
+        headers: ctx.headers,
+        body: JSON.stringify({
+          p_organization_id: ctx.session.organization.id,
+          p_actor_id: ctx.session.user.id,
+          p_order_id: d.orderId,
+          p_target_status: d.targetStatus,
+          p_reason: d.reason ?? null,
+        }),
+      },
+    );
+
+    const result: unknown = await response.json();
+    if (!response.ok) {
+      return {
+        error:
+          result && typeof result === 'object' && 'message' in result
+            ? String(result.message)
+            : 'Gagal memperbarui status pesanan.',
+      };
+    }
+
+    if (!result || typeof result !== 'object' || !('order_id' in result)) {
+      return { error: 'Respons transisi pesanan tidak valid.' };
+    }
+
+    const data = result as {
+      order_id: string;
+      order_number: string;
+      previous_status?: string;
+      new_status?: string;
+      is_no_op?: boolean;
+    };
+
+    revalidatePath('/orders');
+    revalidatePath(`/orders/${d.orderId}`);
+    revalidatePath('/production');
+    revalidatePath('/shipments');
+    revalidatePath('/ledger');
+
+    return {
+      success: true,
+      orderId: data.order_id,
+      orderNumber: data.order_number,
+      previousStatus: data.previous_status,
+      newStatus: data.new_status,
+      isNoOp: data.is_no_op,
+    };
+  } catch {
+    return {
+      error: 'Koneksi gagal saat memperbarui status pesanan.',
     };
   }
 }
