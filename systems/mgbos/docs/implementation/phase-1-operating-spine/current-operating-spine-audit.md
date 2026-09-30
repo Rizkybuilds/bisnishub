@@ -207,24 +207,24 @@ MODULE B
 
 # 6. Current Capability Matrix
 
-| Stage | Entity | State Model | Commands | UI | Tests | Founder Friction | Action |
-|---|---|---|---|---|---|---|---|
-| Customer | EXISTS | Stable | Stable | Present | Strong baseline | Low | KEEP |
-| Lead | EXISTS | Strong | Strong | Present | Strong module tests | High continuity gap | FIX |
-| Requirement | EXISTS | Strong | Strong | Present | Strong module tests | Medium | CONNECT |
-| Quote | EXISTS | Strong core | Strong core | Present | Strong module tests | Low | KEEP |
-| Order | EXISTS | Canonical but partially enforced | Partial | Present | Module coverage exists | High | FIX P0 |
-| Invoice | EXISTS | Strong core | Strong core | Present | Strong module tests | Low | KEEP |
-| Payment | EXISTS | Strong | Strong | Present | Strong + E2E | Low | KEEP |
-| Production Job | EXISTS | Strong | Strong | Present | Strong module tests | Low | KEEP |
-| Production Assignment | EXISTS | Partial operational semantics | Partial | Partial | Existing coverage | High | FIX P0 |
-| Vendor | EXISTS | Stable directory | Strong directory commands | Present | Strong baseline | Medium integration gap | CONNECT |
-| QC | EXISTS | Strong | Strong | Present | Strong | Low | KEEP |
-| Shipment | EXISTS | Strong shipment lifecycle | Strong core | Present | Strong | Medium readiness gap | FIX P0 |
-| Cost / Margin | EXISTS | Strong | Strong | Present | Strong | Low | KEEP |
-| Inventory | EXISTS | Strong | Strong | Present | Strong | Not launch blocker | KEEP |
-| Procurement | EXISTS | Strong | Strong | Present | Strong | Not launch blocker | KEEP |
-| Goods Receipt | EXISTS | Evidence model | Strong | Present | Strong | Low | KEEP |
+| Stage                 | Entity | State Model                      | Commands                  | UI      | Tests                  | Founder Friction       | Action  |
+| --------------------- | ------ | -------------------------------- | ------------------------- | ------- | ---------------------- | ---------------------- | ------- |
+| Customer              | EXISTS | Stable                           | Stable                    | Present | Strong baseline        | Low                    | KEEP    |
+| Lead                  | EXISTS | Strong                           | Strong                    | Present | Strong module tests    | High continuity gap    | FIX     |
+| Requirement           | EXISTS | Strong                           | Strong                    | Present | Strong module tests    | Medium                 | CONNECT |
+| Quote                 | EXISTS | Strong core                      | Strong core               | Present | Strong module tests    | Low                    | KEEP    |
+| Order                 | EXISTS | Canonical but partially enforced | Partial                   | Present | Module coverage exists | High                   | FIX P0  |
+| Invoice               | EXISTS | Strong core                      | Strong core               | Present | Strong module tests    | Low                    | KEEP    |
+| Payment               | EXISTS | Strong                           | Strong                    | Present | Strong + E2E           | Low                    | KEEP    |
+| Production Job        | EXISTS | Strong                           | Strong                    | Present | Strong module tests    | Low                    | KEEP    |
+| Production Assignment | EXISTS | Partial operational semantics    | Partial                   | Partial | Existing coverage      | High                   | FIX P0  |
+| Vendor                | EXISTS | Stable directory                 | Strong directory commands | Present | Strong baseline        | Medium integration gap | CONNECT |
+| QC                    | EXISTS | Strong                           | Strong                    | Present | Strong                 | Low                    | KEEP    |
+| Shipment              | EXISTS | Strong shipment lifecycle        | Strong core               | Present | Strong                 | Medium readiness gap   | FIX P0  |
+| Cost / Margin         | EXISTS | Strong                           | Strong                    | Present | Strong                 | Low                    | KEEP    |
+| Inventory             | EXISTS | Strong                           | Strong                    | Present | Strong                 | Not launch blocker     | KEEP    |
+| Procurement           | EXISTS | Strong                           | Strong                    | Present | Strong                 | Not launch blocker     | KEEP    |
+| Goods Receipt         | EXISTS | Evidence model                   | Strong                    | Present | Strong                 | Low                    | KEEP    |
 
 ---
 
@@ -1577,16 +1577,16 @@ This explains why adding more modules would currently create less value than con
 
 # 69. P0 Gap Summary
 
-| ID | Gap | Root Cause | Severity | New Entity Needed? |
-|---|---|---|---|---|
-| P0-01 | Lead → Requirement | UX/workflow continuity | High | No |
-| P0-02 | Order lifecycle | missing authoritative transition surface | High | No |
-| P0-03 | Vendor assignment | old free-text integration | High | No |
-| P0-04 | Assignment acceptance | split lifecycle not coordinated | High | No |
-| P0-05 | Fulfillment readiness | shipment not sufficiently coupled to production/QC | High | No |
-| P0-06 | Work Order / SPK | governed communication artifact missing | High | No |
-| P0-07 | Clean E2E | broad test mixes normal/failure paths | High evidence gap | No |
-| P0-08 | Operator acceptance | full UI journey unverified | High launch-readiness gap | No |
+| ID    | Gap                   | Root Cause                                         | Severity                  | New Entity Needed? |
+| ----- | --------------------- | -------------------------------------------------- | ------------------------- | ------------------ |
+| P0-01 | Lead → Requirement    | UX/workflow continuity                             | High                      | No                 |
+| P0-02 | Order lifecycle       | missing authoritative transition surface           | High                      | No                 |
+| P0-03 | Vendor assignment     | old free-text integration                          | High                      | No                 |
+| P0-04 | Assignment acceptance | split lifecycle not coordinated                    | High                      | No                 |
+| P0-05 | Fulfillment readiness | shipment not sufficiently coupled to production/QC | High                      | No                 |
+| P0-06 | Work Order / SPK      | governed communication artifact missing            | High                      | No                 |
+| P0-07 | Clean E2E             | broad test mixes normal/failure paths              | High evidence gap         | No                 |
+| P0-08 | Operator acceptance   | full UI journey unverified                         | High launch-readiness gap | No                 |
 
 Critical result:
 
@@ -1891,16 +1891,16 @@ status override
 
 Current remaining founder burdens include:
 
-| Gap | Founder burden |
-|---|---|
-| Lead → Requirement | remembering and re-entering inquiry context |
-| Order lifecycle | mentally interpreting order progress |
-| Vendor assignment | remembering which textual vendor means which vendor record |
-| Assignment acceptance | manually confirming whether partner really accepted |
+| Gap                   | Founder burden                                                |
+| --------------------- | ------------------------------------------------------------- |
+| Lead → Requirement    | remembering and re-entering inquiry context                   |
+| Order lifecycle       | mentally interpreting order progress                          |
+| Vendor assignment     | remembering which textual vendor means which vendor record    |
+| Assignment acceptance | manually confirming whether partner really accepted           |
 | Fulfillment readiness | manually checking whether production is actually safe to ship |
-| Work Order | reconstructing vendor instructions from system + chat |
-| E2E gap | uncertainty whether modules work together |
-| Operator gap | uncertainty whether normal UI is actually usable |
+| Work Order            | reconstructing vendor instructions from system + chat         |
+| E2E gap               | uncertainty whether modules work together                     |
+| Operator gap          | uncertainty whether normal UI is actually usable              |
 
 ---
 

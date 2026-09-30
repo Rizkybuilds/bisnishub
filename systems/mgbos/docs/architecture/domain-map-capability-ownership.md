@@ -213,28 +213,28 @@ perform physical work
 
 # 16. Current Core Domain Map
 
-| Domain | MGBOS Status | Primary Owner | Near-Term Importance |
-|---|---|---|---|
-| Organization / Identity | CURRENT | MGBOS | Critical |
-| Customer | CURRENT | MGBOS | Critical |
-| Lead / CRM | CURRENT / PARTIAL workflow integration | MGBOS | Critical |
-| Requirement | CURRENT | MGBOS | Critical |
-| Quotation | CURRENT | MGBOS | Critical |
-| Order | CURRENT / PARTIAL lifecycle | MGBOS | Critical |
-| Production Job | CURRENT | MGBOS | Critical |
-| Production Assignment | CURRENT / PARTIAL operational integration | MGBOS | Critical |
-| Vendor | CURRENT / PARTIAL assignment integration | MGBOS | Critical |
-| Quality Control | CURRENT | MGBOS | Critical |
-| Invoice | CURRENT | MGBOS | Critical |
-| Payment | CURRENT | MGBOS | Critical |
-| Fulfillment / Shipment | CURRENT / PARTIAL readiness guard | MGBOS | Critical |
-| Cost / Margin | CURRENT | MGBOS | Critical |
-| Inventory | CURRENT | MGBOS | High |
-| Procurement | CURRENT | MGBOS | High |
-| Goods Receipt | CURRENT | MGBOS | High |
-| Vendor Bills | CURRENT | MGBOS | High |
-| Order Financial Summary | CURRENT | MGBOS | High |
-| Design Library | EXPERIMENTAL | MGBOS | Low near-term |
+| Domain                  | MGBOS Status                              | Primary Owner | Near-Term Importance |
+| ----------------------- | ----------------------------------------- | ------------- | -------------------- |
+| Organization / Identity | CURRENT                                   | MGBOS         | Critical             |
+| Customer                | CURRENT                                   | MGBOS         | Critical             |
+| Lead / CRM              | CURRENT / PARTIAL workflow integration    | MGBOS         | Critical             |
+| Requirement             | CURRENT                                   | MGBOS         | Critical             |
+| Quotation               | CURRENT                                   | MGBOS         | Critical             |
+| Order                   | CURRENT / PARTIAL lifecycle               | MGBOS         | Critical             |
+| Production Job          | CURRENT                                   | MGBOS         | Critical             |
+| Production Assignment   | CURRENT / PARTIAL operational integration | MGBOS         | Critical             |
+| Vendor                  | CURRENT / PARTIAL assignment integration  | MGBOS         | Critical             |
+| Quality Control         | CURRENT                                   | MGBOS         | Critical             |
+| Invoice                 | CURRENT                                   | MGBOS         | Critical             |
+| Payment                 | CURRENT                                   | MGBOS         | Critical             |
+| Fulfillment / Shipment  | CURRENT / PARTIAL readiness guard         | MGBOS         | Critical             |
+| Cost / Margin           | CURRENT                                   | MGBOS         | Critical             |
+| Inventory               | CURRENT                                   | MGBOS         | High                 |
+| Procurement             | CURRENT                                   | MGBOS         | High                 |
+| Goods Receipt           | CURRENT                                   | MGBOS         | High                 |
+| Vendor Bills            | CURRENT                                   | MGBOS         | High                 |
+| Order Financial Summary | CURRENT                                   | MGBOS         | High                 |
+| Design Library          | EXPERIMENTAL                              | MGBOS         | Low near-term        |
 
 ---
 
@@ -1800,29 +1800,29 @@ Physical completion requires trusted observation/evidence.
 
 # 119. Domain Boundary Matrix
 
-| Capability | Business Layer | MGBOS | JARVIS | Automation | External |
-|---|---|---|---|---|---|
-| Business strategy | Owner | — | Assist | — | — |
-| Brand | Owner | Context only | Assist | — | — |
-| Customer identity | Requirements | **Owner** | Read | Sync | External sources |
-| Lead | Policy | **Owner** | Analyze | Capture/route | Channels |
-| Requirement | Definition | **Owner** | Extract/draft | Route | Customer |
-| Quote | Pricing policy | **Owner** | Analyze/draft | Reminder | Customer |
-| Order | Commercial policy | **Owner** | Analyze | Trigger | Channel |
-| Invoice | Finance policy | **Owner** | Analyze | Reminder | Customer |
-| Payment | Finance policy | **Owner** | Analyze | Reconcile/notify | Payment provider |
-| Production | Operating policy | **Owner** | Risk analysis | Reminder | Partner |
-| Assignment | Vendor policy | **Owner** | Recommend | Notify | Partner |
-| QC | Quality policy | **Owner** | Summarize | Route | Operator/partner |
-| Shipment | Service policy | **Owner** | Analyze | Notify | Courier |
-| Inventory | Stock policy | **Owner** | Forecast | Alerts | Supplier |
-| Procurement | Procurement policy | **Owner** | Recommend | Reminder | Vendor |
-| Goods Receipt | Receiving policy | **Owner** | Analyze | Notify | Supplier/receiver |
-| Operational Exception | Exception policy | **Owner** | Prioritize | Detect | — |
-| Content | Brand/marketing | Link only | Cognitive assist | Publish/schedule | Channels |
-| AI Memory | — | Not truth | **Owner** | — | Provider optional |
-| Model routing | — | — | **Owner** | — | AI provider |
-| Physical production | Standards | Track | Analyze | Coordinate | **Partner owner** |
+| Capability            | Business Layer     | MGBOS        | JARVIS           | Automation       | External          |
+| --------------------- | ------------------ | ------------ | ---------------- | ---------------- | ----------------- |
+| Business strategy     | Owner              | —            | Assist           | —                | —                 |
+| Brand                 | Owner              | Context only | Assist           | —                | —                 |
+| Customer identity     | Requirements       | **Owner**    | Read             | Sync             | External sources  |
+| Lead                  | Policy             | **Owner**    | Analyze          | Capture/route    | Channels          |
+| Requirement           | Definition         | **Owner**    | Extract/draft    | Route            | Customer          |
+| Quote                 | Pricing policy     | **Owner**    | Analyze/draft    | Reminder         | Customer          |
+| Order                 | Commercial policy  | **Owner**    | Analyze          | Trigger          | Channel           |
+| Invoice               | Finance policy     | **Owner**    | Analyze          | Reminder         | Customer          |
+| Payment               | Finance policy     | **Owner**    | Analyze          | Reconcile/notify | Payment provider  |
+| Production            | Operating policy   | **Owner**    | Risk analysis    | Reminder         | Partner           |
+| Assignment            | Vendor policy      | **Owner**    | Recommend        | Notify           | Partner           |
+| QC                    | Quality policy     | **Owner**    | Summarize        | Route            | Operator/partner  |
+| Shipment              | Service policy     | **Owner**    | Analyze          | Notify           | Courier           |
+| Inventory             | Stock policy       | **Owner**    | Forecast         | Alerts           | Supplier          |
+| Procurement           | Procurement policy | **Owner**    | Recommend        | Reminder         | Vendor            |
+| Goods Receipt         | Receiving policy   | **Owner**    | Analyze          | Notify           | Supplier/receiver |
+| Operational Exception | Exception policy   | **Owner**    | Prioritize       | Detect           | —                 |
+| Content               | Brand/marketing    | Link only    | Cognitive assist | Publish/schedule | Channels          |
+| AI Memory             | —                  | Not truth    | **Owner**        | —                | Provider optional |
+| Model routing         | —                  | —            | **Owner**        | —                | AI provider       |
+| Physical production   | Standards          | Track        | Analyze          | Coordinate       | **Partner owner** |
 
 ---
 
@@ -2288,21 +2288,21 @@ Internal business interpretation belongs to the relevant BisnisHub system.
 
 # 146. Founder Burden Mapping
 
-| Capability | Founder burden removed |
-|---|---|
-| Lead → Requirement continuity | reconstructing inquiry context |
-| Requirement structure | remembering missing requirements |
-| Quote engine | repetitive pricing preparation |
-| Order lifecycle | mentally tracking overall commitment |
-| Vendor-backed assignment | remembering who is executing |
-| Assignment acknowledgement | manually confirming vendor acceptance |
-| Work Order artifact | reconstructing production instructions from chat |
-| Fulfillment readiness guard | manually deciding whether shipment is safe |
-| Operational Exception | searching for problems |
-| Cash/AR view | manually reconciling finance |
-| Production attention view | checking jobs individually |
-| Reminder automation | remembering follow-ups |
-| Morning Briefing | opening many screens every morning |
+| Capability                    | Founder burden removed                           |
+| ----------------------------- | ------------------------------------------------ |
+| Lead → Requirement continuity | reconstructing inquiry context                   |
+| Requirement structure         | remembering missing requirements                 |
+| Quote engine                  | repetitive pricing preparation                   |
+| Order lifecycle               | mentally tracking overall commitment             |
+| Vendor-backed assignment      | remembering who is executing                     |
+| Assignment acknowledgement    | manually confirming vendor acceptance            |
+| Work Order artifact           | reconstructing production instructions from chat |
+| Fulfillment readiness guard   | manually deciding whether shipment is safe       |
+| Operational Exception         | searching for problems                           |
+| Cash/AR view                  | manually reconciling finance                     |
+| Production attention view     | checking jobs individually                       |
+| Reminder automation           | remembering follow-ups                           |
+| Morning Briefing              | opening many screens every morning               |
 
 ---
 

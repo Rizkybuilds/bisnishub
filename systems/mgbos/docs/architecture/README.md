@@ -131,14 +131,14 @@ MGBOS must remain usable without JARVIS.
 
 The following documents are the current dedicated canonical architecture specifications.
 
-| Concept | Canonical Source | Status |
-|---|---|---|
-| Entity and relationship semantics | `canonical-data-model.md` | ACTIVE |
-| Business lifecycle semantics | `business-state-machines.md` | ACTIVE |
-| Business integrity rules | `business-invariants.md` | ACTIVE |
-| Commands, events and integration mutation boundary | `command-event-model.md` | ACTIVE |
-| Identity, roles and authorization | `permission-authorization-model.md` | ACTIVE |
-| Domain/capability ownership and expansion | `domain-map-capability-ownership.md` | ACTIVE |
+| Concept                                            | Canonical Source                     | Status |
+| -------------------------------------------------- | ------------------------------------ | ------ |
+| Entity and relationship semantics                  | `canonical-data-model.md`            | ACTIVE |
+| Business lifecycle semantics                       | `business-state-machines.md`         | ACTIVE |
+| Business integrity rules                           | `business-invariants.md`             | ACTIVE |
+| Commands, events and integration mutation boundary | `command-event-model.md`             | ACTIVE |
+| Identity, roles and authorization                  | `permission-authorization-model.md`  | ACTIVE |
+| Domain/capability ownership and expansion          | `domain-map-capability-ownership.md` | ACTIVE |
 
 ---
 
@@ -1401,16 +1401,16 @@ Otherwise extend the existing canonical owner.
 
 # 60. Document Ownership Map
 
-| Question | Read |
-|---|---|
-| What entities exist? | `canonical-data-model.md` |
-| What does this status mean? | `business-state-machines.md` |
-| What must always remain true? | `business-invariants.md` |
-| How may this state change? | `command-event-model.md` |
-| Who may attempt the change? | `permission-authorization-model.md` |
-| Does this capability belong in MGBOS? | `domain-map-capability-ownership.md` |
-| Why did we choose this technical pattern? | relevant ADR |
-| Is it implemented right now? | current code/tests/evidence |
+| Question                                  | Read                                 |
+| ----------------------------------------- | ------------------------------------ |
+| What entities exist?                      | `canonical-data-model.md`            |
+| What does this status mean?               | `business-state-machines.md`         |
+| What must always remain true?             | `business-invariants.md`             |
+| How may this state change?                | `command-event-model.md`             |
+| Who may attempt the change?               | `permission-authorization-model.md`  |
+| Does this capability belong in MGBOS?     | `domain-map-capability-ownership.md` |
+| Why did we choose this technical pattern? | relevant ADR                         |
+| Is it implemented right now?              | current code/tests/evidence          |
 
 ---
 
