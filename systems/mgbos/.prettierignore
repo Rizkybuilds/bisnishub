@@ -6,3 +6,5 @@ next-env.d.ts
 supabase/.temp
 supabase/.branches
 packages/database/generated
+docs/
+*.md
