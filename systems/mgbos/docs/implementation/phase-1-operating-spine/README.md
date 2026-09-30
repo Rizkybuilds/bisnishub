@@ -21,6 +21,8 @@ depends_on:
   - operating-spine-plan.md
   - current-operating-spine-audit.md
   - backlog.md
+  - operator-acceptance-test.md
+  - completion-report.md
 supersedes: null
 implementation_status: DOCUMENTATION_INDEX
 ---
@@ -150,6 +152,48 @@ Read this to understand:
 
 ---
 
+## Operator Acceptance Test
+
+```text
+operator-acceptance-test.md
+```
+
+Owns:
+
+```text
+human operator journey verification
+screen and action walkthroughs
+friction observations
+acceptance criteria evaluation (AC-01..AC-08)
+```
+
+Read this to understand:
+
+> **How does the operating spine behave for an actual human operator?**
+
+---
+
+## Phase 1 Completion Report
+
+```text
+completion-report.md
+```
+
+Owns:
+
+```text
+phase exit gate certification
+reproducible test scorecard
+architectural boundary verification
+forward guidance for Phase 2
+```
+
+Read this to understand:
+
+> **Why is Phase 1 certified and closed?**
+
+---
+
 # 4. Reading Order
 
 For implementation work:
@@ -232,10 +276,10 @@ P0-04  DONE
 P0-05  DONE
 P0-06  DONE
 P0-07  DONE
-P0-08  READY
+P0-08  DONE
 ```
 
-P0-01 through P0-07 are verified and passing across unit, database, and E2E suites. P0-08 (Operator Acceptance Test) is ready for execution.
+All Phase 1 operating spine milestones (P0-01 through P0-08) are complete, verified, and certified. Phase 1 is officially CLOSED. See `operator-acceptance-test.md` and `completion-report.md`.
 
 ---
 

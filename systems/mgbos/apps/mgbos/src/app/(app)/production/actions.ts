@@ -6,6 +6,10 @@ import {
   createProductionJobSchema,
   transitionProductionJobSchema,
   assignProductionJobSchema,
+  acceptProductionAssignmentSchema,
+  declineProductionAssignmentSchema,
+  cancelProductionAssignmentSchema,
+  reassignProductionJobSchema,
   recordQcInspectionSchema,
 } from '@mgbos/validation';
 import { productionContext } from './data';
@@ -162,6 +166,7 @@ export async function assignProductionJobAction(
         p_actor_id: ctx.session.user.id,
         p_job_id: d.jobId,
         p_executor_type: d.executorType,
+        p_vendor_id: d.vendorId ?? null,
         p_vendor_name: d.vendorName ?? null,
         p_assigned_brand_id: d.assignedBrandId ?? null,
         p_assigned_cost: d.assignedCost.toString(),
@@ -186,6 +191,221 @@ export async function assignProductionJobAction(
   } catch {
     return {
       error: 'Koneksi gagal saat menugaskan job produksi. Coba lagi.',
+    };
+  }
+}
+
+export async function acceptProductionAssignmentAction(
+  input: unknown,
+): Promise<ProductionActionResult> {
+  try {
+    const ctx = await productionContext();
+    const permission = checkPermission(ctx.session, 'production:update');
+    if (!permission.allowed) return { error: permission.error };
+
+    const parsed = acceptProductionAssignmentSchema.safeParse(input);
+    if (!parsed.success) {
+      return {
+        error:
+          parsed.error.issues[0]?.message ??
+          'Periksa data penerimaan penugasan.',
+      };
+    }
+
+    const d = parsed.data;
+
+    const response = await fetch(
+      ctx.endpoint + '/rpc/accept_production_assignment',
+      {
+        method: 'POST',
+        headers: ctx.headers,
+        body: JSON.stringify({
+          p_organization_id: ctx.session.organization.id,
+          p_actor_id: ctx.session.user.id,
+          p_assignment_id: d.assignmentId,
+        }),
+      },
+    );
+
+    const result: unknown = await response.json();
+    if (!response.ok) {
+      return {
+        error:
+          result && typeof result === 'object' && 'message' in result
+            ? String(result.message)
+            : 'Gagal menerima penugasan produksi.',
+      };
+    }
+
+    revalidatePath('/production');
+    return { success: true };
+  } catch {
+    return {
+      error: 'Koneksi gagal saat menerima penugasan produksi. Coba lagi.',
+    };
+  }
+}
+
+export async function declineProductionAssignmentAction(
+  input: unknown,
+): Promise<ProductionActionResult> {
+  try {
+    const ctx = await productionContext();
+    const permission = checkPermission(ctx.session, 'production:update');
+    if (!permission.allowed) return { error: permission.error };
+
+    const parsed = declineProductionAssignmentSchema.safeParse(input);
+    if (!parsed.success) {
+      return {
+        error:
+          parsed.error.issues[0]?.message ??
+          'Periksa data penolakan penugasan.',
+      };
+    }
+
+    const d = parsed.data;
+
+    const response = await fetch(
+      ctx.endpoint + '/rpc/decline_production_assignment',
+      {
+        method: 'POST',
+        headers: ctx.headers,
+        body: JSON.stringify({
+          p_organization_id: ctx.session.organization.id,
+          p_actor_id: ctx.session.user.id,
+          p_assignment_id: d.assignmentId,
+          p_reason: d.reason ?? null,
+        }),
+      },
+    );
+
+    const result: unknown = await response.json();
+    if (!response.ok) {
+      return {
+        error:
+          result && typeof result === 'object' && 'message' in result
+            ? String(result.message)
+            : 'Gagal menolak penugasan produksi.',
+      };
+    }
+
+    revalidatePath('/production');
+    return { success: true };
+  } catch {
+    return {
+      error: 'Koneksi gagal saat menolak penugasan produksi. Coba lagi.',
+    };
+  }
+}
+
+export async function cancelProductionAssignmentAction(
+  input: unknown,
+): Promise<ProductionActionResult> {
+  try {
+    const ctx = await productionContext();
+    const permission = checkPermission(ctx.session, 'production:update');
+    if (!permission.allowed) return { error: permission.error };
+
+    const parsed = cancelProductionAssignmentSchema.safeParse(input);
+    if (!parsed.success) {
+      return {
+        error:
+          parsed.error.issues[0]?.message ??
+          'Periksa data pembatalan penugasan.',
+      };
+    }
+
+    const d = parsed.data;
+
+    const response = await fetch(
+      ctx.endpoint + '/rpc/cancel_production_assignment',
+      {
+        method: 'POST',
+        headers: ctx.headers,
+        body: JSON.stringify({
+          p_organization_id: ctx.session.organization.id,
+          p_actor_id: ctx.session.user.id,
+          p_assignment_id: d.assignmentId,
+          p_reason: d.reason ?? null,
+        }),
+      },
+    );
+
+    const result: unknown = await response.json();
+    if (!response.ok) {
+      return {
+        error:
+          result && typeof result === 'object' && 'message' in result
+            ? String(result.message)
+            : 'Gagal membatalkan penugasan produksi.',
+      };
+    }
+
+    revalidatePath('/production');
+    return { success: true };
+  } catch {
+    return {
+      error: 'Koneksi gagal saat membatalkan penugasan produksi. Coba lagi.',
+    };
+  }
+}
+
+export async function reassignProductionJobAction(
+  input: unknown,
+): Promise<ProductionActionResult> {
+  try {
+    const ctx = await productionContext();
+    const permission = checkPermission(ctx.session, 'production:assign');
+    if (!permission.allowed) return { error: permission.error };
+
+    const parsed = reassignProductionJobSchema.safeParse(input);
+    if (!parsed.success) {
+      return {
+        error:
+          parsed.error.issues[0]?.message ??
+          'Periksa data penugasan ulang job.',
+      };
+    }
+
+    const d = parsed.data;
+
+    const response = await fetch(
+      ctx.endpoint + '/rpc/reassign_production_job',
+      {
+        method: 'POST',
+        headers: ctx.headers,
+        body: JSON.stringify({
+          p_organization_id: ctx.session.organization.id,
+          p_actor_id: ctx.session.user.id,
+          p_job_id: d.jobId,
+          p_executor_type: d.executorType,
+          p_vendor_id: d.vendorId ?? null,
+          p_vendor_name: d.vendorName ?? null,
+          p_assigned_brand_id: d.assignedBrandId ?? null,
+          p_assigned_cost: d.assignedCost.toString(),
+          p_notes: d.notes ?? null,
+          p_reason: d.reason ?? null,
+        }),
+      },
+    );
+
+    const result: unknown = await response.json();
+    if (!response.ok) {
+      return {
+        error:
+          result && typeof result === 'object' && 'message' in result
+            ? String(result.message)
+            : 'Gagal menugaskan ulang job produksi.',
+      };
+    }
+
+    revalidatePath('/production');
+    revalidatePath(`/production/${d.jobId}`);
+
+    return { success: true, jobId: d.jobId };
+  } catch {
+    return {
+      error: 'Koneksi gagal saat menugaskan ulang job produksi. Coba lagi.',
     };
   }
 }

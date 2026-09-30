@@ -6,6 +6,10 @@ export default defineConfig({
       'next/cache': fileURLToPath(
         new URL('./apps/mgbos/node_modules/next/cache.js', import.meta.url),
       ),
+      'server-only': fileURLToPath(
+        new URL('./scripts/empty-server-only.js', import.meta.url),
+      ),
+      '@': fileURLToPath(new URL('./apps/mgbos/src', import.meta.url)),
     },
   },
   test: {

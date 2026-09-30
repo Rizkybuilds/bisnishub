@@ -209,3 +209,65 @@ export function calculateShipmentAllocation(
     fulfillmentPercentage,
   };
 }
+
+export interface ProductionReadinessContext {
+  jobId: string;
+  jobNumber: string;
+  orderId: string;
+  orderItemId?: string | null;
+  status: string;
+  latestQcResult?: string | null;
+}
+
+/**
+ * Validates fulfillment readiness for Delivery Order creation (P0-05).
+ * Ensures that all active production jobs representing required work
+ * are in READY_FOR_HANDOFF or COMPLETED status and have clean QC clearance.
+ */
+export function validateFulfillmentReadiness(
+  orderId: string,
+  requestedOrderItemIds: string[],
+  productionJobs: ProductionReadinessContext[],
+): {
+  isReady: boolean;
+  blockingReasons: string[];
+} {
+  const blockingReasons: string[] = [];
+
+  for (const job of productionJobs) {
+    if (job.orderId !== orderId) continue;
+
+    // Legitimate cancelled jobs do not block fulfillment (AC-07)
+    if (job.status === 'CANCELLED') continue;
+
+    // Relevant if job applies to order generally or is linked to an item being shipped
+    const isRelevant =
+      !job.orderItemId || requestedOrderItemIds.includes(job.orderItemId);
+
+    if (!isRelevant) continue;
+
+    // Unfinished production blocks shipment (AC-02..AC-05)
+    if (job.status !== 'READY_FOR_HANDOFF' && job.status !== 'COMPLETED') {
+      blockingReasons.push(
+        `Job produksi ${job.jobNumber} (${job.jobId}) masih berstatus ${job.status} (wajib READY_FOR_HANDOFF atau COMPLETED)`,
+      );
+      continue;
+    }
+
+    // QC clearance check (AC-03..AC-05)
+    if (job.latestQcResult === 'REWORK') {
+      blockingReasons.push(
+        `Job produksi ${job.jobNumber} memiliki hasil inspeksi QC REWORK yang belum terselesaikan`,
+      );
+    } else if (job.latestQcResult === 'REJECTED') {
+      blockingReasons.push(
+        `Job produksi ${job.jobNumber} memiliki hasil inspeksi QC REJECTED yang belum terselesaikan`,
+      );
+    }
+  }
+
+  return {
+    isReady: blockingReasons.length === 0,
+    blockingReasons,
+  };
+}

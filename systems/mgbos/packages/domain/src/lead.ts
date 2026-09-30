@@ -94,6 +94,62 @@ export function validateLeadTransition(from: LeadStatus, to: LeadStatus): void {
   }
 }
 
+/**
+ * Determines whether a Lead is eligible to continue to a Requirement.
+ * Canonical rule: Only leads that have reached QUALIFIED or CONVERTED status may proceed.
+ */
+export function isLeadEligibleForRequirement(status: LeadStatus): boolean {
+  return status === 'QUALIFIED' || status === 'CONVERTED';
+}
+
+export interface LeadForRequirementPrefill {
+  id: string;
+  title: string;
+  rawInquiry?: string | null;
+  estimatedQuantity?: number | null;
+  estimatedBudget?: bigint | number | string | null;
+  customerAccountId?: string | null;
+  status: LeadStatus;
+}
+
+export interface RequirementPrefillData {
+  leadId: string;
+  title: string;
+  summary: string;
+  quantity?: number;
+  targetBudget?: string;
+  customerAccountId?: string;
+}
+
+/**
+ * Maps trusted lead attributes into prefill fields for a new Requirement.
+ * Missing fields remain missing / empty.
+ * Throws a domain error if the lead status is not eligible.
+ */
+export function mapLeadToRequirementPrefill(
+  lead: LeadForRequirementPrefill,
+): RequirementPrefillData {
+  if (!isLeadEligibleForRequirement(lead.status)) {
+    throw new Error(
+      `Lead with status '${lead.status}' is not eligible for Requirement continuation. Only QUALIFIED or CONVERTED leads may be continued.`,
+    );
+  }
+  return {
+    leadId: lead.id,
+    title: lead.title,
+    summary: lead.rawInquiry ?? '',
+    quantity:
+      lead.estimatedQuantity && lead.estimatedQuantity > 0
+        ? lead.estimatedQuantity
+        : undefined,
+    targetBudget:
+      lead.estimatedBudget != null && String(lead.estimatedBudget).trim() !== ''
+        ? String(lead.estimatedBudget).trim()
+        : undefined,
+    customerAccountId: lead.customerAccountId ?? undefined,
+  };
+}
+
 export interface LeadQualificationInput {
   contactName?: string | null;
   email?: string | null;

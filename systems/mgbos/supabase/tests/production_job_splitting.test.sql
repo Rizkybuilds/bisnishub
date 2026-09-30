@@ -247,6 +247,12 @@ select is(
   'Job 1 finished and awaiting QC inspection'
 );
 
+-- Record QC PASS inspection required by F3 before handoff
+insert into app.qc_inspections (
+  organization_id, production_job_id, inspector_id, inspection_number, result
+) select org, (result->>'job_id')::uuid, '77777777-0000-4000-8000-000000000012', 'TS-QC-2026-000099', 'PASS'
+from prod_ctx, prod_job_1;
+
 select is(
   (select app.transition_production_job_status(
     org, '77777777-0000-4000-8000-000000000011', (result->>'job_id')::uuid, 'READY_FOR_HANDOFF'

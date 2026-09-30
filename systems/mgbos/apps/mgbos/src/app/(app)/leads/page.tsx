@@ -18,7 +18,7 @@ export default async function LeadsPage() {
   let leads: LeadDetailData[] = [];
 
   if (serviceKey) {
-    const endpoint = `${supabaseUrl.replace(/\/+$/, '')}/rest/v1/leads?organization_id=eq.${session.organization.id}&select=id,lead_number,title,contact_name,company_name,phone,email,raw_inquiry,estimated_quantity,estimated_budget,status,qualification_result,qualification_score,qualification_notes,disqualification_reason,created_at,qualified_at,disqualified_at,converted_at,channels(id,code,name,channel_type),brands(id,code,name),customer_accounts(id,display_name,account_type)&order=created_at.desc`;
+    const endpoint = `${supabaseUrl.replace(/\/+$/, '')}/rest/v1/leads?organization_id=eq.${session.organization.id}&select=id,lead_number,title,contact_name,company_name,phone,email,raw_inquiry,estimated_quantity,estimated_budget,status,qualification_result,qualification_score,qualification_notes,disqualification_reason,created_at,qualified_at,disqualified_at,converted_at,channels(id,code,name,channel_type),brands(id,code,name),customer_accounts(id,display_name,account_type),requirements(id,requirement_number,status,title)&order=created_at.desc`;
 
     const headers: Record<string, string> = {
       apikey: serviceKey,

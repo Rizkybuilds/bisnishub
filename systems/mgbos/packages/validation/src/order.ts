@@ -87,3 +87,17 @@ export const createRetailOrderSchema = z.object({
 });
 
 export type CreateRetailOrderInput = z.infer<typeof createRetailOrderSchema>;
+
+export const transitionOrderStatusSchema = z.object({
+  orderId: z.string().uuid('ID pesanan tidak valid'),
+  targetStatus: orderStatusSchema,
+  reason: z
+    .string()
+    .max(1000, 'Alasan transisi maksimal 1000 karakter')
+    .optional()
+    .nullable(),
+});
+
+export type TransitionOrderStatusInput = z.infer<
+  typeof transitionOrderStatusSchema
+>;

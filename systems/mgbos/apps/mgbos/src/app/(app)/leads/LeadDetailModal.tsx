@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import Link from 'next/link';
 import {
   qualifyLeadAction,
   disqualifyLeadAction,
@@ -50,6 +51,12 @@ export interface LeadDetailData {
     display_name: string;
     account_type: string;
   } | null;
+  requirements?: Array<{
+    id: string;
+    requirement_number: string;
+    status: string;
+    title: string;
+  }> | null;
 }
 
 export function LeadDetailModal({
@@ -320,6 +327,28 @@ export function LeadDetailModal({
               ⚡ Konversi ke Akun Customer
             </button>
           )}
+
+          {(lead.status === 'QUALIFIED' || lead.status === 'CONVERTED') && (
+            <Link
+              href={`/requirements?leadId=${lead.id}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                background: '#0284c7',
+                color: '#f8fafc',
+                textDecoration: 'none',
+                border: '1px solid #38bdf8',
+                cursor: 'pointer',
+              }}
+            >
+              + Lanjutkan ke Kebutuhan
+            </Link>
+          )}
         </div>
 
         {/* View Tab */}
@@ -327,6 +356,69 @@ export function LeadDetailModal({
           <div
             style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
           >
+            {/* Linked Requirements Card (if any) */}
+            {lead.requirements && lead.requirements.length > 0 && (
+              <div
+                style={{
+                  background: '#042f2e',
+                  border: '1px solid #0d9488',
+                  borderRadius: '8px',
+                  padding: '12px 14px',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    color: '#5eead4',
+                    marginBottom: '8px',
+                    fontWeight: 600,
+                  }}
+                >
+                  KEBUTUHAN TERKAIT (REQUIREMENTS)
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '6px',
+                  }}
+                >
+                  {lead.requirements.map((req) => (
+                    <div
+                      key={req.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        fontSize: '0.85rem',
+                      }}
+                    >
+                      <Link
+                        href={`/requirements?id=${req.id}`}
+                        style={{
+                          color: '#38bdf8',
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        {req.requirement_number} — {req.title}
+                      </Link>
+                      <span
+                        style={{
+                          fontSize: '0.75rem',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          background: '#134e4a',
+                          color: '#ccfbf1',
+                        }}
+                      >
+                        {req.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Raw Inquiry Box */}
             <div
               style={{
