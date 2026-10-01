@@ -3012,6 +3012,10 @@ def validate(root=ROOT):
         ),
         (
             "python scripts/governance/"
+            "validate_engineering_capabilities.py"
+        ),
+        (
+            "python scripts/governance/"
             "validate_engineering_contracts.py"
         ),
         (
