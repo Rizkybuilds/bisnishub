@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/work-package.schema.json",
+  "title": "BisnisHub Engineering Work Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "artifact_id",
+    "implementation_contract_id",
+    "state",
+    "writer",
+    "base_revision",
+    "branch",
+    "worktree",
+    "objective",
+    "scope",
+    "risk",
+    "required_expertise",
+    "acceptance_criteria",
+    "required_checks",
+    "stop_conditions",
+    "handoff_to"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "artifact_type": {
+      "const": "WORK_PACKAGE"
+    },
+    "artifact_id": {
+      "type": "string",
+      "pattern": "^WP-[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "implementation_contract_id": {
+      "type": "string",
+      "pattern": "^IC-[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "state": {
+      "enum": [
+        "READY",
+        "IN_PROGRESS",
+        "BLOCKED",
+        "COMPLETED",
+        "SUPERSEDED",
+        "CANCELLED"
+      ]
+    },
+    "writer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "identity"],
+      "properties": {
+        "role": {
+          "const": "engineer"
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtime": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "base_revision": {
+      "type": "string",
+      "minLength": 7
+    },
+    "branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "worktree": {
+      "type": "string",
+      "minLength": 1
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowed_paths", "forbidden_paths"],
+      "properties": {
+        "allowed_paths": {
+          "$ref": "#/$defs/uniqueStrings"
+        },
+        "forbidden_paths": {
+          "$ref": "#/$defs/uniqueStrings"
+        }
+      }
+    },
+    "risk": {
+      "enum": ["R0", "R1", "R2", "R3", "R4", "R5"]
+    },
+    "required_expertise": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^EXP-[0-9]{3}$"
+      }
+    },
+    "selected_skills": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "acceptance_criteria": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "required_checks": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "dependencies": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^WP-[A-Za-z0-9][A-Za-z0-9._-]*$"
+      }
+    },
+    "stop_conditions": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "handoff_to": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["auditor", "qa"]
+      }
+    }
+  },
+  "$defs": {
+    "uniqueStrings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

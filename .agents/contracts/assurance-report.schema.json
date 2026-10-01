@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/assurance-report.schema.json",
+  "title": "BisnisHub Assurance Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "artifact_id",
+    "engineering_report_id",
+    "reviewed_revision",
+    "reviewer",
+    "independence",
+    "risk",
+    "coverage",
+    "findings",
+    "unverified_areas",
+    "residual_risk",
+    "assurance_status",
+    "handoff"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "artifact_type": {
+      "const": "ASSURANCE_REPORT"
+    },
+    "artifact_id": {
+      "type": "string",
+      "pattern": "^AR-[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "engineering_report_id": {
+      "type": "string",
+      "pattern": "^ER-[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "reviewed_revision": {
+      "type": "string",
+      "minLength": 7
+    },
+    "reviewer": {
+      "$ref": "#/$defs/reviewer"
+    },
+    "independence": {
+      "enum": ["INDEPENDENT", "SELF_REVIEW", "NOT_APPLICABLE"]
+    },
+    "risk": {
+      "enum": ["R0", "R1", "R2", "R3", "R4", "R5"]
+    },
+    "canonical_sources": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "coverage": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "unverified_areas": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "residual_risk": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "assurance_status": {
+      "enum": ["SATISFIED", "NOT_SATISFIED", "PARTIAL", "BLOCKED"]
+    },
+    "handoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["to_roles", "allowed_next_action"],
+      "properties": {
+        "to_roles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": ["engineer", "qa", "release-operator"]
+          }
+        },
+        "allowed_next_action": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "$defs": {
+    "uniqueStrings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "reviewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "identity"],
+      "properties": {
+        "role": {
+          "const": "auditor"
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtime": {
+          "type": ["string", "null"]
+        },
+        "provider": {
+          "type": ["string", "null"]
+        },
+        "version": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finding_id",
+        "severity",
+        "status",
+        "trigger",
+        "consequence",
+        "evidence",
+        "recommended_correction"
+      ],
+      "properties": {
+        "finding_id": {
+          "type": "string",
+          "pattern": "^F-[0-9]{3,}$"
+        },
+        "severity": {
+          "enum": ["INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"]
+        },
+        "status": {
+          "enum": ["OPEN", "RESOLVED", "ACCEPTED_RISK", "NOT_APPLICABLE"]
+        },
+        "path": {
+          "type": ["string", "null"]
+        },
+        "location": {
+          "type": ["string", "null"]
+        },
+        "trigger": {
+          "type": "string",
+          "minLength": 1
+        },
+        "consequence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recommended_correction": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

@@ -395,20 +395,21 @@ It does not own business truth.
 
 # 20. Repository-Level Canonical Sources
 
-| Concept | Owner | Canonical Source |
-|---|---|---|
-| Documentation authority | Repository Governance | `docs/governance/documentation-constitution.md` |
-| Source routing | Repository Governance | `docs/governance/canonical-source-map.md` |
-| Active project locations | Repository Governance | `docs/project-index.md` |
-| Directory ownership | Repository Engineering | `docs/engineering/repository-layout.md` |
-| Repository organization | Repository Governance | `docs/decisions/001-repository-organization.md` |
-| Ecosystem architecture | Cross-System Architecture | `docs/architecture/master-system-blueprint.md` |
-| System boundaries | Cross-System Architecture | `docs/architecture/system-boundaries.md` |
-| Architecture laws | Cross-System Architecture | `docs/architecture/architectural-laws.md` |
-| Cross-system risk | Cross-System Governance | `docs/governance/cross-system-risk-classification.md` |
-| Autonomy | Cross-System Governance | `docs/governance/autonomy-levels.md` |
-| Approval | Cross-System Governance | `docs/governance/approval-policy.md` |
-| Evidence/provenance | Cross-System Governance | `docs/governance/evidence-provenance-model.md` |
+| Concept                      | Owner                     | Canonical Source                                      |
+| ---------------------------- | ------------------------- | ----------------------------------------------------- |
+| Documentation authority      | Repository Governance     | `docs/governance/documentation-constitution.md`       |
+| Source routing               | Repository Governance     | `docs/governance/canonical-source-map.md`             |
+| Active project locations     | Repository Governance     | `docs/project-index.md`                               |
+| Directory ownership          | Repository Engineering    | `docs/engineering/repository-layout.md`               |
+| Engineering AI Control Plane | Repository Engineering    | `docs/engineering/engineering-ai-control-plane.md`    |
+| Repository organization      | Repository Governance     | `docs/decisions/001-repository-organization.md`       |
+| Ecosystem architecture       | Cross-System Architecture | `docs/architecture/master-system-blueprint.md`        |
+| System boundaries            | Cross-System Architecture | `docs/architecture/system-boundaries.md`              |
+| Architecture laws            | Cross-System Architecture | `docs/architecture/architectural-laws.md`             |
+| Cross-system risk            | Cross-System Governance   | `docs/governance/cross-system-risk-classification.md` |
+| Autonomy                     | Cross-System Governance   | `docs/governance/autonomy-levels.md`                  |
+| Approval                     | Cross-System Governance   | `docs/governance/approval-policy.md`                  |
+| Evidence/provenance          | Cross-System Governance   | `docs/governance/evidence-provenance-model.md`        |
 
 ---
 

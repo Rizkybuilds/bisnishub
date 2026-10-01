@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/engineering-report.schema.json",
+  "title": "BisnisHub Engineering Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "artifact_id",
+    "work_package_id",
+    "status",
+    "executor",
+    "repository",
+    "base_revision",
+    "head",
+    "files_changed",
+    "implementation_summary",
+    "decisions",
+    "checks_run",
+    "checks_not_run",
+    "known_failures",
+    "limitations",
+    "residual_risk",
+    "handoff"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "artifact_type": {
+      "const": "ENGINEERING_REPORT"
+    },
+    "artifact_id": {
+      "type": "string",
+      "pattern": "^ER-[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "work_package_id": {
+      "type": "string",
+      "pattern": "^WP-[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "status": {
+      "enum": ["COMPLETED", "PARTIAL", "BLOCKED", "FAILED"]
+    },
+    "executor": {
+      "$ref": "#/$defs/executor"
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
+    "base_revision": {
+      "type": "string",
+      "minLength": 7
+    },
+    "head": {
+      "$ref": "#/$defs/head"
+    },
+    "files_changed": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "implementation_summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decisions": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "invariants_preserved": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "scope_drift": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["detected", "details"],
+      "properties": {
+        "detected": {
+          "type": "boolean"
+        },
+        "details": {
+          "$ref": "#/$defs/uniqueStrings"
+        }
+      }
+    },
+    "checks_run": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/checkResult"
+      }
+    },
+    "checks_not_run": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/notRun"
+      }
+    },
+    "known_failures": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "limitations": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "residual_risk": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "handoff": {
+      "$ref": "#/$defs/handoff"
+    }
+  },
+  "$defs": {
+    "uniqueStrings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "executor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "identity"],
+      "properties": {
+        "role": {
+          "const": "engineer"
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtime": {
+          "type": ["string", "null"]
+        },
+        "provider": {
+          "type": ["string", "null"]
+        },
+        "version": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "head": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["dirty", "sha"],
+          "properties": {
+            "dirty": {
+              "const": false
+            },
+            "sha": {
+              "type": "string",
+              "minLength": 7
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["dirty", "base_sha", "diff_fingerprint"],
+          "properties": {
+            "dirty": {
+              "const": true
+            },
+            "base_sha": {
+              "type": "string",
+              "minLength": 7
+            },
+            "diff_fingerprint": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "checkResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "check_id",
+        "timestamp",
+        "environment",
+        "procedure",
+        "result"
+      ],
+      "properties": {
+        "check_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "procedure": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result": {
+          "enum": ["PASS", "FAIL", "BLOCKED"]
+        },
+        "evidence_reference": {
+          "type": ["string", "null"]
+        },
+        "limitations": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "notRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["check_id", "reason", "consequence"],
+      "properties": {
+        "check_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "consequence": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "handoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["to_roles", "allowed_next_action"],
+      "properties": {
+        "to_roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["auditor", "qa"]
+          }
+        },
+        "allowed_next_action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "blockers": {
+          "$ref": "#/$defs/uniqueStrings"
+        }
+      }
+    }
+  }
+}

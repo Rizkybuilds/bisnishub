@@ -1,0 +1,758 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.expertise
+  status: ACTIVE
+  version: "1.0"
+  owner: Rizky
+  scope: repository-engineering
+  semantic_policy: docs/engineering/engineering-ai-control-plane.md
+  guide: .agents/expertise/README.md
+  role_registry: .agents/roles/contracts.json
+  risk_policy: docs/governance/cross-system-risk-classification.md
+
+principles:
+  selection_mode: on-demand
+  prefer_minimum_sufficient_set: true
+  expertise_grants_role: false
+  expertise_grants_permission: false
+  expertise_grants_tool_access: false
+  expertise_grants_approval: false
+  expertise_grants_autonomy: false
+  provider_neutral: true
+
+allowed_maturity:
+  - ACTIVE
+  - PROVISIONAL
+  - DEFERRED
+
+allowed_groups:
+  - core
+  - founder-control
+  - automation
+  - ai
+  - platform
+
+expertise:
+  - id: EXP-001
+    slug: system-business-architecture
+    name: System & Business Architecture
+    maturity: ACTIVE
+    group: core
+    mission: >
+      Preserve system boundaries, semantic ownership, canonical authority,
+      architectural coherence, and business-to-system separation across BisnisHub.
+    primary_roles:
+      - planner
+      - auditor
+    secondary_roles:
+      - engineer
+      - release-operator
+    activation_signals:
+      - cross-system architecture
+      - semantic ownership
+      - canonical source conflict
+      - system boundary
+      - architectural decision
+      - repository-wide design
+    canonical_sources:
+      - docs/architecture/master-system-blueprint.md
+      - docs/architecture/system-boundaries.md
+      - docs/architecture/architectural-laws.md
+      - docs/governance/canonical-source-map.md
+      - docs/governance/documentation-constitution.md
+    non_responsibilities:
+      - Does not grant implementation permission.
+      - Does not override system-owned business semantics.
+      - Does not treat future architecture as implemented reality.
+
+  - id: EXP-002
+    slug: mgbos-domain-erp
+    name: MGBOS Domain / ERP
+    maturity: ACTIVE
+    group: core
+    mission: >
+      Preserve MGBOS domain ownership, entity semantics, business state machines,
+      business invariants, and operational transaction lineage.
+    primary_roles:
+      - planner
+      - engineer
+      - auditor
+    secondary_roles:
+      - qa
+    activation_signals:
+      - MGBOS entity
+      - business state
+      - order lifecycle
+      - invoice
+      - payment
+      - production
+      - inventory
+      - procurement
+      - shipment
+      - QC
+    canonical_sources:
+      - systems/mgbos/docs/architecture/domain-map-capability-ownership.md
+      - systems/mgbos/docs/architecture/canonical-data-model.md
+      - systems/mgbos/docs/architecture/business-state-machines.md
+      - systems/mgbos/docs/architecture/business-invariants.md
+    non_responsibilities:
+      - Does not redefine TeeStock business strategy.
+      - Does not grant business mutation authority.
+      - Does not collapse independent domain lifecycles into one generic status.
+
+  - id: EXP-003
+    slug: backend-command-engineering
+    name: Backend & Command Engineering
+    maturity: ACTIVE
+    group: core
+    mission: >
+      Design and implement authenticated, authorized, validated, idempotent,
+      transactional server command boundaries and backend application behavior.
+    primary_roles:
+      - engineer
+      - auditor
+    secondary_roles:
+      - planner
+      - qa
+    activation_signals:
+      - server command
+      - RPC
+      - API
+      - server action
+      - mutation
+      - idempotency
+      - transaction boundary
+      - backend integration
+    canonical_sources:
+      - systems/mgbos/docs/architecture/command-event-model.md
+      - systems/mgbos/docs/architecture/permission-authorization-model.md
+      - systems/mgbos/docs/architecture/business-invariants.md
+      - systems/mgbos/AGENTS.md
+    non_responsibilities:
+      - Does not bypass authorization for implementation convenience.
+      - Does not invent a generic command bus when actual MGBOS contracts differ.
+      - Does not treat frontend validation as server authorization.
+
+  - id: EXP-004
+    slug: postgresql-supabase-transaction
+    name: PostgreSQL / Supabase Transaction
+    maturity: ACTIVE
+    group: core
+    mission: >
+      Preserve database transactional correctness, constraints, locking,
+      migrations, RLS, grants, idempotency, concurrency, and recoverability.
+    primary_roles:
+      - engineer
+      - auditor
+      - qa
+    secondary_roles:
+      - planner
+      - release-operator
+    activation_signals:
+      - PostgreSQL
+      - Supabase
+      - SQL
+      - migration
+      - RLS
+      - transaction
+      - row lock
+      - advisory lock
+      - constraint
+      - database function
+      - concurrency
+    canonical_sources:
+      - systems/mgbos/docs/adr/002-postgresql-system-of-record.md
+      - systems/mgbos/docs/adr/003-supabase.md
+      - systems/mgbos/docs/architecture/command-event-model.md
+      - systems/mgbos/docs/runbooks/local-database.md
+      - systems/mgbos/docs/engineering/agent-system/risk-classification.md
+    non_responsibilities:
+      - Does not authorize remote or production database mutation.
+      - Does not permit modification of existing base migration history.
+      - Does not turn database credentials into business permission.
+
+  - id: EXP-005
+    slug: authorization-iam-capability
+    name: Authorization / IAM / Capability
+    maturity: ACTIVE
+    group: core
+    mission: >
+      Preserve identity, organization scope, role resolution, capability checks,
+      least privilege, server-side authorization, and cross-tenant isolation.
+    primary_roles:
+      - planner
+      - engineer
+      - auditor
+    secondary_roles:
+      - qa
+      - release-operator
+    activation_signals:
+      - authentication
+      - authorization
+      - role
+      - permission
+      - organization
+      - capability
+      - service principal
+      - RLS
+      - cross-org
+      - privileged function
+    canonical_sources:
+      - systems/mgbos/docs/architecture/permission-authorization-model.md
+      - docs/architecture/architectural-laws.md
+      - docs/governance/cross-system-risk-classification.md
+    non_responsibilities:
+      - Does not grant roles or permissions by prompt.
+      - Does not treat service credentials as authorization.
+      - Does not treat hidden UI elements as access control.
+
+  - id: EXP-006
+    slug: financial-integrity
+    name: Financial Integrity
+    maturity: ACTIVE
+    group: core
+    mission: >
+      Preserve authoritative financial truth, integer-money semantics,
+      payment and invoice reconciliation, historical integrity, idempotency,
+      concurrency safety, and economically correct transaction effects.
+    primary_roles:
+      - auditor
+      - engineer
+      - planner
+    secondary_roles:
+      - qa
+      - release-operator
+    activation_signals:
+      - payment
+      - invoice
+      - payment allocation
+      - refund
+      - reversal
+      - vendor bill
+      - vendor payment
+      - financial ledger
+      - cost
+      - margin
+      - money
+    canonical_sources:
+      - systems/mgbos/docs/architecture/business-invariants.md
+      - systems/mgbos/docs/architecture/canonical-data-model.md
+      - systems/mgbos/docs/architecture/command-event-model.md
+      - systems/mgbos/docs/engineering/agent-system/risk-classification.md
+    non_responsibilities:
+      - Does not approve or execute real payments.
+      - Does not establish accounting policy outside canonical business/system authority.
+      - Does not permit floating-point authoritative money.
+
+  - id: EXP-007
+    slug: security-trust-boundary
+    name: Security & Trust Boundary
+    maturity: ACTIVE
+    group: core
+    mission: >
+      Preserve least authority, secret isolation, trusted execution boundaries,
+      untrusted-input handling, privilege separation, and security failure containment.
+    primary_roles:
+      - auditor
+      - planner
+      - engineer
+    secondary_roles:
+      - qa
+      - release-operator
+    activation_signals:
+      - secret
+      - credential
+      - privileged access
+      - authentication
+      - authorization
+      - prompt injection
+      - untrusted input
+      - external content
+      - security policy
+      - sensitive data
+    canonical_sources:
+      - docs/architecture/architectural-laws.md
+      - systems/mgbos/docs/architecture/permission-authorization-model.md
+      - systems/jarvis/docs/architecture/security-secrets-environment.md
+      - docs/governance/cross-system-risk-classification.md
+    non_responsibilities:
+      - Does not grant privileged access.
+      - Does not request raw secrets for documentation or review.
+      - Does not assume AI instructions can replace technical security controls.
+
+  - id: EXP-008
+    slug: frontend-product-engineering
+    name: Frontend Product Engineering
+    maturity: ACTIVE
+    group: core
+    mission: >
+      Build maintainable application interfaces that preserve server authority,
+      framework boundaries, accessibility, performance, and product behavior.
+    primary_roles:
+      - engineer
+      - qa
+    secondary_roles:
+      - planner
+      - auditor
+    activation_signals:
+      - Next.js
+      - React
+      - page
+      - component
+      - form
+      - frontend state
+      - accessibility
+      - responsive UI
+      - client-server boundary
+    canonical_sources:
+      - systems/mgbos/docs/adr/001-modular-monolith.md
+      - systems/mgbos/docs/product/README.md
+      - systems/mgbos/AGENTS.md
+    non_responsibilities:
+      - Does not make frontend state authoritative business truth.
+      - Does not treat hidden buttons as authorization.
+      - Does not redesign unrelated product areas without scope.
+
+  - id: EXP-009
+    slug: product-ux-operator-workflow
+    name: Product UX & Operator Workflow
+    maturity: ACTIVE
+    group: core
+    mission: >
+      Reduce operator cognitive load, expose next actions and exceptions,
+      preserve workflow clarity, and make governed business operations usable.
+    primary_roles:
+      - planner
+      - engineer
+      - qa
+    secondary_roles:
+      - auditor
+    activation_signals:
+      - operator workflow
+      - founder workflow
+      - navigation
+      - attention
+      - next action
+      - usability
+      - workflow friction
+      - information architecture
+    canonical_sources:
+      - docs/operating-model/solo-founder-operating-system.md
+      - docs/roadmaps/solo-founder-launch-roadmap.md
+      - systems/mgbos/docs/product/README.md
+      - systems/mgbos/docs/implementation/phase-1-operating-spine/operator-acceptance-test.md
+    non_responsibilities:
+      - Does not weaken business invariants for convenience.
+      - Does not turn dashboards into substitute workflows.
+      - Does not invent business requirements absent canonical authority.
+
+  - id: EXP-010
+    slug: qa-reliability
+    name: QA & Reliability
+    maturity: ACTIVE
+    group: core
+    mission: >
+      Design risk-proportional verification across unit, integration, database,
+      end-to-end, negative-path, concurrency, retry, and operational evidence.
+    primary_roles:
+      - qa
+      - planner
+    secondary_roles:
+      - engineer
+      - auditor
+      - release-operator
+    activation_signals:
+      - acceptance criteria
+      - regression
+      - test
+      - QA
+      - failure path
+      - retry
+      - concurrency
+      - verification
+      - release gate
+    canonical_sources:
+      - systems/mgbos/docs/engineering/maintenance-policy.md
+      - systems/mgbos/docs/engineering/agent-system/evidence-model.md
+      - systems/mgbos/docs/engineering/agent-system/release-gates.md
+      - docs/governance/evidence-provenance-model.md
+    non_responsibilities:
+      - Does not convert NOT_RUN or BLOCKED into PASS.
+      - Does not treat test count as evidence quality.
+      - Does not authorize release.
+
+  - id: EXP-011
+    slug: independent-business-integrity-assurance
+    name: Independent Business Integrity Assurance
+    maturity: ACTIVE
+    group: core
+    mission: >
+      Independently assess whether an implementation preserves business
+      invariants, authorization, financial integrity, historical integrity,
+      evidence quality, and release trustworthiness.
+    primary_roles:
+      - auditor
+    secondary_roles:
+      - planner
+      - release-operator
+    activation_signals:
+      - independent review
+      - business integrity
+      - high-risk change
+      - money
+      - authorization
+      - history
+      - release blocker
+      - assurance
+    canonical_sources:
+      - systems/mgbos/docs/architecture/business-invariants.md
+      - systems/mgbos/docs/architecture/permission-authorization-model.md
+      - docs/governance/evidence-provenance-model.md
+      - systems/mgbos/docs/engineering/agent-system/evidence-model.md
+      - systems/mgbos/docs/engineering/agent-system/release-gates.md
+    non_responsibilities:
+      - Does not make self-review independent.
+      - Does not silently fix the implementation being audited.
+      - Does not waive unresolved money, access, history, or recovery blockers.
+
+  - id: EXP-012
+    slug: operational-exception
+    name: Operational Exception
+    maturity: ACTIVE
+    group: founder-control
+    mission: >
+      Model abnormal operational conditions as explicit, durable,
+      evidence-backed exceptions that can be owned, prioritized, and resolved.
+    primary_roles:
+      - planner
+      - engineer
+    secondary_roles:
+      - auditor
+      - qa
+    activation_signals:
+      - operational exception
+      - overdue
+      - at risk
+      - mismatch
+      - QC failure
+      - delayed shipment
+      - automation failure
+      - needs attention
+    canonical_sources:
+      - docs/roadmaps/solo-founder-launch-roadmap.md
+      - docs/operating-model/solo-founder-operating-system.md
+      - systems/mgbos/docs/architecture/domain-map-capability-ownership.md
+    non_responsibilities:
+      - Does not replace underlying authoritative domain state.
+      - Does not create a generic workflow engine.
+      - Does not infer physical failure without evidence.
+
+  - id: EXP-013
+    slug: founder-decision-intelligence
+    name: Founder Decision Intelligence
+    maturity: ACTIVE
+    group: founder-control
+    mission: >
+      Convert authoritative business signals into deterministic attention views,
+      evidence-backed decision context, and founder-by-exception workflows.
+    primary_roles:
+      - planner
+      - engineer
+    secondary_roles:
+      - auditor
+      - qa
+    activation_signals:
+      - founder attention
+      - decision intelligence
+      - attention view
+      - command center
+      - needs attention
+      - decision inbox
+      - exception prioritization
+    canonical_sources:
+      - docs/operating-model/solo-founder-operating-system.md
+      - docs/roadmaps/solo-founder-launch-roadmap.md
+      - systems/jarvis/docs/architecture/command-center-decision-experience.md
+      - systems/mgbos/docs/architecture/domain-map-capability-ownership.md
+    non_responsibilities:
+      - Does not make JARVIS authoritative.
+      - Does not replace deterministic business projections with free-form AI inference.
+      - Does not create approval noise for routine low-risk work.
+
+  - id: EXP-014
+    slug: vendor-capability-sla
+    name: Vendor Capability & SLA
+    maturity: PROVISIONAL
+    group: founder-control
+    mission: >
+      Model vendor capabilities, rates, lead-time evidence, quality,
+      reliability, acknowledgement, and execution suitability without
+      inventing unsupported scoring systems.
+    primary_roles:
+      - planner
+      - engineer
+    secondary_roles:
+      - auditor
+      - qa
+    activation_signals:
+      - vendor capability
+      - vendor SLA
+      - production partner
+      - lead time
+      - rate card
+      - vendor acknowledgement
+      - vendor reliability
+    canonical_sources:
+      - systems/mgbos/docs/adr/012-vendor-capabilities-and-qc-inspections.md
+      - systems/mgbos/docs/architecture/domain-map-capability-ownership.md
+      - bisnis/teestock/07-operations/sourcing-and-vendors.md
+    non_responsibilities:
+      - Does not invent numeric vendor scores without evidence.
+      - Does not automatically select or commit a real vendor.
+      - Does not override current production assignment semantics.
+
+  - id: EXP-015
+    slug: customer-case-service-recovery
+    name: Customer Case & Service Recovery
+    maturity: PROVISIONAL
+    group: founder-control
+    mission: >
+      Structure durable customer-facing exceptions, complaints, scope changes,
+      refund requests, delivery issues, and service recovery without replacing
+      authoritative transaction state.
+    primary_roles:
+      - planner
+      - engineer
+    secondary_roles:
+      - auditor
+      - qa
+    activation_signals:
+      - complaint
+      - customer case
+      - service recovery
+      - refund request
+      - quality complaint
+      - scope change
+      - delivery issue
+    canonical_sources:
+      - docs/roadmaps/solo-founder-launch-roadmap.md
+      - bisnis/teestock/07-operations/customer-service.md
+      - bisnis/teestock/07-operations/returns-and-warranty.md
+    non_responsibilities:
+      - Does not replace order, payment, QC, shipment, or refund state.
+      - Does not infer refund authority from complaint status.
+      - Does not become a generic CRM super-domain before requirements mature.
+
+  - id: EXP-016
+    slug: integration-reliability-eventing
+    name: Integration Reliability & Eventing
+    maturity: ACTIVE
+    group: automation
+    mission: >
+      Design reliable integration and event boundaries with idempotency,
+      delivery semantics, causation, correlation, failure visibility,
+      reconciliation, and authoritative-state revalidation.
+    primary_roles:
+      - planner
+      - engineer
+      - auditor
+    secondary_roles:
+      - qa
+      - release-operator
+    activation_signals:
+      - webhook
+      - event
+      - integration
+      - outbox
+      - callback
+      - retry
+      - duplicate delivery
+      - reconciliation
+      - external provider
+    canonical_sources:
+      - systems/mgbos/docs/adr/005-transactional-outbox.md
+      - systems/mgbos/docs/architecture/command-event-model.md
+      - systems/jarvis/docs/architecture/event-proactive-intelligence.md
+      - systems/jarvis/docs/architecture/integration-api-interoperability.md
+    non_responsibilities:
+      - Does not make events authoritative current state.
+      - Does not treat HTTP success as business success.
+      - Does not bypass canonical MGBOS commands.
+
+  - id: EXP-017
+    slug: workflow-automation-n8n
+    name: Workflow Automation / n8n
+    maturity: ACTIVE
+    group: automation
+    mission: >
+      Automate stable repeatable coordination while preserving authoritative
+      business ownership, explicit commands, visible failures, bounded retries,
+      and recoverable orchestration.
+    primary_roles:
+      - planner
+      - engineer
+    secondary_roles:
+      - auditor
+      - qa
+    activation_signals:
+      - n8n
+      - workflow automation
+      - reminder
+      - scheduled workflow
+      - orchestration
+      - automation failure
+      - workflow retry
+    canonical_sources:
+      - systems/mgbos/docs/adr/004-n8n-orchestrator.md
+      - docs/architecture/architectural-laws.md
+      - bisnis/teestock/10-product-tech/automation-architecture.md
+    non_responsibilities:
+      - Does not make n8n a system of record.
+      - Does not bypass MGBOS invariants.
+      - Does not automate unstable or undefined business semantics by default.
+
+  - id: EXP-018
+    slug: ai-systems-ai-builder
+    name: AI Systems / AI Builder
+    maturity: ACTIVE
+    group: ai
+    mission: >
+      Build provider-neutral AI capabilities using structured interfaces,
+      bounded context, tool governance, model routing, prompt-injection
+      resistance, validation, evidence, and deterministic business boundaries.
+    primary_roles:
+      - planner
+      - engineer
+      - auditor
+    secondary_roles:
+      - qa
+    activation_signals:
+      - LLM
+      - OCR
+      - extraction
+      - classification
+      - tool calling
+      - model gateway
+      - prompt injection
+      - structured output
+      - AI capability
+    canonical_sources:
+      - systems/mgbos/docs/adr/006-ai-gateway.md
+      - systems/jarvis/docs/architecture/model-gateway-routing.md
+      - systems/jarvis/docs/architecture/tool-capability.md
+      - systems/jarvis/docs/architecture/security-secrets-environment.md
+      - systems/jarvis/docs/architecture/ai-evaluation-regression-autonomy-promotion.md
+    non_responsibilities:
+      - Does not make AI output authoritative business truth.
+      - Does not allow provider SDK choice to define business architecture.
+      - Does not convert model confidence into permission or approval.
+
+  - id: EXP-019
+    slug: jarvis-runtime-architecture
+    name: JARVIS Runtime Architecture
+    maturity: ACTIVE
+    group: ai
+    mission: >
+      Preserve JARVIS Core boundaries across intent routing, context building,
+      planning, policy coordination, capability execution, verification,
+      evidence synthesis, memory, and provider-independent intelligence.
+    primary_roles:
+      - planner
+      - auditor
+    secondary_roles:
+      - engineer
+      - qa
+    activation_signals:
+      - JARVIS
+      - intent router
+      - context builder
+      - planner
+      - policy coordinator
+      - execution coordinator
+      - verification coordinator
+      - memory
+      - model gateway
+    canonical_sources:
+      - systems/jarvis/docs/charter.md
+      - systems/jarvis/docs/architecture.md
+      - systems/jarvis/docs/core-runtime.md
+      - systems/jarvis/docs/architecture/canonical-index-implementation-readiness.md
+    non_responsibilities:
+      - Does not imply JARVIS runtime is implemented.
+      - Does not make JARVIS a system of record.
+      - Does not create a giant unrestricted super-agent.
+
+  - id: EXP-020
+    slug: agent-evaluation-ai-governance
+    name: Agent Evaluation & AI Governance
+    maturity: ACTIVE
+    group: ai
+    mission: >
+      Evaluate observable AI behavior, routing, context use, tool selection,
+      forbidden actions, regression, assurance, and autonomy readiness using
+      revision-bound evidence rather than prompt confidence.
+    primary_roles:
+      - auditor
+      - qa
+      - planner
+    secondary_roles:
+      - engineer
+      - release-operator
+    activation_signals:
+      - agent evaluation
+      - behavioral eval
+      - prompt regression
+      - model upgrade
+      - skill change
+      - runtime change
+      - autonomy promotion
+      - AI governance
+    canonical_sources:
+      - systems/jarvis/docs/architecture/ai-evaluation-regression-autonomy-promotion.md
+      - systems/jarvis/docs/architecture/agent-registry.md
+      - systems/jarvis/docs/architecture/skill-registry.md
+      - .agents/evals/README.md
+      - docs/governance/evidence-provenance-model.md
+    non_responsibilities:
+      - Does not treat eval definition as eval success.
+      - Does not automatically promote autonomy from aggregate scores.
+      - Does not label sequential self-review as independent evaluation.
+
+  - id: EXP-021
+    slug: platform-sre-recovery
+    name: Platform / SRE / Recovery
+    maturity: ACTIVE
+    group: platform
+    mission: >
+      Preserve environment isolation, deployment safety, observability,
+      backup, restore, incident response, rollback, reconciliation,
+      and operational recovery readiness.
+    primary_roles:
+      - release-operator
+      - planner
+      - auditor
+    secondary_roles:
+      - engineer
+      - qa
+    activation_signals:
+      - deployment
+      - environment
+      - production
+      - backup
+      - restore
+      - rollback
+      - monitoring
+      - incident
+      - recovery
+      - operational readiness
+    canonical_sources:
+      - systems/mgbos/docs/engineering/operational-readiness.md
+      - systems/mgbos/docs/runbooks/release-and-recovery.md
+      - systems/mgbos/docs/runbooks/backup-and-restore.md
+      - systems/mgbos/docs/runbooks/monitoring-and-incidents.md
+      - systems/mgbos/docs/engineering/agent-system/release-gates.md
+    non_responsibilities:
+      - Does not grant production access.
+      - Does not equate written runbooks with configured infrastructure.
+      - Does not declare deployment or recovery success without runtime evidence.
