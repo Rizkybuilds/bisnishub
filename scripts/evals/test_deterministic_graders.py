@@ -184,6 +184,18 @@ cases:
                 ),
             "repository_revision":
                 "aaaaaaaa",
+            "configuration_fingerprint": {
+                "id": (
+                    "sha256:"
+                    + "0" * 64
+                ),
+                "inputs": [
+                    {
+                        "path": "AGENTS.md",
+                        "sha256": "0" * 64,
+                    }
+                ],
+            },
             "started_at":
                 "2026-10-01T00:00:00Z",
             "finished_at":

@@ -2,6 +2,7 @@
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import os
 import shutil
@@ -78,6 +79,80 @@ def load_json(path):
             encoding="utf-8"
         )
     )
+
+
+def sha256_file(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(
+            lambda: handle.read(1024 * 1024),
+            b"",
+        ):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def configuration_fingerprint(
+    worktree,
+    case,
+):
+    paths = {
+        ".agents/evals/baseline.json",
+        "AGENTS.md",
+        "systems/mgbos/AGENTS.md",
+        ".agents/roles/"
+        f"{case['role']}.md",
+        ".agents/expertise/registry.yaml",
+        ".agents/routing/task-types.yaml",
+    }
+    adapter_registry = (
+        worktree
+        / ".agents/adapters/registry.yaml"
+    )
+    if adapter_registry.is_file():
+        paths.add(
+            ".agents/adapters/registry.yaml"
+        )
+    for source in case[
+        "sources"
+    ]:
+        paths.add(
+            source
+        )
+    inputs = []
+    aggregate = hashlib.sha256()
+    for relative in sorted(
+        paths
+    ):
+        path = (
+            worktree
+            / relative
+        )
+        if not path.is_file():
+            raise RuntimeError(
+                "Fingerprint source missing: "
+                f"{relative}"
+            )
+        sha = sha256_file(path)
+        inputs.append(
+            {
+                "path": relative,
+                "sha256": sha,
+            }
+        )
+        aggregate.update(
+            f"{relative}:{sha}\n".encode(
+                "utf-8"
+            )
+        )
+
+    return {
+        "id": (
+            "sha256:"
+            f"{aggregate.hexdigest()}"
+        ),
+        "inputs": inputs,
+    }
 
 
 def find_case(baseline, case_id):
@@ -378,6 +453,13 @@ def main():
         repo_sha,
     )
 
+    fingerprint = (
+        configuration_fingerprint(
+            worktree,
+            case,
+        )
+    )
+
     started_at = utc_now()
 
     env = safe_environment(
@@ -539,6 +621,8 @@ def main():
         "runtime_version": version,
         "model": None,
         "repository_revision": repo_sha,
+        "configuration_fingerprint":
+            fingerprint,
         "started_at": started_at,
         "finished_at": finished_at,
         "execution_status":
