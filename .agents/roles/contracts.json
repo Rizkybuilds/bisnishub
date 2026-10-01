@@ -2,14 +2,23 @@
   "schemaVersion": 1,
   "workspace": "systems/mgbos/",
   "policy": "systems/mgbos/docs/engineering/agent-system/permission-matrix.md",
+  "capabilityRegistry": ".agents/capabilities/registry.yaml",
+  "roleGrantRegistry": ".agents/capabilities/role-grants.yaml",
   "roles": [
     {
       "id": "planner",
       "name": "Planner",
       "contract": ".agents/roles/planner.md",
-      "skills": ["mgbos-change-planner"],
-      "capabilities": ["read-repository", "write-plan"],
-      "handoffTo": ["engineer"]
+      "skills": [
+        "mgbos-change-planner"
+      ],
+      "capabilities": [
+        "engineering.repository.read",
+        "engineering.plan.write"
+      ],
+      "handoffTo": [
+        "engineer"
+      ]
     },
     {
       "id": "engineer",
@@ -17,39 +26,63 @@
       "contract": ".agents/roles/engineer.md",
       "skills": [],
       "capabilities": [
-        "read-repository",
-        "write-scoped-files",
-        "run-local-checks"
+        "engineering.repository.read",
+        "engineering.source.write.scoped",
+        "engineering.check.local.execute"
       ],
-      "handoffTo": ["auditor", "qa"]
+      "handoffTo": [
+        "auditor",
+        "qa"
+      ]
     },
     {
       "id": "auditor",
       "name": "Auditor",
       "contract": ".agents/roles/auditor.md",
-      "skills": ["mgbos-business-integrity-auditor", "mgbos-pr-reviewer"],
-      "capabilities": ["read-repository", "write-review"],
-      "handoffTo": ["engineer", "qa"]
+      "skills": [
+        "mgbos-business-integrity-auditor",
+        "mgbos-pr-reviewer"
+      ],
+      "capabilities": [
+        "engineering.repository.read",
+        "engineering.review.write"
+      ],
+      "handoffTo": [
+        "engineer",
+        "qa"
+      ]
     },
     {
       "id": "qa",
       "name": "QA",
       "contract": ".agents/roles/qa.md",
-      "skills": ["web-qa-testing"],
-      "capabilities": [
-        "read-repository",
-        "write-test-artifacts",
-        "run-local-checks"
+      "skills": [
+        "web-qa-testing"
       ],
-      "handoffTo": ["engineer", "release-operator"]
+      "capabilities": [
+        "engineering.repository.read",
+        "engineering.test_artifact.write",
+        "engineering.check.local.execute"
+      ],
+      "handoffTo": [
+        "engineer",
+        "release-operator"
+      ]
     },
     {
       "id": "release-operator",
       "name": "Release Operator",
       "contract": ".agents/roles/release-operator.md",
-      "skills": ["git-deploy-ops"],
-      "capabilities": ["read-repository", "write-release-plan"],
-      "handoffTo": ["engineer"]
+      "skills": [
+        "git-deploy-ops"
+      ],
+      "capabilities": [
+        "engineering.repository.read",
+        "engineering.release_packet.write"
+      ],
+      "handoffTo": [
+        "engineer"
+      ]
     }
   ]
 }

@@ -230,7 +230,7 @@ class GovernanceValidationTests(
 
         with self.assertRaisesRegex(
             ValueError,
-            "capabilities",
+            "capability",
         ):
             governance.validate(
                 self.root
