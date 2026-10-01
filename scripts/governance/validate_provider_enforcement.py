@@ -1,4 +1,16 @@
-"""Validate Codex and Antigravity governed gateway wiring."""
+"""Validate Codex and Antigravity governed gateway wiring.
+
+This validator checks provider-level enforcement structure.
+
+Important distinction:
+
+    MCP server availability
+    !=
+    engineering authority
+
+The Engineering Gateway must be able to initialize without a trusted session.
+Actual governed tools fail closed until a trusted launcher session exists.
+"""
 
 from __future__ import annotations
 
@@ -220,9 +232,7 @@ def validate_codex(
     )
 
     require(
-        set(
-            servers
-        )
+        set(servers)
         == {
             "bisnishubEngineeringGateway"
         },
@@ -233,9 +243,11 @@ def validate_codex(
         ),
     )
 
-    gateway = servers[
-        "bisnishubEngineeringGateway"
-    ]
+    gateway = (
+        servers[
+            "bisnishubEngineeringGateway"
+        ]
+    )
 
     require(
         gateway.get(
@@ -275,14 +287,16 @@ def validate_codex(
         ),
     )
 
+    # The project must remain usable on hosts where the local gateway runtime
+    # has not yet been activated. Authorization still fails closed at tool use.
     require(
         gateway.get(
             "required"
         )
-        is True,
+        is False,
         (
-            "Codex gateway MCP "
-            "must remain required"
+            "Codex Engineering Gateway must not be a fatal thread-start "
+            "dependency. Keep required=false and enforce authority at tool use."
         ),
     )
 
@@ -338,9 +352,7 @@ def validate_antigravity(
     )
 
     require(
-        set(
-            config
-        )
+        set(config)
         == {
             "mcpServers"
         },
@@ -351,9 +363,11 @@ def validate_antigravity(
         ),
     )
 
-    servers = config[
-        "mcpServers"
-    ]
+    servers = (
+        config[
+            "mcpServers"
+        ]
+    )
 
     require(
         isinstance(
@@ -367,9 +381,7 @@ def validate_antigravity(
     )
 
     require(
-        set(
-            servers
-        )
+        set(servers)
         == {
             (
                 "bisnishub-"
@@ -383,9 +395,11 @@ def validate_antigravity(
         ),
     )
 
-    gateway = servers[
-        "bisnishub-engineering-gateway"
-    ]
+    gateway = (
+        servers[
+            "bisnishub-engineering-gateway"
+        ]
+    )
 
     require(
         gateway.get(
@@ -430,6 +444,89 @@ def validate_antigravity(
     )
 
 
+def validate_server_lifecycle(
+    root: Path,
+) -> None:
+    server = local_file(
+        root,
+        SERVER,
+    )
+
+    text = server.read_text(
+        encoding="utf-8"
+    )
+
+    require(
+        SESSION_VARIABLE
+        in text,
+        (
+            "Gateway server no longer "
+            "uses trusted session state"
+        ),
+    )
+
+    require(
+        "def trusted_session_path"
+        in text,
+        (
+            "Gateway server missing "
+            "trusted-session resolver"
+        ),
+    )
+
+    require(
+        "def gateway_for_tool"
+        in text,
+        (
+            "Gateway server must resolve "
+            "EngineeringGateway lazily "
+            "inside tool execution"
+        ),
+    )
+
+    require(
+        "ToolError"
+        in text,
+        (
+            "Gateway server must expose "
+            "missing/invalid authority as "
+            "an MCP tool failure rather "
+            "than process startup failure"
+        ),
+    )
+
+    require(
+        "SESSION_PATH = trusted_session_path()"
+        not in text,
+        (
+            "Gateway server must not resolve "
+            "trusted session at module startup"
+        ),
+    )
+
+    require(
+        "GATEWAY = EngineeringGateway"
+        not in text,
+        (
+            "Gateway server must not construct "
+            "EngineeringGateway at module startup"
+        ),
+    )
+
+    require(
+        (
+            "must not be stored inside "
+            "the repository"
+        )
+        in text,
+        (
+            "Gateway server no longer "
+            "rejects repository-local "
+            "trusted session state"
+        ),
+    )
+
+
 def validate(
     root: Path = ROOT,
 ) -> dict[str, Any]:
@@ -445,22 +542,19 @@ def validate(
         root
     )
 
+    validate_server_lifecycle(
+        root
+    )
+
     launcher = local_file(
         root,
         LAUNCHER,
     )
 
-    server = local_file(
-        root,
-        SERVER,
-    )
-
-    launcher_text = launcher.read_text(
-        encoding="utf-8"
-    )
-
-    server_text = server.read_text(
-        encoding="utf-8"
+    launcher_text = (
+        launcher.read_text(
+            encoding="utf-8"
+        )
     )
 
     require(
@@ -492,30 +586,14 @@ def validate(
         ),
     )
 
-    require(
-        SESSION_VARIABLE
-        in server_text,
-        (
-            "Gateway server no longer "
-            "requires trusted session state"
-        ),
-    )
-
-    require(
-        (
-            "must not be stored inside "
-            "the repository"
-        )
-        in server_text,
-        (
-            "Gateway server no longer "
-            "rejects repository-local "
-            "trusted session state"
-        ),
-    )
-
     return {
         "codex_gateway":
+            True,
+
+        "codex_gateway_required":
+            False,
+
+        "lazy_trusted_session":
             True,
 
         "antigravity_gateway":

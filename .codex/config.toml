@@ -1,8 +1,11 @@
 # BisnisHub governed Codex project configuration.
 #
-# This project-level config is loaded by Codex only when the repository
-# is trusted. It is an execution adapter, not a source of business or
-# engineering authority.
+# This project-level config is an execution adapter.
+# It is NOT a source of engineering or business authority.
+#
+# Important:
+# The Engineering Gateway must not prevent Codex itself from starting.
+# Gateway authorization is enforced when gateway tools are called.
 
 approval_policy = "on-request"
 approvals_reviewer = "user"
@@ -14,9 +17,18 @@ network_access = false
 [mcp_servers.bisnishubEngineeringGateway]
 command = "python"
 args = ["tools/engineering_gateway/server.py"]
+
+# Forward the trusted launcher session only when the parent process has one.
 env_vars = ["BISNISHUB_ENGINEERING_GATEWAY_SESSION"]
+
 enabled = true
-required = true
+
+# IMPORTANT:
+# The MCP process may be unavailable on hosts that have not activated the
+# local engineering gateway runtime yet. This must not prevent Codex thread
+# creation. Governed actions still fail closed when their gateway is absent.
+required = false
+
 startup_timeout_sec = 20
 tool_timeout_sec = 1800
 
@@ -26,6 +38,5 @@ enabled_tools = [
   "execute_engineering_profile",
 ]
 
-# Keep an additional host-side review boundary for MCP execution.
-# The gateway still performs its own repository policy preflight.
+# Keep an additional host-side approval boundary.
 default_tools_approval_mode = "prompt"

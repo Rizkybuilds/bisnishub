@@ -147,11 +147,56 @@ class ProviderEnforcementTests(
             ]
         )
 
+        self.assertFalse(
+            result[
+                "codex_gateway_required"
+            ]
+        )
+
+        self.assertTrue(
+            result[
+                "lazy_trusted_session"
+            ]
+        )
+
         self.assertTrue(
             result[
                 "antigravity_gateway"
             ]
         )
+
+    def test_codex_gateway_must_not_be_startup_fatal(
+        self,
+    ) -> None:
+        path = (
+            self.root
+            / ".codex/config.toml"
+        )
+
+        value = path.read_text(
+            encoding="utf-8"
+        )
+
+        value = value.replace(
+            "required = false",
+            "required = true",
+        )
+
+        path.write_text(
+            value,
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            (
+                "must not be a fatal "
+                "thread-start dependency"
+            ),
+        ):
+            validator.validate(
+                self.root
+            )
 
     def test_codex_danger_full_access_rejected(
         self,
