@@ -21,8 +21,7 @@
       "const": 1
     },
     "principal": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "#/$defs/principal"
     },
     "role": {
       "enum": [
@@ -86,6 +85,47 @@
     }
   },
   "$defs": {
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "principal_id",
+        "adapter_id",
+        "verified",
+        "issued_at",
+        "session_id",
+        "evidence_ref"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "principal_id": {
+          "type": "string",
+          "pattern": "^engineering\\.[a-z0-9_.-]+$"
+        },
+        "adapter_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verified": {
+          "type": "boolean"
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
     "autonomy": {
       "type": "object",
       "additionalProperties": false,

@@ -233,6 +233,17 @@ def base_decision(
         "principal":
             request[
                 "principal"
+            ][
+                "principal_id"
+            ]
+            if isinstance(
+                request[
+                    "principal"
+                ],
+                dict,
+            )
+            else request[
+                "principal"
             ],
 
         "role":
@@ -761,6 +772,27 @@ def resolve(
             "DENY",
             "ENVIRONMENT_NOT_SUPPORTED",
         )
+
+    # --------------------------------------------------------
+    # Principal attestation
+    # --------------------------------------------------------
+
+    principal = request[
+        "principal"
+    ]
+
+    if isinstance(
+        principal,
+        dict,
+    ):
+        if not principal.get(
+            "verified"
+        ):
+            return finish(
+                decision,
+                "DENY",
+                "PRINCIPAL_UNVERIFIED",
+            )
 
     # --------------------------------------------------------
     # Autonomy

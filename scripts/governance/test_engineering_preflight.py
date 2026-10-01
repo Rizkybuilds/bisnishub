@@ -27,7 +27,17 @@ spec.loader.exec_module(
 def source_request():
     return {
         "schema_version": 1,
-        "principal": "fixture-engineer",
+        "principal": {
+            "schema_version": 1,
+            "principal_id":
+                "engineering.runtime.primary",
+            "adapter_id": "codex",
+            "verified": True,
+            "issued_at":
+                "2026-10-01T00:00:00Z",
+            "session_id": "fixture-session",
+            "evidence_ref": "fixture-grant",
+        },
         "role": "engineer",
         "capability":
             "engineering.source.write.scoped",
@@ -395,6 +405,36 @@ class EngineeringPreflightTests(
             resolver.resolve(
                 request
             )
+
+
+    def test_unverified_principal_denied(
+        self
+    ):
+        request = source_request()
+
+        request[
+            "principal"
+        ][
+            "verified"
+        ] = False
+
+        result = resolver.resolve(
+            request
+        )
+
+        self.assertEqual(
+            result[
+                "decision"
+            ],
+            "DENY",
+        )
+
+        self.assertEqual(
+            result[
+                "reason_code"
+            ],
+            "PRINCIPAL_UNVERIFIED",
+        )
 
 
 if __name__ == "__main__":
