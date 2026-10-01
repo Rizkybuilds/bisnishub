@@ -145,6 +145,13 @@ def entry_for(
                 "repository_revision"
             ],
 
+        "configuration_fingerprint":
+            run[
+                "configuration_fingerprint"
+            ][
+                "id"
+            ],
+
         "execution_status":
             run[
                 "execution_status"
