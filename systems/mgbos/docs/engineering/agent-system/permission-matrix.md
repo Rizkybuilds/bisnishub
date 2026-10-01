@@ -2,6 +2,14 @@
 
 Defaults below are process boundaries. Actual enforcement depends on the runtime's tool permissions, Git hosting and environment access. A skill, role, PR comment or generated plan is never new authorization. User scope may narrow these defaults.
 
+Machine-readable engineering capability and role-permission encoding lives in
+`.agents/capabilities/registry.yaml` and `.agents/capabilities/role-grants.yaml`.
+
+This document remains the human semantic permission policy.
+The machine registries apply it; they do not supersede it.
+
+If the human policy and machine encoding conflict, treat the affected permission as unresolved and fail closed until the conflict is reconciled.
+
 | Action                                                   | Planner              | Engineer                   | Auditor                | QA                         | Release Operator                            |
 | -------------------------------------------------------- | -------------------- | -------------------------- | ---------------------- | -------------------------- | ------------------------------------------- |
 | Inspect scoped repository and sanitized evidence         | Yes                  | Yes                        | Yes                    | Yes                        | Yes                                         |
