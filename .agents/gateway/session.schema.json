@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/gateway-session.schema.json",
+  "title": "BisnisHub Engineering Gateway Session",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "host_profile",
+    "principal_attestation",
+    "role",
+    "declared_risk",
+    "created_at",
+    "expires_at",
+    "workspace",
+    "work_package_ref",
+    "acceptance_ref",
+    "approval",
+    "host"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "host_profile": {
+      "const": "development-workstation"
+    },
+    "principal_attestation": {
+      "$ref": "#/$defs/principalAttestation"
+    },
+    "role": {
+      "enum": [
+        "planner",
+        "engineer",
+        "auditor",
+        "qa",
+        "release-operator"
+      ]
+    },
+    "declared_risk": {
+      "enum": [
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "UNKNOWN"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "workspace": {
+      "$ref": "#/$defs/workspace"
+    },
+    "work_package_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "acceptance_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "approval": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/approval"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "host": {
+      "$ref": "#/$defs/host"
+    }
+  },
+  "$defs": {
+    "principalAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "principal_id",
+        "adapter_id",
+        "verified",
+        "issued_at",
+        "session_id",
+        "evidence_ref"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "principal_id": {
+          "type": "string",
+          "pattern": "^engineering\\.[a-z0-9_.-]+$"
+        },
+        "adapter_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verified": {
+          "const": true
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "branch",
+        "head",
+        "dirty",
+        "dirty_fingerprint"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "head": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "dirty": {
+          "type": "boolean"
+        },
+        "dirty_fingerprint": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "type",
+        "request_id",
+        "decision_id",
+        "approver",
+        "approver_eligible",
+        "action_fingerprint",
+        "not_expired",
+        "unused"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "AWAITING_APPROVAL",
+            "APPROVED",
+            "REJECTED",
+            "EDIT_REQUESTED",
+            "DEFERRED",
+            "EXPIRED",
+            "INVALIDATED"
+          ]
+        },
+        "type": {
+          "enum": [
+            "ACTION",
+            "POLICY",
+            "EXCEPTION",
+            "EMERGENCY"
+          ]
+        },
+        "request_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decision_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "approver": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "approver_eligible": {
+          "type": "boolean"
+        },
+        "action_fingerprint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "not_expired": {
+          "type": "boolean"
+        },
+        "unused": {
+          "type": "boolean"
+        }
+      }
+    },
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool_available",
+        "permission_state"
+      ],
+      "properties": {
+        "tool_available": {
+          "type": "boolean"
+        },
+        "permission_state": {
+          "enum": [
+            "ALLOW",
+            "DENY",
+            "UNKNOWN"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+# BisnisHub governed Codex project configuration.
+#
+# This project-level config is loaded by Codex only when the repository
+# is trusted. It is an execution adapter, not a source of business or
+# engineering authority.
+
+approval_policy = "on-request"
+approvals_reviewer = "user"
+sandbox_mode = "workspace-write"
+
+[sandbox_workspace_write]
+network_access = false
+
+[mcp_servers.bisnishubEngineeringGateway]
+command = "python"
+args = ["tools/engineering_gateway/server.py"]
+env_vars = ["BISNISHUB_ENGINEERING_GATEWAY_SESSION"]
+enabled = true
+required = true
+startup_timeout_sec = 20
+tool_timeout_sec = 1800
+
+enabled_tools = [
+  "list_engineering_profiles",
+  "preflight_engineering_profile",
+  "execute_engineering_profile",
+]
+
+# Keep an additional host-side review boundary for MCP execution.
+# The gateway still performs its own repository policy preflight.
+default_tools_approval_mode = "prompt"

@@ -1,0 +1,146 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.gateway-profiles
+  status: ACTIVE
+  version: "1.0"
+  owner: Rizky
+  guide: .agents/gateway/README.md
+  capability_registry: .agents/capabilities/registry.yaml
+
+principles:
+  raw_shell_exposed: false
+  arbitrary_argv_allowed: false
+  remote_mutation_profiles_enabled: false
+  production_profiles_enabled: false
+  fixed_profiles_only: true
+
+execution:
+  output_root: .agent-gateway-runs
+  shell: false
+  default_timeout_seconds: 600
+
+evidence:
+  max_text_bytes: 1000000
+
+profiles:
+  - id: governance.validate
+    version: "1.0"
+    description: Run the repository Agent Governance structural validator.
+    capability: engineering.check.local.execute
+    environment: repository-local
+    cwd: .
+    resource_scope:
+      - scripts/governance
+      - .agents
+      - docs
+      - systems/mgbos/docs
+    argv:
+      - python
+      - scripts/governance/validate-agent-governance.py
+    timeout_seconds: 120
+    non_destructive: true
+    conditions_by_role:
+      engineer:
+        - non-destructive-local-check
+        - relevant-to-work-package
+      qa:
+        - non-destructive-local-check
+        - relevant-to-acceptance-criteria
+
+  - id: governance.tests
+    version: "1.0"
+    description: Run repository governance Python regression tests.
+    capability: engineering.check.local.execute
+    environment: repository-local
+    cwd: .
+    resource_scope:
+      - scripts/governance
+      - .agents
+      - docs
+      - systems/mgbos/docs
+    argv:
+      - python
+      - -m
+      - unittest
+      - discover
+      - -s
+      - scripts/governance
+      - -p
+      - test_*.py
+    timeout_seconds: 300
+    non_destructive: true
+    conditions_by_role:
+      engineer:
+        - non-destructive-local-check
+        - relevant-to-work-package
+      qa:
+        - non-destructive-local-check
+        - relevant-to-acceptance-criteria
+
+  - id: mgbos.pr-scope-tests
+    version: "1.0"
+    description: Run deterministic MGBOS PR scope regression tests.
+    capability: engineering.check.local.execute
+    environment: repository-local
+    cwd: .
+    resource_scope:
+      - scripts/governance
+      - systems/mgbos
+    argv:
+      - node
+      - --test
+      - scripts/governance/pr-scope.test.mjs
+    timeout_seconds: 180
+    non_destructive: true
+    conditions_by_role:
+      engineer:
+        - non-destructive-local-check
+        - relevant-to-work-package
+      qa:
+        - non-destructive-local-check
+        - relevant-to-acceptance-criteria
+
+  - id: mgbos.migration-immutability-tests
+    version: "1.0"
+    description: Run deterministic migration immutability regression tests.
+    capability: engineering.check.local.execute
+    environment: repository-local
+    cwd: .
+    resource_scope:
+      - scripts/governance
+      - systems/mgbos/supabase/migrations
+    argv:
+      - node
+      - --test
+      - scripts/governance/migration-immutability.test.mjs
+    timeout_seconds: 180
+    non_destructive: true
+    conditions_by_role:
+      engineer:
+        - non-destructive-local-check
+        - relevant-to-work-package
+      qa:
+        - non-destructive-local-check
+        - relevant-to-acceptance-criteria
+
+  - id: mgbos.check
+    version: "1.0"
+    description: Run the canonical MGBOS application verification command.
+    capability: engineering.check.local.execute
+    environment: repository-local
+    cwd: systems/mgbos
+    resource_scope:
+      - systems/mgbos
+    argv:
+      - pnpm
+      - check
+    timeout_seconds: 1200
+    non_destructive: true
+    conditions_by_role:
+      engineer:
+        - non-destructive-local-check
+        - relevant-to-work-package
+      qa:
+        - non-destructive-local-check
+        - relevant-to-acceptance-criteria

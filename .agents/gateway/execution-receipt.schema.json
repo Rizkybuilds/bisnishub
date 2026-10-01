@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/execution-receipt.schema.json",
+  "title": "BisnisHub Engineering Gateway Execution Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "execution_id",
+    "session_id",
+    "principal_id",
+    "role",
+    "profile_id",
+    "capability",
+    "environment",
+    "action_fingerprint",
+    "preflight_decision",
+    "preflight_reason",
+    "command",
+    "cwd",
+    "started_at",
+    "finished_at",
+    "execution_status",
+    "exit_code",
+    "verification_status",
+    "stdout_ref",
+    "stderr_ref",
+    "preflight_ref"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "execution_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "principal_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "capability": {
+      "type": "string",
+      "minLength": 1
+    },
+    "environment": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action_fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "preflight_decision": {
+      "enum": [
+        "ALLOW",
+        "DENY",
+        "BLOCK",
+        "NEED_APPROVAL"
+      ]
+    },
+    "preflight_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "command": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "cwd": {
+      "type": "string",
+      "minLength": 1
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "execution_status": {
+      "enum": [
+        "NOT_EXECUTED",
+        "SUCCEEDED",
+        "FAILED",
+        "TIMED_OUT"
+      ]
+    },
+    "exit_code": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "verification_status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED",
+        "NOT_RUN"
+      ]
+    },
+    "stdout_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "stderr_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "preflight_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}
