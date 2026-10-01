@@ -673,6 +673,41 @@ def validate_capabilities(
             ),
         )
 
+        minimum = entry.get(
+            "minimum_autonomy"
+        )
+
+        require(
+            (
+                minimum
+                in AUTONOMY_LEVELS
+            )
+            or (
+                minimum is None
+            ),
+            (
+                "Invalid minimum autonomy: "
+                f"{cid}"
+            ),
+        )
+
+        if (
+            minimum is not None
+            and ceiling is not None
+        ):
+            require(
+                autonomy_index(
+                    minimum
+                )
+                <= autonomy_index(
+                    ceiling
+                ),
+                (
+                    "Minimum autonomy exceeds "
+                    f"ceiling: {cid}"
+                ),
+            )
+
         environments = entry.get(
             "supported_environments"
         )
@@ -1158,6 +1193,7 @@ def validate_grants(
     for field in (
         "capability_registry",
         "role_registry",
+        "condition_registry",
         "semantic_policy",
     ):
         local_file(

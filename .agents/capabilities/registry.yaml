@@ -111,6 +111,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R2
+    minimum_autonomy: L2
     autonomy_ceiling: L2
 
     supported_environments:

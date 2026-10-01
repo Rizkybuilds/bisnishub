@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/preflight-decision.schema.json",
+  "title": "BisnisHub Engineering Action Preflight Decision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "decision",
+    "reason_code",
+    "principal",
+    "role",
+    "capability",
+    "role_grant_state",
+    "environment",
+    "declared_risk",
+    "effective_risk",
+    "risk_adjusted",
+    "minimum_autonomy",
+    "autonomy_ceiling",
+    "current_autonomy",
+    "action_fingerprint",
+    "required_conditions",
+    "missing_conditions",
+    "approval_required",
+    "post_execution_verification_required",
+    "tool_execution_allowed"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "decision": {
+      "enum": [
+        "ALLOW",
+        "DENY",
+        "BLOCK",
+        "NEED_APPROVAL"
+      ]
+    },
+    "reason_code": {
+      "type": "string",
+      "minLength": 1
+    },
+    "principal": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "capability": {
+      "type": "string"
+    },
+    "role_grant_state": {
+      "enum": [
+        "GRANTED",
+        "CONDITIONAL",
+        "DENIED",
+        "PROHIBITED"
+      ]
+    },
+    "environment": {
+      "type": "string"
+    },
+    "declared_risk": {
+      "type": "string"
+    },
+    "effective_risk": {
+      "type": ["string", "null"]
+    },
+    "risk_adjusted": {
+      "type": "boolean"
+    },
+    "minimum_autonomy": {
+      "type": ["string", "null"]
+    },
+    "autonomy_ceiling": {
+      "type": ["string", "null"]
+    },
+    "current_autonomy": {
+      "type": "string"
+    },
+    "action_fingerprint": {
+      "type": "string"
+    },
+    "required_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "missing_conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approval_required": {
+      "type": "boolean"
+    },
+    "post_execution_verification_required": {
+      "type": "boolean"
+    },
+    "tool_execution_allowed": {
+      "type": "boolean"
+    },
+    "details": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,149 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.permission-conditions
+  status: ACTIVE
+  version: "1.0"
+
+  capability_registry: .agents/capabilities/registry.yaml
+  role_grants: .agents/capabilities/role-grants.yaml
+
+sources:
+  - EVIDENCE
+  - APPROVAL
+
+outcomes:
+  - DENY
+  - BLOCK
+  - NEED_APPROVAL
+
+conditions:
+  accepted-work-package:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  authorized-worktree:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  allowed-path-match:
+    source: EVIDENCE
+    on_unsatisfied: DENY
+    on_unknown: BLOCK
+
+  non-destructive-local-check:
+    source: EVIDENCE
+    on_unsatisfied: DENY
+    on_unknown: BLOCK
+
+  relevant-to-work-package:
+    source: EVIDENCE
+    on_unsatisfied: DENY
+    on_unknown: BLOCK
+
+  relevant-to-acceptance-criteria:
+    source: EVIDENCE
+    on_unsatisfied: DENY
+    on_unknown: BLOCK
+
+  reproducibility-scope:
+    source: EVIDENCE
+    on_unsatisfied: DENY
+    on_unknown: BLOCK
+
+  verified-local-disposable-target:
+    source: EVIDENCE
+    on_unsatisfied: DENY
+    on_unknown: BLOCK
+
+  systems-mgbos-working-directory:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  shared-local-stack-collision-check:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  explicit-action-authorization:
+    source: APPROVAL
+    on_unsatisfied: NEED_APPROVAL
+    on_unknown: NEED_APPROVAL
+
+  authorized-feature-branch:
+    source: EVIDENCE
+    on_unsatisfied: DENY
+    on_unknown: BLOCK
+
+  main-not-targeted:
+    source: EVIDENCE
+    on_unsatisfied: DENY
+    on_unknown: BLOCK
+
+  reviewable-pr-body:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  exact-pull-request-identity:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  safety-evidence:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  exact-branch-identity:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  recovery-or-safety-evidence:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  exact-reviewed-revision:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  applicable-release-gates-pass:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  current-ci-evidence:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  required-assurance-satisfied:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  required-qa-satisfied:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  exact-clean-candidate:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  verified-target-identity:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
+
+  recovery-readiness:
+    source: EVIDENCE
+    on_unsatisfied: BLOCK
+    on_unknown: BLOCK
