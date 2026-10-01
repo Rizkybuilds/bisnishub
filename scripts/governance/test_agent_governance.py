@@ -214,23 +214,26 @@ class GovernanceValidationTests(
     # Existing role / permission protections
     # --------------------------------------------------------
 
-    def test_capability_escalation_rejected(
+    def test_legacy_role_capability_rejected(
         self
     ):
         self.edit_json(
             ".agents/roles/contracts.json",
             lambda data: data[
                 "roles"
-            ][2][
+            ][0][
                 "capabilities"
             ].append(
-                "deploy-production"
+                "read-repository"
             ),
         )
 
         with self.assertRaisesRegex(
             ValueError,
-            "capability",
+            (
+                "canonical engineering "
+                "capability"
+            ),
         ):
             governance.validate(
                 self.root
