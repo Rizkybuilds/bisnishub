@@ -26,6 +26,10 @@ ROLE_CATALOG = (
     ".agents/roles/contracts.json"
 )
 
+CONDITION_REGISTRY = (
+    ".agents/capabilities/conditions.yaml"
+)
+
 ROLE_IDS = {
     "planner",
     "engineer",
@@ -613,6 +617,15 @@ def validate_capabilities(
             ),
         )
 
+        if cid in HARD_PROHIBITIONS:
+            require(
+                disposition == "PROHIBITED",
+                (
+                    "Hard prohibition "
+                    f"must remain PROHIBITED: {cid}"
+                ),
+            )
+
         require(
             isinstance(
                 entry.get(
@@ -672,41 +685,6 @@ def validate_capabilities(
                 f"{cid}"
             ),
         )
-
-        minimum = entry.get(
-            "minimum_autonomy"
-        )
-
-        require(
-            (
-                minimum
-                in AUTONOMY_LEVELS
-            )
-            or (
-                minimum is None
-            ),
-            (
-                "Invalid minimum autonomy: "
-                f"{cid}"
-            ),
-        )
-
-        if (
-            minimum is not None
-            and ceiling is not None
-        ):
-            require(
-                autonomy_index(
-                    minimum
-                )
-                <= autonomy_index(
-                    ceiling
-                ),
-                (
-                    "Minimum autonomy exceeds "
-                    f"ceiling: {cid}"
-                ),
-            )
 
         environments = entry.get(
             "supported_environments"
@@ -794,6 +772,17 @@ def validate_capabilities(
                 ),
             )
 
+            require(
+                entry.get(
+                    "minimum_autonomy"
+                )
+                is None,
+                (
+                    "Prohibited capability cannot "
+                    f"have minimum autonomy: {cid}"
+                ),
+            )
+
         else:
             require(
                 approval
@@ -835,6 +824,31 @@ def validate_capabilities(
                         f"L3 in profile v1: {cid}"
                     ),
                 )
+
+            minimum = entry.get(
+                "minimum_autonomy"
+            )
+
+            require(
+                minimum in AUTONOMY_LEVELS,
+                (
+                    "Active capability requires "
+                    f"minimum autonomy: {cid}"
+                ),
+            )
+
+            require(
+                autonomy_index(
+                    minimum
+                )
+                <= autonomy_index(
+                    ceiling
+                ),
+                (
+                    "Minimum autonomy exceeds "
+                    f"ceiling: {cid}"
+                ),
+            )
 
         if (
             approval
@@ -1190,6 +1204,18 @@ def validate_grants(
         "Missing role grant metadata",
     )
 
+    require(
+        metadata.get(
+            "condition_registry"
+        )
+        == CONDITION_REGISTRY,
+        (
+            "Role grant metadata must "
+            "reference canonical condition registry: "
+            f"{CONDITION_REGISTRY}"
+        ),
+    )
+
     for field in (
         "capability_registry",
         "role_registry",
@@ -1202,6 +1228,46 @@ def validate_grants(
                 field
             ),
         )
+
+    conditions_catalog = load_yaml(
+        root,
+        CONDITION_REGISTRY,
+    )
+
+    condition_ids = set(
+        conditions_catalog[
+            "conditions"
+        ]
+    )
+
+    for role_id, role in grants[
+        "roles"
+    ].items():
+        for group in (
+            "granted",
+            "conditional",
+        ):
+            for capability, entry in role.get(
+                group,
+                {},
+            ).items():
+                unknown = (
+                    set(
+                        entry.get(
+                            "requires",
+                            [],
+                        )
+                    )
+                    - condition_ids
+                )
+
+                require(
+                    not unknown,
+                    (
+                        "Role grant references "
+                        f"unknown condition: {role_id} -> {capability} -> {sorted(unknown)}"
+                    ),
+                )
 
     defaults = grants.get(
         "defaults"

@@ -546,6 +546,136 @@ class EngineeringCapabilityTests(
                 self.root
             )
 
+    def test_active_capability_requires_minimum_autonomy(
+        self
+    ):
+        def mutate(data):
+            del data[
+                "capabilities"
+            ][0][
+                "minimum_autonomy"
+            ]
+
+        self.edit_yaml(
+            ".agents/capabilities/registry.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Active capability requires minimum autonomy",
+        ):
+            capabilities.validate(
+                self.root
+            )
+
+    def test_minimum_autonomy_cannot_exceed_ceiling(
+        self
+    ):
+        def mutate(data):
+            data[
+                "capabilities"
+            ][1][
+                "minimum_autonomy"
+            ] = "L3"
+
+        self.edit_yaml(
+            ".agents/capabilities/registry.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Minimum autonomy exceeds ceiling",
+        ):
+            capabilities.validate(
+                self.root
+            )
+
+    def test_prohibited_capability_cannot_have_minimum_autonomy(
+        self
+    ):
+        def mutate(data):
+            for entry in data[
+                "capabilities"
+            ]:
+                if (
+                    entry[
+                        "id"
+                    ]
+                    == "engineering.git.main.push"
+                ):
+                    entry[
+                        "minimum_autonomy"
+                    ] = "L0"
+
+        self.edit_yaml(
+            ".agents/capabilities/registry.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Prohibited capability cannot have minimum autonomy",
+        ):
+            capabilities.validate(
+                self.root
+            )
+
+    def test_role_grant_unknown_condition_rejected(
+        self
+    ):
+        def mutate(data):
+            data[
+                "roles"
+            ][
+                "engineer"
+            ][
+                "granted"
+            ][
+                "engineering.source.write.scoped"
+            ][
+                "requires"
+            ].append(
+                "non-existent-magic-condition"
+            )
+
+        self.edit_yaml(
+            ".agents/capabilities/role-grants.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Role grant references unknown condition",
+        ):
+            capabilities.validate(
+                self.root
+            )
+
+    def test_role_grant_invalid_condition_registry_rejected(
+        self
+    ):
+        def mutate(data):
+            data[
+                "registry"
+            ][
+                "condition_registry"
+            ] = ".agents/capabilities/wrong.yaml"
+
+        self.edit_yaml(
+            ".agents/capabilities/role-grants.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "canonical condition registry",
+        ):
+            capabilities.validate(
+                self.root
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

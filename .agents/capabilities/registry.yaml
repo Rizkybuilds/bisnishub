@@ -66,6 +66,7 @@ capabilities:
 
     mutation: false
     baseline_risk: R1
+    minimum_autonomy: L0
     autonomy_ceiling: L4
 
     supported_environments:
@@ -89,6 +90,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R2
+    minimum_autonomy: L1
     autonomy_ceiling: L2
 
     supported_environments:
@@ -140,6 +142,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R2
+    minimum_autonomy: L1
     autonomy_ceiling: L1
 
     supported_environments:
@@ -162,6 +165,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R2
+    minimum_autonomy: L2
     autonomy_ceiling: L2
 
     supported_environments:
@@ -184,6 +188,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R2
+    minimum_autonomy: L2
     autonomy_ceiling: L2
 
     supported_environments:
@@ -205,6 +210,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R2
+    minimum_autonomy: L2
     autonomy_ceiling: L2
 
     supported_environments:
@@ -229,6 +235,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R2
+    minimum_autonomy: L2
     autonomy_ceiling: L2
 
     supported_environments:
@@ -256,6 +263,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R3
+    minimum_autonomy: L3
     autonomy_ceiling: L3
 
     supported_environments:
@@ -277,6 +285,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R3
+    minimum_autonomy: L3
     autonomy_ceiling: L3
 
     supported_environments:
@@ -298,6 +307,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R3
+    minimum_autonomy: L3
     autonomy_ceiling: L3
 
     supported_environments:
@@ -315,6 +325,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R3
+    minimum_autonomy: L3
     autonomy_ceiling: L3
 
     supported_environments:
@@ -338,6 +349,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R4
+    minimum_autonomy: L3
     autonomy_ceiling: L3
 
     supported_environments:
@@ -362,6 +374,7 @@ capabilities:
 
     mutation: true
     baseline_risk: R3
+    minimum_autonomy: L3
     autonomy_ceiling: L3
 
     supported_environments:
