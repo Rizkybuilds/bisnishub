@@ -1,0 +1,113 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.principals
+  status: ACTIVE
+  version: "1.0"
+  owner: Rizky
+
+  semantic_model: .agents/principals/README.md
+  role_registry: .agents/roles/contracts.json
+  capability_registry: .agents/capabilities/registry.yaml
+  autonomy_registry: .agents/autonomy/grants.yaml
+  runtime_adapter_registry: .agents/adapters/registry.yaml
+
+allowed_types:
+  - ENGINEERING_RUNTIME
+  - AUTOMATION
+
+allowed_states:
+  - ACTIVE
+  - SUSPENDED
+  - DISABLED
+  - RETIRED
+
+principles:
+  provider_is_identity: false
+  model_is_identity: false
+  role_is_identity: false
+  skill_is_identity: false
+  tool_is_identity: false
+  identity_grants_permission: false
+  identity_grants_autonomy: false
+  runtime_switch_proves_independence: false
+  trusted_host_binding_required: true
+
+principals:
+  - id: engineering.runtime.primary
+    display_name: Primary Engineering Runtime
+
+    type: ENGINEERING_RUNTIME
+    state: ACTIVE
+
+    purpose: >
+      Execute bounded planning, implementation, review, QA and
+      release-preparation engineering work under repository governance.
+
+    runtime_binding:
+      adapter_id: codex
+      binding_version: "1.0"
+
+    allowed_roles:
+      - planner
+      - engineer
+      - auditor
+      - qa
+      - release-operator
+
+    capability_ceiling:
+      - engineering.repository.read
+      - engineering.plan.write
+      - engineering.source.write.scoped
+      - engineering.review.write
+      - engineering.test_artifact.write
+      - engineering.release_packet.write
+      - engineering.check.local.execute
+      - engineering.database.local.reset_disposable
+
+    independent_assurance_eligible: false
+
+    boundaries:
+      - No remote GitHub mutation capability in the initial ceiling.
+      - No production deployment capability.
+      - No remote MGBOS database capability.
+      - Role switching does not create review independence.
+
+  - id: engineering.runtime.orchestrator
+    display_name: Engineering Orchestration Runtime
+
+    type: ENGINEERING_RUNTIME
+    state: ACTIVE
+
+    purpose: >
+      Coordinate governed engineering planning, bounded Work Packages,
+      evidence and runtime workflow execution.
+
+    runtime_binding:
+      adapter_id: antigravity
+      binding_version: "1.0"
+
+    allowed_roles:
+      - planner
+      - engineer
+      - auditor
+      - qa
+      - release-operator
+
+    capability_ceiling:
+      - engineering.repository.read
+      - engineering.plan.write
+      - engineering.source.write.scoped
+      - engineering.review.write
+      - engineering.test_artifact.write
+      - engineering.release_packet.write
+      - engineering.check.local.execute
+      - engineering.database.local.reset_disposable
+
+    independent_assurance_eligible: false
+
+    boundaries:
+      - Orchestration does not imply authority inheritance.
+      - Parallel work must preserve One Writer Rule.
+      - No remote GitHub mutation capability in the initial ceiling.
+      - No deployment capability.

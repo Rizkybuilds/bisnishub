@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/eval-result-registry.schema.json",
+  "title": "BisnisHub Behavioral Evaluation Result Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "entries"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id",
+        "case_id",
+        "runtime",
+        "provider",
+        "repository_revision",
+        "configuration_fingerprint",
+        "execution_status",
+        "deterministic_status",
+        "semantic_status",
+        "independence",
+        "final_status"
+      ],
+      "properties": {
+        "run_id": {
+          "type": "string"
+        },
+        "case_id": {
+          "type": "string"
+        },
+        "runtime": {
+          "enum": ["codex", "antigravity"]
+        },
+        "provider": {
+          "type": "string"
+        },
+        "runtime_version": {
+          "type": ["string", "null"]
+        },
+        "model": {
+          "type": ["string", "null"]
+        },
+        "repository_revision": {
+          "type": "string"
+        },
+        "configuration_fingerprint": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "execution_status": {
+          "enum": [
+            "COMPLETED",
+            "FAILED",
+            "BLOCKED",
+            "TIMED_OUT"
+          ]
+        },
+        "deterministic_status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "NOT_RUN"
+          ]
+        },
+        "semantic_status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "UNREVIEWED"
+          ]
+        },
+        "independence": {
+          "enum": [
+            "HUMAN_INDEPENDENT",
+            "RUNTIME_INDEPENDENT",
+            "SELF_REVIEW",
+            "NOT_REVIEWED"
+          ]
+        },
+        "final_status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "UNREVIEWED"
+          ]
+        }
+      }
+    }
+  }
+}

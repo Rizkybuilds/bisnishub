@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/principal-attestation.schema.json",
+  "title": "BisnisHub Engineering Principal Attestation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "principal_id",
+    "adapter_id",
+    "verified",
+    "issued_at",
+    "session_id",
+    "evidence_ref"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "principal_id": {
+      "type": "string",
+      "pattern": "^engineering\\.[a-z0-9_.-]+$"
+    },
+    "adapter_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "verified": {
+      "type": "boolean"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_ref": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

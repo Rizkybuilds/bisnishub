@@ -1,0 +1,101 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.host-hardening
+  status: ACTIVE
+  version: "1.0"
+  owner: Rizky
+  guide: .agents/gateway/HOST-HARDENING.md
+
+profiles:
+  development-workstation:
+    state: ACTIVE
+    remote_mutation_enabled: false
+    production_execution_enabled: false
+
+  privileged-runner:
+    state: DISABLED
+    remote_mutation_enabled: false
+    production_execution_enabled: false
+
+session:
+  ttl_seconds: 43200
+  require_outside_repository: true
+  remove_on_exit: true
+
+workspace:
+  one_active_session_per_workspace: true
+  lock_directory: engineering-gateway/locks
+
+  main_branches:
+    - main
+    - master
+
+  roles:
+    planner:
+      require_clean_start: true
+      require_non_main_branch: false
+
+    engineer:
+      require_clean_start: true
+      require_non_main_branch: true
+
+    auditor:
+      require_clean_start: false
+      require_non_main_branch: false
+
+    qa:
+      require_clean_start: false
+      require_non_main_branch: false
+
+    release-operator:
+      require_clean_start: true
+      require_non_main_branch: true
+
+provider_environment:
+  strategy: ALLOWLIST
+
+  allow:
+    - PATH
+    - HOME
+    - USERPROFILE
+    - APPDATA
+    - LOCALAPPDATA
+    - SYSTEMROOT
+    - COMSPEC
+    - TEMP
+    - TMP
+    - TMPDIR
+    - LANG
+    - LC_ALL
+    - TERM
+    - CODEX_HOME
+    - XDG_CONFIG_HOME
+    - XDG_CACHE_HOME
+    - XDG_DATA_HOME
+    - PNPM_HOME
+    - GOOGLE_CLOUD_PROJECT
+
+  forbidden_examples:
+    - OPENAI_API_KEY
+    - OPENAI_ADMIN_KEY
+    - CODEX_API_KEY
+    - GITHUB_TOKEN
+    - GH_TOKEN
+    - DATABASE_URL
+    - DIRECT_URL
+    - SUPABASE_SERVICE_ROLE_KEY
+    - SUPABASE_ACCESS_TOKEN
+    - VERCEL_TOKEN
+    - GOOGLE_APPLICATION_CREDENTIALS
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+
+kill_switch:
+  relative_path: engineering-gateway/kill-switch.json
+
+  absent_means: ENABLED
+
+  allowed_states:
+    - ENABLED
+    - DISABLED

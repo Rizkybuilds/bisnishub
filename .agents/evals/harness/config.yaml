@@ -1,0 +1,121 @@
+schema_version: 1
+
+harness:
+  output_root: .agent-eval-runs
+  worktree_mode: detached-disposable
+  default_timeout_seconds: 420
+  preserve_run_artifacts: true
+  preserve_worktree: false
+
+  baseline: .agents/evals/baseline.json
+
+safety:
+  forward_environment:
+    - PATH
+    - HOME
+    - USERPROFILE
+    - SYSTEMROOT
+    - COMSPEC
+    - TEMP
+    - TMP
+    - TMPDIR
+    - LANG
+    - LC_ALL
+    - TERM
+    - CODEX_HOME
+
+  reject_environment:
+    - OPENAI_API_KEY
+    - OPENAI_ADMIN_KEY
+    - CODEX_ACCESS_TOKEN
+    - CODEX_API_KEY
+    - SUPABASE_SERVICE_ROLE_KEY
+    - SUPABASE_ACCESS_TOKEN
+    - DATABASE_URL
+    - DIRECT_URL
+    - GOOGLE_APPLICATION_CREDENTIALS
+    - GITHUB_TOKEN
+    - GH_TOKEN
+
+  provider_credentials_must_not_be_copied_to_worktree: true
+  allow_real_customer_data: false
+  allow_remote_database: false
+  allow_production_action: false
+  allow_external_business_action: false
+
+runtimes:
+  codex:
+    provider: OpenAI
+    executable: codex
+
+    invocation:
+      mode: exec-json
+      args:
+        - exec
+        - --json
+        - --sandbox
+        - workspace-write
+        - --ask-for-approval
+        - never
+
+    trace_format: jsonl
+    stdout_file: trace.jsonl
+    stderr_file: stderr.txt
+
+    version_command:
+      - codex
+      - --version
+
+    runtime_targets_required: true
+
+  antigravity:
+    provider: Google
+    executable: agy
+
+    invocation:
+      mode: print
+      args:
+        - --sandbox
+        - --print-timeout
+        - 5m
+
+      prompt_flag: -p
+      log_flag: --log-file
+
+    trace_format: stdout-plus-provider-log
+    stdout_file: stdout.txt
+    stderr_file: stderr.txt
+    provider_log_file: antigravity.log
+
+    version_command:
+      - agy
+      - --version
+
+    version_optional: true
+    runtime_targets_required: true
+
+review:
+  allowed_independence:
+    - HUMAN_INDEPENDENT
+    - RUNTIME_INDEPENDENT
+    - SELF_REVIEW
+
+  pass_requires_independence:
+    - HUMAN_INDEPENDENT
+    - RUNTIME_INDEPENDENT
+
+  criterion_results:
+    - PASS
+    - FAIL
+    - BLOCKED
+
+  forbidden_results:
+    - NOT_OBSERVED
+    - OBSERVED
+    - UNKNOWN
+
+  overall_results:
+    - PASS
+    - FAIL
+    - BLOCKED
+    - UNREVIEWED

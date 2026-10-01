@@ -33,8 +33,7 @@
       "pattern": "^IC-[A-Za-z0-9][A-Za-z0-9._-]*$"
     },
     "verified_revision": {
-      "type": "string",
-      "minLength": 7
+      "$ref": "#/$defs/revisionIdentity"
     },
     "verifier": {
       "type": "object",
@@ -93,6 +92,42 @@
     }
   },
   "$defs": {
+    "revisionIdentity": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["dirty", "sha"],
+          "properties": {
+            "dirty": {
+              "const": false
+            },
+            "sha": {
+              "type": "string",
+              "minLength": 7
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["dirty", "base_sha", "diff_fingerprint"],
+          "properties": {
+            "dirty": {
+              "const": true
+            },
+            "base_sha": {
+              "type": "string",
+              "minLength": 7
+            },
+            "diff_fingerprint": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
     "uniqueStrings": {
       "type": "array",
       "uniqueItems": true,

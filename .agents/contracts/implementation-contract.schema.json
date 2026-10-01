@@ -184,8 +184,7 @@
       "required": ["role", "identity"],
       "properties": {
         "role": {
-          "type": "string",
-          "minLength": 1
+          "const": "planner"
         },
         "identity": {
           "type": "string",

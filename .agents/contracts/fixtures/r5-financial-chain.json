@@ -1,0 +1,418 @@
+{
+  "implementation_contract": {
+    "schema_version": 1,
+    "artifact_type": "IMPLEMENTATION_CONTRACT",
+    "artifact_id": "IC-fixture-payment-command",
+    "state": "READY_FOR_IMPLEMENTATION",
+    "created_at": "2026-10-01T03:00:00Z",
+    "created_by": {
+      "role": "planner",
+      "identity": "fixture-planner",
+      "runtime": "synthetic",
+      "provider": null
+    },
+    "repository": "Rizkybuilds/bisnishub",
+    "workspace": "systems/mgbos/",
+    "target_system": "mgbos",
+    "base_revision": {
+      "sha": "49908f102b4f96fc21ec6a7e6386ef348c6557a4",
+      "branch": "main"
+    },
+    "objective": "Harden the synthetic payment command while preserving financial and authorization invariants.",
+    "scope": {
+      "allowed_paths": [
+        "systems/mgbos/"
+      ],
+      "excluded_paths": [
+        "archive/",
+        "supabase/"
+      ],
+      "explicit_non_goals": [
+        "No production deployment.",
+        "No real payment execution."
+      ]
+    },
+    "routing": {
+      "profile": "mgbos",
+      "primary_task_type": "backend-command-change",
+      "concerns": [
+        "financial-truth",
+        "authorization",
+        "concurrency-idempotency",
+        "historical-integrity"
+      ],
+      "roles": [
+        "planner",
+        "engineer",
+        "auditor",
+        "qa"
+      ],
+      "required_expertise": [
+        "EXP-002",
+        "EXP-003",
+        "EXP-005",
+        "EXP-006",
+        "EXP-007",
+        "EXP-011"
+      ],
+      "skill_candidates": [
+        "api-backend-engineer",
+        "mgbos-business-integrity-auditor"
+      ]
+    },
+    "risk": {
+      "effective_level": "R5",
+      "reasons": [
+        "Authoritative financial truth is affected.",
+        "Authorization and duplicate execution can alter financial outcome."
+      ],
+      "affected_capabilities": [
+        "mgbos.payment.record"
+      ]
+    },
+    "canonical_sources": [
+      "systems/mgbos/docs/architecture/business-invariants.md",
+      "systems/mgbos/docs/architecture/permission-authorization-model.md",
+      "systems/mgbos/docs/architecture/command-event-model.md"
+    ],
+    "invariants": [
+      "Money remains integer rupiah.",
+      "Authorization is enforced server-side.",
+      "Duplicate execution cannot duplicate financial effects.",
+      "Historical financial records remain attributable."
+    ],
+    "acceptance_criteria": [
+      {
+        "id": "AC-001",
+        "description": "Unauthorized and cross-organization payment attempts are rejected.",
+        "blocking": true
+      },
+      {
+        "id": "AC-002",
+        "description": "Duplicate or concurrent requests cannot create duplicate payment effects.",
+        "blocking": true
+      }
+    ],
+    "planned_checks": [
+      {
+        "id": "CHK-001",
+        "description": "Verify authorization and cross-organization denial.",
+        "environment": "local-disposable"
+      },
+      {
+        "id": "CHK-002",
+        "description": "Verify duplicate and concurrent command behavior.",
+        "environment": "local-disposable"
+      }
+    ],
+    "stop_conditions": [
+      "FINANCIAL_INVARIANT_AMBIGUOUS",
+      "PERMISSION_UNCLEAR",
+      "REQUIRED_EVIDENCE_UNAVAILABLE"
+    ],
+    "dependencies": [],
+    "work_package_ids": [
+      "WP-fixture-payment-command"
+    ],
+    "decision_required": {
+      "required": false,
+      "question": null
+    },
+    "notes": []
+  },
+
+  "work_package": {
+    "schema_version": 1,
+    "artifact_type": "WORK_PACKAGE",
+    "artifact_id": "WP-fixture-payment-command",
+    "implementation_contract_id": "IC-fixture-payment-command",
+    "state": "COMPLETED",
+    "writer": {
+      "role": "engineer",
+      "identity": "fixture-engineer",
+      "runtime": "synthetic"
+    },
+    "base_revision": "49908f102b4f96fc21ec6a7e6386ef348c6557a4",
+    "branch": "fixture/payment-command",
+    "worktree": "synthetic/payment-command",
+    "objective": "Implement the bounded synthetic payment command hardening.",
+    "scope": {
+      "allowed_paths": [
+        "systems/mgbos/"
+      ],
+      "forbidden_paths": [
+        "archive/",
+        "supabase/"
+      ]
+    },
+    "risk": "R5",
+    "required_expertise": [
+      "EXP-002",
+      "EXP-003",
+      "EXP-005",
+      "EXP-006",
+      "EXP-007",
+      "EXP-011"
+    ],
+    "selected_skills": [
+      "api-backend-engineer"
+    ],
+    "acceptance_criteria": [
+      "AC-001",
+      "AC-002"
+    ],
+    "required_checks": [
+      "CHK-001",
+      "CHK-002"
+    ],
+    "dependencies": [],
+    "stop_conditions": [
+      "FINANCIAL_INVARIANT_AMBIGUOUS",
+      "PERMISSION_UNCLEAR"
+    ],
+    "handoff_to": [
+      "auditor",
+      "qa"
+    ]
+  },
+
+  "engineering_report": {
+    "schema_version": 1,
+    "artifact_type": "ENGINEERING_REPORT",
+    "artifact_id": "ER-fixture-payment-command",
+    "work_package_id": "WP-fixture-payment-command",
+    "status": "COMPLETED",
+    "executor": {
+      "role": "engineer",
+      "identity": "fixture-engineer",
+      "runtime": "synthetic",
+      "provider": null,
+      "version": null
+    },
+    "repository": "Rizkybuilds/bisnishub",
+    "base_revision": "49908f102b4f96fc21ec6a7e6386ef348c6557a4",
+    "head": {
+      "dirty": false,
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "files_changed": [
+      "systems/mgbos/packages/domain/src/payment.ts"
+    ],
+    "implementation_summary": "Synthetic fixture implementation preserving payment, authorization, and idempotency boundaries.",
+    "decisions": [
+      "Kept financial mutation inside the canonical command boundary."
+    ],
+    "invariants_preserved": [
+      "Integer-money semantics.",
+      "Server authorization.",
+      "Atomic idempotency."
+    ],
+    "scope_drift": {
+      "detected": false,
+      "details": []
+    },
+    "checks_run": [
+      {
+        "check_id": "CHK-001",
+        "timestamp": "2026-10-01T03:30:00Z",
+        "environment": "local-disposable",
+        "procedure": "Synthetic authorization verification.",
+        "result": "PASS",
+        "evidence_reference": "fixture://CHK-001",
+        "limitations": null
+      },
+      {
+        "check_id": "CHK-002",
+        "timestamp": "2026-10-01T03:31:00Z",
+        "environment": "local-disposable",
+        "procedure": "Synthetic duplicate and concurrency verification.",
+        "result": "PASS",
+        "evidence_reference": "fixture://CHK-002",
+        "limitations": null
+      }
+    ],
+    "checks_not_run": [],
+    "known_failures": [],
+    "limitations": [],
+    "residual_risk": [],
+    "handoff": {
+      "to_roles": [
+        "auditor",
+        "qa"
+      ],
+      "allowed_next_action": "Review and verify the exact synthetic revision.",
+      "blockers": []
+    }
+  },
+
+  "assurance_report": {
+    "schema_version": 1,
+    "artifact_type": "ASSURANCE_REPORT",
+    "artifact_id": "AR-fixture-payment-command",
+    "engineering_report_id": "ER-fixture-payment-command",
+    "reviewed_revision": {
+      "dirty": false,
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "reviewer": {
+      "role": "auditor",
+      "identity": "fixture-independent-auditor",
+      "runtime": "synthetic-independent",
+      "provider": null,
+      "version": null
+    },
+    "independence": "INDEPENDENT",
+    "risk": "R5",
+    "canonical_sources": [
+      "systems/mgbos/docs/architecture/business-invariants.md",
+      "systems/mgbos/docs/architecture/permission-authorization-model.md"
+    ],
+    "coverage": [
+      "Authorization",
+      "Organization isolation",
+      "Financial integrity",
+      "Idempotency",
+      "Historical integrity"
+    ],
+    "findings": [],
+    "unverified_areas": [],
+    "residual_risk": [],
+    "assurance_status": "SATISFIED",
+    "handoff": {
+      "to_roles": [
+        "qa"
+      ],
+      "allowed_next_action": "Verify acceptance criteria on the exact reviewed revision."
+    }
+  },
+
+  "verification_matrix": {
+    "schema_version": 1,
+    "artifact_type": "VERIFICATION_MATRIX",
+    "artifact_id": "VM-fixture-payment-command",
+    "implementation_contract_id": "IC-fixture-payment-command",
+    "verified_revision": {
+      "dirty": false,
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "verifier": {
+      "role": "qa",
+      "identity": "fixture-qa",
+      "runtime": "synthetic",
+      "provider": null
+    },
+    "environment": "local-disposable",
+    "cases": [
+      {
+        "case_id": "VC-001",
+        "acceptance_criterion_ids": [
+          "AC-001"
+        ],
+        "description": "Verify unauthorized and cross-organization calls are rejected.",
+        "procedure": "Synthetic authorization test.",
+        "result": "PASS",
+        "observed": "Unauthorized fixture calls were rejected.",
+        "timestamp": "2026-10-01T03:40:00Z",
+        "evidence_reference": "fixture://VC-001",
+        "limitations": null
+      },
+      {
+        "case_id": "VC-002",
+        "acceptance_criterion_ids": [
+          "AC-002"
+        ],
+        "description": "Verify duplicate and concurrent requests preserve one logical financial effect.",
+        "procedure": "Synthetic duplicate/concurrency test.",
+        "result": "PASS",
+        "observed": "Fixture produced one logical payment effect.",
+        "timestamp": "2026-10-01T03:41:00Z",
+        "evidence_reference": "fixture://VC-002",
+        "limitations": null
+      }
+    ],
+    "overall_status": "PASS",
+    "unverified_gates": [],
+    "handoff": {
+      "to_roles": [
+        "release-operator"
+      ],
+      "allowed_next_action": "Prepare release readiness only if release preparation is requested."
+    }
+  },
+
+  "release_packet": {
+    "schema_version": 1,
+    "artifact_type": "RELEASE_PACKET",
+    "artifact_id": "RP-fixture-payment-command",
+    "candidate_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "prepared_by": {
+      "role": "release-operator",
+      "identity": "fixture-release-operator",
+      "runtime": "synthetic"
+    },
+    "target": {
+      "environment": "staging",
+      "target_name": "synthetic-staging",
+      "identity_verified": true
+    },
+    "risk": "R5",
+    "artifact_references": {
+      "implementation_contract_id": "IC-fixture-payment-command",
+      "engineering_report_ids": [
+        "ER-fixture-payment-command"
+      ],
+      "assurance_report_ids": [
+        "AR-fixture-payment-command"
+      ],
+      "verification_matrix_ids": [
+        "VM-fixture-payment-command"
+      ]
+    },
+    "gate_matrix": [
+      {
+        "gate_id": "scope",
+        "name": "Scope and revision",
+        "required": true,
+        "status": "PASS",
+        "evidence_reference": "fixture://scope",
+        "notes": null
+      },
+      {
+        "gate_id": "assurance",
+        "name": "Independent assurance",
+        "required": true,
+        "status": "PASS",
+        "evidence_reference": "fixture://assurance",
+        "notes": null
+      },
+      {
+        "gate_id": "verification",
+        "name": "Acceptance verification",
+        "required": true,
+        "status": "PASS",
+        "evidence_reference": "fixture://verification",
+        "notes": null
+      },
+      {
+        "gate_id": "recovery",
+        "name": "Recovery readiness",
+        "required": true,
+        "status": "PASS",
+        "evidence_reference": "fixture://recovery",
+        "notes": null
+      }
+    ],
+    "blockers": [],
+    "recovery": {
+      "required": true,
+      "strategy": "Use the reviewed forward-repair/reconciliation procedure for the synthetic candidate.",
+      "verified": true,
+      "evidence_reference": "fixture://recovery"
+    },
+    "execution_authority": "NOT_GRANTED",
+    "recommendation": "READY_FOR_AUTHORIZED_RELEASE",
+    "notes": [
+      "Readiness does not grant deployment authority."
+    ]
+  }
+}

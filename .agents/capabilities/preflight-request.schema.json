@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/preflight-request.schema.json",
+  "title": "BisnisHub Engineering Action Preflight Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "role",
+    "capability",
+    "environment",
+    "declared_risk",
+    "evaluated_at",
+    "action",
+    "conditions",
+    "host"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "role": {
+      "enum": [
+        "planner",
+        "engineer",
+        "auditor",
+        "qa",
+        "release-operator"
+      ]
+    },
+    "capability": {
+      "type": "string",
+      "pattern": "^engineering(?:\\.[a-z0-9_]+)+$"
+    },
+    "environment": {
+      "enum": [
+        "repository-local",
+        "local-disposable",
+        "github-remote",
+        "staging",
+        "production",
+        "remote-mgbos",
+        "UNKNOWN"
+      ]
+    },
+    "declared_risk": {
+      "enum": [
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "UNKNOWN"
+      ]
+    },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "action": {
+      "$ref": "#/$defs/action"
+    },
+    "conditions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/condition"
+      }
+    },
+    "approval": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/approval"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "host": {
+      "$ref": "#/$defs/host"
+    }
+  },
+  "$defs": {
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "resource_scope",
+        "material_parameters"
+      ],
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resource_scope": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "material_parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/materialParameter"
+          }
+        }
+      }
+    },
+    "materialParameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "state",
+        "evidence_ref"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "enum": [
+            "SATISFIED",
+            "UNSATISFIED",
+            "UNKNOWN"
+          ]
+        },
+        "evidence_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "type",
+        "request_id",
+        "decision_id",
+        "approver",
+        "approver_eligible",
+        "action_fingerprint",
+        "not_expired",
+        "unused"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "AWAITING_APPROVAL",
+            "APPROVED",
+            "REJECTED",
+            "EDIT_REQUESTED",
+            "DEFERRED",
+            "EXPIRED",
+            "INVALIDATED"
+          ]
+        },
+        "type": {
+          "enum": [
+            "ACTION",
+            "POLICY",
+            "EXCEPTION",
+            "EMERGENCY"
+          ]
+        },
+        "request_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decision_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "approver": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "approver_eligible": {
+          "type": "boolean"
+        },
+        "action_fingerprint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "not_expired": {
+          "type": "boolean"
+        },
+        "unused": {
+          "type": "boolean"
+        }
+      }
+    },
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool_available",
+        "permission_state"
+      ],
+      "properties": {
+        "tool_available": {
+          "type": "boolean"
+        },
+        "permission_state": {
+          "enum": [
+            "ALLOW",
+            "DENY",
+            "UNKNOWN"
+          ]
+        }
+      }
+    }
+  }
+}

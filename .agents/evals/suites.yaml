@@ -1,0 +1,178 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.eval-suites
+  status: ACTIVE
+  version: "1.0"
+
+  baseline: .agents/evals/baseline.json
+  qualification_policy: .agents/evals/qualification-policy.yaml
+
+suites:
+  adapter-safety:
+    version: "1.0"
+
+    purpose: >
+      Verify core runtime-adapter behavior around routing,
+      risk, scope, independence, revision freshness and One Writer discipline.
+
+    runtimes:
+      - codex
+      - antigravity
+
+    required_cases:
+      - runtime-payment-r5-routing
+      - runtime-ui-r1-proportionality
+      - runtime-scope-expansion-stop
+      - runtime-fake-independent-review
+      - runtime-stale-revision-evidence
+
+    runtime_specific_cases:
+      antigravity:
+        - runtime-overlapping-writers
+
+    blocking_cases:
+      - runtime-payment-r5-routing
+      - runtime-scope-expansion-stop
+      - runtime-fake-independent-review
+      - runtime-stale-revision-evidence
+      - runtime-overlapping-writers
+
+    qualification_use:
+      - runtime-registration
+      - adapter-regression
+      - promotion-evidence
+
+  bounded-engineering:
+    version: "1.0"
+
+    purpose: >
+      Evaluate bounded preparation and implementation behavior
+      against repository, database, permission and AI trust boundaries.
+
+    runtimes:
+      - codex
+      - antigravity
+
+    required_cases:
+      - routing-mgbos-nextjs
+      - routing-maintenance
+      - database-applied-edit
+      - database-root-link
+      - permissions-secret
+      - ai-injection
+      - finance-retry
+      - runtime-scope-expansion-stop
+      - runtime-payment-r5-routing
+
+    blocking_cases:
+      - database-applied-edit
+      - database-root-link
+      - permissions-secret
+      - ai-injection
+      - finance-retry
+      - runtime-scope-expansion-stop
+      - runtime-payment-r5-routing
+
+    qualification_use:
+      - bounded-change-preparation
+      - implementation-regression
+      - L1-to-L2-evidence
+
+  independent-assurance:
+    version: "1.0"
+
+    purpose: >
+      Evaluate audit behavior, financial/business-integrity reasoning,
+      review-only boundaries, revision binding and factual independence.
+
+    runtimes:
+      - codex
+      - antigravity
+
+    required_cases:
+      - finance-integer
+      - finance-lifecycle
+      - finance-retry
+      - permissions-cross-org
+      - permissions-review-only
+      - ai-stale-confirmation
+      - runtime-fake-independent-review
+      - runtime-stale-revision-evidence
+
+    blocking_cases:
+      - finance-integer
+      - finance-lifecycle
+      - finance-retry
+      - permissions-cross-org
+      - permissions-review-only
+      - runtime-fake-independent-review
+      - runtime-stale-revision-evidence
+
+    qualification_use:
+      - auditor-regression
+      - independent-assurance-evidence
+
+  release-governance:
+    version: "1.0"
+
+    purpose: >
+      Evaluate release evidence handling, stale revision detection,
+      PR boundaries and unauthorized release avoidance.
+
+    runtimes:
+      - codex
+      - antigravity
+
+    required_cases:
+      - release-old-green
+      - release-stale-pr
+      - release-eval-evidence
+      - runtime-stale-revision-evidence
+
+    blocking_cases:
+      - release-old-green
+      - release-stale-pr
+      - runtime-stale-revision-evidence
+
+    qualification_use:
+      - release-operator-regression
+      - release-preparation-evidence
+
+  engineering-control-plane-full:
+    version: "1.0"
+
+    purpose: >
+      Full behavioral regression suite for material control-plane,
+      runtime, provider/model, routing or governance changes.
+
+    runtimes:
+      - codex
+      - antigravity
+
+    include_all_baseline_cases: true
+
+    blocking_cases:
+      - database-applied-edit
+      - database-root-link
+      - finance-integer
+      - finance-lifecycle
+      - finance-retry
+      - permissions-cross-org
+      - permissions-review-only
+      - permissions-secret
+      - ai-injection
+      - ai-stale-confirmation
+      - release-old-green
+      - release-stale-pr
+      - runtime-payment-r5-routing
+      - runtime-scope-expansion-stop
+      - runtime-fake-independent-review
+      - runtime-stale-revision-evidence
+      - runtime-overlapping-writers
+
+    qualification_use:
+      - major-runtime-change
+      - model-family-change
+      - major-control-plane-change
+      - full-regression

@@ -29,29 +29,12 @@ LEGACY_METADATA = {
     "web-sec-perf",
 }
 
-CAPABILITIES = {
-    "planner": {
-        "read-repository",
-        "write-plan",
-    },
-    "engineer": {
-        "read-repository",
-        "write-scoped-files",
-        "run-local-checks",
-    },
-    "auditor": {
-        "read-repository",
-        "write-review",
-    },
-    "qa": {
-        "read-repository",
-        "write-test-artifacts",
-        "run-local-checks",
-    },
-    "release-operator": {
-        "read-repository",
-        "write-release-plan",
-    },
+EXPECTED_ROLE_IDS = {
+    "planner",
+    "engineer",
+    "auditor",
+    "qa",
+    "release-operator",
 }
 
 ROLE_ORDER = (
@@ -914,9 +897,9 @@ def validate(root=ROOT):
     require(
         len(role_ids)
         == len(roles)
-        == len(CAPABILITIES)
+        == len(EXPECTED_ROLE_IDS)
         and set(role_ids)
-        == set(CAPABILITIES),
+        == EXPECTED_ROLE_IDS,
         (
             "Missing, duplicate "
             "or unknown roles"
@@ -979,19 +962,33 @@ def validate(root=ROOT):
                 capabilities
             )
             == len(
-                set(capabilities)
-            )
-            and set(
-                capabilities
-            )
-            == CAPABILITIES[
-                rid
-            ],
+                set(
+                    capabilities
+                )
+            ),
             (
                 "Invalid capabilities: "
                 f"{rid}"
             ),
         )
+
+        for capability in capabilities:
+            require(
+                re.fullmatch(
+                    (
+                        r"engineering"
+                        r"(?:\.[a-z0-9_]+)+"
+                    ),
+                    capability,
+                )
+                is not None,
+                (
+                    "Role catalog must use "
+                    "canonical engineering "
+                    f"capability IDs: "
+                    f"{rid} -> {capability}"
+                ),
+            )
 
         handoff = role.get(
             "handoffTo"
@@ -2751,7 +2748,7 @@ def validate(root=ROOT):
             case.get(
                 "role"
             )
-            in CAPABILITIES,
+            in EXPECTED_ROLE_IDS,
             (
                 "Invalid eval role: "
                 f"{cid}"
@@ -2837,7 +2834,11 @@ def validate(root=ROOT):
         ".agents/evals/README.md",
         ".agents/expertise/README.md",
         ".agents/routing/README.md",
+        ".agents/contracts/README.md",
+        ".agents/rules/engineering-control-plane.md",
+        ".agents/workflows/mgbos.change.md",
         "docs/engineering/engineering-ai-control-plane.md",
+        "docs/engineering/runtime-adapter-architecture.md",
     ):
         markdown.add(
             local_file(
@@ -2972,6 +2973,70 @@ def validate(root=ROOT):
                     "ignore failure"
                 ),
             )
+
+    agent_governance_steps = (
+        workflow[
+            "jobs"
+        ][
+            "agent-governance"
+        ].get(
+            "steps",
+            [],
+        )
+    )
+
+    run_commands = {
+        step.get(
+            "run"
+        )
+        for step
+        in agent_governance_steps
+        if (
+            isinstance(
+                step,
+                dict,
+            )
+            and isinstance(
+                step.get(
+                    "run"
+                ),
+                str,
+            )
+        )
+    }
+
+    required_governance_commands = {
+        (
+            "python scripts/governance/"
+            "validate-agent-governance.py"
+        ),
+        (
+            "python scripts/governance/"
+            "validate_engineering_capabilities.py"
+        ),
+        (
+            "python scripts/governance/"
+            "validate_engineering_contracts.py"
+        ),
+        (
+            "python scripts/governance/"
+            "validate_runtime_adapters.py"
+        ),
+    }
+
+    missing_governance_commands = (
+        required_governance_commands
+        - run_commands
+    )
+
+    require(
+        not missing_governance_commands,
+        (
+            "Agent Governance CI is missing "
+            "required validators: "
+            f"{sorted(missing_governance_commands)}"
+        ),
+    )
 
     return {
         "skills":

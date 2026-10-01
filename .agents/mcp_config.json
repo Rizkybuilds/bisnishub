@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "bisnishub-engineering-gateway": {
+      "command": "python",
+      "args": [
+        "tools/engineering_gateway/server.py"
+      ],
+      "env": {}
+    }
+  }
+}

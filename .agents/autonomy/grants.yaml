@@ -1,0 +1,385 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.autonomy-grants
+  status: ACTIVE
+  version: "1.0"
+  owner: Rizky
+
+  autonomy_policy: docs/governance/autonomy-levels.md
+  approval_policy: docs/governance/approval-policy.md
+
+  principal_registry: .agents/principals/registry.yaml
+  capability_registry: .agents/capabilities/registry.yaml
+
+allowed_states:
+  - ACTIVE
+  - SUSPENDED
+  - REVOKED
+  - EXPIRED
+
+allowed_basis:
+  - INITIAL_GOVERNANCE_BASELINE
+  - PROMOTION_DECISION
+
+allowed_scope_modes:
+  - ANY
+  - EXACT
+  - PREFIX
+
+principles:
+  autonomy_is_capability_specific: true
+  autonomy_grants_permission: false
+  autonomy_grants_approval: false
+  model_can_self_promote: false
+  provider_change_grants_authority: false
+  missing_grant_is_denied: true
+
+grants:
+  # ----------------------------------------------------------
+  # Primary engineering runtime
+  # ----------------------------------------------------------
+
+  - id: EAG-primary-repository-read
+    principal_id: engineering.runtime.primary
+    capability_id: engineering.repository.read
+
+    state: ACTIVE
+    level: L0
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/principals/README.md
+      - systems/mgbos/docs/engineering/agent-system/permission-matrix.md
+
+  - id: EAG-primary-plan
+    principal_id: engineering.runtime.primary
+    capability_id: engineering.plan.write
+
+    state: ACTIVE
+    level: L1
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/roles/planner.md
+      - .agents/skills/mgbos-change-planner/SKILL.md
+
+  - id: EAG-primary-source-write
+    principal_id: engineering.runtime.primary
+    capability_id: engineering.source.write.scoped
+
+    state: ACTIVE
+    level: L2
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/roles/engineer.md
+      - systems/mgbos/docs/engineering/agent-system/workflow.md
+
+  - id: EAG-primary-local-check
+    principal_id: engineering.runtime.primary
+    capability_id: engineering.check.local.execute
+
+    state: ACTIVE
+    level: L2
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/roles/engineer.md
+      - .agents/roles/qa.md
+
+  - id: EAG-primary-review
+    principal_id: engineering.runtime.primary
+    capability_id: engineering.review.write
+
+    state: ACTIVE
+    level: L1
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/roles/auditor.md
+
+  - id: EAG-primary-qa-artifact
+    principal_id: engineering.runtime.primary
+    capability_id: engineering.test_artifact.write
+
+    state: ACTIVE
+    level: L2
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/roles/qa.md
+
+  - id: EAG-primary-release-packet
+    principal_id: engineering.runtime.primary
+    capability_id: engineering.release_packet.write
+
+    state: ACTIVE
+    level: L2
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/roles/release-operator.md
+
+  # ----------------------------------------------------------
+  # Orchestration runtime
+  # ----------------------------------------------------------
+
+  - id: EAG-orchestrator-repository-read
+    principal_id: engineering.runtime.orchestrator
+    capability_id: engineering.repository.read
+
+    state: ACTIVE
+    level: L0
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/principals/README.md
+
+  - id: EAG-orchestrator-plan
+    principal_id: engineering.runtime.orchestrator
+    capability_id: engineering.plan.write
+
+    state: ACTIVE
+    level: L1
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/workflows/mgbos.change.md
+
+  - id: EAG-orchestrator-source-write
+    principal_id: engineering.runtime.orchestrator
+    capability_id: engineering.source.write.scoped
+
+    state: ACTIVE
+    level: L2
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/workflows/mgbos.change.md
+
+  - id: EAG-orchestrator-local-check
+    principal_id: engineering.runtime.orchestrator
+    capability_id: engineering.check.local.execute
+
+    state: ACTIVE
+    level: L2
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/workflows/mgbos.change.md
+
+  - id: EAG-orchestrator-review
+    principal_id: engineering.runtime.orchestrator
+    capability_id: engineering.review.write
+
+    state: ACTIVE
+    level: L1
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/roles/auditor.md
+
+  - id: EAG-orchestrator-qa-artifact
+    principal_id: engineering.runtime.orchestrator
+    capability_id: engineering.test_artifact.write
+
+    state: ACTIVE
+    level: L2
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/roles/qa.md
+
+  - id: EAG-orchestrator-release-packet
+    principal_id: engineering.runtime.orchestrator
+    capability_id: engineering.release_packet.write
+
+    state: ACTIVE
+    level: L2
+    environment: repository-local
+    risk_ceiling: R5
+
+    resource_scope:
+      mode: ANY
+      values: []
+
+    basis: INITIAL_GOVERNANCE_BASELINE
+    policy_ref: docs/governance/autonomy-levels.md
+    promotion_case_ref: null
+    owner_decision_ref: null
+
+    effective_from: "2026-10-01T00:00:00Z"
+    expires_at: null
+
+    evidence_refs:
+      - .agents/roles/release-operator.md

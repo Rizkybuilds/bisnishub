@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/autonomy-promotion-evidence.schema.json",
+  "title": "BisnisHub Engineering Autonomy Promotion Evidence",
+  "type": "object",
+  "additionalProperties": false,
+
+  "required": [
+    "schema_version",
+    "promotion_case_id",
+    "principal",
+    "capability_id",
+    "scope",
+    "environment",
+    "effective_risk",
+    "current_level",
+    "proposed_level",
+    "configuration_fingerprints",
+    "suite_evidence",
+    "operational_evidence",
+    "regressions",
+    "readiness",
+    "recommendation"
+  ],
+
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+
+    "promotion_case_id": {
+      "type": "string",
+      "pattern": "^APC-[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+
+    "principal": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "capability_id": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "scope": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+
+    "environment": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "effective_risk": {
+      "enum": [
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5"
+      ]
+    },
+
+    "current_level": {
+      "enum": [
+        "L0",
+        "L1",
+        "L2",
+        "L3",
+        "L4"
+      ]
+    },
+
+    "proposed_level": {
+      "enum": [
+        "L1",
+        "L2",
+        "L3",
+        "L4"
+      ]
+    },
+
+    "configuration_fingerprints": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+
+    "suite_evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/suiteEvidence"
+      }
+    },
+
+    "operational_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "available",
+        "references"
+      ],
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "references": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+
+    "regressions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/regression"
+      }
+    },
+
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "permission",
+        "verification",
+        "recovery",
+        "observability",
+        "security",
+        "approval_policy"
+      ],
+      "properties": {
+        "permission": {
+          "$ref": "#/$defs/readinessState"
+        },
+        "verification": {
+          "$ref": "#/$defs/readinessState"
+        },
+        "recovery": {
+          "$ref": "#/$defs/readinessState"
+        },
+        "observability": {
+          "$ref": "#/$defs/readinessState"
+        },
+        "security": {
+          "$ref": "#/$defs/readinessState"
+        },
+        "approval_policy": {
+          "$ref": "#/$defs/readinessState"
+        }
+      }
+    },
+
+    "recommendation": {
+      "enum": [
+        "ELIGIBLE_FOR_OWNER_REVIEW",
+        "NOT_ELIGIBLE",
+        "BLOCKED",
+        "STALE"
+      ]
+    },
+
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+
+  "$defs": {
+    "suiteEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "suite_id",
+        "suite_version",
+        "runtime",
+        "required_runs",
+        "observed_runs",
+        "status",
+        "run_ids"
+      ],
+      "properties": {
+        "suite_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suite_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtime": {
+          "enum": [
+            "codex",
+            "antigravity"
+          ]
+        },
+        "required_runs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "observed_runs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "enum": [
+            "QUALIFIED",
+            "FAILED",
+            "BLOCKED",
+            "STALE",
+            "INCOMPLETE"
+          ]
+        },
+        "run_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "regression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "blocking",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "OPEN",
+            "RESOLVED",
+            "ACCEPTED"
+          ]
+        }
+      }
+    },
+
+    "readinessState": {
+      "enum": [
+        "READY",
+        "NOT_READY",
+        "NOT_APPLICABLE",
+        "UNKNOWN"
+      ]
+    }
+  }
+}

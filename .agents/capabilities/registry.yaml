@@ -1,0 +1,504 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.capabilities
+  status: ACTIVE
+  version: "1.0"
+  owner: Rizky
+  namespace: engineering
+
+  guide: .agents/capabilities/README.md
+  permission_registry: .agents/capabilities/role-grants.yaml
+
+  risk_policy: docs/governance/cross-system-risk-classification.md
+  autonomy_policy: docs/governance/autonomy-levels.md
+  approval_policy: docs/governance/approval-policy.md
+
+  human_permission_policy: systems/mgbos/docs/engineering/agent-system/permission-matrix.md
+
+principles:
+  default_permission: DENIED
+  tool_access_grants_permission: false
+  skill_grants_permission: false
+  expertise_grants_permission: false
+  role_name_grants_unregistered_capability: false
+  capability_grants_autonomy: false
+  capability_grants_approval: false
+  highest_applicable_risk_wins: true
+  unknown_consequential_environment_fails_closed: true
+
+allowed_dispositions:
+  - ACTIVE
+  - PROHIBITED
+
+allowed_approval_modes:
+  - NONE
+  - WORK_PACKAGE
+  - EXPLICIT_ACTION
+  - RELEASE_GATES_AND_EXPLICIT_ACTION
+  - PROHIBITED
+
+allowed_environments:
+  - repository-local
+  - local-disposable
+  - github-remote
+  - staging
+  - production
+  - remote-mgbos
+
+legacy_aliases:
+  read-repository: engineering.repository.read
+  write-plan: engineering.plan.write
+  write-scoped-files: engineering.source.write.scoped
+  run-local-checks: engineering.check.local.execute
+  write-review: engineering.review.write
+  write-test-artifacts: engineering.test_artifact.write
+  write-release-plan: engineering.release_packet.write
+
+capabilities:
+  - id: engineering.repository.read
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Inspect repository content and sanitized engineering evidence
+      within the authorized engineering scope.
+
+    mutation: false
+    baseline_risk: R1
+    minimum_autonomy: L0
+    autonomy_ceiling: L4
+
+    supported_environments:
+      - repository-local
+      - github-remote
+
+    approval_mode: NONE
+    verification_required: false
+
+    boundaries:
+      - Does not include secret extraction.
+      - Does not include customer-data disclosure.
+      - Does not imply cross-system business read authority.
+
+  - id: engineering.plan.write
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Create or update engineering planning and implementation-contract artifacts.
+
+    mutation: true
+    baseline_risk: R2
+    minimum_autonomy: L1
+    autonomy_ceiling: L2
+
+    supported_environments:
+      - repository-local
+
+    approval_mode: NONE
+    verification_required: false
+
+    boundaries:
+      - Does not authorize implementation-source mutation.
+      - Does not grant execution authority.
+
+  - id: engineering.source.write.scoped
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Modify application, migration, configuration, test, or related
+      implementation source only inside an accepted bounded Work Package.
+
+    mutation: true
+    baseline_risk: R2
+    minimum_autonomy: L2
+    autonomy_ceiling: L2
+
+    supported_environments:
+      - repository-local
+
+    approval_mode: WORK_PACKAGE
+    verification_required: true
+
+    risk_escalation:
+      - Effective risk inherits affected business capability consequence.
+      - Financial-truth implementation may therefore become R5.
+      - Authorization/security implementation may therefore become R4 or R5.
+      - Production-critical implementation may therefore become R4 or R5.
+
+    boundaries:
+      - Allowed paths come from the active Work Package.
+      - Silent material scope expansion is forbidden.
+      - Applied migration history remains immutable.
+
+  - id: engineering.review.write
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Produce engineering review, assurance, finding, or audit evidence.
+
+    mutation: true
+    baseline_risk: R2
+    minimum_autonomy: L1
+    autonomy_ceiling: L1
+
+    supported_environments:
+      - repository-local
+
+    approval_mode: NONE
+    verification_required: false
+
+    boundaries:
+      - Does not authorize fixing reviewed implementation.
+      - Does not create independent-review status automatically.
+      - Accepted risk requires actual authority.
+
+  - id: engineering.test_artifact.write
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Create or update test, verification, and QA evidence artifacts.
+
+    mutation: true
+    baseline_risk: R2
+    minimum_autonomy: L2
+    autonomy_ceiling: L2
+
+    supported_environments:
+      - repository-local
+      - local-disposable
+
+    approval_mode: NONE
+    verification_required: false
+
+    boundaries:
+      - Does not authorize application-source mutation outside QA scope.
+      - Test definition does not equal test execution.
+
+  - id: engineering.release_packet.write
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Prepare release-readiness evidence and Release Packet artifacts.
+
+    mutation: true
+    baseline_risk: R2
+    minimum_autonomy: L2
+    autonomy_ceiling: L2
+
+    supported_environments:
+      - repository-local
+
+    approval_mode: NONE
+    verification_required: false
+
+    boundaries:
+      - Does not authorize merge or deployment.
+      - READY_FOR_AUTHORIZED_RELEASE is not execution authority.
+
+  - id: engineering.check.local.execute
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Execute relevant non-destructive local engineering checks.
+
+    mutation: true
+    baseline_risk: R2
+    minimum_autonomy: L2
+    autonomy_ceiling: L2
+
+    supported_environments:
+      - repository-local
+      - local-disposable
+
+    approval_mode: WORK_PACKAGE
+    verification_required: true
+
+    boundaries:
+      - Must remain relevant to accepted engineering scope.
+      - Does not authorize production or remote-system mutation.
+      - Generated local build/test artifacts do not become authoritative business truth.
+
+  - id: engineering.database.local.reset_disposable
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Reset a verified disposable local MGBOS database for reproducibility
+      or QA purposes.
+
+    mutation: true
+    baseline_risk: R2
+    minimum_autonomy: L2
+    autonomy_ceiling: L2
+
+    supported_environments:
+      - local-disposable
+
+    approval_mode: EXPLICIT_ACTION
+    verification_required: true
+
+    preconditions:
+      - Target identity is verified local/disposable.
+      - Command is executed from systems/mgbos/.
+      - Reproducibility or QA purpose is explicit.
+      - Shared local database collision has been checked.
+
+    boundaries:
+      - A worktree does not imply database isolation.
+      - Remote database targets are not permitted.
+
+  - id: engineering.github.feature_branch.push
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Push an authorized non-main feature branch to Git hosting.
+
+    mutation: true
+    baseline_risk: R3
+    minimum_autonomy: L3
+    autonomy_ceiling: L3
+
+    supported_environments:
+      - github-remote
+
+    approval_mode: EXPLICIT_ACTION
+    verification_required: true
+
+    boundaries:
+      - Direct main push is a separate prohibited capability.
+      - Authorization must identify repository and branch scope.
+
+  - id: engineering.github.pull_request.create
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Create a pull request for an authorized feature branch.
+
+    mutation: true
+    baseline_risk: R3
+    minimum_autonomy: L3
+    autonomy_ceiling: L3
+
+    supported_environments:
+      - github-remote
+
+    approval_mode: EXPLICIT_ACTION
+    verification_required: true
+
+    boundaries:
+      - Pull-request creation does not authorize merge.
+      - PR claims do not replace revision-bound evidence.
+
+  - id: engineering.github.pull_request.close
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Close a pull request when explicit scope and safety evidence authorize it.
+
+    mutation: true
+    baseline_risk: R3
+    minimum_autonomy: L3
+    autonomy_ceiling: L3
+
+    supported_environments:
+      - github-remote
+
+    approval_mode: EXPLICIT_ACTION
+    verification_required: true
+
+  - id: engineering.github.branch.delete
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Delete an explicitly identified remote engineering branch.
+
+    mutation: true
+    baseline_risk: R3
+    minimum_autonomy: L3
+    autonomy_ceiling: L3
+
+    supported_environments:
+      - github-remote
+
+    approval_mode: EXPLICIT_ACTION
+    verification_required: true
+
+    preconditions:
+      - Branch identity is explicit.
+      - Recovery/safety implications are understood.
+      - Main/default branch is not targeted.
+
+  - id: engineering.github.pull_request.merge
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Merge an exact reviewed candidate after applicable release gates
+      and explicit authorization.
+
+    mutation: true
+    baseline_risk: R4
+    minimum_autonomy: L3
+    autonomy_ceiling: L3
+
+    supported_environments:
+      - github-remote
+
+    approval_mode: RELEASE_GATES_AND_EXPLICIT_ACTION
+    verification_required: true
+
+    preconditions:
+      - Exact candidate revision is known.
+      - Required CI evidence is current.
+      - Required audit and QA evidence is current.
+      - Applicable release gates pass.
+      - Explicit merge authorization exists.
+
+  - id: engineering.release.deploy
+    version: 1
+    disposition: ACTIVE
+
+    description: >
+      Deploy an exact release candidate to an explicitly identified target.
+
+    mutation: true
+    baseline_risk: R3
+    minimum_autonomy: L3
+    autonomy_ceiling: L3
+
+    supported_environments:
+      - staging
+      - production
+
+    approval_mode: RELEASE_GATES_AND_EXPLICIT_ACTION
+    verification_required: true
+
+    environment_risk_floor:
+      staging: R3
+      production: R4
+
+    preconditions:
+      - Target identity is verified.
+      - Candidate revision is exact and clean.
+      - Applicable release gates pass.
+      - Recovery strategy is available.
+      - Explicit deployment authorization exists.
+
+    boundaries:
+      - Production deployment does not imply database mutation authority.
+
+  - id: engineering.git.main.push
+    version: 1
+    disposition: PROHIBITED
+
+    description: >
+      Push directly to the protected/default main branch.
+
+    mutation: true
+    baseline_risk: R4
+    autonomy_ceiling: null
+
+    supported_environments:
+      - github-remote
+
+    approval_mode: PROHIBITED
+    verification_required: false
+
+  - id: engineering.database.mgbos.remote.mutate
+    version: 1
+    disposition: PROHIBITED
+
+    description: >
+      Directly mutate a remote or production MGBOS database through
+      engineering runtime authority.
+
+    mutation: true
+    baseline_risk: R5
+    autonomy_ceiling: null
+
+    supported_environments:
+      - remote-mgbos
+      - staging
+      - production
+
+    approval_mode: PROHIBITED
+    verification_required: false
+
+    boundaries:
+      - MGBOS business mutation must use canonical application/domain authority.
+      - Engineering runtime authority does not become business command authority.
+
+  - id: engineering.supabase.mgbos.root.use
+    version: 1
+    disposition: PROHIBITED
+
+    description: >
+      Use root or unrestricted Supabase authority as an MGBOS engineering
+      business-execution mechanism.
+
+    mutation: true
+    baseline_risk: R5
+    autonomy_ceiling: null
+
+    supported_environments:
+      - remote-mgbos
+      - staging
+      - production
+
+    approval_mode: PROHIBITED
+    verification_required: false
+
+  - id: engineering.secret.expose
+    version: 1
+    disposition: PROHIBITED
+
+    description: >
+      Expose raw secrets or credentials in engineering prompts,
+      artifacts, logs, reviews, or generated repository content.
+
+    mutation: true
+    baseline_risk: R5
+    autonomy_ceiling: null
+
+    supported_environments:
+      - repository-local
+      - github-remote
+      - staging
+      - production
+      - remote-mgbos
+
+    approval_mode: PROHIBITED
+    verification_required: false
+
+  - id: engineering.customer_data.expose
+    version: 1
+    disposition: PROHIBITED
+
+    description: >
+      Expose customer private data in engineering artifacts where the data
+      is not explicitly authorized, necessary, minimized, and sanitized.
+
+    mutation: true
+    baseline_risk: R4
+    autonomy_ceiling: null
+
+    supported_environments:
+      - repository-local
+      - github-remote
+      - staging
+      - production
+      - remote-mgbos
+
+    approval_mode: PROHIBITED
+    verification_required: false

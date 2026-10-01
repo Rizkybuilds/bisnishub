@@ -214,23 +214,26 @@ class GovernanceValidationTests(
     # Existing role / permission protections
     # --------------------------------------------------------
 
-    def test_capability_escalation_rejected(
+    def test_legacy_role_capability_rejected(
         self
     ):
         self.edit_json(
             ".agents/roles/contracts.json",
             lambda data: data[
                 "roles"
-            ][2][
+            ][0][
                 "capabilities"
             ].append(
-                "deploy-production"
+                "read-repository"
             ),
         )
 
         with self.assertRaisesRegex(
             ValueError,
-            "capabilities",
+            (
+                "canonical engineering "
+                "capability"
+            ),
         ):
             governance.validate(
                 self.root
@@ -931,6 +934,171 @@ class GovernanceValidationTests(
         with self.assertRaisesRegex(
             ValueError,
             "ignore failure",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_contract_validator_ci_step_required(
+        self
+    ):
+        path = (
+            self.root
+            / ".github/workflows/"
+            "agent-governance.yml"
+        )
+
+        content = path.read_text(
+            encoding="utf-8"
+        )
+
+        modified = content.replace(
+            (
+                "      - run: python "
+                "scripts/governance/"
+                "validate_engineering_contracts.py\n"
+            ),
+            "",
+            1,
+        )
+        if modified == content:
+            modified = content.replace(
+                (
+                    "- run: python "
+                    "scripts/governance/"
+                    "validate_engineering_contracts.py\n"
+                ),
+                "",
+                1,
+            )
+        if modified == content:
+            modified = content.replace(
+                (
+                    "python scripts/governance/"
+                    "validate_engineering_contracts.py"
+                ),
+                "python scripts/governance/validate-agent-governance.py",
+                1,
+            )
+
+        path.write_text(
+            modified,
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "missing required validators",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_runtime_adapter_validator_ci_step_required(
+        self
+    ):
+        path = (
+            self.root
+            / ".github/workflows/"
+            "agent-governance.yml"
+        )
+
+        content = path.read_text(
+            encoding="utf-8"
+        )
+
+        modified = content.replace(
+            (
+                "      - run: python "
+                "scripts/governance/"
+                "validate_runtime_adapters.py\n"
+            ),
+            "",
+            1,
+        )
+        if modified == content:
+            modified = content.replace(
+                (
+                    "- run: python "
+                    "scripts/governance/"
+                    "validate_runtime_adapters.py\n"
+                ),
+                "",
+                1,
+            )
+        if modified == content:
+            modified = content.replace(
+                (
+                    "python scripts/governance/"
+                    "validate_runtime_adapters.py"
+                ),
+                "python scripts/governance/validate-agent-governance.py",
+                1,
+            )
+
+        path.write_text(
+            modified,
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "missing required validators",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_capabilities_validator_ci_step_required(
+        self
+    ):
+        path = (
+            self.root
+            / ".github/workflows/"
+            "agent-governance.yml"
+        )
+
+        content = path.read_text(
+            encoding="utf-8"
+        )
+
+        modified = content.replace(
+            (
+                "      - run: python "
+                "scripts/governance/"
+                "validate_engineering_capabilities.py\n"
+            ),
+            "",
+            1,
+        )
+        if modified == content:
+            modified = content.replace(
+                (
+                    "- run: python "
+                    "scripts/governance/"
+                    "validate_engineering_capabilities.py\n"
+                ),
+                "",
+                1,
+            )
+        if modified == content:
+            modified = content.replace(
+                (
+                    "python scripts/governance/"
+                    "validate_engineering_capabilities.py"
+                ),
+                "python scripts/governance/validate-agent-governance.py",
+                1,
+            )
+
+        path.write_text(
+            modified,
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "missing required validators",
         ):
             governance.validate(
                 self.root

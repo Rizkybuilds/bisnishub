@@ -1,0 +1,171 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.role-capability-grants
+  status: ACTIVE
+  version: "1.0"
+
+  capability_registry: .agents/capabilities/registry.yaml
+  role_registry: .agents/roles/contracts.json
+  condition_registry: .agents/capabilities/conditions.yaml
+
+  semantic_policy: systems/mgbos/docs/engineering/agent-system/permission-matrix.md
+
+defaults:
+  unlisted_capability: DENIED
+  unlisted_role: DENIED
+
+permission_states:
+  - GRANTED
+  - CONDITIONAL
+  - DENIED
+  - PROHIBITED
+
+global_prohibitions:
+  - engineering.git.main.push
+  - engineering.database.mgbos.remote.mutate
+  - engineering.supabase.mgbos.root.use
+  - engineering.secret.expose
+  - engineering.customer_data.expose
+
+roles:
+  planner:
+    granted:
+      engineering.repository.read:
+        scope: authorized-repository-and-sanitized-evidence
+
+      engineering.plan.write:
+        scope: planning-and-implementation-contract-artifacts
+
+    conditional: {}
+
+  engineer:
+    granted:
+      engineering.repository.read:
+        scope: authorized-repository-and-sanitized-evidence
+
+      engineering.source.write.scoped:
+        scope: active-work-package
+        requires:
+          - accepted-work-package
+          - authorized-worktree
+          - allowed-path-match
+
+      engineering.check.local.execute:
+        scope: accepted-engineering-work
+        requires:
+          - non-destructive-local-check
+          - relevant-to-work-package
+
+    conditional:
+      engineering.database.local.reset_disposable:
+        requires:
+          - reproducibility-scope
+          - verified-local-disposable-target
+          - systems-mgbos-working-directory
+          - shared-local-stack-collision-check
+
+      engineering.github.feature_branch.push:
+        requires:
+          - explicit-action-authorization
+          - authorized-feature-branch
+          - main-not-targeted
+
+      engineering.github.pull_request.create:
+        requires:
+          - explicit-action-authorization
+          - authorized-feature-branch
+          - reviewable-pr-body
+
+  auditor:
+    granted:
+      engineering.repository.read:
+        scope: exact-review-scope-and-sanitized-evidence
+
+      engineering.review.write:
+        scope: review-and-assurance-artifacts
+
+    conditional: {}
+
+    explicit_denials:
+      - engineering.source.write.scoped
+      - engineering.check.local.execute
+      - engineering.database.local.reset_disposable
+      - engineering.github.feature_branch.push
+      - engineering.github.pull_request.create
+      - engineering.github.pull_request.close
+      - engineering.github.branch.delete
+      - engineering.github.pull_request.merge
+      - engineering.release.deploy
+
+  qa:
+    granted:
+      engineering.repository.read:
+        scope: verification-scope-and-sanitized-evidence
+
+      engineering.test_artifact.write:
+        scope: test-and-verification-artifacts
+
+      engineering.check.local.execute:
+        scope: accepted-verification-work
+        requires:
+          - non-destructive-local-check
+          - relevant-to-acceptance-criteria
+
+    conditional:
+      engineering.database.local.reset_disposable:
+        requires:
+          - reproducibility-scope
+          - verified-local-disposable-target
+          - systems-mgbos-working-directory
+          - shared-local-stack-collision-check
+
+  release-operator:
+    granted:
+      engineering.repository.read:
+        scope: release-candidate-and-sanitized-evidence
+
+      engineering.release_packet.write:
+        scope: release-readiness-artifacts
+
+    conditional:
+      engineering.github.feature_branch.push:
+        requires:
+          - explicit-action-authorization
+          - authorized-feature-branch
+          - main-not-targeted
+
+      engineering.github.pull_request.create:
+        requires:
+          - explicit-action-authorization
+          - authorized-feature-branch
+
+      engineering.github.pull_request.close:
+        requires:
+          - explicit-action-authorization
+          - exact-pull-request-identity
+          - safety-evidence
+
+      engineering.github.branch.delete:
+        requires:
+          - explicit-action-authorization
+          - exact-branch-identity
+          - recovery-or-safety-evidence
+          - main-not-targeted
+
+      engineering.github.pull_request.merge:
+        requires:
+          - explicit-action-authorization
+          - exact-reviewed-revision
+          - applicable-release-gates-pass
+          - current-ci-evidence
+          - required-assurance-satisfied
+          - required-qa-satisfied
+
+      engineering.release.deploy:
+        requires:
+          - explicit-action-authorization
+          - exact-clean-candidate
+          - verified-target-identity
+          - applicable-release-gates-pass
+          - recovery-readiness
