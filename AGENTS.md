@@ -27,6 +27,15 @@ For UI work, use `21st-ui-explore` for directions, `21st-ui-build` for implement
 Use `design-system` when token/component contracts change, `ui-styling` for focused implementation details, and `ui-ux-pro-max` for a specific research gap. Existing application tokens and components take precedence over generated design proposals; a new page does not automatically require a new design system.
 Skill examples do not authorize staging unrelated work, pushing to main, deploying, publishing assets or mutating remote databases. Use explicit file paths when staging authorized changes.
 
+## Engineering AI Control Plane
+
+For material AI-assisted engineering work, follow the canonical
+[Engineering AI Control Plane](docs/engineering/engineering-ai-control-plane.md).
+Repository-wide role, expertise, routing, risk, evidence, and runtime-adapter semantics
+must not be redefined in provider-specific instructions.
+System-specific engineering instructions may add stricter requirements but may not weaken
+repository governance.
+
 ## MGBOS engineering control plane
 
 For MGBOS change planning use `mgbos-change-planner`; for transaction integrity audits use `mgbos-business-integrity-auditor`; for PR/diff review use `mgbos-pr-reviewer`.

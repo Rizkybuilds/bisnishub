@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/release-packet.schema.json",
+  "title": "BisnisHub Release Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "artifact_id",
+    "candidate_revision",
+    "prepared_by",
+    "target",
+    "risk",
+    "gate_matrix",
+    "blockers",
+    "recovery",
+    "execution_authority",
+    "recommendation"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "artifact_type": {
+      "const": "RELEASE_PACKET"
+    },
+    "artifact_id": {
+      "type": "string",
+      "pattern": "^RP-[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "candidate_revision": {
+      "type": "string",
+      "minLength": 7
+    },
+    "prepared_by": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "identity"],
+      "properties": {
+        "role": {
+          "const": "release-operator"
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtime": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["environment", "identity_verified"],
+      "properties": {
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_name": {
+          "type": ["string", "null"]
+        },
+        "identity_verified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "risk": {
+      "enum": ["R0", "R1", "R2", "R3", "R4", "R5"]
+    },
+    "artifact_references": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "implementation_contract_id": {
+          "type": ["string", "null"]
+        },
+        "engineering_report_ids": {
+          "$ref": "#/$defs/uniqueStrings"
+        },
+        "assurance_report_ids": {
+          "$ref": "#/$defs/uniqueStrings"
+        },
+        "verification_matrix_ids": {
+          "$ref": "#/$defs/uniqueStrings"
+        }
+      }
+    },
+    "gate_matrix": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/gate"
+      }
+    },
+    "blockers": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "strategy", "verified"],
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "strategy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verified": {
+          "type": "boolean"
+        },
+        "evidence_reference": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "execution_authority": {
+      "enum": [
+        "NOT_GRANTED",
+        "EXPLICITLY_GRANTED",
+        "NOT_REQUIRED_FOR_PREPARATION"
+      ]
+    },
+    "recommendation": {
+      "enum": ["READY_FOR_AUTHORIZED_RELEASE", "NOT_READY", "BLOCKED"]
+    },
+    "notes": {
+      "$ref": "#/$defs/uniqueStrings"
+    }
+  },
+  "$defs": {
+    "uniqueStrings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gate_id", "name", "required", "status"],
+      "properties": {
+        "gate_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": ["PASS", "FAIL", "BLOCKED", "NOT_RUN", "NOT_APPLICABLE"]
+        },
+        "evidence_reference": {
+          "type": ["string", "null"]
+        },
+        "notes": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bisnishub://engineering/implementation-contract.schema.json",
+  "title": "BisnisHub Implementation Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "artifact_id",
+    "state",
+    "created_at",
+    "created_by",
+    "repository",
+    "workspace",
+    "target_system",
+    "base_revision",
+    "objective",
+    "scope",
+    "routing",
+    "risk",
+    "canonical_sources",
+    "invariants",
+    "acceptance_criteria",
+    "planned_checks",
+    "stop_conditions",
+    "work_package_ids"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "artifact_type": {
+      "const": "IMPLEMENTATION_CONTRACT"
+    },
+    "artifact_id": {
+      "type": "string",
+      "pattern": "^IC-[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "state": {
+      "enum": [
+        "PLANNED",
+        "READY_FOR_IMPLEMENTATION",
+        "BLOCKED",
+        "SUPERSEDED",
+        "CANCELLED"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_by": {
+      "$ref": "#/$defs/executor"
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workspace": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_system": {
+      "type": "string",
+      "minLength": 1
+    },
+    "base_revision": {
+      "$ref": "#/$defs/revision"
+    },
+    "supersedes": {
+      "type": ["string", "null"],
+      "pattern": "^IC-[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "primary_task_type",
+        "concerns",
+        "roles",
+        "required_expertise"
+      ],
+      "properties": {
+        "profile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "primary_task_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "concerns": {
+          "$ref": "#/$defs/uniqueStrings"
+        },
+        "roles": {
+          "$ref": "#/$defs/uniqueStrings"
+        },
+        "required_expertise": {
+          "$ref": "#/$defs/expertiseIds"
+        },
+        "skill_candidates": {
+          "$ref": "#/$defs/uniqueStrings"
+        }
+      }
+    },
+    "risk": {
+      "$ref": "#/$defs/risk"
+    },
+    "canonical_sources": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "invariants": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/acceptanceCriterion"
+      }
+    },
+    "planned_checks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/plannedCheck"
+      }
+    },
+    "stop_conditions": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "dependencies": {
+      "$ref": "#/$defs/uniqueStrings"
+    },
+    "work_package_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^WP-[A-Za-z0-9][A-Za-z0-9._-]*$"
+      }
+    },
+    "decision_required": {
+      "$ref": "#/$defs/decision"
+    },
+    "notes": {
+      "$ref": "#/$defs/uniqueStrings"
+    }
+  },
+  "$defs": {
+    "uniqueStrings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "expertiseIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^EXP-[0-9]{3}$"
+      }
+    },
+    "executor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "identity"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtime": {
+          "type": ["string", "null"]
+        },
+        "provider": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha"],
+      "properties": {
+        "sha": {
+          "type": "string",
+          "minLength": 7
+        },
+        "branch": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowed_paths", "excluded_paths", "explicit_non_goals"],
+      "properties": {
+        "allowed_paths": {
+          "$ref": "#/$defs/uniqueStrings"
+        },
+        "excluded_paths": {
+          "$ref": "#/$defs/uniqueStrings"
+        },
+        "explicit_non_goals": {
+          "$ref": "#/$defs/uniqueStrings"
+        }
+      }
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effective_level", "reasons"],
+      "properties": {
+        "effective_level": {
+          "enum": ["R0", "R1", "R2", "R3", "R4", "R5"]
+        },
+        "reasons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "affected_capabilities": {
+          "$ref": "#/$defs/uniqueStrings"
+        }
+      }
+    },
+    "acceptanceCriterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^AC-[0-9]{3,}$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "blocking": {
+          "type": "boolean"
+        }
+      }
+    },
+    "plannedCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^CHK-[0-9]{3,}$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "environment": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required"],
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "question": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  }
+}

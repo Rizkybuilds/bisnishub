@@ -1,0 +1,1091 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.routing
+  status: ACTIVE
+  version: "1.0"
+  owner: Rizky
+  scope: repository-engineering
+
+  semantic_policy: docs/engineering/engineering-ai-control-plane.md
+  guide: .agents/routing/README.md
+  role_registry: .agents/roles/contracts.json
+  expertise_registry: .agents/expertise/registry.yaml
+  risk_policy: docs/governance/cross-system-risk-classification.md
+  evidence_policy: docs/governance/evidence-provenance-model.md
+
+risk_order:
+  - R0
+  - R1
+  - R2
+  - R3
+  - R4
+  - R5
+
+assurance_levels:
+  - NONE
+  - PROPORTIONAL
+  - REQUIRED
+  - INDEPENDENT_REQUIRED
+
+role_order:
+  - planner
+  - engineer
+  - auditor
+  - qa
+  - release-operator
+
+composition:
+  allow_multiple_concerns: true
+
+  effective_risk:
+    strategy: highest-applicable-wins
+    sources:
+      - task_type_risk_floor
+      - concern_risk_floor
+      - environment_rule
+      - affected_capability
+      - explicit_policy_floor
+
+  roles:
+    strategy: union-in-role-order
+
+  expertise:
+    strategy: union
+    automatic_maturity:
+      - ACTIVE
+
+  assurance:
+    strategy: strictest-wins
+
+  skills:
+    strategy: select-minimum-relevant
+    candidates_are_mandatory: false
+
+profiles:
+  mgbos:
+    status: ACTIVE
+    workspace: systems/mgbos/
+    instructions: systems/mgbos/AGENTS.md
+    role_registry: .agents/roles/contracts.json
+    risk_profile: systems/mgbos/docs/engineering/agent-system/risk-classification.md
+    workflow: systems/mgbos/docs/engineering/agent-system/workflow.md
+    release_gates: systems/mgbos/docs/engineering/agent-system/release-gates.md
+
+    default_stop_conditions:
+      - CANONICAL_CONFLICT
+      - UNKNOWN_HIGH_RISK
+      - SCOPE_EXPANSION_REQUIRED
+      - REQUIRED_SOURCE_MISSING
+      - PERMISSION_UNCLEAR
+      - ENVIRONMENT_UNVERIFIED
+      - REQUIRED_EVIDENCE_UNAVAILABLE
+      - UNRELATED_WORK_COLLISION
+
+environments:
+  local-disposable:
+    mutation_risk_floor: null
+    notes:
+      - Local disposable execution does not lower affected capability risk.
+
+  local-nondisposable:
+    mutation_risk_floor: R2
+    notes:
+      - Confirm target identity and preserve unrelated local data.
+
+  ci:
+    mutation_risk_floor: null
+    notes:
+      - CI evidence is revision-bound and does not prove deployment.
+
+  staging:
+    mutation_risk_floor: R3
+    applies_when:
+      - real_state_mutation
+    notes:
+      - Staging mutation requires verified target isolation.
+
+  production:
+    mutation_risk_floor: R4
+    applies_when:
+      - real_state_mutation
+    notes:
+      - Higher capability or concern floors still win.
+      - Production financial, privileged-security, or destructive authoritative mutation may be R5.
+
+task_types:
+  documentation-change:
+    description: >
+      Non-runtime documentation maintenance where the primary change is prose,
+      links, formatting, navigation, or explanatory material.
+    risk_floor: R0
+
+    required_roles:
+      - engineer
+
+    required_expertise: []
+
+    skill_candidates:
+      - agent-skill-maintainer
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: PROPORTIONAL
+      independent_review: NONE
+
+    checks:
+      - focused-diff
+      - link-reference-validation
+      - confirm-no-semantic-runtime-effect
+
+    escalation:
+      - If normative governance changes, also classify governance-change.
+      - If architecture semantics change, also classify architecture-contract-change.
+      - Markdown alone never guarantees R0.
+
+  governance-change:
+    description: >
+      Changes to engineering instructions, roles, expertise, routing,
+      validators, CI governance, permission matrices, or control-plane behavior.
+    risk_floor: R1
+
+    required_roles:
+      - planner
+      - engineer
+      - auditor
+      - qa
+
+    required_expertise:
+      - EXP-001
+      - EXP-020
+
+    skill_candidates:
+      - agent-skill-maintainer
+      - mgbos-pr-reviewer
+
+    assurance:
+      audit: REQUIRED
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    checks:
+      - canonical-authority-review
+      - positive-governance-tests
+      - negative-governance-tests
+      - bypass-analysis
+      - structural-validation
+
+    escalation:
+      - If permissions or privileged authority can be weakened, add authorization or privileged-security concern.
+      - If release protection can be bypassed, add production-critical concern as applicable.
+      - Modified validators must not be trusted solely to validate themselves.
+
+  architecture-contract-change:
+    description: >
+      Changes to system boundaries, canonical architecture, state semantics,
+      capability ownership, command/event contracts, or other normative system design.
+    risk_floor: R1
+
+    required_roles:
+      - planner
+      - engineer
+      - auditor
+
+    conditional_roles:
+      qa:
+        when:
+          - runtime_behavior_changes
+          - executable_contract_changes
+
+    required_expertise:
+      - EXP-001
+
+    skill_candidates:
+      - mgbos-change-planner
+      - integrated-erp-engine
+      - web-app-architect
+
+    assurance:
+      audit: REQUIRED
+      qa: PROPORTIONAL
+      independent_review: PROPORTIONAL
+
+    checks:
+      - canonical-source-resolution
+      - semantic-ownership-review
+      - downstream-contract-impact
+      - implementation-drift-assessment
+
+  frontend-ui-change:
+    description: >
+      Changes primarily to frontend presentation, interaction, forms,
+      accessibility, navigation, or client-side product experience.
+    risk_floor: R1
+
+    required_roles:
+      - engineer
+      - qa
+
+    required_expertise:
+      - EXP-008
+      - EXP-009
+
+    skill_candidates:
+      - fullstack-web-dev
+      - ui-ux-pro-max
+      - web-qa-testing
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: REQUIRED
+      independent_review: NONE
+
+    checks:
+      - relevant-ui-regression
+      - accessibility-as-applicable
+      - responsive-behavior-as-applicable
+      - client-server-boundary-review
+
+    escalation:
+      - If server mutation changes, also classify backend-command-change.
+      - If permission behavior changes, add authorization concern.
+      - If financial values become authoritative in client state, add financial-truth concern.
+
+  read-model-change:
+    description: >
+      Changes to deterministic read projections, reporting queries,
+      attention views, summaries, or non-mutating application read paths.
+    risk_floor: R1
+
+    required_roles:
+      - engineer
+      - qa
+
+    conditional_roles:
+      planner:
+        when:
+          - new_projection_contract
+          - canonical_business_semantics_change
+
+    required_expertise:
+      - EXP-002
+
+    optional_expertise:
+      - EXP-004
+      - EXP-005
+      - EXP-013
+
+    skill_candidates:
+      - integrated-erp-engine
+      - api-backend-engineer
+      - supabase-architect
+      - web-qa-testing
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: REQUIRED
+      independent_review: NONE
+
+    checks:
+      - projection-correctness
+      - source-authority
+      - organization-scope-as-applicable
+      - freshness-semantics-as-applicable
+
+  backend-command-change:
+    description: >
+      Changes to server commands, RPCs, APIs, server actions,
+      business mutations, validation, or backend transactional orchestration.
+    risk_floor: R2
+
+    required_roles:
+      - planner
+      - engineer
+      - qa
+
+    conditional_roles:
+      auditor:
+        when:
+          - effective_risk_at_least_R3
+          - consequential_business_mutation
+          - critical_concern_present
+
+    required_expertise:
+      - EXP-002
+      - EXP-003
+
+    optional_expertise:
+      - EXP-004
+      - EXP-005
+
+    skill_candidates:
+      - api-backend-engineer
+      - integrated-erp-engine
+      - mgbos-business-integrity-auditor
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    checks:
+      - authentication-as-applicable
+      - authorization-as-applicable
+      - validation
+      - state-guard
+      - transaction-boundary
+      - retry-idempotency-as-applicable
+      - failure-path
+      - postcondition
+
+  database-schema-change:
+    description: >
+      Changes to PostgreSQL/Supabase schema, migrations, RLS,
+      grants, functions, constraints, indexes, or database behavior.
+    risk_floor: R2
+
+    required_roles:
+      - planner
+      - engineer
+      - qa
+
+    conditional_roles:
+      auditor:
+        when:
+          - effective_risk_at_least_R4
+          - authorization_affected
+          - financial_truth_affected
+          - historical_integrity_affected
+
+    required_expertise:
+      - EXP-002
+      - EXP-004
+
+    optional_expertise:
+      - EXP-005
+      - EXP-006
+      - EXP-007
+
+    skill_candidates:
+      - supabase-architect
+      - integrated-erp-engine
+      - mgbos-business-integrity-auditor
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    checks:
+      - migration-immutability
+      - forward-migration
+      - upgrade-from-prior-state
+      - clean-replay
+      - constraints
+      - grants-and-rls-as-applicable
+      - generated-types-as-applicable
+      - application-compatibility
+
+  integration-eventing-change:
+    description: >
+      Changes to provider integrations, webhooks, callbacks,
+      event contracts, transactional outbox consumers, or external adapters.
+    risk_floor: R2
+
+    required_roles:
+      - planner
+      - engineer
+      - qa
+
+    required_expertise:
+      - EXP-003
+      - EXP-016
+
+    optional_expertise:
+      - EXP-004
+      - EXP-005
+      - EXP-007
+
+    skill_candidates:
+      - api-backend-engineer
+      - mgbos-business-integrity-auditor
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    checks:
+      - provider-contract
+      - authentication-or-signature-as-applicable
+      - idempotency
+      - duplicate-delivery
+      - out-of-order-delivery-as-applicable
+      - timeout-and-retry
+      - unknown-outcome-reconciliation
+      - postcondition-verification
+
+    escalation:
+      - Real external mutation adds external-side-effect concern.
+      - Payment integrations add financial-truth concern.
+      - Sensitive credentials add privileged-security or sensitive-data concern.
+
+  workflow-automation-change:
+    description: >
+      Changes to n8n or deterministic orchestration that schedules,
+      routes, notifies, transforms, or invokes governed capabilities.
+    risk_floor: R2
+
+    required_roles:
+      - planner
+      - engineer
+      - qa
+
+    required_expertise:
+      - EXP-017
+
+    optional_expertise:
+      - EXP-003
+      - EXP-005
+      - EXP-016
+      - EXP-018
+
+    skill_candidates:
+      - ai-automation-engine
+      - api-backend-engineer
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    checks:
+      - authoritative-boundary
+      - retry-policy
+      - duplicate-effect-prevention
+      - visible-failure
+      - recovery
+      - side-effect-verification
+
+    escalation:
+      - External communication adds external-side-effect concern.
+      - Authoritative mutation adds the concern of the target capability.
+      - Financial mutation adds financial-truth concern.
+
+  ai-capability-change:
+    description: >
+      Changes to AI model routing, OCR, extraction, classification,
+      tool calling, copilot behavior, structured output, or AI-assisted workflows.
+    risk_floor: R1
+
+    required_roles:
+      - planner
+      - engineer
+      - qa
+
+    conditional_roles:
+      auditor:
+        when:
+          - tool_calling_enabled
+          - authoritative_mutation_reachable
+          - sensitive_data_used
+          - security_boundary_affected
+
+    required_expertise:
+      - EXP-018
+      - EXP-020
+
+    optional_expertise:
+      - EXP-019
+      - EXP-005
+      - EXP-007
+
+    skill_candidates:
+      - ai-automation-engine
+      - ai-copilot-builder
+      - web-sec-perf
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    checks:
+      - provider-neutral-boundary
+      - structured-output-validation
+      - prompt-injection-resistance
+      - tool-allowlist-as-applicable
+      - stale-state-handling
+      - permission-recheck-as-applicable
+      - model-provider-failure
+      - behavioral-eval-impact
+
+    escalation:
+      - AI reaching authoritative mutation adds ai-authoritative-mutation concern.
+      - Target capability risk still governs final effective risk.
+
+  test-verification-change:
+    description: >
+      Changes primarily to tests, fixtures, QA infrastructure,
+      verification scripts, or acceptance evidence behavior.
+    risk_floor: R0
+
+    required_roles:
+      - engineer
+      - qa
+
+    required_expertise:
+      - EXP-010
+
+    skill_candidates:
+      - web-qa-testing
+      - mgbos-business-integrity-auditor
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: REQUIRED
+      independent_review: NONE
+
+    checks:
+      - changed-test-intent
+      - regression-coverage-impact
+      - false-positive-risk
+      - false-negative-risk
+
+    escalation:
+      - Weakening a critical gate inherits the consequence of the protection removed.
+      - Governance test changes may also classify governance-change.
+
+  release-operation:
+    description: >
+      Release preparation, deployment planning, target verification,
+      deployment execution, rollback preparation, or recovery operations.
+    risk_floor: R2
+
+    required_roles:
+      - release-operator
+
+    required_expertise:
+      - EXP-021
+
+    optional_expertise:
+      - EXP-007
+      - EXP-010
+      - EXP-011
+
+    skill_candidates:
+      - git-deploy-ops
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: PROPORTIONAL
+      independent_review: PROPORTIONAL
+
+    checks:
+      - exact-revision
+      - exact-target
+      - current-ci
+      - recovery-path
+      - target-health
+      - authorization
+
+    escalation:
+      - Production mutation is at least R4.
+      - Critical financial, privileged-security, or destructive production mutation may be R5.
+      - Release preparation alone does not authorize deployment.
+
+concerns:
+  financial-truth:
+    description: >
+      Authoritative money, payment, invoice balance, refund,
+      vendor payment, ledger, or financial reconciliation can change.
+    risk_floor: R5
+
+    required_roles:
+      - planner
+      - auditor
+      - qa
+
+    required_expertise:
+      - EXP-005
+      - EXP-006
+      - EXP-011
+
+    optional_expertise:
+      - EXP-002
+      - EXP-003
+      - EXP-004
+
+    skill_candidates:
+      - mgbos-business-integrity-auditor
+      - integrated-erp-engine
+
+    assurance:
+      audit: INDEPENDENT_REQUIRED
+      qa: REQUIRED
+      independent_review: INDEPENDENT_REQUIRED
+
+    required_checks:
+      - integer-money
+      - authorization
+      - organization-isolation
+      - financial-state-eligibility
+      - allocation-or-balance-integrity
+      - idempotency
+      - retry
+      - failure-atomicity
+      - concurrency-as-applicable
+      - historical-integrity
+      - postcondition
+      - reconciliation
+
+    stop_conditions:
+      - FINANCIAL_INVARIANT_AMBIGUOUS
+      - REQUIRED_EVIDENCE_UNAVAILABLE
+
+  authorization:
+    description: >
+      Identity, permission, role resolution, organization scope,
+      RLS, privileged RPC, or capability authority can change.
+    risk_floor: R4
+
+    required_roles:
+      - planner
+      - auditor
+      - qa
+
+    required_expertise:
+      - EXP-005
+      - EXP-007
+      - EXP-011
+
+    skill_candidates:
+      - web-sec-perf
+      - mgbos-business-integrity-auditor
+
+    assurance:
+      audit: INDEPENDENT_REQUIRED
+      qa: REQUIRED
+      independent_review: INDEPENDENT_REQUIRED
+
+    required_checks:
+      - authenticated-identity
+      - allowed-role
+      - denied-role
+      - cross-organization-denial
+      - direct-command-or-rpc
+      - privileged-context
+      - ui-bypass
+
+    stop_conditions:
+      - PERMISSION_UNCLEAR
+      - SECURITY_BOUNDARY_UNCLEAR
+
+  cross-organization-boundary:
+    description: >
+      Work can affect isolation between organizations, brands,
+      tenants, or otherwise separately authorized business scopes.
+    risk_floor: R4
+
+    required_roles:
+      - auditor
+      - qa
+
+    required_expertise:
+      - EXP-005
+      - EXP-007
+
+    assurance:
+      audit: INDEPENDENT_REQUIRED
+      qa: REQUIRED
+      independent_review: INDEPENDENT_REQUIRED
+
+    required_checks:
+      - server-derived-scope
+      - denied-cross-org-reference
+      - direct-boundary-access
+      - cache-or-projection-isolation-as-applicable
+
+  external-side-effect:
+    description: >
+      Real customer, vendor, provider, communication, fulfillment,
+      or external operational state can be affected.
+    risk_floor: R3
+
+    required_roles:
+      - qa
+
+    required_expertise:
+      - EXP-016
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    required_checks:
+      - target-identity
+      - duplicate-effect
+      - retry
+      - external-failure
+      - postcondition-or-provider-state
+      - safe-test-environment
+
+  sensitive-data:
+    description: >
+      Confidential, restricted, customer, financial,
+      security, or similarly sensitive data can be exposed.
+    risk_floor: R4
+
+    required_roles:
+      - auditor
+      - qa
+
+    required_expertise:
+      - EXP-007
+
+    assurance:
+      audit: REQUIRED
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    required_checks:
+      - least-data
+      - authorized-reader
+      - output-exposure
+      - logs-and-artifacts
+      - cache-boundary
+      - secret-redaction-as-applicable
+
+  privileged-security:
+    description: >
+      Privileged production authority, critical credentials,
+      security administration, or similarly severe security capability changes.
+    risk_floor: R5
+
+    required_roles:
+      - planner
+      - auditor
+      - qa
+
+    required_expertise:
+      - EXP-005
+      - EXP-007
+      - EXP-011
+      - EXP-021
+
+    skill_candidates:
+      - web-sec-perf
+
+    assurance:
+      audit: INDEPENDENT_REQUIRED
+      qa: REQUIRED
+      independent_review: INDEPENDENT_REQUIRED
+
+    required_checks:
+      - least-privilege
+      - privilege-escalation
+      - credential-isolation
+      - revocation-or-recovery
+      - auditability
+
+    stop_conditions:
+      - SECURITY_BOUNDARY_UNCLEAR
+
+  production-critical:
+    description: >
+      Failure can materially disrupt production availability,
+      critical operations, or authoritative production state.
+    risk_floor: R4
+
+    required_roles:
+      - auditor
+      - qa
+
+    required_expertise:
+      - EXP-021
+
+    assurance:
+      audit: REQUIRED
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    required_checks:
+      - target-identity
+      - recovery
+      - rollback-or-forward-repair
+      - observability
+      - postcondition
+      - incident-readiness
+
+  destructive-authoritative-data:
+    description: >
+      Work can irreversibly or destructively alter authoritative
+      production business data or critical history.
+    risk_floor: R5
+
+    required_roles:
+      - planner
+      - auditor
+      - qa
+
+    required_expertise:
+      - EXP-004
+      - EXP-011
+      - EXP-021
+
+    assurance:
+      audit: INDEPENDENT_REQUIRED
+      qa: REQUIRED
+      independent_review: INDEPENDENT_REQUIRED
+
+    required_checks:
+      - backup-or-recovery-evidence
+      - restore-or-reconciliation-plan
+      - target-verification
+      - exact-scope
+      - postcondition
+
+    stop_conditions:
+      - DESTRUCTIVE_CHANGE_REQUIRED
+      - REQUIRED_EVIDENCE_UNAVAILABLE
+
+  bulk-operation:
+    description: >
+      One defect or action may affect a large set of customers,
+      records, orders, organizations, or external recipients.
+    risk_floor: R4
+
+    required_roles:
+      - auditor
+      - qa
+
+    required_expertise:
+      - EXP-010
+
+    assurance:
+      audit: REQUIRED
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    required_checks:
+      - blast-radius
+      - batch-boundary
+      - partial-failure
+      - retry
+      - rollback-or-reconciliation
+      - high-risk-outlier-detection
+
+  concurrency-idempotency:
+    description: >
+      Duplicate requests, retries, concurrent execution,
+      lost responses, or out-of-order delivery can duplicate or corrupt effects.
+    risk_floor: null
+
+    required_expertise:
+      - EXP-003
+
+    optional_expertise:
+      - EXP-004
+      - EXP-016
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: REQUIRED
+      independent_review: NONE
+
+    required_checks:
+      - duplicate-request
+      - concurrent-request-as-applicable
+      - lost-response-retry
+      - atomic-idempotency
+      - payload-conflict-as-applicable
+
+  historical-integrity:
+    description: >
+      Immutable commercial, financial, operational, audit,
+      or migration history can be rewritten or made inconsistent.
+    risk_floor: null
+
+    required_expertise:
+      - EXP-002
+      - EXP-011
+
+    assurance:
+      audit: REQUIRED
+      qa: PROPORTIONAL
+      independent_review: PROPORTIONAL
+
+    required_checks:
+      - immutable-snapshot
+      - append-or-correction-semantics
+      - provenance
+      - historical-reference-stability
+
+  migration:
+    description: >
+      Database migration history, schema evolution,
+      data backfill, grants, RLS, or generated types are affected.
+    risk_floor: R2
+
+    required_expertise:
+      - EXP-004
+
+    skill_candidates:
+      - supabase-architect
+
+    assurance:
+      audit: PROPORTIONAL
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    required_checks:
+      - base-migration-immutability
+      - forward-migration
+      - upgrade-path
+      - clean-replay
+      - constraints
+      - grants-and-rls-as-applicable
+      - generated-types-as-applicable
+
+  ai-authoritative-mutation:
+    description: >
+      AI-derived output can reach an authoritative business mutation.
+    risk_floor: null
+
+    required_roles:
+      - auditor
+      - qa
+
+    required_expertise:
+      - EXP-005
+      - EXP-007
+      - EXP-018
+      - EXP-020
+
+    assurance:
+      audit: REQUIRED
+      qa: REQUIRED
+      independent_review: PROPORTIONAL
+
+    required_checks:
+      - untrusted-ai-output
+      - structured-proposal
+      - deterministic-validation
+      - current-permission-recheck
+      - current-state-recheck
+      - canonical-command
+      - duplicate-execution
+      - postcondition
+
+    notes:
+      - Effective risk inherits the authoritative target capability.
+      - Model confidence never reduces target capability risk.
+
+routing_failures:
+  unknown-profile:
+    result: BLOCKED
+
+  unknown-task-type:
+    result: NEEDS_PLANNER
+
+  unknown-concern:
+    result: NEEDS_PLANNER
+
+  unknown-risk:
+    result: NEEDS_PLANNER
+
+  unknown-role:
+    result: BLOCKED
+
+  unknown-expertise:
+    result: BLOCKED
+
+  unresolved-canonical-conflict:
+    result: BLOCKED
+
+  unresolved-high-risk:
+    result: NEEDS_OWNER_DECISION
+
+  required-independent-review-unavailable:
+    result: BLOCKED
+    notes:
+      - Self-review may still be performed and recorded.
+      - It does not satisfy INDEPENDENT_REQUIRED.
+
+example_routes:
+  payment-command-change:
+    profile: mgbos
+    primary_task_type: backend-command-change
+    concerns:
+      - financial-truth
+      - authorization
+      - concurrency-idempotency
+      - historical-integrity
+
+    expected:
+      effective_risk: R5
+      roles:
+        - planner
+        - engineer
+        - auditor
+        - qa
+      required_expertise:
+        - EXP-002
+        - EXP-003
+        - EXP-005
+        - EXP-006
+        - EXP-007
+        - EXP-011
+
+  ui-spacing-change:
+    profile: mgbos
+    primary_task_type: frontend-ui-change
+    concerns: []
+
+    expected:
+      effective_risk: R1
+      roles:
+        - engineer
+        - qa
+      required_expertise:
+        - EXP-008
+        - EXP-009
+
+  automated-customer-reminder:
+    profile: mgbos
+    primary_task_type: workflow-automation-change
+    concerns:
+      - external-side-effect
+      - concurrency-idempotency
+
+    expected:
+      effective_risk: R3
+      roles:
+        - planner
+        - engineer
+        - qa
+      required_expertise:
+        - EXP-003
+        - EXP-016
+        - EXP-017
+
+  cross-org-read-model:
+    profile: mgbos
+    primary_task_type: read-model-change
+    concerns:
+      - authorization
+      - cross-organization-boundary
+
+    expected:
+      effective_risk: R4
+      roles:
+        - planner
+        - engineer
+        - auditor
+        - qa
+      required_expertise:
+        - EXP-002
+        - EXP-005
+        - EXP-007
+        - EXP-011
