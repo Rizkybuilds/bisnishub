@@ -1,9 +1,9 @@
 """Tests for deterministic engineering action preflight."""
 
 import importlib.util
-import copy
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 spec = importlib.util.spec_from_file_location(
@@ -27,32 +27,14 @@ spec.loader.exec_module(
 def source_request():
     return {
         "schema_version": 1,
-        "principal": {
-            "schema_version": 1,
-            "principal_id":
-                "engineering.runtime.primary",
-            "adapter_id": "codex",
-            "verified": True,
-            "issued_at":
-                "2026-10-01T00:00:00Z",
-            "session_id": "fixture-session",
-            "evidence_ref": "fixture-grant",
-        },
         "role": "engineer",
         "capability":
             "engineering.source.write.scoped",
         "environment":
             "repository-local",
         "declared_risk": "R5",
-
-        "autonomy": {
-            "level": "L2",
-            "verified": True,
-            "scope_match": True,
-            "environment_match": True,
-            "evidence_ref": "fixture-grant",
-        },
-
+        "evaluated_at":
+            "2026-10-01T00:00:00Z",
         "action": {
             "target":
                 "systems/mgbos/test.ts",
@@ -68,7 +50,6 @@ def source_request():
                 }
             ],
         },
-
         "conditions": [
             {
                 "id":
@@ -95,14 +76,26 @@ def source_request():
                     "WP-fixture.scope",
             },
         ],
-
         "approval": None,
-
         "host": {
             "tool_available": True,
             "permission_state":
                 "ALLOW",
         },
+    }
+
+
+def source_attestation():
+    return {
+        "schema_version": 1,
+        "principal_id":
+            "engineering.runtime.primary",
+        "adapter_id": "codex",
+        "verified": True,
+        "issued_at":
+            "2026-10-01T00:00:00Z",
+        "session_id": "fixture-session",
+        "evidence_ref": "fixture-grant",
     }
 
 
@@ -113,7 +106,8 @@ class EngineeringPreflightTests(
         self
     ):
         result = resolver.resolve(
-            source_request()
+            source_request(),
+            source_attestation(),
         )
 
         self.assertEqual(
@@ -133,7 +127,8 @@ class EngineeringPreflightTests(
         ] = "auditor"
 
         result = resolver.resolve(
-            request
+            request,
+            source_attestation(),
         )
 
         self.assertEqual(
@@ -165,14 +160,9 @@ class EngineeringPreflightTests(
             "environment"
         ] = "github-remote"
 
-        request[
-            "autonomy"
-        ][
-            "level"
-        ] = "L3"
-
         result = resolver.resolve(
-            request
+            request,
+            source_attestation(),
         )
 
         self.assertEqual(
@@ -209,7 +199,8 @@ class EngineeringPreflightTests(
         ]
 
         result = resolver.resolve(
-            request
+            request,
+            source_attestation(),
         )
 
         self.assertEqual(
@@ -238,7 +229,8 @@ class EngineeringPreflightTests(
                 ] = "UNSATISFIED"
 
         result = resolver.resolve(
-            request
+            request,
+            source_attestation(),
         )
 
         self.assertEqual(
@@ -258,7 +250,8 @@ class EngineeringPreflightTests(
         ] = "UNKNOWN"
 
         result = resolver.resolve(
-            request
+            request,
+            source_attestation(),
         )
 
         self.assertEqual(
@@ -273,15 +266,24 @@ class EngineeringPreflightTests(
     ):
         request = source_request()
 
-        request[
-            "autonomy"
-        ][
-            "level"
-        ] = "L1"
-
-        result = resolver.resolve(
-            request
-        )
+        with patch.object(
+            resolver,
+            "resolve_autonomy_grant",
+            return_value=(
+                {
+                    "id": "fixture-grant",
+                    "level": "L1",
+                    "risk_ceiling": "R5",
+                    "basis": "INITIAL_GOVERNANCE_BASELINE",
+                },
+                "ALLOW",
+                "AUTONOMY_GRANT_ACTIVE",
+            ),
+        ):
+            result = resolver.resolve(
+                request,
+                source_attestation(),
+            )
 
         self.assertEqual(
             result[
@@ -295,21 +297,25 @@ class EngineeringPreflightTests(
     ):
         request = source_request()
 
-        request[
-            "autonomy"
-        ][
-            "verified"
-        ] = False
-
-        result = resolver.resolve(
-            request
-        )
+        with patch.object(
+            resolver,
+            "resolve_autonomy_grant",
+            return_value=(
+                None,
+                "BLOCK",
+                "AUTONOMY_GRANT_SUSPENDED",
+            ),
+        ):
+            result = resolver.resolve(
+                request,
+                source_attestation(),
+            )
 
         self.assertEqual(
             result[
                 "reason_code"
             ],
-            "AUTONOMY_UNVERIFIED",
+            "AUTONOMY_GRANT_SUSPENDED",
         )
 
     def test_host_denial_wins(
@@ -324,7 +330,8 @@ class EngineeringPreflightTests(
         ] = "DENY"
 
         result = resolver.resolve(
-            request
+            request,
+            source_attestation(),
         )
 
         self.assertEqual(
@@ -344,7 +351,8 @@ class EngineeringPreflightTests(
         ] = "R0"
 
         result = resolver.resolve(
-            request
+            request,
+            source_attestation(),
         )
 
         self.assertEqual(
@@ -370,7 +378,8 @@ class EngineeringPreflightTests(
         ] = "UNKNOWN"
 
         result = resolver.resolve(
-            request
+            request,
+            source_attestation(),
         )
 
         self.assertEqual(
@@ -403,23 +412,50 @@ class EngineeringPreflightTests(
             "cannot be supplied directly",
         ):
             resolver.resolve(
-                request
+                request,
+                source_attestation(),
             )
-
 
     def test_unverified_principal_denied(
         self
     ):
-        request = source_request()
+        attestation = source_attestation()
 
-        request[
-            "principal"
-        ][
+        attestation[
             "verified"
         ] = False
 
         result = resolver.resolve(
-            request
+            source_request(),
+            attestation,
+        )
+
+        self.assertEqual(
+            result[
+                "decision"
+            ],
+            "BLOCK",
+        )
+
+        self.assertEqual(
+            result[
+                "reason_code"
+            ],
+            "PRINCIPAL_UNVERIFIED",
+        )
+
+    def test_principal_binding_mismatch_denied(
+        self
+    ):
+        attestation = source_attestation()
+
+        attestation[
+            "adapter_id"
+        ] = "wrong-adapter"
+
+        result = resolver.resolve(
+            source_request(),
+            attestation,
         )
 
         self.assertEqual(
@@ -433,7 +469,40 @@ class EngineeringPreflightTests(
             result[
                 "reason_code"
             ],
-            "PRINCIPAL_UNVERIFIED",
+            "PRINCIPAL_BINDING_MISMATCH",
+        )
+
+    def test_ambiguous_autonomy_grant_blocks(
+        self
+    ):
+        request = source_request()
+
+        with patch.object(
+            resolver,
+            "resolve_autonomy_grant",
+            return_value=(
+                None,
+                "BLOCK",
+                "AMBIGUOUS_AUTONOMY_GRANT",
+            ),
+        ):
+            result = resolver.resolve(
+                request,
+                source_attestation(),
+            )
+
+        self.assertEqual(
+            result[
+                "decision"
+            ],
+            "BLOCK",
+        )
+
+        self.assertEqual(
+            result[
+                "reason_code"
+            ],
+            "AMBIGUOUS_AUTONOMY_GRANT",
         )
 
 

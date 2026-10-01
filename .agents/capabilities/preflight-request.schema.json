@@ -10,10 +10,10 @@
     "capability",
     "environment",
     "declared_risk",
+    "evaluated_at",
     "action",
     "conditions",
-    "host",
-    "evaluated_at"
+    "host"
   ],
   "properties": {
     "schema_version": {
@@ -54,6 +54,10 @@
         "UNKNOWN"
       ]
     },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
     "action": {
       "$ref": "#/$defs/action"
     },
@@ -75,14 +79,9 @@
     },
     "host": {
       "$ref": "#/$defs/host"
-    },
-    "evaluated_at": {
-      "type": "string",
-      "format": "date-time"
     }
   },
   "$defs": {
-
     "action": {
       "type": "object",
       "additionalProperties": false,
@@ -112,22 +111,29 @@
         }
       }
     },
-
     "materialParameter": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "value"],
+      "required": [
+        "name",
+        "value"
+      ],
       "properties": {
         "name": {
           "type": "string",
           "minLength": 1
         },
         "value": {
-          "type": ["string", "number", "integer", "boolean", "null"]
+          "type": [
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "null"
+          ]
         }
       }
     },
-
     "condition": {
       "type": "object",
       "additionalProperties": false,
@@ -149,11 +155,13 @@
           ]
         },
         "evidence_ref": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     },
-
     "approval": {
       "type": "object",
       "additionalProperties": false,
@@ -189,19 +197,31 @@
           ]
         },
         "request_id": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "decision_id": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "approver": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "approver_eligible": {
           "type": "boolean"
         },
         "action_fingerprint": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "not_expired": {
           "type": "boolean"
@@ -211,7 +231,6 @@
         }
       }
     },
-
     "host": {
       "type": "object",
       "additionalProperties": false,

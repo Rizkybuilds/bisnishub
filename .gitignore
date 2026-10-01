@@ -29,8 +29,10 @@ playwright-report/
 **/playwright-report/
 test-results/
 **/test-results/
-.agent-eval-runs/
 
+# AI runtime evaluation / gateway evidence
+.agent-eval-runs/
+.agent-gateway-runs/
 
 # 21st local drafts
 .21st/
@@ -54,4 +56,3 @@ Thumbs.db
 .obsidian/workspace-mobile.json
 .obsidian/cache/
 .obsidian/backups/
-

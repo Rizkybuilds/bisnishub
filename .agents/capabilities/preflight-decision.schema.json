@@ -8,7 +8,8 @@
     "schema_version",
     "decision",
     "reason_code",
-    "principal",
+    "principal_id",
+    "principal_attestation_ref",
     "role",
     "capability",
     "role_grant_state",
@@ -19,12 +20,15 @@
     "minimum_autonomy",
     "autonomy_ceiling",
     "current_autonomy",
+    "autonomy_grant_id",
+    "autonomy_basis",
     "action_fingerprint",
     "required_conditions",
     "missing_conditions",
     "approval_required",
     "post_execution_verification_required",
-    "tool_execution_allowed"
+    "tool_execution_allowed",
+    "details"
   ],
   "properties": {
     "schema_version": {
@@ -42,14 +46,21 @@
       "type": "string",
       "minLength": 1
     },
-    "principal": {
-      "type": "string"
+    "principal_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "principal_attestation_ref": {
+      "type": "string",
+      "minLength": 1
     },
     "role": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "capability": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "role_grant_state": {
       "enum": [
@@ -60,28 +71,96 @@
       ]
     },
     "environment": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "declared_risk": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "effective_risk": {
-      "type": ["string", "null"]
+      "oneOf": [
+        {
+          "enum": [
+            "R0",
+            "R1",
+            "R2",
+            "R3",
+            "R4",
+            "R5"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "risk_adjusted": {
       "type": "boolean"
     },
     "minimum_autonomy": {
-      "type": ["string", "null"]
+      "oneOf": [
+        {
+          "enum": [
+            "L0",
+            "L1",
+            "L2",
+            "L3",
+            "L4"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "autonomy_ceiling": {
-      "type": ["string", "null"]
+      "oneOf": [
+        {
+          "enum": [
+            "L0",
+            "L1",
+            "L2",
+            "L3",
+            "L4"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "current_autonomy": {
-      "type": "string"
+      "oneOf": [
+        {
+          "enum": [
+            "L0",
+            "L1",
+            "L2",
+            "L3",
+            "L4"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "autonomy_grant_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "autonomy_basis": {
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "action_fingerprint": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
     },
     "required_conditions": {
       "type": "array",
