@@ -29,6 +29,8 @@ playwright-report/
 **/playwright-report/
 test-results/
 **/test-results/
+.agent-eval-runs/
+
 
 # 21st local drafts
 .21st/

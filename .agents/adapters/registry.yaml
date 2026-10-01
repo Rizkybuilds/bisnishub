@@ -1,0 +1,105 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.runtime-adapters
+  status: ACTIVE
+  version: "1.0"
+  owner: Rizky
+  scope: repository-engineering
+
+  semantic_policy: docs/engineering/runtime-adapter-architecture.md
+  control_plane: docs/engineering/engineering-ai-control-plane.md
+  role_registry: .agents/roles/contracts.json
+  expertise_registry: .agents/expertise/registry.yaml
+  routing_registry: .agents/routing/task-types.yaml
+  contract_registry: .agents/contracts/README.md
+  eval_baseline: .agents/evals/baseline.json
+
+shared:
+  skill_source: .agents/skills/
+
+  provider_policy_authority: false
+  direct_runtime_rpc_assumed: false
+  independence_inferred_from_runtime_switch: false
+  one_writer_required: true
+  artifact_handoff_required_for_material_cross_runtime_work: true
+
+providers:
+  codex:
+    status: ACTIVE
+    provider: OpenAI
+    adapter_version: "1.0"
+
+    native_mode: hierarchical-agents-and-skills
+
+    instruction_sources:
+      - AGENTS.md
+      - systems/mgbos/AGENTS.md
+
+    adapter_files: []
+
+    shared_skill_source: .agents/skills/
+
+    required_references:
+      - docs/engineering/engineering-ai-control-plane.md
+
+    runtime_eval_required: true
+
+    notes:
+      - Codex uses repository AGENTS.md hierarchy instead of a duplicate provider policy file.
+      - Task-specific canonical sources, roles, expertise, skills, and Work Packages are loaded as needed.
+
+  antigravity:
+    status: ACTIVE
+    provider: Google
+    adapter_version: "1.0"
+
+    native_mode: workspace-rules-skills-workflows
+
+    native_surfaces:
+      rules: .agents/rules/
+      skills: .agents/skills/
+      workflows: .agents/workflows/
+
+    adapter_files:
+      - .agents/rules/engineering-control-plane.md
+      - .agents/workflows/mgbos.change.md
+
+    shared_skill_source: .agents/skills/
+
+    workflow_commands:
+      /mgbos.change: .agents/workflows/mgbos.change.md
+
+    required_references:
+      - docs/engineering/engineering-ai-control-plane.md
+      - docs/engineering/runtime-adapter-architecture.md
+      - .agents/roles/contracts.json
+      - .agents/expertise/registry.yaml
+      - .agents/routing/task-types.yaml
+      - .agents/contracts/README.md
+
+    required_markers:
+      - SELF_REVIEW
+      - SCOPE_EXPANSION_REQUIRED
+      - ONE WRITER
+      - BLOCKED
+      - READY_FOR_AUTHORIZED_RELEASE
+
+    runtime_eval_required: true
+
+cross_runtime:
+  handoff_mode: canonical-artifacts
+  direct_provider_rpc_required: false
+  runtime_switch_implies_independence: false
+  shared_mutable_worktree_allowed: false
+
+behavioral_evaluation:
+  baseline: .agents/evals/baseline.json
+
+  required_adapter_cases:
+    - runtime-payment-r5-routing
+    - runtime-ui-r1-proportionality
+    - runtime-scope-expansion-stop
+    - runtime-fake-independent-review
+    - runtime-stale-revision-evidence
+    - runtime-overlapping-writers

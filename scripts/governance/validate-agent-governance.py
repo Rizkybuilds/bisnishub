@@ -2837,7 +2837,11 @@ def validate(root=ROOT):
         ".agents/evals/README.md",
         ".agents/expertise/README.md",
         ".agents/routing/README.md",
+        ".agents/contracts/README.md",
+        ".agents/rules/engineering-control-plane.md",
+        ".agents/workflows/mgbos.change.md",
         "docs/engineering/engineering-ai-control-plane.md",
+        "docs/engineering/runtime-adapter-architecture.md",
     ):
         markdown.add(
             local_file(
@@ -2972,6 +2976,66 @@ def validate(root=ROOT):
                     "ignore failure"
                 ),
             )
+
+    agent_governance_steps = (
+        workflow[
+            "jobs"
+        ][
+            "agent-governance"
+        ].get(
+            "steps",
+            [],
+        )
+    )
+
+    run_commands = {
+        step.get(
+            "run"
+        )
+        for step
+        in agent_governance_steps
+        if (
+            isinstance(
+                step,
+                dict,
+            )
+            and isinstance(
+                step.get(
+                    "run"
+                ),
+                str,
+            )
+        )
+    }
+
+    required_governance_commands = {
+        (
+            "python scripts/governance/"
+            "validate-agent-governance.py"
+        ),
+        (
+            "python scripts/governance/"
+            "validate_engineering_contracts.py"
+        ),
+        (
+            "python scripts/governance/"
+            "validate_runtime_adapters.py"
+        ),
+    }
+
+    missing_governance_commands = (
+        required_governance_commands
+        - run_commands
+    )
+
+    require(
+        not missing_governance_commands,
+        (
+            "Agent Governance CI is missing "
+            "required validators: "
+            f"{sorted(missing_governance_commands)}"
+        ),
+    )
 
     return {
         "skills":

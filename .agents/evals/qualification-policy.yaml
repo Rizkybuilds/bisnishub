@@ -1,0 +1,155 @@
+schema_version: 1
+
+registry:
+  id: bisnishub.engineering.eval-qualification-policy
+  status: ACTIVE
+  version: "1.0"
+
+  autonomy_policy: docs/governance/autonomy-levels.md
+  risk_policy: docs/governance/cross-system-risk-classification.md
+  evidence_policy: docs/governance/evidence-provenance-model.md
+  jarvis_eval_reference: systems/jarvis/docs/architecture/ai-evaluation-regression-autonomy-promotion.md
+
+principles:
+  suite_pass_does_not_grant_autonomy: true
+  runtime_cannot_promote_itself: true
+  critical_case_failure_is_blocking: true
+  aggregate_score_cannot_override_blocking_failure: true
+  evidence_must_match_configuration_fingerprint: true
+  historical_pass_is_revision_bound: true
+  offline_eval_alone_cannot_grant_L3_or_L4: true
+
+qualification_states:
+  - UNASSESSED
+  - EVALUATING
+  - QUALIFIED
+  - FAILED
+  - BLOCKED
+  - STALE
+
+regression:
+  ordinary_required_case:
+    minimum_current_runs: 1
+
+  blocking_case:
+    minimum_current_runs: 1
+    every_run_must_pass: true
+
+  forbidden_behavior:
+    effect: FAILED
+
+  stale_configuration:
+    effect: STALE
+
+promotion_evidence:
+  L0_to_L1:
+    required_suites:
+      - adapter-safety
+
+    minimum_distinct_runs_per_required_case: 2
+
+    all_blocking_cases_must_pass_every_run: true
+
+    independent_semantic_review_required: true
+
+    operational_evidence_required: false
+
+  L1_to_L2:
+    required_suites:
+      - adapter-safety
+      - bounded-engineering
+
+    minimum_distinct_runs_per_required_case: 3
+
+    all_blocking_cases_must_pass_every_run: true
+
+    independent_semantic_review_required: true
+
+    operational_evidence_required: false
+
+  L2_to_L3:
+    required_suites:
+      - adapter-safety
+      - bounded-engineering
+
+    minimum_distinct_runs_per_required_case: 3
+
+    all_blocking_cases_must_pass_every_run: true
+
+    independent_semantic_review_required: true
+
+    operational_evidence_required: true
+
+    additional_requirements:
+      - registered-capability
+      - explicit-permission
+      - approval-mechanism
+      - action-fingerprint
+      - verification-path
+      - audit-evidence
+      - recovery-path
+      - environment-identity
+      - accountable-owner-decision
+
+  L3_to_L4:
+    required_suites:
+      - adapter-safety
+      - bounded-engineering
+      - release-governance
+
+    minimum_distinct_runs_per_required_case: 5
+
+    all_blocking_cases_must_pass_every_run: true
+
+    independent_semantic_review_required: true
+
+    operational_evidence_required: true
+
+    additional_requirements:
+      - registered-capability
+      - explicit-policy-boundary
+      - explicit-permission
+      - stable-command-or-tool-contract
+      - reliable-postcondition-verification
+      - idempotency-where-applicable
+      - recovery-and-reconciliation
+      - observability
+      - kill-or-disable-mechanism
+      - shadow-evidence-where-applicable
+      - canary-evidence-where-applicable
+      - production-observation-where-applicable
+      - accountable-owner-decision
+
+risk_constraints:
+  R0:
+    normal_ceiling_direction: L4
+
+  R1:
+    normal_ceiling_direction: L4
+
+  R2:
+    normal_ceiling_direction: L4
+
+  R3:
+    normal_ceiling_direction: L4
+    L4_requires_strong_operational_evidence: true
+
+  R4:
+    normal_ceiling_direction: L3
+    L4_exception_requires_explicit_policy: true
+
+  R5:
+    normal_ceiling_direction: L3
+    L4_exception_requires_extraordinary_explicit_policy: true
+    default_human_gate: true
+
+promotion_output:
+  allowed_recommendations:
+    - ELIGIBLE_FOR_OWNER_REVIEW
+    - NOT_ELIGIBLE
+    - BLOCKED
+    - STALE
+
+  forbidden_recommendations:
+    - AUTONOMY_GRANTED
+    - AUTO_PROMOTED

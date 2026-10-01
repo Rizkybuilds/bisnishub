@@ -936,6 +936,116 @@ class GovernanceValidationTests(
                 self.root
             )
 
+    def test_contract_validator_ci_step_required(
+        self
+    ):
+        path = (
+            self.root
+            / ".github/workflows/"
+            "agent-governance.yml"
+        )
+
+        content = path.read_text(
+            encoding="utf-8"
+        )
+
+        modified = content.replace(
+            (
+                "      - run: python "
+                "scripts/governance/"
+                "validate_engineering_contracts.py\n"
+            ),
+            "",
+            1,
+        )
+        if modified == content:
+            modified = content.replace(
+                (
+                    "- run: python "
+                    "scripts/governance/"
+                    "validate_engineering_contracts.py\n"
+                ),
+                "",
+                1,
+            )
+        if modified == content:
+            modified = content.replace(
+                (
+                    "python scripts/governance/"
+                    "validate_engineering_contracts.py"
+                ),
+                "python scripts/governance/validate-agent-governance.py",
+                1,
+            )
+
+        path.write_text(
+            modified,
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "missing required validators",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_runtime_adapter_validator_ci_step_required(
+        self
+    ):
+        path = (
+            self.root
+            / ".github/workflows/"
+            "agent-governance.yml"
+        )
+
+        content = path.read_text(
+            encoding="utf-8"
+        )
+
+        modified = content.replace(
+            (
+                "      - run: python "
+                "scripts/governance/"
+                "validate_runtime_adapters.py\n"
+            ),
+            "",
+            1,
+        )
+        if modified == content:
+            modified = content.replace(
+                (
+                    "- run: python "
+                    "scripts/governance/"
+                    "validate_runtime_adapters.py\n"
+                ),
+                "",
+                1,
+            )
+        if modified == content:
+            modified = content.replace(
+                (
+                    "python scripts/governance/"
+                    "validate_runtime_adapters.py"
+                ),
+                "python scripts/governance/validate-agent-governance.py",
+                1,
+            )
+
+        path.write_text(
+            modified,
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "missing required validators",
+        ):
+            governance.validate(
+                self.root
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
