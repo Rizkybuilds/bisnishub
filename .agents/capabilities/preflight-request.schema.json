@@ -6,22 +6,18 @@
   "additionalProperties": false,
   "required": [
     "schema_version",
-    "principal",
     "role",
     "capability",
     "environment",
     "declared_risk",
-    "autonomy",
     "action",
     "conditions",
-    "host"
+    "host",
+    "evaluated_at"
   ],
   "properties": {
     "schema_version": {
       "const": 1
-    },
-    "principal": {
-      "$ref": "#/$defs/principal"
     },
     "role": {
       "enum": [
@@ -58,9 +54,6 @@
         "UNKNOWN"
       ]
     },
-    "autonomy": {
-      "$ref": "#/$defs/autonomy"
-    },
     "action": {
       "$ref": "#/$defs/action"
     },
@@ -82,79 +75,13 @@
     },
     "host": {
       "$ref": "#/$defs/host"
+    },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time"
     }
   },
   "$defs": {
-    "principal": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "schema_version",
-        "principal_id",
-        "adapter_id",
-        "verified",
-        "issued_at",
-        "session_id",
-        "evidence_ref"
-      ],
-      "properties": {
-        "schema_version": {
-          "const": 1
-        },
-        "principal_id": {
-          "type": "string",
-          "pattern": "^engineering\\.[a-z0-9_.-]+$"
-        },
-        "adapter_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "verified": {
-          "type": "boolean"
-        },
-        "issued_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "session_id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "evidence_ref": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
-    },
-    "autonomy": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "level",
-        "verified",
-        "scope_match",
-        "environment_match",
-        "evidence_ref"
-      ],
-      "properties": {
-        "level": {
-          "enum": ["L0", "L1", "L2", "L3", "L4"]
-        },
-        "verified": {
-          "type": "boolean"
-        },
-        "scope_match": {
-          "type": "boolean"
-        },
-        "environment_match": {
-          "type": "boolean"
-        },
-        "evidence_ref": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
-    },
 
     "action": {
       "type": "object",
