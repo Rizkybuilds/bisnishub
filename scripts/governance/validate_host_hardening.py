@@ -532,6 +532,20 @@ def validate(
         ),
     )
 
+    for marker in (
+        "os.fsdecode",
+        "os.fsencode",
+        "split(b\"\\0\")",
+        "Unsupported untracked filesystem entry",
+    ):
+        require(
+            marker in workspace_text,
+            (
+                "Workspace helper missing "
+                f"hardening marker: {marker}"
+            ),
+        )
+
     launcher_text = (
         local_file(
             root,

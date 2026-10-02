@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import stat
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -111,23 +112,40 @@ def workspace_state(
     hasher.update(b"\nuntracked:\n")
 
     raw_entries = [
-        item.decode("utf-8", errors="replace")
+        item
         for item in untracked_bytes.split(b"\0")
         if item
     ]
     raw_entries.sort()
 
-    for rel_path in raw_entries:
-        full_path = resolved_root / rel_path
-        if os.path.islink(full_path):
-            target = os.readlink(full_path)
+    for raw_rel_path in raw_entries:
+        fs_rel = os.fsdecode(raw_rel_path)
+        full_path = resolved_root / fs_rel
+
+        try:
+            st = os.lstat(full_path)
+        except OSError as error:
+            raise ValueError(
+                f"Failed to inspect untracked file {fs_rel}: {error}"
+            ) from error
+
+        if stat.S_ISLNK(st.st_mode):
+            try:
+                raw_target = os.fsencode(
+                    os.readlink(full_path)
+                )
+            except OSError as error:
+                raise ValueError(
+                    f"Failed to read untracked symlink {fs_rel}: {error}"
+                ) from error
             hasher.update(
-                f"symlink:{rel_path}:{target}\n".encode("utf-8")
+                b"symlink:%d:" % len(raw_rel_path)
+                + raw_rel_path
+                + (b":%d:" % len(raw_target))
+                + raw_target
+                + b"\n"
             )
-        elif full_path.is_file():
-            hasher.update(
-                f"file:{rel_path}:".encode("utf-8")
-            )
+        elif stat.S_ISREG(st.st_mode):
             file_hasher = hashlib.sha256()
             try:
                 with full_path.open("rb") as handle:
@@ -135,15 +153,18 @@ def workspace_state(
                         file_hasher.update(chunk)
             except OSError as error:
                 raise ValueError(
-                    f"Failed to hash untracked file {rel_path}: {error}"
+                    f"Failed to hash untracked file {fs_rel}: {error}"
                 ) from error
             hasher.update(
-                file_hasher.hexdigest().encode("utf-8")
+                b"file:%d:" % len(raw_rel_path)
+                + raw_rel_path
+                + b":"
+                + file_hasher.hexdigest().encode("ascii")
                 + b"\n"
             )
         else:
-            hasher.update(
-                f"special:{rel_path}\n".encode("utf-8")
+            raise ValueError(
+                f"Unsupported untracked filesystem entry: {fs_rel}"
             )
 
     post_branch = _run_git_text(
