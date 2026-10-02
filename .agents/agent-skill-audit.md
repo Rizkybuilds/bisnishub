@@ -128,3 +128,11 @@ Root README now routes official MGBOS separately from Vite prototype and legacy 
 ## Prototype retirement routing — 2026-09-28
 
 Vite prototype retired with owner confirmation to `archive/mgbos-vite-prototype/`. Updated five project skill routing references, two synthetic routing cases, root/Next.js navigation and removed root prototype execution aliases. Official MGBOS stays at `mgbos/`; archive is reference-only. Personal/plugin skills unchanged. See [migration evidence](../docs/engineering/repository-migration-wave-1.md). No new runtime role or permission introduced; structural validation is not an executed behavioral evaluation.
+
+## 2026-10-02 — CP-007A.2 Antigravity workflow-to-Skill migration
+
+Migrated the governed MGBOS orchestration entrypoint from legacy `.agents/workflows/mgbos.change.md` to the open Agent Skills format at `.agents/skills/mgbos-change/SKILL.md`. The workspace Skill catalog moves from 42 to 43 entrypoints. The canonical Antigravity slash command is now `/mgbos-change`; the legacy `/mgbos.change` command is retired because Agent Skills names are lowercase alphanumeric plus hyphens and must match the parent directory.
+
+The migrated Skill preserves provider-neutral control-plane semantics, bounded work, revision-bound evidence, truthful self-review, QA, assurance, and release boundaries. It does not grant merge, deployment, production-database, customer/vendor communication, or other external authority.
+
+Structural validation proves repository compatibility only. Actual Antigravity Skill discovery, activation, and behavioral qualification remain runtime evidence for the later behavioral-qualification stage.

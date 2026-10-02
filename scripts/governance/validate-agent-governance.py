@@ -2836,7 +2836,7 @@ def validate(root=ROOT):
         ".agents/routing/README.md",
         ".agents/contracts/README.md",
         ".agents/rules/engineering-control-plane.md",
-        ".agents/workflows/mgbos.change.md",
+        ".agents/skills/mgbos-change/SKILL.md",
         "docs/engineering/engineering-ai-control-plane.md",
         "docs/engineering/runtime-adapter-architecture.md",
     ):

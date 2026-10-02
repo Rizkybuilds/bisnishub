@@ -1,14 +1,15 @@
 ---
-description: Execute a governed MGBOS engineering change through the BisnisHub Engineering AI Control Plane.
+name: mgbos-change
+description: Orchestrates a governed MGBOS engineering change through canonical BisnisHub control-plane contracts. Use for MGBOS changes that need risk routing, bounded implementation, evidence, QA, assurance, or release preparation.
 ---
 
 # MGBOS Governed Change
 
 Execute an MGBOS engineering change through the BisnisHub Engineering AI Control Plane.
 
-Treat the text supplied with this workflow invocation as the requested engineering objective.
+Treat the objective supplied by the user or invoking runtime as the requested engineering objective.
 
-Do not interpret this workflow as deployment, production-database, merge, or external-action authorization.
+Do not interpret this Skill as deployment, production-database, merge, or external-action authorization.
 
 ---
 
@@ -261,7 +262,7 @@ Do not silently fix implementation while claiming to remain Auditor.
 
 Determine factual review independence.
 
-If this same Antigravity execution implemented the code and now reviews it:
+If this same runtime execution implemented the code and now reviews it:
 
 `independence = SELF_REVIEW`
 

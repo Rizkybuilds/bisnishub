@@ -1,7 +1,7 @@
 ---
 canonical_id: docs.engineering.runtime-adapter-architecture
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -18,7 +18,7 @@ authoritative_for:
   - runtime artifact handoff rules
   - provider-specific adapter constraints
 
-last_reviewed: 2026-10-01
+last_reviewed: 2026-10-02
 review_cadence: quarterly
 
 depends_on:
@@ -39,11 +39,10 @@ verified_provider_surfaces:
       - AGENTS.md hierarchy
       - Agent Skills / SKILL.md
   antigravity:
-    verified_at: 2026-10-01
+    verified_at: 2026-10-02
     mechanisms:
       - .agents/rules/
       - .agents/skills/
-      - .agents/workflows/
 
 implementation_status: PARTIALLY_IMPLEMENTED
 initial_adapters:
@@ -51,7 +50,7 @@ initial_adapters:
   - antigravity
 ---
 
-# BisnisHub Engineering Runtime Adapter Architecture v1.0
+# BisnisHub Engineering Runtime Adapter Architecture v1.1
 
 ## 1. Purpose
 
@@ -618,11 +617,11 @@ Antigravity adapter uses:
 .agents/rules/
 
 .agents/skills/
-
-.agents/workflows/
 ```
 
 as provider-native surfaces.
+
+Legacy `.agents/workflows/` is no longer part of the active adapter surface.
 
 Canonical shared Skills remain:
 
@@ -656,21 +655,35 @@ It MUST remain significantly smaller than canonical control-plane documentation.
 
 ---
 
-# 22. Antigravity Workflow
+# 22. Antigravity Governed Change Skill
 
-Initial manual workflow:
+Current reusable orchestration entrypoint:
+
+```text
+.agents/skills/mgbos-change/SKILL.md
+```
+
+Expected Antigravity invocation:
+
+```text
+/mgbos-change <objective>
+```
+
+The legacy workflow:
 
 ```text
 .agents/workflows/mgbos.change.md
 ```
 
-Expected invocation:
+and its slash command:
 
 ```text
-/mgbos.change <objective>
+/mgbos.change
 ```
 
-It is a reusable orchestration prompt.
+were retired during CP-007A.2 because Agent Skills names use lowercase letters, numbers, and hyphens and must match the parent directory.
+
+The Skill is reusable orchestration knowledge.
 
 It is NOT:
 
@@ -686,9 +699,9 @@ automatic independent review
 
 ---
 
-# 23. Antigravity Workflow Responsibility
+# 23. Antigravity Skill Responsibility
 
-The workflow SHOULD coordinate:
+The mgbos-change Skill SHOULD coordinate:
 
 ```text
 preflight
@@ -714,7 +727,7 @@ while delegating actual semantics to canonical repository files.
 
 # 24. Antigravity Planning
 
-Workflow first resolves:
+The mgbos-change Skill first resolves:
 
 ```text
 target system
@@ -812,7 +825,7 @@ unless actual independent-executor criteria are satisfied.
 
 # 28. No Assumed Codex Invocation
 
-Antigravity V1 adapter MUST NOT assume it can programmatically spawn or control Codex.
+Antigravity adapter MUST NOT assume it can programmatically spawn or control Codex.
 
 Likewise Codex MUST NOT assume it can invoke Antigravity.
 
@@ -985,7 +998,7 @@ instruction-loading change
 
 Skill-discovery change
 
-workflow-format change
+Skill-format change
 
 permission model change
 
@@ -1054,8 +1067,8 @@ Codex
 
 Antigravity
 → .agents/rules/engineering-control-plane.md
-→ existing .agents/skills/
-→ .agents/workflows/mgbos.change.md
+→ .agents/skills/mgbos-change/SKILL.md
+→ existing shared .agents/skills/
 ```
 
 ---
@@ -1093,7 +1106,7 @@ Codex consumes repository governance without policy duplication
 
 Antigravity has thin always-on routing context
 
-Antigravity has a reusable MGBOS change workflow
+Antigravity has a reusable MGBOS change Skill with the /mgbos-change command
 
 shared Skills remain single-source
 

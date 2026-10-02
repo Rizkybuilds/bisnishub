@@ -391,7 +391,7 @@
         ".agents/contracts/README.md",
         ".agents/routing/task-types.yaml",
         ".agents/rules/engineering-control-plane.md",
-        ".agents/workflows/mgbos.change.md"
+        ".agents/skills/mgbos-change/SKILL.md"
       ]
     },
     {
@@ -416,7 +416,7 @@
       "sources": [
         ".agents/contracts/README.md",
         ".agents/rules/engineering-control-plane.md",
-        ".agents/workflows/mgbos.change.md",
+        ".agents/skills/mgbos-change/SKILL.md",
         "systems/mgbos/docs/engineering/agent-system/workflow.md"
       ]
     },
@@ -466,7 +466,7 @@
       ],
       "sources": [
         ".agents/rules/engineering-control-plane.md",
-        ".agents/workflows/mgbos.change.md",
+        ".agents/skills/mgbos-change/SKILL.md",
         ".agents/contracts/README.md",
         "docs/engineering/runtime-adapter-architecture.md"
       ]

@@ -262,7 +262,7 @@ grants:
     expires_at: null
 
     evidence_refs:
-      - .agents/workflows/mgbos.change.md
+      - .agents/skills/mgbos-change/SKILL.md
 
   - id: EAG-orchestrator-source-write
     principal_id: engineering.runtime.orchestrator
@@ -286,7 +286,7 @@ grants:
     expires_at: null
 
     evidence_refs:
-      - .agents/workflows/mgbos.change.md
+      - .agents/skills/mgbos-change/SKILL.md
 
   - id: EAG-orchestrator-local-check
     principal_id: engineering.runtime.orchestrator
@@ -310,7 +310,7 @@ grants:
     expires_at: null
 
     evidence_refs:
-      - .agents/workflows/mgbos.change.md
+      - .agents/skills/mgbos-change/SKILL.md
 
   - id: EAG-orchestrator-review
     principal_id: engineering.runtime.orchestrator

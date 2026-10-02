@@ -257,6 +257,62 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
             f"Grant '{gid}' has unknown basis: {basis}",
         )
 
+        evidence_refs = grant.get(
+            "evidence_refs"
+        )
+
+        require(
+            isinstance(
+                evidence_refs,
+                list,
+            )
+            and bool(
+                evidence_refs
+            )
+            and all(
+                isinstance(
+                    reference,
+                    str,
+                )
+                and reference.strip()
+                for reference
+                in evidence_refs
+            ),
+            (
+                f"Grant '{gid}' has "
+                "invalid evidence_refs"
+            ),
+        )
+
+        if basis == "INITIAL_GOVERNANCE_BASELINE":
+            for reference in evidence_refs:
+                evidence_path = (
+                    root
+                    / reference
+                ).resolve()
+
+                require(
+                    evidence_path.is_relative_to(
+                        root
+                    ),
+                    (
+                        f"Grant '{gid}' "
+                        "evidence_ref escapes "
+                        "repository: "
+                        f"{reference}"
+                    ),
+                )
+
+                require(
+                    evidence_path.is_file(),
+                    (
+                        f"Grant '{gid}' "
+                        "evidence_ref does not "
+                        "resolve to a file: "
+                        f"{reference}"
+                    ),
+                )
+
         # Invariant 19: remote capabilities currently have no initial grant
         if basis == "INITIAL_GOVERNANCE_BASELINE":
             require(
