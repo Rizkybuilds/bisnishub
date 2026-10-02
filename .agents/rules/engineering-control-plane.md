@@ -1,3 +1,8 @@
+---
+trigger: always_on
+description: "Apply the thin BisnisHub Engineering Control Plane adapter to Antigravity engineering work in this repository."
+---
+
 # BisnisHub Engineering Control Plane — Antigravity Adapter
 
 This file is an Antigravity workspace rule.

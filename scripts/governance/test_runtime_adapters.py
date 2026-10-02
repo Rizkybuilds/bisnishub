@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import re
 import shutil
 import tempfile
 import unittest
@@ -268,7 +269,197 @@ class RuntimeAdapterValidationTests(
 
         with self.assertRaisesRegex(
             ValueError,
-            "Missing path|Missing file",
+            "must contain at least one",
+        ):
+            runtime_adapters.validate(
+                self.root
+            )
+
+    def test_rule_requires_frontmatter(
+        self
+    ):
+        path = (
+            self.root
+            / ".agents/rules/"
+            "engineering-control-plane.md"
+        )
+
+        text = path.read_text(
+            encoding="utf-8"
+        )
+
+        if text.startswith("---\n"):
+            _, _, remainder = (
+                text.split(
+                    "---",
+                    2,
+                )
+            )
+
+            path.write_text(
+                remainder.lstrip(
+                    "\n"
+                ),
+                encoding="utf-8",
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "rule must contain YAML frontmatter",
+        ):
+            runtime_adapters.validate(
+                self.root
+            )
+
+    def test_rule_invalid_trigger_rejected(
+        self
+    ):
+        path = (
+            self.root
+            / ".agents/rules/"
+            "engineering-control-plane.md"
+        )
+
+        path.write_text(
+            path.read_text(
+                encoding="utf-8"
+            ).replace(
+                "trigger: always_on",
+                "trigger: alwaysOn",
+                1,
+            ),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Invalid Antigravity rule trigger",
+        ):
+            runtime_adapters.validate(
+                self.root
+            )
+
+    def test_model_decision_rule_requires_description(
+        self
+    ):
+        path = (
+            self.root
+            / ".agents/rules/"
+            "engineering-control-plane.md"
+        )
+
+        text = path.read_text(
+            encoding="utf-8"
+        )
+
+        text = text.replace(
+            "trigger: always_on",
+            "trigger: model_decision",
+            1,
+        )
+
+        text = re.sub(
+            r"(?m)^description:.*\n",
+            "",
+            text,
+            count=1,
+        )
+
+        path.write_text(
+            text,
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "model_decision rule requires description",
+        ):
+            runtime_adapters.validate(
+                self.root
+            )
+
+    def test_glob_rule_requires_exactly_one_glob_field(
+        self
+    ):
+        path = (
+            self.root
+            / ".agents/rules/"
+            "engineering-control-plane.md"
+        )
+
+        path.write_text(
+            path.read_text(
+                encoding="utf-8"
+            ).replace(
+                "trigger: always_on",
+                "trigger: glob",
+                1,
+            ),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "glob rule requires exactly one",
+        ):
+            runtime_adapters.validate(
+                self.root
+            )
+
+    def test_rule_unknown_frontmatter_key_rejected(
+        self
+    ):
+        path = (
+            self.root
+            / ".agents/rules/"
+            "engineering-control-plane.md"
+        )
+
+        path.write_text(
+            path.read_text(
+                encoding="utf-8"
+            ).replace(
+                "trigger: always_on\n",
+                (
+                    "trigger: always_on\n"
+                    "unexpected: true\n"
+                ),
+                1,
+            ),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Unsupported Antigravity rule frontmatter keys",
+        ):
+            runtime_adapters.validate(
+                self.root
+            )
+
+    def test_control_plane_rule_must_remain_always_on(
+        self
+    ):
+        path = (
+            self.root
+            / ".agents/rules/"
+            "engineering-control-plane.md"
+        )
+
+        path.write_text(
+            path.read_text(
+                encoding="utf-8"
+            ).replace(
+                "trigger: always_on",
+                "trigger: manual",
+                1,
+            ),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "rule must remain always_on",
         ):
             runtime_adapters.validate(
                 self.root
@@ -358,10 +549,10 @@ class RuntimeAdapterValidationTests(
 
         path.write_text(
             (
-                "canonical_id: bad.provider.policy\n"
-                + path.read_text(
+                path.read_text(
                     encoding="utf-8"
                 )
+                + "\ncanonical_id: bad.provider.policy\n"
             ),
             encoding="utf-8",
         )
