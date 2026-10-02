@@ -25,11 +25,18 @@
     "verification_status",
     "stdout_ref",
     "stderr_ref",
-    "preflight_ref"
+    "preflight_ref",
+    "session_workspace",
+    "preflight_workspace",
+    "dispatch_workspace",
+    "post_workspace",
+    "workspace_guard_status",
+    "workspace_guard_reason",
+    "workspace_guard_detail"
   ],
   "properties": {
     "schema_version": {
-      "const": 1
+      "const": 2
     },
     "execution_id": {
       "type": "string",
@@ -133,6 +140,86 @@
         "string",
         "null"
       ]
+    },
+    "session_workspace": {
+      "$ref": "#/$defs/workspaceSnapshot"
+    },
+    "preflight_workspace": {
+      "$ref": "#/$defs/workspaceSnapshot"
+    },
+    "dispatch_workspace": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/workspaceSnapshot"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "post_workspace": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/workspaceSnapshot"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "workspace_guard_status": {
+      "enum": [
+        "NOT_EVALUATED",
+        "PASS",
+        "BLOCKED",
+        "VIOLATED"
+      ]
+    },
+    "workspace_guard_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "workspace_guard_detail": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "$defs": {
+    "workspaceSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "branch",
+        "head",
+        "dirty",
+        "dirty_fingerprint"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "head": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "dirty": {
+          "type": "boolean"
+        },
+        "dirty_fingerprint": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
     }
   }
 }

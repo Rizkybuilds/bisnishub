@@ -25,6 +25,17 @@ from jsonschema import (
     FormatChecker,
 )
 
+try:
+    from tools.engineering_gateway.workspace import (
+        workspace_dirty_fingerprint,
+        workspace_state,
+    )
+except ModuleNotFoundError:
+    from workspace import (  # type: ignore
+        workspace_dirty_fingerprint,
+        workspace_state,
+    )
+
 
 DEFAULT_ROOT = (
     Path(__file__)
@@ -420,66 +431,29 @@ def run_git(
     )
 
 
-def workspace_dirty_fingerprint(
-    root: Path,
-) -> str:
-    status = run_git(
-        root,
-        "status",
-        "--porcelain=v1",
-        "--untracked-files=all",
+def run_profile_process(
+    argv: list[str],
+    *,
+    cwd: Path,
+    env: dict[str, str],
+    timeout: int,
+    shell: bool = False,
+) -> subprocess.CompletedProcess[str]:
+    require(
+        shell is False,
+        "Gateway profile execution must not use shell",
     )
-
-    return (
-        "sha256:"
-        + hashlib.sha256(
-            status.encode(
-                "utf-8"
-            )
-        ).hexdigest()
+    return subprocess.run(
+        argv,
+        cwd=cwd,
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        timeout=timeout,
+        shell=False,
+        check=False,
     )
-
-
-def current_workspace_state(
-    root: Path,
-) -> dict[str, Any]:
-    head = run_git(
-        root,
-        "rev-parse",
-        "HEAD",
-    )
-
-    branch = run_git(
-        root,
-        "rev-parse",
-        "--abbrev-ref",
-        "HEAD",
-    )
-
-    status = run_git(
-        root,
-        "status",
-        "--porcelain=v1",
-        "--untracked-files=all",
-    )
-
-    return {
-        "head":
-            head,
-
-        "branch":
-            branch,
-
-        "dirty":
-            bool(
-                status.strip()
-            ),
-
-        "dirty_fingerprint":
-            workspace_dirty_fingerprint(
-                root
-            ),
-    }
 
 
 class EngineeringGateway:
@@ -948,6 +922,8 @@ class EngineeringGateway:
     def build_preflight_request(
         self,
         profile_id: str,
+        *,
+        workspace: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         self._assert_session_fresh()
 
@@ -956,17 +932,12 @@ class EngineeringGateway:
         )
 
         require(
-            profile
-            is not None,
-            (
-                "Unknown gateway profile: "
-                f"{profile_id}"
-            ),
+            profile is not None,
+            f"Unknown gateway profile: {profile_id}",
         )
 
         required_conditions = (
-            self
-            ._required_conditions_for_profile(
+            self._required_conditions_for_profile(
                 profile
             )
         )
@@ -976,111 +947,67 @@ class EngineeringGateway:
                 condition_id,
                 profile,
             )
-            for condition_id
-            in required_conditions
+            for condition_id in required_conditions
         ]
 
-        workspace = (
-            self.session[
-                "workspace"
-            ]
+        actual_workspace = (
+            workspace
+            if workspace is not None
+            else workspace_state(self.root)
+        )
+
+        session_workspace = self.session["workspace"]
+        require(
+            session_workspace.get("branch") == actual_workspace["branch"],
+            (
+                "Gateway session branch does not match current repository branch: "
+                f"{session_workspace.get('branch')} != {actual_workspace['branch']}"
+            ),
+        )
+        require(
+            session_workspace.get("head") == actual_workspace["head"],
+            (
+                "Gateway session HEAD does not match current repository HEAD: "
+                f"{session_workspace.get('head')} != {actual_workspace['head']}"
+            ),
         )
 
         request = {
-            "schema_version":
-                1,
-
-            "role":
-                self.session[
-                    "role"
-                ],
-
-            "capability":
-                profile[
-                    "capability"
-                ],
-
-            "environment":
-                profile[
-                    "environment"
-                ],
-
-            "declared_risk":
-                self.session[
-                    "declared_risk"
-                ],
-
-            "evaluated_at":
-                iso8601(
-                    utc_now()
-                ),
-
+            "schema_version": 1,
+            "role": self.session["role"],
+            "capability": profile["capability"],
+            "environment": profile["environment"],
+            "declared_risk": self.session["declared_risk"],
+            "evaluated_at": iso8601(utc_now()),
             "action": {
-                "target":
-                    profile[
-                        "id"
-                    ],
-
-                "resource_scope":
-                    list(
-                        profile[
-                            "resource_scope"
-                        ]
-                    ),
-
+                "target": profile["id"],
+                "resource_scope": list(profile["resource_scope"]),
                 "material_parameters": [
                     {
-                        "name":
-                            "profile_id",
-                        "value":
-                            profile[
-                                "id"
-                            ],
+                        "name": "profile_id",
+                        "value": profile["id"],
                     },
                     {
-                        "name":
-                            "profile_version",
-                        "value":
-                            profile[
-                                "version"
-                            ],
+                        "name": "profile_version",
+                        "value": profile["version"],
                     },
                     {
-                        "name":
-                            "workspace_head",
-                        "value":
-                            workspace[
-                                "head"
-                            ],
+                        "name": "workspace_branch",
+                        "value": actual_workspace["branch"],
                     },
                     {
-                        "name":
-                            (
-                                "workspace_"
-                                "dirty_fingerprint"
-                            ),
-                        "value":
-                            workspace[
-                                "dirty_fingerprint"
-                            ],
+                        "name": "workspace_head",
+                        "value": actual_workspace["head"],
+                    },
+                    {
+                        "name": "workspace_dirty_fingerprint",
+                        "value": actual_workspace["dirty_fingerprint"],
                     },
                 ],
             },
-
-            "conditions":
-                conditions,
-
-            "approval":
-                self.session.get(
-                    "approval"
-                ),
-
-            "host":
-                dict(
-                    self.session[
-                        "host"
-                    ]
-                ),
+            "conditions": conditions,
+            "approval": self.session.get("approval"),
+            "host": dict(self.session["host"]),
         }
 
         validate_json(
@@ -1094,13 +1021,14 @@ class EngineeringGateway:
     def preflight_profile(
         self,
         profile_id: str,
+        *,
+        workspace: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         self._assert_session_fresh()
 
-        request = (
-            self.build_preflight_request(
-                profile_id
-            )
+        request = self.build_preflight_request(
+            profile_id,
+            workspace=workspace,
         )
 
         decision = (
@@ -1159,101 +1087,53 @@ class EngineeringGateway:
     def _receipt_base(
         self,
         execution_id: str,
-        profile:
-            dict[str, Any],
-        decision:
-            dict[str, Any],
+        profile: dict[str, Any],
+        decision: dict[str, Any],
         started_at: str,
+        *,
+        preflight_workspace: dict[str, Any],
     ) -> dict[str, Any]:
         return {
-            "schema_version":
-                1,
-
-            "execution_id":
-                execution_id,
-
-            "session_id":
+            "schema_version": 2,
+            "execution_id": execution_id,
+            "session_id": (
                 self.session[
                     "principal_attestation"
                 ][
                     "session_id"
-                ],
-
-            "principal_id":
-                decision[
-                    "principal_id"
-                ],
-
-            "role":
-                decision[
-                    "role"
-                ],
-
-            "profile_id":
-                profile[
-                    "id"
-                ],
-
-            "capability":
-                decision[
-                    "capability"
-                ],
-
-            "environment":
-                decision[
-                    "environment"
-                ],
-
-            "action_fingerprint":
-                decision[
-                    "action_fingerprint"
-                ],
-
-            "preflight_decision":
-                decision[
-                    "decision"
-                ],
-
-            "preflight_reason":
-                decision[
-                    "reason_code"
-                ],
-
-            "command":
-                list(
-                    profile[
-                        "argv"
-                    ]
-                ),
-
-            "cwd":
-                profile[
-                    "cwd"
-                ],
-
-            "started_at":
-                started_at,
-
-            "finished_at":
-                started_at,
-
-            "execution_status":
-                "NOT_EXECUTED",
-
-            "exit_code":
-                None,
-
-            "verification_status":
-                "NOT_RUN",
-
-            "stdout_ref":
-                None,
-
-            "stderr_ref":
-                None,
-
-            "preflight_ref":
-                None,
+                ]
+            ),
+            "principal_id": decision["principal_id"],
+            "role": decision["role"],
+            "profile_id": profile["id"],
+            "capability": decision["capability"],
+            "environment": decision["environment"],
+            "action_fingerprint": (
+                decision["action_fingerprint"]
+            ),
+            "preflight_decision": decision["decision"],
+            "preflight_reason": decision["reason_code"],
+            "command": list(profile["argv"]),
+            "cwd": profile["cwd"],
+            "started_at": started_at,
+            "finished_at": started_at,
+            "execution_status": "NOT_EXECUTED",
+            "exit_code": None,
+            "verification_status": "NOT_RUN",
+            "stdout_ref": None,
+            "stderr_ref": None,
+            "preflight_ref": None,
+            "session_workspace": dict(
+                self.session["workspace"]
+            ),
+            "preflight_workspace": dict(
+                preflight_workspace
+            ),
+            "dispatch_workspace": None,
+            "post_workspace": None,
+            "workspace_guard_status": "NOT_EVALUATED",
+            "workspace_guard_reason": "PREFLIGHT_NOT_ALLOWED",
+            "workspace_guard_detail": None,
         }
 
     def execute_profile(
@@ -1262,25 +1142,13 @@ class EngineeringGateway:
     ) -> dict[str, Any]:
         self._assert_session_fresh()
 
-        profile = self.profiles.get(
-            profile_id
-        )
-
+        profile = self.profiles.get(profile_id)
         require(
-            profile
-            is not None,
-            (
-                "Unknown gateway profile: "
-                f"{profile_id}"
-            ),
+            profile is not None,
+            f"Unknown gateway profile: {profile_id}",
         )
 
-        started_at = (
-            iso8601(
-                utc_now()
-            )
-        )
-
+        started_at = iso8601(utc_now())
         execution_id = (
             f"EGX-{profile_id}-"
             f"{uuid.uuid4().hex[:12]}"
@@ -1290,69 +1158,95 @@ class EngineeringGateway:
             self.output_root
             / execution_id
         )
-
         artifact_dir.mkdir(
             parents=True,
             exist_ok=False,
         )
 
-        decision = (
-            self.preflight_profile(
-                profile_id
-            )
+        preflight_ws = workspace_state(self.root)
+        decision = self.preflight_profile(
+            profile_id,
+            workspace=preflight_ws,
         )
 
         preflight_path = (
             artifact_dir
             / "preflight.json"
         )
-
         self._write_json(
             preflight_path,
             decision,
         )
 
-        receipt = (
-            self._receipt_base(
-                execution_id,
-                profile,
-                decision,
-                started_at,
-            )
+        receipt = self._receipt_base(
+            execution_id,
+            profile,
+            decision,
+            started_at,
+            preflight_workspace=preflight_ws,
         )
 
-        receipt[
-            "preflight_ref"
-        ] = (
+        receipt["preflight_ref"] = (
             str(
                 preflight_path
                 .relative_to(
                     self.root
                 )
             )
-            if preflight_path
-            .is_relative_to(
-                self.root
-            )
-            else str(
-                preflight_path
-            )
+            if preflight_path.is_relative_to(self.root)
+            else str(preflight_path)
         )
 
         if (
-            decision[
-                "decision"
-            ]
-            != "ALLOW"
-            or decision[
-                "tool_execution_allowed"
-            ]
-            is not True
+            decision["decision"] != "ALLOW"
+            or decision["tool_execution_allowed"] is not True
         ):
-            receipt[
-                "finished_at"
-            ] = iso8601(
-                utc_now()
+            receipt["finished_at"] = iso8601(utc_now())
+            receipt["execution_status"] = "NOT_EXECUTED"
+            receipt["verification_status"] = "NOT_RUN"
+            receipt["workspace_guard_status"] = "NOT_EVALUATED"
+            receipt["workspace_guard_reason"] = "PREFLIGHT_NOT_ALLOWED"
+            receipt["workspace_guard_detail"] = None
+            receipt["dispatch_workspace"] = None
+            receipt["post_workspace"] = None
+
+            validate_json(
+                self.receipt_schema,
+                receipt,
+                "execution receipt",
+            )
+            self._write_json(
+                artifact_dir / "receipt.json",
+                receipt,
+            )
+            return receipt
+
+        dispatch_ws = workspace_state(self.root)
+        receipt["dispatch_workspace"] = dispatch_ws
+
+        toctou_mismatches = []
+        for key in (
+            "path",
+            "branch",
+            "head",
+            "dirty",
+            "dirty_fingerprint",
+        ):
+            if preflight_ws.get(key) != dispatch_ws.get(key):
+                toctou_mismatches.append(
+                    f"workspace_{key} changed"
+                )
+
+        if toctou_mismatches:
+            receipt["finished_at"] = iso8601(utc_now())
+            receipt["execution_status"] = "NOT_EXECUTED"
+            receipt["verification_status"] = "BLOCKED"
+            receipt["workspace_guard_status"] = "BLOCKED"
+            receipt["workspace_guard_reason"] = (
+                "WORKSPACE_CHANGED_AFTER_PREFLIGHT"
+            )
+            receipt["workspace_guard_detail"] = (
+                ", ".join(toctou_mismatches)
             )
 
             validate_json(
@@ -1360,220 +1254,148 @@ class EngineeringGateway:
                 receipt,
                 "execution receipt",
             )
-
             self._write_json(
-                artifact_dir
-                / "receipt.json",
+                artifact_dir / "receipt.json",
                 receipt,
             )
-
             return receipt
 
-        cwd = (
-            normalize_repo_relative(
-                self.root,
-                profile[
-                    "cwd"
-                ],
-            )
+        cwd = normalize_repo_relative(
+            self.root,
+            profile["cwd"],
         )
-
         require(
             cwd.is_dir(),
             (
-                "Profile cwd "
-                "does not exist: "
+                "Profile cwd does not exist: "
                 f"{profile['cwd']}"
             ),
         )
 
-        timeout = int(
-            profile[
-                "timeout_seconds"
-            ]
-        )
+        timeout = int(profile["timeout_seconds"])
+        env = minimal_environment()
 
-        env = (
-            minimal_environment()
-        )
-
-        stdout_path = (
-            artifact_dir
-            / "stdout.txt"
-        )
-
-        stderr_path = (
-            artifact_dir
-            / "stderr.txt"
-        )
+        stdout_path = artifact_dir / "stdout.txt"
+        stderr_path = artifact_dir / "stderr.txt"
 
         try:
-            result = subprocess.run(
-                list(
-                    profile[
-                        "argv"
-                    ]
-                ),
+            result = run_profile_process(
+                list(profile["argv"]),
                 cwd=cwd,
                 env=env,
-                text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
                 timeout=timeout,
                 shell=False,
-                check=False,
             )
 
-            stdout = (
-                result.stdout
-                or ""
-            )
-
-            stderr = (
-                result.stderr
-                or ""
-            )
-
-            exit_code = (
-                result.returncode
-            )
+            stdout = result.stdout or ""
+            stderr = result.stderr or ""
+            exit_code = result.returncode
 
             execution_status = (
                 "SUCCEEDED"
-                if exit_code
-                == 0
+                if exit_code == 0
                 else "FAILED"
             )
-
             verification_status = (
                 "PASS"
-                if exit_code
-                == 0
+                if exit_code == 0
                 else "FAIL"
             )
 
         except subprocess.TimeoutExpired as error:
-            stdout = (
-                error.stdout
-                or ""
-            )
+            stdout = error.stdout or ""
+            stderr = error.stderr or ""
 
-            stderr = (
-                error.stderr
-                or ""
-            )
-
-            if isinstance(
-                stdout,
-                bytes,
-            ):
-                stdout = (
-                    stdout.decode(
-                        "utf-8",
-                        errors="replace",
-                    )
+            if isinstance(stdout, bytes):
+                stdout = stdout.decode(
+                    "utf-8",
+                    errors="replace",
                 )
 
-            if isinstance(
-                stderr,
-                bytes,
-            ):
-                stderr = (
-                    stderr.decode(
-                        "utf-8",
-                        errors="replace",
-                    )
+            if isinstance(stderr, bytes):
+                stderr = stderr.decode(
+                    "utf-8",
+                    errors="replace",
                 )
 
             exit_code = None
-
-            execution_status = (
-                "TIMED_OUT"
-            )
-
-            verification_status = (
-                "BLOCKED"
-            )
+            execution_status = "TIMED_OUT"
+            verification_status = "BLOCKED"
 
         max_bytes = int(
             self.profile_catalog
-            .get(
-                "evidence",
-                {},
+            .get("evidence", {})
+            .get("max_text_bytes", 1_000_000)
+        )
+        stdout = stdout[:max_bytes]
+        stderr = stderr[:max_bytes]
+
+        self._write_text(stdout_path, stdout)
+        self._write_text(stderr_path, stderr)
+
+        post_ws = workspace_state(self.root)
+        receipt["post_workspace"] = post_ws
+
+        post_mismatches = []
+        for key in (
+            "path",
+            "branch",
+            "head",
+            "dirty",
+            "dirty_fingerprint",
+        ):
+            if dispatch_ws.get(key) != post_ws.get(key):
+                post_mismatches.append(
+                    f"workspace_{key} changed"
+                )
+
+        if (
+            profile.get("non_destructive", True)
+            and post_mismatches
+        ):
+            receipt["workspace_guard_status"] = "VIOLATED"
+            receipt["workspace_guard_reason"] = (
+                "NON_DESTRUCTIVE_PROFILE_CHANGED_WORKSPACE"
             )
-            .get(
-                "max_text_bytes",
-                1_000_000,
+            receipt["workspace_guard_detail"] = (
+                ", ".join(post_mismatches)
             )
-        )
-
-        stdout = stdout[
-            :max_bytes
-        ]
-
-        stderr = stderr[
-            :max_bytes
-        ]
-
-        self._write_text(
-            stdout_path,
-            stdout,
-        )
-
-        self._write_text(
-            stderr_path,
-            stderr,
-        )
+            receipt["verification_status"] = "FAIL"
+        else:
+            receipt["workspace_guard_status"] = "PASS"
+            receipt["workspace_guard_reason"] = "REVISION_BOUND"
+            receipt["workspace_guard_detail"] = None
 
         receipt.update(
             {
-                "finished_at":
-                    iso8601(
-                        utc_now()
-                    ),
-
-                "execution_status":
-                    execution_status,
-
-                "exit_code":
-                    exit_code,
-
-                "verification_status":
-                    verification_status,
-
-                "stdout_ref":
-                    (
-                        str(
-                            stdout_path
-                            .relative_to(
-                                self.root
-                            )
-                        )
-                        if stdout_path
-                        .is_relative_to(
+                "finished_at": iso8601(utc_now()),
+                "execution_status": execution_status,
+                "exit_code": exit_code,
+                "verification_status": (
+                    "FAIL"
+                    if receipt["workspace_guard_status"] == "VIOLATED"
+                    else verification_status
+                ),
+                "stdout_ref": (
+                    str(
+                        stdout_path
+                        .relative_to(
                             self.root
                         )
-                        else str(
-                            stdout_path
-                        )
-                    ),
-
-                "stderr_ref":
-                    (
-                        str(
-                            stderr_path
-                            .relative_to(
-                                self.root
-                            )
-                        )
-                        if stderr_path
-                        .is_relative_to(
+                    )
+                    if stdout_path.is_relative_to(self.root)
+                    else str(stdout_path)
+                ),
+                "stderr_ref": (
+                    str(
+                        stderr_path
+                        .relative_to(
                             self.root
                         )
-                        else str(
-                            stderr_path
-                        )
-                    ),
+                    )
+                    if stderr_path.is_relative_to(self.root)
+                    else str(stderr_path)
+                ),
             }
         )
 
@@ -1582,10 +1404,8 @@ class EngineeringGateway:
             receipt,
             "execution receipt",
         )
-
         self._write_json(
-            artifact_dir
-            / "receipt.json",
+            artifact_dir / "receipt.json",
             receipt,
         )
 

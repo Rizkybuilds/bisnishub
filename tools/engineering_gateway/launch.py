@@ -23,6 +23,17 @@ from typing import Any
 
 import yaml
 
+try:
+    from tools.engineering_gateway.workspace import (
+        workspace_dirty_fingerprint,
+        workspace_state,
+    )
+except ModuleNotFoundError:
+    from workspace import (  # type: ignore
+        workspace_dirty_fingerprint,
+        workspace_state,
+    )
+
 
 ROLE_IDS = {
     "planner",
@@ -479,65 +490,6 @@ def resolve_principal(
         provider_definition,
         principal,
     )
-
-
-def workspace_state(
-    root: Path,
-) -> dict[str, Any]:
-    branch = run_git(
-        root,
-        "rev-parse",
-        "--abbrev-ref",
-        "HEAD",
-    )
-
-    head = run_git(
-        root,
-        "rev-parse",
-        "HEAD",
-    )
-
-    status = run_git(
-        root,
-        "status",
-        "--porcelain=v1",
-        "--untracked-files=all",
-    )
-
-    dirty = bool(
-        status.strip()
-    )
-
-    fingerprint = (
-        hashlib.sha256(
-            status.encode(
-                "utf-8"
-            )
-        )
-        .hexdigest()
-    )
-
-    return {
-        "path":
-            str(
-                root
-            ),
-
-        "branch":
-            branch,
-
-        "head":
-            head,
-
-        "dirty":
-            dirty,
-
-        "dirty_fingerprint":
-            (
-                "sha256:"
-                + fingerprint
-            ),
-    }
 
 
 def check_workspace_policy(

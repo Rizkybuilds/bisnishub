@@ -121,6 +121,57 @@ The launcher binds each session to one Git workspace root.
 
 The Gateway rejects a session whose workspace does not match the repository from which the Gateway is running.
 
+## Session Revision Immutability
+
+A governed session immutably binds:
+
+- workspace root path;
+- branch;
+- HEAD.
+
+If repository branch or HEAD changes from the session binding, preflight fails closed. A new governed session is required.
+
+However, worktree dirty state and content-sensitive dirty fingerprints may legitimately evolve during source editing within the active session without invalidating session authority.
+
+## Content-Sensitive Workspace Fingerprint V2
+
+The shared workspace module (`tools/engineering_gateway/workspace.py`) implements versioned algorithm `bisnishub-workspace-fingerprint-v2`:
+
+- captures zero-delimited machine-stable git status (`--porcelain=v1 -z --untracked-files=all`);
+- captures binary git diff relative to HEAD (`git diff --binary --full-index --no-ext-diff --no-textconv HEAD --`);
+- captures sorted untracked files (`git ls-files --others --exclude-standard -z`) with incremental chunked file hashing;
+- hashes symbolic link targets without following external targets;
+- performs a before/after revision consistency check around snapshot capture.
+
+## Preflight-to-Dispatch TOCTOU Guard
+
+Preflight evaluates the actual current workspace snapshot rather than a stale session-start dirty state.
+
+Immediately before fixed profile process dispatch:
+
+1. Workspace state is captured again (`dispatch_workspace`).
+2. All snapshot fields (`path`, `branch`, `head`, `dirty`, `dirty_fingerprint`) are compared against `preflight_workspace`.
+3. If any field changed:
+   - `execution_status = NOT_EXECUTED`
+   - `verification_status = BLOCKED`
+   - `workspace_guard_status = BLOCKED`
+   - `workspace_guard_reason = WORKSPACE_CHANGED_AFTER_PREFLIGHT`
+   - Subprocess dispatch is completely bypassed.
+
+## Post-Execution Non-Destructive Guard
+
+After profile process completion:
+
+1. Post-execution workspace is captured (`post_workspace`).
+2. For all `non_destructive: true` profiles, `dispatch_workspace` is compared to `post_workspace`.
+3. If repository mutation occurred:
+   - `workspace_guard_status = VIOLATED`
+   - `workspace_guard_reason = NON_DESTRUCTIVE_PROFILE_CHANGED_WORKSPACE`
+   - `verification_status = FAIL` (overrides exit code 0).
+4. If untouched:
+   - `workspace_guard_status = PASS`
+   - `workspace_guard_reason = REVISION_BOUND`
+
 ## One Active Session Per Workspace
 
 V1 deliberately chooses:
