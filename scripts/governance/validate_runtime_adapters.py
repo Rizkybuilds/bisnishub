@@ -31,6 +31,20 @@ EXPECTED_RUNTIME_CASES = {
     "runtime-overlapping-writers",
 }
 
+ANTIGRAVITY_RULE_TRIGGERS = {
+    "always_on",
+    "model_decision",
+    "glob",
+    "manual",
+}
+
+ANTIGRAVITY_RULE_FRONTMATTER_KEYS = {
+    "trigger",
+    "description",
+    "globs",
+    "glob",
+}
+
 
 class UniqueLoader(yaml.SafeLoader):
     """Fail instead of silently accepting duplicate YAML keys."""
@@ -235,6 +249,201 @@ def read_markdown(root, relative):
     )
 
     return text
+
+
+def parse_rule_frontmatter(
+    path,
+    text,
+):
+    match = re.match(
+        r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|$)",
+        text,
+        re.S,
+    )
+
+    require(
+        match is not None,
+        (
+            "Antigravity rule must contain "
+            "YAML frontmatter: "
+            f"{path}"
+        ),
+    )
+
+    data = yaml.load(
+        match.group(1),
+        Loader=UniqueLoader,
+    )
+
+    require(
+        isinstance(
+            data,
+            dict,
+        ),
+        (
+            "Invalid Antigravity "
+            "rule frontmatter: "
+            f"{path}"
+        ),
+    )
+
+    unknown_keys = (
+        set(data)
+        - ANTIGRAVITY_RULE_FRONTMATTER_KEYS
+    )
+
+    require(
+        not unknown_keys,
+        (
+            "Unsupported Antigravity "
+            "rule frontmatter keys in "
+            f"{path}: "
+            f"{sorted(unknown_keys)}"
+        ),
+    )
+
+    trigger = data.get(
+        "trigger"
+    )
+
+    require(
+        trigger
+        in ANTIGRAVITY_RULE_TRIGGERS,
+        (
+            "Invalid Antigravity rule "
+            f"trigger in {path}: "
+            f"{trigger!r}"
+        ),
+    )
+
+    description = data.get(
+        "description"
+    )
+
+    if description is not None:
+        require(
+            isinstance(
+                description,
+                str,
+            )
+            and description.strip(),
+            (
+                "Antigravity rule description "
+                "must be a nonempty string: "
+                f"{path}"
+            ),
+        )
+
+    if trigger == "model_decision":
+        require(
+            isinstance(
+                description,
+                str,
+            )
+            and description.strip(),
+            (
+                "Antigravity model_decision "
+                "rule requires description: "
+                f"{path}"
+            ),
+        )
+
+    glob_value = data.get(
+        "globs"
+    )
+    singular_glob = data.get(
+        "glob"
+    )
+
+    if trigger == "glob":
+        require(
+            bool(
+                isinstance(
+                    glob_value,
+                    str,
+                )
+                and glob_value.strip()
+            )
+            ^ bool(
+                isinstance(
+                    singular_glob,
+                    str,
+                )
+                and singular_glob.strip()
+            ),
+            (
+                "Antigravity glob rule requires "
+                "exactly one nonempty globs/glob "
+                f"value: {path}"
+            ),
+        )
+
+    else:
+        require(
+            glob_value is None
+            and singular_glob is None,
+            (
+                "Antigravity non-glob rule "
+                "must not declare globs/glob: "
+                f"{path}"
+            ),
+        )
+
+    return data
+
+
+def validate_antigravity_rules(
+    root,
+    relative_directory,
+):
+    directory = local_dir(
+        root,
+        relative_directory,
+    )
+
+    rule_files = sorted(
+        path
+        for path in directory.glob(
+            "*.md"
+        )
+        if path.is_file()
+    )
+
+    require(
+        bool(
+            rule_files
+        ),
+        (
+            "Antigravity rule directory "
+            "must contain at least one "
+            "top-level .md rule"
+        ),
+    )
+
+    metadata = {}
+
+    for target in rule_files:
+        relative = (
+            target.relative_to(
+                root
+            ).as_posix()
+        )
+
+        text = read_markdown(
+            root,
+            relative,
+        )
+
+        metadata[
+            relative
+        ] = (
+            parse_rule_frontmatter(
+                relative,
+                text,
+            )
+        )
+
+    return metadata
 
 
 def parse_workflow_frontmatter(text):
@@ -702,6 +911,42 @@ def validate(root=ROOT):
         (
             "Antigravity must use shared "
             "project Skills"
+        ),
+    )
+
+    rule_metadata = (
+        validate_antigravity_rules(
+            root,
+            surfaces[
+                "rules"
+            ],
+        )
+    )
+
+    control_plane_rule = (
+        ".agents/rules/"
+        "engineering-control-plane.md"
+    )
+
+    require(
+        control_plane_rule
+        in rule_metadata,
+        (
+            "Antigravity control-plane "
+            "rule is not discoverable"
+        ),
+    )
+
+    require(
+        rule_metadata[
+            control_plane_rule
+        ].get(
+            "trigger"
+        )
+        == "always_on",
+        (
+            "Antigravity control-plane "
+            "rule must remain always_on"
         ),
     )
 
