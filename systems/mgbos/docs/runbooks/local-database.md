@@ -19,6 +19,44 @@ Create new timestamped migrations; never edit applied SQL or fabricate generated
 
 Reset is **not** normal startup or upgrade. `pnpm db:reset` destroys local MGBOS data; use only for an explicit reset request or scoped reproducibility checks on disposable data. Preserve needed data and verify the target first. CI may reset its disposable database. Test upgrades as well as clean reconstruction when changing business schema.
 
+## Destructive local E2E verification
+
+The following end-to-end verification and concurrency scripts are destructive to the local disposable MGBOS dataset:
+
+- `pnpm test:e2e:happy` (`scripts/verify-happy-path-e2e.mjs`)
+- `pnpm test:e2e` (`scripts/verify-e2e-flow.mjs`)
+- `node scripts/test-document-concurrency.mjs`
+
+These scripts execute real business transactions (leads, orders, invoices, payments, shipments, ledger entries, and sequence generation) with service-role authority. They:
+
+- **cannot** target hosted Supabase (staging, production, or remote projects)
+- **require** the explicit one-shot acknowledgement `MGBOS_DESTRUCTIVE_LOCAL_E2E=1`
+- **only accept** the canonical local Supabase target: `http://127.0.0.1:55431`
+- **reject** non-local service-role credentials (only the canonical local development key is accepted)
+- **do not** automatically reset or clean local data; run `pnpm db:reset` beforehand if starting from a fresh baseline
+
+### One-shot execution examples
+
+POSIX:
+
+```sh
+MGBOS_DESTRUCTIVE_LOCAL_E2E=1 pnpm test:e2e
+```
+
+PowerShell:
+
+```powershell
+$env:MGBOS_DESTRUCTIVE_LOCAL_E2E = "1"
+try {
+  pnpm test:e2e
+}
+finally {
+  Remove-Item Env:MGBOS_DESTRUCTIVE_LOCAL_E2E -ErrorAction SilentlyContinue
+}
+```
+
+If the shell environment currently contains hosted `NEXT_PUBLIC_SUPABASE_URL` or `SUPABASE_SERVICE_ROLE_KEY`, the test intentionally refuses to start and fails closed. Never bypass this guard or inject remote credentials.
+
 ## Current configuration and evidence
 
 Project: `mgbos-foundation`. API 55431, database 55432, shadow database 55430, Studio 55433. Verify against `supabase/config.toml` when configuration changes.

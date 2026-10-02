@@ -108,20 +108,22 @@ npm exec --yes --package=pnpm@10.34.5 -- pnpm check
 
 ## 7. Developer Commands
 
-| Command                     | Purpose                                                   |
-| --------------------------- | --------------------------------------------------------- |
-| `pnpm dev`                  | Menjalankan MGBOS Internal Shell (Port 3101)              |
-| `pnpm dev:teestock`         | Menjalankan TeeStock Public Shell (Port 3102)             |
-| `pnpm build`                | Production build kedua aplikasi Next.js                   |
-| `pnpm lint`                 | ESLint checks (Next.js, React, TypeScript strict)         |
-| `pnpm typecheck`            | Strict TypeScript verification di seluruh apps & packages |
-| `pnpm test` / `test:unit`   | Vitest unit tests (packages/config, scripts)              |
-| `pnpm test:integration`     | HTTP smoke tests untuk kedua server produksi              |
-| `pnpm check`                | Full pipeline: Format + Lint + Typecheck + Test + Build   |
-| `pnpm db:start` / `db:stop` | Start / stop local Supabase stack                         |
-| `pnpm db:reset`             | Reset database lokal MGBOS & apply migrasi bersih         |
-| `pnpm db:test`              | Menjalankan pgTAP unit tests di database lokal            |
-| `pnpm db:types`             | Introspeksi skema database menjadi TypeScript types       |
+| Command                     | Purpose                                                                                                                                                             |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`                  | Menjalankan MGBOS Internal Shell (Port 3101)                                                                                                                        |
+| `pnpm dev:teestock`         | Menjalankan TeeStock Public Shell (Port 3102)                                                                                                                       |
+| `pnpm build`                | Production build kedua aplikasi Next.js                                                                                                                             |
+| `pnpm lint`                 | ESLint checks (Next.js, React, TypeScript strict)                                                                                                                   |
+| `pnpm typecheck`            | Strict TypeScript verification di seluruh apps & packages                                                                                                           |
+| `pnpm test` / `test:unit`   | Vitest unit tests (packages/config, scripts)                                                                                                                        |
+| `pnpm test:integration`     | HTTP smoke tests untuk kedua server produksi                                                                                                                        |
+| `pnpm test:e2e:happy`       | Destructive local-only lifecycle verification (happy path; requires `MGBOS_DESTRUCTIVE_LOCAL_E2E=1`, see [Local Database Runbook](docs/runbooks/local-database.md)) |
+| `pnpm test:e2e`             | Destructive local-only lifecycle verification (full flow; requires `MGBOS_DESTRUCTIVE_LOCAL_E2E=1`, see [Local Database Runbook](docs/runbooks/local-database.md))  |
+| `pnpm check`                | Full pipeline: Format + Lint + Typecheck + Test + Build                                                                                                             |
+| `pnpm db:start` / `db:stop` | Start / stop local Supabase stack                                                                                                                                   |
+| `pnpm db:reset`             | Reset database lokal MGBOS & apply migrasi bersih                                                                                                                   |
+| `pnpm db:test`              | Menjalankan pgTAP unit tests di database lokal                                                                                                                      |
+| `pnpm db:types`             | Introspeksi skema database menjadi TypeScript types                                                                                                                 |
 
 ---
 

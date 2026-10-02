@@ -1,4 +1,8 @@
 import assert from 'node:assert/strict';
+import {
+  resolveDestructiveLocalE2EEnvironment,
+  createDestructiveLocalSupabaseFetch,
+} from './destructive-local-e2e-guard.mjs';
 
 /**
  * MultiGraph Business OS — Focused Clean Happy-Path E2E Flow (P0-07)
@@ -11,11 +15,12 @@ import assert from 'node:assert/strict';
  * → Settle Actual Cost → Order COMPLETED → Analytical Realized Margin
  */
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:55431';
-const SERVICE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
+const { baseUrl: BASE_URL, serviceRoleKey: SERVICE_KEY } =
+  resolveDestructiveLocalE2EEnvironment();
+const guardedFetch = createDestructiveLocalSupabaseFetch({
+  baseUrl: BASE_URL,
+  serviceRoleKey: SERVICE_KEY,
+});
 
 const headers = {
   apikey: SERVICE_KEY,
@@ -29,7 +34,7 @@ const headers = {
 const endpoint = `${BASE_URL.replace(/\/+$/, '')}/rest/v1`;
 
 async function rpc(functionName, params) {
-  const res = await fetch(`${endpoint}/rpc/${functionName}`, {
+  const res = await guardedFetch(`${endpoint}/rpc/${functionName}`, {
     method: 'POST',
     headers,
     body: JSON.stringify(params),
@@ -43,7 +48,7 @@ async function rpc(functionName, params) {
 }
 
 async function queryTable(table, query = '') {
-  const res = await fetch(`${endpoint}/${table}?${query}`, {
+  const res = await guardedFetch(`${endpoint}/${table}?${query}`, {
     headers,
   });
   if (!res.ok) {
@@ -54,7 +59,7 @@ async function queryTable(table, query = '') {
 }
 
 async function insertRow(table, row) {
-  const res = await fetch(`${endpoint}/${table}`, {
+  const res = await guardedFetch(`${endpoint}/${table}`, {
     method: 'POST',
     headers,
     body: JSON.stringify(row),
