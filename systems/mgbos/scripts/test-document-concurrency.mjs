@@ -1,10 +1,15 @@
 import assert from 'node:assert/strict';
+import {
+  resolveDestructiveLocalE2EEnvironment,
+  createDestructiveLocalSupabaseFetch,
+} from './destructive-local-e2e-guard.mjs';
 
-const SUPABASE_URL =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:55431';
-const SERVICE_ROLE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
+const { baseUrl: SUPABASE_URL, serviceRoleKey: SERVICE_ROLE_KEY } =
+  resolveDestructiveLocalE2EEnvironment();
+const guardedFetch = createDestructiveLocalSupabaseFetch({
+  baseUrl: SUPABASE_URL,
+  serviceRoleKey: SERVICE_ROLE_KEY,
+});
 
 async function main() {
   console.log(
@@ -12,13 +17,16 @@ async function main() {
   );
 
   // Fetch TeeStock brand and organization
-  const brandRes = await fetch(`${SUPABASE_URL}/rest/v1/brands?code=eq.TS`, {
-    headers: {
-      apikey: SERVICE_ROLE_KEY,
-      Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
-      'Accept-Profile': 'app',
+  const brandRes = await guardedFetch(
+    `${SUPABASE_URL}/rest/v1/brands?code=eq.TS`,
+    {
+      headers: {
+        apikey: SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
+        'Accept-Profile': 'app',
+      },
     },
-  });
+  );
   assert.equal(brandRes.status, 200, 'Failed to fetch TS brand');
   const brands = await brandRes.json();
   assert.ok(brands.length > 0, 'TS brand not found');
@@ -32,7 +40,7 @@ async function main() {
 
   for (let i = 0; i < CONCURRENCY_COUNT; i++) {
     promises.push(
-      fetch(`${SUPABASE_URL}/rest/v1/rpc/generate_document_number`, {
+      guardedFetch(`${SUPABASE_URL}/rest/v1/rpc/generate_document_number`, {
         method: 'POST',
         headers: {
           apikey: SERVICE_ROLE_KEY,

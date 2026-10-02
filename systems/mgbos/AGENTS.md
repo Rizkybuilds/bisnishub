@@ -24,6 +24,7 @@ Use only this workspace's local Supabase commands. Never traverse the legacy Sup
 No remote reset, production schema modification, hard-delete of history or production seeding.
 Use local/test credentials in PR CI; never expose service credentials to browsers.
 Local reset is destructive to this workspace's local data: use it only for reproducibility checks or an explicit local reset request.
+Destructive service-role E2E/concurrency scripts are local-only. They require the explicit one-shot MGBOS_DESTRUCTIVE_LOCAL_E2E=1 acknowledgement. Never bypass the target guard, inject hosted Supabase credentials, or reinterpret a failed guard as permission to run remotely.
 
 ## Scope and verification
 
