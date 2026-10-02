@@ -907,9 +907,9 @@ def approval_resolution(
         )
 
     return (
-        True,
-        "ALLOW",
-        "APPROVAL_VALID",
+        False,
+        "NEED_APPROVAL",
+        "APPROVAL_EVIDENCE_UNVERIFIED",
     )
 
 
@@ -1483,14 +1483,6 @@ def resolve(
     )
 
     if (
-        capability_id
-        in explicit_denials
-    ):
-        role_grant_state = (
-            "DENIED"
-        )
-
-    elif (
         capability_id
         in explicit_denials
     ):

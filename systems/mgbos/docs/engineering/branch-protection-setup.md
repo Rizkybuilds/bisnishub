@@ -13,77 +13,108 @@ tags:
 
 # Panduan Konfigurasi Branch Protection MGBOS
 
-## Ringkasan Eksekutif (Executive Summary)
+## Ringkasan Status Perlindungan (Enforcement Status)
 
-Penerapan _branch protection_ pada repositori MGBOS adalah langkah kritis untuk memastikan stabilitas dan kualitas kode (code quality) pada _branch_ `main`. Dengan mengaktifkan perlindungan ini, kita mencegah perubahan kode yang tidak disengaja, memastikan bahwa semua perubahan telah melalui proses _code review_, dan memvalidasi bahwa CI/CD _pipeline_ (khususnya _workflow_ `.github/workflows/mgbos-foundation.yml`) telah berhasil berjalan sebelum kode digabungkan (_merged_). Hal ini meminimalkan risiko _downtime_ dan _bugs_ di lingkungan produksi.
+Dokumen ini membedakan secara tegas antara **OBSERVED CURRENT STATE** (fakta GitHub yang terverifikasi), **NOT VERIFIED** (pengaturan yang belum terbukti atau belum dapat diverifikasi oleh endpoint yang tersedia), dan **DESIRED TARGET STATE** (kondisi target tata kelola).
+
+### 1. OBSERVED CURRENT STATE (Terverifikasi per 2026-10-02)
+
+Berdasarkan inspeksi endpoint GitHub API pada baseline:
+- **`branch: main`**: `protected = true`, `protection.enabled = true`
+- **`required_status_checks.enforcement_level`**: `everyone`
+- **Required status checks (6 konteks wajib)**:
+  1. `application`
+  2. `database`
+  3. `pr-gate`
+  4. `agent-governance`
+  5. `migration-immutability`
+  6. `repository-integrity`
+
+### 2. NOT VERIFIED (Belum Terverifikasi / Status Pembuktian Terbatas)
+
+Pengaturan berikut **TIDAK** diklaim aktif atau terbukti secara penuh karena keterbatasan akses endpoint administrasi (HTTP 403) dan bukti operasional yang diobservasi:
+- **Required PR review count / Review approval enforcement**: `NOT_VERIFIED`. Bukti faktual: PR #23 dan PR #24 berhasil digabungkan (_merged_) dengan 0 review GitHub. Dalam realitas operasional solo-founder saat ini, pembuat PR tidak dapat memberikan review persetujuan GitHub yang valid untuk dirinya sendiri. Verifikasi manusia saat ini tetap berlabel `SELF_REVIEW`, bukan `INDEPENDENT_REVIEW`.
+- **Direct push rejection**: `NOT_VERIFIED` secara eksperimental. Tata kelola repositori melarang keras direct push ke `main`, namun penolakan server-side belum diuji secara destruktif.
+- **Admin / bypass policy**: `NOT_VERIFIED`.
+- **Required linear history**: `NOT_VERIFIED`.
+- **Allow force pushes / Allow deletions**: `NOT_VERIFIED`.
+- **Repository rulesets**: Endpoint mengembalikan `[]`.
+
+### 3. DESIRED TARGET STATE (Target Tata Kelola Bertahap)
+
+Kondisi target tata kelola jangka panjang ketika organisasi bertumbuh dan memiliki reviewer independen kedua:
+- Enforce status checks untuk semua kontributor (`everyone`).
+- Seluruh 6 konteks CI wajib hijau sebelum merge.
+- Required review count diaktifkan ketika reviewer kedua yang memenuhi syarat telah tersedia.
+- Larangan force push dan branch deletion terikat ketat di server.
+
+---
 
 ## Instruksi Konfigurasi GitHub UI
 
-Ikuti langkah-langkah berikut untuk mengonfigurasi _branch protection_ pada _branch_ `main` melalui antarmuka web GitHub:
+Ikuti langkah-langkah berikut untuk mengonfigurasi atau menyinkronkan _branch protection_ pada _branch_ `main` melalui antarmuka web GitHub:
 
 > [!important] Hak Akses
 > Anda memerlukan hak akses **Repository Admin** untuk dapat melakukan konfigurasi ini.
 
-1. Buka repositori MGBOS di GitHub.
+1. Buka repositori di GitHub.
 2. Klik tab **Settings**.
 3. Di _sidebar_ sebelah kiri, di bawah bagian "Code and automation", klik **Branches**.
-4. Klik tombol **Add branch protection rule**.
+4. Klik **Add branch protection rule** (atau edit aturan yang sudah ada untuk `main`).
 5. Pada bagian **Branch name pattern**, masukkan `main`.
-6. Konfigurasikan pengaturan berikut (centang kotak yang sesuai):
-   - **Require a pull request before merging**: Aktifkan opsi ini.
-     - Pastikan **Require approvals** diaktifkan dan set _Required number of approvals before merging_ ke **1**.
+6. Konfigurasikan pengaturan berikut:
    - **Require status checks to pass before merging**: Aktifkan opsi ini.
      - Aktifkan juga **Require branches to be up to date before merging**.
-     - Di kolom pencarian _status checks_, cari dan tambahkan _jobs_ dari CI _workflow_ `.github/workflows/mgbos-foundation.yml`:
+     - Tambahkan seluruh **6 status checks wajib**:
        - `application`
        - `database`
-       - `pr-gate` (Pengecekan PR konvensional yang baru ditambahkan)
-   - **Require linear history**: Aktifkan opsi ini untuk mencegah _merge commits_ dan mengharuskan _squash merge_ atau _rebase merge_.
+       - `pr-gate`
+       - `agent-governance`
+       - `migration-immutability`
+       - `repository-integrity`
+     - Pastikan evaluasi berlaku untuk semua kontributor (**Do not allow bypasses** / `everyone`).
+   - **Require a pull request before merging**:
+     - Untuk lingkungan solo-founder saat ini, review enforcement wajib disesuaikan agar tidak terjadi deadlock sampai ada reviewer kedua yang memenuhi syarat.
+   - **Require linear history**: Disarankan aktif (squash atau rebase merge).
    - Pastikan opsi **Allow force pushes** TIDAK dicentang.
    - Pastikan opsi **Allow deletions** TIDAK dicentang.
-7. Klik tombol **Create** di bagian paling bawah untuk menyimpan aturan ini.
+7. Klik tombol **Save changes** / **Create** untuk menyimpan aturan.
 
-## Alternatif menggunakan GitHub CLI (`gh`)
+---
 
-Jika Anda lebih memilih menggunakan _command line_, Anda dapat mengonfigurasi aturan perlindungan menggunakan GitHub CLI dan GitHub API.
+## Konfigurasi menggunakan GitHub CLI (`gh`) / API
 
-> [!tip] Otomatisasi
-> Menggunakan CLI sangat direkomendasikan jika Anda ingin mengotomatiskan setup repositori di masa mendatang.
-
-Gunakan perintah berikut di terminal:
+Untuk memperbarui konteks pemeriksaan wajib melalui GitHub CLI / API:
 
 ```bash
 gh api \
   --method PUT \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
-  /repos/{owner}/{repo}/branches/main/protection \
-  -f required_status_checks[strict]=true \
-  -f required_status_checks[contexts][]=application \
-  -f required_status_checks[contexts][]=database \
-  -f required_status_checks[contexts][]=pr-gate \
-  -f enforce_admins=true \
-  -f required_pull_request_reviews[required_approving_review_count]=1 \
-  -f required_pull_request_reviews[dismiss_stale_reviews]=true \
-  -f required_pull_request_reviews[require_code_owner_reviews]=false \
-  -f restrictions=null \
-  -f required_linear_history=true \
-  -f allow_force_pushes=false \
-  -f allow_deletions=false
+  /repos/{owner}/{repo}/branches/main/protection/required_status_checks \
+  -f strict=true \
+  -f contexts[]=application \
+  -f contexts[]=database \
+  -f contexts[]=pr-gate \
+  -f contexts[]=agent-governance \
+  -f contexts[]=migration-immutability \
+  -f contexts[]=repository-integrity
 ```
 
-_Catatan: Ganti `{owner}/{repo}` dengan nama organisasi dan repositori yang sesuai._
+_Catatan: Pengubahan konfigurasi penuh membutuhkan token dengan hak akses admin repositori._
 
-## Daftar Periksa Verifikasi (Verification Checklist)
+---
 
-Setelah konfigurasi selesai, gunakan daftar periksa berikut untuk memastikan perlindungan berjalan dengan benar:
+## Realitas Review Solo-Founder & Verifikasi
 
-- [ ] Cobalah melakukan `git push origin main` secara langsung. Perintah ini **harus** gagal ditolak oleh server.
-- [ ] Buat sebuah _Pull Request_ baru.
-- [ ] Pastikan PR tidak bisa di-_merge_ sebelum mendapatkan minimal 1 persetujuan (_approval_).
-- [ ] Pastikan tombol _Merge_ dinonaktifkan (berwarna abu-abu) sampai _status checks_ (`application`, `database`, `pr-gate`) berstatus _passed_.
-- [ ] Pastikan hanya opsi _Squash and merge_ atau _Rebase and merge_ yang tersedia (tergantung pengaturan repositori), mengonfirmasi berlakunya aturan _linear history_.
-- [ ] Cobalah menghapus _branch_ `main` dari web UI atau CLI. Tindakan ini **harus** gagal.
+1. **Pemisahan Pemeriksaan Mesin vs Review Manusia**:
+   - **Machine merge checks**: Enforce 6 required status checks secara otomatis pada setiap PR.
+   - **Independent human review**: Belum dapat di-enforce via GitHub PR review gating karena batasan solo-founder (deadlock jika author harus di-review orang lain).
+   - Assurance saat ini menggunakan **`SELF_REVIEW`** yang terdokumentasi dalam PR body dan kontrol rencana kerja, bukan klaim `INDEPENDENT_REVIEW`.
 
-> [!warning] Perhatian
-> Administrator repositori dapat mengabaikan aturan ini (bypass rules). Pastikan opsi "Do not allow bypasses the above settings" diaktifkan jika Anda ingin aturan ini mengikat ketat semua pengguna termasuk Admin.
+2. **Daftar Periksa Status (Status Checklist)**:
+   - [x] `main` branch terlindungi (`protected = true`).
+   - [x] 6 required status checks terdaftar dan dievaluasi di CI.
+   - [ ] Enforcement penolakan direct push diuji secara empiris (`NOT_VERIFIED`).
+   - [ ] Enforcement review approval GitHub aktif (`NOT_VERIFIED` / Solo-founder mode).
+   - [ ] Larangan force push dan linear history diverifikasi via admin API (`NOT_VERIFIED`).

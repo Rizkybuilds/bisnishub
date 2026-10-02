@@ -207,6 +207,14 @@ may be conditionally eligible.
 
 Actual merge still requires applicable release gates and explicit action authority.
 
+## Approval Trust Boundary
+
+The capability registry is machine enforced, role permission is machine evaluated, and autonomy grants are machine evaluated.
+
+However, self-asserted approval JSON is NOT trusted authorization evidence. An approval claim object documents structure and binds to an action fingerprint, but does not independently prove authentic authorization.
+
+Approval-required execution remains fail-closed (`NEED_APPROVAL` / `APPROVAL_EVIDENCE_UNVERIFIED`) until trusted evidence verification exists. No self-asserted approval can produce an `ALLOW` decision.
+
 ## Permission States
 
 Machine role grants use:

@@ -816,16 +816,11 @@ def load_approval(
     if path is None:
         return None
 
-    require(
-        path.is_file(),
-        (
-            "Approval file does "
-            f"not exist: {path}"
-        ),
-    )
-
-    return load_json(
-        path
+    raise ValueError(
+        "Trusted approval evidence "
+        "verification is not implemented; "
+        "--approval-file cannot "
+        "authorize governed execution."
     )
 
 

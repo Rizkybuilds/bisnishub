@@ -505,6 +505,252 @@ class EngineeringPreflightTests(
             "AMBIGUOUS_AUTONOMY_GRANT",
         )
 
+    def test_self_asserted_approved_cannot_authorize(
+        self,
+    ) -> None:
+        request = {
+            "schema_version": 1,
+            "role": "engineer",
+            "capability": (
+                "engineering.github.feature_branch.push"
+            ),
+            "environment": "github-remote",
+            "declared_risk": "R3",
+            "evaluated_at": (
+                "2026-10-01T00:00:00Z"
+            ),
+            "action": {
+                "target": (
+                    "refs/heads/feature-x"
+                ),
+                "resource_scope": [
+                    "refs/heads/feature-x"
+                ],
+                "material_parameters": [
+                    {
+                        "name": "branch",
+                        "value": "feature-x",
+                    }
+                ],
+            },
+            "conditions": [
+                {
+                    "id": (
+                        "authorized-feature-branch"
+                    ),
+                    "state": "SATISFIED",
+                    "evidence_ref": "WP-fixture",
+                },
+                {
+                    "id": "main-not-targeted",
+                    "state": "SATISFIED",
+                    "evidence_ref": "WP-fixture",
+                },
+            ],
+            "approval": None,
+            "host": {
+                "tool_available": True,
+                "permission_state": "ALLOW",
+            },
+        }
+
+        attestation = source_attestation()
+        fingerprint = resolver.action_fingerprint(
+            request,
+            attestation["principal_id"],
+            "R3",
+        )
+
+        request["approval"] = {
+            "status": "APPROVED",
+            "type": "ACTION",
+            "request_id": "req-1",
+            "decision_id": "dec-1",
+            "approver": "founder",
+            "approver_eligible": True,
+            "action_fingerprint": fingerprint,
+            "not_expired": True,
+            "unused": True,
+        }
+
+        synthetic_grant = {
+            "id": "fixture-push-grant",
+            "level": "L3",
+            "risk_ceiling": "R3",
+            "basis": "PROMOTION_DECISION",
+        }
+
+        synthetic_principal = {
+            "id": "engineering.runtime.primary",
+            "state": "ACTIVE",
+            "allowed_roles": ["engineer"],
+            "capability_ceiling": [
+                "engineering.github.feature_branch.push"
+            ],
+            "runtime_binding": {
+                "adapter_id": "codex"
+            },
+        }
+
+        with (
+            patch.object(
+                resolver,
+                "resolve_principal",
+                return_value=(
+                    synthetic_principal,
+                    "ALLOW",
+                    "PRINCIPAL_ACTIVE",
+                ),
+            ),
+            patch.object(
+                resolver,
+                "resolve_autonomy_grant",
+                return_value=(
+                    synthetic_grant,
+                    "ALLOW",
+                    "AUTONOMY_GRANT_ACTIVE",
+                ),
+            ),
+        ):
+            result = resolver.resolve(
+                request,
+                attestation,
+            )
+
+        self.assertEqual(
+            result["decision"],
+            "NEED_APPROVAL",
+        )
+        self.assertEqual(
+            result["reason_code"],
+            "APPROVAL_EVIDENCE_UNVERIFIED",
+        )
+        self.assertTrue(
+            result["approval_required"]
+        )
+        self.assertFalse(
+            result["tool_execution_allowed"]
+        )
+
+    def test_rejected_approval_remains_denial(
+        self,
+    ) -> None:
+        request = {
+            "schema_version": 1,
+            "role": "engineer",
+            "capability": (
+                "engineering.github.feature_branch.push"
+            ),
+            "environment": "github-remote",
+            "declared_risk": "R3",
+            "evaluated_at": (
+                "2026-10-01T00:00:00Z"
+            ),
+            "action": {
+                "target": (
+                    "refs/heads/feature-x"
+                ),
+                "resource_scope": [
+                    "refs/heads/feature-x"
+                ],
+                "material_parameters": [
+                    {
+                        "name": "branch",
+                        "value": "feature-x",
+                    }
+                ],
+            },
+            "conditions": [
+                {
+                    "id": (
+                        "authorized-feature-branch"
+                    ),
+                    "state": "SATISFIED",
+                    "evidence_ref": "WP-fixture",
+                },
+                {
+                    "id": "main-not-targeted",
+                    "state": "SATISFIED",
+                    "evidence_ref": "WP-fixture",
+                },
+            ],
+            "approval": {
+                "status": "REJECTED",
+                "type": "ACTION",
+                "request_id": "req-1",
+                "decision_id": "dec-1",
+                "approver": "founder",
+                "approver_eligible": True,
+                "action_fingerprint": (
+                    "sha256:" + "0" * 64
+                ),
+                "not_expired": True,
+                "unused": True,
+            },
+            "host": {
+                "tool_available": True,
+                "permission_state": "ALLOW",
+            },
+        }
+
+        attestation = source_attestation()
+
+        synthetic_grant = {
+            "id": "fixture-push-grant",
+            "level": "L3",
+            "risk_ceiling": "R3",
+            "basis": "PROMOTION_DECISION",
+        }
+
+        synthetic_principal = {
+            "id": "engineering.runtime.primary",
+            "state": "ACTIVE",
+            "allowed_roles": ["engineer"],
+            "capability_ceiling": [
+                "engineering.github.feature_branch.push"
+            ],
+            "runtime_binding": {
+                "adapter_id": "codex"
+            },
+        }
+
+        with (
+            patch.object(
+                resolver,
+                "resolve_principal",
+                return_value=(
+                    synthetic_principal,
+                    "ALLOW",
+                    "PRINCIPAL_ACTIVE",
+                ),
+            ),
+            patch.object(
+                resolver,
+                "resolve_autonomy_grant",
+                return_value=(
+                    synthetic_grant,
+                    "ALLOW",
+                    "AUTONOMY_GRANT_ACTIVE",
+                ),
+            ),
+        ):
+            result = resolver.resolve(
+                request,
+                attestation,
+            )
+
+        self.assertEqual(
+            result["decision"],
+            "DENY",
+        )
+        self.assertEqual(
+            result["reason_code"],
+            "APPROVAL_REJECTED",
+        )
+        self.assertFalse(
+            result["tool_execution_allowed"]
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

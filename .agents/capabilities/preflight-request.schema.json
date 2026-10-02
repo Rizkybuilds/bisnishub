@@ -68,6 +68,7 @@
       }
     },
     "approval": {
+      "description": "Optional declarative approval claim shape. Documents structure only, not trusted executable approval evidence.",
       "oneOf": [
         {
           "$ref": "#/$defs/approval"
@@ -164,6 +165,7 @@
     },
     "approval": {
       "type": "object",
+      "description": "Declarative approval claim shape. Documents structure only, not trusted executable approval evidence; current runtime fails closed on positive approval claims.",
       "additionalProperties": false,
       "required": [
         "status",
@@ -215,19 +217,23 @@
           ]
         },
         "approver_eligible": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Declarative claim asserting approver eligibility; not independently verified trusted proof."
         },
         "action_fingerprint": {
           "type": [
             "string",
             "null"
-          ]
+          ],
+          "description": "Action fingerprint to bind claim to action; matching fingerprint indicates claim references action but does not establish authenticity."
         },
         "not_expired": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Declarative claim asserting approval has not expired; not independently verified trusted proof."
         },
         "unused": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Declarative claim asserting approval has not been consumed; not independently verified trusted proof."
         }
       }
     },
