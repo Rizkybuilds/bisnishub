@@ -65,6 +65,124 @@ class EngineeringAutonomyTests(
                 destination,
             )
 
+        # The autonomy validator treats repository-local
+        # INITIAL_GOVERNANCE_BASELINE evidence as real files.
+        #
+        # Most evidence already arrives through the .agents/docs
+        # fixture trees above. Materialize any remaining baseline
+        # evidence references explicitly so this temporary repository
+        # represents the same evidence graph as the real repository.
+        grants_path = (
+            self.root
+            / autonomy_validator.GRANTS_PATH
+        )
+
+        grants_document = yaml.safe_load(
+            grants_path.read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertIsInstance(
+            grants_document,
+            dict,
+        )
+
+        for grant in grants_document.get(
+            "grants",
+            [],
+        ):
+            if (
+                grant.get(
+                    "basis"
+                )
+                != "INITIAL_GOVERNANCE_BASELINE"
+            ):
+                continue
+
+            for reference in grant.get(
+                "evidence_refs",
+                [],
+            ):
+                reference_path = Path(
+                    reference
+                )
+
+                self.assertFalse(
+                    reference_path.is_absolute(),
+                    (
+                        "Baseline evidence must "
+                        "be repository-relative: "
+                        f"{reference}"
+                    ),
+                )
+
+                self.assertNotIn(
+                    "..",
+                    reference_path.parts,
+                    (
+                        "Baseline evidence must "
+                        "not escape repository: "
+                        f"{reference}"
+                    ),
+                )
+
+                source = (
+                    autonomy_validator.ROOT
+                    / reference_path
+                ).resolve()
+
+                destination = (
+                    self.root
+                    / reference_path
+                ).resolve()
+
+                self.assertTrue(
+                    source.is_relative_to(
+                        autonomy_validator
+                        .ROOT
+                        .resolve()
+                    ),
+                    (
+                        "Evidence source escapes "
+                        "repository: "
+                        f"{reference}"
+                    ),
+                )
+
+                self.assertTrue(
+                    destination.is_relative_to(
+                        self.root.resolve()
+                    ),
+                    (
+                        "Evidence fixture escapes "
+                        "temporary repository: "
+                        f"{reference}"
+                    ),
+                )
+
+                self.assertTrue(
+                    source.is_file(),
+                    (
+                        "Baseline evidence source "
+                        "does not exist: "
+                        f"{reference}"
+                    ),
+                )
+
+                if destination.exists():
+                    continue
+
+                destination.parent.mkdir(
+                    parents=True,
+                    exist_ok=True,
+                )
+
+                shutil.copyfile(
+                    source,
+                    destination,
+                )
+
     def validate(self):
         return autonomy_validator.validate(
             self.root
@@ -422,6 +540,36 @@ class EngineeringAutonomyTests(
         with self.assertRaisesRegex(
             ValueError,
             "Overlapping current autonomy grants",
+        ):
+            self.validate()
+
+    def test_initial_baseline_evidence_ref_must_exist(
+        self
+    ):
+        def mutate(data):
+            grant = self.find_grant(
+                "EAG-orchestrator-plan",
+                data,
+            )
+
+            grant[
+                "evidence_refs"
+            ] = [
+                ".agents/"
+                "does-not-exist.md"
+            ]
+
+        self.edit_yaml(
+            autonomy_validator.GRANTS_PATH,
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            (
+                "evidence_ref does not "
+                "resolve to a file"
+            ),
         ):
             self.validate()
 

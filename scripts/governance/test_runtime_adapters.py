@@ -465,13 +465,30 @@ class RuntimeAdapterValidationTests(
                 self.root
             )
 
-    def test_workflow_requires_frontmatter(
+    def test_missing_mgbos_change_skill_rejected(
+        self
+    ):
+        (
+            self.root
+            / ".agents/skills/"
+            "mgbos-change/SKILL.md"
+        ).unlink()
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Missing path|Missing file",
+        ):
+            runtime_adapters.validate(
+                self.root
+            )
+
+    def test_mgbos_change_skill_requires_frontmatter(
         self
     ):
         path = (
             self.root
-            / ".agents/workflows/"
-            "mgbos.change.md"
+            / ".agents/skills/"
+            "mgbos-change/SKILL.md"
         )
 
         text = path.read_text(
@@ -495,7 +512,119 @@ class RuntimeAdapterValidationTests(
 
         with self.assertRaisesRegex(
             ValueError,
-            "workflow must contain YAML frontmatter",
+            "Skill must contain YAML frontmatter",
+        ):
+            runtime_adapters.validate(
+                self.root
+            )
+
+    def test_mgbos_change_skill_name_mismatch_rejected(
+        self
+    ):
+        path = (
+            self.root
+            / ".agents/skills/"
+            "mgbos-change/SKILL.md"
+        )
+
+        path.write_text(
+            path.read_text(
+                encoding="utf-8"
+            ).replace(
+                "name: mgbos-change",
+                "name: mgbos-change-other",
+                1,
+            ),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "name/folder mismatch",
+        ):
+            runtime_adapters.validate(
+                self.root
+            )
+
+    def test_legacy_workflow_markdown_rejected(
+        self
+    ):
+        path = (
+            self.root
+            / ".agents/workflows/"
+            "legacy.md"
+        )
+
+        path.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        path.write_text(
+            (
+                "---\n"
+                "description: Legacy workflow\n"
+                "---\n"
+                "Legacy\n"
+            ),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "workflow Markdown must be removed",
+        ):
+            runtime_adapters.validate(
+                self.root
+            )
+
+    def test_legacy_workflow_command_registry_rejected(
+        self
+    ):
+        self.edit_yaml(
+            ".agents/adapters/registry.yaml",
+            lambda data: data[
+                "providers"
+            ][
+                "antigravity"
+            ].update(
+                workflow_commands={
+                    "/mgbos.change":
+                        ".agents/workflows/"
+                        "mgbos.change.md"
+                }
+            ),
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "workflow_commands must be removed",
+        ):
+            runtime_adapters.validate(
+                self.root
+            )
+
+    def test_skill_command_mapping_rejected(
+        self
+    ):
+        self.edit_yaml(
+            ".agents/adapters/registry.yaml",
+            lambda data: data[
+                "providers"
+            ][
+                "antigravity"
+            ].update(
+                skill_commands={
+                    "/mgbos.change":
+                        ".agents/skills/"
+                        "mgbos-change/SKILL.md"
+                }
+            ),
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Skill command mapping",
         ):
             runtime_adapters.validate(
                 self.root
@@ -510,15 +639,15 @@ class RuntimeAdapterValidationTests(
             "engineering-control-plane.md"
         )
 
-        workflow_path = (
+        skill_path = (
             self.root
-            / ".agents/workflows/"
-            "mgbos.change.md"
+            / ".agents/skills/"
+            "mgbos-change/SKILL.md"
         )
 
         for path in (
             rule_path,
-            workflow_path,
+            skill_path,
         ):
             path.write_text(
                 path.read_text(

@@ -3,7 +3,7 @@ schema_version: 1
 registry:
   id: bisnishub.engineering.runtime-adapters
   status: ACTIVE
-  version: "1.0"
+  version: "1.1"
   owner: Rizky
   scope: repository-engineering
 
@@ -52,23 +52,22 @@ providers:
   antigravity:
     status: ACTIVE
     provider: Google
-    adapter_version: "1.0"
+    adapter_version: "1.1"
 
-    native_mode: workspace-rules-skills-workflows
+    native_mode: workspace-rules-skills
 
     native_surfaces:
       rules: .agents/rules/
       skills: .agents/skills/
-      workflows: .agents/workflows/
 
     adapter_files:
       - .agents/rules/engineering-control-plane.md
-      - .agents/workflows/mgbos.change.md
+      - .agents/skills/mgbos-change/SKILL.md
 
     shared_skill_source: .agents/skills/
 
-    workflow_commands:
-      /mgbos.change: .agents/workflows/mgbos.change.md
+    skill_commands:
+      /mgbos-change: .agents/skills/mgbos-change/SKILL.md
 
     required_references:
       - docs/engineering/engineering-ai-control-plane.md

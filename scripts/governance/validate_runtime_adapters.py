@@ -45,6 +45,20 @@ ANTIGRAVITY_RULE_FRONTMATTER_KEYS = {
     "glob",
 }
 
+ANTIGRAVITY_SKILL_FRONTMATTER_KEYS = {
+    "name",
+    "description",
+    "license",
+    "compatibility",
+    "metadata",
+    "allowed-tools",
+}
+
+MGBOS_CHANGE_SKILL_PATH = (
+    ".agents/skills/"
+    "mgbos-change/SKILL.md"
+)
+
 
 class UniqueLoader(yaml.SafeLoader):
     """Fail instead of silently accepting duplicate YAML keys."""
@@ -446,9 +460,12 @@ def validate_antigravity_rules(
     return metadata
 
 
-def parse_workflow_frontmatter(text):
+def parse_skill_frontmatter(
+    path,
+    text,
+):
     match = re.match(
-        r"\A---\n(.*?)\n---(?:\n|$)",
+        r"\A---\r?\n(.*?)\r?\n---(?:\r?\n|$)",
         text,
         re.S,
     )
@@ -456,8 +473,9 @@ def parse_workflow_frontmatter(text):
     require(
         match is not None,
         (
-            "Antigravity workflow must "
-            "contain YAML frontmatter"
+            "Antigravity Skill must "
+            "contain YAML frontmatter: "
+            f"{path}"
         ),
     )
 
@@ -467,37 +485,220 @@ def parse_workflow_frontmatter(text):
     )
 
     require(
-        isinstance(data, dict),
+        isinstance(
+            data,
+            dict,
+        ),
         (
             "Invalid Antigravity "
-            "workflow frontmatter"
+            "Skill frontmatter: "
+            f"{path}"
         ),
     )
 
-    require(
+    unknown_keys = (
         set(data)
-        == {
-            "description",
-        },
+        - ANTIGRAVITY_SKILL_FRONTMATTER_KEYS
+    )
+
+    require(
+        not unknown_keys,
         (
-            "Antigravity workflow frontmatter "
-            "must contain only description"
+            "Unsupported Antigravity "
+            "Skill frontmatter keys in "
+            f"{path}: "
+            f"{sorted(unknown_keys)}"
         ),
+    )
+
+    name = data.get(
+        "name"
     )
 
     require(
         isinstance(
-            data.get(
-                "description"
-            ),
+            name,
             str,
         )
-        and data[
-            "description"
-        ].strip(),
+        and bool(
+            re.fullmatch(
+                r"[a-z0-9]+(?:-[a-z0-9]+)*",
+                name,
+            )
+        )
+        and len(name) <= 64,
         (
-            "Antigravity workflow requires "
-            "a nonempty description"
+            "Invalid Agent Skill name "
+            f"in {path}: {name!r}"
+        ),
+    )
+
+    expected_name = (
+        Path(path)
+        .parent
+        .name
+    )
+
+    require(
+        name
+        == expected_name,
+        (
+            "Agent Skill name/folder "
+            f"mismatch in {path}: "
+            f"{name!r} != "
+            f"{expected_name!r}"
+        ),
+    )
+
+    description = data.get(
+        "description"
+    )
+
+    require(
+        isinstance(
+            description,
+            str,
+        )
+        and 0
+        < len(
+            description.strip()
+        )
+        <= 1024,
+        (
+            "Invalid Agent Skill "
+            "description: "
+            f"{path}"
+        ),
+    )
+
+    license_value = data.get(
+        "license"
+    )
+
+    if license_value is not None:
+        require(
+            isinstance(
+                license_value,
+                str,
+            )
+            and license_value.strip(),
+            (
+                "Invalid Agent Skill "
+                f"license: {path}"
+            ),
+        )
+
+    compatibility = data.get(
+        "compatibility"
+    )
+
+    if compatibility is not None:
+        require(
+            isinstance(
+                compatibility,
+                str,
+            )
+            and 0
+            < len(
+                compatibility.strip()
+            )
+            <= 500,
+            (
+                "Invalid Agent Skill "
+                f"compatibility: {path}"
+            ),
+        )
+
+    metadata = data.get(
+        "metadata"
+    )
+
+    if metadata is not None:
+        require(
+            isinstance(
+                metadata,
+                dict,
+            )
+            and all(
+                isinstance(key, str)
+                and isinstance(value, str)
+                for key, value
+                in metadata.items()
+            ),
+            (
+                "Invalid Agent Skill "
+                f"metadata: {path}"
+            ),
+        )
+
+    allowed_tools = data.get(
+        "allowed-tools"
+    )
+
+    if allowed_tools is not None:
+        require(
+            isinstance(
+                allowed_tools,
+                str,
+            )
+            and allowed_tools.strip(),
+            (
+                "Invalid Agent Skill "
+                f"allowed-tools: {path}"
+            ),
+        )
+
+    require(
+        bool(
+            text[
+                match.end():
+            ].strip()
+        ),
+        (
+            "Empty Agent Skill body: "
+            f"{path}"
+        ),
+    )
+
+    return data
+
+
+def validate_no_legacy_workflows(
+    root,
+):
+    workflows = (
+        root
+        / ".agents/workflows"
+    )
+
+    if not workflows.exists():
+        return
+
+    require(
+        workflows.is_dir(),
+        (
+            "Legacy Antigravity workflows "
+            "path must be a directory"
+        ),
+    )
+
+    markdown = sorted(
+        path.relative_to(
+            root
+        ).as_posix()
+        for path in workflows.rglob(
+            "*.md"
+        )
+        if path.is_file()
+    )
+
+    require(
+        not markdown,
+        (
+            "Legacy Antigravity workflow "
+            "Markdown must be removed after "
+            "Skill migration: "
+            f"{markdown}"
         ),
     )
 
@@ -703,7 +904,7 @@ def validate(root=ROOT):
         )
         == EXPECTED_PROVIDERS,
         (
-            "Runtime Adapter v1 must register "
+            "Runtime Adapter v1.1 must register "
             "exactly Codex and Antigravity"
         ),
     )
@@ -862,7 +1063,7 @@ def validate(root=ROOT):
         antigravity.get(
             "native_mode"
         )
-        == "workspace-rules-skills-workflows",
+        == "workspace-rules-skills",
         (
             "Invalid Antigravity "
             "native mode"
@@ -884,7 +1085,6 @@ def validate(root=ROOT):
         == {
             "rules",
             "skills",
-            "workflows",
         },
         (
             "Invalid Antigravity "
@@ -950,6 +1150,10 @@ def validate(root=ROOT):
         ),
     )
 
+    validate_no_legacy_workflows(
+        root
+    )
+
     adapter_texts = (
         validate_provider_files(
             root,
@@ -960,7 +1164,7 @@ def validate(root=ROOT):
 
     expected_files = {
         ".agents/rules/engineering-control-plane.md",
-        ".agents/workflows/mgbos.change.md",
+        MGBOS_CHANGE_SKILL_PATH,
     }
 
     require(
@@ -969,36 +1173,57 @@ def validate(root=ROOT):
         )
         == expected_files,
         (
-            "Antigravity v1 must contain "
+            "Antigravity v1.1 must contain "
             "exactly the approved rule and "
-            "MGBOS workflow adapter"
+            "MGBOS change Skill adapter"
         ),
     )
 
-    workflow_path = (
-        ".agents/workflows/"
-        "mgbos.change.md"
+    skill_metadata = (
+        parse_skill_frontmatter(
+            MGBOS_CHANGE_SKILL_PATH,
+            adapter_texts[
+                MGBOS_CHANGE_SKILL_PATH
+            ],
+        )
     )
 
-    parse_workflow_frontmatter(
-        adapter_texts[
-            workflow_path
+    require(
+        skill_metadata[
+            "name"
         ]
+        == "mgbos-change",
+        (
+            "Antigravity MGBOS change "
+            "Skill must be named "
+            "mgbos-change"
+        ),
+    )
+
+    require(
+        "workflow_commands"
+        not in antigravity,
+        (
+            "Legacy Antigravity "
+            "workflow_commands must "
+            "be removed after Skill "
+            "migration"
+        ),
     )
 
     commands = antigravity.get(
-        "workflow_commands"
+        "skill_commands"
     )
 
     require(
         commands
         == {
-            "/mgbos.change":
-                workflow_path
+            "/mgbos-change":
+                MGBOS_CHANGE_SKILL_PATH
         },
         (
             "Invalid Antigravity "
-            "workflow command mapping"
+            "Skill command mapping"
         ),
     )
 
@@ -1217,7 +1442,7 @@ def validate(root=ROOT):
         declared_required
         == EXPECTED_RUNTIME_CASES,
         (
-            "Runtime Adapter v1 requires "
+            "Runtime Adapter v1.1 requires "
             "the six canonical runtime cases"
         ),
     )
