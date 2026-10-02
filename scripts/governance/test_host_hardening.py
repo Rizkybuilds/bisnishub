@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -430,6 +431,61 @@ class HostHardeningTests(
                 "production_execution"
             ]
         )
+
+
+    def test_content_change_with_same_status_shape_changes_fingerprint(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+            subprocess.run(
+                ["git", "-C", str(repo), "init"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repo), "config", "user.email", "test@example.com"],
+                check=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repo), "config", "user.name", "Test User"],
+                check=True,
+            )
+            tracked_file = repo / "tracked.txt"
+            tracked_file.write_text("initial content\n", encoding="utf-8")
+            subprocess.run(
+                ["git", "-C", str(repo), "add", "tracked.txt"],
+                check=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repo), "commit", "-m", "init"],
+                check=True,
+            )
+
+            tracked_file.write_text("content B\n", encoding="utf-8")
+            state_b = launcher.workspace_state(repo)
+            status_b = subprocess.run(
+                ["git", "-C", str(repo), "status", "--porcelain=v1"],
+                stdout=subprocess.PIPE,
+                text=True,
+                check=True,
+            ).stdout.strip()
+            fp_b = state_b["dirty_fingerprint"]
+
+            tracked_file.write_text("content C\n", encoding="utf-8")
+            state_c = launcher.workspace_state(repo)
+            status_c = subprocess.run(
+                ["git", "-C", str(repo), "status", "--porcelain=v1"],
+                stdout=subprocess.PIPE,
+                text=True,
+                check=True,
+            ).stdout.strip()
+            fp_c = state_c["dirty_fingerprint"]
+
+            self.assertEqual(status_b, status_c)
+            self.assertEqual(status_b, "M tracked.txt")
+            self.assertNotEqual(fp_b, fp_c)
 
 
 if __name__ == "__main__":

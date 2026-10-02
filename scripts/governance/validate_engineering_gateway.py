@@ -47,6 +47,11 @@ RECEIPT_SCHEMA = (
     "execution-receipt.schema.json"
 )
 
+GATEWAY_WORKSPACE = (
+    "tools/engineering_gateway/"
+    "workspace.py"
+)
+
 GATEWAY_CORE = (
     "tools/engineering_gateway/"
     "gateway.py"
@@ -792,6 +797,93 @@ def validate(
             schema
         )
 
+    receipt_schema = load_json(
+        root,
+        RECEIPT_SCHEMA,
+    )
+
+    require(
+        receipt_schema.get("properties", {})
+        .get("schema_version", {})
+        .get("const")
+        == 2,
+        (
+            "Execution receipt schema must declare "
+            "schema_version const == 2"
+        ),
+    )
+
+    receipt_required = set(
+        receipt_schema.get(
+            "required",
+            [],
+        )
+    )
+
+    expected_receipt_fields = {
+        "session_workspace",
+        "preflight_workspace",
+        "dispatch_workspace",
+        "post_workspace",
+        "workspace_guard_status",
+        "workspace_guard_reason",
+        "workspace_guard_detail",
+    }
+
+    require(
+        expected_receipt_fields
+        <= receipt_required,
+        (
+            "Execution receipt schema missing required fields: "
+            f"{sorted(expected_receipt_fields - receipt_required)}"
+        ),
+    )
+
+    ws_snapshot = (
+        receipt_schema.get("$defs", {})
+        .get("workspaceSnapshot", {})
+    )
+
+    require(
+        isinstance(
+            ws_snapshot,
+            dict,
+        ),
+        (
+            "Execution receipt schema missing "
+            "$defs.workspaceSnapshot"
+        ),
+    )
+
+    ws_snapshot_required = set(
+        ws_snapshot.get(
+            "required",
+            [],
+        )
+    )
+
+    expected_ws_fields = {
+        "path",
+        "branch",
+        "head",
+        "dirty",
+        "dirty_fingerprint",
+    }
+
+    require(
+        expected_ws_fields
+        <= ws_snapshot_required,
+        (
+            "workspaceSnapshot definition missing required fields: "
+            f"{sorted(expected_ws_fields - ws_snapshot_required)}"
+        ),
+    )
+
+    local_file(
+        root,
+        GATEWAY_WORKSPACE,
+    )
+
     local_file(
         root,
         GATEWAY_CORE,
@@ -800,6 +892,54 @@ def validate(
     local_file(
         root,
         GATEWAY_SERVER,
+    )
+
+    gateway_text = (
+        local_file(
+            root,
+            GATEWAY_CORE,
+        )
+        .read_text(
+            encoding="utf-8"
+        )
+    )
+
+    require(
+        "workspace_state"
+        in gateway_text,
+        (
+            "Gateway core must use shared "
+            "workspace helper workspace_state"
+        ),
+    )
+
+    require(
+        "WORKSPACE_CHANGED_AFTER_PREFLIGHT"
+        in gateway_text,
+        (
+            "Gateway core must enforce "
+            "preflight/dispatch workspace comparison"
+        ),
+    )
+
+    require(
+        "NON_DESTRUCTIVE_PROFILE_CHANGED_WORKSPACE"
+        in gateway_text,
+        (
+            "Gateway core must enforce post-execution "
+            "non-destructive workspace guard"
+        ),
+    )
+
+    require(
+        "shell=False"
+        in gateway_text
+        and "shell is False"
+        in gateway_text,
+        (
+            "Gateway core must enforce "
+            "shell=False in execution dispatch"
+        ),
     )
 
     requirements = (

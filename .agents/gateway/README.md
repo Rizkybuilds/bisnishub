@@ -305,6 +305,48 @@ operational acceptance
 business success
 ```
 
+## Revision Binding and Workspace Fingerprint V2
+
+Execution authority is tightly bound to exact repository revision state:
+
+1. **Content-Sensitive Fingerprint V2 (`bisnishub-workspace-fingerprint-v2`)**:
+   Hashing extends beyond git status text. The digest deterministically combines:
+   - machine-stable zero-delimited git status (`--porcelain=v1 -z --untracked-files=all`);
+   - tracked binary git diff relative to HEAD (`git diff --binary --full-index --no-ext-diff --no-textconv HEAD --`);
+   - untracked file entries (`git ls-files --others --exclude-standard -z`) with incremental content hashing for regular files and link target hashing for symbolic links (without following external targets).
+
+2. **Session Revision Immutability**:
+   A governed session binds immutably to its workspace path, branch, and HEAD. If branch or HEAD changes, preflight fails closed.
+   However, worktree dirty state and dirty fingerprints may legitimately evolve during source editing within the same session.
+
+3. **Actual Preflight Binding**:
+   Action fingerprints and preflight evaluations evaluate actual current workspace state at preflight time, rather than stale session-start dirty snapshots.
+
+4. **Preflight-to-Dispatch TOCTOU Guard**:
+   Immediately before dispatching a profile process, the gateway captures dispatch workspace state and compares path, branch, HEAD, dirty flag, and dirty fingerprint against the preflight snapshot. If any value changed:
+   - `execution_status = NOT_EXECUTED`
+   - `verification_status = BLOCKED`
+   - `workspace_guard_status = BLOCKED`
+   - `workspace_guard_reason = WORKSPACE_CHANGED_AFTER_PREFLIGHT`
+   The profile process is not executed.
+
+5. **Post-Execution Non-Destructive Guard**:
+   After process completion, post-execution workspace is captured. For `non_destructive: true` profiles, any change between dispatch and post workspace results in:
+   - `workspace_guard_status = VIOLATED`
+   - `workspace_guard_reason = NON_DESTRUCTIVE_PROFILE_CHANGED_WORKSPACE`
+   - `verification_status = FAIL` (overriding exit code 0).
+
+6. **Execution Receipt V2**:
+   Receipts record complete lifecycle workspace evidence across `session_workspace`, `preflight_workspace`, `dispatch_workspace`, and `post_workspace`, alongside `workspace_guard_status`, `workspace_guard_reason`, and `workspace_guard_detail`.
+
+7. **Workstation Trust Boundary**:
+   These guards mitigate race conditions and stale evidence on the development host, but do not make the workstation cryptographically sealed or race-free. The development workstation is not a sealed privileged runner:
+
+   ```text
+   development workstation ≠ sealed privileged runner
+   ```
+
+
 ## Work Package Relevance
 
 Engineer execution of local checks requires trusted Work Package context.

@@ -26,6 +26,11 @@ SESSION_SCHEMA = (
     "session.schema.json"
 )
 
+WORKSPACE = (
+    "tools/engineering_gateway/"
+    "workspace.py"
+)
+
 LAUNCHER = (
     "tools/engineering_gateway/"
     "launch.py"
@@ -507,6 +512,26 @@ def validate(
         ),
     )
 
+    workspace_text = (
+        local_file(
+            root,
+            WORKSPACE,
+        )
+        .read_text(
+            encoding="utf-8"
+        )
+    )
+
+    require(
+        "bisnishub-workspace-fingerprint-v2"
+        in workspace_text,
+        (
+            "Workspace helper must declare "
+            "versioned fingerprint algorithm "
+            "bisnishub-workspace-fingerprint-v2"
+        ),
+    )
+
     launcher_text = (
         local_file(
             root,
@@ -525,6 +550,34 @@ def validate(
         .read_text(
             encoding="utf-8"
         )
+    )
+
+    require(
+        "workspace_state" in launcher_text
+        and (
+            "tools.engineering_gateway.workspace"
+            in launcher_text
+            or "from workspace import"
+            in launcher_text
+        ),
+        (
+            "Launcher must use shared "
+            "workspace helper"
+        ),
+    )
+
+    require(
+        "workspace_state" in gateway_text
+        and (
+            "tools.engineering_gateway.workspace"
+            in gateway_text
+            or "from workspace import"
+            in gateway_text
+        ),
+        (
+            "Gateway must use shared "
+            "workspace helper"
+        ),
     )
 
     for marker in (
