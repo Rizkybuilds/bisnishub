@@ -225,13 +225,13 @@ All six dedicated specifications are present in the repository snapshot reviewed
 
 # 8. Primary Architecture Sources
 
-| Semantic question | Canonical source | Status |
-|---|---|---|
-| What entities and relationships exist? | `canonical-data-model.md` | ACTIVE |
-| What do lifecycle states mean? | `business-state-machines.md` | ACTIVE |
-| What must always remain true? | `business-invariants.md` | ACTIVE |
-| How may authoritative state change? | `command-event-model.md` | ACTIVE |
-| Who may attempt an operation? | `permission-authorization-model.md` | ACTIVE |
+| Semantic question                            | Canonical source                     | Status |
+| -------------------------------------------- | ------------------------------------ | ------ |
+| What entities and relationships exist?       | `canonical-data-model.md`            | ACTIVE |
+| What do lifecycle states mean?               | `business-state-machines.md`         | ACTIVE |
+| What must always remain true?                | `business-invariants.md`             | ACTIVE |
+| How may authoritative state change?          | `command-event-model.md`             | ACTIVE |
+| Who may attempt an operation?                | `permission-authorization-model.md`  | ACTIVE |
 | Which system/domain should own a capability? | `domain-map-capability-ownership.md` | ACTIVE |
 
 These sources are complementary.
@@ -1836,19 +1836,19 @@ Frontend visibility alone is not security.
 
 # 88. Document Ownership Map
 
-| Question | Read |
-|---|---|
-| What entities exist? | `canonical-data-model.md` |
-| What does this lifecycle state mean? | `business-state-machines.md` |
-| What must never become invalid? | `business-invariants.md` |
-| How may state change? | `command-event-model.md` |
-| Who may request the change? | `permission-authorization-model.md` |
-| Should this capability belong to MGBOS? | `domain-map-capability-ownership.md` |
-| Why was a technical pattern selected? | relevant ADR |
-| Is it actually implemented? | current source/schema/tests/evidence |
-| Is it currently deployed? | deployment/runtime evidence |
-| What should the UI do? | product/implementation specifications |
-| What should TeeStock commercially do? | `bisnis/teestock/` |
+| Question                                | Read                                  |
+| --------------------------------------- | ------------------------------------- |
+| What entities exist?                    | `canonical-data-model.md`             |
+| What does this lifecycle state mean?    | `business-state-machines.md`          |
+| What must never become invalid?         | `business-invariants.md`              |
+| How may state change?                   | `command-event-model.md`              |
+| Who may request the change?             | `permission-authorization-model.md`   |
+| Should this capability belong to MGBOS? | `domain-map-capability-ownership.md`  |
+| Why was a technical pattern selected?   | relevant ADR                          |
+| Is it actually implemented?             | current source/schema/tests/evidence  |
+| Is it currently deployed?               | deployment/runtime evidence           |
+| What should the UI do?                  | product/implementation specifications |
+| What should TeeStock commercially do?   | `bisnis/teestock/`                    |
 
 ---
 
