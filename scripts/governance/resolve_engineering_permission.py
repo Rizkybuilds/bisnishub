@@ -1621,6 +1621,22 @@ def resolve(
         else []
     )
 
+    approval_mode = capability.get(
+        "approval_mode"
+    )
+
+    if approval_mode in {
+        "EXPLICIT_ACTION",
+        "RELEASE_GATES_AND_EXPLICIT_ACTION",
+    }:
+        if (
+            "explicit-action-authorization"
+            not in required_conditions
+        ):
+            required_conditions.append(
+                "explicit-action-authorization"
+            )
+
     decision = (
         base_decision(
             request,

@@ -211,6 +211,8 @@ Actual merge still requires applicable release gates and explicit action authori
 
 The capability registry is machine enforced, role permission is machine evaluated, and autonomy grants are machine evaluated.
 
+Capability `approval_mode` is independently enforced by preflight: for capabilities with `EXPLICIT_ACTION` or `RELEASE_GATES_AND_EXPLICIT_ACTION`, the resolver requires explicit action authorization (`explicit-action-authorization`) even if a role-grant entry accidentally omits the approval condition. Role conditions may add additional evidence gates but may not weaken capability approval mode.
+
 However, self-asserted approval JSON is NOT trusted authorization evidence. An approval claim object documents structure and binds to an action fingerprint, but does not independently prove authentic authorization.
 
 Approval-required execution remains fail-closed (`NEED_APPROVAL` / `APPROVAL_EVIDENCE_UNVERIFIED`) until trusted evidence verification exists. No self-asserted approval can produce an `ALLOW` decision.

@@ -751,6 +751,111 @@ class EngineeringPreflightTests(
             result["tool_execution_allowed"]
         )
 
+    def test_capability_approval_mode_enforced_despite_role_grant_omission(
+        self,
+    ) -> None:
+        request = {
+            "schema_version": 1,
+            "role": "engineer",
+            "capability": (
+                "engineering.database.local.reset_disposable"
+            ),
+            "environment": "local-disposable",
+            "declared_risk": "R2",
+            "evaluated_at": (
+                "2026-10-01T00:00:00Z"
+            ),
+            "action": {
+                "target": (
+                    "systems/mgbos/supabase"
+                ),
+                "resource_scope": [
+                    "systems/mgbos/supabase"
+                ],
+                "material_parameters": [
+                    {
+                        "name": "work_package_id",
+                        "value": "WP-fixture",
+                    }
+                ],
+            },
+            "conditions": [
+                {
+                    "id": "reproducibility-scope",
+                    "state": "SATISFIED",
+                    "evidence_ref": "WP-fixture",
+                },
+                {
+                    "id": (
+                        "verified-local-disposable-target"
+                    ),
+                    "state": "SATISFIED",
+                    "evidence_ref": "WP-fixture",
+                },
+                {
+                    "id": (
+                        "systems-mgbos-working-directory"
+                    ),
+                    "state": "SATISFIED",
+                    "evidence_ref": "WP-fixture",
+                },
+                {
+                    "id": (
+                        "shared-local-stack-collision-check"
+                    ),
+                    "state": "SATISFIED",
+                    "evidence_ref": "WP-fixture",
+                },
+            ],
+            "approval": None,
+            "host": {
+                "tool_available": True,
+                "permission_state": "ALLOW",
+            },
+        }
+
+        attestation = source_attestation()
+
+        synthetic_grant = {
+            "id": "fixture-db-grant",
+            "level": "L2",
+            "risk_ceiling": "R2",
+            "basis": "PROMOTION_DECISION",
+        }
+
+        with patch.object(
+            resolver,
+            "resolve_autonomy_grant",
+            return_value=(
+                synthetic_grant,
+                "ALLOW",
+                "AUTONOMY_GRANT_ACTIVE",
+            ),
+        ):
+            result = resolver.resolve(
+                request,
+                attestation,
+            )
+
+        self.assertEqual(
+            result["decision"],
+            "NEED_APPROVAL",
+        )
+        self.assertEqual(
+            result["reason_code"],
+            "APPROVAL_REQUIRED",
+        )
+        self.assertTrue(
+            result["approval_required"]
+        )
+        self.assertFalse(
+            result["tool_execution_allowed"]
+        )
+        self.assertIn(
+            "explicit-action-authorization",
+            result["required_conditions"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

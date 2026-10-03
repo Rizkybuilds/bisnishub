@@ -20,6 +20,7 @@ Dokumen ini membedakan secara tegas antara **OBSERVED CURRENT STATE** (fakta Git
 ### 1. OBSERVED CURRENT STATE (Terverifikasi per 2026-10-02)
 
 Berdasarkan inspeksi endpoint GitHub API pada baseline:
+
 - **`branch: main`**: `protected = true`, `protection.enabled = true`
 - **`required_status_checks.enforcement_level`**: `everyone`
 - **Required status checks (6 konteks wajib)**:
@@ -33,6 +34,7 @@ Berdasarkan inspeksi endpoint GitHub API pada baseline:
 ### 2. NOT VERIFIED (Belum Terverifikasi / Status Pembuktian Terbatas)
 
 Pengaturan berikut **TIDAK** diklaim aktif atau terbukti secara penuh karena keterbatasan akses endpoint administrasi (HTTP 403) dan bukti operasional yang diobservasi:
+
 - **Required PR review count / Review approval enforcement**: `NOT_VERIFIED`. Bukti faktual: PR #23 dan PR #24 berhasil digabungkan (_merged_) dengan 0 review GitHub. Dalam realitas operasional solo-founder saat ini, pembuat PR tidak dapat memberikan review persetujuan GitHub yang valid untuk dirinya sendiri. Verifikasi manusia saat ini tetap berlabel `SELF_REVIEW`, bukan `INDEPENDENT_REVIEW`.
 - **Direct push rejection**: `NOT_VERIFIED` secara eksperimental. Tata kelola repositori melarang keras direct push ke `main`, namun penolakan server-side belum diuji secara destruktif.
 - **Admin / bypass policy**: `NOT_VERIFIED`.
@@ -43,6 +45,7 @@ Pengaturan berikut **TIDAK** diklaim aktif atau terbukti secara penuh karena ket
 ### 3. DESIRED TARGET STATE (Target Tata Kelola Bertahap)
 
 Kondisi target tata kelola jangka panjang ketika organisasi bertumbuh dan memiliki reviewer independen kedua:
+
 - Enforce status checks untuk semua kontributor (`everyone`).
 - Seluruh 6 konteks CI wajib hijau sebelum merge.
 - Required review count diaktifkan ketika reviewer kedua yang memenuhi syarat telah tersedia.
