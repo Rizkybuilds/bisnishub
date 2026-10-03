@@ -45,6 +45,8 @@ ALLOWED_ACTION_INPUTS = {
 
 FULL_SHA_REGEX = re.compile(r"^[0-9a-f]{40}$")
 ACTION_REPO_REGEX = re.compile(r"^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$")
+GITHUB_EXPRESSION_REGEX = re.compile(r"\$\{\{.*?\}\}", re.DOTALL)
+SECRET_CONTEXT_REGEX = re.compile(r"\bsecrets\b", re.IGNORECASE)
 
 
 class UniqueLoader(yaml.SafeLoader):
@@ -89,12 +91,13 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
     for workflow_path in workflow_files:
         rel_path = workflow_path.relative_to(root).as_posix()
         raw_content = workflow_path.read_text(encoding="utf-8")
-        if "secrets." in raw_content:
-            raise ValueError(
-                f"Workflow {rel_path} contains forbidden secret context "
-                "reference ('secrets.'); secret context is not permitted "
-                "by the CI supply-chain baseline"
-            )
+        for expression in GITHUB_EXPRESSION_REGEX.findall(raw_content):
+            if SECRET_CONTEXT_REGEX.search(expression):
+                raise ValueError(
+                    f"Workflow {rel_path} contains forbidden secret context "
+                    f"reference in expression '{expression.strip()}'; "
+                    "secret context is not permitted by the CI supply-chain baseline"
+                )
         data = yaml.load(raw_content, Loader=UniqueLoader)
 
         if not isinstance(data, dict):
@@ -169,6 +172,11 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
                         )
 
                     if "uses" in step:
+                        if "env" in step:
+                            raise ValueError(
+                                f"Action step in job '{job_id}' of {rel_path} defines 'env'; "
+                                "Action step environment overrides are not permitted by the current CI supply-chain baseline"
+                            )
                         uses = step["uses"]
                         if not isinstance(uses, str):
                             raise ValueError(

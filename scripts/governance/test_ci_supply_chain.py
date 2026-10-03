@@ -380,6 +380,90 @@ class TestCISupplyChain(unittest.TestCase):
         ):
             supply_chain.validate(self.temp_root)
 
+    def test_secret_index_syntax_rejected(self) -> None:
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        target_str = "    steps:\n"
+        replacement_str = (
+            "    steps:\n"
+            "      - run: echo 'test'\n"
+            "        env:\n"
+            "          TOKEN: ${{ secrets['PAT'] }}\n"
+        )
+        if target_str not in content:
+            target_str = "    steps:\r\n"
+            replacement_str = (
+                "    steps:\r\n"
+                "      - run: echo 'test'\r\n"
+                "        env:\r\n"
+                "          TOKEN: ${{ secrets['PAT'] }}\r\n"
+            )
+        modified = content.replace(target_str, replacement_str, 1)
+        self.assertNotEqual(content, modified)
+        target.write_text(modified, encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "secret context",
+        ):
+            supply_chain.validate(self.temp_root)
+
+    def test_bare_secrets_object_rejected(self) -> None:
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        target_str = "    steps:\n"
+        replacement_str = (
+            "    steps:\n"
+            "      - run: echo 'test'\n"
+            "        env:\n"
+            "          ALL_SECRETS: ${{ toJSON(secrets) }}\n"
+        )
+        if target_str not in content:
+            target_str = "    steps:\r\n"
+            replacement_str = (
+                "    steps:\r\n"
+                "      - run: echo 'test'\r\n"
+                "        env:\r\n"
+                "          ALL_SECRETS: ${{ toJSON(secrets) }}\r\n"
+            )
+        modified = content.replace(target_str, replacement_str, 1)
+        self.assertNotEqual(content, modified)
+        target.write_text(modified, encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "secret context",
+        ):
+            supply_chain.validate(self.temp_root)
+
+    def test_action_step_env_rejected(self) -> None:
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        target_str = "        with:\n          persist-credentials: false\n"
+        replacement_str = (
+            "        env:\n"
+            "          HTTPS_PROXY: http://proxy.local:8080\n"
+            "        with:\n"
+            "          persist-credentials: false\n"
+        )
+        if target_str not in content:
+            target_str = "        with:\r\n          persist-credentials: false\r\n"
+            replacement_str = (
+                "        env:\r\n"
+                "          HTTPS_PROXY: http://proxy.local:8080\r\n"
+                "        with:\r\n"
+                "          persist-credentials: false\r\n"
+            )
+        modified = content.replace(target_str, replacement_str, 1)
+        self.assertNotEqual(content, modified)
+        target.write_text(modified, encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Action step environment",
+        ):
+            supply_chain.validate(self.temp_root)
+
 
 if __name__ == "__main__":
     unittest.main()
