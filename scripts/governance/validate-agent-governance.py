@@ -3022,6 +3022,10 @@ def validate(root=ROOT):
             "python scripts/governance/"
             "validate_runtime_adapters.py"
         ),
+        (
+            "python scripts/governance/"
+            "validate_ci_supply_chain.py"
+        ),
     }
 
     missing_governance_commands = (
