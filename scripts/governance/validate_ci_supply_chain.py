@@ -20,6 +20,29 @@ ALLOWED_EXTERNAL_ACTIONS = {
     "pnpm/action-setup",
 }
 
+ALLOWED_ACTION_INPUTS = {
+    "actions/checkout": {
+        "persist-credentials",
+        "fetch-depth",
+    },
+    "actions/setup-node": {
+        "node-version",
+        "node-version-file",
+        "cache",
+        "cache-dependency-path",
+    },
+    "actions/setup-python": {
+        "python-version",
+    },
+    "actions/upload-artifact": {
+        "name",
+        "path",
+    },
+    "pnpm/action-setup": {
+        "version",
+    },
+}
+
 FULL_SHA_REGEX = re.compile(r"^[0-9a-f]{40}$")
 ACTION_REPO_REGEX = re.compile(r"^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$")
 
@@ -65,8 +88,14 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
 
     for workflow_path in workflow_files:
         rel_path = workflow_path.relative_to(root).as_posix()
-        with workflow_path.open("r", encoding="utf-8") as f:
-            data = yaml.load(f, Loader=UniqueLoader)
+        raw_content = workflow_path.read_text(encoding="utf-8")
+        if "secrets." in raw_content:
+            raise ValueError(
+                f"Workflow {rel_path} contains forbidden secret context "
+                "reference ('secrets.'); secret context is not permitted "
+                "by the CI supply-chain baseline"
+            )
+        data = yaml.load(raw_content, Loader=UniqueLoader)
 
         if not isinstance(data, dict):
             raise ValueError(f"Workflow {rel_path} root must be a YAML mapping")
@@ -98,6 +127,31 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
                     f"Job '{job_id}' in {rel_path} defines permissions "
                     f"({job['permissions']!r}); job-level permission override "
                     f"is not permitted"
+                )
+
+            runs_on = job.get("runs-on")
+            if runs_on != "ubuntu-24.04":
+                raise ValueError(
+                    f"Job '{job_id}' in {rel_path} must have 'runs-on: ubuntu-24.04', "
+                    f"got {runs_on!r}; unapproved runner baseline"
+                )
+
+            if "container" in job:
+                raise ValueError(
+                    f"Job '{job_id}' in {rel_path} defines 'container'; "
+                    "job container not permitted by the CI supply-chain baseline"
+                )
+
+            if "services" in job:
+                raise ValueError(
+                    f"Job '{job_id}' in {rel_path} defines 'services'; "
+                    "service container not permitted by the CI supply-chain baseline"
+                )
+
+            if "environment" in job:
+                raise ValueError(
+                    f"Job '{job_id}' in {rel_path} defines 'environment'; "
+                    "job environment not permitted by the CI supply-chain baseline"
                 )
 
             steps = job.get("steps")
@@ -169,9 +223,23 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
 
                         total_action_uses += 1
 
+                        with_block = step.get("with")
+                        if with_block is not None:
+                            if not isinstance(with_block, dict):
+                                raise ValueError(
+                                    f"Step {step_idx} in job '{job_id}' of {rel_path} "
+                                    "'with' must be a mapping"
+                                )
+                            allowed_inputs = ALLOWED_ACTION_INPUTS.get(repo, set())
+                            for input_key in with_block.keys():
+                                if input_key not in allowed_inputs:
+                                    raise ValueError(
+                                        f"Unapproved action input '{input_key}' "
+                                        f"for '{repo}' in job '{job_id}' of {rel_path}"
+                                    )
+
                         if repo == "actions/checkout":
                             total_checkout_steps += 1
-                            with_block = step.get("with")
                             if not isinstance(with_block, dict):
                                 raise ValueError(
                                     f"Checkout step in job '{job_id}' of "
@@ -187,6 +255,13 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
                                     f"{rel_path} must configure checkout "
                                     f"credential persistence to false "
                                     f"('persist-credentials: false', got {persist!r})"
+                                )
+
+                            if "fetch-depth" in with_block and with_block["fetch-depth"] != 0:
+                                raise ValueError(
+                                    f"Checkout step in job '{job_id}' of "
+                                    f"{rel_path} must specify 'fetch-depth: 0', "
+                                    f"got {with_block['fetch-depth']!r}"
                                 )
 
     return {

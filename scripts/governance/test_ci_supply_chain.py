@@ -201,6 +201,185 @@ class TestCISupplyChain(unittest.TestCase):
         ):
             supply_chain.validate(self.temp_root)
 
+    def test_checkout_unauthorized_inputs_rejected(self) -> None:
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        unauthorized_inputs = (
+            "repository",
+            "ref",
+            "token",
+            "ssh-key",
+            "github-server-url",
+            "submodules",
+        )
+        for input_key in unauthorized_inputs:
+            with self.subTest(input_key=input_key):
+                modified = content.replace(
+                    "persist-credentials: false\n",
+                    f"persist-credentials: false\n          {input_key}: invalid_val\n",
+                    1,
+                )
+                if modified == content:
+                    modified = content.replace(
+                        "persist-credentials: false\r\n",
+                        f"persist-credentials: false\r\n          {input_key}: invalid_val\r\n",
+                        1,
+                    )
+                target.write_text(modified, encoding="utf-8")
+                with self.assertRaisesRegex(
+                    ValueError,
+                    "Unapproved action input",
+                ):
+                    supply_chain.validate(self.temp_root)
+                target.write_text(content, encoding="utf-8")
+
+    def test_setup_node_mirror_rejected(self) -> None:
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        target_str = "node-version-file: systems/mgbos/.node-version\n"
+        replacement_str = (
+            "node-version-file: systems/mgbos/.node-version\n"
+            "          mirror: https://attacker.example\n"
+        )
+        if target_str not in content:
+            target_str = "node-version-file: systems/mgbos/.node-version\r\n"
+            replacement_str = (
+                "node-version-file: systems/mgbos/.node-version\r\n"
+                "          mirror: https://attacker.example\r\n"
+            )
+        modified = content.replace(target_str, replacement_str, 1)
+        self.assertNotEqual(content, modified)
+        target.write_text(modified, encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Unapproved action input",
+        ):
+            supply_chain.validate(self.temp_root)
+
+    def test_self_hosted_runner_rejected(self) -> None:
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        modified = content.replace(
+            "runs-on: ubuntu-24.04",
+            "runs-on: self-hosted",
+            1,
+        )
+        self.assertNotEqual(content, modified)
+        target.write_text(modified, encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "runner baseline",
+        ):
+            supply_chain.validate(self.temp_root)
+
+    def test_job_container_rejected(self) -> None:
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        target_str = "  agent-governance:\n"
+        replacement_str = (
+            "  agent-governance:\n"
+            "    container:\n"
+            "      image: attacker/example:latest\n"
+        )
+        if target_str not in content:
+            target_str = "  agent-governance:\r\n"
+            replacement_str = (
+                "  agent-governance:\r\n"
+                "    container:\r\n"
+                "      image: attacker/example:latest\r\n"
+            )
+        modified = content.replace(target_str, replacement_str, 1)
+        self.assertNotEqual(content, modified)
+        target.write_text(modified, encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "job container not permitted",
+        ):
+            supply_chain.validate(self.temp_root)
+
+    def test_service_container_rejected(self) -> None:
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        target_str = "  agent-governance:\n"
+        replacement_str = (
+            "  agent-governance:\n"
+            "    services:\n"
+            "      attacker:\n"
+            "        image: attacker/example:latest\n"
+        )
+        if target_str not in content:
+            target_str = "  agent-governance:\r\n"
+            replacement_str = (
+                "  agent-governance:\r\n"
+                "    services:\r\n"
+                "      attacker:\r\n"
+                "        image: attacker/example:latest\r\n"
+            )
+        modified = content.replace(target_str, replacement_str, 1)
+        self.assertNotEqual(content, modified)
+        target.write_text(modified, encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "service container not permitted",
+        ):
+            supply_chain.validate(self.temp_root)
+
+    def test_secret_context_rejected(self) -> None:
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        target_str = "    steps:\n"
+        replacement_str = (
+            "    steps:\n"
+            "      - run: echo 'test'\n"
+            "        env:\n"
+            "          TOKEN: ${{ secrets.PAT }}\n"
+        )
+        if target_str not in content:
+            target_str = "    steps:\r\n"
+            replacement_str = (
+                "    steps:\r\n"
+                "      - run: echo 'test'\r\n"
+                "        env:\r\n"
+                "          TOKEN: ${{ secrets.PAT }}\r\n"
+            )
+        modified = content.replace(target_str, replacement_str, 1)
+        self.assertNotEqual(content, modified)
+        target.write_text(modified, encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "secret context",
+        ):
+            supply_chain.validate(self.temp_root)
+
+    def test_job_environment_rejected(self) -> None:
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        target_str = "  agent-governance:\n"
+        replacement_str = (
+            "  agent-governance:\n"
+            "    environment: production\n"
+        )
+        if target_str not in content:
+            target_str = "  agent-governance:\r\n"
+            replacement_str = (
+                "  agent-governance:\r\n"
+                "    environment: production\r\n"
+            )
+        modified = content.replace(target_str, replacement_str, 1)
+        self.assertNotEqual(content, modified)
+        target.write_text(modified, encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "job environment not permitted",
+        ):
+            supply_chain.validate(self.temp_root)
+
 
 if __name__ == "__main__":
     unittest.main()
