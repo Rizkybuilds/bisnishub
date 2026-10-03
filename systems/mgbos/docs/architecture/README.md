@@ -1,51 +1,60 @@
 ---
 canonical_id: mgbos.architecture.index
 status: ACTIVE
-version: 2.0
+version: 2.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos-architecture
 document_class: canonical-navigation-index
-effective_from: 2026-09-30
+effective_from: 2026-10-03
+
 authoritative_for:
   - mgbos architecture navigation
   - mgbos architecture source routing
   - canonical architecture reading order
   - architecture document ownership boundaries
-  - current-vs-historical architecture source classification
-last_reviewed: 2026-09-30
+  - current-versus-historical architecture source classification
+  - architecture-to-implementation routing
+
+last_reviewed: 2026-10-03
 review_cadence: monthly-during-active-development
+
 depends_on:
   - ../../../../docs/governance/documentation-constitution.md
   - ../../../../docs/governance/canonical-source-map.md
   - ../../../../docs/architecture/master-system-blueprint.md
   - ../../../../docs/architecture/system-boundaries.md
   - ../../../../docs/architecture/architectural-laws.md
+  - ../../../../docs/operating-model/solo-founder-operating-system.md
   - ../README.md
+
 supersedes:
-  - mgbos.architecture.index@1.0
+  - mgbos.architecture.index@2.0
+
 implementation_status: DOCUMENTATION_INDEX
+repository_snapshot: 26871da802706fba5bc033576fbb0a487f6c9255
 ---
 
-# MultiGraph Business OS — Architecture Index v2.0
+# MultiGraph Business OS — Architecture Index v2.1
 
 ## 1. Purpose
 
-Dokumen ini adalah entry point canonical untuk arsitektur MGBOS.
+Dokumen ini adalah canonical navigation entrypoint untuk arsitektur MGBOS.
 
-Tujuannya adalah membantu manusia maupun AI menemukan:
+Fungsinya adalah membantu manusia maupun AI menemukan:
 
-- sumber canonical untuk data model;
-- sumber canonical untuk lifecycle/state;
-- sumber canonical untuk business invariants;
-- sumber canonical untuk command/event semantics;
-- sumber canonical untuk authorization;
-- keputusan arsitektur yang relevan;
-- current implementation maturity;
-- dan sumber historis jika rationale diperlukan.
+- semantic owner untuk data model;
+- lifecycle dan state;
+- business invariants;
+- command dan event;
+- permission dan authorization;
+- domain/capability ownership;
+- architecture decisions;
+- current implementation evidence;
+- historical design rationale.
 
-Dokumen ini **bukan** tempat untuk mendefinisikan ulang seluruh arsitektur.
+Dokumen ini **tidak mendefinisikan ulang seluruh arsitektur**.
 
 Canonical rule:
 
@@ -53,38 +62,97 @@ Canonical rule:
 
 ---
 
-# 2. Architecture Reading Model
+# 2. Authority Boundary
+
+Dokumen ini authoritative untuk:
 
 ```text
-CROSS-SYSTEM GOVERNANCE
-        │
-        ▼
+WHERE MGBOS ARCHITECTURE TRUTH LIVES
+```
+
+Ia bukan authoritative owner untuk seluruh isi:
+
+```text
+entity semantics
+state transition semantics
+business invariants
+command semantics
+authorization semantics
+domain ownership details
+```
+
+Semantics tersebut dimiliki oleh dedicated canonical specifications.
+
+---
+
+# 3. Architecture Authority Chain
+
+Use:
+
+```text
+DOCUMENTATION CONSTITUTION
+        ↓
+CANONICAL SOURCE MAP
+        ↓
+CROSS-SYSTEM ARCHITECTURE
+        ↓
 MGBOS ARCHITECTURE INDEX
-        │
-        ├── Canonical Data Model
-        ├── Business State Machines
-        ├── Business Invariants
-        ├── Command & Event Model
-        ├── Permission & Authorization Model
-        └── Domain Map & Capability Ownership
-                 │
-                 ▼
-              ADRs
-                 │
-                 ▼
-      IMPLEMENTATION / TESTS
-                 │
-                 ▼
-              EVIDENCE
+        ↓
+DEDICATED MGBOS SPECIFICATION
+        ↓
+ADR
+where relevant
+        ↓
+IMPLEMENTATION
+        ↓
+TESTS / EVIDENCE
 ```
 
 ---
 
-# 3. Fundamental Architecture Principle
+# 4. Intended Truth vs Implementation Truth
+
+Canonical architecture answers:
+
+```text
+WHAT SHOULD BE TRUE?
+```
+
+Implementation and runtime evidence answer:
+
+```text
+WHAT IS CURRENTLY TRUE?
+```
+
+Therefore:
+
+```text
+CANONICAL SPECIFICATION
+≠
+IMPLEMENTATION EVIDENCE
+```
+
+If they disagree:
+
+```text
+DOCUMENTATION_DRIFT
+```
+
+or:
+
+```text
+IMPLEMENTATION_DRIFT
+```
+
+must be investigated.
+
+---
+
+# 5. Fundamental Architecture Principle
 
 MGBOS is the governed operational business system.
 
-Its core responsibility is to maintain:
+Its core responsibility is maintaining:
 
 ```text
 BUSINESS IDENTITY
@@ -98,56 +166,85 @@ BUSINESS INTEGRITY
 BUSINESS HISTORY
 ```
 
-It is not responsible for every concept in BisnisHub.
+MGBOS does not own every business concept in BisnisHub.
 
 ---
 
-# 4. MGBOS Position in BisnisHub
+# 6. MGBOS Position in BisnisHub
 
 Canonical relationship:
 
 ```text
-TEEStock / Business Layer
-defines business requirements
-        │
-        ▼
-      MGBOS
-governs operational truth
-        │
-        ▼
-     JARVIS
-reasons over that truth
-        │
-        ▼
- Automation / Providers
-execute bounded external work
+BUSINESS LAYER
+defines business need and policy
+
+        ↓
+
+MGBOS
+holds governed operational truth
+
+        ↓
+
+JARVIS
+interprets and reasons over governed truth
+
+        ↓
+
+AUTOMATION
+coordinates deterministic workflows
+
+        ↓
+
+EXTERNAL PROVIDERS / PARTNERS
+perform bounded external or physical work
 ```
 
-MGBOS must remain usable without JARVIS.
+MGBOS MUST remain usable without JARVIS.
 
 ---
 
-# 5. Primary Architecture Sources
+# 7. Current Canonical Architecture Set
 
-The following documents are the current dedicated canonical architecture specifications.
+The complete current architecture directory is:
 
-| Concept                                            | Canonical Source                     | Status |
-| -------------------------------------------------- | ------------------------------------ | ------ |
-| Entity and relationship semantics                  | `canonical-data-model.md`            | ACTIVE |
-| Business lifecycle semantics                       | `business-state-machines.md`         | ACTIVE |
-| Business integrity rules                           | `business-invariants.md`             | ACTIVE |
-| Commands, events and integration mutation boundary | `command-event-model.md`             | ACTIVE |
-| Identity, roles and authorization                  | `permission-authorization-model.md`  | ACTIVE |
-| Domain/capability ownership and expansion          | `domain-map-capability-ownership.md` | ACTIVE |
+```text
+systems/mgbos/docs/architecture/
+│
+├── README.md
+├── canonical-data-model.md
+├── business-state-machines.md
+├── business-invariants.md
+├── command-event-model.md
+├── permission-authorization-model.md
+└── domain-map-capability-ownership.md
+```
+
+All six dedicated specifications are present in the repository snapshot reviewed for v2.1.
 
 ---
 
-# 6. Canonical Data Model
+# 8. Primary Architecture Sources
+
+| Semantic question | Canonical source | Status |
+|---|---|---|
+| What entities and relationships exist? | `canonical-data-model.md` | ACTIVE |
+| What do lifecycle states mean? | `business-state-machines.md` | ACTIVE |
+| What must always remain true? | `business-invariants.md` | ACTIVE |
+| How may authoritative state change? | `command-event-model.md` | ACTIVE |
+| Who may attempt an operation? | `permission-authorization-model.md` | ACTIVE |
+| Which system/domain should own a capability? | `domain-map-capability-ownership.md` | ACTIVE |
+
+These sources are complementary.
+
+They MUST NOT compete for the same semantic responsibility.
+
+---
+
+# 9. Canonical Data Model
 
 Canonical source:
 
 ```text
-systems/mgbos/docs/architecture/
 canonical-data-model.md
 ```
 
@@ -161,85 +258,72 @@ Owns:
 
 ```text
 business entities
-
 entity identity
-
 relationships
-
 aggregate boundaries
-
 snapshot semantics
-
 monetary representation
-
-CURRENT versus future entity classification
+current-vs-future entity classification
 ```
-
-It is the primary semantic source for the MGBOS data model.
 
 ---
 
-# 7. Data Model ≠ Physical Schema Alone
+# 10. Data Model Is Not Physical Schema Alone
 
-The physical PostgreSQL schema is implementation truth.
+Canonical Data Model defines intended entity semantics.
 
-The Canonical Data Model defines intended entity semantics.
+PostgreSQL schema is implementation truth.
 
 Therefore:
 
 ```text
 CANONICAL DATA MODEL
         ↕
-DATABASE SCHEMA
+PHYSICAL DATABASE SCHEMA
 ```
 
 must remain aligned.
 
-Mismatch is architecture or implementation drift.
+A database table existing does not automatically make its semantics canonical.
+
+A canonical entity existing does not automatically prove its implementation is complete.
 
 ---
 
-# 8. Current Major MGBOS Domains
+# 11. Current Major MGBOS Domains
 
-Current canonical model contains operational capability across domains including:
+The current architecture materially covers domains including:
 
 ```text
 Organization & Identity
-
 Customer
-
 CRM / Lead
-
 Requirement
-
 Quotation
-
 Order
-
 Production
-
 Vendor
-
 Quality Control
-
 Customer Finance
-
 Analytical Finance
-
 Fulfillment
-
 Inventory
-
 Procurement
 ```
 
-Some capabilities within those domains have different implementation maturity.
+Capability maturity varies within those domains.
 
-Do not infer completeness merely from entity existence.
+Do not infer:
+
+```text
+ENTITY EXISTS
+=
+WORKFLOW COMPLETE
+```
 
 ---
 
-# 9. Business State Machines
+# 12. Business State Machines
 
 Canonical source:
 
@@ -257,25 +341,21 @@ Owns:
 
 ```text
 state vocabularies
-
 allowed transitions
-
 terminal states
-
-stored versus derived state
-
+stored state
+derived state
 cross-domain lifecycle coordination
-
-implementation maturity of transitions
+transition maturity
 ```
 
 ---
 
-# 10. Independent Lifecycle Principle
+# 13. Independent Lifecycle Principle
 
-MGBOS does not collapse all business progress into one giant Order status.
+MGBOS does not collapse business progress into one giant Order status.
 
-Examples of separate lifecycle ownership:
+Separate lifecycle ownership exists for concepts such as:
 
 ```text
 Lead
@@ -290,31 +370,30 @@ Shipment
 Procurement
 ```
 
-These domains may influence each other without becoming the same state machine.
+These lifecycles may coordinate.
+
+They MUST NOT silently become one state machine.
 
 ---
 
-# 11. Derived Business State
+# 14. Derived Business State
 
-Founder-facing views may derive concepts such as:
+Founder-facing read models may derive states such as:
 
 ```text
 WAITING_PAYMENT
-
 PRODUCTION_AT_RISK
-
 READY_TO_SHIP
-
 NEEDS_ATTENTION
 ```
 
-from multiple authoritative entities.
+Derived state is useful.
 
-Derived state MUST NOT silently become competing transactional truth.
+It MUST NOT become competing transactional truth unless deliberately promoted into canonical architecture.
 
 ---
 
-# 12. Business Invariants
+# 15. Business Invariants
 
 Canonical source:
 
@@ -328,53 +407,44 @@ Canonical ID:
 mgbos.architecture.business-invariants
 ```
 
-Owns rules that must remain valid regardless of execution surface.
-
-Examples include:
+Owns cross-execution rules including applicable:
 
 ```text
 organization isolation
-
 financial integrity
-
 historical snapshot integrity
-
 payment allocation correctness
-
 inventory non-negativity
-
 procurement ceilings
-
 shipment ceilings
-
 Cost Trilogy separation
-
 idempotency expectations
 ```
 
 ---
 
-# 13. Invariant Precedence
+# 16. Invariant Precedence
 
 No:
 
 ```text
 UI
-
-automation
-
 AI
-
+automation
+operator
 approval
-
-operator role
+provider
 ```
 
-may bypass a canonical invariant.
+may bypass a canonical MGBOS invariant.
+
+Authorization answers whether an operation may be attempted.
+
+Business invariants still determine whether the operation itself is valid.
 
 ---
 
-# 14. Command & Event Model
+# 17. Command & Event Model
 
 Canonical source:
 
@@ -392,58 +462,49 @@ Owns:
 
 ```text
 query-command separation
-
 command semantics
-
 command identity
-
 idempotency
-
-business event semantics
-
+business-event semantics
 event contracts
-
-audit versus event distinction
-
-transactional outbox direction
-
-n8n/JARVIS mutation boundary
+audit-vs-event distinction
+transactional-outbox direction
+JARVIS / n8n mutation boundary
 ```
 
 ---
 
-# 15. Commands Request Change
+# 18. Command Semantics
 
 Canonical:
 
 ```text
 COMMAND
-→ request to change authoritative business state
+=
+REQUEST TO CHANGE AUTHORITATIVE BUSINESS STATE
 ```
 
-Examples conceptually:
+Conceptual examples:
 
 ```text
 CreateQuote
-
 RecordPayment
-
 AssignProductionJob
-
 CreateShipment
 ```
 
-Mutations should use governed semantic operations rather than arbitrary direct state editing.
+Consequential mutation SHOULD use governed semantic operations rather than arbitrary state editing.
 
 ---
 
-# 16. Events Report Facts
+# 19. Event Semantics
 
 Canonical:
 
 ```text
 EVENT
-→ statement that a meaningful fact occurred
+=
+STATEMENT THAT A MEANINGFUL FACT OCCURRED
 ```
 
 Example:
@@ -452,46 +513,39 @@ Example:
 mgbos.payment.recorded
 ```
 
-An event is historical evidence of an occurrence.
+An event is historical evidence.
 
-It is not necessarily current state.
-
----
-
-# 17. Current Event Runtime Maturity
-
-Important current fact:
-
-```text
-FULL BUSINESS EVENT RUNTIME
-=
-NOT YET VERIFIED / IMPLEMENTED
-```
-
-and:
-
-```text
-TRANSACTIONAL OUTBOX PRODUCTION SLICE
-=
-NOT YET VERIFIED
-```
-
-unless newer implementation evidence explicitly proves otherwise.
-
-Therefore this Architecture Index MUST NOT claim:
-
-```text
-"every state change currently writes
-a production outbox event"
-```
-
-as current reality.
+It is not automatically the current business state.
 
 ---
 
-# 18. Transactional Outbox Is a Canonical Pattern
+# 20. Event Runtime Maturity
 
-Accepted architectural direction:
+Architectural event semantics exist.
+
+However architectural specification alone MUST NOT be interpreted as proof that:
+
+```text
+every business mutation
+currently emits a complete production event
+```
+
+or:
+
+```text
+transactional outbox
+is fully operational everywhere
+```
+
+Current implementation maturity must be verified through implementation/evidence sources.
+
+---
+
+# 21. Transactional Outbox
+
+Transactional Outbox is an accepted architecture pattern.
+
+Conceptually:
 
 ```text
 BUSINESS MUTATION
@@ -501,15 +555,13 @@ OUTBOX RECORD
 ONE ATOMIC TRANSACTION
 ```
 
-when external event consumers justify the pattern.
+when external event delivery justifies it.
 
-This is an architectural rule/direction.
-
-It is not a blanket claim about current implementation maturity.
+An accepted ADR or architecture pattern is not proof that every command currently implements it.
 
 ---
 
-# 19. Permission & Authorization
+# 22. Permission & Authorization
 
 Canonical source:
 
@@ -527,71 +579,97 @@ Owns:
 
 ```text
 authentication relationship
-
 organization membership
-
 roles
-
 capability direction
-
 command authorization
-
 tenant isolation
-
 approval boundary
-
 service-principal direction
-
-JARVIS/automation authority
+JARVIS / automation business authority
 ```
 
 ---
 
-# 20. Current Human Roles
+# 23. Current Human Role Model
 
 Current role model includes:
 
 ```text
 OWNER
-
 ADMIN
-
 SALES
-
 OPERATIONS
-
 FINANCE
-
 QC
 ```
 
-Current implementation remains largely role-driven.
+Current implementation remains materially role-driven.
 
-Longer-term capability-based authorization is architectural direction, not a reason to prematurely replace the working model.
+Capability-based authorization is an architectural evolution path.
+
+It MUST NOT be documented as fully implemented without evidence.
 
 ---
 
-# 21. Authorization ≠ Business Validation
+# 24. Authorization Is Not Business Validation
 
-Canonical flow:
+Canonical logical flow:
 
 ```text
 WHO IS THE ACTOR?
         ↓
 MAY THEY ATTEMPT THIS?
         ↓
-IS THE CURRENT BUSINESS STATE VALID?
+IS CURRENT BUSINESS STATE VALID?
         ↓
-DO INVARIANTS ALLOW IT?
+DO BUSINESS INVARIANTS ALLOW IT?
         ↓
 EXECUTE
 ```
 
-Permission cannot make an invalid business operation valid.
+Permission cannot make an invalid business action valid.
 
 ---
 
-# 22. Domain Map & Capability Ownership
+# 25. Technical Privilege Is Not Business Authority
+
+Technical credentials such as:
+
+```text
+database admin
+service role
+deployment credential
+repository write
+```
+
+do not automatically grant business authorization.
+
+Likewise:
+
+```text
+business OWNER authority
+```
+
+does not require the same credential to hold every infrastructure privilege.
+
+---
+
+# 26. AI Has No Implicit Founder Authority
+
+JARVIS, automation, engineering agents, or any AI runtime MUST NOT implicitly inherit:
+
+```text
+OWNER
+```
+
+business authority merely because Rizky owns the business.
+
+Delegation for consequential operations must remain explicit and bounded.
+
+---
+
+# 27. Domain Map & Capability Ownership
 
 Canonical source:
 
@@ -605,120 +683,215 @@ Canonical ID:
 mgbos.architecture.domain-map-capability-ownership
 ```
 
-Purpose:
+This source is present and ACTIVE.
+
+It owns:
 
 ```text
-classify domains/capabilities as:
+domain boundaries
+capability ownership
+current-vs-target classification
+business-requirement promotion
+TeeStock → MGBOS mapping
+MGBOS → JARVIS boundary
+MGBOS → automation boundary
+external-provider boundary
+domain expansion sequencing
+```
 
+---
+
+# 28. Domain Map Current Repository State
+
+Current state:
+
+```text
+FILE
+systems/mgbos/docs/architecture/domain-map-capability-ownership.md
+
+STATUS
+ACTIVE
+
+VERSION
+1.0
+
+IMPLEMENTATION STATUS
+PARTIALLY_IMPLEMENTED
+```
+
+Therefore previous documentation claiming that this file:
+
+```text
+"has been prepared but is not yet present"
+```
+
+is superseded and MUST NOT be used.
+
+---
+
+# 29. Domain Capability Classification
+
+The Domain Map uses:
+
+```text
 CURRENT
 PARTIAL
 NEXT
 DEFERRED
+EXPERIMENTAL
 OUTSIDE_MGBOS
 ```
 
-and determine whether capability ownership belongs to:
+for domain/capability maturity and ownership planning.
+
+These classifications belong to the Domain Map.
+
+This Architecture Index MUST NOT independently redefine them.
+
+---
+
+# 30. Capability Ownership Model
+
+At a high level:
 
 ```text
-MGBOS
+BUSINESS LAYER
+→ defines business need and commercial policy
 
-business layer
+MGBOS
+→ owns governed operational truth
 
 JARVIS
+→ interprets and coordinates governed truth
 
-automation
+AUTOMATION
+→ performs deterministic repetition/orchestration
 
-external provider
+EXTERNAL PROVIDER
+→ owns provider-side facts
 
-physical partner
+PHYSICAL PARTNER
+→ performs external physical work
+
+CROSS-SYSTEM GOVERNANCE
+→ owns shared governance
 ```
+
+Detailed ownership belongs to the Domain Map.
 
 ---
 
-# 23. Domain Map Current Repository State
+# 31. Underbuild vs Overbuild
 
-The specification has been prepared as an ACTIVE-ready canonical document but is not yet present in the repository snapshot audited for this index.
-
-Until persisted:
+The Domain Map exists partly to prevent:
 
 ```text
-canonical-data-model.md
-+
-other dedicated architecture specs
-+
-current implementation
+UNDERBUILD
+→ founder remains the hidden operating system
 ```
 
-remain the authoritative sources for existing semantics.
+and:
 
-The missing Domain Map file MUST NOT be fabricated by downstream agents.
+```text
+OVERBUILD
+→ MGBOS becomes an ERP monster
+  before the business needs it
+```
+
+Architecture should grow from repeated operational truth.
 
 ---
 
-# 24. Architecture Decisions
+# 32. Business Requirements Do Not Automatically Become Entities
 
-Durable implementation choices are recorded under:
+Canonical principle:
+
+> **Business requirements may pull MGBOS forward. They do not automatically become MGBOS entities.**
+
+A new capability may be implemented as:
+
+```text
+query
+read model
+command
+generated artifact
+workflow
+integration
+automation
+JARVIS capability
+```
+
+without adding another root aggregate.
+
+---
+
+# 33. Founder-Leverage Principle
+
+A new MGBOS capability should materially do at least one of:
+
+```text
+remove operational ambiguity
+protect business integrity
+reduce founder burden
+support repeated operational truth
+```
+
+Otherwise defer it until evidence improves.
+
+---
+
+# 34. Architecture Decisions
+
+Durable technical decisions live under:
 
 ```text
 systems/mgbos/docs/adr/
 ```
 
-ADRs explain why a technical direction was selected.
+ADRs explain:
+
+```text
+WHY A TECHNICAL DIRECTION WAS CHOSEN
+```
+
+They do not replace semantic specifications.
 
 ---
 
-# 25. Foundational ADRs
+# 35. Foundational ADR Themes
 
-Important foundational decisions include:
+Foundational decisions include architecture directions such as:
 
 ```text
-ADR-001
 Modular Monolith
-
-ADR-002
 PostgreSQL as System of Record
-
-ADR-003
 Supabase
-
-ADR-004
 n8n as Orchestrator
-
-ADR-005
 Transactional Outbox
-
-ADR-006
 Provider-Independent AI Gateway
 ```
 
-Additional ADRs cover later implementation slices and workspace decisions.
+Always inspect the current ADR directory for the authoritative complete inventory.
 
-Always inspect the current ADR directory for complete inventory.
-
----
-
-# 26. Modular Monolith
-
-Canonical decision:
-
-```text
-MGBOS remains one bounded deployable system
-with internal modular domain boundaries
-```
-
-until actual requirements justify distributed architecture.
-
-Do not introduce microservices merely because individual domains exist.
+Do not rely on this index as a permanent ADR list.
 
 ---
 
-# 27. PostgreSQL System of Record
+# 36. Modular Monolith
 
-Canonical:
+MGBOS remains a bounded deployable system with internal modular domain boundaries until real requirements justify stronger distribution.
 
-> **Canonical transactional facts and business integrity live in PostgreSQL through the MGBOS architecture.**
+Do not introduce microservices merely because multiple domains exist.
 
-Therefore:
+---
+
+# 37. PostgreSQL as System of Record
+
+Foundational principle:
+
+> **Canonical transactional facts and MGBOS business integrity live in PostgreSQL through MGBOS-governed architecture.**
+
+The following MUST NOT become competing systems of record:
 
 ```text
 spreadsheet
@@ -728,342 +901,585 @@ AI memory
 chat history
 ```
 
-cannot become competing business systems of record.
-
 ---
 
-# 28. Domain Purity
+# 38. n8n Boundary
 
-Business logic SHOULD remain separated from presentation/provider details where practical.
-
-Current package architecture uses dedicated domain code for reusable deterministic business rules.
-
-However:
-
-> **Domain purity must serve maintainability, not create unnecessary abstraction layers.**
-
----
-
-# 29. Monetary Integrity
-
-Canonical rules live primarily in:
-
-```text
-canonical-data-model.md
-business-invariants.md
-```
-
-MGBOS uses integer Rupiah semantics for authoritative money calculations.
-
-Floating-point money arithmetic must not become authoritative transaction logic.
-
----
-
-# 30. Cost Trilogy
-
-Canonical financial distinction:
-
-```text
-ESTIMATED COST
-
-COMMITTED COST
-
-ACTUAL COST
-```
-
-These values represent different business facts.
-
-They must not be collapsed into one generic cost field.
-
----
-
-# 31. Estimated Cost
-
-Represents expected economic cost before a binding external/internal commitment.
-
-Typical use:
-
-```text
-quote costing
-```
-
----
-
-# 32. Committed Cost
-
-Represents cost the business has materially committed to.
-
-Examples:
-
-```text
-vendor production assignment
-
-purchase commitment
-```
-
-according to the relevant transaction model.
-
----
-
-# 33. Actual Cost
-
-Represents reconciled observed economic cost after execution.
-
-Actual Cost must not simply copy Estimated Cost to make reports complete.
-
----
-
-# 34. Shipping Pass-Through
-
-Shipping revenue/cost semantics must follow canonical finance invariants.
-
-Product economics and pass-through logistics should remain distinguishable where required.
-
-Detailed formulas belong to dedicated data/invariant specifications and implementation.
-
-They MUST NOT be independently redefined in this index.
-
----
-
-# 35. Rules Before AI
-
-Canonical:
-
-> **Deterministic business rules should remain deterministic.**
-
-AI may:
-
-```text
-analyze
-
-classify
-
-recommend
-
-draft
-```
-
-AI may not replace:
-
-```text
-financial constraints
-
-authorization
-
-state transition rules
-
-business invariants
-```
-
----
-
-# 36. JARVIS Boundary
-
-JARVIS is a separate intelligence system.
-
-Canonical JARVIS architecture lives under:
-
-```text
-systems/jarvis/docs/
-```
-
-MGBOS exposes governed:
-
-```text
-reads
-
-commands
-
-business evidence
-```
-
-to JARVIS when appropriate.
-
-JARVIS does not own MGBOS business truth.
-
----
-
-# 37. n8n Boundary
-
-Accepted architecture:
+Canonical high-level position:
 
 ```text
 n8n
 =
-orchestration
+ORCHESTRATION
 ```
 
 It may coordinate:
 
 ```text
 schedules
-
-external integrations
-
 notifications
-
+integrations
 workflow routing
 ```
 
-but MGBOS remains authority for MGBOS-owned business state.
+It does not become canonical owner of MGBOS business truth.
 
 ---
 
-# 38. External Provider Boundary
+# 39. JARVIS Boundary
+
+JARVIS is a separate intelligence system.
+
+JARVIS may consume governed:
+
+```text
+reads
+commands
+events
+evidence
+```
+
+from MGBOS.
+
+JARVIS MUST NOT become a competing transactional system of record.
+
+MGBOS must remain operational without JARVIS.
+
+---
+
+# 40. Engineering Agents Boundary
+
+Engineering agents operate on software/repository changes.
+
+They do not inherit MGBOS runtime business permission.
+
+Example:
+
+```text
+ENGINEER
+may edit payment implementation
+```
+
+does not imply:
+
+```text
+ENGINEER
+may record a real customer payment
+```
+
+Repository authority and business authority remain separate.
+
+---
+
+# 41. Rules Before AI
+
+Canonical direction:
+
+> **Deterministic business rules remain deterministic.**
+
+AI may:
+
+```text
+analyze
+classify
+recommend
+draft
+summarize
+```
+
+AI MUST NOT replace deterministic:
+
+```text
+financial constraints
+authorization
+state-transition rules
+business invariants
+```
+
+---
+
+# 42. Monetary Integrity
+
+Money semantics are primarily owned by:
+
+```text
+canonical-data-model.md
+business-invariants.md
+```
+
+Authoritative money calculations use integer Rupiah semantics according to those specifications.
+
+Floating-point arithmetic MUST NOT become authoritative transactional money logic.
+
+---
+
+# 43. Cost Trilogy
+
+Canonical distinction:
+
+```text
+ESTIMATED COST
+COMMITTED COST
+ACTUAL COST
+```
+
+These are different economic facts.
+
+Do not collapse them into one generic cost value.
+
+---
+
+# 44. Estimated Cost
+
+Represents expected cost before binding execution/commitment.
+
+Common context:
+
+```text
+quotation
+cost estimation
+```
+
+---
+
+# 45. Committed Cost
+
+Represents economic cost materially committed by the business.
+
+Examples may include:
+
+```text
+vendor production assignment
+purchase commitment
+```
+
+according to canonical transaction semantics.
+
+---
+
+# 46. Actual Cost
+
+Represents reconciled observed economic cost after execution.
+
+Do not populate Actual Cost by simply copying Estimated Cost to make reporting appear complete.
+
+---
+
+# 47. Shipping Pass-Through
+
+Shipping revenue/cost handling must follow dedicated financial invariants.
+
+Detailed formulas belong to their semantic owner.
+
+Do not independently define them inside this navigation index.
+
+---
+
+# 48. Domain Purity
+
+Domain code should preserve reusable deterministic business rules separately from presentation/provider details where practical.
+
+However:
+
+> **Domain purity exists to improve correctness and maintainability—not to create abstraction for abstraction's sake.**
+
+---
+
+# 49. Physical Reality Boundary
+
+Database state represents governed business observations.
+
+It does not automatically prove physical reality.
+
+Examples requiring appropriate evidence may include:
+
+```text
+production completed
+QC passed
+goods received
+shipment handed over
+delivery completed
+```
+
+MGBOS stores the governed representation of those observed facts.
+
+---
+
+# 50. External Provider Boundary
 
 External systems may own provider-side facts.
 
 Examples:
 
 ```text
-payment-provider transaction state
-
-courier tracking scan
-
-external channel order event
+payment-provider transaction
+courier tracking event
+external marketplace event
 ```
 
-MGBOS owns the normalized internal business interpretation.
+MGBOS owns the normalized internal business interpretation where that fact enters MGBOS scope.
 
 ---
 
-# 39. Physical Reality Boundary
+# 51. Current Capability Maturity Is Not Uniform
 
-A database record does not automatically prove physical reality.
-
-Examples requiring observation/evidence:
+Different MGBOS capabilities may be:
 
 ```text
-production completed
-
-QC passed
-
-shipment handed to courier
-
-delivery completed
+CURRENT
+PARTIAL
+NEXT
+DEFERRED
+EXPERIMENTAL
+OUTSIDE_MGBOS
 ```
 
-MGBOS stores the governed business representation of those observations.
+according to the Domain Map.
 
----
-
-# 40. Current Implementation Is Not Uniformly Mature
-
-Different MGBOS domains have different maturity.
-
-Possible classifications include:
+Do not infer maturity from:
 
 ```text
-implemented
-
-partially implemented
-
-schema-reserved
-
-canonical target
-
-not implemented
+file exists
+table exists
+canonical spec exists
 ```
 
-Use the relevant dedicated specification and current implementation evidence.
-
-Do not infer maturity from this index.
+alone.
 
 ---
 
-# 41. Known Current Architecture Gaps
+# 52. Current Core Operating Spine
 
-Current dedicated specifications already identify gaps including:
+Current near-term business operating spine centers on:
 
 ```text
-generic Order transition enforcement
-
-complete Quote exception-state commands
-
-some Invoice lifecycle commands
-
-full production business-event runtime
-
-transactional outbox production runtime
-
-generalized service-principal model
-
-full capability authorization registry
+LEAD
+    ↓
+REQUIREMENT
+    ↓
+QUOTE
+    ↓
+ORDER
+    ├──────────────► INVOICE / PAYMENT
+    │
+    ▼
+PRODUCTION
+    ↓
+ASSIGNMENT / VENDOR
+    ↓
+QC
+    ↓
+SHIPMENT
+    ↓
+COST / MARGIN
 ```
 
-These are documented gaps.
-
-They are not permission for uncontrolled implementation.
+Detailed lifecycle semantics belong to dedicated specifications.
 
 ---
 
-# 42. Current TeeStock Operating-Spine Focus
+# 53. Operating-Spine Principle
 
-Current implementation priority centers on:
+Current architecture already contains much of the required core domain model.
+
+Therefore near-term implementation should often prioritize:
+
+```text
+CONNECT
+HARDEN
+RECONCILE
+SIMPLIFY
+SURFACE
+```
+
+before introducing many new root entities.
+
+---
+
+# 54. Lead
+
+Current Domain Map classifies Lead as materially present with workflow integration still needing hardening.
+
+The intended progression may use:
 
 ```text
 Lead
 → Requirement
 → Quote
-→ Order
-→ Invoice / Payment
-→ Production
-→ QC
-→ Shipment
-→ Cost / Margin
 ```
 
-This is an implementation priority.
-
-It does not reduce MGBOS to a TeeStock-only architecture.
+without introducing Opportunity prematurely.
 
 ---
 
-# 43. Business-Specific Data
+# 55. Opportunity
 
-Apparel-specific concepts such as:
+Opportunity remains deferred until recurring operations justify independent sales-pursuit semantics.
+
+Do not resurrect it merely because historical design mentioned it.
+
+---
+
+# 56. Requirement
+
+Requirement is a core business-specification boundary.
+
+It helps move operational truth out of:
+
+```text
+WhatsApp
+founder memory
+temporary notes
+```
+
+into governed business context.
+
+---
+
+# 57. Quote
+
+Quote is a current canonical capability involving concepts such as:
+
+```text
+versioning
+line items
+estimated cost
+pricing approval
+requirement snapshot
+```
+
+Detailed semantics belong to canonical data/invariant/state specifications.
+
+---
+
+# 58. Order
+
+Order represents commercial commitment.
+
+Order MUST NOT become a mega-state for:
+
+```text
+payment
+production
+QC
+shipment
+```
+
+Those domains retain their own lifecycle semantics.
+
+---
+
+# 59. Production Job
+
+Production Job owns physical-work coordination.
+
+It should answer questions such as:
+
+```text
+what must be produced?
+for which Order?
+what is its state?
+what is its deadline?
+what blocks completion?
+```
+
+---
+
+# 60. Production Assignment
+
+Production Assignment is a current capability with operational integration still requiring hardening.
+
+It represents:
+
+```text
+who is expected to execute
+assignment context
+partner acknowledgement
+assignment lifecycle
+```
+
+Production Job remains owner of physical-work lifecycle.
+
+---
+
+# 61. Work Order / SPK
+
+Current Domain Map classifies Work Order / SPK as a near-term governed operational artifact rather than automatically a new root entity.
+
+Initial representation should reuse existing authoritative context where possible.
+
+Do not promote it to a root entity until independent lifecycle/evidence needs justify that architecture.
+
+---
+
+# 62. Vendor
+
+Vendor is a current MGBOS domain.
+
+Broader generic:
+
+```text
+Partner
+```
+
+remains deferred until materially different partner types require a shared abstraction.
+
+Do not generalize early.
+
+---
+
+# 63. Quality Control
+
+QC inspection belongs to governed operational truth.
+
+Useful evidence may include:
+
+```text
+result
+defect classification
+notes
+photo/file reference
+rework context
+rejection reason
+```
+
+when operationally justified.
+
+---
+
+# 64. Invoice and Payment
+
+Invoice and Payment remain separate authoritative financial concepts.
+
+Payment Allocation must preserve its own financial-integrity rules.
+
+Order state must not replace receivable/payment lifecycle semantics.
+
+---
+
+# 65. Financial Read Models
+
+Founder-level financial visibility may require projections such as:
+
+```text
+cash summary
+AR aging
+AP obligations
+margin exceptions
+estimated-vs-actual variance
+```
+
+These are read models.
+
+They do not automatically require new transaction aggregates.
+
+---
+
+# 66. Procurement
+
+Procurement capabilities include current concepts such as:
+
+```text
+purchase order
+purchase-order item
+goods receipt
+vendor bill
+vendor-bill payment
+```
+
+Detailed implementation status belongs to current architecture/implementation evidence.
+
+---
+
+# 67. Goods Receipt
+
+Goods Receipt represents observed physical receipt of purchased goods.
+
+It is evidence-bearing operational truth.
+
+It does not necessarily require a large independent mutable lifecycle.
+
+---
+
+# 68. Inventory
+
+Inventory is a current MGBOS capability.
+
+Canonical distinction:
+
+```text
+INVENTORY ITEM
+≠
+PRODUCT
+```
+
+A generic Product/Variant/SKU architecture should not be introduced solely because inventory exists.
+
+---
+
+# 69. Generic Product Architecture
+
+Generic:
+
+```text
+Product
+Variant
+SKU
+```
+
+should be promoted only when actual business scope repeatedly requires shared catalog identity/lifecycle.
+
+Custom-service operations may remain adequately represented through:
+
+```text
+Requirement
+Quote
+Order snapshots
+Inventory Item
+```
+
+depending on the use case.
+
+---
+
+# 70. Business-Specific Data
+
+Concepts such as:
 
 ```text
 GSM
-
 fabric composition
-
 print placement
-
-decoration details
-
+embroidery specification
 size breakdown
+decoration details
 ```
 
-should not automatically become universal MGBOS fields.
+must not automatically become universal MGBOS columns.
 
-Prefer business/domain specifications attached to generic transactional entities where appropriate.
+Prefer bounded business/domain specification structures unless repeated cross-business semantics justify promotion.
 
 ---
 
-# 44. Generic Abstraction Rule
+# 71. Generic Abstraction Rule
 
-A new shared MGBOS abstraction SHOULD be introduced only when it has:
+Introduce shared abstraction only when it has:
 
 ```text
 stable meaning
-
-independent lifecycle or integrity requirement
-
+clear semantic ownership
 repeated operational need
-
-clear ownership
-
+independent lifecycle or integrity requirement
 real reuse value
 ```
 
-not merely hypothetical future utility.
+Avoid architecture driven only by imagined future scale.
 
 ---
 
-# 45. Architecture Expansion Rule
+# 72. Architecture Expansion Rule
 
-Canonical sequence:
+Preferred sequence:
 
 ```text
 REAL BUSINESS NEED
@@ -1083,113 +1499,96 @@ VERIFY
 
 ---
 
-# 46. Architecture Does Not Mean New Entity
+# 73. Architecture Does Not Mean Entity
 
-A capability may be implemented as:
+A new business capability can be solved through:
 
 ```text
-query/read model
-
+read model
+query
 command
-
-view
-
 generated artifact
-
 workflow
-
 integration
-
 automation
-
-JARVIS skill
+JARVIS capability
 ```
 
-without creating another database aggregate.
+without adding another aggregate/table.
 
 ---
 
-# 47. Historical Sources
+# 74. Historical Architecture Sources
 
-Historical MGBOS architecture material remains under:
+Historical architecture discussions may remain under:
 
 ```text
+catatan/
 catatan/sesi/
 ```
 
-including Sep-23 design documents.
-
-They are valuable for:
+They are useful for:
 
 ```text
 rationale
-
 design provenance
-
-earlier alternatives
-
+discarded alternatives
 unpromoted detail
 ```
 
-but are no longer the default source for concepts already promoted.
+They are not the default authority once a concept has been promoted.
 
 ---
 
-# 48. Historical Source Precedence
+# 75. Historical Source Precedence
 
-If a historical note conflicts with:
+If historical material conflicts with any current dedicated specification:
 
 ```text
 canonical-data-model.md
-
 business-state-machines.md
-
 business-invariants.md
-
 command-event-model.md
-
 permission-authorization-model.md
+domain-map-capability-ownership.md
 ```
 
-the dedicated canonical specification wins.
+the dedicated ACTIVE canonical specification wins within its scope.
 
 ---
 
-# 49. Implementation Evidence
+# 76. Implementation Evidence
 
-Implementation reality is evidenced by:
+Current implementation reality may be evidenced through:
 
 ```text
 source code
-
 database migrations
-
-domain tests
-
-pgTAP tests
-
+unit/domain tests
+pgTAP
 integration tests
-
-E2E tests
-
-implementation reports
+E2E
+CI
+Engineering Reports
+implementation audits
+runtime observations
 ```
 
-These verify current behavior.
+Evidence proves bounded observations.
 
-They do not silently redefine architectural intent.
+Evidence does not silently rewrite architecture.
 
 ---
 
-# 50. Architecture Drift
+# 77. Architecture Drift
 
-When implementation differs from canonical architecture:
+If implementation violates intended canonical architecture:
 
 ```text
 IMPLEMENTATION_DRIFT
 ```
 
-When documentation no longer describes intended/current semantics correctly:
+If active architecture documentation is stale or contradictory:
 
 ```text
 DOCUMENTATION_DRIFT
@@ -1199,82 +1598,94 @@ Both require explicit reconciliation.
 
 ---
 
-# 51. Example — Order State
+# 78. Example — Order State
 
-Canonical State Machine documents intended Order lifecycle.
+Canonical state-machine specification may define valid Order lifecycle while implementation still lacks full authoritative transition enforcement.
 
-Current implementation audit may show incomplete transition commands.
-
-Correct interpretation:
+Correct:
 
 ```text
-CANONICAL LIFECYCLE
-exists
+CANONICAL SEMANTICS
+complete enough to govern
 
 IMPLEMENTATION
 partial
 ```
 
-Wrong interpretation:
+Incorrect:
 
 ```text
-missing command
-=
-state rule does not matter.
+transition command missing
+→ canonical lifecycle irrelevant
 ```
 
 ---
 
-# 52. Example — Transactional Outbox
-
-ADR-005 establishes the architectural pattern.
-
-Command/Event specification records current implementation maturity.
+# 79. Example — Transactional Outbox
 
 Correct:
 
 ```text
-OUTBOX
-canonical architecture direction
+TRANSACTIONAL OUTBOX
+=
+accepted architecture pattern
 +
-not yet fully verified runtime
+implementation maturity must be verified
 ```
 
-Wrong:
+Incorrect:
 
 ```text
-ADR accepted
+ADR exists
 =
-outbox already operational everywhere.
+production outbox fully active
 ```
 
 ---
 
-# 53. Example — Opportunity
+# 80. Example — Domain Map
 
-Historical designs may mention:
+Correct current state:
 
 ```text
-Opportunity
+domain-map-capability-ownership.md
+=
+PRESENT
++
+ACTIVE CANONICAL SPECIFICATION
++
+PARTIALLY_IMPLEMENTED SUBJECT MATTER
 ```
 
-Current Canonical Data Model states it is not a current canonical entity.
+Incorrect old state:
+
+```text
+prepared but not persisted
+```
+
+That statement is stale.
+
+---
+
+# 81. Example — Opportunity
+
+Historical architecture may mention Opportunity.
+
+Current canonical architecture keeps it deferred.
 
 Therefore:
 
 ```text
-Opportunity
-=
-future/deferred concept
+HISTORICAL IDEA
+≠
+CURRENT ENTITY
 ```
-
-until deliberately promoted.
 
 ---
 
-# 54. Architecture Reading Order — General
+# 82. Architecture Reading Order — General
 
-For architecture changes:
+For material MGBOS architecture work:
 
 ```text
 1. Documentation Constitution
@@ -1289,143 +1700,168 @@ For architecture changes:
 
 6. this Architecture Index
 
-7. relevant dedicated MGBOS spec
+7. relevant dedicated MGBOS specification
 
 8. relevant ADR
 
-9. current implementation/evidence
+9. current implementation
+
+10. relevant tests / evidence
 ```
 
 ---
 
-# 55. Architecture Reading Order — Data Change
+# 83. Architecture Reading Order — Data Change
+
+For entity/data semantics:
 
 ```text
 canonical-data-model.md
-
+        ↓
 business-invariants.md
-
+        ↓
 business-state-machines.md
-if lifecycle affected
-
+if lifecycle changes
+        ↓
 permission-authorization-model.md
-if access affected
-
+if access changes
+        ↓
 command-event-model.md
-if mutation/integration affected
+if mutation/integration changes
+        ↓
+domain-map-capability-ownership.md
+if ownership/expansion changes
 ```
 
-Then inspect schema/migrations.
+Then inspect physical schema/migrations.
 
 ---
 
-# 56. Architecture Reading Order — New Workflow
+# 84. Architecture Reading Order — Workflow Change
 
-Read:
+For consequential workflow:
 
 ```text
-Domain Map
-
-Canonical Data Model
-
-State Machines
-
-Invariants
-
-Command & Event
-
-Permission Model
+domain-map-capability-ownership.md
+        ↓
+canonical-data-model.md
+        ↓
+business-state-machines.md
+        ↓
+business-invariants.md
+        ↓
+command-event-model.md
+        ↓
+permission-authorization-model.md
 ```
 
-before implementing consequential workflow mutations.
+Then inspect implementation and tests.
 
 ---
 
-# 57. Architecture Reading Order — AI / Automation Integration
+# 85. Architecture Reading Order — AI / Automation
 
-Read:
+For JARVIS, agent, or automation integration:
 
 ```text
-Command & Event Model
-
-Permission & Authorization Model
-
-Business Invariants
-
-System Boundaries
-
+system-boundaries.md
+        ↓
+domain-map-capability-ownership.md
+        ↓
+command-event-model.md
+        ↓
+permission-authorization-model.md
+        ↓
+business-invariants.md
+        ↓
 JARVIS / automation canonical docs
+        ↓
+implementation / runtime evidence
 ```
 
-Never derive authority solely from tool availability.
+Never infer mutation authority from tool availability.
 
 ---
 
-# 58. Canonical Architecture Directory
+# 86. Architecture Reading Order — Financial Change
 
-Target:
+For payment, invoice, procurement, cost, or financial-integrity changes:
 
 ```text
-systems/mgbos/docs/architecture/
-│
-├── README.md
-├── canonical-data-model.md
-├── business-state-machines.md
-├── business-invariants.md
-├── command-event-model.md
-├── permission-authorization-model.md
-└── domain-map-capability-ownership.md
+canonical-data-model.md
+business-invariants.md
+business-state-machines.md
+command-event-model.md
+permission-authorization-model.md
+domain-map-capability-ownership.md
 ```
 
-Do not add architecture documents merely to create symmetry.
+plus applicable implementation/tests.
 
----
-
-# 59. When a New Architecture Document Is Justified
-
-Create one only when a concept:
+Financial work should preserve relevant:
 
 ```text
-has independent semantic ownership
-
-is too important to remain a section elsewhere
-
-has multiple downstream consumers
-
-requires its own lifecycle/versioning
+authorization
+integer-money semantics
+allocation integrity
+idempotency
+concurrency
+historical integrity
+reconciliation
 ```
 
-Otherwise extend the existing canonical owner.
+---
+
+# 87. Architecture Reading Order — Authorization Change
+
+Use:
+
+```text
+permission-authorization-model.md
+        ↓
+command-event-model.md
+        ↓
+business-invariants.md
+        ↓
+domain model / state machine as affected
+        ↓
+actual server/database enforcement
+        ↓
+negative authorization tests
+```
+
+Frontend visibility alone is not security.
 
 ---
 
-# 60. Document Ownership Map
+# 88. Document Ownership Map
 
-| Question                                  | Read                                 |
-| ----------------------------------------- | ------------------------------------ |
-| What entities exist?                      | `canonical-data-model.md`            |
-| What does this status mean?               | `business-state-machines.md`         |
-| What must always remain true?             | `business-invariants.md`             |
-| How may this state change?                | `command-event-model.md`             |
-| Who may attempt the change?               | `permission-authorization-model.md`  |
-| Does this capability belong in MGBOS?     | `domain-map-capability-ownership.md` |
-| Why did we choose this technical pattern? | relevant ADR                         |
-| Is it implemented right now?              | current code/tests/evidence          |
+| Question | Read |
+|---|---|
+| What entities exist? | `canonical-data-model.md` |
+| What does this lifecycle state mean? | `business-state-machines.md` |
+| What must never become invalid? | `business-invariants.md` |
+| How may state change? | `command-event-model.md` |
+| Who may request the change? | `permission-authorization-model.md` |
+| Should this capability belong to MGBOS? | `domain-map-capability-ownership.md` |
+| Why was a technical pattern selected? | relevant ADR |
+| Is it actually implemented? | current source/schema/tests/evidence |
+| Is it currently deployed? | deployment/runtime evidence |
+| What should the UI do? | product/implementation specifications |
+| What should TeeStock commercially do? | `bisnis/teestock/` |
 
 ---
 
-# 61. Do Not Put Product UX Here
+# 89. Do Not Put Product UX Here
 
 Detailed:
 
 ```text
 screen design
-
 form layout
-
+navigation
 pilot UX
-
-customer document presentation
+document presentation
 ```
 
 belongs under:
@@ -1434,24 +1870,20 @@ belongs under:
 systems/mgbos/docs/product/
 ```
 
-or the appropriate implementation specification.
+or an appropriate implementation specification.
 
 ---
 
-# 62. Do Not Put Business Strategy Here
+# 90. Do Not Put Business Strategy Here
 
 Detailed:
 
 ```text
 TeeStock positioning
-
-pricing philosophy
-
+pricing strategy
 marketing
-
 brand architecture
-
-business roadmap
+commercial roadmap
 ```
 
 belongs under:
@@ -1460,122 +1892,601 @@ belongs under:
 bisnis/teestock/
 ```
 
+or its proper business owner.
+
 ---
 
-# 63. Do Not Put Engineering Reports Here
+# 91. Do Not Put Engineering Reports Here
 
-Implementation reports belong under:
+Implementation/audit evidence belongs under the applicable engineering/evidence structure.
+
+For MGBOS, current material commonly lives under:
 
 ```text
 systems/mgbos/docs/engineering/
 ```
 
-or future evidence structure.
-
-Architecture stays normative.
+Architecture remains normative.
 
 ---
 
-# 64. Do Not Put Session Notes Here
+# 92. Do Not Put Session Notes Here
 
-Working discussion remains:
+Working discussion and historical session material belongs under:
 
 ```text
 catatan/
 ```
 
-until deliberately promoted.
+until deliberately canonicalized.
 
 ---
 
-# 65. Current Architecture Program State
+# 93. Do Not Put Repository-Wide Engineering Governance Here
 
-Current architecture state is:
+Repository-wide:
+
+```text
+engineering roles
+AI engineering routing
+engineering risk
+engineering contracts
+Vibe Engineering procedure
+provider adapters
+```
+
+belong under:
+
+```text
+docs/engineering/
+.agents/
+docs/governance/
+```
+
+according to canonical ownership.
+
+MGBOS Architecture MUST NOT become repository engineering governance.
+
+---
+
+# 94. Engineering Workflow Boundary
+
+Architecture answers:
+
+```text
+WHAT SHOULD MGBOS MEAN?
+```
+
+Engineering governance answers:
+
+```text
+HOW MAY WE CHANGE IT SAFELY?
+```
+
+For material engineering work, follow repository-level engineering governance and then consume this architecture as target-system authority.
+
+---
+
+# 95. MGBOS Engineering Rules
+
+System-specific engineering guidance may live under:
+
+```text
+systems/mgbos/AGENTS.md
+systems/mgbos/docs/engineering/
+```
+
+These may impose stricter implementation requirements.
+
+They MUST NOT redefine architecture semantics owned by dedicated architecture specifications.
+
+---
+
+# 96. Architecture Program State
+
+Current architecture program state is best described as:
 
 ```text
 CONTROLLED_CANONICALIZATION
++
+IMPLEMENTATION HARDENING
 ```
 
-Meaning:
+Core architecture semantic owners are now persisted.
+
+Current focus should increasingly move toward:
 
 ```text
-resolve known authority gaps
-
-repair canonical indexes
-
-persist mature canonical specs
-
-support current implementation work
+implementation alignment
+workflow closure
+evidence
+hardening
 ```
 
-while avoiding speculative expansion.
+rather than continually inventing additional architecture documents.
 
 ---
 
-# 66. Architecture Closure Condition
+# 97. Core Architecture Closure
 
-Architecture is sufficiently closed for the current Phase 1 implementation when:
+For the current Phase 1 operating-spine horizon, the architecture foundation is sufficiently bounded when:
 
 ```text
 canonical source routing is clear
-
-current core architecture specs are persisted
-
-domain/capability ownership is clear
-
-Phase 1 implementation scope is bounded
-
-no known authority conflict blocks implementation
+six core dedicated specifications are persisted
+domain/capability ownership is explicit
+implementation scope can be bounded
+known architecture gaps are explicit
+no unresolved authority conflict blocks implementation
 ```
 
-It does not require every future domain to be designed.
+This does not mean every future business capability has been designed.
 
 ---
 
-# 67. Current Next Architecture Document
+# 98. No Predetermined “Next Architecture Document”
 
-After this index, the next new MGBOS architecture specification planned for persistence is:
+There is currently **no mandatory next architecture document solely for completeness**.
+
+The previous v2.0 statement that:
 
 ```text
-systems/mgbos/docs/architecture/
 domain-map-capability-ownership.md
 ```
 
-But cross-system operating context should first be persisted at its own owner location:
-
-```text
-docs/operating-model/
-solo-founder-operating-system.md
-```
-
-following the closure sequence.
+was the next architecture document to persist is obsolete because that document is now present and ACTIVE.
 
 ---
 
-# 68. Architecture Index Success Definition
+# 99. New Architecture Document Trigger
 
-This index succeeds when someone can answer:
+A new architecture specification should be created only when a real concept:
+
+```text
+has independent semantic ownership
+is too important to remain a section elsewhere
+has multiple downstream consumers
+needs its own lifecycle/version
+cannot cleanly extend an existing owner
+```
+
+Otherwise extend the existing canonical specification.
+
+---
+
+# 100. Avoid Architecture Symmetry
+
+Do not create:
+
+```text
+new file
+new aggregate
+new subsystem
+new service
+```
+
+because the architecture tree looks incomplete.
+
+Architecture exists to resolve real semantic complexity.
+
+Not to make directories look symmetrical.
+
+---
+
+# 101. Current Known Architecture Gaps
+
+Dedicated specifications and implementation evidence identify areas that may still require implementation hardening, including examples such as:
+
+```text
+authoritative transition enforcement in some lifecycles
+workflow integration between existing domains
+production assignment/vendor flow hardening
+full business-event runtime maturity
+transactional-outbox runtime maturity
+service-principal implementation
+capability-registry implementation
+coarser current permission/read boundaries
+```
+
+Treat these as implementation/architecture maturity gaps.
+
+Do not infer that every item requires a new architecture document.
+
+---
+
+# 102. Gap Resolution Rule
+
+For each gap ask:
+
+```text
+Is canonical meaning already clear?
+```
+
+If yes:
+
+```text
+IMPLEMENT / HARDEN
+```
+
+If no:
+
+```text
+ARCHITECTURE WORK
+```
+
+This distinction prevents endless documentation before implementation.
+
+---
+
+# 103. Current Operating-Spine Priority
+
+Near-term work should prioritize a trustworthy operational spine over broad ERP expansion.
+
+Conceptually:
+
+```text
+LEAD
+→ REQUIREMENT
+→ QUOTE
+→ ORDER
+→ FINANCE
+→ PRODUCTION
+→ QC
+→ FULFILLMENT
+→ COST / MARGIN
+```
+
+while preserving independent domain lifecycles.
+
+---
+
+# 104. Architecture and Solo-Founder Constraint
+
+MGBOS architecture must account for the actual founder operating model.
+
+The system should reduce:
+
+```text
+memory dependence
+manual coordination
+hidden operational state
+repetitive founder intervention
+```
+
+without creating unnecessary enterprise complexity.
+
+---
+
+# 105. Founder Is Not Hidden Middleware
+
+Architecture should progressively eliminate workflows where:
+
+```text
+system A
+→ founder memory
+→ WhatsApp
+→ spreadsheet
+→ system B
+```
+
+is the only integration mechanism for important operational truth.
+
+But replacement should remain bounded and evidence-driven.
+
+---
+
+# 106. System Must Remain Operable
+
+The architecture should favor systems that a resource-constrained founder can:
+
+```text
+understand
+operate
+recover
+audit
+extend
+```
+
+over technically impressive but operationally fragile complexity.
+
+---
+
+# 107. Implementation Must Not Outrun Semantics
+
+Implementation may not invent:
+
+```text
+new financial meaning
+new lifecycle transition
+new permission semantics
+new capability ownership
+```
+
+merely because the current code path needs a quick solution.
+
+Return to the appropriate canonical specification when semantics are unclear.
+
+---
+
+# 108. Architecture Must Not Outrun Evidence
+
+Architecture should not introduce complex future abstractions without:
+
+```text
+repeated operational need
+clear semantic distinction
+real downstream consumer
+```
+
+Design for growth.
+
+Do not prebuild the entire imagined future company.
+
+---
+
+# 109. Architecture Does Not Prove Runtime
+
+Even when this entire architecture set is:
+
+```text
+ACTIVE
+```
+
+individual runtime capabilities may remain:
+
+```text
+partial
+not implemented
+not integrated
+not verified
+```
+
+Use implementation evidence.
+
+---
+
+# 110. Implementation Does Not Rewrite Architecture Automatically
+
+If current code differs from architecture:
+
+do not declare current code canonical merely because it exists.
+
+Determine whether:
+
+```text
+architecture should change
+```
+
+or:
+
+```text
+implementation should change
+```
+
+through governed reconciliation.
+
+---
+
+# 111. Verification Principle
+
+For consequential changes, architecture review should eventually connect to evidence such as:
+
+```text
+unit/domain tests
+database tests
+integration tests
+negative authorization tests
+migration tests
+E2E
+CI
+runtime evidence
+```
+
+according to risk.
+
+Documentation correctness alone is not behavioral verification.
+
+---
+
+# 112. Architecture Index Maintenance
+
+Update this README when:
+
+```text
+a canonical architecture source is added
+a canonical architecture source is superseded
+semantic ownership changes
+a listed file moves
+reading order changes materially
+architecture program state changes materially
+```
+
+Do not update it for every source-code change.
+
+---
+
+# 113. Reverse-Reference Requirement
+
+Before materially renaming/removing a canonical architecture source:
+
+inspect:
+
+```text
+Source Map references
+MGBOS docs index
+product docs
+implementation docs
+engineering docs
+AGENTS files
+Skills
+tests/validators
+historical references where operationally relevant
+```
+
+Do not create broken authority routing.
+
+---
+
+# 114. Architecture Source Removal
+
+A canonical source should not simply disappear.
+
+Use Documentation Constitution lifecycle where applicable:
+
+```text
+DEPRECATED
+SUPERSEDED
+ARCHIVED
+```
+
+and maintain replacement routing.
+
+---
+
+# 115. Architecture Versioning
+
+Version changes should reflect meaningful document evolution.
+
+Do not increment architecture version merely because repository snapshot changed.
+
+Current index v2.1 exists because its authority routing/current-state claims materially changed from v2.0.
+
+---
+
+# 116. Repository Snapshot
+
+This index was reviewed against:
+
+```text
+26871da802706fba5bc033576fbb0a487f6c9255
+```
+
+on:
+
+```text
+2026-10-03
+```
+
+The snapshot supports current-state statements in this version.
+
+When repository state advances, current implementation claims must be rechecked as needed.
+
+Canonical semantic ownership does not automatically expire because main advances.
+
+---
+
+# 117. Snapshot Is Not Permanent Current Truth
+
+Do not use this snapshot as proof that:
+
+```text
+current main
+current CI
+current implementation
+current migration state
+```
+
+remain unchanged in a later session.
+
+Always inspect current evidence when the claim is time-sensitive.
+
+---
+
+# 118. Architecture Index Success Definition
+
+This index succeeds when a competent human or AI can answer:
 
 ```text
 What document owns this concept?
 
-Is this current or future?
+Is it architecture or implementation?
 
-Where should I verify implementation?
+Is the concept CURRENT, PARTIAL, NEXT,
+DEFERRED, EXPERIMENTAL, or OUTSIDE_MGBOS?
 
-Which historical source may explain the rationale?
+Where do I verify actual implementation?
 
-Am I accidentally creating competing authority?
+Where do I find the rationale?
+
+Am I introducing a competing semantic owner?
+
+Do I really need a new architecture document?
 ```
 
 without reading every MGBOS document.
 
 ---
 
-# 69. Final Principle
+# 119. Architecture Invariants
+
+Preserve:
+
+```text
+ARCH-INDEX-001
+Architecture Index routes authority; it does not duplicate dedicated specifications.
+
+ARCH-INDEX-002
+Dedicated canonical specifications own semantics.
+
+ARCH-INDEX-003
+Implementation evidence does not silently redefine architecture.
+
+ARCH-INDEX-004
+Architecture specification does not prove implementation.
+
+ARCH-INDEX-005
+MGBOS remains the owner of governed operational truth within its scope.
+
+ARCH-INDEX-006
+JARVIS does not become MGBOS system of record.
+
+ARCH-INDEX-007
+n8n remains orchestration, not business truth.
+
+ARCH-INDEX-008
+Provider facts and internal business interpretation remain distinct.
+
+ARCH-INDEX-009
+Business authorization remains distinct from technical privilege.
+
+ARCH-INDEX-010
+Business validation remains distinct from authorization.
+
+ARCH-INDEX-011
+Independent domain lifecycles must not collapse into Order mega-state.
+
+ARCH-INDEX-012
+Deterministic business rules remain deterministic.
+
+ARCH-INDEX-013
+Generic abstractions require real operational evidence.
+
+ARCH-INDEX-014
+Business requirements do not automatically become entities.
+
+ARCH-INDEX-015
+Domain Map is present and ACTIVE.
+
+ARCH-INDEX-016
+No predetermined next architecture document exists solely for symmetry.
+
+ARCH-INDEX-017
+Architecture growth follows operational need.
+
+ARCH-INDEX-018
+Architecture remains operable by the actual organization.
+```
+
+---
+
+# 120. Final Principle
 
 > **MGBOS architecture should be precise enough to protect business integrity and small enough to remain operable by a resource-constrained founder.**
 
 And:
 
-> **This README tells you where truth lives. The dedicated specifications define that truth.**
+> **This README tells you where MGBOS architecture truth lives. Dedicated specifications define that truth. Implementation and evidence tell you how much of that truth currently exists in the running system.**
+
+And finally:
+
+> **Now that the six core architecture specifications are persisted, the default next move is not “write another architecture document.” The default next move is to close real implementation gaps—unless evidence reveals a genuinely new semantic ownership problem.**
