@@ -87,6 +87,12 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
             if not isinstance(job, dict):
                 raise ValueError(f"Job '{job_id}' in {rel_path} must be a mapping")
 
+            if "uses" in job:
+                raise ValueError(
+                    f"Reusable workflow job '{job_id}' in {rel_path} "
+                    "is not permitted by the current CI supply-chain baseline"
+                )
+
             if "permissions" in job:
                 raise ValueError(
                     f"Job '{job_id}' in {rel_path} defines permissions "

@@ -148,6 +148,22 @@ class TestCISupplyChain(unittest.TestCase):
         ):
             supply_chain.validate(self.temp_root)
 
+    def test_reusable_workflow_job_rejected(self) -> None:
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        fixture = (
+            "\n  supply-chain-bypass:\n"
+            "    uses: attacker/example/.github/workflows/build.yml@main\n"
+        )
+        modified = content + fixture
+        target.write_text(modified, encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Reusable workflow",
+        ):
+            supply_chain.validate(self.temp_root)
+
 
 if __name__ == "__main__":
     unittest.main()
