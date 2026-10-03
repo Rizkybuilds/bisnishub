@@ -123,82 +123,71 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
                             )
 
                         if uses.startswith("./"):
-                            # Local action reference
-                            target_path = (root / uses).resolve()
-                            try:
-                                target_path.relative_to(root.resolve())
-                            except ValueError:
+                            raise ValueError(
+                                f"Local action reference '{uses}' in {rel_path} "
+                                "is not permitted by the current CI supply-chain baseline"
+                            )
+
+                        if uses.startswith("docker://"):
+                            raise ValueError(
+                                f"Unsupported action source '{uses}' in "
+                                f"{rel_path}: docker actions are not permitted"
+                            )
+
+                        if "@" not in uses:
+                            raise ValueError(
+                                f"External action '{uses}' in {rel_path} "
+                                f"requires a full 40-character commit SHA"
+                            )
+
+                        parts = uses.split("@")
+                        if len(parts) != 2:
+                            raise ValueError(
+                                f"Malformed external action reference "
+                                f"'{uses}' in {rel_path}"
+                            )
+
+                        repo, ref = parts
+                        if not ACTION_REPO_REGEX.match(repo):
+                            raise ValueError(
+                                f"Malformed external action repository "
+                                f"'{repo}' in {rel_path}"
+                            )
+
+                        if repo not in ALLOWED_EXTERNAL_ACTIONS:
+                            raise ValueError(
+                                f"Unapproved external action repository "
+                                f"'{repo}' in {rel_path}"
+                            )
+
+                        if not FULL_SHA_REGEX.match(ref):
+                            raise ValueError(
+                                f"External action '{uses}' in {rel_path} "
+                                f"requires a full 40-character commit SHA "
+                                f"(got '{ref}')"
+                            )
+
+                        total_action_uses += 1
+
+                        if repo == "actions/checkout":
+                            total_checkout_steps += 1
+                            with_block = step.get("with")
+                            if not isinstance(with_block, dict):
                                 raise ValueError(
-                                    f"Local action '{uses}' traverses outside "
-                                    f"repository root in {rel_path}"
-                                )
-                            if not target_path.exists():
-                                raise ValueError(
-                                    f"Local action '{uses}' target does not "
-                                    f"exist in {rel_path}"
-                                )
-                        else:
-                            # External action reference
-                            if uses.startswith("docker://"):
-                                raise ValueError(
-                                    f"Unsupported action source '{uses}' in "
-                                    f"{rel_path}: docker actions are not permitted"
+                                    f"Checkout step in job '{job_id}' of "
+                                    f"{rel_path} missing 'with' block; "
+                                    f"must configure checkout credential "
+                                    f"persistence to false ('persist-credentials: false')"
                                 )
 
-                            if "@" not in uses:
+                            persist = with_block.get("persist-credentials")
+                            if persist is not False:
                                 raise ValueError(
-                                    f"External action '{uses}' in {rel_path} "
-                                    f"requires a full 40-character commit SHA"
+                                    f"Checkout step in job '{job_id}' of "
+                                    f"{rel_path} must configure checkout "
+                                    f"credential persistence to false "
+                                    f"('persist-credentials: false', got {persist!r})"
                                 )
-
-                            parts = uses.split("@")
-                            if len(parts) != 2:
-                                raise ValueError(
-                                    f"Malformed external action reference "
-                                    f"'{uses}' in {rel_path}"
-                                )
-
-                            repo, ref = parts
-                            if not ACTION_REPO_REGEX.match(repo):
-                                raise ValueError(
-                                    f"Malformed external action repository "
-                                    f"'{repo}' in {rel_path}"
-                                )
-
-                            if repo not in ALLOWED_EXTERNAL_ACTIONS:
-                                raise ValueError(
-                                    f"Unapproved external action repository "
-                                    f"'{repo}' in {rel_path}"
-                                )
-
-                            if not FULL_SHA_REGEX.match(ref):
-                                raise ValueError(
-                                    f"External action '{uses}' in {rel_path} "
-                                    f"requires a full 40-character commit SHA "
-                                    f"(got '{ref}')"
-                                )
-
-                            total_action_uses += 1
-
-                            if repo == "actions/checkout":
-                                total_checkout_steps += 1
-                                with_block = step.get("with")
-                                if not isinstance(with_block, dict):
-                                    raise ValueError(
-                                        f"Checkout step in job '{job_id}' of "
-                                        f"{rel_path} missing 'with' block; "
-                                        f"must configure checkout credential "
-                                        f"persistence to false ('persist-credentials: false')"
-                                    )
-
-                                persist = with_block.get("persist-credentials")
-                                if persist is not False:
-                                    raise ValueError(
-                                        f"Checkout step in job '{job_id}' of "
-                                        f"{rel_path} must configure checkout "
-                                        f"credential persistence to false "
-                                        f"('persist-credentials: false', got {persist!r})"
-                                    )
 
     return {
         "workflows": len(workflow_files),

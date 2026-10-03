@@ -164,6 +164,43 @@ class TestCISupplyChain(unittest.TestCase):
         ):
             supply_chain.validate(self.temp_root)
 
+    def test_local_action_reference_rejected(self) -> None:
+        action_dir = self.temp_root / ".github/actions/supply-chain-bypass"
+        action_dir.mkdir(parents=True, exist_ok=True)
+        action_file = action_dir / "action.yml"
+        action_file.write_text(
+            "name: Supply Chain Bypass\n"
+            "description: Test fixture\n"
+            "runs:\n"
+            "  using: composite\n"
+            "  steps:\n"
+            "    - uses: attacker/example@main\n",
+            encoding="utf-8",
+        )
+
+        target = self.temp_root / ".github/workflows/agent-governance.yml"
+        content = target.read_text(encoding="utf-8")
+        target_str = "    steps:\n"
+        replacement_str = (
+            "    steps:\n"
+            "      - uses: ./.github/actions/supply-chain-bypass\n"
+        )
+        if target_str not in content:
+            target_str = "    steps:\r\n"
+            replacement_str = (
+                "    steps:\r\n"
+                "      - uses: ./.github/actions/supply-chain-bypass\r\n"
+            )
+        modified = content.replace(target_str, replacement_str, 1)
+        self.assertNotEqual(content, modified)
+        target.write_text(modified, encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Local action",
+        ):
+            supply_chain.validate(self.temp_root)
+
 
 if __name__ == "__main__":
     unittest.main()
