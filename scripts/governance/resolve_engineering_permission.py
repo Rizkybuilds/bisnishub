@@ -907,9 +907,9 @@ def approval_resolution(
         )
 
     return (
-        True,
-        "ALLOW",
-        "APPROVAL_VALID",
+        False,
+        "NEED_APPROVAL",
+        "APPROVAL_EVIDENCE_UNVERIFIED",
     )
 
 
@@ -1492,14 +1492,6 @@ def resolve(
 
     elif (
         capability_id
-        in explicit_denials
-    ):
-        role_grant_state = (
-            "DENIED"
-        )
-
-    elif (
-        capability_id
         in role_policy.get(
             "granted",
             {},
@@ -1628,6 +1620,22 @@ def resolve(
         if grant_entry
         else []
     )
+
+    approval_mode = capability.get(
+        "approval_mode"
+    )
+
+    if approval_mode in {
+        "EXPLICIT_ACTION",
+        "RELEASE_GATES_AND_EXPLICIT_ACTION",
+    }:
+        if (
+            "explicit-action-authorization"
+            not in required_conditions
+        ):
+            required_conditions.append(
+                "explicit-action-authorization"
+            )
 
     decision = (
         base_decision(

@@ -152,9 +152,9 @@ The model does not supply its own L-level.
 
 ## Approval
 
-Where approval is required, the resolver validates an action-bound approval against the action fingerprint.
+Where approval is required, the resolver verifies approval claim structure and ensures the claim is bound to the exact action fingerprint. Changing material action parameters invalidates reuse of unrelated approval claims.
 
-Changing material action parameters invalidates reuse of unrelated approval.
+However, approval claim structure and fingerprint consistency are distinct from trusted approval evidence. Because a trusted approval evidence verifier is not implemented, V1 intentionally fails closed: even structurally valid positive approval claims (`status: APPROVED`) evaluate to `NEED_APPROVAL` with `reason_code = APPROVAL_EVIDENCE_UNVERIFIED`. The launcher similarly rejects `--approval-file` to prevent self-asserted approval claims from authorizing governed execution.
 
 ## Fixed Profiles
 

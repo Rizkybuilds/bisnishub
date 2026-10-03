@@ -575,6 +575,27 @@ class HostHardeningTests(
 
             self.assertNotEqual(fp_a, fp_b)
 
+    def test_launcher_rejects_arbitrary_approval_file(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            approval_file = (
+                Path(directory)
+                / "approval.json"
+            )
+            approval_file.write_text(
+                '{"status": "APPROVED"}',
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(
+                ValueError,
+                "Trusted approval evidence "
+                "verification is not implemented",
+            ):
+                launcher.load_approval(
+                    approval_file
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

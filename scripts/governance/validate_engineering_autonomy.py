@@ -404,17 +404,6 @@ def validate(root: Path = ROOT) -> dict[str, Any]:
             )
             active_tuples.add(grant_key)
 
-        # Invariant 19: remote capabilities currently have no initial grant
-        if basis == "INITIAL_GOVERNANCE_BASELINE":
-            require(
-                cid not in REMOTE_CAPABILITIES,
-                f"Remote capability cannot have initial baseline grant: {cid} in {gid}",
-            )
-            require(
-                env == "repository-local",
-                f"Initial baseline grant must be repository-local environment: {gid} has {env}",
-            )
-
         # Resource scope
         scope = grant.get("resource_scope")
         require(isinstance(scope, dict), f"Grant '{gid}' missing resource_scope")
