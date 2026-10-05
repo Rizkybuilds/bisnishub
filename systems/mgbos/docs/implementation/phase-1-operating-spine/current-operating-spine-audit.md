@@ -1,85 +1,257 @@
 ---
 canonical_id: teestock.audit.phase1a-mgbos-operating-spine
-status: ACTIVE
-version: 1.0
+status: ARCHIVED
+version: 2.0
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos-teestock-phase1
 document_class: implementation-audit
 effective_from: 2026-09-30
-authoritative_for:
-  - phase-1 current implementation baseline
-  - operating-spine implementation-gap inventory
-  - current-versus-target workflow assessment
-  - phase-1 remediation priorities
-  - phase-1 backlog input
-last_reviewed: 2026-09-30
-review_cadence: after-material-phase1-change
-repository_snapshot: 9aa8a698b9b9daab6103a9e4139cd08adbb09fb4
+archived_at: 2026-10-05
+
+phase_status: CLOSED
+implementation_status: HISTORICAL_PRE_REMEDIATION_AUDIT
+
+historical_repository_snapshot:
+  repository: Rizkybuilds/bisnishub
+  commit: 9aa8a698b9b9daab6103a9e4139cd08adbb09fb4
+  audited_at: 2026-09-30
+
+reconciliation_repository_baseline:
+  repository: Rizkybuilds/bisnishub
+  branch: main
+  commit: ce30a1440eb6c4038d732e80ecae4446d311e0bd
+  reviewed_at: 2026-10-05
+
+authoritative_for: []
+
+historical_for:
+  - phase-1 pre-remediation implementation baseline
+  - phase-1 operating-spine gap discovery
+  - phase-1 current-versus-target analysis at historical snapshot
+  - phase-1 remediation rationale
+  - phase-1 backlog provenance
+
+not_authoritative_for:
+  - current MGBOS implementation state
+  - current MGBOS product backlog
+  - current engineering priorities
+  - current source behavior
+  - Founder Control product requirements
+  - current operational readiness
+  - production readiness
+  - MGBOS canonical architecture
+
+last_reviewed: 2026-10-05
+review_cadence: historical-only-unless-provenance-correction-is-required
+
 depends_on:
+  - README.md
   - operating-spine-plan.md
+  - backlog.md
+  - operator-acceptance-test.md
+  - completion-report.md
   - ../../architecture/domain-map-capability-ownership.md
   - ../../architecture/canonical-data-model.md
   - ../../architecture/business-state-machines.md
   - ../../architecture/business-invariants.md
   - ../../architecture/command-event-model.md
   - ../../architecture/permission-authorization-model.md
-supersedes: null
-implementation_status: AUDITED
+
+closure_evidence:
+  - completion-report.md
+  - operator-acceptance-test.md
+  - ../../../scripts/verify-happy-path-e2e.mjs
+
+current_navigation:
+  - README.md
+  - ../../product/founder-control-documentation-plan.md
+
+supersedes:
+  - teestock.audit.phase1a-mgbos-operating-spine@1.0
 ---
 
-# Phase 1A — Current MGBOS Operating-Spine Audit v1.0
+# Phase 1A — Historical Pre-Remediation MGBOS Operating-Spine Audit v2.0
 
-## 1. Purpose
+## 1. Document Lifecycle Notice
 
-Audit ini menentukan:
+This document preserves the **pre-remediation implementation audit** that produced the Phase 1 Operating Spine backlog.
 
-> **Seberapa jauh current MGBOS sudah mampu menjalankan TeeStock operating spine secara end-to-end, dan di titik mana founder masih harus menjadi manual router?**
+Current lifecycle:
 
-Audit tidak mendesain ulang MGBOS.
+```text
+DOCUMENT
+=
+ARCHIVED
 
-Audit membandingkan:
+HISTORICAL AUDIT SNAPSHOT
+=
+PRESERVED
+
+PHASE 1
+=
+CLOSED
+```
+
+The word:
+
+```text
+current
+```
+
+in the historical filename:
+
+```text
+current-operating-spine-audit.md
+```
+
+refers to the repository state that was current **when the audit was originally performed**.
+
+It MUST NOT be interpreted as current repository truth after Phase 1 closure.
+
+---
+
+# 2. Machine Interpretation Rule
+
+Machine readers MUST apply:
+
+```text
+HISTORICAL AUDIT FINDING
+≠
+CURRENT IMPLEMENTATION GAP
+```
+
+The original audit discovered deficiencies at:
+
+```text
+repository snapshot:
+9aa8a698b9b9daab6103a9e4139cd08adbb09fb4
+```
+
+Those findings subsequently became Phase 1 P0 work.
+
+The current Phase 1 lifecycle is:
+
+```text
+P0-01 = DONE
+P0-02 = DONE
+P0-03 = DONE
+P0-04 = DONE
+P0-05 = DONE
+P0-06 = DONE
+P0-07 = DONE
+P0-08 = DONE
+
+PHASE 1 = CLOSED
+```
+
+For current implementation claims, inspect:
+
+```text
+current source
+
+current migrations
+
+current tests
+
+current CI / evidence
+
+completion-report.md
+```
+
+rather than using the historical findings below as current facts.
+
+---
+
+# 3. Historical Audit Purpose
+
+The original audit asked:
+
+> **How far could the MGBOS implementation at the historical snapshot execute the TeeStock operating spine end-to-end, and where did the founder still have to act as manual integration middleware?**
+
+The audit compared:
 
 ```text
 CANONICAL ARCHITECTURE
         ↓
-CURRENT IMPLEMENTATION
+HISTORICAL IMPLEMENTATION
         ↓
-TARGET PHASE 1 WORKFLOW
+PHASE 1 TARGET WORKFLOW
 ```
+
+It was an implementation-gap audit.
+
+It was not long-term architecture authority.
 
 ---
 
-# 2. Repository Snapshot
+# 4. Historical Repository Snapshot
 
-Audit dilakukan terhadap:
+Original audit target:
 
 ```text
+repository:
+Rizkybuilds/bisnishub
+
 commit:
 9aa8a698b9b9daab6103a9e4139cd08adbb09fb4
 
-date:
-2026-09-29T23:47:05Z
-```
-
-Repository:
-
-```text
-Rizkybuilds/bisnishub
-```
-
-Primary system:
-
-```text
+primary system:
 systems/mgbos/
+```
+
+All original statements using terms such as:
+
+```text
+current implementation
+
+current problem
+
+current UI
+
+current command
+```
+
+must be interpreted relative to that historical snapshot.
+
+---
+
+# 5. Reconciliation Baseline
+
+This archived revision was reconciled against:
+
+```text
+repository:
+Rizkybuilds/bisnishub
+
+branch:
+main
+
+commit:
+ce30a1440eb6c4038d732e80ecae4446d311e0bd
+
+reviewed:
+2026-10-05
+```
+
+The reconciliation did not re-run every runtime test.
+
+Its purpose was to determine whether the original audit findings still represented current open implementation gaps.
+
+Result:
+
+```text
+THE ORIGINAL P0 FINDINGS
+NO LONGER REPRESENT
+THE CURRENT PHASE 1 BACKLOG
 ```
 
 ---
 
-# 3. Audit Scope
+# 6. Historical Operating-Spine Scope
 
-Operating spine:
+The audit inspected the operating spine:
 
 ```text
 LEAD
@@ -107,23 +279,29 @@ ACTUAL COST
 REALIZED MARGIN
 ```
 
-Supporting concerns:
+Supporting concerns included:
 
 ```text
 authorization
+
 organization isolation
+
 state machines
-audit
+
+auditability
+
 idempotency
-operator UX
+
+operator continuity
+
 E2E verification
 ```
 
 ---
 
-# 4. Audit Method
+# 7. Historical Audit Method
 
-Reviewed:
+The original review inspected applicable:
 
 ```text
 UI routes
@@ -138,58 +316,66 @@ database migrations
 
 RPC commands
 
-state-machine specifications
+canonical state-machine specifications
 
 implementation reports
 
-current E2E script
+E2E scripts
 ```
 
-Current code was treated as:
+At audit time:
 
 ```text
-IMPLEMENTATION TRUTH
+SOURCE / MIGRATIONS
+=
+IMPLEMENTATION EVIDENCE
 ```
 
-Canonical documents were treated as:
+while:
 
 ```text
+CANONICAL ARCHITECTURE
+=
 INTENDED / GOVERNED SEMANTICS
 ```
 
-Mismatch was classified as drift or implementation gap.
+Mismatch was classified as implementation gap or drift.
 
 ---
 
-# 5. Overall Finding
+# 8. Historical Overall Finding
 
-MGBOS already contains most of the transactional machinery required for the first TeeStock operating spine.
+The historical audit concluded that MGBOS already contained most transactional domains required for the first TeeStock operating spine.
 
-The primary remaining problem is NOT:
+The main issue was not:
 
 ```text
-missing ERP modules
+MISSING ERP BREADTH
 ```
 
-It is:
+but:
 
 ```text
 WORKFLOW CONTINUITY
-+
+
 LIFECYCLE ENFORCEMENT
-+
-PARTNER COORDINATION
-+
+
+VENDOR / PARTNER COORDINATION
+
+FULFILLMENT SAFETY
+
 OPERATOR USABILITY
+
+END-TO-END PROOF
 ```
 
-Current anti-pattern:
+Historical anti-pattern:
 
 ```text
 MODULE A
-   ↓
-RIZKY remembers what to do
-   ↓
+    ↓
+FOUNDER REMEMBERS WHAT TO DO
+    ↓
 MODULE B
 ```
 
@@ -197,690 +383,501 @@ Target:
 
 ```text
 MODULE A
-   ↓
+    ↓
 GOVERNED WORKFLOW
-   ↓
+    ↓
 MODULE B
 ```
 
 ---
 
-# 6. Current Capability Matrix
+# 9. Historical Capability Assessment
 
-| Stage                 | Entity | State Model                      | Commands                  | UI      | Tests                  | Founder Friction       | Action  |
-| --------------------- | ------ | -------------------------------- | ------------------------- | ------- | ---------------------- | ---------------------- | ------- |
-| Customer              | EXISTS | Stable                           | Stable                    | Present | Strong baseline        | Low                    | KEEP    |
-| Lead                  | EXISTS | Strong                           | Strong                    | Present | Strong module tests    | High continuity gap    | FIX     |
-| Requirement           | EXISTS | Strong                           | Strong                    | Present | Strong module tests    | Medium                 | CONNECT |
-| Quote                 | EXISTS | Strong core                      | Strong core               | Present | Strong module tests    | Low                    | KEEP    |
-| Order                 | EXISTS | Canonical but partially enforced | Partial                   | Present | Module coverage exists | High                   | FIX P0  |
-| Invoice               | EXISTS | Strong core                      | Strong core               | Present | Strong module tests    | Low                    | KEEP    |
-| Payment               | EXISTS | Strong                           | Strong                    | Present | Strong + E2E           | Low                    | KEEP    |
-| Production Job        | EXISTS | Strong                           | Strong                    | Present | Strong module tests    | Low                    | KEEP    |
-| Production Assignment | EXISTS | Partial operational semantics    | Partial                   | Partial | Existing coverage      | High                   | FIX P0  |
-| Vendor                | EXISTS | Stable directory                 | Strong directory commands | Present | Strong baseline        | Medium integration gap | CONNECT |
-| QC                    | EXISTS | Strong                           | Strong                    | Present | Strong                 | Low                    | KEEP    |
-| Shipment              | EXISTS | Strong shipment lifecycle        | Strong core               | Present | Strong                 | Medium readiness gap   | FIX P0  |
-| Cost / Margin         | EXISTS | Strong                           | Strong                    | Present | Strong                 | Low                    | KEEP    |
-| Inventory             | EXISTS | Strong                           | Strong                    | Present | Strong                 | Not launch blocker     | KEEP    |
-| Procurement           | EXISTS | Strong                           | Strong                    | Present | Strong                 | Not launch blocker     | KEEP    |
-| Goods Receipt         | EXISTS | Evidence model                   | Strong                    | Present | Strong                 | Low                    | KEEP    |
+At the original audit snapshot, the broad assessment was:
 
----
+| Capability            | Historical assessment               | Phase 1 response           | Closure state |
+| --------------------- | ----------------------------------- | -------------------------- | ------------- |
+| Customer              | Existing / usable                   | Preserve                   | DONE          |
+| Lead                  | Existing, continuity gap            | P0-01                      | DONE          |
+| Requirement           | Existing                            | Connect to Lead            | DONE          |
+| Quote                 | Strong baseline                     | Preserve                   | DONE          |
+| Order                 | Lifecycle partially operationalized | P0-02                      | DONE          |
+| Invoice               | Strong baseline                     | Preserve                   | DONE          |
+| Payment               | Strong baseline                     | Preserve                   | DONE          |
+| Production Job        | Strong baseline                     | Preserve                   | DONE          |
+| Production Assignment | Incomplete execution semantics      | P0-03 / P0-04              | DONE          |
+| Vendor                | Existing directory                  | Connect to assignment      | DONE          |
+| QC                    | Strong baseline                     | Consume as readiness truth | DONE          |
+| Shipment              | Strong lifecycle, readiness gap     | P0-05                      | DONE          |
+| Cost / Margin         | Strong baseline                     | Preserve                   | DONE          |
+| Inventory             | Existing                            | Not Phase 1 blocker        | PRESERVED     |
+| Procurement           | Existing                            | Not Phase 1 blocker        | PRESERVED     |
+| Goods Receipt         | Existing                            | Not Phase 1 blocker        | PRESERVED     |
+| Work Order / SPK      | Missing governed operator artifact  | P0-06                      | DONE          |
+| Clean Lead→Margin E2E | Missing                             | P0-07                      | DONE          |
+| Operator acceptance   | Missing                             | P0-08                      | DONE          |
 
-# 7. Important Interpretation
+This table is a historical-to-closure mapping.
 
-`PARTIAL` in this audit does NOT mean:
-
-```text
-bad implementation
-```
-
-It means:
-
-> **The domain exists but the complete founder/operator workflow required by Phase 1 is not yet closed-loop.**
+It is not a current capability maturity scorecard.
 
 ---
 
-# 8. Lead Domain
+# 10. P0-01 Historical Finding — Lead → Requirement Continuity
 
-Current implementation includes:
+## Historical State
+
+The data model already supported linkage through concepts including:
 
 ```text
-Lead creation
-qualification
-disqualification
-conversion
-customer linkage
-lead lifecycle
-permissions
+lead_id
+
+customer_account_id
 ```
 
-Current lifecycle is materially mature.
+The problem was primarily workflow continuity.
 
----
-
-# 9. Lead UI
-
-Current Lead detail includes:
+Historical operator path resembled:
 
 ```text
-view
-
-qualify
-
-disqualify
-
-convert to customer
-```
-
-For:
-
-```text
-QUALIFIED
-```
-
-the UI presents:
-
-```text
-Konversi ke Akun Customer
-```
-
----
-
-# 10. Lead Conversion
-
-Current action:
-
-```text
-convertLeadAction(...)
-```
-
-invokes:
-
-```text
-convert_lead_to_customer
-```
-
-This is already a governed command.
-
-No replacement is required.
-
----
-
-# 11. Requirement Domain
-
-Requirement creation already supports:
-
-```text
-leadId
-
-customerAccountId
-```
-
-Current server action maps them into:
-
-```text
-p_lead_id
-
-p_customer_account_id
-```
-
-through:
-
-```text
-create_requirement_with_initial_version
-```
-
-Therefore the data model already supports:
-
-```text
-LEAD
-→ REQUIREMENT
-```
-
----
-
-# 12. Requirement UI
-
-Requirement creation currently exposes dropdowns for:
-
-```text
-Inquiry terkait
-
-Pelanggan
-```
-
-The underlying records are available.
-
----
-
-# 13. P0-01 Finding — Lead → Requirement Continuity
-
-Current problem is NOT missing schema.
-
-Current problem is navigation/context continuity.
-
-Existing flow:
-
-```text
-Lead Detail
-  ↓
+Lead
+↓
 Qualify
-  ↓
+↓
 Convert
-  ↓
-operator leaves Lead workflow
-  ↓
-Requirement screen
-  ↓
-select Lead manually
-  ↓
-select Customer manually
-  ↓
-reconstruct requirement context
+↓
+Leave Lead workflow
+↓
+Navigate manually
+↓
+Requirement
+↓
+Re-select known context
 ```
+
+Founder/operator still acted as workflow router.
 
 ---
 
-# 14. P0-01 Impact
+# 11. P0-01 Historical Remediation Direction
 
-Founder/operator becomes:
-
-```text
-WORKFLOW ROUTER
-```
-
-between two domains that are already structurally connected.
-
-Severity:
-
-```text
-HIGH
-```
-
-Priority:
-
-```text
-P0-01
-```
-
----
-
-# 15. P0-01 Remediation Direction
-
-No database redesign is currently justified.
-
-Likely smallest solution:
+The recommended minimal solution was:
 
 ```text
 Lead Detail
-   ↓
+    ↓
 Continue to Requirement
-   ↓
-/requirements?...trusted-context...
-   ↓
-Requirement form prefilled
+    ↓
+trusted Lead context
+    ↓
+prefilled Requirement form
 ```
 
-or an equivalent governed pattern.
-
----
-
-# 16. P0-01 Must Preserve
-
-```text
-Lead state rules
-
-Customer conversion rules
-
-Requirement validation
-
-organization isolation
-
-existing Requirement RPC
-```
-
----
-
-# 17. Opportunity Is Not Required
-
-Current MGBOS explicitly does not require:
+without introducing:
 
 ```text
 Opportunity
 ```
 
-for this continuity.
+or redesigning the underlying Requirement domain.
 
-Canonical initial pipeline remains:
+---
+
+# 12. P0-01 Current Closure Evidence
+
+Current source contains direct Lead → Requirement continuation behavior.
+
+Evidence includes:
+
+```text
+apps/mgbos/src/app/(app)/leads/LeadDetailModal.tsx
+```
+
+with navigation to:
+
+```text
+/requirements?leadId=<lead-id>
+```
+
+and linked Requirement visibility.
+
+Operator acceptance records the normal journey:
 
 ```text
 Lead
-→ Requirement
-→ Quote
+→ "+ Lanjutkan ke Kebutuhan"
+→ Requirement prefill
 ```
 
----
+with preserved Lead/Customer context.
 
-# 18. Quote Domain
-
-Current Quote implementation already materially provides:
+Relevant evidence:
 
 ```text
-versioning
+apps/mgbos/src/app/(app)/leads/LeadDetailModal.tsx
 
-cost components
+apps/mgbos/src/app/(app)/leads/actions.ts
 
-pricing guardrails
+apps/mgbos/src/app/(app)/requirements/
 
-customer-facing projection
+operator-acceptance-test.md
 
-requirement locking
-
-acceptance
-
-historical snapshot
+scripts/verify-happy-path-e2e.mjs
 ```
 
-No foundational Quote redesign is required for Phase 1.
+Closure:
+
+```text
+P0-01
+=
+DONE
+```
 
 ---
 
-# 19. Order Domain
+# 13. P0-01 Current Interpretation
 
-Current Order schema includes:
+Do NOT read the historical finding as:
+
+```text
+Lead → Requirement continuity
+still missing.
+```
+
+Correct interpretation:
+
+```text
+historical gap
+→ remediation
+→ current implemented continuation
+```
+
+Any new Lead-continuity defect must be established from fresh current evidence.
+
+---
+
+# 14. P0-02 Historical Finding — Order Lifecycle
+
+## Historical State
+
+The Order model contained canonical states including:
 
 ```text
 DRAFT
+
 CONFIRMED
+
 ACTIVE
+
 ON_HOLD
+
 COMPLETED
+
 CANCELLED
 ```
 
-Current custom Order creation:
+but the historical implementation audit did not find a complete normal operator-facing lifecycle command surface.
+
+Risk:
 
 ```text
-create_order_from_quote
+Order remains CONFIRMED
+while
+production/payment/shipment advance
 ```
 
-produces contractual snapshot state.
+causing high-level commercial state to drift from reality.
 
 ---
 
-# 20. P0-02 Finding — Missing General Order Transition Command
+# 15. P0-02 Historical Remediation Direction
 
-Current application server actions provide primarily:
-
-```text
-createOrderFromQuoteAction
-
-createRetailOrderAction
-```
-
-No complete normal UI command surface was found for:
+Required behavior included:
 
 ```text
-CONFIRMED
-→ ACTIVE
-→ COMPLETED
-```
+governed transition command
 
-or equivalent guarded Order lifecycle.
-
----
-
-# 21. Order State-Machine Conflict
-
-Canonical architecture says Order has a lifecycle.
-
-Current implementation can therefore reach a situation where:
-
-```text
-Order = CONFIRMED
-```
-
-while:
-
-```text
-Production = advanced
-Payment = advanced
-Shipment = advanced
-```
-
-This creates inaccurate high-level commercial state.
-
----
-
-# 22. P0-02 Severity
-
-```text
-HIGH / STRUCTURAL
-```
-
-Why:
-
-Order is the primary commercial commitment.
-
-Its status must remain meaningful.
-
----
-
-# 23. P0-02 Required Direction
-
-Implement an authoritative Order transition mechanism with:
-
-```text
 authorization
 
-current-state locking
+current-state validation
 
-allowed transition validation
+transition guard
 
-completion guards
+completion eligibility
 
 audit evidence
+
+normal UI action
+```
+
+The plan explicitly rejected turning Order into a mega-state for child domains.
+
+---
+
+# 16. P0-02 Current Closure Evidence
+
+Current application source contains:
+
+```text
+transitionOrderStatusAction
+```
+
+in:
+
+```text
+apps/mgbos/src/app/(app)/orders/actions.ts
+```
+
+using:
+
+```text
+/rpc/transition_order_status
+```
+
+Current UI:
+
+```text
+apps/mgbos/src/app/(app)/orders/OrderStatusActions.tsx
+```
+
+contains explicit completion behavior and checks for unresolved obligations.
+
+Current happy-path E2E invokes:
+
+```text
+transition_order_status
+```
+
+to move the transaction through the normal lifecycle and finally into:
+
+```text
+COMPLETED
+```
+
+Relevant evidence:
+
+```text
+apps/mgbos/src/app/(app)/orders/actions.ts
+
+apps/mgbos/src/app/(app)/orders/OrderStatusActions.tsx
+
+scripts/verify-happy-path-e2e.mjs
+
+completion-report.md
+
+operator-acceptance-test.md
+```
+
+Closure:
+
+```text
+P0-02
+=
+DONE
 ```
 
 ---
 
-# 24. Order Completion Must Be Derived From Reality
+# 17. Order Lifecycle Boundary Preserved
 
-Completion must not be cosmetic.
-
-At minimum consider:
+Phase 1 remediation preserved:
 
 ```text
-required production
+ORDER
+=
+commercial commitment lifecycle
+```
+
+separately from:
+
+```text
+PAYMENT
+
+PRODUCTION
 
 QC
 
-fulfillment
-
-applicable financial obligations
+SHIPMENT
 ```
 
-without forcing child states.
+Future product work MUST NOT reinterpret completion as permission to mutate those child lifecycles automatically.
 
 ---
 
-# 25. Production Job
+# 18. P0-03 Historical Finding — Vendor Identity in Production Assignment
 
-Production Job implementation is materially strong.
+## Historical State
 
-Current lifecycle includes:
+At the historical snapshot:
 
 ```text
-PLANNED
-READY
-ASSIGNED
-ACCEPTED
-IN_PRODUCTION
-AWAITING_QC
-REWORK
-READY_FOR_HANDOFF
-COMPLETED
-ON_HOLD
-CANCELLED
+Vendor directory existed
+```
+
+and production assignment structure had evolved toward canonical Vendor linkage.
+
+However the primary operator assignment flow still depended materially on:
+
+```text
+free-text vendor name
+```
+
+instead of trusted:
+
+```text
+vendor_id
+```
+
+This weakened:
+
+```text
+vendor history
+
+rate-card linkage
+
+reassignment history
+
+analytics
+
+future vendor intelligence
 ```
 
 ---
 
-# 26. Production Assignment
+# 19. P0-03 Historical Remediation Direction
 
-Database already contains:
+The target relationship was:
 
 ```text
-production_assignments
+Production Job
+      ↓
+Vendor Directory
+      ↓
+vendor_id
+      ↓
+Production Assignment
 ```
 
 with:
 
 ```text
-status
+same-organization validation
 
-vendor_name
+ACTIVE Vendor validation
 
-accepted_at
+committed-cost preservation
+
+internal-assignment compatibility
 ```
 
-and later migration adds:
+---
+
+# 20. P0-03 Current Closure Evidence
+
+Current assignment UI explicitly uses canonical Vendor identity.
+
+Evidence:
+
+```text
+apps/mgbos/src/app/(app)/production/JobAssignForm.tsx
+```
+
+contains:
+
+```text
+vendorId
+```
+
+and a registered Vendor selector.
+
+Current action:
+
+```text
+assignProductionJobAction
+```
+
+passes:
+
+```text
+p_vendor_id
+```
+
+through the governed production RPC path.
+
+Relevant evidence:
+
+```text
+apps/mgbos/src/app/(app)/production/JobAssignForm.tsx
+
+apps/mgbos/src/app/(app)/production/actions.ts
+
+supabase/migrations/
+20260930180000_production_assignment_lifecycle.sql
+
+scripts/verify-happy-path-e2e.mjs
+```
+
+Closure:
+
+```text
+P0-03
+=
+DONE
+```
+
+---
+
+# 21. Vendor Snapshot Boundary
+
+Current Work Order and assignment behavior may still preserve vendor-readable snapshot data such as names for historical artifact readability.
+
+That does not change the canonical relationship:
 
 ```text
 vendor_id
+=
+authoritative Vendor identity
 ```
 
-Therefore Vendor identity support exists structurally.
+where applicable.
 
 ---
 
-# 27. P0-03 Finding — UI Still Uses Free-Text Vendor
+# 22. P0-04 Historical Finding — Assignment Acceptance Consistency
 
-Current:
+## Historical State
 
-```text
-JobAssignForm
-```
-
-asks for:
-
-```text
-vendorName
-```
-
-Current server action sends:
-
-```text
-p_vendor_name
-```
-
-to:
-
-```text
-assign_production_job
-```
-
----
-
-# 28. P0-03 Architectural Mismatch
-
-Database now supports:
-
-```text
-production_assignments.vendor_id
-```
-
-but the primary normal assignment workflow still uses:
-
-```text
-free-text vendor_name
-```
-
-Result:
-
-```text
-Vendor Directory
-        │
-        X
-        │
-Production Assignment
-```
-
-instead of:
-
-```text
-Vendor Directory
-        ↓
-vendor_id
-        ↓
-Production Assignment
-```
-
----
-
-# 29. P0-03 Consequences
-
-Free-text vendor identity weakens:
-
-```text
-vendor performance history
-
-rate-card linkage
-
-routing
-
-vendor analytics
-
-reassignment history
-
-future JARVIS vendor recommendation
-```
-
----
-
-# 30. P0-03 Severity
-
-```text
-HIGH
-```
-
-because TeeStock is explicitly partner-production / asset-light.
-
-Partner identity is core operational infrastructure.
-
----
-
-# 31. Vendor Domain Itself Is Not Missing
-
-Current MGBOS already has:
-
-```text
-vendors
-
-vendor_rate_cards
-```
-
-Therefore the solution is NOT:
-
-```text
-create Partner domain
-```
-
-It is:
-
-```text
-connect existing Vendor
-to
-existing Production Assignment
-```
-
----
-
-# 32. P0-04 Finding — Assignment Acceptance Consistency
-
-Production Assignment has state vocabulary:
-
-```text
-ASSIGNED
-ACCEPTED
-DECLINED
-CANCELLED
-```
-
-and:
-
-```text
-accepted_at
-```
-
----
-
-# 33. Current Assignment Creation
-
-`assign_production_job` currently:
-
-```text
-creates Production Assignment = ASSIGNED
-
-and
-
-moves Production Job = ASSIGNED
-```
-
-This is coherent initially.
-
----
-
-# 34. Current Job Acceptance
-
-Current E2E subsequently invokes:
-
-```text
-transition_production_job_status(
-  ...,
-  'ACCEPTED'
-)
-```
-
-directly on Production Job.
-
----
-
-# 35. Missing Coordination
-
-The audited production-job transition function does not establish corresponding:
-
-```text
-production_assignments.status = ACCEPTED
-
-accepted_at = ...
-```
-
-within that transition.
-
-Therefore possible state:
+The historical audit found a possible contradiction:
 
 ```text
 Production Job
-= ACCEPTED
+=
+ACCEPTED
 
 Production Assignment
-= ASSIGNED
+=
+ASSIGNED
 ```
 
----
+because Job lifecycle advancement and Assignment acceptance were not yet clearly coordinated.
 
-# 36. Why This Matters
-
-These represent different but related facts:
+The two concepts have related but distinct meaning:
 
 ```text
-Assignment:
-Did the executor accept the commitment?
+Production Assignment
+=
+executor commitment
 
-Job:
-Where is physical work in its lifecycle?
+Production Job
+=
+physical work lifecycle
 ```
-
-They must not contradict each other.
 
 ---
 
-# 37. P0-04 Severity
+# 23. P0-04 Historical Remediation Direction
 
-```text
-HIGH
-```
-
-because it directly affects partner coordination truth.
-
----
-
-# 38. P0-04 Required Direction
-
-Create explicit assignment semantics:
+Required explicit behaviors included:
 
 ```text
 accept assignment
@@ -889,552 +886,385 @@ decline assignment
 
 cancel assignment
 
-reassign
-```
+safe reassignment
 
-with coordinated Production Job behavior.
+history preservation
 
----
+active-assignment consistency
 
-# 39. Reassignment History
-
-Do not rewrite historical assignment.
-
-Target:
-
-```text
-Assignment A
-DECLINED
-
-Assignment B
-ASSIGNED
-
-Assignment B
-ACCEPTED
-```
-
-rather than:
-
-```text
-Assignment A
-overwritten into Vendor B
+idempotent retry behavior
 ```
 
 ---
 
-# 40. Quality Control
+# 24. P0-04 Current Closure Evidence
 
-QC implementation is materially strong.
-
-Current command:
+Current application actions expose:
 
 ```text
-record_qc_inspection
+acceptProductionAssignmentAction
+
+declineProductionAssignmentAction
+
+cancelProductionAssignmentAction
+
+reassignProductionJobAction
 ```
 
-requires:
+through:
 
 ```text
-Production Job = AWAITING_QC
+apps/mgbos/src/app/(app)/production/actions.ts
 ```
 
-and can drive:
+Current database migration implements:
 
 ```text
-PASS
-→ READY_FOR_HANDOFF
+accept_production_assignment
 
-REWORK
-→ REWORK
+decline_production_assignment
 
-REJECTED
-→ ON_HOLD
+reassign_production_job
+```
+
+with coordinated lifecycle behavior.
+
+Relevant migration:
+
+```text
+supabase/migrations/
+20260930180000_production_assignment_lifecycle.sql
+```
+
+The migration explicitly covers:
+
+```text
+ASSIGNED → ACCEPTED
+
+ASSIGNED → DECLINED
+
+safe reassignment
+
+accepted_at
+
+job synchronization
+
+duplicate acceptance safety
+```
+
+Closure:
+
+```text
+P0-04
+=
+DONE
 ```
 
 ---
 
-# 41. QC Provides Strong Phase 1 Foundation
+# 25. Assignment History Principle
 
-No new QC domain is required.
+The Phase 1 solution preserves the distinction between:
 
-Phase 1 should consume existing QC truth.
+```text
+historical assignment
+
+current assignment
+```
+
+instead of treating reassignment as destructive replacement of history.
+
+This remains an important business-integrity principle.
 
 ---
 
-# 42. Shipment Domain
+# 26. P0-05 Historical Finding — Fulfillment Readiness
 
-Current Shipment implementation includes:
+## Historical State
 
-```text
-Delivery Order creation
+Shipment behavior already enforced quantity ceilings.
 
-shipment item allocation
-
-quantity ceiling
-
-dispatch
-
-tracking
-
-delivery
-
-cancellation
-
-delivered immutability
-
-shipment audit
-```
-
-This is a strong base.
-
----
-
-# 43. P0-05 Finding — Fulfillment Readiness Gap
-
-Current:
+However the historical audit found that quantity correctness did not yet prove:
 
 ```text
-create_delivery_order
-```
-
-materially checks shipment/order-item quantities and shipment constraints.
-
-The audited migration does not demonstrate a required:
-
-```text
-Production Job READY_FOR_HANDOFF / COMPLETED
+production readiness
 +
-QC cleared
+QC clearance
 ```
 
-guard before Delivery Order creation.
-
----
-
-# 44. E2E Provides Direct Evidence of the Gap
-
-Existing broad E2E performs:
+The risk was:
 
 ```text
-Job 1
-QC PASS
-→ READY_FOR_HANDOFF
-
-Job 2
-QC REJECTED
-→ ON_HOLD
-```
-
-then later proceeds into:
-
-```text
-create_delivery_order(...)
-```
-
-for the same Order flow.
-
-This is strong evidence that shipment eligibility and production/QC readiness are not currently fully coupled.
-
----
-
-# 45. P0-05 Core Problem
-
-Current system proves:
-
-```text
-CAN WE SHIP THIS QUANTITY?
-```
-
-better than:
-
-```text
-IS THIS QUANTITY ACTUALLY READY TO SHIP?
+CAN SHIP QUANTITY
+≠
+SAFE TO SHIP QUANTITY
 ```
 
 ---
 
-# 46. P0-05 Severity
+# 27. P0-05 Historical Evidence
+
+The broad historical E2E could contain:
 
 ```text
-HIGH
+one production job ready
+
+another production job ON_HOLD after QC rejection
 ```
 
-because unsafe shipment can produce:
+while the flow could still proceed toward delivery-order creation.
 
-```text
-incomplete delivery
-
-quality failure
-
-customer dispute
-
-manual founder checking
-```
+This demonstrated insufficient coupling between fulfillment eligibility and physical readiness.
 
 ---
 
-# 47. P0-05 Direction
+# 28. P0-05 Historical Remediation Direction
 
-Introduce conservative authoritative readiness guard.
-
-Preferred initial rule:
+The initial conservative rule required applicable production work to be:
 
 ```text
-required production
-must be READY_FOR_HANDOFF / COMPLETED
+READY_FOR_HANDOFF
 
-and
+or
 
-no unresolved blocking QC condition
+COMPLETED
 ```
 
-before fulfillment.
+and not have unresolved blocking QC conditions.
 
----
-
-# 48. Partial Fulfillment
-
-Partial shipment should remain possible only when:
-
-```text
-readiness for the shipped quantity
-can be proven safely
-```
-
-If current model cannot prove that precisely:
+When precise partial readiness could not be proven:
 
 ```text
 BLOCK CONSERVATIVELY
 ```
 
-during launch v1.
+was preferred.
 
 ---
 
-# 49. Invoice Domain
+# 29. P0-05 Current Closure Evidence
 
-Current Invoice implementation already provides:
+Current database migration:
 
 ```text
-DRAFT
-
-ISSUED
-
-PARTIALLY_PAID
-
-PAID
-
-OVERDUE vocabulary
-
-VOID
-
-CANCELLED vocabulary
+supabase/migrations/
+20260930190000_fulfillment_readiness_guard.sql
 ```
 
-with important ceiling guards.
+adds production/QC readiness checks before Delivery Order creation.
+
+The migration explicitly checks conditions involving:
+
+```text
+READY_FOR_HANDOFF
+
+COMPLETED
+
+AWAITING_QC
+
+unresolved QC inspection
+
+PASS QC evidence
+```
+
+and raises descriptive blocker errors.
+
+Operator acceptance records QC PASS as a visible prerequisite before fulfillment.
+
+Relevant evidence:
+
+```text
+supabase/migrations/
+20260930190000_fulfillment_readiness_guard.sql
+
+apps/mgbos/src/app/(app)/production/actions.ts
+
+operator-acceptance-test.md
+
+scripts/verify-happy-path-e2e.mjs
+```
+
+Closure:
+
+```text
+P0-05
+=
+DONE
+```
 
 ---
 
-# 50. Payment Domain
+# 30. Fulfillment Integrity Boundary
 
-Current Payment implementation supports:
+Phase 1 closure does not imply that every imaginable future partial-fulfillment allocation model is solved.
 
-```text
-record
+It proves the documented Phase 1 readiness model.
 
-allocate
-
-partial allocation
-
-full settlement
-
-reversal
-
-audit/history
-```
-
-Existing E2E already tests:
-
-```text
-partial payment
-
-over-allocation prevention
-
-full settlement
-
-payment reversal
-```
-
-This is strong Phase 1 infrastructure.
+Future more granular production allocation requires independent evidence and product need.
 
 ---
 
-# 51. Cost / Margin
+# 31. P0-06 Historical Finding — Governed Work Order / SPK
 
-Current implementation already supports:
+## Historical State
 
-```text
-Estimated Cost
-
-Committed Cost
-
-Actual Cost
-
-Financial Ledger
-
-Order Financial Summary
-
-Realized Margin
-
-shipping pass-through isolation
-```
-
-No new finance aggregate is needed for Phase 1.
-
----
-
-# 52. Goods Receipt
-
-Current implementation includes:
-
-```text
-goods_receipts
-goods_receipt_items
-```
-
-and:
-
-```text
-receive_purchase_order_items
-```
-
-Goods Receipt is therefore:
-
-```text
-CURRENT
-```
-
-not a Phase 1 missing capability.
-
----
-
-# 53. Procurement
-
-Existing broad E2E already validates:
-
-```text
-Vendor
-→ Purchase Order
-→ Partial Goods Receipt
-→ Inventory increment
-→ Remaining receipt
-→ PO RECEIVED
-→ Vendor Bill
-→ Vendor Payment
-```
-
-Procurement is not a primary Phase 1 blocker.
-
----
-
-# 54. Work Order / SPK Search
-
-No clear first-class operator-facing governed production SPK / Work Order artifact was identified in the current operating path.
-
-Current external production coordination is primarily represented through:
+The historical audit found that the underlying operational data existed through:
 
 ```text
 Production Job
-+
+
 Production Assignment
-```
-
----
-
-# 55. P0-06 Finding — Missing Work Order Communication Artifact
-
-The underlying data exists.
-
-The missing capability is:
-
-```text
-shareable / printable governed instruction
-```
-
-for Vendor execution.
-
----
-
-# 56. P0-06 Should Not Create Root Aggregate Yet
-
-Phase 1 does not currently justify:
-
-```text
-work_orders table
-```
-
-with another independent lifecycle.
-
-Preferred:
-
-```text
-generated Work Order / SPK
-```
-
-from current authoritative records.
-
----
-
-# 57. Work Order Should Contain
-
-At minimum:
-
-```text
-Order reference
-
-Production Job
 
 Vendor
 
-scope
-
-quantity
-
-specification
-
-deadline
-
-committed cost / rate basis
-
-files / artwork refs
-
-instructions
-```
-
----
-
-# 58. Work Order Gap Severity
-
-```text
-HIGH OPERATIONAL
-```
-
-because without it:
-
-```text
-system truth
-→ manually reconstructed
-→ WhatsApp/vendor
-```
-
-and Rizky remains middleware.
-
----
-
-# 59. Current E2E Script
-
-Current:
-
-```text
-systems/mgbos/scripts/verify-e2e-flow.mjs
-```
-
-is valuable broad regression evidence.
-
-It covers:
-
-```text
-Requirement
-Quote
 Order
-Production
-QC
-Invoice
-Payment
-Ledger
-Margin
-Shipment
-Inventory
-Procurement
-Retail
+
+Requirement / specification
+```
+
+but the external production workflow lacked one governed operator-facing instruction artifact.
+
+Without that artifact, operational handoff risked becoming:
+
+```text
+MGBOS facts
++
+Founder memory
++
+chat reconstruction
 ```
 
 ---
 
-# 60. P0-07 Finding — E2E Does Not Start From Lead
+# 32. P0-06 Historical Architecture Direction
 
-Current script begins by finding:
+Phase 1 explicitly avoided creating:
 
 ```text
-existing Customer
+WorkOrder root aggregate
 ```
 
-then directly creates:
+without independent lifecycle evidence.
+
+Preferred first representation:
 
 ```text
-Requirement
+GENERATED GOVERNED ARTIFACT
 ```
 
-It does NOT prove:
+derived from existing authoritative records.
+
+---
+
+# 33. P0-06 Current Closure Evidence
+
+Current domain service:
 
 ```text
-Lead
-→ Qualification
-→ Customer
-→ Requirement
+packages/domain/src/workOrder.ts
+```
+
+builds governed Work Order / SPK documents.
+
+Current document-loading boundary:
+
+```text
+apps/mgbos/src/lib/workOrder/load.server.ts
+```
+
+loads the authoritative Job, Assignment, and Vendor context.
+
+Operator acceptance verifies the printable SPK journey through:
+
+```text
+/(documents)/production/[jobId]/spk
+```
+
+Relevant evidence:
+
+```text
+packages/domain/src/workOrder.ts
+
+apps/mgbos/src/lib/workOrder/load.server.ts
+
+apps/mgbos/src/app/(documents)/production/[jobId]/spk/
+
+operator-acceptance-test.md
+```
+
+Closure:
+
+```text
+P0-06
+=
+DONE
 ```
 
 ---
 
-# 61. Existing E2E Is Also Intentionally Mixed
+# 34. SPK ≠ Assignment Acceptance
 
-The same script deliberately includes:
+Phase 1 correctly preserved:
 
 ```text
-QC REWORK
-
-QC REJECTION
-
-payment reversal
-
-over-invoicing guard
-
-over-shipment guard
+SPK GENERATED
+≠
+VENDOR ACCEPTED
 ```
 
-This is useful regression testing.
+The governed artifact communicates the work.
 
-But it is not a clean normal business journey.
+Production Assignment lifecycle owns executor commitment.
+
+These concepts must remain separate.
 
 ---
 
-# 62. P0-07 Required Direction
+# 35. P0-07 Historical Finding — Clean End-to-End Proof
 
-Keep:
+## Historical State
+
+The repository already had broad regression E2E behavior.
+
+However the original broad test:
 
 ```text
 verify-e2e-flow.mjs
 ```
 
-as broad regression suite.
-
-Add separate focused:
+was not a clean normal business journey because it:
 
 ```text
-Lead → Margin happy path
+did not begin from Lead
+
+and
+
+intentionally mixed negative scenarios
 ```
 
-with no intentional negative branch inside it.
+including cases such as:
+
+```text
+QC rejection
+
+rework
+
+payment reversal
+
+over-invoicing protection
+
+over-shipment protection
+```
 
 ---
 
-# 63. Clean Happy Path
+# 36. P0-07 Historical Remediation Direction
 
-Required:
+The plan called for a focused positive path:
 
 ```text
 Lead
-→ Qualified
+→ Qualification
 → Customer
 → Requirement
 → Quote
@@ -1453,625 +1283,983 @@ Lead
 → Order Completed
 ```
 
+with explicit hard assertions.
+
 ---
 
-# 64. P0-08 Finding — Operator Journey Not Yet Proven
+# 37. P0-07 Current Closure Evidence
 
-Current engineering evidence strongly validates:
+Current script:
+
+```text
+systems/mgbos/scripts/
+verify-happy-path-e2e.mjs
+```
+
+explicitly verifies the complete normal operating journey.
+
+The script begins from:
+
+```text
+Lead Intake & Qualification
+```
+
+and continues through:
+
+```text
+Customer conversion
+
+Requirement
+
+Quote
+
+Order
+
+Payment
+
+Vendor assignment
+
+Assignment acceptance
+
+Production
+
+QC PASS
+
+READY_FOR_HANDOFF
+
+Shipment
+
+Delivery
+
+Final Payment
+
+Actual Cost
+
+Order Completion
+
+Realized Margin
+```
+
+It contains explicit assertions and successful completion output for the clean path.
+
+Closure:
+
+```text
+P0-07
+=
+DONE
+```
+
+---
+
+# 38. Broad Regression Still Has Value
+
+Closure of P0-07 did not eliminate the value of:
+
+```text
+verify-e2e-flow.mjs
+```
+
+The two test styles serve different purposes:
+
+```text
+verify-happy-path-e2e
+=
+clean business path
+
+verify-e2e-flow
+=
+broader regression / negative behavior coverage
+```
+
+They should not be collapsed merely for test-count reduction.
+
+---
+
+# 39. P0-08 Historical Finding — Operator Acceptance
+
+## Historical State
+
+Before P0-08, engineering evidence could demonstrate:
 
 ```text
 database rules
 
-domain behavior
+RPC behavior
 
-server actions
+domain logic
 
-individual application modules
+automated E2E
 ```
 
-But Phase 1 still requires proof that:
-
-```text
-a normal operator
-```
-
-can complete the entire transaction through normal application surfaces.
+but that did not prove that a human operator could complete the same transaction through normal product surfaces.
 
 ---
 
-# 65. Why Programmatic E2E Is Not Enough
+# 40. P0-08 Historical Acceptance Requirement
 
-An RPC script can succeed while UI still contains:
-
-```text
-missing navigation
-
-duplicate entry
-
-confusing terminology
-
-hidden prerequisites
-
-manual context transfer
-```
-
-Founder burden exists at the operator layer.
-
----
-
-# 66. P0-08 Required Test
-
-Run the entire workflow through:
-
-```text
-normal authenticated UI
-```
-
-without:
-
-```text
-SQL
-
-Supabase Studio
-
-manual DB mutation
-
-developer-console state changes
-
-hidden spreadsheet
-```
-
----
-
-# 67. Current Spine Strengths
-
-The audit should not understate existing work.
-
-MGBOS already has strong foundations for:
-
-```text
-immutable commercial snapshots
-
-money integrity
-
-Cost Trilogy
-
-payment allocation
-
-inventory integrity
-
-procurement
-
-QC
-
-shipment quantity ceilings
-
-role authorization
-
-organization isolation
-
-audit structures
-
-domain tests
-
-database tests
-```
-
----
-
-# 68. Current Spine Weakness Pattern
-
-The pattern is primarily:
-
-```text
-MODULE IMPLEMENTATION
-= strong
-
-MODULE-TO-MODULE OPERATING FLOW
-= incomplete in selected places
-```
-
-This explains why adding more modules would currently create less value than connecting existing ones.
-
----
-
-# 69. P0 Gap Summary
-
-| ID    | Gap                   | Root Cause                                         | Severity                  | New Entity Needed? |
-| ----- | --------------------- | -------------------------------------------------- | ------------------------- | ------------------ |
-| P0-01 | Lead → Requirement    | UX/workflow continuity                             | High                      | No                 |
-| P0-02 | Order lifecycle       | missing authoritative transition surface           | High                      | No                 |
-| P0-03 | Vendor assignment     | old free-text integration                          | High                      | No                 |
-| P0-04 | Assignment acceptance | split lifecycle not coordinated                    | High                      | No                 |
-| P0-05 | Fulfillment readiness | shipment not sufficiently coupled to production/QC | High                      | No                 |
-| P0-06 | Work Order / SPK      | governed communication artifact missing            | High                      | No                 |
-| P0-07 | Clean E2E             | broad test mixes normal/failure paths              | High evidence gap         | No                 |
-| P0-08 | Operator acceptance   | full UI journey unverified                         | High launch-readiness gap | No                 |
-
-Critical result:
-
-```text
-0 of 8
-requires a new root business entity.
-```
-
----
-
-# 70. Architecture Validation
-
-This audit strongly validates the current architecture strategy:
-
-> **Connect and harden before expanding domains.**
-
-The required Phase 1 remediation can be achieved mostly through:
-
-```text
-commands
-
-server actions
-
-UI continuity
-
-guards
-
-tests
-
-generated artifact
-```
-
-not schema proliferation.
-
----
-
-# 71. Opportunity Decision
-
-Audit evidence does not justify Opportunity.
-
-Current flow remains:
+The normal operator had to execute:
 
 ```text
 Lead
 → Requirement
 → Quote
+→ Order
+→ Invoice / Payment
+→ Production
+→ Vendor Assignment
+→ Assignment Acceptance
+→ Work Order / SPK
+→ QC
+→ Shipment
+→ Cost / Margin
+→ Order Completion
 ```
 
----
-
-# 72. Project Decision
-
-Audit evidence does not justify Project.
-
-Current combination:
+without:
 
 ```text
-Order
-+
-Production Jobs
-```
+manual SQL
 
-is sufficient for Phase 1.
+Supabase Studio state edits
+
+developer-console mutation
+
+hidden spreadsheet state
+
+manual financial correction
+```
 
 ---
 
-# 73. Generic Partner Decision
-
-Audit evidence does not justify generic Partner.
+# 41. P0-08 Current Closure Evidence
 
 Current:
 
 ```text
-Vendor
+operator-acceptance-test.md
 ```
 
-should first be properly connected to Production Assignment.
-
----
-
-# 74. Exception Decision
-
-Operational Exception remains strategically important.
-
-But current sequence should be:
+records:
 
 ```text
-fix authoritative spine
-        ↓
-prove it
-        ↓
-then model abnormality
+Final Classification:
+PASS
+
+Blocker Count:
+0
 ```
 
-Therefore generic Operational Exception remains Phase 2.
-
----
-
-# 75. Founder Read Model Decision
-
-Founder Attention views are valuable but should consume reliable state.
-
-Therefore:
+and evaluates acceptance criteria covering:
 
 ```text
-Spine correctness
-        ↓
-Exception
-        ↓
-Founder Read Models
+end-to-end operator journey
+
+no direct database work
+
+automatic authoritative financial totals
+
+discoverable next actions
+
+visible Vendor coordination
+
+understandable QC-to-shipment logic
+
+understandable Order completion
+
+zero blockers
 ```
 
-remains the preferred sequence.
+Closure:
+
+```text
+P0-08
+=
+DONE
+```
 
 ---
 
-# 76. Implementation Sequence
+# 42. Closure Mapping Summary
 
-Recommended strict execution order:
+Historical audit findings map to current closure evidence as follows:
+
+| P0    | Historical finding                            | Primary closure evidence                                                | State |
+| ----- | --------------------------------------------- | ----------------------------------------------------------------------- | ----- |
+| P0-01 | Lead → Requirement continuity gap             | `LeadDetailModal.tsx`, Requirement prefill journey, operator acceptance | DONE  |
+| P0-02 | Incomplete Order lifecycle surface            | `transitionOrderStatusAction`, `transition_order_status`, Order UI      | DONE  |
+| P0-03 | Free-text Vendor assignment identity          | `vendorId` selection + `p_vendor_id`                                    | DONE  |
+| P0-04 | Assignment/Job lifecycle inconsistency        | assignment lifecycle actions + migration                                | DONE  |
+| P0-05 | Shipment not sufficiently production/QC gated | fulfillment-readiness migration                                         | DONE  |
+| P0-06 | Missing governed external SPK artifact        | Work Order domain + SPK route                                           | DONE  |
+| P0-07 | No clean Lead→Margin E2E                      | `verify-happy-path-e2e.mjs`                                             | DONE  |
+| P0-08 | Human journey unproven                        | `operator-acceptance-test.md`                                           | DONE  |
+
+---
+
+# 43. What This Reconciliation Proves
+
+The reconciliation proves that:
+
+```text
+THE ORIGINAL PHASE 1
+P0 GAP INVENTORY
+IS NO LONGER
+THE CURRENT OPEN BACKLOG
+```
+
+It supports lifecycle correction of this audit.
+
+---
+
+# 44. What This Reconciliation Does Not Prove
+
+This reconciliation does not independently certify:
+
+```text
+production deployment
+
+hosted production database
+
+production credentials
+
+backup automation
+
+restore success
+
+monitoring
+
+incident escalation
+
+RPO / RTO
+
+real customer behavior
+
+real vendor performance
+
+real transaction economics
+
+Founder Control product maturity
+```
+
+Those require separate evidence.
+
+---
+
+# 45. Quote Domain Historical Assessment
+
+The original audit considered Quote sufficiently mature for Phase 1 and did not identify a foundational Quote redesign as a P0 blocker.
+
+Important preserved behaviors included:
+
+```text
+versioning
+
+requirement linkage
+
+pricing guard
+
+customer projection
+
+historical snapshots
+
+acceptance
+```
+
+Future Quote changes remain subject to current canonical architecture and business policy.
+
+---
+
+# 46. Invoice / Payment Historical Assessment
+
+The original audit considered the commercial finance baseline materially strong.
+
+Existing capabilities included applicable:
+
+```text
+Invoice lifecycle
+
+Payment recording
+
+Payment allocation
+
+partial settlement
+
+reversal history
+
+financial ceilings
+```
+
+Phase 1 therefore focused on integration rather than inventing a new finance aggregate.
+
+---
+
+# 47. Cost / Margin Historical Assessment
+
+The historical audit found existing support for:
+
+```text
+Estimated Cost
+
+Committed Cost
+
+Actual Cost
+
+Order Financial Summary
+
+Realized Margin
+```
+
+The Cost Trilogy was therefore treated as a capability to preserve, not redesign.
+
+---
+
+# 48. Inventory / Procurement Historical Assessment
+
+Inventory, Procurement, Goods Receipt, and Vendor Bill capabilities were not considered operating-spine P0 blockers.
+
+They remained supporting MGBOS domains.
+
+The fact that they were not Phase 1 P0 work does not mean they are operationally mature for every future TeeStock business model.
+
+---
+
+# 49. Historical Architectural Lesson
+
+The audit strongly supported a recurring principle:
+
+> **A missing business capability does not automatically justify a new root entity.**
+
+Phase 1 successfully solved several problems through:
+
+```text
+existing entity
+
+existing lifecycle
+
+new command
+
+new guard
+
+new projection
+
+new generated artifact
+
+workflow continuity
+```
+
+without creating unnecessary top-level aggregates.
+
+---
+
+# 50. Historical Founder-Burden Lesson
+
+Each P0 gap represented a place where the founder had been acting as hidden middleware.
+
+Examples:
 
 ```text
 P0-01
-Lead → Requirement
+remember Lead context
 
 P0-02
-Order Lifecycle
+mentally interpret Order state
 
 P0-03
-Vendor-backed Assignment
+manually map Vendor identity
 
 P0-04
-Assignment Acceptance
+manually confirm acceptance truth
 
 P0-05
-Fulfillment Readiness
+manually decide shipment readiness
 
 P0-06
-Work Order / SPK
+reconstruct production instructions
 
 P0-07
-Clean E2E
+guess whether domains work together
 
 P0-08
-Operator Acceptance
+guess whether the UI is actually usable
+```
+
+This pattern directly motivates the next product problem:
+
+```text
+FOUNDER CONTROL
 ```
 
 ---
 
-# 77. Why P0-03 Comes Before Work Order
+# 51. From Transaction Integration to Attention Integration
 
-Work Order must display trustworthy:
+Phase 1 primarily solved:
 
 ```text
-Vendor
+HOW DOES WORK MOVE?
 ```
 
-Therefore Vendor assignment identity must be corrected first.
+The next product question is:
+
+```text
+WHAT DESERVES ATTENTION?
+```
+
+The system should progressively reduce the need for the founder to manually search for:
+
+```text
+late work
+
+blocked work
+
+unpaid invoices
+
+Vendor acknowledgement problems
+
+QC problems
+
+shipment problems
+
+missing costs
+
+margin exceptions
+```
+
+This is a new product layer.
+
+It should not be implemented as an extension of this archived audit.
 
 ---
 
-# 78. Why P0-04 Comes Before Work Order Proof
+# 52. Operational Exception Boundary
 
-Work Order issuance and partner acknowledgement must remain distinguishable.
-
-Without Assignment acceptance semantics:
+The original audit intentionally did not promote:
 
 ```text
-SPK exists
+Operational Exception
 ```
 
-could be mistaken for:
+into the Phase 1 P0 domain set.
+
+Current MGBOS domain planning identifies it as a post-spine candidate.
+
+Its final product and architecture semantics remain separate work.
+
+Do not infer from Phase 1 history that:
 
 ```text
-Vendor accepted
+Operational Exception entity
+=
+already approved
 ```
 
 ---
 
-# 79. Why P0-05 Comes Before Happy-Path E2E
+# 53. Founder Control Boundary
 
-Happy-path Shipment should prove:
+Founder Control requires separate product definition for:
 
 ```text
-production ready
+attention
+
+priority
+
+next action
+
+decision requirement
+
+exception visibility
+
+responsible actor
+
+evidence
+
+founder escalation
+```
+
+It cannot safely be derived by simply adding more dashboard cards over raw module state.
+
+---
+
+# 54. Real Operational Pilot Boundary
+
+Phase 1 software verification used realistic scenarios and operator acceptance.
+
+That remains different from real business validation.
+
+A later pilot should use real operating evidence such as:
+
+```text
+real inquiry
+
+real customer
+
+real quotation
+
+real payment
+
+real Vendor
+
+real physical production
+
+real QC
+
+real shipment
+
+real cost
+
+real margin
+
+real abnormal condition
+```
+
+where appropriate and safe.
+
+---
+
+# 55. Operational Readiness Boundary
+
+Phase 1 audit closure is independent from operational production readiness.
+
+Separate readiness concerns include:
+
+```text
+staging / production isolation
+
+production authentication
+
+secret management
+
+backup
+
+restore
+
+monitoring
+
+escalation
+
+RPO
+
+RTO
+
+release recovery
+
+production acceptance
+```
+
+Current owner:
+
+```text
+../../engineering/operational-readiness.md
+```
+
+and related runbooks/evidence.
+
+---
+
+# 56. Historical Audit Authority Is Closed
+
+This document no longer owns:
+
+```text
+current baseline
+
+current gap inventory
+
+current remediation priority
+
+current backlog input
+```
+
+Those original authority claims expired with Phase 1 closure.
+
+The document is now preserved only for:
+
+```text
+historical baseline
+
+provenance
+
+reasoning trace
+
+closure mapping
+```
+
+---
+
+# 57. Current Implementation Truth Rule
+
+If a machine needs to know:
+
+> **Does MGBOS currently support X?**
+
+the required flow is:
+
+```text
+CURRENT REPOSITORY
+        ↓
+CURRENT CANONICAL SOURCE
+        ↓
+CURRENT SOURCE / MIGRATION
+        ↓
+CURRENT TEST / EVIDENCE
+        ↓
+CLAIM
+```
+
+not:
+
+```text
+ARCHIVED AUDIT
+        ↓
+CLAIM
+```
+
+---
+
+# 58. Current Product Direction
+
+Current product/documentation planning after Phase 1 is routed through:
+
+```text
+../../product/founder-control-documentation-plan.md
+```
+
+The intended progression is:
+
+```text
+PHASE 1 CLOSED
+        ↓
+DOCUMENTATION RECONCILIATION
+        ↓
+FOUNDER CONTROL PRD
+        ↓
+FOUNDER ATTENTION SPEC
+        ↓
+OPERATIONAL EXCEPTION SPEC
+        ↓
+REAL OPERATIONAL PILOT PLAN
+        ↓
+ARCHITECTURE IMPACT REVIEW
+        ↓
+ENGINEERING DISCOVERY
+```
+
+---
+
+# 59. AI / Engineering Runtime Safety Rule
+
+An engineering runtime MUST NOT use this archived audit to create new implementation work directly.
+
+Forbidden inference:
+
+```text
+historical finding exists
+→ implement it now
+```
+
+Required interpretation:
+
+```text
+historical finding
 +
-QC passed
-```
-
-not merely quantity availability.
-
----
-
-# 80. Why P0-07 Comes Before Operator Acceptance
-
-First prove:
-
-```text
-business semantics
-```
-
-programmatically.
-
-Then prove:
-
-```text
-operator usability
-```
-
-through UI.
-
-This separates business-logic failure from UX failure.
-
----
-
-# 81. Current Test Maturity
-
-Current repository already includes substantial:
-
-```text
-Vitest
-
-pgTAP
-
-module tests
-
-permission tests
-
-integration/E2E
-```
-
-Phase 1 should extend these patterns rather than invent a new testing architecture.
-
----
-
-# 82. Test Rule
-
-Every P0 change should add the smallest appropriate combination of:
-
-```text
-domain test
-
-validation test
-
-permission test
-
-database test
-
-E2E assertion
-```
-
-depending on the behavior changed.
-
----
-
-# 83. Migration Rule
-
-If database behavior changes:
-
-```text
-CREATE FORWARD MIGRATION
-```
-
-Do not rewrite already-applied migration history.
-
----
-
-# 84. Authorization Rule
-
-Every consequential command must retain:
-
-```text
-authenticated actor
-
-organization membership
-
-permission
-
-business-state validation
-
-invariant validation
-```
-
----
-
-# 85. Business Integrity Rule
-
-Do not solve workflow friction through:
-
-```text
-direct frontend table update
-
-service-role bypass
-
-manual SQL
-
-status override
-```
-
----
-
-# 86. Founder Burden Identified by Audit
-
-Current remaining founder burdens include:
-
-| Gap                   | Founder burden                                                |
-| --------------------- | ------------------------------------------------------------- |
-| Lead → Requirement    | remembering and re-entering inquiry context                   |
-| Order lifecycle       | mentally interpreting order progress                          |
-| Vendor assignment     | remembering which textual vendor means which vendor record    |
-| Assignment acceptance | manually confirming whether partner really accepted           |
-| Fulfillment readiness | manually checking whether production is actually safe to ship |
-| Work Order            | reconstructing vendor instructions from system + chat         |
-| E2E gap               | uncertainty whether modules work together                     |
-| Operator gap          | uncertainty whether normal UI is actually usable              |
-
----
-
-# 87. Launch-Risk Classification
-
-Current highest launch risks are not:
-
-```text
-missing AI
-
-missing catalog
-
-missing creator platform
-```
-
-They are:
-
-```text
-workflow discontinuity
-
-ambiguous partner state
-
-commercial lifecycle drift
-
-unsafe fulfillment
-
-operator friction
-```
-
----
-
-# 88. What Phase 1 Should Not Touch
-
-Unless implementation reveals an actual blocker:
-
-```text
-JARVIS runtime
-
-generic Exception
-
-Creator
-
-Royalty
-
-Affiliate
-
-Campaign domain
-
-advanced Product Catalog
-
-generic Partner
-
-BOM
-
-microservices
-
-event streaming infrastructure
-```
-
----
-
-# 89. Phase 1 Completion Evidence Required
-
-Before closure:
-
-```text
-clean happy-path E2E
+closure mapping
 +
-negative scenario evidence
+current source
 +
-operator acceptance
+current product requirement
 +
-full relevant test suite
-+
-production build
+current architecture
+```
+
+must all be considered.
+
+---
+
+# 60. File-Name Compatibility Decision
+
+The physical filename remains:
+
+```text
+current-operating-spine-audit.md
+```
+
+for:
+
+```text
+link stability
+
+historical references
+
+Git provenance
+
+existing documentation navigation
+```
+
+The file is NOT renamed merely to correct wording.
+
+The lifecycle metadata and explicit historical notice remove semantic ambiguity.
+
+---
+
+# 61. Why Not Delete This File?
+
+Deletion would remove useful evidence about:
+
+```text
+how Phase 1 gaps were discovered
+
+why each P0 item existed
+
+which current capabilities were not always present
+
+why implementation took its eventual form
+```
+
+For Vibe Engineering, this history is valuable.
+
+The correct treatment is:
+
+```text
+ARCHIVE SEMANTICALLY
+```
+
+not:
+
+```text
+ERASE HISTORY
 ```
 
 ---
 
-# 90. Current Readiness Assessment
+# 62. Why Not Keep It ACTIVE?
 
-Current MGBOS is:
+`ACTIVE` would imply that the document remains authoritative within its original declared scope.
 
-```text
-STRUCTURALLY MATURE
-```
-
-for the first operating spine.
-
-It is not yet:
+Its original scope included:
 
 ```text
-OPERATIONALLY CLOSED-LOOP
+current implementation baseline
+
+current gap inventory
+
+current remediation priorities
 ```
 
-for launch.
+Those claims are no longer current after Phase 1 closure.
+
+Therefore `ACTIVE` would be misleading.
+
+Lifecycle:
+
+```text
+ARCHIVED
+```
+
+is the correct state.
 
 ---
 
-# 91. Correct Strategic Response
+# 63. Why Not SUPERSEDED?
 
-Wrong:
+No single new canonical document directly replaces this audit's historical purpose.
 
-```text
-add more modules
-```
-
-Correct:
+The completion report answers:
 
 ```text
-connect existing modules
-↓
-remove contradictions
-↓
-remove manual handoffs
-↓
-prove end-to-end
+WHAT WAS COMPLETED?
 ```
+
+The audit answers:
+
+```text
+WHAT WAS WRONG BEFORE REMEDIATION?
+```
+
+These are complementary evidence artifacts.
+
+The audit therefore becomes historical provenance rather than being semantically replaced by another single document.
 
 ---
 
-# 92. Phase 1A Conclusion
+# 64. Phase 1 Historical Timeline
 
-The system does not need another architecture expansion before implementation.
-
-It needs execution against eight bounded gaps.
-
-The critical finding is:
-
-> **MGBOS already knows most of the facts TeeStock needs. The remaining work is making those facts move through one coherent governed workflow.**
-
----
-
-# 93. Immediate Next Artifact
-
-Create:
+Correct machine-readable interpretation:
 
 ```text
-systems/mgbos/docs/implementation/
-phase-1-operating-spine/
-backlog.md
-```
+2026-09-30
 
-to convert:
-
-```text
-P0-01 ... P0-08
-```
-
-into bounded Antigravity execution tasks with:
-
-```text
-problem
-
-current evidence
-
-target behavior
-
-files likely affected
-
-acceptance criteria
-
-tests
-
-non-goals
-
-completion evidence
+PRE-REMEDIATION AUDIT
+        ↓
+8 P0 GAPS IDENTIFIED
+        ↓
+IMPLEMENTATION PLAN
+        ↓
+P0 BACKLOG
+        ↓
+P0-01 ... P0-08 EXECUTED
+        ↓
+AUTOMATED VERIFICATION
+        ↓
+OPERATOR ACCEPTANCE
+        ↓
+COMPLETION REPORT
+        ↓
+PHASE 1 CLOSED
 ```
 
 ---
 
-# 94. Final Audit Principle
+# 65. Current Phase 1 Summary
 
-> **Do not measure Phase 1 by how many modules exist. Measure it by whether one real transaction can travel through them without the founder becoming integration middleware.**
+```text
+PHASE
+=
+Phase 1 Operating Spine
+
+STATUS
+=
+CLOSED
+
+THIS AUDIT
+=
+ARCHIVED PRE-REMEDIATION BASELINE
+
+OPEN P0 ITEMS
+=
+NONE
+
+CURRENT PHASE 1 EXECUTION AUTHORITY
+=
+NONE
+```
+
+---
+
+# 66. Durable Lessons Preserved
+
+Phase 1 provides several durable lessons for future MGBOS development.
+
+## Lesson 1
+
+```text
+WORKFLOW CONTINUITY
+can matter more than
+NEW MODULE COUNT
+```
+
+## Lesson 2
+
+```text
+BUSINESS STATE
+must remain meaningful
+across independent domains
+```
+
+## Lesson 3
+
+```text
+IDENTITY
+must be canonical
+before analytics or AI can be trusted
+```
+
+## Lesson 4
+
+```text
+QUANTITY VALIDITY
+does not automatically mean
+OPERATIONAL READINESS
+```
+
+## Lesson 5
+
+```text
+ARTIFACT
+can solve an operational need
+without becoming a new aggregate
+```
+
+## Lesson 6
+
+```text
+AUTOMATED TEST PASS
+does not replace
+OPERATOR ACCEPTANCE
+```
+
+## Lesson 7
+
+```text
+IMPLEMENTED SOFTWARE
+does not automatically mean
+REAL BUSINESS VALIDATED
+```
+
+---
+
+# 67. Founder-Control Implication
+
+The next major operational burden is no longer primarily:
+
+```text
+connecting module A to module B
+```
+
+It is increasingly:
+
+```text
+knowing which business fact
+requires attention
+```
+
+Target direction:
+
+```text
+NORMAL WORK
+→ quiet
+
+ABNORMAL WORK
+→ explicit
+
+MATERIAL ABNORMAL WORK
+→ prioritized
+
+FOUNDER JUDGMENT
+→ requested only when necessary
+```
+
+This direction belongs to new product documentation.
+
+---
+
+# 68. Final Interpretation
+
+This file should be read as:
+
+> **The historical diagnostic record that explains why Phase 1 existed.**
+
+It should NOT be read as:
+
+> **The current list of what MGBOS still lacks.**
+
+Canonical closure interpretation:
+
+```text
+AUDIT FOUND GAPS
+        ↓
+GAPS BECAME P0 WORK
+        ↓
+P0 WORK WAS IMPLEMENTED
+        ↓
+VERIFICATION PASSED
+        ↓
+OPERATOR ACCEPTANCE PASSED
+        ↓
+PHASE 1 CLOSED
+```
+
+The repository has moved beyond the baseline described by the original audit.
+
+The next work must begin from current repository truth and the active Founder Control documentation program.

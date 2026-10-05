@@ -1,849 +1,1090 @@
 ---
 canonical_id: bisnishub.roadmap.solo-founder-launch
 status: ACTIVE
-version: 1.0
+version: 2.0
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: bisnishub-teestock-launch
 document_class: canonical-roadmap
-effective_from: 2026-09-30
+effective_from: 2026-10-05
+
 planning_horizon:
-  start: 2026-09-30
+  start: 2026-10-05
+  quarter_end: 2026-12-31
   capital_readiness_target: late-november-2026
   controlled_launch_target: late-november-to-early-december-2026
+
 primary_business: teestock
 primary_operating_system: mgbos
-supporting_systems:
+
+supporting_capabilities:
   - deterministic-automation
   - jarvis-lite
+
+current_state:
+  mgbos_phase_1_operating_spine: CLOSED
+  active_mgbos_implementation_phase: NONE
+  current_mgbos_product_program: FOUNDER_CONTROL
+  operational_readiness: NOT_PRODUCTION_READY
+  real_transaction_readiness: GATED
+  roadmap_stage: STAGE_A_CURRENT_STATE_RECONCILIATION
+
+repository_baseline:
+  repository: Rizkybuilds/bisnishub
+  branch: main
+  commit: f89ccb49878668f5cb00edf7375e168b9d4a0670
+  reviewed_at: 2026-10-05
+
 authoritative_for:
-  - solo-founder pre-launch implementation sequencing
-  - mgbos operating-spine closure priority
-  - founder-control sequencing
-  - automation sequencing
-  - jarvis-lite launch sequencing
-  - launch-readiness gates
-last_reviewed: 2026-09-30
-review_cadence: weekly-during-prelaunch
+  - solo-founder strategic pre-launch sequencing
+  - cross-product launch-stage ordering
+  - founder-control sequencing relative to automation and JARVIS
+  - controlled-launch strategic gates
+  - Q4 MGBOS-to-TeeStock execution direction
+  - roadmap-stage transition criteria
+
+not_authoritative_for:
+  - TeeStock detailed business policy
+  - MGBOS canonical entity semantics
+  - MGBOS canonical state machines
+  - MGBOS business invariants
+  - Founder Control detailed product requirements
+  - engineering implementation design
+  - implementation work packages
+  - deployment authorization
+  - production-readiness certification
+  - JARVIS runtime architecture
+  - automation runtime configuration
+
+last_reviewed: 2026-10-05
+review_cadence: weekly-during-prelaunch-or-after-material-stage-change
+
 depends_on:
   - ../operating-model/solo-founder-operating-system.md
   - ../architecture/master-system-blueprint.md
   - ../architecture/system-boundaries.md
   - ../architecture/architectural-laws.md
+  - ../../systems/mgbos/docs/README.md
   - ../../systems/mgbos/docs/architecture/domain-map-capability-ownership.md
-  - ../../systems/mgbos/docs/architecture/canonical-data-model.md
-  - ../../systems/mgbos/docs/architecture/business-state-machines.md
+  - ../../systems/mgbos/docs/implementation/README.md
+  - ../../systems/mgbos/docs/implementation/phase-1-operating-spine/completion-report.md
+  - ../../systems/mgbos/docs/product/founder-control-documentation-plan.md
+  - ../../systems/mgbos/docs/engineering/operational-readiness.md
+  - ../../bisnis/teestock/07-operations/operating-model.md
   - ../../bisnis/teestock/14-roadmap/current-quarter.md
   - ../../systems/jarvis/docs/core-runtime.md
-supersedes: null
-implementation_status: EXECUTION_READY
+
+supersedes:
+  - bisnishub.roadmap.solo-founder-launch@1.0
+
+implementation_status: STRATEGIC_ROADMAP_ACTIVE
 ---
 
-# Solo-Founder Launch Roadmap — September → Launch v1.0
+# Solo-Founder Launch Roadmap — Q4 2026 to Controlled Launch v2.0
 
 ## 1. Purpose
 
-Dokumen ini menerjemahkan:
+Dokumen ini menentukan urutan strategis untuk membawa:
 
-```text
-Solo-Founder Operating System
+```text id="is49yy"
+TEEStock
 +
-TeeStock Q4 Business Priority
+MGBOS
 +
-Current MGBOS Reality
-+
-JARVIS Architecture
-```
-
-menjadi satu urutan implementasi menuju launch.
-
-Pertanyaan utamanya:
-
-> **Apa yang harus dibangun dalam urutan yang benar agar TeeStock dapat mulai menerima transaksi tanpa menjadikan Rizky manual operating system?**
-
----
-
-# 2. Launch Objective
-
-Sebelum volume transaksi nyata mulai meningkat, TeeStock harus mampu menjalankan:
-
-```text
-LEAD
-  ↓
-REQUIREMENT
-  ↓
-QUOTE
-  ↓
-ORDER
-  ├────────────► INVOICE / PAYMENT
-  │
-  ▼
-PRODUCTION
-  ↓
-PRODUCTION ASSIGNMENT
-  ↓
-WORK ORDER / SPK
-  ↓
-QC
-  ↓
-SHIPMENT
-  ↓
-ACTUAL COST
-  ↓
-REALIZED MARGIN
-```
-
-melalui workflow yang dapat dipercaya.
-
----
-
-# 3. Launch Readiness Question
-
-Sistem harus bisa menjawab tanpa Rizky melakukan database investigation:
-
-```text
-Apa yang sedang berjalan?
-
-Apa yang terlambat?
-
-Apa yang terblokir?
-
-Apa yang belum dibayar?
-
-Siapa vendor yang mengerjakan?
-
-Apakah vendor sudah menerima pekerjaan?
-
-Apakah produksi sudah lolos QC?
-
-Apakah order aman dikirim?
-
-Berapa biaya aktual?
-
-Berapa margin aktual?
-
-Apa yang membutuhkan keputusan Rizky?
-```
-
----
-
-# 4. Roadmap Strategy
-
-Urutan canonical:
-
-```text
-TRUTH
-  ↓
-SPINE INTEGRITY
-  ↓
-FOUNDER CONTROL
-  ↓
 DETERMINISTIC AUTOMATION
-  ↓
-AI LEVERAGE
-  ↓
-CONTROLLED LAUNCH
++
+JARVIS
 ```
+
+menuju operasi bisnis nyata tanpa menjadikan founder sebagai manual operating system.
+
+Pertanyaan utama:
+
+> **Apa urutan paling aman dan paling leverage untuk mengubah MGBOS yang sudah memiliki operating spine menjadi sistem yang benar-benar membantu solo founder menjalankan TeeStock, kemudian membuktikannya melalui transaksi nyata sebelum menambah automation dan AI lebih jauh?**
 
 ---
 
-# 5. Critical Correction From Previous Roadmap
+# 2. Roadmap Is Sequencing Authority
 
-Previous sequencing placed:
+Dokumen ini memiliki authority untuk:
 
-```text
-Operating Spine
-→ Exception
-→ Founder Control
+```text id="ovbaw6"
+WHAT COMES BEFORE WHAT
 ```
 
-too early.
+pada level strategis.
 
-Current implementation audit discovered that several existing spine components are not yet operationally closed-loop.
+Dokumen ini tidak menentukan:
 
-Therefore correct sequence is:
+```text id="v98s4m"
+database schema
 
-```text
-FIX THE SPINE
-      ↓
-PROVE THE SPINE
-      ↓
-SURFACE EXCEPTIONS
-      ↓
-BUILD FOUNDER CONTROL
+RPC
+
+table
+
+component
+
+migration
+
+exact API
+
+exact AI prompt
+
+exact automation workflow
 ```
+
+Detail tersebut harus mengikuti semantic owner masing-masing.
 
 ---
 
-# 6. Current Reality
+# 3. Current Reality
 
-MGBOS already materially implements most required business domains.
+Repository truth at the reviewed baseline shows:
 
-Current strength includes:
+```text id="0l8vck"
+MGBOS IMPLEMENTATION PHASE 1
+OPERATING SPINE
+=
+CLOSED
+```
 
-```text
-Customer
+Therefore:
+
+```text id="cv6pqb"
+FIX THE PHASE 1 SPINE
+```
+
+is no longer the current roadmap objective.
+
+The strategic problem has advanced.
+
+---
+
+# 4. Phase 1 Achievement
+
+The completed software operating spine materially supports:
+
+```text id="769bjq"
 Lead
-Requirement
-Quote
-Order
-Invoice
-Payment
-Production
-Vendor
-QC
-Shipment
-Inventory
-Procurement
-Goods Receipt
-Cost / Margin
+→ Customer
+→ Requirement
+→ Quote
+→ Order
+→ Invoice
+→ Payment
+→ Production Job
+→ Production Assignment
+→ Work Order / SPK
+→ QC
+→ Shipment
+→ Actual Cost
+→ Realized Margin
+→ Order Completion
 ```
 
-The primary challenge is now:
-
-> **integration integrity, not ERP breadth.**
+within the documented Phase 1 verification boundary.
 
 ---
 
-# 7. Current Critical Gaps
+# 5. Phase 1 P0 Status
 
-Implementation audit identified these operating-spine gaps:
+The historical P0 backlog is complete:
 
-```text
+```text id="kzhxb7"
 P0-01
-Lead → Requirement continuity
+Lead → Requirement
+=
+DONE
 
 P0-02
-Authoritative Order lifecycle
+Order Lifecycle
+=
+DONE
 
 P0-03
-Vendor → Production Assignment identity
+Vendor-Backed Assignment
+=
+DONE
 
 P0-04
-Assignment acceptance / decline / reassignment
+Assignment Acceptance / Reassignment
+=
+DONE
 
 P0-05
-Production/QC → Shipment readiness
+Fulfillment Readiness
+=
+DONE
 
 P0-06
-Governed Work Order / SPK
+Work Order / SPK
+=
+DONE
 
 P0-07
-Clean Lead → Margin E2E
+Clean Happy-Path E2E
+=
+DONE
 
 P0-08
-Operator Acceptance Test
+Operator Acceptance
+=
+DONE
 ```
 
-These take priority over new root domains.
+These items MUST NOT appear as open current roadmap work.
 
 ---
 
-# 8. Phase Model
+# 6. Critical Roadmap Correction
 
-```text
-PHASE 0
-Canonical Closure
+Roadmap v1.0 used:
 
-PHASE 1
-Operating-Spine Closure
+```text id="oopj3n"
+FIX THE SPINE
+        ↓
+PROVE THE SPINE
+        ↓
+SURFACE EXCEPTIONS
+        ↓
+FOUNDER CONTROL
+```
 
-PHASE 2
-Founder Control Layer
+The first two stages have now materially completed at the software/operator level.
 
-PHASE 3
+Current strategic sequence becomes:
+
+```text id="4q9r0g"
+RECONCILE CURRENT TRUTH
+        ↓
+DEFINE FOUNDER CONTROL
+        ↓
+RECONCILE ARCHITECTURE
+        ↓
+BUILD ONLY APPROVED FOUNDER CONTROL
+        ↓
+PROVE OPERATIONAL READINESS
+        ↓
+RUN REAL TRANSACTIONS
+        ↓
+LEARN FROM EXCEPTIONS
+        ↓
+AUTOMATE REPEATED STABLE WORK
+        ↓
+ADD AI LEVERAGE
+        ↓
+CONTROLLED SCALE
+```
+
+---
+
+# 7. Current Bottleneck
+
+The primary current bottleneck is no longer:
+
+```text id="eob159"
+Can the system represent the transaction?
+```
+
+It is increasingly:
+
+```text id="y4zugn"
+Can the founder understand
+what deserves attention
+without inspecting everything manually?
+```
+
+---
+
+# 8. Founder-Control Objective
+
+The next MGBOS product layer should allow the founder to answer:
+
+```text id="230ge1"
+What needs attention?
+
+What is late?
+
+What is blocked?
+
+What is unpaid?
+
+What is waiting on a Vendor?
+
+What has failed QC?
+
+What cannot ship?
+
+What cost is missing?
+
+What margin is abnormal?
+
+What requires my decision?
+
+What can safely continue without me?
+```
+
+without manual database or multi-module investigation.
+
+---
+
+# 9. Canonical Strategic Sequence
+
+Current strategic sequence:
+
+```text id="csblau"
+TRUSTED BUSINESS STATE
+
+        ↓
+
+TRANSACTIONAL SPINE
+CLOSED
+
+        ↓
+
+FOUNDER CONTROL
+
+        ↓
+
+OPERATIONAL READINESS
+
+        ↓
+
+REAL OPERATING PILOT
+
+        ↓
+
+REPEATED OPERATIONAL LEARNING
+
+        ↓
+
+DETERMINISTIC AUTOMATION
+
+        ↓
+
+AI / JARVIS LEVERAGE
+
+        ↓
+
+CONTROLLED SCALE
+```
+
+---
+
+# 10. Roadmap Stage Vocabulary
+
+To avoid collision with MGBOS engineering:
+
+```text id="0u5itf"
+ROADMAP STAGE
+≠
+MGBOS IMPLEMENTATION PHASE
+```
+
+This roadmap uses:
+
+```text id="v1p9on"
+STAGE A
+STAGE B
+STAGE C
+...
+```
+
+MGBOS implementation retains its own:
+
+```text id="kmcn28"
+Phase 1
+Phase 2
+...
+```
+
+lifecycle.
+
+---
+
+# 11. Roadmap Stage Model
+
+```text id="ghyjsv"
+STAGE A
+Current-State Reconciliation
+
+STAGE B
+Founder Control Product Definition
+
+STAGE C
+Architecture + Engineering Readiness
+
+STAGE D
+Founder Control Implementation
+
+STAGE E
+Operational Readiness + Real Pilot
+
+STAGE F
 Deterministic Automation
 
-PHASE 4
+STAGE G
 JARVIS Lite
 
-PHASE 5
-Launch Stress Test
-
-PHASE 6
-Controlled Launch
+STAGE H
+Controlled Launch & Q4 Learning
 ```
+
+Stages may overlap only when dependencies are genuinely independent.
 
 ---
 
-# 9. Phase 0 — Canonical Closure
+# 12. Stage A — Current-State Reconciliation
 
-Target window:
+Current stage:
 
-```text
-September 30
-→ early October
+```text id="0v3d33"
+ACTIVE
 ```
 
 Objective:
 
-> **Remove ambiguity before implementation agents begin changing runtime behavior.**
+> **Make repository documentation reflect current reality before starting the next product and engineering program.**
 
 ---
 
-# 10. Phase 0 Required Documents
+# 13. Stage A Problem
 
-Persist and reconcile:
+Machine-driven engineering becomes unsafe when repository sources simultaneously say:
 
-```text
-Canonical Source Map v1.1
-
-MGBOS Master Documentation Index v2.0
-
-MGBOS Architecture Index v2.0
-
-Solo-Founder Operating System v1.0
-
-MGBOS Domain Map & Capability Ownership v1.0
-
-Solo-Founder Launch Roadmap v1.0
-
-Phase 1 Operating Spine Plan
-
-Phase 1 Current Operating-Spine Audit
-
-Phase 1 Backlog
+```text id="kiu2m1"
+Phase 1 is CLOSED
 ```
+
+and:
+
+```text id="q4nfd1"
+P0-01 is the next task
+```
+
+or:
+
+```text id="s60d96"
+Current implementation focus
+=
+Phase 1
+```
+
+when that is no longer true.
 
 ---
 
-# 11. Phase 0 Also Requires TeeStock Authority Cleanup
+# 14. Stage A Work
 
-The current:
+Reconcile applicable:
 
-```text
-bisnis/teestock/11-data-mgbos/
+```text id="z7v5kc"
+Phase 1 navigation
+
+Phase 1 implementation plan
+
+Phase 1 historical audit
+
+Phase 1 backlog
+
+MGBOS implementation index
+
+MGBOS product index
+
+operational-readiness register
+
+project index
+
+this launch roadmap
+
+MGBOS master documentation routing
 ```
 
-must be interpreted as:
-
-```text
-TEEStock BUSINESS / SYSTEM REQUIREMENTS
-```
-
-not MGBOS implementation authority.
-
-A controlled rename may happen later.
-
-Authority must be clear before implementation begins.
+while preserving historical provenance.
 
 ---
 
-# 12. Phase 0 Exit Gate
+# 15. Stage A Exit Gate
 
-Proceed when:
+Stage A passes when a fresh capable machine can determine:
 
-```text
-canonical ownership
-= clear
+```text id="d9dqzh"
+Phase 1
+=
+CLOSED
 
-implementation priority
-= clear
+current MGBOS product program
+=
+FOUNDER CONTROL
 
-current-vs-target semantics
-= clear
+current active MGBOS implementation phase
+=
+NONE
 
-P0 backlog
-= bounded
-
-Antigravity does not need to guess authority
+production readiness
+=
+NOT VERIFIED
 ```
+
+without relying on conversation history.
 
 ---
 
-# 13. Phase 1 — Operating-Spine Closure
+# 16. Stage B — Founder Control Product Definition
 
-Primary goal:
+Objective:
 
-> **Make one TeeStock Custom/B2B transaction run coherently from Lead to realized margin.**
-
-No major new business domains should be introduced during Phase 1.
+> **Define the next product layer completely enough that engineering does not have to invent its semantics.**
 
 ---
 
-# 14. Phase 1A — Lead → Requirement
+# 17. Stage B Product Package
 
-Current situation:
+Current planned documents:
 
-```text
-Lead exists
-Requirement exists
-linkage exists
-operator continuity is weak
-```
+```text id="ralerm"
+D0
+Founder Control Documentation Plan
 
-Implement:
+D1
+Founder Control PRD
 
-```text
-QUALIFIED LEAD
-      ↓
-Continue to Requirement
-      ↓
-prefilled trusted context
-```
+D2
+Founder Attention & Decision Experience Spec
 
-without Opportunity.
+D3
+Operational Exception Product Spec
 
----
-
-# 15. Phase 1A Done
-
-Success:
-
-```text
-lead_id preserved
-
-customer linkage preserved
-
-trusted lead context prefilled
-
-missing information remains missing
-
-existing linked Requirement discoverable
-
-no manual context reconstruction
+D4
+TeeStock Real Operational Pilot Plan
 ```
 
 ---
 
-# 16. Phase 1B — Authoritative Order Lifecycle
+# 18. Stage B Parent PRD
 
-Current:
+D1 owns:
 
-```text
-Order entity
-= CURRENT
+```text id="s5qla5"
+WHY
 
-generic lifecycle enforcement
-= PARTIAL
+WHAT
+
+ACTORS
+
+OUTCOMES
+
+SCOPE
+
+NON-GOALS
+
+FUNCTIONAL REQUIREMENTS
+
+BUSINESS-RULE DEPENDENCIES
+
+SUCCESS
+
+RISKS
+
+DECISIONS
 ```
 
-Implement governed transitions for:
-
-```text
-CONFIRMED
-ACTIVE
-ON_HOLD
-COMPLETED
-CANCELLED
-```
-
-according to canonical state semantics.
+It does not design physical implementation.
 
 ---
 
-# 17. Order Completion Must Mean Something
+# 19. Founder Attention
 
-Order must not become `COMPLETED` merely because someone clicked a button.
+Founder Attention should answer:
 
-Completion must consider appropriate:
+```text id="cxxzer"
+what deserves attention
 
-```text
-production obligations
+why it deserves attention
 
-QC
+how urgent it is
 
-fulfillment
+who currently owns it
 
-commercial/financial obligations
+what next action exists
+
+whether founder judgment is needed
+
+what evidence supports the signal
 ```
-
-while preserving independent child-domain states.
 
 ---
 
-# 18. Phase 1C — Vendor-Backed Assignment
+# 20. Critical State Separation
 
-Current vendor directory and rate-card capability already exist.
+Founder Control must preserve:
 
-Current normal Production Assignment flow must use:
-
-```text
-vendor_id
+```text id="zze9zk"
+BUSINESS STATE
+≠
+ATTENTION STATE
+≠
+OPERATIONAL EXCEPTION
+≠
+APPROVAL REQUEST
+≠
+FOUNDER DECISION
 ```
 
-as the primary vendor identity.
-
-Free-text vendor naming must not remain the canonical relationship.
+No mega-state.
 
 ---
 
-# 19. Phase 1D — Assignment Acknowledgement
+# 21. Operational Exception Is Not Yet An Entity Decision
 
-Reconcile:
+Current roadmap supports defining:
 
-```text
-Production Assignment lifecycle
-↔
-Production Job lifecycle
+```text id="84qxpx"
+OPERATIONAL EXCEPTION
 ```
 
-Required:
+as a product need.
 
-```text
-ASSIGNED
-→ ACCEPTED
+It does NOT pre-decide:
 
-ASSIGNED
-→ DECLINED
-→ safe reassignment
+```text id="vsfcj5"
+table
+
+aggregate
+
+database schema
+
+state machine implementation
 ```
 
-Old assignment history must survive.
+Architecture decides representation later.
 
 ---
 
-# 20. Phase 1E — Fulfillment Readiness
+# 22. Customer Case Boundary
 
-Shipment creation must no longer depend only on shipment quantity ceilings.
+Potential:
 
-System must prove required work is sufficiently:
+```text id="8sdgrp"
+CUSTOMER CASE
+```
 
-```text
-produced
+and:
+
+```text id="25ybvb"
+OPERATIONAL EXCEPTION
+```
+
+should remain distinct until evidence proves otherwise.
+
+Working distinction:
+
+```text id="6dtijn"
+Customer Case
+→ durable customer-facing issue
+
+Operational Exception
+→ abnormal operational condition
+```
+
+---
+
+# 23. Stage B Primary Business Context
+
+Primary TeeStock Q4 operating vertical remains:
+
+```text id="797bvx"
+TEEStock BUSINESS
 +
-QC cleared
-+
-ready for handoff
+TEEStock CUSTOM
 ```
 
-before fulfillment.
+consistent with current TeeStock quarter planning.
 
 ---
 
-# 21. Conservative Launch Rule
+# 24. Assisted-Sales First
 
-If precise partial-production allocation cannot yet be proven safely:
+Initial real validation SHOULD prefer:
 
-```text
-prefer conservative fulfillment blocking
+```text id="hbilcf"
+ASSISTED-SALES
 ```
 
-over accidental incomplete shipment.
+if that allows the business to validate:
 
----
-
-# 22. Phase 1F — Work Order / SPK
-
-TeeStock's asset-light model requires explicit external production instructions.
-
-Initial implementation:
-
-```text
-generated governed artifact
-```
-
-not a new WorkOrder aggregate.
-
-Source:
-
-```text
-Production Job
-+
-Production Assignment
-+
-Vendor
-+
-Requirement/specification
-+
-deadline
-+
-committed cost
-```
-
----
-
-# 23. Work Order Success Condition
-
-Vendor execution should not require Rizky to reconstruct:
-
-```text
-scope
-specification
-quantity
-deadline
-rate
-files
-instructions
-```
-
-from old chat messages.
-
----
-
-# 24. Phase 1G — Clean Happy-Path E2E
-
-Create a dedicated scenario separate from the existing broad regression script.
-
-Canonical scenario:
-
-```text
+```text id="3za20d"
 Lead
-→ Qualified
-→ Customer
 → Requirement
 → Quote
-→ Accepted
 → Order
-→ Active
-→ Invoice / DP
 → Payment
 → Production
-→ Vendor Assignment
-→ Assignment Accepted
-→ Production
-→ QC PASS
-→ Shipment
-→ Delivered
-→ Final Payment
-→ Actual Cost
-→ Realized Margin
-→ Order Completed
+→ QC
+→ Fulfillment
+→ Cost / Margin
+```
+
+without waiting for a full customer storefront.
+
+---
+
+# 25. Storefront Boundary
+
+A complete public TeeStock storefront is not automatically required before the first real Custom/Business pilot.
+
+Public self-service becomes a separate capability when needed.
+
+---
+
+# 26. Stage B Exit Gate
+
+Stage B passes when:
+
+```text id="i51ax6"
+product problem
+=
+clear
+
+Founder Attention behavior
+=
+clear
+
+Operational Exception need
+=
+clear
+
+pilot scope
+=
+bounded
+
+material Owner decisions
+=
+durable
+
+critical assumptions
+=
+identified
+
+product package
+=
+internally consistent
 ```
 
 ---
 
-# 25. Phase 1H — Operator Acceptance Test
+# 27. Stage C — Architecture + Engineering Readiness
 
-The same scenario must succeed through normal application surfaces.
+Objective:
 
-Forbidden dependencies:
+> **Translate approved product semantics into governed MGBOS architecture and bounded engineering scope.**
 
-```text
-manual SQL
-Supabase dashboard edits
-developer console changes
-hidden spreadsheet
-manual financial arithmetic
+---
+
+# 28. Architecture Impact Review
+
+For every approved material product requirement:
+
+```text id="jfcz1o"
+Does current MGBOS architecture
+already support this?
+```
+
+If yes:
+
+```text id="3s86j5"
+REUSE EXISTING SEMANTICS
+```
+
+If no:
+
+```text id="gswe31"
+PROMOTE ONLY
+THE MINIMUM REQUIRED
+CANONICAL CHANGE
 ```
 
 ---
 
-# 26. Phase 1 Exit Gate
+# 29. Candidate Architecture Owners
 
-Phase 1 closes when:
+Potential architecture review may touch:
 
-```text
-one normal transaction
-can complete Lead → Margin
+```text id="q0trku"
+canonical-data-model.md
 
-and
+business-state-machines.md
 
-core invalid/failure paths
-fail safely
+business-invariants.md
+
+command-event-model.md
+
+permission-authorization-model.md
+
+domain-map-capability-ownership.md
 ```
 
-without founder acting as invisible middleware.
+Only files actually affected should change.
 
 ---
 
-# 27. Phase 1 Explicitly Does Not Build
+# 30. No Parallel Founder-Control Architecture By Default
 
-```text
-Opportunity
+Avoid creating:
 
-generic Project
-
-full Product/Catalog
-
-Creator
-
-Royalty
-
-Affiliate
-
-generic Partner super-domain
-
-advanced BOM
-
-complex event infrastructure
-
-multi-agent JARVIS
+```text id="4kxzhr"
+founder-control-architecture.md
 ```
 
-unless a real blocker appears.
+merely to collect concepts that already belong to existing canonical semantic owners.
 
 ---
 
-# 28. Phase 2 — Founder Control Layer
+# 31. Current-Source Audit
 
-Only after spine integrity is proven.
+Before implementation planning, engineering must inspect actual:
 
-Primary objective:
+```text id="l9090c"
+application source
 
-> **Rizky should stop searching for problems. Problems should become explicit.**
+queries
 
----
+domain code
 
-# 29. Phase 2A — Operational Exception
+permissions
 
-Create persistent business exceptions for abnormal conditions such as:
+validation
 
-```text
-MISSING_INFORMATION
+database migrations
 
-QUOTE_WAITING
+RPCs
 
-PAYMENT_OVERDUE
+tests
 
-PAYMENT_MISMATCH
-
-PARTNER_NOT_ACKNOWLEDGED
-
-PRODUCTION_AT_RISK
-
-PRODUCTION_OVERDUE
-
-QC_FAILED
-
-SHIPMENT_DELAYED
-
-MARGIN_EXCEPTION
-
-AUTOMATION_FAILURE
+current evidence
 ```
 
-Final taxonomy should remain small and evidence-driven.
+to determine what already exists.
 
 ---
 
-# 30. Minimum Exception Record
+# 32. Reuse Before Build
 
-```text
-exception_id
+Engineering should first ask:
 
-organization_id
+```text id="gab9l9"
+Can the requirement be satisfied with:
 
-related_entity
+existing entity?
 
-category
+existing state?
 
-severity
+existing command?
 
-status
+derived read model?
 
-opened_at
+existing event?
 
-owner
-
-description
-
-evidence references
-
-resolved_at
-
-resolution
+existing relationship?
 ```
 
+before creating another root concept.
+
 ---
 
-# 31. Initial Exception Lifecycle
+# 33. Stage C Engineering Deliverables
 
-Keep v1 simple:
+Only after product/architecture maturity:
 
-```text
-OPEN
-  ↓
-ACKNOWLEDGED
-  ↓
-RESOLVED
+```text id="u5rc1j"
+current Founder Control implementation audit
 
-or
+technical implementation plan
 
-DISMISSED
+risk/routing resolution
+
+Implementation Contract
+
+bounded Work Packages
 ```
 
-Do not create another giant workflow engine.
+become valid.
 
 ---
 
-# 32. Phase 2B — Founder Read Models
+# 34. Future MGBOS Implementation Phase 2
 
-Build deterministic attention views.
+Potential directory:
 
-Examples:
+```text id="3iskpr"
+systems/mgbos/docs/implementation/
+phase-2-founder-control/
+```
 
-```text
-Sales Attention
+MUST NOT exist merely because this roadmap mentions it.
 
-Quote Attention
+Creation requires the engineering-entry gate.
 
-Order Attention
+---
 
-Payment Attention
+# 35. Stage C Exit Gate
 
-Production Attention
+Pass when:
 
-Shipment Attention
+```text id="q0u6gz"
+product requirements
+=
+engineering-ready
 
-Margin Attention
+architecture conflict
+=
+resolved
+
+current implementation
+=
+audited
+
+routing
+=
+resolved
+
+risk
+=
+classified
+
+technical plan
+=
+bounded
+
+completion gate
+=
+defined
 ```
 
 ---
 
-# 33. Founder Home v0.1
+# 36. Stage D — Founder Control Implementation
 
-Should answer:
+Objective:
 
-```text
-What needs attention now?
+> **Implement the smallest correct Founder Control layer that materially reduces founder attention burden.**
 
-What is critical?
+---
 
-What is waiting?
+# 37. Founder Control Is Not Dashboard Decoration
 
-What is late?
+Do not optimize for:
 
-What requires a decision?
+```text id="rpj7je"
+charts
+
+cards
+
+visual density
+
+executive-dashboard appearance
 ```
 
-Not:
+before solving:
 
-```text
-How many charts can fit on one screen?
+```text id="wcbt2f"
+what needs action?
+
+why?
+
+when?
+
+who owns it?
+
+what happens next?
 ```
 
 ---
 
-# 34. Finance Attention
+# 38. Preferred First Technical Shape
 
-Founder should see:
+Where product semantics permit, prefer:
 
-```text
-invoices issued
+```text id="yp5z84"
+DETERMINISTIC READ MODELS
 
-cash received
++
 
-outstanding receivables
+EXPLICIT BUSINESS EXCEPTION FACTS
+
++
+
+ACTIONABLE APPLICATION SURFACES
+```
+
+before AI orchestration.
+
+---
+
+# 39. Founder Home Direction
+
+Founder Home should progressively answer:
+
+```text id="s1oxq5"
+CRITICAL NOW
+
+DUE SOON
+
+WAITING
+
+OVERDUE
+
+NEEDS DECISION
+
+NO ACTION REQUIRED
+```
+
+using authoritative MGBOS state.
+
+---
+
+# 40. Finance Attention Direction
+
+Potential product outcomes include visibility into:
+
+```text id="39a56s"
+outstanding invoices
 
 overdue receivables
 
-vendor obligations
+payment mismatches
+
+Vendor obligations
+
+missing actual cost
 
 actual-cost variance
 
 margin exceptions
 ```
 
+subject to approved PRD semantics.
+
 ---
 
-# 35. Operations Attention
+# 41. Operations Attention Direction
 
-Founder should see:
+Potential visibility includes:
 
-```text
-jobs active
+```text id="2mcb6y"
+active production
 
-jobs due soon
+due-soon work
 
-jobs late
+late production
 
-vendor acknowledgement missing
+Vendor acknowledgement missing
 
 QC pending
 
-QC failure
+QC failed
 
 ready to ship
 
@@ -852,214 +1093,623 @@ shipment delay
 
 ---
 
-# 36. Phase 2C — Vendor Capability Enrichment
+# 42. Stage D Non-Goals
 
-Extend existing Vendor baseline only where useful.
+Founder Control implementation should NOT automatically include:
 
-Possible fields/concepts:
+```text id="9nj5xk"
+Opportunity
 
-```text
-capability taxonomy
+generic Project
 
-typical lead time
+generic Partner
 
-rate basis
+full Customer Support suite
 
-observed quality
+advanced Vendor scoring
 
-observed reliability
+multi-agent AI
 
-capacity note
+general workflow engine
+
+full notification platform
 ```
 
-Avoid artificial numeric scoring.
+unless approved product evidence requires them.
 
 ---
 
-# 37. Phase 2D — Customer Case Lite
+# 43. Stage D Exit Gate
 
-Use for durable abnormal customer-facing issues:
+Founder should be able to answer:
 
-```text
-complaint
-
-scope change
-
-refund request
-
-delivery problem
-
-quality complaint
-```
-
-Customer Case does not replace authoritative domain state.
-
----
-
-# 38. Phase 2 Exit Gate
-
-Founder can answer:
-
-```text
-What needs me?
+```text id="4dqyr4"
+WHAT NEEDS ME?
 ```
 
 without:
 
-```text
+```text id="3nqn71"
 opening every module
 
-checking every job
+checking every order manually
 
-remembering every promise
+searching old chats
+
+remembering due dates mentally
+
+performing database investigation
 ```
 
 ---
 
-# 39. Phase 3 — Deterministic Automation
+# 44. Stage E — Operational Readiness + Real Pilot
 
-Only automate workflows already proven stable.
+Objective:
 
-Canonical rule:
-
-> **Standardize before automate.**
+> **Move from software capability into controlled operational evidence.**
 
 ---
 
-# 40. Phase 3 Candidates
+# 45. Operational Readiness Current State
 
-```text
-lead intake
+Current register concludes:
 
-lead routing
+```text id="f3a10u"
+SOFTWARE CI
+=
+VERIFIED FOR CURRENT CI SCOPE
 
-qualification assistance
+PHASE 1
+=
+CLOSED
 
+OPERATOR ACCEPTANCE
+=
+PASS
+
+PRODUCTION READINESS
+=
+NOT VERIFIED
+
+REAL TRANSACTION READINESS
+=
+GATED
+```
+
+---
+
+# 46. Readiness Before Real Transactions
+
+Before real operational use, resolve applicable:
+
+```text id="nhxund"
+environment separation
+
+credential hygiene
+
+backup
+
+restore
+
+RPO
+
+RTO
+
+monitoring
+
+alerting
+
+release recovery
+
+production-like acceptance
+```
+
+according to exact pilot boundary.
+
+---
+
+# 47. Credential Hygiene Is A Hard Gate
+
+Current development login defaults and development seed identity must not become production behavior.
+
+Before network-exposed operational use:
+
+```text id="gqq6ld"
+development identity
+≠
+production identity
+
+development credential
+≠
+production credential
+```
+
+must be explicitly verified.
+
+---
+
+# 48. RPO / RTO
+
+Owner must decide:
+
+```text id="gvpj8r"
+RPO
+maximum acceptable data loss
+
+RTO
+maximum acceptable recovery time
+```
+
+before recovery readiness can be meaningfully certified.
+
+Engineering must not invent these business-risk targets.
+
+---
+
+# 49. Real Pilot Objective
+
+The pilot must answer:
+
+> **Can TeeStock actually execute real Business/Custom work through the system with less founder burden and trustworthy business truth?**
+
+---
+
+# 50. Real Pilot Evidence
+
+Use real evidence where safe and applicable:
+
+```text id="vx0j00"
+real inquiry
+
+real customer
+
+real requirement
+
+real quote
+
+real acceptance
+
+real invoice
+
+real payment
+
+real Vendor
+
+real production
+
+real QC
+
+real shipment
+
+real actual cost
+
+real realized margin
+
+real abnormal condition
+
+real founder intervention
+```
+
+---
+
+# 51. Pilot ≠ Production Scale
+
+A pilot is:
+
+```text id="hjky83"
+CONTROLLED LEARNING
+```
+
+not:
+
+```text id="6w776w"
+UNRESTRICTED SCALE
+```
+
+Keep:
+
+```text id="nx15qw"
+offer scope
+
+transaction volume
+
+production partners
+
+commercial commitments
+```
+
+within operational confidence.
+
+---
+
+# 52. Q4 Real-Transaction Goal
+
+TeeStock Q4 succeeds when it can demonstrate multiple explainable real transactions through the operating spine.
+
+Not because:
+
+```text id="gbue98"
+module exists
+```
+
+but because:
+
+```text id="94t7rx"
+CAPABILITY WAS USED
++
+TRUTH WAS CAPTURED
++
+OUTCOME WAS EXPLAINABLE
+```
+
+---
+
+# 53. Business Vocabulary Translation
+
+TeeStock business documentation may use terms broader than current MGBOS canonical entities.
+
+For MGBOS implementation during this roadmap, use the following current compatibility mapping unless canonical architecture changes.
+
+| Business concept | Current MGBOS representation |
+|---|---|
+| Opportunity | Qualified Lead + Requirement + Quote |
+| Project | Order + Requirement + Production Job(s) |
+| Partner for production | Vendor |
+| Work Order | Governed SPK/Work Order artifact |
+| Exception | Product concept pending Founder Control definition |
+| Customer Case | Separate proposed durable customer-issue concept |
+
+---
+
+# 54. Opportunity Rule
+
+Do NOT implement a generic:
+
+```text id="p4sjbs"
+Opportunity
+```
+
+merely because the TeeStock business roadmap uses the term.
+
+Current MGBOS architecture keeps Opportunity deferred until evidence demonstrates an independent lifecycle need.
+
+---
+
+# 55. Project Rule
+
+Do NOT implement generic:
+
+```text id="ob1b3c"
+Project
+```
+
+for Custom/Business coordination while:
+
+```text id="oxtm3r"
+Requirement
++
+Order
++
+Production Jobs
+```
+
+adequately represent the operating need.
+
+Promote only from evidence.
+
+---
+
+# 56. Vendor Rule
+
+For production outsourcing, current MGBOS canonical concept is:
+
+```text id="7h68k9"
+Vendor
+```
+
+Do not create generic:
+
+```text id="n821dy"
+Partner
+```
+
+solely for abstraction purity.
+
+---
+
+# 57. Real Pilot Metrics
+
+Measure at minimum:
+
+```text id="xz3yid"
+manual touches
+
+manual reminders
+
+context switches
+
+duplicate data entry
+
+time spent reconstructing status
+
+technical interventions
+
+missed follow-ups
+
+unclear next actions
+
+founder decisions required
+
+system bypasses
+
+operational exceptions
+```
+
+---
+
+# 58. Founder-Burden Metric
+
+The most important product question is not:
+
+```text id="fru6gz"
+How many features did we ship?
+```
+
+It is:
+
+```text id="n17ldl"
+How much repeated founder labor
+did the system eliminate
+without reducing business integrity?
+```
+
+---
+
+# 59. Stage E Exit Gate
+
+Stage E passes when:
+
+```text id="uekpqo"
+multiple real transactions
+=
+completed or meaningfully progressed
+
+core business truth
+=
+traceable
+
+founder friction
+=
+measured
+
+material exceptions
+=
+captured
+
+operational readiness
+=
+sufficient for approved scope
+
+major workarounds
+=
+understood
+```
+
+---
+
+# 60. Stage F — Deterministic Automation
+
+Objective:
+
+> **Automate only repeated workflows whose underlying business semantics are already stable.**
+
+Golden rule:
+
+```text id="mp2qh1"
+STANDARDIZE
+BEFORE
+AUTOMATE
+```
+
+---
+
+# 61. Automation Candidates
+
+Evidence may justify:
+
+```text id="jzeysn"
 quote follow-up
 
 payment reminder
 
-vendor acknowledgement reminder
+Vendor acknowledgement reminder
 
-production deadline alert
+production due-date reminder
 
 shipment notification
 
 exception routing
+
+internal follow-up
 ```
 
 ---
 
-# 41. Existing Decision Engine
+# 62. Existing Lead Qualification Automation
 
-The current n8n lead qualification workflow may become one component of this layer.
+Existing lead qualification / Decision Engine may continue as an experiment/capability.
 
-Current baseline rules include:
+Its rules must remain evidence-driven.
 
-```text
-valid email
-
-budget threshold
-
-requirement clarity
-```
-
-but should be evaluated using real operating evidence before becoming rigid business policy.
+A threshold does not become permanent business policy merely because an automation uses it.
 
 ---
 
-# 42. Automation Boundary
+# 63. Automation Boundary
 
 Automation may:
 
-```text
+```text id="1a0opw"
 schedule
+
 route
+
 notify
+
 transform
+
 invoke authorized commands
 ```
 
-It may not:
+It must not:
 
-```text
+```text id="njyfn6"
 become business system of record
-bypass state machines
-bypass invariants
+
+bypass business invariants
+
+bypass authorization
+
 invent business state
+
+silently mutate money
 ```
 
 ---
 
-# 43. Reminder Safety
-
-Early reminders may initially create:
-
-```text
-candidate action
-or
-internal finding
-```
-
-before automatically messaging customers/vendors.
-
-This allows policy tuning safely.
-
----
-
-# 44. Automation Failure
-
-Failure itself must become visible.
+# 64. Automation Failure Must Be Visible
 
 Never allow:
 
-```text
-workflow failed silently
-→ founder assumes work happened
+```text id="xzf9xy"
+automation failed
+        ↓
+system says nothing
+        ↓
+founder assumes task happened
+```
+
+Failure must become detectable and recoverable.
+
+---
+
+# 65. Outbound Automation Safety
+
+Before automatically contacting real:
+
+```text id="wednt3"
+customer
+
+Vendor
+
+provider
+```
+
+prove:
+
+```text id="yf3nmf"
+correct target
+
+authorization
+
+duplicate-effect prevention
+
+retry behavior
+
+failure behavior
 ```
 
 ---
 
-# 45. Phase 3 Exit Gate
+# 66. Stage F Exit Gate
 
-Selected routine coordination no longer depends on founder memory.
+Selected routine coordination no longer depends on:
+
+```text id="fjsz5t"
+founder memory
+
+manual calendar reminders
+
+manual repeated message drafting
+```
+
+while failures remain visible.
 
 ---
 
-# 46. Phase 4 — JARVIS Lite
+# 67. Stage G — JARVIS Lite
 
-JARVIS begins only after trusted business projections exist.
+Objective:
 
-Initial allowed behavioral scope:
+> **Use AI to compress trusted business reality, not reconstruct missing truth.**
 
-```text
+---
+
+# 68. JARVIS Entry Condition
+
+JARVIS should not become the next priority merely because:
+
+```text id="exg87q"
+AI is powerful
+```
+
+It becomes useful when:
+
+```text id="llb2r7"
+trusted business state
+
++
+
+Founder Control projections
+
++
+
+operational exception evidence
+```
+
+exist.
+
+---
+
+# 69. Initial JARVIS Authority
+
+Initial runtime should be primarily:
+
+```text id="6wqe4a"
 READ
+
 ANALYZE
+
 SUMMARIZE
+
 RECOMMEND
+
 DRAFT
 ```
 
+not authoritative mutation.
+
 ---
 
-# 47. First JARVIS Slice
+# 70. First JARVIS Slice
 
-Canonical first runtime:
+Recommended first product slice remains a read-only:
 
-```text
+```text id="ciuhvz"
 business.morning_briefing
 ```
 
-read-only and evidence-first.
+or equivalent governed capability.
 
 ---
 
-# 48. Morning Briefing Inputs
+# 71. Morning Briefing Inputs
 
-Prefer trusted projections:
+Prefer:
 
-```text
-Sales Attention
+```text id="o5dvgw"
+Founder Attention
 
 Finance Attention
 
@@ -1069,60 +1719,42 @@ Shipment Attention
 
 Open Exceptions
 
-System/automation health
+System / Automation Health
 ```
 
-rather than unrestricted raw database discovery.
+instead of unrestricted raw database interpretation.
 
 ---
 
-# 49. Morning Briefing Output
+# 72. Morning Briefing Output Direction
 
-Example structure:
+Example:
 
-```text
+```text id="je0np1"
 3 items need attention.
 
-1. Payment overdue.
-2. Production deadline risk.
-3. Margin exception.
+1.
+Payment overdue.
 
-14 other active items have no material exception.
+2.
+Production deadline risk.
+
+3.
+Margin exception.
+
+14 other active items
+have no material founder action.
 ```
 
-Facts must remain traceable to evidence.
+Every factual claim must be traceable.
 
 ---
 
-# 50. Additional JARVIS Lite Capabilities
+# 73. JARVIS Missing-Information Rule
 
-After Morning Briefing proves useful:
+JARVIS must distinguish:
 
-```text
-sales.pipeline_summary
-
-operations.exception_summary
-
-finance.cash_summary
-
-production.risk_analysis
-
-vendor.recommendation
-
-requirement extraction
-
-quote draft assistance
-
-customer communication drafts
-```
-
----
-
-# 51. Missing Information Behavior
-
-JARVIS should distinguish:
-
-```text
+```text id="8dm6vk"
 KNOWN
 
 MISSING
@@ -1134,286 +1766,156 @@ STALE
 CONFLICTING
 ```
 
-rather than filling missing business facts through inference.
+instead of filling missing business facts through confident inference.
 
 ---
 
-# 52. JARVIS Golden Test Suite
+# 74. JARVIS Availability Test
 
-At minimum test:
+Core business must remain operable with:
 
-```text
-healthy business day
-
-overdue payment
-
-late production
-
-margin exception
-
-missing source
-
-stale source
-
-conflicting evidence
-
-untrusted external prompt injection
-
-MGBOS unavailable
-```
-
----
-
-# 53. Phase 4 Exit Gate
-
-Founder no longer prepares every decision from zero.
-
-JARVIS helps compress business reality without owning it.
-
----
-
-# 54. Phase 5 — Launch Stress Test
-
-Before meaningful launch volume, simulate concurrency and failure.
-
----
-
-# 55. Business Scenarios
-
-Test:
-
-```text
-normal custom B2B order
-
-incomplete inquiry
-
-requirement revision
-
-low-margin quote
-
-partial payment
-
-overdue invoice
-
-vendor decline
-
-vendor delay
-
-QC rework
-
-QC rejection
-
-shipment delay
-
-customer complaint
-
-automation failure
-
-duplicate submission
-
-JARVIS unavailable
-```
-
----
-
-# 56. Concurrency Test
-
-If practical, simulate:
-
-```text
-5
-10
-25
-```
-
-simultaneously active business items.
-
-This is not a performance benchmark.
-
-It tests founder usability and workflow clarity.
-
----
-
-# 57. Measure Founder Friction
-
-Measure:
-
-```text
-manual touches per order
-
-minutes per order
-
-manual reminders
-
-context switches
-
-duplicate data entry
-
-technical access required
-
-ambiguous next actions
-```
-
----
-
-# 58. Failure Injection
-
-Test scenarios such as:
-
-```text
-provider timeout
-
-duplicate webhook
-
-missing Vendor
-
-invalid transition
-
-payment mismatch
-
-automation unavailable
-
-AI unavailable
-```
-
-Business truth must survive.
-
----
-
-# 59. AI-Off Test
-
-Run the business with:
-
-```text
-JARVIS OFF
+```text id="nynzom"
+JARVIS
+=
+OFF
 ```
 
 Expected:
 
-```text
-core operating spine still works
+```text id="nsucpn"
+MGBOS BUSINESS TRUTH
+REMAINS VALID
 ```
 
 ---
 
-# 60. Automation-Off Test
+# 75. Stage G Exit Gate
 
-Run with:
-
-```text
-automation unavailable
-```
-
-Expected:
-
-```text
-authoritative state remains valid
-manual recovery remains possible
-```
+Founder receives useful cognitive leverage without transferring authoritative business truth to the model.
 
 ---
 
-# 61. Phase 5 Exit Gate
+# 76. Stage H — Controlled Launch & Q4 Learning
 
-The system must:
+Objective:
 
-```text
-reduce founder burden
-```
-
-more than it:
-
-```text
-creates system-management burden.
-```
+> **Begin narrow real operations, protect operational capacity, and use every transaction as evidence for the next system decision.**
 
 ---
 
-# 62. Phase 6 — Controlled Launch
+# 77. Launch Target
 
-Target:
+Planning target:
 
-```text
-late November 2026 onward
+```text id="9y550d"
+late November 2026
+to
+early December 2026
 ```
 
-subject to actual business/capital readiness.
+subject to:
 
-The date is a planning target, not permission to skip readiness gates.
+```text id="nbjtor"
+capital readiness
+
+operational readiness
+
+product readiness
+
+partner readiness
+```
+
+Date is not authorization to skip gates.
 
 ---
 
-# 63. Launch Scope Must Be Narrow
+# 78. Controlled Launch Scope
 
 Prefer:
 
-```text
-known offer
+```text id="k6bgb4"
+KNOWN OFFER
 
-known costing
+KNOWN COSTING METHOD
 
-known production partners
+KNOWN VENDOR SET
 
-known workflow
+KNOWN PRODUCTION FLOW
 
-manageable transaction volume
+KNOWN QC EXPECTATION
+
+MANAGEABLE DEMAND
 ```
 
 over broad ecosystem launch.
 
 ---
 
-# 64. Launch Demand Control
+# 79. Demand Control
 
-If inbound demand exceeds operational confidence:
+If inbound exceeds operational confidence:
 
-```text
+```text id="fv5o22"
 CONTROL INTAKE
 ```
 
-rather than degrading:
+before sacrificing:
 
-```text
+```text id="wsh5ce"
 quality
+
 delivery
-cash
+
+cash integrity
+
 founder capacity
 ```
 
 ---
 
-# 65. Founder Launch Routine
+# 80. Founder Operating Loop
 
-Target daily operating loop:
+Target daily operating pattern:
 
-```text
+```text id="f4v0so"
 MORNING
-Briefing / attention review
 
-↓
+Founder Attention / briefing
+
+        ↓
+
 DECISIONS
+
 material exceptions only
 
-↓
-SYSTEM
-normal workflows continue
+        ↓
 
-↓
-PARTNERS
+SYSTEM
+
+normal governed flows continue
+
+        ↓
+
+VENDORS / OPERATIONS
+
 physical execution
 
-↓
-EVENING
-outcome / finance / lesson review
+        ↓
+
+REVIEW
+
+finance
+outcomes
+learning
 ```
 
 ---
 
-# 66. Real Transactions Become Product Research
+# 81. Real Transactions Become Research
 
-Every real order should generate:
+Every real transaction should generate:
 
-```text
+```text id="4izdqk"
 BUSINESS DATA
 
 PROCESS EVIDENCE
@@ -1424,64 +1926,235 @@ EXCEPTION PATTERNS
 
 VENDOR EVIDENCE
 
-UNIT ECONOMIC EVIDENCE
+UNIT-ECONOMIC EVIDENCE
 ```
-
-These determine what should be built next.
 
 ---
 
-# 67. Post-Launch Development Pull
+# 82. Build From Repeated Truth
 
 After launch ask:
 
-```text
-What problem repeated?
-
-What required Rizky?
+```text id="nb1dkk"
+What repeated?
 
 What failed?
 
-What became expensive?
+What stayed manual?
 
-What created customer risk?
+What required founder judgment?
 
-What became impossible to manage manually?
+What caused customer risk?
+
+What caused margin risk?
+
+What was hard to recover?
+
+What became too expensive?
 ```
 
-Then prioritize the next capability.
+Then choose the next capability.
 
 ---
 
-# 68. Deferred Before Launch
+# 83. Priority Model
+
+Evaluate candidate work using:
+
+```text id="3pxc0b"
+FOUNDER BURDEN
+
+×
+
+FREQUENCY
+
+×
+
+BUSINESS IMPACT
+
+×
+
+CURRENT-STAGE NECESSITY
+```
+
+against:
+
+```text id="1dgp80"
+IMPLEMENTATION COMPLEXITY
+
++
+
+BUSINESS RISK
+
++
+
+MAINTENANCE BURDEN
+```
+
+---
+
+# 84. Current Priority Classes
+
+For strategic prioritization:
+
+```text id="qxmyui"
+P0
+business integrity / launch blocker
+
+P1
+founder control / visibility
+
+P2
+repeated deterministic efficiency
+
+P3
+AI leverage / growth experiment
+
+P4
+future optionality
+```
+
+These roadmap priority classes do not reuse the historical Phase 1 P0 item IDs.
+
+---
+
+# 85. P0 Now Means Current Blocker, Not Historical Task
+
+Do not interpret:
+
+```text id="12pc25"
+P0
+```
+
+in current roadmap work as:
+
+```text id="2n6ioj"
+P0-01 through P0-08
+```
+
+Those historical Phase 1 IDs are closed.
+
+---
+
+# 86. Q4 Business Objective
+
+Current Q4 objective remains:
+
+> **Turn TeeStock from a designed business architecture into a repeatable, measurable, system-controlled operating business.**
+
+---
+
+# 87. Q4 Primary Vertical
+
+Priority:
+
+```text id="jt7t2j"
+BUSINESS
++
+CUSTOM
+```
+
+Secondary work should not displace the core operating pilot.
+
+---
+
+# 88. Q4 Secondary Scope
+
+Potential secondary scope only after core readiness:
+
+```text id="0vf86w"
+MERCH
+
+small commerce pilot
+
+small creator pilot
+
+small Originals validation
+```
+
+These are optional learning slices.
+
+---
+
+# 89. Commerce Pilot
+
+If attempted:
+
+```text id="dxgdni"
+SMALL CATALOG
+
+KNOWN PRODUCTS
+
+CONTROLLED VOLUME
+```
+
+not a full general-commerce system.
+
+---
+
+# 90. Creator Pilot
+
+If evidence and capacity support it:
+
+```text id="0yh11u"
+1 creator
+
+1 agreement
+
+1 artwork
+
+1 product
+```
+
+is sufficient to learn.
+
+Do not build a creator marketplace first.
+
+---
+
+# 91. Originals
+
+Originals may remain:
+
+```text id="xs02bc"
+CONCEPT
++
+CAPSULE VALIDATION
+```
+
+until evidence supports more.
+
+---
+
+# 92. Deferred Before Controlled Launch
 
 Default defer:
 
-```text
-Opportunity
+```text id="vwb8xv"
+generic Opportunity
 
 generic Project
 
-full Product/Variant/SKU
-unless launch scope requires it
+generic Partner abstraction
 
-advanced Catalog
+full Product / Variant / SKU
+unless pilot requires it
 
 Creator Marketplace
 
-Royalty / Earnings / Payout engine
+Royalty platform
 
 Affiliate platform
 
-advanced marketing attribution
+advanced WMS
 
-BOM / Recipe
+predictive inventory
 
-multi-agent AI organization
+dynamic pricing
 
 full autonomous finance
 
-self-modifying AI
+multi-agent AI organization
 
 Kafka
 
@@ -1489,108 +2162,184 @@ Temporal
 
 microservices
 
+Kubernetes
+
 multi-region infrastructure
 ```
 
 ---
 
-# 69. Weekly Execution Loop
+# 93. Deferred Does Not Mean Never
 
-Every week:
+It means:
 
-```text
-PLAN
- ↓
-BUILD
- ↓
-TEST
- ↓
-RUN SYNTHETIC BUSINESS
- ↓
-RECORD FRICTION
- ↓
-FIX HIGHEST-LEVERAGE GAP
+```text id="yclyz9"
+NOT CURRENTLY
+THE HIGHEST-LEVERAGE CONSTRAINT
 ```
 
 ---
 
-# 70. Weekly Review Questions
+# 94. Operational Architecture Principle
 
-```text
-What can the system do this week that it could not do last week?
+Use the smallest architecture capable of supporting:
 
-What founder burden disappeared?
+```text id="nf5wkc"
+CURRENT REAL WORK
 
-What still lives in Rizky's head?
-
-What workflow remains ambiguous?
-
-What broke under testing?
-
-What did we over-engineer?
-
-What is the single highest-leverage next constraint?
-```
-
----
-
-# 71. Priority Model
-
-Evaluate candidate work qualitatively against:
-
-```text
-FOUNDER BURDEN
-×
-FREQUENCY
-×
-BUSINESS IMPACT
-×
-PRE-LAUNCH NECESSITY
-```
-
-versus:
-
-```text
-IMPLEMENTATION COMPLEXITY
 +
-RISK
-+
-MAINTENANCE BURDEN
+
+NEXT REASONABLE MATURITY STEP
+```
+
+Do not design for imagined scale without evidence.
+
+---
+
+# 95. Modular Monolith Direction
+
+A modular monolith remains appropriate while it supports:
+
+```text id="g4m1sm"
+clear boundaries
+
+transactional integrity
+
+maintainability
+
+operational scale
+```
+
+No roadmap pressure exists to distribute the system for prestige.
+
+---
+
+# 96. PostgreSQL Authority
+
+MGBOS remains the authoritative relational business-state direction.
+
+Automation, AI, spreadsheets, and external tools should not become hidden competing sources of truth.
+
+---
+
+# 97. n8n Boundary
+
+Use n8n for:
+
+```text id="6t2tpy"
+orchestration
+
+scheduling
+
+integration
+
+notifications
+```
+
+not for owning canonical business state.
+
+---
+
+# 98. Reporting Direction
+
+Prefer simple:
+
+```text id="e7j3c7"
+deterministic projections
+
+read models
+
+database-backed views
+```
+
+before sophisticated analytics infrastructure.
+
+---
+
+# 99. Queue / Event Infrastructure
+
+Introduce queues or more complex event infrastructure only when actual workload/reliability evidence requires them.
+
+Do not make them a roadmap milestone by default.
+
+---
+
+# 100. AI Policy
+
+AI may assist with:
+
+```text id="ulng98"
+research
+
+drafting
+
+summarization
+
+classification
+
+analysis
+
+coding
+
+decision preparation
+```
+
+within current authority.
+
+---
+
+# 101. AI Must Not Independently
+
+Without separately approved governed authority, AI must not:
+
+```text id="00yjhc"
+move money
+
+approve refund
+
+sign contract
+
+override commercial terms
+
+promise delivery
+
+silently alter canonical business state
 ```
 
 ---
 
-# 72. Priority Classes
+# 102. Automation / AI Authority
 
-```text
-P0
-transactional spine integrity
+Canonical:
 
-P1
-founder attention/control
+```text id="uvnmkj"
+INTELLIGENCE
+≠
+AUTHORITY
+```
 
-P2
-deterministic automation
+and:
 
-P3
-AI cognitive leverage
-
-P4
-everything else
+```text id="qygluf"
+AUTOMATION
+≠
+SOURCE OF TRUTH
 ```
 
 ---
 
-# 73. Launch Gate A — Business Truth
+# 103. Business Launch Gate A — Transaction Truth
 
-Pass when:
+Required core business facts must be governable:
 
-```text
+```text id="nwsf11"
 customer
 
 requirement
 
 commercial agreement
+
+order
 
 payment
 
@@ -1603,423 +2352,1083 @@ shipment
 cost
 ```
 
-have governed representation.
+Phase 1 provides the software baseline.
+
+Real validation remains required.
 
 ---
 
-# 74. Launch Gate B — Commercial Integrity
+# 104. Launch Gate B — Commercial Integrity
+
+Pass when real transactions demonstrate:
+
+```text id="4nmyyv"
+quote/version history
+
+accepted terms
+
+order snapshot
+
+invoice/payment reconciliation
+```
+
+without hidden manual truth.
+
+---
+
+# 105. Launch Gate C — Operational Execution
 
 Pass when:
 
-```text
-quote history preserved
+```text id="nbgzoq"
+production is traceable
 
-accepted terms preserved
+Vendor assignment is explicit
 
-order contract stable
+Vendor commitment is visible
 
-invoice/payment reconcile
+QC is explicit
+
+shipment readiness is safe
+
+fulfillment is traceable
+```
+
+under real operation.
+
+---
+
+# 106. Launch Gate D — Economics
+
+Pass when completed pilot transactions can answer:
+
+```text id="w5lr1j"
+what did we charge?
+
+what did we collect?
+
+what did production cost?
+
+what did fulfillment cost?
+
+what was actual contribution?
+```
+
+from traceable data.
+
+---
+
+# 107. Launch Gate E — Founder Control
+
+Pass when founder can determine:
+
+```text id="f56si0"
+what requires attention
+
+what is healthy
+
+what is waiting
+
+what is abnormal
+
+what needs a decision
+```
+
+without manual system reconstruction.
+
+---
+
+# 108. Launch Gate F — Recovery
+
+Pass applicable operational readiness for:
+
+```text id="ppzcz1"
+backup
+
+restore
+
+monitoring
+
+alert escalation
+
+release recovery
+```
+
+for the intended launch boundary.
+
+---
+
+# 109. Launch Gate G — Security / Environment
+
+Pass applicable:
+
+```text id="h25oy1"
+environment isolation
+
+secret separation
+
+production authentication
+
+organization isolation
+
+credential hygiene
+```
+
+before external operational exposure.
+
+---
+
+# 110. Launch Gate H — Manual Fallback
+
+When automation or AI is unavailable:
+
+```text id="jz6tyz"
+core business
+must still be recoverable
+through governed manual operation
+```
+
+without turning direct SQL into normal workflow.
+
+---
+
+# 111. Launch Gate I — Founder Capacity
+
+The launch is not healthy if:
+
+```text id="isq36d"
+transaction volume
+>
+founder + system handling capacity
+```
+
+even if software technically accepts more orders.
+
+Control demand when needed.
+
+---
+
+# 112. Weekly Execution Loop
+
+Current preferred operating loop:
+
+```text id="7k5hf6"
+REVIEW REALITY
+        ↓
+IDENTIFY HIGHEST-LEVERAGE CONSTRAINT
+        ↓
+DEFINE / PLAN
+        ↓
+BUILD IF ACTUALLY NEEDED
+        ↓
+VERIFY
+        ↓
+OPERATE
+        ↓
+RECORD LEARNING
+        ↓
+UPDATE ROADMAP
 ```
 
 ---
 
-# 75. Launch Gate C — Operational Execution
+# 113. Weekly Review Questions
 
-Pass when:
+Ask:
 
-```text
-production jobs
-can be created and tracked
+```text id="9e3m0a"
+What can the system do now?
 
-vendor assignment
-is explicit
+What founder burden disappeared?
 
-acknowledgement
-is visible
+What still lives only in founder memory?
 
-QC
-is explicit
+What operational abnormality repeated?
+
+What required a workaround?
+
+What current architecture assumption was wrong?
+
+What did we overbuild?
+
+What is the single highest-leverage constraint now?
 ```
 
 ---
 
-# 76. Launch Gate D — Partner Coordination
+# 114. Build Decision Questions
 
-Pass when partner can receive governed:
+Before new engineering:
 
-```text
-scope
+```text id="fc8373"
+WHAT REAL PROBLEM?
 
-specification
+WHAT EVIDENCE?
 
-quantity
+WHAT CURRENT CAPABILITY?
 
-deadline
+WHAT EXACT GAP?
 
-commercial basis
+WHAT FOUNDER BURDEN?
 
-handoff instruction
-```
+WHAT BUSINESS RISK?
 
-without chat archaeology.
+CAN EXISTING SEMANTICS SOLVE IT?
 
----
-
-# 77. Launch Gate E — Financial Control
-
-Pass when founder sees:
-
-```text
-invoiced
-
-received
-
-outstanding
-
-committed costs
-
-actual costs
-
-margin
-```
-
-reliably.
-
----
-
-# 78. Launch Gate F — Fulfillment Integrity
-
-Pass when shipment cannot silently bypass required production/QC readiness.
-
----
-
-# 79. Launch Gate G — Exception Visibility
-
-Pass when material abnormal conditions become explicit.
-
-This gate belongs after core spine correctness.
-
----
-
-# 80. Launch Gate H — Automation
-
-Selected routine reminders/coordination no longer depend entirely on founder memory.
-
-Not every process must be automated.
-
----
-
-# 81. Launch Gate I — JARVIS Lite
-
-Optional for first transaction but desirable before meaningful scale.
-
-Pass when read-only briefing is:
-
-```text
-useful
-traceable
-reliable
-non-authoritative
+DO WE NEED THIS BEFORE PILOT?
 ```
 
 ---
 
-# 82. Launch Gate J — Failure Safety
+# 115. Feature Rejection Rule
 
-Pass when:
+A feature should normally be deferred if it does not materially improve:
 
-```text
-AI outage
-automation outage
-external timeout
-duplicate event
+```text id="p9r8a5"
+REVENUE VALIDATION
+
+DELIVERY
+
+CASH
+
+CONTROL
+
+RISK
+
+LEARNING
 ```
 
-do not corrupt business truth.
+for the current roadmap stage.
 
 ---
 
-# 83. Launch Gate K — Founder Usability
+# 116. No Roadmap-by-FOMO
 
-Final question:
+New idea:
 
-> **Would Rizky prefer running the next real order through MGBOS rather than bypassing it?**
-
-If no:
-
-```text
-the operating system is not ready.
+```text id="bx3h57"
+→ BACKLOG / RESEARCH
 ```
+
+not:
+
+```text id="6e0ou4"
+→ IMMEDIATE BUILD
+```
+
+unless it becomes the current bottleneck.
 
 ---
 
-# 84. UI Quality Standard
+# 117. Documentation Follows Reality
 
-Launch UI does not need perfection.
+When implementation and real business evidence changes the roadmap:
 
-It must be:
-
-```text
-fast enough
-
-clear enough
-
-next-action oriented
-
-exception visible
-
-hard to misuse
+```text id="yup0cb"
+EVIDENCE
+        ↓
+DECISION
+        ↓
+UPDATE CANONICAL DOCUMENT
+        ↓
+CHANGE SYSTEM
 ```
+
+where sensible.
+
+Documentation is governing truth, not immutable dogma.
 
 ---
 
-# 85. Manual Entry Is Allowed
+# 118. Roadmap Must Preserve History
 
-Manual authoritative entry is acceptable.
+If a previous stage was wrong:
 
-Example:
-
-```text
-vendor acknowledgement
-recorded manually
+```text id="ld5i6v"
+do not rewrite history
+as if it was never proposed.
 ```
 
-is better than:
+Correct:
 
-```text
-automated integration
-with unreliable semantics
-```
+```text id="oy4r8y"
+OLD PLAN
 
----
+↓
 
-# 86. Integrate After Systemizing
+NEW EVIDENCE
 
-Preferred:
+↓
 
-```text
-manual
-but governed
-```
-
-before:
-
-```text
-automatic
-but ambiguous
-```
-
----
-
-# 87. Hiring Gate
-
-Before hiring for an operational bottleneck ask:
-
-```text
-Can the work be eliminated?
-
-Can it be standardized?
-
-Can MGBOS absorb it?
-
-Can deterministic automation absorb it?
-
-Can AI prepare it?
-
-Can a partner execute it?
-```
-
-Only then evaluate a permanent hire.
-
----
-
-# 88. Metrics
-
-Track over time:
-
-```text
-founder touches / order
-
-founder minutes / order
-
-decisions / order
-
-exception rate
-
-exception resolution time
-
-quote turnaround
-
-on-time production
-
-on-time fulfillment
-
-payment collection
-
-actual margin
-
-automation coverage
+UPDATED ROADMAP
 ```
 
 ---
 
-# 89. Milestones
+# 119. Q4 Success — Business
 
-```text
-M0
-Canonical Closure
+By quarter end, desirable evidence includes:
 
-M1
-Spine Connected
+```text id="41ye08"
+REAL DEMAND
 
-M2
-Spine Proven End-to-End
+REAL DELIVERY
 
-M3
-Founder Sees Problems
+REAL CASH
 
-M4
-System Remembers Routine Work
+REAL COST
 
-M5
-AI Prepares Decisions
+REAL MARGIN
 
-M6
-Stress Test Passes
+REAL EXCEPTIONS
 
-M7
-Controlled Launch
-
-M8
-Real Transaction Learning Loop
+REAL LEARNING
 ```
 
 ---
 
-# 90. Architecture Freeze During Phase 1
+# 120. Q4 Success — System
 
-During Phase 1:
+MGBOS should increasingly be:
 
-> **Do not create another major architecture document unless implementation exposes a genuine semantic conflict or missing owner.**
+```text id="kb9pbe"
+TRUSTWORTHY
 
-Documentation work should now be primarily:
+TRACEABLE
 
-```text
-implementation spec
+REPAIRABLE
 
-test scenario
+QUIET WHEN HEALTHY
 
-ADR if needed
-
-completion evidence
+LOUD WHEN MATERIAL
 ```
-
-not speculative platform architecture.
 
 ---
 
-# 91. Immediate Next Documentation
+# 121. Q4 Success — Founder
 
-After this roadmap, create/persist:
+Founder should depend less on:
 
-```text
-systems/mgbos/docs/implementation/
-phase-1-operating-spine/
+```text id="alw9ac"
+memory
+
+chat search
+
+mental todo list
+
+status hunting
+
+manual reminder loops
+```
+
+and more on:
+
+```text id="1vcc7g"
+governed state
+
+attention queue
+
+next action
+
+exceptions
+
+economics
+```
+
+---
+
+# 122. Q4 Success — Automation
+
+Automation success means:
+
+```text id="mj023q"
+repeated stable work
+
+is reduced
+
+without hiding failure
+or corrupting truth
+```
+
+Not automation count.
+
+---
+
+# 123. Q4 Success — AI
+
+AI success means:
+
+```text id="2w2pdr"
+LESS COGNITIVE PREPARATION
+FOR THE FOUNDER
+```
+
+without making AI authoritative for business truth.
+
+---
+
+# 124. Q4 KPI Philosophy
+
+Use:
+
+```text id="g7mija"
+COMPLETENESS
+
+TRACEABILITY
+
+REPEATABILITY
+
+FOUNDER BURDEN REDUCTION
+```
+
+before scale optimization.
+
+---
+
+# 125. Useful Structural KPIs
+
+Potential metrics include:
+
+```text id="nl4ud3"
+% material leads recorded
+
+% quotes versioned
+
+% active production jobs with governed assignment
+
+% required jobs with SPK
+
+% completed jobs with QC
+
+% completed transactions with actual cost
+
+% payments reconciled
+
+% shipments traceable
+
+% material exceptions captured
+
+manual touches per transaction
+
+founder interventions per transaction
+```
+
+Exact targets must come from product/pilot design and evidence.
+
+---
+
+# 126. No Invented Commercial Targets
+
+Revenue targets, margin targets, order targets, or transaction-count commitments must come from actual business planning.
+
+Architecture/engineering documents must not invent them.
+
+---
+
+# 127. Capital Readiness Target
+
+Current planning assumes:
+
+```text id="k99s9m"
+CAPITAL READINESS
+≈
+LATE NOVEMBER 2026
+```
+
+This is a planning input.
+
+If business reality changes, roadmap timing changes.
+
+---
+
+# 128. Controlled Launch Target
+
+Current planning window:
+
+```text id="ap9suc"
+LATE NOVEMBER
+→
+EARLY DECEMBER 2026
+```
+
+is conditional.
+
+No launch date overrides readiness gates.
+
+---
+
+# 129. October Direction
+
+Current October priority:
+
+```text id="o51thj"
+RECONCILE
+
+DEFINE
+
+BOUND
+
+PREPARE
+```
+
+Specifically:
+
+```text id="5dhzw3"
+documentation truth
+
+Founder Control product definition
+
+architecture impact
+
+engineering readiness
+
+operational readiness groundwork
+```
+
+---
+
+# 130. November Direction
+
+Subject to Stage B–D completion:
+
+```text id="4xiqr9"
+BUILD
+
+VERIFY
+
+PREPARE PILOT
+
+PROVE READINESS
+```
+
+then begin controlled real operations when gates permit.
+
+---
+
+# 131. December Direction
+
+Use actual operations to:
+
+```text id="8yw3sw"
+FIX
+
+STANDARDIZE
+
+MEASURE
+
+AUTOMATE SELECTIVELY
+
+ADD AI ONLY WHERE USEFUL
+```
+
+---
+
+# 132. Quarter-End Review
+
+By:
+
+```text id="feblo4"
+2026-12-31
+```
+
+review:
+
+```text id="h2plah"
+business demand
+
+unit economics
+
+Vendor performance
+
+founder burden
+
+MGBOS capability maturity
+
+automation usefulness
+
+operational exceptions
+
+readiness gaps
+
+JARVIS usefulness
+
+Q1 2027 priorities
+```
+
+---
+
+# 133. Q1 2027 Must Follow Evidence
+
+Possible directions may include:
+
+```text id="rjjw2f"
+commerce systemization
+
+deeper Founder Control
+
+deeper finance
+
+creator pilot
+
+marketing engine
+
+Vendor intelligence
+
+JARVIS expansion
+```
+
+but no direction should be pre-committed before Q4 learning.
+
+---
+
+# 134. Q1 Decision Tree
+
+```text id="aiss6r"
+REAL OPERATING SPINE STILL UNSTABLE?
+→ HARDEN OPERATIONS
+
+SPINE STABLE BUT FOUNDER STILL MANUAL?
+→ DEEPEN FOUNDER CONTROL / AUTOMATION
+
+OPERATIONS STABLE + DEMAND GROWING?
+→ SCALE COMMERCIAL CAPABILITY
+
+DATA TRUSTWORTHY + FOUNDER OVERLOADED?
+→ DEEPEN AI COPILOT
+
+NEW BUSINESS MODEL PROVEN?
+→ PROMOTE REQUIRED DOMAIN CAPABILITY
+```
+
+---
+
+# 135. Stop Conditions
+
+Roadmap progression must stop when:
+
+```text id="pduf66"
+business policy is materially unknown
+
+canonical architecture conflicts
+
+current source contradicts assumed capability
+
+production readiness has a hard blocker
+
+founder capacity is exceeded
+
+business economics are not understood
+
+real operation exposes unsafe behavior
+```
+
+Stop means:
+
+```text id="5wxna8"
+RECONCILE
+```
+
+not:
+
+```text id="0rhqrp"
+PUSH FORWARD BECAUSE TIMELINE SAYS SO
+```
+
+---
+
+# 136. Current Hard Strategic Risks
+
+Primary risks now include:
+
+```text id="0t6625"
+RISK-01
+building Founder Control before defining it
+
+RISK-02
+assuming software completion means business validation
+
+RISK-03
+launching before operational readiness
+
+RISK-04
+overbuilding future ERP entities
+
+RISK-05
+premature automation
+
+RISK-06
+premature AI authority
+
+RISK-07
+founder overload despite system complexity
+
+RISK-08
+stale documentation misrouting AI engineering
+```
+
+---
+
+# 137. Risk — Overbuilding
+
+Largest structural risk remains:
+
+```text id="jafqy1"
+BUILDING THE SYSTEM
+instead of
+BUILDING THE BUSINESS THROUGH THE SYSTEM
+```
+
+Every engineering cycle should eventually reconnect to real operational learning.
+
+---
+
+# 138. Risk — Premature Founder Control Complexity
+
+Founder Control must not become:
+
+```text id="9xdg4l"
+another giant workflow engine
+
+another universal status model
+
+another notification platform
+
+another CRM
+```
+
+Its job is attention compression.
+
+---
+
+# 139. Risk — Premature AI
+
+Do not solve:
+
+```text id="pm0jj4"
+missing structure
 ```
 
 with:
 
-```text
-README.md
-
-operating-spine-plan.md
-
-current-operating-spine-audit.md
-
-backlog.md
+```text id="9oxu4a"
+LLM interpretation
 ```
 
-The remaining Phase 1 test/evidence documents can be created as implementation progresses.
+when deterministic business state should exist.
 
 ---
 
-# 92. Immediate Engineering Start
+# 140. Risk — Operational Readiness Neglect
 
-After the documentation closure gate, the first implementation task is:
+Green CI is necessary.
 
-```text
-P0-01
-Lead → Requirement Continuation
-```
+It is not enough.
 
-Then:
-
-```text
-P0-02
-Order Lifecycle
-
-P0-03
-Vendor-backed Assignment
-
-P0-04
-Assignment Acceptance
-
-P0-05
-Fulfillment Readiness
-
-P0-06
-Work Order / SPK
-
-P0-07
-Clean E2E
-
-P0-08
-Operator Acceptance
-```
+No real operational launch without applicable recovery/security evidence.
 
 ---
 
-# 93. Final Operating Principle
+# 141. Risk — Entity Inflation
 
-The objective is not:
+Do not promote:
 
-```text
-build all of MGBOS
-before launch
+```text id="1yvq4o"
+Opportunity
+
+Project
+
+Partner
 ```
 
-The objective is:
+because they sound enterprise-ready.
 
-```text
-build enough trusted operating leverage
-that launch volume does not immediately
-turn Rizky into the bottleneck.
+Promote only after repeated real operational need.
+
+---
+
+# 142. Risk — Automation Failure
+
+Automation must fail visibly.
+
+Silent failure creates false founder confidence and can be worse than no automation.
+
+---
+
+# 143. Risk — Founder Bottleneck
+
+A system that requires founder approval for every normal action has failed the solo-founder leverage objective.
+
+Target:
+
+```text id="usjkqe"
+FOUNDER BY EXCEPTION
+```
+
+not:
+
+```text id="p0i1mg"
+FOUNDER BY DEFAULT
 ```
 
 ---
 
-# 94. Final Roadmap
+# 144. Roadmap Transition Rules
 
-```text
-CANONICAL CLOSURE
-        ↓
-OPERATING-SPINE CLOSURE
-        ↓
-END-TO-END PROOF
-        ↓
-FOUNDER CONTROL
-        ↓
-DETERMINISTIC AUTOMATION
-        ↓
-JARVIS LITE
-        ↓
-STRESS TEST
-        ↓
-CONTROLLED LAUNCH
-        ↓
-REAL OPERATING EVIDENCE
-        ↓
-NEXT CAPABILITY
+Move from Stage A → B when:
+
+```text id="ogp00s"
+current repository state is no longer materially misleading
 ```
 
-> **Business pulls the system forward. The system should remove founder burden faster than the business creates it.**
+Move B → C when:
+
+```text id="98vkra"
+product package is mature enough for architecture review
+```
+
+Move C → D when:
+
+```text id="lmvwhq"
+engineering work is bounded and authorized
+```
+
+Move D → E when:
+
+```text id="7ki4c2"
+Founder Control candidate capability passes engineering verification
+```
+
+Move E → F when:
+
+```text id="qgpfo3"
+real repeated manual coordination is observed
+```
+
+Move F → G when:
+
+```text id="hf42er"
+trusted read models and stable operational evidence exist
+```
+
+Move into controlled scale only when operational capacity supports it.
+
+---
+
+# 145. Current Roadmap Status
+
+At this revision:
+
+```text id="lnhvnt"
+STAGE A
+Current-State Reconciliation
+=
+ACTIVE
+
+STAGE B
+Founder Control Product Definition
+=
+NEXT
+
+STAGE C
+Architecture + Engineering Readiness
+=
+PENDING
+
+STAGE D
+Founder Control Implementation
+=
+NOT OPEN
+
+STAGE E
+Operational Readiness + Real Pilot
+=
+GATED
+
+STAGE F
+Deterministic Automation
+=
+FUTURE / EVIDENCE-DRIVEN
+
+STAGE G
+JARVIS Lite
+=
+FUTURE / EVIDENCE-DRIVEN
+
+STAGE H
+Controlled Launch
+=
+TARGETED, NOT AUTHORIZED
+```
+
+---
+
+# 146. Current MGBOS Engineering State
+
+```text id="w04j0e"
+ACTIVE IMPLEMENTATION PHASE
+=
+NONE
+```
+
+Therefore:
+
+```text id="j2c2zt"
+Antigravity
+```
+
+currently has no authorized Founder Control implementation package from this roadmap.
+
+---
+
+# 147. Current Product Next Step
+
+After Stage A reconciliation:
+
+```text id="vrp0b1"
+MGBOS × TeeStock
+Founder Control PRD
+```
+
+becomes the next parent product artifact.
+
+---
+
+# 148. Current Readiness Next Step
+
+In parallel with product definition, continue resolving evidence for:
+
+```text id="36v0of"
+credential hygiene
+
+environment design
+
+RPO / RTO
+
+backup
+
+restore
+
+monitoring
+
+recovery
+```
+
+without prematurely deploying production.
+
+---
+
+# 149. Current Business Next Step
+
+TeeStock should continue refining the actual:
+
+```text id="02ekgo"
+Business / Custom offer
+
+Vendor readiness
+
+cost assumptions
+
+commercial process
+
+real inquiry path
+```
+
+so the later pilot validates real operating behavior rather than synthetic business assumptions.
+
+---
+
+# 150. What Not To Do Next
+
+Do NOT currently:
+
+```text id="fr2pty"
+restart Phase 1
+
+implement Opportunity
+
+implement generic Project
+
+open Phase 2 implementation without PRD
+
+build full public storefront as a blocker
+
+build full JARVIS
+
+build multi-agent runtime
+
+automate every reminder
+
+deploy production merely because CI is green
+```
+
+---
+
+# 151. Roadmap Definition of Success
+
+This roadmap succeeds if it causes the project to move through:
+
+```text id="nhqxrr"
+TRUSTED STATE
+        ↓
+LOWER FOUNDER BURDEN
+        ↓
+REAL BUSINESS VALIDATION
+        ↓
+REPEATED LEARNING
+        ↓
+SELECTIVE AUTOMATION
+        ↓
+AI LEVERAGE
+```
+
+without losing:
+
+```text id="j5dtwq"
+business integrity
+
+financial truth
+
+operational traceability
+
+human accountability
+```
+
+---
+
+# 152. Final Strategic Principle
+
+The goal is not:
+
+```text id="3qn73b"
+BUILD EVERYTHING
+BEFORE TEEStock STARTS
+```
+
+and it is not:
+
+```text id="3q5nzr"
+START SELLING
+WHILE THE FOUNDER
+IS STILL THE ENTIRE OPERATING SYSTEM
+```
+
+The target balance is:
+
+```text id="l5bxlk"
+BUILD ENOUGH GOVERNED SYSTEM
+TO OPERATE SAFELY
+        ↓
+RUN REAL BUSINESS
+        ↓
+LEARN
+        ↓
+BUILD ONLY WHAT REALITY PULLS
+```
+
+Current canonical direction:
+
+> **The MGBOS transactional spine is already closed at the Phase 1 software level. The next leverage comes from Founder Control, operational readiness, and real TeeStock Business/Custom transactions—not from reopening solved Phase 1 work or expanding into speculative ERP breadth.**
+
+And the long-term solo-founder principle remains:
+
+> **Normal work should flow quietly through governed systems. Abnormal work should become explicit. Founder attention should be reserved for decisions that actually require founder judgment.**

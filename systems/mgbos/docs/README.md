@@ -1,112 +1,213 @@
 ---
 canonical_id: mgbos.docs.master-index
 status: ACTIVE
-version: 2.0
+version: 3.0
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos-documentation
 document_class: canonical-navigation-index
-effective_from: 2026-09-30
+effective_from: 2026-10-05
+
+implementation_status: DOCUMENTATION_INDEX
+
+prepared_against:
+  repository: Rizkybuilds/bisnishub
+  branch: main
+  commit: f89ccb49878668f5cb00edf7375e168b9d4a0670
+  reviewed_at: 2026-10-05
+
+documentation_program:
+  program: W0_CURRENT_STATE_RECONCILIATION
+  purpose: reconcile durable documentation routing after Phase 1 closure
+  next_product_program: FOUNDER_CONTROL
+
 authoritative_for:
-  - mgbos documentation navigation
-  - mgbos documentation classification
-  - mgbos documentation placement
-  - canonical-versus-evidence routing within mgbos
-  - mgbos documentation reading order
-last_reviewed: 2026-09-30
-review_cadence: monthly-during-active-development
+  - MGBOS documentation navigation
+  - MGBOS documentation classification
+  - MGBOS documentation placement
+  - canonical-versus-product-versus-implementation routing within MGBOS
+  - MGBOS documentation reading order
+  - MGBOS current documentation-program routing
+  - current-versus-historical documentation interpretation
+
+not_authoritative_for:
+  - MGBOS business semantics owned by dedicated architecture specifications
+  - TeeStock business policy
+  - product requirements owned by dedicated product specifications
+  - implementation truth
+  - deployment state
+  - runtime state
+  - production readiness
+  - engineering risk taxonomy
+  - repository-wide Vibe Engineering governance
+
+last_reviewed: 2026-10-05
+review_cadence: monthly-during-active-development-or-after-material-documentation-program-change
+
 depends_on:
   - ../../../docs/governance/documentation-constitution.md
   - ../../../docs/governance/canonical-source-map.md
   - ../../../docs/project-index.md
+  - ../../../docs/engineering/vibe-engineering/README.md
   - ../AGENTS.md
+  - architecture/README.md
+  - product/README.md
+  - implementation/README.md
+  - engineering/operational-readiness.md
+
 supersedes:
-  - mgbos.docs.master-index@1.0
-implementation_status: DOCUMENTATION_INDEX
+  - mgbos.docs.master-index@2.0
 ---
 
-# MultiGraph Business OS — Master Documentation Index v2.0
+# MultiGraph Business OS — Master Documentation Index v3.0
 
 ## 1. Purpose
 
-Dokumen ini adalah pintu masuk canonical untuk seluruh dokumentasi MGBOS.
+Dokumen ini adalah master navigation entrypoint untuk dokumentasi MGBOS.
 
 Ia menjawab:
 
-> **Dokumen MGBOS mana yang harus dibaca untuk memahami architecture, implementation, evidence, decisions, dan operations?**
+```text
+WHERE IS MGBOS AUTHORITY?
+
+WHERE ARE PRODUCT REQUIREMENTS?
+
+WHERE IS CURRENT IMPLEMENTATION WORK?
+
+WHERE IS HISTORICAL IMPLEMENTATION WORK?
+
+WHERE IS ENGINEERING GOVERNANCE?
+
+WHERE IS OPERATIONAL READINESS?
+
+WHERE ARE ADRs?
+
+WHERE ARE RUNBOOKS?
+
+WHAT SHOULD A HUMAN OR MACHINE READ FIRST?
+```
 
 Dokumen ini adalah:
 
 ```text
 NAVIGATION AUTHORITY
++
+DOCUMENT CLASSIFICATION ROUTER
++
+CURRENT-PROGRAM ROUTER
 ```
 
-bukan specification pengganti dokumen domain di bawahnya.
+bukan pengganti semantic owner di bawahnya.
 
 ---
 
-# 2. MGBOS Documentation Principle
+# 2. Fundamental Documentation Rule
 
-Canonical routing:
+MGBOS documentation follows:
 
 ```text
-MGBOS
-│
-├── architecture
-│   → what the system means
-│
-├── product
-│   → what a specific application/pilot needs
-│
-├── implementation
-│   → what we are currently building
-│
-├── engineering
-│   → how software work is governed
-│
-├── adr
-│   → why major technical decisions were made
-│
-├── runbooks
-│   → how the system is operated/recovered
-│
-└── evidence
-    → proof that something was actually implemented/tested
+ONE NORMATIVE CONCEPT
+=
+ONE SEMANTIC OWNER
 ```
+
+A navigation index may point to authority.
+
+It MUST NOT silently duplicate or override that authority.
 
 ---
 
-# 3. Documentation Authority Hierarchy
+# 3. Repository Authority Order
 
-Within MGBOS:
+For MGBOS work, use the applicable authority chain:
 
 ```text
-CROSS-SYSTEM GOVERNANCE
+REPOSITORY-WIDE GOVERNANCE
 docs/
         ↓
 MGBOS CANONICAL ARCHITECTURE
 systems/mgbos/docs/architecture/
         ↓
-PRODUCT / IMPLEMENTATION SPEC
+PRODUCT REQUIREMENTS
 systems/mgbos/docs/product/
+        ↓
+IMPLEMENTATION PROGRAM
 systems/mgbos/docs/implementation/
         ↓
-CODE / MIGRATIONS / TESTS
+CURRENT SOURCE / MIGRATIONS / CONFIG
 systems/mgbos/
         ↓
-IMPLEMENTATION EVIDENCE
-systems/mgbos/docs/engineering/
-systems/mgbos/docs/evidence/
+TEST / CI / RUNTIME / ACCEPTANCE EVIDENCE
 ```
 
-Implementation report MUST NOT override canonical architecture.
+Evidence proves observed implementation reality.
+
+Evidence does not silently redefine architecture.
 
 ---
 
-# 4. Current Documentation Structure
+# 4. Documentation Classes
 
-Canonical target:
+MGBOS documentation is separated into:
+
+```text
+architecture/
+→ what MGBOS means
+
+product/
+→ what an MGBOS-backed product capability should do
+
+implementation/
+→ bounded software change programs
+
+engineering/
+→ MGBOS engineering governance and engineering evidence
+
+adr/
+→ why durable technical decisions exist
+
+runbooks/
+→ how the system is operated and recovered
+```
+
+There is currently no physical:
+
+```text
+evidence/
+```
+
+directory in the verified repository baseline.
+
+Evidence may currently live in:
+
+```text
+engineering/
+
+implementation completion artifacts
+
+tests
+
+CI
+
+runtime verification
+```
+
+Do not invent a physical evidence directory merely because an older target tree mentioned one.
+
+---
+
+# 5. Current Verified Physical Tree
+
+At the reviewed remote baseline:
+
+```text
+main
+=
+f89ccb49878668f5cb00edf7375e168b9d4a0670
+```
+
+the physical MGBOS documentation tree contains:
 
 ```text
 systems/mgbos/docs/
@@ -114,106 +215,66 @@ systems/mgbos/docs/
 ├── README.md
 │
 ├── architecture/
-│   ├── README.md
-│   ├── canonical-data-model.md
-│   ├── business-state-machines.md
-│   ├── business-invariants.md
-│   ├── command-event-model.md
-│   ├── permission-authorization-model.md
-│   └── domain-map-capability-ownership.md
 │
 ├── product/
-│   ├── README.md
-│   ├── teestock-curated-strategy.md
-│   ├── teestock-development-plan.md
-│   ├── teestock-design-library-spec.md
-│   └── teestock-asset-readiness.md
 │
 ├── implementation/
-│   ├── README.md
-│   │
-│   ├── phase-1-operating-spine/
-│   │   ├── README.md
-│   │   ├── operating-spine-plan.md
-│   │   ├── current-operating-spine-audit.md
-│   │   ├── backlog.md
-│   │   ├── synthetic-scenarios.md
-│   │   ├── operator-acceptance-test.md
-│   │   └── completion-report.md
-│   │
-│   ├── phase-2-founder-control/
-│   ├── phase-3-automation/
-│   ├── phase-4-jarvis-lite/
-│   └── phase-5-launch-readiness/
 │
 ├── engineering/
-│   ├── README.md
-│   ├── maintenance-policy.md
-│   ├── operational-readiness.md
-│   ├── pre-implementation-audit.md
-│   ├── agent-system/
-│   └── implementation reports
 │
 ├── adr/
-│
-├── runbooks/
-│
-└── evidence/
+└── runbooks/
 ```
 
-Directories marked as target MUST NOT be treated as physically present until created.
+No additional documentation directory should be assumed to exist without repository evidence.
 
 ---
 
-# 5. Architecture Documentation
+# 6. Current Architecture Tree
 
-Canonical location:
-
-```text
-systems/mgbos/docs/architecture/
-```
-
-Architecture documents define:
+Verified physical tree:
 
 ```text
-entities
-
-state
-
-invariants
-
-commands
-
-events
-
-permissions
-
-domain boundaries
-
-transactional semantics
+architecture/
+│
+├── README.md
+├── canonical-data-model.md
+├── business-state-machines.md
+├── business-invariants.md
+├── command-event-model.md
+├── permission-authorization-model.md
+└── domain-map-capability-ownership.md
 ```
+
+These are physically present.
+
+Older documentation claiming:
+
+```text
+domain-map-capability-ownership.md
+=
+NOT YET PERSISTED
+```
+
+is stale.
 
 ---
 
-# 6. Architecture Index
+# 7. Architecture Index
 
-Primary entry point:
+Primary entrypoint:
 
 ```text
 architecture/README.md
 ```
 
-Role:
+Use it to navigate MGBOS canonical architecture.
 
-```text
-CANONICAL ARCHITECTURE INDEX
-```
-
-It should route readers to dedicated specifications rather than reproduce them.
+The architecture index should route readers to dedicated specifications rather than reproduce their normative contents.
 
 ---
 
-# 7. Canonical Data Model
+# 8. Canonical Data Model
 
 Canonical source:
 
@@ -221,29 +282,23 @@ Canonical source:
 architecture/canonical-data-model.md
 ```
 
-Owns:
+Owns applicable:
 
 ```text
-MGBOS entities
+entity identity
 
 relationships
 
-identity semantics
+canonical business representation
 
 financial structures
 
-transactional representation
-```
-
-Classification:
-
-```text
-CANONICAL
+persistent domain concepts
 ```
 
 ---
 
-# 8. Business State Machines
+# 9. Business State Machines
 
 Canonical source:
 
@@ -254,26 +309,18 @@ architecture/business-state-machines.md
 Owns:
 
 ```text
-domain state vocabularies
+state vocabularies
 
-allowed transitions
+transition semantics
 
-stored vs derived state
+terminal semantics
 
-terminal-state semantics
-
-implementation maturity
-```
-
-Classification:
-
-```text
-CANONICAL
+stored versus derived state
 ```
 
 ---
 
-# 9. Business Invariants
+# 10. Business Invariants
 
 Canonical source:
 
@@ -281,29 +328,23 @@ Canonical source:
 architecture/business-invariants.md
 ```
 
-Owns rules that MUST remain true regardless of:
+Owns rules that must remain true regardless of:
 
 ```text
 UI
+
+operator
 
 automation
 
 AI
 
 integration
-
-operator
-```
-
-Classification:
-
-```text
-CANONICAL
 ```
 
 ---
 
-# 10. Command & Event Model
+# 11. Command & Event Model
 
 Canonical source:
 
@@ -318,22 +359,16 @@ command semantics
 
 event semantics
 
-outbox principles
+idempotency principles
 
-idempotency expectations
+outbox expectations
 
-external signal boundaries
-```
-
-Classification:
-
-```text
-CANONICAL
+external-signal boundaries
 ```
 
 ---
 
-# 11. Permission & Authorization
+# 12. Permission & Authorization
 
 Canonical source:
 
@@ -341,7 +376,7 @@ Canonical source:
 architecture/permission-authorization-model.md
 ```
 
-Owns:
+Owns applicable:
 
 ```text
 roles
@@ -350,22 +385,16 @@ capabilities
 
 authorization semantics
 
-approval relationship
+approval relationships
 
 service-principal boundaries
 ```
 
-Classification:
-
-```text
-CANONICAL
-```
-
 ---
 
-# 12. Domain Map & Capability Ownership
+# 13. Domain Map & Capability Ownership
 
-Canonical target:
+Canonical source:
 
 ```text
 architecture/domain-map-capability-ownership.md
@@ -377,69 +406,55 @@ Canonical ID:
 mgbos.architecture.domain-map-capability-ownership
 ```
 
-Role:
+The file is physically present.
+
+It classifies capability maturity/ownership using concepts such as:
 
 ```text
-CURRENT / PARTIAL / NEXT / DEFERRED
-domain and capability ownership map
+CURRENT
+
+PARTIAL
+
+NEXT
+
+DEFERRED
+
+EXPERIMENTAL
+
+OUTSIDE_MGBOS
 ```
 
-Current repository state:
-
-```text
-ACTIVE-READY
-NOT YET PERSISTED
-```
-
-until the file is created.
+according to its own semantics.
 
 ---
 
-# 13. Historical Sep-23 Architecture Notes
+# 14. Domain Map Is Not Runtime Proof
 
-Historical sources under:
+A capability classified:
 
 ```text
-catatan/sesi/2026-09-23*
+CURRENT
 ```
 
-including earlier:
+in the domain map does not automatically prove every UI, command, integration, or operational workflow is complete.
+
+When implementation truth matters, inspect:
 
 ```text
-Canonical Data Model
+current source
 
-Logical Data Model
+migrations
 
-Business State Machines
+tests
 
-System Architecture
-```
+CI
 
-are:
-
-```text
-HISTORICAL / DESIGN PROVENANCE
-```
-
-for concepts now promoted into dedicated canonical MGBOS specifications.
-
-They MUST NOT override:
-
-```text
-architecture/canonical-data-model.md
-
-architecture/business-state-machines.md
-
-architecture/business-invariants.md
-
-architecture/command-event-model.md
-
-architecture/permission-authorization-model.md
+runtime / operator evidence
 ```
 
 ---
 
-# 14. Product Documentation
+# 15. Product Documentation
 
 Location:
 
@@ -447,236 +462,281 @@ Location:
 systems/mgbos/docs/product/
 ```
 
-Owns application/product-level requirements implemented through MGBOS.
-
-Examples:
+Product documentation owns:
 
 ```text
-Custom Atelier pilot
+WHY
 
-TeeStock product/application requirements
++
 
-screen architecture
+WHAT
+```
 
-pilot interaction flows
+for MGBOS-backed product behavior.
+
+It does not own physical implementation design.
+
+---
+
+# 16. Product Index
+
+Primary entrypoint:
+
+```text
+product/README.md
+```
+
+Its role is:
+
+```text
+PRODUCT DOCUMENTATION NAVIGATION
+
+PRODUCT DOCUMENT CLASSIFICATION
+
+CURRENT PRODUCT-PROGRAM ROUTING
+```
+
+not parent PRD for every MGBOS capability.
+
+---
+
+# 17. Verified Remote Product Tree
+
+At the repository baseline:
+
+```text
+product/
+│
+├── README.md
+├── teestock-asset-readiness.md
+├── teestock-curated-strategy.md
+├── teestock-design-library-spec.md
+└── teestock-development-plan.md
+```
+
+The verified remote baseline does not yet contain:
+
+```text
+founder-control-documentation-plan.md
+```
+
+unless it has been added after this document's reviewed baseline.
+
+---
+
+# 18. W0 Companion Product Document
+
+The current documentation reconciliation program introduces:
+
+```text
+product/
+founder-control-documentation-plan.md
+```
+
+as the active documentation-program manifest for Founder Control.
+
+Machine rule:
+
+```text
+PLANNED / PREPARED COMPANION CHANGE
+≠
+VERIFIED REMOTE FILE
+```
+
+until repository state proves the file exists.
+
+Once the W0 patch set is applied, the product index should route current product work through that document.
+
+---
+
+# 19. Current Product Program
+
+Current strategic product program:
+
+```text
+FOUNDER CONTROL
+```
+
+The central product question is no longer merely:
+
+```text
+Can the transaction move?
+```
+
+but:
+
+```text
+Can MGBOS determine
+what deserves founder attention
+without the founder searching everything manually?
 ```
 
 ---
 
-# 15. Product Docs Are Not Business Strategy
+# 20. Founder Control Documentation Family
 
-Business strategy remains under:
+Current documentation plan defines the intended family:
+
+```text
+D0
+founder-control-documentation-plan.md
+
+D1
+teestock-founder-control-prd.md
+
+D2
+founder-attention-experience-spec.md
+
+D3
+operational-exception-spec.md
+
+D4
+teestock-operational-pilot-plan.md
+```
+
+Only physically present documents may be treated as existing files.
+
+---
+
+# 21. Existing Product Documents
+
+Existing product files predate the current Founder Control program.
+
+Their detailed classification is owned by:
+
+```text
+product/README.md
+```
+
+Broadly, they include:
+
+```text
+legacy / domain-specific TeeStock planning
+
+experimental Design Library specification
+
+bounded historical asset-readiness evidence
+```
+
+They must not automatically override newer business, product, or canonical sources.
+
+---
+
+# 22. Product ≠ Business Strategy
+
+TeeStock business authority remains under:
 
 ```text
 bisnis/teestock/
 ```
 
-Example separation:
+Example:
 
 ```text
-bisnis/teestock/04-services/custom.md
-→ TeeStock Custom business definition
+TeeStock Custom commercial definition
+→ bisnis/teestock/
 
-systems/mgbos/docs/product/
-→ software/pilot behavior supporting TeeStock Custom
+MGBOS behavior supporting that business need
+→ systems/mgbos/docs/product/
 ```
 
 ---
 
-# 16. Product Documentation Is Not Implementation Evidence
+# 23. Product ≠ Architecture
 
-A product spec saying:
-
-```text
-"This screen should exist."
-```
-
-does not mean:
+Example product requirement:
 
 ```text
-"This screen is implemented."
+Founder must see materially overdue production.
 ```
 
-Implementation status must be verified separately.
+Architecture question:
+
+```text
+How should that abnormal condition
+be represented canonically?
+```
+
+Implementation question:
+
+```text
+Which query, command, migration,
+read model, and component implement it?
+```
+
+These layers MUST remain separate.
 
 ---
 
-# 17. Historical Pilot Specifications
+# 24. Implementation Documentation
 
-Sep-23 documents such as:
-
-```text
-MGBOS 0.5 TeeStock Pilot MVP
-
-MGBOS 0.5.1 Custom Atelier
-```
-
-remain:
-
-```text
-HISTORICAL / PRODUCT DESIGN PROVENANCE
-```
-
-where their requirements have already been promoted or implemented.
-
-They may still be consulted for unpromoted detail.
-
----
-
-# 18. Implementation Documentation
-
-Canonical target location:
+Location:
 
 ```text
 systems/mgbos/docs/implementation/
 ```
 
-Purpose:
-
-> **Translate canonical architecture + current business requirements into bounded engineering execution.**
+Implementation documentation exists to convert approved product/architecture requirements into bounded software change.
 
 ---
 
-# 19. Implementation Docs Own
+# 25. Implementation Index
+
+Primary entrypoint:
 
 ```text
-phase plan
-
-current implementation audit
-
-implementation backlog
-
-acceptance criteria
-
-synthetic scenarios
-
-operator acceptance test
-
-phase completion report
+implementation/README.md
 ```
 
-They do NOT own long-term architecture semantics.
+Current intended interpretation after W0 reconciliation:
+
+```text
+PHASE 1
+=
+CLOSED
+
+ACTIVE NEW IMPLEMENTATION PHASE
+=
+NONE
+
+CURRENT PRODUCT PROGRAM
+=
+FOUNDER CONTROL PRODUCT DEFINITION
+```
 
 ---
 
-# 20. Phase 1 — Operating Spine
+# 26. Verified Implementation Tree
 
-Canonical target:
+At the reviewed baseline:
 
 ```text
-systems/mgbos/docs/implementation/
-phase-1-operating-spine/
+implementation/
+│
+├── README.md
+└── phase-1-operating-spine/
+    │
+    ├── README.md
+    ├── operating-spine-plan.md
+    ├── current-operating-spine-audit.md
+    ├── backlog.md
+    ├── operator-acceptance-test.md
+    └── completion-report.md
 ```
 
-Files:
+There is no physical:
 
 ```text
-README.md
-
-operating-spine-plan.md
-
-current-operating-spine-audit.md
-
-backlog.md
-
 synthetic-scenarios.md
-
-operator-acceptance-test.md
-
-completion-report.md
 ```
+
+inside Phase 1.
 
 ---
 
-# 21. Phase 1 Operating Spine Plan
+# 27. No Future Phase Directories Currently
 
-Target:
-
-```text
-implementation/phase-1-operating-spine/
-operating-spine-plan.md
-```
-
-Canonical ID:
-
-```text
-teestock.implementation.phase1-operating-spine
-```
-
-Current state:
-
-```text
-ACTIVE-READY
-NOT YET PERSISTED
-```
-
----
-
-# 22. Phase 1 Current Audit
-
-Target:
-
-```text
-implementation/phase-1-operating-spine/
-current-operating-spine-audit.md
-```
-
-Canonical ID:
-
-```text
-teestock.audit.phase1a-mgbos-operating-spine
-```
-
-Current state:
-
-```text
-ACTIVE-READY
-NOT YET PERSISTED
-```
-
----
-
-# 23. Phase 1 Backlog
-
-Target:
-
-```text
-implementation/phase-1-operating-spine/backlog.md
-```
-
-Should eventually own active engineering sequence such as:
-
-```text
-P0-01 Lead → Requirement continuation
-
-P0-02 Order lifecycle
-
-P0-03 Vendor-backed assignment
-
-P0-04 Assignment acceptance
-
-P0-05 Fulfillment readiness
-
-P0-06 Governed Work Order / SPK Artifact
-
-P0-07 Clean Happy-Path E2E Verification
-
-P0-08 Operator Acceptance Test
-```
-
-The backlog is:
-
-```text
-EXECUTION CONTROL
-```
-
-not architecture authority.
-
----
-
-# 24. Future Implementation Phases
-
-Reserved semantic destinations:
+The verified implementation tree does NOT contain:
 
 ```text
 phase-2-founder-control/
@@ -688,37 +748,349 @@ phase-4-jarvis-lite/
 phase-5-launch-readiness/
 ```
 
-Do not create files merely to populate these directories.
-
-Create them when implementation work reaches the phase.
+Do not show these as current physical structure.
 
 ---
 
-# 25. JARVIS Lite Boundary
+# 28. Future Phase Names Are Planning Vocabulary
 
-JARVIS-specific implementation eventually belongs primarily under:
+Possible future phase names may remain useful as roadmap destinations.
 
-```text
-systems/jarvis/docs/implementation/
-```
-
-MGBOS Phase 4 documentation should only own:
+But:
 
 ```text
-MGBOS integration requirements
-
-read models
-
-business-data interfaces
-
-MGBOS-side constraints
+FUTURE PHASE NAME
+≠
+DIRECTORY EXISTS
 ```
 
-not JARVIS runtime architecture.
+and:
+
+```text
+DIRECTORY EXISTS
+≠
+IMPLEMENTATION AUTHORIZED
+```
 
 ---
 
-# 26. Engineering Documentation
+# 29. Phase 1 — Operating Spine
+
+Directory:
+
+```text
+implementation/
+phase-1-operating-spine/
+```
+
+Current phase lifecycle:
+
+```text
+CLOSED
+```
+
+Phase 1 must not be presented as current unfinished implementation work.
+
+---
+
+# 30. Phase 1 Delivered Spine
+
+Phase 1 materially established the governed software journey:
+
+```text
+Lead
+→ Requirement
+→ Quote
+→ Order
+→ Invoice / Payment
+→ Production
+→ Vendor Assignment
+→ Work Order / SPK
+→ QC
+→ Shipment
+→ Actual Cost
+→ Realized Margin
+→ Order Completion
+```
+
+within its documented evidence boundary.
+
+---
+
+# 31. Phase 1 P0 State
+
+Historical Phase 1 work:
+
+```text
+P0-01 Lead → Requirement
+P0-02 Order Lifecycle
+P0-03 Vendor-Backed Assignment
+P0-04 Assignment Acceptance / Reassignment
+P0-05 Fulfillment Readiness
+P0-06 Work Order / SPK
+P0-07 Clean Happy-Path E2E
+P0-08 Operator Acceptance
+```
+
+Current lifecycle:
+
+```text
+ALL
+=
+DONE
+```
+
+---
+
+# 32. Phase 1 Navigation Index
+
+Entry:
+
+```text
+implementation/
+phase-1-operating-spine/
+README.md
+```
+
+may remain:
+
+```text
+ACTIVE
+```
+
+because its continuing role is:
+
+```text
+closed-phase navigation
+
+lifecycle interpretation
+
+evidence routing
+```
+
+It is not an active execution backlog.
+
+---
+
+# 33. Phase 1 Historical Plan
+
+File:
+
+```text
+operating-spine-plan.md
+```
+
+must be interpreted after W0 reconciliation as:
+
+```text
+ARCHIVED
+HISTORICAL IMPLEMENTATION PLAN
+```
+
+It explains what was intended.
+
+It does not authorize current work.
+
+---
+
+# 34. Phase 1 Historical Audit
+
+File:
+
+```text
+current-operating-spine-audit.md
+```
+
+must be interpreted as:
+
+```text
+ARCHIVED
+PRE-REMEDIATION AUDIT
+```
+
+The word:
+
+```text
+current
+```
+
+belongs to its historical audit snapshot.
+
+It does not mean current repository truth today.
+
+---
+
+# 35. Phase 1 Historical Backlog
+
+File:
+
+```text
+backlog.md
+```
+
+must be interpreted as:
+
+```text
+ARCHIVED
+COMPLETED BACKLOG
+
+EXECUTION AUTHORITY
+=
+NONE
+```
+
+---
+
+# 36. Phase 1 Operator Evidence
+
+File:
+
+```text
+operator-acceptance-test.md
+```
+
+records operator acceptance.
+
+Current documented Phase 1 result:
+
+```text
+PASS
+
+BLOCKERS
+=
+0
+```
+
+within its stated acceptance boundary.
+
+---
+
+# 37. Phase 1 Completion Evidence
+
+Primary closure record:
+
+```text
+completion-report.md
+```
+
+records:
+
+```text
+PHASE 1 CLOSED
+```
+
+and associated test/evidence results.
+
+Use it for historical closure evidence.
+
+---
+
+# 38. Phase 1 Closure Does Not Mean Production Ready
+
+Do not infer:
+
+```text
+PHASE 1 CLOSED
+→
+PRODUCTION READY
+```
+
+or:
+
+```text
+OPERATOR ACCEPTANCE PASS
+→
+REAL BUSINESS VALIDATED
+```
+
+These are independent evidence classes.
+
+---
+
+# 39. No Active MGBOS Implementation Phase
+
+Current intended program state:
+
+```text
+ACTIVE MGBOS IMPLEMENTATION PHASE
+=
+NONE
+```
+
+Founder Control remains in product-definition/reconciliation work until applicable gates pass.
+
+---
+
+# 40. Phase 2 Creation Gate
+
+Do not create:
+
+```text
+implementation/
+phase-2-founder-control/
+```
+
+merely because Founder Control is the next product program.
+
+Create a new implementation phase only after:
+
+```text
+product scope
+=
+bounded
+
+material decisions
+=
+resolved
+
+architecture impact
+=
+reconciled
+
+current source
+=
+audited
+
+routing / risk
+=
+resolved
+
+technical plan
+=
+bounded
+
+completion gate
+=
+defined
+```
+
+---
+
+# 41. Product-to-Implementation Flow
+
+Required flow:
+
+```text
+BUSINESS NEED
+        ↓
+PRODUCT DEFINITION
+        ↓
+ARCHITECTURE IMPACT REVIEW
+        ↓
+ENGINEERING DISCOVERY
+        ↓
+IMPLEMENTATION CONTRACT
+        ↓
+WORK PACKAGE
+        ↓
+BUILDER
+```
+
+Do not hand a raw PRD directly to implementation as unrestricted authority.
+
+---
+
+# 42. Engineering Documentation
 
 Location:
 
@@ -726,51 +1098,193 @@ Location:
 systems/mgbos/docs/engineering/
 ```
 
-Owns:
+The physical directory currently includes:
 
 ```text
-software engineering governance
+README.md
 
-maintenance policy
+maintenance-policy.md
 
-operational readiness
+operational-readiness.md
 
-implementation evidence
+pre-implementation-audit.md
 
-agent-assisted development workflow
+branch-protection-setup.md
 
-historical engineering reports
+2026-09-26-foundation-recheck.md
+
+agent-system/
+
+mgbos-001-report.md
+...
+mgbos-020-report.md
+
+mgbos-001-files.md
+```
+
+Read actual directory contents rather than assuming the report range remains permanently fixed.
+
+---
+
+# 43. Engineering Documentation Responsibilities
+
+Engineering documentation may own:
+
+```text
+MGBOS-specific engineering governance
+
+maintenance procedures
+
+readiness register
+
+engineering reports
+
+agent-system controls
+
+historical engineering evidence
+```
+
+It must not override MGBOS canonical business semantics.
+
+---
+
+# 44. Engineering README Debt
+
+The engineering index has historically contained references to older MGBOS session-era engineering material.
+
+Until separately reconciled where necessary:
+
+```text
+CURRENT REPOSITORY GOVERNANCE
+
++
+
+CURRENT MGBOS AGENTS
+
++
+
+CURRENT CANONICAL ARCHITECTURE
+
++
+
+CURRENT SOURCE / TESTS
+
++
+
+CURRENT VIBE ENGINEERING GOVERNANCE
+```
+
+win over stale historical engineering-index interpretations.
+
+This debt is not by itself permission to rewrite engineering semantics from this master index.
+
+---
+
+# 45. Operational Readiness
+
+Current readiness register:
+
+```text
+engineering/
+operational-readiness.md
+```
+
+Current intended W0 conclusion:
+
+```text
+SOFTWARE / CI HEALTH
+=
+VERIFIED FOR CURRENT CI SCOPE
+
+PHASE 1
+=
+CLOSED
+
+OPERATOR ACCEPTANCE
+=
+PASS
+
+PRODUCTION READINESS
+=
+NOT VERIFIED
+
+REAL TRANSACTION READINESS
+=
+GATED
 ```
 
 ---
 
-# 27. Engineering Index Debt
+# 46. Readiness Is Separate From Product Maturity
 
-Current:
-
-```text
-engineering/README.md
-```
-
-still describes Sep-23 MGBOS 0.5.2 / 0.5.3 / 0.5.4 session notes as engineering source of truth.
-
-This requires a future controlled revision.
-
-Until revised:
+Product maturity asks:
 
 ```text
-canonical architecture wins
-
-current code/tests verify implementation
-
-session notes provide historical provenance
+Do we know what to build?
 ```
+
+Operational readiness asks:
+
+```text
+Can the system be operated safely
+in the intended environment?
+```
+
+Both are required for real operation.
 
 ---
 
-# 28. Implementation Reports
+# 47. Readiness Hard Areas
 
-Current implementation reports:
+Current unresolved readiness includes applicable:
+
+```text
+environment isolation
+
+credential hygiene
+
+backup automation
+
+restore drill
+
+RPO
+
+RTO
+
+active monitoring
+
+alert escalation
+
+recovery exercise
+
+production acceptance
+```
+
+Use the readiness register for current evidence.
+
+---
+
+# 48. Development Credential Boundary
+
+Development-oriented login and seed material must not be treated as production identity configuration.
+
+Before external/production use:
+
+```text
+development identity
+≠
+production identity
+```
+
+must be proven.
+
+Sensitive values should not be repeated in documentation unnecessarily.
+
+---
+
+# 49. Implementation Reports
+
+Files such as:
 
 ```text
 engineering/mgbos-001-report.md
@@ -778,61 +1292,49 @@ engineering/mgbos-001-report.md
 engineering/mgbos-020-report.md
 ```
 
-Classification:
+are:
 
 ```text
-EVIDENCE
+IMPLEMENTATION / ENGINEERING EVIDENCE
 ```
 
-These demonstrate what was built and tested at a specific time.
+at their applicable revisions.
+
+They do not automatically define current system semantics.
 
 ---
 
-# 29. Implementation Report Rule
+# 50. Report Interpretation Rule
 
-Reports SHOULD answer:
+An implementation report may answer:
 
 ```text
-What changed?
+What was changed?
 
 What was tested?
 
-At which revision?
+What was observed?
 
-What remains incomplete?
+At which point in history?
 ```
 
-They MUST NOT redefine:
+It must not independently redefine:
 
 ```text
+entity semantics
+
 business state
 
-permissions
-
 invariants
+
+permissions
 
 domain ownership
 ```
 
-without corresponding canonical updates.
-
 ---
 
-# 30. Future Engineering Report Organization
-
-Preferred future organization:
-
-```text
-engineering/reports/
-```
-
-But existing files SHOULD NOT be mass-moved solely for aesthetics.
-
-Move only through a controlled reference migration if the value justifies it.
-
----
-
-# 31. Architecture Decision Records
+# 51. Architecture Decision Records
 
 Location:
 
@@ -840,587 +1342,1290 @@ Location:
 systems/mgbos/docs/adr/
 ```
 
-ADRs explain major durable decisions.
-
-Current accepted decision topics include:
+Verified current physical inventory includes:
 
 ```text
-Modular Monolith
+001-modular-monolith.md
 
-PostgreSQL System of Record
+002-postgresql-system-of-record.md
 
-Supabase
+003-supabase.md
 
-n8n Orchestrator
+004-n8n-orchestrator.md
 
-Transactional Outbox
+005-transactional-outbox.md
 
-AI Gateway
+006-ai-gateway.md
 
-Workspace Coexistence
+007-workspace-coexistence.md
 
-Quote Pricing Snapshots
+008-quote-pricing-snapshots.md
 
-Customer Quotation Projection
+009-customer-quotation-projection.md
 
-Order Contract Snapshots
+010-order-contract-snapshots.md
 
-Production Job Splitting
+011-production-job-splitting.md
 
-Vendor Capability / QC
+012-vendor-capabilities-and-qc-inspections.md
 
-Commercial Invoicing
+013-commercial-invoicing-and-payment-terms.md
 
-Design Library Demo
+014-design-library-demo.md
 
-System Directory
+015-system-directory.md
 ```
 
-Exact current inventory should be read from the directory rather than hard-coded forever in this index.
+Always inspect the directory for later additions.
 
 ---
 
-# 32. ADR Authority
+# 52. ADR Authority
 
 An accepted ADR owns:
 
 ```text
-WHY A DURABLE TECHNICAL CHOICE EXISTS
+WHY A DURABLE TECHNICAL DECISION EXISTS
 ```
 
-It does not replace detailed canonical specification when one exists.
+It does not replace the detailed specification owning:
+
+```text
+WHAT THE SYSTEM SEMANTICALLY MEANS
+```
 
 Example:
 
 ```text
-ADR-002
-→ why PostgreSQL is SoR
+ADR
+→ why PostgreSQL is the System of Record
 
-canonical-data-model.md
-→ what entities MGBOS canonically represents
+Canonical Data Model
+→ what entities are canonically represented
 ```
 
 ---
 
-# 33. Runbooks
+# 53. Runbooks
 
-Location:
-
-```text
-systems/mgbos/docs/runbooks/
-```
-
-Current operational runbooks include:
+Current physical runbooks:
 
 ```text
-local-database.md
-
-windows-database-prerequisites.md
-
-backup-and-restore.md
-
-monitoring-and-incidents.md
-
-release-and-recovery.md
+runbooks/
+│
+├── backup-and-restore.md
+├── local-database.md
+├── monitoring-and-incidents.md
+├── release-and-recovery.md
+└── windows-database-prerequisites.md
 ```
 
-Classification:
-
-```text
-CANONICAL OPERATIONAL PROCEDURE
-```
-
-within stated scope.
+These are operational procedure sources within their declared scope.
 
 ---
 
-# 34. Runbook Rule
+# 54. Runbook ≠ Configured Infrastructure
 
-A runbook tells operators:
-
-```text
-HOW TO OPERATE / RECOVER
-```
-
-It does not define:
-
-```text
-business semantics.
-```
-
----
-
-# 35. Policy ≠ Active Infrastructure
-
-A runbook or policy describing:
+A runbook describing:
 
 ```text
 backup
 
+restore
+
 monitoring
 
-alerting
+incident handling
 
-recovery
+release recovery
 ```
 
-does not prove that the service is configured.
+does not prove those controls are actively configured.
 
-Runtime evidence is required.
+Operational evidence remains required.
 
 ---
 
-# 36. Evidence Documentation
+# 55. Evidence Without `evidence/`
 
-Preferred target:
-
-```text
-systems/mgbos/docs/evidence/
-```
-
-Purpose:
+MGBOS currently does not require a dedicated:
 
 ```text
-acceptance evidence
-
-test evidence
-
-release evidence
-
-phase certification
-
-runtime verification references
+docs/evidence/
 ```
+
+directory merely to satisfy an old target tree.
+
+Evidence may legitimately remain attached to:
+
+```text
+phase completion reports
+
+operator acceptance
+
+engineering reports
+
+tests
+
+CI
+
+runtime evidence
+```
+
+Create a dedicated evidence directory only if independent lifecycle/volume makes it useful.
 
 ---
 
-# 37. Evidence Should Not Become Documentation Noise
-
-Do not duplicate:
-
-```text
-CI output
-
-raw logs
-
-thousands of screenshots
-```
-
-inside repository documentation unnecessarily.
-
-Store durable summaries/references.
-
----
-
-# 38. Root MGBOS README
-
-Parent:
-
-```text
-systems/mgbos/README.md
-```
-
-Role:
-
-```text
-workspace navigation
-quick start
-high-level system identity
-```
-
-It SHOULD link to this Master Documentation Index.
-
----
-
-# 39. Root README Documentation Drift
-
-Current root README contains static implementation counts/status references that may become stale as MGBOS evolves.
-
-Future revision SHOULD prefer:
-
-```text
-stable architecture description
-
-navigation
-
-commands
-
-links to current evidence
-```
-
-over frequently stale hard-coded completion claims.
-
-This is documentation debt, not a Phase 1 blocker.
-
----
-
-# 40. Current Canonical Reading Order
+# 56. Current Documentation Reading Order — Architecture
 
 For architecture work:
 
 ```text
-1. ../../../docs/governance/documentation-constitution.md
+1.
+../../../docs/governance/
+documentation-constitution.md
 
-2. ../../../docs/governance/canonical-source-map.md
+2.
+../../../docs/governance/
+canonical-source-map.md
 
-3. ../../../docs/architecture/master-system-blueprint.md
+3.
+../../../docs/architecture/
+master-system-blueprint.md
+when cross-system context matters
 
-4. architecture/README.md
+4.
+architecture/README.md
 
-5. relevant dedicated architecture specification
+5.
+relevant dedicated MGBOS architecture specification
 
-6. relevant ADR
+6.
+relevant ADR
 
-7. current code/migration/tests
+7.
+current source / migrations / tests
 
-8. implementation evidence
+8.
+implementation evidence
 ```
 
 ---
 
-# 41. Current Implementation Reading Order
+# 57. Current Reading Order — Founder Control Product Work
 
-For bounded engineering work:
-
-```text
-1. systems/mgbos/AGENTS.md
-
-2. cross-system governance relevant to the task
-
-3. relevant MGBOS canonical architecture docs
-
-4. implementation phase plan
-
-5. current implementation audit
-
-6. active backlog item
-
-7. source code / migrations / tests
-
-8. historical notes only if necessary
-```
-
----
-
-# 42. Business Requirement Reading Order
-
-For TeeStock-driven capability:
+For current Founder Control product work:
 
 ```text
-TeeStock canonical business docs
-        ↓
-MGBOS Domain Map
-        ↓
+1.
+../../../docs/project-index.md
+
+2.
+../AGENTS.md
+
+3.
+README.md
+
+4.
+product/README.md
+
+5.
+product/
+founder-control-documentation-plan.md
+when physically applied
+
+6.
+relevant TeeStock business sources
+
+7.
 relevant MGBOS architecture
-        ↓
-implementation phase docs
-        ↓
-code
+
+8.
+Phase 1 evidence
+when current baseline capability matters
+
+9.
+current source
+when actual implementation matters
 ```
 
 ---
 
-# 43. Documentation Status Interpretation
+# 58. Current Reading Order — New Engineering Work
 
-Important distinction:
-
-```text
-DOCUMENT ACTIVE
-≠
-FEATURE IMPLEMENTED
-```
-
-And:
-
-```text
-IMPLEMENTATION REPORT EXISTS
-≠
-CURRENT RUNTIME VERIFIED
-```
-
-Always inspect implementation evidence when runtime status matters.
-
----
-
-# 44. Current Core MGBOS Architecture
-
-Current dedicated canonical specifications already establish strong foundation for:
-
-```text
-organization
-
-customer
-
-lead
-
-requirement
-
-quote
-
-order
-
-production
-
-vendor
-
-QC
-
-invoice
-
-payment
-
-inventory
-
-procurement
-
-shipment
-
-ledger / cost / margin
-```
-
-Implementation maturity differs by capability.
+Do NOT begin new MGBOS implementation from the Phase 1 historical backlog.
 
 Use:
 
 ```text
-Domain Map
-+
-current audit
-+
-implementation evidence
-```
+1.
+repository AGENTS.md
 
-to determine current status.
+2.
+systems/mgbos/AGENTS.md
+
+3.
+current product requirement
+
+4.
+relevant canonical architecture
+
+5.
+current repository source
+
+6.
+current routing / risk governance
+
+7.
+engineering discovery
+
+8.
+Implementation Contract
+
+9.
+Work Package
+```
 
 ---
 
-# 45. No Session Note as Default Authority
+# 59. Current Reading Order — Phase 1 History
 
-New rule for this index:
+To understand why Phase 1 was implemented:
 
-> **A session note is never the default MGBOS authority when a dedicated canonical specification now exists.**
+```text
+1.
+implementation/
+phase-1-operating-spine/README.md
 
-Historical note may still explain:
+2.
+operating-spine-plan.md
+
+3.
+current-operating-spine-audit.md
+
+4.
+backlog.md
+
+5.
+current/historical source as relevant
+
+6.
+operator-acceptance-test.md
+
+7.
+completion-report.md
+```
+
+Read lifecycle metadata before using historical claims.
+
+---
+
+# 60. Current Reading Order — Operational Readiness
+
+For production/pilot readiness:
+
+```text
+1.
+engineering/
+operational-readiness.md
+
+2.
+runbooks/
+backup-and-restore.md
+
+3.
+runbooks/
+monitoring-and-incidents.md
+
+4.
+runbooks/
+release-and-recovery.md
+
+5.
+current provider/environment evidence
+
+6.
+current CI/runtime evidence
+```
+
+Do not infer readiness from Phase 1 closure alone.
+
+---
+
+# 61. Current Reading Order — TeeStock-Driven Capability
+
+For a TeeStock requirement:
+
+```text
+TEEStock CURRENT BUSINESS SOURCE
+        ↓
+MGBOS PRODUCT REQUIREMENT
+        ↓
+MGBOS DOMAIN MAP
+        ↓
+RELEVANT MGBOS ARCHITECTURE
+        ↓
+ENGINEERING DISCOVERY
+        ↓
+IMPLEMENTATION
+```
+
+A business term is not automatically an MGBOS entity.
+
+---
+
+# 62. Opportunity Boundary
+
+Generic:
+
+```text
+Opportunity
+```
+
+remains deferred/evidence-driven in current MGBOS architecture.
+
+Use existing:
+
+```text
+Lead
+→ Requirement
+→ Quote
+```
+
+until repeated operational truth justifies promotion.
+
+---
+
+# 63. Project Boundary
+
+Generic:
+
+```text
+Project
+```
+
+remains deferred/conditional.
+
+Prefer:
+
+```text
+Requirement
++
+Order
++
+Production Job
+```
+
+until independent Project lifecycle need is proven.
+
+---
+
+# 64. Partner Boundary
+
+Do not create generic:
+
+```text
+Partner
+```
+
+merely because TeeStock uses broad partner language.
+
+Current production relationship uses:
+
+```text
+Vendor
+```
+
+where applicable.
+
+---
+
+# 65. Work Order Boundary
+
+Work Order/SPK is currently a governed artifact derived from existing business truth.
+
+Do not promote it into an independent root entity without independent lifecycle evidence.
+
+---
+
+# 66. Operational Exception Boundary
+
+Operational Exception is a post-spine product need under current Founder Control planning.
+
+It is not yet automatically an approved:
+
+```text
+root entity
+
+database table
+
+state machine
+
+command set
+```
+
+Product definition comes first.
+
+---
+
+# 67. JARVIS Boundary
+
+JARVIS-specific architecture is owned under:
+
+```text
+systems/jarvis/docs/
+```
+
+MGBOS documentation should own only applicable:
+
+```text
+MGBOS-side read models
+
+business-data interfaces
+
+MGBOS constraints
+
+MGBOS integration expectations
+```
+
+not JARVIS runtime architecture.
+
+---
+
+# 68. Founder Control Must Work Without JARVIS
+
+Preferred direction:
+
+```text
+MGBOS AUTHORITATIVE STATE
+        ↓
+DETERMINISTIC FOUNDER CONTROL
+        ↓
+JARVIS MAY LATER
+ANALYZE / SUMMARIZE / RECOMMEND
+```
+
+Do not make LLM inference the missing system-of-record layer.
+
+---
+
+# 69. Automation Boundary
+
+Automation may coordinate:
+
+```text
+routing
+
+scheduling
+
+notification
+
+integration
+```
+
+It must not become a competing business system of record.
+
+---
+
+# 70. Machine Interpretation Rule — Physical vs Planned
+
+Machine readers MUST distinguish:
+
+```text
+PHYSICAL FILE
+```
+
+from:
+
+```text
+PLANNED FILE
+```
+
+and:
+
+```text
+ACTIVE DOCUMENT
+```
+
+from:
+
+```text
+IMPLEMENTED FEATURE
+```
+
+and:
+
+```text
+CLOSED HISTORICAL PHASE
+```
+
+from:
+
+```text
+CURRENT EXECUTION PROGRAM
+```
+
+---
+
+# 71. Machine Interpretation Rule — Current vs Historical
+
+Never infer:
+
+```text
+historical audit says gap exists
+→ gap exists now
+```
+
+or:
+
+```text
+historical backlog contains task
+→ task should be executed now
+```
+
+or:
+
+```text
+old target tree contains directory
+→ directory currently exists
+```
+
+---
+
+# 72. Machine Interpretation Rule — Documentation vs Runtime
+
+Canonical:
+
+```text
+DOCUMENTED
+≠
+IMPLEMENTED
+
+IMPLEMENTED
+≠
+VERIFIED NOW
+
+VERIFIED NOW
+≠
+PRODUCTION READY
+
+PRODUCTION READY
+≠
+BUSINESS VALIDATED
+```
+
+---
+
+# 73. Session Notes
+
+Historical session material under:
+
+```text
+catatan/
+
+catatan/sesi/
+```
+
+is generally:
+
+```text
+HISTORICAL
+
+DESIGN INPUT
+
+RESEARCH
+
+PROVENANCE
+```
+
+unless explicitly promoted.
+
+---
+
+# 74. Session Notes Are Not Default Authority
+
+If a dedicated canonical specification exists:
+
+```text
+DEDICATED CANONICAL SPEC
+>
+SESSION NOTE
+```
+
+Session notes may still explain:
 
 ```text
 origin
 
-design rationale
+older reasoning
 
-older schema ideas
+discarded alternatives
 ```
 
-but cannot silently override current canonical docs.
+but may not silently override current authority.
 
 ---
 
-# 46. MGBOS Documentation Placement Rule
+# 75. Archive
+
+Material under:
+
+```text
+archive/
+```
+
+is reference-only unless a bounded recovery/migration task explicitly promotes it.
+
+Do not restore old application code merely because it appears complete.
+
+---
+
+# 76. Documentation Placement Rule
 
 Ask:
 
 ```text
-Is this durable MGBOS semantic architecture?
+Is this durable MGBOS system semantics?
 → architecture/
 
-Is this application/product behavior?
+Is this product behavior / requirement?
 → product/
 
-Is this current bounded implementation work?
+Is this bounded current software execution?
 → implementation/
 
-Is this engineering policy/evidence?
+Is this MGBOS engineering governance/readiness/evidence?
 → engineering/
 
-Is this a durable architecture decision?
+Is this durable technical decision rationale?
 → adr/
 
-Is this an operating procedure?
+Is this operational/recovery procedure?
 → runbooks/
-
-Is this proof/certification?
-→ evidence/
 ```
 
 ---
 
-# 47. What Does Not Belong Here
+# 77. What Does Not Belong in MGBOS Canonical Docs
 
-Do not store:
+Do not place:
 
 ```text
 TeeStock brand strategy
 
-marketing strategy
+general marketing strategy
 
-pricing philosophy
+cross-system repository governance
 
 JARVIS runtime architecture
 
-general repository policy
-
-casual session notes
+casual brainstorm notes
 ```
 
-as MGBOS canonical docs.
+inside MGBOS canonical documentation.
 
-They belong to their semantic owner.
+Route them to their actual owner.
 
 ---
 
-# 48. Cross-System Sources
+# 78. Current Cross-System Sources
 
-Important related directories:
+Important adjacent owners:
 
 ```text
-docs/
-→ cross-system governance
+../../../docs/
+→ repository / cross-system governance
 
-bisnis/teestock/
+../../../bisnis/teestock/
 → TeeStock business truth
 
-systems/jarvis/docs/
-→ intelligence architecture
+../../jarvis/docs/
+→ JARVIS architecture
 
-catatan/
-→ historical / design input
+../../../catatan/
+→ historical / research / session provenance
 ```
 
 ---
 
-# 49. Current Documentation Closure Program
+# 79. Repository Vibe Engineering
 
-Immediate documentation sequence:
+Repository-wide engineering operating method:
 
 ```text
-1. Canonical Source Map v1.1
-   docs/governance/canonical-source-map.md
-
-2. MGBOS Master Documentation Index v2.0
-   systems/mgbos/docs/README.md
-
-3. MGBOS Architecture Index v2.0
-   systems/mgbos/docs/architecture/README.md
-
-4. Solo-Founder Operating System v1.0
-   docs/operating-model/solo-founder-operating-system.md
-
-5. Domain Map & Capability Ownership v1.0
-   systems/mgbos/docs/architecture/
-   domain-map-capability-ownership.md
-
-6. Solo-Founder Launch Roadmap
-   docs/roadmaps/solo-founder-launch-roadmap.md
-
-7. Phase 1 implementation docs
-   systems/mgbos/docs/implementation/
-   phase-1-operating-spine/
-
-8. TeeStock/MGBOS authority cleanup
+../../../docs/engineering/
+vibe-engineering/README.md
 ```
+
+MGBOS implementation documentation must compose with that method.
+
+MGBOS docs must not create a competing repository-wide engineering operating model.
 
 ---
 
-# 50. Closure Gate
+# 80. Engineering Execution Flow
 
-MGBOS documentation may enter implementation-focused mode when:
-
-```text
-architecture authority
-= clear
-
-business/system ownership
-= clear
-
-implementation plan
-= persisted
-
-current audit
-= persisted
-
-active backlog
-= clear
-```
-
-At that point:
+Current governed direction:
 
 ```text
-STOP FOUNDATION DOCUMENT EXPANSION
+OWNER INTENT
+        ↓
+PRODUCT / ENGINEERING PLANNING
+        ↓
+CANONICAL ROUTING
+        ↓
+ENGINEERING DISCOVERY
+        ↓
+IMPLEMENTATION CONTRACT
+        ↓
+WORK PACKAGE
+        ↓
+BUILDER
+        ↓
+ASSURANCE
+        ↓
+VERIFICATION
+        ↓
+PR AUDIT
+        ↓
+MERGE
+        ↓
+POST-MERGE REFLECTION
 ```
 
-unless implementation exposes a real semantic gap.
+Detailed workflow authority belongs to repository engineering governance.
 
 ---
 
-# 51. Final Navigation
+# 81. Documentation Drift Is A Real Engineering Risk
+
+In machine-driven development:
 
 ```text
-systems/mgbos/
-│
-├── README.md
-│      ↓
-├── docs/README.md
-│      │
-│      ├── architecture/
-│      │      ↓
-│      │   canonical system meaning
-│      │
-│      ├── product/
-│      │      ↓
-│      │   application requirements
-│      │
-│      ├── implementation/
-│      │      ↓
-│      │   current execution
-│      │
-│      ├── engineering/
-│      │      ↓
-│      │   software governance/evidence
-│      │
-│      ├── adr/
-│      │      ↓
-│      │   durable decisions
-│      │
-│      ├── runbooks/
-│      │      ↓
-│      │   operational procedures
-│      │
-│      └── evidence/
-│             ↓
-│          implementation proof
-│
-├── apps/
-├── packages/
-├── supabase/
-└── scripts/
+STALE CURRENT-STATE DOCUMENTATION
 ```
+
+can cause:
+
+```text
+duplicate work
+
+wrong implementation
+
+scope drift
+
+incorrect entity promotion
+
+incorrect Builder handoff
+
+false completion claims
+```
+
+Therefore documentation lifecycle is part of engineering integrity.
 
 ---
 
-# 52. Final Principle
+# 82. Historical Preservation Principle
 
-> **The documentation index should help a reader find authority, not force them to reconstruct history.**
-
-Therefore:
+Correct repository history is:
 
 ```text
-CANONICAL SPECS
-first
+AUDIT FOUND GAP
+        ↓
+PLAN CREATED
+        ↓
+BACKLOG CREATED
+        ↓
+IMPLEMENTATION OCCURRED
+        ↓
+EVIDENCE COLLECTED
+        ↓
+PHASE CLOSED
+```
 
-IMPLEMENTATION
-second
+Do not erase old reasoning merely because it is no longer current.
 
-EVIDENCE
-third
+Change its lifecycle.
 
-HISTORY
-when needed
+---
+
+# 83. Current Documentation Program
+
+Current documentation reconciliation program:
+
+```text
+W0
+CURRENT-STATE RECONCILIATION
+```
+
+exists to remove false current-state signals after Phase 1 closure.
+
+---
+
+# 84. W0 Companion Changes
+
+The W0 change set includes or prepares updates for:
+
+```text
+product/
+founder-control-documentation-plan.md
+
+implementation/
+phase-1-operating-spine/README.md
+
+implementation/
+phase-1-operating-spine/
+operating-spine-plan.md
+
+implementation/
+phase-1-operating-spine/
+current-operating-spine-audit.md
+
+implementation/
+phase-1-operating-spine/backlog.md
+
+implementation/README.md
+
+product/README.md
+
+engineering/
+operational-readiness.md
+
+../../../docs/project-index.md
+
+../../../docs/roadmaps/
+solo-founder-launch-roadmap.md
+
+README.md
+```
+
+The exact remote repository state must be verified after these files are actually applied/committed.
+
+---
+
+# 85. W0 Expected Outcome
+
+Once the complete W0 patch set is applied, a fresh machine should be able to determine:
+
+```text
+MGBOS PHASE 1
+=
+CLOSED
+
+PHASE 1 P0 BACKLOG
+=
+COMPLETED / HISTORICAL
+
+CURRENT MGBOS PRODUCT PROGRAM
+=
+FOUNDER CONTROL
+
+ACTIVE NEW IMPLEMENTATION PHASE
+=
+NONE
+
+PRODUCTION READINESS
+=
+NOT VERIFIED
+
+REAL TRANSACTION READINESS
+=
+GATED
+```
+
+without relying on private conversation history.
+
+---
+
+# 86. W0 Does Not Change Runtime
+
+W0 is:
+
+```text
+DOCUMENTATION RECONCILIATION
 ```
 
 not:
 
 ```text
-old session note
-→ guess current meaning
-→ inspect code
-→ guess which document won.
+RUNTIME IMPLEMENTATION
 ```
+
+It does not itself:
+
+```text
+change database
+
+change application behavior
+
+deploy infrastructure
+
+create Founder Control functionality
+```
+
+---
+
+# 87. Next Product Program
+
+After W0 documentation preparation:
+
+```text
+D1
+MGBOS × TeeStock
+Founder Control PRD
+```
+
+becomes the next new parent product artifact.
+
+---
+
+# 88. D1 Does Not Open Phase 2
+
+Creating D1 does NOT mean:
+
+```text
+PHASE 2 IMPLEMENTATION
+=
+OPEN
+```
+
+Product definition still needs:
+
+```text
+Founder Attention specification
+
+Operational Exception specification
+
+real pilot planning
+
+cross-document review
+
+architecture impact review
+
+engineering discovery
+```
+
+before implementation authorization.
+
+---
+
+# 89. Current Strategic Sequence
+
+Canonical current direction:
+
+```text
+PHASE 1 CLOSED
+        ↓
+W0 DOCUMENTATION RECONCILIATION
+        ↓
+FOUNDER CONTROL PRODUCT DEFINITION
+        ↓
+ARCHITECTURE RECONCILIATION
+        ↓
+ENGINEERING DISCOVERY
+        ↓
+PHASE 2 IMPLEMENTATION
+        ↓
+OPERATIONAL READINESS
+        ↓
+REAL BUSINESS PILOT
+        ↓
+DETERMINISTIC AUTOMATION
+        ↓
+JARVIS LEVERAGE
+```
+
+Detailed roadmap authority lives in:
+
+```text
+../../../docs/roadmaps/
+solo-founder-launch-roadmap.md
+```
+
+---
+
+# 90. Master Index Maintenance Rule
+
+Update this index when:
+
+```text
+documentation class changes materially
+
+new major documentation directory becomes real
+
+active product program changes
+
+implementation phase opens or closes
+
+semantic-owner routing changes
+
+current reading order changes materially
+```
+
+Do not update this index for every implementation detail.
+
+---
+
+# 91. Avoid Hard-Coding Volatile Counts
+
+Do not make this master index depend on:
+
+```text
+exact number of tests
+
+exact number of migrations
+
+exact number of implementation reports
+
+exact number of application routes
+```
+
+unless those counts are themselves materially useful and maintained.
+
+Read actual repository state when counts matter.
+
+---
+
+# 92. Avoid Target-Tree Fiction
+
+Do not list future:
+
+```text
+phase directories
+
+evidence directories
+
+reports directories
+```
+
+inside a section titled:
+
+```text
+CURRENT STRUCTURE
+```
+
+unless they physically exist.
+
+Future destinations must be explicitly labeled:
+
+```text
+FUTURE
+
+RESERVED
+
+PLANNED
+```
+
+---
+
+# 93. Current Master Navigation
+
+```text
+systems/mgbos/
+│
+├── README.md
+│
+├── AGENTS.md
+│
+└── docs/
+    │
+    ├── README.md
+    │      master documentation navigation
+    │
+    ├── architecture/
+    │      canonical MGBOS semantics
+    │
+    ├── product/
+    │      product requirements
+    │
+    ├── implementation/
+    │      bounded engineering phases
+    │
+    ├── engineering/
+    │      engineering governance,
+    │      readiness, and reports
+    │
+    ├── adr/
+    │      durable technical decisions
+    │
+    └── runbooks/
+           operations and recovery
+```
+
+---
+
+# 94. Current Program Summary
+
+Expected interpretation after the W0 set is applied:
+
+```text
+ARCHITECTURE
+=
+ACTIVE CANONICAL FOUNDATION
+
+PHASE 1
+=
+CLOSED
+
+CURRENT PRODUCT PROGRAM
+=
+FOUNDER CONTROL
+
+ACTIVE IMPLEMENTATION PHASE
+=
+NONE
+
+OPERATIONAL READINESS
+=
+NOT PRODUCTION READY
+
+NEXT NEW PRODUCT DOCUMENT
+=
+FOUNDER CONTROL PRD
+```
+
+---
+
+# 95. Machine Query Examples
+
+Question:
+
+```text
+"Where do I find canonical Order semantics?"
+```
+
+Answer:
+
+```text
+architecture/
+```
+
+using the applicable dedicated specifications.
+
+---
+
+Question:
+
+```text
+"Should I implement P0-04?"
+```
+
+Answer:
+
+```text
+NO.
+
+P0-04 belongs to closed Phase 1.
+```
+
+---
+
+Question:
+
+```text
+"What should Antigravity implement next?"
+```
+
+Answer:
+
+```text
+NO CURRENT IMPLEMENTATION PACKAGE
+IS AUTHORIZED BY THIS INDEX.
+```
+
+---
+
+Question:
+
+```text
+"What product work is current?"
+```
+
+Answer:
+
+```text
+FOUNDER CONTROL PRODUCT DEFINITION
+```
+
+---
+
+Question:
+
+```text
+"Is Operational Exception already an entity?"
+```
+
+Answer:
+
+```text
+DO NOT ASSUME.
+
+Resolve product specification
+and current canonical architecture first.
+```
+
+---
+
+Question:
+
+```text
+"Is MGBOS production-ready?"
+```
+
+Answer:
+
+```text
+NO PRODUCTION CERTIFICATION
+IS ESTABLISHED BY THIS INDEX.
+
+Read:
+engineering/operational-readiness.md
+```
+
+---
+
+# 96. Final Principle
+
+The master documentation index exists so a capable reader can move from:
+
+```text
+QUESTION
+```
+
+to:
+
+```text
+CORRECT AUTHORITY
+```
+
+without reconstructing project history manually.
+
+The intended hierarchy is:
+
+```text
+NAVIGATION
+        ↓
+SEMANTIC OWNER
+        ↓
+CURRENT IMPLEMENTATION
+        ↓
+EVIDENCE
+        ↓
+HISTORY WHEN NEEDED
+```
+
+not:
+
+```text
+OLD TARGET TREE
+        ↓
+OLD BACKLOG
+        ↓
+SESSION NOTE
+        ↓
+GUESS CURRENT STATE
+```
+
+Current MGBOS documentation direction is therefore:
+
+> **Phase 1 is a closed implementation chapter. Founder Control is the next product-definition program. No new MGBOS implementation phase is currently authorized, production readiness remains separately gated, and future documentation directories must not be represented as current physical reality until they actually exist.**
