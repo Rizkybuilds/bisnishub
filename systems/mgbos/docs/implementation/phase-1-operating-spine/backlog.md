@@ -1,58 +1,306 @@
 ---
 canonical_id: teestock.implementation.phase1-operating-spine-backlog
-status: ACTIVE
-version: 1.0
+status: ARCHIVED
+version: 2.0
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos-teestock-phase1
 document_class: implementation-backlog
 effective_from: 2026-09-30
-authoritative_for:
-  - phase-1 execution backlog
-  - phase-1 task sequencing
-  - phase-1 task boundaries
-  - phase-1 task acceptance criteria
-  - phase-1 task dependencies
-  - antigravity execution handoff
-last_reviewed: 2026-09-30
-review_cadence: after-each-p0-task
+archived_at: 2026-10-05
+
+phase_status: CLOSED
+implementation_status: COMPLETED_BACKLOG
+execution_authority: NONE
+
+historical_repository_context:
+  repository: Rizkybuilds/bisnishub
+  original_phase_date: 2026-09-30
+
+reconciliation_repository_baseline:
+  repository: Rizkybuilds/bisnishub
+  branch: main
+  commit: f89ccb49878668f5cb00edf7375e168b9d4a0670
+  reviewed_at: 2026-10-05
+
+authoritative_for: []
+
+historical_for:
+  - phase-1 P0 task decomposition
+  - phase-1 execution sequencing rationale
+  - phase-1 implementation boundaries
+  - phase-1 acceptance criteria provenance
+  - phase-1 dependency provenance
+  - phase-1 engineering handoff provenance
+
+not_authoritative_for:
+  - current engineering backlog
+  - current implementation work
+  - current product requirements
+  - current implementation sequencing
+  - current Antigravity work packages
+  - current MGBOS architecture
+  - current runtime truth
+  - Founder Control requirements
+  - operational readiness
+  - launch readiness
+
+last_reviewed: 2026-10-05
+review_cadence: historical-only-unless-provenance-correction-is-required
+
 depends_on:
+  - README.md
   - operating-spine-plan.md
   - current-operating-spine-audit.md
+  - operator-acceptance-test.md
+  - completion-report.md
   - ../../architecture/domain-map-capability-ownership.md
   - ../../architecture/business-state-machines.md
   - ../../architecture/business-invariants.md
   - ../../architecture/command-event-model.md
   - ../../architecture/permission-authorization-model.md
-supersedes: null
-implementation_status: READY_FOR_EXECUTION
+
+closure_evidence:
+  - completion-report.md
+  - operator-acceptance-test.md
+  - ../../../scripts/verify-happy-path-e2e.mjs
+  - ../../../scripts/verify-e2e-flow.mjs
+
+current_navigation:
+  - README.md
+  - ../../product/founder-control-documentation-plan.md
+
+supersedes:
+  - teestock.implementation.phase1-operating-spine-backlog@1.0
 ---
 
-# Phase 1 — Operating Spine Backlog v1.0
+# Phase 1 — Operating Spine Completed Backlog v2.0
 
-## 1. Purpose
+## 1. Lifecycle Notice
 
-Dokumen ini mengubah hasil architecture + audit menjadi backlog engineering yang bounded.
+This file preserves the completed Phase 1 execution backlog.
 
-Setiap item harus cukup jelas untuk diberikan kepada AntiGraphity tanpa meminta agent menebak:
-
-- business intent;
-- canonical semantics;
-- scope;
-- likely affected areas;
-- acceptance criteria;
-- test expectations;
-- dan stop condition.
-
----
-
-# 2. Execution Principle
-
-Canonical execution pattern:
+Current interpretation:
 
 ```text
-ONE BACKLOG ITEM
+DOCUMENT
+=
+ARCHIVED
+
+PHASE
+=
+CLOSED
+
+BACKLOG ITEMS
+=
+COMPLETED
+
+OPEN EXECUTION ITEMS
+=
+NONE
+
+EXECUTION AUTHORITY
+=
+NONE
+```
+
+The backlog remains in the repository for:
+
+```text
+implementation provenance
+
+scope history
+
+acceptance-criteria history
+
+dependency history
+
+engineering reasoning
+
+future regression investigation
+```
+
+It MUST NOT be used as the current engineering queue.
+
+---
+
+# 2. Machine Safety Rule
+
+A machine MUST NOT infer:
+
+```text
+P0 item exists in this file
+→
+P0 item should be implemented
+```
+
+or:
+
+```text
+section says "Problem"
+→
+problem still exists
+```
+
+or:
+
+```text
+section says "Target"
+→
+target is still unimplemented
+```
+
+Correct interpretation:
+
+```text
+HISTORICAL PROBLEM
+        ↓
+HISTORICAL TASK
+        ↓
+IMPLEMENTATION
+        ↓
+VERIFICATION
+        ↓
+DONE
+```
+
+Current implementation truth requires current source and current evidence.
+
+---
+
+# 3. Why This File Remains
+
+Deleting this backlog would remove useful explanations for:
+
+```text
+why Lead continuation exists
+
+why Order transition commands exist
+
+why production uses canonical Vendor identity
+
+why assignment acceptance has explicit commands
+
+why shipment is QC / production gated
+
+why SPK exists as governed artifact
+
+why clean E2E exists separately
+
+why operator acceptance became a phase gate
+```
+
+For Vibe Engineering, these causal links are valuable.
+
+Therefore the correct lifecycle treatment is:
+
+```text
+ARCHIVE
+```
+
+not:
+
+```text
+DELETE
+```
+
+---
+
+# 4. Why This File Is Not ACTIVE
+
+The original file declared authority for:
+
+```text
+phase-1 execution backlog
+
+task sequencing
+
+task boundaries
+
+acceptance criteria
+
+Antigravity execution handoff
+```
+
+Phase 1 is closed.
+
+Those responsibilities no longer represent current work.
+
+Leaving the document:
+
+```text
+ACTIVE
+```
+
+or:
+
+```text
+READY_FOR_EXECUTION
+```
+
+would create a high-risk machine-routing error.
+
+Therefore:
+
+```text
+status
+=
+ARCHIVED
+
+implementation_status
+=
+COMPLETED_BACKLOG
+```
+
+---
+
+# 5. Why This File Is Not SUPERSEDED
+
+No single document replaces the backlog's historical purpose.
+
+Different documents now answer different questions:
+
+```text
+backlog.md
+→
+What work was decomposed?
+
+completion-report.md
+→
+What was completed and certified?
+
+operator-acceptance-test.md
+→
+What did the operator acceptance show?
+
+README.md
+→
+How should the closed phase be interpreted now?
+```
+
+The backlog is therefore historical provenance rather than a superseded semantic specification.
+
+---
+
+# 6. Historical Backlog Objective
+
+The original backlog converted:
+
+```text
+canonical architecture
+
++
+
+pre-remediation implementation audit
+```
+
+into bounded engineering tasks.
+
+Original pattern:
+
+```text
+ONE P0 ITEM
         ↓
 AUDIT CURRENT CODE
         ↓
@@ -67,15 +315,17 @@ REPORT
 STOP
 ```
 
-AntiGraphity MUST NOT automatically continue to the next backlog item.
+This pattern is preserved as historical engineering rationale.
 
 ---
 
-# 3. Priority Vocabulary
+# 7. Historical Priority Vocabulary
+
+The original program used:
 
 ```text
 P0
-Launch-spine integrity blocker
+Operating-spine integrity blocker
 
 P1
 Founder-control capability
@@ -87,107 +337,190 @@ P3
 AI cognitive leverage
 ```
 
-This backlog contains:
+This Phase 1 backlog contained:
 
 ```text
 P0 ONLY
 ```
 
+The vocabulary does not automatically define all future priority semantics.
+
 ---
 
-# 4. Backlog Sequence
+# 8. Completed P0 Sequence
+
+Historical execution sequence:
 
 ```text
-P0-01 Lead → Requirement Continuation
-P0-02 Authoritative Order Lifecycle
-P0-03 Vendor-Backed Production Assignment
-P0-04 Assignment Acceptance / Reassignment
-P0-05 Fulfillment Readiness Guard
-P0-06 Governed Work Order / SPK
-P0-07 Clean Happy-Path E2E
-P0-08 Operator Acceptance Test
+P0-01
+Lead → Requirement Continuation
+
+        ↓
+
+P0-02
+Authoritative Order Lifecycle
+
+        ↓
+
+P0-03
+Vendor-Backed Production Assignment
+
+        ↓
+
+P0-04
+Assignment Acceptance / Reassignment
+
+        ↓
+
+P0-05
+Fulfillment Readiness Guard
+
+        ↓
+
+P0-06
+Governed Work Order / SPK
+
+        ↓
+
+P0-07
+Clean Happy-Path E2E
+
+        ↓
+
+P0-08
+Operator Acceptance Test
 ```
 
-Default execution order is strict.
+Current state:
+
+```text
+P0-01 DONE
+P0-02 DONE
+P0-03 DONE
+P0-04 DONE
+P0-05 DONE
+P0-06 DONE
+P0-07 DONE
+P0-08 DONE
+```
 
 ---
 
-# 5. Global Implementation Rules
+# 9. Historical Global Integrity Rules
 
-Every item MUST preserve:
+All Phase 1 work was required to preserve applicable:
 
 ```text
 organization isolation
+
 RLS
+
 RBAC
+
 integer-IDR money semantics
-immutable historical snapshots
+
+immutable historical evidence
+
 Cost Trilogy
+
 audit history
-idempotency where applicable
+
+idempotency
+
 command-based mutation
+
 canonical state semantics
 ```
 
+These rules were not invented by the backlog.
+
+They were inherited from applicable canonical and engineering sources.
+
 ---
 
-# 6. Global Non-Goals
+# 10. Historical Global Non-Goals
 
-Do not introduce during Phase 1 unless a real blocker is proven:
+Phase 1 explicitly avoided speculative expansion into:
 
 ```text
 Opportunity
+
 generic Project
+
 generic Partner
-full Product/Catalog
+
+full Product / Catalog
+
 Creator
+
 Royalty
+
 Affiliate
-generic Exception domain
+
+generic Operational Exception
+
 JARVIS mutation runtime
+
 microservices
+
 Kafka
+
 Temporal
-new workflow engine
+
+general workflow engine
 ```
+
+unless a real Phase 1 blocker proved such expansion unavoidable.
+
+These were scope protections for Phase 1.
+
+They are not permanent universal bans.
 
 ---
 
-# 7. Migration Rule
+# 11. Historical Migration Rule
 
-If database behavior must change:
+Where database behavior changed:
 
 ```text
-CREATE NEW FORWARD MIGRATION
+NEW FORWARD MIGRATION
 ```
 
-Never alter an already-applied historical migration merely to rewrite behavior.
+was required.
+
+The backlog did not authorize rewriting previously applied migration history to change later behavior.
+
+Current migration governance is owned by current engineering policy.
 
 ---
 
-# 8. Test Rule
+# 12. Historical Verification Rule
 
-Each task should use only the test layers relevant to the changed behavior.
-
-Possible layers:
+Each task used only relevant verification layers, potentially including:
 
 ```text
-domain test
-validation test
-permission test
-pgTAP/database test
-server-action test
-integration/E2E
+domain tests
+
+validation tests
+
+permission tests
+
+database / pgTAP tests
+
+server-action verification
+
+integration / E2E
+
 production build
 ```
 
-Do not create test ceremony unrelated to the task.
+The backlog intentionally discouraged test ceremony unrelated to changed behavior.
 
 ---
 
-# 9. Reporting Rule
+# 13. Historical Completion Reporting
 
-Every AntiGraphity task must finish with:
+Each P0 handoff was expected to report:
 
 ```text
 IMPLEMENTED
@@ -205,288 +538,241 @@ KNOWN LIMITATIONS
 NEXT DEPENDENCY
 ```
 
+This pattern helped preserve implementation traceability.
+
 ---
 
-# P0-01 — Lead → Requirement Continuation
+# 14. P0-01 — Lead → Requirement Continuation
 
-## 10. Problem
+Status:
 
-Lead and Requirement already exist and are structurally linkable.
+```text
+DONE
+```
 
-Current gap:
+---
+
+# 15. P0-01 Historical Problem
+
+Lead and Requirement already existed and were structurally linkable.
+
+The missing capability was workflow continuity.
+
+Historical anti-pattern:
 
 ```text
 Lead
  ↓
-operator manually navigates
+operator navigates manually
  ↓
 Requirement
  ↓
-operator re-selects context
+operator reconstructs known context
 ```
 
-Founder/operator remains workflow middleware.
+The founder/operator remained integration middleware.
 
 ---
 
-## 11. Current Evidence
+# 16. P0-01 Historical Evidence
 
-Current implementation already includes:
+The underlying system already supported concepts such as:
 
 ```text
-convertLeadAction(...)
-convert_lead_to_customer(...)
+convertLeadAction
+
+convert_lead_to_customer
 
 requirements.lead_id
+
 requirements.customer_account_id
-
-RequirementForm lead dropdown
-RequirementForm customer dropdown
 ```
 
-No new root entity is required.
-
----
-
-## 12. Target Behavior
-
-From an eligible Lead:
+Therefore the problem did not justify:
 
 ```text
-Lead Detail
-   ↓
-Continue to Requirement
-   ↓
-Requirement creation
-with trusted context prefilled
+new sales aggregate
 ```
 
----
-
-## 13. State Eligibility
-
-Continuation must respect canonical Lead lifecycle.
-
-At minimum:
-
-```text
-QUALIFIED
-```
-
-must be supported.
-
-If converted Customer linkage is required by current Requirement/customer semantics, use existing conversion behavior rather than inventing parallel conversion logic.
-
----
-
-## 14. Prefill Candidates
-
-Where semantically valid:
-
-```text
-lead_id
-customer_account_id
-lead title
-raw inquiry
-estimated quantity
-estimated budget
-```
-
-Operator must review/edit before Requirement creation.
-
-Missing values remain missing.
-
----
-
-## 15. Existing Requirement Behavior
-
-If one or more Requirements already reference the Lead:
-
-```text
-show existing linkage
-```
-
-rather than silently creating accidental duplicate work.
-
-Exact UX can remain simple.
-
----
-
-## 16. Likely Code Areas
-
-Inspect before changing:
-
-```text
-apps/mgbos/src/app/(app)/leads/
-  LeadDetailModal.tsx
-  actions.ts
-  data.ts
-  page.tsx
-
-apps/mgbos/src/app/(app)/requirements/
-  page.tsx
-  RequirementForm.tsx
-  actions.ts
-  data.ts
-
-packages/validation/
-  lead*
-  requirement*
-
-packages/domain/
-  lead*
-  requirement*
-
-supabase migrations/functions
-  convert_lead_to_customer
-  create_requirement_with_initial_version
-```
-
-Do not assume every listed file needs modification.
-
----
-
-## 17. Preferred Implementation Shape
-
-Prefer a small integration such as:
-
-```text
-Lead action/link
-→ Requirement route with trusted identifier(s)
-→ server validates Lead in active organization
-→ Requirement form receives server-derived prefill
-→ normal Requirement command creates record
-```
-
-Do not trust arbitrary query-string values as business truth without server validation.
-
----
-
-## 18. Acceptance Criteria
-
-P0-01 PASS when:
-
-```text
-AC-01
-eligible Lead can continue to Requirement
-
-AC-02
-created Requirement retains lead_id
-
-AC-03
-linked customer_account_id is preserved where applicable
-
-AC-04
-trusted Lead context is prefilled
-
-AC-05
-operator can modify editable requirement fields
-
-AC-06
-missing source data remains missing
-
-AC-07
-cross-organization Lead cannot be used
-
-AC-08
-invalid Lead state cannot bypass canonical rules
-
-AC-09
-existing Requirement linkage is discoverable
-
-AC-10
-normal flow does not require manually finding/re-selecting Lead
-```
-
----
-
-## 19. Required Tests
-
-At minimum cover:
-
-```text
-eligible Lead continuation
-
-prefill mapping
-
-missing context
-
-cross-org denial
-
-invalid state
-
-Requirement linkage
-
-existing linked Requirement behavior
-```
-
----
-
-## 20. Non-Goals
-
-Do NOT add:
+or:
 
 ```text
 Opportunity
+```
+
+for Phase 1.
+
+---
+
+# 17. P0-01 Historical Target
+
+Target:
+
+```text
+Eligible Lead
+        ↓
+Continue to Requirement
+        ↓
+trusted context loaded
+        ↓
+operator reviews
+        ↓
+normal Requirement command
+```
+
+---
+
+# 18. P0-01 Historical Prefill Candidates
+
+Where authoritative and semantically valid:
+
+```text
+lead_id
+
+customer_account_id
+
+lead title
+
+raw inquiry
+
+estimated quantity
+
+estimated budget
+```
+
+Missing values had to remain missing.
+
+The system was not allowed to fabricate business facts.
+
+---
+
+# 19. P0-01 Historical Acceptance Criteria
+
+The task required:
+
+```text
+eligible Lead can continue to Requirement
+
+created Requirement retains lead_id
+
+customer linkage retained where applicable
+
+trusted source context prefilled
+
+operator may edit appropriate fields
+
+missing data remains missing
+
+cross-organization Lead rejected
+
+invalid Lead state cannot bypass rules
+
+existing linked Requirement is discoverable
+
+normal flow avoids manual Lead re-selection
+```
+
+---
+
+# 20. P0-01 Closure Evidence
+
+Current implementation includes Lead-detail continuation toward:
+
+```text
+/requirements?leadId=...
+```
+
+and linked Requirement visibility.
+
+Operator acceptance records:
+
+```text
+Lead
+→
+"+ Lanjutkan ke Kebutuhan"
+→
+prefilled Requirement
+```
+
+Relevant evidence includes:
+
+```text
+apps/mgbos/src/app/(app)/leads/LeadDetailModal.tsx
+
+apps/mgbos/src/app/(app)/leads/actions.ts
+
+apps/mgbos/src/app/(app)/requirements/
+
+scripts/verify-happy-path-e2e.mjs
+
+operator-acceptance-test.md
+```
+
+Closure:
+
+```text
+P0-01
+=
+DONE
+```
+
+---
+
+# 21. P0-01 Historical Non-Goals
+
+The task intentionally did not introduce:
+
+```text
+Opportunity
+
 sales pipeline redesign
+
 new Customer aggregate
+
 generic workflow engine
+
 AI requirement extraction
 ```
 
 ---
 
-## 21. Stop Condition
+# 22. P0-02 — Authoritative Order Lifecycle
 
-When P0-01 passes its tests and verification:
+Status:
 
 ```text
-STOP
+DONE
 ```
-
-Do not begin Order Lifecycle automatically.
 
 ---
 
-# P0-02 — Authoritative Order Lifecycle
+# 23. P0-02 Historical Problem
 
-## 22. Problem
-
-Canonical Order states exist:
+Canonical Order states existed:
 
 ```text
 DRAFT
+
 CONFIRMED
+
 ACTIVE
+
 ON_HOLD
+
 COMPLETED
+
 CANCELLED
 ```
 
-but current runtime lacks a complete general authoritative transition surface.
+but the historical implementation did not expose a complete governed transition surface.
+
+This could allow commercial state to lag behind operational reality.
 
 ---
 
-## 23. Current Evidence
+# 24. P0-02 Historical Target
 
-Current app actions materially expose:
-
-```text
-createOrderFromQuoteAction
-createRetailOrderAction
-```
-
-but not a complete transition action.
-
-Canonical state-machine documentation explicitly marks Order lifecycle enforcement as partial.
-
----
-
-## 24. Target Behavior
-
-Implement governed Order transition behavior.
-
-Minimum useful flow:
+Minimum useful lifecycle:
 
 ```text
 CONFIRMED
@@ -496,247 +782,205 @@ ACTIVE
 COMPLETED
 ```
 
-with appropriate:
+with governed:
 
 ```text
 ON_HOLD
-CANCELLED
-```
-
-paths.
-
----
-
-## 25. Allowed Transition Baseline
-
-Canonical intended graph:
-
-```text
-DRAFT
-→ CONFIRMED
-→ CANCELLED
-
-CONFIRMED
-→ ACTIVE
-→ ON_HOLD
-→ CANCELLED
-
-ACTIVE
-→ ON_HOLD
-→ COMPLETED
-→ CANCELLED
-
-ON_HOLD
-→ ACTIVE
-→ CANCELLED
-
-COMPLETED
-terminal
 
 CANCELLED
-terminal
 ```
 
-Exact implementation must reconcile canonical state-machine specification before coding.
+where valid.
 
 ---
 
-## 26. Target Command Shape
+# 25. P0-02 Historical Semantic Boundary
 
-Prefer:
-
-```text
-transition_order_status(...)
-```
-
-or equally explicit semantic commands.
-
-Must include:
+Order state was defined as:
 
 ```text
-organization
-actor
-order
-target state
-reason/reference where appropriate
+COMMERCIAL COMMITMENT LIFECYCLE
 ```
+
+not:
+
+```text
+Payment state
+
+Production state
+
+QC state
+
+Shipment state
+```
+
+The backlog explicitly prohibited solving Order lifecycle by collapsing child lifecycles into Order.
 
 ---
 
-## 27. Required Guards
+# 26. P0-02 Historical Required Guards
 
-At minimum:
-
-```text
-current Order locked
-organization validated
-actor authorized
-transition allowed
-terminal state protected
-completion guard passed
-audit written
-```
-
----
-
-## 28. Completion Guard
-
-`ACTIVE → COMPLETED` must evaluate current authoritative obligations.
-
-At minimum investigate:
+Target transition behavior included:
 
 ```text
-required Production Jobs
-QC readiness
-Shipment/fulfillment obligations
-financial obligations
-```
-
-Do not invent one giant child-state mutation.
-
----
-
-## 29. Financial Completion Policy
-
-The implementation must inspect existing commercial policy before deciding whether:
-
-```text
-all invoices PAID
-```
-
-is mandatory for Order completion.
-
-If current policy is ambiguous, choose the conservative launch-safe behavior and document it.
-
-Do not silently invent a permissive rule.
-
----
-
-## 30. Likely Code Areas
-
-```text
-apps/mgbos/src/app/(app)/orders/
-  actions.ts
-  data.ts
-  [order detail UI]
-
-packages/domain/src/order.ts
-
-packages/validation/
-  order*
-
-packages/auth/
-  permission definitions/tests
-
-supabase/migrations/
-  new forward migration
-
-supabase/tests/
-  order-related pgTAP
-```
-
----
-
-## 31. Acceptance Criteria
-
-```text
-AC-01
-valid transitions succeed
-
-AC-02
-invalid transitions fail
-
-AC-03
-COMPLETED cannot leave terminal state
-
-AC-04
-CANCELLED cannot leave terminal state
-
-AC-05
-unauthorized actor rejected
-
-AC-06
-cross-org actor rejected
-
-AC-07
-ACTIVE cannot complete while required operational obligations remain
-
-AC-08
-eligible ACTIVE Order can complete
-
-AC-09
-audit history records transition
-
-AC-10
-normal UI uses governed command, not direct table mutation
-```
-
----
-
-## 32. Required Tests
-
-```text
-transition graph
-
-terminal-state protection
-
-completion blocked by production
-
-completion blocked by fulfillment
-
-financial completion policy
+organization validation
 
 authorization
 
-cross-org
+current-state validation
 
-audit
+allowed-transition validation
 
-idempotent/safe repeat where appropriate
+terminal-state protection
+
+completion eligibility
+
+audit evidence
 ```
 
 ---
 
-## 33. Non-Goals
+# 27. P0-02 Historical Completion Guard
 
-Do not:
+`ACTIVE → COMPLETED` needed to evaluate applicable authoritative obligations, including:
 
 ```text
-merge child states into Order
-create Project
-introduce general workflow engine
-auto-complete child records
+Production work
+
+fulfillment / Shipment
+
+financial obligations
+```
+
+without silently forcing child domains into completed states.
+
+---
+
+# 28. P0-02 Historical Acceptance Criteria
+
+Required behavior included:
+
+```text
+valid transitions succeed
+
+invalid transitions fail
+
+COMPLETED is terminal
+
+CANCELLED is terminal
+
+unauthorized actors rejected
+
+cross-organization actors rejected
+
+unfinished obligations block completion
+
+eligible ACTIVE Order can complete
+
+audit history records transition
+
+normal UI uses governed mutation
 ```
 
 ---
 
-## 34. Stop Condition
+# 29. P0-02 Closure Evidence
 
-Verify Order lifecycle thoroughly, report, then stop.
+Current application exposes:
+
+```text
+transitionOrderStatusAction
+```
+
+through:
+
+```text
+apps/mgbos/src/app/(app)/orders/actions.ts
+```
+
+using:
+
+```text
+/rpc/transition_order_status
+```
+
+Current operator UI includes completion eligibility behavior in:
+
+```text
+apps/mgbos/src/app/(app)/orders/OrderStatusActions.tsx
+```
+
+The clean E2E completes the Order using governed transition behavior.
+
+Relevant evidence:
+
+```text
+apps/mgbos/src/app/(app)/orders/actions.ts
+
+apps/mgbos/src/app/(app)/orders/OrderStatusActions.tsx
+
+scripts/verify-happy-path-e2e.mjs
+
+operator-acceptance-test.md
+```
+
+Closure:
+
+```text
+P0-02
+=
+DONE
+```
 
 ---
 
-# P0-03 — Vendor-Backed Production Assignment
+# 30. P0-02 Historical Non-Goals
 
-## 35. Problem
+The task did not authorize:
 
-Vendor directory exists.
+```text
+child-state collapse into Order
 
-`production_assignments.vendor_id` exists.
+generic Project
 
-Normal UI still uses:
+workflow engine
+
+automatic fabrication of child completion
+```
+
+---
+
+# 31. P0-03 — Vendor-Backed Production Assignment
+
+Status:
+
+```text
+DONE
+```
+
+---
+
+# 32. P0-03 Historical Problem
+
+Vendor directory capability existed.
+
+Production assignment supported evolving Vendor linkage.
+
+However the normal UI historically relied on:
 
 ```text
 vendorName
 ```
 
-as external executor identity.
+free text for external executor identity.
+
+This created identity drift.
 
 ---
 
-## 36. Target
+# 33. P0-03 Historical Target
 
-Canonical external assignment:
+Canonical relationship:
 
 ```text
 Production Job
@@ -750,9 +994,9 @@ Production Assignment
 
 ---
 
-## 37. Vendor Validation
+# 34. P0-03 Historical Vendor Guards
 
-Vendor must:
+Vendor had to:
 
 ```text
 exist
@@ -766,15 +1010,15 @@ be valid for assignment
 
 ---
 
-## 38. Historical Display
+# 35. P0-03 Historical Snapshot Boundary
 
-It is acceptable to preserve:
+A readable:
 
 ```text
-vendor_name snapshot
+vendor_name
 ```
 
-for historical readability if useful.
+snapshot could remain useful for history.
 
 But:
 
@@ -782,170 +1026,176 @@ But:
 vendor_id
 ```
 
-becomes canonical identity.
+was intended to become authoritative identity for canonical external Vendor relationships.
 
 ---
 
-## 39. Rate Card Assistance
+# 36. P0-03 Historical Rate-Card Boundary
 
-Where useful:
+Vendor Rate Card could assist selection.
+
+It could not automatically become:
 
 ```text
-Vendor
-→ relevant rate cards
-→ operator reference
+transaction-specific committed Vendor price
 ```
 
-Rate Card must not automatically become final committed Vendor quotation.
+without operator confirmation.
 
-Operator confirms committed cost.
+Committed Cost remained distinct from rate-card reference data.
 
 ---
 
-## 40. Internal Assignment Compatibility
+# 37. P0-03 Historical Internal-Execution Compatibility
 
-Current:
+The task had to preserve:
 
 ```text
-executor_type = INTERNAL
-assigned_brand_id
+INTERNAL
 ```
 
-must continue to work.
+assignment behavior.
+
+Vendor hardening could not break internal production.
 
 ---
 
-## 41. Likely Code Areas
+# 38. P0-03 Historical Acceptance Criteria
+
+Required:
 
 ```text
-apps/mgbos/src/app/(app)/production/
-  JobAssignForm.tsx
-  actions.ts
-  data.ts
-
-apps/mgbos/src/app/(app)/vendors/
-
-packages/validation/
-  production*
-
-packages/domain/
-  production*
-  vendor*
-
-supabase/migrations/
-  assign_production_job evolution
-
-supabase/tests/
-  production/vendor assignment tests
-```
-
----
-
-## 42. Acceptance Criteria
-
-```text
-AC-01
 Vendor assignment accepts vendor_id
 
-AC-02
 Vendor identity persisted
 
-AC-03
 inactive Vendor rejected
 
-AC-04
-cross-org Vendor rejected
+cross-organization Vendor rejected
 
-AC-05
 unknown Vendor rejected
 
-AC-06
-internal assignment unchanged
+internal assignment preserved
 
-AC-07
-committed cost preserved
+Committed Cost preserved
 
-AC-08
 UI selects canonical Vendor
 
-AC-09
 historical assignment remains readable
 ```
 
 ---
 
-## 43. Tests
+# 39. P0-03 Closure Evidence
+
+Current:
 
 ```text
-active vendor
+JobAssignForm.tsx
+```
 
-inactive vendor
+uses:
 
-cross-org vendor
+```text
+vendorId
+```
 
-missing vendor
+and a Vendor selector.
 
-internal assignment regression
+Current production action passes:
 
-committed cost
+```text
+p_vendor_id
+```
 
-UI/server validation
+into governed assignment behavior.
+
+Relevant evidence:
+
+```text
+apps/mgbos/src/app/(app)/production/JobAssignForm.tsx
+
+apps/mgbos/src/app/(app)/production/actions.ts
+
+supabase/migrations/
+20260930180000_production_assignment_lifecycle.sql
+
+scripts/verify-happy-path-e2e.mjs
+```
+
+Closure:
+
+```text
+P0-03
+=
+DONE
 ```
 
 ---
 
-## 44. Non-Goals
+# 40. P0-03 Historical Non-Goals
 
-Do not add:
+The task intentionally did not introduce:
 
 ```text
 generic Partner
+
 Vendor marketplace
-advanced vendor scoring
+
+advanced Vendor scoring
+
 capacity optimizer
 ```
 
 ---
 
-## 45. Stop Condition
+# 41. P0-04 — Assignment Acceptance / Reassignment
 
-P0-03 ends after Vendor identity is trustworthy.
-
-Do not implement assignment acceptance in the same task unless absolutely necessary for backward compatibility.
-
----
-
-# P0-04 — Assignment Acceptance / Reassignment
-
-## 46. Problem
-
-Current possible contradiction:
+Status:
 
 ```text
-Production Job
-= ACCEPTED
-
-Production Assignment
-= ASSIGNED
+DONE
 ```
 
 ---
 
-## 47. Semantic Ownership
+# 42. P0-04 Historical Problem
+
+Possible historical contradiction:
+
+```text
+Production Job
+=
+ACCEPTED
+
+Production Assignment
+=
+ASSIGNED
+```
+
+The two domains represented related but separate truths.
+
+---
+
+# 43. P0-04 Semantic Ownership
+
+Preserved distinction:
 
 ```text
 Production Assignment
-→ executor commitment lifecycle
+=
+executor commitment lifecycle
 
 Production Job
-→ physical work lifecycle
+=
+physical work lifecycle
 ```
 
 ---
 
-## 48. Required Commands
+# 44. P0-04 Historical Required Commands
 
-Introduce or harden:
+The task called for explicit behavior equivalent to:
 
 ```text
 accept_production_assignment
@@ -953,15 +1203,13 @@ accept_production_assignment
 decline_production_assignment
 
 cancel_production_assignment
+
+reassign_production_job
 ```
-
-or equivalent canonical command surface.
-
-Reassignment can use existing/new assignment creation once old assignment reaches valid terminal state.
 
 ---
 
-## 49. Acceptance Behavior
+# 45. P0-04 Historical Acceptance Behavior
 
 Target:
 
@@ -970,18 +1218,16 @@ Assignment ASSIGNED
         ↓
 ACCEPTED
         ↓
-accepted_at set
+accepted_at
         ↓
-Production Job coordinated to ACCEPTED
+coordinated Job state
 ```
 
-where canonical Job semantics require it.
-
-Coordination should be atomic where both must change together.
+where appropriate.
 
 ---
 
-## 50. Decline Behavior
+# 46. P0-04 Historical Decline / Reassignment Behavior
 
 Target:
 
@@ -990,383 +1236,404 @@ Assignment ASSIGNED
         ↓
 DECLINED
         ↓
-history retained
+history preserved
         ↓
-Job returns to safe assignable state
+Job becomes safely assignable
+        ↓
+new Assignment
 ```
 
-Likely:
+Old assignment records were not to be overwritten destructively.
+
+---
+
+# 47. P0-04 Historical Cost Boundary
+
+Reassignment could not silently erase previous committed-cost evidence.
+
+Any cost correction or new commitment needed explicit history.
+
+---
+
+# 48. P0-04 Historical Acceptance Criteria
+
+Required:
 
 ```text
-READY
+ASSIGNED can become ACCEPTED
+
+assignment status changes correctly
+
+accepted_at recorded
+
+Job and Assignment remain semantically consistent
+
+valid decline supported
+
+declined Assignment preserved
+
+Job becomes safely assignable
+
+new Assignment can be created
+
+contradictory active assignments blocked
+
+authorization enforced
+
+organization isolation enforced
+
+duplicate acceptance safe
 ```
 
-subject to canonical reconciliation.
-
 ---
 
-## 51. Reassignment
+# 49. P0-04 Closure Evidence
 
-Old Assignment remains immutable historical evidence.
-
-New executor creates new Assignment.
-
----
-
-## 52. Active Assignment Constraint
-
-The system should prevent two contradictory active assignments for the same Production Job unless future semantics explicitly introduce multi-executor work.
-
----
-
-## 53. Cost Semantics
-
-Reassignment must not silently destroy previous committed-cost evidence.
-
-Inspect Cost Trilogy behavior carefully.
-
-If committed-cost semantics require correction/reversal records, implement explicitly rather than overwriting history.
-
----
-
-## 54. Likely Code Areas
+Current application exposes:
 
 ```text
-apps/mgbos/src/app/(app)/production/
-  actions.ts
-  assignment UI
-  job detail
+acceptProductionAssignmentAction
 
-packages/domain/src/production*
+declineProductionAssignmentAction
 
-packages/validation/
-  production*
+cancelProductionAssignmentAction
 
-packages/auth/
-  production permissions
-
-supabase/migrations/
-  assignment lifecycle functions
-
-supabase/tests/
-  assignment lifecycle
+reassignProductionJobAction
 ```
 
----
-
-## 55. Acceptance Criteria
+Current migration:
 
 ```text
-AC-01
-ASSIGNED assignment can be accepted
+20260930180000_production_assignment_lifecycle.sql
+```
 
-AC-02
-assignment.status becomes ACCEPTED
+implements explicit lifecycle behavior including:
 
-AC-03
-accepted_at populated
+```text
+accept_production_assignment
 
-AC-04
-Production Job and Assignment remain semantically consistent
+decline_production_assignment
 
-AC-05
-assignment may be declined where valid
+reassign_production_job
 
-AC-06
-declined assignment remains historical
+accepted_at
 
-AC-07
-Job becomes safely assignable again
+job synchronization
 
-AC-08
-new assignment can be created
+retry safety
+```
 
-AC-09
-multiple conflicting active assignments prevented
+Closure:
 
-AC-10
-unauthorized actor rejected
-
-AC-11
-cross-org actor rejected
-
-AC-12
-duplicate acceptance is safe
+```text
+P0-04
+=
+DONE
 ```
 
 ---
 
-## 56. Non-Goals
+# 50. P0-04 Historical Non-Goals
 
-Do not build:
+The task did not build:
 
 ```text
 Vendor portal
-real-time partner API
-multi-vendor collaborative Job
-advanced assignment marketplace
+
+real-time Vendor API
+
+multi-Vendor collaborative Production Job
+
+assignment marketplace
 ```
 
 ---
 
-## 57. Stop Condition
+# 51. P0-05 — Fulfillment Readiness Guard
 
-Assignment lifecycle trustworthy → stop.
+Status:
+
+```text
+DONE
+```
 
 ---
 
-# P0-05 — Fulfillment Readiness Guard
+# 52. P0-05 Historical Problem
 
-## 58. Problem
-
-Current shipment implementation strongly protects:
+Shipment logic already protected:
 
 ```text
-shipment quantity ceiling
+shipment quantity ceilings
 ```
 
-but does not sufficiently prove:
+but historical behavior did not sufficiently prove:
 
 ```text
-production readiness
+Production readiness
+
 +
-QC readiness
+
+QC clearance
 ```
 
-before creating Delivery Order.
+before Delivery Order creation.
 
----
-
-## 59. Current Evidence
-
-Existing broad E2E can have:
+Core distinction:
 
 ```text
-one Job READY_FOR_HANDOFF
-one Job ON_HOLD after QC rejection
+CAN SHIP QUANTITY
+≠
+READY TO SHIP QUANTITY
 ```
-
-and still proceed to Delivery Order creation.
-
-This is unsafe for launch.
 
 ---
 
-## 60. Target Rule
+# 53. P0-05 Historical Unsafe Scenario
 
-Before shipment creation:
+The historical regression flow could represent:
+
+```text
+Job A
+=
+READY_FOR_HANDOFF
+
+Job B
+=
+ON_HOLD after QC failure
+```
+
+and still proceed far enough to expose a fulfillment-readiness gap.
+
+This became a P0 blocker.
+
+---
+
+# 54. P0-05 Historical Target
+
+Before Delivery Order creation, applicable:
 
 ```text
 ordered quantity
-AND
+
 unshipped quantity
-AND
-production-ready quantity
-AND
-QC-cleared quantity
+
+production readiness
+
+QC clearance
 ```
 
-must be mutually valid.
+needed to be mutually valid.
 
 ---
 
-## 61. Launch-v1 Conservative Rule
+# 55. P0-05 Conservative Launch Rule
 
-If current data model cannot prove readiness at per-quantity granularity:
+If exact per-quantity production readiness could not be proven:
 
 ```text
-all required active Production Jobs
-for the relevant Order / item
-must be READY_FOR_HANDOFF or COMPLETED
+BLOCK CONSERVATIVELY
 ```
 
-before shipment.
-
-A more permissive partial model can come later.
+was preferred over unsafe shipment.
 
 ---
 
-## 62. Blocking Conditions
+# 56. P0-05 Historical Blocking Conditions
 
-Must consider unresolved:
+Required work could not remain in unresolved states such as:
 
 ```text
 PLANNED
+
 READY
+
 ASSIGNED
+
 ACCEPTED
+
 IN_PRODUCTION
+
 AWAITING_QC
+
 REWORK
+
 ON_HOLD
 ```
 
-where they represent required work.
+and still silently qualify as fulfillment-ready.
 
 ---
 
-## 63. Cancelled Production Jobs
+# 57. P0-05 Historical Acceptance Criteria
 
-A legitimate cancelled Job should not automatically block fulfillment if it no longer represents required work.
-
-This must be explicit.
-
----
-
-## 64. Error UX
-
-Operator-facing rejection should explain what blocks shipment.
-
-Example conceptually:
+Required:
 
 ```text
-Cannot create Delivery Order:
-Production Job TS-PJ-... is still ON_HOLD after QC rejection.
+ready work can ship
+
+unfinished Production blocks shipment
+
+AWAITING_QC blocks shipment
+
+REWORK blocks shipment
+
+QC rejection / ON_HOLD blocks shipment
+
+shipment quantity ceiling remains valid
+
+irrelevant cancelled work does not block incorrectly
+
+partial shipment allowed only when readiness can be proven
+
+operator receives meaningful blocker
+
+delivered Shipment history remains protected
 ```
 
 ---
 
-## 65. Likely Code Areas
+# 58. P0-05 Closure Evidence
+
+Current migration:
 
 ```text
 supabase/migrations/
-  create_delivery_order evolution
-
-supabase/tests/
-  fulfillment tests
-
-packages/domain/
-  shipment/order/production helper rules if needed
-
-packages/validation/
-  shipment*
-
-apps/mgbos/src/app/(app)/shipments/
-  actions.ts
-  forms/UI
-
-apps/mgbos/src/app/(app)/orders/[id]/
-  shipment display/actions
+20260930190000_fulfillment_readiness_guard.sql
 ```
 
----
+enforces production/QC readiness before Delivery Order creation.
 
-## 66. Acceptance Criteria
+It explicitly evaluates:
 
 ```text
-AC-01
-ready work can be shipped
+READY_FOR_HANDOFF
 
-AC-02
-unfinished production blocks shipment
+COMPLETED
 
-AC-03
-AWAITING_QC blocks shipment
+blocking production status
 
-AC-04
-REWORK blocks shipment
+unresolved QC evidence
 
-AC-05
-QC rejection / ON_HOLD blocks shipment
+PASS QC evidence
+```
 
-AC-06
-shipment quantity ceiling remains intact
+and emits descriptive blocker errors.
 
-AC-07
-cancelled irrelevant Job does not incorrectly block
+Operator acceptance confirms visible QC-to-shipment gating.
 
-AC-08
-partial shipment only succeeds when readiness is safely provable
+Closure:
 
-AC-09
-operator receives clear blocker message
-
-AC-10
-delivered shipment immutability remains intact
+```text
+P0-05
+=
+DONE
 ```
 
 ---
 
-## 67. Non-Goals
+# 59. P0-05 Historical Non-Goals
 
-Do not implement:
+The task intentionally did not build:
 
 ```text
 advanced production allocation engine
+
 warehouse wave planning
+
 carrier optimization
 ```
 
 ---
 
-## 68. Stop Condition
+# 60. P0-06 — Governed Work Order / SPK
 
-Readiness guard proven → stop.
+Status:
+
+```text
+DONE
+```
 
 ---
 
-# P0-06 — Governed Work Order / SPK Artifact
+# 61. P0-06 Historical Problem
 
-## 69. Problem
+External production handoff lacked one governed, operator-facing instruction artifact.
 
-External production still lacks one governed operator-facing instruction artifact.
-
-Without it:
+Historical anti-pattern:
 
 ```text
-MGBOS data
+MGBOS DATA
+
 +
-Rizky memory
+
+FOUNDER MEMORY
+
 +
-WhatsApp
+
+WHATSAPP RECONSTRUCTION
+
 =
-Vendor instructions
+
+VENDOR INSTRUCTION
 ```
 
 ---
 
-## 70. Architecture Decision
+# 62. P0-06 Architecture Decision
 
-Phase 1 Work Order is:
-
-```text
-GENERATED ARTIFACT
-```
-
-not:
+Phase 1 deliberately selected:
 
 ```text
-NEW ROOT AGGREGATE
+GENERATED GOVERNED ARTIFACT
 ```
+
+instead of:
+
+```text
+NEW WORK_ORDER ROOT AGGREGATE
+```
+
+because an independent Work Order lifecycle had not yet been justified.
 
 ---
 
-## 71. Authoritative Sources
+# 63. P0-06 Historical Source Context
 
-Generate from:
+The artifact was expected to derive from:
 
 ```text
 Production Job
+
 Production Assignment
+
 Vendor
+
 Order
+
 Order Items
+
 Requirement Version / specification
+
 deadline
-committed cost
-relevant files/artwork references
+
+Committed Cost
+
+relevant file / artwork references
 ```
 
 ---
 
-## 72. Minimum Output
+# 64. P0-06 Historical Minimum Output
+
+The SPK / Work Order needed enough information to communicate:
 
 ```text
-SPK / Work Order reference
+reference number
 
-Order number
+Order
 
-Production Job number
+Production Job
 
 Vendor
 
@@ -1378,7 +1645,7 @@ specification
 
 deadline
 
-commercial basis / committed cost where appropriate
+commercial basis where appropriate
 
 file references
 
@@ -1386,169 +1653,172 @@ instructions
 
 issuer
 
-issued timestamp
+issued time
 ```
 
 ---
 
-## 73. Security Allowlist
+# 65. P0-06 Security Boundary
 
-The document must not expose unrelated:
+The artifact was not allowed to expose unnecessary:
 
 ```text
-customer private data
+customer private information
+
 internal margin
+
 other Vendor rates
+
 system metadata
+
 secrets
 ```
 
 ---
 
-## 74. Behavior
+# 66. P0-06 Lifecycle Boundary
 
-Generating/printing SPK:
-
-```text
-MUST NOT
-```
-
-automatically mean:
+Generating an SPK did not mean:
 
 ```text
 Vendor accepted assignment
 ```
 
-Assignment lifecycle remains separate.
-
----
-
-## 75. Likely Code Areas
+Canonical distinction:
 
 ```text
-apps/mgbos/src/app/(app)/production/
-  job detail
-  work-order route/view
+SPK
+=
+work instruction artifact
 
-apps/mgbos/src/app/
-  document rendering patterns
-
-existing Quote/customer PDF implementation
-  inspect and reuse where appropriate
-
-production/data.ts
-
-vendor data
-
-requirement/order read projections
-```
-
-Avoid database migration unless actual stable document identity/evidence requires it.
-
----
-
-## 76. Acceptance Criteria
-
-```text
-AC-01
-authenticated operator can open Work Order
-
-AC-02
-cross-org access denied
-
-AC-03
-correct Job shown
-
-AC-04
-correct Vendor shown
-
-AC-05
-correct quantities/specification shown
-
-AC-06
-correct deadline shown
-
-AC-07
-correct committed cost context shown where intended
-
-AC-08
-no internal margin leak
-
-AC-09
-print-friendly
-
-AC-10
-historical Assignment is distinguishable
-
-AC-11
-document generation causes no hidden Production state mutation
+Assignment Acceptance
+=
+executor commitment fact
 ```
 
 ---
 
-## 77. PDF
+# 67. P0-06 Historical Acceptance Criteria
 
-PDF is optional for Phase 1.
+Required:
 
-Only add it if existing document-rendering infrastructure can be reused cleanly.
+```text
+authorized operator can open SPK
 
-Print-friendly HTML is sufficient for first governed artifact.
+cross-organization access denied
+
+correct Production Job
+
+correct Vendor
+
+correct quantity
+
+correct specification
+
+correct deadline
+
+appropriate Committed Cost context
+
+no internal-margin leakage
+
+print-friendly representation
+
+historical Assignment distinguishable
+
+generation performs no hidden Production mutation
+```
 
 ---
 
-## 78. Non-Goals
+# 68. P0-06 Closure Evidence
 
-Do not add:
+Current Work Order implementation includes:
+
+```text
+packages/domain/src/workOrder.ts
+
+apps/mgbos/src/lib/workOrder/load.server.ts
+
+apps/mgbos/src/app/(documents)/
+production/[jobId]/spk/
+```
+
+The operator-acceptance evidence confirms the governed SPK journey.
+
+Closure:
+
+```text
+P0-06
+=
+DONE
+```
+
+---
+
+# 69. P0-06 Historical Non-Goals
+
+The task did not build:
 
 ```text
 WorkOrder aggregate
+
 Vendor portal
-electronic signature
-document management platform
+
+electronic signature platform
+
+document-management system
 ```
 
 ---
 
-## 79. Stop Condition
+# 70. P0-07 — Clean Happy-Path E2E
 
-Governed external production instruction exists and is safe → stop.
+Status:
+
+```text
+DONE
+```
 
 ---
 
-# P0-07 — Clean Happy-Path E2E
+# 71. P0-07 Historical Problem
 
-## 80. Problem
-
-Current broad:
+Existing:
 
 ```text
 scripts/verify-e2e-flow.mjs
 ```
 
-is valuable but:
+was valuable regression evidence, but it:
 
 ```text
-starts from existing Customer / Requirement
+did not begin from Lead
+
+and
+
+mixed healthy and negative scenarios
 ```
 
-and mixes positive and negative scenarios.
+A clean normal-business journey was still missing.
 
 ---
 
-## 81. Decision
+# 72. P0-07 Historical Decision
 
-Keep existing regression script.
+The existing broad regression script was preserved.
 
-Create separate focused happy-path scenario.
+A separate focused happy-path scenario was required.
 
 ---
 
-## 82. Required Journey
+# 73. P0-07 Historical Journey
+
+Target:
 
 ```text
 Lead
-→ qualify
-→ convert/link Customer
+→ Qualify
+→ Convert / Customer
 → Requirement
 → READY
 → Quote
@@ -1576,31 +1846,36 @@ Lead
 
 ---
 
-## 83. Happy Path Must Stay Clean
+# 74. P0-07 Clean-Path Rule
 
-Do not intentionally include:
+Intentional negative cases were excluded from the clean scenario, including:
 
 ```text
 QC rejection
+
 QC rework
+
 payment reversal
+
 over-invoicing
+
 over-shipment
+
 Vendor decline
 ```
 
-These belong to negative scenarios.
+They remained separate regression concerns.
 
 ---
 
-## 84. Required Assertions
+# 75. P0-07 Historical Assertions
 
-At minimum:
+The clean path needed to prove applicable:
 
 ```text
 Lead identity
 
-Customer conversion/linkage
+Customer conversion / linkage
 
 Requirement linkage
 
@@ -1612,7 +1887,7 @@ Order state
 
 Invoice totals
 
-Payment allocations
+Payment allocation
 
 Vendor identity
 
@@ -1622,144 +1897,170 @@ Production state
 
 QC evidence
 
-Shipment eligibility
+fulfillment eligibility
 
 Shipment delivery
 
-Actual cost
+Actual Cost
 
-Realized margin
+Realized Margin
 
 Order completion
 ```
 
 ---
 
-## 85. Likely Code Areas
+# 76. P0-07 Historical Acceptance Criteria
+
+Required:
+
+```text
+fresh scenario works
+
+starts from Lead
+
+uses canonical Vendor
+
+uses explicit Assignment acceptance
+
+Shipment occurs only after readiness
+
+Order reaches COMPLETED
+
+Realized Margin available
+
+critical assertions explicit
+
+assertion failure exits non-zero
+
+local execution reproducible
+```
+
+---
+
+# 77. P0-07 Closure Evidence
+
+Current:
 
 ```text
 systems/mgbos/scripts/
-  new focused E2E script
-
-package scripts
-if useful
-
-documentation
-  command to run
+verify-happy-path-e2e.mjs
 ```
 
-Do not rewrite all module tests into the E2E script.
+implements the clean operating journey from Lead through Order completion and realized margin.
 
----
-
-## 86. Acceptance Criteria
+The script explicitly verifies:
 
 ```text
-AC-01
-fresh scenario setup works
+Lead qualification
 
-AC-02
-starts from Lead
+Customer conversion
 
-AC-03
-uses canonical Vendor
+Requirement
 
-AC-04
-uses Assignment acceptance
+Quote
 
-AC-05
-shipment only after readiness
+Order lifecycle
 
-AC-06
-Order reaches COMPLETED
+Payment
 
-AC-07
-realized margin is available
+Vendor assignment
 
-AC-08
-all critical assertions are explicit
+Assignment acceptance
 
-AC-09
-any assertion failure exits non-zero
+Production
 
-AC-10
-script is reproducible locally
+QC PASS
+
+READY_FOR_HANDOFF
+
+Shipment
+
+Delivery
+
+Actual Cost
+
+Order COMPLETED
+
+Realized Margin
 ```
 
----
-
-## 87. Negative Scenario Pack
-
-Separate future/adjacent test scenario set should cover:
+Closure:
 
 ```text
-Requirement revision
-
-low-margin quote
-
-partial payment
-
-Vendor decline
-
-reassignment
-
-QC rework
-
-QC rejection
-
-shipment-before-ready
-
-actual-cost variance
-
-invalid Order transition
-
-duplicate command
-
-payment reversal
+P0-07
+=
+DONE
 ```
 
-Do not block P0-07 on building a large testing framework.
-
 ---
 
-## 88. Stop Condition
+# 78. P0-07 Regression Boundary
 
-Focused happy-path E2E passes consistently → stop.
-
----
-
-# P0-08 — Operator Acceptance Test
-
-## 89. Problem
-
-Programmatic correctness does not prove operator usability.
-
-Phase 1 must show a normal operator can execute the same business transaction through the application.
-
----
-
-## 90. Required Surface
-
-Use normal:
+The broad:
 
 ```text
-authenticated browser application
+verify-e2e-flow.mjs
 ```
 
-for the complete journey.
+remains useful.
+
+Correct distinction:
+
+```text
+verify-happy-path-e2e.mjs
+=
+clean business flow
+
+verify-e2e-flow.mjs
+=
+broader regression and negative coverage
+```
+
+Neither should replace the other merely for simplification.
 
 ---
 
-## 91. Prohibited Shortcuts
+# 79. P0-08 — Operator Acceptance Test
 
-Do not use:
+Status:
+
+```text
+DONE
+```
+
+---
+
+# 80. P0-08 Historical Problem
+
+Programmatic correctness did not prove that a real operator could complete the operating spine through normal application surfaces.
+
+A separate human-operability gate was required.
+
+---
+
+# 81. P0-08 Required Surface
+
+The full journey had to be performed through:
+
+```text
+normal authenticated application behavior
+```
+
+rather than direct database manipulation.
+
+---
+
+# 82. P0-08 Prohibited Shortcuts
+
+The acceptance journey prohibited:
 
 ```text
 manual SQL
 
-Supabase Studio edits
+Supabase Studio state mutation
 
-database console
+database console repair
 
 developer-console state mutation
 
@@ -1768,61 +2069,49 @@ hidden spreadsheet
 manual ledger correction
 ```
 
-to make the scenario pass.
-
 ---
 
-## 92. Operator Journey
+# 83. P0-08 Historical Operator Journey
+
+Required journey:
 
 ```text
 Lead
+
 → Qualification
+
 → Customer
+
 → Requirement
+
 → Quote
+
 → Order
+
 → Invoice / Payment
+
 → Production
+
 → Vendor Assignment
+
 → Assignment Acceptance
-→ Work Order
+
+→ Work Order / SPK
+
 → QC
+
 → Shipment
+
 → Cost / Margin
+
 → Order Completion
 ```
 
 ---
 
-## 93. Acceptance Report
+# 84. P0-08 Historical Friction Categories
 
-Record each step with:
-
-```text
-step
-
-route
-
-screen
-
-action
-
-expected result
-
-actual result
-
-friction
-
-severity
-
-evidence
-```
-
----
-
-## 94. Friction Types
-
-Look specifically for:
+Acceptance observed for:
 
 ```text
 missing navigation
@@ -1844,101 +2133,118 @@ technical workaround
 
 ---
 
-## 95. Severity
+# 85. P0-08 Historical Severity
+
+Findings could be classified:
 
 ```text
 BLOCKER
-cannot complete normal transaction safely
 
 HIGH
-major founder/operator burden or significant error risk
 
 MEDIUM
-meaningful friction but workable
 
 LOW
-polish / convenience
+```
+
+with Blocker including conditions such as:
+
+```text
+cannot safely finish transaction
+
+requires direct database repair
+
+business state contradiction
+
+financial integrity failure
+
+unsafe shipment
+
+cross-organization leakage
 ```
 
 ---
 
-## 96. Fixing During Acceptance
+# 86. P0-08 Historical Acceptance Criteria
 
-First pass:
-
-```text
-OBSERVE
-```
-
-Do not continuously modify the system during the journey and invalidate the test.
-
-After complete first pass:
+Required:
 
 ```text
-small obvious BLOCKER
-```
+normal operator completes transaction
 
-may be fixed if tightly scoped.
+no direct database work
 
-Otherwise create follow-up backlog.
+no manual authoritative financial arithmetic
 
----
+next actions discoverable
 
-## 97. Acceptance Criteria
+Vendor coordination visible
 
-```text
-AC-01
-normal operator completes the transaction
+QC-to-shipment logic understandable
 
-AC-02
-no direct DB work required
+Order completion understandable
 
-AC-03
-no manual financial arithmetic required for authoritative totals
-
-AC-04
-next actions are discoverable
-
-AC-05
-Vendor coordination is visible
-
-AC-06
-QC-to-shipment logic is understandable
-
-AC-07
-final Order completion is understandable
-
-AC-08
-BLOCKER findings = 0
+BLOCKER count = 0
 ```
 
 ---
 
-## 98. Completion Evidence
+# 87. P0-08 Closure Evidence
 
-Produce:
+Current:
 
 ```text
 operator-acceptance-test.md
 ```
 
-with final classification:
+records:
 
 ```text
+Final Classification
+=
 PASS
-PASS_WITH_KNOWN_LIMITATIONS
-FAIL
+
+Blocker Count
+=
+0
+```
+
+and reports successful end-to-end operator behavior through governed application surfaces.
+
+Closure:
+
+```text
+P0-08
+=
+DONE
 ```
 
 ---
 
-## 99. Stop Condition
+# 88. Completed Backlog Matrix
 
-Operator test complete, blockers resolved or explicitly reported → stop.
+| Backlog | Purpose                              | Final state |
+| ------- | ------------------------------------ | ----------: |
+| P0-01   | Lead → Requirement continuity        |        DONE |
+| P0-02   | Authoritative Order lifecycle        |        DONE |
+| P0-03   | Canonical Vendor-backed assignment   |        DONE |
+| P0-04   | Assignment acceptance / reassignment |        DONE |
+| P0-05   | Production/QC fulfillment guard      |        DONE |
+| P0-06   | Governed Work Order / SPK            |        DONE |
+| P0-07   | Clean Lead→Margin E2E                |        DONE |
+| P0-08   | Operator acceptance                  |        DONE |
+
+Open Phase 1 backlog:
+
+```text
+NONE
+```
 
 ---
 
-# 100. Phase 1 Cross-Task Dependency Graph
+# 89. Historical Dependency Graph
+
+The completed implementation sequence was:
 
 ```text
 P0-01
@@ -1962,7 +2268,7 @@ Fulfillment Readiness
      │
      ▼
 P0-06
-Work Order
+Work Order / SPK
      │
      ▼
 P0-07
@@ -1973,68 +2279,130 @@ P0-08
 Operator Acceptance
 ```
 
----
-
-# 101. Dependency Interpretation
-
-The graph means:
+This is now:
 
 ```text
-default execution order
+HISTORICAL EXECUTION ORDER
 ```
 
 not:
 
 ```text
-every task has a hard technical database dependency
-```
-
-We intentionally serialize the work to:
-
-```text
-reduce rework
-preserve clarity
-make regressions easier to locate
+CURRENT EXECUTION QUEUE
 ```
 
 ---
 
-# 102. Task Status Vocabulary
+# 90. Why The Work Was Serialized
 
-Each backlog item may be marked:
+The phase intentionally reduced rework by proving prerequisites in order.
+
+Example:
+
+```text
+canonical Vendor identity
+must be trustworthy
+before
+Vendor-specific SPK output
+can be trusted
+```
+
+and:
+
+```text
+production / QC readiness
+must be trustworthy
+before
+Shipment eligibility
+can be safely verified
+```
+
+This remains useful implementation provenance.
+
+---
+
+# 91. Historical Task Status Vocabulary
+
+The original execution vocabulary was:
 
 ```text
 READY
+
 IN_PROGRESS
+
 BLOCKED
+
 VERIFYING
+
 DONE
 ```
 
-Do not use percentage-complete.
-
----
-
-# 103. Current Status
+Current final status for every P0 item:
 
 ```text
-P0-01  DONE
-P0-02  DONE
-P0-03  DONE
-P0-04  DONE
-P0-05  DONE
-P0-06  DONE
-P0-07  DONE
-P0-08  DONE
+DONE
 ```
 
-All Phase 1 operating spine milestones (P0-01 through P0-08) are complete, verified, and certified. Phase 1 is officially CLOSED. See `operator-acceptance-test.md` and `completion-report.md`.
+No P0 task should return to `READY` without creating a new current engineering work package under current governance.
 
 ---
 
-# 104. Architecture Escalation Rule
+# 92. Historical Builder Authority
 
-AntiGraphity must stop and report if a backlog item appears to require:
+The original backlog was designed to be usable as a bounded implementation handoff for AntiGraphity.
+
+That authority is now closed.
+
+Current rule:
+
+```text
+DO NOT HAND THIS ARCHIVED BACKLOG
+TO A BUILDER AS CURRENT WORK.
+```
+
+---
+
+# 93. Current Builder Handoff Rule
+
+New implementation work must follow current Vibe Engineering governance:
+
+```text
+CURRENT PRODUCT REQUIREMENT
+
++
+
+CURRENT CANONICAL ARCHITECTURE
+
++
+
+CURRENT SOURCE AUDIT
+
+        ↓
+
+ENGINEERING DISCOVERY
+
+        ↓
+
+TECHNICAL PLAN
+
+        ↓
+
+IMPLEMENTATION CONTRACT
+
+        ↓
+
+BOUNDED WORK PACKAGE
+
+        ↓
+
+BUILDER
+```
+
+---
+
+# 94. Architecture Escalation Provenance
+
+The original backlog instructed the builder to stop if work appeared to require:
 
 ```text
 new root entity
@@ -2043,7 +2411,7 @@ new system
 
 major authorization redesign
 
-new cross-system authority model
+cross-system authority change
 
 destructive migration
 
@@ -2052,55 +2420,37 @@ historical-data reinterpretation
 large architecture deviation
 ```
 
-Do not solve these silently.
+This was intended to prevent implementation agents from silently redesigning MGBOS.
+
+The principle remains consistent with current governance.
 
 ---
 
-# 105. Small Implementation Decision Rule
+# 95. Local Implementation Decision Boundary
 
-AntiGraphity MAY decide local details such as:
+The original builder could decide local non-semantic details such as:
 
 ```text
 component naming
 
 helper extraction
 
-test utility
+test utilities
 
-route structure
+route organization
 
 function decomposition
 ```
 
-when they do not change canonical semantics.
+provided canonical semantics did not change.
+
+Current work must follow current implementation-contract authority rather than this archived backlog.
 
 ---
 
-# 106. Documentation Update Rule
+# 96. Phase 1 Exit Gate
 
-A task may update:
-
-```text
-implementation docs
-tests
-engineering report
-```
-
-as evidence.
-
-If runtime implementation reveals a canonical architecture mismatch:
-
-```text
-STOP
-```
-
-and report the conflict before editing canonical semantics.
-
----
-
-# 107. Phase 1 Exit Gate
-
-Phase 1 can close only when all are true:
+Original exit gate:
 
 ```text
 Lead continuity
@@ -2125,95 +2475,707 @@ Clean E2E
 PASS
 
 Operator Acceptance
-PASS / accepted non-blocking limitation
+PASS
 ```
+
+The completion report certifies these Phase 1 gates as satisfied.
 
 ---
 
-# 108. No Artificial Completion
+# 97. No Artificial Completion Principle
 
-Do not mark DONE merely because:
+The original backlog explicitly rejected:
 
 ```text
 code compiled
+=
+task complete
 ```
 
-A P0 item requires:
+Required pattern:
 
 ```text
-implemented
+IMPLEMENTED
+
 +
-tested
+
+TESTED
+
 +
-verified
+
+VERIFIED
+
+=
+
+DONE
 ```
+
+This remains a useful Vibe Engineering principle.
 
 ---
 
-# 109. Phase 1 Final Certification
+# 98. Phase 1 Final Certification
 
-After P0-08:
-
-create:
+Phase 1 closure is owned by:
 
 ```text
 completion-report.md
 ```
 
-and verify the complete system.
-
-Only then decide:
+which records:
 
 ```text
 PHASE 1 CLOSED
 ```
 
-or:
+The backlog itself does not certify closure.
+
+It records the work that led to closure.
+
+---
+
+# 99. Completion Evidence Boundary
+
+Phase 1 completion evidence demonstrates the documented software and operator acceptance scope.
+
+It does NOT automatically establish:
 
 ```text
-PHASE 1 REMAINS OPEN
+production deployment readiness
+
+real customer transaction validation
+
+real Vendor performance
+
+real cash collection behavior
+
+backup readiness
+
+restore readiness
+
+monitoring readiness
+
+RPO / RTO
+
+production acceptance
+
+Founder Control capability
+```
+
+These require separate evidence.
+
+---
+
+# 100. Post-Phase-1 Direction Is Not Backlog Authority
+
+The original backlog mentioned future ideas including:
+
+```text
+Operational Exception
+
+Founder Attention Read Models
+
+Customer Case Lite
+
+Vendor Capability Enrichment
+```
+
+These were forward guidance.
+
+They were NOT pre-authorized Phase 2 work packages.
+
+Current rule:
+
+```text
+FORWARD GUIDANCE
+≠
+IMPLEMENTATION AUTHORITY
 ```
 
 ---
 
-# 110. Next Phase
+# 101. Current Product Program
 
-After Phase 1:
+Current product/documentation direction is governed through:
 
 ```text
-P1-01 Operational Exception
-P1-02 Founder Attention Read Models
-P1-03 Customer Case Lite
-P1-04 Vendor Capability Enrichment
+../../product/
+founder-control-documentation-plan.md
 ```
 
-subject to real implementation evidence.
+Current sequence:
+
+```text
+PHASE 1 CLOSED
+        ↓
+CURRENT-STATE DOCUMENTATION RECONCILIATION
+        ↓
+FOUNDER CONTROL PRD
+        ↓
+FOUNDER ATTENTION SPEC
+        ↓
+OPERATIONAL EXCEPTION SPEC
+        ↓
+REAL OPERATIONAL PILOT PLAN
+        ↓
+PRODUCT PACKAGE AUDIT
+        ↓
+ARCHITECTURE IMPACT REVIEW
+        ↓
+ENGINEERING DISCOVERY
+```
 
 ---
 
-# 111. Final Principle
+# 102. Founder Control Is A New Product Problem
 
-> **Every P0 task should remove one place where Rizky currently acts as integration middleware.**
-
-Phase 1 is complete when:
+Phase 1 primarily reduced:
 
 ```text
-Lead
-→ Requirement
-→ Quote
-→ Order
-→ Payment
-→ Production
-→ Vendor
-→ QC
-→ Shipment
-→ Margin
+transaction-routing burden
 ```
 
-behaves like:
+The next product problem is:
 
 ```text
-ONE GOVERNED OPERATING SPINE
+attention-routing burden
 ```
 
-rather than a set of disconnected modules.
+The founder should not need to manually search every module to determine:
+
+```text
+what is late
+
+what is blocked
+
+what is unpaid
+
+what Vendor has not acknowledged
+
+what failed QC
+
+what cannot ship
+
+what cost is missing
+
+what margin is abnormal
+
+what needs human judgment
+```
+
+That problem requires new product definition.
+
+It must not be implemented from this historical backlog.
+
+---
+
+# 103. Operational Exception Is Not Automatically Approved
+
+The term:
+
+```text
+Operational Exception
+```
+
+appears in post-Phase-1 direction.
+
+That does not establish:
+
+```text
+a table
+
+a root aggregate
+
+a state machine
+
+a command set
+```
+
+as already approved.
+
+Required flow:
+
+```text
+PRODUCT NEED
+        ↓
+PRODUCT SPEC
+        ↓
+ARCHITECTURE IMPACT REVIEW
+        ↓
+CANONICAL REPRESENTATION
+        ↓
+IMPLEMENTATION
+```
+
+---
+
+# 104. Customer Case Boundary
+
+Customer Case Lite appeared as future guidance.
+
+It is not automatically identical to:
+
+```text
+Operational Exception
+```
+
+Potential future distinction:
+
+```text
+Customer Case
+=
+durable customer-facing issue
+
+Operational Exception
+=
+abnormal operational condition
+```
+
+Exact semantics belong to future product/architecture work.
+
+---
+
+# 105. Vendor Capability Enrichment Boundary
+
+Phase 1 established trusted Vendor identity in production assignment.
+
+That does not automatically justify building:
+
+```text
+complex Vendor scoring
+
+automated capacity prediction
+
+marketplace ranking
+
+AI Vendor allocation
+```
+
+Future enrichment should be pulled by operational evidence.
+
+---
+
+# 106. Real Operational Pilot
+
+The next product program must eventually distinguish:
+
+```text
+SYNTHETIC VERIFICATION
+
+OPERATOR ACCEPTANCE
+
+REAL BUSINESS VALIDATION
+
+PRODUCTION READINESS
+```
+
+Phase 1 closed the first two relevant categories within its scope.
+
+Real operating evidence remains separate.
+
+---
+
+# 107. Real-Pilot Evidence Direction
+
+Future pilot evidence may include:
+
+```text
+real inquiry
+
+real customer
+
+real quote
+
+real payment
+
+real Vendor
+
+real physical production
+
+real QC
+
+real fulfillment
+
+real Actual Cost
+
+real Realized Margin
+
+real abnormal condition
+
+real founder intervention
+```
+
+The exact pilot contract belongs to product documentation, not this backlog.
+
+---
+
+# 108. Operational Readiness Boundary
+
+Phase 1 backlog completion does not certify:
+
+```text
+staging isolation
+
+production isolation
+
+production authentication
+
+backup automation
+
+restore drill
+
+monitoring
+
+escalation
+
+RPO
+
+RTO
+
+release recovery
+
+production acceptance
+```
+
+Those concerns are tracked under engineering operational readiness.
+
+---
+
+# 109. Current Source Rule
+
+If an AI needs to determine whether a Phase 1 capability still works on current `main`, it MUST inspect:
+
+```text
+current source
+
+current migration history
+
+current tests
+
+current CI evidence
+
+current runtime evidence when applicable
+```
+
+Historical DONE status means:
+
+```text
+implemented and accepted
+at Phase 1 closure
+```
+
+not:
+
+```text
+all future revisions are automatically verified.
+```
+
+---
+
+# 110. Regression Rule
+
+If a future regression breaks a Phase 1 capability:
+
+```text
+DO NOT
+reopen this archived backlog directly.
+```
+
+Instead create a current:
+
+```text
+bug
+
+remediation work package
+
+incident follow-up
+
+or current implementation task
+```
+
+with current repository evidence and traceability back to the affected capability.
+
+---
+
+# 111. Historical Backlog Traceability
+
+Useful mappings:
+
+```text
+P0-01
+→ Lead / Requirement continuity
+
+P0-02
+→ Order lifecycle
+
+P0-03
+→ Vendor assignment identity
+
+P0-04
+→ Assignment lifecycle
+
+P0-05
+→ fulfillment readiness
+
+P0-06
+→ SPK / Work Order artifact
+
+P0-07
+→ clean E2E
+
+P0-08
+→ operator acceptance
+```
+
+These IDs may be referenced by future documentation when explaining provenance.
+
+They MUST NOT be reused for unrelated new work.
+
+---
+
+# 112. Machine Query Guidance
+
+Question:
+
+```text
+"What was P0-05?"
+```
+
+Use this file.
+
+Question:
+
+```text
+"Is P0-05 done?"
+```
+
+Answer:
+
+```text
+YES
+at Phase 1 closure.
+```
+
+Question:
+
+```text
+"Does current shipment code still enforce it?"
+```
+
+Inspect current source/migrations/tests.
+
+Question:
+
+```text
+"What should we build next?"
+```
+
+Do NOT use this file.
+
+Use the current product / engineering program.
+
+---
+
+# 113. Historical Founder-Burden Mapping
+
+Each P0 item removed a form of founder middleware:
+
+```text
+P0-01
+manual Lead context transfer
+
+P0-02
+mental Order-state interpretation
+
+P0-03
+manual Vendor identity mapping
+
+P0-04
+manual acceptance verification
+
+P0-05
+manual fulfillment-readiness judgment
+
+P0-06
+production instruction reconstruction
+
+P0-07
+uncertainty whether modules work together
+
+P0-08
+uncertainty whether human workflow is usable
+```
+
+This progression provides direct provenance for the Founder Control program.
+
+---
+
+# 114. Durable Engineering Lesson
+
+The Phase 1 backlog demonstrated:
+
+```text
+MORE MODULES
+```
+
+was not the highest-leverage solution.
+
+The higher-leverage work was often:
+
+```text
+CONNECT
+
+HARDEN
+
+GUARD
+
+EXPOSE
+
+VERIFY
+```
+
+existing domains.
+
+Future engineering should preserve this bias against unnecessary domain expansion.
+
+---
+
+# 115. Durable Product Lesson
+
+The system improved when it removed invisible founder labor between existing capabilities.
+
+That leads to the next product principle:
+
+```text
+NORMAL OPERATIONS
+should stay quiet
+
+ABNORMAL OPERATIONS
+should become explicit
+
+MATERIAL ABNORMALITY
+should reach the right human
+```
+
+This is Founder Control territory.
+
+---
+
+# 116. Historical Timeline
+
+Correct lifecycle:
+
+```text
+PRE-REMEDIATION AUDIT
+        ↓
+PHASE 1 IMPLEMENTATION PLAN
+        ↓
+P0 BACKLOG
+        ↓
+P0-01
+        ↓
+P0-02
+        ↓
+P0-03
+        ↓
+P0-04
+        ↓
+P0-05
+        ↓
+P0-06
+        ↓
+P0-07
+        ↓
+P0-08
+        ↓
+COMPLETION REPORT
+        ↓
+PHASE 1 CLOSED
+```
+
+---
+
+# 117. Current Phase Summary
+
+```text
+PHASE
+=
+Phase 1 Operating Spine
+
+STATUS
+=
+CLOSED
+
+BACKLOG
+=
+COMPLETED
+
+OPEN ITEMS
+=
+NONE
+
+CURRENT BUILDER HANDOFF
+=
+NONE
+
+CURRENT IMPLEMENTATION AUTHORITY
+=
+NONE
+```
+
+---
+
+# 118. Current Next Work
+
+Current documentation program proceeds through:
+
+```text
+CURRENT-STATE RECONCILIATION
+
+        ↓
+
+FOUNDER CONTROL PRODUCT DEFINITION
+```
+
+not through additional Phase 1 P0 execution.
+
+The active planning entrypoint is:
+
+```text
+../../product/
+founder-control-documentation-plan.md
+```
+
+---
+
+# 119. Final Principle
+
+This backlog should now be read as:
+
+> **A durable record of how Phase 1 converted discovered operating-spine gaps into bounded engineering work and successfully closed them.**
+
+It should never again be read as:
+
+> **The queue of tasks Antigravity should execute next.**
+
+Canonical interpretation:
+
+```text
+GAPS IDENTIFIED
+        ↓
+BACKLOG BOUNDED
+        ↓
+WORK IMPLEMENTED
+        ↓
+TESTS / E2E
+        ↓
+OPERATOR ACCEPTANCE
+        ↓
+PHASE CLOSED
+        ↓
+BACKLOG ARCHIVED
+```
+
+The next product challenge is no longer to connect the Phase 1 spine.
+
+It is to make MGBOS determine **what deserves founder attention**, prove that behavior against real operations, and only then authorize the next engineering phase.

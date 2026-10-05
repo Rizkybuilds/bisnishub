@@ -1,13 +1,21 @@
 ---
 canonical_id: docs.project-index
 status: ACTIVE
-version: 1.1
+version: 1.2
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: repository
 document_class: registry
-effective_from: 2026-10-03
+effective_from: 2026-10-05
+
+repository_snapshot: f89ccb49878668f5cb00edf7375e168b9d4a0670
+
+current_repository_program:
+  engineering_method: VIBE_ENGINEERING_ACTIVE
+  mgbos_product_program: FOUNDER_CONTROL_PRODUCT_DEFINITION
+  mgbos_active_implementation_phase: NONE
+  mgbos_phase_1: CLOSED
 
 authoritative_for:
   - active repository project locations
@@ -15,46 +23,87 @@ authoritative_for:
   - repository system locator
   - top-level authority entrypoints
   - top-level engineering navigation
+  - top-level current-program routing
 
-last_reviewed: 2026-10-03
-review_cadence: monthly
+not_authoritative_for:
+  - business semantics
+  - system-specific architecture
+  - MGBOS product requirements
+  - implementation truth
+  - runtime truth
+  - engineering risk semantics
+  - routing registry contents
+  - permission grants
+  - deployment authorization
+  - production readiness
+
+last_reviewed: 2026-10-05
+review_cadence: monthly-or-after-material-repository-routing-change
 
 depends_on:
   - governance/documentation-constitution.md
   - governance/canonical-source-map.md
   - engineering/repository-layout.md
+  - engineering/engineering-ai-control-plane.md
+  - engineering/vibe-engineering/README.md
   - decisions/001-repository-organization.md
+  - ../.agents/routing/README.md
+  - ../.agents/routing/task-types.yaml
 
 supersedes: null
-
-repository_snapshot: 26871da802706fba5bc033576fbb0a487f6c9255
 ---
 
-# BisnisHub Project Index
+# BisnisHub Project Index v1.2
 
 ## 1. Purpose
 
-Dokumen ini adalah **top-level repository locator** untuk BisnisHub.
+Dokumen ini adalah top-level repository locator untuk BisnisHub.
 
 Ia menjawab:
 
-> **Sistem, business knowledge, engineering governance, operating model, roadmap, dan historical material berada di mana?**
+```text id="cytz60"
+WHERE IS THE TARGET SYSTEM?
+
+WHERE IS ITS CANONICAL DOCUMENTATION?
+
+WHERE IS BUSINESS KNOWLEDGE?
+
+WHERE IS ENGINEERING GOVERNANCE?
+
+WHERE IS CURRENT PRODUCT WORK?
+
+WHERE IS CURRENT IMPLEMENTATION WORK?
+
+WHERE IS HISTORICAL MATERIAL?
+
+WHERE SHOULD A HUMAN OR AI START?
+```
 
 Dokumen ini adalah:
 
-```text
+```text id="26v2l6"
 OPERATIONAL REGISTRY
 +
 NAVIGATION ENTRYPOINT
++
+CURRENT-PROGRAM ROUTER
 ```
 
 bukan:
 
-```text
+```text id="khm8om"
 business specification
+
 system architecture
+
+product PRD
+
+implementation contract
+
 runtime evidence
+
 permission grant
+
 deployment authority
 ```
 
@@ -62,102 +111,169 @@ deployment authority
 
 # 2. Authority Boundary
 
-Project Index menentukan:
+Project Index determines:
 
-```text
+```text id="o1by64"
 WHERE TO START
 ```
 
-Ia tidak menentukan:
+It does not determine:
 
-```text
+```text id="vnte6m"
 WHAT A DOMAIN MEANS
 ```
 
-Semantic authority tetap mengikuti:
+or:
 
-```text
+```text id="5ajpcz"
+WHAT SOFTWARE SHOULD DO
+```
+
+or:
+
+```text id="hc37kn"
+WHAT A BUILDER IS AUTHORIZED TO CHANGE
+```
+
+Semantic authority remains governed by:
+
+```text id="r2te9l"
 docs/governance/documentation-constitution.md
+
 docs/governance/canonical-source-map.md
 ```
 
-dan canonical source milik domain terkait.
+plus the applicable domain/system canonical owner.
 
 ---
 
-# 3. Current Repository Snapshot
+# 3. Repository Snapshot
 
 Current repository state reviewed for this index:
 
-```text
+```text id="cdbhhx"
 REPOSITORY
 Rizkybuilds/bisnishub
 
+BRANCH
+main
+
 SNAPSHOT
-26871da802706fba5bc033576fbb0a487f6c9255
+f89ccb49878668f5cb00edf7375e168b9d4a0670
 
 REVIEW DATE
-2026-10-03
+2026-10-05
 ```
 
-Snapshot adalah konteks current-state.
+Snapshot is current-state evidence for this document.
 
-Ia bukan jaminan bahwa repository tidak berubah setelah tanggal tersebut.
+It does not imply that future repository revisions inherit the same verified state automatically.
 
 ---
 
-# 4. Active Systems & Runtime Areas
+# 4. Current Repository-Level Program State
 
-| Sistem / area | Lokasi | Current boundary |
+Current repository-level interpretation:
+
+```text id="hjih1z"
+VIBE ENGINEERING
+=
+ACTIVE REPOSITORY OPERATING METHOD
+
+MGBOS PHASE 1
+=
+CLOSED
+
+MGBOS ACTIVE IMPLEMENTATION PHASE
+=
+NONE
+
+MGBOS CURRENT PRODUCT PROGRAM
+=
+FOUNDER CONTROL PRODUCT DEFINITION
+
+JARVIS
+=
+ARCHITECTURE / SPECIFICATION PRESENT
+RUNTIME IMPLEMENTATION NOT ASSUMED
+
+TEEStock V1
+=
+ARCHIVED
+
+MGBOS VITE PROTOTYPE
+=
+ARCHIVED
+```
+
+---
+
+# 5. Active Systems and Runtime Areas
+
+| System / area | Location | Current boundary |
 |---|---|---|
-| MGBOS | [`systems/mgbos/`](../systems/mgbos/README.md) | Active Next.js + pnpm + Supabase workspace. Governed transactional business system. |
-| JARVIS | [`systems/jarvis/docs/`](../systems/jarvis/docs/charter.md) | Canonical architecture/specification exists. Documentation status does not by itself prove runtime implementation. |
-| KasKita | `systems/kaskita/` | Independent system workspace with its own application/database boundaries. |
-| Engineering Assistant | [`tools/assistant/`](../tools/assistant/README.md) | Existing engineering/assistant tooling. It is not the JARVIS runtime. |
-| TeeStock V1 | [`archive/teestock-v1/`](../archive/teestock-v1/README.md) | Retired legacy application/reference. Not an active runtime source. |
-| MGBOS Vite Prototype | `archive/mgbos-vite-prototype/` | Retired prototype. Reference only. |
+| MGBOS | [`systems/mgbos/`](../systems/mgbos/README.md) | Active governed transactional business system and current primary implementation workspace |
+| JARVIS | [`systems/jarvis/docs/`](../systems/jarvis/docs/charter.md) | Canonical architecture/specification exists; runtime implementation must be verified separately |
+| KasKita | `systems/kaskita/` | Independent system workspace with its own application/database boundary |
+| Engineering Assistant | [`tools/assistant/`](../tools/assistant/README.md) | Existing engineering/assistant tooling; not JARVIS runtime |
+| TeeStock V1 | [`archive/teestock-v1/`](../archive/teestock-v1/README.md) | Retired legacy application/reference |
+| MGBOS Vite Prototype | `archive/mgbos-vite-prototype/` | Retired prototype/reference |
 
 ---
 
-# 5. Business Knowledge
+# 6. Business Knowledge
 
 Business knowledge lives under:
 
-```text
+```text id="5njbez"
 bisnis/
 ```
 
 Current top-level business areas include:
 
-```text
+```text id="4ixgps"
 bisnis/multigraph/
+
 bisnis/teestock/
+
 bisnis/rizkybuild/
 ```
 
-These sources own business knowledge within their declared scopes.
+Business sources own business semantics within their declared scope.
 
-They do not automatically define MGBOS implementation semantics.
+They do not automatically define:
+
+```text id="1xhwxt"
+database entities
+
+state machines
+
+commands
+
+MGBOS architecture
+
+engineering work packages
+```
 
 ---
 
-# 6. Repository Governance
+# 7. Repository Governance
 
-Start here for repository-wide documentation authority:
+Start here for documentation authority:
 
-```text
+```text id="f3qvy3"
 docs/governance/documentation-constitution.md
 ```
 
 Then:
 
-```text
+```text id="4olnga"
 docs/governance/canonical-source-map.md
 ```
 
 Responsibilities:
 
-```text
+```text id="ztskzf"
 Documentation Constitution
 → how documentation authority works
 
@@ -167,45 +283,99 @@ Canonical Source Map
 
 ---
 
-# 7. Repository Structure
+# 8. Documentation Constitution
 
-Canonical directory ownership:
+The Documentation Constitution governs:
 
-```text
-docs/engineering/repository-layout.md
+```text id="qvgj6f"
+document lifecycle
+
+canonical identity
+
+semantic ownership
+
+authority resolution
+
+current-vs-target distinction
+
+session-note treatment
+
+historical material
+
+documentation debt
+
+machine-readable metadata
 ```
 
-Canonical repository-organization decision:
-
-```text
-docs/decisions/001-repository-organization.md
-```
-
-These sources govern physical placement and repository organization.
+Before promoting a document into authority, follow its lifecycle rules.
 
 ---
 
-# 8. Cross-System Architecture
+# 9. Canonical Source Map
 
-Primary architecture entrypoints:
+Canonical Source Map answers:
 
-```text
+```text id="p79wqm"
+WHO OWNS THIS SEMANTIC QUESTION?
+```
+
+Use it before trusting a detailed document merely because:
+
+```text id="fdldas"
+it is newer
+
+it is longer
+
+it sounds technical
+
+it was generated by AI
+```
+
+Authority comes from scope and ownership.
+
+---
+
+# 10. Repository Structure
+
+Canonical physical repository organization:
+
+```text id="r890lf"
+docs/engineering/repository-layout.md
+```
+
+Repository organization decision:
+
+```text id="fr65gz"
+docs/decisions/001-repository-organization.md
+```
+
+Use these for placement and top-level structure.
+
+---
+
+# 11. Cross-System Architecture
+
+Primary cross-system architecture entrypoints:
+
+```text id="ngh6gl"
 docs/architecture/master-system-blueprint.md
+
 docs/architecture/system-boundaries.md
+
 docs/architecture/architectural-laws.md
 ```
 
 These own cross-system architecture.
 
-They do not replace system-specific canonical specifications.
+They do not replace system-specific architecture.
 
 ---
 
-# 9. Cross-System Governance
+# 12. Cross-System Governance
 
-Primary repository-wide governance includes:
+Primary governance includes:
 
-```text
+```text id="5ifdm5"
 docs/governance/cross-system-risk-classification.md
 
 docs/governance/autonomy-levels.md
@@ -215,125 +385,151 @@ docs/governance/approval-policy.md
 docs/governance/evidence-provenance-model.md
 ```
 
-Use them for:
+Use these for:
 
-```text
+```text id="175b7m"
 risk
+
 autonomy
+
 approval
-evidence/provenance
+
+evidence provenance
 ```
 
-rather than redefining those concepts inside subsystem or provider instructions.
+rather than redefining those semantics inside subsystem docs.
 
 ---
 
-# 10. Engineering AI Control Plane
+# 13. Engineering AI Control Plane
 
-Canonical repository-wide engineering governance:
+Canonical engineering-governance source:
 
-```text
+```text id="rn66ct"
 docs/engineering/engineering-ai-control-plane.md
 ```
 
 It owns engineering semantics including:
 
-```text
+```text id="pq242r"
 canonical engineering roles
+
 expertise model
+
 routing principles
+
 bounded execution
+
 assurance
+
 runtime-adapter principles
+
 engineering autonomy boundaries
 ```
 
 For material AI-assisted engineering:
 
-```text
+```text id="29uf3c"
 READ THIS
 ```
 
-before relying on provider-specific instructions.
+before relying on provider-specific behavior.
 
 ---
 
-# 11. Runtime Adapter Architecture
+# 14. Runtime Adapter Architecture
 
 Canonical source:
 
-```text
+```text id="lxnnof"
 docs/engineering/runtime-adapter-architecture.md
 ```
 
 Use it for:
 
-```text
+```text id="g66xp1"
 provider/runtime adaptation
+
 provider-neutral runtime boundaries
-adapter responsibilities
+
+adapter responsibility
 ```
 
 Provider-specific tools MUST NOT redefine repository engineering governance.
 
 ---
 
-# 12. Vibe Engineering
+# 15. Vibe Engineering
 
 Canonical operating-method entrypoint:
 
-```text
+```text id="qu79po"
 docs/engineering/vibe-engineering/README.md
 ```
 
 Vibe Engineering defines:
 
-> **How the Owner, Head function, Builder, canonical engineering roles, contracts, evidence, assurance, PR review, remediation, and post-merge reflection are orchestrated into one governed AI-assisted engineering workflow.**
+> How Owner intent, Head Engineering planning, canonical role routing, Builder execution, assurance, verification, PR audit, remediation, integration, and post-merge reflection are coordinated under repository authority.
 
-Vibe Engineering is:
+It is:
 
-```text
+```text id="wm6hf4"
 ENGINEERING OPERATING METHOD
 ```
 
 not:
 
-```text
-a replacement Control Plane
-a new risk taxonomy
-a new permission model
-a new contract schema
-a provider-specific policy
+```text id="2tvpky"
+a second Control Plane
+
+a second risk taxonomy
+
+a second permission model
+
+a provider-specific authority model
 ```
 
 ---
 
-# 13. Vibe Engineering Document Set
+# 16. Vibe Engineering Current State
 
-Canonical Vibe family:
+At this repository snapshot:
 
-```text
-docs/engineering/vibe-engineering/
-├── README.md
-├── state-and-vocabulary.md
-├── operating-model.md
-├── session-protocol.md
-├── change-package-template.md
-├── implementation-contract-template.md
-├── pr-audit-protocol.md
-├── remediation-protocol.md
-└── post-merge-reflection.md
+```text id="3ftdef"
+VIBE ENGINEERING
+=
+ACTIVE
 ```
 
-All nine files are required for the complete operating-method documentation set.
+Current canonical family includes:
+
+```text id="hw0vbp"
+README.md
+
+state-and-vocabulary.md
+
+operating-model.md
+
+session-protocol.md
+
+change-package-template.md
+
+implementation-contract-template.md
+
+pr-audit-protocol.md
+
+remediation-protocol.md
+
+post-merge-reflection.md
+```
 
 ---
 
-# 14. Vibe Reading Order
+# 17. Vibe Engineering Reading Order
 
-For general orientation:
+Orientation:
 
-```text
+```text id="1uobjl"
 README.md
         ↓
 operating-model.md
@@ -341,45 +537,45 @@ operating-model.md
 state-and-vocabulary.md
 ```
 
-For starting or continuing work:
+Starting or resuming work:
 
-```text
+```text id="0y1ic4"
 session-protocol.md
 ```
 
-For planning:
+Planning:
 
-```text
+```text id="5l2ykf"
 change-package-template.md
         ↓
 implementation-contract-template.md
 ```
 
-For PR review:
+PR review:
 
-```text
+```text id="6qaaze"
 pr-audit-protocol.md
 ```
 
-For corrective work:
+Remediation:
 
-```text
+```text id="ohv072"
 remediation-protocol.md
 ```
 
 After merge:
 
-```text
+```text id="0zd60k"
 post-merge-reflection.md
 ```
 
 ---
 
-# 15. Vibe vs Control Plane
+# 18. Vibe vs Engineering Control Plane
 
-Canonical relationship:
+Correct hierarchy:
 
-```text
+```text id="axpmff"
 ENGINEERING AI CONTROL PLANE
 defines engineering governance
 
@@ -388,7 +584,7 @@ defines engineering governance
 .agents/routing
 .agents/contracts
 .agents/capabilities
-define operational controls
+define machine-operational controls
 
         ↓
 
@@ -405,125 +601,281 @@ Do not invert this hierarchy.
 
 ---
 
-# 16. Engineering Operational Registries
+# 19. Engineering Registries
 
-Current engineering operational data lives primarily under:
+Current engineering operational registries live primarily under:
 
-```text
+```text id="rbf2r9"
 .agents/
 ```
 
 Important areas include:
 
-```text
+```text id="ihv8hq"
 .agents/roles/
+
 .agents/expertise/
+
 .agents/routing/
+
 .agents/contracts/
+
 .agents/capabilities/
+
 .agents/skills/
+
 .agents/evals/
+
+.agents/continuity/
 ```
 
-Read each registry according to its own scope.
+Each registry should be interpreted according to its declared authority.
 
 ---
 
-# 17. Engineering Contracts
+# 20. Engineering Contracts
 
 Canonical contract navigation:
 
-```text
+```text id="gzwjkf"
 .agents/contracts/README.md
 ```
 
-Machine schemas include:
+Machine schemas include applicable:
 
-```text
+```text id="e0z0i1"
 implementation-contract.schema.json
+
 work-package.schema.json
+
 engineering-report.schema.json
+
 assurance-report.schema.json
+
 verification-matrix.schema.json
+
 release-packet.schema.json
 ```
 
-Vibe Engineering uses these contracts.
-
-It does not replace their schema semantics.
+Contract validity does not independently grant execution authority.
 
 ---
 
-# 18. Engineering Routing
+# 21. Engineering Routing
 
 Canonical routing entrypoint:
 
-```text
+```text id="pf1wnf"
 .agents/routing/README.md
 ```
 
-Current route definitions:
+Machine registry:
 
-```text
-.agents/routing/
+```text id="q3fhhj"
+.agents/routing/task-types.yaml
 ```
 
-Routing controls such concepts as:
+Routing determines applicable:
 
-```text
+```text id="drsbs4"
 profile
+
 task type
+
 concern
-risk composition
-required role
-required expertise
-assurance requirement
-stop condition
+
+risk floor
+
+roles
+
+expertise
+
+assurance
+
+checks
+
+stop conditions
 ```
 
 ---
 
-# 19. Current Routing Limitation
+# 22. Current Active Routing Profiles
 
-At the repository snapshot recorded above, the active routing registry is currently centered on:
+Current canonical routing registry declares:
 
-```text
+```text id="9va7l0"
 mgbos
 → systems/mgbos/
-```
 
-Do not assume unrelated targets may borrow this profile.
-
-Targets such as:
-
-```text
 repository-engineering
-JARVIS engineering
-KasKita engineering
+→ ./
 ```
 
-require matching registered routing when governed implementation depends on routing.
+Both are:
+
+```text id="qgu23x"
+ACTIVE
+```
 
 ---
 
-# 20. MGBOS Entry Point
+# 23. MGBOS Routing Profile
+
+Profile:
+
+```text id="tzj0xr"
+mgbos
+```
+
+Workspace:
+
+```text id="xbgnfm"
+systems/mgbos/
+```
+
+System instructions:
+
+```text id="7fahzu"
+systems/mgbos/AGENTS.md
+```
+
+Risk profile:
+
+```text id="p1j35q"
+systems/mgbos/docs/engineering/
+agent-system/risk-classification.md
+```
+
+Workflow:
+
+```text id="f4sk15"
+systems/mgbos/docs/engineering/
+agent-system/workflow.md
+```
+
+Release gates:
+
+```text id="wge8ht"
+systems/mgbos/docs/engineering/
+agent-system/release-gates.md
+```
+
+---
+
+# 24. Repository Engineering Routing Profile
+
+Profile:
+
+```text id="t71fir"
+repository-engineering
+```
+
+Workspace:
+
+```text id="dbyvik"
+./
+```
+
+Instructions:
+
+```text id="3xa0n1"
+AGENTS.md
+```
+
+Risk profile:
+
+```text id="yurxc9"
+docs/governance/
+cross-system-risk-classification.md
+```
+
+Workflow:
+
+```text id="f7hs2m"
+docs/engineering/
+vibe-engineering/README.md
+```
+
+Release gates:
+
+```text id="8947yd"
+docs/engineering/
+repository-release-gates.md
+```
+
+---
+
+# 25. Unsupported Routing Profiles
+
+At this snapshot, do NOT assume active profiles exist for:
+
+```text id="259aue"
+jarvis
+
+kaskita
+```
+
+unless the routing registry is changed.
+
+Canonical rule:
+
+```text id="ath0ov"
+NO MATCHING ACTIVE PROFILE
+        ↓
+DO NOT BORROW ANOTHER PROFILE
+        ↓
+FAIL CLOSED / GOVERNANCE BOOTSTRAP
+```
+
+according to current Vibe Engineering routing policy.
+
+---
+
+# 26. Routing Is Evidence-Based
+
+Do not route work only from keywords.
+
+Routing should consider:
+
+```text id="h8d2qq"
+target workspace
+
+requested outcome
+
+actual changed paths
+
+affected business capability
+
+environment
+
+cross-cutting concerns
+
+canonical contracts
+```
+
+Initial classification may change when implementation reveals more consequential behavior.
+
+---
+
+# 27. MGBOS Entry Point
 
 System root:
 
-```text
+```text id="vughy6"
 systems/mgbos/
 ```
 
 Start with:
 
-```text
+```text id="6cmqz3"
 systems/mgbos/AGENTS.md
+
 systems/mgbos/README.md
 ```
 
 Then:
 
-```text
+```text id="w5myfk"
 systems/mgbos/docs/README.md
 ```
 
@@ -531,90 +883,562 @@ for documentation routing.
 
 ---
 
-# 21. MGBOS Documentation Navigation
+# 28. MGBOS Documentation Entry Points
 
-Canonical MGBOS Master Index:
+Master documentation index:
 
-```text
+```text id="gm51f9"
 systems/mgbos/docs/README.md
 ```
 
 Architecture index:
 
-```text
+```text id="m618xi"
 systems/mgbos/docs/architecture/README.md
+```
+
+Product index:
+
+```text id="zdxrq4"
+systems/mgbos/docs/product/README.md
 ```
 
 Implementation index:
 
-```text
+```text id="e25lkv"
 systems/mgbos/docs/implementation/README.md
+```
+
+Engineering index:
+
+```text id="v6lj78"
+systems/mgbos/docs/engineering/README.md
 ```
 
 ---
 
-# 22. MGBOS Canonical Architecture
+# 29. MGBOS Canonical Architecture
 
 Core canonical architecture includes:
 
-```text
-systems/mgbos/docs/architecture/canonical-data-model.md
+```text id="1ol9x8"
+systems/mgbos/docs/architecture/
+canonical-data-model.md
 
-systems/mgbos/docs/architecture/business-state-machines.md
+systems/mgbos/docs/architecture/
+business-state-machines.md
 
-systems/mgbos/docs/architecture/business-invariants.md
+systems/mgbos/docs/architecture/
+business-invariants.md
 
-systems/mgbos/docs/architecture/command-event-model.md
+systems/mgbos/docs/architecture/
+command-event-model.md
 
-systems/mgbos/docs/architecture/permission-authorization-model.md
+systems/mgbos/docs/architecture/
+permission-authorization-model.md
 
-systems/mgbos/docs/architecture/domain-map-capability-ownership.md
+systems/mgbos/docs/architecture/
+domain-map-capability-ownership.md
 ```
 
 Dedicated specifications own their respective semantics.
 
 ---
 
-# 23. MGBOS Current Implementation Focus
+# 30. MGBOS Phase 1 Status
 
-Current implementation planning entrypoint:
+Historical Phase 1 implementation directory:
 
-```text
-systems/mgbos/docs/implementation/phase-1-operating-spine/README.md
+```text id="cvek1x"
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
 ```
 
-Current operating-spine audit:
+Current lifecycle:
 
-```text
-systems/mgbos/docs/implementation/phase-1-operating-spine/current-operating-spine-audit.md
+```text id="1gne2f"
+PHASE 1
+=
+CLOSED
 ```
 
-These sources do not replace MGBOS architecture.
+Phase 1 is not current implementation work.
 
 ---
 
-# 24. MGBOS Engineering Control
+# 31. Phase 1 Navigation
 
-MGBOS-specific engineering documentation lives under:
+Closed Phase 1 entrypoint:
 
-```text
+```text id="ohmmzb"
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/README.md
+```
+
+Use it for:
+
+```text id="s06x2p"
+historical implementation navigation
+
+closure routing
+
+Phase 1 provenance
+
+Phase 1 evidence reading order
+```
+
+Do not start new engineering work from its historical backlog.
+
+---
+
+# 32. Phase 1 Historical Plan
+
+Historical implementation plan:
+
+```text id="2ge9u8"
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
+operating-spine-plan.md
+```
+
+Interpret as:
+
+```text id="lo5blf"
+ARCHIVED
+HISTORICAL IMPLEMENTATION PROVENANCE
+```
+
+not current execution authority.
+
+---
+
+# 33. Phase 1 Historical Audit
+
+Historical pre-remediation audit:
+
+```text id="al1gvf"
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
+current-operating-spine-audit.md
+```
+
+The filename retains:
+
+```text id="ojax1c"
+current
+```
+
+for provenance/link stability.
+
+Its findings describe the historical audit snapshot, not current implementation truth.
+
+---
+
+# 34. Phase 1 Historical Backlog
+
+Historical completed backlog:
+
+```text id="ntsrav"
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/backlog.md
+```
+
+Current interpretation:
+
+```text id="9yud9s"
+P0-01 ... P0-08
+=
+DONE
+
+OPEN PHASE 1 BACKLOG
+=
+NONE
+```
+
+---
+
+# 35. Phase 1 Completion Evidence
+
+Primary Phase 1 closure record:
+
+```text id="c2t6io"
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
+completion-report.md
+```
+
+Operator acceptance:
+
+```text id="qyx6g9"
+systems/mgbos/docs/implementation/
+phase-1-operating-spine/
+operator-acceptance-test.md
+```
+
+These establish Phase 1 closure within their documented evidence boundaries.
+
+---
+
+# 36. Phase 1 Capability Direction
+
+Phase 1 closed the documented software operating spine around:
+
+```text id="ka4o51"
+Lead
+→ Requirement
+→ Quote
+→ Order
+→ Invoice / Payment
+→ Production
+→ Vendor Assignment
+→ Work Order / SPK
+→ QC
+→ Shipment
+→ Actual Cost
+→ Realized Margin
+→ Order Completion
+```
+
+This does not itself prove production readiness or real business validation.
+
+---
+
+# 37. Current MGBOS Implementation State
+
+Current implementation index declares:
+
+```text id="4unh9d"
+ACTIVE MGBOS IMPLEMENTATION PHASE
+=
+NONE
+```
+
+Therefore a new Builder should NOT ask:
+
+```text id="dnvb0v"
+Which Phase 1 P0 should I implement next?
+```
+
+Correct answer:
+
+```text id="ljyjm5"
+NONE.
+PHASE 1 IS CLOSED.
+```
+
+---
+
+# 38. Current MGBOS Product Program
+
+Current MGBOS product-definition program:
+
+```text id="l5uc76"
+FOUNDER CONTROL
+```
+
+Current documentation-program entrypoint:
+
+```text id="yt1f1q"
+systems/mgbos/docs/product/
+founder-control-documentation-plan.md
+```
+
+---
+
+# 39. Founder Control Direction
+
+Current product thesis:
+
+> Phase 1 made business transactions governable. Founder Control must make founder attention governable.
+
+Target operating direction:
+
+```text id="gxcxca"
+NORMAL BUSINESS
+→ quiet governed operation
+
+ABNORMAL BUSINESS
+→ explicit operational fact
+
+MATERIAL ABNORMALITY
+→ prioritized attention
+
+FOUNDER
+→ involved only where judgment or authority is required
+```
+
+Exact product behavior belongs to dedicated Founder Control product documents.
+
+---
+
+# 40. Founder Control Documentation Package
+
+Current planned product package:
+
+```text id="5na86y"
+D0
+founder-control-documentation-plan.md
+
+D1
+teestock-founder-control-prd.md
+
+D2
+founder-attention-experience-spec.md
+
+D3
+operational-exception-spec.md
+
+D4
+teestock-operational-pilot-plan.md
+```
+
+Planned path does not imply current file existence.
+
+---
+
+# 41. Founder Control Is Not Phase 2 Implementation Yet
+
+Do not infer:
+
+```text id="12xdxb"
+Founder Control product program exists
+→
+phase-2-founder-control implementation is active
+```
+
+Current state:
+
+```text id="5ey1s9"
+PRODUCT DEFINITION
+=
+ACTIVE
+
+PHASE 2 IMPLEMENTATION
+=
+NOT OPEN
+```
+
+---
+
+# 42. Phase 2 Entry Gate
+
+Before:
+
+```text id="jmdxyw"
+systems/mgbos/docs/implementation/
+phase-2-founder-control/
+```
+
+is created, current planning requires:
+
+```text id="w2fg1u"
+bounded product scope
+
+resolved material decisions
+
+architecture impact reconciliation
+
+current source audit
+
+understood dependencies
+
+defined completion gate
+
+engineering discovery
+```
+
+---
+
+# 43. MGBOS Product Documentation
+
+Current product index:
+
+```text id="1or089"
+systems/mgbos/docs/product/README.md
+```
+
+It routes current and historical product material.
+
+Physical presence in:
+
+```text id="db6f3b"
+systems/mgbos/docs/product/
+```
+
+does not automatically mean a file is current product authority.
+
+---
+
+# 44. Legacy TeeStock Product Planning
+
+Existing product files include:
+
+```text id="gxq9bp"
+teestock-development-plan.md
+
+teestock-curated-strategy.md
+
+teestock-design-library-spec.md
+
+teestock-asset-readiness.md
+```
+
+These predate the current Founder Control documentation program and current canonical metadata discipline.
+
+Use their current classification from:
+
+```text id="xxljwm"
+systems/mgbos/docs/product/README.md
+```
+
+rather than assuming they are all current active PRDs.
+
+---
+
+# 45. MGBOS Operational Readiness
+
+Current register:
+
+```text id="hw34h0"
+systems/mgbos/docs/engineering/
+operational-readiness.md
+```
+
+Current broad conclusion:
+
+```text id="pugeq8"
+SOFTWARE / CI BASELINE
+=
+VERIFIED FOR CURRENT CI SCOPE
+
+PHASE 1
+=
+CLOSED
+
+OPERATOR ACCEPTANCE
+=
+PASS
+
+PRODUCTION READINESS
+=
+NOT VERIFIED
+
+REAL TRANSACTION READINESS
+=
+GATED
+```
+
+---
+
+# 46. Software Completion ≠ Production Readiness
+
+Do not infer:
+
+```text id="ys6eog"
+Phase 1 closed
+→ production ready
+```
+
+or:
+
+```text id="sjwgq8"
+CI green
+→ operationally safe
+```
+
+Production readiness requires separate evidence for applicable:
+
+```text id="1h4m6s"
+environment isolation
+
+credentials
+
+backup
+
+restore
+
+monitoring
+
+RPO
+
+RTO
+
+release recovery
+
+production acceptance
+```
+
+---
+
+# 47. Hosted CI Current Evidence
+
+At this index snapshot:
+
+```text id="5k2nn9"
+main
+=
+f89ccb49878668f5cb00edf7375e168b9d4a0670
+```
+
+current hosted workflows include successful:
+
+```text id="d8u4hq"
+Repository Integrity
+
+Agent Governance
+
+MGBOS Foundation
+```
+
+Exact CI evidence remains revision-bound.
+
+---
+
+# 48. Branch Protection Current Evidence
+
+GitHub currently reports:
+
+```text id="w85fuq"
+main
+protected = true
+```
+
+Detailed branch-protection rule contents are not assumed here.
+
+Operational-readiness documentation owns the detailed evidence classification.
+
+---
+
+# 49. MGBOS Engineering Control
+
+MGBOS-specific engineering docs live under:
+
+```text id="1i5yn0"
 systems/mgbos/docs/engineering/
 ```
 
-and system-specific agent guidance under:
+System-specific instructions:
 
-```text
+```text id="ne49cr"
 systems/mgbos/AGENTS.md
 ```
 
 For MGBOS engineering, apply:
 
-```text
-repository-wide engineering governance
+```text id="2pyh5s"
+repository-wide governance
+
 +
+
 Vibe Engineering
+
 +
-MGBOS-specific engineering requirements
+
+mgbos routing profile
+
++
+
+MGBOS-specific engineering rules
 ```
 
 where applicable.
@@ -625,87 +1449,87 @@ They may not weaken repository governance.
 
 ---
 
-# 25. JARVIS Entry Point
+# 50. JARVIS Entry Point
 
 Start with:
 
-```text
+```text id="sa5bin"
 systems/jarvis/docs/charter.md
+
 systems/jarvis/docs/architecture.md
+
 systems/jarvis/docs/core-runtime.md
 ```
 
-Then read only relevant architecture contracts.
+Then read only the relevant architecture contracts.
 
 ---
 
-# 26. JARVIS Architecture Directory
+# 51. JARVIS Architecture Directory
 
-Canonical architecture lives under:
+Canonical JARVIS architecture lives under:
 
-```text
+```text id="9lc5h0"
 systems/jarvis/docs/architecture/
 ```
 
-Important examples include:
-
-```text
-agent-registry.md
-skill-registry.md
-tool-capability.md
-memory.md
-model-gateway-routing.md
-entity-identity-resolution.md
-event-proactive-intelligence.md
-execution-verification-recovery.md
-observability-audit-incident.md
-security-secrets-environment.md
-data-privacy-retention.md
-ai-evaluation-regression-autonomy-promotion.md
-human-accountability-ownership-operating-model.md
-command-center-decision-experience.md
-integration-api-interoperability.md
-```
-
-Use current repository contents rather than assuming this list is permanently exhaustive.
+Use current repository contents instead of assuming a permanently fixed file list.
 
 ---
 
-# 27. JARVIS Specification vs Runtime
+# 52. JARVIS Specification vs Runtime
 
-Canonical JARVIS documentation may be:
+JARVIS architecture documentation may be:
 
-```text
+```text id="xme2di"
 ACTIVE
 ```
 
-without proving equivalent runtime implementation exists.
+without proving equivalent runtime implementation.
 
 Always distinguish:
 
-```text
+```text id="37azkb"
 SPECIFICATION
-```
 
-from:
-
-```text
 IMPLEMENTATION
-```
 
-and:
-
-```text
 RUNTIME EVIDENCE
 ```
 
 ---
 
-# 28. KasKita
+# 53. JARVIS Engineering Routing
 
-Current active workspace:
+At this repository snapshot:
 
-```text
+```text id="w0bs6x"
+jarvis
+```
+
+is not an active routing profile in the canonical engineering routing registry.
+
+Therefore governed JARVIS implementation must not silently borrow:
+
+```text id="ik5tbe"
+mgbos
+```
+
+or:
+
+```text id="jht2iu"
+repository-engineering
+```
+
+profiles.
+
+---
+
+# 54. KasKita
+
+Workspace:
+
+```text id="950a09"
 systems/kaskita/
 ```
 
@@ -715,394 +1539,977 @@ Do not reuse MGBOS database/runtime assumptions automatically.
 
 ---
 
-# 29. Engineering Assistant
+# 55. KasKita Routing
 
-Existing assistant tooling:
+At this snapshot:
 
-```text
-tools/assistant/
+```text id="dy9j5k"
+kaskita
 ```
 
-This is not JARVIS merely because both involve AI/assistant behavior.
+is not an active routing profile in the canonical registry.
 
-Respect their separate boundaries.
+Governed implementation requiring canonical routing must fail closed or bootstrap the appropriate profile.
 
 ---
 
-# 30. Solo-Founder Operating Model
+# 56. Engineering Assistant
 
-Canonical operating-model source:
+Existing tooling:
 
-```text
-docs/operating-model/solo-founder-operating-system.md
+```text id="xafjbm"
+tools/assistant/
 ```
 
-This governs founder operating principles such as:
+This is not JARVIS merely because both involve assistant behavior.
 
-```text
+Treat their boundaries independently.
+
+---
+
+# 57. Solo-Founder Operating Model
+
+Canonical source:
+
+```text id="dc884l"
+docs/operating-model/
+solo-founder-operating-system.md
+```
+
+It owns founder operating principles including:
+
+```text id="6q67l3"
 founder-by-exception
+
 delegation boundaries
+
 human accountability
-workload allocation
+
+attention allocation
 ```
 
 It is not an engineering contract.
 
 ---
 
-# 31. Solo-Founder Launch Roadmap
+# 58. Solo-Founder Launch Roadmap
 
-Canonical cross-system launch roadmap:
+Canonical cross-system roadmap:
 
-```text
-docs/roadmaps/solo-founder-launch-roadmap.md
-```
-
-Correct directory:
-
-```text
+```text id="o3e53a"
 docs/roadmaps/
+solo-founder-launch-roadmap.md
 ```
 
-not:
-
-```text
-docs/roadmap/
-```
-
-Roadmap defines planned direction.
+Roadmap owns strategic sequencing.
 
 It does not certify implementation.
 
+Current MGBOS product/implementation state must be reconciled against current evidence rather than inferred from old roadmap wording.
+
 ---
 
-# 32. Business Knowledge Navigation
+# 59. TeeStock Business Entry Point
 
-Primary business locations:
+Primary TeeStock business root:
 
-```text
-bisnis/multigraph/
+```text id="8jgfb4"
 bisnis/teestock/
-bisnis/rizkybuild/
 ```
 
-Business documentation answers:
+Current business documents define applicable:
 
-```text
-what business should exist?
-how should it operate commercially?
-what outcomes matter?
+```text id="hruknk"
+business identity
+
+services
+
+commercial policies
+
+operating model
+
+finance
+
+roadmap
+
+MGBOS integration expectations
 ```
 
-MGBOS answers how governed operational truth is represented.
+within their declared scopes.
 
 ---
 
-# 33. TeeStock ↔ MGBOS Boundary
+# 60. TeeStock ↔ MGBOS Boundary
 
-TeeStock business docs may define:
+TeeStock may define:
 
-```text
-business requirements
-commercial concepts
-journey stages
-service rules
+```text id="3hz0op"
+business need
+
+commercial concept
+
+journey
+
+service policy
 ```
 
-MGBOS canonical sources define:
+MGBOS canonical architecture defines:
 
-```text
-transactional entities
-state machines
-invariants
-authorization
-commands/events
-financial integrity
+```text id="0oky1v"
+authoritative business entity
+
+state machine
+
+invariant
+
+permission
+
+command
+
+transactional integrity
 ```
 
 For MGBOS-owned transactional semantics:
 
-```text
-MGBOS CANONICAL SOURCES
-WIN
+```text id="ah05td"
+MGBOS CANONICAL SOURCE
+```
+
+must be resolved.
+
+---
+
+# 61. Business Concept Does Not Automatically Become MGBOS Entity
+
+Terms such as:
+
+```text id="85npq3"
+Opportunity
+
+Project
+
+Customer Case
+
+Exception
+
+Program
+```
+
+may exist in business vocabulary.
+
+They do not automatically become MGBOS root aggregates.
+
+Promotion requires applicable:
+
+```text id="fww6i5"
+product justification
+
+architecture review
+
+operational evidence
 ```
 
 ---
 
-# 34. Historical Notes
+# 62. Historical Notes
 
 Historical/session material lives primarily under:
 
-```text
+```text id="2h2whz"
 catatan/
+
 catatan/sesi/
 ```
 
 Default interpretation:
 
-```text
+```text id="7ab9p9"
 HISTORICAL
-DESIGN_INPUT
+
+DESIGN INPUT
+
 RESEARCH
-SESSION_MEMORY
+
+SESSION MEMORY
 ```
 
-unless explicitly promoted through governance.
+unless explicitly promoted.
+
+Session notes must not become permanent production authority by accident.
 
 ---
 
-# 35. Archive
+# 63. Archive
 
 Retired material lives under:
 
-```text
+```text id="0nlmx6"
 archive/
 ```
 
-Archive is reference-only unless an explicit migration/recovery task says otherwise.
+Archive is reference-only unless a bounded recovery/migration task explicitly says otherwise.
 
-Do not restore archived runtime code merely because it still exists.
+Do not restore archived runtime code merely because it appears complete.
 
 ---
 
-# 36. Repository Reading Order — New Engineering Work
+# 64. Current Repository Reading Order — New Engineering Work
 
-For material AI-assisted engineering:
+For material engineering:
 
-```text
-1. AGENTS.md
+```text id="s9sm9p"
+1.
+AGENTS.md
 
-2. this Project Index
+2.
+docs/project-index.md
 
-3. Documentation Constitution
+3.
+Documentation Constitution
 
-4. Canonical Source Map
+4.
+Canonical Source Map
 
-5. Engineering AI Control Plane
+5.
+Engineering AI Control Plane
 
-6. Vibe Engineering
+6.
+Vibe Engineering
 
-7. current routing / contracts / capabilities
+7.
+current routing / contracts / capabilities
 
-8. target-system AGENTS / README / canonical specs
+8.
+target-system AGENTS / README / canonical sources
 
-9. actual implementation / tests / evidence
+9.
+actual source / tests / evidence
 ```
 
 Use minimum sufficient context.
 
-Do not load the entire repository by default.
+---
+
+# 65. New MGBOS Product Work Reading Order
+
+For current MGBOS Founder Control work:
+
+```text id="1akjij"
+1.
+AGENTS.md
+
+2.
+docs/project-index.md
+
+3.
+systems/mgbos/AGENTS.md
+
+4.
+systems/mgbos/docs/README.md
+
+5.
+systems/mgbos/docs/product/README.md
+
+6.
+founder-control-documentation-plan.md
+
+7.
+relevant TeeStock business sources
+
+8.
+relevant MGBOS architecture
+
+9.
+Phase 1 evidence where baseline capability matters
+
+10.
+current source when implementation reality matters
+```
+
+Do not start from the old Phase 1 backlog.
 
 ---
 
-# 37. Repository Reading Order — Continue Existing Work
+# 66. Existing Engineering Work Reading Order
 
-When continuing existing engineering:
+When continuing an existing implementation:
 
-```text
-1. Vibe Session Protocol
+```text id="g81d85"
+1.
+Vibe Session Protocol
 
-2. current repository state
+2.
+current repository state
 
-3. current VECP / Implementation Contract / Work Package
+3.
+active Implementation Contract
 
-4. active PR if any
+4.
+current Work Package
 
-5. current routing
+5.
+active PR if any
 
-6. current evidence
+6.
+current routing
 
-7. affected canonical sources
+7.
+current evidence
+
+8.
+affected canonical sources
 ```
 
 Repository reality outranks conversation memory.
 
 ---
 
-# 38. Repository Reading Order — PR Audit
+# 67. PR Audit Reading Order
 
 For PR audit:
 
-```text
-1. Vibe PR Audit Protocol
+```text id="9c7d4n"
+1.
+Vibe PR Audit Protocol
 
-2. actual PR
+2.
+actual PR
 
-3. exact PR base/head
+3.
+exact base / head
 
-4. parent Implementation Contract
+4.
+parent Implementation Contract
 
-5. Work Package
+5.
+Work Package
 
-6. Engineering Report
+6.
+Engineering Report
 
-7. relevant canonical sources
+7.
+relevant canonical sources
 
-8. current CI
+8.
+current CI
 
-9. Assurance / Verification artifacts
+9.
+Assurance / Verification artifacts
 ```
 
 Do not audit from Builder summary alone.
 
 ---
 
-# 39. Repository Reading Order — Remediation
+# 68. Remediation Reading Order
 
 For remediation:
 
-```text
-1. Vibe Remediation Protocol
+```text id="tvp8hs"
+1.
+Vibe Remediation Protocol
 
-2. finding / failure evidence
+2.
+finding / failure evidence
 
-3. current candidate
+3.
+current candidate revision
 
-4. parent Implementation Contract
+4.
+parent Implementation Contract
 
-5. current remediation Work Package
+5.
+remediation Work Package
 
-6. affected canonical sources
+6.
+affected canonical sources
 
-7. current evidence
+7.
+current evidence
 ```
 
 ---
 
-# 40. Repository Reading Order — After Merge
+# 69. Post-Merge Reading Order
 
 When Owner says:
 
-```text
+```text id="uqif6w"
 merged
 ```
 
-use:
+verify repository reality.
 
-```text
-1. Vibe Post-Merge Verification & Reflection
+Read:
 
-2. actual PR merge state
+```text id="ql5xl7"
+1.
+Vibe Post-Merge Reflection
 
-3. integration revision
+2.
+actual PR merge state
 
-4. current main
+3.
+integration revision
 
-5. relevant CI/evidence
+4.
+current main
 
-6. target-system release/recovery runbook if applicable
+5.
+relevant CI
+
+6.
+target-system release/recovery docs where applicable
 ```
 
-Do not assume merge from conversation alone.
+Do not infer merge solely from conversation text.
 
 ---
 
-# 41. Current vs Target
+# 70. Product Work Is Not Automatically Engineering Work
 
-Repository documentation MUST distinguish:
+A current product program may exist while:
 
-```text
+```text id="rjhfbm"
+ACTIVE IMPLEMENTATION PHASE
+=
+NONE
+```
+
+That is the current MGBOS state.
+
+Correct progression:
+
+```text id="8jflxa"
+PRODUCT DEFINITION
+        ↓
+ARCHITECTURE IMPACT REVIEW
+        ↓
+ENGINEERING DISCOVERY
+        ↓
+IMPLEMENTATION CONTRACT
+        ↓
+WORK PACKAGE
+```
+
+---
+
+# 71. Documentation Lifecycle Must Be Respected
+
+Current documents may be:
+
+```text id="9m1m7f"
+ACTIVE
+
+DEPRECATED
+
+SUPERSEDED
+
+ARCHIVED
+```
+
+A path alone does not establish current authority.
+
+Before using a document as normative input, inspect:
+
+```text id="uc115v"
+status
+
+scope
+
+semantic ownership
+
+supersession
+
+version
+
+effective state
+```
+
+---
+
+# 72. Current vs Target
+
+Repository documentation must distinguish:
+
+```text id="l9n74s"
 CURRENT
+
 TARGET
+
 PROPOSED
+
 EXPERIMENTAL
+
 NOT VERIFIED
 ```
 
-according to Documentation Constitution.
+according to applicable governance.
 
-Do not infer that a detailed design is implemented.
+Detailed design does not imply implementation.
 
 ---
 
-# 42. Navigation Does Not Grant Permission
+# 73. Intended Truth vs Implementation Truth
 
-A link in this Project Index does not authorize:
+Canonical documentation may represent:
 
-```text
+```text id="djq6bh"
+INTENDED TRUTH
+```
+
+while:
+
+```text id="7m5qqh"
+source
+
+migration
+
+configuration
+
+runtime
+```
+
+represent implementation truth.
+
+When they disagree:
+
+```text id="2dy0a3"
+INVESTIGATE DRIFT
+```
+
+Do not silently choose whichever source is more convenient.
+
+---
+
+# 74. Navigation Does Not Grant Permission
+
+A path listed in this index does not authorize:
+
+```text id="axredm"
 deployment
+
 push
+
 merge
+
 database mutation
+
 production mutation
+
 customer communication
+
+payment
+
 business transaction
 ```
 
-Permission and approval are separate.
+Permission and navigation are separate.
 
 ---
 
-# 43. Tool Availability Does Not Grant Permission
+# 75. Tool Availability Does Not Grant Permission
 
 Likewise:
 
-```text
-tool available
+```text id="dghmfs"
+TOOL AVAILABLE
 ≠
-action permitted
+ACTION AUTHORIZED
 ```
 
-Consult current capability/permission governance.
+Consult:
 
----
+```text id="tcyth3"
+routing
 
-# 44. Vibe Activation State
-
-When all nine Vibe files, Canonical Source Map v1.2, this Project Index, and root `AGENTS.md` activation routing are persisted together and repository validation remains healthy:
-
-```text
-VIBE ENGINEERING
-=
-ACTIVE REPOSITORY OPERATING METHOD
-```
-
-within its declared scope.
-
----
-
-# 45. Partial Activation
-
-If this Project Index links to Vibe files that are not actually present:
-
-```text
-DOCUMENTATION_DRIFT
-```
-
-exists.
-
-Do not infer missing methodology from memory.
-
-Until activation is complete, fall back to:
-
-```text
-Engineering AI Control Plane
-routing registry
-contract schemas
 capability governance
-target-system engineering rules
+
+approval policy
+
+target-system instructions
+```
+
+as applicable.
+
+---
+
+# 76. AI Provider Does Not Grant Authority
+
+A runtime such as:
+
+```text id="18gdk4"
+ChatGPT
+
+Antigravity
+
+Codex
+
+Claude Code
+
+future agent runtime
+```
+
+does not gain project authority merely from provider identity.
+
+Authority comes from repository governance and current work contracts.
+
+---
+
+# 77. Conversation Memory Boundary
+
+Conversation context may help restore:
+
+```text id="hhalmm"
+intent
+
+prior discussion
+
+working rationale
+```
+
+but durable project truth lives in:
+
+```text id="pxxyvf"
+repository
+
+canonical documentation
+
+current source
+
+exact-revision evidence
+
+active contracts
+```
+
+If memory and repository disagree:
+
+```text id="f7jxhk"
+REPOSITORY AUTHORITY
+must be resolved first.
 ```
 
 ---
 
-# 46. Navigation Health
+# 78. Repository Engineering Work
 
-This index is healthy when a competent human or AI can determine:
+Changes involving:
 
-```text
+```text id="fq634w"
+AGENTS.md
+
+docs/governance/
+
+docs/engineering/
+
+.agents/
+
+repository validators
+
+CI governance
+
+routing
+
+contracts
+```
+
+should generally route through:
+
+```text id="05z2in"
+repository-engineering
+```
+
+when covered by the active registry.
+
+Do not misuse the MGBOS profile merely because MGBOS is the main business system.
+
+---
+
+# 79. MGBOS Engineering Work
+
+Changes primarily inside:
+
+```text id="sm43ov"
+systems/mgbos/
+```
+
+should resolve:
+
+```text id="62od5y"
+mgbos
+```
+
+routing when applicable.
+
+Cross-repository governance impact may require repository-engineering treatment as well.
+
+Routing composition must follow current registry rather than intuition.
+
+---
+
+# 80. Routing Profile ≠ System Identity
+
+A system may exist without a current engineering routing profile.
+
+Example:
+
+```text id="yvknau"
+JARVIS SYSTEM
+exists as documented architecture
+```
+
+while:
+
+```text id="6tjkep"
+jarvis routing profile
+```
+
+may not yet exist.
+
+Do not conflate the two.
+
+---
+
+# 81. Current MGBOS Readiness Boundary
+
+MGBOS software may be healthy enough for continued engineering while not yet being production-ready.
+
+Current broad state:
+
+```text id="bkhh1a"
+ENGINEERING CONTINUATION
+=
+ALLOWED
+
+LOCAL / CI VERIFICATION
+=
+ALLOWED
+
+PRODUCT DEFINITION
+=
+ALLOWED
+
+REAL OPERATIONAL PILOT
+=
+GATED
+
+PRODUCTION RELEASE
+=
+NOT CERTIFIED
+```
+
+Detailed readiness authority lives in the MGBOS readiness register.
+
+---
+
+# 82. Founder Control vs Operational Readiness
+
+Founder Control product definition and operational readiness are parallel concerns.
+
+Product definition asks:
+
+```text id="vlnwgk"
+WHAT SHOULD FOUNDER CONTROL DO?
+```
+
+Operational readiness asks:
+
+```text id="fu7s90"
+CAN THE SYSTEM BE OPERATED SAFELY
+IN THE INTENDED ENVIRONMENT?
+```
+
+Neither should substitute for the other.
+
+---
+
+# 83. Founder Control vs JARVIS
+
+Current preferred dependency:
+
+```text id="6c8hyc"
+MGBOS AUTHORITATIVE STATE
+        ↓
+DETERMINISTIC FOUNDER CONTROL
+        ↓
+JARVIS MAY LATER
+ANALYZE / SUMMARIZE / RECOMMEND
+```
+
+Founder Control should not depend on AI reconstructing business truth from raw operational noise.
+
+---
+
+# 84. Engineering Evidence Principle
+
+Evidence includes applicable:
+
+```text id="eghrmk"
+CI result
+
+test result
+
+migration evidence
+
+tool execution
+
+runtime verification
+
+operator acceptance
+
+approval
+
+release smoke
+
+restore drill
+```
+
+Evidence proves observed reality.
+
+It does not silently redefine intended architecture.
+
+---
+
+# 85. Historical Evidence Must Remain Historical
+
+When documentation is corrected after implementation:
+
+```text id="deepsh"
+DO NOT
+rewrite history as if
+the final answer was always known.
+```
+
+Preferred history:
+
+```text id="ld6gkt"
+AUDIT FOUND GAP
+        ↓
+PLAN CREATED
+        ↓
+WORK EXECUTED
+        ↓
+EVIDENCE COLLECTED
+        ↓
+PHASE CLOSED
+        ↓
+NEXT PLAN ADAPTED
+```
+
+This is especially important for machine-assisted engineering.
+
+---
+
+# 86. Current Documentation Reconciliation Program
+
+Current MGBOS documentation work includes correcting stale Phase 1/current-routing semantics before the Founder Control PRD becomes the next active product definition.
+
+Primary affected areas include:
+
+```text id="n4tlam"
+Phase 1 lifecycle
+
+MGBOS implementation index
+
+MGBOS product index
+
+operational readiness
+
+project index
+
+launch roadmap
+```
+
+This is documentation reconciliation.
+
+It is not new runtime implementation.
+
+---
+
+# 87. Current Product Next Step
+
+After current-state documentation reconciliation:
+
+```text id="gatf50"
+NEXT NEW MGBOS PRODUCT ARTIFACT
+=
+teestock-founder-control-prd.md
+```
+
+That PRD becomes the parent WHAT/WHY definition for the next MGBOS product layer.
+
+---
+
+# 88. Current Engineering Next Step
+
+There is currently no valid instruction of the form:
+
+```text id="6wxdmu"
+"Start Phase 2 implementation now."
+```
+
+The engineering gate comes after:
+
+```text id="ykew4s"
+product maturity
+
+architecture impact resolution
+
+engineering discovery
+
+implementation contracting
+```
+
+---
+
+# 89. Project Index Maintenance Rule
+
+Update this index when:
+
+```text id="gzuxre"
+active system moves
+
+canonical entrypoint changes
+
+new top-level authority domain appears
+
+active routing profile changes
+
+engineering operating method changes
+
+current repository-wide program changes materially
+
+a listed location becomes retired
+```
+
+Do not update it for every implementation detail.
+
+---
+
+# 90. Navigation Health
+
+This index is healthy when a competent human or AI can answer:
+
+```text id="4t2bk9"
 Where is the target system?
 
-Where is its documentation entrypoint?
+Where is business knowledge?
 
-Where is repository governance?
+Where is product work?
+
+Where is architecture?
+
+Where is implementation work?
+
+Is the current phase active or historical?
+
+Which routing profile applies?
 
 Where is engineering governance?
 
-Where is Vibe Engineering?
+Where is operational readiness?
 
-Where are operational engineering registries?
-
-Where is business knowledge?
+Where is evidence?
 
 Where is historical material?
 ```
@@ -1111,26 +2518,143 @@ without guessing.
 
 ---
 
-# 47. Maintenance
+# 91. Current Navigation Summary
 
-Update this index when:
+```text id="r21o2r"
+REPOSITORY
+→ docs/project-index.md
 
-```text
-active system moves
-canonical navigation entrypoint changes
-new top-level authority domain is introduced
-engineering entrypoint changes
-a listed location is retired
+AUTHORITY MODEL
+→ docs/governance/
+
+ENGINEERING GOVERNANCE
+→ docs/engineering/
+
+ENGINEERING ROUTING
+→ .agents/routing/
+
+MGBOS
+→ systems/mgbos/
+
+MGBOS ARCHITECTURE
+→ systems/mgbos/docs/architecture/
+
+MGBOS PRODUCT
+→ systems/mgbos/docs/product/
+
+MGBOS IMPLEMENTATION
+→ systems/mgbos/docs/implementation/
+
+MGBOS READINESS
+→ systems/mgbos/docs/engineering/
+   operational-readiness.md
+
+TEEStock BUSINESS
+→ bisnis/teestock/
+
+JARVIS
+→ systems/jarvis/docs/
+
+HISTORICAL
+→ catatan/
+→ archive/
 ```
-
-Do not update it for every implementation detail.
 
 ---
 
-# 48. Final Principle
+# 92. Current MGBOS Program Summary
 
-> **Project Index tells you where to go. Canonical Source Map tells you whom to trust. Canonical specifications tell you what should be true. Repository/runtime evidence tells you what is actually true.**
+```text id="ra50jz"
+PHASE 1 OPERATING SPINE
+=
+CLOSED
 
-For engineering:
+CURRENT PRODUCT PROGRAM
+=
+FOUNDER CONTROL
 
-> **Engineering AI Control Plane defines the governance. Vibe Engineering defines the operating procedure. Target-system documentation defines system semantics. Evidence determines what actually happened.**
+CURRENT IMPLEMENTATION PHASE
+=
+NONE
+
+CURRENT READINESS
+=
+NOT PRODUCTION CERTIFIED
+
+NEXT PRODUCT ARTIFACT
+=
+FOUNDER CONTROL PRD
+```
+
+---
+
+# 93. Current Routing Summary
+
+```text id="jtf3zw"
+ACTIVE ROUTING PROFILES
+
+mgbos
+→ systems/mgbos/
+
+repository-engineering
+→ ./
+```
+
+Not currently active unless registry changes:
+
+```text id="caokva"
+jarvis
+
+kaskita
+```
+
+---
+
+# 94. Final Principle
+
+Project Index tells you:
+
+```text id="769sx8"
+WHERE TO GO
+```
+
+Canonical Source Map tells you:
+
+```text id="x4i52e"
+WHOM TO TRUST
+```
+
+Canonical specifications tell you:
+
+```text id="k3fdd6"
+WHAT SHOULD BE TRUE
+```
+
+Current source/runtime evidence tells you:
+
+```text id="0klfnm"
+WHAT IS ACTUALLY TRUE
+```
+
+Vibe Engineering tells you:
+
+```text id="qefptk"
+HOW TO TURN OWNER INTENT
+INTO GOVERNED ENGINEERING WORK
+```
+
+Routing tells you:
+
+```text id="i91drs"
+WHAT CONTROLS APPLY
+```
+
+Implementation Contract and Work Package tell the Builder:
+
+```text id="6dklm0"
+WHAT EXACT WORK IS AUTHORIZED
+```
+
+At the current repository state:
+
+> **MGBOS Phase 1 is closed, Founder Control is the active product-definition program, no new MGBOS implementation phase is active, and governed engineering routing currently supports both MGBOS work and repository-engineering work through their own active profiles.**
