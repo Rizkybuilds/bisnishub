@@ -16,7 +16,7 @@ production_acceptance: NOT_VERIFIED
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: f89ccb49878668f5cb00edf7375e168b9d4a0670
+  commit: d0686b7f752c85a090c4f719d4aeb974451418c5
   reviewed_at: 2026-10-05
 
 authoritative_for:
@@ -123,7 +123,7 @@ No readiness claim may skip those distinctions.
 At repository baseline:
 
 ```text
-f89ccb49878668f5cb00edf7375e168b9d4a0670
+d0686b7f752c85a090c4f719d4aeb974451418c5
 ```
 
 current conclusion is:
@@ -247,33 +247,33 @@ without explicit promotion and matching environment proof.
 
 # 7. Current Readiness Matrix
 
-| Control                            | Evidence status        | Gate             | Current conclusion                                                                                       |
-| ---------------------------------- | ---------------------- | ---------------- | -------------------------------------------------------------------------------------------------------- |
-| Engineering / maintenance policy   | VERIFIED               | SUPPORTING       | Active documented policy and runbooks exist                                                              |
-| Local development safety guards    | VERIFIED               | SUPPORTING       | Destructive MGBOS E2E fails closed against hosted targets                                                |
-| Hosted CI on current `main`        | VERIFIED               | HARD_GATE        | Current SHA has successful Repository Integrity, Agent Governance, MGBOS Foundation                      |
-| MGBOS application CI               | VERIFIED               | HARD_GATE        | Current MGBOS Foundation `application` job passed                                                        |
-| MGBOS database CI                  | VERIFIED               | HARD_GATE        | Current MGBOS Foundation `database` job passed                                                           |
-| Main branch protection             | PARTIALLY_VERIFIED     | HARD_GATE        | GitHub reports `main` as protected; detailed protection configuration unavailable to current integration |
-| Required-check enforcement details | NOT_VERIFIED           | HARD_GATE        | Protection endpoint requires unavailable repository administration access                                |
-| Staging environment                | NOT_VERIFIED           | HARD_GATE        | No current verified isolated staging target/evidence                                                     |
-| Production environment             | NOT_VERIFIED           | HARD_GATE        | No current verified production target/evidence                                                           |
-| Environment credential isolation   | NOT_VERIFIED           | HARD_GATE        | Required by policy; production separation not yet evidenced                                              |
-| Development credential hygiene     | BLOCKED                | HARD_GATE        | Development login defaults remain present in current repository source                                   |
-| Backup automation                  | NOT_VERIFIED           | HARD_GATE        | Runbook explicitly does not claim active backup configuration                                            |
-| Backup retention                   | NOT_VERIFIED           | HARD_GATE        | Policy defined; provider/runtime evidence missing                                                        |
-| RPO                                | NOT_SET                | HARD_GATE        | Owner target not established                                                                             |
-| RTO                                | NOT_SET                | HARD_GATE        | Owner target not established                                                                             |
-| Restore drill                      | NOT_VERIFIED           | HARD_GATE        | Procedure defined; successful current drill evidence missing                                             |
-| Monitoring                         | DEFINED_NOT_VERIFIED   | HARD_GATE        | Runbook exists; active monitored environment not proven                                                  |
-| Alerting / escalation              | DEFINED_NOT_VERIFIED   | HARD_GATE        | Policy exists; active alert test/evidence missing                                                        |
-| Release procedure                  | VERIFIED               | SUPPORTING       | Release/recovery runbook exists                                                                          |
-| Rollback / recovery drill          | NOT_VERIFIED           | HARD_GATE        | Procedure defined; successful production-like exercise absent                                            |
-| Operator acceptance                | VERIFIED               | HARD_GATE        | Phase 1 acceptance PASS, blocker count 0                                                                 |
-| Phase 1 software completion        | VERIFIED               | SUPPORTING       | Phase 1 closure evidence exists                                                                          |
-| Production acceptance              | NOT_VERIFIED           | HARD_GATE        | No production operational acceptance evidence                                                            |
-| Real business pilot                | NOT_VERIFIED           | CONDITIONAL_GATE | Separate future pilot required for business validation                                                   |
-| Public TeeStock storefront         | NOT_VERIFIED / LIMITED | CONDITIONAL_GATE | Required only if customer self-service is part of pilot/release                                          |
+| Control                            | Evidence status        | Gate             | Current conclusion                                                                                                      |
+| ---------------------------------- | ---------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Engineering / maintenance policy   | VERIFIED               | SUPPORTING       | Active documented policy and runbooks exist                                                                             |
+| Local development safety guards    | VERIFIED               | SUPPORTING       | Destructive MGBOS E2E fails closed against hosted targets                                                               |
+| Hosted CI on current `main`        | VERIFIED               | HARD_GATE        | Current SHA has successful Repository Integrity, Agent Governance, MGBOS Foundation                                     |
+| MGBOS application CI               | VERIFIED               | HARD_GATE        | Current MGBOS Foundation `application` job passed                                                                       |
+| MGBOS database CI                  | VERIFIED               | HARD_GATE        | Current MGBOS Foundation `database` job passed                                                                          |
+| Main branch protection             | PARTIALLY_VERIFIED     | HARD_GATE        | GitHub reports `main` as protected with required checks enforced for `everyone`; other protection dimensions unobserved |
+| Required-check enforcement details | VERIFIED               | HARD_GATE        | 6 required status-check contexts observable with enforcement level `everyone`                                           |
+| Staging environment                | NOT_VERIFIED           | HARD_GATE        | No current verified isolated staging target/evidence                                                                    |
+| Production environment             | NOT_VERIFIED           | HARD_GATE        | No current verified production target/evidence                                                                          |
+| Environment credential isolation   | NOT_VERIFIED           | HARD_GATE        | Required by policy; production separation not yet evidenced                                                             |
+| Development credential hygiene     | BLOCKED                | HARD_GATE        | Development login defaults remain present in current repository source                                                  |
+| Backup automation                  | NOT_VERIFIED           | HARD_GATE        | Runbook explicitly does not claim active backup configuration                                                           |
+| Backup retention                   | NOT_VERIFIED           | HARD_GATE        | Policy defined; provider/runtime evidence missing                                                                       |
+| RPO                                | NOT_SET                | HARD_GATE        | Owner target not established                                                                                            |
+| RTO                                | NOT_SET                | HARD_GATE        | Owner target not established                                                                                            |
+| Restore drill                      | NOT_VERIFIED           | HARD_GATE        | Procedure defined; successful current drill evidence missing                                                            |
+| Monitoring                         | DEFINED_NOT_VERIFIED   | HARD_GATE        | Runbook exists; active monitored environment not proven                                                                 |
+| Alerting / escalation              | DEFINED_NOT_VERIFIED   | HARD_GATE        | Policy exists; active alert test/evidence missing                                                                       |
+| Release procedure                  | VERIFIED               | SUPPORTING       | Release/recovery runbook exists                                                                                         |
+| Rollback / recovery drill          | NOT_VERIFIED           | HARD_GATE        | Procedure defined; successful production-like exercise absent                                                           |
+| Operator acceptance                | VERIFIED               | HARD_GATE        | Phase 1 acceptance PASS, blocker count 0                                                                                |
+| Phase 1 software completion        | VERIFIED               | SUPPORTING       | Phase 1 closure evidence exists                                                                                         |
+| Production acceptance              | NOT_VERIFIED           | HARD_GATE        | No production operational acceptance evidence                                                                           |
+| Real business pilot                | NOT_VERIFIED           | CONDITIONAL_GATE | Separate future pilot required for business validation                                                                  |
+| Public TeeStock storefront         | NOT_VERIFIED / LIMITED | CONDITIONAL_GATE | Required only if customer self-service is part of pilot/release                                                         |
 
 ---
 
@@ -282,7 +282,7 @@ without explicit promotion and matching environment proof.
 Current exact revision:
 
 ```text
-f89ccb49878668f5cb00edf7375e168b9d4a0670
+d0686b7f752c85a090c4f719d4aeb974451418c5
 ```
 
 has successful hosted workflows:
@@ -305,16 +305,27 @@ Observed GitHub Actions run IDs:
 
 ```text
 Repository Integrity
-37275545254
+37280718762
 
 Agent Governance
-37275545281
+37280718730
 
 MGBOS Foundation
-37275545251
+37280718654
 ```
 
 All three completed successfully against the same exact current SHA.
+
+### PR Candidate vs Post-Merge Integration Assurance
+
+The register distinguishes PR candidate checks from post-merge integration checks:
+
+- **PR #35 Candidate (`8e46860f8db7104b788d13216f584b9cda85e816`):**
+  Successfully executed all candidate checks: `application`, `database`, `pr-gate` (PR Gate run #81), `agent-governance`, `migration-immutability`, and `repository-integrity` across workflows MGBOS Foundation #99, Agent Governance #93, PR Gate #81, and Repository Integrity #64.
+
+- **Post-Merge Integration (`d0686b7f752c85a090c4f719d4aeb974451418c5`):**
+  Executed push-triggered workflows on `main`: MGBOS Foundation run 37280718654 (run #100: `application` -> SUCCESS, `database` -> SUCCESS), Agent Governance run 37280718730 (run #94: `agent-governance` -> SUCCESS, `migration-immutability` -> SUCCESS), and Repository Integrity run 37280718762 (run #65: `repository-integrity` -> SUCCESS).
+  _Notice:_ `pr-gate` executes on PR pull_request events; it does not execute as a post-merge push check on the merge SHA.
 
 ---
 
@@ -324,7 +335,7 @@ Within:
 
 ```text
 MGBOS Foundation
-run 37275545251
+run 37280718654
 ```
 
 the following jobs completed successfully:
@@ -386,17 +397,17 @@ current external providers are healthy
 A later `main` revision is not automatically covered by:
 
 ```text
-run 37275545254
+run 37280718762
 
-run 37275545281
+run 37280718730
 
-run 37275545251
+run 37280718654
 ```
 
 Those runs are evidence for:
 
 ```text
-f89ccb49878668f5cb00edf7375e168b9d4a0670
+d0686b7f752c85a090c4f719d4aeb974451418c5
 ```
 
 only.
@@ -415,6 +426,18 @@ main
 
 protected:
 true
+
+protection:
+  enabled: true
+  required_status_checks:
+    enforcement_level: everyone
+    contexts:
+      - application
+      - database
+      - pr-gate
+      - agent-governance
+      - migration-immutability
+      - repository-integrity
 ```
 
 Therefore:
@@ -425,55 +448,68 @@ MAIN BRANCH PROTECTION
 PARTIALLY VERIFIED
 ```
 
+The protected state and status-check enforcement level are verified, while other branch protection dimensions remain unobserved.
+
 ---
 
-# 13. Why Protection Is Not Fully VERIFIED
+# 13. Observable vs Unobserved Protection Dimensions
 
-The connected GitHub integration does not have repository administration permission required to inspect the complete:
+Observable GitHub branch metadata confirms:
+
+- `main protected` — **VERIFIED** (`protected: true`)
+- `required status-check contexts observable` — **VERIFIED** (`application`, `database`, `pr-gate`, `agent-governance`, `migration-immutability`, `repository-integrity`)
+- `required status-check enforcement level "everyone"` — **VERIFIED** (`enforcement_level: everyone`)
+
+The connected GitHub integration does not have repository administration permission to inspect the full admin-restricted branch protection endpoint (`/repos/.../branches/main/protection`). Therefore, unobserved protection dimensions remain:
 
 ```text
-branch protection endpoint
+UNOBSERVED PROTECTION DIMENSIONS
+=
+NOT_VERIFIED
 ```
 
-Therefore this register cannot currently prove exact configuration for:
+Specifically unobserved / unverified:
 
 ```text
-required status checks
+required approving reviews (minimum review count)
 
-required approving reviews
+review dismissal behavior
 
-dismissal behavior
+code owner reviews
 
 force-push restrictions
 
 deletion restrictions
 
-administrator enforcement
+administrator bypass / enforce_admins configuration
 
 conversation-resolution policy
 ```
 
-without another authoritative evidence source.
+without administrative evidence or direct API access.
 
 ---
 
-# 14. Required-Check Enforcement Gate
+# 14. Required-Check Enforcement Evidence — VERIFIED
 
-Before production release, collect explicit evidence showing which checks are required for `main`.
-
-At minimum verify applicable:
+The required status checks for `main` are explicitly verified via GitHub branch metadata:
 
 ```text
-Repository Integrity
+enforcement_level:
+everyone
 
-Agent Governance
-
-MGBOS Foundation
+contexts:
+- application
+- database
+- pr-gate
+- agent-governance
+- migration-immutability
+- repository-integrity
 ```
 
-or the then-current canonical required-check set.
+All 6 contexts match the canonical CI workflows (`MGBOS Foundation`, `PR Gate`, `Agent Governance`, `Repository Integrity`). Enforcement applies to `everyone`.
 
-Do not infer enforcement merely from workflow existence.
+However, workflow execution alone does not replace unobserved branch governance rules (e.g. PR reviews, admin bypass).
 
 ---
 
@@ -2109,9 +2145,9 @@ Compared with the earlier baseline:
 main branch protected
 ```
 
-is now directly observable.
+and required status-check enforcement level `everyone` are now directly observable.
 
-However detailed enforcement configuration remains unavailable through the current integration.
+However other branch protection dimensions (review count, admin bypass, force-push/deletion rules) remain unobserved through the current integration.
 
 Therefore the correct status is:
 
@@ -2280,7 +2316,7 @@ STATUS:
 VERIFIED
 
 REVISION:
-f89ccb49878668f5cb00edf7375e168b9d4a0670
+d0686b7f752c85a090c4f719d4aeb974451418c5
 
 ENVIRONMENT:
 GitHub Actions
@@ -2468,7 +2504,7 @@ operator acceptance passes
 Not yet sufficiently evidenced:
 
 ```text
-exact branch protection enforcement details
+unobserved branch protection dimensions (review count, admin bypass, force-push/deletion rules)
 
 staging environment
 
@@ -2644,7 +2680,7 @@ repository:
 Rizkybuilds/bisnishub
 
 revision:
-f89ccb49878668f5cb00edf7375e168b9d4a0670
+d0686b7f752c85a090c4f719d4aeb974451418c5
 
 review date:
 2026-10-05
