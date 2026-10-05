@@ -1,7 +1,7 @@
 ---
 canonical_id: agents.engineering.routing
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -18,7 +18,7 @@ authoritative_for:
   - expertise routing composition
   - engineering routing escalation semantics
 
-last_reviewed: 2026-10-01
+last_reviewed: 2026-10-05
 review_cadence: quarterly
 
 depends_on:
@@ -36,7 +36,7 @@ machine_registry:
 supersedes: null
 ---
 
-# BisnisHub Engineering Task & Routing Model v1
+# BisnisHub Engineering Task & Routing Model v1.1
 
 ## 1. Purpose
 

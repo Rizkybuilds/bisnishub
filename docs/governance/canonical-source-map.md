@@ -1,7 +1,7 @@
 ---
 canonical_id: docs.governance.canonical-source-map
 status: ACTIVE
-version: 1.3
+version: 1.4
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -31,12 +31,12 @@ depends_on:
   - ../decisions/001-repository-organization.md
 
 supersedes:
-  - docs.governance.canonical-source-map@1.2
+  - docs.governance.canonical-source-map@1.3
 
-repository_snapshot: f767fd141513d4c8761ab0fc05be34736fa0f5ab
+repository_snapshot: c6d8043a5bc2944064f6514b7ccdef0fd8f007d4
 ---
 
-# DOC-002 — BisnisHub Canonical Source Map v1.3
+# DOC-002 — BisnisHub Canonical Source Map v1.4
 
 ## 1. Purpose
 

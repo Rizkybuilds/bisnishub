@@ -1,7 +1,7 @@
 ---
 canonical_id: docs.engineering.vibe-engineering.session-protocol
 status: ACTIVE
-version: 1.2.0
+version: 1.3.0
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -21,7 +21,7 @@ authoritative_for:
   - vibe engineering persisted continuity checkpoint integration
 
 last_reviewed: 2026-10-05
-reviewed_against_revision: f767fd141513d4c8761ab0fc05be34736fa0f5ab
+reviewed_against_revision: c6d8043a5bc2944064f6514b7ccdef0fd8f007d4
 review_cadence: quarterly
 
 depends_on:
