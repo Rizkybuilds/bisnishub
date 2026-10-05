@@ -12,7 +12,7 @@ review_cadence: per-material-product-or-phase-change
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  sha: ce30a1440eb6c4038d732e80ecae4446d311e0bd
+  sha: f05bd82f9be6aa038799931ede19059481aed8d1
 
 authoritative_for:
   - founder-control documentation package composition
@@ -117,7 +117,7 @@ untuk perubahan material.
 
 # 3. Current Repository Baseline
 
-Baseline dokumen ini:
+Reviewed repository baseline:
 
 ```text
 repository:
@@ -127,8 +127,10 @@ branch:
 main
 
 revision:
-ce30a1440eb6c4038d732e80ecae4446d311e0bd
+f05bd82f9be6aa038799931ede19059481aed8d1
 ```
+
+_(Historical initial activation baseline was `ce30a1440eb6c4038d732e80ecae4446d311e0bd`)._
 
 Baseline adalah reference point untuk penyusunan dokumentasi.
 
@@ -2480,7 +2482,9 @@ not silent invention.
 
 ---
 
-# 74. Current Documentation Program State
+# 74. Documentation Program State
+
+## Historical State (At Initial Activation)
 
 At activation of this document:
 
@@ -2524,22 +2528,62 @@ Phase 2 Implementation Documentation
 NOT CREATED
 ```
 
+## Current Program State (Post PR #37 / VECP-003F)
+
+```text
+W0 CURRENT-STATE RECONCILIATION
+=
+COMPLETE
+
+D1
+=
+ACTIVE (PRD_MATURE)
+
+D2
+=
+ACTIVE (SPEC_MATURE)
+
+D3
+=
+ACTIVE / ARCHITECTURE BOUNDARY RECONCILED (SPEC_MATURE)
+
+D4
+=
+ACTIVE (PILOT_PLAN_MATURE / PILOT_EXECUTION_BLOCKED)
+
+PRODUCT PACKAGE
+=
+READY FOR ARCHITECTURE IMPACT REVIEW
+
+W2 ARCHITECTURE RECONCILIATION
+=
+NEXT
+
+ENGINEERING DISCOVERY
+=
+NOT YET OPEN
+
+PHASE 2 IMPLEMENTATION
+=
+NOT OPEN
+```
+
 ---
 
 # 75. Next Work Package
 
-The immediate next documentation work is:
+The immediate next work package is:
 
 ```text
-W0
-CURRENT-STATE DOCUMENTATION RECONCILIATION
+W2
+ARCHITECTURE RECONCILIATION / ARCHITECTURE IMPACT REVIEW
 ```
 
 Primary purpose:
 
-> Remove stale Phase 1 execution semantics and refresh current documentation routing before Founder Control PRD becomes the next active product definition.
+> Review whether the active Founder Control product definition package (D1–D4) requires material updates to MGBOS canonical architecture specifications (data model, business state machines, invariants, command/event model, and authorization).
 
-This work should update existing files rather than create unnecessary parallel documents.
+W0 (Current-State Reconciliation) is complete, and product package D1–D4 is active. Engineering discovery and Phase 2 implementation remain not open until architecture reconciliation completes and produces governed engineering contracts.
 
 ---
 

@@ -14,7 +14,7 @@ implementation_status: DOCUMENTATION_INDEX
 prepared_against:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: f89ccb49878668f5cb00edf7375e168b9d4a0670
+  commit: f05bd82f9be6aa038799931ede19059481aed8d1
   reviewed_at: 2026-10-05
 
 documentation_program:
@@ -508,19 +508,26 @@ At the repository baseline:
 product/
 │
 ├── README.md
+├── founder-attention-experience-spec.md
+├── founder-control-documentation-plan.md
+├── operational-exception-spec.md
 ├── teestock-asset-readiness.md
 ├── teestock-curated-strategy.md
 ├── teestock-design-library-spec.md
-└── teestock-development-plan.md
+├── teestock-development-plan.md
+├── teestock-founder-control-prd.md
+└── teestock-operational-pilot-plan.md
 ```
 
-The verified remote baseline does not yet contain:
+The verified remote baseline contains the Founder Control documentation family:
 
 ```text
 founder-control-documentation-plan.md
+teestock-founder-control-prd.md
+founder-attention-experience-spec.md
+operational-exception-spec.md
+teestock-operational-pilot-plan.md
 ```
-
-unless it has been added after this document's reviewed baseline.
 
 ---
 
@@ -2265,17 +2272,19 @@ create Founder Control functionality
 
 ---
 
-# 87. Next Product Program
+# 87. Founder Control Product Definition Family
 
-After W0 documentation preparation:
+Following W0 documentation preparation, the Founder Control product definition family (D1 through D4) has been introduced:
 
 ```text
-D1
-MGBOS × TeeStock
-Founder Control PRD
+D0: founder-control-documentation-plan.md (ACTIVE)
+D1: teestock-founder-control-prd.md (ACTIVE)
+D2: founder-attention-experience-spec.md (ACTIVE)
+D3: operational-exception-spec.md (ACTIVE)
+D4: teestock-operational-pilot-plan.md (ACTIVE)
 ```
 
-becomes the next new parent product artifact.
+The Founder Control product package is defined, active implementation phase is none, and the next gate is Architecture Impact Review.
 
 ---
 
@@ -2471,6 +2480,10 @@ CURRENT PRODUCT PROGRAM
 =
 FOUNDER CONTROL
 
+FOUNDER CONTROL PRODUCT PACKAGE
+=
+DEFINED
+
 ACTIVE IMPLEMENTATION PHASE
 =
 NONE
@@ -2479,9 +2492,9 @@ OPERATIONAL READINESS
 =
 NOT PRODUCTION READY
 
-NEXT NEW PRODUCT DOCUMENT
+NEXT GATE
 =
-FOUNDER CONTROL PRD
+ARCHITECTURE IMPACT REVIEW
 ```
 
 ---

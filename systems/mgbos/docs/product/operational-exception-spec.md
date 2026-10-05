@@ -22,11 +22,12 @@ maturity: SPEC_MATURE
 design_readiness: READY_FOR_OPERATIONAL_PILOT_PLAN
 engineering_readiness: NOT_READY_FOR_ENGINEERING
 implementation_status: PRODUCT_SPECIFICATION_ONLY
+architecture_lifecycle_status: PENDING_ARCHITECTURE_RECONCILIATION
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: d0686b7f752c85a090c4f719d4aeb974451418c5
+  commit: f05bd82f9be6aa038799931ede19059481aed8d1
   reviewed_at: 2026-10-05
 
 authoritative_for:
@@ -34,7 +35,8 @@ authoritative_for:
   - Operational Exception qualification criteria
   - Operational Exception product taxonomy
   - Operational Exception severity semantics
-  - Operational Exception logical lifecycle
+  - Operational Exception product lifecycle requirements
+  - Operational Exception lifecycle behavior required for architecture evaluation
   - Operational Exception ownership semantics
   - Operational Exception acknowledgement semantics
   - Operational Exception resolution semantics
@@ -52,6 +54,9 @@ authoritative_for:
   - product-level Operational Exception acceptance criteria
 
 not_authoritative_for:
+  - canonical Operational Exception state vocabulary
+  - canonical Operational Exception lifecycle state machine
+  - canonical allowed Operational Exception transitions
   - physical Operational Exception database schema
   - Operational Exception table design
   - primary key strategy
@@ -1056,7 +1061,7 @@ Severity history must remain explainable where material.
 
 ---
 
-# 47. Logical Lifecycle
+# 47. Product Lifecycle Requirements
 
 D3 v1 lifecycle:
 
@@ -1088,9 +1093,9 @@ when justified.
 
 ---
 
-# 48. Lifecycle State Vocabulary
+# 48. Proposed Product-Required Lifecycle Vocabulary
 
-Canonical D3 product states:
+PROPOSED PRODUCT-REQUIRED LIFECYCLE VOCABULARY:
 
 ```text id="vtsb0d"
 OPEN
@@ -1103,6 +1108,18 @@ DISMISSED
 ```
 
 `REOPENED` is an event/transition concept, not a long-lived status.
+
+### Canonical Architecture Separation
+
+These states express product-required behavior for architecture impact review.
+
+They are NOT yet canonical MGBOS state-machine semantics.
+
+Canonical lifecycle vocabulary, allowed transitions, guards, terminal semantics, storage classification, and transition authority belong to:
+
+`../architecture/business-state-machines.md`
+
+after applicable architecture reconciliation.
 
 ---
 
@@ -2116,7 +2133,7 @@ DISMISS
 REOPEN
 ```
 
-Exact command names/interfaces are architecture work.
+Product-level operations express required operational capabilities. Exact command contracts, allowed canonical transitions, authorization enforcement, atomicity, event contracts, and persistence remain architecture and engineering concerns.
 
 ---
 

@@ -16,7 +16,7 @@ current_implementation_phase: NONE
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: f89ccb49878668f5cb00edf7375e168b9d4a0670
+  commit: f05bd82f9be6aa038799931ede19059481aed8d1
   reviewed_at: 2026-10-05
 
 authoritative_for:
@@ -339,7 +339,7 @@ their relationship to architecture and implementation
 
 # 9. Founder Control Documentation Package
 
-Planned package:
+The Founder Control product-definition package consists of:
 
 ```text
 D0
@@ -358,21 +358,13 @@ D4
 teestock-operational-pilot-plan.md
 ```
 
-Not every planned file physically exists yet.
-
-Machine rule:
-
-```text
-PLANNED PATH
-≠
-EXISTING DOCUMENT
-```
+All five documents are physically present and active in the repository.
 
 ---
 
 # 10. Current Package State
 
-Current intended state after activation of D0:
+Current active product package state:
 
 ```text
 D0
@@ -383,25 +375,47 @@ ACTIVE
 D1
 Founder Control PRD
 =
-NOT YET ACTIVE
+ACTIVE (PRD_MATURE)
 
 D2
 Founder Attention Experience
 =
-NOT YET ACTIVE
+ACTIVE (SPEC_MATURE)
 
 D3
 Operational Exception Specification
 =
-NOT YET ACTIVE
+ACTIVE (SPEC_MATURE / ARCHITECTURE_LIFECYCLE_PROMOTION_PENDING)
 
 D4
 Real Operational Pilot Plan
 =
-NOT YET ACTIVE
+ACTIVE (PILOT_PLAN_MATURE / PILOT_EXECUTION_BLOCKED)
 ```
 
-Do not fabricate missing documents.
+Product package interpretation:
+
+```text
+FOUNDER CONTROL PRODUCT PACKAGE
+=
+DEFINED
+
+PRODUCT DOCUMENTS D1-D4
+=
+ACTIVE
+
+ENGINEERING READINESS
+=
+NOT READY
+
+PHASE 2 IMPLEMENTATION
+=
+NOT OPEN
+
+NEXT MATERIAL GATE
+=
+ARCHITECTURE IMPACT REVIEW
+```
 
 ---
 
@@ -2084,29 +2098,41 @@ PRODUCT PROGRAM
 =
 FOUNDER CONTROL
 
-DOCUMENTATION PLAN
+DOCUMENTATION PLAN (D0)
 =
 ACTIVE
 
-PARENT PRD
+PARENT PRD (D1)
 =
-NEXT
+ACTIVE (PRD_MATURE)
 
-FOUNDER ATTENTION SPEC
+FOUNDER ATTENTION SPEC (D2)
 =
-PLANNED
+ACTIVE (SPEC_MATURE)
 
-OPERATIONAL EXCEPTION SPEC
+OPERATIONAL EXCEPTION SPEC (D3)
 =
-PLANNED
+ACTIVE (SPEC_MATURE / ARCHITECTURE_LIFECYCLE_PROMOTION_PENDING)
 
-REAL PILOT PLAN
+REAL PILOT PLAN (D4)
 =
-PLANNED
+ACTIVE (PILOT_PLAN_MATURE / PILOT_EXECUTION_BLOCKED)
+
+PRODUCT DEFINITION PACKAGE D1-D4
+=
+ACTIVE / DEFINED
 
 ARCHITECTURE RECONCILIATION
 =
-NOT STARTED
+NEXT
+
+ENGINEERING READINESS
+=
+NOT READY
+
+ACTIVE IMPLEMENTATION PHASE
+=
+NONE
 
 PHASE 2 IMPLEMENTATION
 =
@@ -2117,23 +2143,25 @@ NOT OPEN
 
 # 72. Current Product Next Step
 
-After current-state documentation reconciliation is complete, the next new product artifact is:
+Founder Control product definition package (D1–D4) is defined and active:
 
 ```text
-teestock-founder-control-prd.md
+D0 — founder-control-documentation-plan.md
+D1 — teestock-founder-control-prd.md
+D2 — founder-attention-experience-spec.md
+D3 — operational-exception-spec.md
+D4 — teestock-operational-pilot-plan.md
 ```
 
-It will define the parent:
+The next durable gate is:
 
 ```text
-WHY
-+
-WHAT
+FOUNDER CONTROL ARCHITECTURE IMPACT REVIEW
 ```
 
-for Founder Control.
+to determine whether Founder Control requires updates to canonical architecture specifications (data model, business state machines, invariants, command/event model, and authorization).
 
-Do not begin Phase 2 implementation before that product package and its architecture impact are mature.
+Do not begin Phase 2 implementation before that architecture review and its resulting contracts are mature. Phase 2 implementation is NOT open.
 
 ---
 
@@ -2234,4 +2262,4 @@ mixed together.
 
 Current canonical direction:
 
-> **Founder Control is the next MGBOS product-definition program. Existing TeeStock product files remain useful as bounded historical/domain-specific references, but they do not override current business truth, canonical architecture, Phase 1 closure evidence, or the active Founder Control documentation program.**
+> **Founder Control is the active MGBOS product-definition program. Existing TeeStock product files remain useful as bounded historical/domain-specific references, but they do not override current business truth, canonical architecture, Phase 1 closure evidence, or the active Founder Control documentation program.**

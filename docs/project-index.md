@@ -9,7 +9,7 @@ scope: repository
 document_class: registry
 effective_from: 2026-10-05
 
-repository_snapshot: f89ccb49878668f5cb00edf7375e168b9d4a0670
+repository_snapshot: f05bd82f9be6aa038799931ede19059481aed8d1
 
 current_repository_program:
   engineering_method: VIBE_ENGINEERING_ACTIVE
@@ -210,14 +210,14 @@ ARCHIVED
 
 # 5. Active Systems and Runtime Areas
 
-| System / area | Location | Current boundary |
-|---|---|---|
-| MGBOS | [`systems/mgbos/`](../systems/mgbos/README.md) | Active governed transactional business system and current primary implementation workspace |
-| JARVIS | [`systems/jarvis/docs/`](../systems/jarvis/docs/charter.md) | Canonical architecture/specification exists; runtime implementation must be verified separately |
-| KasKita | `systems/kaskita/` | Independent system workspace with its own application/database boundary |
-| Engineering Assistant | [`tools/assistant/`](../tools/assistant/README.md) | Existing engineering/assistant tooling; not JARVIS runtime |
-| TeeStock V1 | [`archive/teestock-v1/`](../archive/teestock-v1/README.md) | Retired legacy application/reference |
-| MGBOS Vite Prototype | `archive/mgbos-vite-prototype/` | Retired prototype/reference |
+| System / area         | Location                                                    | Current boundary                                                                                |
+| --------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| MGBOS                 | [`systems/mgbos/`](../systems/mgbos/README.md)              | Active governed transactional business system and current primary implementation workspace      |
+| JARVIS                | [`systems/jarvis/docs/`](../systems/jarvis/docs/charter.md) | Canonical architecture/specification exists; runtime implementation must be verified separately |
+| KasKita               | `systems/kaskita/`                                          | Independent system workspace with its own application/database boundary                         |
+| Engineering Assistant | [`tools/assistant/`](../tools/assistant/README.md)          | Existing engineering/assistant tooling; not JARVIS runtime                                      |
+| TeeStock V1           | [`archive/teestock-v1/`](../archive/teestock-v1/README.md)  | Retired legacy application/reference                                                            |
+| MGBOS Vite Prototype  | `archive/mgbos-vite-prototype/`                             | Retired prototype/reference                                                                     |
 
 ---
 
@@ -1173,26 +1173,26 @@ Exact product behavior belongs to dedicated Founder Control product documents.
 
 # 40. Founder Control Documentation Package
 
-Current planned product package:
+Current product package:
 
 ```text id="5na86y"
 D0
-founder-control-documentation-plan.md
+founder-control-documentation-plan.md (ACTIVE)
 
 D1
-teestock-founder-control-prd.md
+teestock-founder-control-prd.md (ACTIVE)
 
 D2
-founder-attention-experience-spec.md
+founder-attention-experience-spec.md (ACTIVE)
 
 D3
-operational-exception-spec.md
+operational-exception-spec.md (ACTIVE)
 
 D4
-teestock-operational-pilot-plan.md
+teestock-operational-pilot-plan.md (ACTIVE)
 ```
 
-Planned path does not imply current file existence.
+Product definition package is defined and active; engineering readiness is not ready.
 
 ---
 
@@ -2428,15 +2428,31 @@ It is not new runtime implementation.
 
 # 87. Current Product Next Step
 
-After current-state documentation reconciliation:
+Following product definition package introduction:
 
 ```text id="gatf50"
-NEXT NEW MGBOS PRODUCT ARTIFACT
+CURRENT PRODUCT PROGRAM
 =
-teestock-founder-control-prd.md
+FOUNDER CONTROL
+
+PRODUCT DEFINITION PACKAGE D1-D4
+=
+PRESENT / ACTIVE
+
+ACTIVE IMPLEMENTATION PHASE
+=
+NONE
+
+NEXT SYSTEM GATE
+=
+FOUNDER CONTROL ARCHITECTURE IMPACT REVIEW
+
+PHASE 2
+=
+NOT OPEN
 ```
 
-That PRD becomes the parent WHAT/WHY definition for the next MGBOS product layer.
+Product definition (D1–D4) is defined and active. Engineering readiness is not ready and Phase 2 is not open.
 
 ---
 
@@ -2573,6 +2589,10 @@ CURRENT PRODUCT PROGRAM
 =
 FOUNDER CONTROL
 
+PRODUCT DEFINITION PACKAGE D1-D4
+=
+PRESENT / ACTIVE
+
 CURRENT IMPLEMENTATION PHASE
 =
 NONE
@@ -2581,9 +2601,13 @@ CURRENT READINESS
 =
 NOT PRODUCTION CERTIFIED
 
-NEXT PRODUCT ARTIFACT
+NEXT SYSTEM GATE
 =
-FOUNDER CONTROL PRD
+FOUNDER CONTROL ARCHITECTURE IMPACT REVIEW
+
+PHASE 2
+=
+NOT OPEN
 ```
 
 ---
