@@ -18,9 +18,10 @@ prepared_against:
   reviewed_at: 2026-10-05
 
 documentation_program:
-  program: W0_CURRENT_STATE_RECONCILIATION
-  purpose: reconcile durable documentation routing after Phase 1 closure
-  next_product_program: FOUNDER_CONTROL
+  program: FOUNDER_CONTROL_PRODUCT_PACKAGE_RECONCILIATION
+  prior_program: W0_CURRENT_STATE_RECONCILIATION
+  status: CLOSING_RECONCILIATION
+  next_gate: ARCHITECTURE_IMPACT_REVIEW
 
 authoritative_for:
   - MGBOS documentation navigation
@@ -531,9 +532,9 @@ teestock-operational-pilot-plan.md
 
 ---
 
-# 18. W0 Companion Product Document
+# 18. Founder Control Documentation Manifest
 
-The current documentation reconciliation program introduces:
+The W0 documentation reconciliation program introduced:
 
 ```text
 product/
@@ -542,17 +543,27 @@ founder-control-documentation-plan.md
 
 as the active documentation-program manifest for Founder Control.
 
-Machine rule:
+Current repository state:
 
 ```text
-PLANNED / PREPARED COMPANION CHANGE
-≠
-VERIFIED REMOTE FILE
+W0
+=
+COMPLETE
+
+FOUNDER CONTROL DOCUMENTATION FAMILY
+=
+PRESENT / ACTIVE
+
+PRODUCT PACKAGE
+=
+DEFINED
+
+NEXT GATE
+=
+ARCHITECTURE IMPACT REVIEW
 ```
 
-until repository state proves the file exists.
-
-Once the W0 patch set is applied, the product index should route current product work through that document.
+The document is verified present and active on remote `main`. The product index routes current Founder Control product work through this plan and its companion specifications (D1 through D4) toward Architecture Impact Review.
 
 ---
 
@@ -695,7 +706,7 @@ Primary entrypoint:
 implementation/README.md
 ```
 
-Current intended interpretation after W0 reconciliation:
+Current interpretation (W0 reconciliation complete):
 
 ```text
 PHASE 1
@@ -1196,7 +1207,7 @@ engineering/
 operational-readiness.md
 ```
 
-Current intended W0 conclusion:
+Current operational readiness conclusion:
 
 ```text
 SOFTWARE / CI HEALTH
@@ -2158,20 +2169,33 @@ Change its lifecycle.
 
 # 83. Current Documentation Program
 
-Current documentation reconciliation program:
+Documentation reconciliation state:
 
 ```text
-W0
-CURRENT-STATE RECONCILIATION
+W0 CURRENT-STATE RECONCILIATION
+=
+COMPLETE
+
+CURRENT PROGRAM
+=
+FOUNDER CONTROL PRODUCT PACKAGE RECONCILIATION
+
+STATUS
+=
+CLOSING RECONCILIATION
+
+NEXT GATE
+=
+ARCHITECTURE IMPACT REVIEW
 ```
 
-exists to remove false current-state signals after Phase 1 closure.
+W0 removed false current-state signals after Phase 1 closure. The Founder Control product definition family (D0–D4) is now active and defined, with Architecture Impact Review as the next material gate.
 
 ---
 
-# 84. W0 Companion Changes
+# 84. W0 Reconciled Scope (Historical Provenance)
 
-The W0 change set includes or prepares updates for:
+At the W0 planning stage, the change set prepared updates for:
 
 ```text
 product/
@@ -2206,13 +2230,13 @@ solo-founder-launch-roadmap.md
 README.md
 ```
 
-The exact remote repository state must be verified after these files are actually applied/committed.
+All W0 documentation changes have been applied, reconciled, and verified on `main`.
 
 ---
 
-# 85. W0 Expected Outcome
+# 85. W0 Reconciled Outcome
 
-Once the complete W0 patch set is applied, a fresh machine should be able to determine:
+With the W0 patch set completed, a fresh machine resolves:
 
 ```text
 MGBOS PHASE 1
@@ -2227,6 +2251,10 @@ CURRENT MGBOS PRODUCT PROGRAM
 =
 FOUNDER CONTROL
 
+FOUNDER CONTROL PRODUCT PACKAGE (D0-D4)
+=
+ACTIVE / DEFINED
+
 ACTIVE NEW IMPLEMENTATION PHASE
 =
 NONE
@@ -2238,15 +2266,19 @@ NOT VERIFIED
 REAL TRANSACTION READINESS
 =
 GATED
+
+NEXT MATERIAL GATE
+=
+ARCHITECTURE IMPACT REVIEW
 ```
 
 without relying on private conversation history.
 
 ---
 
-# 86. W0 Does Not Change Runtime
+# 86. W0 Documentation-Only Boundary
 
-W0 is:
+W0 was:
 
 ```text
 DOCUMENTATION RECONCILIATION
@@ -2465,7 +2497,7 @@ systems/mgbos/
 
 # 94. Current Program Summary
 
-Expected interpretation after the W0 set is applied:
+Current program interpretation (W0 complete, D0–D4 active):
 
 ```text
 ARCHITECTURE
