@@ -1,7 +1,7 @@
 ---
 canonical_id: docs.governance.canonical-source-map
 status: ACTIVE
-version: 1.2
+version: 1.3
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -17,10 +17,11 @@ authoritative_for:
   - business-versus-system documentation boundaries
   - engineering-control documentation routing
   - vibe engineering source routing
+  - vibe engineering continuity checkpoint routing
   - transitional documentation tracking
   - canonicalization backlog
 
-last_reviewed: 2026-10-03
+last_reviewed: 2026-10-05
 review_cadence: monthly
 
 depends_on:
@@ -30,12 +31,12 @@ depends_on:
   - ../decisions/001-repository-organization.md
 
 supersedes:
-  - docs.governance.canonical-source-map@1.1
+  - docs.governance.canonical-source-map@1.2
 
-repository_snapshot: 26871da802706fba5bc033576fbb0a487f6c9255
+repository_snapshot: f767fd141513d4c8761ab0fc05be34736fa0f5ab
 ---
 
-# DOC-002 — BisnisHub Canonical Source Map v1.2
+# DOC-002 — BisnisHub Canonical Source Map v1.3
 
 ## 1. Purpose
 
@@ -221,6 +222,7 @@ docs/project-index.md
 .agents/routing/
 .agents/expertise/registry.yaml
 .agents/capabilities/
+.agents/continuity/checkpoint.yaml
 ```
 
 Registry authoritative untuk data registry yang menjadi tanggung jawabnya.
@@ -500,6 +502,7 @@ It does not own business truth.
 | Engineering AI Control Plane | Repository Engineering | `docs/engineering/engineering-ai-control-plane.md` |
 | Runtime-adapter architecture | Repository Engineering | `docs/engineering/runtime-adapter-architecture.md` |
 | Vibe Engineering operating method | Repository Engineering | `docs/engineering/vibe-engineering/` |
+| Vibe continuity checkpoint | Repository Engineering | `.agents/continuity/checkpoint.yaml` |
 | Solo-Founder operating model | Repository Operating Model | `docs/operating-model/solo-founder-operating-system.md` |
 | Solo-Founder launch roadmap | Repository Roadmap | `docs/roadmaps/solo-founder-launch-roadmap.md` |
 
@@ -1117,6 +1120,44 @@ package closure
 ```
 
 It does not own deployment/runtime truth.
+
+---
+
+# 50A. Vibe Continuity Checkpoint Authority
+
+Canonical continuity artifact:
+
+```text
+.agents/continuity/checkpoint.yaml
+```
+
+Classification:
+
+```text
+OPERATIONAL_REGISTRY
++
+EVIDENCE / COORDINATION CHECKPOINT
+```
+
+Authoritative for:
+
+```text
+what the last persisted continuity snapshot recorded
+```
+
+Boundary:
+
+It is authoritative only for:
+
+> **what the last persisted continuity snapshot recorded**
+
+not:
+
+> **what the repository currently is**
+
+Actual repository and GitHub evidence remains stronger.
+
+The continuity checkpoint accelerates session restoration and context recovery. It does NOT own canonical risk, roles, permissions, approval, architecture, business truth, contract schemas, or release state.
 
 ---
 
@@ -2896,6 +2937,9 @@ VIBE ENGINEERING
 
 .agents/skills
 → reusable execution procedures
+
+.agents/continuity
+→ durable verified engineering snapshot
 ```
 
 None should duplicate the others.

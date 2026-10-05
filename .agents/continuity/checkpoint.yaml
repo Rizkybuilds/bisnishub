@@ -1,0 +1,94 @@
+schema_version: 1
+kind: VIBE_CONTINUITY_CHECKPOINT
+status: ACTIVE
+
+repository:
+  full_name: Rizkybuilds/bisnishub
+  canonical_branch: main
+
+capture:
+  observed_main: f767fd141513d4c8761ab0fc05be34736fa0f5ab
+  observed_on: 2026-10-05
+  semantics: SNAPSHOT_NOT_LIVE_HEAD
+
+program:
+  current_stream: CP-007E
+
+  completed_milestones:
+    - label: CP-007A.1
+      pr: 21
+      integration_sha: e8304f995c6b794118b0b24f5ad31bd868b17cb4
+      result: VE_POST_MERGE.VERIFIED
+
+    - label: CP-007A.2
+      pr: 22
+      integration_sha: e6d8399f512660ded30671ab04852a9339493c2d
+      result: VE_POST_MERGE.VERIFIED
+
+    - label: CP-007B
+      pr: 23
+      integration_sha: 152713ef444ec281f12cf464cde8422d5275b207
+      result: VE_POST_MERGE.VERIFIED
+
+    - label: CP-007C
+      pr: 24
+      integration_sha: 5b3dd8715b40924b493d86ef19fdb3e20dac0d29
+      result: VE_POST_MERGE.VERIFIED
+
+    - label: CP-007D
+      pr: 25
+      integration_sha: e21366573afe6af77a0b7adcab6573515d4371c7
+      result: VE_POST_MERGE.VERIFIED
+
+    - label: CP-007E.1
+      pr: 26
+      integration_sha: 26871da802706fba5bc033576fbb0a487f6c9255
+      result: VE_POST_MERGE.VERIFIED
+
+    - label: CP-007E.2
+      pr: 27
+      integration_sha: 1d8eeba9d62e3a186c8c30cf9f28036a8b79fe26
+      result: VE_POST_MERGE.VERIFIED
+
+  latest_known_main_change:
+    pr: 28
+    sha: f767fd141513d4c8761ab0fc05be34736fa0f5ab
+    summary: Activate Vibe Engineering operating model.
+
+  next_expected_work:
+    label: CP-007E.3
+    objective: Add governed Dependabot maintenance for GitHub Actions without weakening immutable SHA enforcement.
+
+security_posture:
+  remote_mutation_enabled: false
+  production_execution_enabled: false
+  privileged_runner: DISABLED
+
+deferred_layers:
+  - id: CI_NETWORK_AND_PACKAGE_SUPPLY_CHAIN
+    summary: General shell network egress, package registry trust, provenance, and scanners remain outside CP-007E.2.
+
+  - id: SERVER_SIDE_ACTION_PINNING_POLICY
+    summary: Repository-side CI enforces full SHA; GitHub server-side full-SHA policy remains NOT_VERIFIED.
+
+recovery:
+  read_first:
+    - AGENTS.md
+    - .agents/continuity/checkpoint.yaml
+    - docs/engineering/vibe-engineering/README.md
+    - docs/engineering/vibe-engineering/session-protocol.md
+    - docs/governance/canonical-source-map.md
+
+  verify_on_restore:
+    - actual repository identity
+    - actual current main
+    - commits after capture.observed_main
+    - relevant open or newly merged PRs
+    - exact candidate or main CI
+    - current routing profile
+    - relevant canonical-source changes
+
+next_allowed_action:
+  session_type: VE_SESSION.NEW_WORK
+  target_system: repository-engineering
+  action: Reconcile actual repository state against this checkpoint, then plan CP-007E.3.

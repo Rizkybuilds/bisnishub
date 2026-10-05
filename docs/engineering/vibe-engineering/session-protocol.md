@@ -1,7 +1,7 @@
 ---
 canonical_id: docs.engineering.vibe-engineering.session-protocol
 status: ACTIVE
-version: 1.1.1
+version: 1.2.0
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -18,9 +18,10 @@ authoritative_for:
   - vibe engineering long-gap recovery
   - vibe engineering stale-context handling
   - vibe engineering owner-command interpretation
+  - vibe engineering persisted continuity checkpoint integration
 
-last_reviewed: 2026-10-03
-reviewed_against_revision: 26871da802706fba5bc033576fbb0a487f6c9255
+last_reviewed: 2026-10-05
+reviewed_against_revision: f767fd141513d4c8761ab0fc05be34736fa0f5ab
 review_cadence: quarterly
 
 depends_on:
@@ -37,6 +38,7 @@ depends_on:
   - ../../../.agents/contracts/README.md
   - ../../../.agents/routing/README.md
   - ../../../.agents/capabilities/README.md
+  - ../../../.agents/continuity/README.md
   - ../../../.agents/roles/contracts.json
   - ../../../AGENTS.md
 
@@ -337,17 +339,26 @@ VE_PHASE.RESTORE
 The restoration sequence is:
 
 ```text id="nacy7x"
-1. identify repository
-2. identify target system
-3. observe current revision state
-4. observe active branch/worktree
-5. identify relevant package/artifacts
-6. identify relevant PR if any
-7. identify unresolved findings
-8. inspect current route/profile
-9. identify next allowed procedure
-10. compare expected vs observed state
+1. observe repository identity
+2. observe actual current main
+3. read durable continuity checkpoint
+4. compare checkpoint snapshot against current repository
+5. inspect intervening commits / PRs / CI
+6. read relevant canonical sources
+7. restore active work
+8. record VE_CONTINUITY.CONFIRMED or BLOCKED
 ```
+
+Important:
+
+```text
+checkpoint is accelerator
+not authority over actual repository
+```
+
+The durable continuity checkpoint (`.agents/continuity/checkpoint.yaml`) captures the last verified engineering snapshot. It accelerates session startup and recovery by providing recent milestones, integration revisions, security posture, and expected work without relying on conversational memory.
+
+However, actual repository reality and GitHub evidence always outrank the checkpoint snapshot. If `main` has progressed beyond `capture.observed_main`, the runtime reconciles intervening changes before proceeding.
 
 ---
 
@@ -1379,11 +1390,15 @@ Procedure:
 ```text id="d4huv0"
 VE_SESSION.CONTINUATION
 ↓
-restore
+observe actual repository state
 ↓
-compare expected vs observed
+read .agents/continuity/checkpoint.yaml
 ↓
-select correct next phase
+reconcile changes since capture.observed_main
+↓
+inspect active PR / package if present
+↓
+continue next governed step
 ```
 
 Do not ask the Owner to reconstruct technical state if repository evidence can provide it.
@@ -1748,9 +1763,21 @@ VE_STOP.ROUTING_PROFILE_UNAVAILABLE
 
 # 81. Context Compression
 
-When session history becomes large, preserve:
+When session history becomes large or approaches context limits, durable state should be reducible to:
 
 ```text id="zsir5o"
+checkpoint snapshot (.agents/continuity/checkpoint.yaml)
++
+actual repository delta
++
+active PR/package evidence
+```
+
+Do not attempt to preserve the entire conversation transcript.
+
+Within active session coordination, preserve:
+
+```text id="19ksd8"
 current objective
 canonical decisions
 target system
@@ -1807,10 +1834,10 @@ Recovery SHOULD include:
 
 ```text id="dgn7zk"
 current main
+durable continuity checkpoint (.agents/continuity/checkpoint.yaml)
 recent relevant commits
 relevant open/merged PRs
 active package
-roadmap/current-state docs
 open findings
 current CI
 changed governance

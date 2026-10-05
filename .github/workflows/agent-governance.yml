@@ -31,6 +31,7 @@ jobs:
       - run: python scripts/governance/validate_host_hardening.py
       - run: python scripts/governance/validate_provider_enforcement.py
       - run: python scripts/governance/validate_ci_supply_chain.py
+      - run: python scripts/governance/validate_vibe_continuity.py
       - run: python -m unittest discover -s scripts/governance -p 'test_*.py'
       - run: python -m unittest discover -s scripts/evals -p 'test_*.py'
   migration-immutability:

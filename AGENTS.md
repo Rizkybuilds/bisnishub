@@ -395,6 +395,8 @@ then continue the next governed step
 
 Do not ask the Owner to reconstruct technical state that can be recovered from repository evidence.
 
+On continuation or chat-loss recovery, read `.agents/continuity/checkpoint.yaml` after observing repository reality, then reconcile the snapshot with current GitHub/repository state.
+
 ### `PR #N`
 
 Interpret as:
