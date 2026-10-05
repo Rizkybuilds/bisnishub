@@ -1,7 +1,6 @@
 ---
 title: BisnisHub Command Center
 type: navigation-gateway
-status: ACTIVE
 updated: "2026-10-05"
 tags:
   - command-center
@@ -15,13 +14,13 @@ tags:
 > [!important] **Non-Authoritative Navigation Gateway**
 > Dokumen ini adalah dashboard navigasi dan gerbang orientasi cepat untuk manusia dan pengguna Obsidian.
 > Dokumen ini **BUKAN** spesifikasi kanonikal, **BUKAN** bukti runtime, dan **BUKAN** sumber kebenaran bisnis maupun roadmap.
-> Jika terdapat perbedaan, bukti repositori/runtime aktual dan sumber kanonikal selalu menang atas dokumen ini.
+> Dokumen ini tidak pernah menjadi sumber otoritas ataupun menyelesaikan konflik otoritas.
 
 ---
 
 ## 1. Start Here (Gerbang Utama)
 
-Mulai orientasi repositori dari sumber kanonikal berikut:
+Mulai orientasi repositori dari gerbang utama berikut:
 
 - [README.md](README.md) — Orientasi repositori, kepemilikan direktori, dan perintah eksekusi resmi.
 - [docs/project-index.md](docs/project-index.md) — Lokator repositori tingkat atas untuk seluruh sistem, dokumen bisnis, dan tata kelola.
@@ -77,16 +76,11 @@ Dokumen ini sengaja tidak menduplikasi perintah runtime untuk mencegah desinkron
 
 ---
 
-## 6. Conflict Rule (Hierarki Otoritas)
+## 6. Authority & Drift (Kebenaran Semantik vs Implementasi)
 
-Sesuai tata kelola repositori, resolusi konflik mengikuti hierarki:
+Sesuai [Dokumentasi Konstitusi](docs/governance/documentation-constitution.md), repositori membedakan antara intended truth dan implementation truth:
 
-```text
-ACTUAL REPOSITORY / RUNTIME EVIDENCE
->
-ACTIVE CANONICAL SOURCES
->
-NAVIGATION / DASHBOARD
->
-HISTORICAL NOTES
-```
+- **Current Implementation / Runtime Reality**: Diverifikasi langsung dari bukti repositori dan runtime aktual.
+- **Intended / Semantic Truth**: Diselesaikan dari sumber kanonikal ACTIVE (lihat [Canonical Source Map](docs/governance/canonical-source-map.md)).
+- **Jika Terjadi Ketidaksesuaian**: Diperlakukan sebagai `IMPLEMENTATION_DRIFT` atau `DOCUMENTATION_DRIFT` dan harus diinvestigasi secara eksplisit. Tidak ada pihak yang otomatis menyelesaikan konflik.
+- **Command Center Ini**: Hanyalah gerbang navigasi kenyamanan dan **tidak pernah menyelesaikan konflik otoritas**.
