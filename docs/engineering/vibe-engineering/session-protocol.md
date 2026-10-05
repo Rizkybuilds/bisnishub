@@ -223,17 +223,14 @@ Do not select a routing profile before target-system resolution.
 
 # 8. Current Routing Reality
 
-At the reviewed baseline of this protocol:
-
-```text id="0nej4n"
-26871da802706fba5bc033576fbb0a487f6c9255
-```
-
-the active registered routing profile is:
+Currently active registered routing profiles:
 
 ```text id="odgg0m"
 mgbos
 → systems/mgbos/
+
+repository-engineering
+→ ./
 ```
 
 This is a CURRENT implementation observation.

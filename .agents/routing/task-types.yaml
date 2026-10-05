@@ -82,6 +82,25 @@ profiles:
       - REQUIRED_EVIDENCE_UNAVAILABLE
       - UNRELATED_WORK_COLLISION
 
+  repository-engineering:
+    status: ACTIVE
+    workspace: ./
+    instructions: AGENTS.md
+    role_registry: .agents/roles/contracts.json
+    risk_profile: docs/governance/cross-system-risk-classification.md
+    workflow: docs/engineering/vibe-engineering/README.md
+    release_gates: docs/engineering/repository-release-gates.md
+
+    default_stop_conditions:
+      - CANONICAL_CONFLICT
+      - UNKNOWN_HIGH_RISK
+      - SCOPE_EXPANSION_REQUIRED
+      - REQUIRED_SOURCE_MISSING
+      - PERMISSION_UNCLEAR
+      - ENVIRONMENT_UNVERIFIED
+      - REQUIRED_EVIDENCE_UNAVAILABLE
+      - UNRELATED_WORK_COLLISION
+
 environments:
   local-disposable:
     mutation_risk_floor: null
@@ -1089,3 +1108,19 @@ example_routes:
         - EXP-005
         - EXP-007
         - EXP-011
+
+  repository-governance-change:
+    profile: repository-engineering
+    primary_task_type: governance-change
+    concerns: []
+
+    expected:
+      effective_risk: R1
+      roles:
+        - planner
+        - engineer
+        - auditor
+        - qa
+      required_expertise:
+        - EXP-001
+        - EXP-020

@@ -27,6 +27,7 @@ depends_on:
   - ../../docs/governance/evidence-provenance-model.md
   - ../roles/contracts.json
   - ../expertise/registry.yaml
+  - ../../docs/engineering/repository-release-gates.md
   - ../../systems/mgbos/docs/engineering/agent-system/risk-classification.md
 
 machine_registry:
@@ -399,11 +400,14 @@ Before routing:
 resolve the workspace
 ```
 
-Current first supported routing profile:
+Current supported routing profiles:
 
 ```text
-MGBOS
+mgbos
 → systems/mgbos/
+
+repository-engineering
+→ ./
 ```
 
 Archive or historical implementation MUST NOT be selected from similarity alone.
@@ -422,10 +426,14 @@ profiles
 
 A profile binds shared routing semantics to a concrete system.
 
-Current profile:
+Current active profiles:
 
 ```text
 mgbos
+→ systems/mgbos/
+
+repository-engineering
+→ ./
 ```
 
 Future examples:

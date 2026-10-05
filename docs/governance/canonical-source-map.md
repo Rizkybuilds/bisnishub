@@ -503,6 +503,7 @@ It does not own business truth.
 | Runtime-adapter architecture | Repository Engineering | `docs/engineering/runtime-adapter-architecture.md` |
 | Vibe Engineering operating method | Repository Engineering | `docs/engineering/vibe-engineering/` |
 | Vibe continuity checkpoint | Repository Engineering | `.agents/continuity/checkpoint.yaml` |
+| Repository release gates | Repository Engineering | `docs/engineering/repository-release-gates.md` |
 | Solo-Founder operating model | Repository Operating Model | `docs/operating-model/solo-founder-operating-system.md` |
 | Solo-Founder launch roadmap | Repository Roadmap | `docs/roadmaps/solo-founder-launch-roadmap.md` |
 
@@ -680,17 +681,14 @@ stop conditions
 
 # 31. Current Routing Profile Reality
 
-At repository snapshot:
-
-```text
-26871da802706fba5bc033576fbb0a487f6c9255
-```
-
-the currently active registered routing profile is:
+Active registered routing profiles in `.agents/routing/task-types.yaml`:
 
 ```text
 mgbos
 → systems/mgbos/
+
+repository-engineering
+→ ./
 ```
 
 This is a current registry observation.
@@ -2702,12 +2700,11 @@ After integration it should be resolved.
 
 # 128. Current Engineering Routing Limitation
 
-Current routing registry is MGBOS-focused.
+The routing registry provides active profiles for `mgbos` and `repository-engineering`.
 
 A dedicated profile for:
 
 ```text
-repository-engineering
 JARVIS engineering
 KasKita engineering
 ```

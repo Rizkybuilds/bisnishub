@@ -2363,6 +2363,117 @@ def validate(root=ROOT):
     )
 
     # ------------------------------------------------------------
+    # Routing profile invariants
+    # ------------------------------------------------------------
+
+    # MGBOS routing profile must remain intact.
+    mgbos_profile = profiles.get("mgbos")
+    require(
+        mgbos_profile is not None,
+        "mgbos routing profile is missing",
+    )
+    require(
+        mgbos_profile.get("status") == "ACTIVE",
+        "mgbos routing profile must be ACTIVE",
+    )
+    require(
+        mgbos_profile.get("workspace") == "systems/mgbos/",
+        "mgbos workspace must be systems/mgbos/",
+    )
+    require(
+        mgbos_profile.get("instructions") == "systems/mgbos/AGENTS.md",
+        "mgbos instructions must be systems/mgbos/AGENTS.md",
+    )
+    require(
+        mgbos_profile.get("risk_profile") == (
+            "systems/mgbos/docs/engineering/agent-system/risk-classification.md"
+        ),
+        "mgbos risk profile mismatch",
+    )
+    require(
+        mgbos_profile.get("workflow") == (
+            "systems/mgbos/docs/engineering/agent-system/workflow.md"
+        ),
+        "mgbos workflow mismatch",
+    )
+    require(
+        mgbos_profile.get("release_gates") == (
+            "systems/mgbos/docs/engineering/agent-system/release-gates.md"
+        ),
+        "mgbos release gates mismatch",
+    )
+
+    # Repository engineering routing profile invariants.
+    repo_profile = profiles.get("repository-engineering")
+    require(
+        repo_profile is not None,
+        "repository-engineering routing profile is missing",
+    )
+    require(
+        repo_profile.get("status") == "ACTIVE",
+        "repository-engineering routing profile must be ACTIVE",
+    )
+
+    repo_workspace = repo_profile.get("workspace", "")
+    require(
+        isinstance(repo_workspace, str) and repo_workspace.strip(),
+        "repository-engineering workspace must be a nonempty string",
+    )
+    repo_ws_path = local_dir(root, repo_workspace)
+    require(
+        repo_ws_path.resolve() == root.resolve()
+        and not repo_workspace.startswith("systems/mgbos"),
+        (
+            "repository-engineering workspace must resolve to repository root "
+            "and cannot point into systems/mgbos/"
+        ),
+    )
+    require(
+        repo_profile.get("instructions") == "AGENTS.md",
+        "repository-engineering instructions must be root AGENTS.md",
+    )
+    require(
+        repo_profile.get("risk_profile") == (
+            "docs/governance/cross-system-risk-classification.md"
+        )
+        and "systems/mgbos" not in repo_profile.get("risk_profile", ""),
+        (
+            "repository-engineering risk profile must be "
+            "docs/governance/cross-system-risk-classification.md "
+            "and cannot point to MGBOS risk classification"
+        ),
+    )
+    require(
+        repo_profile.get("release_gates") == (
+            "docs/engineering/repository-release-gates.md"
+        )
+        and "systems/mgbos" not in repo_profile.get("release_gates", ""),
+        (
+            "repository-engineering release gates must be "
+            "docs/engineering/repository-release-gates.md "
+            "and cannot point to MGBOS release gates"
+        ),
+    )
+    require(
+        repo_profile.get("workflow") == (
+            "docs/engineering/vibe-engineering/README.md"
+        ),
+        (
+            "repository-engineering workflow must be "
+            "docs/engineering/vibe-engineering/README.md"
+        ),
+    )
+    require(
+        repo_profile.get("role_registry") == (
+            ".agents/roles/contracts.json"
+        ),
+        (
+            "repository-engineering role registry must be "
+            ".agents/roles/contracts.json"
+        ),
+    )
+
+    # ------------------------------------------------------------
     # Routing failures
     # ------------------------------------------------------------
 
@@ -2434,6 +2545,11 @@ def validate(root=ROOT):
                     f"{failure_id}"
                 ),
             )
+
+    require(
+        failures.get("unknown-profile", {}).get("result") == "BLOCKED",
+        "unknown-profile failure result must remain BLOCKED",
+    )
 
     # ------------------------------------------------------------
     # Executable routing examples
@@ -2839,6 +2955,7 @@ def validate(root=ROOT):
         ".agents/skills/mgbos-change/SKILL.md",
         "docs/engineering/engineering-ai-control-plane.md",
         "docs/engineering/runtime-adapter-architecture.md",
+        "docs/engineering/repository-release-gates.md",
     ):
         markdown.add(
             local_file(

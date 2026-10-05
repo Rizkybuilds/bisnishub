@@ -670,6 +670,368 @@ class GovernanceValidationTests(
             )
 
     # --------------------------------------------------------
+    # Routing profile protections
+    # --------------------------------------------------------
+
+    def test_repository_engineering_route_resolution(
+        self
+    ):
+        result = governance.validate(
+            self.root
+        )
+
+        routing = governance.load_yaml(
+            self.root,
+            ".agents/routing/task-types.yaml",
+        )
+
+        self.assertIn(
+            "repository-engineering",
+            routing["profiles"],
+        )
+
+        repo_profile = routing[
+            "profiles"
+        ][
+            "repository-engineering"
+        ]
+
+        self.assertEqual(
+            repo_profile["status"],
+            "ACTIVE",
+        )
+
+        self.assertEqual(
+            repo_profile["instructions"],
+            "AGENTS.md",
+        )
+
+        self.assertEqual(
+            repo_profile["risk_profile"],
+            "docs/governance/cross-system-risk-classification.md",
+        )
+
+        self.assertEqual(
+            repo_profile["release_gates"],
+            "docs/engineering/repository-release-gates.md",
+        )
+
+        self.assertEqual(
+            repo_profile["workflow"],
+            "docs/engineering/vibe-engineering/README.md",
+        )
+
+        example = routing[
+            "example_routes"
+        ][
+            "repository-governance-change"
+        ]
+
+        resolved = (
+            governance.resolve_example_route(
+                routing,
+                example,
+            )
+        )
+
+        self.assertEqual(
+            resolved["effective_risk"],
+            "R1",
+        )
+
+        self.assertEqual(
+            resolved["roles"],
+            [
+                "planner",
+                "engineer",
+                "auditor",
+                "qa",
+            ],
+        )
+
+        self.assertEqual(
+            resolved["required_expertise"],
+            [
+                "EXP-001",
+                "EXP-020",
+            ],
+        )
+
+    def test_repository_engineering_workspace_mgbos_rejected(
+        self
+    ):
+        def mutate(data):
+            data[
+                "profiles"
+            ][
+                "repository-engineering"
+            ][
+                "workspace"
+            ] = "systems/mgbos/"
+
+        self.edit_yaml(
+            ".agents/routing/task-types.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "cannot point into systems/mgbos",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_repository_engineering_mgbos_release_gates_rejected(
+        self
+    ):
+        def mutate(data):
+            data[
+                "profiles"
+            ][
+                "repository-engineering"
+            ][
+                "release_gates"
+            ] = (
+                "systems/mgbos/docs/"
+                "engineering/agent-system/"
+                "release-gates.md"
+            )
+
+        self.edit_yaml(
+            ".agents/routing/task-types.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "cannot point to MGBOS release gates",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_repository_engineering_mgbos_risk_profile_rejected(
+        self
+    ):
+        def mutate(data):
+            data[
+                "profiles"
+            ][
+                "repository-engineering"
+            ][
+                "risk_profile"
+            ] = (
+                "systems/mgbos/docs/"
+                "engineering/agent-system/"
+                "risk-classification.md"
+            )
+
+        self.edit_yaml(
+            ".agents/routing/task-types.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "cannot point to MGBOS risk classification",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_repository_engineering_profile_missing_rejected(
+        self
+    ):
+        def mutate(data):
+            del data[
+                "profiles"
+            ][
+                "repository-engineering"
+            ]
+
+            del data[
+                "example_routes"
+            ][
+                "repository-governance-change"
+            ]
+
+        self.edit_yaml(
+            ".agents/routing/task-types.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "repository-engineering routing profile is missing",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_repository_engineering_profile_inactive_rejected(
+        self
+    ):
+        def mutate(data):
+            data[
+                "profiles"
+            ][
+                "repository-engineering"
+            ][
+                "status"
+            ] = "DEFERRED"
+
+        self.edit_yaml(
+            ".agents/routing/task-types.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Inactive routing profile: repository-engineering",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_mgbos_profile_missing_rejected(
+        self
+    ):
+        def mutate(data):
+            del data[
+                "profiles"
+            ][
+                "mgbos"
+            ]
+
+            data[
+                "example_routes"
+            ] = {
+                k: v
+                for k, v
+                in data[
+                    "example_routes"
+                ].items()
+                if v.get(
+                    "profile"
+                )
+                != "mgbos"
+            }
+
+        self.edit_yaml(
+            ".agents/routing/task-types.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "mgbos routing profile is missing",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_mgbos_profile_corrupted_rejected(
+        self
+    ):
+        def mutate(data):
+            data[
+                "profiles"
+            ][
+                "mgbos"
+            ][
+                "workspace"
+            ] = "systems/mgbos/docs/"
+
+        self.edit_yaml(
+            ".agents/routing/task-types.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "mgbos workspace must be systems/mgbos/",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_unknown_route_profile_rejected(
+        self
+    ):
+        def mutate(data):
+            data[
+                "example_routes"
+            ][
+                "repository-governance-change"
+            ][
+                "profile"
+            ] = "unknown-profile"
+
+        self.edit_yaml(
+            ".agents/routing/task-types.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Unknown example profile",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_unknown_profile_cannot_fallback_to_repository_engineering(
+        self
+    ):
+        def mutate(data):
+            data[
+                "routing_failures"
+            ][
+                "unknown-profile"
+            ][
+                "result"
+            ] = "COMPLETED"
+
+        self.edit_yaml(
+            ".agents/routing/task-types.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "unknown-profile failure result must remain BLOCKED",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    def test_unknown_profile_invalid_result_rejected(
+        self
+    ):
+        def mutate(data):
+            data[
+                "routing_failures"
+            ][
+                "unknown-profile"
+            ][
+                "result"
+            ] = "repository-engineering"
+
+        self.edit_yaml(
+            ".agents/routing/task-types.yaml",
+            mutate,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Invalid routing failure result: unknown-profile",
+        ):
+            governance.validate(
+                self.root
+            )
+
+    # --------------------------------------------------------
     # Existing eval protections
     # --------------------------------------------------------
 
