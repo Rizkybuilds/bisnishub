@@ -1,7 +1,7 @@
 ---
 canonical_id: docs.engineering.vibe-engineering.index
 status: ACTIVE
-version: 1.1.1
+version: 1.2.0
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -16,8 +16,8 @@ authoritative_for:
   - vibe engineering document responsibility map
   - vibe engineering applicability and routing-profile boundary
 
-last_reviewed: 2026-10-03
-reviewed_against_revision: 26871da802706fba5bc033576fbb0a487f6c9255
+last_reviewed: 2026-10-05
+reviewed_against_revision: f767fd141513d4c8761ab0fc05be34736fa0f5ab
 review_cadence: quarterly
 
 depends_on:
@@ -31,6 +31,7 @@ depends_on:
   - ../../../.agents/contracts/README.md
   - ../../../.agents/routing/README.md
   - ../../../.agents/capabilities/README.md
+  - ../../../.agents/continuity/README.md
   - ../../../AGENTS.md
 
 supersedes: null
@@ -226,6 +227,23 @@ Owned by:
 ```text
 .agents/capabilities/README.md
 ```
+
+## Persisted continuity checkpoint
+
+Operational registry:
+
+```text
+.agents/continuity/
+```
+
+Owned by:
+
+```text
+.agents/continuity/README.md
+.agents/continuity/checkpoint.yaml
+```
+
+The continuity directory provides a durable operational registry storing the last verified engineering snapshot. It is NOT a second Control Plane and does not define canonical risk, roles, permissions, contracts, or architecture.
 
 If Vibe Engineering conflicts with one of those canonical owners:
 
@@ -1603,6 +1621,18 @@ Owns:
 - reflection;
 - roadmap feedback;
 - next-package preparation.
+
+## `.agents/continuity/`
+
+Operational registry for persisted Vibe Engineering continuity.
+
+Owns:
+
+- durable repository-backed continuity snapshot (`checkpoint.yaml`);
+- snapshot-not-live-head semantics;
+- restoration precedence and update policies.
+
+It accelerates recovery without replacing canonical contracts or becoming a second Control Plane.
 
 ---
 
