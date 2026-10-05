@@ -1,7 +1,7 @@
 ---
 canonical_id: agents.engineering.routing
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -18,7 +18,7 @@ authoritative_for:
   - expertise routing composition
   - engineering routing escalation semantics
 
-last_reviewed: 2026-10-01
+last_reviewed: 2026-10-05
 review_cadence: quarterly
 
 depends_on:
@@ -27,6 +27,7 @@ depends_on:
   - ../../docs/governance/evidence-provenance-model.md
   - ../roles/contracts.json
   - ../expertise/registry.yaml
+  - ../../docs/engineering/repository-release-gates.md
   - ../../systems/mgbos/docs/engineering/agent-system/risk-classification.md
 
 machine_registry:
@@ -35,7 +36,7 @@ machine_registry:
 supersedes: null
 ---
 
-# BisnisHub Engineering Task & Routing Model v1
+# BisnisHub Engineering Task & Routing Model v1.1
 
 ## 1. Purpose
 
@@ -399,11 +400,14 @@ Before routing:
 resolve the workspace
 ```
 
-Current first supported routing profile:
+Current supported routing profiles:
 
 ```text
-MGBOS
+mgbos
 → systems/mgbos/
+
+repository-engineering
+→ ./
 ```
 
 Archive or historical implementation MUST NOT be selected from similarity alone.
@@ -422,10 +426,14 @@ profiles
 
 A profile binds shared routing semantics to a concrete system.
 
-Current profile:
+Current active profiles:
 
 ```text
 mgbos
+→ systems/mgbos/
+
+repository-engineering
+→ ./
 ```
 
 Future examples:

@@ -1,7 +1,7 @@
 ---
 canonical_id: docs.governance.canonical-source-map
 status: ACTIVE
-version: 1.3
+version: 1.4
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -31,12 +31,12 @@ depends_on:
   - ../decisions/001-repository-organization.md
 
 supersedes:
-  - docs.governance.canonical-source-map@1.2
+  - docs.governance.canonical-source-map@1.3
 
-repository_snapshot: f767fd141513d4c8761ab0fc05be34736fa0f5ab
+repository_snapshot: c6d8043a5bc2944064f6514b7ccdef0fd8f007d4
 ---
 
-# DOC-002 — BisnisHub Canonical Source Map v1.3
+# DOC-002 — BisnisHub Canonical Source Map v1.4
 
 ## 1. Purpose
 
@@ -503,6 +503,7 @@ It does not own business truth.
 | Runtime-adapter architecture | Repository Engineering | `docs/engineering/runtime-adapter-architecture.md` |
 | Vibe Engineering operating method | Repository Engineering | `docs/engineering/vibe-engineering/` |
 | Vibe continuity checkpoint | Repository Engineering | `.agents/continuity/checkpoint.yaml` |
+| Repository release gates | Repository Engineering | `docs/engineering/repository-release-gates.md` |
 | Solo-Founder operating model | Repository Operating Model | `docs/operating-model/solo-founder-operating-system.md` |
 | Solo-Founder launch roadmap | Repository Roadmap | `docs/roadmaps/solo-founder-launch-roadmap.md` |
 
@@ -680,17 +681,14 @@ stop conditions
 
 # 31. Current Routing Profile Reality
 
-At repository snapshot:
-
-```text
-26871da802706fba5bc033576fbb0a487f6c9255
-```
-
-the currently active registered routing profile is:
+Active registered routing profiles in `.agents/routing/task-types.yaml`:
 
 ```text
 mgbos
 → systems/mgbos/
+
+repository-engineering
+→ ./
 ```
 
 This is a current registry observation.
@@ -2702,12 +2700,11 @@ After integration it should be resolved.
 
 # 128. Current Engineering Routing Limitation
 
-Current routing registry is MGBOS-focused.
+The routing registry provides active profiles for `mgbos` and `repository-engineering`.
 
 A dedicated profile for:
 
 ```text
-repository-engineering
 JARVIS engineering
 KasKita engineering
 ```
