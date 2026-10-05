@@ -65,9 +65,9 @@ Laporan berkala hasil eksekusi engineering (seperti `mgbos-001-report.md` hingga
 
 Catatan sesi perancangan awal MGBOS pada September 2026 disimpan untuk pelacakan alasan historis dan forensik keputusan:
 
-- [2026-09-23 - MGBOS 0.5.2.md](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.5.2.md>) — Catatan histori backlog & build plan awal Custom Atelier.
-- [2026-09-23 - MGBOS 0.5.3.md](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.5.3.md>) — Catatan histori fondasi sistem dan setup database.
-- [2026-09-23 - MGBOS 0.5.4.md](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.5.4.md>) — Catatan histori shell aplikasi dan verifikasi rute awal.
+- [2026-09-23 - MGBOS 0.5.2.md](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.5.2.md>) — Historical: TeeStock Custom Atelier Implementation Backlog & Build Plan v0.1.
+- [2026-09-23 - MGBOS 0.5.3.md](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.5.3.md>) — Historical: Engineering Specification & Repository Standard v0.1.
+- [2026-09-23 - MGBOS 0.5.4.md](<../../../../catatan/sesi/2026-09-23 - MGBOS 0.5.4.md>) — Historical: Repository Bootstrap Specification v0.1.
 
 ### Aturan Otoritas Catatan Historis:
 
