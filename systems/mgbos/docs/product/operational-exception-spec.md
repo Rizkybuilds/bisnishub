@@ -3365,7 +3365,7 @@ RESOLVED_BY_D4
 Owner:
 `mgbos.product.teestock-operational-pilot`
 
-D4 (`teestock-operational-pilot-plan.md`) Section 38–46 selects the bounded initial validation catalog:
+D4 (`teestock-operational-pilot-plan.md`) Section 88 selects the bounded initial validation catalog (with Sections 89–90 providing boundedness and implementation-availability constraints):
 
 1. Production deadline breach
 2. Vendor no-response / commitment problem
@@ -3448,7 +3448,7 @@ D4 HANDOFF
 SATISFIED BY ACTIVE D4 v1
 ```
 
-D4 (`teestock-operational-pilot-plan.md`) has satisfied this handoff by selecting the bounded initial pilot exception catalog (Section 38–46). The original handoff guidance is preserved for historical and traceability context:
+D4 (`teestock-operational-pilot-plan.md`) has satisfied this handoff by selecting the bounded initial pilot exception catalog (Section 88, with Sections 89–90 providing boundedness constraints). The original handoff guidance is preserved for historical and traceability context:
 
 Candidate evidence areas included:
 

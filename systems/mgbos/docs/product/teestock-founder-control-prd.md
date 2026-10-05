@@ -2892,7 +2892,15 @@ RESOLVED_BY_D2
 Owner:
 `mgbos.product.founder-attention-experience`
 
-Resolved by D2 (`founder-attention-experience-spec.md`) Section 17–28, establishing the formal 8 attention categories.
+Resolved by D2 (`founder-attention-experience-spec.md`) Sections 23–32, establishing the formal 5 Attention Kinds:
+
+```text
+DECISION
+ACTION
+WAITING
+WATCH
+DATA_GAP
+```
 
 ---
 
@@ -2907,12 +2915,12 @@ RESOLVED_BY_D2
 Owner:
 `mgbos.product.founder-attention-experience`
 
-Resolved by D2 (`founder-attention-experience-spec.md`) Section 38–43, establishing the formal 4 priority levels:
+Resolved by D2 (`founder-attention-experience-spec.md`) Sections 34–42, establishing the formal 4 priority levels:
 
 ```text
 INTERRUPT
 TODAY
-THIS_WEEK
+QUEUE
 WATCH
 ```
 
@@ -2959,7 +2967,7 @@ RESOLVED_BY_D3
 Owner:
 `mgbos.product.operational-exception`
 
-Resolved by D3 (`operational-exception-spec.md`) Section 39–46, establishing the formal 4 exception severity tiers:
+Resolved by D3 (`operational-exception-spec.md`) Sections 36–46, establishing the formal 4 exception severity tiers:
 
 ```text
 CRITICAL
@@ -3019,7 +3027,20 @@ RESOLVED_BY_D4
 Owner:
 `mgbos.product.teestock-operational-pilot`
 
-Resolved by D4 (`teestock-operational-pilot-plan.md`) Section 14–22, defining bounded cohort sizing (minimum 10 completed end-to-end orders across Assisted Sales and Custom Atelier cohorts) and pilot milestone gates.
+Resolved by D4 (`teestock-operational-pilot-plan.md`) Sections 21–25, defining the bounded initial validation cohort:
+
+```text
+minimum_real_transactions:
+3
+
+minimum_end_to_end_completed:
+2
+
+third_transaction:
+may remain operationally active at review
+if it has reached real operational execution
+and provides material validation evidence
+```
 
 ---
 

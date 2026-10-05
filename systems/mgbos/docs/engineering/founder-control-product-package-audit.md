@@ -88,7 +88,7 @@ The cross-document semantic audit verified that the core product thesis across D
 2. **Operational Exception ≠ Source Business Lifecycle State:** Orders, payments, and shipments maintain standard operational state machines; exceptions track orthogonal blockers.
 3. **Operational Exception ≠ Technical Incident:** System bugs, database outages, or infrastructure errors are technical incidents, not domain operational exceptions.
 4. **Operational Exception ≠ Customer Case:** Customer complaints and inquiries follow CRM/case lifecycles, not operational exception lifecycles.
-5. **Attention Priority ≠ Exception Severity:** Exception severity (CRITICAL, HIGH, MEDIUM, LOW) measures business consequence; attention priority (INTERRUPT, HIGH, NORMAL, LOW) measures immediacy of required attention.
+5. **Attention Priority ≠ Exception Severity:** Exception severity (CRITICAL, HIGH, MEDIUM, LOW) measures business consequence; attention priority (INTERRUPT, TODAY, QUEUE, WATCH) measures immediacy of required attention.
 6. **Founder Visibility ≠ Exception Ownership:** Visibility on Founder Home does not transfer routine operational responsibility from operators/vendors to the founder.
 7. **Founder Decision Required ≠ Abnormality:** Founder decision is required strictly when owner judgment or authority is needed, not automatically for every exception.
 8. **No Invented Commercial Policies:** No arbitrary numeric thresholds (margin floor, stale exception age, SLA hours, follow-up days) were invented; unresolved thresholds remain explicitly open for business policy.
@@ -115,14 +115,14 @@ The cross-document semantic audit verified that the core product thesis across D
 
 ### Resolved Unknowns (Downstream Closure)
 
-| Unknown ID      | Description                     | Resolution Status                   | Downstream Semantic Owner                    | Reference Section |
-| :-------------- | :------------------------------ | :---------------------------------- | :------------------------------------------- | :---------------- |
-| **UNK-001**     | Exact Attention Taxonomy        | `RESOLVED_BY_D2`                    | `mgbos.product.founder-attention-experience` | D2 Sections 17–28 |
-| **UNK-002**     | Exact Priority Vocabulary       | `RESOLVED_BY_D2`                    | `mgbos.product.founder-attention-experience` | D2 Sections 38–43 |
-| **UNK-005**     | Exception Severity Model        | `RESOLVED_BY_D3`                    | `mgbos.product.operational-exception`        | D3 Sections 39–46 |
-| **UNK-006**     | Customer Case Product Boundary  | `RESOLVED_BY_D3` (Product Boundary) | `mgbos.product.operational-exception`        | D3 Section 127    |
-| **UNK-008**     | Real Pilot Volume & Cohort      | `RESOLVED_BY_D4`                    | `mgbos.product.teestock-operational-pilot`   | D4 Sections 14–22 |
-| **EXC-UNK-001** | Initial Pilot Exception Catalog | `RESOLVED_BY_D4`                    | `mgbos.product.teestock-operational-pilot`   | D4 Sections 23–40 |
+| Unknown ID      | Description                                                                              | Resolution Status                   | Downstream Semantic Owner                    | Reference Section                          |
+| :-------------- | :--------------------------------------------------------------------------------------- | :---------------------------------- | :------------------------------------------- | :----------------------------------------- |
+| **UNK-001**     | Exact Attention Taxonomy (5 Attention Kinds: DECISION, ACTION, WAITING, WATCH, DATA_GAP) | `RESOLVED_BY_D2`                    | `mgbos.product.founder-attention-experience` | D2 Sections 23–32                          |
+| **UNK-002**     | Exact Priority Vocabulary (4 Priorities: INTERRUPT, TODAY, QUEUE, WATCH)                 | `RESOLVED_BY_D2`                    | `mgbos.product.founder-attention-experience` | D2 Sections 34–42                          |
+| **UNK-005**     | Exception Severity Model (4 Tiers: CRITICAL, HIGH, MEDIUM, LOW)                          | `RESOLVED_BY_D3`                    | `mgbos.product.operational-exception`        | D3 Sections 36–46                          |
+| **UNK-006**     | Customer Case Product Boundary                                                           | `RESOLVED_BY_D3` (Product Boundary) | `mgbos.product.operational-exception`        | D3 Section 127                             |
+| **UNK-008**     | Real Pilot Volume (3 real transactions, 2 end-to-end completed)                          | `RESOLVED_BY_D4`                    | `mgbos.product.teestock-operational-pilot`   | D4 Sections 21–25                          |
+| **EXC-UNK-001** | Initial Pilot Exception Catalog (8 bounded exception types)                              | `RESOLVED_BY_D4`                    | `mgbos.product.teestock-operational-pilot`   | D4 Section 88 (Sections 89–90 constraints) |
 
 ### Preserved Open & Deferred Unknowns (OPEN PRODUCT UNKNOWN)
 
@@ -152,18 +152,24 @@ D3: OPERATIONAL EXCEPTION SPEC
         ↓ (routes to D2 for presentation)
 
 D2: FOUNDER ATTENTION & EXPERIENCE SPEC
-├── Owns Founder Home Attention Item Projection
-├── Owns Attention Priority (INTERRUPT, HIGH, NORMAL, LOW)
-├── Owns Attention Bucket Placement (Decision Required, Needs Review, Blocked, Delegated)
-└── Owns Founder Decision Required (YES / NO)
+├── Owns Attention Item projection
+├── Owns Founder Home presentation
+├── Owns Attention Kind:
+│   DECISION / ACTION / WAITING / WATCH / DATA_GAP
+├── Owns Attention Priority:
+│   INTERRUPT / TODAY / QUEUE / WATCH
+├── Owns Founder Decision Required:
+│   YES / NO / UNKNOWN
+└── Owns Flow Impact:
+    BLOCKING / DEGRADING / NON_BLOCKING / UNKNOWN
 ```
 
 ### Governing Visibility Rule
 
 1. **Active CRITICAL Exception Qualification:** An active CRITICAL Operational Exception MUST qualify for Founder Home visibility evaluation under D2 rules.
-2. **Persistence Across Acknowledgement:** An active CRITICAL Operational Exception MUST NOT disappear from Founder Home merely because it is marked `ACKNOWLEDGED` (it remains visible until resolution or explicit mitigation).
-3. **Independent Priority Derivation:** CRITICAL severity does **NOT** automatically imply `Attention Priority = INTERRUPT`. Priority is derived based on urgency and time sensitivity in D2.
-4. **Independent Decision Required Derivation:** CRITICAL severity does **NOT** automatically imply `Founder Decision Required = YES`. It qualifies for `Decision Required = YES` only if founder authority or judgment is strictly required; otherwise it routes to `Needs Review` or `Blocked`.
+2. **Persistence Across Acknowledgement:** An active CRITICAL Operational Exception must not disappear solely because it is `ACKNOWLEDGED` while the underlying abnormal condition remains active/unresolved.
+3. **Independent Priority Derivation:** CRITICAL severity does **NOT** automatically imply `Attention Priority = INTERRUPT`. Priority is derived independently based on immediacy and time sensitivity under D2 rules.
+4. **Independent Decision Required Derivation:** CRITICAL severity does **NOT** automatically imply `Founder Decision Required = YES`. Founder Decision Required (`YES` / `NO` / `UNKNOWN`) is derived independently based on whether founder authority or judgment is strictly required.
 
 ---
 
