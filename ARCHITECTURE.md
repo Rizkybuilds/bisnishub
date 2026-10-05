@@ -41,7 +41,7 @@ Spesifikasi kanonikal arsitektur lintas ekosistem dimiliki oleh dokumen berikut 
 Navigasi ke pemilik arsitektur masing-masing sistem:
 
 - **MGBOS**: [systems/mgbos/docs/architecture/README.md](systems/mgbos/docs/architecture/README.md)  
-  Indeks navigasi arsitektur kanonikal MGBOS (mengatur data model, state machines, business invariants, commands/events, dan perizinan).
+  Indeks navigasi arsitektur kanonikal MGBOS yang merutekan pembaca ke dedicated specifications untuk data model, state machines, business invariants, commands/events, permissions, dan domain/capability ownership.
 - **JARVIS**: [systems/jarvis/docs/architecture.md](systems/jarvis/docs/architecture.md) & [systems/jarvis/docs/charter.md](systems/jarvis/docs/charter.md)  
   Spesifikasi dan piagam arsitektur kanonikal JARVIS. *Catatan kematangan:* spesifikasi arsitektur berstatus aktif, namun implementasi runtime berstatus `NOT_IMPLEMENTED` (bukan runtime produksi yang aktif).
 - **Sistem Lainnya (KasKita, Assistant, dll.)**:  
