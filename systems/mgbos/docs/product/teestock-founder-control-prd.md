@@ -18,7 +18,7 @@ implementation_status: PRODUCT_DEFINITION_ONLY
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: d0686b7f752c85a090c4f719d4aeb974451418c5
+  commit: 65ad026fc0d6cf8da1eec15b2de39bd72b0343e5
   reviewed_at: 2026-10-05
 
 authoritative_for:
@@ -2883,27 +2883,38 @@ Current-source audit must verify this again before engineering.
 
 ## UNK-001 — Exact Attention Taxonomy
 
-To be resolved in D2.
+Resolution status:
+
+```text
+RESOLVED_BY_D2
+```
+
+Owner:
+`mgbos.product.founder-attention-experience`
+
+Resolved by D2 (`founder-attention-experience-spec.md`) Section 17–28, establishing the formal 8 attention categories.
 
 ---
 
 # 159. UNK-002 — Exact Priority Vocabulary
 
-Potential forms may include:
+Resolution status:
 
 ```text
-critical
-
-high
-
-normal
-
-waiting
+RESOLVED_BY_D2
 ```
 
-but no taxonomy is approved by D1.
+Owner:
+`mgbos.product.founder-attention-experience`
 
-D2 owns this.
+Resolved by D2 (`founder-attention-experience-spec.md`) Section 38–43, establishing the formal 4 priority levels:
+
+```text
+INTERRUPT
+TODAY
+THIS_WEEK
+WATCH
+```
 
 ---
 
@@ -2923,7 +2934,7 @@ collection urgency
 Vendor response
 ```
 
-remain policy-specific.
+remain policy-specific (`OPEN / BUSINESS_POLICY`).
 
 ---
 
@@ -2931,41 +2942,47 @@ remain policy-specific.
 
 Product need is established.
 
-Architecture representation is not.
+Architecture representation is not (`OPEN / ARCHITECTURE`).
 
-Possible representation must be decided after D3.
+Possible representation must be decided during Architecture Impact Review after D3/D4 reconciliation.
 
 ---
 
 # 162. UNK-005 — Exception Severity Model
 
-TeeStock business documentation proposes concepts such as:
+Resolution status:
 
 ```text
-LOW
-
-MEDIUM
-
-HIGH
-
-CRITICAL
+RESOLVED_BY_D3
 ```
 
-but D3 must reconcile the final product model before architecture adoption.
+Owner:
+`mgbos.product.operational-exception`
+
+Resolved by D3 (`operational-exception-spec.md`) Section 39–46, establishing the formal 4 exception severity tiers:
+
+```text
+CRITICAL
+HIGH
+MEDIUM
+LOW
+```
 
 ---
 
 # 163. UNK-006 — Customer Case Boundary
 
-Exact relationship between:
+Resolution status:
 
 ```text
-Customer Case
-
-Operational Exception
+PRODUCT_BOUNDARY = RESOLVED_BY_D3
+CANONICAL CUSTOMER_CASE LIFECYCLE = DEFERRED / OUTSIDE CURRENT FOUNDER CONTROL
 ```
 
-requires D3 and future Customer Case work.
+Owner:
+`mgbos.product.operational-exception`
+
+D3 (`operational-exception-spec.md`) Section 127 clarifies the product-level separation between Customer Case and Operational Exception. Canonical Customer Case architecture and lifecycle remain deferred and outside the current Founder Control boundary.
 
 ---
 
@@ -2985,7 +3002,7 @@ push
 other channel
 ```
 
-for Founder Control notifications.
+for Founder Control notifications (`DEFERRED`).
 
 Not required to define core attention semantics.
 
@@ -2993,9 +3010,16 @@ Not required to define core attention semantics.
 
 # 165. UNK-008 — Real Pilot Volume
 
-D1 does not set the number of transactions required for the real operational pilot.
+Resolution status:
 
-D4 owns pilot design.
+```text
+RESOLVED_BY_D4
+```
+
+Owner:
+`mgbos.product.teestock-operational-pilot`
+
+Resolved by D4 (`teestock-operational-pilot-plan.md`) Section 14–22, defining bounded cohort sizing (minimum 10 completed end-to-end orders across Assisted Sales and Custom Atelier cohorts) and pilot milestone gates.
 
 ---
 
@@ -3877,22 +3901,19 @@ For Founder Control product work:
 
 ```text
 1.
-founder-control-documentation-plan.md
+founder-control-documentation-plan.md (ACTIVE)
 
 2.
-teestock-founder-control-prd.md
+teestock-founder-control-prd.md (ACTIVE)
 
 3.
-founder-attention-experience-spec.md
-when created
+founder-attention-experience-spec.md (ACTIVE)
 
 4.
-operational-exception-spec.md
-when created
+operational-exception-spec.md (ACTIVE)
 
 5.
-teestock-operational-pilot-plan.md
-when created
+teestock-operational-pilot-plan.md (ACTIVE)
 ```
 
 ---
@@ -4016,11 +4037,6 @@ may be owned by D2/D3/D4 where they do not contradict this parent PRD.
 # 217. Current Program Status
 
 ```text
-W0
-Current-State Documentation Reconciliation
-=
-SUFFICIENT FOR D1 AUTHORING
-
 D0
 Founder Control Documentation Plan
 =
@@ -4034,21 +4050,37 @@ ACTIVE / PRD_MATURE
 D2
 Founder Attention Experience
 =
-NEXT
+ACTIVE / SPEC_MATURE
 
 D3
 Operational Exception
 =
-AFTER D2
+ACTIVE / SPEC_MATURE
 
 D4
 Real Operational Pilot Plan
 =
-AFTER D3
+ACTIVE / PILOT_PLAN_MATURE
 
-ARCHITECTURE RECONCILIATION
+CROSS-DOCUMENT PRODUCT AUDIT
 =
-NOT STARTED
+PASS (POST-RECONCILIATION)
+
+OWNER PRODUCT PACKAGE APPROVAL
+=
+PENDING
+
+ARCHITECTURE IMPACT REVIEW
+=
+NEXT AFTER OWNER APPROVAL / NOT STARTED
+
+ENGINEERING READINESS
+=
+NOT READY
+
+ACTIVE IMPLEMENTATION PHASE
+=
+NONE
 
 PHASE 2 IMPLEMENTATION
 =
@@ -4057,18 +4089,37 @@ NOT OPEN
 
 ---
 
-# 218. Next Product Artifact
+# 218. Historical Authoring Sequence and Next Program Step
 
-Next document:
+### Historical Authoring Sequence
+
+At initial PRD drafting, the planned authoring sequence was:
 
 ```text
-systems/mgbos/docs/product/
-founder-attention-experience-spec.md
+D1 (Founder Control PRD)
+  ↓
+D2 (Founder Attention Experience)
+  ↓
+D3 (Operational Exception)
+  ↓
+D4 (Real Operational Pilot Plan)
 ```
 
-Purpose:
+All four specifications have been authored, reconciled, and are ACTIVE on `main`.
 
-> **Define exactly how authoritative business conditions become a useful founder-facing attention and decision experience without collapsing business state, exception state, approval, and founder judgment into one concept.**
+### Next Governed Program Step
+
+Following cross-document product audit closure:
+
+```text
+OWNER PRODUCT PACKAGE APPROVAL
+=
+PENDING
+
+ARCHITECTURE IMPACT REVIEW (W2)
+=
+NEXT GOVERNED STAGE
+```
 
 ---
 

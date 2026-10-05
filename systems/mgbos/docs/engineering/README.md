@@ -52,12 +52,13 @@ Dokumentasi engineering bukan otoritas arsitektur semantik. Untuk pertanyaan men
 
 ---
 
-## 6. Bukti Implementasi (Implementation Evidence)
+## 6. Bukti Implementasi & Audit (Implementation & Audit Evidence)
 
-Laporan berkala hasil eksekusi engineering (seperti `mgbos-001-report.md` hingga laporan fase terkini) dan pengujian bertanggal:
+Laporan berkala hasil eksekusi engineering (seperti `mgbos-001-report.md` hingga laporan fase terkini), pengujian bertanggal, dan audit paket dokumentasi:
 
-- Merupakan **BUKTI REVISI** (evidence) yang mencatat apa yang dibangun, diuji, dan diobservasi pada commit/lingkungan tertentu beserta limitasinya.
-- **Bukan** spesifikasi arsitektur kanonikal dan **bukan** jaminan otomatis atas kondisi runtime saat ini.
+- [Founder Control Product Package Audit](founder-control-product-package-audit.md) — Bukti audit semantik lintas dokumen untuk paket Founder Control (D1–D4) pada baseline reviewed `65ad026fc0d6cf8da1eec15b2de39bd72b0343e5`.
+- Merupakan **BUKTI REVISI** (evidence) yang mencatat apa yang dibangun, diuji, diaudit, dan diobservasi pada commit/lingkungan tertentu beserta limitasinya.
+- **Bukan** spesifikasi arsitektur kanonikal, **bukan** otoritas semantik produk, **bukan** otorisasi implementasi, dan **bukan** sertifikasi kesiapan produksi.
 
 ---
 

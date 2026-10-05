@@ -27,7 +27,7 @@ architecture_lifecycle_status: PENDING_ARCHITECTURE_RECONCILIATION
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: f05bd82f9be6aa038799931ede19059481aed8d1
+  commit: 65ad026fc0d6cf8da1eec15b2de39bd72b0343e5
   reviewed_at: 2026-10-05
 
 authoritative_for:
@@ -983,7 +983,7 @@ consistent with TeeStock Operating Model.
 
 ---
 
-# 43. Critical Must Be Visible
+# 43. Critical Must Qualify For Founder Attention Visibility
 
 A:
 
@@ -991,9 +991,15 @@ A:
 CRITICAL
 ```
 
-Operational Exception MUST generate material Founder Control visibility.
+Operational Exception MUST qualify for Founder Control visibility evaluation under D2.
 
-Its D2 priority is still evaluated independently.
+D3 defines the exception severity and business impact. The founder-facing representation, attention projection, and Founder Home placement are strictly owned by D2 (`founder-attention-experience-spec.md`).
+
+Furthermore:
+
+- CRITICAL severity does NOT automatically imply `Founder Decision Required = YES`.
+- CRITICAL severity does NOT automatically imply `Priority = INTERRUPT`.
+- Attention Priority and Founder Decision Required remain independently evaluated under D2 semantics.
 
 ---
 
@@ -1823,11 +1829,11 @@ no immediate founder action
 
 ---
 
-# 100. Critical Visibility Rule
+# 100. Critical Visibility Preservation
 
-A CRITICAL active exception must never disappear solely because another actor has acknowledged it.
+An active CRITICAL Operational Exception must not disappear from Founder Control visibility evaluation solely because another actor has acknowledged it.
 
-Acknowledgement changes ownership state, not business impact.
+Acknowledgement changes ownership state, not business impact. Routing and display on Founder Home remain governed by D2 visibility rules.
 
 ---
 
@@ -3350,9 +3356,27 @@ query model
 
 ## EXC-UNK-001 — Initial Approved Exception Type Catalog
 
-D3 defines categories and semantics.
+Resolution status:
 
-The bounded initial set used for TeeStock real pilot belongs to D4/product-package reconciliation.
+```text
+RESOLVED_BY_D4
+```
+
+Owner:
+`mgbos.product.teestock-operational-pilot`
+
+D4 (`teestock-operational-pilot-plan.md`) Section 38–46 selects the bounded initial validation catalog:
+
+1. Production deadline breach
+2. Vendor no-response / commitment problem
+3. QC failure / rework
+4. Fulfillment blocker / delivery problem
+5. Past-due receivable / payment issue
+6. Required Actual Cost missing
+7. Material margin exception
+8. Business-impacting automation failure
+
+Preserved rule: Only exception types supported by approved implementation may be automatically detected.
 
 ---
 
@@ -3418,11 +3442,15 @@ Outbound notification/escalation channels remain outside D3.
 
 # 225. D4 Handoff
 
-D4 must now choose a **bounded pilot exception catalog**, not implement every imaginable category.
+```text
+D4 HANDOFF
+=
+SATISFIED BY ACTIVE D4 v1
+```
 
-Recommended initial real-pilot focus should come from the actual Business/Custom operating spine.
+D4 (`teestock-operational-pilot-plan.md`) has satisfied this handoff by selecting the bounded initial pilot exception catalog (Section 38–46). The original handoff guidance is preserved for historical and traceability context:
 
-Candidate evidence areas include:
+Candidate evidence areas included:
 
 ```text id="a2b0gh"
 production delay
@@ -3441,8 +3469,6 @@ material margin exception
 
 material business-impacting automation failure
 ```
-
-D4 must decide which are actually part of the pilot.
 
 ---
 
@@ -3601,32 +3627,47 @@ READY
 D0
 Founder Control Documentation Plan
 =
-ACTIVE ON REMOTE
+ACTIVE
 
 D1
 Founder Control PRD
 =
-PREPARED / APPLY FIRST
+ACTIVE / PRD_MATURE
 
 D2
 Founder Attention Experience
 =
-PREPARED / APPLY SECOND
+ACTIVE / SPEC_MATURE
 
 D3
 Operational Exception Spec
 =
 ACTIVE / SPEC_MATURE
-APPLY THIRD
 
 D4
 Real Operational Pilot Plan
 =
-NEXT
+ACTIVE / PILOT_PLAN_MATURE
 
-ARCHITECTURE RECONCILIATION
+CROSS-DOCUMENT PRODUCT AUDIT
+=
+PASS (POST-RECONCILIATION)
+
+OWNER PRODUCT PACKAGE APPROVAL
+=
+PENDING
+
+ARCHITECTURE LIFECYCLE STATUS
+=
+PENDING_ARCHITECTURE_RECONCILIATION
+
+ARCHITECTURE IMPACT REVIEW
 =
 NOT STARTED
+
+ENGINEERING READINESS
+=
+NOT READY
 
 PHASE 2 IMPLEMENTATION
 =
