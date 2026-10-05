@@ -103,7 +103,11 @@ TESTED
 
 TESTED
 ≠
-VERIFIED ON CURRENT REVISION
+VERIFIED ON REVIEWED REVISION
+
+REVIEWED REVISION SNAPSHOT
+≠
+LIVE REPOSITORY HEAD
 
 VERIFIED SOFTWARE
 ≠
@@ -131,7 +135,7 @@ current conclusion is:
 ```text
 SOFTWARE / CI HEALTH
 =
-VERIFIED ON CURRENT REVISION
+VERIFIED ON REVIEWED REVISION
 
 PHASE 1 OPERATING SPINE
 =
@@ -247,39 +251,39 @@ without explicit promotion and matching environment proof.
 
 # 7. Current Readiness Matrix
 
-| Control                            | Evidence status        | Gate             | Current conclusion                                                                                                      |
-| ---------------------------------- | ---------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Engineering / maintenance policy   | VERIFIED               | SUPPORTING       | Active documented policy and runbooks exist                                                                             |
-| Local development safety guards    | VERIFIED               | SUPPORTING       | Destructive MGBOS E2E fails closed against hosted targets                                                               |
-| Hosted CI on current `main`        | VERIFIED               | HARD_GATE        | Current SHA has successful Repository Integrity, Agent Governance, MGBOS Foundation                                     |
-| MGBOS application CI               | VERIFIED               | HARD_GATE        | Current MGBOS Foundation `application` job passed                                                                       |
-| MGBOS database CI                  | VERIFIED               | HARD_GATE        | Current MGBOS Foundation `database` job passed                                                                          |
-| Main branch protection             | PARTIALLY_VERIFIED     | HARD_GATE        | GitHub reports `main` as protected with required checks enforced for `everyone`; other protection dimensions unobserved |
-| Required-check enforcement details | VERIFIED               | HARD_GATE        | 6 required status-check contexts observable with enforcement level `everyone`                                           |
-| Staging environment                | NOT_VERIFIED           | HARD_GATE        | No current verified isolated staging target/evidence                                                                    |
-| Production environment             | NOT_VERIFIED           | HARD_GATE        | No current verified production target/evidence                                                                          |
-| Environment credential isolation   | NOT_VERIFIED           | HARD_GATE        | Required by policy; production separation not yet evidenced                                                             |
-| Development credential hygiene     | BLOCKED                | HARD_GATE        | Development login defaults remain present in current repository source                                                  |
-| Backup automation                  | NOT_VERIFIED           | HARD_GATE        | Runbook explicitly does not claim active backup configuration                                                           |
-| Backup retention                   | NOT_VERIFIED           | HARD_GATE        | Policy defined; provider/runtime evidence missing                                                                       |
-| RPO                                | NOT_SET                | HARD_GATE        | Owner target not established                                                                                            |
-| RTO                                | NOT_SET                | HARD_GATE        | Owner target not established                                                                                            |
-| Restore drill                      | NOT_VERIFIED           | HARD_GATE        | Procedure defined; successful current drill evidence missing                                                            |
-| Monitoring                         | DEFINED_NOT_VERIFIED   | HARD_GATE        | Runbook exists; active monitored environment not proven                                                                 |
-| Alerting / escalation              | DEFINED_NOT_VERIFIED   | HARD_GATE        | Policy exists; active alert test/evidence missing                                                                       |
-| Release procedure                  | VERIFIED               | SUPPORTING       | Release/recovery runbook exists                                                                                         |
-| Rollback / recovery drill          | NOT_VERIFIED           | HARD_GATE        | Procedure defined; successful production-like exercise absent                                                           |
-| Operator acceptance                | VERIFIED               | HARD_GATE        | Phase 1 acceptance PASS, blocker count 0                                                                                |
-| Phase 1 software completion        | VERIFIED               | SUPPORTING       | Phase 1 closure evidence exists                                                                                         |
-| Production acceptance              | NOT_VERIFIED           | HARD_GATE        | No production operational acceptance evidence                                                                           |
-| Real business pilot                | NOT_VERIFIED           | CONDITIONAL_GATE | Separate future pilot required for business validation                                                                  |
-| Public TeeStock storefront         | NOT_VERIFIED / LIMITED | CONDITIONAL_GATE | Required only if customer self-service is part of pilot/release                                                         |
+| Control                             | Evidence status        | Gate             | Current conclusion                                                                                                      |
+| ----------------------------------- | ---------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Engineering / maintenance policy    | VERIFIED               | SUPPORTING       | Active documented policy and runbooks exist                                                                             |
+| Local development safety guards     | VERIFIED               | SUPPORTING       | Destructive MGBOS E2E fails closed against hosted targets                                                               |
+| Hosted CI on reviewed main revision | VERIFIED               | HARD_GATE        | Reviewed evidence revision has successful Repository Integrity, Agent Governance, MGBOS Foundation                      |
+| MGBOS application CI                | VERIFIED               | HARD_GATE        | Reviewed MGBOS Foundation `application` job passed                                                                      |
+| MGBOS database CI                   | VERIFIED               | HARD_GATE        | Reviewed MGBOS Foundation `database` job passed                                                                         |
+| Main branch protection              | PARTIALLY_VERIFIED     | HARD_GATE        | GitHub reports `main` as protected with required checks enforced for `everyone`; other protection dimensions unobserved |
+| Required-check enforcement details  | VERIFIED               | HARD_GATE        | 6 required status-check contexts observable with enforcement level `everyone`                                           |
+| Staging environment                 | NOT_VERIFIED           | HARD_GATE        | No current verified isolated staging target/evidence                                                                    |
+| Production environment              | NOT_VERIFIED           | HARD_GATE        | No current verified production target/evidence                                                                          |
+| Environment credential isolation    | NOT_VERIFIED           | HARD_GATE        | Required by policy; production separation not yet evidenced                                                             |
+| Development credential hygiene      | BLOCKED                | HARD_GATE        | Development login defaults remain present in current repository source                                                  |
+| Backup automation                   | NOT_VERIFIED           | HARD_GATE        | Runbook explicitly does not claim active backup configuration                                                           |
+| Backup retention                    | NOT_VERIFIED           | HARD_GATE        | Policy defined; provider/runtime evidence missing                                                                       |
+| RPO                                 | NOT_SET                | HARD_GATE        | Owner target not established                                                                                            |
+| RTO                                 | NOT_SET                | HARD_GATE        | Owner target not established                                                                                            |
+| Restore drill                       | NOT_VERIFIED           | HARD_GATE        | Procedure defined; successful current drill evidence missing                                                            |
+| Monitoring                          | DEFINED_NOT_VERIFIED   | HARD_GATE        | Runbook exists; active monitored environment not proven                                                                 |
+| Alerting / escalation               | DEFINED_NOT_VERIFIED   | HARD_GATE        | Policy exists; active alert test/evidence missing                                                                       |
+| Release procedure                   | VERIFIED               | SUPPORTING       | Release/recovery runbook exists                                                                                         |
+| Rollback / recovery drill           | NOT_VERIFIED           | HARD_GATE        | Procedure defined; successful production-like exercise absent                                                           |
+| Operator acceptance                 | VERIFIED               | HARD_GATE        | Phase 1 acceptance PASS, blocker count 0                                                                                |
+| Phase 1 software completion         | VERIFIED               | SUPPORTING       | Phase 1 closure evidence exists                                                                                         |
+| Production acceptance               | NOT_VERIFIED           | HARD_GATE        | No production operational acceptance evidence                                                                           |
+| Real business pilot                 | NOT_VERIFIED           | CONDITIONAL_GATE | Separate future pilot required for business validation                                                                  |
+| Public TeeStock storefront          | NOT_VERIFIED / LIMITED | CONDITIONAL_GATE | Required only if customer self-service is part of pilot/release                                                         |
 
 ---
 
 # 8. Hosted CI — VERIFIED
 
-Current exact revision:
+Reviewed exact integration revision:
 
 ```text
 d0686b7f752c85a090c4f719d4aeb974451418c5
@@ -314,7 +318,7 @@ MGBOS Foundation
 37280718654
 ```
 
-All three completed successfully against the same exact current SHA.
+All three completed successfully against the same exact reviewed integration revision.
 
 ### PR Candidate vs Post-Merge Integration Assurance
 
@@ -392,7 +396,7 @@ current external providers are healthy
 
 ---
 
-# 11. Current Revision Discipline
+# 11. Revision Discipline and Snapshot Rule
 
 A later `main` revision is not automatically covered by:
 
@@ -404,7 +408,7 @@ run 37280718730
 run 37280718654
 ```
 
-Those runs are evidence for:
+Those runs are evidence for reviewed integration revision:
 
 ```text
 d0686b7f752c85a090c4f719d4aeb974451418c5
@@ -412,7 +416,20 @@ d0686b7f752c85a090c4f719d4aeb974451418c5
 
 only.
 
-Before production-like acceptance, capture successful hosted CI for the actual release revision.
+### Explicit Snapshot Rule
+
+```text
+SNAPSHOT_RULE:
+Revision-bound evidence in this register is a reviewed snapshot.
+
+It MUST NOT be interpreted as proof that the recorded revision
+is still the live Git `main` head at read time.
+
+When a decision depends on current repository head,
+resolve GitHub/repository evidence again.
+```
+
+Before production-like acceptance or operational release decisions, capture successful hosted CI for the actual release revision.
 
 ---
 
@@ -2130,7 +2147,7 @@ run not verified
 to:
 
 ```text
-current exact SHA
+reviewed exact integration revision
 hosted workflows
 SUCCESS
 ```
@@ -2480,7 +2497,7 @@ maintenance/release procedure exists
 
 local destructive-test safety guards exist
 
-current exact revision hosted CI passes
+reviewed integration revision hosted CI passes
 
 application CI passes
 
@@ -2691,7 +2708,7 @@ the evidence supports:
 ```text
 SOFTWARE ENGINEERING BASELINE
 =
-HEALTHY / VERIFIED FOR CURRENT CI SCOPE
+HEALTHY / VERIFIED FOR REVIEWED CI SCOPE
 
 PHASE 1 APPLICATION FLOW
 =
