@@ -10,7 +10,7 @@ Use strict TypeScript. Narrow unknown values; do not bypass checks with any.
 
 Critical mutations go through authenticated, authorized and validated server commands.
 Never update order, quote, payment, production, QC or shipment state directly from UI or automation.
-Canonical state-machine semantics come from `docs/architecture/business-state-machines.md` and applicable dedicated canonical MGBOS specifications, not UI labels or historical/session notes.
+Canonical state-machine semantics come from `docs/architecture/business-state-machines.md`, not UI labels or historical/session notes; consult other dedicated canonical MGBOS specifications for their respective semantics and constraints.
 Sent quote versions and historical transaction snapshots are immutable.
 Money uses integer representation, never floating-point arithmetic.
 Business events use the canonical envelope; critical state changes eventually commit with transactional outbox and audit.
