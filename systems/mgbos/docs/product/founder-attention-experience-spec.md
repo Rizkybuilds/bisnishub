@@ -22,11 +22,12 @@ implementation_status: PRODUCT_SPECIFICATION_ONLY
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: d0686b7f752c85a090c4f719d4aeb974451418c5
+  commit: 65ad026fc0d6cf8da1eec15b2de39bd72b0343e5
   reviewed_at: 2026-10-05
 
 authoritative_for:
   - Founder Control attention experience semantics
+  - active CRITICAL Operational Exception Founder Home visibility rules
   - founder-facing attention classification
   - founder-facing decision-required semantics
   - attention priority semantics
@@ -1170,10 +1171,28 @@ Priority = INTERRUPT
 
 material policy requires founder awareness
 
+active CRITICAL Operational Exception
+
 no responsible owner can be established
 
 material DATA_GAP prevents safe understanding
 ```
+
+---
+
+# 63B. Active CRITICAL Operational Exception Visibility Rule
+
+Under cross-document authority alignment with D3 (`operational-exception-spec.md`):
+
+1. **Qualification:** Any active CRITICAL Operational Exception MUST qualify for Founder Control visibility evaluation on Founder Home.
+2. **Persistence Across Acknowledgement:** An active CRITICAL Operational Exception does NOT disappear from Founder Home merely because it has been acknowledged by an operator; it remains visible while the underlying abnormal business condition is unresolved.
+3. **Decoupled Ownership:**
+   - D3 owns exception severity classification and business-impact meaning.
+   - D2 strictly owns the founder-facing attention projection, priority, and Founder Home presentation.
+4. **No Semantic Collapse:**
+   - `CRITICAL` exception severity does NOT automatically imply `Founder Decision Required = YES`.
+   - `CRITICAL` exception severity does NOT automatically imply `Priority = INTERRUPT`.
+   - `Founder Decision Required` and `Attention Priority` remain independently evaluated and derived under D2 semantics.
 
 ---
 
@@ -3607,7 +3626,13 @@ Outbound escalation channels remain deferred.
 
 # 225. D3 Handoff Questions
 
-Operational Exception specification must now answer:
+```text
+HANDOFF CONTRACT
+=
+SATISFIED BY ACTIVE D3 v1
+```
+
+Operational Exception specification (`operational-exception-spec.md`) has answered these original handoff questions:
 
 ```text
 What abnormality deserves persistence?
@@ -3770,7 +3795,7 @@ ACTIVE
 D1
 Founder Control PRD
 =
-PREPARED / MUST BE APPLIED BEFORE D2
+ACTIVE / PRD_MATURE
 
 D2
 Founder Attention & Decision Experience
@@ -3780,12 +3805,28 @@ ACTIVE / SPEC_MATURE
 D3
 Operational Exception
 =
-NEXT
+ACTIVE / SPEC_MATURE
 
 D4
 Real Operational Pilot
 =
-AFTER D3
+ACTIVE / PILOT_PLAN_MATURE
+
+PRODUCT PACKAGE AUDIT
+=
+PASS (POST-RECONCILIATION)
+
+OWNER PRODUCT PACKAGE APPROVAL
+=
+PENDING
+
+ARCHITECTURE IMPACT REVIEW
+=
+NEXT GOVERNED SYSTEM REVIEW
+
+ENGINEERING READINESS
+=
+NOT READY
 
 PHASE 2 IMPLEMENTATION
 =
