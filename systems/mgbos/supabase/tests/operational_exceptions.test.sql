@@ -1,8 +1,8 @@
 begin;
-select plan(38);
+select plan(84);
 
 -- ============================================================================
--- 0. Schema Structure & RLS Verification
+-- 0. Schema Structure & Trust Boundary Verification (Blocking 1 & 2)
 -- ============================================================================
 
 select has_table('app', 'operational_exceptions', 'Table operational_exceptions exists');
@@ -20,6 +20,104 @@ select results_eq(
   'RLS is enabled on app.operational_exception_audit'
 );
 
+-- Function execute privileges: authenticated role denied (Blocking 1)
+select ok(not has_function_privilege('authenticated', 'app.open_operational_exception(uuid,uuid,uuid,text,text,text,text,uuid,text,text,text,text,uuid,text,timestamptz,text,jsonb)', 'EXECUTE'), 'authenticated denied EXECUTE on open_operational_exception');
+select ok(not has_function_privilege('authenticated', 'app.acknowledge_operational_exception(uuid,uuid,uuid,uuid,bigint,text)', 'EXECUTE'), 'authenticated denied EXECUTE on acknowledge_operational_exception');
+select ok(not has_function_privilege('authenticated', 'app.assign_operational_exception(uuid,uuid,uuid,uuid,bigint,text,uuid,text)', 'EXECUTE'), 'authenticated denied EXECUTE on assign_operational_exception');
+select ok(not has_function_privilege('authenticated', 'app.reassign_operational_exception(uuid,uuid,uuid,uuid,bigint,text,uuid,text)', 'EXECUTE'), 'authenticated denied EXECUTE on reassign_operational_exception');
+select ok(not has_function_privilege('authenticated', 'app.change_operational_exception_severity(uuid,uuid,uuid,uuid,bigint,text,text)', 'EXECUTE'), 'authenticated denied EXECUTE on change_operational_exception_severity');
+select ok(not has_function_privilege('authenticated', 'app.resolve_operational_exception(uuid,uuid,uuid,uuid,bigint,text,text,jsonb,uuid)', 'EXECUTE'), 'authenticated denied EXECUTE on resolve_operational_exception');
+select ok(not has_function_privilege('authenticated', 'app.dismiss_operational_exception(uuid,uuid,uuid,uuid,bigint,text,text,jsonb,uuid)', 'EXECUTE'), 'authenticated denied EXECUTE on dismiss_operational_exception');
+select ok(not has_function_privilege('authenticated', 'app.reopen_operational_exception(uuid,uuid,uuid,uuid,bigint,text,jsonb)', 'EXECUTE'), 'authenticated denied EXECUTE on reopen_operational_exception');
+select ok(not has_function_privilege('authenticated', 'app.operational_exception_actor_role(uuid,uuid)', 'EXECUTE'), 'authenticated denied EXECUTE on operational_exception_actor_role');
+
+-- Function execute privileges: service_role granted
+select ok(has_function_privilege('service_role', 'app.open_operational_exception(uuid,uuid,uuid,text,text,text,text,uuid,text,text,text,text,uuid,text,timestamptz,text,jsonb)', 'EXECUTE'), 'service_role granted EXECUTE on open_operational_exception');
+select ok(has_function_privilege('service_role', 'app.acknowledge_operational_exception(uuid,uuid,uuid,uuid,bigint,text)', 'EXECUTE'), 'service_role granted EXECUTE on acknowledge_operational_exception');
+select ok(has_function_privilege('service_role', 'app.assign_operational_exception(uuid,uuid,uuid,uuid,bigint,text,uuid,text)', 'EXECUTE'), 'service_role granted EXECUTE on assign_operational_exception');
+select ok(has_function_privilege('service_role', 'app.reassign_operational_exception(uuid,uuid,uuid,uuid,bigint,text,uuid,text)', 'EXECUTE'), 'service_role granted EXECUTE on reassign_operational_exception');
+select ok(has_function_privilege('service_role', 'app.change_operational_exception_severity(uuid,uuid,uuid,uuid,bigint,text,text)', 'EXECUTE'), 'service_role granted EXECUTE on change_operational_exception_severity');
+select ok(has_function_privilege('service_role', 'app.resolve_operational_exception(uuid,uuid,uuid,uuid,bigint,text,text,jsonb,uuid)', 'EXECUTE'), 'service_role granted EXECUTE on resolve_operational_exception');
+select ok(has_function_privilege('service_role', 'app.dismiss_operational_exception(uuid,uuid,uuid,uuid,bigint,text,text,jsonb,uuid)', 'EXECUTE'), 'service_role granted EXECUTE on dismiss_operational_exception');
+select ok(has_function_privilege('service_role', 'app.reopen_operational_exception(uuid,uuid,uuid,uuid,bigint,text,jsonb)', 'EXECUTE'), 'service_role granted EXECUTE on reopen_operational_exception');
+select ok(has_function_privilege('service_role', 'app.operational_exception_actor_role(uuid,uuid)', 'EXECUTE'), 'service_role granted EXECUTE on operational_exception_actor_role');
+
+-- Table privileges: service_role (Blocking 2: SELECT only, no direct table mutation)
+select ok(has_table_privilege('service_role', 'app.operational_exceptions', 'SELECT'), 'service_role has SELECT on app.operational_exceptions');
+select ok(not has_table_privilege('service_role', 'app.operational_exceptions', 'INSERT'), 'service_role denied INSERT on app.operational_exceptions');
+select ok(not has_table_privilege('service_role', 'app.operational_exceptions', 'UPDATE'), 'service_role denied UPDATE on app.operational_exceptions');
+select ok(not has_table_privilege('service_role', 'app.operational_exceptions', 'DELETE'), 'service_role denied DELETE on app.operational_exceptions');
+
+select ok(has_table_privilege('service_role', 'app.operational_exception_audit', 'SELECT'), 'service_role has SELECT on app.operational_exception_audit');
+select ok(not has_table_privilege('service_role', 'app.operational_exception_audit', 'INSERT'), 'service_role denied INSERT on app.operational_exception_audit');
+select ok(not has_table_privilege('service_role', 'app.operational_exception_audit', 'UPDATE'), 'service_role denied UPDATE on app.operational_exception_audit');
+select ok(not has_table_privilege('service_role', 'app.operational_exception_audit', 'DELETE'), 'service_role denied DELETE on app.operational_exception_audit');
+
+-- Table privileges: authenticated (SELECT only, no direct table mutation)
+select ok(has_table_privilege('authenticated', 'app.operational_exceptions', 'SELECT'), 'authenticated has SELECT on app.operational_exceptions');
+select ok(not has_table_privilege('authenticated', 'app.operational_exceptions', 'INSERT'), 'authenticated denied INSERT on app.operational_exceptions');
+select ok(not has_table_privilege('authenticated', 'app.operational_exceptions', 'UPDATE'), 'authenticated denied UPDATE on app.operational_exceptions');
+select ok(not has_table_privilege('authenticated', 'app.operational_exceptions', 'DELETE'), 'authenticated denied DELETE on app.operational_exceptions');
+
+select ok(has_table_privilege('authenticated', 'app.operational_exception_audit', 'SELECT'), 'authenticated has SELECT on app.operational_exception_audit');
+select ok(not has_table_privilege('authenticated', 'app.operational_exception_audit', 'INSERT'), 'authenticated denied INSERT on app.operational_exception_audit');
+select ok(not has_table_privilege('authenticated', 'app.operational_exception_audit', 'UPDATE'), 'authenticated denied UPDATE on app.operational_exception_audit');
+select ok(not has_table_privilege('authenticated', 'app.operational_exception_audit', 'DELETE'), 'authenticated denied DELETE on app.operational_exception_audit');
+
+-- Direct table mutation dynamic denial
+set local role service_role;
+select throws_matching(
+  $q$ insert into app.operational_exceptions (
+    organization_id, exception_type, exception_category, severity,
+    status, source_kind, primary_resource_type, primary_resource_id,
+    responsible_role_code, summary, business_impact, created_by_user_id
+  ) values (
+    '00000000-0000-4000-8000-000000000001'::uuid, 'production.deadline_breached', 'PRODUCTION', 'HIGH',
+    'OPEN', 'HUMAN_REPORT', 'PRODUCTION_JOB', '44444444-0000-4000-8000-000000000002'::uuid,
+    'OPERATIONS', 'Direct bypass', 'Direct bypass impact', '00000000-0000-0000-0000-000000000099'::uuid
+  ) $q$,
+  'permission denied',
+  'Direct INSERT on app.operational_exceptions by service_role is denied'
+);
+reset role;
+
+set local role authenticated;
+select throws_matching(
+  $q$ insert into app.operational_exceptions (
+    organization_id, exception_type, exception_category, severity,
+    status, source_kind, primary_resource_type, primary_resource_id,
+    responsible_role_code, summary, business_impact, created_by_user_id
+  ) values (
+    '00000000-0000-4000-8000-000000000001'::uuid, 'production.deadline_breached', 'PRODUCTION', 'HIGH',
+    'OPEN', 'HUMAN_REPORT', 'PRODUCTION_JOB', '44444444-0000-4000-8000-000000000002'::uuid,
+    'OPERATIONS', 'Direct bypass', 'Direct bypass impact', '00000000-0000-0000-0000-000000000099'::uuid
+  ) $q$,
+  'permission denied',
+  'Direct INSERT on app.operational_exceptions by authenticated is denied'
+);
+reset role;
+
+-- Actor spoof regression (authenticated role denied RPC execution even when passing owner UUID)
+set local role authenticated;
+select throws_matching(
+  $q$ select app.open_operational_exception(
+    '00000000-0000-4000-8000-000000000001'::uuid,
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '77777777-0000-4000-8000-000000000001'::uuid,
+    'production.deadline_breached',
+    'HIGH',
+    'HUMAN_REPORT',
+    'PRODUCTION_JOB',
+    '44444444-0000-4000-8000-000000000002'::uuid,
+    'OPERATIONS',
+    'Spoof attempt by authenticated caller',
+    'Audit falsification attempt'
+  ) $q$,
+  'permission denied',
+  'Authenticated role cannot execute open_operational_exception even when supplying owner UUID (Actor Spoof Regression)'
+);
+reset role;
+
 -- ============================================================================
 -- 1. Setup Test Fixtures: Organizations, Users, Roles, and Source Resources
 -- ============================================================================
@@ -31,6 +129,8 @@ create temporary table ex_ctx as select
   (select id from app.users where email='founder@multigraph.id') as owner_actor,
   (select id from app.customer_accounts where status='ACTIVE' limit 1) as customer;
 
+grant select on ex_ctx to public;
+
 -- Secondary Organization for Cross-Tenant Isolation Tests
 insert into app.organizations (id, code, display_name, legal_name, status) values
   ('22222222-0000-4000-8000-000000000001', 'foreign-org', 'Foreign Apparel Corp', 'PT Foreign Apparel Corp', 'ACTIVE')
@@ -40,13 +140,28 @@ insert into app.roles (id, organization_id, code, name) values
   ('22222222-0000-4000-8000-000000000002', '22222222-0000-4000-8000-000000000001', 'OWNER', 'Owner')
 on conflict (id) do nothing;
 
--- Create test actors in Primary Organization: Admin, Operations, Inactive User, Foreign User
-insert into app.users (id, name, email, status) values
-  ('33333333-0000-4000-8000-000000000001', 'Admin Tester', 'admin_ex@test.invalid', 'ACTIVE'),
-  ('33333333-0000-4000-8000-000000000002', 'Ops Tester', 'ops_ex@test.invalid', 'ACTIVE'),
-  ('33333333-0000-4000-8000-000000000003', 'Inactive Tester', 'inactive_ex@test.invalid', 'INACTIVE'),
-  ('33333333-0000-4000-8000-000000000004', 'Foreign Tester', 'foreign_ex@test.invalid', 'ACTIVE')
+-- Create auth.users records for test actors
+insert into auth.users (
+  instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at
+) values
+  ('00000000-0000-0000-0000-000000000000', '11111111-0000-4000-8000-000000000001', 'authenticated', 'authenticated', 'admin_ex@test.invalid', 'pw', now(), '{}'::jsonb, '{}'::jsonb, now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '11111111-0000-4000-8000-000000000002', 'authenticated', 'authenticated', 'ops_ex@test.invalid', 'pw', now(), '{}'::jsonb, '{}'::jsonb, now(), now()),
+  ('00000000-0000-0000-0000-000000000003', '11111111-0000-4000-8000-000000000003', 'authenticated', 'authenticated', 'inactive_user_ex@test.invalid', 'pw', now(), '{}'::jsonb, '{}'::jsonb, now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '11111111-0000-4000-8000-000000000004', 'authenticated', 'authenticated', 'foreign_ex@test.invalid', 'pw', now(), '{}'::jsonb, '{}'::jsonb, now(), now()),
+  ('00000000-0000-0000-0000-000000000000', '11111111-0000-4000-8000-000000000005', 'authenticated', 'authenticated', 'inactive_mem_ex@test.invalid', 'pw', now(), '{}'::jsonb, '{}'::jsonb, now(), now())
 on conflict (id) do nothing;
+
+-- Create test actors in Primary Organization: Admin, Operations, Inactive User, Foreign User, Inactive Member
+insert into app.users (id, auth_user_id, name, email, status) values
+  ('33333333-0000-4000-8000-000000000001', '11111111-0000-4000-8000-000000000001', 'Admin Tester', 'admin_ex@test.invalid', 'ACTIVE'),
+  ('33333333-0000-4000-8000-000000000002', '11111111-0000-4000-8000-000000000002', 'Ops Tester', 'ops_ex@test.invalid', 'ACTIVE'),
+  ('33333333-0000-4000-8000-000000000003', '11111111-0000-4000-8000-000000000003', 'Inactive Tester', 'inactive_ex@test.invalid', 'INACTIVE'),
+  ('33333333-0000-4000-8000-000000000004', '11111111-0000-4000-8000-000000000004', 'Foreign Tester', 'foreign_ex@test.invalid', 'ACTIVE'),
+  ('33333333-0000-4000-8000-000000000005', '11111111-0000-4000-8000-000000000005', 'Inactive Member Tester', 'inactive_mem_ex@test.invalid', 'ACTIVE')
+on conflict (id) do update set
+  auth_user_id = excluded.auth_user_id,
+  status = excluded.status;
 
 -- Memberships in Primary Organization
 insert into app.organization_members (organization_id, user_id, role_id, status)
@@ -58,7 +173,11 @@ select org, '33333333-0000-4000-8000-000000000002', (select id from app.roles wh
 on conflict do nothing;
 
 insert into app.organization_members (organization_id, user_id, role_id, status)
-select org, '33333333-0000-4000-8000-000000000003', (select id from app.roles where organization_id=org and code='ADMIN'), 'INACTIVE' from ex_ctx
+select org, '33333333-0000-4000-8000-000000000003', (select id from app.roles where organization_id=org and code='ADMIN'), 'ACTIVE' from ex_ctx
+on conflict do nothing;
+
+insert into app.organization_members (organization_id, user_id, role_id, status)
+select org, '33333333-0000-4000-8000-000000000005', (select id from app.roles where organization_id=org and code='ADMIN'), 'INACTIVE' from ex_ctx
 on conflict do nothing;
 
 -- Foreign Membership in Secondary Organization
@@ -130,6 +249,95 @@ select results_eq(
   $q$ select 'PRODUCTION'::text, brand, '44444444-0000-4000-8000-000000000001'::uuid, 1::bigint, 'OPEN'::text from ex_ctx $q$,
   'Row derives category PRODUCTION, brand_id, order_id, and has revision 1'
 );
+
+grant select on open_res_1 to public;
+
+-- RLS Read Policy: OWNER can read own organization exceptions (Blocking 2B)
+set local role authenticated;
+set local "request.jwt.claim.sub" = '00000000-0000-0000-0000-000000000099';
+set local "request.jwt.claims" = '{"sub": "00000000-0000-0000-0000-000000000099"}';
+select is(
+  (select count(*)::int from app.operational_exceptions where id = (select (res->>'exception_id')::uuid from open_res_1)),
+  1,
+  'OWNER can read operational exceptions in own organization via RLS (Blocking 2B)'
+);
+reset role;
+
+-- RLS Read Policy: ADMIN can read own organization exceptions (Blocking 2B)
+set local role authenticated;
+set local "request.jwt.claim.sub" = '11111111-0000-4000-8000-000000000001';
+set local "request.jwt.claims" = '{"sub": "11111111-0000-4000-8000-000000000001"}';
+select is(
+  (select count(*)::int from app.operational_exceptions where id = (select (res->>'exception_id')::uuid from open_res_1)),
+  1,
+  'ADMIN can read operational exceptions in own organization via RLS (Blocking 2B)'
+);
+reset role;
+
+-- RLS Read Policy: OPERATIONS cannot read exceptions in WP01 (Blocking 2B)
+set local role authenticated;
+set local "request.jwt.claim.sub" = '11111111-0000-4000-8000-000000000002';
+set local "request.jwt.claims" = '{"sub": "11111111-0000-4000-8000-000000000002"}';
+select is(
+  (select count(*)::int from app.operational_exceptions where id = (select (res->>'exception_id')::uuid from open_res_1)),
+  0,
+  'OPERATIONS role cannot read operational exceptions in WP01 via RLS (Blocking 2B)'
+);
+reset role;
+
+-- RLS Read Policy: Inactive user cannot read exceptions (Blocking 2B)
+set local role authenticated;
+set local "request.jwt.claim.sub" = '11111111-0000-4000-8000-000000000003';
+set local "request.jwt.claims" = '{"sub": "11111111-0000-4000-8000-000000000003"}';
+select is(
+  (select count(*)::int from app.operational_exceptions where id = (select (res->>'exception_id')::uuid from open_res_1)),
+  0,
+  'Inactive user cannot read operational exceptions via RLS (Blocking 2B)'
+);
+reset role;
+
+-- RLS Read Policy: User with inactive membership cannot read exceptions (Blocking 2B)
+set local role authenticated;
+set local "request.jwt.claim.sub" = '11111111-0000-4000-8000-000000000005';
+set local "request.jwt.claims" = '{"sub": "11111111-0000-4000-8000-000000000005"}';
+select is(
+  (select count(*)::int from app.operational_exceptions where id = (select (res->>'exception_id')::uuid from open_res_1)),
+  0,
+  'User with inactive membership cannot read operational exceptions via RLS (Blocking 2B)'
+);
+reset role;
+
+-- RLS Read Policy: Foreign organization user cannot read exceptions (Blocking 2B)
+set local role authenticated;
+set local "request.jwt.claim.sub" = '11111111-0000-4000-8000-000000000004';
+set local "request.jwt.claims" = '{"sub": "11111111-0000-4000-8000-000000000004"}';
+select is(
+  (select count(*)::int from app.operational_exceptions where id = (select (res->>'exception_id')::uuid from open_res_1)),
+  0,
+  'Foreign organization user cannot read primary organization exceptions via RLS (Blocking 2B)'
+);
+reset role;
+
+-- RLS Read Policy on Audit: OWNER can read audit rows (Blocking 2B)
+set local role authenticated;
+set local "request.jwt.claim.sub" = '00000000-0000-0000-0000-000000000099';
+set local "request.jwt.claims" = '{"sub": "00000000-0000-0000-0000-000000000099"}';
+select ok(
+  (select count(*)::int from app.operational_exception_audit) > 0,
+  'OWNER can read operational exception audit rows via RLS (Blocking 2B)'
+);
+reset role;
+
+-- RLS Read Policy on Audit: OPERATIONS cannot read audit rows in WP01 (Blocking 2B)
+set local role authenticated;
+set local "request.jwt.claim.sub" = '11111111-0000-4000-8000-000000000002';
+set local "request.jwt.claims" = '{"sub": "11111111-0000-4000-8000-000000000002"}';
+select is(
+  (select count(*)::int from app.operational_exception_audit),
+  0,
+  'OPERATIONS role cannot read operational exception audit rows in WP01 via RLS (Blocking 2B)'
+);
+reset role;
 
 -- Test 3: Active Business Deduplication (AC-005, Section 36 & 47)
 -- Competing attempt to open exception for SAME abnormality and SAME resource
@@ -322,6 +530,27 @@ select throws_ok(
   'P0001',
   'Active organization membership required',
   'Assignee from foreign organization is rejected'
+);
+
+-- Test 11B: Human Observation length check (observation <= 4000 characters)
+select throws_ok(
+  $q$ select app.open_operational_exception(
+    p_organization_id => org,
+    p_actor_id => owner_actor,
+    p_request_id => '66666666-0000-4000-8000-000000000099'::uuid,
+    p_exception_type => 'production.deadline_breached',
+    p_severity => 'HIGH',
+    p_source_kind => 'HUMAN_REPORT',
+    p_primary_resource_type => 'PRODUCTION_JOB',
+    p_primary_resource_id => '44444444-0000-4000-8000-000000000002'::uuid,
+    p_responsible_role_code => 'OPERATIONS',
+    p_summary => 'Excessive observation test',
+    p_business_impact => 'High impact',
+    p_observation => repeat('x', 4001)
+  ) from ex_ctx $q$,
+  'P0001',
+  'Observation exceeds maximum allowed length of 4000 characters',
+  'Human observation exceeding 4000 characters is rejected'
 );
 
 -- ============================================================================

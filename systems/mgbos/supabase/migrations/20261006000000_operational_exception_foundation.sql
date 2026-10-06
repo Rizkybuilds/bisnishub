@@ -279,40 +279,51 @@ create trigger trg_operational_exception_audit_immutable
 alter table app.operational_exceptions enable row level security;
 alter table app.operational_exception_audit enable row level security;
 
-create policy "Allow service_role full access to operational_exceptions"
-  on app.operational_exceptions for all to service_role using (true) with check (true);
+create policy "Allow service_role to view operational_exceptions"
+  on app.operational_exceptions for select to service_role using (true);
 
-create policy "Allow organization members to view operational_exceptions"
+create policy "Allow owners and admins to view operational_exceptions"
   on app.operational_exceptions for select to authenticated
   using (
     exists (
       select 1 from app.organization_members om
+      join app.roles r on r.id = om.role_id
       join app.users u on u.id = om.user_id
+      join app.organizations o on o.id = om.organization_id
       where om.organization_id = operational_exceptions.organization_id
         and u.auth_user_id = auth.uid()
         and om.status = 'ACTIVE'
+        and u.status = 'ACTIVE'
+        and o.status = 'ACTIVE'
+        and r.code in ('OWNER', 'ADMIN')
     )
   );
 
-create policy "Allow service_role full access to operational_exception_audit"
-  on app.operational_exception_audit for all to service_role using (true) with check (true);
+create policy "Allow service_role to view operational_exception_audit"
+  on app.operational_exception_audit for select to service_role using (true);
 
-create policy "Allow organization members to view operational_exception_audit"
+create policy "Allow owners and admins to view operational_exception_audit"
   on app.operational_exception_audit for select to authenticated
   using (
     exists (
       select 1 from app.organization_members om
+      join app.roles r on r.id = om.role_id
       join app.users u on u.id = om.user_id
+      join app.organizations o on o.id = om.organization_id
       where om.organization_id = operational_exception_audit.organization_id
         and u.auth_user_id = auth.uid()
         and om.status = 'ACTIVE'
+        and u.status = 'ACTIVE'
+        and o.status = 'ACTIVE'
+        and r.code in ('OWNER', 'ADMIN')
     )
   );
 
-grant select on app.operational_exceptions to authenticated;
-grant select on app.operational_exception_audit to authenticated;
-grant all on app.operational_exceptions to service_role;
-grant all on app.operational_exception_audit to service_role;
+grant select on app.operational_exceptions to authenticated, service_role;
+grant select on app.operational_exception_audit to authenticated, service_role;
+
+revoke insert, update, delete, truncate on app.operational_exceptions from public, anon, authenticated, service_role;
+revoke insert, update, delete, truncate on app.operational_exception_audit from public, anon, authenticated, service_role;
 
 -- ============================================================================
 -- 4. Authorization Helper Function (Section 51)
@@ -407,6 +418,12 @@ begin
     'supplementary_evidence', coalesce(p_supplementary_evidence, '{}'::jsonb)
   );
 
+  -- Serialize concurrent requests using deterministic request-scoped advisory transaction lock
+  perform pg_advisory_xact_lock(hashtextextended(
+    'oe_req:' || p_organization_id::text || ':' || p_actor_id::text || ':' || p_request_id::text,
+    0
+  ));
+
   -- 3. Idempotency Check on existing request receipt
   select * into v_prior_audit
   from app.operational_exception_audit
@@ -438,6 +455,10 @@ begin
 
   if p_detected_at is not null and p_detected_at > now() then
     raise exception 'detected_at cannot be in the future';
+  end if;
+
+  if p_observation is not null and char_length(p_observation) > 4000 then
+    raise exception 'Observation exceeds maximum allowed length of 4000 characters';
   end if;
 
   if p_supplementary_evidence is not null and octet_length(p_supplementary_evidence::text) > 16384 then
@@ -644,11 +665,13 @@ begin
 
   -- 8. Concurrency Protection & Business Deduplication (Sections 35, 36, 39, 47)
   -- Take transaction advisory lock based on business dedup fingerprint
-  perform pg_advisory_xact_lock(hashtext(
+  perform pg_advisory_xact_lock(hashtextextended(
+    'oe_dedup:' ||
     p_organization_id::text || ':' ||
     p_exception_type || ':' ||
     p_primary_resource_type || ':' ||
-    p_primary_resource_id::text
+    p_primary_resource_id::text,
+    0
   ));
 
   select * into v_existing
@@ -775,6 +798,12 @@ begin
     'note', case when p_note is not null then trim(p_note) else null end
   );
 
+  -- Serialize concurrent requests using deterministic request-scoped advisory transaction lock
+  perform pg_advisory_xact_lock(hashtextextended(
+    'oe_req:' || p_organization_id::text || ':' || p_actor_id::text || ':' || p_request_id::text,
+    0
+  ));
+
   select * into v_prior_audit
   from app.operational_exception_audit
   where organization_id = p_organization_id
@@ -891,6 +920,12 @@ begin
     'responsible_user_id', p_responsible_user_id,
     'reason', case when p_reason is not null then trim(p_reason) else null end
   );
+
+  -- Serialize concurrent requests using deterministic request-scoped advisory transaction lock
+  perform pg_advisory_xact_lock(hashtextextended(
+    'oe_req:' || p_organization_id::text || ':' || p_actor_id::text || ':' || p_request_id::text,
+    0
+  ));
 
   select * into v_prior_audit
   from app.operational_exception_audit
@@ -1022,6 +1057,12 @@ begin
     'new_responsible_user_id', p_new_responsible_user_id,
     'reason', trim(p_reason)
   );
+
+  -- Serialize concurrent requests using deterministic request-scoped advisory transaction lock
+  perform pg_advisory_xact_lock(hashtextextended(
+    'oe_req:' || p_organization_id::text || ':' || p_actor_id::text || ':' || p_request_id::text,
+    0
+  ));
 
   select * into v_prior_audit
   from app.operational_exception_audit
@@ -1155,6 +1196,12 @@ begin
     'reason', trim(p_reason)
   );
 
+  -- Serialize concurrent requests using deterministic request-scoped advisory transaction lock
+  perform pg_advisory_xact_lock(hashtextextended(
+    'oe_req:' || p_organization_id::text || ':' || p_actor_id::text || ':' || p_request_id::text,
+    0
+  ));
+
   select * into v_prior_audit
   from app.operational_exception_audit
   where organization_id = p_organization_id
@@ -1287,6 +1334,12 @@ begin
     'closure_evidence', coalesce(p_closure_evidence, '{}'::jsonb),
     'superseded_by_exception_id', p_superseded_by_exception_id
   );
+
+  -- Serialize concurrent requests using deterministic request-scoped advisory transaction lock
+  perform pg_advisory_xact_lock(hashtextextended(
+    'oe_req:' || p_organization_id::text || ':' || p_actor_id::text || ':' || p_request_id::text,
+    0
+  ));
 
   select * into v_prior_audit
   from app.operational_exception_audit
@@ -1442,6 +1495,12 @@ begin
     'duplicate_of_exception_id', p_duplicate_of_exception_id
   );
 
+  -- Serialize concurrent requests using deterministic request-scoped advisory transaction lock
+  perform pg_advisory_xact_lock(hashtextextended(
+    'oe_req:' || p_organization_id::text || ':' || p_actor_id::text || ':' || p_request_id::text,
+    0
+  ));
+
   select * into v_prior_audit
   from app.operational_exception_audit
   where organization_id = p_organization_id
@@ -1588,6 +1647,12 @@ begin
     'supporting_evidence', coalesce(p_supporting_evidence, '{}'::jsonb)
   );
 
+  -- Serialize concurrent requests using deterministic request-scoped advisory transaction lock
+  perform pg_advisory_xact_lock(hashtextextended(
+    'oe_req:' || p_organization_id::text || ':' || p_actor_id::text || ':' || p_request_id::text,
+    0
+  ));
+
   select * into v_prior_audit
   from app.operational_exception_audit
   where organization_id = p_organization_id
@@ -1696,28 +1761,28 @@ $$;
 revoke all on function app.operational_exception_actor_role(uuid, uuid) from public, anon, authenticated;
 grant execute on function app.operational_exception_actor_role(uuid, uuid) to service_role;
 
-revoke all on function app.open_operational_exception from public, anon;
-grant execute on function app.open_operational_exception to authenticated, service_role;
+revoke all on function app.open_operational_exception from public, anon, authenticated;
+grant execute on function app.open_operational_exception to service_role;
 
-revoke all on function app.acknowledge_operational_exception from public, anon;
-grant execute on function app.acknowledge_operational_exception to authenticated, service_role;
+revoke all on function app.acknowledge_operational_exception from public, anon, authenticated;
+grant execute on function app.acknowledge_operational_exception to service_role;
 
-revoke all on function app.assign_operational_exception from public, anon;
-grant execute on function app.assign_operational_exception to authenticated, service_role;
+revoke all on function app.assign_operational_exception from public, anon, authenticated;
+grant execute on function app.assign_operational_exception to service_role;
 
-revoke all on function app.reassign_operational_exception from public, anon;
-grant execute on function app.reassign_operational_exception to authenticated, service_role;
+revoke all on function app.reassign_operational_exception from public, anon, authenticated;
+grant execute on function app.reassign_operational_exception to service_role;
 
-revoke all on function app.change_operational_exception_severity from public, anon;
-grant execute on function app.change_operational_exception_severity to authenticated, service_role;
+revoke all on function app.change_operational_exception_severity from public, anon, authenticated;
+grant execute on function app.change_operational_exception_severity to service_role;
 
-revoke all on function app.resolve_operational_exception from public, anon;
-grant execute on function app.resolve_operational_exception to authenticated, service_role;
+revoke all on function app.resolve_operational_exception from public, anon, authenticated;
+grant execute on function app.resolve_operational_exception to service_role;
 
-revoke all on function app.dismiss_operational_exception from public, anon;
-grant execute on function app.dismiss_operational_exception to authenticated, service_role;
+revoke all on function app.dismiss_operational_exception from public, anon, authenticated;
+grant execute on function app.dismiss_operational_exception to service_role;
 
-revoke all on function app.reopen_operational_exception from public, anon;
-grant execute on function app.reopen_operational_exception to authenticated, service_role;
+revoke all on function app.reopen_operational_exception from public, anon, authenticated;
+grant execute on function app.reopen_operational_exception to service_role;
 
 commit;
