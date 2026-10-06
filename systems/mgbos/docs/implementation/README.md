@@ -1827,23 +1827,35 @@ The term:
 Operational Exception
 ```
 
-must not be interpreted as an already-approved:
+has approved canonical architecture (`CANONICAL_TARGET`):
 
 ```text
-table
+canonical lifecycle:
+RECONCILED (OPEN, ACKNOWLEDGED, RESOLVED, DISMISSED)
 
-aggregate
+canonical commands:
+RECONCILED (open, acknowledge, assign, reassign, change_severity, resolve, dismiss, reopen)
 
-state machine
-
-API
-
-command set
+invariants and authorization:
+reconciled across canonical architecture specifications
 ```
 
-Product need comes first.
+However, canonical architecture approval must NOT be confused with physical implementation:
 
-Canonical representation comes after product approval and architecture review.
+```text
+physical table:
+NOT IMPLEMENTED (undecided between independent table vs. bounded extension)
+
+physical API / RPC:
+NOT IMPLEMENTED
+
+runtime code:
+NOT IMPLEMENTED
+```
+
+Physical persistence strategy, API design, and schema decisions remain the subject of W3 Engineering Discovery.
+
+Phase 2 implementation remains strictly **NOT OPEN**.
 
 ---
 

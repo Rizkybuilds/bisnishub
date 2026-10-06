@@ -378,32 +378,12 @@ This is sufficient for initial custom/B2B operations.
 Status:
 
 ```text
-CURRENT / PARTIAL WORKFLOW INTEGRATION
+CURRENT
 ```
 
 Lead is the canonical inbound commercial inquiry.
 
-Core entity/lifecycle capability exists.
-
-Current operator-flow gap:
-
-```text
-QUALIFIED LEAD
-    ↓
-manual navigation/context reconstruction
-    ↓
-REQUIREMENT
-```
-
-Near-term objective:
-
-```text
-Lead
-→ governed continuation
-→ Requirement
-```
-
-without adding Opportunity.
+In Phase 1 Operating Spine closure, Lead → Requirement governed continuation was implemented and verified as a standard operator flow without adding Opportunity.
 
 ---
 
@@ -575,7 +555,7 @@ These remain independent lifecycles.
 Status:
 
 ```text
-DEFERRED / CONDITIONAL NEXT
+DEFERRED / CONDITIONAL
 ```
 
 Current custom work may be sufficiently represented by:
@@ -637,7 +617,7 @@ What blocks completion?
 Status:
 
 ```text
-CURRENT / PARTIAL OPERATIONAL INTEGRATION
+CURRENT
 ```
 
 Current entity:
@@ -648,22 +628,22 @@ production_assignments
 
 exists materially.
 
+Vendor-backed production assignment, acknowledgement, reassignment, and status coordination were integrated and verified in the Phase 1 Operating Spine closure.
+
 ---
 
-# 39. Current Assignment Gaps
+# 39. Production Assignment Operational Closure
 
-Current operating-flow gaps include:
+In Phase 1 Operating Spine closure:
 
 ```text
-vendor identity not consistently used in normal assignment flow
-assignment acknowledgement not fully coordinated
-assignment ACCEPTED may diverge from job ACCEPTED
-decline / reassignment flow needs hardening
+vendor identity consistently bound to production assignment
+assignment acknowledgement workflow coordinated
+assignment ACCEPTED coordinated with job lifecycle
+decline and reassignment flows hardened
 ```
 
-Therefore this is not a missing domain.
-
-It is a current domain needing integration.
+Production Assignment is an active operational domain, not an integration gap.
 
 ---
 
@@ -797,7 +777,7 @@ affiliate organization
 Status:
 
 ```text
-PARTIAL / NEXT
+CURRENT / ADVANCED PORTAL DEFERRED
 ```
 
 Current baseline already exists through:
@@ -810,7 +790,7 @@ vendor relationships
 
 ---
 
-# 49. Vendor Capability — NEXT Scope
+# 49. Vendor Capability — Advanced Scope Deferred
 
 Add structure only where operationally useful:
 
@@ -829,7 +809,7 @@ capacity observations
 Status:
 
 ```text
-PARTIAL / NEXT
+DEFERRED
 ```
 
 Initial representation may remain manual observation.
@@ -922,7 +902,7 @@ Founder-level consolidated visibility still needs deliberate read models.
 Status:
 
 ```text
-NEXT
+CANONICAL_TARGET (READ PROJECTION)
 ```
 
 Examples:
@@ -1217,7 +1197,7 @@ Current financial reversal primitives are not a complete Returns domain.
 Status:
 
 ```text
-NEXT-LITE
+DEFERRED / CONDITIONAL UPON RETAIL SCALE
 ```
 
 Useful categories include:
@@ -1250,7 +1230,6 @@ Status:
 
 ```text
 CANONICAL_TARGET
-P1 FOUNDER-CONTROL CAPABILITY
 ```
 
 Operational Exception is a first-class logical MGBOS architectural domain (`CANONICAL_TARGET`), formally reconciled in W2. It provides governed lifecycle, invariants, and commands for business abnormalities across the operating spine, while physical persistence (independent table vs. bounded extension) remains undecided pending Engineering Discovery. Phase 2 implementation is NOT OPEN.
@@ -1393,7 +1372,7 @@ production linkage
 Status:
 
 ```text
-PARTIAL / NEXT WHEN REAL JOBS REQUIRE
+PARTIAL / DEFERRED UNTIL REAL JOBS REQUIRE
 ```
 
 ---
@@ -1876,9 +1855,9 @@ Physical completion requires trusted observation/evidence.
 
 ---
 
-# 120. P0 — Operating Spine Must Work
+# 120. Operating Spine (CLOSED & VERIFIED)
 
-Before launch scale, the following must be trustworthy:
+In Phase 1, the following core capabilities were integrated and verified:
 
 ```text
 Customer
@@ -1895,15 +1874,13 @@ Shipment
 Cost / Margin
 ```
 
-Most exist.
-
-The work is integration and hardening.
+The Phase 1 Operating Spine is closed and verified.
 
 ---
 
-# 121. P0 Operating-Spine Closure Verification
+# 121. Operating-Spine Closure Verification
 
-Phase 1 Operating Spine closure verified and closed the P0 implementation priorities:
+Phase 1 Operating Spine closure verified and closed the implementation priorities:
 
 ```text
 1. Lead → Requirement continuation (implemented & verified)
@@ -1934,17 +1911,18 @@ EXCEPTION MANAGEMENT & FOUNDER ATTENTION (CANONICAL TARGET)
 
 ---
 
-# 123. P1 — Founder Control Layer
+# 123. Founder Control Layer
 
-After P0:
+Post-Spine Canonical Target Capabilities:
 
 ```text
-Operational Exception
-Founder Read Models
-Customer Case Lite
-Vendor Capability expansion
-Finance attention views
-Operations attention views
+Operational Exception (CANONICAL_TARGET)
+Founder Attention Projections (CANONICAL_TARGET DERIVED PROJECTION)
+Founder Home (CANONICAL_TARGET APPLICATION SURFACE)
+Customer Case (DEFERRED / CONDITIONAL UPON RETAIL SCALE)
+Vendor Capability expansion (ADVANCED SCOPE DEFERRED)
+Finance attention views (CANONICAL_TARGET READ PROJECTION)
+Operations attention views (CANONICAL_TARGET READ PROJECTION)
 ```
 
 ---
@@ -1957,7 +1935,7 @@ because founder-by-exception requires the system to surface abnormality rather t
 
 ---
 
-# 125. P1 Founder Read Models
+# 125. Founder Attention Projections (CANONICAL_TARGET)
 
 Examples:
 
@@ -1970,9 +1948,9 @@ Shipment Attention
 Margin Attention
 ```
 
-These are read projections.
+These are derived read projections.
 
-They are not systems of record.
+They are not independent transactional lifecycles or systems of record.
 
 ---
 
@@ -2343,16 +2321,16 @@ Internal business interpretation belongs to the relevant BisnisHub system.
 
 ---
 
-# 147. Immediate Highest-Leverage Gaps
+# 147. Capability Progression & Governance Baseline
 
-Current evidence identifies:
+With Phase 1 Operating Spine closure verified and Work Order / SPK operational artifact in place:
 
 ```text
-1. Operating-spine integration gaps
-2. Work Order communication
-3. Operational Exception
-4. Founder Read Models
-5. Vendor capability enrichment
+1. Operating-Spine Core (CLOSED & VERIFIED in Phase 1)
+2. Work Order / SPK Artifact (CURRENT GOVERNED ARTIFACT)
+3. Operational Exception (CANONICAL_TARGET)
+4. Founder Attention Projections (CANONICAL_TARGET DERIVED PROJECTION)
+5. Vendor Capability Enrichment (ADVANCED SCOPE DEFERRED)
 ```
 
 ---
@@ -2419,34 +2397,30 @@ Then decide.
 
 ---
 
-# 152. Current Recommended Capability Order
+# 152. Capability Sequencing & Current Horizon
+
+### Historical Phase 1 Priorities (CLOSED & VERIFIED)
 
 ```text
-1. Connect Lead → Requirement
+1. Connect Lead → Requirement (VERIFIED)
+2. Complete authoritative Order lifecycle (VERIFIED)
+3. Connect Vendor → Production Assignment (VERIFIED)
+4. Reconcile Assignment acknowledgement/reassignment (VERIFIED)
+5. Enforce Production/QC → Fulfillment readiness (VERIFIED)
+6. Generate governed Work Order / SPK (VERIFIED)
+7. Prove clean Lead → Margin E2E (VERIFIED)
+8. Run Operator Acceptance Test (VERIFIED)
+```
 
-2. Complete authoritative Order lifecycle
+### Current Architecture & Next Horizon
 
-3. Connect Vendor → Production Assignment
-
-4. Reconcile Assignment acknowledgement/reassignment
-
-5. Enforce Production/QC → Fulfillment readiness
-
-6. Generate governed Work Order / SPK
-
-7. Prove clean Lead → Margin E2E
-
-8. Run Operator Acceptance Test
-
-9. Add Operational Exception
-
-10. Add Founder Read Models
-
-11. Enrich Vendor Capability
-
-12. Automate routine deterministic work
-
-13. Add JARVIS Lite read intelligence
+```text
+9. Founder Control Architecture Reconciliation (W2 COMPLETE)
+10. Engineering Discovery — Physical Model & Persistence Strategy (W3 NEXT)
+11. Phase 2 Implementation (NOT OPEN)
+12. Vendor Capability Enrichment (ADVANCED SCOPE DEFERRED)
+13. Deterministic Automation (DEFERRED)
+14. JARVIS Lite Read Intelligence (DEFERRED)
 ```
 
 ---
@@ -2501,13 +2475,13 @@ Project
 → DEFERRED / CONDITIONAL
 
 Work Order
-→ NEXT / P0 artifact first
+→ CURRENT GOVERNED OPERATIONAL ARTIFACT (verified in Phase 1)
 
 Customer Case
-→ NEXT-LITE / P1
+→ DEFERRED / CONDITIONAL UPON RETAIL SCALE
 
 Operational Exception
-→ NEXT / P1 highest-leverage post-spine
+→ CANONICAL_TARGET (reconciled in W2; physical implementation pending Engineering Discovery; Phase 2 NOT OPEN)
 ```
 
 ---
@@ -2766,10 +2740,10 @@ Work Order Artifact          ███  (Phase 1 SPK verified)
 Operational Exception                   ███ TARGET (reconciled; Phase 2 not open)
 Founder Attention                       ███ TARGET (reconciled projection)
 Founder Home                            ███ TARGET (reconciled surface)
-Vendor Capability Expansion             ██▒ P1 deferred
-Customer Case Lite                      ██▒ P1 deferred
-Automation                              ██▒ P2
-JARVIS Lite                             ██▒ P3
+Vendor Capability Expansion             ██▒ deferred
+Customer Case                           ██▒ deferred (conditional)
+Automation                              ██▒ deferred
+JARVIS Lite                             ██▒ deferred
 
 Opportunity                                      ▒
 Project                                          ▒
@@ -2839,14 +2813,14 @@ Legend:
        ▼               ▼               ▼                ▼
     CURRENT     CANONICAL_TARGET      NEXT           DEFERRED
        │               │               │                │
-Customer        Operational     Customer Case    Opportunity
-Lead            Exception       Vendor           Project
-Requirement     Founder         Capability       Product/Catalog
-Quote           Attention                        Creator/Royalty
-Order           Founder Home                     Affiliate
-Production                                       Advanced Partner
-Assignment                                       BOM/Recipe
-Work Order
+Customer        Operational     Engineering     Customer Case
+Lead            Exception       Discovery (W3)  Opportunity
+Requirement     Founder                         Project
+Quote           Attention                       Product/Catalog
+Order           Founder Home                    Creator/Royalty
+Production                                      Affiliate
+Assignment                                      Advanced Partner
+Work Order                                      BOM/Recipe
 Vendor
 QC
 Invoice/Payment

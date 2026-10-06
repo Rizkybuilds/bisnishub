@@ -3392,8 +3392,8 @@ Semantik perintah:
 3. `mgbos.operational_exception.assign`: Menugaskan exception ke handler spesifik dalam organisasi.
 4. `mgbos.operational_exception.reassign`: Mengalihkan penugasan exception ke handler lain disertai alasan operasional.
 5. `mgbos.operational_exception.change_severity`: Mengubah tingkat keparahan exception (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`) berdasarkan observasi dampak terbaru.
-6. `mgbos.operational_exception.resolve`: Menandai masalah selesai dengan justifikasi tindakan dan bukti penyelesaian.
-7. `mgbos.operational_exception.dismiss`: Menutup exception tanpa perbaikan karena false alarm atau risiko diterima secara formal (_accepted risk_).
+6. `mgbos.operational_exception.resolve`: Menandai masalah selesai dengan tindakan perbaikan operasional nyata DAN/ATAU penerimaan risiko operasional formal (_accepted risk_). Resolusi berbasis accepted risk wajib menyertakan justifikasi bisnis eksplisit dan otorisasi Owner (D3: **Accepted Risk Is Resolution, Not Dismissal**).
+7. `mgbos.operational_exception.dismiss`: Menutup exception karena anomali terbukti alarm palsu (`FALSE_POSITIVE`), duplikat (`DUPLICATE`), tidak relevan/tidak dapat diterapkan (`NOT_APPLICABLE`), atau dibuka karena kesalahan input (`OPENED_IN_ERROR`). **Dismissal DILARANG digunakan untuk menerima risiko riil.**
 8. `mgbos.operational_exception.reopen`: Membuka kembali exception yang telah resolved/dismissed jika anomali muncul kembali pada episode logis yang sama.
 
 Pemisahan Idempotensi vs Deduplikasi Bisnis:

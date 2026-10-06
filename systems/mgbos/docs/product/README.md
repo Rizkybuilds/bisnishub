@@ -1330,27 +1330,30 @@ without evidence for an independent lifecycle.
 
 # 42. Operational Exception Boundary
 
-Current domain planning identifies Operational Exception as:
+Operational Exception is established as a canonical architectural domain:
 
 ```text
-NEXT
+CANONICAL_TARGET
 ```
 
-but that does NOT yet mean:
+Following W2 canonical architecture reconciliation:
 
 ```text
-approved table
+canonical lifecycle:
+RECONCILED (OPEN, ACKNOWLEDGED, RESOLVED, DISMISSED)
 
-approved root entity
+canonical commands:
+RECONCILED (open, acknowledge, assign, reassign, change_severity, resolve, dismiss, reopen)
 
-approved lifecycle
+physical persistence & table design:
+NOT DESIGNED (undecided between independent table vs. bounded extension)
 
-approved commands
+engineering readiness:
+NOT_READY_FOR_ENGINEERING
+
+next step:
+W3 ENGINEERING DISCOVERY (mandatory next gate; Phase 2 implementation NOT OPEN)
 ```
-
-The product need will be defined first.
-
-Architecture representation follows later.
 
 ---
 

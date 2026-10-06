@@ -1142,6 +1142,7 @@ Different MGBOS capabilities may be:
 ```text
 CURRENT
 PARTIAL
+CANONICAL_TARGET
 NEXT
 DEFERRED
 EXPERIMENTAL
@@ -1212,9 +1213,9 @@ before introducing many new root entities.
 
 # 54. Lead
 
-Current Domain Map classifies Lead as materially present with workflow integration still needing hardening.
+Lead is CURRENT. In Phase 1 Operating Spine closure, Lead → Requirement continuation was implemented and verified as a standard operator flow without introducing Opportunity.
 
-The intended progression may use:
+The verified progression uses:
 
 ```text
 Lead
@@ -1301,7 +1302,7 @@ what blocks completion?
 
 # 60. Production Assignment
 
-Production Assignment is a current capability with operational integration still requiring hardening.
+Production Assignment is CURRENT. Vendor-backed assignment, acknowledgement, reassignment, and status coordination were implemented and verified in the Phase 1 Operating Spine closure.
 
 It represents:
 
@@ -1318,9 +1319,9 @@ Production Job remains owner of physical-work lifecycle.
 
 # 61. Work Order / SPK
 
-Current Domain Map classifies Work Order / SPK as a near-term governed operational artifact rather than automatically a new root entity.
+Work Order / SPK is a CURRENT governed operational artifact implemented and verified in Phase 1, rather than automatically a new root entity.
 
-Initial representation should reuse existing authoritative context where possible.
+It is generated from Production Job + Production Assignment context.
 
 Do not promote it to a root entity until independent lifecycle/evidence needs justify that architecture.
 
@@ -2103,7 +2104,7 @@ Dedicated specifications and implementation evidence identify areas that may sti
 ```text
 authoritative transition enforcement in some lifecycles
 workflow integration between existing domains
-production assignment/vendor flow hardening
+Operational Exception physical persistence strategy (pending Engineering Discovery)
 full business-event runtime maturity
 transactional-outbox runtime maturity
 service-principal implementation
@@ -2512,4 +2513,4 @@ And:
 
 And finally:
 
-> **Now that the six core architecture specifications are persisted, the default next move is not “write another architecture document.” The default next move is to close real implementation gaps—unless evidence reveals a genuinely new semantic ownership problem.**
+> **Now that the six core architecture specifications are reconciled, the mandatory next step is W3 Engineering Discovery to evaluate physical persistence strategies—Phase 2 implementation remains strictly NOT OPEN.**

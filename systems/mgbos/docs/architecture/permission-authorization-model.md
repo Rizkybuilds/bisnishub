@@ -2726,7 +2726,8 @@ Sistem mempertahankan enam human role aktif yang ada (`OWNER`, `ADMIN`, `SALES`,
 
 Arah pemetaan wewenang:
 
-- **`OWNER` / `ADMIN`**: Memiliki wewenang exception management luas dalam Organization (`open`, `acknowledge`, `assign`, `reassign`, `change_severity`, `resolve`, `dismiss`, `reopen`, `read`, serta resolusi _accepted risk_).
+- **`OWNER`**: Memiliki wewenang exception management penuh dalam Organization (`open`, `acknowledge`, `assign`, `reassign`, `change_severity`, `resolve`, `dismiss`, `reopen`, `read`, serta wewenang eksklusif menyetujui resolusi _accepted risk_).
+- **`ADMIN`**: Memiliki wewenang exception management operasional luas dalam Organization (`open`, `acknowledge`, `assign`, `reassign`, `change_severity`, `resolve` untuk perbaikan operasional nyata, `dismiss` untuk anomali terbukti non-valid/salah input, `reopen`, `read`). **ADMIN TIDAK MEMILIKI wewenang mandiri menyetujui resolusi _accepted risk_** tanpa otorisasi atau pendelegasian eksplisit dari OWNER.
 - **`SALES` / `OPERATIONS` / `FINANCE` / `QC`**: Memiliki wewenang exception terikat domain (_domain/resource-scoped_):
   - Membaca dan melaporkan (`open`) anomali pada domain masing-masing;
   - Mengakui (`acknowledge`) dan menangani exception yang ditugaskan kepada mereka;

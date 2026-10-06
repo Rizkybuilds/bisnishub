@@ -2745,24 +2745,28 @@ Arti setiap state:
 
 - **`OPEN`**: Anomali operasional baru terdeteksi secara otomatis atau dibuka manual; belum diakui oleh handler yang ditugaskan.
 - **`ACKNOWLEDGED`**: Exception telah diakui oleh penanggung jawab operasional (_handler_). Tanggung jawab penanganan/investigasi telah diterima.
-- **`RESOLVED`**: Masalah akar operasional telah diselesaikan dengan tindakan nyata dan tercatat dengan bukti/justifikasi penyelesaian (_resolution rationale & evidence_).
-- **`DISMISSED`**: Exception ditutup tanpa perbaikan operasional, baik karena dinilai bukan anomali material atau risiko telah diterima secara formal (_accepted risk_).
+- **`RESOLVED`**: Masalah akar operasional telah diselesaikan dengan tindakan nyata, perbaikan akar masalah, ATAU risiko operasional riil telah diterima secara formal oleh Owner (_accepted risk resolution_). Sesuai D3: **Accepted Risk Is Resolution, Not Dismissal**. Resolusi berbasis _accepted risk_ wajib menyertakan justifikasi formal dan otorisasi Owner.
+- **`DISMISSED`**: Exception ditutup karena anomali tersebut terbukti tidak valid atau tidak dapat diaplikasikan (misal: `FALSE_POSITIVE`, `DUPLICATE`, `NOT_APPLICABLE`, `OPENED_IN_ERROR`). **`DISMISSED` TIDAK BOLEH digunakan untuk menerima risiko riil.** Penerimaan risiko operasional riil harus melalui alur `RESOLVED` dengan konteks _accepted risk_.
 
 ## Canonical Transition Paths
 
 ```text
 OPEN ───────────► ACKNOWLEDGED ───────────► RESOLVED
-  │                     │
-  │                     ▼
-  └────────────────► DISMISSED
+  │                     │                      ▲
+  │                     │                      │
+  │                     ▼                      │
+  ├───────────────► DISMISSED                  │
+  │                                            │
+  └────────────────────────────────────────────┘
 ```
 
 Path transisi kanonikal:
 
 1. `OPEN → ACKNOWLEDGED`: Handler menerima tanggung jawab investigasi dan penanganan.
-2. `ACKNOWLEDGED → RESOLVED`: Handler menyelesaikan masalah operasional dengan bukti penyelesaian.
-3. `OPEN → DISMISSED`: Penutupan langsung dengan alasan dismissal yang sah.
-4. `ACKNOWLEDGED → DISMISSED`: Penutupan setelah investigasi dengan justifikasi dismissal atau penerimaan risiko formal.
+2. `ACKNOWLEDGED → RESOLVED`: Masalah operasional diselesaikan dengan bukti penyelesaian operasional, atau ditutup melalui resolusi penerimaan risiko formal (_accepted risk_) dengan otorisasi Owner.
+3. `OPEN → RESOLVED`: Penyelesaian langsung atau penerimaan risiko formal langsung tanpa fase investigasi perantara.
+4. `OPEN → DISMISSED`: Penutupan karena kesalahan pencatatan atau anomali tidak valid/non-aplikabel (`FALSE_POSITIVE`, `DUPLICATE`, `NOT_APPLICABLE`, `OPENED_IN_ERROR`).
+5. `ACKNOWLEDGED → DISMISSED`: Penutupan setelah investigasi membuktikan anomali tidak valid, duplikat, atau tidak dapat diaplikasikan. **Bukan untuk penerimaan risiko operasional riil.**
 
 ## Governed Reopen Transitions
 
@@ -2782,15 +2786,16 @@ Aturan reopen:
 ## State Machine Boundaries & Invariants
 
 1. **`ACKNOWLEDGED ≠ RESOLVED`**: Mengakui masalah bukan berarti masalah telah selesai. Status `ACKNOWLEDGED` tidak menutup pengecualian.
-2. **`SEVERITY ≠ LIFECYCLE`**: Tingkat keparahan (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`) adalah atribut klasifikasi dampak bisnis, bukan state transisi mesin. Perubahan severity adalah mutasi data yang tercatat di audit log, bukan pergantian lifecycle state.
-3. **`SEVERITY ≠ FOUNDER ATTENTION PRIORITY`**: Tingkat keparahan `CRITICAL` tidak otomatis memaksa prioritas perhatian founder menjadi `INTERRUPT`. Prioritas dihitung terpisah oleh proyeksi perhatian.
-4. **`FOUNDER DECISION REQUIRED ≠ EXCEPTION STATE`**: Flag kebutuhan keputusan founder adalah dimensi perhatian ortogonal, bukan status mesin exception.
-5. **Penugasan Bukan Transisi Lifecycle**: Perubahan penugasan (_assign / reassign_) adalah mutasi atribut penanggung jawab, bukan perubahan status lifecycle state machine.
-6. **Isolasi Mutasi Domain Asal**: Resolusi Operational Exception **TIDAK BOLEH** secara implisit mengubah state domain asal (misal: menyelesaikan exception pengiriman terlambat tidak otomatis menandai shipment terkirim; menandai exception selesai tidak otomatis menyelesaikan order). Perubahan domain asal harus dipicu melalui command domain masing-masing.
+2. **`ACCEPTED RISK IS RESOLUTION, NOT DISMISSAL`**: Penerimaan risiko operasional riil adalah hasil resolusi sah (`RESOLVED`), bukan pembatalan/penolakan (`DISMISSED`). Dismissal terbatas mutlak pada anomali palsu, duplikat, tidak relevan, atau salah input.
+3. **`SEVERITY ≠ LIFECYCLE`**: Tingkat keparahan (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`) adalah atribut klasifikasi dampak bisnis, bukan state transisi mesin. Perubahan severity adalah mutasi data yang tercatat di audit log, bukan pergantian lifecycle state.
+4. **`SEVERITY ≠ FOUNDER ATTENTION PRIORITY`**: Tingkat keparahan `CRITICAL` tidak otomatis memaksa prioritas perhatian founder menjadi `INTERRUPT`. Prioritas dihitung terpisah oleh proyeksi perhatian.
+5. **`FOUNDER DECISION REQUIRED ≠ EXCEPTION STATE`**: Flag kebutuhan keputusan founder adalah dimensi perhatian ortogonal, bukan status mesin exception.
+6. **Penugasan Bukan Transisi Lifecycle**: Perubahan penugasan (_assign / reassign_) adalah mutasi atribut penanggung jawab, bukan perubahan status lifecycle state machine.
+7. **Isolasi Mutasi Domain Asal**: Resolusi Operational Exception **TIDAK BOLEH** secara implisit mengubah state domain asal (misal: menyelesaikan exception pengiriman terlambat tidak otomatis menandai shipment terkirim; menandai exception selesai tidak otomatis menyelesaikan order). Perubahan domain asal harus dipicu melalui command domain masing-masing.
 
 ---
 
-# 117. Founder Attention Projection Lifecycle (CANONICAL_TARGET)
+# 117. Founder Attention Projection Semantics (CANONICAL_TARGET)
 
 Status kematangan:
 
@@ -2798,24 +2803,38 @@ Status kematangan:
 CANONICAL_TARGET (DERIVED PROJECTION)
 ```
 
-Perhatian founder bukanlah mesin state transaksional yang persisten secara independen, melainkan proyeksi baca (_read projection_).
+Perhatian founder (**Founder Attention**) adalah proyeksi baca (_read projection_) yang diturunkan secara dinamis dari domain transaksional dan Operational Exceptions.
 
-Siklus hidup proyeksi perhatian:
+Sesuai spesifikasi produk D2:
 
-```text
-ACTIVE
-  │
-  ├──► SNOOZED (proyeksi disembunyikan sementara hingga waktu bangun)
-  │
-  ├──► DISMISSED (proyeksi diabaikan dari daftar perhatian)
-  │
-  └──► RESOLVED (otomatis terangkat jika underlying exception/kondisi selesai)
-```
+- Perhatian founder **BUKAN** mesin state transaksional yang persisten secara independen.
+- **TIDAK ADA** lifecycle transaksional mandiri (proyeksi tidak memiliki state transaksional tersendiri).
+- **TIDAK ADA** aksi generik _Dismiss_ pada v1.
+- **TIDAK ADA** kebutuhan generik _Snooze_ pada v1.
+- **TIDAK ADA** lifecycle _Mark Done_ generik pada v1.
 
-Aturan proyeksi:
+Item perhatian muncul dan hilang secara dinamis ketika kondisi fakta operasional yang mendasarinya berubah.
 
-1. **State-Neutral Reads**: Evaluasi atau query perhatian founder tidak boleh memicu mutasi sampingan pada domain transaksional maupun Operational Exceptions.
-2. **Hilangnya Perhatian Bukan Berarti Exception Selesai**: Jika suatu item perhatian founder di-dismiss atau di-snooze oleh founder, underlying Operational Exception di domain operasional tetap berstatus aktif (`OPEN` atau `ACKNOWLEDGED`) dan tetap menjadi tanggung jawab operasional tim.
+## Dimensi Klasifikasi & Atribut Proyeksi
+
+Proyeksi perhatian mengklasifikasikan item perhatian berdasarkan:
+
+1. **Attention Kind (D2 Authoritative Taxonomy)**:
+   - `DECISION`: Membutuhkan keputusan founder untuk membuka hambatan bisnis.
+   - `ACTION`: Membutuhkan tindakan langsung founder.
+   - `WAITING`: Menunggu pihak eksternal/internal dengan batas waktu yang dipantau.
+   - `WATCH`: Memantau risiko atau anomali yang belum memerlukan intervensi langsung.
+   - `DATA_GAP`: Informasi operasional kritis belum lengkap atau inkonsisten.
+2. **Priority**: Urutan prioritas penanganan perhatian founder (`P0`, `P1`, `P2`, `P3`).
+3. **Urgency**: Tingkat kedesakan waktu operasional.
+4. **Founder Decision Required**: Flag eksplisit apakah keputusan founder secara aktif memblokir alur operasional.
+5. **Flow Impact**: Dampak terhadap kelancaran arus operasional dan komitmen pelanggan.
+
+## Aturan Proyeksi & Batasan Kanonikal
+
+1. **State-Neutral Reads**: Membuka Founder Home, mengevaluasi proyeksi, atau menjalankan query perhatian founder **TIDAK BOLEH** memicu mutasi sampingan pada domain transaksional maupun Operational Exceptions.
+2. **Hilangnya Perhatian Bukan Berarti Exception Selesai**: Hilangnya suatu item perhatian dari proyeksi founder (misal karena filter, pergeseran waktu, atau kondisi perhatian teratasi) **TIDAK BERARTI** Operational Exception di domain operasional telah selesai. Operational Exception tetap berstatus aktif (`OPEN` atau `ACKNOWLEDGED`) dan harus diselesaikan melalui command transaksional governed tersendiri.
+3. **Transient Dynamic Evaluation**: Proyeksi perhatian dievaluasi ulang saat data dibaca; tidak memerlukan tabel riwayat audit mandiri di luar audit trail domain asal dan operational exceptions.
 
 ---
 

@@ -1365,14 +1365,14 @@ TeeStock business documentation may use terms broader than current MGBOS canonic
 
 For MGBOS implementation during this roadmap, use the following current compatibility mapping unless canonical architecture changes.
 
-| Business concept       | Current MGBOS representation                       |
-| ---------------------- | -------------------------------------------------- |
-| Opportunity            | Qualified Lead + Requirement + Quote               |
-| Project                | Order + Requirement + Production Job(s)            |
-| Partner for production | Vendor                                             |
-| Work Order             | Governed SPK/Work Order artifact                   |
-| Exception              | Product concept pending Founder Control definition |
-| Customer Case          | Separate proposed durable customer-issue concept   |
+| Business concept       | Current MGBOS representation                                                                                              |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Opportunity            | Qualified Lead + Requirement + Quote                                                                                      |
+| Project                | Order + Requirement + Production Job(s)                                                                                   |
+| Partner for production | Vendor                                                                                                                    |
+| Work Order             | Governed SPK/Work Order artifact                                                                                          |
+| Exception              | Operational Exception = CANONICAL_TARGET first-class MGBOS concept; physical implementation pending Engineering Discovery |
+| Customer Case          | Separate proposed durable customer-issue concept                                                                          |
 
 ---
 

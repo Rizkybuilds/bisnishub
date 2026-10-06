@@ -2113,12 +2113,12 @@ Munculnya exception di layar Founder Home atau daftar perhatian founder tidak me
 ### INV-109 — Truthful Dismissal Semantics
 
 **Type:** OPERATIONAL INTEGRITY
-Penutupan exception dengan status `DISMISSED` wajib menyertakan alasan bisnis yang jujur (misal _false alarm_ terverifikasi atau anomali tidak material) dan dilarang digunakan untuk menyembunyikan masalah yang belum terselesaikan.
+Penutupan exception dengan status `DISMISSED` dibatasi secara ketat untuk anomali yang terbukti tidak valid atau tidak dapat diaplikasikan (seperti `FALSE_POSITIVE`, `DUPLICATE`, `NOT_APPLICABLE`, atau `OPENED_IN_ERROR`) dengan justifikasi tertulis yang jujur. Status `DISMISSED` dilarang digunakan untuk menutup anomali riil yang belum tertangani atau untuk menerima risiko bisnis.
 
-### INV-110 — Accepted Risk != Dismissal
+### INV-110 — Accepted Risk Is Resolution, Not Dismissal
 
 **Type:** GOVERNANCE INTEGRITY
-Penerimaan risiko operasional (_accepted risk_) memerlukan justifikasi formal dan otorisasi level Owner/Founder, serta dicatat secara berbeda dari penutupan biasa karena bukan anomali yang selesai atau diabaikan.
+Penerimaan risiko operasional riil (_accepted risk_) adalah hasil resolusi sah (`RESOLVED`), bukan pembatalan atau penolakan (`DISMISSED`). Sesuai spesifikasi D3: **Accepted Risk Is Resolution, Not Dismissal**. Resolusi berbasis penerimaan risiko memerlukan justifikasi bisnis formal, pencatatan alasan, dan otorisasi eksplisit level Owner. Status `DISMISSED` dilarang keras digunakan untuk mencatat penerimaan risiko riil.
 
 ### INV-111 — Resolution Evidence Preservation
 
@@ -2183,7 +2183,7 @@ Cache atau materialisasi proyeksi perhatian founder hanyalah optimasi baca. Jika
 ### INV-123 — Attention Disappearance != Exception Resolved
 
 **Type:** OPERATIONAL INTEGRITY
-Hilangnya atau disembunyikannya (_dismissed/snoozed_) item perhatian dari antarmuka founder tidak berarti Operational Exception terkait telah selesai di lapangan.
+Hilangnya suatu item perhatian dari proyeksi Founder Home (misal karena filter, pergeseran waktu, atau kondisi proyeksi teratasi) tidak berarti Operational Exception terkait telah selesai di lapangan. Operational Exception tetap berstatus aktif hingga diselesaikan melalui command transaksional yang sah.
 
 ### INV-124 — Active CRITICAL Exception Remains Eligible for Visibility Evaluation After Acknowledgement
 
@@ -2777,7 +2777,7 @@ FOUNDER CONTROL & OPERATIONAL EXCEPTIONS
 107 acknowledgement requires responsibility
 108 founder visibility != founder ownership
 109 truthful dismissal semantics
-110 accepted risk != dismissal
+110 accepted risk is resolution, not dismissal
 111 resolution evidence preservation
 112 resolution does not mutate source domain
 113 source-domain mutation does not erase exception history
