@@ -1,7 +1,7 @@
 ---
 canonical_id: mgbos.implementation.index
 status: ACTIVE
-version: 2.1
+version: 2.2
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -11,12 +11,12 @@ effective_from: 2026-10-06
 
 implementation_status: DOCUMENTATION_INDEX
 current_implementation_phase: NONE
-current_program_state: ARCHITECTURE_RECONCILED_ENGINEERING_DISCOVERY_NEXT
+current_program_state: ENGINEERING_DISCOVERY_COMPLETE_TECHNICAL_PLAN_ACTIVE_CONTRACT_PLANNED
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: 63dec5a78462e3eff994ebdd0c15e31676b12bee
+  commit: 88a8a28f1b64a624717a8e03038c63f4520f8978
   reviewed_at: 2026-10-06
 
 authoritative_for:
@@ -61,7 +61,7 @@ supersedes:
   - mgbos.implementation.index@2.0
 ---
 
-# MGBOS Implementation Documentation Index v2.1
+# MGBOS Implementation Documentation Index v2.2
 
 ## 1. Purpose
 
@@ -142,9 +142,13 @@ FOUNDER CONTROL PRODUCT DEFINITION (APPROVED BY OWNER)
         ↓
 CANONICAL ARCHITECTURE RECONCILIATION (W2 COMPLETE)
         ↓
-ENGINEERING DISCOVERY (W3 NEXT)
+ENGINEERING DISCOVERY (W3 COMPLETE)
         ↓
-ONLY THEN
+P2-A TECHNICAL PLAN (ACTIVE)
+        ↓
+P2-A IMPLEMENTATION CONTRACT (PLANNED)
+        ↓
+ONLY AFTER GOVERNED AUTHORIZATION
 NEXT IMPLEMENTATION PHASE (PHASE 2 NOT OPEN)
 ```
 
@@ -1843,17 +1847,29 @@ reconciled across canonical architecture specifications
 However, canonical architecture approval must NOT be confused with physical implementation:
 
 ```text
-physical table:
-NOT IMPLEMENTED (undecided between independent table vs. bounded extension)
+canonical representation:
+CANONICAL_TARGET
 
-physical API / RPC:
+W3 physical design direction:
+independent persistent Operational Exception table
++
+append-oriented audit/history
++
+typed primary-resource reference
++
+governed PostgreSQL RPC mutation
+
+runtime implementation:
 NOT IMPLEMENTED
 
-runtime code:
-NOT IMPLEMENTED
+Implementation Contract:
+PLANNED
+
+Phase 2 execution:
+NOT OPEN
 ```
 
-Physical persistence strategy, API design, and schema decisions remain the subject of W3 Engineering Discovery.
+Important: W3 technical design is engineering planning authority. It does NOT turn into canonical architecture overrides without formal architectural governance, and does NOT authorize runtime implementation.
 
 Phase 2 implementation remains strictly **NOT OPEN**.
 
@@ -2568,9 +2584,9 @@ ACTIVE NEW IMPLEMENTATION PHASE
 =
 NONE
 
-CURRENT NEXT PROGRAM
+CURRENT NEXT ENGINEERING GATE
 =
-FOUNDER CONTROL PRODUCT DEFINITION
+P2-A IMPLEMENTATION CONTRACT ACTIVATION + WP-P2A-01 CREATION
 ```
 
 ---
@@ -2587,10 +2603,18 @@ Answer from this index:
 
 ```text
 NO CURRENT IMPLEMENTATION WORK
-IS AUTHORIZED BY THIS DIRECTORY.
+IS AUTHORIZED YET.
 ```
 
-Resolve current product/engineering program first.
+Required governed routing:
+
+```text
+activate P2-A Implementation Contract
+        ↓
+create WP-P2A-01
+        ↓
+only then Builder handoff
+```
 
 ---
 
@@ -2691,4 +2715,4 @@ CLOSURE
 
 At this repository state:
 
-> **Phase 1 implementation is closed. No new MGBOS implementation phase is active. Canonical architecture reconciliation (W2) is complete. The next durable step is W3 Engineering Discovery before Phase 2 implementation can be planned or authorized.**
+> **W3 Engineering Discovery is analysis-complete and the P2-A Technical Plan is active. No MGBOS implementation phase is currently active. The next durable engineering gate is activation of the P2-A Implementation Contract followed by creation of WP-P2A-01. Phase 2 execution remains NOT OPEN.**

@@ -1,7 +1,7 @@
 ---
 canonical_id: mgbos.product.founder-control.documentation-plan
 status: ACTIVE
-version: 1.1
+version: 1.2
 owner: Rizky
 scope: mgbos-founder-control
 document_class: product-documentation-plan
@@ -12,7 +12,7 @@ review_cadence: per-material-product-or-phase-change
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  sha: 63dec5a78462e3eff994ebdd0c15e31676b12bee
+  sha: 88a8a28f1b64a624717a8e03038c63f4520f8978
 
 authoritative_for:
   - founder-control documentation package composition
@@ -46,6 +46,8 @@ depends_on:
   - ../architecture/README.md
   - ../architecture/domain-map-capability-ownership.md
   - ../implementation/README.md
+  - ../engineering/founder-control-engineering-discovery.md
+  - ../engineering/founder-control-p2a-operational-exception-technical-plan.md
   - ../../../../bisnis/teestock/07-operations/operating-model.md
   - ../../../../bisnis/teestock/14-roadmap/current-quarter.md
 
@@ -54,7 +56,7 @@ supersedes: null
 implementation_status: DOCUMENTATION_PROGRAM_ACTIVE
 ---
 
-# MGBOS Founder Control Documentation Plan v1.1
+# MGBOS Founder Control Documentation Plan v1.2
 
 ## 1. Purpose
 
@@ -127,10 +129,10 @@ branch:
 main
 
 revision:
-63dec5a78462e3eff994ebdd0c15e31676b12bee
+88a8a28f1b64a624717a8e03038c63f4520f8978
 ```
 
-_(Historical product package activation baselines were `f05bd82f9be6aa038799931ede19059481aed8d1` and `ce30a1440eb6c4038d732e80ecae4446d311e0bd`)._
+_(Historical product package activation baselines were `63dec5a78462e3eff994ebdd0c15e31676b12bee`, `f05bd82f9be6aa038799931ede19059481aed8d1` and `ce30a1440eb6c4038d732e80ecae4446d311e0bd`)._
 
 Baseline adalah reference point untuk penyusunan dokumentasi.
 
@@ -2291,17 +2293,32 @@ Operational Exception, Founder Attention, and Founder Home formally established 
 Status:
 
 ```text
-NEXT (ACTIVE FOCUS)
+ANALYSIS COMPLETE
+
+P2-A TECHNICAL PLAN
+=
+ACTIVE
+
+IMPLEMENTATION CONTRACT
+=
+PLANNED
+
+PHASE 2 EXECUTION
+=
+NOT OPEN
 ```
 
-Includes:
+W3 completed outputs include:
 
 ```text
-current implementation audit
-technical design (schema & persistence options)
-risk classification
-verification design
+current source audit
+schema/persistence recommendation
+authorization-gap analysis
+detector-readiness classification
+risk/routing direction
+verification direction
 implementation sequencing
+P2-A technical plan
 ```
 
 ---
@@ -2311,7 +2328,14 @@ implementation sequencing
 Status:
 
 ```text
-NOT OPEN (PHASE 2 BLOCKED PENDING W3 DISCOVERY)
+NOT OPEN
+
+PENDING:
+Implementation Contract activation
++
+bounded Work Package creation
++
+governed implementation authorization
 ```
 
 Includes bounded work packages executed through Vibe Engineering governance once W3 produces an approved Implementation Contract.
@@ -2556,7 +2580,7 @@ Phase 2 Implementation Documentation
 NOT CREATED
 ```
 
-## Current Program State (Post PR #37 / VECP-003F)
+## Historical Program State (Post PR #37 / VECP-003F)
 
 ```text
 W0 CURRENT-STATE RECONCILIATION
@@ -2596,22 +2620,72 @@ PHASE 2 IMPLEMENTATION
 NOT OPEN
 ```
 
+## Current Program State (Post W3 Engineering Discovery)
+
+```text
+W0
+=
+COMPLETE
+
+D1-D4
+=
+ACTIVE / OWNER APPROVED
+
+W2
+=
+COMPLETE
+
+W3 ENGINEERING DISCOVERY
+=
+ANALYSIS COMPLETE
+
+P2-A TECHNICAL PLAN
+=
+ACTIVE
+
+P2-A IMPLEMENTATION CONTRACT
+=
+PLANNED
+
+ACTIVE IMPLEMENTATION PHASE
+=
+NONE
+
+PHASE 2 EXECUTION
+=
+NOT OPEN
+
+REAL PILOT
+=
+BLOCKED
+```
+
 ---
 
 # 75. Next Work Package
 
-The immediate next work package is:
+The current routing for the next engineering gate is:
 
 ```text
-W2
-ARCHITECTURE RECONCILIATION / ARCHITECTURE IMPACT REVIEW
+NEXT ENGINEERING GATE
+
+P2-A IMPLEMENTATION CONTRACT
+ACTIVATION
+
+        ↓
+
+WP-P2A-01
+DATABASE + DOMAIN FOUNDATION
+CREATION
+
+        ↓
+
+ONLY AFTER GOVERNED AUTHORIZATION
+
+ANTIGRAVITY IMPLEMENTATION
 ```
 
-Primary purpose:
-
-> Review whether the active Founder Control product definition package (D1–D4) requires material updates to MGBOS canonical architecture specifications (data model, business state machines, invariants, command/event model, and authorization).
-
-W0 (Current-State Reconciliation) is complete, and product package D1–D4 is active. Engineering discovery and Phase 2 implementation remain not open until architecture reconciliation completes and produces governed engineering contracts.
+W0 (Current-State Reconciliation), product package D1–D4 (Approved by Owner), canonical architecture reconciliation W2, and W3 Engineering Discovery are complete. The P2-A Technical Plan is active. Phase 2 implementation remains not open and Antigravity implementation is not authorized until the P2-A Implementation Contract is activated and WP-P2A-01 is created under governed authorization.
 
 ---
 

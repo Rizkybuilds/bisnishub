@@ -36,7 +36,16 @@ Kerangka kerja bounded AI engineering dan control plane MGBOS:
 
 ---
 
-## 4. Perencanaan & Eksekusi Implementasi
+## 4. Perencanaan Teknis & Discovery Engineering (Engineering Planning & Discovery)
+
+Artefak penemuan teknis, investigasi basis kode sumber aktual, dan rencana implementasi teknis terikat:
+
+- [Founder Control Engineering Discovery](founder-control-engineering-discovery.md) — Mencatat hasil inspeksi kode sumber aktual pada W3, mengikat temuan ke baseline `main@88a8a28f1b64a624717a8e03038c63f4520f8978`, mengidentifikasi kesenjangan schema/auth/query/UI, merekomendasikan arah implementasi fisik, serta **TIDAK** mengotorisasi implementasi runtime.
+- [Founder Control P2-A Operational Exception Technical Plan](founder-control-p2a-operational-exception-technical-plan.md) — Menerjemahkan temuan W3 menjadi perancangan teknis terikat untuk fondasi Operational Exception (P2-A), menentukan tahapan sekuens implementasi (WP01–WP04) dengan WP01 sebagai prospektif work package pertama, serta tetap terpisah dari otorisasi implementasi aktual.
+
+---
+
+## 5. Pelacakan Fase & Eksekusi Implementasi
 
 Perencanaan kerja terikat dan pelacakan fase pengembangan aktif:
 
@@ -44,7 +53,7 @@ Perencanaan kerja terikat dan pelacakan fase pengembangan aktif:
 
 ---
 
-## 5. Otoritas Arsitektur
+## 6. Otoritas Arsitektur
 
 Dokumentasi engineering bukan otoritas arsitektur semantik. Untuk pertanyaan mengenai model data, state machine, invarian bisnis, command/event, dan kepemilikan domain:
 
@@ -52,7 +61,7 @@ Dokumentasi engineering bukan otoritas arsitektur semantik. Untuk pertanyaan men
 
 ---
 
-## 6. Bukti Implementasi & Audit (Implementation & Audit Evidence)
+## 7. Bukti Implementasi & Audit (Implementation & Audit Evidence)
 
 Laporan berkala hasil eksekusi engineering (seperti `mgbos-001-report.md` hingga laporan fase terkini), pengujian bertanggal, dan audit paket dokumentasi:
 
@@ -63,7 +72,7 @@ Laporan berkala hasil eksekusi engineering (seperti `mgbos-001-report.md` hingga
 
 ---
 
-## 7. Catatan Sesi & Histori Desain (Historical Provenance)
+## 8. Catatan Sesi & Histori Desain (Historical Provenance)
 
 Catatan sesi perancangan awal MGBOS pada September 2026 disimpan untuk pelacakan alasan historis dan forensik keputusan:
 

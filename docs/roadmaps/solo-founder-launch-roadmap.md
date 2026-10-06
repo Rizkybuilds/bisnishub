@@ -1,7 +1,7 @@
 ---
 canonical_id: bisnishub.roadmap.solo-founder-launch
 status: ACTIVE
-version: 2.1
+version: 2.2
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -28,12 +28,12 @@ current_state:
   current_mgbos_product_program: FOUNDER_CONTROL
   operational_readiness: NOT_PRODUCTION_READY
   real_transaction_readiness: GATED
-  roadmap_stage: STAGE_C_ARCHITECTURE_RECONCILED_ENGINEERING_DISCOVERY_NEXT
+  roadmap_stage: STAGE_C_ENGINEERING_DISCOVERY_COMPLETE_CONTRACT_PLANNED
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: 63dec5a78462e3eff994ebdd0c15e31676b12bee
+  commit: 88a8a28f1b64a624717a8e03038c63f4520f8978
   reviewed_at: 2026-10-06
 
 authoritative_for:
@@ -81,7 +81,7 @@ supersedes:
 implementation_status: STRATEGIC_ROADMAP_ACTIVE
 ---
 
-# Solo-Founder Launch Roadmap — Q4 2026 to Controlled Launch v2.1
+# Solo-Founder Launch Roadmap — Q4 2026 to Controlled Launch v2.2
 
 ## 1. Purpose
 
@@ -786,14 +786,22 @@ internally consistent
 Stage status:
 
 ```text id="c3s8t1"
-ACTIVE (ARCHITECTURE RECONCILIATION COMPLETE / ENGINEERING DISCOVERY NEXT)
+ACTIVE (ENGINEERING DISCOVERY COMPLETE / P2-A TECHNICAL PLAN ACTIVE / CONTRACT PLANNED)
 ```
 
 Objective:
 
 > **Translate approved product semantics into governed MGBOS architecture and bounded engineering scope.**
 
-In Stage C, Canonical Architecture Reconciliation (W2) was completed under VECP-003H across all six canonical specifications. Operational Exception was reconciled as a first-class logical MGBOS architectural domain (`CANONICAL_TARGET`), Founder Attention as a derived projection layer (`CANONICAL_TARGET`), and Founder Home as an application surface (`CANONICAL_TARGET`), while physical persistence remains undecided. W3 Engineering Discovery is the current focus of Stage C. Phase 2 implementation (Stage D) is NOT OPEN.
+In Stage C, Canonical Architecture Reconciliation (W2) was completed under VECP-003H across all six canonical specifications. Operational Exception was reconciled as a first-class logical MGBOS architectural domain (`CANONICAL_TARGET`), Founder Attention as a derived projection layer (`CANONICAL_TARGET`), and Founder Home as an application surface (`CANONICAL_TARGET`).
+
+Canonical physical implementation remains NOT IMPLEMENTED, while W3 technical direction is DEFINED FOR INITIAL P2-A SLICE. W3 has recommended:
+- Operational Exception: persistent Postgres table + append-oriented audit
+- Founder Attention: compute-on-read later
+- existing `/dashboard`: future Founder Home surface
+- event infrastructure: not required initially
+
+These remain engineering decisions, not product/canonical overrides. W3 Engineering Discovery is analysis-complete and the P2-A Technical Plan is active. Phase 2 implementation (Stage D) remains NOT OPEN.
 
 ---
 
@@ -910,21 +918,33 @@ before creating another root concept.
 
 # 33. Stage C Engineering Deliverables
 
-Only after product/architecture maturity:
+Following product and canonical architecture maturity, Stage C engineering deliverables reflect:
 
 ```text id="u5rc1j"
-current Founder Control implementation audit
+current-source audit
+=
+COMPLETE
 
-technical implementation plan
+engineering discovery
+=
+COMPLETE
 
-risk/routing resolution
+risk/routing
+=
+RESOLVED FOR P2-A FOUNDATION
+
+P2-A technical plan
+=
+ACTIVE
 
 Implementation Contract
+=
+PLANNED
 
-bounded Work Packages
+bounded Work Package
+=
+NOT YET CREATED
 ```
-
-become valid.
 
 ---
 
@@ -3246,7 +3266,7 @@ COMPLETE / APPROVED_BY_OWNER
 STAGE C
 Architecture + Engineering Readiness
 =
-ACTIVE (ARCHITECTURE RECONCILED / DISCOVERY NEXT)
+ACTIVE (DISCOVERY COMPLETE / TECHNICAL PLAN READY / CONTRACT PLANNED)
 
 STAGE D
 Founder Control Implementation
@@ -3296,7 +3316,7 @@ currently has no authorized Founder Control implementation package from this roa
 
 # 147. Current Product Next Step
 
-Following Stage B completion and Owner approval, the Founder Control product definition package (D1 through D4) was reconciled with canonical architecture in Stage C (W2 COMPLETE):
+Following Stage B completion and Owner approval, the Founder Control product definition package (D1 through D4) was reconciled with canonical architecture in Stage C (W2 COMPLETE), and W3 Engineering Discovery was completed with an active P2-A Technical Plan:
 
 ```text id="vrp0b1"
 FOUNDER CONTROL PRODUCT PACKAGE
@@ -3307,9 +3327,17 @@ CANONICAL ARCHITECTURE RECONCILIATION (W2)
 =
 COMPLETE (v1.1)
 
+W3 ENGINEERING DISCOVERY
+=
+ANALYSIS COMPLETE
+
+P2-A TECHNICAL PLAN
+=
+ACTIVE
+
 NEXT GATE
 =
-W3 ENGINEERING DISCOVERY (STAGE C)
+P2-A IMPLEMENTATION CONTRACT ACTIVATION + WP-P2A-01 CREATION
 ```
 
 ---
