@@ -9,8 +9,8 @@ scope: mgbos-founder-control-architecture-reconciliation
 document_class: evidence
 reviewed_repository: Rizkybuilds/bisnishub
 reviewed_base: 63dec5a78462e3eff994ebdd0c15e31676b12bee
-audited_semantic_candidate: 4715d6785192538dbeaf651e0731fe21ad8813d6
-audit_timestamp_utc: '2026-10-06T03:37:00Z'
+audited_semantic_candidate: b4f31b1efe2659a0eaad79b4c7b42ef668b1f491
+audit_timestamp_utc: '2026-10-06T04:20:00Z'
 effective_from: 2026-10-06
 ---
 
@@ -37,7 +37,8 @@ VECP-003H — Founder Control Canonical Architecture Reconciliation
 
 RECONCILIATION RESULT
 =
-SEMANTIC CANDIDATE PASS (4715d6785192538dbeaf651e0731fe21ad8813d6)
+SEMANTIC CANDIDATE PASS — BUILDER SELF-AUDIT (b4f31b1efe2659a0eaad79b4c7b42ef668b1f491)
+PENDING INDEPENDENT HEAD ENGINEERING EXACT PR AUDIT
 
 CANONICAL ARCHITECTURE (6 SPECIFICATIONS)
 =
@@ -101,9 +102,9 @@ BASE REVISION
 =
 63dec5a78462e3eff994ebdd0c15e31676b12bee
 
-AUDITED SEMANTIC CANDIDATE HEAD (REVISION A)
+AUDITED SEMANTIC CANDIDATE HEAD (REVISION A2)
 =
-4715d6785192538dbeaf651e0731fe21ad8813d6
+b4f31b1efe2659a0eaad79b4c7b42ef668b1f491
 
 AUDIT TYPE
 =
@@ -141,35 +142,35 @@ The semantic candidate diff modifies exactly 14 files across two main groupings:
    - Version: 1.0 → 1.1
    - Added `CANONICAL_TARGET` maturity classification.
    - Reconciled Phase 1 Operating Spine closures (Order lifecycle, assignment, QC gates).
-   - Added Section 116 (`Operational Exception State Machine`): terminal and non-terminal states (`OPEN`, `ACKNOWLEDGED`, `RESOLVED`, `DISMISSED`), governed `REOPEN`, terminal immutability, and state-machine invariants.
-   - Added Section 117 (`Founder Attention Projection Lifecycle`): read projection lifecycle, Attention Kinds (`DECISION`, `ACTION`, `WAITING`, `WATCH`, `DATA_GAP`), and projection staleness/refresh rules.
+   - Added Section 116 (`Operational Exception State Machine`): terminal and non-terminal states (`OPEN`, `ACKNOWLEDGED`, `RESOLVED`, `DISMISSED`), governed `REOPEN`, terminal immutability, and state-machine invariants. Sesuai D3: **Accepted Risk Is Resolution, Not Dismissal**; resolusi berbasis accepted risk adalah hasil resolusi sah (`RESOLVED`) dengan otorisasi Owner. Status `DISMISSED` dibatasi secara mutlak untuk anomali tidak valid/duplikat/tidak dapat diaplikasikan/salah input.
+   - Added Section 117 (`Founder Attention Projection Semantics`): read projection semantics, Attention Kinds (`DECISION`, `ACTION`, `WAITING`, `WATCH`, `DATA_GAP`), priority, urgency, and flow impact. Menegaskan tidak ada state machine transaksional mandiri pada proyeksi perhatian (tidak ada lifecycle aktif/tunda/tolak/selesai tersendiri).
 
 3. `systems/mgbos/docs/architecture/business-invariants.md`
    - Version: 1.0 → 1.1
    - Strictly preserved existing invariants `INV-001` through `INV-098` without renumbering or collision.
-   - Added Section 103 defining 49 Founder Control invariant families (`INV-099` through `INV-147`).
+   - Added Section 103 defining 49 Founder Control invariant families (`INV-099` through `INV-147`), including `INV-110` (**Accepted Risk Is Resolution, Not Dismissal**) requiring Owner authority.
    - Updated Section 116 Comprehensive Invariant Registry with the complete list of 147 invariants.
 
 4. `systems/mgbos/docs/architecture/command-event-model.md`
    - Version: 1.0 → 1.1
-   - Added Section 159: logical commands for Operational Exception (`mgbos.operational_exception.acknowledge`, `resolve`, `dismiss`, `reopen`, `escalate`, `assign`) with idempotency and deduplication semantics.
-   - Added Section 160: query endpoints for Founder Attention (`mgbos.founder_attention.list`, `get`, `summary`) as state-neutral reads.
+   - Added Section 159: logical commands for Operational Exception (`mgbos.operational_exception.open`, `acknowledge`, `assign`, `reassign`, `change_severity`, `resolve`, `dismiss`, `reopen`) with idempotency and deduplication semantics. Command `resolve` mencakup perbaikan operasional nyata dan/atau accepted risk berotorisasi Owner; `dismiss` dilarang digunakan untuk accepted risk. Tidak ada command `escalate`.
+   - Added Section 160: query endpoints for Founder Attention (`mgbos.founder_attention.list`, `get`, `coverage`) as state-neutral reads. Tidak ada query `summary`.
    - Added Section 161: candidate domain events emitted by exception transitions.
    - Added Section 162: Event Architecture Boundaries & Non-Goals: no Kafka, no event-streaming infrastructure, no microservices, Event Runtime = `NOT IMPLEMENTED`, Outbox = `TARGET`.
 
 5. `systems/mgbos/docs/architecture/permission-authorization-model.md`
    - Version: 1.0 → 1.1
    - Preserved core human roles (`OWNER`, `ADMIN`, `SALES`, `OPERATIONS`, `FINANCE`, `QC`).
-   - Added Section 125: logical capabilities (`mgbos.operational_exception.*`, `mgbos.founder_attention.*`), role mapping guidelines, and the fundamental law `EXCEPTION CAPABILITY != SOURCE-DOMAIN CAPABILITY`.
+   - Added Section 125: logical capabilities (`mgbos.operational_exception.*`, `mgbos.founder_attention.*`), role mapping guidelines, wewenang eksklusif OWNER untuk resolusi accepted risk (ADMIN tidak memiliki wewenang mandiri menyetujui accepted risk), dan hukum fundamental `EXCEPTION CAPABILITY != SOURCE-DOMAIN CAPABILITY`.
 
 6. `systems/mgbos/docs/architecture/domain-map-capability-ownership.md`
    - Version: 1.0 → 1.1
    - Added `CANONICAL_TARGET` to capability classifications.
-   - Promoted Operational Exception to `CANONICAL_TARGET MGBOS ARCHITECTURAL DOMAIN` (logical target, physical undecided).
+   - Promoted Operational Exception to `CANONICAL_TARGET MGBOS ARCHITECTURAL DOMAIN` (logical target, physical persistence undecided).
    - Defined Founder Attention as `CANONICAL_TARGET DERIVED MGBOS PROJECTION`.
    - Defined Founder Home as `CANONICAL_TARGET MGBOS APPLICATION SURFACE`.
-   - Reconciled Phase 1 Operating Spine closures (Order, Production Assignment, QC gates, SPK generation).
-   - Preserved deferred domains (Inventory, Purchasing, Financial Ledger, Shipping Tracking remain deferred / `LATER`).
+   - Reconciled Phase 1 Operating Spine closures (Lead → Requirement, Order, Production Assignment, QC gates, SPK generation).
+   - Accurately describes active domain statuses: Inventory, Procurement, Goods Receipt, Vendor Bills, and Cost / Margin are CURRENT in MGBOS; only Advanced Partner / BOM / Creator / Royalty / Customer Case are deferred.
 
 ### B. Downstream, Navigation, and Roadmap Documents (8 files)
 
@@ -227,25 +228,28 @@ The semantic candidate diff modifies exactly 14 files across two main groupings:
 
 ## 4. Detailed Verification Matrix
 
-| Verification Aspect        | Expected Requirement                                                     | Observed Evidence                                         | Verdict  |
-| :------------------------- | :----------------------------------------------------------------------- | :-------------------------------------------------------- | :------- |
-| **Branch & Isolation**     | Isolated branch `docs/mgbos-founder-control-architecture-reconciliation` | Verified clean branch and worktree                        | **PASS** |
-| **Base Revision**          | `63dec5a78462e3eff994ebdd0c15e31676b12bee`                               | Git base equals expected commit SHA                       | **PASS** |
-| **Semantic Candidate**     | 14 files committed under Revision A                                      | SHA `4715d6785192538dbeaf651e0731fe21ad8813d6`            | **PASS** |
-| **CANONICAL_TARGET**       | Explicitly defined in data model, state machines, and domain map         | Added without implying physical schema                    | **PASS** |
-| **Invariant Preservation** | `INV-001` through `INV-098` preserved 100%                               | Zero numbering modifications or collisions                | **PASS** |
-| **New Invariants**         | `INV-099` through `INV-147` (49 invariants) added                        | Defined and registered in registry                        | **PASS** |
-| **Phase 1 Claims**         | Outdated Phase 1 gap claims reconciled                                   | Order, assignment, QC, and SPK marked verified            | **PASS** |
-| **Event Boundaries**       | No Kafka, no microservices, runtime NOT IMPLEMENTED                      | Explicitly stated in command-event model                  | **PASS** |
-| **Authorization Law**      | Exception capability != domain capability                                | Enforced in permission-authorization model                | **PASS** |
-| **Zero Code/SQL Changes**  | No migration, table, or code changes in PR                               | 0 lines of code or SQL modified                           | **PASS** |
-| **Phase 2 Status**         | Phase 2 implementation explicitly NOT OPEN                               | Verified across all 14 files                              | **PASS** |
-| **Prettier Formatting**    | All documentation files formatted cleanly                                | `npx prettier --write` executed without errors            | **PASS** |
-| **Repository Layout**      | `check_repository_layout.py`                                             | PASS: repository locations and active root commands       | **PASS** |
-| **Document References**    | `check_document_references.py`                                           | PASS: declared local references in 39 committed documents | **PASS** |
-| **Agent Governance**       | `validate-agent-governance.py`                                           | PASS (structural validation only)                         | **PASS** |
-| **PR Scope Isolation**     | `check-pr-scope.mjs` against base and candidate                          | PASS: system scope isolation                              | **PASS** |
-| **MGBOS Workspace**        | `npm run check:mgbos`                                                    | PASS: 59 test files, 375 tests, builds passed             | **PASS** |
+| Verification Aspect        | Expected Requirement                                                     | Observed Evidence                                         | Verdict                       |
+| :------------------------- | :----------------------------------------------------------------------- | :-------------------------------------------------------- | :---------------------------- |
+| **Branch & Isolation**     | Isolated branch `docs/mgbos-founder-control-architecture-reconciliation` | Verified clean branch and worktree                        | **PASS**                      |
+| **Base Revision**          | `63dec5a78462e3eff994ebdd0c15e31676b12bee`                               | Git base equals expected commit SHA                       | **PASS**                      |
+| **Semantic Candidate**     | 14 files under Revision A; 9 files remediated under Revision A2          | SHA `b4f31b1efe2659a0eaad79b4c7b42ef668b1f491`            | **PASS (BUILDER SELF-AUDIT)** |
+| **CANONICAL_TARGET**       | Explicitly defined in data model, state machines, and domain map         | Added without implying physical schema                    | **PASS**                      |
+| **Invariant Preservation** | `INV-001` through `INV-098` preserved 100%                               | Zero numbering modifications or collisions                | **PASS**                      |
+| **New Invariants**         | `INV-099` through `INV-147` (49 invariants) added                        | Defined and registered in registry                        | **PASS**                      |
+| **Phase 1 Claims**         | Outdated Phase 1 gap claims reconciled                                   | Order, assignment, QC, and SPK marked verified            | **PASS**                      |
+| **Event Boundaries**       | No Kafka, no microservices, runtime NOT IMPLEMENTED                      | Explicitly stated in command-event model                  | **PASS**                      |
+| **Authorization Law**      | Exception capability != domain capability                                | Enforced in permission-authorization model                | **PASS**                      |
+| **Zero Code/SQL Changes**  | No migration, table, or code changes in PR                               | 0 lines of code or SQL modified                           | **PASS**                      |
+| **Phase 2 Status**         | Phase 2 implementation explicitly NOT OPEN                               | Verified across all 14 files                              | **PASS**                      |
+| **Prettier Formatting**    | All documentation files formatted cleanly                                | `npx prettier --write` executed without errors            | **PASS**                      |
+| **Repository Layout**      | `check_repository_layout.py`                                             | PASS: repository locations and active root commands       | **PASS**                      |
+| **Document References**    | `check_document_references.py`                                           | PASS: declared local references in 39 committed documents | **PASS**                      |
+| **Agent Governance**       | `validate-agent-governance.py`                                           | PASS (structural validation only)                         | **PASS**                      |
+| **PR Scope Isolation**     | `check-pr-scope.mjs` against base and candidate                          | PASS: system scope isolation                              | **PASS**                      |
+| **MGBOS Workspace**        | `npm run check:mgbos`                                                    | PASS: 59 test files, 375 tests, builds passed             | **PASS**                      |
+
+> [!note]
+> All verification verdicts in this matrix represent **Builder Self-Audit** observations by Antigravity, pending independent Head Engineering Exact PR Audit.
 
 ---
 
@@ -261,6 +265,7 @@ The semantic candidate diff modifies exactly 14 files across two main groupings:
 
 ## 6. Next Steps
 
-1. Commit and push Revision B (Report-Only Delta) containing this audit document.
-2. Submit PR #40 for independent Head Engineering Exact PR Audit.
-3. Upon approval and merge by Owner, proceed to **Workstream W3 — Engineering Discovery**.
+1. Commit and push Revision B2 (Report-Only Delta) containing this updated audit evidence document.
+2. Update PR #40 body description with exact revision metadata.
+3. Submit PR #40 for independent Head Engineering Exact PR Audit.
+4. Upon approval and merge by Owner, proceed to **Workstream W3 — Engineering Discovery**.
