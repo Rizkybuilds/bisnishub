@@ -1423,6 +1423,218 @@ export type Database = {
           },
         ]
       }
+      operational_exception_audit: {
+        Row: {
+          action: string
+          actor_id: string
+          created_at: string
+          details: Json
+          from_status: string | null
+          id: string
+          operational_exception_id: string
+          organization_id: string
+          request_id: string
+          request_payload: Json
+          result_snapshot: Json
+          to_status: string | null
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          created_at?: string
+          details?: Json
+          from_status?: string | null
+          id?: string
+          operational_exception_id: string
+          organization_id: string
+          request_id: string
+          request_payload?: Json
+          result_snapshot?: Json
+          to_status?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          created_at?: string
+          details?: Json
+          from_status?: string | null
+          id?: string
+          operational_exception_id?: string
+          organization_id?: string
+          request_id?: string
+          request_payload?: Json
+          result_snapshot?: Json
+          to_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "operational_exception_audit_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_exception_audit_operational_exception_id_fkey"
+            columns: ["operational_exception_id"]
+            isOneToOne: false
+            referencedRelation: "operational_exceptions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_exception_audit_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      operational_exceptions: {
+        Row: {
+          acknowledged_at: string | null
+          brand_id: string | null
+          business_impact: string
+          closed_at: string | null
+          closure_evidence: Json | null
+          created_at: string
+          current_revision: number
+          detected_at: string | null
+          dismissal_reason: string | null
+          duplicate_of_exception_id: string | null
+          exception_category: string
+          exception_type: string
+          id: string
+          opened_at: string
+          opening_evidence: Json
+          order_id: string | null
+          organization_id: string
+          other_category_reason: string | null
+          primary_resource_id: string
+          primary_resource_type: string
+          resolution_summary: string | null
+          resolution_type: string | null
+          responsible_role_code: string
+          responsible_user_id: string | null
+          root_cause: string | null
+          severity: string
+          source_kind: string
+          status: string
+          summary: string
+          superseded_by_exception_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          brand_id?: string | null
+          business_impact: string
+          closed_at?: string | null
+          closure_evidence?: Json | null
+          created_at?: string
+          current_revision?: number
+          detected_at?: string | null
+          dismissal_reason?: string | null
+          duplicate_of_exception_id?: string | null
+          exception_category: string
+          exception_type: string
+          id?: string
+          opened_at?: string
+          opening_evidence?: Json
+          order_id?: string | null
+          organization_id: string
+          other_category_reason?: string | null
+          primary_resource_id: string
+          primary_resource_type: string
+          resolution_summary?: string | null
+          resolution_type?: string | null
+          responsible_role_code: string
+          responsible_user_id?: string | null
+          root_cause?: string | null
+          severity: string
+          source_kind: string
+          status?: string
+          summary: string
+          superseded_by_exception_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          brand_id?: string | null
+          business_impact?: string
+          closed_at?: string | null
+          closure_evidence?: Json | null
+          created_at?: string
+          current_revision?: number
+          detected_at?: string | null
+          dismissal_reason?: string | null
+          duplicate_of_exception_id?: string | null
+          exception_category?: string
+          exception_type?: string
+          id?: string
+          opened_at?: string
+          opening_evidence?: Json
+          order_id?: string | null
+          organization_id?: string
+          other_category_reason?: string | null
+          primary_resource_id?: string
+          primary_resource_type?: string
+          resolution_summary?: string | null
+          resolution_type?: string | null
+          responsible_role_code?: string
+          responsible_user_id?: string | null
+          root_cause?: string | null
+          severity?: string
+          source_kind?: string
+          status?: string
+          summary?: string
+          superseded_by_exception_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "operational_exceptions_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_exceptions_duplicate_of_exception_id_fkey"
+            columns: ["duplicate_of_exception_id"]
+            isOneToOne: false
+            referencedRelation: "operational_exceptions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_exceptions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_exceptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_exceptions_responsible_user_id_fkey"
+            columns: ["responsible_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "operational_exceptions_superseded_by_exception_id_fkey"
+            columns: ["superseded_by_exception_id"]
+            isOneToOne: false
+            referencedRelation: "operational_exceptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_audit: {
         Row: {
           action: string
@@ -3623,6 +3835,17 @@ export type Database = {
       }
     }
     Functions: {
+      acknowledge_operational_exception: {
+        Args: {
+          p_actor_id: string
+          p_exception_id: string
+          p_expected_revision: number
+          p_note?: string
+          p_organization_id: string
+          p_request_id: string
+        }
+        Returns: Json
+      }
       allocate_existing_payment: {
         Args: {
           p_actor_id: string
@@ -3643,6 +3866,19 @@ export type Database = {
         }
         Returns: string
       }
+      assign_operational_exception: {
+        Args: {
+          p_actor_id: string
+          p_exception_id: string
+          p_expected_revision: number
+          p_organization_id: string
+          p_reason?: string
+          p_request_id: string
+          p_responsible_role_code: string
+          p_responsible_user_id: string
+        }
+        Returns: Json
+      }
       assign_production_job: {
         Args: {
           p_actor_id: string
@@ -3662,6 +3898,18 @@ export type Database = {
           p_organization_id: string
           p_reason: string
           p_shipment_id: string
+        }
+        Returns: Json
+      }
+      change_operational_exception_severity: {
+        Args: {
+          p_actor_id: string
+          p_exception_id: string
+          p_expected_revision: number
+          p_new_severity: string
+          p_organization_id: string
+          p_reason: string
+          p_request_id: string
         }
         Returns: Json
       }
@@ -3860,6 +4108,20 @@ export type Database = {
         }
         Returns: string
       }
+      dismiss_operational_exception: {
+        Args: {
+          p_actor_id: string
+          p_closure_evidence?: Json
+          p_dismissal_reason: string
+          p_duplicate_of_exception_id?: string
+          p_exception_id: string
+          p_expected_revision: number
+          p_organization_id: string
+          p_reason_summary: string
+          p_request_id: string
+        }
+        Returns: Json
+      }
       dispatch_shipment: {
         Args: {
           p_actor_id: string
@@ -3944,6 +4206,35 @@ export type Database = {
         }
         Returns: number
       }
+      open_operational_exception: {
+        Args: {
+          p_actor_id: string
+          p_business_impact: string
+          p_detected_at?: string
+          p_exception_type: string
+          p_observation?: string
+          p_organization_id: string
+          p_other_category_reason?: string
+          p_primary_resource_id: string
+          p_primary_resource_type: string
+          p_request_id: string
+          p_responsible_role_code: string
+          p_responsible_user_id?: string
+          p_root_cause?: string
+          p_severity: string
+          p_source_kind: string
+          p_summary: string
+          p_supplementary_evidence?: Json
+        }
+        Returns: Json
+      }
+      operational_exception_actor_role: {
+        Args: {
+          p_actor_id: string
+          p_organization_id: string
+        }
+        Returns: string
+      }
       pay_vendor_bill: {
         Args: {
           p_actor_id: string
@@ -3994,6 +4285,19 @@ export type Database = {
           p_organization_id: string
           p_purchase_order_id: string
           p_vendor_delivery_note?: string
+        }
+        Returns: Json
+      }
+      reassign_operational_exception: {
+        Args: {
+          p_actor_id: string
+          p_exception_id: string
+          p_expected_revision: number
+          p_new_responsible_role_code: string
+          p_new_responsible_user_id: string
+          p_organization_id: string
+          p_reason: string
+          p_request_id: string
         }
         Returns: Json
       }
@@ -4074,6 +4378,32 @@ export type Database = {
           p_notes?: string
           p_order_id: string
           p_organization_id: string
+        }
+        Returns: Json
+      }
+      reopen_operational_exception: {
+        Args: {
+          p_actor_id: string
+          p_exception_id: string
+          p_expected_revision: number
+          p_organization_id: string
+          p_reason: string
+          p_request_id: string
+          p_supporting_evidence?: Json
+        }
+        Returns: Json
+      }
+      resolve_operational_exception: {
+        Args: {
+          p_actor_id: string
+          p_closure_evidence?: Json
+          p_exception_id: string
+          p_expected_revision: number
+          p_organization_id: string
+          p_request_id: string
+          p_resolution_summary: string
+          p_resolution_type: string
+          p_superseded_by_exception_id?: string
         }
         Returns: Json
       }

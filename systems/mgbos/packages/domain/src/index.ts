@@ -19,3 +19,4 @@ export * from './shipment';
 export * from './inventory';
 export * from './procurement';
 export * from './workOrder';
+export * from './operationalException';
