@@ -279,24 +279,35 @@ create trigger trg_operational_exception_audit_immutable
 alter table app.operational_exceptions enable row level security;
 alter table app.operational_exception_audit enable row level security;
 
+create or replace function app.can_read_operational_exceptions(
+  p_organization_id uuid
+) returns boolean language plpgsql stable security definer set search_path=app,pg_temp as $$
+begin
+  return exists (
+    select 1 from app.organization_members om
+    join app.roles r on r.id = om.role_id
+    join app.users u on u.id = om.user_id
+    join app.organizations o on o.id = om.organization_id
+    where om.organization_id = p_organization_id
+      and u.auth_user_id = auth.uid()
+      and om.status = 'ACTIVE'
+      and u.status = 'ACTIVE'
+      and o.status = 'ACTIVE'
+      and r.code in ('OWNER', 'ADMIN')
+  );
+end;
+$$;
+
+revoke execute on function app.can_read_operational_exceptions(uuid) from public, anon;
+grant execute on function app.can_read_operational_exceptions(uuid) to authenticated, service_role;
+
 create policy "Allow service_role to view operational_exceptions"
   on app.operational_exceptions for select to service_role using (true);
 
 create policy "Allow owners and admins to view operational_exceptions"
   on app.operational_exceptions for select to authenticated
   using (
-    exists (
-      select 1 from app.organization_members om
-      join app.roles r on r.id = om.role_id
-      join app.users u on u.id = om.user_id
-      join app.organizations o on o.id = om.organization_id
-      where om.organization_id = operational_exceptions.organization_id
-        and u.auth_user_id = auth.uid()
-        and om.status = 'ACTIVE'
-        and u.status = 'ACTIVE'
-        and o.status = 'ACTIVE'
-        and r.code in ('OWNER', 'ADMIN')
-    )
+    app.can_read_operational_exceptions(organization_id)
   );
 
 create policy "Allow service_role to view operational_exception_audit"
@@ -305,18 +316,7 @@ create policy "Allow service_role to view operational_exception_audit"
 create policy "Allow owners and admins to view operational_exception_audit"
   on app.operational_exception_audit for select to authenticated
   using (
-    exists (
-      select 1 from app.organization_members om
-      join app.roles r on r.id = om.role_id
-      join app.users u on u.id = om.user_id
-      join app.organizations o on o.id = om.organization_id
-      where om.organization_id = operational_exception_audit.organization_id
-        and u.auth_user_id = auth.uid()
-        and om.status = 'ACTIVE'
-        and u.status = 'ACTIVE'
-        and o.status = 'ACTIVE'
-        and r.code in ('OWNER', 'ADMIN')
-    )
+    app.can_read_operational_exceptions(organization_id)
   );
 
 grant usage on schema app to authenticated;
