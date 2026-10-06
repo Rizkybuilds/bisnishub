@@ -1,13 +1,13 @@
 ---
 canonical_id: mgbos.architecture.canonical-data-model
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos
 document_class: canonical-specification
-effective_from: 2026-09-29
+effective_from: 2026-10-06
 authoritative_for:
   - mgbos canonical business entities
   - entity ownership and relationships
@@ -16,7 +16,8 @@ authoritative_for:
   - monetary representation
   - current implemented domain model
   - current-vs-future entity classification
-last_reviewed: 2026-09-29
+  - canonical target entities
+last_reviewed: 2026-10-06
 review_cadence: quarterly
 depends_on:
   - ../../../../docs/governance/documentation-constitution.md
@@ -26,6 +27,8 @@ depends_on:
   - ../../../../docs/architecture/architectural-laws.md
   - README.md
   - ../adr/002-postgresql-system-of-record.md
+  - ../product/operational-exception-spec.md
+  - ../product/founder-attention-experience-spec.md
 supersedes:
   - ../../../../catatan/sesi/2026-09-23 - MGBOS 0.2 — Canonical Data Model v0.1.md
   - ../../../../catatan/sesi/2026-09-23 - MGBOS 0.2.1 Logical Data Model.md
@@ -34,7 +37,7 @@ implementation_basis:
 implementation_through: MGBOS-020
 ---
 
-# MGBOS Canonical Data Model v1.0
+# MGBOS Canonical Data Model v1.1
 
 ## 1. Purpose
 
@@ -116,26 +119,41 @@ Perbedaan di antara keduanya harus diperlakukan sebagai drift.
 
 ---
 
-# 4. Current Model Rule
+# 4. Current vs Target Model Rules
 
-Entity diklasifikasikan sebagai **CURRENT** hanya apabila sudah menjadi bagian schema MGBOS aktif.
-
-Konsep dari blueprint lama yang belum diimplementasikan tidak otomatis dimasukkan sebagai current canonical entities.
-
-Status yang digunakan:
+Entity di dalam arsitektur MGBOS diklasifikasikan menggunakan status eksplisit:
 
 ```text
 CURRENT
+CANONICAL_TARGET
 EXPERIMENTAL
 FUTURE_EXTENSION
 RETIRED_CONCEPT
 ```
 
+Kriteria klasifikasi:
+
+- **CURRENT**: Entity telah aktif dan diimplementasikan di dalam schema database aktif MGBOS (PostgreSQL migrations terverifikasi).
+- **CANONICAL_TARGET**: Konsep atau entitas bisnis kanonikal yang telah disetujui secara arsitektural sebagai bagian resmi domain MGBOS, tetapi implementasi fisik (migrasi tabel, RPC, API) belum dibangun.
+- **EXPERIMENTAL**: Desain uji coba sementara yang belum dipromosikan ke spesifikasi kanonikal.
+- **FUTURE_EXTENSION**: Konsep eksplorasi masa depan yang belum menjadi target arsitektur kanonikal aktif.
+- **RETIRED_CONCEPT**: Konsep lama yang telah ditinggalkan atau tidak lagi berlaku.
+
+Prinsip otoritas:
+
+```text
+CURRENT
+≠
+CANONICAL_TARGET
+```
+
+Spesifikasi kanonikal berhak menetapkan semantik target tanpa mengklaim bahwa implementasi runtime sudah selesai. Sebaliknya, implementasi yang ada tidak boleh dianggap final jika belum memenuhi spesifikasi target.
+
 ---
 
 # 5. Domain Map
 
-Current MGBOS data model terdiri dari domain:
+Current dan target canonical MGBOS data model mencakup domain:
 
 ```text
 ORGANIZATION & IDENTITY
@@ -149,16 +167,16 @@ REQUIREMENT
 QUOTATION
         ↓
 ORDER
-        ├───────────────┐
-        ▼               ▼
-PRODUCTION          FINANCE
-        │               │
-        ▼               ▼
-VENDOR / QC         INVOICE
-        │               │
-        ▼               ▼
-PROCUREMENT         PAYMENT
-        │               │
+        ├───────────────┬────────────────────────┐
+        ▼               ▼                        ▼
+PRODUCTION          FINANCE            OPERATIONS (CANONICAL_TARGET)
+        │               │                        │
+        ▼               ▼                        ▼
+VENDOR / QC         INVOICE             OPERATIONAL EXCEPTION
+        │               │                        │
+        ▼               ▼                        ▼
+PROCUREMENT         PAYMENT              FOUNDER ATTENTION
+        │               │             (Derived Read Projection)
         ▼               ▼
 INVENTORY          ANALYTICAL LEDGER
         │
@@ -166,7 +184,7 @@ INVENTORY          ANALYTICAL LEDGER
 FULFILLMENT
 ```
 
-Retail ordering provides a second entry path directly into Order.
+Retail ordering provides a second entry path directly into Order. Operational Exceptions and Founder Attention operate as first-class canonical targets across domains.
 
 ---
 
@@ -374,6 +392,8 @@ base currency: IDR
 Organization is not merely a UI grouping.
 
 It is an authority and isolation boundary.
+
+`organizations.timezone` adalah sumber waktu bisnis otoritatif (_owning business-time source_) untuk seluruh evaluasi jadwal, cutoff, peringatan keterlambatan (SLA), dan deteksi pengecualian operasional. Sistem TIDAK BOLEH meng-hardcode evaluasi waktu ke server timezone (misal UTC) tanpa melakukan konversi ke timezone organisasi pemilik data.
 
 ---
 
@@ -2561,7 +2581,65 @@ The data model establishes these invariants:
 
 ---
 
-# 106. Migration Rule for Future Domains
+# 106. Canonical Target Entity Inventory (Operations Domain)
+
+Bagian ini mendefinisikan entitas kanonikal berstatus **CANONICAL_TARGET** yang telah disetujui secara arsitektural untuk kebutuhan program Founder Control, namun implementasi fisiknya (tabel PostgreSQL, relasi fisik, RPC, API) belum dibangun.
+
+## Operational Exception
+
+Status klasifikasi:
+
+```text
+CANONICAL_TARGET
+```
+
+`Operational Exception` merepresentasikan fakta operasional abnormal objektif yang terdeteksi di dalam sistem dan memerlukan visibilitas, penugasan, atau tindakan perbaikan.
+
+Semantik logis kanonikal meliputi:
+
+1. **Stable Identity**: Identitas unik logis yang persisten dan stabil sepanjang seluruh episode pengecualian (_episode identity_).
+2. **Organization Ownership**: Setiap exception dimiliki secara ketat oleh satu Organization (`organization_id`) dan terisolasi penuh dari organisasi lain.
+3. **Exception Type**: Taksonomi tipe pengecualian terstandarisasi (misal keterlambatan produksi, anomali margin, pembatalan pesanan, kegagalan pembayaran, dll.).
+4. **Severity**: Tingkat keparahan dampak bisnis (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`) yang dievaluasi secara deterministik (_fail-closed_).
+5. **Primary Related Business Object**: Rujukan logis ke objek bisnis primer tempat anomali terjadi (misal Order spesifik, Shipment spesifik, Purchase Order spesifik).
+6. **Supporting Related Objects**: Referensi opsional ke objek-objek terkait lainnya (misal customer, vendor, production job, payment).
+7. **Responsibility**: Penugasan penanganan (_assignee_) kepada pengguna/role tertentu yang bertanggung jawab menyelesaikan anomali.
+8. **Evidence**: Payload data snapshot terstruktur yang mendasari pembukaan exception (alasan, metrik yang terlanggar, timestamp pengamatan).
+9. **Lifecycle**: Status siklus hidup formal (`OPEN`, `ACKNOWLEDGED`, `RESOLVED`, `DISMISSED`).
+10. **Deduplication Identity**: Kunci logis sidik jari (_deduplication fingerprint_) berbasis `(organization_id, exception_type, primary_object_id)` untuk mencegah pembukaan exception ganda yang masih aktif pada satu masalah yang sama.
+11. **History**: Catatan audit log berbasis append-only untuk setiap perubahan status, pengalihan penugasan, eskalasi severity, dan catatan investigasi.
+12. **Reopen History**: Riwayat pembukaan kembali (_reopen event_) jika anomali yang telah diselesaikan muncul kembali, menjaga continuity dari episode yang sama.
+
+**Batasan Non-Goals (Prescription Exclusion):**
+Spesifikasi ini sengaja **TIDAK** mendikte:
+
+- Nama tabel fisik database (misal `operational_exceptions` vs `exceptions`);
+- Definisi kolom-kolom fisik, tipe data SQL, atau nullability constraint;
+- Strategi relasi foreign-key fisik atau desain polymorphic relation;
+- Script SQL, Stored Procedure, RPC, atau endpoint API.
+  Hal-hal teknis fisik tersebut menjadi wewenang tahap _Engineering Discovery_ dan _Bounded Implementation Contract_.
+
+---
+
+## Founder Attention (Derived Read Projection)
+
+Status klasifikasi:
+
+```text
+CANONICAL_TARGET (DERIVED PROJECTION / READ MODEL)
+```
+
+`Founder Attention` **BUKAN** sumber kebenaran transaksional (_transactional source of truth_), melainkan **model proyeksi baca (_read projection_)** yang diturunkan secara deterministik dari kondisi operasional dan Operational Exceptions yang ada.
+
+Karakteristik kanonikal:
+
+1. **Derived Nature**: Menghitung item perhatian founder berdasarkan aturan urgensi, materialitas, dan kebutuhan keputusan (_decision required_).
+2. **Read-Only Status**: Proyeksi perhatian founder tidak memiliki state transaksional independen; jika query atau cache perhatian founder hilang atau dihapus, kebenaran operasional tidak berubah dan tetap utuh di dalam Operational Exceptions dan domain transaksional.
+3. **Projection Cache Rule**: Sekalipun implementasi runtime di masa depan menggunakan caching atau materialisasi untuk optimasi performa query Founder Home, cache tersebut berstatus _derived view_, bukan data master transaksi.
+
+---
+
+# 107. Migration Rule for Future Domains
 
 A new business concept SHOULD become a first-class entity when it has one or more of these properties:
 
@@ -2582,7 +2660,7 @@ Do not hide a durable business concept inside JSON merely to avoid modeling it.
 
 ---
 
-# 107. Extension Rule
+# 108. Extension Rule
 
 Future extensions such as:
 
@@ -2621,7 +2699,7 @@ They MUST NOT be introduced by ad hoc table creation.
 
 ---
 
-# 108. Canonicalization Effect
+# 109. Canonicalization Effect
 
 With activation of this document:
 
@@ -2651,7 +2729,7 @@ They no longer override this specification.
 
 ---
 
-# 109. Relationship to Database Migrations
+# 110. Relationship to Database Migrations
 
 Canonical hierarchy:
 
@@ -2675,7 +2753,7 @@ A migration that materially changes entity semantics MUST trigger a review of th
 
 ---
 
-# 110. Non-Goals
+# 111. Non-Goals
 
 This document does not fully define:
 
@@ -2699,7 +2777,7 @@ Those belong to dedicated canonical specifications.
 
 ---
 
-# 111. North Star
+# 112. North Star
 
 The MGBOS data model should make it possible to answer reliably:
 
@@ -2747,6 +2825,6 @@ human memory
 
 ---
 
-# 112. Final Principle
+# 113. Final Principle
 
 > **MGBOS models durable business truth, preserves historical context, and separates identity, intent, commitment, execution, finance, and physical reality instead of collapsing them into convenient but ambiguous records.**

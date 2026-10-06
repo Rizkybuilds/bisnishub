@@ -1,13 +1,13 @@
 ---
 canonical_id: mgbos.architecture.permission-authorization-model
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos
 document_class: canonical-specification
-effective_from: 2026-09-29
+effective_from: 2026-10-06
 authoritative_for:
   - mgbos authentication and authorization semantics
   - organization membership authority
@@ -19,7 +19,9 @@ authoritative_for:
   - JARVIS and automation authority boundary
   - approval-vs-authorization separation
   - database privilege-vs-business-authority separation
-last_reviewed: 2026-09-29
+  - operational exception capabilities and role direction
+  - founder attention projection permissions
+last_reviewed: 2026-10-06
 review_cadence: quarterly
 depends_on:
   - ../../../../docs/governance/documentation-constitution.md
@@ -32,6 +34,8 @@ depends_on:
   - business-invariants.md
   - command-event-model.md
   - README.md
+  - ../product/operational-exception-spec.md
+  - ../product/founder-attention-experience-spec.md
 supersedes: null
 implementation_basis:
   - ../../supabase/migrations/
@@ -39,7 +43,7 @@ implementation_basis:
 implementation_through: MGBOS-020
 ---
 
-# MGBOS Permission & Authorization Model v1.0
+# MGBOS Permission & Authorization Model v1.1
 
 ## 1. Purpose
 
@@ -2687,7 +2691,66 @@ It does not invalidate working RBAC.
 
 ---
 
-# 125. Architectural Invariants
+# 125. Operational Exception & Founder Attention Capabilities (CANONICAL_TARGET)
+
+Status kematangan:
+
+```text
+CANONICAL_TARGET
+```
+
+## Logical Capabilities
+
+Kamus capability logis kanonikal:
+
+```text
+mgbos.operational_exception.read
+mgbos.operational_exception.history.read
+mgbos.operational_exception.open
+mgbos.operational_exception.acknowledge
+mgbos.operational_exception.assign
+mgbos.operational_exception.reassign
+mgbos.operational_exception.change_severity
+mgbos.operational_exception.resolve
+mgbos.operational_exception.dismiss
+mgbos.operational_exception.reopen
+
+mgbos.founder_attention.read
+mgbos.founder_attention.coverage.read
+mgbos.founder_attention.evaluate
+```
+
+## Initial Role Mapping Direction
+
+Sistem mempertahankan enam human role aktif yang ada (`OWNER`, `ADMIN`, `SALES`, `OPERATIONS`, `FINANCE`, `QC`) dan **TIDAK MENCIPTAKAN** role khusus Founder-Control baru.
+
+Arah pemetaan wewenang:
+
+- **`OWNER` / `ADMIN`**: Memiliki wewenang exception management luas dalam Organization (`open`, `acknowledge`, `assign`, `reassign`, `change_severity`, `resolve`, `dismiss`, `reopen`, `read`, serta resolusi _accepted risk_).
+- **`SALES` / `OPERATIONS` / `FINANCE` / `QC`**: Memiliki wewenang exception terikat domain (_domain/resource-scoped_):
+  - Membaca dan melaporkan (`open`) anomali pada domain masing-masing;
+  - Mengakui (`acknowledge`) dan menangani exception yang ditugaskan kepada mereka;
+  - Menyelesaikan (`resolve`) exception operasional rutin dengan bukti perbaikan nyata;
+  - Tidak memiliki wewenang penutupan berbasis _accepted risk_ tanpa persetujuan Owner.
+
+## Critical Authority Invariants
+
+1. **`EXCEPTION CAPABILITY ≠ SOURCE-DOMAIN CAPABILITY`**:
+   - Memiliki wewenang menyelesaikan exception (`mgbos.operational_exception.resolve`) **TIDAK SAMA** dengan wewenang mengubah state domain asal (misal: resolve exception pengiriman tidak berarti boleh menandai status shipment menjadi delivered; resolve margin exception tidak berarti boleh memutasi payment).
+   - Sebaliknya, memiliki hak mutasi pada domain asal tidak otomatis memberikan hak menutup exception secara sembarangan tanpa bukti.
+2. **Accepted-Risk Requires Owner Authority**: Resolusi berbasis penerimaan risiko operasional wajib memerlukan otorisasi peran `OWNER` kecuali jika ada kebijakan delegasi formal tertulis di masa depan.
+3. **`mgbos.founder_attention.evaluate`**: Ditujukan secara eksklusif untuk identitas tepercaya sistem latar belakang (_trusted background system/service identity_), bukan peran manusia operasional biasa.
+4. **Current Runtime Truth**:
+   ```text
+   RBAC = CURRENT
+   RUNTIME CAPABILITY REGISTRY = NOT IMPLEMENTED
+   SERVICE PRINCIPAL MODEL = NOT IMPLEMENTED
+   ```
+   Paket ini tidak mengimplementasikan runtime registry atau service principal baru, melainkan menetapkan target kanonikal yang mengikat.
+
+---
+
+# 126. Architectural Invariants
 
 1. Authentication does not grant business permission.
 2. Membership does not grant every capability.
@@ -2717,7 +2780,7 @@ It does not invalidate working RBAC.
 
 ---
 
-# 126. Relationship to Other Specifications
+# 127. Relationship to Other Specifications
 
 ```text
 Canonical Data Model
@@ -2741,7 +2804,7 @@ Risk / Autonomy / Approval
 
 ---
 
-# 127. North Star
+# 128. North Star
 
 MGBOS permission architecture succeeds when the system can answer:
 
@@ -2775,7 +2838,7 @@ without answering:
 
 ---
 
-# 128. Final Principle
+# 129. Final Principle
 
 > **Authority must be explicit, bounded, revocable, and independent from intelligence.**
 

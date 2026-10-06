@@ -1,23 +1,23 @@
 ---
 canonical_id: mgbos.implementation.index
 status: ACTIVE
-version: 2.0
+version: 2.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos-implementation
 document_class: navigation-index
-effective_from: 2026-10-05
+effective_from: 2026-10-06
 
 implementation_status: DOCUMENTATION_INDEX
 current_implementation_phase: NONE
-current_program_state: PRODUCT_DEFINITION_BEFORE_NEXT_IMPLEMENTATION_PHASE
+current_program_state: ARCHITECTURE_RECONCILED_ENGINEERING_DISCOVERY_NEXT
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: f89ccb49878668f5cb00edf7375e168b9d4a0670
-  reviewed_at: 2026-10-05
+  commit: 63dec5a78462e3eff994ebdd0c15e31676b12bee
+  reviewed_at: 2026-10-06
 
 authoritative_for:
   - mgbos implementation documentation navigation
@@ -42,7 +42,7 @@ not_authoritative_for:
   - deployment state
   - operational readiness certification
 
-last_reviewed: 2026-10-05
+last_reviewed: 2026-10-06
 review_cadence: per-material-implementation-phase-change
 
 depends_on:
@@ -58,10 +58,10 @@ depends_on:
   - ../../../../.agents/contracts/work-package.schema.json
 
 supersedes:
-  - mgbos.implementation.index@1.0
+  - mgbos.implementation.index@2.0
 ---
 
-# MGBOS Implementation Documentation Index v2.0
+# MGBOS Implementation Documentation Index v2.1
 
 ## 1. Purpose
 
@@ -136,16 +136,16 @@ Current program direction is:
 ```text
 PHASE 1 CLOSED
         ↓
-DOCUMENTATION RECONCILIATION
+DOCUMENTATION RECONCILIATION (COMPLETE)
         ↓
-FOUNDER CONTROL PRODUCT DEFINITION
+FOUNDER CONTROL PRODUCT DEFINITION (APPROVED BY OWNER)
         ↓
-CANONICAL ARCHITECTURE IMPACT REVIEW
+CANONICAL ARCHITECTURE RECONCILIATION (W2 COMPLETE)
         ↓
-ENGINEERING DISCOVERY
+ENGINEERING DISCOVERY (W3 NEXT)
         ↓
 ONLY THEN
-NEXT IMPLEMENTATION PHASE
+NEXT IMPLEMENTATION PHASE (PHASE 2 NOT OPEN)
 ```
 
 Therefore this implementation index MUST NOT route a Builder toward Phase 1 backlog execution or a non-existent Phase 2 backlog.
@@ -2679,4 +2679,4 @@ CLOSURE
 
 At this repository state:
 
-> **Phase 1 implementation is closed. No new MGBOS implementation phase is active. The next durable step is to finish current-state reconciliation and mature Founder Control into an engineering-ready product definition before Phase 2 implementation exists.**
+> **Phase 1 implementation is closed. No new MGBOS implementation phase is active. Canonical architecture reconciliation (W2) is complete. The next durable step is W3 Engineering Discovery before Phase 2 implementation can be planned or authorized.**

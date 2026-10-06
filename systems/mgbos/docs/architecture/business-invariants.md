@@ -1,13 +1,13 @@
 ---
 canonical_id: mgbos.architecture.business-invariants
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos
 document_class: canonical-specification
-effective_from: 2026-09-29
+effective_from: 2026-10-06
 authoritative_for:
   - mgbos business invariants
   - transactional integrity rules
@@ -20,7 +20,9 @@ authoritative_for:
   - idempotency expectations
   - organization isolation expectations
   - mutation boundary expectations
-last_reviewed: 2026-09-29
+  - founder control invariants
+  - operational exception invariants
+last_reviewed: 2026-10-06
 review_cadence: quarterly
 depends_on:
   - ../../../../docs/governance/documentation-constitution.md
@@ -34,6 +36,8 @@ depends_on:
   - ../adr/002-postgresql-system-of-record.md
   - ../adr/005-transactional-outbox.md
   - ../adr/006-ai-gateway.md
+  - ../product/operational-exception-spec.md
+  - ../product/founder-attention-experience-spec.md
 supersedes: null
 implementation_basis:
   - ../../supabase/migrations/
@@ -42,7 +46,7 @@ implementation_basis:
 implementation_through: MGBOS-020
 ---
 
-# MGBOS Business Invariants v1.0
+# MGBOS Business Invariants v1.1
 
 ## 1. Purpose
 
@@ -2054,7 +2058,256 @@ vendor records
 
 ---
 
-# 103. Invariant Interaction Example — Custom Order
+# 103. Founder Control & Operational Exception Invariants (INV-099 — INV-147)
+
+### INV-099 — Organization Isolation for Operational Exceptions
+
+**Type:** CONTROL ISOLATION
+Setiap Operational Exception wajib terikat secara eksklusif ke satu `organization_id`. Pengguna, query, atau proses latar belakang dari suatu organisasi dilarang keras mengakses, membaca, memodifikasi, atau menutup exception milik organisasi lain.
+
+### INV-100 — Same-Organization Source References
+
+**Type:** STRUCTURAL INTEGRITY
+Semua objek bisnis yang direferensikan oleh suatu exception (baik objek primer seperti Order, Shipment, PO, maupun objek pendukung) wajib berasal dari `organization_id` yang sama persis dengan exception tersebut.
+
+### INV-101 — Real Abnormal-Condition Requirement
+
+**Type:** OPERATIONAL INTEGRITY
+Operational Exception hanya boleh dibuka jika terdapat fakta kondisi abnormal objektif yang nyata dan teramati di dalam sistem (misal batas SLA terlanggar, anomali margin, pembatalan sepihak, kegagalan rekonsiliasi). Dilarang membuat exception sintetis atau fiktif tanpa data dasar.
+
+### INV-102 — Primary Authoritative Source Traceability
+
+**Type:** OPERATIONAL TRACEABILITY
+Setiap Operational Exception wajib mencatat rujukan yang jelas dan dapat dilacak ke entitas bisnis primer otoritatif tempat anomali terjadi.
+
+### INV-103 — Active-Exception Deduplication
+
+**Type:** OPERATIONAL INTEGRITY
+Sistem tidak boleh membuka exception baru jika sudah terdapat exception aktif (`OPEN` atau `ACKNOWLEDGED`) untuk kombinasi anomali dan objek bisnis primer yang sama.
+
+### INV-104 — Organization-Scoped Deduplication
+
+**Type:** CONTROL ISOLATION
+Pengecekan keunikan dan deduplikasi exception wajib di-scope secara ketat per Organization (`organization_id`).
+
+### INV-105 — Transport Idempotency != Business Deduplication
+
+**Type:** ARCHITECTURAL CONTROL
+Idempotensi transport command (berbasis idempotency key teknis) terpisah secara semantik dari aturan deduplikasi bisnis operasional. Kegagalan transport yang di-retry tidak boleh menghasilkan episode exception baru.
+
+### INV-106 — ACKNOWLEDGED != RESOLVED
+
+**Type:** STATE INTEGRITY
+Status `ACKNOWLEDGED` hanya menyatakan bahwa exception telah diakui dan penanganan diterima oleh penanggung jawab. `ACKNOWLEDGED` bukan penyelesaian masalah bisnis dan tidak menutup exception.
+
+### INV-107 — Acknowledgement Requires Responsibility
+
+**Type:** CONTROL PROCESS
+Pengakuan exception (_acknowledgement_) wajib menetapkan penanggung jawab penanganan (_assignee/handler_) yang sah di dalam organisasi.
+
+### INV-108 — Founder Visibility != Founder Ownership
+
+**Type:** OPERATIONAL BOUNDARY
+Munculnya exception di layar Founder Home atau daftar perhatian founder tidak memindahkan kepemilikan operasional dari tim/handler ke founder. Handler yang ditugaskan tetap bertanggung jawab atas penyelesaian.
+
+### INV-109 — Truthful Dismissal Semantics
+
+**Type:** OPERATIONAL INTEGRITY
+Penutupan exception dengan status `DISMISSED` wajib menyertakan alasan bisnis yang jujur (misal _false alarm_ terverifikasi atau anomali tidak material) dan dilarang digunakan untuk menyembunyikan masalah yang belum terselesaikan.
+
+### INV-110 — Accepted Risk != Dismissal
+
+**Type:** GOVERNANCE INTEGRITY
+Penerimaan risiko operasional (_accepted risk_) memerlukan justifikasi formal dan otorisasi level Owner/Founder, serta dicatat secara berbeda dari penutupan biasa karena bukan anomali yang selesai atau diabaikan.
+
+### INV-111 — Resolution Evidence Preservation
+
+**Type:** AUDIT INTEGRITY
+Resolusi exception (`RESOLVED`) wajib menyertakan justifikasi tertulis dan bukti penyelesaian operasional yang diawetkan secara kekal pada riwayat audit.
+
+### INV-112 — Resolution Does Not Mutate Source Domain
+
+**Type:** DOMAIN BOUNDARY
+Menyelesaikan suatu Operational Exception tidak boleh secara implisit mengubah state domain asal (misal menyelesaikan exception keterlambatan tidak otomatis menandai shipment terkirim atau order selesai).
+
+### INV-113 — Source-Domain Mutation Does Not Erase Exception History
+
+**Type:** AUDIT INTEGRITY
+Perubahan atau pembatalan state pada domain asal (misal order dibatalkan) tidak boleh menghapus atau menimpa rekaman riwayat dan audit log dari exception yang pernah terjadi pada objek tersebut.
+
+### INV-114 — Reopen Preserves History
+
+**Type:** AUDIT INTEGRITY
+Pembukaan kembali (_reopen_) exception yang telah `RESOLVED` atau `DISMISSED` wajib mempertahankan seluruh riwayat audit log sebelumnya tanpa penghapusan atau penimpaan.
+
+### INV-115 — Reopen Constitutes Same Logical Episode
+
+**Type:** OPERATIONAL CONTINUITY
+Exception yang di-reopen tetap merupakan episode logis yang sama (_same logical episode_) dengan stable identity yang sama, bukan pembuatan exception baru yang terputus dari konteks awalnya.
+
+### INV-116 — REOPENED Is Event/Transition Semantic, Not Current Status
+
+**Type:** STATE INTEGRITY
+`REOPENED` adalah semantik transisi/event audit, bukan status _current state_ jangka panjang. Status terkini entitas setelah reopen kembali menjadi `OPEN`.
+
+### INV-117 — Severity != Lifecycle State
+
+**Type:** ARCHITECTURAL SEPARATION
+Tingkat keparahan (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`) adalah atribut klasifikasi dampak bisnis, bukan status lifecycle state machine. Perubahan severity adalah mutasi data, bukan transisi lifecycle.
+
+### INV-118 — Severity != Attention Priority
+
+**Type:** ARCHITECTURAL SEPARATION
+Tingkat keparahan exception tidak identik dengan prioritas perhatian founder. Pengecualian berkepala `CRITICAL` tidak otomatis memaksa prioritas perhatian founder menjadi `INTERRUPT`.
+
+### INV-119 — Founder Decision Required Is Independent of Exception State
+
+**Type:** GOVERNANCE SEPARATION
+Status apakah suatu masalah memerlukan keputusan founder (_Founder Decision Required_) bersifat independen dari status lifecycle exception dan diatur oleh kebijakan bisnis material.
+
+### INV-120 — Assignment != Lifecycle Transition
+
+**Type:** STATE INTEGRITY
+Penugasan atau pengalihan tanggung jawab penanganan (_assign/reassign_) tidak mengubah status lifecycle state machine exception.
+
+### INV-121 — Attention Is Derived Projection
+
+**Type:** ARCHITECTURAL PROJECTION
+Founder Attention adalah model proyeksi baca (_derived read projection_), bukan sumber kebenaran transaksi MGBOS.
+
+### INV-122 — Attention Cache != Source of Truth
+
+**Type:** ARCHITECTURAL INTEGRITY
+Cache atau materialisasi proyeksi perhatian founder hanyalah optimasi baca. Jika cache hilang, kebenaran bisnis tetap utuh di dalam Operational Exceptions dan domain transaksional.
+
+### INV-123 — Attention Disappearance != Exception Resolved
+
+**Type:** OPERATIONAL INTEGRITY
+Hilangnya atau disembunyikannya (_dismissed/snoozed_) item perhatian dari antarmuka founder tidak berarti Operational Exception terkait telah selesai di lapangan.
+
+### INV-124 — Active CRITICAL Exception Remains Eligible for Visibility Evaluation After Acknowledgement
+
+**Type:** OPERATIONAL VISIBILITY
+Exception berstatus `CRITICAL` yang masih aktif tetap memenuhi syarat untuk dievaluasi pada proyeksi Founder Home kendati telah diakui (_ACKNOWLEDGED_) oleh staf.
+
+### INV-125 — Evaluation Failure != Healthy
+
+**Type:** CONTROL SAFETY
+Kegagalan proses evaluasi perhatian atau deteksi exception harus diperlakukan secara _fail-closed_. Sistem tidak boleh mengasumsikan kondisi operasional sehat ketika mesin evaluasi gagal berjalan.
+
+### INV-126 — Evaluation Coverage Traceability
+
+**Type:** OPERATIONAL TRACEABILITY
+Cakupan aturan evaluasi perhatian dan deteksi exception harus memiliki metadata yang dapat diaudit untuk memverifikasi apakah seluruh domain telah dipindai.
+
+### INV-127 — Organization Timezone Governs Business-Time Evaluation
+
+**Type:** TEMPORAL INTEGRITY
+Seluruh evaluasi waktu bisnis, jadwal cutoff operasional, dan peringatan batas waktu (SLA) wajib dihitung berdasarkan `organizations.timezone` milik organisasi terkait, bukan server UTC mentah.
+
+### INV-128 — Deterministic Automatic Opening
+
+**Type:** AUTOMATION BOUNDARY
+Pembukaan exception secara otomatis oleh sistem wajib didasarkan pada aturan deterministik yang dapat dijelaskan dan tervalidasi.
+
+### INV-129 — Deterministic Automatic Resolution
+
+**Type:** AUTOMATION BOUNDARY
+Penyelesaian exception secara otomatis oleh sistem hanya diperbolehkan jika kondisi abnormal terbukti telah pulih secara deterministik dan terverifikasi oleh data transaksional.
+
+### INV-130 — AI Not Sole Lifecycle Authority
+
+**Type:** CONTROL AUTHORITY
+Model AI (termasuk JARVIS atau agen LLM) tidak boleh menjadi otoritas tunggal untuk membuka, mengakui, menyelesaikan, atau menghapus exception tanpa aturan deterministik atau persetujuan manusia.
+
+### INV-131 — Technical Incident != Operational Exception
+
+**Type:** DOMAIN SEPARATION
+Kegagalan teknis (seperti kegagalan jaringan, database timeout, crash aplikasi) adalah _Technical Incident_ yang ditangani di level infrastruktur, bukan _Operational Exception_ bisnis.
+
+### INV-132 — Operational Exception != Generic Task
+
+**Type:** DOMAIN SEPARATION
+Operational Exception merepresentasikan penyimpangan dari operasi normal yang memerlukan perbaikan, bukan daftar to-do list umum atau penugasan tugas rutin biasa.
+
+### INV-133 — Operational Exception != Customer Case
+
+**Type:** DOMAIN SEPARATION
+Kasus keluhan dan komunikasi pelanggan dikelola dalam domain customer service / case management, terpisah dari anomali operasional internal.
+
+### INV-134 — Bounded Evidence
+
+**Type:** DATA INTEGRITY
+Payload bukti (_evidence_) yang dilampirkan pada exception wajib memiliki batas ukuran maksimal dan struktur yang tervalidasi guna mencegah memory leak atau penyimpanan data tidak terkontrol.
+
+### INV-135 — Append-Oriented History
+
+**Type:** AUDIT INTEGRITY
+Setiap perubahan state, severity, assignment, dan catatan investigasi pada Operational Exception wajib dicatat secara append-only di dalam riwayat audit log.
+
+### INV-136 — Current Exception State Reconciles History
+
+**Type:** AUDIT INTEGRITY
+Status terkini dari suatu Operational Exception wajib dapat direkonsiliasi dan dibuktikan secara konsisten dari deretan peristiwa di dalam riwayat audit log.
+
+### INV-137 — Source-Domain Invariants Remain Binding
+
+**Type:** DOMAIN INTEGRITY
+Tindakan perbaikan operasional apapun yang dipicu dari penanganan exception tetap terikat penuh pada invarian bisnis domain Orders, Inventory, Production, dan Finance.
+
+### INV-138 — OWNER Is Not Invariant Bypass
+
+**Type:** GOVERNANCE BOUNDARY
+Role OWNER memiliki hak akses otorisasi tertinggi dalam bisnis, tetapi tetap tunduk pada invarian integritas data MGBOS dan tidak dapat memalsukan saldo, membalikkan transaksi tanpa reversal, atau melanggar aturan double-entry.
+
+### INV-139 — Engineering Must Not Invent Materiality Thresholds
+
+**Type:** GOVERNANCE INTEGRITY
+Tim engineering dilarang mengarang angka ambang batas materialitas bisnis (misal margin minimum, batas nominal keterlambatan). Jika kebijakan belum ditetapkan oleh Owner, statusnya wajib dinyatakan `POLICY_UNAVAILABLE`.
+
+### INV-140 — Unknown Policy Fails Explicitly
+
+**Type:** GOVERNANCE CONTROL
+Jika terdapat kebijakan bisnis yang belum ditentukan (_unknown policy_), sistem wajib gagal secara eksplisit (_fail explicitly_) atau menandai kebutuhan keputusan, bukan mengasumsikan nilai default yang permisif.
+
+### INV-141 — Per-Exception-Type Automation Boundary
+
+**Type:** AUTOMATION CONTROL
+Setiap tipe Operational Exception wajib mendefinisikan batas kewenangan otomatisasi secara spesifik (apakah boleh auto-detect, auto-assign, auto-resolve, atau wajib campur tangan manusia).
+
+### INV-142 — Normal Work != Exception
+
+**Type:** OPERATIONAL BOUNDARY
+Pekerjaan operasional normal yang sedang berjalan sesuai jadwal dan kapasitas yang disepakati bukan merupakan exception dan tidak boleh membanjiri antrean anomali.
+
+### INV-143 — Alert-Storm Prevention
+
+**Type:** CONTROL RESILIENCE
+Sistem evaluasi anomali wajib memiliki mekanisme peredaman badai peringatan (_alert-storm prevention_) agar kegagalan berulang tidak menghasilkan ribuan exception duplikat yang melumpuhkan perhatian manusia.
+
+### INV-144 — Attention Projection Prefers Existing Persistent Exception
+
+**Type:** ARCHITECTURAL PRIORITY
+Proyeksi perhatian founder harus mengutamakan referensi ke Operational Exception persisten yang sudah ada daripada membuat peringatan ad-hoc tanpa rekaman audit.
+
+### INV-145 — Founder Control Reads Are State-Neutral
+
+**Type:** ARCHITECTURAL PURITY
+Operasi pembacaan, navigasi, dan polling data pada permukaan Founder Home dan Founder Attention wajib bersifat bebas efek samping (_state-neutral_).
+
+### INV-146 — Notification Delivery != Business Mutation
+
+**Type:** INTEGRATION BOUNDARY
+Keberhasilan atau kegagalan pengiriman notifikasi ke saluran eksternal (WhatsApp, Email, Slack) tidak mengubah status bisnis atau lifecycle dari Operational Exception.
+
+### INV-147 — JARVIS != Source of Truth
+
+**Type:** SYSTEM BOUNDARY
+JARVIS adalah konsumen kognitif hilir dan sistem rekomendasi opsional. JARVIS bukan sistem pencatat transaksi dan bukan pemegang kebenaran bisnis MGBOS.
+
+---
+
+# 104. Invariant Interaction Example — Custom Order
 
 ```text id="wvvc70"
 Requirement READY
@@ -2082,7 +2335,7 @@ Each step exists because several invariants work together.
 
 ---
 
-# 104. Invariant Interaction Example — Payment
+# 105. Invariant Interaction Example — Payment
 
 ```text id="769nnw"
 Payment amount > 0
@@ -2106,7 +2359,7 @@ ledger effect recorded
 
 ---
 
-# 105. Invariant Interaction Example — Retail Sale
+# 106. Invariant Interaction Example — Retail Sale
 
 ```text id="hpc50p"
 Retail items selected
@@ -2130,7 +2383,7 @@ Anti-overselling is part of transaction integrity, not a dashboard warning.
 
 ---
 
-# 106. Invariant Interaction Example — Procurement
+# 107. Invariant Interaction Example — Procurement
 
 ```text id="34cf8d"
 Active Vendor
@@ -2152,7 +2405,7 @@ payment <= balance
 
 ---
 
-# 107. Invariant Violation Severity
+# 108. Invariant Violation Severity
 
 ## CRITICAL
 
@@ -2194,7 +2447,7 @@ It changes response urgency.
 
 ---
 
-# 108. Invariant Failure Behavior
+# 109. Invariant Failure Behavior
 
 If hard invariant fails:
 
@@ -2215,7 +2468,7 @@ The system SHOULD NOT silently repair invalid input unless the repair itself is 
 
 ---
 
-# 109. Invariant Testing Contract
+# 110. Invariant Testing Contract
 
 Transaction-changing work MUST test relevant categories:
 
@@ -2251,7 +2504,7 @@ shipment
 
 ---
 
-# 110. Negative Tests Are Mandatory for Critical Invariants
+# 111. Negative Tests Are Mandatory for Critical Invariants
 
 A test that only proves:
 
@@ -2276,7 +2529,7 @@ reuse idempotency key incorrectly
 
 ---
 
-# 111. Concurrency Tests
+# 112. Concurrency Tests
 
 Concurrency-sensitive domains SHOULD verify competing execution.
 
@@ -2293,7 +2546,7 @@ Correct architecture must remain valid under contention.
 
 ---
 
-# 112. Current Enforcement Strength
+# 113. Current Enforcement Strength
 
 Strong current enforcement exists around:
 
@@ -2316,7 +2569,7 @@ organization-scoped command checks
 
 ---
 
-# 113. Known Invariant Enforcement Gaps
+# 114. Known Invariant Enforcement Gaps
 
 Current gaps identified from audited implementation include:
 
@@ -2325,7 +2578,7 @@ Current gaps identified from audited implementation include:
 
 2. Transactional outbox is architectural target but not yet a verified implemented event backbone.
 
-3. Order lifecycle transition enforcement remains incomplete.
+3. Order lifecycle transition enforcement was completed and verified in Phase 1 Operating Spine closure.
 
 4. Several exception lifecycles still have schema states without dedicated commands.
 
@@ -2338,7 +2591,7 @@ These are engineering backlog items, not exceptions to the invariants.
 
 ---
 
-# 114. Invariant Change Rule
+# 115. Invariant Change Rule
 
 Changing a HARD invariant requires deliberate architecture review.
 
@@ -2371,7 +2624,7 @@ operational consideration
 
 ---
 
-# 115. Business Invariant Registry
+# 116. Business Invariant Registry
 
 Core registry:
 
@@ -2511,11 +2764,62 @@ ARCHITECTURE
 96 UI-independent rules
 97 provider-independent domain
 98 business survives AI failure
+
+FOUNDER CONTROL & OPERATIONAL EXCEPTIONS
+99 organization isolation for exceptions
+100 same-organization source references
+101 real abnormal-condition requirement
+102 primary authoritative source traceability
+103 active-exception deduplication
+104 organization-scoped deduplication
+105 transport idempotency != business deduplication
+106 ACKNOWLEDGED != RESOLVED
+107 acknowledgement requires responsibility
+108 founder visibility != founder ownership
+109 truthful dismissal semantics
+110 accepted risk != dismissal
+111 resolution evidence preservation
+112 resolution does not mutate source domain
+113 source-domain mutation does not erase exception history
+114 reopen preserves history
+115 reopen constitutes same logical episode
+116 REOPENED is event/transition, not current status
+117 severity != lifecycle state
+118 severity != attention priority
+119 founder decision required independent of exception state
+120 assignment != lifecycle transition
+121 attention is derived projection
+122 attention cache != source of truth
+123 attention disappearance != exception resolved
+124 active critical exception remains eligible after acknowledgement
+125 evaluation failure != healthy
+126 evaluation coverage traceability
+127 organization timezone governs business-time evaluation
+128 deterministic automatic opening
+129 deterministic automatic resolution
+130 AI not sole lifecycle authority
+131 technical incident != operational exception
+132 operational exception != generic task
+133 operational exception != customer case
+134 bounded evidence
+135 append-oriented history
+136 current exception state reconciles history
+137 source-domain invariants remain binding
+138 OWNER is not invariant bypass
+139 engineering must not invent materiality thresholds
+140 unknown policy fails explicitly
+141 per-exception-type automation boundary
+142 normal work != exception
+143 alert-storm prevention
+144 attention projection prefers existing persistent exception
+145 founder control reads are state-neutral
+146 notification delivery != business mutation
+147 JARVIS != source of truth
 ```
 
 ---
 
-# 116. Canonical Relationship to Other MGBOS Specs
+# 117. Canonical Relationship to Other MGBOS Specs
 
 ```text id="f7d721"
 Canonical Data Model
@@ -2540,7 +2844,7 @@ They MUST NOT redefine each other's ownership.
 
 ---
 
-# 117. Canonicalization Effect
+# 118. Canonicalization Effect
 
 Before this document, critical rules were distributed across:
 
@@ -2556,7 +2860,7 @@ engineering reports
 After activation:
 
 ```text id="j0xfd1"
-MGBOS Business Invariants v1.0
+MGBOS Business Invariants v1.1
 =
 canonical semantic owner
 ```
@@ -2567,7 +2871,7 @@ They no longer need to serve as the only place humans or AI discover what the ru
 
 ---
 
-# 118. North Star
+# 119. North Star
 
 A trustworthy transaction system should make impossible states difficult or impossible to create.
 
@@ -2591,7 +2895,7 @@ MGBOS still protects business truth.
 
 ---
 
-# 119. Final Principle
+# 120. Final Principle
 
 > **A business invariant is not advice to the application. It is a property the system is responsible for preserving.**
 

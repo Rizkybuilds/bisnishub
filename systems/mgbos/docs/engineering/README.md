@@ -56,6 +56,7 @@ Dokumentasi engineering bukan otoritas arsitektur semantik. Untuk pertanyaan men
 
 Laporan berkala hasil eksekusi engineering (seperti `mgbos-001-report.md` hingga laporan fase terkini), pengujian bertanggal, dan audit paket dokumentasi:
 
+- [Founder Control Architecture Reconciliation Audit](founder-control-architecture-reconciliation-audit.md) — Bukti audit rekonsiliasi arsitektur kanonikal untuk paket Founder Control (VECP-003H) terhadap 6 spesifikasi arsitektur kanonikal (v1.1) pada baseline `63dec5a78462e3eff994ebdd0c15e31676b12bee`.
 - [Founder Control Product Package Audit](founder-control-product-package-audit.md) — Bukti audit semantik lintas dokumen untuk paket Founder Control (D1–D4) pada baseline reviewed `65ad026fc0d6cf8da1eec15b2de39bd72b0343e5`.
 - Merupakan **BUKTI REVISI** (evidence) yang mencatat apa yang dibangun, diuji, diaudit, dan diobservasi pada commit/lingkungan tertentu beserta limitasinya.
 - **Bukan** spesifikasi arsitektur kanonikal, **bukan** otoritas semantik produk, **bukan** otorisasi implementasi, dan **bukan** sertifikasi kesiapan produksi.

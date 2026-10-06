@@ -1,13 +1,13 @@
 ---
 canonical_id: mgbos.architecture.command-event-model
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos
 document_class: canonical-specification
-effective_from: 2026-09-29
+effective_from: 2026-10-06
 authoritative_for:
   - mgbos command semantics
   - mgbos query-command separation
@@ -21,7 +21,9 @@ authoritative_for:
   - inbound external event handling
   - JARVIS and n8n mutation boundary
   - event delivery and consumer expectations
-last_reviewed: 2026-09-29
+  - operational exception commands and queries
+  - founder attention projection queries
+last_reviewed: 2026-10-06
 review_cadence: quarterly
 depends_on:
   - ../../../../docs/governance/documentation-constitution.md
@@ -36,6 +38,8 @@ depends_on:
   - ../adr/004-n8n-orchestrator.md
   - ../adr/005-transactional-outbox.md
   - ../adr/006-ai-gateway.md
+  - ../product/operational-exception-spec.md
+  - ../product/founder-attention-experience-spec.md
 supersedes: null
 implementation_basis:
   - ../../supabase/migrations/
@@ -43,7 +47,7 @@ implementation_basis:
 implementation_through: MGBOS-020
 ---
 
-# MGBOS Command & Event Model v1.0
+# MGBOS Command & Event Model v1.1
 
 ## 1. Purpose
 
@@ -3360,7 +3364,112 @@ It does not replace working foundations merely for architectural aesthetics.
 
 ---
 
-# 159. North Star
+# 159. Founder Control & Operational Exception Logical Commands (CANONICAL_TARGET)
+
+Status kematangan:
+
+```text
+CANONICAL_TARGET
+```
+
+Logical commands kanonikal untuk Operational Exceptions:
+
+```text
+mgbos.operational_exception.open
+mgbos.operational_exception.acknowledge
+mgbos.operational_exception.assign
+mgbos.operational_exception.reassign
+mgbos.operational_exception.change_severity
+mgbos.operational_exception.resolve
+mgbos.operational_exception.dismiss
+mgbos.operational_exception.reopen
+```
+
+Semantik perintah:
+
+1. `mgbos.operational_exception.open`: Membuka exception baru secara deterministik (oleh background scanner) atau manual (oleh staff/founder) dengan payload fakta abnormal dan rujukan objek bisnis primer.
+2. `mgbos.operational_exception.acknowledge`: Mengakui exception dan menerima tanggung jawab penanganan operasional.
+3. `mgbos.operational_exception.assign`: Menugaskan exception ke handler spesifik dalam organisasi.
+4. `mgbos.operational_exception.reassign`: Mengalihkan penugasan exception ke handler lain disertai alasan operasional.
+5. `mgbos.operational_exception.change_severity`: Mengubah tingkat keparahan exception (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`) berdasarkan observasi dampak terbaru.
+6. `mgbos.operational_exception.resolve`: Menandai masalah selesai dengan justifikasi tindakan dan bukti penyelesaian.
+7. `mgbos.operational_exception.dismiss`: Menutup exception tanpa perbaikan karena false alarm atau risiko diterima secara formal (_accepted risk_).
+8. `mgbos.operational_exception.reopen`: Membuka kembali exception yang telah resolved/dismissed jika anomali muncul kembali pada episode logis yang sama.
+
+Pemisahan Idempotensi vs Deduplikasi Bisnis:
+
+- **Command Idempotency**: Menggunakan `idempotency_key` pada envelope perintah untuk menjamin pengiriman ulang pada lapisan transport tidak mengeksekusi mutasi teknis dua kali.
+- **Business Deduplication**: Menjamin bahwa aturan bisnis tidak membuka exception aktif baru jika sudah ada exception aktif untuk episode anomali yang sama pada objek bisnis primer dalam organisasi.
+
+---
+
+# 160. Operational Exception & Founder Attention Logical Reads
+
+Logical reads kanonikal:
+
+```text
+mgbos.operational_exception.get
+mgbos.operational_exception.list
+mgbos.operational_exception.history
+mgbos.founder_attention.list
+mgbos.founder_attention.get
+mgbos.founder_attention.coverage
+```
+
+Aturan Integritas Pembacaan (_State-Neutral Reads_):
+
+1. **Internal Derived Process**: Evaluasi perhatian founder adalah proses proyeksi internal yang membaca kondisi operasional dan Operational Exceptions secara murni.
+2. **Tanpa Mutasi Sampingan**: Query atau pembacaan Founder Attention (`mgbos.founder_attention.list`, dsb.) **DILARANG KERAS** memicu efek samping mutasi transaksional secara rahasia (tidak boleh mengubah state Order, Payment, Production, Shipment, atau mengubah lifecycle exception).
+3. **Penyelidikan Bebas Efek Samping**: Founder dapat memeriksa, memfilter, dan meninjau kondisi tanpa khawatir mengubah data bisnis.
+
+---
+
+# 161. Operational Exception Candidate Events (CANONICAL_TARGET)
+
+Status kematangan:
+
+```text
+CANONICAL_TARGET (CANDIDATE EVENT CONTRACTS)
+```
+
+Candidate event names untuk dipublikasikan setelah transaksi exception selesai:
+
+```text
+mgbos.operational_exception.opened
+mgbos.operational_exception.acknowledged
+mgbos.operational_exception.assigned
+mgbos.operational_exception.reassigned
+mgbos.operational_exception.severity_changed
+mgbos.operational_exception.resolved
+mgbos.operational_exception.dismissed
+mgbos.operational_exception.reopened
+```
+
+---
+
+# 162. Event Architecture Boundaries & Non-Goals
+
+Realitas arsitektur saat ini:
+
+```text
+BUSINESS EVENT RUNTIME
+=
+NOT IMPLEMENTED
+
+TRANSACTIONAL OUTBOX
+=
+TARGET / NOT IMPLEMENTED
+```
+
+Batasan non-goals yang tegas:
+
+1. Spesifikasi ini **TIDAK MENCIPTAKAN ATAU MENGIMPLIKASIKAN** broker pesan terdistribusi (seperti Kafka, RabbitMQ), microservices, Event Sourcing murni, CQRS terdistribusi penuh, atau generic command bus.
+2. Pendekatan arsitektur awal untuk Founder Control adalah **scheduled / bounded queries** dan database views/functions langsung di PostgreSQL MGBOS.
+3. Event contracts di atas disiapkan sebagai target terstandarisasi saat Transactional Outbox dan event runtime kelak diaktifkan melalui tata kelola terpisah.
+
+---
+
+# 163. North Star
 
 MGBOS should reach a point where every consequential mutation can answer:
 
@@ -3392,7 +3501,7 @@ Can the whole chain be traced?
 
 ---
 
-# 160. Final Principle
+# 164. Final Principle
 
 > **Commands are the controlled entrance to business change.  
 > Transactions create authoritative reality.  

@@ -1,13 +1,13 @@
 ---
 canonical_id: mgbos.architecture.business-state-machines
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos
 document_class: canonical-specification
-effective_from: 2026-09-29
+effective_from: 2026-10-06
 authoritative_for:
   - mgbos lifecycle semantics
   - canonical state vocabularies
@@ -16,7 +16,8 @@ authoritative_for:
   - derived-vs-stored state rules
   - cross-domain lifecycle coordination
   - state transition enforcement expectations
-last_reviewed: 2026-09-29
+  - operational exception lifecycle
+last_reviewed: 2026-10-06
 review_cadence: quarterly
 depends_on:
   - ../../../../docs/governance/documentation-constitution.md
@@ -26,6 +27,8 @@ depends_on:
   - ../../../../docs/architecture/architectural-laws.md
   - canonical-data-model.md
   - README.md
+  - ../product/operational-exception-spec.md
+  - ../product/founder-attention-experience-spec.md
 supersedes:
   - ../../../../catatan/sesi/2026-09-23 - MGBOS 0.3 — Business State Machines.md
 implementation_basis:
@@ -33,7 +36,7 @@ implementation_basis:
 implementation_through: MGBOS-020
 ---
 
-# MGBOS Business State Machines v1.0
+# MGBOS Business State Machines v1.1
 
 ## 1. Purpose
 
@@ -177,13 +180,17 @@ Transition sudah dijaga oleh current command/database implementation.
 
 Transition ditetapkan oleh dokumen ini sebagai intended lifecycle dan harus menjadi target implementation.
 
+## CANONICAL_TARGET
+
+Lifecycle model dan state transition kanonikal yang telah disetujui secara arsitektural untuk kebutuhan program Founder Control (misal Operational Exception), tetapi implementasi command penegakannya di database/kode belum dibangun.
+
 ## SCHEMA_RESERVED
 
 Status sudah tersedia pada schema tetapi belum mempunyai lifecycle command yang cukup jelas untuk diperlakukan sebagai fully operational transition.
 
 ## DERIVED
 
-Condition dihitung, bukan menjadi transition utama.
+Condition dihitung secara logis atau merupakan proyeksi baca, bukan menjadi transition state mesin transaksional master.
 
 Ini menjaga dokumentasi tetap jujur terhadap current implementation.
 
@@ -808,19 +815,19 @@ after authoritative creation.
 
 # 30. Order Enforcement Status
 
-Unlike Requirement and Production, the audited migrations do not yet contain a complete generic Order transition command.
+Order lifecycle transition commands telah diselesaikan dan diverifikasi penuh pada penutupan Phase 1 Operating Spine.
 
-Therefore:
+Status penegakan:
 
 ```text id="iy8m6t"
 Order lifecycle
 =
 CANONICAL
-but
-NOT FULLY ENFORCED
+and
+ENFORCED
 ```
 
-This is an implementation gap, not permission for direct status mutation.
+Transisi order dijaga oleh command yang tervalidasi dan audit log transaksional. Perubahan status langsung tanpa command tetap dilarang keras.
 
 ---
 
@@ -2459,12 +2466,15 @@ They MUST NOT be interpreted as permission for raw status updates.
 
 # 105. Enforcement Priority
 
-Recommended implementation priority:
+Catatan penyelesaian Phase 1 Operating Spine:
+
+- **Order lifecycle commands**: `COMPLETED & ENFORCED`
+- **Vendor-backed Production Assignment & transitions**: `COMPLETED & ENFORCED`
+- **QC / Fulfillment Readiness gate**: `COMPLETED & ENFORCED`
+
+Sisa prioritas implementasi lifecycle di luar spine utama:
 
 ```text id="bcffqb"
-P0
-Order lifecycle command
-
 P0
 Quote exception transitions
 
@@ -2714,7 +2724,102 @@ A lifecycle change requires review of this specification.
 
 ---
 
-# 116. Architectural Invariants
+# 116. Operational Exception State Machine (CANONICAL_TARGET)
+
+Status kematangan:
+
+```text
+CANONICAL_TARGET
+```
+
+## Canonical States
+
+```text
+OPEN
+ACKNOWLEDGED
+RESOLVED
+DISMISSED
+```
+
+Arti setiap state:
+
+- **`OPEN`**: Anomali operasional baru terdeteksi secara otomatis atau dibuka manual; belum diakui oleh handler yang ditugaskan.
+- **`ACKNOWLEDGED`**: Exception telah diakui oleh penanggung jawab operasional (_handler_). Tanggung jawab penanganan/investigasi telah diterima.
+- **`RESOLVED`**: Masalah akar operasional telah diselesaikan dengan tindakan nyata dan tercatat dengan bukti/justifikasi penyelesaian (_resolution rationale & evidence_).
+- **`DISMISSED`**: Exception ditutup tanpa perbaikan operasional, baik karena dinilai bukan anomali material atau risiko telah diterima secara formal (_accepted risk_).
+
+## Canonical Transition Paths
+
+```text
+OPEN ───────────► ACKNOWLEDGED ───────────► RESOLVED
+  │                     │
+  │                     ▼
+  └────────────────► DISMISSED
+```
+
+Path transisi kanonikal:
+
+1. `OPEN → ACKNOWLEDGED`: Handler menerima tanggung jawab investigasi dan penanganan.
+2. `ACKNOWLEDGED → RESOLVED`: Handler menyelesaikan masalah operasional dengan bukti penyelesaian.
+3. `OPEN → DISMISSED`: Penutupan langsung dengan alasan dismissal yang sah.
+4. `ACKNOWLEDGED → DISMISSED`: Penutupan setelah investigasi dengan justifikasi dismissal atau penerimaan risiko formal.
+
+## Governed Reopen Transitions
+
+Diperbolehkan transisi balik eksplisit:
+
+```text
+RESOLVED ──────(governed REOPEN)──────► OPEN
+DISMISSED ─────(governed REOPEN)──────► OPEN
+```
+
+Aturan reopen:
+
+- `REOPENED` adalah **EVENT / TRANSITION SEMANTIC**, **bukan** status _current state_ jangka panjang.
+- Ketika command reopen dieksekusi, sistem mencatat event reopen pada audit trail dan mengembalikan status entitas menjadi `OPEN`.
+- Episode exception yang di-reopen tetap mempertahankan stable identity dan riwayat audit penuh sebelumnya (_same logical episode_).
+
+## State Machine Boundaries & Invariants
+
+1. **`ACKNOWLEDGED ≠ RESOLVED`**: Mengakui masalah bukan berarti masalah telah selesai. Status `ACKNOWLEDGED` tidak menutup pengecualian.
+2. **`SEVERITY ≠ LIFECYCLE`**: Tingkat keparahan (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`) adalah atribut klasifikasi dampak bisnis, bukan state transisi mesin. Perubahan severity adalah mutasi data yang tercatat di audit log, bukan pergantian lifecycle state.
+3. **`SEVERITY ≠ FOUNDER ATTENTION PRIORITY`**: Tingkat keparahan `CRITICAL` tidak otomatis memaksa prioritas perhatian founder menjadi `INTERRUPT`. Prioritas dihitung terpisah oleh proyeksi perhatian.
+4. **`FOUNDER DECISION REQUIRED ≠ EXCEPTION STATE`**: Flag kebutuhan keputusan founder adalah dimensi perhatian ortogonal, bukan status mesin exception.
+5. **Penugasan Bukan Transisi Lifecycle**: Perubahan penugasan (_assign / reassign_) adalah mutasi atribut penanggung jawab, bukan perubahan status lifecycle state machine.
+6. **Isolasi Mutasi Domain Asal**: Resolusi Operational Exception **TIDAK BOLEH** secara implisit mengubah state domain asal (misal: menyelesaikan exception pengiriman terlambat tidak otomatis menandai shipment terkirim; menandai exception selesai tidak otomatis menyelesaikan order). Perubahan domain asal harus dipicu melalui command domain masing-masing.
+
+---
+
+# 117. Founder Attention Projection Lifecycle (CANONICAL_TARGET)
+
+Status kematangan:
+
+```text
+CANONICAL_TARGET (DERIVED PROJECTION)
+```
+
+Perhatian founder bukanlah mesin state transaksional yang persisten secara independen, melainkan proyeksi baca (_read projection_).
+
+Siklus hidup proyeksi perhatian:
+
+```text
+ACTIVE
+  │
+  ├──► SNOOZED (proyeksi disembunyikan sementara hingga waktu bangun)
+  │
+  ├──► DISMISSED (proyeksi diabaikan dari daftar perhatian)
+  │
+  └──► RESOLVED (otomatis terangkat jika underlying exception/kondisi selesai)
+```
+
+Aturan proyeksi:
+
+1. **State-Neutral Reads**: Evaluasi atau query perhatian founder tidak boleh memicu mutasi sampingan pada domain transaksional maupun Operational Exceptions.
+2. **Hilangnya Perhatian Bukan Berarti Exception Selesai**: Jika suatu item perhatian founder di-dismiss atau di-snooze oleh founder, underlying Operational Exception di domain operasional tetap berstatus aktif (`OPEN` atau `ACKNOWLEDGED`) dan tetap menjadi tanggung jawab operasional tim.
+
+---
+
+# 118. Architectural Invariants
 
 1. Each domain owns its own lifecycle.
 2. Order status does not encode payment, production, QC, or shipping.
@@ -2739,7 +2844,7 @@ A lifecycle change requires review of this specification.
 
 ---
 
-# 117. Final Mental Model
+# 119. Final Mental Model
 
 ```text id="4ufuj1"
 CUSTOMER INTENT
@@ -2762,17 +2867,20 @@ ORDER STATE
       │
       ├─────────── PROCUREMENT STATE
       │
-      └─────────── FULFILLMENT STATE
-                           │
-                           ▼
-                    BUSINESS REALITY
+      ├─────────── FULFILLMENT STATE
+      │                    │
+      ▼                    ▼
+OPERATIONAL EXCEPTION  BUSINESS REALITY
+      │                    │
+      ▼                    ▼
+FOUNDER ATTENTION PROJECTION
 ```
 
 Founder-facing intelligence is derived from all of them.
 
 ---
 
-# 118. Final Principle
+# 120. Final Principle
 
 > **State machines exist to represent business reality precisely—not to make UI filtering convenient.**
 
