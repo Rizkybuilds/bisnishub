@@ -1,17 +1,20 @@
 ---
 canonical_id: mgbos.architecture.domain-map-capability-ownership
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos-cross-business
 document_class: canonical-specification
-effective_from: 2026-09-30
+effective_from: 2026-10-06
 authoritative_for:
   - mgbos domain boundaries
   - mgbos capability ownership
   - current-versus-target domain classification
+  - canonical-target-domain-classification
+  - operational-exception-domain-ownership
+  - founder-attention-projection-ownership
   - business-requirement promotion into mgbos
   - teestock-to-mgbos capability mapping
   - mgbos-versus-jarvis capability boundaries
@@ -19,7 +22,7 @@ authoritative_for:
   - external-provider capability boundaries
   - domain expansion sequencing
   - mgbos capability prioritization under solo-founder operating constraints
-last_reviewed: 2026-09-30
+last_reviewed: 2026-10-06
 review_cadence: monthly-during-q4-2026
 depends_on:
   - ../../../../docs/governance/documentation-constitution.md
@@ -43,7 +46,7 @@ supersedes: null
 implementation_status: PARTIALLY_IMPLEMENTED
 ---
 
-# MGBOS Domain Map & Capability Ownership v1.0
+# MGBOS Domain Map & Capability Ownership v1.1
 
 ## 1. Purpose
 
@@ -127,6 +130,7 @@ Every domain or capability uses one of:
 ```text
 CURRENT
 PARTIAL
+CANONICAL_TARGET
 NEXT
 DEFERRED
 EXPERIMENTAL
@@ -149,31 +153,37 @@ The capability materially exists, but intended workflow, lifecycle, integration,
 
 ---
 
-# 10. NEXT
+# 10. CANONICAL_TARGET
+
+The capability or domain is formally accepted into the canonical MGBOS target architecture as a first-class logical concept, but its physical implementation, schema, or runtime code is not yet active or implemented.
+
+---
+
+# 11. NEXT
 
 Strong near-term operational justification exists and the capability belongs in the next implementation horizon.
 
 ---
 
-# 11. DEFERRED
+# 12. DEFERRED
 
 Potentially valuable, but current evidence does not justify implementation.
 
 ---
 
-# 12. EXPERIMENTAL
+# 13. EXPERIMENTAL
 
 A provisional implementation or prototype exists without mature production semantics.
 
 ---
 
-# 13. OUTSIDE_MGBOS
+# 14. OUTSIDE_MGBOS
 
 Another system or domain is the proper semantic owner.
 
 ---
 
-# 14. Primary Capability Owners
+# 15. Primary Capability Owners
 
 ```text
 BUSINESS LAYER
@@ -187,7 +197,7 @@ CROSS-SYSTEM GOVERNANCE
 
 ---
 
-# 15. Fundamental Ownership Model
+# 16. Fundamental Ownership Model
 
 ```text
 BUSINESS
@@ -211,30 +221,34 @@ perform physical work
 
 ---
 
-# 16. Current Core Domain Map
+# 17. Current Core Domain Map
 
-| Domain                  | MGBOS Status                              | Primary Owner | Near-Term Importance |
-| ----------------------- | ----------------------------------------- | ------------- | -------------------- |
-| Organization / Identity | CURRENT                                   | MGBOS         | Critical             |
-| Customer                | CURRENT                                   | MGBOS         | Critical             |
-| Lead / CRM              | CURRENT / PARTIAL workflow integration    | MGBOS         | Critical             |
-| Requirement             | CURRENT                                   | MGBOS         | Critical             |
-| Quotation               | CURRENT                                   | MGBOS         | Critical             |
-| Order                   | CURRENT / PARTIAL lifecycle               | MGBOS         | Critical             |
-| Production Job          | CURRENT                                   | MGBOS         | Critical             |
-| Production Assignment   | CURRENT / PARTIAL operational integration | MGBOS         | Critical             |
-| Vendor                  | CURRENT / PARTIAL assignment integration  | MGBOS         | Critical             |
-| Quality Control         | CURRENT                                   | MGBOS         | Critical             |
-| Invoice                 | CURRENT                                   | MGBOS         | Critical             |
-| Payment                 | CURRENT                                   | MGBOS         | Critical             |
-| Fulfillment / Shipment  | CURRENT / PARTIAL readiness guard         | MGBOS         | Critical             |
-| Cost / Margin           | CURRENT                                   | MGBOS         | Critical             |
-| Inventory               | CURRENT                                   | MGBOS         | High                 |
-| Procurement             | CURRENT                                   | MGBOS         | High                 |
-| Goods Receipt           | CURRENT                                   | MGBOS         | High                 |
-| Vendor Bills            | CURRENT                                   | MGBOS         | High                 |
-| Order Financial Summary | CURRENT                                   | MGBOS         | High                 |
-| Design Library          | EXPERIMENTAL                              | MGBOS         | Low near-term        |
+| Domain                  | MGBOS Status                                                 | Primary Owner | Near-Term Importance  |
+| ----------------------- | ------------------------------------------------------------ | ------------- | --------------------- |
+| Organization / Identity | CURRENT                                                      | MGBOS         | Critical              |
+| Customer                | CURRENT                                                      | MGBOS         | Critical              |
+| Lead / CRM              | CURRENT / PARTIAL workflow integration                       | MGBOS         | Critical              |
+| Requirement             | CURRENT                                                      | MGBOS         | Critical              |
+| Quotation               | CURRENT                                                      | MGBOS         | Critical              |
+| Order                   | CURRENT (Phase 1 verified lifecycle)                         | MGBOS         | Critical              |
+| Production Job          | CURRENT                                                      | MGBOS         | Critical              |
+| Production Assignment   | CURRENT (Phase 1 verified assignment & tracking)             | MGBOS         | Critical              |
+| Vendor                  | CURRENT / PARTIAL assignment integration                     | MGBOS         | Critical              |
+| Quality Control         | CURRENT (Phase 1 verified item-level gates)                  | MGBOS         | Critical              |
+| Invoice                 | CURRENT                                                      | MGBOS         | Critical              |
+| Payment                 | CURRENT                                                      | MGBOS         | Critical              |
+| Fulfillment / Shipment  | CURRENT (Phase 1 verified readiness guard)                   | MGBOS         | Critical              |
+| Cost / Margin           | CURRENT                                                      | MGBOS         | Critical              |
+| Inventory               | CURRENT                                                      | MGBOS         | High                  |
+| Procurement             | CURRENT                                                      | MGBOS         | High                  |
+| Goods Receipt           | CURRENT                                                      | MGBOS         | High                  |
+| Vendor Bills            | CURRENT                                                      | MGBOS         | High                  |
+| Order Financial Summary | CURRENT                                                      | MGBOS         | High                  |
+| Work Order / SPK        | CURRENT (Phase 1 verified operational artifact)              | MGBOS         | Critical              |
+| Operational Exception   | CANONICAL_TARGET (Logical domain; physical undecided)        | MGBOS         | Critical (reconciled) |
+| Founder Attention       | CANONICAL_TARGET (Derived projection; not system of record)  | MGBOS         | Critical (reconciled) |
+| Founder Home            | CANONICAL_TARGET (Application surface; not domain aggregate) | MGBOS         | Critical (reconciled) |
+| Design Library          | EXPERIMENTAL                                                 | MGBOS         | Low near-term         |
 
 ---
 
@@ -364,32 +378,12 @@ This is sufficient for initial custom/B2B operations.
 Status:
 
 ```text
-CURRENT / PARTIAL WORKFLOW INTEGRATION
+CURRENT
 ```
 
 Lead is the canonical inbound commercial inquiry.
 
-Core entity/lifecycle capability exists.
-
-Current operator-flow gap:
-
-```text
-QUALIFIED LEAD
-    ↓
-manual navigation/context reconstruction
-    ↓
-REQUIREMENT
-```
-
-Near-term objective:
-
-```text
-Lead
-→ governed continuation
-→ Requirement
-```
-
-without adding Opportunity.
+In Phase 1 Operating Spine closure, Lead → Requirement governed continuation was implemented and verified as a standard operator flow without adding Opportunity.
 
 ---
 
@@ -561,7 +555,7 @@ These remain independent lifecycles.
 Status:
 
 ```text
-DEFERRED / CONDITIONAL NEXT
+DEFERRED / CONDITIONAL
 ```
 
 Current custom work may be sufficiently represented by:
@@ -623,7 +617,7 @@ What blocks completion?
 Status:
 
 ```text
-CURRENT / PARTIAL OPERATIONAL INTEGRATION
+CURRENT
 ```
 
 Current entity:
@@ -634,22 +628,22 @@ production_assignments
 
 exists materially.
 
+Vendor-backed production assignment, acknowledgement, reassignment, and status coordination were integrated and verified in the Phase 1 Operating Spine closure.
+
 ---
 
-# 39. Current Assignment Gaps
+# 39. Production Assignment Operational Closure
 
-Current operating-flow gaps include:
+In Phase 1 Operating Spine closure:
 
 ```text
-vendor identity not consistently used in normal assignment flow
-assignment acknowledgement not fully coordinated
-assignment ACCEPTED may diverge from job ACCEPTED
-decline / reassignment flow needs hardening
+vendor identity consistently bound to production assignment
+assignment acknowledgement workflow coordinated
+assignment ACCEPTED coordinated with job lifecycle
+decline and reassignment flows hardened
 ```
 
-Therefore this is not a missing domain.
-
-It is a current domain needing integration.
+Production Assignment is an active operational domain, not an integration gap.
 
 ---
 
@@ -673,11 +667,11 @@ Production Job continues to own physical work lifecycle.
 Status:
 
 ```text
-NEXT AS GOVERNED OPERATIONAL ARTIFACT
-P0 OPERATING-SPINE CLOSURE
+CURRENT AS GOVERNED OPERATIONAL ARTIFACT
+PHASE 1 OPERATING-SPINE VERIFIED
 ```
 
-It is not yet justified as a new root entity.
+In Phase 1, Work Order / SPK generation and print slip were implemented and verified as a governed operational artifact generated from Production Job + Production Assignment context. It is not currently justified as an independent root entity.
 
 ---
 
@@ -783,7 +777,7 @@ affiliate organization
 Status:
 
 ```text
-PARTIAL / NEXT
+CURRENT / ADVANCED PORTAL DEFERRED
 ```
 
 Current baseline already exists through:
@@ -796,7 +790,7 @@ vendor relationships
 
 ---
 
-# 49. Vendor Capability — NEXT Scope
+# 49. Vendor Capability — Advanced Scope Deferred
 
 Add structure only where operationally useful:
 
@@ -815,7 +809,7 @@ capacity observations
 Status:
 
 ```text
-PARTIAL / NEXT
+DEFERRED
 ```
 
 Initial representation may remain manual observation.
@@ -908,7 +902,7 @@ Founder-level consolidated visibility still needs deliberate read models.
 Status:
 
 ```text
-NEXT
+CANONICAL_TARGET (READ PROJECTION)
 ```
 
 Examples:
@@ -1161,7 +1155,7 @@ until repeated structure justifies BOM complexity.
 Status:
 
 ```text
-CURRENT / PARTIAL FULFILLMENT-READINESS GUARD
+CURRENT
 ```
 
 MGBOS owns internal shipment business state.
@@ -1170,11 +1164,11 @@ Carrier owns carrier-side tracking facts.
 
 ---
 
-# 74. Current Fulfillment Gap
+# 74. Fulfillment Readiness Guard
 
 Shipment quantity controls exist.
 
-However the operating spine still needs a stronger guard proving:
+The operating spine guard requiring:
 
 ```text
 required production ready
@@ -1182,9 +1176,7 @@ required production ready
 required QC cleared
 ```
 
-before fulfillment.
-
-This is a P0 integrity issue.
+before fulfillment was implemented and verified in Phase 1.
 
 ---
 
@@ -1205,7 +1197,7 @@ Current financial reversal primitives are not a complete Returns domain.
 Status:
 
 ```text
-NEXT-LITE
+DEFERRED / CONDITIONAL UPON RETAIL SCALE
 ```
 
 Useful categories include:
@@ -1237,11 +1229,10 @@ does not replace authoritative Payment state.
 Status:
 
 ```text
-NEXT
-P1 FOUNDER-CONTROL CAPABILITY
+CANONICAL_TARGET
 ```
 
-Operational Exception is likely the highest-leverage capability **after the operating spine itself is trustworthy**.
+Operational Exception is a first-class logical MGBOS architectural domain (`CANONICAL_TARGET`), formally reconciled in W2. It provides governed lifecycle, invariants, and commands for business abnormalities across the operating spine, while physical persistence (independent table vs. bounded extension) remains undecided pending Engineering Discovery. Phase 2 implementation is NOT OPEN.
 
 ---
 
@@ -1317,7 +1308,45 @@ MATERIAL EXCEPTION
 
 ---
 
-# 84. Artwork
+# 84. Founder Attention Projection
+
+Status:
+
+```text
+CANONICAL_TARGET DERIVED MGBOS PROJECTION
+```
+
+Founder Attention is a read projection computed across canonical business domains and operational exceptions.
+
+Key architectural boundaries:
+
+1. It is a read model, NOT an independent transactional system of record.
+2. It projects actionable founder items categorized by Attention Kind (`DECISION`, `ACTION`, `WAITING`, `WATCH`, `DATA_GAP`).
+3. It exposes query endpoints (such as `mgbos.founder_attention.list`) without owning independent mutation state.
+4. Mutation of underlying facts occurs through domain commands or governed exception commands.
+
+---
+
+# 85. Founder Home Application Surface
+
+Status:
+
+```text
+CANONICAL_TARGET MGBOS APPLICATION SURFACE
+```
+
+Founder Home is the single governed presentation and control surface for the solo founder in MGBOS.
+
+Key architectural boundaries:
+
+1. It is an application-layer interface, NOT a domain entity or aggregate.
+2. It displays unified business posture, attention inbox, triage controls, and drill-down links.
+3. It delegates all operational actions to governed MGBOS commands.
+4. It does not store business state independently of the underlying domain and exception layers.
+
+---
+
+# 86. Artwork
 
 Current Design Library capability is:
 
@@ -1343,7 +1372,7 @@ production linkage
 Status:
 
 ```text
-PARTIAL / NEXT WHEN REAL JOBS REQUIRE
+PARTIAL / DEFERRED UNTIL REAL JOBS REQUIRE
 ```
 
 ---
@@ -1826,9 +1855,9 @@ Physical completion requires trusted observation/evidence.
 
 ---
 
-# 120. P0 — Operating Spine Must Work
+# 120. Operating Spine (CLOSED & VERIFIED)
 
-Before launch scale, the following must be trustworthy:
+In Phase 1, the following core capabilities were integrated and verified:
 
 ```text
 Customer
@@ -1845,69 +1874,55 @@ Shipment
 Cost / Margin
 ```
 
-Most exist.
-
-The work is integration and hardening.
+The Phase 1 Operating Spine is closed and verified.
 
 ---
 
-# 121. P0 Operating-Spine Closure Tasks
+# 121. Operating-Spine Closure Verification
 
-Current implementation priorities:
+Phase 1 Operating Spine closure verified and closed the implementation priorities:
 
 ```text
-1. Lead → Requirement continuation
-
-2. Authoritative Order lifecycle
-
-3. Vendor identity → Production Assignment
-
-4. Assignment acceptance / decline / reassignment
-
-5. Production/QC → Fulfillment readiness
-
-6. Governed Work Order / SPK artifact
-
-7. Clean Lead → Margin E2E
-
-8. Operator Acceptance Test
+1. Lead → Requirement continuation (implemented & verified)
+2. Authoritative Order lifecycle (enforced state transitions & cancellation)
+3. Vendor identity → Production Assignment (implemented & verified)
+4. Assignment acceptance / decline / reassignment (implemented & verified)
+5. Production/QC → Fulfillment readiness (item-level pass/fail gates)
+6. Governed Work Order / SPK artifact (generation & print slip)
+7. Clean Lead → Margin E2E (verified)
+8. Operator Acceptance Test (verified)
 ```
 
 ---
 
-# 122. Why These Come Before Exception
+# 122. Why Operating Spine Preceded Exception
 
 Operational Exception is valuable only when underlying authoritative state is sufficiently reliable.
 
-If the spine itself can produce contradictory state:
-
-```text
-exception detection
-```
-
-becomes less trustworthy.
+Because the Phase 1 Operating Spine has established verified integrity across the core business flows, the prerequisite for Founder Control and Operational Exception modeling is satisfied.
 
 Therefore:
 
 ```text
-SPINE INTEGRITY
+SPINE INTEGRITY (VERIFIED IN PHASE 1)
         ↓
-EXCEPTION MANAGEMENT
+EXCEPTION MANAGEMENT & FOUNDER ATTENTION (CANONICAL TARGET)
 ```
 
 ---
 
-# 123. P1 — Founder Control Layer
+# 123. Founder Control Layer
 
-After P0:
+Post-Spine Canonical Target Capabilities:
 
 ```text
-Operational Exception
-Founder Read Models
-Customer Case Lite
-Vendor Capability expansion
-Finance attention views
-Operations attention views
+Operational Exception (CANONICAL_TARGET)
+Founder Attention Projections (CANONICAL_TARGET DERIVED PROJECTION)
+Founder Home (CANONICAL_TARGET APPLICATION SURFACE)
+Customer Case (DEFERRED / CONDITIONAL UPON RETAIL SCALE)
+Vendor Capability expansion (ADVANCED SCOPE DEFERRED)
+Finance attention views (CANONICAL_TARGET READ PROJECTION)
+Operations attention views (CANONICAL_TARGET READ PROJECTION)
 ```
 
 ---
@@ -1920,7 +1935,7 @@ because founder-by-exception requires the system to surface abnormality rather t
 
 ---
 
-# 125. P1 Founder Read Models
+# 125. Founder Attention Projections (CANONICAL_TARGET)
 
 Examples:
 
@@ -1933,9 +1948,9 @@ Shipment Attention
 Margin Attention
 ```
 
-These are read projections.
+These are derived read projections.
 
-They are not systems of record.
+They are not independent transactional lifecycles or systems of record.
 
 ---
 
@@ -2306,16 +2321,16 @@ Internal business interpretation belongs to the relevant BisnisHub system.
 
 ---
 
-# 147. Immediate Highest-Leverage Gaps
+# 147. Capability Progression & Governance Baseline
 
-Current evidence identifies:
+With Phase 1 Operating Spine closure verified and Work Order / SPK operational artifact in place:
 
 ```text
-1. Operating-spine integration gaps
-2. Work Order communication
-3. Operational Exception
-4. Founder Read Models
-5. Vendor capability enrichment
+1. Operating-Spine Core (CLOSED & VERIFIED in Phase 1)
+2. Work Order / SPK Artifact (CURRENT GOVERNED ARTIFACT)
+3. Operational Exception (CANONICAL_TARGET)
+4. Founder Attention Projections (CANONICAL_TARGET DERIVED PROJECTION)
+5. Vendor Capability Enrichment (ADVANCED SCOPE DEFERRED)
 ```
 
 ---
@@ -2382,34 +2397,30 @@ Then decide.
 
 ---
 
-# 152. Current Recommended Capability Order
+# 152. Capability Sequencing & Current Horizon
+
+### Historical Phase 1 Priorities (CLOSED & VERIFIED)
 
 ```text
-1. Connect Lead → Requirement
+1. Connect Lead → Requirement (VERIFIED)
+2. Complete authoritative Order lifecycle (VERIFIED)
+3. Connect Vendor → Production Assignment (VERIFIED)
+4. Reconcile Assignment acknowledgement/reassignment (VERIFIED)
+5. Enforce Production/QC → Fulfillment readiness (VERIFIED)
+6. Generate governed Work Order / SPK (VERIFIED)
+7. Prove clean Lead → Margin E2E (VERIFIED)
+8. Run Operator Acceptance Test (VERIFIED)
+```
 
-2. Complete authoritative Order lifecycle
+### Current Architecture & Next Horizon
 
-3. Connect Vendor → Production Assignment
-
-4. Reconcile Assignment acknowledgement/reassignment
-
-5. Enforce Production/QC → Fulfillment readiness
-
-6. Generate governed Work Order / SPK
-
-7. Prove clean Lead → Margin E2E
-
-8. Run Operator Acceptance Test
-
-9. Add Operational Exception
-
-10. Add Founder Read Models
-
-11. Enrich Vendor Capability
-
-12. Automate routine deterministic work
-
-13. Add JARVIS Lite read intelligence
+```text
+9. Founder Control Architecture Reconciliation (W2 COMPLETE)
+10. Engineering Discovery — Physical Model & Persistence Strategy (W3 NEXT)
+11. Phase 2 Implementation (NOT OPEN)
+12. Vendor Capability Enrichment (ADVANCED SCOPE DEFERRED)
+13. Deterministic Automation (DEFERRED)
+14. JARVIS Lite Read Intelligence (DEFERRED)
 ```
 
 ---
@@ -2464,13 +2475,13 @@ Project
 → DEFERRED / CONDITIONAL
 
 Work Order
-→ NEXT / P0 artifact first
+→ CURRENT GOVERNED OPERATIONAL ARTIFACT (verified in Phase 1)
 
 Customer Case
-→ NEXT-LITE / P1
+→ DEFERRED / CONDITIONAL UPON RETAIL SCALE
 
 Operational Exception
-→ NEXT / P1 highest-leverage post-spine
+→ CANONICAL_TARGET (reconciled in W2; physical implementation pending Engineering Discovery; Phase 2 NOT OPEN)
 ```
 
 ---
@@ -2709,29 +2720,30 @@ without becoming a mutation authority.
                               NOW        NEXT
 
 Customer                     ███
-Lead                         ██▒  → continuity
+Lead                         ███
 Requirement                  ███
 Quote                        ███
-Order                        ██▒  → lifecycle
+Order                        ███  (Phase 1 lifecycle verified)
 Payment                      ███
 Production                   ███
-Production Assignment        ██▒  → vendor/acceptance
-Vendor                       ██▒  → integration
-QC                           ███
-Shipment                     ██▒  → readiness
+Production Assignment        ███  (Phase 1 assignment verified)
+Vendor                       ██▒  → portal deferred
+QC                           ███  (Phase 1 gates verified)
+Shipment                     ███  (Phase 1 readiness verified)
 Inventory                    ███
 Procurement                  ███
 Goods Receipt                ███
 Vendor Bills                 ███
 Cost / Margin                ███
+Work Order Artifact          ███  (Phase 1 SPK verified)
 
-Work Order Artifact                     ███ P0
-Operational Exception                   ███ P1
-Founder Read Models                     ███ P1
-Vendor Capability Expansion             ██▒ P1
-Customer Case Lite                      ██▒ P1
-Automation                              ██▒ P2
-JARVIS Lite                             ██▒ P3
+Operational Exception                   ███ TARGET (reconciled; Phase 2 not open)
+Founder Attention                       ███ TARGET (reconciled projection)
+Founder Home                            ███ TARGET (reconciled surface)
+Vendor Capability Expansion             ██▒ deferred
+Customer Case                           ██▒ deferred (conditional)
+Automation                              ██▒ deferred
+JARVIS Lite                             ██▒ deferred
 
 Opportunity                                      ▒
 Project                                          ▒
@@ -2796,18 +2808,19 @@ Legend:
                      MGBOS
           governed operational truth
                        │
-       ┌───────────────┼────────────────┐
-       │               │                │
-       ▼               ▼                ▼
-    CURRENT          NEXT            DEFERRED
-       │               │                │
-Customer          Work Order        Opportunity
-Lead              Exception         Project
-Requirement       Read Models       Product/Catalog
-Quote             Customer Case     Creator/Royalty
-Order             Vendor Capability Affiliate
-Production                           Advanced Partner
-Assignment                           BOM/Recipe
+       ┌───────────────┼───────────────┬────────────────┐
+       │               │               │                │
+       ▼               ▼               ▼                ▼
+    CURRENT     CANONICAL_TARGET      NEXT           DEFERRED
+       │               │               │                │
+Customer        Operational     Engineering     Customer Case
+Lead            Exception       Discovery (W3)  Opportunity
+Requirement     Founder                         Project
+Quote           Attention                       Product/Catalog
+Order           Founder Home                    Creator/Royalty
+Production                                      Affiliate
+Assignment                                      Advanced Partner
+Work Order                                      BOM/Recipe
 Vendor
 QC
 Invoice/Payment
@@ -2816,17 +2829,17 @@ Inventory
 Procurement
 Goods Receipt
 Cost/Margin
-       │
-       └───────────────┬────────────────┘
-                       ▼
-                    JARVIS
-              intelligence / decisions
-                       │
-                       ▼
-                  AUTOMATION
-                       │
-                       ▼
-              PROVIDERS / PARTNERS
+       │               │               │                │
+       └───────────────┴───────┬───────┴────────────────┘
+                               ▼
+                            JARVIS
+                      intelligence / decisions
+                               │
+                               ▼
+                          AUTOMATION
+                               │
+                               ▼
+                      PROVIDERS / PARTNERS
 ```
 
 ---

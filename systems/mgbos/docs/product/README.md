@@ -1,23 +1,23 @@
 ---
 canonical_id: mgbos.product.index
 status: ACTIVE
-version: 2.0
+version: 2.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos-product-documentation
 document_class: navigation-index
-effective_from: 2026-10-05
+effective_from: 2026-10-06
 
-product_program_status: ACTIVE_PRODUCT_DEFINITION
+product_program_status: ARCHITECTURE_RECONCILED_ENGINEERING_DISCOVERY_NEXT
 current_product_program: FOUNDER_CONTROL
 current_implementation_phase: NONE
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: f05bd82f9be6aa038799931ede19059481aed8d1
-  reviewed_at: 2026-10-05
+  commit: 63dec5a78462e3eff994ebdd0c15e31676b12bee
+  reviewed_at: 2026-10-06
 
 authoritative_for:
   - MGBOS product documentation navigation
@@ -60,7 +60,7 @@ depends_on:
 supersedes: null
 ---
 
-# MGBOS Product Documentation Index v2.0
+# MGBOS Product Documentation Index v2.1
 
 ## 1. Purpose
 
@@ -385,7 +385,7 @@ ACTIVE (SPEC_MATURE)
 D3
 Operational Exception Specification
 =
-ACTIVE (SPEC_MATURE / ARCHITECTURE_LIFECYCLE_PROMOTION_PENDING)
+ACTIVE (CANONICAL_ARCHITECTURE_RECONCILED)
 
 D4
 Real Operational Pilot Plan
@@ -398,15 +398,15 @@ Product package interpretation:
 ```text
 FOUNDER CONTROL PRODUCT PACKAGE
 =
-DEFINED
+APPROVED_BY_OWNER
 
-PRODUCT DOCUMENTS D1-D4
+CANONICAL ARCHITECTURE RECONCILIATION (W2)
 =
-ACTIVE
+COMPLETE
 
 ENGINEERING READINESS
 =
-NOT READY
+NOT READY (NOT_READY_FOR_ENGINEERING)
 
 PHASE 2 IMPLEMENTATION
 =
@@ -414,7 +414,7 @@ NOT OPEN
 
 NEXT MATERIAL GATE
 =
-ARCHITECTURE IMPACT REVIEW
+W3 ENGINEERING DISCOVERY
 ```
 
 ---
@@ -1330,27 +1330,30 @@ without evidence for an independent lifecycle.
 
 # 42. Operational Exception Boundary
 
-Current domain planning identifies Operational Exception as:
+Operational Exception is established as a canonical architectural domain:
 
 ```text
-NEXT
+CANONICAL_TARGET
 ```
 
-but that does NOT yet mean:
+Following W2 canonical architecture reconciliation:
 
 ```text
-approved table
+canonical lifecycle:
+RECONCILED (OPEN, ACKNOWLEDGED, RESOLVED, DISMISSED)
 
-approved root entity
+canonical commands:
+RECONCILED (open, acknowledge, assign, reassign, change_severity, resolve, dismiss, reopen)
 
-approved lifecycle
+physical persistence & table design:
+NOT DESIGNED (undecided between independent table vs. bounded extension)
 
-approved commands
+engineering readiness:
+NOT_READY_FOR_ENGINEERING
+
+next step:
+W3 ENGINEERING DISCOVERY (mandatory next gate; Phase 2 implementation NOT OPEN)
 ```
-
-The product need will be defined first.
-
-Architecture representation follows later.
 
 ---
 
@@ -2112,7 +2115,7 @@ ACTIVE (SPEC_MATURE)
 
 OPERATIONAL EXCEPTION SPEC (D3)
 =
-ACTIVE (SPEC_MATURE / ARCHITECTURE_LIFECYCLE_PROMOTION_PENDING)
+ACTIVE (CANONICAL_ARCHITECTURE_RECONCILED)
 
 REAL PILOT PLAN (D4)
 =
@@ -2120,15 +2123,15 @@ ACTIVE (PILOT_PLAN_MATURE / PILOT_EXECUTION_BLOCKED)
 
 PRODUCT DEFINITION PACKAGE D1-D4
 =
-ACTIVE / DEFINED
+APPROVED_BY_OWNER
 
-ARCHITECTURE RECONCILIATION
+ARCHITECTURE RECONCILIATION (W2)
 =
-NEXT
+COMPLETE
 
 ENGINEERING READINESS
 =
-NOT READY
+NOT READY (NOT_READY_FOR_ENGINEERING)
 
 ACTIVE IMPLEMENTATION PHASE
 =
@@ -2143,7 +2146,7 @@ NOT OPEN
 
 # 72. Current Product Next Step
 
-Founder Control product definition package (D1–D4) is defined and active:
+Founder Control product definition package (D1–D4) is defined and approved by Owner:
 
 ```text
 D0 — founder-control-documentation-plan.md
@@ -2153,15 +2156,17 @@ D3 — operational-exception-spec.md
 D4 — teestock-operational-pilot-plan.md
 ```
 
+Canonical architecture reconciliation (W2) across all 6 core MGBOS architecture specifications is COMPLETE.
+
 The next durable gate is:
 
 ```text
-FOUNDER CONTROL ARCHITECTURE IMPACT REVIEW
+W3 ENGINEERING DISCOVERY
 ```
 
-to determine whether Founder Control requires updates to canonical architecture specifications (data model, business state machines, invariants, command/event model, and authorization).
+to investigate candidate physical persistence and schema strategies, boundary implementations, and risk-managed technical decomposition without mutating the database or writing application code.
 
-Do not begin Phase 2 implementation before that architecture review and its resulting contracts are mature. Phase 2 implementation is NOT open.
+Do not begin Phase 2 implementation before that engineering discovery and its resulting Implementation Contract are mature and approved. Phase 2 implementation is NOT open.
 
 ---
 

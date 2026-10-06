@@ -1,13 +1,13 @@
 ---
 canonical_id: bisnishub.roadmap.solo-founder-launch
 status: ACTIVE
-version: 2.0
+version: 2.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: bisnishub-teestock-launch
 document_class: canonical-roadmap
-effective_from: 2026-10-05
+effective_from: 2026-10-06
 
 planning_horizon:
   start: 2026-10-05
@@ -28,13 +28,13 @@ current_state:
   current_mgbos_product_program: FOUNDER_CONTROL
   operational_readiness: NOT_PRODUCTION_READY
   real_transaction_readiness: GATED
-  roadmap_stage: STAGE_C_ARCHITECTURE_AND_ENGINEERING_READINESS_NEXT
+  roadmap_stage: STAGE_C_ARCHITECTURE_RECONCILED_ENGINEERING_DISCOVERY_NEXT
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: f05bd82f9be6aa038799931ede19059481aed8d1
-  reviewed_at: 2026-10-05
+  commit: 63dec5a78462e3eff994ebdd0c15e31676b12bee
+  reviewed_at: 2026-10-06
 
 authoritative_for:
   - solo-founder strategic pre-launch sequencing
@@ -81,7 +81,7 @@ supersedes:
 implementation_status: STRATEGIC_ROADMAP_ACTIVE
 ---
 
-# Solo-Founder Launch Roadmap — Q4 2026 to Controlled Launch v2.0
+# Solo-Founder Launch Roadmap — Q4 2026 to Controlled Launch v2.1
 
 ## 1. Purpose
 
@@ -786,12 +786,14 @@ internally consistent
 Stage status:
 
 ```text id="c3s8t1"
-NEXT
+ACTIVE (ARCHITECTURE RECONCILIATION COMPLETE / ENGINEERING DISCOVERY NEXT)
 ```
 
 Objective:
 
 > **Translate approved product semantics into governed MGBOS architecture and bounded engineering scope.**
+
+In Stage C, Canonical Architecture Reconciliation (W2) was completed under VECP-003H across all six canonical specifications. Operational Exception was reconciled as a first-class logical MGBOS architectural domain (`CANONICAL_TARGET`), Founder Attention as a derived projection layer (`CANONICAL_TARGET`), and Founder Home as an application surface (`CANONICAL_TARGET`), while physical persistence remains undecided. W3 Engineering Discovery is the current focus of Stage C. Phase 2 implementation (Stage D) is NOT OPEN.
 
 ---
 
@@ -1363,14 +1365,14 @@ TeeStock business documentation may use terms broader than current MGBOS canonic
 
 For MGBOS implementation during this roadmap, use the following current compatibility mapping unless canonical architecture changes.
 
-| Business concept       | Current MGBOS representation                       |
-| ---------------------- | -------------------------------------------------- |
-| Opportunity            | Qualified Lead + Requirement + Quote               |
-| Project                | Order + Requirement + Production Job(s)            |
-| Partner for production | Vendor                                             |
-| Work Order             | Governed SPK/Work Order artifact                   |
-| Exception              | Product concept pending Founder Control definition |
-| Customer Case          | Separate proposed durable customer-issue concept   |
+| Business concept       | Current MGBOS representation                                                                                              |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Opportunity            | Qualified Lead + Requirement + Quote                                                                                      |
+| Project                | Order + Requirement + Production Job(s)                                                                                   |
+| Partner for production | Vendor                                                                                                                    |
+| Work Order             | Governed SPK/Work Order artifact                                                                                          |
+| Exception              | Operational Exception = CANONICAL_TARGET first-class MGBOS concept; physical implementation pending Engineering Discovery |
+| Customer Case          | Separate proposed durable customer-issue concept                                                                          |
 
 ---
 
@@ -3239,12 +3241,12 @@ COMPLETE
 STAGE B
 Founder Control Product Definition
 =
-COMPLETE / PRODUCT PACKAGE DEFINED
+COMPLETE / APPROVED_BY_OWNER
 
 STAGE C
 Architecture + Engineering Readiness
 =
-NEXT
+ACTIVE (ARCHITECTURE RECONCILED / DISCOVERY NEXT)
 
 STAGE D
 Founder Control Implementation
@@ -3288,22 +3290,26 @@ Therefore:
 Antigravity
 ```
 
-currently has no authorized Founder Control implementation package from this roadmap.
+currently has no authorized Founder Control implementation package from this roadmap. Phase 2 implementation is NOT OPEN.
 
 ---
 
 # 147. Current Product Next Step
 
-Following Stage B completion, the Founder Control product definition package (D1 through D4) is defined and active:
+Following Stage B completion and Owner approval, the Founder Control product definition package (D1 through D4) was reconciled with canonical architecture in Stage C (W2 COMPLETE):
 
 ```text id="vrp0b1"
 FOUNDER CONTROL PRODUCT PACKAGE
 =
-DEFINED / ACTIVE (D1-D4)
+APPROVED_BY_OWNER (D1-D4)
+
+CANONICAL ARCHITECTURE RECONCILIATION (W2)
+=
+COMPLETE (v1.1)
 
 NEXT GATE
 =
-ARCHITECTURE IMPACT REVIEW (STAGE C)
+W3 ENGINEERING DISCOVERY (STAGE C)
 ```
 
 ---

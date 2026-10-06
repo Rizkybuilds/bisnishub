@@ -1,13 +1,13 @@
 ---
 canonical_id: mgbos.architecture.index
 status: ACTIVE
-version: 2.1
+version: 2.2
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos-architecture
 document_class: canonical-navigation-index
-effective_from: 2026-10-03
+effective_from: 2026-10-06
 
 authoritative_for:
   - mgbos architecture navigation
@@ -17,7 +17,7 @@ authoritative_for:
   - current-versus-historical architecture source classification
   - architecture-to-implementation routing
 
-last_reviewed: 2026-10-03
+last_reviewed: 2026-10-06
 review_cadence: monthly-during-active-development
 
 depends_on:
@@ -30,13 +30,13 @@ depends_on:
   - ../README.md
 
 supersedes:
-  - mgbos.architecture.index@2.0
+  - mgbos.architecture.index@2.1
 
 implementation_status: DOCUMENTATION_INDEX
-repository_snapshot: 26871da802706fba5bc033576fbb0a487f6c9255
+repository_snapshot: 63dec5a78462e3eff994ebdd0c15e31676b12bee
 ---
 
-# MultiGraph Business OS — Architecture Index v2.1
+# MultiGraph Business OS — Architecture Index v2.2
 
 ## 1. Purpose
 
@@ -132,7 +132,21 @@ CANONICAL SPECIFICATION
 IMPLEMENTATION EVIDENCE
 ```
 
-If they disagree:
+Architecture maturity classification explicitly distinguishes:
+
+```text
+CURRENT
+Concept is materially represented and operationally implemented in active code/database.
+
+CANONICAL_TARGET
+Concept is formally accepted into the canonical MGBOS target architecture,
+but physical implementation, schema, or runtime code is not yet active.
+
+DEFERRED
+Concept is acknowledged for potential future relevance, but not accepted into target horizon.
+```
+
+If canonical specifications and implementation disagree:
 
 ```text
 DOCUMENTATION_DRIFT
@@ -210,29 +224,29 @@ The complete current architecture directory is:
 ```text
 systems/mgbos/docs/architecture/
 │
-├── README.md
-├── canonical-data-model.md
-├── business-state-machines.md
-├── business-invariants.md
-├── command-event-model.md
-├── permission-authorization-model.md
-└── domain-map-capability-ownership.md
+├── README.md (v2.2)
+├── canonical-data-model.md (v1.1)
+├── business-state-machines.md (v1.1)
+├── business-invariants.md (v1.1)
+├── command-event-model.md (v1.1)
+├── permission-authorization-model.md (v1.1)
+└── domain-map-capability-ownership.md (v1.1)
 ```
 
-All six dedicated specifications are present in the repository snapshot reviewed for v2.1.
+All six dedicated specifications are present and aligned at version 1.1 following the W2 Founder Control Canonical Architecture Reconciliation (`VECP-003H`).
 
 ---
 
 # 8. Primary Architecture Sources
 
-| Semantic question                            | Canonical source                     | Status |
-| -------------------------------------------- | ------------------------------------ | ------ |
-| What entities and relationships exist?       | `canonical-data-model.md`            | ACTIVE |
-| What do lifecycle states mean?               | `business-state-machines.md`         | ACTIVE |
-| What must always remain true?                | `business-invariants.md`             | ACTIVE |
-| How may authoritative state change?          | `command-event-model.md`             | ACTIVE |
-| Who may attempt an operation?                | `permission-authorization-model.md`  | ACTIVE |
-| Which system/domain should own a capability? | `domain-map-capability-ownership.md` | ACTIVE |
+| Semantic question                            | Canonical source                     | Version | Status |
+| -------------------------------------------- | ------------------------------------ | ------- | ------ |
+| What entities and relationships exist?       | `canonical-data-model.md`            | v1.1    | ACTIVE |
+| What do lifecycle states mean?               | `business-state-machines.md`         | v1.1    | ACTIVE |
+| What must always remain true?                | `business-invariants.md`             | v1.1    | ACTIVE |
+| How may authoritative state change?          | `command-event-model.md`             | v1.1    | ACTIVE |
+| Who may attempt an operation?                | `permission-authorization-model.md`  | v1.1    | ACTIVE |
+| Which system/domain should own a capability? | `domain-map-capability-ownership.md` | v1.1    | ACTIVE |
 
 These sources are complementary.
 
@@ -1128,6 +1142,7 @@ Different MGBOS capabilities may be:
 ```text
 CURRENT
 PARTIAL
+CANONICAL_TARGET
 NEXT
 DEFERRED
 EXPERIMENTAL
@@ -1198,9 +1213,9 @@ before introducing many new root entities.
 
 # 54. Lead
 
-Current Domain Map classifies Lead as materially present with workflow integration still needing hardening.
+Lead is CURRENT. In Phase 1 Operating Spine closure, Lead → Requirement continuation was implemented and verified as a standard operator flow without introducing Opportunity.
 
-The intended progression may use:
+The verified progression uses:
 
 ```text
 Lead
@@ -1287,7 +1302,7 @@ what blocks completion?
 
 # 60. Production Assignment
 
-Production Assignment is a current capability with operational integration still requiring hardening.
+Production Assignment is CURRENT. Vendor-backed assignment, acknowledgement, reassignment, and status coordination were implemented and verified in the Phase 1 Operating Spine closure.
 
 It represents:
 
@@ -1304,9 +1319,9 @@ Production Job remains owner of physical-work lifecycle.
 
 # 61. Work Order / SPK
 
-Current Domain Map classifies Work Order / SPK as a near-term governed operational artifact rather than automatically a new root entity.
+Work Order / SPK is a CURRENT governed operational artifact implemented and verified in Phase 1, rather than automatically a new root entity.
 
-Initial representation should reuse existing authoritative context where possible.
+It is generated from Production Job + Production Assignment context.
 
 Do not promote it to a root entity until independent lifecycle/evidence needs justify that architecture.
 
@@ -2007,34 +2022,43 @@ rather than continually inventing additional architecture documents.
 
 ---
 
-# 97. Core Architecture Closure
+# 97. Founder Control Canonical Architecture Reconciliation (W2)
 
-For the current Phase 1 operating-spine horizon, the architecture foundation is sufficiently bounded when:
+Following the verification and closure of the Phase 1 Operating Spine, the W2 Founder Control Canonical Architecture Reconciliation (`VECP-003H`) was executed to reconcile the Owner-approved Founder Control Product Package (D1-D4) across all six canonical architecture specifications:
 
 ```text
-canonical source routing is clear
-six core dedicated specifications are persisted
-domain/capability ownership is explicit
-implementation scope can be bounded
-known architecture gaps are explicit
-no unresolved authority conflict blocks implementation
+canonical-data-model.md (v1.1)
+business-state-machines.md (v1.1)
+business-invariants.md (v1.1)
+command-event-model.md (v1.1)
+permission-authorization-model.md (v1.1)
+domain-map-capability-ownership.md (v1.1)
 ```
 
-This does not mean every future business capability has been designed.
+Key reconciliation results:
+
+1. **Operational Exception** is established as a first-class logical MGBOS architectural domain (`CANONICAL_TARGET`).
+2. **Founder Attention** is established as a derived MGBOS projection layer (`CANONICAL_TARGET`).
+3. **Founder Home** is established as a single governed presentation surface (`CANONICAL_TARGET`).
+4. All 49 Founder Control invariants (`INV-099` through `INV-147`) are integrated without disturbing existing core invariants (`INV-001` through `INV-098`).
+5. Logical commands (`mgbos.operational_exception.*`) and capabilities are defined at the application boundary.
+6. Boundaries are reinforced: no event streaming infrastructure, no Kafka, no microservices, event runtime remains `NOT IMPLEMENTED`, and database persistence strategy remains undecided pending Engineering Discovery.
+7. Phase 2 implementation is **NOT OPEN**. W3 Engineering Discovery is the mandatory next step.
 
 ---
 
-# 98. No Predetermined “Next Architecture Document”
+# 98. Architecture Status & Implementation Horizon
 
-There is currently **no mandatory next architecture document solely for completeness**.
-
-The previous v2.0 statement that:
+With W2 architecture reconciliation complete, the canonical architecture foundation for Founder Control is fully bounded and reconciled.
 
 ```text
-domain-map-capability-ownership.md
+Product Package (D0-D4): APPROVED_BY_OWNER
+Canonical Architecture (v1.1): RECONCILED (W2 COMPLETE)
+Implementation Phase: NONE (Phase 1 closed, Phase 2 NOT OPEN)
+Next Required Gate: W3 Engineering Discovery
 ```
 
-was the next architecture document to persist is obsolete because that document is now present and ACTIVE.
+No active database mutation, schema change, or code implementation may proceed until Engineering Discovery produces an approved Implementation Contract.
 
 ---
 
@@ -2080,7 +2104,7 @@ Dedicated specifications and implementation evidence identify areas that may sti
 ```text
 authoritative transition enforcement in some lifecycles
 workflow integration between existing domains
-production assignment/vendor flow hardening
+Operational Exception physical persistence strategy (pending Engineering Discovery)
 full business-event runtime maturity
 transactional-outbox runtime maturity
 service-principal implementation
@@ -2489,4 +2513,4 @@ And:
 
 And finally:
 
-> **Now that the six core architecture specifications are persisted, the default next move is not “write another architecture document.” The default next move is to close real implementation gaps—unless evidence reveals a genuinely new semantic ownership problem.**
+> **Now that the six core architecture specifications are reconciled, the mandatory next step is W3 Engineering Discovery to evaluate physical persistence strategies—Phase 2 implementation remains strictly NOT OPEN.**

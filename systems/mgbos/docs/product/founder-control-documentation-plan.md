@@ -1,18 +1,18 @@
 ---
 canonical_id: mgbos.product.founder-control.documentation-plan
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 scope: mgbos-founder-control
 document_class: product-documentation-plan
-effective_from: 2026-10-05
-last_reviewed: 2026-10-05
+effective_from: 2026-10-06
+last_reviewed: 2026-10-06
 review_cadence: per-material-product-or-phase-change
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  sha: f05bd82f9be6aa038799931ede19059481aed8d1
+  sha: 63dec5a78462e3eff994ebdd0c15e31676b12bee
 
 authoritative_for:
   - founder-control documentation package composition
@@ -54,7 +54,7 @@ supersedes: null
 implementation_status: DOCUMENTATION_PROGRAM_ACTIVE
 ---
 
-# MGBOS Founder Control Documentation Plan v1.0
+# MGBOS Founder Control Documentation Plan v1.1
 
 ## 1. Purpose
 
@@ -127,10 +127,10 @@ branch:
 main
 
 revision:
-f05bd82f9be6aa038799931ede19059481aed8d1
+63dec5a78462e3eff994ebdd0c15e31676b12bee
 ```
 
-_(Historical initial activation baseline was `ce30a1440eb6c4038d732e80ecae4446d311e0bd`)._
+_(Historical product package activation baselines were `f05bd82f9be6aa038799931ede19059481aed8d1` and `ce30a1440eb6c4038d732e80ecae4446d311e0bd`)._
 
 Baseline adalah reference point untuk penyusunan dokumentasi.
 
@@ -2246,39 +2246,61 @@ operational-readiness refresh
 
 ## W1 — Product Definition
 
+Status:
+
+```text
+COMPLETE (APPROVED BY OWNER)
+```
+
 Includes:
 
 ```text
-D1 Founder Control PRD
-
-D2 Founder Attention Experience
-
-D3 Operational Exception
-
-D4 Real Operational Pilot
+D1 Founder Control PRD (PRD_MATURE)
+D2 Founder Attention Experience (SPEC_MATURE)
+D3 Operational Exception (CANONICAL_ARCHITECTURE_RECONCILED)
+D4 Real Operational Pilot (PILOT_PLAN_MATURE)
 ```
+
+Owner Product Approval formally recorded under PR #38 and PR #39.
 
 ---
 
 ## W2 — Architecture Reconciliation
 
-Includes only architecture changes justified by approved product requirements.
+Status:
+
+```text
+COMPLETE (VECP-003H)
+```
+
+Includes canonical architecture reconciliation across all 6 core MGBOS architecture specifications:
+
+- `canonical-data-model.md` (v1.1)
+- `business-state-machines.md` (v1.1)
+- `business-invariants.md` (v1.1)
+- `command-event-model.md` (v1.1)
+- `permission-authorization-model.md` (v1.1)
+- `domain-map-capability-ownership.md` (v1.1)
+
+Operational Exception, Founder Attention, and Founder Home formally established as `CANONICAL_TARGET`.
 
 ---
 
 ## W3 — Engineering Discovery
 
+Status:
+
+```text
+NEXT (ACTIVE FOCUS)
+```
+
 Includes:
 
 ```text
 current implementation audit
-
-technical design
-
+technical design (schema & persistence options)
 risk classification
-
 verification design
-
 implementation sequencing
 ```
 
@@ -2286,7 +2308,13 @@ implementation sequencing
 
 ## W4 — Implementation
 
-Includes bounded work packages executed through Vibe Engineering governance.
+Status:
+
+```text
+NOT OPEN (PHASE 2 BLOCKED PENDING W3 DISCOVERY)
+```
+
+Includes bounded work packages executed through Vibe Engineering governance once W3 produces an approved Implementation Contract.
 
 ---
 
