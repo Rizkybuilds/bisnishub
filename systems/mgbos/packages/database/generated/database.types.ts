@@ -1609,6 +1609,13 @@ export type Database = {
             foreignKeyName: "operational_exceptions_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "order_financial_summaries"
+            referencedColumns: ["order_id"]
+          },
+          {
+            foreignKeyName: "operational_exceptions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -2233,6 +2240,8 @@ export type Database = {
           id: string
           notes: string | null
           production_job_id: string
+          request_id: string | null
+          request_payload: Json | null
           status: string
           vendor_id: string | null
           vendor_name: string | null
@@ -2247,6 +2256,8 @@ export type Database = {
           id?: string
           notes?: string | null
           production_job_id: string
+          request_id?: string | null
+          request_payload?: Json | null
           status?: string
           vendor_id?: string | null
           vendor_name?: string | null
@@ -2261,6 +2272,8 @@ export type Database = {
           id?: string
           notes?: string | null
           production_job_id?: string
+          request_id?: string | null
+          request_payload?: Json | null
           status?: string
           vendor_id?: string | null
           vendor_name?: string | null
@@ -3835,6 +3848,14 @@ export type Database = {
       }
     }
     Functions: {
+      accept_production_assignment: {
+        Args: {
+          p_actor_id: string
+          p_assignment_id: string
+          p_organization_id: string
+        }
+        Returns: Json
+      }
       acknowledge_operational_exception: {
         Args: {
           p_actor_id: string
@@ -3888,15 +3909,29 @@ export type Database = {
           p_job_id: string
           p_notes?: string
           p_organization_id: string
+          p_vendor_id?: string
           p_vendor_name?: string
         }
         Returns: string
+      }
+      can_read_operational_exceptions: {
+        Args: { p_organization_id: string }
+        Returns: boolean
+      }
+      cancel_production_assignment: {
+        Args: {
+          p_actor_id: string
+          p_assignment_id: string
+          p_organization_id: string
+          p_reason?: string
+        }
+        Returns: Json
       }
       cancel_shipment: {
         Args: {
           p_actor_id: string
           p_organization_id: string
-          p_reason: string
+          p_reason?: string
           p_shipment_id: string
         }
         Returns: Json
@@ -4108,6 +4143,15 @@ export type Database = {
         }
         Returns: string
       }
+      decline_production_assignment: {
+        Args: {
+          p_actor_id: string
+          p_assignment_id: string
+          p_organization_id: string
+          p_reason?: string
+        }
+        Returns: Json
+      }
       dismiss_operational_exception: {
         Args: {
           p_actor_id: string
@@ -4229,10 +4273,11 @@ export type Database = {
         Returns: Json
       }
       operational_exception_actor_role: {
-        Args: {
-          p_actor_id: string
-          p_organization_id: string
-        }
+        Args: { p_actor_id: string; p_organization_id: string }
+        Returns: string
+      }
+      order_actor_role: {
+        Args: { p_actor_id: string; p_organization_id: string }
         Returns: string
       }
       pay_vendor_bill: {
@@ -4276,18 +4321,6 @@ export type Database = {
         Args: { p_actor: string; p_org: string }
         Returns: string
       }
-      receive_purchase_order_items: {
-        Args: {
-          p_actor_id: string
-          p_items: Json
-          p_location_code?: string
-          p_notes?: string
-          p_organization_id: string
-          p_purchase_order_id: string
-          p_vendor_delivery_note?: string
-        }
-        Returns: Json
-      }
       reassign_operational_exception: {
         Args: {
           p_actor_id: string
@@ -4298,6 +4331,51 @@ export type Database = {
           p_organization_id: string
           p_reason: string
           p_request_id: string
+        }
+        Returns: Json
+      }
+      reassign_production_job:
+        | {
+            Args: {
+              p_actor_id: string
+              p_assigned_brand_id?: string
+              p_assigned_cost?: number
+              p_executor_type: string
+              p_job_id: string
+              p_notes?: string
+              p_organization_id: string
+              p_reason?: string
+              p_vendor_id?: string
+              p_vendor_name?: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_actor_id: string
+              p_assigned_brand_id?: string
+              p_assigned_cost?: number
+              p_executor_type: string
+              p_expected_assignment_id?: string
+              p_job_id: string
+              p_notes?: string
+              p_organization_id: string
+              p_reason?: string
+              p_request_id?: string
+              p_vendor_id?: string
+              p_vendor_name?: string
+            }
+            Returns: string
+          }
+      receive_purchase_order_items: {
+        Args: {
+          p_actor_id: string
+          p_items: Json
+          p_location_code?: string
+          p_notes?: string
+          p_organization_id: string
+          p_purchase_order_id: string
+          p_vendor_delivery_note?: string
         }
         Returns: Json
       }
@@ -4371,16 +4449,6 @@ export type Database = {
         }
         Returns: Json
       }
-      reserve_inventory_for_order: {
-        Args: {
-          p_actor_id: string
-          p_items: Json
-          p_notes?: string
-          p_order_id: string
-          p_organization_id: string
-        }
-        Returns: Json
-      }
       reopen_operational_exception: {
         Args: {
           p_actor_id: string
@@ -4390,6 +4458,16 @@ export type Database = {
           p_reason: string
           p_request_id: string
           p_supporting_evidence?: Json
+        }
+        Returns: Json
+      }
+      reserve_inventory_for_order: {
+        Args: {
+          p_actor_id: string
+          p_items: Json
+          p_notes?: string
+          p_order_id: string
+          p_organization_id: string
         }
         Returns: Json
       }
@@ -4503,6 +4581,16 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      transition_order_status: {
+        Args: {
+          p_actor_id: string
+          p_order_id: string
+          p_organization_id: string
+          p_reason?: string
+          p_target_status: string
+        }
+        Returns: Json
       }
       transition_production_job_status: {
         Args: {
