@@ -70,11 +70,11 @@ select throws_matching(
   $q$ insert into app.operational_exceptions (
     organization_id, exception_type, exception_category, severity,
     status, source_kind, primary_resource_type, primary_resource_id,
-    responsible_role_code, summary, business_impact, created_by_user_id
+    responsible_role_code, summary, business_impact
   ) values (
     '00000000-0000-4000-8000-000000000001'::uuid, 'production.deadline_breached', 'PRODUCTION', 'HIGH',
     'OPEN', 'HUMAN_REPORT', 'PRODUCTION_JOB', '44444444-0000-4000-8000-000000000002'::uuid,
-    'OPERATIONS', 'Direct bypass', 'Direct bypass impact', '00000000-0000-0000-0000-000000000099'::uuid
+    'OPERATIONS', 'Direct bypass', 'Direct bypass impact'
   ) $q$,
   'permission denied',
   'Direct INSERT on app.operational_exceptions by service_role is denied'
@@ -86,11 +86,11 @@ select throws_matching(
   $q$ insert into app.operational_exceptions (
     organization_id, exception_type, exception_category, severity,
     status, source_kind, primary_resource_type, primary_resource_id,
-    responsible_role_code, summary, business_impact, created_by_user_id
+    responsible_role_code, summary, business_impact
   ) values (
     '00000000-0000-4000-8000-000000000001'::uuid, 'production.deadline_breached', 'PRODUCTION', 'HIGH',
     'OPEN', 'HUMAN_REPORT', 'PRODUCTION_JOB', '44444444-0000-4000-8000-000000000002'::uuid,
-    'OPERATIONS', 'Direct bypass', 'Direct bypass impact', '00000000-0000-0000-0000-000000000099'::uuid
+    'OPERATIONS', 'Direct bypass', 'Direct bypass impact'
   ) $q$,
   'permission denied',
   'Direct INSERT on app.operational_exceptions by authenticated is denied'

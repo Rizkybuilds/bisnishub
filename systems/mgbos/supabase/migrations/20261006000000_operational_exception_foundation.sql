@@ -319,6 +319,7 @@ create policy "Allow owners and admins to view operational_exception_audit"
     )
   );
 
+grant usage on schema app to authenticated;
 grant select on app.operational_exceptions to authenticated, service_role;
 grant select on app.operational_exception_audit to authenticated, service_role;
 
