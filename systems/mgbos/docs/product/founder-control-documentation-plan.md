@@ -2725,9 +2725,20 @@ Each must be evaluated against current repository truth.
 
 ---
 
-# 77. W0 Exit Gate
+# 77. Historical W0 Exit Gate
 
-W0 is complete when a fresh machine session cannot reasonably misinterpret:
+This section records the historical state at the conclusion of W0.
+
+Current program state is governed by Section 74–76 above and the current-state sections of the Product and Implementation indexes:
+
+```text
+W3 = ANALYSIS COMPLETE
+P2-A TECHNICAL PLAN = ACTIVE
+IMPLEMENTATION CONTRACT = PLANNED
+NO RUNTIME IMPLEMENTATION AUTHORIZED
+```
+
+Historically, W0 was complete when a fresh machine session could not reasonably misinterpret:
 
 ```text
 Phase 1

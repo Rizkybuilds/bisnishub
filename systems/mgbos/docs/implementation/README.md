@@ -1801,25 +1801,51 @@ Exact identifiers depend on the applicable source documents.
 
 # 61. Current Founder Control Gate
 
-Founder Control is currently a product/documentation program.
-
-Before it becomes implementation work, at minimum resolve:
+Founder Control planning prerequisites have advanced to the following current state:
 
 ```text
-parent product requirements
+PRODUCT PACKAGE
+=
+APPROVED
 
-Founder Attention experience
+W2 ARCHITECTURE RECONCILIATION
+=
+COMPLETE
 
-Operational Exception semantics
+W3 CURRENT-SOURCE AUDIT
+=
+COMPLETE
 
-real pilot boundaries
+P2-A TECHNICAL PLAN
+=
+ACTIVE
 
-architecture impact
+P2-A IMPLEMENTATION CONTRACT
+=
+PLANNED
 
-engineering current-state audit
+WP-P2A-01
+=
+NOT CREATED
+
+IMPLEMENTATION AUTHORIZATION
+=
+NONE
 ```
 
-Only after that should Phase 2 implementation documentation be activated.
+The current remaining gate before any runtime implementation begins is:
+
+```text
+activate governed P2-A Implementation Contract
+        ↓
+create bounded WP-P2A-01
+        ↓
+Owner/governed implementation authorization
+        ↓
+Builder handoff
+```
+
+Phase 2 execution remains strictly **NOT OPEN**.
 
 ---
 
@@ -2379,14 +2405,14 @@ Current repository program is no longer an open Operating Spine implementation p
 The next priority is:
 
 ```text
-DEFINE
+CONTRACT
 +
-VALIDATE
+BOUND WORK PACKAGE
 +
-BOUND
+VERIFY AUTHORIZATION
 ```
 
-Founder Control as a product problem before another implementation phase begins.
+for the already-defined P2-A Operational Exception Foundation before any runtime implementation begins.
 
 ---
 

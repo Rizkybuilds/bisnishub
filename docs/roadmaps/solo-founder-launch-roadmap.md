@@ -1391,7 +1391,7 @@ For MGBOS implementation during this roadmap, use the following current compatib
 | Project                | Order + Requirement + Production Job(s)                                                                                   |
 | Partner for production | Vendor                                                                                                                    |
 | Work Order             | Governed SPK/Work Order artifact                                                                                          |
-| Exception              | Operational Exception = CANONICAL_TARGET first-class MGBOS concept; physical implementation pending Engineering Discovery |
+| Exception              | Operational Exception = CANONICAL_TARGET; P2-A physical design defined by W3; runtime not implemented                     |
 | Customer Case          | Separate proposed durable customer-issue concept                                                                          |
 
 ---
