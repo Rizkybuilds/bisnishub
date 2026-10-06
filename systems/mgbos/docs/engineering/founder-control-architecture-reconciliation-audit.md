@@ -9,8 +9,8 @@ scope: mgbos-founder-control-architecture-reconciliation
 document_class: evidence
 reviewed_repository: Rizkybuilds/bisnishub
 reviewed_base: 63dec5a78462e3eff994ebdd0c15e31676b12bee
-audited_semantic_candidate: b4f31b1efe2659a0eaad79b4c7b42ef668b1f491
-audit_timestamp_utc: '2026-10-06T04:20:00Z'
+audited_semantic_candidate: 7cd39221a92313dad17e39ade708ba4bb37b5355
+audit_timestamp_utc: '2026-10-06T04:45:00Z'
 effective_from: 2026-10-06
 ---
 
@@ -37,7 +37,7 @@ VECP-003H — Founder Control Canonical Architecture Reconciliation
 
 RECONCILIATION RESULT
 =
-SEMANTIC CANDIDATE PASS — BUILDER SELF-AUDIT (b4f31b1efe2659a0eaad79b4c7b42ef668b1f491)
+SEMANTIC CANDIDATE PASS — BUILDER SELF-AUDIT (7cd39221a92313dad17e39ade708ba4bb37b5355)
 PENDING INDEPENDENT HEAD ENGINEERING EXACT PR AUDIT
 
 CANONICAL ARCHITECTURE (6 SPECIFICATIONS)
@@ -102,9 +102,9 @@ BASE REVISION
 =
 63dec5a78462e3eff994ebdd0c15e31676b12bee
 
-AUDITED SEMANTIC CANDIDATE HEAD (REVISION A2)
+AUDITED SEMANTIC CANDIDATE HEAD (REVISION A3)
 =
-b4f31b1efe2659a0eaad79b4c7b42ef668b1f491
+7cd39221a92313dad17e39ade708ba4bb37b5355
 
 AUDIT TYPE
 =
@@ -120,7 +120,7 @@ R1 (governance/canonical architecture reconciliation without runtime or database
 
 UTC TIMESTAMP
 =
-2026-10-06T03:37:00Z
+2026-10-06T04:45:00Z
 ```
 
 ---
@@ -143,7 +143,7 @@ The semantic candidate diff modifies exactly 14 files across two main groupings:
    - Added `CANONICAL_TARGET` maturity classification.
    - Reconciled Phase 1 Operating Spine closures (Order lifecycle, assignment, QC gates).
    - Added Section 116 (`Operational Exception State Machine`): terminal and non-terminal states (`OPEN`, `ACKNOWLEDGED`, `RESOLVED`, `DISMISSED`), governed `REOPEN`, terminal immutability, and state-machine invariants. Sesuai D3: **Accepted Risk Is Resolution, Not Dismissal**; resolusi berbasis accepted risk adalah hasil resolusi sah (`RESOLVED`) dengan otorisasi Owner. Status `DISMISSED` dibatasi secara mutlak untuk anomali tidak valid/duplikat/tidak dapat diaplikasikan/salah input.
-   - Added Section 117 (`Founder Attention Projection Semantics`): read projection semantics, Attention Kinds (`DECISION`, `ACTION`, `WAITING`, `WATCH`, `DATA_GAP`), priority, urgency, and flow impact. Menegaskan tidak ada state machine transaksional mandiri pada proyeksi perhatian (tidak ada lifecycle aktif/tunda/tolak/selesai tersendiri).
+   - Added Section 117 (`Founder Attention Projection Semantics`): read projection semantics, Attention Kinds (`DECISION`, `ACTION`, `WAITING`, `WATCH`, `DATA_GAP`), canonical Priority vocabulary (`INTERRUPT`, `TODAY`, `QUEUE`, `WATCH`), Urgency vocabulary (`OVERDUE`, `DUE_TODAY`, `DUE_SOON`, `NO_IMMEDIATE_DEADLINE`, `UNKNOWN`), priority ordering (`INTERRUPT → TODAY → QUEUE → WATCH`), priority/kind distinction, and flow impact. Menegaskan tidak ada state machine transaksional mandiri pada proyeksi perhatian (tidak ada lifecycle aktif/tunda/tolak/selesai tersendiri).
 
 3. `systems/mgbos/docs/architecture/business-invariants.md`
    - Version: 1.0 → 1.1
@@ -232,7 +232,7 @@ The semantic candidate diff modifies exactly 14 files across two main groupings:
 | :------------------------- | :----------------------------------------------------------------------- | :-------------------------------------------------------- | :---------------------------- |
 | **Branch & Isolation**     | Isolated branch `docs/mgbos-founder-control-architecture-reconciliation` | Verified clean branch and worktree                        | **PASS**                      |
 | **Base Revision**          | `63dec5a78462e3eff994ebdd0c15e31676b12bee`                               | Git base equals expected commit SHA                       | **PASS**                      |
-| **Semantic Candidate**     | 14 files under Revision A; 9 files remediated under Revision A2          | SHA `b4f31b1efe2659a0eaad79b4c7b42ef668b1f491`            | **PASS (BUILDER SELF-AUDIT)** |
+| **Semantic Candidate**     | 14 files under Revision A; remediated under Revision A2/A3               | SHA `7cd39221a92313dad17e39ade708ba4bb37b5355`            | **PASS (BUILDER SELF-AUDIT)** |
 | **CANONICAL_TARGET**       | Explicitly defined in data model, state machines, and domain map         | Added without implying physical schema                    | **PASS**                      |
 | **Invariant Preservation** | `INV-001` through `INV-098` preserved 100%                               | Zero numbering modifications or collisions                | **PASS**                      |
 | **New Invariants**         | `INV-099` through `INV-147` (49 invariants) added                        | Defined and registered in registry                        | **PASS**                      |
@@ -265,7 +265,7 @@ The semantic candidate diff modifies exactly 14 files across two main groupings:
 
 ## 6. Next Steps
 
-1. Commit and push Revision B2 (Report-Only Delta) containing this updated audit evidence document.
+1. Commit and push Revision B3 (Report-Only Delta) containing this updated audit evidence document.
 2. Update PR #40 body description with exact revision metadata.
 3. Submit PR #40 for independent Head Engineering Exact PR Audit.
 4. Upon approval and merge by Owner, proceed to **Workstream W3 — Engineering Discovery**.
