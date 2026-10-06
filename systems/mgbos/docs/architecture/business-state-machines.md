@@ -2825,9 +2825,21 @@ Proyeksi perhatian mengklasifikasikan item perhatian berdasarkan:
    - `WAITING`: Menunggu pihak eksternal/internal dengan batas waktu yang dipantau.
    - `WATCH`: Memantau risiko atau anomali yang belum memerlukan intervensi langsung.
    - `DATA_GAP`: Informasi operasional kritis belum lengkap atau inkonsisten.
-2. **Priority**: Urutan prioritas penanganan perhatian founder (`P0`, `P1`, `P2`, `P3`).
-3. **Urgency**: Tingkat kedesakan waktu operasional.
-4. **Founder Decision Required**: Flag eksplisit apakah keputusan founder secara aktif memblokir alur operasional.
+2. **Priority (D2 Authoritative Taxonomy)**: Urutan prioritas penanganan perhatian founder:
+   - `INTERRUPT`: Kondisi mendesak dan berdampak material di mana penundaan perhatian menimbulkan risiko bisnis yang tidak dapat diterima.
+   - `TODAY`: Memerlukan perhatian founder pada siklus hari kerja saat ini.
+   - `QUEUE`: Pekerjaan perhatian normal yang dapat ditangani sesuai antrean.
+   - `WATCH`: Pemantauan risiko pasif yang belum memerlukan intervensi langsung.
+
+   _Urutan Prioritas Default_: `INTERRUPT → TODAY → QUEUE → WATCH`.
+
+   _Pembedaan Dimensi Kanonikal_:
+   - Dimensi **Attention Kind `WATCH`** terpisah secara ortogonal dari **Attention Priority `WATCH`**, meskipun keduanya menggunakan nama literal yang sama.
+   - **`Priority ≠ Exception Severity`**: Severity exception operasional (misal `CRITICAL`) tidak otomatis menentukan `Priority = INTERRUPT`.
+   - **`Priority ≠ Urgency`**: Prioritas penanganan terpisah dari relasi waktu.
+
+3. **Urgency (D2 Authoritative Taxonomy)**: Relasi waktu operasional terhadap tenggat bisnis (`OVERDUE`, `DUE_TODAY`, `DUE_SOON`, `NO_IMMEDIATE_DEADLINE`, `UNKNOWN` sesuai semantik kanonikal D2). Urgency tidak berdiri sebagai pengganti prioritas atau keparahan exception.
+4. **Founder Decision Required**: Flag eksplisit apakah keputusan founder secara aktif memblokir alur operasional. Dimensi ini dievaluasi independen dari prioritas dan jenis perhatian.
 5. **Flow Impact**: Dampak terhadap kelancaran arus operasional dan komitmen pelanggan.
 
 ## Aturan Proyeksi & Batasan Kanonikal
