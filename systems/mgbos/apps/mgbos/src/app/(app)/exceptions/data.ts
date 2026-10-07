@@ -3,64 +3,15 @@ import { serverEnvironment } from '@/lib/env.server';
 import { publicEnvironment } from '@/lib/env.client';
 import { requireAuth } from '@/lib/session.server';
 import { assertPermission } from '@mgbos/auth';
+import type { Database } from '@mgbos/database';
 
-export interface OperationalExceptionRow {
-  id: string;
-  organization_id: string;
-  exception_number: string;
-  category: string;
-  exception_type: string;
-  status: string;
-  severity: string;
-  source_kind: string;
-  primary_resource_type: string;
-  primary_resource_id: string;
-  brand_id: string | null;
-  order_id: string | null;
-  responsible_role_code: string;
-  responsible_user_id: string | null;
-  summary: string;
-  business_impact: string;
-  observation: string | null;
-  root_cause: string | null;
-  opening_evidence: Record<string, unknown>;
-  other_category_reason: string | null;
-  resolution_type: string | null;
-  resolution_summary: string | null;
-  superseded_by_exception_id: string | null;
-  dismissal_reason: string | null;
-  reason_summary: string | null;
-  duplicate_of_exception_id: string | null;
-  closure_evidence: Record<string, unknown> | null;
-  detected_at: string | null;
-  opened_at: string;
-  closed_at: string | null;
-  current_revision: number;
-  dedup_fingerprint: string;
-  created_at: string;
-  updated_at: string;
-}
+type AppTables = Database['app']['Tables'];
 
-export interface OperationalExceptionAuditRow {
-  id: string;
-  organization_id: string;
-  operational_exception_id: string;
-  actor_id: string;
-  action: string;
-  from_status: string | null;
-  to_status: string | null;
-  from_severity: string | null;
-  to_severity: string | null;
-  from_responsible_role_code: string | null;
-  to_responsible_role_code: string | null;
-  from_responsible_user_id: string | null;
-  to_responsible_user_id: string | null;
-  request_id: string;
-  request_payload: Record<string, unknown>;
-  result_snapshot: Record<string, unknown>;
-  details: Record<string, unknown>;
-  created_at: string;
-}
+export type OperationalExceptionRow =
+  AppTables['operational_exceptions']['Row'];
+
+export type OperationalExceptionAuditRow =
+  AppTables['operational_exception_audit']['Row'];
 
 /**
  * Creates authenticated server-only context for operational exception operations.
@@ -90,9 +41,10 @@ export async function exceptionsContext() {
 }
 
 /**
- * Generic row fetcher for PostgREST endpoints within exceptions context.
+ * Internal scoped row fetcher for PostgREST endpoints within exceptions context.
+ * Kept private to enforce that all external calls go through Organization-filtered helpers.
  */
-export async function readRows<T>(
+async function readRows<T>(
   path: string,
   ctx: Awaited<ReturnType<typeof exceptionsContext>>,
 ): Promise<T[]> {

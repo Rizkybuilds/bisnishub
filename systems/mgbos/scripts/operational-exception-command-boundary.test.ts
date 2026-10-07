@@ -5,14 +5,30 @@ const mocks = vi.hoisted(() => ({
   invalidate: vi.fn(),
 }));
 
-vi.mock('../apps/mgbos/src/app/(app)/exceptions/data', () => ({
-  exceptionsContext: mocks.context,
-}));
+vi.mock(
+  '../apps/mgbos/src/app/(app)/exceptions/data',
+  async (importOriginal) => {
+    const actual =
+      await importOriginal<
+        typeof import('../apps/mgbos/src/app/(app)/exceptions/data')
+      >();
+    return {
+      ...actual,
+      exceptionsContext: mocks.context,
+    };
+  },
+);
 
 vi.mock('next/cache', () => ({
   revalidatePath: mocks.invalidate,
 }));
 
+import * as dataModule from '../apps/mgbos/src/app/(app)/exceptions/data';
+import {
+  listOperationalExceptions,
+  getOperationalException,
+  getOperationalExceptionHistory,
+} from '../apps/mgbos/src/app/(app)/exceptions/data';
 import {
   openOperationalExceptionAction,
   acknowledgeOperationalExceptionAction,
@@ -22,6 +38,7 @@ import {
   resolveOperationalExceptionAction,
   dismissOperationalExceptionAction,
   reopenOperationalExceptionAction,
+  classifyDatabaseError,
 } from '../apps/mgbos/src/app/(app)/exceptions/actions';
 
 const VALID_UUID_EX = '00000000-0000-4000-8000-000000000001';
@@ -110,6 +127,20 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
       expect(mocks.invalidate).toHaveBeenCalledWith(
         `/exceptions/${VALID_UUID_EX}`,
       );
+    });
+
+    it('classifies read permission denial from exceptionsContext as UNAUTHORIZED without calling fetch', async () => {
+      mocks.context.mockRejectedValue(
+        new Error(
+          "Akses ditolak: peran 'SALES' tidak memiliki izin 'operational_exceptions:read'",
+        ),
+      );
+
+      const res = await openOperationalExceptionAction(validOpenInput);
+
+      expect(res.success).toBe(false);
+      expect(res.error?.code).toBe('UNAUTHORIZED');
+      expect(fetch).not.toHaveBeenCalled();
     });
 
     it('rejects invalid input before fetch is called', async () => {
@@ -534,6 +565,144 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
 
       expect(res.success).toBe(false);
       expect(res.error?.code).toBe('BUSINESS_DUPLICATE');
+    });
+  });
+
+  describe('Exact WP01 Database Error Classification Regression', () => {
+    it('classifies exact WP01 status errors as INVALID_STATE', () => {
+      expect(
+        classifyDatabaseError({
+          message:
+            'Cannot acknowledge exception with status RESOLVED: only OPEN exceptions can be acknowledged',
+        }).code,
+      ).toBe('INVALID_STATE');
+
+      expect(
+        classifyDatabaseError({
+          message:
+            'Cannot assign exception with status ACKNOWLEDGED: only OPEN exceptions can be assigned',
+        }).code,
+      ).toBe('INVALID_STATE');
+
+      expect(
+        classifyDatabaseError({
+          message:
+            'Exception already has an assigned principal; use reassign instead',
+        }).code,
+      ).toBe('INVALID_STATE');
+
+      expect(
+        classifyDatabaseError({
+          message: 'New severity must be different from current severity',
+        }).code,
+      ).toBe('INVALID_STATE');
+    });
+
+    it('classifies exact WP01 membership errors as UNAUTHORIZED', () => {
+      expect(
+        classifyDatabaseError({
+          message: 'Active organization membership required',
+        }).code,
+      ).toBe('UNAUTHORIZED');
+    });
+
+    it('classifies exact WP01 cross-org resource errors as CROSS_ORG', () => {
+      expect(
+        classifyDatabaseError({
+          message: `Primary resource PRODUCTION_ASSIGNMENT ${VALID_UUID_RES} does not belong to organization`,
+        }).code,
+      ).toBe('CROSS_ORG');
+    });
+  });
+
+  describe('Read Boundary Verification', () => {
+    it('listOperationalExceptions applies explicit organization_id filter', async () => {
+      const mockRows = [{ id: VALID_UUID_EX }];
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(JSON.stringify(mockRows), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        ),
+      );
+
+      const ctx = await mocks.context();
+      const rows = await listOperationalExceptions(ctx);
+      expect(rows).toEqual(mockRows);
+
+      const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      expect(url).toContain(
+        `organization_id=eq.${encodeURIComponent(trustedSession.organization.id)}`,
+      );
+      expect(url).toContain('/rest/v1/operational_exceptions?');
+    });
+
+    it('getOperationalException applies id filter and explicit organization_id filter', async () => {
+      const mockRow = { id: VALID_UUID_EX };
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(JSON.stringify([mockRow]), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        ),
+      );
+
+      const ctx = await mocks.context();
+      const row = await getOperationalException(VALID_UUID_EX, ctx);
+      expect(row).toEqual(mockRow);
+
+      const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      expect(url).toContain(`id=eq.${encodeURIComponent(VALID_UUID_EX)}`);
+      expect(url).toContain(
+        `organization_id=eq.${encodeURIComponent(trustedSession.organization.id)}`,
+      );
+    });
+
+    it('getOperationalExceptionHistory applies exception_id filter, organization_id filter, and enforces history_read permission', async () => {
+      const mockAuditRows = [{ id: 'audit-1' }];
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(JSON.stringify(mockAuditRows), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        ),
+      );
+
+      // Authorized session (OWNER has operational_exceptions:history_read)
+      const ctx = await mocks.context();
+      const rows = await getOperationalExceptionHistory(VALID_UUID_EX, ctx);
+      expect(rows).toEqual(mockAuditRows);
+
+      const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      expect(url).toContain(
+        `operational_exception_id=eq.${encodeURIComponent(VALID_UUID_EX)}`,
+      );
+      expect(url).toContain(
+        `organization_id=eq.${encodeURIComponent(trustedSession.organization.id)}`,
+      );
+
+      // Unauthorized session without history_read permission (e.g. OPERATIONS)
+      const unauthorizedCtx = {
+        ...ctx,
+        session: {
+          ...trustedSession,
+          role: { code: 'OPERATIONS' },
+        },
+      };
+
+      await expect(
+        getOperationalExceptionHistory(VALID_UUID_EX, unauthorizedCtx),
+      ).rejects.toThrow(/operational_exceptions:history_read/);
+    });
+
+    it('does not export arbitrary service-role readRows primitive', () => {
+      expect('readRows' in dataModule).toBe(false);
     });
   });
 

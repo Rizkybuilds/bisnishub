@@ -61,7 +61,9 @@ export function classifyDatabaseError(err: unknown): {
     lower.includes('not authorized') ||
     lower.includes('requires owner authority') ||
     lower.includes('reserved for active owner') ||
-    lower.includes('must be an active owner or admin')
+    lower.includes('must be an active owner or admin') ||
+    lower.includes('active organization membership required') ||
+    lower.includes('akses ditolak')
   ) {
     return {
       code: 'UNAUTHORIZED',
@@ -71,7 +73,11 @@ export function classifyDatabaseError(err: unknown): {
   }
 
   // 2. Cross-Org
-  if (lower.includes('cross-organization') || lower.includes('cross-org')) {
+  if (
+    lower.includes('cross-organization') ||
+    lower.includes('cross-org') ||
+    lower.includes('does not belong to organization')
+  ) {
     return {
       code: 'CROSS_ORG',
       message: 'Akses atau mutasi lintas organisasi ditolak.',
@@ -130,11 +136,17 @@ export function classifyDatabaseError(err: unknown): {
 
   // 7. Invalid State
   if (
+    lower.includes('cannot acknowledge exception with status') ||
+    lower.includes('cannot assign exception with status') ||
     lower.includes('cannot reassign exception with status') ||
     lower.includes('cannot change severity of exception with status') ||
     lower.includes('cannot resolve exception with status') ||
     lower.includes('cannot dismiss exception with status') ||
     lower.includes('cannot reopen exception with status') ||
+    lower.includes(
+      'exception already has an assigned principal; use reassign instead',
+    ) ||
+    lower.includes('new severity must be different from current severity') ||
     lower.includes('invalid state transition') ||
     lower.includes('must be in active status')
   ) {
@@ -148,17 +160,38 @@ export function classifyDatabaseError(err: unknown): {
   // 8. Invalid Resource
   if (
     lower.includes('primary_resource') ||
+    lower.includes('primary resource') ||
     lower.includes('superseding exception') ||
     lower.includes('duplicate target exception') ||
     lower.includes('cannot supersede itself') ||
     lower.includes('cannot be duplicate of itself') ||
     lower.includes('requires primary_resource_type') ||
+    lower.includes('responsible principal must be an active owner or admin') ||
     lower.includes('foreign key') ||
     lower.includes('violates foreign key constraint')
   ) {
     return {
       code: 'INVALID_RESOURCE',
       message: 'Sumber daya yang dituju tidak valid atau tidak sesuai.',
+    };
+  }
+
+  // 9. Validation Error (known WP01 argument constraint failures)
+  if (
+    lower.includes('validation error') ||
+    lower.includes('is required') ||
+    lower.includes('invalid severity') ||
+    lower.includes('invalid source kind') ||
+    lower.includes('invalid responsible role code') ||
+    lower.includes('invalid resolution type') ||
+    lower.includes('invalid dismissal reason') ||
+    lower.includes('unknown exception type') ||
+    lower.includes('exceeds maximum allowed') ||
+    lower.includes('cannot be in the future')
+  ) {
+    return {
+      code: 'VALIDATION_ERROR',
+      message: 'Parameter data yang diberikan tidak memenuhi batasan validasi.',
     };
   }
 
