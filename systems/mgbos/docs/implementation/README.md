@@ -1,7 +1,7 @@
 ---
 canonical_id: mgbos.implementation.index
 status: ACTIVE
-version: 2.2
+version: 2.3
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -10,14 +10,14 @@ document_class: navigation-index
 effective_from: 2026-10-06
 
 implementation_status: DOCUMENTATION_INDEX
-current_implementation_phase: NONE
-current_program_state: ENGINEERING_DISCOVERY_COMPLETE_TECHNICAL_PLAN_ACTIVE_CONTRACT_PLANNED
+current_implementation_phase: PHASE_2_FOUNDER_CONTROL
+current_program_state: P2A_IN_PROGRESS_WP01_COMPLETE_NO_ACTIVE_WP
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: 88a8a28f1b64a624717a8e03038c63f4520f8978
-  reviewed_at: 2026-10-06
+  commit: aad21534c369829d408db424bb0546aad0d28bd2
+  reviewed_at: 2026-10-07
 
 authoritative_for:
   - mgbos implementation documentation navigation
@@ -42,7 +42,7 @@ not_authoritative_for:
   - deployment state
   - operational readiness certification
 
-last_reviewed: 2026-10-06
+last_reviewed: 2026-10-07
 review_cadence: per-material-implementation-phase-change
 
 depends_on:
@@ -58,10 +58,10 @@ depends_on:
   - ../../../../.agents/contracts/work-package.schema.json
 
 supersedes:
-  - mgbos.implementation.index@2.0
+  - mgbos.implementation.index@2.2
 ---
 
-# MGBOS Implementation Documentation Index v2.2
+# MGBOS Implementation Documentation Index v2.3
 
 ## 1. Purpose
 
@@ -124,12 +124,16 @@ At the reviewed repository baseline:
 ```text
 ACTIVE MGBOS IMPLEMENTATION PHASE
 =
-NONE
+PHASE_2_FOUNDER_CONTROL (BOUNDED IMPLEMENTATION IN PROGRESS)
+
+CURRENT PROGRAM STATE
+=
+P2A_IN_PROGRESS_WP01_COMPLETE_NO_ACTIVE_WP
 ```
 
-Phase 1 has already closed.
+Phase 1 has closed and its closure evidence is preserved.
 
-Phase 2 has **not** yet been opened as an implementation phase.
+Phase 2 Founder Control bounded implementation has started: the database and domain foundation for Operational Exception landed under WP-P2A-01 (PR #42, integration revision `aad21534c369829d408db424bb0546aad0d28bd2`).
 
 Current program direction is:
 
@@ -146,13 +150,20 @@ ENGINEERING DISCOVERY (W3 COMPLETE)
         ↓
 P2-A TECHNICAL PLAN (ACTIVE)
         ↓
-P2-A IMPLEMENTATION CONTRACT (PLANNED)
+IC-MGBOS-P2A-WP01 (SATISFIED / CLOSED)
         ↓
-ONLY AFTER GOVERNED AUTHORIZATION
-NEXT IMPLEMENTATION PHASE (PHASE 2 NOT OPEN)
+WP-P2A-01 (COMPLETE / MERGED / POST-MERGE VERIFIED)
+        ↓
+OPERATIONAL EXCEPTION DATABASE + DOMAIN FOUNDATION (CURRENT)
+        ↓
+P2-A OVERALL (IN PROGRESS)
+        ↓
+ACTIVE WORK PACKAGE = NONE
+        ↓
+WP-P2A-02 (NEXT CANDIDATE / NOT AUTHORIZED)
 ```
 
-Therefore this implementation index MUST NOT route a Builder toward Phase 1 backlog execution or a non-existent Phase 2 backlog.
+Important: Phase 2 bounded implementation has started does **NOT** mean all Phase 2 work is authorized. No active work package currently exists, and this index MUST NOT route a Builder to begin uncontracted implementation.
 
 ---
 
@@ -455,19 +466,21 @@ systems/mgbos/docs/implementation/
 │
 ├── README.md
 │
-└── phase-1-operating-spine/
+├── phase-1-operating-spine/
+│   │
+│   ├── README.md
+│   ├── backlog.md
+│   ├── completion-report.md
+│   ├── current-operating-spine-audit.md
+│   ├── operating-spine-plan.md
+│   └── operator-acceptance-test.md
+│
+└── phase-2-founder-control/
     │
-    ├── README.md
-    ├── backlog.md
-    ├── completion-report.md
-    ├── current-operating-spine-audit.md
-    ├── operating-spine-plan.md
-    └── operator-acceptance-test.md
+    └── README.md
 ```
 
-No other implementation-phase directory currently exists.
-
-This is intentional.
+The `phase-2-founder-control/` directory now exists following the completion and post-merge verification of WP-P2A-01 in PR #42. Historical Phase 1 files remain preserved for closed-phase provenance.
 
 ---
 
@@ -899,15 +912,15 @@ founder-control-documentation-plan.md
 
 ---
 
-# 27. Founder Control Is Not Yet An Implementation Phase
+# 27. Historical Founder Control Phase-Entry Gate
 
-The existence of:
+Before Phase 2 was opened, the existence of:
 
 ```text
 Founder Control
 ```
 
-as a product direction does not authorize:
+as a product direction did not automatically authorize:
 
 ```text
 phase-2-founder-control/
@@ -915,7 +928,7 @@ phase-2-founder-control/
 
 implementation.
 
-Before Phase 2 is opened:
+Before Phase 2 was opened, the following prerequisites applied:
 
 ```text
 PRODUCT SCOPE
@@ -937,20 +950,43 @@ ENGINEERING DISCOVERY
 must be ready
 ```
 
+Current status of this gate:
+
+```text
+CURRENT STATUS
+=
+ENTRY GATE PASSED
+
+PHASE 2 FOUNDER CONTROL
+=
+BOUNDED IMPLEMENTATION IN PROGRESS
+
+WP-P2A-01
+=
+COMPLETE (MERGED & POST-MERGE VERIFIED IN PR #42)
+```
+
 ---
 
-# 28. No Phase 2 Directory Yet
+# 28. Phase 2 Implementation Directory Creation Gate Satisfied
 
-Do NOT create:
+Historically, creating:
 
 ```text
 systems/mgbos/docs/implementation/
 phase-2-founder-control/
 ```
 
-merely to make the directory tree look complete.
+was deferred until real implementation work landed to avoid ceremonial placeholder directories.
 
-Create it only when real implementation work becomes sufficiently ready.
+With the completion and post-merge verification of WP-P2A-01 in PR #42 (integration revision `aad21534c369829d408db424bb0546aad0d28bd2`), that creation gate has been satisfied:
+
+```text
+systems/mgbos/docs/implementation/
+phase-2-founder-control/README.md
+```
+
+now exists as the authoritative entrypoint for Phase 2 bounded implementation navigation.
 
 ---
 
@@ -1820,32 +1856,32 @@ P2-A TECHNICAL PLAN
 =
 ACTIVE
 
-P2-A IMPLEMENTATION CONTRACT
+IC-MGBOS-P2A-WP01
 =
-PLANNED
+SATISFIED / CLOSED
 
 WP-P2A-01
 =
-NOT CREATED
+COMPLETE / MERGED / VERIFIED
 
-IMPLEMENTATION AUTHORIZATION
+OPERATIONAL EXCEPTION FOUNDATION
+=
+CURRENT
+
+P2-A
+=
+IN PROGRESS
+
+ACTIVE WORK PACKAGE
 =
 NONE
+
+WP-P2A-02
+=
+NEXT CANDIDATE / NOT AUTHORIZED
 ```
 
-The current remaining gate before any runtime implementation begins is:
-
-```text
-activate governed P2-A Implementation Contract
-        ↓
-create bounded WP-P2A-01
-        ↓
-Owner/governed implementation authorization
-        ↓
-Builder handoff
-```
-
-Phase 2 execution remains strictly **NOT OPEN**.
+Phase 2 Founder Control bounded implementation is in progress. WP-P2A-01 completed the database and domain foundation. The current state has no active work package; WP-P2A-02 is the next candidate requiring governed Head Engineering contract authoring before execution.
 
 ---
 
@@ -1870,34 +1906,35 @@ invariants and authorization:
 reconciled across canonical architecture specifications
 ```
 
-However, canonical architecture approval must NOT be confused with physical implementation:
+Physical implementation status:
 
 ```text
 canonical representation:
 CANONICAL_TARGET
 
-W3 physical design direction:
-independent persistent Operational Exception table
-+
-append-oriented audit/history
-+
-typed primary-resource reference
-+
-governed PostgreSQL RPC mutation
+database/domain foundation:
+CURRENT (app.operational_exceptions, app.operational_exception_audit, RPCs, @mgbos/domain)
 
-runtime implementation:
+application/runtime command boundary:
 NOT IMPLEMENTED
 
-Implementation Contract:
-PLANNED
+validation/auth integration:
+NOT IMPLEMENTED
 
-Phase 2 execution:
-NOT OPEN
+console UI:
+NOT IMPLEMENTED
+
+overall P2-A:
+IN PROGRESS
+
+active work package:
+NONE
+
+next engineering candidate:
+WP-P2A-02 (NOT AUTHORIZED)
 ```
 
-Important: W3 technical design is engineering planning authority. It does NOT turn into canonical architecture overrides without formal architectural governance, and does NOT authorize runtime implementation.
-
-Phase 2 implementation remains strictly **NOT OPEN**.
+Important: The database and domain foundation is landed, but Operational Exception is not fully implemented. Application commands, auth integration, and console UI remain future work under bounded work packages. Phase 2 execution is strictly bounded to authorized work packages.
 
 ---
 
@@ -2147,28 +2184,33 @@ implementation/
 ├── README.md
 │      current implementation documentation index
 │
-└── phase-1-operating-spine/
+├── phase-1-operating-spine/
+│      │
+│      ├── README.md
+│      │      ACTIVE closed-phase navigation
+│      │
+│      ├── operating-spine-plan.md
+│      │      archived historical plan
+│      │
+│      ├── current-operating-spine-audit.md
+│      │      archived pre-remediation audit
+│      │
+│      ├── backlog.md
+│      │      archived completed backlog
+│      │
+│      ├── operator-acceptance-test.md
+│      │      retained acceptance evidence
+│      │
+│      └── completion-report.md
+│             retained closure evidence
+│
+└── phase-2-founder-control/
        │
-       ├── README.md
-       │      ACTIVE closed-phase navigation
-       │
-       ├── operating-spine-plan.md
-       │      archived historical plan
-       │
-       ├── current-operating-spine-audit.md
-       │      archived pre-remediation audit
-       │
-       ├── backlog.md
-       │      archived completed backlog
-       │
-       ├── operator-acceptance-test.md
-       │      retained acceptance evidence
-       │
-       └── completion-report.md
-              retained closure evidence
+       └── README.md
+              ACTIVE bounded implementation navigation (WP01 verified)
 ```
 
-No active Phase 2 directory exists.
+The `phase-2-founder-control/` directory is active for bounded implementation tracking.
 
 ---
 
@@ -2208,16 +2250,27 @@ Only after applicable gates should implementation documentation become executabl
 
 # 73. Current Reading Route For Founder Control
 
-Until Phase 2 implementation exists:
+For Phase 2 Founder Control implementation navigation:
+
+```text
+phase-2-founder-control/README.md
+```
+
+is the active implementation entrypoint.
+
+For product planning and parent specifications, consult:
 
 ```text
 ../product/
 founder-control-documentation-plan.md
 ```
 
-is the documentation-program entrypoint.
+and the active technical plan:
 
-That product program must mature before this implementation directory gains a new active phase.
+```text
+../engineering/
+founder-control-p2a-operational-exception-technical-plan.md
+```
 
 ---
 
@@ -2604,15 +2657,19 @@ PRESERVED
 
 PHASE 2
 =
-NOT CREATED
+BOUNDED IMPLEMENTATION IN PROGRESS
 
-ACTIVE NEW IMPLEMENTATION PHASE
+WP-P2A-01
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED
+
+ACTIVE WORK PACKAGE
 =
 NONE
 
-CURRENT NEXT ENGINEERING GATE
+NEXT ENGINEERING CANDIDATE
 =
-P2-A IMPLEMENTATION CONTRACT ACTIVATION + WP-P2A-01 CREATION
+WP-P2A-02 / NOT AUTHORIZED
 ```
 
 ---
@@ -2628,16 +2685,24 @@ Question:
 Answer from this index:
 
 ```text
-NO CURRENT IMPLEMENTATION WORK
-IS AUTHORIZED YET.
+NO ACTIVE WORK PACKAGE IS AUTHORIZED.
+
+WP-P2A-02
+IS THE NEXT ENGINEERING CANDIDATE,
+
+BUT HEAD ENGINEERING MUST FIRST
+PREPARE / AUDIT ITS IMPLEMENTATION CONTRACT
+AND BOUNDED WORK PACKAGE.
 ```
 
 Required governed routing:
 
 ```text
-activate P2-A Implementation Contract
+author WP-P2A-02 Implementation Contract
         ↓
-create WP-P2A-01
+author bounded WP-P2A-02
+        ↓
+Owner / governed authorization
         ↓
 only then Builder handoff
 ```
@@ -2741,4 +2806,4 @@ CLOSURE
 
 At this repository state:
 
-> **W3 Engineering Discovery is analysis-complete and the P2-A Technical Plan is active. No MGBOS implementation phase is currently active. The next durable engineering gate is activation of the P2-A Implementation Contract followed by creation of WP-P2A-01. Phase 2 execution remains NOT OPEN.**
+> **Phase 2 Founder Control bounded implementation is in progress. WP-P2A-01 is complete, merged, and post-merge verified. Operational Exception database and domain foundation is CURRENT. No work package is currently active. The next engineering candidate is WP-P2A-02, which requires Head Engineering contract/work-package authorization before any implementation begins.**

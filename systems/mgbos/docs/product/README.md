@@ -1,7 +1,7 @@
 ---
 canonical_id: mgbos.product.index
 status: ACTIVE
-version: 2.2
+version: 2.3
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -9,15 +9,15 @@ scope: mgbos-product-documentation
 document_class: navigation-index
 effective_from: 2026-10-06
 
-product_program_status: ENGINEERING_DISCOVERY_COMPLETE_TECHNICAL_PLAN_ACTIVE_CONTRACT_PLANNED
+product_program_status: FOUNDER_CONTROL_P2A_IN_PROGRESS_WP01_COMPLETE
 current_product_program: FOUNDER_CONTROL
-current_implementation_phase: NONE
+current_implementation_phase: PHASE_2_FOUNDER_CONTROL
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: 88a8a28f1b64a624717a8e03038c63f4520f8978
-  reviewed_at: 2026-10-06
+  commit: aad21534c369829d408db424bb0546aad0d28bd2
+  reviewed_at: 2026-10-07
 
 authoritative_for:
   - MGBOS product documentation navigation
@@ -40,7 +40,7 @@ not_authoritative_for:
   - operational readiness
   - product requirements owned by dedicated child specifications
 
-last_reviewed: 2026-10-05
+last_reviewed: 2026-10-07
 review_cadence: per-material-product-program-change
 
 depends_on:
@@ -57,10 +57,11 @@ depends_on:
   - ../../../../bisnis/teestock/07-operations/operating-model.md
   - ../../../../bisnis/teestock/14-roadmap/current-quarter.md
 
-supersedes: null
+supersedes:
+  - mgbos.product.index@2.2
 ---
 
-# MGBOS Product Documentation Index v2.2
+# MGBOS Product Documentation Index v2.3
 
 ## 1. Purpose
 
@@ -300,14 +301,30 @@ P2-A TECHNICAL PLAN (ACTIVE)
 
         ↓
 
-IMPLEMENTATION CONTRACT (PLANNED)
+IC-MGBOS-P2A-WP01 (SATISFIED / CLOSED)
 
         ↓
 
-PHASE 2 IMPLEMENTATION (NOT OPEN)
+WP-P2A-01 (COMPLETE / MERGED / POST-MERGE VERIFIED)
+
+        ↓
+
+OPERATIONAL EXCEPTION FOUNDATION (CURRENT RUNTIME FOUNDATION)
+
+        ↓
+
+P2-A OVERALL (IN PROGRESS)
+
+        ↓
+
+ACTIVE WORK PACKAGE = NONE
+
+        ↓
+
+WP-P2A-02 (NEXT CANDIDATE / NOT AUTHORIZED)
 ```
 
-There is currently no active Phase 2 implementation program merely because Founder Control is being defined. W3 Engineering Discovery is complete and the P2-A Technical Plan is active, but Phase 2 execution remains NOT OPEN.
+Phase 2 Founder Control bounded implementation is in progress. WP-P2A-01 landed the durable database and domain foundation. No work package is currently active; WP-P2A-02 is the next candidate requiring governed Head Engineering contract authoring before execution.
 
 ---
 
@@ -424,27 +441,33 @@ P2-A TECHNICAL PLAN
 =
 ACTIVE
 
-IMPLEMENTATION CONTRACT
+IC-MGBOS-P2A-WP01
 =
-PLANNED
+SATISFIED / CLOSED
 
-IMPLEMENTATION AUTHORIZATION
+WP-P2A-01
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED
+
+OPERATIONAL EXCEPTION FOUNDATION
+=
+CURRENT
+
+P2-A OVERALL
+=
+IN PROGRESS
+
+ACTIVE WORK PACKAGE
 =
 NONE
-
-PHASE 2 EXECUTION
-=
-NOT OPEN
 
 REAL PILOT
 =
 BLOCKED
 
-NEXT MATERIAL GATE
+NEXT ENGINEERING CANDIDATE
 =
-P2-A IMPLEMENTATION CONTRACT ACTIVATION
-+
-WP-P2A-01 CREATION
+WP-P2A-02 (NOT AUTHORIZED)
 ```
 
 ---
@@ -1376,13 +1399,13 @@ canonical commands:
 RECONCILED (open, acknowledge, assign, reassign, change_severity, resolve, dismiss, reopen)
 
 physical persistence & table design:
-W3 TECHNICAL PLAN ACTIVE (independent persistent table + append-oriented audit recommended for P2-A foundation)
+CURRENT DATABASE/DOMAIN FOUNDATION (app.operational_exceptions, app.operational_exception_audit, RPCs landed in WP-P2A-01)
 
 engineering readiness:
-NOT_READY_FOR_ENGINEERING (Implementation Contract planned)
+P2-A IN PROGRESS (WP01 complete, WP02 candidate)
 
 next step:
-P2-A IMPLEMENTATION CONTRACT ACTIVATION + WP-P2A-01 CREATION (Phase 2 execution NOT OPEN)
+WP-P2A-02 VALIDATION + AUTHORIZATION + SERVER COMMAND BOUNDARY (CANDIDATE / NOT AUTHORIZED)
 ```
 
 ---
@@ -2161,15 +2184,18 @@ COMPLETE
 
 ENGINEERING READINESS
 =
-NOT READY (NOT_READY_FOR_ENGINEERING)
+P2-A BOUNDED IMPLEMENTATION IN PROGRESS (WP-P2A-01 COMPLETE / MERGED / POST-MERGE VERIFIED)
 
 ACTIVE IMPLEMENTATION PHASE
 =
-NONE
+PHASE 2 FOUNDER CONTROL (BOUNDED TO AUTHORIZED WORK PACKAGES ONLY)
 
-PHASE 2 IMPLEMENTATION
+PHASE 2 WORK PACKAGES
 =
-NOT OPEN
+WP-P2A-01: COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
+ACTIVE WORK PACKAGE: NONE
+NEXT CANDIDATE: WP-P2A-02 (NOT AUTHORIZED)
+BUILDER AUTHORIZATION: NONE
 ```
 
 ---
@@ -2188,15 +2214,18 @@ D4 — teestock-operational-pilot-plan.md
 
 Canonical architecture reconciliation (W2) across all 6 core MGBOS architecture specifications is COMPLETE. W3 Engineering Discovery is analysis-complete and the P2-A Technical Plan is active.
 
+WP-P2A-01 (`feat(mgbos): add operational exception database foundation`, PR #42 @ `aad21534c369829d408db424bb0546aad0d28bd2`) has been successfully merged and post-merge verified.
+
 The next durable gate is:
 
 ```text
-P2-A IMPLEMENTATION CONTRACT ACTIVATION
+WP-P2A-02 IMPLEMENTATION CONTRACT
 +
-WP-P2A-01 CREATION
+WORK PACKAGE AUTHORING
+(VALIDATION + AUTHORIZATION + SERVER COMMAND BOUNDARY)
 ```
 
-W3 solved the engineering discovery questions for the initial P2-A foundation (recommending an independent persistent table, append-oriented audit, and human-governed mutations), but this does not mean Founder Control as a whole is implemented or production ready. Do not begin Phase 2 implementation before governed contracts are mature and approved. Phase 2 implementation remains NOT OPEN.
+No runtime implementation authority exists for WP-P2A-02 or subsequent packages until authorized contracts and work packages are approved. Phase 2 implementation is governed package-by-package. See [Phase 2 Founder Control Implementation Index](../implementation/phase-2-founder-control/README.md).
 
 ---
 
@@ -2262,8 +2291,9 @@ NO RUNTIME IMPLEMENTATION
 IS CURRENTLY AUTHORIZED.
 
 HEAD ENGINEERING MUST FIRST
-ACTIVATE THE P2-A IMPLEMENTATION CONTRACT
-AND CREATE WP-P2A-01.
+CREATE THE NEXT IMPLEMENTATION CONTRACT
+AND WORK PACKAGE FOR WP-P2A-02
+(VALIDATION + AUTHORIZATION + SERVER COMMAND BOUNDARY).
 ```
 
 Current program state from this index:
@@ -2277,23 +2307,25 @@ P2-A TECHNICAL PLAN
 =
 ACTIVE
 
-P2-A IMPLEMENTATION CONTRACT
+WP-P2A-01
 =
-PLANNED
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
 
-NEXT ENGINEERING GATE
-=
-IMPLEMENTATION CONTRACT ACTIVATION
-+
-WP-P2A-01 CREATION
-
-ACTIVE IMPLEMENTATION PHASE
+ACTIVE WORK PACKAGE
 =
 NONE
 
-PHASE 2 EXECUTION
+NEXT ENGINEERING GATE
 =
-NOT OPEN
+WP-P2A-02 IMPLEMENTATION CONTRACT + WORK PACKAGE AUTHORING
+
+ACTIVE IMPLEMENTATION PHASE
+=
+PHASE 2 FOUNDER CONTROL (BOUNDED)
+
+BUILDER AUTHORIZATION
+=
+NONE
 ```
 
 ---

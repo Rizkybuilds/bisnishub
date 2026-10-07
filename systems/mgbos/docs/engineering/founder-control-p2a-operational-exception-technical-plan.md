@@ -1,30 +1,36 @@
 ---
 canonical_id: mgbos.engineering.founder-control-p2a-operational-exception-technical-plan
 status: ACTIVE
-version: 1.0
+version: 1.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos-founder-control-p2a-operational-exception-foundation
 document_class: technical-implementation-plan
-effective_from: 2026-10-06
+effective_from: 2026-10-07
 
 program:
   parent_program: FOUNDER_CONTROL
   workstream: W3_ENGINEERING_DISCOVERY
   target_slice: P2-A_OPERATIONAL_EXCEPTION_FOUNDATION
   implementation_phase: PHASE_2_FOUNDER_CONTROL
-  phase_2_execution_status: NOT_OPEN
+  phase_2_execution_status: IN_PROGRESS_BOUNDED
+  implementation_progress:
+    wp01: POST_MERGE_VERIFIED
+    wp02: CANDIDATE_NOT_AUTHORIZED
+    wp03: NOT_OPEN
+    wp04: NOT_OPEN
+  active_work_package: NONE
   implementation_authorization: NONE
-  builder_authorization: NONE
+  builder_authorization: NONE_CURRENT
   deployment_authorization: NONE
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: 88a8a28f1b64a624717a8e03038c63f4520f8978
-  tree: 98572c0186f08ec92d53290ec464c4a88f123bcc
-  reviewed_at: 2026-10-06
+  commit: aad21534c369829d408db424bb0546aad0d28bd2
+  tree: 8f73c11c4a30c2a36138b462664fe51c7345c790
+  reviewed_at: 2026-10-07
 
 risk:
   proposed_classification: R4
@@ -83,9 +89,12 @@ depends_on:
   - ../../../../docs/engineering/vibe-engineering/implementation-contract-template.md
   - ../../../../.agents/contracts/implementation-contract.schema.json
   - ../../../../.agents/contracts/work-package.schema.json
+
+supersedes:
+  - mgbos.engineering.founder-control-p2a-operational-exception-technical-plan@1.0
 ---
 
-# Founder Control P2-A — Operational Exception Foundation Technical Implementation Plan v1.0
+# Founder Control P2-A — Operational Exception Foundation Technical Implementation Plan v1.1
 
 ## 1. Purpose
 
@@ -134,7 +143,11 @@ At baseline:
 ```text
 main
 =
-88a8a28f1b64a624717a8e03038c63f4520f8978
+aad21534c369829d408db424bb0546aad0d28bd2
+
+tree
+=
+8f73c11c4a30c2a36138b462664fe51c7345c790
 
 W2 ARCHITECTURE RECONCILIATION
 =
@@ -144,20 +157,36 @@ W3 ENGINEERING DISCOVERY
 =
 ANALYSIS COMPLETE
 
-Operational Exception runtime
+P2-A TECHNICAL PLAN
 =
-NOT IMPLEMENTED
+ACTIVE (v1.1)
+
+P2-A IMPLEMENTATION
+=
+IN PROGRESS (BOUNDED)
+
+WP-P2A-01
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
+
+Operational Exception database & domain foundation
+=
+CURRENT (LANDED IN WP-P2A-01)
 
 Founder Attention runtime
 =
 NOT IMPLEMENTED
 
-Phase 2 execution
+ACTIVE WORK PACKAGE
 =
-NOT OPEN
+NONE
+
+NEXT WORK PACKAGE CANDIDATE
+=
+WP-P2A-02 (NOT AUTHORIZED)
 ```
 
-No open PR existed at planning baseline.
+No open PR existed at baseline.
 
 ---
 
@@ -3158,23 +3187,27 @@ Operational Exception commands own Exception state only.
 
 # 111. P2-A Work Breakdown
 
-Recommended bounded implementation sequence:
+Bounded implementation sequence and current status:
 
 ```text
 P2A-WP01
 Database + domain foundation
+= COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
 
 P2A-WP02
 Validation + authorization + server command path
+= NEXT CANDIDATE / NOT AUTHORIZED
 
 P2A-WP03
 Operational Exception console UI
+= NOT OPEN
 
 P2A-WP04
 Integrated verification + documentation reflection
+= NOT OPEN
 ```
 
-Only one bounded Work Package should be active for Builder by default.
+Only one bounded Work Package should be active for Builder by default. Active work package is currently NONE.
 
 ---
 
@@ -3832,21 +3865,33 @@ events runtime
 
 ---
 
-# 135. Documentation Impact
+# 135. Documentation Impact — Phase Entry Gate Satisfied
 
-When implementation execution is actually opened, create:
+The Phase 2 implementation directory:
 
 ```text
 systems/mgbos/docs/implementation/
 phase-2-founder-control/
 ```
 
-but NOT before the implementation creation gate passes.
+was previously governed by the gate that it must not be created before implementation execution actually opened.
 
-Expected future package may include:
+With WP-P2A-01 merged and post-merge verified, that creation gate is satisfied:
 
 ```text
-README.md
+phase-2-founder-control/
+=
+CREATED
+
+reason
+=
+WP-P2A-01 landed and Phase 2 bounded implementation began
+```
+
+Expected future documentation artifacts across Phase 2 may optionally include:
+
+```text
+README.md (created as navigation index)
 
 current-founder-control-audit.md
 
@@ -3861,31 +3906,43 @@ operator-acceptance-test.md
 completion-report.md
 ```
 
-Only create files genuinely required.
+These support artifacts remain optional future additions; only create files genuinely required as Phase 2 progresses.
 
 ---
 
-# 136. This Document Does Not Open Phase 2
+# 136. Phase 2 Execution Status
 
-Presence of this technical plan means:
-
-```text
-TECHNICAL DIRECTION
-=
-READY
-```
-
-It does NOT mean:
+Phase 2 implementation status:
 
 ```text
-PHASE 2 EXECUTION
+PHASE 2 BOUNDED IMPLEMENTATION
 =
-AUTHORIZED
+IN PROGRESS (BOUNDED TO AUTHORIZED WORK PACKAGES ONLY)
+
+WP-P2A-01
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
+
+ACTIVE WORK PACKAGE
+=
+NONE
+
+NEXT WORK PACKAGE CANDIDATE
+=
+WP-P2A-02 (NOT AUTHORIZED)
 ```
+
+Presence of this technical plan provides technical direction. It does NOT authorize blanket implementation. Each work package requires its own governed contract and approval.
 
 ---
 
-# 137. Implementation Contract Gate
+# 137. Implementation Contract Gate (Historical for WP01 — Satisfied)
+
+Pre-WP01 Gate Status:
+
+```text
+SATISFIED (IC-MGBOS-P2A-WP01-OPERATIONAL-EXCEPTION-FOUNDATION PROMOTED & EXECUTED)
+```
 
 Before Builder receives code authority, Head Engineering must produce a schema-valid:
 
@@ -3919,25 +3976,33 @@ stop conditions
 work-package IDs
 ```
 
+This gate was satisfied for WP01. It remains mandatory for subsequent work packages (WP02, WP03, WP04).
+
 ---
 
-# 138. Work Package Gate
+# 138. Work Package Gate (Historical for WP01 — Satisfied)
 
-After the Implementation Contract is accepted, produce one bounded:
+Pre-WP01 Gate Status:
 
 ```text
-P2A-WP01
+SATISFIED (WP-P2A-01 COMPLETED & MERGED IN PR #42)
 ```
 
-first.
+After the Implementation Contract is accepted, produce one bounded work package first.
 
 Do NOT send Antigravity the whole P2-A program at once.
 
 ---
 
-# 139. Initial Builder Package Recommendation
+# 139. Initial Builder Package Recommendation (Completed)
 
-First Builder work should be:
+Status:
+
+```text
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
+```
+
+First Builder work was:
 
 ```text
 P2A-WP01
@@ -3960,9 +4025,15 @@ schema/lifecycle verified before application dependency
 
 ---
 
-# 140. P2A-WP01 Stop Conditions
+# 140. P2A-WP01 Stop Conditions (Historical / Executed)
 
-Builder MUST stop if:
+Status:
+
+```text
+EXECUTED WITHOUT STOP CONDITION VIOLATION; CLOSED
+```
+
+Pre-WP01 stop conditions were defined as:
 
 ```text
 main no longer matches accepted base revision
@@ -4186,24 +4257,24 @@ P2-A deliberately avoids unresolved commercial-policy decisions.
 
 No Vendor SLA, margin threshold, Due-Soon window, or automation authority decision is required to build the manual Exception foundation.
 
-Therefore no business-policy blocker currently prevents P2-A contract preparation.
+Therefore, no known business-policy blocker currently prevents governed preparation of subsequent P2-A work-package contracts such as WP-P2A-02 (without implying WP-P2A-02 is authorized).
 
 ---
 
 # 149. Remaining Approval Boundary
 
-The remaining boundary is engineering authorization:
+The remaining boundary is engineering authorization for subsequent work packages:
 
 ```text
-TECHNICAL PLAN
+TECHNICAL PLAN (ACTIVE v1.1)
         ↓
-IMPLEMENTATION CONTRACT
+WP-P2A-01 (COMPLETE / MERGED / POST-MERGE VERIFIED)
+        ↓
+WP-P2A-02 IMPLEMENTATION CONTRACT + WORK PACKAGE
         ↓
 OWNER / GOVERNED ACCEPTANCE
         ↓
-P2A-WP01
-        ↓
-ANTIGRAVITY
+BUILDER EXECUTION
 ```
 
 ---
@@ -4213,20 +4284,22 @@ ANTIGRAVITY
 Immediate next Head Engineering artifact:
 
 ```text
-P2-A IMPLEMENTATION CONTRACT
+WP-P2A-02 IMPLEMENTATION CONTRACT
++
+WORK PACKAGE
 ```
 
 for:
 
 ```text
-P2A-WP01
-Operational Exception Database + Domain Foundation
+P2A-WP02
+Validation + Authorization + Server Command Path
 ```
 
 The contract must bind:
 
 ```text
-main@88a8a28f1b64a624717a8e03038c63f4520f8978
+main@aad21534c369829d408db424bb0546aad0d28bd2
 ```
 
 unless repository state changes before authoring.

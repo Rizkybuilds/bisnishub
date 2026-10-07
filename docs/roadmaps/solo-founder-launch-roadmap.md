@@ -1,13 +1,13 @@
 ---
 canonical_id: bisnishub.roadmap.solo-founder-launch
 status: ACTIVE
-version: 2.2
+version: 2.3
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: bisnishub-teestock-launch
 document_class: canonical-roadmap
-effective_from: 2026-10-06
+effective_from: 2026-10-07
 
 planning_horizon:
   start: 2026-10-05
@@ -24,17 +24,17 @@ supporting_capabilities:
 
 current_state:
   mgbos_phase_1_operating_spine: CLOSED
-  active_mgbos_implementation_phase: NONE
+  active_mgbos_implementation_phase: PHASE_2_FOUNDER_CONTROL
   current_mgbos_product_program: FOUNDER_CONTROL
   operational_readiness: NOT_PRODUCTION_READY
   real_transaction_readiness: GATED
-  roadmap_stage: STAGE_C_ENGINEERING_DISCOVERY_COMPLETE_CONTRACT_PLANNED
+  roadmap_stage: STAGE_D_FOUNDER_CONTROL_BOUNDED_IMPLEMENTATION
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: 88a8a28f1b64a624717a8e03038c63f4520f8978
-  reviewed_at: 2026-10-06
+  commit: aad21534c369829d408db424bb0546aad0d28bd2
+  reviewed_at: 2026-10-07
 
 authoritative_for:
   - solo-founder strategic pre-launch sequencing
@@ -57,7 +57,7 @@ not_authoritative_for:
   - JARVIS runtime architecture
   - automation runtime configuration
 
-last_reviewed: 2026-10-05
+last_reviewed: 2026-10-07
 review_cadence: weekly-during-prelaunch-or-after-material-stage-change
 
 depends_on:
@@ -76,12 +76,12 @@ depends_on:
   - ../../systems/jarvis/docs/core-runtime.md
 
 supersedes:
-  - bisnishub.roadmap.solo-founder-launch@1.0
+  - bisnishub.roadmap.solo-founder-launch@2.2
 
 implementation_status: STRATEGIC_ROADMAP_ACTIVE
 ---
 
-# Solo-Founder Launch Roadmap — Q4 2026 to Controlled Launch v2.2
+# Solo-Founder Launch Roadmap — Q4 2026 to Controlled Launch v2.3
 
 ## 1. Purpose
 
@@ -786,7 +786,7 @@ internally consistent
 Stage status:
 
 ```text id="c3s8t1"
-ACTIVE (ENGINEERING DISCOVERY COMPLETE / P2-A TECHNICAL PLAN ACTIVE / CONTRACT PLANNED)
+COMPLETE
 ```
 
 Objective:
@@ -795,13 +795,7 @@ Objective:
 
 In Stage C, Canonical Architecture Reconciliation (W2) was completed under VECP-003H across all six canonical specifications. Operational Exception was reconciled as a first-class logical MGBOS architectural domain (`CANONICAL_TARGET`), Founder Attention as a derived projection layer (`CANONICAL_TARGET`), and Founder Home as an application surface (`CANONICAL_TARGET`).
 
-Canonical physical implementation remains NOT IMPLEMENTED, while W3 technical direction is DEFINED FOR INITIAL P2-A SLICE. W3 has recommended:
-- Operational Exception: persistent Postgres table + append-oriented audit
-- Founder Attention: compute-on-read later
-- existing `/dashboard`: future Founder Home surface
-- event infrastructure: not required initially
-
-These remain engineering decisions, not product/canonical overrides. W3 Engineering Discovery is analysis-complete and the P2-A Technical Plan is active. Phase 2 implementation (Stage D) remains NOT OPEN.
+W3 Engineering Discovery completed technical direction for the initial P2-A slice (persistent Postgres table, append-oriented audit, compute-on-read attention, existing dashboard surface, no early event infrastructure). Stage C exit gates have passed, and Stage D bounded implementation is now active.
 
 ---
 
@@ -931,41 +925,58 @@ COMPLETE
 
 risk/routing
 =
-RESOLVED FOR P2-A FOUNDATION
+RESOLVED
 
 P2-A technical plan
 =
 ACTIVE
 
-Implementation Contract
+initial implementation entry
 =
-PLANNED
+COMPLETED
 
-bounded Work Package
+WP-P2A-01
 =
-NOT YET CREATED
+COMPLETE / MERGED / VERIFIED
+
+WP-P2A-02
+=
+NEXT CANDIDATE / NOT AUTHORIZED
 ```
 
 ---
 
-# 34. Future MGBOS Implementation Phase 2
+# 34. Phase 2 Founder Control Implementation Entry — Gate Passed
 
-Potential directory:
+Historically, the directory:
 
 ```text id="3iskpr"
 systems/mgbos/docs/implementation/
 phase-2-founder-control/
 ```
 
-MUST NOT exist merely because this roadmap mentions it.
+was governed by the strict rule that it must not exist merely because this roadmap mentions it, and must not be pre-created ceremonially before real implementation begins.
 
-Creation requires the engineering-entry gate.
+With WP-P2A-01 merged and post-merge verified, that engineering-entry gate has now passed because real bounded implementation has landed:
+
+```text id="p2entnav"
+systems/mgbos/docs/implementation/
+phase-2-founder-control/
+=
+CURRENT IMPLEMENTATION NAVIGATION
+```
 
 ---
 
 # 35. Stage C Exit Gate
 
-Pass when:
+Status:
+
+```text id="q0u6gz-status"
+PASSED
+```
+
+Pass criteria satisfied:
 
 ```text id="q0u6gz"
 product requirements
@@ -1000,6 +1011,17 @@ defined
 ---
 
 # 36. Stage D — Founder Control Implementation
+
+Stage status:
+
+```text id="stgd01"
+ACTIVE (BOUNDED IMPLEMENTATION IN PROGRESS)
+
+WORK PACKAGES:
+- WP-P2A-01: COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
+- ACTIVE WORK PACKAGE: NONE
+- NEXT CANDIDATE: WP-P2A-02 (NOT AUTHORIZED)
+```
 
 Objective:
 
@@ -1391,7 +1413,7 @@ For MGBOS implementation during this roadmap, use the following current compatib
 | Project                | Order + Requirement + Production Job(s)                                                                                   |
 | Partner for production | Vendor                                                                                                                    |
 | Work Order             | Governed SPK/Work Order artifact                                                                                          |
-| Exception              | Operational Exception = CANONICAL_TARGET; P2-A physical design defined by W3; runtime not implemented                     |
+| Exception              | Operational Exception = CANONICAL_TARGET; database/domain foundation CURRENT; P2-A implementation IN PROGRESS              |
 | Customer Case          | Separate proposed durable customer-issue concept                                                                          |
 
 ---
@@ -3266,12 +3288,12 @@ COMPLETE / APPROVED_BY_OWNER
 STAGE C
 Architecture + Engineering Readiness
 =
-ACTIVE (DISCOVERY COMPLETE / TECHNICAL PLAN READY / CONTRACT PLANNED)
+COMPLETE
 
 STAGE D
 Founder Control Implementation
 =
-NOT OPEN
+ACTIVE / BOUNDED (WP-P2A-01 COMPLETE / MERGED / POST-MERGE VERIFIED; WP-P2A-02 NEXT CANDIDATE)
 
 STAGE E
 Operational Readiness + Real Pilot
@@ -3301,7 +3323,14 @@ TARGETED, NOT AUTHORIZED
 ```text id="w04j0e"
 ACTIVE IMPLEMENTATION PHASE
 =
-NONE
+PHASE 2 FOUNDER CONTROL (BOUNDED TO AUTHORIZED WORK PACKAGES ONLY)
+
+WORK PACKAGES
+=
+WP-P2A-01: COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
+ACTIVE WORK PACKAGE: NONE
+NEXT CANDIDATE: WP-P2A-02 (NOT AUTHORIZED)
+BUILDER AUTHORIZATION: NONE
 ```
 
 Therefore:
@@ -3310,13 +3339,13 @@ Therefore:
 Antigravity
 ```
 
-currently has no authorized Founder Control implementation package from this roadmap. Phase 2 implementation is NOT OPEN.
+currently has no authorized Founder Control implementation package from this roadmap. WP-P2A-01 has merged, and WP-P2A-02 requires Head Engineering Implementation Contract and Work Package authoring before any implementation can occur.
 
 ---
 
 # 147. Current Product Next Step
 
-Following Stage B completion and Owner approval, the Founder Control product definition package (D1 through D4) was reconciled with canonical architecture in Stage C (W2 COMPLETE), and W3 Engineering Discovery was completed with an active P2-A Technical Plan:
+Following Stage B completion and Owner approval, the Founder Control product definition package (D1 through D4) was reconciled with canonical architecture in Stage C (W2 COMPLETE), W3 Engineering Discovery was completed with an active P2-A Technical Plan, and WP-P2A-01 was completed and merged:
 
 ```text id="vrp0b1"
 FOUNDER CONTROL PRODUCT PACKAGE
@@ -3335,9 +3364,17 @@ P2-A TECHNICAL PLAN
 =
 ACTIVE
 
+WP-P2A-01
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
+
+ACTIVE WORK PACKAGE
+=
+NONE
+
 NEXT GATE
 =
-P2-A IMPLEMENTATION CONTRACT ACTIVATION + WP-P2A-01 CREATION
+WP-P2A-02 IMPLEMENTATION CONTRACT + WORK PACKAGE AUTHORING
 ```
 
 ---
