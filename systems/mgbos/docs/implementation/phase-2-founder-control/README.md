@@ -58,9 +58,9 @@ depends_on:
   - ../../product/operational-exception-spec.md
   - ../../product/founder-attention-experience-spec.md
   - ../../engineering/founder-control-p2a-operational-exception-technical-plan.md
-  - ../../../../docs/governance/documentation-constitution.md
-  - ../../../../docs/governance/canonical-source-map.md
-  - ../../../../docs/engineering/vibe-engineering/README.md
+  - ../../../../../docs/governance/documentation-constitution.md
+  - ../../../../../docs/governance/canonical-source-map.md
+  - ../../../../../docs/engineering/vibe-engineering/README.md
 
 supersedes: null
 ---
