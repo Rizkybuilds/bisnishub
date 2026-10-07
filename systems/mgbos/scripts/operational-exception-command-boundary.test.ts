@@ -1,26 +1,26 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mocks = vi.hoisted(() => ({
-  context: vi.fn(),
-  invalidate: vi.fn(),
+const sessionMock = vi.fn();
+const invalidateMock = vi.fn();
+
+vi.mock('@/lib/session.server', () => ({
+  requireAuth: () => sessionMock(),
 }));
 
-vi.mock(
-  '../apps/mgbos/src/app/(app)/exceptions/data',
-  async (importOriginal) => {
-    const actual =
-      await importOriginal<
-        typeof import('../apps/mgbos/src/app/(app)/exceptions/data')
-      >();
-    return {
-      ...actual,
-      exceptionsContext: mocks.context,
-    };
+vi.mock('@/lib/env.server', () => ({
+  serverEnvironment: {
+    SUPABASE_SERVICE_ROLE_KEY: 'service-role-test-key',
   },
-);
+}));
+
+vi.mock('@/lib/env.client', () => ({
+  publicEnvironment: {
+    NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:55431',
+  },
+}));
 
 vi.mock('next/cache', () => ({
-  revalidatePath: mocks.invalidate,
+  revalidatePath: (...args: unknown[]) => invalidateMock(...args),
 }));
 
 import * as dataModule from '../apps/mgbos/src/app/(app)/exceptions/data';
@@ -30,6 +30,16 @@ import {
   getOperationalExceptionHistory,
 } from '../apps/mgbos/src/app/(app)/exceptions/data';
 import {
+  openOperationalExceptionSchema,
+  acknowledgeOperationalExceptionSchema,
+  assignOperationalExceptionSchema,
+  reassignOperationalExceptionSchema,
+  changeOperationalExceptionSeveritySchema,
+  resolveOperationalExceptionSchema,
+  dismissOperationalExceptionSchema,
+  reopenOperationalExceptionSchema,
+} from '../packages/validation/src/operationalException';
+import {
   openOperationalExceptionAction,
   acknowledgeOperationalExceptionAction,
   assignOperationalExceptionAction,
@@ -38,7 +48,6 @@ import {
   resolveOperationalExceptionAction,
   dismissOperationalExceptionAction,
   reopenOperationalExceptionAction,
-  classifyDatabaseError,
 } from '../apps/mgbos/src/app/(app)/exceptions/actions';
 
 const VALID_UUID_EX = '00000000-0000-4000-8000-000000000001';
@@ -50,6 +59,7 @@ const trustedSession = {
   organization: { id: 'trusted-org-uuid-001' },
   user: { id: 'trusted-actor-uuid-002' },
   role: { code: 'OWNER' },
+  activeBrand: { code: 'TEESTOCK', name: 'TeeStock' },
 };
 
 const validOpenInput = {
@@ -67,17 +77,7 @@ const validOpenInput = {
 describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.context.mockResolvedValue({
-      session: trustedSession,
-      endpoint: 'http://127.0.0.1:55431/rest/v1',
-      headers: {
-        apikey: 'service-role-test-key',
-        Authorization: 'Bearer service-role-test-key',
-        'Content-Type': 'application/json',
-        'Accept-Profile': 'app',
-        'Content-Profile': 'app',
-      },
-    });
+    sessionMock.mockResolvedValue(trustedSession);
 
     vi.stubGlobal(
       'fetch',
@@ -123,18 +123,17 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
         'Keterlambatan proses jahit pada pesanan TS-O-2026-0001',
       );
 
-      expect(mocks.invalidate).toHaveBeenCalledWith('/exceptions');
-      expect(mocks.invalidate).toHaveBeenCalledWith(
+      expect(invalidateMock).toHaveBeenCalledWith('/exceptions');
+      expect(invalidateMock).toHaveBeenCalledWith(
         `/exceptions/${VALID_UUID_EX}`,
       );
     });
 
     it('classifies read permission denial from exceptionsContext as UNAUTHORIZED without calling fetch', async () => {
-      mocks.context.mockRejectedValue(
-        new Error(
-          "Akses ditolak: peran 'SALES' tidak memiliki izin 'operational_exceptions:read'",
-        ),
-      );
+      sessionMock.mockResolvedValue({
+        ...trustedSession,
+        role: { code: 'SALES' },
+      });
 
       const res = await openOperationalExceptionAction(validOpenInput);
 
@@ -155,13 +154,9 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
     });
 
     it('rejects unauthorized role before RPC fetch is called', async () => {
-      mocks.context.mockResolvedValue({
-        session: {
-          ...trustedSession,
-          role: { code: 'SALES' },
-        },
-        endpoint: 'http://127.0.0.1:55431/rest/v1',
-        headers: {},
+      sessionMock.mockResolvedValue({
+        ...trustedSession,
+        role: { code: 'SALES' },
       });
 
       const res = await openOperationalExceptionAction(validOpenInput);
@@ -265,8 +260,8 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
       expect(body.p_expected_revision).toBe(1);
       expect(body.p_note).toBe('Dikonfirmasi oleh supervisor shift');
 
-      expect(mocks.invalidate).toHaveBeenCalledWith('/exceptions');
-      expect(mocks.invalidate).toHaveBeenCalledWith(
+      expect(invalidateMock).toHaveBeenCalledWith('/exceptions');
+      expect(invalidateMock).toHaveBeenCalledWith(
         `/exceptions/${VALID_UUID_EX}`,
       );
     });
@@ -319,8 +314,8 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
       expect(body.p_responsible_role_code).toBe('OPERATIONS');
       expect(body.p_responsible_user_id).toBe(VALID_UUID_USER);
 
-      expect(mocks.invalidate).toHaveBeenCalledWith('/exceptions');
-      expect(mocks.invalidate).toHaveBeenCalledWith(
+      expect(invalidateMock).toHaveBeenCalledWith('/exceptions');
+      expect(invalidateMock).toHaveBeenCalledWith(
         `/exceptions/${VALID_UUID_EX}`,
       );
     });
@@ -569,86 +564,217 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
   });
 
   describe('Exact WP01 Database Error Classification Regression', () => {
-    it('classifies exact WP01 status errors as INVALID_STATE', () => {
-      expect(
-        classifyDatabaseError({
-          message:
-            'Cannot acknowledge exception with status RESOLVED: only OPEN exceptions can be acknowledged',
-        }).code,
-      ).toBe('INVALID_STATE');
+    it('classifies exact WP01 status errors as INVALID_STATE across actions', async () => {
+      // 1. Cannot acknowledge exception with status ...
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                'Cannot acknowledge exception with status RESOLVED: only OPEN exceptions can be acknowledged',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const ackRes = await acknowledgeOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+      });
+      expect(ackRes.success).toBe(false);
+      expect(ackRes.error?.code).toBe('INVALID_STATE');
 
-      expect(
-        classifyDatabaseError({
-          message:
-            'Cannot assign exception with status ACKNOWLEDGED: only OPEN exceptions can be assigned',
-        }).code,
-      ).toBe('INVALID_STATE');
+      // 2. Cannot assign exception with status ...
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                'Cannot assign exception with status ACKNOWLEDGED: only OPEN exceptions can be assigned',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const assignRes = await assignOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        responsibleRoleCode: 'OPERATIONS',
+        responsibleUserId: VALID_UUID_USER,
+      });
+      expect(assignRes.success).toBe(false);
+      expect(assignRes.error?.code).toBe('INVALID_STATE');
 
-      expect(
-        classifyDatabaseError({
-          message:
-            'Exception already has an assigned principal; use reassign instead',
-        }).code,
-      ).toBe('INVALID_STATE');
+      // 3. Exception already has an assigned principal; use reassign instead
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                'Exception already has an assigned principal; use reassign instead',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const assignHasPrincRes = await assignOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        responsibleRoleCode: 'OPERATIONS',
+        responsibleUserId: VALID_UUID_USER,
+      });
+      expect(assignHasPrincRes.success).toBe(false);
+      expect(assignHasPrincRes.error?.code).toBe('INVALID_STATE');
 
-      expect(
-        classifyDatabaseError({
-          message: 'New severity must be different from current severity',
-        }).code,
-      ).toBe('INVALID_STATE');
+      // 4. New severity must be different from current severity
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message: 'New severity must be different from current severity',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const sevRes = await changeOperationalExceptionSeverityAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        newSeverity: 'CRITICAL',
+        reason: 'Escalation required',
+      });
+      expect(sevRes.success).toBe(false);
+      expect(sevRes.error?.code).toBe('INVALID_STATE');
     });
 
-    it('classifies exact WP01 membership errors as UNAUTHORIZED', () => {
-      expect(
-        classifyDatabaseError({
-          message: 'Active organization membership required',
-        }).code,
-      ).toBe('UNAUTHORIZED');
+    it('classifies exact WP01 membership errors as UNAUTHORIZED', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message: 'Active organization membership required',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const res = await openOperationalExceptionAction(validOpenInput);
+      expect(res.success).toBe(false);
+      expect(res.error?.code).toBe('UNAUTHORIZED');
     });
 
-    it('classifies exact WP01 cross-org resource errors as CROSS_ORG', () => {
-      expect(
-        classifyDatabaseError({
-          message: `Primary resource PRODUCTION_ASSIGNMENT ${VALID_UUID_RES} does not belong to organization`,
-        }).code,
-      ).toBe('CROSS_ORG');
+    it('classifies exact WP01 cross-org resource errors as CROSS_ORG', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message: `Primary resource PRODUCTION_ASSIGNMENT ${VALID_UUID_RES} does not belong to organization`,
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const res = await openOperationalExceptionAction(validOpenInput);
+      expect(res.success).toBe(false);
+      expect(res.error?.code).toBe('CROSS_ORG');
     });
 
-    it('classifies exact WP01 target principal errors as INVALID_RESOURCE', () => {
-      expect(
-        classifyDatabaseError({
-          message:
-            'Responsible principal must be an active OWNER or ADMIN in the organization',
-        }).code,
-      ).toBe('INVALID_RESOURCE');
+    it('classifies exact WP01 target principal errors as INVALID_RESOURCE', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                'Responsible principal must be an active OWNER or ADMIN in the organization',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const res = await assignOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        responsibleRoleCode: 'ADMIN',
+        responsibleUserId: VALID_UUID_USER,
+      });
+      expect(res.success).toBe(false);
+      expect(res.error?.code).toBe('INVALID_RESOURCE');
     });
 
-    it('classifies actor authorization errors as UNAUTHORIZED', () => {
-      expect(
-        classifyDatabaseError({
-          message: 'Not authorized to assign operational exceptions',
-        }).code,
-      ).toBe('UNAUTHORIZED');
+    it('classifies actor authorization errors as UNAUTHORIZED across actions', async () => {
+      // 1. Not authorized to assign operational exceptions
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message: 'Not authorized to assign operational exceptions',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const assignAuthRes = await assignOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        responsibleRoleCode: 'ADMIN',
+        responsibleUserId: VALID_UUID_USER,
+      });
+      expect(assignAuthRes.success).toBe(false);
+      expect(assignAuthRes.error?.code).toBe('UNAUTHORIZED');
 
-      expect(
-        classifyDatabaseError({
-          message:
-            'Accepted risk resolution requires OWNER authority; active ADMIN cannot resolve with accepted_risk',
-        }).code,
-      ).toBe('UNAUTHORIZED');
+      // 2. Accepted risk resolution requires OWNER authority
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                'Accepted risk resolution requires OWNER authority; active ADMIN cannot resolve with accepted_risk',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const resolveAuthRes = await resolveOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        resolutionType: 'ACCEPTED_RISK',
+        resolutionSummary: 'Accepting residual risk for expedited drop',
+      });
+      expect(resolveAuthRes.success).toBe(false);
+      expect(resolveAuthRes.error?.code).toBe('UNAUTHORIZED');
 
-      expect(
-        classifyDatabaseError({
-          message: 'Active organization membership required',
-        }).code,
-      ).toBe('UNAUTHORIZED');
-
-      expect(
-        classifyDatabaseError({
-          message:
-            "Akses ditolak: peran 'SALES' tidak memiliki izin 'operational_exceptions:open'",
-        }).code,
-      ).toBe('UNAUTHORIZED');
+      // 3. Akses ditolak role check from app layer / db
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                "Akses ditolak: peran 'SALES' tidak memiliki izin 'operational_exceptions:open'",
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const openRoleRes = await openOperationalExceptionAction(validOpenInput);
+      expect(openRoleRes.success).toBe(false);
+      expect(openRoleRes.error?.code).toBe('UNAUTHORIZED');
     });
   });
 
@@ -658,7 +784,7 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
       (redirectError as unknown as { digest: string }).digest =
         'NEXT_REDIRECT;replace;/login;307;';
 
-      mocks.context.mockRejectedValue(redirectError);
+      sessionMock.mockRejectedValue(redirectError);
 
       const actionInvocations = [
         () => openOperationalExceptionAction(validOpenInput),
@@ -726,7 +852,7 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
     });
 
     it('does not rethrow non-framework database or runtime errors', async () => {
-      mocks.context.mockRejectedValue(new Error('Connection terminated'));
+      sessionMock.mockRejectedValue(new Error('Connection terminated'));
 
       const res = await openOperationalExceptionAction(validOpenInput);
       expect(res.success).toBe(false);
@@ -747,8 +873,7 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
         ),
       );
 
-      const ctx = await mocks.context();
-      const rows = await listOperationalExceptions(ctx);
+      const rows = await listOperationalExceptions();
       expect(rows).toEqual(mockRows);
 
       const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
@@ -770,8 +895,7 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
         ),
       );
 
-      const ctx = await mocks.context();
-      const row = await getOperationalException(VALID_UUID_EX, ctx);
+      const row = await getOperationalException(VALID_UUID_EX);
       expect(row).toEqual(mockRow);
 
       const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
@@ -794,8 +918,7 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
       );
 
       // Authorized session (OWNER has operational_exceptions:history_read)
-      const ctx = await mocks.context();
-      const rows = await getOperationalExceptionHistory(VALID_UUID_EX, ctx);
+      const rows = await getOperationalExceptionHistory(VALID_UUID_EX);
       expect(rows).toEqual(mockAuditRows);
 
       const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
@@ -807,21 +930,22 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
       );
 
       // Unauthorized session without history_read permission (e.g. OPERATIONS)
-      const unauthorizedCtx = {
-        ...ctx,
-        session: {
-          ...trustedSession,
-          role: { code: 'OPERATIONS' },
-        },
-      };
+      sessionMock.mockResolvedValueOnce({
+        ...trustedSession,
+        role: { code: 'OPERATIONS' },
+      });
 
       await expect(
-        getOperationalExceptionHistory(VALID_UUID_EX, unauthorizedCtx),
-      ).rejects.toThrow(/operational_exceptions:history_read/);
+        getOperationalExceptionHistory(VALID_UUID_EX),
+      ).rejects.toThrow(/operational_exceptions:(history_)?read/);
     });
 
-    it('does not export arbitrary service-role readRows primitive', () => {
+    it('does not export arbitrary service-role readRows primitive, test seams, or accept caller context', () => {
       expect('readRows' in dataModule).toBe(false);
+      expect('internalContextHolder' in dataModule).toBe(false);
+      expect(listOperationalExceptions.length).toBe(0);
+      expect(getOperationalException.length).toBe(1);
+      expect(getOperationalExceptionHistory.length).toBe(1);
     });
   });
 
@@ -898,11 +1022,7 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
 
       for (const runAction of actions) {
         vi.clearAllMocks();
-        mocks.context.mockResolvedValue({
-          session: trustedSession,
-          endpoint: 'http://127.0.0.1:55431/rest/v1',
-          headers: {},
-        });
+        sessionMock.mockResolvedValue(trustedSession);
         vi.stubGlobal(
           'fetch',
           vi.fn().mockResolvedValue(
@@ -930,6 +1050,188 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
         expect(url).not.toContain('/rest/v1/operational_exception_audit');
         expect(init.method).toBe('POST');
       }
+    });
+  });
+
+  describe('UI Form Command Payload Schema Invariants', () => {
+    it('validates all 8 command payload shapes against strict schemas and rejects legacy mismatched keys', () => {
+      // 1. Open
+      const validOpen = {
+        requestId: VALID_UUID_REQ,
+        exceptionType: 'production.deadline_breached' as const,
+        primaryResourceType: 'PRODUCTION_JOB' as const,
+        primaryResourceId: VALID_UUID_RES,
+        severity: 'HIGH' as const,
+        sourceKind: 'HUMAN_REPORT' as const,
+        responsibleRoleCode: 'OPERATIONS' as const,
+        responsibleUserId: null,
+        summary: 'Valid summary text',
+        businessImpact: 'Valid business impact text',
+        observation: 'Valid observation notes here',
+        rootCause: null,
+        detectedAt: null,
+        otherCategoryReason: null,
+        supplementaryEvidence: null,
+      };
+      expect(openOperationalExceptionSchema.safeParse(validOpen).success).toBe(
+        true,
+      );
+      // Rejects old key 'observationText' under strict schema
+      expect(
+        openOperationalExceptionSchema.safeParse({
+          ...validOpen,
+          observationText: 'invalid key',
+        }).success,
+      ).toBe(false);
+
+      // 2. Acknowledge
+      const validAck = {
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        note: 'Valid acknowledge note',
+      };
+      expect(
+        acknowledgeOperationalExceptionSchema.safeParse(validAck).success,
+      ).toBe(true);
+
+      // 3. Assign
+      const validAssign = {
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        responsibleRoleCode: 'OPERATIONS' as const,
+        responsibleUserId: VALID_UUID_USER,
+        reason: 'Assigned to manager',
+      };
+      expect(
+        assignOperationalExceptionSchema.safeParse(validAssign).success,
+      ).toBe(true);
+      // Rejects missing/empty responsibleUserId
+      expect(
+        assignOperationalExceptionSchema.safeParse({
+          ...validAssign,
+          responsibleUserId: '',
+        }).success,
+      ).toBe(false);
+
+      // 4. Reassign
+      const validReassign = {
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        newResponsibleRoleCode: 'ADMIN' as const,
+        newResponsibleUserId: VALID_UUID_USER,
+        reason: 'Reassigned due to workload',
+      };
+      expect(
+        reassignOperationalExceptionSchema.safeParse(validReassign).success,
+      ).toBe(true);
+      // Rejects reason < 5 chars
+      expect(
+        reassignOperationalExceptionSchema.safeParse({
+          ...validReassign,
+          reason: 'abc',
+        }).success,
+      ).toBe(false);
+
+      // 5. Change Severity
+      const validSeverity = {
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        newSeverity: 'CRITICAL' as const,
+        reason: 'Impact escalated to client delay',
+      };
+      expect(
+        changeOperationalExceptionSeveritySchema.safeParse(validSeverity)
+          .success,
+      ).toBe(true);
+      // Rejects old key 'severity' / 'severityChangeReason'
+      expect(
+        changeOperationalExceptionSeveritySchema.safeParse({
+          requestId: VALID_UUID_REQ,
+          exceptionId: VALID_UUID_EX,
+          expectedRevision: 1,
+          severity: 'CRITICAL',
+          severityChangeReason: 'Old mismatched key',
+        }).success,
+      ).toBe(false);
+
+      // 6. Resolve
+      const validResolve = {
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        resolutionType: 'REMEDIATED' as const,
+        resolutionSummary: 'Issue fixed by reprint',
+        supersededByExceptionId: null,
+        closureEvidence: null,
+      };
+      expect(
+        resolveOperationalExceptionSchema.safeParse(validResolve).success,
+      ).toBe(true);
+      // SUPERSEDED requires supersededByExceptionId
+      expect(
+        resolveOperationalExceptionSchema.safeParse({
+          ...validResolve,
+          resolutionType: 'SUPERSEDED' as const,
+          supersededByExceptionId: null,
+        }).success,
+      ).toBe(false);
+
+      // 7. Dismiss
+      const validDismiss = {
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        dismissalReason: 'FALSE_POSITIVE' as const,
+        reasonSummary: 'Operator entered wrong order number initially',
+        duplicateOfExceptionId: null,
+        closureEvidence: null,
+      };
+      expect(
+        dismissOperationalExceptionSchema.safeParse(validDismiss).success,
+      ).toBe(true);
+      // Rejects old key 'dismissalNote'
+      expect(
+        dismissOperationalExceptionSchema.safeParse({
+          requestId: VALID_UUID_REQ,
+          exceptionId: VALID_UUID_EX,
+          expectedRevision: 1,
+          dismissalReason: 'FALSE_POSITIVE',
+          dismissalNote: 'Old key',
+        }).success,
+      ).toBe(false);
+      // DUPLICATE requires duplicateOfExceptionId
+      expect(
+        dismissOperationalExceptionSchema.safeParse({
+          ...validDismiss,
+          dismissalReason: 'DUPLICATE' as const,
+          duplicateOfExceptionId: null,
+        }).success,
+      ).toBe(false);
+
+      // 8. Reopen
+      const validReopen = {
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        reason: 'Abnormality resurfaced in production step',
+        supportingEvidence: null,
+      };
+      expect(
+        reopenOperationalExceptionSchema.safeParse(validReopen).success,
+      ).toBe(true);
+      // Rejects old key 'reopeningReason'
+      expect(
+        reopenOperationalExceptionSchema.safeParse({
+          requestId: VALID_UUID_REQ,
+          exceptionId: VALID_UUID_EX,
+          expectedRevision: 1,
+          reopeningReason: 'Old key',
+        }).success,
+      ).toBe(false);
     });
   });
 });

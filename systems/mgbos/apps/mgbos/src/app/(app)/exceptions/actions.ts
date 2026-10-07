@@ -44,7 +44,7 @@ export interface OperationalExceptionActionResult<T = Record<string, unknown>> {
  * Classifies PostgREST and PostgreSQL database errors into bounded WP02 error codes.
  * Ensures internal database connection credentials and raw SQL traces are never leaked.
  */
-export function classifyDatabaseError(err: unknown): {
+function classifyDatabaseError(err: unknown): {
   code: OperationalExceptionErrorCode;
   message: string;
 } {

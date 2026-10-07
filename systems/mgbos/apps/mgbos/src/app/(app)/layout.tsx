@@ -235,6 +235,20 @@ export default async function AppLayout({
                   <span className="nav-badge">MGBOS-019</span>
                 </div>
               )}
+              {hasPermission(
+                session.role.code,
+                'operational_exceptions:read',
+              ) && (
+                <Link href="/exceptions" className="sidebar-link">
+                  <span>Operational Exceptions</span>
+                  <span
+                    className="nav-badge"
+                    style={{ background: '#052e16', color: '#4ade80' }}
+                  >
+                    ACTIVE
+                  </span>
+                </Link>
+              )}
             </nav>
           </div>
 
