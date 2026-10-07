@@ -3319,19 +3319,18 @@ No Founder Home work.
 
 WP02 delivered and verified:
 
-- Pure input/state Zod validation schemas (`packages/domain-core/src/operational-exception/schemas.ts`);
-- 10 authoritative RBAC permissions assigned to `OWNER` and `ADMIN` with fail-closed denial for staff roles;
-- Server-only authenticated action context deriving actor identity from session (`apps/mgbos/src/app/(app)/operational-exceptions/server-action-context.ts`);
-- 8 governed server actions calling WP01 RPCs with request idempotency forwarding and revision preconditions (`apps/mgbos/src/app/(app)/operational-exceptions/actions.ts`);
-- Dedicated read queries deriving shapes from generated database types (`apps/mgbos/src/app/(app)/operational-exceptions/queries.ts`);
-- Standard Next.js redirect preservation (`apps/mgbos/src/app/(app)/operational-exceptions/redirect-error.ts`);
-- Complete permission, action, query, schema, and regression test suites passing locally and in CI.
+- Strict Zod command validation schemas for all eight Operational Exception lifecycle commands in `@mgbos/validation` (`systems/mgbos/packages/validation/src/operationalException.ts`), verified by unit tests in `systems/mgbos/packages/validation/src/operationalException.test.ts`;
+- 10 authoritative RBAC permissions registered in `@mgbos/auth` (`systems/mgbos/packages/auth/src/permissions.ts`), granting authority to active `OWNER` and `ADMIN` roles while denying staff roles (`SALES`, `OPERATIONS`, `FINANCE`, `QC`), verified by regression tests in `systems/mgbos/packages/auth/src/operational-exception-permissions.test.ts`;
+- Server-only authenticated action context and Organization-scoped read queries in `apps/mgbos` (`systems/mgbos/apps/mgbos/src/app/(app)/exceptions/data.ts`), containing `exceptionsContext`, `listOperationalExceptions`, `getOperationalException`, and `getOperationalExceptionHistory`, deriving read models directly from `@mgbos/database` while keeping the PostgREST read primitive private;
+- 8 governed application server actions in `apps/mgbos` (`systems/mgbos/apps/mgbos/src/app/(app)/exceptions/actions.ts`), executing WP01 RPC endpoints with session-derived actor and Organization identity, requestId and expectedRevision preservation, path revalidation, and zero direct table mutations;
+- Next.js framework redirect control flow preservation handled directly within `systems/mgbos/apps/mgbos/src/app/(app)/exceptions/actions.ts` via `unstable_rethrow`, ensuring authentication redirects are never caught as application failures;
+- Application-boundary test suite in `systems/mgbos/scripts/operational-exception-command-boundary.test.ts` with 32 focused tests covering validation rejections, permission gates, RPC payload mappings, idempotency handling, redirect rethrowing, target principal error classification, and read boundary isolation.
 
 Follow-up note for WP03 planning:
 
 ```text
 FOLLOW_UP / NON_BLOCKING:
-Read queries (`listOperationalExceptions`, `getOperationalException`, `getOperationalExceptionHistory`) allow an optional injected context argument to facilitate non-server/test callers. Head Engineering should evaluate whether console page components consume default server-action reads or leverage injected context during WP03 contract authoring.
+Read queries (`listOperationalExceptions`, `getOperationalException`, `getOperationalExceptionHistory`) in `exceptions/data.ts` allow an optional injected context argument to support internal server-side composition and focused test injection. Head Engineering should evaluate whether console page components consume default server-action reads or leverage injected context during WP03 contract authoring.
 ```
 
 ---
