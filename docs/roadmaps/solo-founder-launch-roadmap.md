@@ -925,35 +925,46 @@ COMPLETE
 
 risk/routing
 =
-RESOLVED FOR P2-A FOUNDATION
+RESOLVED
 
 P2-A technical plan
 =
 ACTIVE
 
-Implementation Contract
+initial implementation entry
 =
-PLANNED
+COMPLETED
 
-bounded Work Package
+WP-P2A-01
 =
-NOT YET CREATED
+COMPLETE / MERGED / VERIFIED
+
+WP-P2A-02
+=
+NEXT CANDIDATE / NOT AUTHORIZED
 ```
 
 ---
 
-# 34. Future MGBOS Implementation Phase 2
+# 34. Phase 2 Founder Control Implementation Entry — Gate Passed
 
-Potential directory:
+Historically, the directory:
 
 ```text id="3iskpr"
 systems/mgbos/docs/implementation/
 phase-2-founder-control/
 ```
 
-MUST NOT exist merely because this roadmap mentions it.
+was governed by the strict rule that it must not exist merely because this roadmap mentions it, and must not be pre-created ceremonially before real implementation begins.
 
-Creation requires the engineering-entry gate.
+With WP-P2A-01 merged and post-merge verified, that engineering-entry gate has now passed because real bounded implementation has landed:
+
+```text id="p2entnav"
+systems/mgbos/docs/implementation/
+phase-2-founder-control/
+=
+CURRENT IMPLEMENTATION NAVIGATION
+```
 
 ---
 

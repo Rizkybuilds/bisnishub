@@ -912,15 +912,15 @@ founder-control-documentation-plan.md
 
 ---
 
-# 27. Founder Control Is Not Yet An Implementation Phase
+# 27. Historical Founder Control Phase-Entry Gate
 
-The existence of:
+Before Phase 2 was opened, the existence of:
 
 ```text
 Founder Control
 ```
 
-as a product direction does not authorize:
+as a product direction did not automatically authorize:
 
 ```text
 phase-2-founder-control/
@@ -928,7 +928,7 @@ phase-2-founder-control/
 
 implementation.
 
-Before Phase 2 is opened:
+Before Phase 2 was opened, the following prerequisites applied:
 
 ```text
 PRODUCT SCOPE
@@ -948,6 +948,22 @@ must be defined
 
 ENGINEERING DISCOVERY
 must be ready
+```
+
+Current status of this gate:
+
+```text
+CURRENT STATUS
+=
+ENTRY GATE PASSED
+
+PHASE 2 FOUNDER CONTROL
+=
+BOUNDED IMPLEMENTATION IN PROGRESS
+
+WP-P2A-01
+=
+COMPLETE (MERGED & POST-MERGE VERIFIED IN PR #42)
 ```
 
 ---

@@ -3865,21 +3865,33 @@ events runtime
 
 ---
 
-# 135. Documentation Impact
+# 135. Documentation Impact — Phase Entry Gate Satisfied
 
-When implementation execution is actually opened, create:
+The Phase 2 implementation directory:
 
 ```text
 systems/mgbos/docs/implementation/
 phase-2-founder-control/
 ```
 
-but NOT before the implementation creation gate passes.
+was previously governed by the gate that it must not be created before implementation execution actually opened.
 
-Expected future package may include:
+With WP-P2A-01 merged and post-merge verified, that creation gate is satisfied:
 
 ```text
-README.md
+phase-2-founder-control/
+=
+CREATED
+
+reason
+=
+WP-P2A-01 landed and Phase 2 bounded implementation began
+```
+
+Expected future documentation artifacts across Phase 2 may optionally include:
+
+```text
+README.md (created as navigation index)
 
 current-founder-control-audit.md
 
@@ -3894,7 +3906,7 @@ operator-acceptance-test.md
 completion-report.md
 ```
 
-Only create files genuinely required.
+These support artifacts remain optional future additions; only create files genuinely required as Phase 2 progresses.
 
 ---
 
@@ -4245,7 +4257,7 @@ P2-A deliberately avoids unresolved commercial-policy decisions.
 
 No Vendor SLA, margin threshold, Due-Soon window, or automation authority decision is required to build the manual Exception foundation.
 
-Therefore no business-policy blocker currently prevents P2-A contract preparation.
+Therefore, no known business-policy blocker currently prevents governed preparation of subsequent P2-A work-package contracts such as WP-P2A-02 (without implying WP-P2A-02 is authorized).
 
 ---
 
