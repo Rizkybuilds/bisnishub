@@ -55,7 +55,17 @@ export type MgbosPermission =
   | 'procurement:read'
   | 'procurement:create'
   | 'procurement:receive'
-  | 'procurement:pay';
+  | 'procurement:pay'
+  | 'operational_exceptions:read'
+  | 'operational_exceptions:history_read'
+  | 'operational_exceptions:open'
+  | 'operational_exceptions:acknowledge'
+  | 'operational_exceptions:assign'
+  | 'operational_exceptions:reassign'
+  | 'operational_exceptions:change_severity'
+  | 'operational_exceptions:resolve'
+  | 'operational_exceptions:dismiss'
+  | 'operational_exceptions:reopen';
 
 /**
  * Authoritative role-to-permission mapping for MultiGraph Business OS.
@@ -116,6 +126,16 @@ export const ROLE_PERMISSIONS: Record<MgbosRole, readonly MgbosPermission[]> = {
     'procurement:create',
     'procurement:receive',
     'procurement:pay',
+    'operational_exceptions:read',
+    'operational_exceptions:history_read',
+    'operational_exceptions:open',
+    'operational_exceptions:acknowledge',
+    'operational_exceptions:assign',
+    'operational_exceptions:reassign',
+    'operational_exceptions:change_severity',
+    'operational_exceptions:resolve',
+    'operational_exceptions:dismiss',
+    'operational_exceptions:reopen',
   ],
   ADMIN: [
     'designs:read',
@@ -169,6 +189,16 @@ export const ROLE_PERMISSIONS: Record<MgbosRole, readonly MgbosPermission[]> = {
     'procurement:create',
     'procurement:receive',
     'procurement:pay',
+    'operational_exceptions:read',
+    'operational_exceptions:history_read',
+    'operational_exceptions:open',
+    'operational_exceptions:acknowledge',
+    'operational_exceptions:assign',
+    'operational_exceptions:reassign',
+    'operational_exceptions:change_severity',
+    'operational_exceptions:resolve',
+    'operational_exceptions:dismiss',
+    'operational_exceptions:reopen',
   ],
   SALES: [
     'quotes:accept',
