@@ -1,7 +1,7 @@
 ---
 canonical_id: mgbos.product.founder-control.documentation-plan
 status: ACTIVE
-version: 1.3
+version: 1.4
 owner: Rizky
 scope: mgbos-founder-control
 document_class: product-documentation-plan
@@ -12,7 +12,7 @@ review_cadence: per-material-product-or-phase-change
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  sha: aad21534c369829d408db424bb0546aad0d28bd2
+  sha: b8262cca87a7d2644cf1738bf54fe72e8c4545f1
 
 authoritative_for:
   - founder-control documentation package composition
@@ -52,12 +52,12 @@ depends_on:
   - ../../../../bisnis/teestock/14-roadmap/current-quarter.md
 
 supersedes:
-  - mgbos.product.founder-control.documentation-plan@1.2
+  - mgbos.product.founder-control.documentation-plan@1.3
 
 implementation_status: DOCUMENTATION_PROGRAM_ACTIVE
 ---
 
-# MGBOS Founder Control Documentation Plan v1.3
+# MGBOS Founder Control Documentation Plan v1.4
 
 ## 1. Purpose
 
@@ -1716,10 +1716,10 @@ PASSED
 
 phase-2-founder-control/
 =
-NOW CREATED AS ACTIVE IMPLEMENTATION NAVIGATION (WP01 VERIFIED)
+NOW CREATED AS ACTIVE IMPLEMENTATION NAVIGATION (WP01 & WP02 VERIFIED)
 ```
 
-The directory now exists containing `README.md` tracking Phase 2 bounded implementation following the merge and post-merge verification of WP-P2A-01.
+The directory now exists containing `README.md` tracking Phase 2 bounded implementation following the merge and post-merge verification of WP-P2A-01 and WP-P2A-02.
 
 ---
 
@@ -2318,9 +2318,13 @@ ACTIVE
 
 INITIAL P2-A ENTRY CONTRACT
 =
-SATISFIED FOR WP-P2A-01
+SATISFIED FOR WP-P2A-01 AND WP-P2A-02
 
 WP-P2A-01
+=
+COMPLETE / MERGED / VERIFIED
+
+WP-P2A-02
 =
 COMPLETE / MERGED / VERIFIED
 
@@ -2330,7 +2334,7 @@ ACTIVE / BOUNDED
 
 NEXT CANDIDATE
 =
-WP-P2A-02 / NOT AUTHORIZED
+WP-P2A-03 / NOT AUTHORIZED
 ```
 
 W3 completed outputs include:
@@ -2365,16 +2369,20 @@ WP-P2A-01
 =
 COMPLETE / MERGED / POST-MERGE VERIFIED
 
+WP-P2A-02
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED
+
 ACTIVE WORK PACKAGE
 =
 NONE
 
 NEXT CANDIDATE
 =
-WP-P2A-02 / NOT AUTHORIZED
+WP-P2A-03 / NOT AUTHORIZED
 ```
 
-Bounded implementation execution through Vibe Engineering governance has begun. WP-P2A-01 landed the database and domain foundation. Future work packages remain strictly gated and require dedicated Implementation Contract authoring.
+Bounded implementation execution through Vibe Engineering governance has begun. WP-P2A-01 landed the database and domain foundation. WP-P2A-02 landed the validation, authorization, and runtime command boundary. Future work packages remain strictly gated and require dedicated Implementation Contract authoring.
 
 ---
 
@@ -2656,7 +2664,7 @@ PHASE 2 IMPLEMENTATION
 NOT OPEN
 ```
 
-## Current Program State (Post WP-P2A-01 Integration)
+## Current Program State (Post WP-P2A-02 Integration)
 
 ```text
 W0
@@ -2685,13 +2693,17 @@ IN PROGRESS
 
 WP-P2A-01
 =
-COMPLETE / MERGED / VERIFIED
+COMPLETE / MERGED / POST-MERGE VERIFIED
+
+WP-P2A-02
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED
 
 ACTIVE WORK PACKAGE
 =
 NONE
 
-WP-P2A-02
+WP-P2A-03
 =
 NEXT CANDIDATE / NOT AUTHORIZED
 
@@ -2709,8 +2721,8 @@ The current routing for the next engineering candidate is:
 ```text
 NEXT ENGINEERING CANDIDATE
 
-WP-P2A-02
-VALIDATION + AUTHORIZATION + SERVER COMMAND BOUNDARY
+WP-P2A-03
+OPERATOR CONSOLE UI / RESOLUTION SURFACE
 
         ↓
 
@@ -2726,7 +2738,7 @@ ONLY AFTER GOVERNED AUTHORIZATION
 BUILDER IMPLEMENTATION
 ```
 
-WP-P2A-01 (Database + Domain Foundation) is complete, merged, and post-merge verified in PR #42 (`aad21534c369829d408db424bb0546aad0d28bd2`). Phase 2 bounded implementation is in progress, but no active work package currently exists. WP-P2A-02 is the next engineering candidate, and Builder implementation remains strictly unauthorized until Head Engineering prepares its Implementation Contract and Work Package under governed authority.
+WP-P2A-01 (Database + Domain Foundation) and WP-P2A-02 (Runtime Command Boundary, Schemas, Permissions, and Server Actions) are complete, merged, and post-merge verified (PR #42 and PR #44). Phase 2 bounded implementation is in progress, but no active work package currently exists. WP-P2A-03 is the next engineering candidate, and Builder implementation remains strictly unauthorized until Head Engineering prepares its Implementation Contract and Work Package under governed authority.
 
 ---
 
@@ -2776,8 +2788,9 @@ Current program state is governed by Section 74–76 above and the current-state
 W3 = ANALYSIS COMPLETE
 P2-A TECHNICAL PLAN = ACTIVE
 WP-P2A-01 = COMPLETE / MERGED / POST-MERGE VERIFIED
+WP-P2A-02 = COMPLETE / MERGED / POST-MERGE VERIFIED
 ACTIVE WORK PACKAGE = NONE
-NEXT CANDIDATE = WP-P2A-02 / NOT AUTHORIZED
+NEXT CANDIDATE = WP-P2A-03 / NOT AUTHORIZED
 ```
 
 Historically, W0 was complete when a fresh machine session could not reasonably misinterpret:

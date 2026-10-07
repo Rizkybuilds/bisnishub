@@ -1,7 +1,7 @@
 ---
 canonical_id: mgbos.product.index
 status: ACTIVE
-version: 2.3
+version: 2.4
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -9,14 +9,14 @@ scope: mgbos-product-documentation
 document_class: navigation-index
 effective_from: 2026-10-06
 
-product_program_status: FOUNDER_CONTROL_P2A_IN_PROGRESS_WP01_COMPLETE
+product_program_status: FOUNDER_CONTROL_P2A_IN_PROGRESS_WP02_COMPLETE
 current_product_program: FOUNDER_CONTROL
 current_implementation_phase: PHASE_2_FOUNDER_CONTROL
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: aad21534c369829d408db424bb0546aad0d28bd2
+  commit: b8262cca87a7d2644cf1738bf54fe72e8c4545f1
   reviewed_at: 2026-10-07
 
 authoritative_for:
@@ -58,10 +58,10 @@ depends_on:
   - ../../../../bisnis/teestock/14-roadmap/current-quarter.md
 
 supersedes:
-  - mgbos.product.index@2.2
+  - mgbos.product.index@2.3
 ---
 
-# MGBOS Product Documentation Index v2.3
+# MGBOS Product Documentation Index v2.4
 
 ## 1. Purpose
 
@@ -309,7 +309,15 @@ WP-P2A-01 (COMPLETE / MERGED / POST-MERGE VERIFIED)
 
         ↓
 
-OPERATIONAL EXCEPTION FOUNDATION (CURRENT RUNTIME FOUNDATION)
+IC-MGBOS-P2A-WP02 (SATISFIED / CLOSED)
+
+        ↓
+
+WP-P2A-02 (COMPLETE / MERGED / POST-MERGE VERIFIED)
+
+        ↓
+
+OPERATIONAL EXCEPTION FOUNDATION + RUNTIME BOUNDARY (CURRENT RUNTIME)
 
         ↓
 
@@ -321,10 +329,10 @@ ACTIVE WORK PACKAGE = NONE
 
         ↓
 
-WP-P2A-02 (NEXT CANDIDATE / NOT AUTHORIZED)
+WP-P2A-03 (NEXT CANDIDATE / NOT AUTHORIZED)
 ```
 
-Phase 2 Founder Control bounded implementation is in progress. WP-P2A-01 landed the durable database and domain foundation. No work package is currently active; WP-P2A-02 is the next candidate requiring governed Head Engineering contract authoring before execution.
+Phase 2 Founder Control bounded implementation is in progress. WP-P2A-01 landed the durable database and domain foundation. WP-P2A-02 landed the validation, authorization, and runtime command boundary. No work package is currently active; WP-P2A-03 is the next candidate requiring governed Head Engineering contract authoring before execution.
 
 ---
 
@@ -449,7 +457,15 @@ WP-P2A-01
 =
 COMPLETE / MERGED / POST-MERGE VERIFIED
 
-OPERATIONAL EXCEPTION FOUNDATION
+IC-MGBOS-P2A-WP02
+=
+SATISFIED / CLOSED
+
+WP-P2A-02
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED
+
+OPERATIONAL EXCEPTION FOUNDATION + RUNTIME BOUNDARY
 =
 CURRENT
 
@@ -467,7 +483,7 @@ BLOCKED
 
 NEXT ENGINEERING CANDIDATE
 =
-WP-P2A-02 (NOT AUTHORIZED)
+WP-P2A-03 (NOT AUTHORIZED)
 ```
 
 ---
@@ -1401,11 +1417,14 @@ RECONCILED (open, acknowledge, assign, reassign, change_severity, resolve, dismi
 physical persistence & table design:
 CURRENT DATABASE/DOMAIN FOUNDATION (app.operational_exceptions, app.operational_exception_audit, RPCs landed in WP-P2A-01)
 
+runtime command boundary:
+CURRENT SERVER ACTIONS, SCHEMAS & PERMISSIONS (8 server actions, 10 permissions, Zod validation landed in WP-P2A-02)
+
 engineering readiness:
-P2-A IN PROGRESS (WP01 complete, WP02 candidate)
+P2-A IN PROGRESS (WP01 & WP02 complete, WP03 candidate)
 
 next step:
-WP-P2A-02 VALIDATION + AUTHORIZATION + SERVER COMMAND BOUNDARY (CANDIDATE / NOT AUTHORIZED)
+WP-P2A-03 OPERATOR CONSOLE UI / RESOLUTION SURFACE (CANDIDATE / NOT AUTHORIZED)
 ```
 
 ---
@@ -2184,7 +2203,7 @@ COMPLETE
 
 ENGINEERING READINESS
 =
-P2-A BOUNDED IMPLEMENTATION IN PROGRESS (WP-P2A-01 COMPLETE / MERGED / POST-MERGE VERIFIED)
+P2-A BOUNDED IMPLEMENTATION IN PROGRESS (WP-P2A-01 & WP-P2A-02 COMPLETE / MERGED / POST-MERGE VERIFIED)
 
 ACTIVE IMPLEMENTATION PHASE
 =
@@ -2193,8 +2212,9 @@ PHASE 2 FOUNDER CONTROL (BOUNDED TO AUTHORIZED WORK PACKAGES ONLY)
 PHASE 2 WORK PACKAGES
 =
 WP-P2A-01: COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
+WP-P2A-02: COMPLETE / MERGED / POST-MERGE VERIFIED (PR #44)
 ACTIVE WORK PACKAGE: NONE
-NEXT CANDIDATE: WP-P2A-02 (NOT AUTHORIZED)
+NEXT CANDIDATE: WP-P2A-03 (NOT AUTHORIZED)
 BUILDER AUTHORIZATION: NONE
 ```
 
@@ -2214,18 +2234,18 @@ D4 — teestock-operational-pilot-plan.md
 
 Canonical architecture reconciliation (W2) across all 6 core MGBOS architecture specifications is COMPLETE. W3 Engineering Discovery is analysis-complete and the P2-A Technical Plan is active.
 
-WP-P2A-01 (`feat(mgbos): add operational exception database foundation`, PR #42 @ `aad21534c369829d408db424bb0546aad0d28bd2`) has been successfully merged and post-merge verified.
+WP-P2A-01 (`feat(mgbos): add operational exception database foundation`, PR #42 @ `aad21534c369829d408db424bb0546aad0d28bd2`) and WP-P2A-02 (`feat(mgbos): add operational exception runtime command boundary`, PR #44 @ `b8262cca87a7d2644cf1738bf54fe72e8c4545f1`) have been successfully merged and post-merge verified.
 
 The next durable gate is:
 
 ```text
-WP-P2A-02 IMPLEMENTATION CONTRACT
+WP-P2A-03 IMPLEMENTATION CONTRACT
 +
 WORK PACKAGE AUTHORING
-(VALIDATION + AUTHORIZATION + SERVER COMMAND BOUNDARY)
+(OPERATOR CONSOLE UI / RESOLUTION SURFACE)
 ```
 
-No runtime implementation authority exists for WP-P2A-02 or subsequent packages until authorized contracts and work packages are approved. Phase 2 implementation is governed package-by-package. See [Phase 2 Founder Control Implementation Index](../implementation/phase-2-founder-control/README.md).
+No runtime implementation authority exists for WP-P2A-03 or subsequent packages until authorized contracts and work packages are approved. Phase 2 implementation is governed package-by-package. See [Phase 2 Founder Control Implementation Index](../implementation/phase-2-founder-control/README.md).
 
 ---
 
@@ -2292,8 +2312,8 @@ IS CURRENTLY AUTHORIZED.
 
 HEAD ENGINEERING MUST FIRST
 CREATE THE NEXT IMPLEMENTATION CONTRACT
-AND WORK PACKAGE FOR WP-P2A-02
-(VALIDATION + AUTHORIZATION + SERVER COMMAND BOUNDARY).
+AND WORK PACKAGE FOR WP-P2A-03
+(OPERATOR CONSOLE UI / RESOLUTION SURFACE).
 ```
 
 Current program state from this index:
@@ -2311,13 +2331,17 @@ WP-P2A-01
 =
 COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
 
+WP-P2A-02
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #44)
+
 ACTIVE WORK PACKAGE
 =
 NONE
 
 NEXT ENGINEERING GATE
 =
-WP-P2A-02 IMPLEMENTATION CONTRACT + WORK PACKAGE AUTHORING
+WP-P2A-03 IMPLEMENTATION CONTRACT + WORK PACKAGE AUTHORING
 
 ACTIVE IMPLEMENTATION PHASE
 =
