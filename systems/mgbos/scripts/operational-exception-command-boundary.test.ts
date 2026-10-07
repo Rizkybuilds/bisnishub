@@ -12,6 +12,7 @@ vi.mock(
       await importOriginal<
         typeof import('../apps/mgbos/src/app/(app)/exceptions/data')
       >();
+    actual.internalContextHolder.resolve = mocks.context;
     return {
       ...actual,
       exceptionsContext: mocks.context,
@@ -38,7 +39,6 @@ import {
   resolveOperationalExceptionAction,
   dismissOperationalExceptionAction,
   reopenOperationalExceptionAction,
-  classifyDatabaseError,
 } from '../apps/mgbos/src/app/(app)/exceptions/actions';
 
 const VALID_UUID_EX = '00000000-0000-4000-8000-000000000001';
@@ -569,86 +569,217 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
   });
 
   describe('Exact WP01 Database Error Classification Regression', () => {
-    it('classifies exact WP01 status errors as INVALID_STATE', () => {
-      expect(
-        classifyDatabaseError({
-          message:
-            'Cannot acknowledge exception with status RESOLVED: only OPEN exceptions can be acknowledged',
-        }).code,
-      ).toBe('INVALID_STATE');
+    it('classifies exact WP01 status errors as INVALID_STATE across actions', async () => {
+      // 1. Cannot acknowledge exception with status ...
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                'Cannot acknowledge exception with status RESOLVED: only OPEN exceptions can be acknowledged',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const ackRes = await acknowledgeOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+      });
+      expect(ackRes.success).toBe(false);
+      expect(ackRes.error?.code).toBe('INVALID_STATE');
 
-      expect(
-        classifyDatabaseError({
-          message:
-            'Cannot assign exception with status ACKNOWLEDGED: only OPEN exceptions can be assigned',
-        }).code,
-      ).toBe('INVALID_STATE');
+      // 2. Cannot assign exception with status ...
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                'Cannot assign exception with status ACKNOWLEDGED: only OPEN exceptions can be assigned',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const assignRes = await assignOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        responsibleRoleCode: 'OPERATIONS',
+        responsibleUserId: VALID_UUID_USER,
+      });
+      expect(assignRes.success).toBe(false);
+      expect(assignRes.error?.code).toBe('INVALID_STATE');
 
-      expect(
-        classifyDatabaseError({
-          message:
-            'Exception already has an assigned principal; use reassign instead',
-        }).code,
-      ).toBe('INVALID_STATE');
+      // 3. Exception already has an assigned principal; use reassign instead
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                'Exception already has an assigned principal; use reassign instead',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const assignHasPrincRes = await assignOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        responsibleRoleCode: 'OPERATIONS',
+        responsibleUserId: VALID_UUID_USER,
+      });
+      expect(assignHasPrincRes.success).toBe(false);
+      expect(assignHasPrincRes.error?.code).toBe('INVALID_STATE');
 
-      expect(
-        classifyDatabaseError({
-          message: 'New severity must be different from current severity',
-        }).code,
-      ).toBe('INVALID_STATE');
+      // 4. New severity must be different from current severity
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message: 'New severity must be different from current severity',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const sevRes = await changeOperationalExceptionSeverityAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        newSeverity: 'CRITICAL',
+        reason: 'Escalation required',
+      });
+      expect(sevRes.success).toBe(false);
+      expect(sevRes.error?.code).toBe('INVALID_STATE');
     });
 
-    it('classifies exact WP01 membership errors as UNAUTHORIZED', () => {
-      expect(
-        classifyDatabaseError({
-          message: 'Active organization membership required',
-        }).code,
-      ).toBe('UNAUTHORIZED');
+    it('classifies exact WP01 membership errors as UNAUTHORIZED', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message: 'Active organization membership required',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const res = await openOperationalExceptionAction(validOpenInput);
+      expect(res.success).toBe(false);
+      expect(res.error?.code).toBe('UNAUTHORIZED');
     });
 
-    it('classifies exact WP01 cross-org resource errors as CROSS_ORG', () => {
-      expect(
-        classifyDatabaseError({
-          message: `Primary resource PRODUCTION_ASSIGNMENT ${VALID_UUID_RES} does not belong to organization`,
-        }).code,
-      ).toBe('CROSS_ORG');
+    it('classifies exact WP01 cross-org resource errors as CROSS_ORG', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message: `Primary resource PRODUCTION_ASSIGNMENT ${VALID_UUID_RES} does not belong to organization`,
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const res = await openOperationalExceptionAction(validOpenInput);
+      expect(res.success).toBe(false);
+      expect(res.error?.code).toBe('CROSS_ORG');
     });
 
-    it('classifies exact WP01 target principal errors as INVALID_RESOURCE', () => {
-      expect(
-        classifyDatabaseError({
-          message:
-            'Responsible principal must be an active OWNER or ADMIN in the organization',
-        }).code,
-      ).toBe('INVALID_RESOURCE');
+    it('classifies exact WP01 target principal errors as INVALID_RESOURCE', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                'Responsible principal must be an active OWNER or ADMIN in the organization',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const res = await assignOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        responsibleRoleCode: 'ADMIN',
+        responsibleUserId: VALID_UUID_USER,
+      });
+      expect(res.success).toBe(false);
+      expect(res.error?.code).toBe('INVALID_RESOURCE');
     });
 
-    it('classifies actor authorization errors as UNAUTHORIZED', () => {
-      expect(
-        classifyDatabaseError({
-          message: 'Not authorized to assign operational exceptions',
-        }).code,
-      ).toBe('UNAUTHORIZED');
+    it('classifies actor authorization errors as UNAUTHORIZED across actions', async () => {
+      // 1. Not authorized to assign operational exceptions
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message: 'Not authorized to assign operational exceptions',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const assignAuthRes = await assignOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        responsibleRoleCode: 'ADMIN',
+        responsibleUserId: VALID_UUID_USER,
+      });
+      expect(assignAuthRes.success).toBe(false);
+      expect(assignAuthRes.error?.code).toBe('UNAUTHORIZED');
 
-      expect(
-        classifyDatabaseError({
-          message:
-            'Accepted risk resolution requires OWNER authority; active ADMIN cannot resolve with accepted_risk',
-        }).code,
-      ).toBe('UNAUTHORIZED');
+      // 2. Accepted risk resolution requires OWNER authority
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                'Accepted risk resolution requires OWNER authority; active ADMIN cannot resolve with accepted_risk',
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const resolveAuthRes = await resolveOperationalExceptionAction({
+        requestId: VALID_UUID_REQ,
+        exceptionId: VALID_UUID_EX,
+        expectedRevision: 1,
+        resolutionType: 'ACCEPTED_RISK',
+        resolutionSummary: 'Accepting residual risk for expedited drop',
+      });
+      expect(resolveAuthRes.success).toBe(false);
+      expect(resolveAuthRes.error?.code).toBe('UNAUTHORIZED');
 
-      expect(
-        classifyDatabaseError({
-          message: 'Active organization membership required',
-        }).code,
-      ).toBe('UNAUTHORIZED');
-
-      expect(
-        classifyDatabaseError({
-          message:
-            "Akses ditolak: peran 'SALES' tidak memiliki izin 'operational_exceptions:open'",
-        }).code,
-      ).toBe('UNAUTHORIZED');
+      // 3. Akses ditolak role check from app layer / db
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              message:
+                "Akses ditolak: peran 'SALES' tidak memiliki izin 'operational_exceptions:open'",
+            }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+      const openRoleRes = await openOperationalExceptionAction(validOpenInput);
+      expect(openRoleRes.success).toBe(false);
+      expect(openRoleRes.error?.code).toBe('UNAUTHORIZED');
     });
   });
 
@@ -747,8 +878,7 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
         ),
       );
 
-      const ctx = await mocks.context();
-      const rows = await listOperationalExceptions(ctx);
+      const rows = await listOperationalExceptions();
       expect(rows).toEqual(mockRows);
 
       const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
@@ -770,8 +900,7 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
         ),
       );
 
-      const ctx = await mocks.context();
-      const row = await getOperationalException(VALID_UUID_EX, ctx);
+      const row = await getOperationalException(VALID_UUID_EX);
       expect(row).toEqual(mockRow);
 
       const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
@@ -794,8 +923,7 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
       );
 
       // Authorized session (OWNER has operational_exceptions:history_read)
-      const ctx = await mocks.context();
-      const rows = await getOperationalExceptionHistory(VALID_UUID_EX, ctx);
+      const rows = await getOperationalExceptionHistory(VALID_UUID_EX);
       expect(rows).toEqual(mockAuditRows);
 
       const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
@@ -808,20 +936,32 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
 
       // Unauthorized session without history_read permission (e.g. OPERATIONS)
       const unauthorizedCtx = {
-        ...ctx,
         session: {
           ...trustedSession,
           role: { code: 'OPERATIONS' },
         },
+        endpoint: 'http://127.0.0.1:55431/rest/v1',
+        headers: {
+          apikey: 'service-role-test-key',
+          Authorization: 'Bearer service-role-test-key',
+          'Content-Type': 'application/json',
+          'Accept-Profile': 'app',
+          'Content-Profile': 'app',
+        },
       };
 
+      mocks.context.mockResolvedValueOnce(unauthorizedCtx);
+
       await expect(
-        getOperationalExceptionHistory(VALID_UUID_EX, unauthorizedCtx),
+        getOperationalExceptionHistory(VALID_UUID_EX),
       ).rejects.toThrow(/operational_exceptions:history_read/);
     });
 
-    it('does not export arbitrary service-role readRows primitive', () => {
+    it('does not export arbitrary service-role readRows primitive or accept caller context', () => {
       expect('readRows' in dataModule).toBe(false);
+      expect(listOperationalExceptions.length).toBe(0);
+      expect(getOperationalException.length).toBe(1);
+      expect(getOperationalExceptionHistory.length).toBe(1);
     });
   });
 
