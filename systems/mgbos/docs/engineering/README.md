@@ -40,8 +40,8 @@ Kerangka kerja bounded AI engineering dan control plane MGBOS:
 
 Artefak penemuan teknis, investigasi basis kode sumber aktual, dan rencana implementasi teknis terikat:
 
-- [Founder Control Engineering Discovery](founder-control-engineering-discovery.md) — Mencatat hasil inspeksi kode sumber aktual pada W3, mengikat temuan ke baseline `main@88a8a28f1b64a624717a8e03038c63f4520f8978`, mengidentifikasi kesenjangan schema/auth/query/UI, merekomendasikan arah implementasi fisik, serta **TIDAK** mengotorisasi implementasi runtime.
-- [Founder Control P2-A Operational Exception Technical Plan](founder-control-p2a-operational-exception-technical-plan.md) — Menerjemahkan temuan W3 menjadi perancangan teknis terikat untuk fondasi Operational Exception (P2-A), menentukan tahapan sekuens implementasi (WP01–WP04) dengan WP01 sebagai prospektif work package pertama, serta tetap terpisah dari otorisasi implementasi aktual.
+- [Founder Control Engineering Discovery](founder-control-engineering-discovery.md) — Artefak provenance historis discovery W3, mengikat inspeksi kode sumber aktual ke baseline `main@88a8a28f1b64a624717a8e03038c63f4520f8978`, mengidentifikasi kesenjangan schema/auth/query/UI, dan merekomendasikan arah implementasi fisik P2-A.
+- [Founder Control P2-A Operational Exception Technical Plan](founder-control-p2a-operational-exception-technical-plan.md) — Rencana teknis aktif (v1.1 pada baseline `aad21534c369829d408db424bb0546aad0d28bd2`) untuk program P2-A. Mencatat WP-P2A-01 (Database + Domain Foundation) telah selesai, dimerge (PR #42), dan diverifikasi pasca-merge; menetapkan WP-P2A-02 (Validation + Authorization + Server Command Path) sebagai kandidat work package berikutnya tanpa otorisasi runtime sebelum kontrak disahkan.
 
 ---
 
@@ -50,6 +50,7 @@ Artefak penemuan teknis, investigasi basis kode sumber aktual, dan rencana imple
 Perencanaan kerja terikat dan pelacakan fase pengembangan aktif:
 
 - [MGBOS Implementation Index](../implementation/README.md) — Rencana fase, backlog eksekusi, audit implementasi, uji penerimaan operator, dan laporan penyelesaian. _Catatan backlog historis lama tidak boleh diperlakukan sebagai backlog aktif._
+- [Phase 2 Founder Control Implementation Index](../implementation/phase-2-founder-control/README.md) — Indeks navigasi eksekusi Phase 2 (Founder Control), mencatat batasan paket bounded, status WP-P2A-01 yang telah selesai dan diverifikasi, serta WP-P2A-02 sebagai work package berikutnya yang memerlukan kontrak Head Engineering.
 
 ---
 

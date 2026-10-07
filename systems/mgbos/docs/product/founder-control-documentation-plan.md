@@ -1,18 +1,18 @@
 ---
 canonical_id: mgbos.product.founder-control.documentation-plan
 status: ACTIVE
-version: 1.2
+version: 1.3
 owner: Rizky
 scope: mgbos-founder-control
 document_class: product-documentation-plan
 effective_from: 2026-10-06
-last_reviewed: 2026-10-06
+last_reviewed: 2026-10-07
 review_cadence: per-material-product-or-phase-change
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  sha: 88a8a28f1b64a624717a8e03038c63f4520f8978
+  sha: aad21534c369829d408db424bb0546aad0d28bd2
 
 authoritative_for:
   - founder-control documentation package composition
@@ -51,12 +51,13 @@ depends_on:
   - ../../../../bisnis/teestock/07-operations/operating-model.md
   - ../../../../bisnis/teestock/14-roadmap/current-quarter.md
 
-supersedes: null
+supersedes:
+  - mgbos.product.founder-control.documentation-plan@1.2
 
 implementation_status: DOCUMENTATION_PROGRAM_ACTIVE
 ---
 
-# MGBOS Founder Control Documentation Plan v1.2
+# MGBOS Founder Control Documentation Plan v1.3
 
 ## 1. Purpose
 
@@ -1669,21 +1670,21 @@ Documentation existence does not imply engineering readiness.
 
 ---
 
-# 49. Phase 2 Implementation Creation Gate
+# 49. Phase 2 Implementation Creation Gate (Passed)
 
-Do not yet create:
+Historically, creation of:
 
 ```text
 systems/mgbos/docs/implementation/
 phase-2-founder-control/
 ```
 
-The directory may be created when all are true:
+was gated until all required planning and discovery prerequisites were met:
 
 ```text
 product scope
 =
-bounded
+bounded (D1-D4 approved)
 
 critical business policy
 =
@@ -1691,7 +1692,7 @@ resolved
 
 architecture impact
 =
-reconciled
+reconciled (W2 complete)
 
 dependencies
 =
@@ -1703,8 +1704,22 @@ defined
 
 engineering discovery
 =
-ready
+ready (W3 complete)
 ```
+
+### Current Status
+
+```text
+ENTRY GATE
+=
+PASSED
+
+phase-2-founder-control/
+=
+NOW CREATED AS ACTIVE IMPLEMENTATION NAVIGATION (WP01 VERIFIED)
+```
+
+The directory now exists containing `README.md` tracking Phase 2 bounded implementation following the merge and post-merge verification of WP-P2A-01.
 
 ---
 
@@ -2328,17 +2343,28 @@ P2-A technical plan
 Status:
 
 ```text
-NOT OPEN
+W4 — IMPLEMENTATION
+=
+ACTIVE / BOUNDED
 
-PENDING:
-Implementation Contract activation
-+
-bounded Work Package creation
-+
-governed implementation authorization
+P2-A
+=
+IN PROGRESS
+
+WP-P2A-01
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED
+
+ACTIVE WORK PACKAGE
+=
+NONE
+
+NEXT CANDIDATE
+=
+WP-P2A-02 / NOT AUTHORIZED
 ```
 
-Includes bounded work packages executed through Vibe Engineering governance once W3 produces an approved Implementation Contract.
+Bounded implementation execution through Vibe Engineering governance has begun. WP-P2A-01 landed the database and domain foundation. Future work packages remain strictly gated and require dedicated Implementation Contract authoring.
 
 ---
 
@@ -2620,7 +2646,7 @@ PHASE 2 IMPLEMENTATION
 NOT OPEN
 ```
 
-## Current Program State (Post W3 Engineering Discovery)
+## Current Program State (Post WP-P2A-01 Integration)
 
 ```text
 W0
@@ -2639,21 +2665,25 @@ W3 ENGINEERING DISCOVERY
 =
 ANALYSIS COMPLETE
 
-P2-A TECHNICAL PLAN
+W4 IMPLEMENTATION
 =
-ACTIVE
+ACTIVE / BOUNDED
 
-P2-A IMPLEMENTATION CONTRACT
+P2-A
 =
-PLANNED
+IN PROGRESS
 
-ACTIVE IMPLEMENTATION PHASE
+WP-P2A-01
+=
+COMPLETE / MERGED / VERIFIED
+
+ACTIVE WORK PACKAGE
 =
 NONE
 
-PHASE 2 EXECUTION
+WP-P2A-02
 =
-NOT OPEN
+NEXT CANDIDATE / NOT AUTHORIZED
 
 REAL PILOT
 =
@@ -2662,30 +2692,31 @@ BLOCKED
 
 ---
 
-# 75. Next Work Package
+# 75. Next Work Package Routing
 
-The current routing for the next engineering gate is:
+The current routing for the next engineering candidate is:
 
 ```text
-NEXT ENGINEERING GATE
+NEXT ENGINEERING CANDIDATE
 
-P2-A IMPLEMENTATION CONTRACT
-ACTIVATION
+WP-P2A-02
+VALIDATION + AUTHORIZATION + SERVER COMMAND BOUNDARY
 
         ↓
 
-WP-P2A-01
-DATABASE + DOMAIN FOUNDATION
-CREATION
+HEAD ENGINEERING CONTRACT & WORK PACKAGE AUTHORING
+
+        ↓
+
+OWNER / GOVERNED AUTHORIZATION
 
         ↓
 
 ONLY AFTER GOVERNED AUTHORIZATION
-
-ANTIGRAVITY IMPLEMENTATION
+BUILDER IMPLEMENTATION
 ```
 
-W0 (Current-State Reconciliation), product package D1–D4 (Approved by Owner), canonical architecture reconciliation W2, and W3 Engineering Discovery are complete. The P2-A Technical Plan is active. Phase 2 implementation remains not open and Antigravity implementation is not authorized until the P2-A Implementation Contract is activated and WP-P2A-01 is created under governed authorization.
+WP-P2A-01 (Database + Domain Foundation) is complete, merged, and post-merge verified in PR #42 (`aad21534c369829d408db424bb0546aad0d28bd2`). Phase 2 bounded implementation is in progress, but no active work package currently exists. WP-P2A-02 is the next engineering candidate, and Builder implementation remains strictly unauthorized until Head Engineering prepares its Implementation Contract and Work Package under governed authority.
 
 ---
 
@@ -2734,8 +2765,9 @@ Current program state is governed by Section 74–76 above and the current-state
 ```text
 W3 = ANALYSIS COMPLETE
 P2-A TECHNICAL PLAN = ACTIVE
-IMPLEMENTATION CONTRACT = PLANNED
-NO RUNTIME IMPLEMENTATION AUTHORIZED
+WP-P2A-01 = COMPLETE / MERGED / POST-MERGE VERIFIED
+ACTIVE WORK PACKAGE = NONE
+NEXT CANDIDATE = WP-P2A-02 / NOT AUTHORIZED
 ```
 
 Historically, W0 was complete when a fresh machine session could not reasonably misinterpret:
