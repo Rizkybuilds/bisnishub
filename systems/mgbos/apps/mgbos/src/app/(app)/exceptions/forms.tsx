@@ -10,10 +10,20 @@ import {
   type OperationalExceptionType,
   type OperationalExceptionSeverity,
   type OperationalExceptionResourceType,
-  type OperationalExceptionSourceKind,
   type OperationalExceptionResolutionType,
   type OperationalExceptionDismissalReason,
 } from '@mgbos/domain';
+import type {
+  OpenOperationalExceptionInput,
+  AcknowledgeOperationalExceptionInput,
+  AssignOperationalExceptionInput,
+  ReassignOperationalExceptionInput,
+  ChangeOperationalExceptionSeverityInput,
+  ResolveOperationalExceptionInput,
+  DismissOperationalExceptionInput,
+  ReopenOperationalExceptionInput,
+  ManualOpeningSourceKind,
+} from '@mgbos/validation';
 import {
   openOperationalExceptionAction,
   acknowledgeOperationalExceptionAction,
@@ -199,14 +209,12 @@ const labelStyle: React.CSSProperties = {
 export function ManualOpenModal({
   candidatesByResource,
   eligiblePrincipals,
-  activeBrandId,
 }: {
   candidatesByResource: Record<
     OperationalExceptionResourceType,
     ResourceCandidate[]
   >;
   eligiblePrincipals: EligiblePrincipal[];
-  activeBrandId?: string | null;
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -222,7 +230,7 @@ export function ManualOpenModal({
   const [severity, setSeverity] =
     useState<OperationalExceptionSeverity>('HIGH');
   const [sourceKind, setSourceKind] =
-    useState<OperationalExceptionSourceKind>('HUMAN_REPORT');
+    useState<ManualOpeningSourceKind>('HUMAN_REPORT');
   const [responsibleRoleCode, setResponsibleRoleCode] =
     useState<string>('OPERATIONS');
   const [responsibleUserId, setResponsibleUserId] = useState<string>('');
@@ -281,31 +289,27 @@ export function ManualOpenModal({
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    const selectedCandidate = currentCandidates.find(
-      (c) => c.id === selectedResourceId,
-    );
-
     const payload = {
       requestId,
       exceptionType,
-      severity,
-      sourceKind,
       primaryResourceType,
       primaryResourceId: selectedResourceId,
+      severity,
+      sourceKind,
+      responsibleRoleCode:
+        responsibleRoleCode as (typeof RESPONSIBLE_ROLE_CODES)[number],
+      responsibleUserId: responsibleUserId ? responsibleUserId : null,
       summary: summary.trim(),
       businessImpact: businessImpact.trim(),
-      observationText: observationText.trim(),
+      observation: observationText.trim() ? observationText.trim() : null,
       rootCause: rootCause.trim() ? rootCause.trim() : null,
-      responsibleRoleCode: responsibleRoleCode || null,
-      responsibleUserId: responsibleUserId ? responsibleUserId : null,
       detectedAt: detectedAt ? new Date(detectedAt).toISOString() : null,
       otherCategoryReason:
         exceptionType === 'other.operational_abnormality'
-          ? otherCategoryReason.trim()
+          ? otherCategoryReason.trim() || null
           : null,
-      brandId: selectedCandidate?.brandId || activeBrandId || null,
-      orderId: selectedCandidate?.orderId || null,
-    };
+      supplementaryEvidence: null,
+    } satisfies OpenOperationalExceptionInput;
 
     try {
       const res = await openOperationalExceptionAction(payload);
@@ -488,9 +492,7 @@ export function ManualOpenModal({
                 id="manual-source-kind"
                 value={sourceKind}
                 onChange={(e) =>
-                  setSourceKind(
-                    e.target.value as OperationalExceptionSourceKind,
-                  )
+                  setSourceKind(e.target.value as ManualOpeningSourceKind)
                 }
                 style={inputStyle}
                 required
@@ -710,13 +712,15 @@ export function AcknowledgeModal({
     setIsSubmitting(true);
     setErrorMessage(null);
 
+    const payload = {
+      requestId,
+      exceptionId,
+      expectedRevision: currentRevision,
+      note: note.trim() || null,
+    } satisfies AcknowledgeOperationalExceptionInput;
+
     try {
-      const res = await acknowledgeOperationalExceptionAction({
-        requestId,
-        exceptionId,
-        expectedRevision: currentRevision,
-        note: note.trim() || null,
-      });
+      const res = await acknowledgeOperationalExceptionAction(payload);
 
       if (res.success) {
         setIsOpen(false);
@@ -851,14 +855,31 @@ export function AssignModal({
 
     try {
       if (isReassign) {
-        const res = await reassignOperationalExceptionAction({
+        if (!userId) {
+          setErrorCode('VALIDATION_ERROR');
+          setErrorMessage('Pilih petugas penanggung jawab baru.');
+          setIsSubmitting(false);
+          return;
+        }
+        if (!noteOrReason.trim() || noteOrReason.trim().length < 5) {
+          setErrorCode('VALIDATION_ERROR');
+          setErrorMessage(
+            'Alasan penugasan ulang wajib diisi minimal 5 karakter.',
+          );
+          setIsSubmitting(false);
+          return;
+        }
+        const payload = {
           requestId,
           exceptionId,
           expectedRevision: currentRevision,
-          responsibleRoleCode: roleCode,
-          responsibleUserId: userId ? userId : null,
-          reassignmentReason: noteOrReason.trim(),
-        });
+          newResponsibleRoleCode:
+            roleCode as (typeof RESPONSIBLE_ROLE_CODES)[number],
+          newResponsibleUserId: userId,
+          reason: noteOrReason.trim(),
+        } satisfies ReassignOperationalExceptionInput;
+
+        const res = await reassignOperationalExceptionAction(payload);
         if (res.success) {
           setIsOpen(false);
           router.refresh();
@@ -869,14 +890,23 @@ export function AssignModal({
           );
         }
       } else {
-        const res = await assignOperationalExceptionAction({
+        if (!userId) {
+          setErrorCode('VALIDATION_ERROR');
+          setErrorMessage('Pilih petugas penanggung jawab.');
+          setIsSubmitting(false);
+          return;
+        }
+        const payload = {
           requestId,
           exceptionId,
           expectedRevision: currentRevision,
-          responsibleRoleCode: roleCode,
-          responsibleUserId: userId ? userId : null,
-          assignmentNote: noteOrReason.trim() ? noteOrReason.trim() : null,
-        });
+          responsibleRoleCode:
+            roleCode as (typeof RESPONSIBLE_ROLE_CODES)[number],
+          responsibleUserId: userId,
+          reason: noteOrReason.trim() ? noteOrReason.trim() : null,
+        } satisfies AssignOperationalExceptionInput;
+
+        const res = await assignOperationalExceptionAction(payload);
         if (res.success) {
           setIsOpen(false);
           router.refresh();
@@ -942,15 +972,16 @@ export function AssignModal({
 
           <div style={{ marginBottom: '12px' }}>
             <label htmlFor="assign-user" style={labelStyle}>
-              Petugas Penanggung Jawab (Opsional)
+              Petugas Penanggung Jawab *
             </label>
             <select
               id="assign-user"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
               style={inputStyle}
+              required
             >
-              <option value="">Belum Ditugaskan</option>
+              <option value="">-- Pilih Petugas (Wajib) --</option>
               {eligiblePrincipals.map((p) => (
                 <option key={p.userId} value={p.userId}>
                   {p.name} ({p.roleCode})
@@ -1056,17 +1087,26 @@ export function ChangeSeverityModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmedReason = reason.trim();
+    if (trimmedReason.length < 5) {
+      setErrorCode('VALIDATION_ERROR');
+      setErrorMessage('Alasan perubahan tingkat keparahan minimal 5 karakter.');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage(null);
 
     try {
-      const res = await changeOperationalExceptionSeverityAction({
+      const payload = {
         requestId,
         exceptionId,
         expectedRevision: currentRevision,
-        severity: newSeverity,
-        severityChangeReason: reason.trim(),
-      });
+        newSeverity,
+        reason: trimmedReason,
+      } satisfies ChangeOperationalExceptionSeverityInput;
+
+      const res = await changeOperationalExceptionSeverityAction(payload);
 
       if (res.success) {
         setIsOpen(false);
@@ -1218,6 +1258,13 @@ export function ResolveModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmedSummary = resolutionSummary.trim();
+    if (trimmedSummary.length < 5) {
+      setErrorCode('VALIDATION_ERROR');
+      setErrorMessage('Ringkasan resolusi minimal 5 karakter.');
+      return;
+    }
+
     if (resolutionType === 'SUPERSEDED' && !supersededById) {
       setErrorCode('VALIDATION_ERROR');
       setErrorMessage('Pilih exception pengganti yang masih aktif.');
@@ -1228,15 +1275,18 @@ export function ResolveModal({
     setErrorMessage(null);
 
     try {
-      const res = await resolveOperationalExceptionAction({
+      const payload = {
         requestId,
         exceptionId,
         expectedRevision: currentRevision,
         resolutionType,
-        resolutionSummary: resolutionSummary.trim(),
+        resolutionSummary: trimmedSummary,
         supersededByExceptionId:
           resolutionType === 'SUPERSEDED' ? supersededById : null,
-      });
+        closureEvidence: null,
+      } satisfies ResolveOperationalExceptionInput;
+
+      const res = await resolveOperationalExceptionAction(payload);
 
       if (res.success) {
         setIsOpen(false);
@@ -1418,6 +1468,13 @@ export function DismissModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmedNote = dismissalNote.trim();
+    if (trimmedNote.length < 5) {
+      setErrorCode('VALIDATION_ERROR');
+      setErrorMessage('Penjelasan penolakan minimal 5 karakter.');
+      return;
+    }
+
     if (dismissalReason === 'DUPLICATE' && !duplicateOfId) {
       setErrorCode('VALIDATION_ERROR');
       setErrorMessage('Pilih exception rujukan duplikasi.');
@@ -1428,15 +1485,18 @@ export function DismissModal({
     setErrorMessage(null);
 
     try {
-      const res = await dismissOperationalExceptionAction({
+      const payload = {
         requestId,
         exceptionId,
         expectedRevision: currentRevision,
         dismissalReason,
-        dismissalNote: dismissalNote.trim(),
+        reasonSummary: trimmedNote,
         duplicateOfExceptionId:
           dismissalReason === 'DUPLICATE' ? duplicateOfId : null,
-      });
+        closureEvidence: null,
+      } satisfies DismissOperationalExceptionInput;
+
+      const res = await dismissOperationalExceptionAction(payload);
 
       if (res.success) {
         setIsOpen(false);
@@ -1617,16 +1677,26 @@ export function ReopenModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmedReason = reason.trim();
+    if (trimmedReason.length < 5) {
+      setErrorCode('VALIDATION_ERROR');
+      setErrorMessage('Alasan pembukaan kembali minimal 5 karakter.');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage(null);
 
     try {
-      const res = await reopenOperationalExceptionAction({
+      const payload = {
         requestId,
         exceptionId,
         expectedRevision: currentRevision,
-        reopeningReason: reason.trim(),
-      });
+        reason: trimmedReason,
+        supportingEvidence: null,
+      } satisfies ReopenOperationalExceptionInput;
+
+      const res = await reopenOperationalExceptionAction(payload);
 
       if (res.success) {
         setIsOpen(false);

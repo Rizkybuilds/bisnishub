@@ -78,11 +78,24 @@ export async function exceptionsContext() {
 }
 
 /**
- * Internal context resolver reference to enable hermetic test composition without exposing context parameter in exported read APIs.
+ * Resolves the authenticated session's active Brand UUID within the organization.
+ * Enforces organization_id + active brand code + ACTIVE brand status.
+ * Returns null if the brand cannot be resolved as an ACTIVE brand in the organization.
  */
-export const internalContextHolder = {
-  resolve: () => exceptionsContext(),
-};
+async function resolveActiveBrandId(
+  ctx: Awaited<ReturnType<typeof exceptionsContext>>,
+): Promise<string | null> {
+  const brandCode = ctx.session.activeBrand?.code;
+  if (!brandCode) return null;
+  const orgId = ctx.session.organization.id;
+  const rows = await readRows<{ id: string }>(
+    `brands?organization_id=eq.${encodeURIComponent(
+      orgId,
+    )}&code=eq.${encodeURIComponent(brandCode)}&status=eq.ACTIVE&select=id&limit=1`,
+    ctx,
+  );
+  return rows[0]?.id || null;
+}
 
 /**
  * Internal scoped row fetcher for PostgREST endpoints within exceptions context.
@@ -112,7 +125,7 @@ async function readRows<T>(
 export async function listOperationalExceptions(): Promise<
   OperationalExceptionRow[]
 > {
-  const context = await internalContextHolder.resolve();
+  const context = await exceptionsContext();
   const orgId = context.session.organization.id;
   const path = `operational_exceptions?organization_id=eq.${encodeURIComponent(
     orgId,
@@ -128,7 +141,7 @@ export async function listOperationalExceptions(): Promise<
 export async function getOperationalException(
   id: string,
 ): Promise<OperationalExceptionRow | null> {
-  const context = await internalContextHolder.resolve();
+  const context = await exceptionsContext();
   const orgId = context.session.organization.id;
   const path = `operational_exceptions?id=eq.${encodeURIComponent(
     id,
@@ -146,7 +159,7 @@ export async function getOperationalException(
 export async function getOperationalExceptionHistory(
   exceptionId: string,
 ): Promise<OperationalExceptionAuditRow[]> {
-  const context = await internalContextHolder.resolve();
+  const context = await exceptionsContext();
   assertPermission(context.session, 'operational_exceptions:history_read');
   const orgId = context.session.organization.id;
   const path = `operational_exception_audit?operational_exception_id=eq.${encodeURIComponent(
@@ -162,8 +175,15 @@ export async function getOperationalExceptionHistory(
 export async function loadResourceCandidates(
   resourceType: OperationalExceptionResourceType,
 ): Promise<ResourceCandidate[]> {
-  const context = await internalContextHolder.resolve();
+  const context = await exceptionsContext();
   const orgId = context.session.organization.id;
+  const activeBrandId = await resolveActiveBrandId(context);
+
+  // If the session-selected Brand cannot be resolved as an ACTIVE Brand inside the Organization:
+  // fail closed / return no Brand-scoped candidates.
+  if (!activeBrandId) {
+    return [];
+  }
 
   switch (resourceType) {
     case 'ORDER': {
@@ -176,7 +196,9 @@ export async function loadResourceCandidates(
       }>(
         `orders?organization_id=eq.${encodeURIComponent(
           orgId,
-        )}&select=id,order_number,status,grand_total,brand_id&order=created_at.desc&limit=100`,
+        )}&brand_id=eq.${encodeURIComponent(
+          activeBrandId,
+        )}&status=not.in.(COMPLETED,CANCELLED)&select=id,order_number,status,grand_total,brand_id&order=created_at.desc&limit=100`,
         context,
       );
       return rows.map((r) => ({
@@ -203,6 +225,8 @@ export async function loadResourceCandidates(
       }>(
         `production_jobs?organization_id=eq.${encodeURIComponent(
           orgId,
+        )}&brand_id=eq.${encodeURIComponent(
+          activeBrandId,
         )}&select=id,job_number,title,status,brand_id,order_id&order=created_at.desc&limit=100`,
         context,
       );
@@ -228,11 +252,14 @@ export async function loadResourceCandidates(
         production_jobs?: {
           job_number: string;
           organization_id: string;
+          brand_id: string;
         } | null;
       }>(
-        `production_assignments?select=id,production_job_id,executor_type,vendor_name,status,assigned_cost,production_jobs!inner(job_number,organization_id)&production_jobs.organization_id=eq.${encodeURIComponent(
+        `production_assignments?select=id,production_job_id,executor_type,vendor_name,status,assigned_cost,production_jobs!inner(job_number,organization_id,brand_id)&production_jobs.organization_id=eq.${encodeURIComponent(
           orgId,
-        )}&order=created_at.desc&limit=100`,
+        )}&production_jobs.brand_id=eq.${encodeURIComponent(
+          activeBrandId,
+        )}&status=in.(ASSIGNED,ACCEPTED)&order=created_at.desc&limit=100`,
         context,
       );
       return rows.map((r) => {
@@ -249,7 +276,7 @@ export async function loadResourceCandidates(
           identifier: `SPK-${r.id.substring(0, 8)}`,
           label: `${jobNo}${executor} (${r.status})`,
           status: r.status,
-          brandId: null,
+          brandId: activeBrandId,
           orderId: null,
         };
       });
@@ -262,23 +289,35 @@ export async function loadResourceCandidates(
         result: string;
         defect_category: string | null;
         defect_count: number;
+        production_jobs?: {
+          job_number: string;
+          organization_id: string;
+          brand_id: string;
+        } | null;
       }>(
-        `qc_inspections?organization_id=eq.${encodeURIComponent(
+        `qc_inspections?select=id,inspection_number,result,defect_category,defect_count,production_jobs!inner(job_number,organization_id,brand_id)&production_jobs.organization_id=eq.${encodeURIComponent(
           orgId,
-        )}&select=id,inspection_number,result,defect_category,defect_count&order=created_at.desc&limit=100`,
+        )}&production_jobs.brand_id=eq.${encodeURIComponent(
+          activeBrandId,
+        )}&result=in.(REWORK,REJECTED)&order=created_at.desc&limit=100`,
         context,
       );
-      return rows.map((r) => ({
-        id: r.id,
-        resourceType: 'QC_INSPECTION',
-        identifier: r.inspection_number,
-        label: `${r.inspection_number} (${r.result}${
-          r.defect_count ? ` · ${r.defect_count} cacat` : ''
-        })`,
-        status: r.result,
-        brandId: null,
-        orderId: null,
-      }));
+      return rows.map((r) => {
+        const jobNo = r.production_jobs?.job_number
+          ? `[${r.production_jobs.job_number}] `
+          : '';
+        return {
+          id: r.id,
+          resourceType: 'QC_INSPECTION',
+          identifier: r.inspection_number,
+          label: `${jobNo}${r.inspection_number} (${r.result}${
+            r.defect_count ? ` · ${r.defect_count} cacat` : ''
+          })`,
+          status: r.result,
+          brandId: activeBrandId,
+          orderId: null,
+        };
+      });
     }
 
     case 'SHIPMENT': {
@@ -292,7 +331,9 @@ export async function loadResourceCandidates(
       }>(
         `shipments?organization_id=eq.${encodeURIComponent(
           orgId,
-        )}&select=id,shipment_number,status,courier_name,brand_id,order_id&order=created_at.desc&limit=100`,
+        )}&brand_id=eq.${encodeURIComponent(
+          activeBrandId,
+        )}&status=not.in.(DELIVERED,CANCELLED)&select=id,shipment_number,status,courier_name,brand_id,order_id&order=created_at.desc&limit=100`,
         context,
       );
       return rows.map((r) => ({
@@ -318,7 +359,9 @@ export async function loadResourceCandidates(
       }>(
         `invoices?organization_id=eq.${encodeURIComponent(
           orgId,
-        )}&select=id,invoice_number,status,amount_total,balance_due,brand_id,order_id&order=created_at.desc&limit=100`,
+        )}&brand_id=eq.${encodeURIComponent(
+          activeBrandId,
+        )}&balance_due=gt.0&status=in.(ISSUED,PARTIALLY_PAID,OVERDUE)&select=id,invoice_number,status,amount_total,balance_due,brand_id,order_id&order=created_at.desc&limit=100`,
         context,
       );
       return rows.map((r) => ({
@@ -346,7 +389,7 @@ export async function loadResourceCandidates(
 export async function loadEligibleResponsiblePrincipals(): Promise<
   EligiblePrincipal[]
 > {
-  const context = await internalContextHolder.resolve();
+  const context = await exceptionsContext();
   const orgId = context.session.organization.id;
 
   const rows = await readRows<{
@@ -390,12 +433,17 @@ export async function loadEligibleResponsiblePrincipals(): Promise<
 /**
  * Privileged read: load exception candidates for duplicate / superseded resolution selection.
  * Excludes self-target and strictly filters to the authenticated organization.
+ * When mode === 'active_only', restricts candidates to OPEN and ACKNOWLEDGED status.
  */
 export async function loadExceptionCandidates(
   excludeExceptionId?: string,
+  mode: 'all' | 'active_only' = 'all',
 ): Promise<ExceptionCandidate[]> {
-  const context = await internalContextHolder.resolve();
+  const context = await exceptionsContext();
   const orgId = context.session.organization.id;
+
+  const statusFilter =
+    mode === 'active_only' ? '&status=in.(OPEN,ACKNOWLEDGED)' : '';
 
   const rows = await readRows<{
     id: string;
@@ -406,7 +454,7 @@ export async function loadExceptionCandidates(
   }>(
     `operational_exceptions?organization_id=eq.${encodeURIComponent(
       orgId,
-    )}&select=id,exception_type,severity,status,summary&order=created_at.desc&limit=100`,
+    )}${statusFilter}&select=id,exception_type,severity,status,summary&order=created_at.desc&limit=100`,
     context,
   );
 
@@ -430,7 +478,7 @@ export async function loadResourceDisplayContext(
   resourceType: OperationalExceptionResourceType,
   resourceId: string,
 ): Promise<ResourceDisplayContext | null> {
-  const context = await internalContextHolder.resolve();
+  const context = await exceptionsContext();
   const orgId = context.session.organization.id;
 
   try {

@@ -68,14 +68,15 @@ export default async function OperationalExceptionDetailPage({
   }
 
   // Load resource display details, principals, and candidates in parallel
-  const [resourceContext, eligiblePrincipals, exceptionCandidates] =
+  const [resourceContext, eligiblePrincipals, activeCandidates, allCandidates] =
     await Promise.all([
       loadResourceDisplayContext(
         exception.primary_resource_type as OperationalExceptionResourceType,
         exception.primary_resource_id,
       ),
       loadEligibleResponsiblePrincipals().catch(() => []),
-      loadExceptionCandidates(exception.id).catch(() => []),
+      loadExceptionCandidates(exception.id, 'active_only').catch(() => []),
+      loadExceptionCandidates(exception.id, 'all').catch(() => []),
     ]);
 
   const actions = getAvailableActions(exception, session.role.code);
@@ -217,7 +218,7 @@ export default async function OperationalExceptionDetailPage({
                 exceptionId={exception.id}
                 currentRevision={exception.current_revision}
                 roleCode={session.role.code}
-                exceptionCandidates={exceptionCandidates}
+                exceptionCandidates={activeCandidates}
               />
             )}
 
@@ -225,7 +226,7 @@ export default async function OperationalExceptionDetailPage({
               <DismissModal
                 exceptionId={exception.id}
                 currentRevision={exception.current_revision}
-                exceptionCandidates={exceptionCandidates}
+                exceptionCandidates={allCandidates}
               />
             )}
 

@@ -1,23 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mocks = vi.hoisted(() => ({
-  context: vi.fn(),
+const sessionMock = vi.fn();
+
+vi.mock('@/lib/session.server', () => ({
+  requireAuth: () => sessionMock(),
 }));
 
-vi.mock(
-  '../apps/mgbos/src/app/(app)/exceptions/data',
-  async (importOriginal) => {
-    const actual =
-      await importOriginal<
-        typeof import('../apps/mgbos/src/app/(app)/exceptions/data')
-      >();
-    actual.internalContextHolder.resolve = mocks.context;
-    return {
-      ...actual,
-      exceptionsContext: mocks.context,
-    };
+vi.mock('@/lib/env.server', () => ({
+  serverEnvironment: {
+    SUPABASE_SERVICE_ROLE_KEY: 'service-role-test-key',
   },
-);
+}));
+
+vi.mock('@/lib/env.client', () => ({
+  publicEnvironment: {
+    NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:55431',
+  },
+}));
 
 import * as dataModule from '../apps/mgbos/src/app/(app)/exceptions/data';
 import {
@@ -48,6 +47,7 @@ import {
 
 const TRUSTED_ORG_ID = '00000000-0000-4000-8000-000000000001';
 const TRUSTED_ACTOR_ID = '00000000-0000-4000-8000-000000000002';
+const TRUSTED_BRAND_ID = '00000000-0000-4000-8000-000000000009';
 const TEST_EXCEPTION_ID = '11111111-1111-4111-8111-111111111111';
 const OTHER_EXCEPTION_ID = '22222222-2222-4222-8222-222222222222';
 
@@ -55,31 +55,33 @@ const trustedSession = {
   organization: { id: TRUSTED_ORG_ID, displayName: 'TeeStock Solo' },
   user: { id: TRUSTED_ACTOR_ID, name: 'Rizky Owner' },
   role: { code: 'OWNER' },
+  activeBrand: { code: 'TEESTOCK', name: 'TeeStock' },
 };
 
 describe('Operational Exception Console (P2-A / WP03)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.context.mockResolvedValue({
-      session: trustedSession,
-      endpoint: 'http://127.0.0.1:55431/rest/v1',
-      headers: {
-        apikey: 'service-role-test-key',
-        Authorization: 'Bearer service-role-test-key',
-        'Content-Type': 'application/json',
-        'Accept-Profile': 'app',
-        'Content-Profile': 'app',
-      },
-    });
+    sessionMock.mockResolvedValue(trustedSession);
 
     vi.stubGlobal(
       'fetch',
-      vi.fn().mockResolvedValue(
-        new Response(JSON.stringify([]), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        }),
-      ),
+      vi.fn().mockImplementation((input: string | URL | Request) => {
+        const url = String(input);
+        if (url.includes('/rest/v1/brands')) {
+          return Promise.resolve(
+            new Response(JSON.stringify([{ id: TRUSTED_BRAND_ID }]), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+          );
+        }
+        return Promise.resolve(
+          new Response(JSON.stringify([]), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
+      }),
     );
   });
 
@@ -122,59 +124,84 @@ describe('Operational Exception Console (P2-A / WP03)', () => {
   // 2. Candidate Query Boundedness & Organization Filtering
   // ==========================================================================
   describe('Candidate Queries Boundedness & Security', () => {
-    it('loadResourceCandidates enforces organization_id and limit=100 for ORDER', async () => {
+    function mockFetchForResource(
+      resourcePath: string,
+      resourceRows: unknown[],
+    ) {
       vi.stubGlobal(
         'fetch',
-        vi.fn().mockResolvedValue(
-          new Response(
-            JSON.stringify([
-              {
-                id: 'ord-1',
-                order_number: 'TS-O-2026-0001',
-                status: 'CONFIRMED',
-                grand_total: 1500000,
-                brand_id: 'brand-ts',
-              },
-            ]),
-            { status: 200, headers: { 'Content-Type': 'application/json' } },
-          ),
-        ),
+        vi.fn().mockImplementation((input: string | URL | Request) => {
+          const url = String(input);
+          if (url.includes('/rest/v1/brands')) {
+            return Promise.resolve(
+              new Response(JSON.stringify([{ id: TRUSTED_BRAND_ID }]), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+              }),
+            );
+          }
+          if (url.includes(resourcePath)) {
+            return Promise.resolve(
+              new Response(JSON.stringify(resourceRows), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+              }),
+            );
+          }
+          return Promise.resolve(
+            new Response(JSON.stringify([]), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+          );
+        }),
       );
+    }
+
+    it('loadResourceCandidates enforces organization_id, active brand, lifecycle status, and limit=100 for ORDER', async () => {
+      mockFetchForResource('/rest/v1/orders?', [
+        {
+          id: 'ord-1',
+          order_number: 'TS-O-2026-0001',
+          status: 'CONFIRMED',
+          grand_total: 1500000,
+          brand_id: TRUSTED_BRAND_ID,
+        },
+      ]);
 
       const candidates = await loadResourceCandidates('ORDER');
       expect(candidates).toHaveLength(1);
       expect(candidates[0]!.identifier).toBe('TS-O-2026-0001');
       expect(candidates[0]!.resourceType).toBe('ORDER');
-      expect(candidates[0]!.brandId).toBe('brand-ts');
+      expect(candidates[0]!.brandId).toBe(TRUSTED_BRAND_ID);
       expect(candidates[0]!.orderId).toBe('ord-1');
 
-      const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      const resourceCall = vi
+        .mocked(fetch)
+        .mock.calls.find(([u]) => String(u).includes('/rest/v1/orders?'));
+      expect(resourceCall).toBeDefined();
+      const url = String(resourceCall![0]);
       expect(url).toContain(
         `organization_id=eq.${encodeURIComponent(TRUSTED_ORG_ID)}`,
       );
+      expect(url).toContain(
+        `brand_id=eq.${encodeURIComponent(TRUSTED_BRAND_ID)}`,
+      );
+      expect(url).toContain('status=not.in.(COMPLETED,CANCELLED)');
       expect(url).toContain('limit=100');
-      expect(url).toContain('/rest/v1/orders?');
     });
 
-    it('loadResourceCandidates enforces organization_id and limit=100 for PRODUCTION_JOB', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue(
-          new Response(
-            JSON.stringify([
-              {
-                id: 'job-1',
-                job_number: 'JOB-2026-001',
-                title: 'Sablon DTF Kaos Komunitas',
-                status: 'IN_PROGRESS',
-                brand_id: 'brand-ts',
-                order_id: 'ord-1',
-              },
-            ]),
-            { status: 200, headers: { 'Content-Type': 'application/json' } },
-          ),
-        ),
-      );
+    it('loadResourceCandidates enforces organization_id, active brand, and limit=100 for PRODUCTION_JOB', async () => {
+      mockFetchForResource('/rest/v1/production_jobs?', [
+        {
+          id: 'job-1',
+          job_number: 'JOB-2026-001',
+          title: 'Sablon DTF Kaos Komunitas',
+          status: 'IN_PROGRESS',
+          brand_id: TRUSTED_BRAND_ID,
+          order_id: 'ord-1',
+        },
+      ]);
 
       const candidates = await loadResourceCandidates('PRODUCTION_JOB');
       expect(candidates).toHaveLength(1);
@@ -182,141 +209,186 @@ describe('Operational Exception Console (P2-A / WP03)', () => {
       expect(candidates[0]!.resourceType).toBe('PRODUCTION_JOB');
       expect(candidates[0]!.orderId).toBe('ord-1');
 
-      const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      const resourceCall = vi
+        .mocked(fetch)
+        .mock.calls.find(([u]) =>
+          String(u).includes('/rest/v1/production_jobs?'),
+        );
+      expect(resourceCall).toBeDefined();
+      const url = String(resourceCall![0]);
       expect(url).toContain(
         `organization_id=eq.${encodeURIComponent(TRUSTED_ORG_ID)}`,
       );
+      expect(url).toContain(
+        `brand_id=eq.${encodeURIComponent(TRUSTED_BRAND_ID)}`,
+      );
       expect(url).toContain('limit=100');
-      expect(url).toContain('/rest/v1/production_jobs?');
     });
 
-    it('loadResourceCandidates enforces inner job organization_id for PRODUCTION_ASSIGNMENT', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue(
-          new Response(
-            JSON.stringify([
-              {
-                id: 'assign-1',
-                production_job_id: 'job-1',
-                executor_type: 'VENDOR',
-                vendor_name: 'Mitra DTF Solo',
-                status: 'ASSIGNED',
-                assigned_cost: 500000,
-                production_jobs: {
-                  job_number: 'JOB-2026-001',
-                  organization_id: TRUSTED_ORG_ID,
-                },
-              },
-            ]),
-            { status: 200, headers: { 'Content-Type': 'application/json' } },
-          ),
-        ),
-      );
+    it('loadResourceCandidates enforces inner job organization_id, active brand, status, and limit=100 for PRODUCTION_ASSIGNMENT', async () => {
+      mockFetchForResource('/rest/v1/production_assignments?', [
+        {
+          id: 'assign-1',
+          production_job_id: 'job-1',
+          executor_type: 'VENDOR',
+          vendor_name: 'Mitra DTF Solo',
+          status: 'ASSIGNED',
+          assigned_cost: 500000,
+          production_jobs: {
+            job_number: 'JOB-2026-001',
+            organization_id: TRUSTED_ORG_ID,
+            brand_id: TRUSTED_BRAND_ID,
+          },
+        },
+      ]);
 
       const candidates = await loadResourceCandidates('PRODUCTION_ASSIGNMENT');
       expect(candidates).toHaveLength(1);
       expect(candidates[0]!.resourceType).toBe('PRODUCTION_ASSIGNMENT');
       expect(candidates[0]!.label).toContain('Mitra DTF Solo');
 
-      const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      const resourceCall = vi
+        .mocked(fetch)
+        .mock.calls.find(([u]) =>
+          String(u).includes('/rest/v1/production_assignments?'),
+        );
+      expect(resourceCall).toBeDefined();
+      const url = String(resourceCall![0]);
       expect(url).toContain(
         `production_jobs.organization_id=eq.${encodeURIComponent(TRUSTED_ORG_ID)}`,
       );
+      expect(url).toContain(
+        `production_jobs.brand_id=eq.${encodeURIComponent(TRUSTED_BRAND_ID)}`,
+      );
+      expect(url).toContain('status=in.(ASSIGNED,ACCEPTED)');
       expect(url).toContain('limit=100');
     });
 
-    it('loadResourceCandidates enforces organization_id and limit=100 for QC_INSPECTION', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue(
-          new Response(
-            JSON.stringify([
-              {
-                id: 'qc-1',
-                inspection_number: 'QC-2026-001',
-                result: 'REWORK',
-                defect_category: 'PRINTING',
-                defect_count: 3,
-              },
-            ]),
-            { status: 200, headers: { 'Content-Type': 'application/json' } },
-          ),
-        ),
-      );
+    it('loadResourceCandidates enforces inner job organization_id, active brand, result filter, and limit=100 for QC_INSPECTION', async () => {
+      mockFetchForResource('/rest/v1/qc_inspections?', [
+        {
+          id: 'qc-1',
+          inspection_number: 'QC-2026-001',
+          result: 'REWORK',
+          defect_category: 'PRINTING',
+          defect_count: 3,
+          production_jobs: {
+            job_number: 'JOB-2026-001',
+            organization_id: TRUSTED_ORG_ID,
+            brand_id: TRUSTED_BRAND_ID,
+          },
+        },
+      ]);
 
       const candidates = await loadResourceCandidates('QC_INSPECTION');
       expect(candidates).toHaveLength(1);
       expect(candidates[0]!.identifier).toBe('QC-2026-001');
 
-      const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      const resourceCall = vi
+        .mocked(fetch)
+        .mock.calls.find(([u]) =>
+          String(u).includes('/rest/v1/qc_inspections?'),
+        );
+      expect(resourceCall).toBeDefined();
+      const url = String(resourceCall![0]);
       expect(url).toContain(
-        `organization_id=eq.${encodeURIComponent(TRUSTED_ORG_ID)}`,
+        `production_jobs.organization_id=eq.${encodeURIComponent(TRUSTED_ORG_ID)}`,
       );
+      expect(url).toContain(
+        `production_jobs.brand_id=eq.${encodeURIComponent(TRUSTED_BRAND_ID)}`,
+      );
+      expect(url).toContain('result=in.(REWORK,REJECTED)');
       expect(url).toContain('limit=100');
     });
 
-    it('loadResourceCandidates enforces organization_id and limit=100 for SHIPMENT', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue(
-          new Response(
-            JSON.stringify([
-              {
-                id: 'shp-1',
-                shipment_number: 'SHP-2026-001',
-                status: 'DISPATCHED',
-                courier_name: 'JNE Trucking',
-                brand_id: 'brand-ts',
-                order_id: 'ord-1',
-              },
-            ]),
-            { status: 200, headers: { 'Content-Type': 'application/json' } },
-          ),
-        ),
-      );
+    it('loadResourceCandidates enforces organization_id, active brand, status, and limit=100 for SHIPMENT', async () => {
+      mockFetchForResource('/rest/v1/shipments?', [
+        {
+          id: 'shp-1',
+          shipment_number: 'SHP-2026-001',
+          status: 'DISPATCHED',
+          courier_name: 'JNE Trucking',
+          brand_id: TRUSTED_BRAND_ID,
+          order_id: 'ord-1',
+        },
+      ]);
 
       const candidates = await loadResourceCandidates('SHIPMENT');
       expect(candidates).toHaveLength(1);
       expect(candidates[0]!.identifier).toBe('SHP-2026-001');
 
-      const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      const resourceCall = vi
+        .mocked(fetch)
+        .mock.calls.find(([u]) => String(u).includes('/rest/v1/shipments?'));
+      expect(resourceCall).toBeDefined();
+      const url = String(resourceCall![0]);
       expect(url).toContain(
         `organization_id=eq.${encodeURIComponent(TRUSTED_ORG_ID)}`,
       );
+      expect(url).toContain(
+        `brand_id=eq.${encodeURIComponent(TRUSTED_BRAND_ID)}`,
+      );
+      expect(url).toContain('status=not.in.(DELIVERED,CANCELLED)');
       expect(url).toContain('limit=100');
     });
 
-    it('loadResourceCandidates enforces organization_id and limit=100 for INVOICE', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue(
-          new Response(
-            JSON.stringify([
-              {
-                id: 'inv-1',
-                invoice_number: 'INV-2026-001',
-                status: 'OVERDUE',
-                amount_total: 2500000,
-                balance_due: 2500000,
-                brand_id: 'brand-ts',
-                order_id: 'ord-1',
-              },
-            ]),
-            { status: 200, headers: { 'Content-Type': 'application/json' } },
-          ),
-        ),
-      );
+    it('loadResourceCandidates enforces organization_id, active brand, balance_due, status, and limit=100 for INVOICE', async () => {
+      mockFetchForResource('/rest/v1/invoices?', [
+        {
+          id: 'inv-1',
+          invoice_number: 'INV-2026-001',
+          status: 'OVERDUE',
+          amount_total: 2500000,
+          balance_due: 2500000,
+          brand_id: TRUSTED_BRAND_ID,
+          order_id: 'ord-1',
+        },
+      ]);
 
       const candidates = await loadResourceCandidates('INVOICE');
       expect(candidates).toHaveLength(1);
       expect(candidates[0]!.identifier).toBe('INV-2026-001');
 
-      const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      const resourceCall = vi
+        .mocked(fetch)
+        .mock.calls.find(([u]) => String(u).includes('/rest/v1/invoices?'));
+      expect(resourceCall).toBeDefined();
+      const url = String(resourceCall![0]);
       expect(url).toContain(
         `organization_id=eq.${encodeURIComponent(TRUSTED_ORG_ID)}`,
       );
+      expect(url).toContain(
+        `brand_id=eq.${encodeURIComponent(TRUSTED_BRAND_ID)}`,
+      );
+      expect(url).toContain('balance_due=gt.0');
+      expect(url).toContain('status=in.(ISSUED,PARTIALLY_PAID,OVERDUE)');
       expect(url).toContain('limit=100');
+    });
+
+    it('loadResourceCandidates fails closed and returns empty array if activeBrand cannot be resolved', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockImplementation((input: string | URL | Request) => {
+          const url = String(input);
+          if (url.includes('/rest/v1/brands')) {
+            return Promise.resolve(
+              new Response(JSON.stringify([]), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+              }),
+            );
+          }
+          return Promise.resolve(
+            new Response(JSON.stringify([{ id: 'unreachable' }]), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+          );
+        }),
+      );
+
+      const candidates = await loadResourceCandidates('ORDER');
+      expect(candidates).toEqual([]);
     });
 
     it('loadResourceCandidates rejects arbitrary unsupported resource types', async () => {
@@ -395,7 +467,7 @@ describe('Operational Exception Console (P2-A / WP03)', () => {
   // 4. Duplicate / Superseded Target Exclusion
   // ==========================================================================
   describe('Duplicate and Superseded Target Handling', () => {
-    it('excludes self-target from exception candidates', async () => {
+    it('excludes self-target from exception candidates and supports mode=all', async () => {
       vi.stubGlobal(
         'fetch',
         vi.fn().mockResolvedValue(
@@ -412,6 +484,40 @@ describe('Operational Exception Console (P2-A / WP03)', () => {
                 id: OTHER_EXCEPTION_ID,
                 exception_type: 'production.deadline_breached',
                 severity: 'HIGH',
+                status: 'RESOLVED',
+                summary: 'Keterlambatan jahit',
+              },
+            ]),
+            { status: 200, headers: { 'Content-Type': 'application/json' } },
+          ),
+        ),
+      );
+
+      const candidates = await loadExceptionCandidates(
+        TEST_EXCEPTION_ID,
+        'all',
+      );
+      expect(candidates).toHaveLength(1);
+      expect(candidates[0]!.id).toBe(OTHER_EXCEPTION_ID);
+
+      const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+      expect(url).toContain(
+        `organization_id=eq.${encodeURIComponent(TRUSTED_ORG_ID)}`,
+      );
+      expect(url).not.toContain('status=in.(OPEN,ACKNOWLEDGED)');
+      expect(url).toContain('limit=100');
+    });
+
+    it('filters status=in.(OPEN,ACKNOWLEDGED) when mode=active_only for SUPERSEDED targets', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(
+          new Response(
+            JSON.stringify([
+              {
+                id: OTHER_EXCEPTION_ID,
+                exception_type: 'production.deadline_breached',
+                severity: 'HIGH',
                 status: 'OPEN',
                 summary: 'Keterlambatan jahit',
               },
@@ -421,7 +527,10 @@ describe('Operational Exception Console (P2-A / WP03)', () => {
         ),
       );
 
-      const candidates = await loadExceptionCandidates(TEST_EXCEPTION_ID);
+      const candidates = await loadExceptionCandidates(
+        TEST_EXCEPTION_ID,
+        'active_only',
+      );
       expect(candidates).toHaveLength(1);
       expect(candidates[0]!.id).toBe(OTHER_EXCEPTION_ID);
 
@@ -429,6 +538,7 @@ describe('Operational Exception Console (P2-A / WP03)', () => {
       expect(url).toContain(
         `organization_id=eq.${encodeURIComponent(TRUSTED_ORG_ID)}`,
       );
+      expect(url).toContain('status=in.(OPEN,ACKNOWLEDGED)');
       expect(url).toContain('limit=100');
     });
   });
@@ -442,6 +552,7 @@ describe('Operational Exception Console (P2-A / WP03)', () => {
       expect(getOperationalException.length).toBe(1);
       expect(getOperationalExceptionHistory.length).toBe(1);
       expect('readRows' in dataModule).toBe(false);
+      expect('internalContextHolder' in dataModule).toBe(false);
     });
 
     it('loadResourceDisplayContext enforces organization_id and fails closed on foreign org', async () => {
