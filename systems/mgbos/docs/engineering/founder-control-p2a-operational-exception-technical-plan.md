@@ -3318,6 +3318,7 @@ focused integration tests
 No Founder Home work.
 
 WP02 delivered and verified:
+
 - Pure input/state Zod validation schemas (`packages/domain-core/src/operational-exception/schemas.ts`);
 - 10 authoritative RBAC permissions assigned to `OWNER` and `ADMIN` with fail-closed denial for staff roles;
 - Server-only authenticated action context deriving actor identity from session (`apps/mgbos/src/app/(app)/operational-exceptions/server-action-context.ts`);
