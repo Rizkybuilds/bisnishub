@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { unstable_rethrow } from 'next/navigation';
 import { checkPermission } from '@mgbos/auth';
 import {
   openOperationalExceptionSchema,
@@ -61,7 +62,6 @@ export function classifyDatabaseError(err: unknown): {
     lower.includes('not authorized') ||
     lower.includes('requires owner authority') ||
     lower.includes('reserved for active owner') ||
-    lower.includes('must be an active owner or admin') ||
     lower.includes('active organization membership required') ||
     lower.includes('akses ditolak')
   ) {
@@ -278,6 +278,7 @@ export async function openOperationalExceptionAction(
       data,
     };
   } catch (err) {
+    unstable_rethrow(err);
     return {
       success: false,
       error: classifyDatabaseError(err),
@@ -347,6 +348,7 @@ export async function acknowledgeOperationalExceptionAction(
       data: resJson as Record<string, unknown>,
     };
   } catch (err) {
+    unstable_rethrow(err);
     return {
       success: false,
       error: classifyDatabaseError(err),
@@ -415,6 +417,7 @@ export async function assignOperationalExceptionAction(
       data: resJson as Record<string, unknown>,
     };
   } catch (err) {
+    unstable_rethrow(err);
     return {
       success: false,
       error: classifyDatabaseError(err),
@@ -486,6 +489,7 @@ export async function reassignOperationalExceptionAction(
       data: resJson as Record<string, unknown>,
     };
   } catch (err) {
+    unstable_rethrow(err);
     return {
       success: false,
       error: classifyDatabaseError(err),
@@ -556,6 +560,7 @@ export async function changeOperationalExceptionSeverityAction(
       data: resJson as Record<string, unknown>,
     };
   } catch (err) {
+    unstable_rethrow(err);
     return {
       success: false,
       error: classifyDatabaseError(err),
@@ -625,6 +630,7 @@ export async function resolveOperationalExceptionAction(
       data: resJson as Record<string, unknown>,
     };
   } catch (err) {
+    unstable_rethrow(err);
     return {
       success: false,
       error: classifyDatabaseError(err),
@@ -694,6 +700,7 @@ export async function dismissOperationalExceptionAction(
       data: resJson as Record<string, unknown>,
     };
   } catch (err) {
+    unstable_rethrow(err);
     return {
       success: false,
       error: classifyDatabaseError(err),
@@ -761,6 +768,7 @@ export async function reopenOperationalExceptionAction(
       data: resJson as Record<string, unknown>,
     };
   } catch (err) {
+    unstable_rethrow(err);
     return {
       success: false,
       error: classifyDatabaseError(err),

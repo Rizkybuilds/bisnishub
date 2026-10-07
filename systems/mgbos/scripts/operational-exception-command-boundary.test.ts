@@ -52,6 +52,18 @@ const trustedSession = {
   role: { code: 'OWNER' },
 };
 
+const validOpenInput = {
+  requestId: VALID_UUID_REQ,
+  exceptionType: 'production.deadline_breached',
+  primaryResourceType: 'PRODUCTION_JOB',
+  primaryResourceId: VALID_UUID_RES,
+  severity: 'HIGH',
+  sourceKind: 'HUMAN_REPORT',
+  responsibleRoleCode: 'OPERATIONS',
+  summary: 'Keterlambatan proses jahit pada pesanan TS-O-2026-0001',
+  businessImpact: 'Potensi penalti keterlambatan pengiriman ke pelanggan',
+};
+
 describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -85,18 +97,6 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
   });
 
   describe('openOperationalExceptionAction', () => {
-    const validOpenInput = {
-      requestId: VALID_UUID_REQ,
-      exceptionType: 'production.deadline_breached',
-      primaryResourceType: 'PRODUCTION_JOB',
-      primaryResourceId: VALID_UUID_RES,
-      severity: 'HIGH',
-      sourceKind: 'HUMAN_REPORT',
-      responsibleRoleCode: 'OPERATIONS',
-      summary: 'Keterlambatan proses jahit pada pesanan TS-O-2026-0001',
-      businessImpact: 'Potensi penalti keterlambatan pengiriman ke pelanggan',
-    };
-
     it('calls open_operational_exception RPC with session org and actor', async () => {
       const res = await openOperationalExceptionAction(validOpenInput);
 
@@ -612,6 +612,125 @@ describe('Operational Exception Command Boundary Actions (P2-A / WP02)', () => {
           message: `Primary resource PRODUCTION_ASSIGNMENT ${VALID_UUID_RES} does not belong to organization`,
         }).code,
       ).toBe('CROSS_ORG');
+    });
+
+    it('classifies exact WP01 target principal errors as INVALID_RESOURCE', () => {
+      expect(
+        classifyDatabaseError({
+          message:
+            'Responsible principal must be an active OWNER or ADMIN in the organization',
+        }).code,
+      ).toBe('INVALID_RESOURCE');
+    });
+
+    it('classifies actor authorization errors as UNAUTHORIZED', () => {
+      expect(
+        classifyDatabaseError({
+          message: 'Not authorized to assign operational exceptions',
+        }).code,
+      ).toBe('UNAUTHORIZED');
+
+      expect(
+        classifyDatabaseError({
+          message:
+            'Accepted risk resolution requires OWNER authority; active ADMIN cannot resolve with accepted_risk',
+        }).code,
+      ).toBe('UNAUTHORIZED');
+
+      expect(
+        classifyDatabaseError({
+          message: 'Active organization membership required',
+        }).code,
+      ).toBe('UNAUTHORIZED');
+
+      expect(
+        classifyDatabaseError({
+          message:
+            "Akses ditolak: peran 'SALES' tidak memiliki izin 'operational_exceptions:open'",
+        }).code,
+      ).toBe('UNAUTHORIZED');
+    });
+  });
+
+  describe('Next.js Framework Control Flow & Redirect Preservation', () => {
+    it('rethrows Next.js framework redirect error across all 8 actions instead of swallowing into UNKNOWN_FAILURE', async () => {
+      const redirectError = new Error('NEXT_REDIRECT');
+      (redirectError as unknown as { digest: string }).digest =
+        'NEXT_REDIRECT;replace;/login;307;';
+
+      mocks.context.mockRejectedValue(redirectError);
+
+      const actionInvocations = [
+        () => openOperationalExceptionAction(validOpenInput),
+        () =>
+          acknowledgeOperationalExceptionAction({
+            requestId: VALID_UUID_REQ,
+            exceptionId: VALID_UUID_EX,
+            expectedRevision: 1,
+          }),
+        () =>
+          assignOperationalExceptionAction({
+            requestId: VALID_UUID_REQ,
+            exceptionId: VALID_UUID_EX,
+            expectedRevision: 1,
+            responsibleRoleCode: 'OWNER',
+            responsibleUserId: VALID_UUID_USER,
+          }),
+        () =>
+          reassignOperationalExceptionAction({
+            requestId: VALID_UUID_REQ,
+            exceptionId: VALID_UUID_EX,
+            expectedRevision: 1,
+            newResponsibleRoleCode: 'OWNER',
+            newResponsibleUserId: VALID_UUID_USER,
+            reason: 'Valid reassign reason text',
+          }),
+        () =>
+          changeOperationalExceptionSeverityAction({
+            requestId: VALID_UUID_REQ,
+            exceptionId: VALID_UUID_EX,
+            expectedRevision: 1,
+            newSeverity: 'CRITICAL',
+            reason: 'Escalation required',
+          }),
+        () =>
+          resolveOperationalExceptionAction({
+            requestId: VALID_UUID_REQ,
+            exceptionId: VALID_UUID_EX,
+            expectedRevision: 1,
+            resolutionType: 'WORKAROUND_APPLIED',
+            resolutionSummary: 'Issue mitigated via manual verification',
+          }),
+        () =>
+          dismissOperationalExceptionAction({
+            requestId: VALID_UUID_REQ,
+            exceptionId: VALID_UUID_EX,
+            expectedRevision: 1,
+            dismissalReason: 'NOT_AN_EXCEPTION',
+            reasonSummary: 'Determined to be expected business behavior',
+          }),
+        () =>
+          reopenOperationalExceptionAction({
+            requestId: VALID_UUID_REQ,
+            exceptionId: VALID_UUID_EX,
+            expectedRevision: 1,
+            reason: 'Recurred after initial mitigation',
+          }),
+      ];
+
+      for (const invoke of actionInvocations) {
+        await expect(invoke()).rejects.toThrow('NEXT_REDIRECT');
+      }
+
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it('does not rethrow non-framework database or runtime errors', async () => {
+      mocks.context.mockRejectedValue(new Error('Connection terminated'));
+
+      const res = await openOperationalExceptionAction(validOpenInput);
+      expect(res.success).toBe(false);
+      expect(res.error?.code).toBe('UNKNOWN_FAILURE');
     });
   });
 
