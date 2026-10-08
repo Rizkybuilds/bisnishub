@@ -29,11 +29,11 @@ completed_work_packages:
   - WP-P2A-02
   - WP-P2A-03
 
-active_work_package: NONE
+active_work_package: WP-P2A-04 (BRANCH_CANDIDATE)
 
 next_candidate:
   id: WP-P2A-04
-  status: NOT_AUTHORIZED
+  status: IN_REVIEW_CANDIDATE
 
 deployment_status: NOT_AUTHORIZED
 pilot_status: BLOCKED
@@ -106,12 +106,11 @@ WP-P2A-03 (COMPLETE / MERGED / POST-MERGE VERIFIED)
 
 ACTIVE WORK PACKAGE
 =
-NONE
+WP-P2A-04 (ASSURANCE & REFLECTION — BRANCH CANDIDATE)
 
-NEXT ENGINEERING CANDIDATE
+CANDIDATE STATUS
 =
-WP-P2A-04 (ASSURANCE & REFLECTION)
-STATUS: NOT_AUTHORIZED
+READY FOR PULL REQUEST & INDEPENDENT AUDIT (IN_REVIEW_CANDIDATE)
 
 DEPLOYMENT STATUS
 =
@@ -315,35 +314,36 @@ NOT YET COMPLETE
 
 ---
 
-## 7. Next Candidate: WP-P2A-04
+## 7. Current Candidate: WP-P2A-04 (Assurance & Reflection)
 
-The next engineering slice identified by the P2-A Technical Plan is:
+The bounded assurance slice for P2-A is executed and documented in:
+
+- [WP-P2A-04 Assurance Report](./wp-p2a-04-assurance.md)
 
 ```text
 Work Package:
 WP-P2A-04 — Assurance & Reflection
 
-Scope:
-- full regression
-- DB replay
-- focused security tests
-- migration verification
-- application build
-- operator synthetic scenario
-- documentation state reflection
+Contract:
+IC-MGBOS-P2A-WP04 (READY_FOR_REVIEW)
+
+Branch:
+assurance/mgbos-p2a-wp04
+
+Scope Executed:
+- full workspace check: format, lint, lint:sql, typecheck (11 pkgs), full Vitest (65 files / 527 tests), Next.js builds
+- local HTTP production smoke (:3101 & :3102)
+- disposable local Supabase reset, 27 pgTAP files / 541 tests passed
+- double database type generation determinism (database.types.ts unchanged)
+- forward migration upgrade rehearsal from prior Phase 1 schema on isolated clone
+- 20-request concurrency race proving active deduplication, 1 active row, 20 audit receipts (CHK-008 / AC-004)
+- live local operator console lifecycle: Open -> Assign -> Acknowledge -> Reassign -> Severity -> Non-owner ACCEPTED_RISK denial -> Owner ACCEPTED_RISK resolution -> Reopen -> Dismiss (CHK-009 / AC-006)
+- source-domain independence verified on Order and Production Job (AC-005)
+- negative security: direct table INSERT/UPDATE/DELETE denied, anon denied, staff denied, cross-tenant denied (AC-008)
 
 Status:
-NEXT CANDIDATE / NOT AUTHORIZED
+IN_REVIEW_CANDIDATE (Awaiting Pull Request audit by Head Engineering)
 ```
-
-### Governing Rule for WP04 Entry
-
-Antigravity / Builder MUST NOT begin code implementation on WP04 until:
-
-1. Head Engineering (ChatGPT) authors and audits an Implementation Contract for WP-P2A-04;
-2. Bounded Work Package `WP-P2A-04` is authored;
-3. Owner / governed authority grants explicit execution authorization;
-4. The candidate binds to the exact verified baseline (`main@23d4fd3d184d5bf60c9d41e57a1c01fe3517c132`).
 
 ---
 

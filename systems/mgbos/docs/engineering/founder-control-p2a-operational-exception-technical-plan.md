@@ -19,10 +19,10 @@ program:
     wp01: POST_MERGE_VERIFIED
     wp02: POST_MERGE_VERIFIED
     wp03: POST_MERGE_VERIFIED
-    wp04: CANDIDATE_NOT_AUTHORIZED
-  active_work_package: NONE
-  implementation_authorization: NONE
-  builder_authorization: NONE_CURRENT
+    wp04: IN_ASSURANCE_CANDIDATE
+  active_work_package: WP-P2A-04 (BRANCH_CANDIDATE)
+  implementation_authorization: WP04_BOUNDED_ASSURANCE
+  builder_authorization: WP04_ASSURANCE_ONLY
   deployment_authorization: NONE
 
 repository_baseline:
