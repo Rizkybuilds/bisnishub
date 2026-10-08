@@ -1,7 +1,7 @@
 ---
 canonical_id: mgbos.engineering.founder-control-p2a-operational-exception-technical-plan
 status: ACTIVE
-version: 1.2
+version: 1.3
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -18,8 +18,8 @@ program:
   implementation_progress:
     wp01: POST_MERGE_VERIFIED
     wp02: POST_MERGE_VERIFIED
-    wp03: CANDIDATE_NOT_AUTHORIZED
-    wp04: NOT_OPEN
+    wp03: POST_MERGE_VERIFIED
+    wp04: CANDIDATE_NOT_AUTHORIZED
   active_work_package: NONE
   implementation_authorization: NONE
   builder_authorization: NONE_CURRENT
@@ -28,9 +28,9 @@ program:
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: b8262cca87a7d2644cf1738bf54fe72e8c4545f1
-  tree: 5e6f3f9b6921ce191863fe2ee42b46541b62057e
-  reviewed_at: 2026-10-07
+  commit: 23d4fd3d184d5bf60c9d41e57a1c01fe3517c132
+  tree: 1f8b7f60848d000e405410f4574d0306b923fa56
+  reviewed_at: 2026-10-08
 
 risk:
   proposed_classification: R4
@@ -91,10 +91,10 @@ depends_on:
   - ../../../../.agents/contracts/work-package.schema.json
 
 supersedes:
-  - mgbos.engineering.founder-control-p2a-operational-exception-technical-plan@1.1
+  - mgbos.engineering.founder-control-p2a-operational-exception-technical-plan@1.2
 ---
 
-# Founder Control P2-A — Operational Exception Foundation Technical Implementation Plan v1.2
+# Founder Control P2-A — Operational Exception Foundation Technical Implementation Plan v1.3
 
 ## 1. Purpose
 
@@ -143,11 +143,11 @@ At baseline:
 ```text
 main
 =
-b8262cca87a7d2644cf1738bf54fe72e8c4545f1
+23d4fd3d184d5bf60c9d41e57a1c01fe3517c132
 
 tree
 =
-5e6f3f9b6921ce191863fe2ee42b46541b62057e
+1f8b7f60848d000e405410f4574d0306b923fa56
 
 W2 ARCHITECTURE RECONCILIATION
 =
@@ -159,7 +159,7 @@ ANALYSIS COMPLETE
 
 P2-A TECHNICAL PLAN
 =
-ACTIVE (v1.2)
+ACTIVE (v1.3)
 
 P2-A IMPLEMENTATION
 =
@@ -173,6 +173,10 @@ WP-P2A-02
 =
 COMPLETE / MERGED / POST-MERGE VERIFIED (PR #44)
 
+WP-P2A-03
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #46)
+
 Operational Exception database & domain foundation
 =
 CURRENT (LANDED IN WP-P2A-01)
@@ -183,7 +187,7 @@ CURRENT (LANDED IN WP-P2A-02)
 
 Operational Exception UI / Operator Console
 =
-NOT IMPLEMENTED
+CURRENT (LANDED IN WP-P2A-03)
 
 Founder Attention runtime
 =
@@ -195,7 +199,7 @@ NONE
 
 NEXT WORK PACKAGE CANDIDATE
 =
-WP-P2A-03 (NOT AUTHORIZED)
+WP-P2A-04 (NOT AUTHORIZED)
 ```
 
 No open PR existed at baseline.
@@ -3212,11 +3216,11 @@ Validation + authorization + server command path
 
 P2A-WP03
 Operational Exception console UI
-= NEXT CANDIDATE / NOT AUTHORIZED
+= COMPLETE / MERGED / POST-MERGE VERIFIED (PR #46 @ 23d4fd3d184d5bf60c9d41e57a1c01fe3517c132)
 
 P2A-WP04
 Integrated verification + documentation reflection
-= NOT OPEN
+= NEXT CANDIDATE / NOT AUTHORIZED
 ```
 
 Only one bounded Work Package should be active for Builder by default. Active work package is currently NONE.
@@ -3326,56 +3330,67 @@ WP02 delivered and verified:
 - Next.js framework redirect control flow preservation handled directly within `systems/mgbos/apps/mgbos/src/app/(app)/exceptions/actions.ts` via `unstable_rethrow`, ensuring authentication redirects are never caught as application failures;
 - Application-boundary test suite in `systems/mgbos/scripts/operational-exception-command-boundary.test.ts` with 32 focused tests covering validation rejections, permission gates, RPC payload mappings, idempotency handling, redirect rethrowing, target principal error classification, and read boundary isolation.
 
-Follow-up note for WP03 planning:
+Follow-up note resolved by WP03:
 
 ```text
-FOLLOW_UP / NON_BLOCKING:
-Read queries (`listOperationalExceptions`, `getOperationalException`, `getOperationalExceptionHistory`) in `exceptions/data.ts` allow an optional injected context argument to support internal server-side composition and focused test injection. Head Engineering should evaluate whether console page components consume default server-action reads or leverage injected context during WP03 contract authoring.
+RESOLVED BY WP03:
+Public UI-facing read queries in `exceptions/data.ts` construct trusted context internally with active session verification and service-role derivation (`exceptionsContext`), and no mutable exported context holder or test seam remains.
 ```
 
 ---
 
 # 115. P2A-WP03 — Exception Console
 
+Status:
+
+```text
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #46 @ 23d4fd3d184d5bf60c9d41e57a1c01fe3517c132)
+```
+
 Scope:
 
 ```text
 exception list
-
 manual-open form
-
 resource candidate selector
-
 detail page
-
 history display
-
 lifecycle action UI
-
 sidebar navigation
 ```
 
-No automatic detector.
+WP03 delivered and verified:
+
+- Dedicated operator list console at `/exceptions` with Organization-scoped filtering, triage tabs, and manual-open trigger;
+- Manual-open modal form with compile-time payload conformance to @mgbos/validation input types, while authoritative runtime Zod validation remains enforced by the existing WP02 server-action boundary;
+- Bounded resource candidate selector covering `PRODUCTION_JOB`, `PRODUCTION_ASSIGNMENT`, `QC_INSPECTION`, `INVOICE`, `ORDER`, and `SHIPMENT`, filtered server-side by active Brand (`resolveActiveBrandId`, `limit = 100`) and failing closed (`[]`) if the active Brand cannot be resolved;
+- Same-Organization active member selector for assignment;
+- Exception detail page at `/exceptions/[exceptionId]` rendering severity, lifecycle status, entity target link, assignee, timestamps, immutable observation card, and append-only audit history timeline;
+- Governed human lifecycle action dialogs: Acknowledge, Assign, Reassign, Change Severity, Resolve, Dismiss, Reopen, with OWNER-only Accepted Risk presentation and bounded candidate selection for `SUPERSEDED` (active only) and `DUPLICATE` (all same-org);
+- Stable client-generated `requestId` propagation, optimistic `expectedRevision` verification, and bounded operator-facing error classification without leaking database traces;
+- Permission-gated sidebar navigation via `canReadOperationalExceptions`;
+- Amendment A1: Synchronous helper `classifyDatabaseError` inside top-level `'use server'` module unexported to satisfy Next.js production build without changing command semantics;
+- Integration revision `23d4fd3d184d5bf60c9d41e57a1c01fe3517c132` (PR #46).
 
 ---
 
 # 116. P2A-WP04 — Assurance & Reflection
 
+Status:
+
+```text
+NEXT CANDIDATE / NOT AUTHORIZED
+```
+
 Scope:
 
 ```text
 full regression
-
 DB replay
-
 focused security tests
-
 migration verification
-
 application build
-
 operator synthetic scenario
-
 documentation state reflection
 ```
 
@@ -3961,25 +3976,29 @@ WP-P2A-02
 =
 COMPLETE / MERGED / POST-MERGE VERIFIED (PR #44)
 
+WP-P2A-03
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #46)
+
 ACTIVE WORK PACKAGE
 =
 NONE
 
 NEXT WORK PACKAGE CANDIDATE
 =
-WP-P2A-03 (NOT AUTHORIZED)
+WP-P2A-04 (NOT AUTHORIZED)
 ```
 
 Presence of this technical plan provides technical direction. It does NOT authorize blanket implementation. Each work package requires its own governed contract and approval.
 
 ---
 
-# 137. Implementation Contract Gate (Historical for WP01 & WP02 — Satisfied)
+# 137. Implementation Contract Gate (Historical for WP01, WP02 & WP03 — Satisfied)
 
-Pre-WP01 & Pre-WP02 Gate Status:
+Pre-WP01, Pre-WP02 & Pre-WP03 Gate Status:
 
 ```text
-SATISFIED (IC-MGBOS-P2A-WP01 & IC-MGBOS-P2A-WP02 PROMOTED, EXECUTED, & CLOSED)
+SATISFIED (IC-MGBOS-P2A-WP01, IC-MGBOS-P2A-WP02 & IC-MGBOS-P2A-WP03 PROMOTED, EXECUTED, & CLOSED)
 ```
 
 Before Builder receives code authority, Head Engineering must produce a schema-valid:
@@ -4014,16 +4033,16 @@ stop conditions
 work-package IDs
 ```
 
-This gate was satisfied for WP01 and WP02. It remains mandatory for subsequent work packages (WP03, WP04).
+This gate was satisfied for WP01, WP02, and WP03. It remains mandatory for subsequent work packages (WP04).
 
 ---
 
-# 138. Work Package Gate (Historical for WP01 & WP02 — Satisfied)
+# 138. Work Package Gate (Historical for WP01, WP02 & WP03 — Satisfied)
 
-Pre-WP01 & Pre-WP02 Gate Status:
+Pre-WP01, Pre-WP02 & Pre-WP03 Gate Status:
 
 ```text
-SATISFIED (WP-P2A-01 COMPLETED & MERGED IN PR #42; WP-P2A-02 COMPLETED & MERGED IN PR #44)
+SATISFIED (WP-P2A-01 COMPLETED & MERGED IN PR #42; WP-P2A-02 COMPLETED & MERGED IN PR #44; WP-P2A-03 COMPLETED & MERGED IN PR #46)
 ```
 
 After the Implementation Contract is accepted, produce one bounded work package first.
@@ -4295,7 +4314,7 @@ P2-A deliberately avoids unresolved commercial-policy decisions.
 
 No Vendor SLA, margin threshold, Due-Soon window, or automation authority decision is required to build the manual Exception foundation.
 
-Therefore, no known business-policy blocker currently prevents governed preparation of subsequent P2-A work-package contracts such as WP-P2A-03 (without implying WP-P2A-03 is authorized).
+Therefore, no known business-policy blocker currently prevents governed preparation of subsequent P2-A work-package contracts such as WP-P2A-04 (without implying WP-P2A-04 is authorized).
 
 ---
 
@@ -4304,13 +4323,15 @@ Therefore, no known business-policy blocker currently prevents governed preparat
 The remaining boundary is engineering authorization for subsequent work packages:
 
 ```text
-TECHNICAL PLAN (ACTIVE v1.2)
+TECHNICAL PLAN (ACTIVE v1.3)
         ↓
 WP-P2A-01 (COMPLETE / MERGED / POST-MERGE VERIFIED)
         ↓
 WP-P2A-02 (COMPLETE / MERGED / POST-MERGE VERIFIED)
         ↓
-WP-P2A-03 IMPLEMENTATION CONTRACT + WORK PACKAGE
+WP-P2A-03 (COMPLETE / MERGED / POST-MERGE VERIFIED)
+        ↓
+WP-P2A-04 IMPLEMENTATION CONTRACT + WORK PACKAGE
         ↓
 OWNER / GOVERNED ACCEPTANCE
         ↓
@@ -4324,7 +4345,7 @@ BUILDER EXECUTION
 Immediate next Head Engineering artifact:
 
 ```text
-WP-P2A-03 IMPLEMENTATION CONTRACT
+WP-P2A-04 IMPLEMENTATION CONTRACT
 +
 WORK PACKAGE
 ```
@@ -4332,14 +4353,14 @@ WORK PACKAGE
 for:
 
 ```text
-P2A-WP03
-Operational Exception Console UI / Resolution Surface
+P2A-WP04
+Assurance & Reflection
 ```
 
 The contract must bind:
 
 ```text
-main@b8262cca87a7d2644cf1738bf54fe72e8c4545f1
+main@23d4fd3d184d5bf60c9d41e57a1c01fe3517c132
 ```
 
 unless repository state changes before authoring.
