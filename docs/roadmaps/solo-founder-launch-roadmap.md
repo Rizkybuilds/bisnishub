@@ -1,7 +1,7 @@
 ---
 canonical_id: bisnishub.roadmap.solo-founder-launch
 status: ACTIVE
-version: 2.4
+version: 2.5
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -33,8 +33,8 @@ current_state:
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: b8262cca87a7d2644cf1738bf54fe72e8c4545f1
-  reviewed_at: 2026-10-07
+  commit: 23d4fd3d184d5bf60c9d41e57a1c01fe3517c132
+  reviewed_at: 2026-10-08
 
 authoritative_for:
   - solo-founder strategic pre-launch sequencing
@@ -57,7 +57,7 @@ not_authoritative_for:
   - JARVIS runtime architecture
   - automation runtime configuration
 
-last_reviewed: 2026-10-07
+last_reviewed: 2026-10-08
 review_cadence: weekly-during-prelaunch-or-after-material-stage-change
 
 depends_on:
@@ -76,12 +76,12 @@ depends_on:
   - ../../systems/jarvis/docs/core-runtime.md
 
 supersedes:
-  - bisnishub.roadmap.solo-founder-launch@2.3
+  - bisnishub.roadmap.solo-founder-launch@2.4
 
 implementation_status: STRATEGIC_ROADMAP_ACTIVE
 ---
 
-# Solo-Founder Launch Roadmap — Q4 2026 to Controlled Launch v2.4
+# Solo-Founder Launch Roadmap — Q4 2026 to Controlled Launch v2.5
 
 ## 1. Purpose
 
@@ -943,11 +943,15 @@ WP-P2A-02
 =
 COMPLETE / MERGED / POST-MERGE VERIFIED
 
+WP-P2A-03
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED
+
 ACTIVE WORK PACKAGE
 =
 NONE
 
-WP-P2A-03
+WP-P2A-04
 =
 NEXT CANDIDATE / NOT AUTHORIZED
 ```
@@ -965,7 +969,7 @@ phase-2-founder-control/
 
 was governed by the strict rule that it must not exist merely because this roadmap mentions it, and must not be pre-created ceremonially before real implementation begins.
 
-With WP-P2A-01 and WP-P2A-02 merged and post-merge verified, that engineering-entry gate has now passed because real bounded implementation has landed:
+With WP-P2A-01, WP-P2A-02, and WP-P2A-03 merged and post-merge verified, that engineering-entry gate has now passed because real bounded implementation has landed:
 
 ```text id="p2entnav"
 systems/mgbos/docs/implementation/
@@ -1028,8 +1032,9 @@ ACTIVE (BOUNDED IMPLEMENTATION IN PROGRESS)
 WORK PACKAGES:
 - WP-P2A-01: COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
 - WP-P2A-02: COMPLETE / MERGED / POST-MERGE VERIFIED (PR #44)
+- WP-P2A-03: COMPLETE / MERGED / POST-MERGE VERIFIED (PR #46)
 - ACTIVE WORK PACKAGE: NONE
-- NEXT CANDIDATE: WP-P2A-03 (NOT AUTHORIZED)
+- NEXT CANDIDATE: WP-P2A-04 (NOT AUTHORIZED)
 ```
 
 Objective:
@@ -3302,7 +3307,7 @@ COMPLETE
 STAGE D
 Founder Control Implementation
 =
-ACTIVE / BOUNDED (WP-P2A-01 & WP-P2A-02 COMPLETE / MERGED / POST-MERGE VERIFIED; WP-P2A-03 NEXT CANDIDATE)
+ACTIVE / BOUNDED (WP-P2A-01, WP-P2A-02 & WP-P2A-03 COMPLETE / MERGED / POST-MERGE VERIFIED; WP-P2A-04 NEXT CANDIDATE)
 
 STAGE E
 Operational Readiness + Real Pilot
@@ -3338,8 +3343,9 @@ WORK PACKAGES
 =
 WP-P2A-01: COMPLETE / MERGED / POST-MERGE VERIFIED (PR #42)
 WP-P2A-02: COMPLETE / MERGED / POST-MERGE VERIFIED (PR #44)
+WP-P2A-03: COMPLETE / MERGED / POST-MERGE VERIFIED (PR #46)
 ACTIVE WORK PACKAGE: NONE
-NEXT CANDIDATE: WP-P2A-03 (NOT AUTHORIZED)
+NEXT CANDIDATE: WP-P2A-04 (NOT AUTHORIZED)
 BUILDER AUTHORIZATION: NONE
 ```
 
@@ -3349,13 +3355,13 @@ Therefore:
 Antigravity
 ```
 
-currently has no authorized Founder Control implementation package from this roadmap. WP-P2A-01 and WP-P2A-02 have merged, and WP-P2A-03 requires Head Engineering Implementation Contract and Work Package authoring before any implementation can occur.
+currently has no authorized Founder Control implementation package from this roadmap. WP-P2A-01, WP-P2A-02, and WP-P2A-03 have merged, and WP-P2A-04 requires Head Engineering Implementation Contract and Work Package authoring before any implementation can occur.
 
 ---
 
 # 147. Current Product Next Step
 
-Following Stage B completion and Owner approval, the Founder Control product definition package (D1 through D4) was reconciled with canonical architecture in Stage C (W2 COMPLETE), W3 Engineering Discovery was completed with an active P2-A Technical Plan, and WP-P2A-01 and WP-P2A-02 were completed and merged:
+Following Stage B completion and Owner approval, the Founder Control product definition package (D1 through D4) was reconciled with canonical architecture in Stage C (W2 COMPLETE), W3 Engineering Discovery was completed with an active P2-A Technical Plan, and WP-P2A-01, WP-P2A-02, and WP-P2A-03 were completed and merged:
 
 ```text id="vrp0b1"
 FOUNDER CONTROL PRODUCT PACKAGE
@@ -3382,13 +3388,17 @@ WP-P2A-02
 =
 COMPLETE / MERGED / POST-MERGE VERIFIED (PR #44)
 
+WP-P2A-03
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #46)
+
 ACTIVE WORK PACKAGE
 =
 NONE
 
 NEXT GATE
 =
-WP-P2A-03 IMPLEMENTATION CONTRACT + WORK PACKAGE AUTHORING
+WP-P2A-04 IMPLEMENTATION CONTRACT + WORK PACKAGE AUTHORING
 ```
 
 ---

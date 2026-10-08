@@ -1,20 +1,20 @@
 ---
 canonical_id: mgbos.implementation.phase-2-founder-control.index
 status: ACTIVE
-version: 0.2
+version: 0.3
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos-phase-2-founder-control
 document_class: implementation-phase-index
 effective_from: 2026-10-06
-last_reviewed: 2026-10-07
+last_reviewed: 2026-10-08
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: b8262cca87a7d2644cf1738bf54fe72e8c4545f1
-  tree: 5e6f3f9b6921ce191863fe2ee42b46541b62057e
+  commit: 23d4fd3d184d5bf60c9d41e57a1c01fe3517c132
+  tree: 1f8b7f60848d000e405410f4574d0306b923fa56
 
 phase:
   id: PHASE_2_FOUNDER_CONTROL
@@ -27,11 +27,12 @@ current_slice:
 completed_work_packages:
   - WP-P2A-01
   - WP-P2A-02
+  - WP-P2A-03
 
 active_work_package: NONE
 
 next_candidate:
-  id: WP-P2A-03
+  id: WP-P2A-04
   status: NOT_AUTHORIZED
 
 deployment_status: NOT_AUTHORIZED
@@ -66,7 +67,7 @@ depends_on:
 supersedes: null
 ---
 
-# Phase 2 — Founder Control Implementation Index v0.2
+# Phase 2 — Founder Control Implementation Index v0.3
 
 ## 1. Purpose
 
@@ -101,6 +102,7 @@ COMPLETED WORK PACKAGES
 =
 WP-P2A-01 (COMPLETE / MERGED / POST-MERGE VERIFIED)
 WP-P2A-02 (COMPLETE / MERGED / POST-MERGE VERIFIED)
+WP-P2A-03 (COMPLETE / MERGED / POST-MERGE VERIFIED)
 
 ACTIVE WORK PACKAGE
 =
@@ -108,7 +110,7 @@ NONE
 
 NEXT ENGINEERING CANDIDATE
 =
-WP-P2A-03 (OPERATIONAL EXCEPTION CONSOLE)
+WP-P2A-04 (ASSURANCE & REFLECTION)
 STATUS: NOT_AUTHORIZED
 
 DEPLOYMENT STATUS
@@ -222,83 +224,130 @@ COMPLETE / MERGED / POST-MERGE VERIFIED
 
 ---
 
-## 5. Current Boundaries & What Is NOT Implemented
+## 5. Completed Achievement: WP-P2A-03
 
-While the database, domain, validation, authorization, and server command boundary are **CURRENT**, the following boundaries remain strictly in effect:
+The third bounded increment of Phase 2 landed in PR #46:
+
+```text
+Work Package:
+WP-P2A-03 — Operational Exception Console
+
+Contract:
+IC-MGBOS-P2A-WP03-OPERATIONAL-EXCEPTION-CONSOLE (SATISFIED / CLOSED)
+
+Pull Request:
+#46 (feat(mgbos): add operational exception console)
+
+Integration Revision:
+23d4fd3d184d5bf60c9d41e57a1c01fe3517c132
+
+Integration Tree:
+1f8b7f60848d000e405410f4574d0306b923fa56
+
+Status:
+COMPLETE / MERGED / POST-MERGE VERIFIED
+```
+
+### Verified Runtime Capability Landed by WP03
+
+1. **Operator Console List (`/exceptions`):**
+   - Organization-scoped list view with severity, lifecycle status, entity reference, assignment, and human-readable badges.
+   - Filter tabs for fast triage and manual opening trigger.
+2. **Manual-Open Workflow & Resource Scoping:**
+   - Manual-open modal with strict `@mgbos/validation` contract compliance.
+   - Bounded resource candidate selector covering `PRODUCTION_JOB`, `PRODUCTION_ASSIGNMENT`, `QC_INSPECTION`, `INVOICE`, `ORDER`, and `SHIPMENT`.
+   - Server-derived active-Brand filtering via `resolveActiveBrandId(ctx)` (`limit = 100`) ensuring cross-brand or invalid resource candidates cannot be selected; fails closed (`[]`) if the active brand cannot be resolved.
+   - Same-Organization active member selector for assignment.
+3. **Detail Page & Audit History (`/exceptions/[exceptionId]`):**
+   - Detailed header with severity, status, entity target link, assignee, timestamps, and optimistic revision indicator.
+   - Observation card displaying immutable human report notes.
+   - Append-only audit history timeline rendering trigger-journaled lifecycle transitions.
+4. **Governed Human Lifecycle Actions:**
+   - Dedicated modal forms for all lifecycle commands: Acknowledge, Assign, Reassign, Change Severity, Resolve, Dismiss, Reopen.
+   - OWNER-only Accepted Risk resolution option with explicit risk rationale requirements.
+   - Bounded candidate selection for `SUPERSEDED` resolution (active `OPEN`/`ACKNOWLEDGED` exceptions, excluding self) and `DUPLICATE` dismissal (all same-org exceptions, excluding self).
+   - Strict payload validation using `satisfies ...Input` types from `@mgbos/validation` prior to server action dispatch.
+5. **Runtime Hardening & Framework Integrity:**
+   - Stable client-generated `requestId` propagation across all actions.
+   - Optimistic revision verification (`expectedRevision`).
+   - Bounded operator-facing error classification without leaking database credentials or traces.
+   - Server-only trusted context execution without exported mutable test seams.
+   - Permission-gated sidebar navigation (`canReadOperationalExceptions`).
+6. **Amendment A1 Provenance:**
+   - Authorized Amendment A1 resolved Next.js production build failure caused by synchronous exported helper `classifyDatabaseError` in top-level `'use server'` module `actions.ts`. Delta was strictly removing the `export` keyword. No command semantics changed.
+7. **Closed Audit Findings:**
+   - UI form payload alignment with `@mgbos/validation` (`satisfies ...Input` across all 8 actions).
+   - Exported context test seam removed (`internalContextHolder` removed).
+   - Candidate active-Brand scoping enforced server-side.
+   - Candidate lifecycle eligibility enforced.
+   - SUPERSEDED target active-state eligibility enforced.
+
+---
+
+## 6. Current Boundaries & What Is NOT Implemented
+
+While the database, domain, validation, authorization, runtime command boundary, and operator console UI are **CURRENT**, the following boundaries remain strictly in effect:
 
 ```text
 NO active Builder work package
-NO Operational Exception console UI yet (packages/ui, apps/mgbos console screens not implemented)
-NO manual-open UI form yet
-NO resource candidate selector yet
-NO detail/history screen yet
-NO lifecycle action UI buttons/dialogs yet
-NO sidebar Operational Exception navigation entry yet
 NO Founder Attention projection layer implemented
 NO Founder Home interface implemented
 NO automated background exception detectors
 NO service principal automation
 NO production deployment authorization
 NO real business pilot execution
+FINAL ASSURANCE / REFLECTION (WP04) NOT YET COMPLETE
 ```
 
 Operational Exception classification:
 
 ```text
-Operational Exception
+OPERATIONAL EXCEPTION P2-A
 =
-CANONICAL_TARGET
-+
-IMPLEMENTED THROUGH DATABASE, DOMAIN,
-VALIDATION, AUTHORIZATION,
-AND APPLICATION COMMAND BOUNDARY
+IMPLEMENTED THROUGH OPERATOR CONSOLE
 
 BUT
 
-OPERATOR CONSOLE UI
+FINAL ASSURANCE / REFLECTION
 =
-NOT IMPLEMENTED
+NOT YET COMPLETE
 ```
 
 ---
 
-## 6. Next Candidate: WP-P2A-03
+## 7. Next Candidate: WP-P2A-04
 
 The next engineering slice identified by the P2-A Technical Plan is:
 
 ```text
 Work Package:
-WP-P2A-03 — Operational Exception Console
+WP-P2A-04 — Assurance & Reflection
 
 Scope:
-- Exception list view
-- Manual-open form
-- Resource candidate selector
-- Exception detail page
-- Audit history display
-- Governed lifecycle action UI
-- Sidebar navigation entry
+- full regression
+- DB replay
+- focused security tests
+- migration verification
+- application build
+- operator synthetic scenario
+- documentation state reflection
 
 Status:
 NEXT CANDIDATE / NOT AUTHORIZED
 ```
 
-### Governing Rule for WP03 Entry
+### Governing Rule for WP04 Entry
 
-Antigravity / Builder MUST NOT begin code implementation on WP03 until:
+Antigravity / Builder MUST NOT begin code implementation on WP04 until:
 
-1. Head Engineering (ChatGPT) authors and audits an Implementation Contract for WP-P2A-03;
-2. Bounded Work Package `WP-P2A-03` is authored;
+1. Head Engineering (ChatGPT) authors and audits an Implementation Contract for WP-P2A-04;
+2. Bounded Work Package `WP-P2A-04` is authored;
 3. Owner / governed authority grants explicit execution authorization;
-4. The candidate binds to the exact verified baseline.
-
-### Engineering Follow-Up (Non-Blocking)
-
-Before or during WP-P2A-03 planning, Head Engineering should decide whether public UI-facing read APIs should always create trusted context internally rather than accepting optional injected context. This is tracked as `FOLLOW_UP / NON_BLOCKING` for WP03.
+4. The candidate binds to the exact verified baseline (`main@23d4fd3d184d5bf60c9d41e57a1c01fe3517c132`).
 
 ---
 
-## 7. Document Routing & Reading Order
+## 8. Document Routing & Reading Order
 
 For Phase 2 engineering and product navigation, read in this order:
 
