@@ -266,7 +266,7 @@ COMPLETE / MERGED / POST-MERGE VERIFIED
    - Dedicated modal forms for all lifecycle commands: Acknowledge, Assign, Reassign, Change Severity, Resolve, Dismiss, Reopen.
    - OWNER-only Accepted Risk resolution option with explicit risk rationale requirements.
    - Bounded candidate selection for `SUPERSEDED` resolution (active `OPEN`/`ACKNOWLEDGED` exceptions, excluding self) and `DUPLICATE` dismissal (all same-org exceptions, excluding self).
-   - Strict payload validation using `satisfies ...Input` types from `@mgbos/validation` prior to server action dispatch.
+   - Compile-time payload conformance using `satisfies ...Input` types from `@mgbos/validation` across all eight console command payloads, while authoritative runtime validation remains the strict WP02 Zod validation performed inside the existing server actions.
 5. **Runtime Hardening & Framework Integrity:**
    - Stable client-generated `requestId` propagation across all actions.
    - Optimistic revision verification (`expectedRevision`).

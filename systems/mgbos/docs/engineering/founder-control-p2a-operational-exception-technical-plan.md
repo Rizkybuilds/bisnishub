@@ -3362,7 +3362,7 @@ sidebar navigation
 WP03 delivered and verified:
 
 - Dedicated operator list console at `/exceptions` with Organization-scoped filtering, triage tabs, and manual-open trigger;
-- Manual-open modal form with strict `@mgbos/validation` contract compliance and client-side pre-validation;
+- Manual-open modal form with compile-time payload conformance to @mgbos/validation input types, while authoritative runtime Zod validation remains enforced by the existing WP02 server-action boundary;
 - Bounded resource candidate selector covering `PRODUCTION_JOB`, `PRODUCTION_ASSIGNMENT`, `QC_INSPECTION`, `INVOICE`, `ORDER`, and `SHIPMENT`, filtered server-side by active Brand (`resolveActiveBrandId`, `limit = 100`) and failing closed (`[]`) if the active Brand cannot be resolved;
 - Same-Organization active member selector for assignment;
 - Exception detail page at `/exceptions/[exceptionId]` rendering severity, lifecycle status, entity target link, assignee, timestamps, immutable observation card, and append-only audit history timeline;
