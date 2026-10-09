@@ -1,0 +1,464 @@
+[
+  {
+    "timestamp": "2026-10-09T14:48:31.121Z",
+    "step": "NAV_LOGIN",
+    "url": "http://127.0.0.1:3101/login",
+    "title": "Masuk — MultiGraph Business OS"
+  },
+  {
+    "timestamp": "2026-10-09T14:48:33.659Z",
+    "step": "OWNER_DASHBOARD_1440",
+    "url": "http://127.0.0.1:3101/dashboard",
+    "title": "Command Center — MultiGraph Business OS",
+    "user": "Rizky OWNER",
+    "activeBrand": "TS",
+    "brandBtns": [
+      "TS",
+      "MG",
+      "NP",
+      "PP",
+      "SQ"
+    ],
+    "statCards": [
+      {
+        "title": "KONTEKS BRAND",
+        "value": "TS",
+        "description": "TeeStock",
+        "badge": "Aktif"
+      },
+      {
+        "title": "ORGANISASI",
+        "value": "MultiGraph Group",
+        "description": "Holding Multi-Brand",
+        "badge": "Holding"
+      },
+      {
+        "title": "PERAN PENGGUNA",
+        "value": "OWNER",
+        "description": "Hak akses sesuai peran sistem",
+        "badge": "Role"
+      },
+      {
+        "title": "MODUL TERBUKA",
+        "value": "17 Modul",
+        "description": "Dapat diakses oleh peran Anda",
+        "badge": "Tersedia"
+      }
+    ],
+    "shortcutsCount": 14,
+    "shortcuts": [
+      {
+        "href": "/leads",
+        "text": "Leads Daftar prospek baru dan status kualifikasi"
+      },
+      {
+        "href": "/customers",
+        "text": "Pelanggan Direktori akun pelanggan dan riwayat transaksi"
+      },
+      {
+        "href": "/requirements",
+        "text": "Kebutuhan Spesifikasi pesanan custom dan requirement sheet"
+      },
+      {
+        "href": "/quotes",
+        "text": "Penawaran Kalkulasi penawaran resmi dan margin HPP"
+      },
+      {
+        "href": "/orders",
+        "text": "Pesanan Daftar pesanan aktif dan pelacakan status"
+      },
+      {
+        "href": "/production",
+        "text": "Produksi & QC Antrean SPK kerja dan inspeksi mutu produksi"
+      },
+      {
+        "href": "/vendors",
+        "text": "Vendor Direktori vendor maklon dan performa kerja"
+      },
+      {
+        "href": "/shipments",
+        "text": "Pengiriman Surat jalan (DO) dan status pengiriman"
+      },
+      {
+        "href": "/inventory",
+        "text": "Persediaan Monitoring stok bahan baku dan produk jadi"
+      },
+      {
+        "href": "/procurement",
+        "text": "Pengadaan Pengadaan bahan baku dan purchase order"
+      },
+      {
+        "href": "/exceptions",
+        "text": "Exception Operasional Penanganan eskalasi kendala operasional lapangan"
+      },
+      {
+        "href": "/invoices",
+        "text": "Invoice Penerbitan tagihan resmi dan status pembayaran"
+      },
+      {
+        "href": "/payments",
+        "text": "Pembayaran Pencatatan mutasi kas dan verifikasi pembayaran"
+      },
+      {
+        "href": "/ledger",
+        "text": "Buku Kas / Margin Ringkasan laba kotor transaksi dan buku kas"
+      }
+    ],
+    "sidebarLinksCount": 31,
+    "sidebarLinks": [
+      {
+        "href": "/dashboard",
+        "text": "Dashboard",
+        "active": true
+      },
+      {
+        "href": "/designs",
+        "text": "Library Desain",
+        "active": false
+      },
+      {
+        "href": "/leads",
+        "text": "Leads",
+        "active": false
+      },
+      {
+        "href": "/customers",
+        "text": "Pelanggan",
+        "active": false
+      },
+      {
+        "href": "/requirements",
+        "text": "Kebutuhan",
+        "active": false
+      },
+      {
+        "href": "/quotes",
+        "text": "Penawaran",
+        "active": false
+      },
+      {
+        "href": "/orders",
+        "text": "Pesanan",
+        "active": false
+      },
+      {
+        "href": "/production",
+        "text": "Produksi & QC",
+        "active": false
+      },
+      {
+        "href": "/vendors",
+        "text": "Vendor",
+        "active": false
+      },
+      {
+        "href": "/shipments",
+        "text": "Pengiriman",
+        "active": false
+      },
+      {
+        "href": "/inventory",
+        "text": "Persediaan",
+        "active": false
+      },
+      {
+        "href": "/procurement",
+        "text": "Pengadaan",
+        "active": false
+      },
+      {
+        "href": "/exceptions",
+        "text": "Exception Operasional",
+        "active": false
+      },
+      {
+        "href": "/invoices",
+        "text": "Invoice",
+        "active": false
+      },
+      {
+        "href": "/payments",
+        "text": "Pembayaran",
+        "active": false
+      },
+      {
+        "href": "/ledger",
+        "text": "Buku Kas / Margin",
+        "active": false
+      },
+      {
+        "href": "/settings",
+        "text": "Pengaturan",
+        "active": false
+      },
+      {
+        "href": "/leads",
+        "text": "Leads Daftar prospek baru dan status kualifikasi",
+        "active": false
+      },
+      {
+        "href": "/customers",
+        "text": "Pelanggan Direktori akun pelanggan dan riwayat transaksi",
+        "active": false
+      },
+      {
+        "href": "/requirements",
+        "text": "Kebutuhan Spesifikasi pesanan custom dan requirement sheet",
+        "active": false
+      },
+      {
+        "href": "/quotes",
+        "text": "Penawaran Kalkulasi penawaran resmi dan margin HPP",
+        "active": false
+      },
+      {
+        "href": "/orders",
+        "text": "Pesanan Daftar pesanan aktif dan pelacakan status",
+        "active": false
+      },
+      {
+        "href": "/production",
+        "text": "Produksi & QC Antrean SPK kerja dan inspeksi mutu produksi",
+        "active": false
+      },
+      {
+        "href": "/vendors",
+        "text": "Vendor Direktori vendor maklon dan performa kerja",
+        "active": false
+      },
+      {
+        "href": "/shipments",
+        "text": "Pengiriman Surat jalan (DO) dan status pengiriman",
+        "active": false
+      },
+      {
+        "href": "/inventory",
+        "text": "Persediaan Monitoring stok bahan baku dan produk jadi",
+        "active": false
+      },
+      {
+        "href": "/procurement",
+        "text": "Pengadaan Pengadaan bahan baku dan purchase order",
+        "active": false
+      },
+      {
+        "href": "/exceptions",
+        "text": "Exception Operasional Penanganan eskalasi kendala operasional lapangan",
+        "active": false
+      },
+      {
+        "href": "/invoices",
+        "text": "Invoice Penerbitan tagihan resmi dan status pembayaran",
+        "active": false
+      },
+      {
+        "href": "/payments",
+        "text": "Pembayaran Pencatatan mutasi kas dan verifikasi pembayaran",
+        "active": false
+      },
+      {
+        "href": "/ledger",
+        "text": "Buku Kas / Margin Ringkasan laba kotor transaksi dan buku kas",
+        "active": false
+      }
+    ],
+    "scrollWidth": 1425,
+    "innerWidth": 1440,
+    "hasOverflow": false
+  },
+  {
+    "timestamp": "2026-10-09T14:48:34.976Z",
+    "step": "OWNER_DASHBOARD_1024",
+    "scrollWidth": 1009,
+    "innerWidth": 1024,
+    "hasOverflow": false,
+    "headerWidth": 0
+  },
+  {
+    "timestamp": "2026-10-09T14:48:38.193Z",
+    "step": "OWNER_NAV_LEADS",
+    "currentUrl": "http://127.0.0.1:3101/leads",
+    "activeLink": "Leads",
+    "hasOverflow": false
+  },
+  {
+    "timestamp": "2026-10-09T14:48:40.144Z",
+    "step": "OWNER_NAV_ORDERS",
+    "currentUrl": "http://127.0.0.1:3101/orders",
+    "activeLink": "Pesanan",
+    "hasOverflow": false
+  },
+  {
+    "timestamp": "2026-10-09T14:48:42.214Z",
+    "step": "OWNER_NAV_EXCEPTIONS",
+    "currentUrl": "http://127.0.0.1:3101/exceptions",
+    "activeLink": "Exception Operasional",
+    "hasOverflow": false
+  },
+  {
+    "timestamp": "2026-10-09T14:48:46.560Z",
+    "step": "OWNER_BRAND_SWITCH_MG",
+    "activeBrand": "MG",
+    "hasDesignsInSidebar": false
+  },
+  {
+    "timestamp": "2026-10-09T14:48:49.226Z",
+    "step": "OWNER_BRAND_RESTORE_TS",
+    "activeBrand": "TS",
+    "hasDesignsInSidebar": true
+  },
+  {
+    "timestamp": "2026-10-09T14:48:49.795Z",
+    "step": "OWNER_KEYBOARD_FOCUS",
+    "tagName": "BUTTON",
+    "className": "brand-btn ",
+    "text": "PP",
+    "href": null
+  },
+  {
+    "timestamp": "2026-10-09T14:48:52.546Z",
+    "step": "OWNER_LOGOUT",
+    "url": "http://127.0.0.1:3101/login",
+    "title": "Masuk — MultiGraph Business OS"
+  },
+  {
+    "timestamp": "2026-10-09T14:48:56.844Z",
+    "step": "SALES_DASHBOARD",
+    "url": "http://127.0.0.1:3101/dashboard",
+    "user": "Siti Sales QA SALES",
+    "shortcutsCount": 13,
+    "hasExceptionsShortcut": false,
+    "hasQuotesShortcut": true,
+    "hasLeadsShortcut": true,
+    "shortcuts": [
+      {
+        "href": "/leads",
+        "text": "Leads Daftar prospek baru dan status kualifikasi"
+      },
+      {
+        "href": "/customers",
+        "text": "Pelanggan Direktori akun pelanggan dan riwayat transaksi"
+      },
+      {
+        "href": "/requirements",
+        "text": "Kebutuhan Spesifikasi pesanan custom dan requirement sheet"
+      },
+      {
+        "href": "/quotes",
+        "text": "Penawaran Kalkulasi penawaran resmi dan margin HPP"
+      },
+      {
+        "href": "/orders",
+        "text": "Pesanan Daftar pesanan aktif dan pelacakan status"
+      },
+      {
+        "href": "/production",
+        "text": "Produksi & QC Antrean SPK kerja dan inspeksi mutu produksi"
+      },
+      {
+        "href": "/vendors",
+        "text": "Vendor Direktori vendor maklon dan performa kerja"
+      },
+      {
+        "href": "/shipments",
+        "text": "Pengiriman Surat jalan (DO) dan status pengiriman"
+      },
+      {
+        "href": "/inventory",
+        "text": "Persediaan Monitoring stok bahan baku dan produk jadi"
+      },
+      {
+        "href": "/procurement",
+        "text": "Pengadaan Pengadaan bahan baku dan purchase order"
+      },
+      {
+        "href": "/invoices",
+        "text": "Invoice Penerbitan tagihan resmi dan status pembayaran"
+      },
+      {
+        "href": "/payments",
+        "text": "Pembayaran Pencatatan mutasi kas dan verifikasi pembayaran"
+      },
+      {
+        "href": "/ledger",
+        "text": "Buku Kas / Margin Ringkasan laba kotor transaksi dan buku kas"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-09T14:48:58.777Z",
+    "step": "SALES_DIRECT_EXCEPTIONS_DENIED",
+    "url": "http://127.0.0.1:3101/exceptions",
+    "title": "",
+    "isForbidden": false,
+    "snippet": "This page couldn’t load A server error occurred. Reload to try again. Reload ERROR 2034229081"
+  },
+  {
+    "timestamp": "2026-10-09T14:49:07.385Z",
+    "step": "QC_DASHBOARD",
+    "url": "http://127.0.0.1:3101/dashboard",
+    "user": "Qodir QC QA QC",
+    "shortcutsCount": 12,
+    "hasQuotesShortcut": false,
+    "hasExceptionsShortcut": false,
+    "hasWorkOrdersShortcut": false,
+    "shortcuts": [
+      {
+        "href": "/leads",
+        "text": "Leads Daftar prospek baru dan status kualifikasi"
+      },
+      {
+        "href": "/customers",
+        "text": "Pelanggan Direktori akun pelanggan dan riwayat transaksi"
+      },
+      {
+        "href": "/requirements",
+        "text": "Kebutuhan Spesifikasi pesanan custom dan requirement sheet"
+      },
+      {
+        "href": "/orders",
+        "text": "Pesanan Daftar pesanan aktif dan pelacakan status"
+      },
+      {
+        "href": "/production",
+        "text": "Produksi & QC Antrean SPK kerja dan inspeksi mutu produksi"
+      },
+      {
+        "href": "/vendors",
+        "text": "Vendor Direktori vendor maklon dan performa kerja"
+      },
+      {
+        "href": "/shipments",
+        "text": "Pengiriman Surat jalan (DO) dan status pengiriman"
+      },
+      {
+        "href": "/inventory",
+        "text": "Persediaan Monitoring stok bahan baku dan produk jadi"
+      },
+      {
+        "href": "/procurement",
+        "text": "Pengadaan Pengadaan bahan baku dan purchase order"
+      },
+      {
+        "href": "/invoices",
+        "text": "Invoice Penerbitan tagihan resmi dan status pembayaran"
+      },
+      {
+        "href": "/payments",
+        "text": "Pembayaran Pencatatan mutasi kas dan verifikasi pembayaran"
+      },
+      {
+        "href": "/ledger",
+        "text": "Buku Kas / Margin Ringkasan laba kotor transaksi dan buku kas"
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-09T14:49:09.445Z",
+    "step": "QC_DIRECT_QUOTES_DENIED",
+    "url": "http://127.0.0.1:3101/quotes",
+    "title": "Penawaran & HPP — MGBOS",
+    "isForbidden": false,
+    "snippet": "MultiGraph Business OS MultiGraph Group BRAND: TS MG NP PP SQ Qodir QC QA QC Keluar RINGKASAN Dashboard PENJUALAN Leads Pelanggan Kebutuhan Pesanan OPERASIONAL Produksi & QC Vendor Pengiriman Persediaan Pengadaan KEUANGAN Invoice Pembayaran Buku Kas / Margin SISTEM Pengaturan Penawaran belum dapat d"
+  }
+]
