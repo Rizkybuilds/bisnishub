@@ -26,7 +26,6 @@ export function LoginForm() {
           name="email"
           type="email"
           required
-          defaultValue="founder@multigraph.id"
           className="form-input"
           placeholder="nama@multigraph.id"
           autoComplete="email"
@@ -42,7 +41,6 @@ export function LoginForm() {
           name="password"
           type="password"
           required
-          defaultValue="mgbos-founder-2026"
           className="form-input"
           placeholder="••••••••"
           autoComplete="current-password"
