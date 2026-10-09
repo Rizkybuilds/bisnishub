@@ -65,16 +65,25 @@ class TestVibeContinuity(unittest.TestCase):
 
     def test_baseline_checkpoint_passes(self) -> None:
         """Test 1: Baseline checkpoint passes."""
+        checkpoint = self._load_checkpoint()
         result = continuity.validate(self.temp_root)
+
         self.assertEqual(
-            result,
-            {
-                "milestones": 7,
-                "read_first_paths": 5,
-                "deferred_layers": 2,
-                "snapshot_semantics": True,
-            },
+            result["milestones"],
+            len(checkpoint["program"]["completed_milestones"]),
         )
+
+        self.assertEqual(
+            result["read_first_paths"],
+            len(checkpoint["recovery"]["read_first"]),
+        )
+
+        self.assertEqual(
+            result["deferred_layers"],
+            len(checkpoint["deferred_layers"]),
+        )
+
+        self.assertTrue(result["snapshot_semantics"])
 
     def test_missing_required_top_level_field_fails(self) -> None:
         """Test 2: Missing required top-level field fails."""
