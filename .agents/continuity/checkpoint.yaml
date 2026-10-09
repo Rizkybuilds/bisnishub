@@ -7,12 +7,12 @@ repository:
   canonical_branch: main
 
 capture:
-  observed_main: f767fd141513d4c8761ab0fc05be34736fa0f5ab
-  observed_on: 2026-10-05
+  observed_main: c4ae9668f4b1a9327d8889b7450bec0b0de2a87a
+  observed_on: 2026-10-09
   semantics: SNAPSHOT_NOT_LIVE_HEAD
 
 program:
-  current_stream: CP-007E
+  current_stream: MGBOS_FOUNDER_CONTROL
 
   completed_milestones:
     - label: CP-007A.1
@@ -50,14 +50,44 @@ program:
       integration_sha: 1d8eeba9d62e3a186c8c30cf9f28036a8b79fe26
       result: VE_POST_MERGE.VERIFIED
 
+    - label: MGBOS-P2A-WP01
+      pr: 42
+      integration_sha: aad21534c369829d408db424bb0546aad0d28bd2
+      result: VE_POST_MERGE.VERIFIED
+
+    - label: MGBOS-P2A-WP02
+      pr: 44
+      integration_sha: b8262cca87a7d2644cf1738bf54fe72e8c4545f1
+      result: VE_POST_MERGE.VERIFIED
+
+    - label: MGBOS-P2A-WP03
+      pr: 46
+      integration_sha: 23d4fd3d184d5bf60c9d41e57a1c01fe3517c132
+      result: VE_POST_MERGE.VERIFIED
+
+    - label: MGBOS-SEC01-RPC-BOUNDARY
+      pr: 49
+      integration_sha: 64f72a99f29bf4f8a95cfd8824ff04af22d01c94
+      result: VE_POST_MERGE.VERIFIED
+
+    - label: MGBOS-P2A-WP04
+      pr: 48
+      integration_sha: 77fbcbf08f2699ab85a0682ec4c981235c9c18cf
+      result: VE_POST_MERGE.VERIFIED
+
+    - label: MGBOS-P2A-CLOSURE-RECONCILIATION
+      pr: 50
+      integration_sha: c4ae9668f4b1a9327d8889b7450bec0b0de2a87a
+      result: VE_POST_MERGE.VERIFIED
+
   latest_known_main_change:
-    pr: 28
-    sha: f767fd141513d4c8761ab0fc05be34736fa0f5ab
-    summary: Activate Vibe Engineering operating model.
+    pr: 50
+    sha: c4ae9668f4b1a9327d8889b7450bec0b0de2a87a
+    summary: Reconcile and close MGBOS Founder Control P2-A program state after WP04.
 
   next_expected_work:
-    label: CP-007E.3
-    objective: Add governed Dependabot maintenance for GitHub Actions without weakening immutable SHA enforcement.
+    label: MGBOS-P2B-PLANNING
+    objective: Head Engineering performs fresh current-source audit, technical planning, and bounded design for P2-B Founder Attention. NO BUILDER IMPLEMENTATION AUTHORIZATION YET.
 
 security_posture:
   remote_mutation_enabled: false
@@ -70,6 +100,9 @@ deferred_layers:
 
   - id: SERVER_SIDE_ACTION_PINNING_POLICY
     summary: Repository-side CI enforces full SHA; GitHub server-side full-SHA policy remains NOT_VERIFIED.
+
+  - id: CP_007E_3_DEPENDABOT_MAINTENANCE
+    summary: Previously expected governed Dependabot maintenance remains deferred and is not the current engineering priority after MGBOS Founder Control P2-A closure.
 
 recovery:
   read_first:
@@ -90,5 +123,5 @@ recovery:
 
 next_allowed_action:
   session_type: VE_SESSION.NEW_WORK
-  target_system: repository-engineering
-  action: Reconcile actual repository state against this checkpoint, then plan CP-007E.3.
+  target_system: mgbos
+  action: Fresh repository-grounded P2-B Founder Attention planning by Head Engineering. Builder implementation remains unauthorized until governed Head Engineering planning, Implementation Contract, and Work Package exist.

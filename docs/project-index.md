@@ -1,7 +1,7 @@
 ---
 canonical_id: docs.project-index
 status: ACTIVE
-version: 1.2
+version: 1.3
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -9,13 +9,17 @@ scope: repository
 document_class: registry
 effective_from: 2026-10-05
 
-repository_snapshot: f05bd82f9be6aa038799931ede19059481aed8d1
+repository_snapshot: c4ae9668f4b1a9327d8889b7450bec0b0de2a87a
 
 current_repository_program:
   engineering_method: VIBE_ENGINEERING_ACTIVE
-  mgbos_product_program: FOUNDER_CONTROL_PRODUCT_DEFINITION
-  mgbos_active_implementation_phase: NONE
+  mgbos_product_program: FOUNDER_CONTROL
+  mgbos_active_implementation_phase: PHASE_2_FOUNDER_CONTROL
   mgbos_phase_1: CLOSED
+  mgbos_p2a_operational_exception_foundation: SOFTWARE_COMPLETE_POST_MERGE_VERIFIED
+  mgbos_active_work_package: NONE
+  mgbos_next_program_direction: P2_B_FOUNDER_ATTENTION_HEAD_ENGINEERING_PLANNING
+  mgbos_builder_authorization: NONE
 
 authoritative_for:
   - active repository project locations
@@ -37,7 +41,7 @@ not_authoritative_for:
   - deployment authorization
   - production readiness
 
-last_reviewed: 2026-10-05
+last_reviewed: 2026-10-09
 review_cadence: monthly-or-after-material-repository-routing-change
 
 depends_on:
@@ -50,10 +54,11 @@ depends_on:
   - ../.agents/routing/README.md
   - ../.agents/routing/task-types.yaml
 
-supersedes: null
+supersedes:
+  - docs.project-index@1.2
 ---
 
-# BisnisHub Project Index v1.2
+# BisnisHub Project Index v1.3
 
 ## 1. Purpose
 
@@ -159,10 +164,10 @@ BRANCH
 main
 
 SNAPSHOT
-f89ccb49878668f5cb00edf7375e168b9d4a0670
+c4ae9668f4b1a9327d8889b7450bec0b0de2a87a
 
 REVIEW DATE
-2026-10-05
+2026-10-09
 ```
 
 Snapshot is current-state evidence for this document.
@@ -186,11 +191,27 @@ CLOSED
 
 MGBOS ACTIVE IMPLEMENTATION PHASE
 =
-NONE
+PHASE_2_FOUNDER_CONTROL
 
 MGBOS CURRENT PRODUCT PROGRAM
 =
-FOUNDER CONTROL PRODUCT DEFINITION
+FOUNDER_CONTROL
+
+P2-A OPERATIONAL EXCEPTION FOUNDATION
+=
+SOFTWARE COMPLETE / POST-MERGE VERIFIED
+
+ACTIVE WORK PACKAGE
+=
+NONE
+
+NEXT PROGRAM DIRECTION
+=
+P2-B FOUNDER ATTENTION — HEAD ENGINEERING PLANNING
+
+BUILDER AUTHORIZATION
+=
+NONE
 
 JARVIS
 =
@@ -1110,21 +1131,26 @@ Current implementation index declares:
 ```text id="4unh9d"
 ACTIVE MGBOS IMPLEMENTATION PHASE
 =
+PHASE_2_FOUNDER_CONTROL
+
+P2-A OPERATIONAL EXCEPTION FOUNDATION
+=
+SOFTWARE COMPLETE / POST-MERGE VERIFIED
+
+ACTIVE WORK PACKAGE
+=
+NONE
+
+NEXT PROGRAM DIRECTION
+=
+P2-B FOUNDER ATTENTION — HEAD ENGINEERING PLANNING
+
+BUILDER AUTHORIZATION
+=
 NONE
 ```
 
-Therefore a new Builder should NOT ask:
-
-```text id="dnvb0v"
-Which Phase 1 P0 should I implement next?
-```
-
-Correct answer:
-
-```text id="ljyjm5"
-NONE.
-PHASE 1 IS CLOSED.
-```
+Phase 1 is CLOSED. Phase 2 bounded implementation is in progress; the P2-A Operational Exception Foundation slice is complete, merged, and post-merge verified. No active work package currently exists, and no Builder implementation is authorized.
 
 ---
 
@@ -1192,51 +1218,61 @@ D4
 teestock-operational-pilot-plan.md (ACTIVE)
 ```
 
-Product definition package is defined and active; engineering readiness is not ready.
+Product definition package was approved historically; Phase 2 bounded implementation has opened under governed contracts.
 
 ---
 
-# 41. Founder Control Is Not Phase 2 Implementation Yet
+# 41. Phase 2 Founder Control Bounded Implementation State
 
-Do not infer:
-
-```text id="12xdxb"
-Founder Control product program exists
-→
-phase-2-founder-control implementation is active
-```
+Founder Control product definition was completed and approved historically, and Phase 2 bounded implementation has opened.
 
 Current state:
 
 ```text id="5ey1s9"
 PRODUCT DEFINITION
 =
-ACTIVE
+ACTIVE (APPROVED)
 
 PHASE 2 IMPLEMENTATION
 =
-NOT OPEN
+ACTIVE (BOUNDED)
+
+P2-A OPERATIONAL EXCEPTION FOUNDATION
+=
+SOFTWARE COMPLETE / POST-MERGE VERIFIED
+
+ACTIVE WORK PACKAGE
+=
+NONE
+
+NEXT PROGRAM DIRECTION
+=
+P2-B FOUNDER ATTENTION PLANNING (HEAD ENGINEERING)
+
+BUILDER AUTHORIZATION
+=
+NONE
 ```
 
 ---
 
-# 42. Phase 2 Entry Gate
+# 42. Phase 2 Entry Gate (Historical — Satisfied)
 
-Before:
+Phase 2 implementation directory:
 
 ```text id="jmdxyw"
 systems/mgbos/docs/implementation/
 phase-2-founder-control/
 ```
 
-is created, current planning requires:
+was established following satisfaction of the Phase 2 entry gate:
 
 ```text id="w2fg1u"
-bounded product scope
+bounded product scope (D1–D4 approved)
 
 resolved material decisions
 
-architecture impact reconciliation
+architecture impact reconciliation (W2 complete)
 
 current source audit
 
@@ -1244,8 +1280,10 @@ understood dependencies
 
 defined completion gate
 
-engineering discovery
+engineering discovery (W3 complete)
 ```
+
+P2-A Operational Exception Foundation is now software complete at the governed integration layer (WP01–WP04 verified). Subsequent increments (P2-B) require dedicated technical specifications and governed contracts.
 
 ---
 
@@ -1377,7 +1415,7 @@ At this index snapshot:
 ```text id="5k2nn9"
 main
 =
-f89ccb49878668f5cb00edf7375e168b9d4a0670
+c4ae9668f4b1a9327d8889b7450bec0b0de2a87a
 ```
 
 current hosted workflows include successful:
@@ -1968,15 +2006,15 @@ Do not infer merge solely from conversation text.
 
 # 70. Product Work Is Not Automatically Engineering Work
 
-A current product program may exist while:
+A current product program or technical plan may exist while:
 
 ```text id="rjhfbm"
-ACTIVE IMPLEMENTATION PHASE
+ACTIVE WORK PACKAGE
 =
 NONE
 ```
 
-That is the current MGBOS state.
+That is the current MGBOS state following P2-A completion.
 
 Correct progression:
 
@@ -1985,7 +2023,7 @@ PRODUCT DEFINITION
         ↓
 ARCHITECTURE IMPACT REVIEW
         ↓
-ENGINEERING DISCOVERY
+ENGINEERING DISCOVERY / TECHNICAL PLAN
         ↓
 IMPLEMENTATION CONTRACT
         ↓
@@ -2428,12 +2466,12 @@ It is not new runtime implementation.
 
 # 87. Current Product Next Step
 
-Following product definition package introduction:
+Following P2-A software completion:
 
 ```text id="gatf50"
 CURRENT PRODUCT PROGRAM
 =
-FOUNDER CONTROL
+FOUNDER_CONTROL
 
 PRODUCT DEFINITION PACKAGE D1-D4
 =
@@ -2441,18 +2479,26 @@ PRESENT / ACTIVE
 
 ACTIVE IMPLEMENTATION PHASE
 =
+PHASE_2_FOUNDER_CONTROL
+
+P2-A OPERATIONAL EXCEPTION FOUNDATION
+=
+SOFTWARE COMPLETE / POST-MERGE VERIFIED
+
+ACTIVE WORK PACKAGE
+=
 NONE
 
-NEXT SYSTEM GATE
+NEXT PROGRAM DIRECTION
 =
-FOUNDER CONTROL ARCHITECTURE IMPACT REVIEW
+P2-B FOUNDER ATTENTION PLANNING (HEAD ENGINEERING)
 
-PHASE 2
+BUILDER AUTHORIZATION
 =
-NOT OPEN
+NONE
 ```
 
-Product definition (D1–D4) is defined and active. Engineering readiness is not ready and Phase 2 is not open.
+P2-A Operational Exception Foundation is software complete and post-merge verified. P2-B Founder Attention is the next Head Engineering planning candidate.
 
 ---
 
@@ -2461,19 +2507,21 @@ Product definition (D1–D4) is defined and active. Engineering readiness is not
 There is currently no valid instruction of the form:
 
 ```text id="6wxdmu"
-"Start Phase 2 implementation now."
+"Start P2-B implementation now."
 ```
 
-The engineering gate comes after:
+No Builder implementation package is currently authorized. The engineering gate for P2-B comes after:
 
 ```text id="ykew4s"
-product maturity
+Head Engineering P2-B technical planning
 
-architecture impact resolution
+current-source audit
 
-engineering discovery
+Implementation Contract authoring
 
-implementation contracting
+bounded Work Package authoring
+
+Owner / governed authorization
 ```
 
 ---
@@ -2595,19 +2643,27 @@ PRESENT / ACTIVE
 
 CURRENT IMPLEMENTATION PHASE
 =
+PHASE_2_FOUNDER_CONTROL
+
+P2-A OPERATIONAL EXCEPTION FOUNDATION
+=
+SOFTWARE COMPLETE / POST-MERGE VERIFIED
+
+ACTIVE WORK PACKAGE
+=
+NONE
+
+BUILDER AUTHORIZATION
+=
 NONE
 
 CURRENT READINESS
 =
 NOT PRODUCTION CERTIFIED
 
-NEXT SYSTEM GATE
+NEXT PROGRAM DIRECTION
 =
-FOUNDER CONTROL ARCHITECTURE IMPACT REVIEW
-
-PHASE 2
-=
-NOT OPEN
+P2-B FOUNDER ATTENTION PLANNING (HEAD ENGINEERING)
 ```
 
 ---
@@ -2681,4 +2737,4 @@ WHAT EXACT WORK IS AUTHORIZED
 
 At the current repository state:
 
-> **MGBOS Phase 1 is closed, Founder Control is the active product-definition program, no new MGBOS implementation phase is active, and governed engineering routing currently supports both MGBOS work and repository-engineering work through their own active profiles.**
+> **MGBOS Phase 1 is closed, Phase 2 Founder Control bounded implementation is active with P2-A Operational Exception Foundation software complete and post-merge verified, no Builder work package is currently active, P2-B Founder Attention technical planning is the next governed Head Engineering direction, and governed engineering routing currently supports both MGBOS work and repository-engineering work through their own active profiles.**
