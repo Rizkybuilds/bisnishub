@@ -1,7 +1,7 @@
 ---
 canonical_id: docs.engineering.vibe-engineering.index
 status: ACTIVE
-version: 1.2.0
+version: 1.2.1
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -16,8 +16,8 @@ authoritative_for:
   - vibe engineering document responsibility map
   - vibe engineering applicability and routing-profile boundary
 
-last_reviewed: 2026-10-05
-reviewed_against_revision: f767fd141513d4c8761ab0fc05be34736fa0f5ab
+last_reviewed: 2026-10-09
+reviewed_against_revision: 2489b3214e1f456dd32d42f5bfca6b9c2662c3a0
 review_cadence: quarterly
 
 depends_on:
@@ -1535,6 +1535,7 @@ README.md
 operating-model.md
 state-and-vocabulary.md
 session-protocol.md
+team-operating-protocol.md
 change-package-template.md
 implementation-contract-template.md
 pr-audit-protocol.md
@@ -1587,6 +1588,17 @@ Owns:
 - continuity verification;
 - session handoff;
 - stale-state handling.
+
+## `team-operating-protocol.md`
+
+Owns:
+
+- multi-room advisory and Builder coordination procedure;
+- bounded specialist assignments and evidence handoff;
+- parallel-work collision avoidance;
+- single Head coordination surface without new role or permission authority.
+
+It is subordinate to the canonical role, routing, risk, approval, contract, and release policies.
 
 ## `change-package-template.md`
 
@@ -1649,6 +1661,8 @@ state-and-vocabulary
 ↓
 session-protocol
 ↓
+team-operating-protocol (when parallel rooms are involved)
+↓
 change-package-template
 ↓
 implementation-contract-template
@@ -1660,7 +1674,7 @@ remediation-protocol
 post-merge-reflection
 ```
 
-For active engineering work, do not automatically load all nine files.
+For active engineering work, do not automatically load every file.
 
 Load only the minimum required procedure plus its canonical upstream dependencies.
 
