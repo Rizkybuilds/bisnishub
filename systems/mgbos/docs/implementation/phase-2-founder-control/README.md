@@ -1,20 +1,20 @@
 ---
 canonical_id: mgbos.implementation.phase-2-founder-control.index
 status: ACTIVE
-version: 0.3
+version: 0.4
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
 scope: mgbos-phase-2-founder-control
 document_class: implementation-phase-index
 effective_from: 2026-10-06
-last_reviewed: 2026-10-08
+last_reviewed: 2026-10-09
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: 23d4fd3d184d5bf60c9d41e57a1c01fe3517c132
-  tree: 1f8b7f60848d000e405410f4574d0306b923fa56
+  commit: 77fbcbf08f2699ab85a0682ec4c981235c9c18cf
+  tree: bd8c5061c5cadb87d09793fd7e39e35ed1370066
 
 phase:
   id: PHASE_2_FOUNDER_CONTROL
@@ -22,18 +22,19 @@ phase:
 
 current_slice:
   id: P2-A_OPERATIONAL_EXCEPTION_FOUNDATION
-  status: IN_PROGRESS
+  status: SOFTWARE_COMPLETE
 
 completed_work_packages:
   - WP-P2A-01
   - WP-P2A-02
   - WP-P2A-03
+  - WP-P2A-04
 
-active_work_package: WP-P2A-04 (BRANCH_CANDIDATE)
+active_work_package: NONE
 
 next_candidate:
-  id: WP-P2A-04
-  status: IN_REVIEW_CANDIDATE
+  id: P2-B_FOUNDER_ATTENTION
+  status: PLANNING_CANDIDATE_NOT_AUTHORIZED
 
 deployment_status: NOT_AUTHORIZED
 pilot_status: BLOCKED
@@ -64,10 +65,11 @@ depends_on:
   - ../../../../../docs/governance/canonical-source-map.md
   - ../../../../../docs/engineering/vibe-engineering/README.md
 
-supersedes: null
+supersedes:
+  - mgbos.implementation.phase-2-founder-control.index@0.3
 ---
 
-# Phase 2 — Founder Control Implementation Index v0.3
+# Phase 2 — Founder Control Implementation Index v0.4
 
 ## 1. Purpose
 
@@ -96,21 +98,22 @@ IN_PROGRESS_BOUNDED
 
 CURRENT SLICE
 =
-P2-A OPERATIONAL EXCEPTION FOUNDATION (IN PROGRESS)
+P2-A OPERATIONAL EXCEPTION FOUNDATION (SOFTWARE COMPLETE)
 
 COMPLETED WORK PACKAGES
 =
 WP-P2A-01 (COMPLETE / MERGED / POST-MERGE VERIFIED)
 WP-P2A-02 (COMPLETE / MERGED / POST-MERGE VERIFIED)
 WP-P2A-03 (COMPLETE / MERGED / POST-MERGE VERIFIED)
+WP-P2A-04 (COMPLETE / MERGED / POST-MERGE VERIFIED)
 
 ACTIVE WORK PACKAGE
 =
-WP-P2A-04 (ASSURANCE & REFLECTION — BRANCH CANDIDATE)
+NONE
 
-CANDIDATE STATUS
+NEXT CANDIDATE
 =
-READY FOR PULL REQUEST & INDEPENDENT AUDIT (IN_REVIEW_CANDIDATE)
+P2-B FOUNDER ATTENTION PLANNING (NOT AUTHORIZED FOR BUILDER)
 
 DEPLOYMENT STATUS
 =
@@ -283,9 +286,59 @@ COMPLETE / MERGED / POST-MERGE VERIFIED
 
 ---
 
-## 6. Current Boundaries & What Is NOT Implemented
+## 6. Completed Achievement: WP-P2A-04
 
-While the database, domain, validation, authorization, runtime command boundary, and operator console UI are **CURRENT**, the following boundaries remain strictly in effect:
+The fourth bounded increment of Phase 2 landed in PR #48:
+
+```text
+Work Package:
+WP-P2A-04 — Assurance & Reflection
+
+Contract:
+IC-MGBOS-P2A-WP04 (SATISFIED / CLOSED)
+
+Pull Request:
+#48 (test(mgbos): add operational exception assurance suite and wp04 reflection)
+
+Integration Revision:
+77fbcbf08f2699ab85a0682ec4c981235c9c18cf
+
+Integration Tree:
+bd8c5061c5cadb87d09793fd7e39e35ed1370066
+
+Status:
+COMPLETE / MERGED / POST-MERGE VERIFIED
+
+Evidence Document:
+[WP-P2A-04 Assurance Report](./wp-p2a-04-assurance.md)
+```
+
+### Verified Runtime Assurance Landed by WP04
+
+1. **Full Workspace Regression:**
+   - Format, lint, SQL lint (`npm run lint:sql`), typecheck across 11 packages, full Vitest test suite (66 files / 535 tests passed, 5 skipped), and Next.js production builds with local HTTP smoke (`:3101` and `:3102`).
+2. **Database Replay & Security Baseline:**
+   - Disposable local Supabase reset executing 28 pgTAP files / 578 tests passed, verified against the integrated payment/retail order RPC hardening (SEC-01 / PR #49) baseline.
+3. **Database Type Determinism:**
+   - Double database type generation determinism verified (`systems/mgbos/packages/database/generated/database.types.ts` unchanged after fresh run).
+4. **Migration Upgrade Rehearsal:**
+   - Forward migration rehearsal from prior Phase 1 schema (`20261005110000_baseline_schema.sql` through `20261006120000_phase1_operating_spine.sql`) to P2-A migration `20261007090000_operational_exceptions.sql` on an isolated test clone.
+5. **Concurrency & Deduplication Race:**
+   - 20-request concurrent open race proving active deduplication: exactly 1 active exception row created and 20 audit receipts recorded (CHK-008 / AC-004).
+6. **Trusted Lifecycle Execution:**
+   - Full service-role RPC lifecycle verified with database actor-role enforcement: Open → Assign → Acknowledge → Reassign → Change Severity → Non-owner ACCEPTED_RISK denial → Owner ACCEPTED_RISK resolution → Reopen → Dismiss (CHK-009 / AC-006).
+7. **Source-Domain Independence:**
+   - Source-domain isolation verified on Order and Production Job without mutating target business states (AC-005).
+8. **Negative Security Protections:**
+   - Direct table `INSERT`, `UPDATE`, `DELETE` blocked (HTTP 403), valid local anonymous RPC calls denied with PostgreSQL error 42501 (HTTP 401), staff roles denied, and cross-organization access blocked (AC-008).
+9. **Residual Evidence Limitation:**
+   - WP04 verified trusted service-role RPC lifecycle execution and database actor-role enforcement; durable hosted browser → GoTrue authenticated session → Next.js operator journey E2E remains to be established prior to real operational pilot or production readiness.
+
+---
+
+## 7. Current Boundaries & What Is NOT Implemented
+
+While the P2-A Operational Exception Foundation software slice is **COMPLETE / MERGED / POST-MERGE VERIFIED**, the following boundaries remain strictly in effect:
 
 ```text
 NO active Builder work package
@@ -295,7 +348,6 @@ NO automated background exception detectors
 NO service principal automation
 NO production deployment authorization
 NO real business pilot execution
-FINAL ASSURANCE / REFLECTION (WP04) NOT YET COMPLETE
 ```
 
 Operational Exception classification:
@@ -303,51 +355,51 @@ Operational Exception classification:
 ```text
 OPERATIONAL EXCEPTION P2-A
 =
-IMPLEMENTED THROUGH OPERATOR CONSOLE
+SOFTWARE COMPLETE (INTEGRATION LAYER)
 
-BUT
-
-FINAL ASSURANCE / REFLECTION
+FOUNDER CONTROL OVERALL
 =
-NOT YET COMPLETE
+IN PROGRESS (P2-A SLICE CLOSED, P2-B PLANNING NEXT)
 ```
 
 ---
 
-## 7. Current Candidate: WP-P2A-04 (Assurance & Reflection)
+## 8. Next Program Direction: P2-B Founder Attention (Planning)
 
-The bounded assurance slice for P2-A is executed and documented in:
-
-- [WP-P2A-04 Assurance Report](./wp-p2a-04-assurance.md)
+With the P2-A software completion gate satisfied, the program transitions to P2-B:
 
 ```text
-Work Package:
-WP-P2A-04 — Assurance & Reflection
+Program Slice:
+P2-B — Founder Attention
 
-Contract:
-IC-MGBOS-P2A-WP04 (READY_FOR_REVIEW)
+Target Concepts:
+- Organization timezone in SessionContext
+- Founder Attention evaluator
+- Evaluation Coverage
+- Operational Exception projection
+- source-derived transient attention
+- pricing approval attention
+- Founder Home
 
-Branch:
-assurance/mgbos-p2a-wp04
+Current Status:
+NEXT HEAD ENGINEERING PLANNING CANDIDATE
 
-Scope Executed:
-- full workspace check: format, lint, lint:sql, typecheck (11 pkgs), full Vitest (66 files / 535 tests passed, 5 skipped), Next.js builds
-- local HTTP production smoke (:3101 & :3102)
-- disposable local Supabase reset, 28 pgTAP files / 578 tests passed (integrated with SEC-01 baseline)
-- double database type generation determinism (database.types.ts unchanged)
-- forward migration upgrade rehearsal from prior Phase 1 schema on isolated clone
-- 20-request concurrency race proving active deduplication, 1 active row, 20 audit receipts (CHK-008 / AC-004)
-- trusted service-role RPC lifecycle with database actor-role enforcement: Open -> Assign -> Acknowledge -> Reassign -> Severity -> Non-owner ACCEPTED_RISK denial -> Owner ACCEPTED_RISK resolution -> Reopen -> Dismiss (CHK-009 / AC-006)
-- source-domain independence verified on Order and Production Job (AC-005)
-- negative security: direct table INSERT/UPDATE/DELETE denied (HTTP 403), valid local anon RPC denied with PostgreSQL 42501 (HTTP 401), staff denied, cross-tenant denied (AC-008)
-
-Status:
-IN_REVIEW_CANDIDATE (Awaiting Pull Request audit by Head Engineering)
+Builder Authorization:
+NONE (NO ACTIVE WORK PACKAGE)
 ```
+
+### Governing Rule for P2-B Entry
+
+Builder (Antigravity) MUST NOT begin implementation on P2-B until:
+
+1. Head Engineering (ChatGPT) authors technical specifications and an Implementation Contract for P2-B;
+2. Bounded Work Package `WP-P2B-01` (or initial P2-B slice) is authored;
+3. Owner / governed authority grants explicit execution authorization;
+4. The candidate binds to the exact verified baseline (`main@77fbcbf08f2699ab85a0682ec4c981235c9c18cf`).
 
 ---
 
-## 8. Document Routing & Reading Order
+## 9. Document Routing & Reading Order
 
 For Phase 2 engineering and product navigation, read in this order:
 
@@ -357,4 +409,5 @@ For Phase 2 engineering and product navigation, read in this order:
 4. [Operational Exception Specification](../../product/operational-exception-spec.md) — Exception product specification (D3).
 5. [Founder Attention Experience Specification](../../product/founder-attention-experience-spec.md) — Attention projection specification (D2).
 6. [Founder Control P2-A Technical Plan](../../engineering/founder-control-p2a-operational-exception-technical-plan.md) — Active technical plan for P2-A.
-7. [Phase 1 Operating Spine Completion Report](../phase-1-operating-spine/completion-report.md) — Provenance of the closed foundational phase.
+7. [WP-P2A-04 Assurance Report](./wp-p2a-04-assurance.md) — Closed P2-A assurance report.
+8. [Phase 1 Operating Spine Completion Report](../phase-1-operating-spine/completion-report.md) — Provenance of the closed foundational phase.

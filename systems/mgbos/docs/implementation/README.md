@@ -1,7 +1,7 @@
 ---
 canonical_id: mgbos.implementation.index
 status: ACTIVE
-version: 2.5
+version: 2.6
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -11,14 +11,14 @@ effective_from: 2026-10-06
 
 implementation_status: DOCUMENTATION_INDEX
 current_implementation_phase: PHASE_2_FOUNDER_CONTROL
-current_program_state: P2A_IN_PROGRESS_WP03_COMPLETE_NO_ACTIVE_WP
+current_program_state: P2A_SOFTWARE_COMPLETE_WP04_VERIFIED_NO_ACTIVE_WP
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: 23d4fd3d184d5bf60c9d41e57a1c01fe3517c132
-  tree: 1f8b7f60848d000e405410f4574d0306b923fa56
-  reviewed_at: 2026-10-08
+  commit: 77fbcbf08f2699ab85a0682ec4c981235c9c18cf
+  tree: bd8c5061c5cadb87d09793fd7e39e35ed1370066
+  reviewed_at: 2026-10-09
 
 authoritative_for:
   - mgbos implementation documentation navigation
@@ -43,7 +43,7 @@ not_authoritative_for:
   - deployment state
   - operational readiness certification
 
-last_reviewed: 2026-10-08
+last_reviewed: 2026-10-09
 review_cadence: per-material-implementation-phase-change
 
 depends_on:
@@ -59,10 +59,10 @@ depends_on:
   - ../../../../.agents/contracts/work-package.schema.json
 
 supersedes:
-  - mgbos.implementation.index@2.4
+  - mgbos.implementation.index@2.5
 ---
 
-# MGBOS Implementation Documentation Index v2.5
+# MGBOS Implementation Documentation Index v2.6
 
 ## 1. Purpose
 
@@ -129,12 +129,12 @@ PHASE_2_FOUNDER_CONTROL (BOUNDED IMPLEMENTATION IN PROGRESS)
 
 CURRENT PROGRAM STATE
 =
-P2A_IN_PROGRESS_WP03_COMPLETE_NO_ACTIVE_WP
+P2A_SOFTWARE_COMPLETE_WP04_VERIFIED_NO_ACTIVE_WP
 ```
 
 Phase 1 has closed and its closure evidence is preserved.
 
-Phase 2 Founder Control bounded implementation is in progress: the database and domain foundation landed under WP-P2A-01 (PR #42), the validation, authorization, and runtime command boundary landed under WP-P2A-02 (PR #44), and the operational exception console landed under WP-P2A-03 (PR #46, integration revision `23d4fd3d184d5bf60c9d41e57a1c01fe3517c132`).
+Phase 2 Founder Control bounded implementation is in progress: the database and domain foundation landed under WP-P2A-01 (PR #42), the validation, authorization, and runtime command boundary landed under WP-P2A-02 (PR #44), the operational exception console landed under WP-P2A-03 (PR #46), and integrated assurance and reflection landed under WP-P2A-04 (PR #48, integration revision `77fbcbf08f2699ab85a0682ec4c981235c9c18cf`). The P2-A Operational Exception Foundation software slice is complete at the governed integration layer.
 
 Current program direction is:
 
@@ -163,16 +163,18 @@ IC-MGBOS-P2A-WP03 (SATISFIED / CLOSED)
         ↓
 WP-P2A-03 (COMPLETE / MERGED / POST-MERGE VERIFIED)
         ↓
-OPERATIONAL EXCEPTION CONSOLE (CURRENT)
+IC-MGBOS-P2A-WP04 (SATISFIED / CLOSED)
         ↓
-P2-A OVERALL (IN PROGRESS)
+WP-P2A-04 (COMPLETE / MERGED / POST-MERGE VERIFIED)
+        ↓
+P2-A SOFTWARE COMPLETION GATE (SATISFIED)
         ↓
 ACTIVE WORK PACKAGE = NONE
         ↓
-WP-P2A-04 (NEXT CANDIDATE / NOT AUTHORIZED)
+NEXT CANDIDATE = P2-B FOUNDER ATTENTION PLANNING (HEAD ENGINEERING / NOT AUTHORIZED FOR BUILDER)
 ```
 
-Important: Phase 2 bounded implementation has started does **NOT** mean all Phase 2 work is authorized. No active work package currently exists, and this index MUST NOT route a Builder to begin uncontracted implementation.
+Important: P2-A software foundation is complete does **NOT** mean all Founder Control work is completed or that P2-B is authorized. No active work package currently exists, and this index MUST NOT route a Builder to begin uncontracted implementation.
 
 ---
 
@@ -485,11 +487,11 @@ systems/mgbos/docs/implementation/
 │   └── operator-acceptance-test.md
 │
 └── phase-2-founder-control/
-    │
-    └── README.md
+    ├── README.md
+    └── wp-p2a-04-assurance.md
 ```
 
-The `phase-2-founder-control/` directory now exists following the completion and post-merge verification of WP-P2A-01 in PR #42. Historical Phase 1 files remain preserved for closed-phase provenance.
+The `phase-2-founder-control/` directory tracks Phase 2 bounded implementation following the completion and post-merge verification of WP-P2A-01 through WP-P2A-04. Historical Phase 1 files remain preserved for closed-phase provenance.
 
 ---
 
@@ -1893,20 +1895,28 @@ OPERATIONAL EXCEPTION CONSOLE
 =
 CURRENT
 
+IC-MGBOS-P2A-WP04
+=
+SATISFIED / CLOSED
+
+WP-P2A-04
+=
+COMPLETE / MERGED / VERIFIED (PR #48)
+
 P2-A
 =
-IN PROGRESS
+SOFTWARE COMPLETE (INTEGRATION LAYER)
 
 ACTIVE WORK PACKAGE
 =
 NONE
 
-WP-P2A-04
+NEXT CANDIDATE
 =
-NEXT CANDIDATE / NOT AUTHORIZED
+P2-B FOUNDER ATTENTION PLANNING (NOT AUTHORIZED FOR BUILDER)
 ```
 
-Phase 2 Founder Control bounded implementation is in progress. WP-P2A-01 completed the database and domain foundation. WP-P2A-02 completed the validation, authorization, and runtime command boundary. WP-P2A-03 completed the operational exception console. The current state has no active work package; WP-P2A-04 is the next candidate requiring governed Head Engineering contract authoring before execution.
+Phase 2 Founder Control bounded implementation is in progress. WP-P2A-01 completed the database and domain foundation. WP-P2A-02 completed the validation, authorization, and runtime command boundary. WP-P2A-03 completed the operational exception console. WP-P2A-04 completed integrated assurance and reflection. The P2-A software slice is complete. The current state has no active work package; P2-B Founder Attention is the next planning candidate requiring governed Head Engineering technical planning before any implementation begins.
 
 ---
 
@@ -1950,19 +1960,19 @@ operator console UI:
 CURRENT (apps/mgbos list /exceptions, detail /exceptions/[id], modal actions, candidate selectors)
 
 final P2-A assurance:
-NOT COMPLETE
+CURRENT (WP-P2A-04 complete, PR #48 @ 77fbcbf08f2699ab85a0682ec4c981235c9c18cf)
 
 overall P2-A:
-IN PROGRESS
+SOFTWARE COMPLETE (INTEGRATION LAYER)
 
 active work package:
 NONE
 
 next engineering candidate:
-WP-P2A-04 (NOT AUTHORIZED)
+P2-B FOUNDER ATTENTION PLANNING (NOT AUTHORIZED FOR BUILDER)
 ```
 
-Important: The database, domain, validation, authorization, server command boundary, and operator console UI are landed, but P2-A final assurance and reflection (WP04) remain to be completed. Phase 2 execution is strictly bounded to authorized work packages.
+Important: The P2-A Operational Exception Foundation software slice is complete and post-merge verified. However, Founder Attention, Founder Home, automated background detectors, production deployment, and real pilot remain not implemented or gated. No active work package currently exists.
 
 ---
 
@@ -2699,13 +2709,21 @@ WP-P2A-03
 =
 COMPLETE / MERGED / POST-MERGE VERIFIED
 
+WP-P2A-04
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #48)
+
+P2-A
+=
+SOFTWARE COMPLETE (INTEGRATION LAYER)
+
 ACTIVE WORK PACKAGE
 =
 NONE
 
 NEXT ENGINEERING CANDIDATE
 =
-WP-P2A-04 / NOT AUTHORIZED
+P2-B FOUNDER ATTENTION PLANNING (NOT AUTHORIZED FOR BUILDER)
 ```
 
 ---
@@ -2723,21 +2741,28 @@ Answer from this index:
 ```text
 NO ACTIVE WORK PACKAGE IS AUTHORIZED.
 
-WP-P2A-04
-ASSURANCE + REFLECTION
-IS THE NEXT ENGINEERING CANDIDATE.
+P2-A (WP01–WP04) IS SOFTWARE COMPLETE.
+
+P2-B FOUNDER ATTENTION
+IS THE NEXT PLANNING CANDIDATE.
 
 HEAD ENGINEERING MUST FIRST
-PREPARE AND AUDIT ITS CONTRACT
-AND BOUNDED WORK PACKAGE.
+PREPARE THE TECHNICAL DESIGN
+AND IMPLEMENTATION CONTRACT.
+
+NO BUILDER IMPLEMENTATION IS AUTHORIZED.
 ```
 
 Required governed routing:
 
 ```text
-author WP-P2A-04 Implementation Contract
+P2-A software slice complete & post-merge verified
         ↓
-author bounded WP-P2A-04
+Head Engineering technical planning for P2-B
+        ↓
+author P2-B Implementation Contract
+        ↓
+author bounded Work Package
         ↓
 Owner / governed authorization
         ↓
@@ -2843,4 +2868,4 @@ CLOSURE
 
 At this repository state:
 
-> **Phase 2 Founder Control bounded implementation is in progress. WP-P2A-01, WP-P2A-02, and WP-P2A-03 are complete, merged, and post-merge verified. Operational Exception database, domain, validation, authorization, server command boundary, and operator console UI are CURRENT. Final P2-A assurance and reflection have not yet run. No work package is currently active. The next engineering candidate is WP-P2A-04, which requires Head Engineering contract/work-package authorization before any implementation begins.**
+> **Phase 2 Founder Control bounded implementation is in progress. P2-A Operational Exception Foundation (WP-P2A-01, WP-P2A-02, WP-P2A-03, and WP-P2A-04) is complete, merged, and post-merge verified. P2-A software completion gate is satisfied. No work package is currently active. The next engineering candidate is P2-B Founder Attention, which requires Head Engineering technical planning before any implementation contract or work package authoring begins.**
