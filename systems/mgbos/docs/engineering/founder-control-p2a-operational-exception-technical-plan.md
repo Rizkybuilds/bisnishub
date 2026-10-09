@@ -4012,12 +4012,12 @@ Presence of this technical plan provides technical direction. It does NOT author
 
 ---
 
-# 137. Implementation Contract Gate (Historical for WP01, WP02, WP03 & WP04 — Satisfied)
+# 137. Implementation Contract Gate (Historical for WP01–WP04 — Satisfied)
 
 Pre-WP01 through Pre-WP04 Gate Status:
 
 ```text
-SATISFIED (IC-MGBOS-P2A-WP01, IC-MGBOS-P2A-WP02, IC-MGBOS-P2A-WP03 & IC-MGBOS-P2A-WP04 PROMOTED, EXECUTED, & CLOSED)
+SATISFIED (IC-MGBOS-P2A-WP01, IC-MGBOS-P2A-WP02 & IC-MGBOS-P2A-WP03 PROMOTED, EXECUTED, & CLOSED; WP04 EXECUTION/CONTRACT GATE SUFFICIENT FOR GOVERNED EXECUTION; WP-P2A-04 COMPLETE / MERGED / POST-MERGE VERIFIED IN PR #48)
 ```
 
 Before Builder receives code authority, Head Engineering must produce a schema-valid:
@@ -4052,7 +4052,7 @@ stop conditions
 work-package IDs
 ```
 
-This gate was satisfied for WP01, WP02, WP03, and WP04. It remains mandatory for subsequent programs and work packages (P2-B).
+This gate was satisfied for WP01 through WP04. It remains mandatory for subsequent programs and work packages (P2-B).
 
 ---
 

@@ -294,8 +294,8 @@ The fourth bounded increment of Phase 2 landed in PR #48:
 Work Package:
 WP-P2A-04 — Assurance & Reflection
 
-Contract:
-IC-MGBOS-P2A-WP04 (SATISFIED / CLOSED)
+Governance Gate:
+WP04 execution/contract gate satisfied; closure grounded in PR #48 merge & post-merge verification
 
 Pull Request:
 #48 (test(mgbos): add operational exception assurance suite and wp04 reflection)
@@ -310,7 +310,7 @@ Status:
 COMPLETE / MERGED / POST-MERGE VERIFIED
 
 Evidence Document:
-[WP-P2A-04 Assurance Report](./wp-p2a-04-assurance.md)
+[WP-P2A-04 Assurance Report](./wp-p2a-04-assurance.md) (revision-bound candidate assurance evidence)
 ```
 
 ### Verified Runtime Assurance Landed by WP04
@@ -359,7 +359,7 @@ SOFTWARE COMPLETE (INTEGRATION LAYER)
 
 FOUNDER CONTROL OVERALL
 =
-IN PROGRESS (P2-A SLICE CLOSED, P2-B PLANNING NEXT)
+IN PROGRESS (P2-A SLICE COMPLETE, P2-B PLANNING NEXT)
 ```
 
 ---
@@ -409,5 +409,5 @@ For Phase 2 engineering and product navigation, read in this order:
 4. [Operational Exception Specification](../../product/operational-exception-spec.md) — Exception product specification (D3).
 5. [Founder Attention Experience Specification](../../product/founder-attention-experience-spec.md) — Attention projection specification (D2).
 6. [Founder Control P2-A Technical Plan](../../engineering/founder-control-p2a-operational-exception-technical-plan.md) — Active technical plan for P2-A.
-7. [WP-P2A-04 Assurance Report](./wp-p2a-04-assurance.md) — Closed P2-A assurance report.
+7. [WP-P2A-04 Assurance Report](./wp-p2a-04-assurance.md) — Revision-bound candidate assurance evidence for WP-P2A-04.
 8. [Phase 1 Operating Spine Completion Report](../phase-1-operating-spine/completion-report.md) — Provenance of the closed foundational phase.
