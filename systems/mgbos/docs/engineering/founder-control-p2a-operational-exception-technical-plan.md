@@ -19,10 +19,10 @@ program:
     wp01: POST_MERGE_VERIFIED
     wp02: POST_MERGE_VERIFIED
     wp03: POST_MERGE_VERIFIED
-    wp04: CANDIDATE_NOT_AUTHORIZED
-  active_work_package: NONE
-  implementation_authorization: NONE
-  builder_authorization: NONE_CURRENT
+    wp04: IN_ASSURANCE_CANDIDATE
+  active_work_package: WP-P2A-04 (BRANCH_CANDIDATE)
+  implementation_authorization: WP04_BOUNDED_ASSURANCE
+  builder_authorization: WP04_ASSURANCE_ONLY
   deployment_authorization: NONE
 
 repository_baseline:
@@ -195,11 +195,11 @@ NOT IMPLEMENTED
 
 ACTIVE WORK PACKAGE
 =
-NONE
+WP-P2A-04 (BRANCH_CANDIDATE — BOUNDED ASSURANCE ONLY)
 
 NEXT WORK PACKAGE CANDIDATE
 =
-WP-P2A-04 (NOT AUTHORIZED)
+WP-P2A-04 (IN_ASSURANCE_CANDIDATE)
 ```
 
 No open PR existed at baseline.
@@ -3220,10 +3220,10 @@ Operational Exception console UI
 
 P2A-WP04
 Integrated verification + documentation reflection
-= NEXT CANDIDATE / NOT AUTHORIZED
+= IN_ASSURANCE_CANDIDATE (BRANCH_CANDIDATE / AWAITING PULL REQUEST AUDIT)
 ```
 
-Only one bounded Work Package should be active for Builder by default. Active work package is currently NONE.
+Only one bounded Work Package should be active for Builder by default. Active candidate is WP-P2A-04 (BOUNDED ASSURANCE ONLY).
 
 ---
 
@@ -3379,7 +3379,7 @@ WP03 delivered and verified:
 Status:
 
 ```text
-NEXT CANDIDATE / NOT AUTHORIZED
+IN_ASSURANCE_CANDIDATE (BRANCH_CANDIDATE / AWAITING PULL REQUEST AUDIT)
 ```
 
 Scope:
@@ -3982,11 +3982,11 @@ COMPLETE / MERGED / POST-MERGE VERIFIED (PR #46)
 
 ACTIVE WORK PACKAGE
 =
-NONE
+WP-P2A-04 (BRANCH_CANDIDATE — BOUNDED ASSURANCE ONLY)
 
 NEXT WORK PACKAGE CANDIDATE
 =
-WP-P2A-04 (NOT AUTHORIZED)
+WP-P2A-04 (IN_ASSURANCE_CANDIDATE)
 ```
 
 Presence of this technical plan provides technical direction. It does NOT authorize blanket implementation. Each work package requires its own governed contract and approval.
