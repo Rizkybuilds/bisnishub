@@ -3,9 +3,16 @@
  *
  * Exercises live local Supabase instance against canonical contracts:
  * - CHK-008 (AC-004): Concurrency deduplication race with 20 parallel requests
- * - CHK-009 (AC-006): End-to-end human operator lifecycle (Open -> Acknowledge -> Assign -> Reassign -> Severity -> Non-owner ACCEPTED_RISK denial -> Owner ACCEPTED_RISK resolution -> Reopen -> Dismiss)
+ * - CHK-009 (AC-006): Trusted service-role RPC lifecycle with database actor-role enforcement
+ *   (Open -> Assign -> Acknowledge -> Reassign -> Severity -> Non-owner ACCEPTED_RISK denial -> Owner ACCEPTED_RISK resolution -> Reopen -> Dismiss)
  * - AC-005: Source-domain independence (verifying order & production job status invariant preservation)
- * - AC-008: Negative security verification (direct table mutation denial, anon RPC denial, cross-tenant isolation)
+ * - AC-008: Negative security verification (direct table mutation denial, anon RPC denial with PG 42501, cross-tenant isolation)
+ *
+ * ASSURANCE CATEGORIZATION & BOUNDARY (P2A48-F02):
+ * This script tests trusted database-level RPC execution via service_role with explicit p_actor_id parameters
+ * and verifies database-level actor role enforcement (e.g. OWNER vs ADMIN vs OPERATIONS).
+ * It does NOT test authenticated Next.js session cookies, GoTrue login tokens, or browser UI server actions.
+ * Application-level E2E integration belongs to a distinct application test layer.
  */
 
 import assert from 'node:assert/strict';
@@ -22,6 +29,12 @@ const guardedFetch = createDestructiveLocalSupabaseFetch({
   baseUrl: BASE_URL,
   serviceRoleKey: SERVICE_KEY,
 });
+
+// Canonical local-only anon / publishable credentials for negative authorization testing (P2A48-F01)
+const CANONICAL_LOCAL_ANON_KEY =
+  'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+const CANONICAL_LOCAL_ANON_JWT =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
 
 const serviceHeaders = {
   apikey: SERVICE_KEY,
@@ -474,7 +487,9 @@ async function main() {
   // --------------------------------------------------------------------------
   // Phase 3: CHK-009 (AC-006) End-to-End Human Operator Lifecycle
   // --------------------------------------------------------------------------
-  console.log('\n--- Phase 3: CHK-009 (AC-006) Operator Console Lifecycle ---');
+  console.log(
+    '\n--- Phase 3: CHK-009 (AC-006) Trusted Service-Role RPC Lifecycle & Actor Enforcement ---',
+  );
 
   // We exercise a fresh lifecycle against the Order:
   // Open -> Assign (OPEN) -> Acknowledge (ACKNOWLEDGED) -> Reassign -> Severity -> Non-owner ACCEPTED_RISK denial -> Owner ACCEPTED_RISK resolution -> Reopen -> Dismiss
@@ -786,15 +801,18 @@ async function main() {
     '✓ Security: Direct DELETE on app.operational_exception_audit denied (HTTP 403)',
   );
 
-  // 4. Anon Role Execution Denial
+  // 4. Anon Role Execution Denial (P2A48-F01)
+  // Verify with canonical local-only credentials that PostgREST recognizes anon
+  // and denies access attributable to role/schema/function authorization with PostgreSQL 42501.
   const anonRes = await guardedFetch(
     `${endpoint}/rpc/open_operational_exception`,
     {
       method: 'POST',
       headers: {
-        apikey:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A_error',
+        apikey: CANONICAL_LOCAL_ANON_KEY,
+        Authorization: `Bearer ${CANONICAL_LOCAL_ANON_JWT}`,
         'Content-Type': 'application/json',
+        'Accept-Profile': 'app',
         'Content-Profile': 'app',
       },
       body: JSON.stringify({
@@ -816,8 +834,19 @@ async function main() {
     anonRes.status === 401 || anonRes.status === 403,
     `Anon role RPC execution must return 401 or 403, got ${anonRes.status}`,
   );
+  const anonBody = await anonRes.json();
+  assert.equal(
+    anonBody.code,
+    '42501',
+    `Anon role RPC rejection must return PostgreSQL code 42501 (permission denied), got ${anonBody.code}`,
+  );
+  assert.match(
+    anonBody.message,
+    /permission denied for (schema|function) app/,
+    `Anon rejection must be attributable to schema/function authorization, got: ${anonBody.message}`,
+  );
   console.log(
-    `✓ Security: Anon role RPC execution denied (HTTP ${anonRes.status})`,
+    `✓ Security: Anon role RPC execution denied (HTTP ${anonRes.status} / PG ${anonBody.code}: ${anonBody.message})`,
   );
 
   // 5. Staff Role Denial (OPERATIONS actor cannot open exceptions)

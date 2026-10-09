@@ -18,10 +18,10 @@ contract:
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
-  base_sha: 2d9d2a43f66da81e870d636c5e8abc8b4c785630
-  base_tree: 10011d798df0ce08a17d23960a76f98c7e4b3de7
+  historical_base_sha: 2d9d2a43f66da81e870d636c5e8abc8b4c785630
+  integrated_main_sha: 64f72a99f29bf4f8a95cfd8824ff04af22d01c94
   branch: assurance/mgbos-p2a-wp04
-  open_prs_at_start: 0
+  pr_number: 48
 
 runtime_environment:
   node: 22.23.2
@@ -46,24 +46,24 @@ The assurance execution strictly complied with BisnisHub Control Plane governanc
 - **Effective Risk:** `R4` (authoritative multi-tenant governance; independent audit and QA required).
 - **Scope Discipline:** Verification-first package with zero runtime product expansions. All modifications strictly confined to allowed test, harness, and documentation paths.
 - **Environment Safety:** All destructive operations executed against verified disposable local Supabase instance (`mgbos-foundation`, `127.0.0.1:55431`), guarded by canonical `MGBOS_DESTRUCTIVE_LOCAL_E2E=1` controls.
-- **Assurance Verdict:** All planned local checks (`CHK-001` through `CHK-009`) have **PASSED** with exact empirical evidence. `CHK-010` through `CHK-012` are prepared as a reviewable PR candidate awaiting independent audit and post-merge verification.
+- **Assurance Verdict:** All planned local checks (`CHK-001` through `CHK-009`) have **PASSED** with exact empirical evidence. Audit findings `P2A48-F01`, `P2A48-F02`, and `P2A48-F03` are fully resolved and verified on integrated main (`64f72a99f29bf4f8a95cfd8824ff04af22d01c94`).
 
 ---
 
 ## 2. Baseline & Toolchain Verification
 
-| Attribute            | Expected Contract Baseline                 | Observed Repository Reality                | Match Status |
-| :------------------- | :----------------------------------------- | :----------------------------------------- | :----------- |
-| **Repository**       | `https://github.com/Rizkybuilds/bisnishub` | `https://github.com/Rizkybuilds/bisnishub` | **EXACT**    |
-| **Base Commit SHA**  | `2d9d2a43f66da81e870d636c5e8abc8b4c785630` | `2d9d2a43f66da81e870d636c5e8abc8b4c785630` | **EXACT**    |
-| **Base Tree SHA**    | `10011d798df0ce08a17d23960a76f98c7e4b3de7` | `10011d798df0ce08a17d23960a76f98c7e4b3de7` | **EXACT**    |
-| **Open PR Count**    | `0`                                        | `0` (queried via GitHub API)               | **EXACT**    |
-| **Target Branch**    | `assurance/mgbos-p2a-wp04`                 | `assurance/mgbos-p2a-wp04`                 | **EXACT**    |
-| **Node.js**          | `22.23.2`                                  | `v22.23.2`                                 | **PINNED**   |
-| **pnpm**             | `10.34.5`                                  | `10.34.5`                                  | **PINNED**   |
-| **Docker Engine**    | Docker Desktop running                     | Docker version 29.8.0, build 01b848e       | **RUNNING**  |
-| **PostgreSQL**       | 17.x in Supabase container                 | PostgreSQL 17.6 on x86_64-pc-linux-gnu     | **HEALTHY**  |
-| **Supabase Project** | `mgbos-foundation`                         | `supabase_db_mgbos-foundation` (:55432)    | **VERIFIED** |
+| Attribute               | Expected Contract Baseline                 | Observed Repository Reality                | Match Status   |
+| :---------------------- | :----------------------------------------- | :----------------------------------------- | :------------- |
+| **Repository**          | `https://github.com/Rizkybuilds/bisnishub` | `https://github.com/Rizkybuilds/bisnishub` | **EXACT**      |
+| **Historical Base SHA** | `2d9d2a43f66da81e870d636c5e8abc8b4c785630` | `2d9d2a43f66da81e870d636c5e8abc8b4c785630` | **HISTORICAL** |
+| **Integrated Main SHA** | `64f72a99f29bf4f8a95cfd8824ff04af22d01c94` | `64f72a99f29bf4f8a95cfd8824ff04af22d01c94` | **INTEGRATED** |
+| **Pull Request**        | `#48`                                      | `#48` (open, mergeable)                    | **ACTIVE**     |
+| **Target Branch**       | `assurance/mgbos-p2a-wp04`                 | `assurance/mgbos-p2a-wp04`                 | **EXACT**      |
+| **Node.js**             | `22.23.2`                                  | `v22.23.2`                                 | **PINNED**     |
+| **pnpm**                | `10.34.5`                                  | `10.34.5`                                  | **PINNED**     |
+| **Docker Engine**       | Docker Desktop running                     | Docker version 29.8.0, build 01b848e       | **RUNNING**    |
+| **PostgreSQL**          | 17.x in Supabase container                 | PostgreSQL 17.6 on x86_64-pc-linux-gnu     | **HEALTHY**    |
+| **Supabase Project**    | `mgbos-foundation`                         | `supabase_db_mgbos-foundation` (:55432)    | **VERIFIED**   |
 
 ---
 
@@ -95,7 +95,7 @@ AC-008 (Attributable Evidence Reflection):PASS (CHK-012)
   - `pnpm lint`: 0 errors, 0 warnings across whole workspace (`--max-warnings 0`).
   - `pnpm lint:sql`: All migrations verified; no floating-point money columns found, all use `bigint`.
   - `pnpm typecheck`: 0 errors across all 11 workspace packages (`tsc -p tsconfig.tools.json && pnpm -r typecheck`).
-  - `pnpm test`: 65 test files passed, 527 unit/integration tests passed in Vitest v5.0.1.
+  - `pnpm test`: 66 test files passed, 1 skipped (isolated live E2E opt-in guard); 535 unit/integration tests passed, 5 skipped in Vitest v5.0.1.
   - `pnpm build`: Optimized Next.js production builds completed for `@mgbos/app` and `@mgbos/teestock`.
 
 #### CHK-002: Local HTTP Smoke Test (AC-001)
@@ -106,9 +106,11 @@ AC-008 (Attributable Evidence Reflection):PASS (CHK-012)
 
 #### CHK-003: Disposable Local Database Reset & pgTAP Regression (AC-002)
 
-- **Command:** `pnpm db:reset && pnpm db:test`
+- **Command:** `pnpm db:reset; pnpm db:test`
 - **Result:** **PASS** (Exit Code: 0).
-- **Details:** Recreated schema, applied all 29 migrations including `20261006000000_operational_exception_foundation.sql`, applied `supabase/seed.sql`. Ran 27 test files, 541 pgTAP tests passed without failures (including 84 tests in `operational_exceptions.test.sql`).
+- **Details:**
+  - **Historical Baseline (`2d9d2a4`):** Recreated schema, applied 29 migrations including `20261006000000_operational_exception_foundation.sql`, applied `supabase/seed.sql`. Ran 27 test files, 541 pgTAP tests passed without failures (including 84 tests in `operational_exceptions.test.sql`).
+  - **Integrated Main Baseline (`64f72a9`):** Recreated schema, applied 30 migrations including `20261008140000_payment_rpc_boundary_hardening.sql` (SEC-01), applied `supabase/seed.sql`. Ran 28 test files, 578 pgTAP assertions passed without failures.
 
 #### CHK-004: Double Database Type Generation Determinism (AC-002)
 
@@ -136,7 +138,7 @@ AC-008 (Attributable Evidence Reflection):PASS (CHK-012)
 
 #### CHK-008: Concurrency Deduplication Race Under 20 Parallel Requests (AC-004)
 
-- **Command:** `node systems/mgbos/scripts/operational-exception-assurance.mjs` (Phase 2)
+- **Command:** `$env:MGBOS_DESTRUCTIVE_LOCAL_E2E='1'; node systems/mgbos/scripts/operational-exception-assurance.mjs` (Phase 2)
 - **Result:** **PASS** (Exit Code: 0).
 - **Details:**
   - 20 concurrent parallel calls to `open_operational_exception` with distinct `request_id`s for the exact same business fingerprint (`org_id`, `production.deadline_breached`, `PRODUCTION_JOB`, `job_id`).
@@ -148,10 +150,12 @@ AC-008 (Attributable Evidence Reflection):PASS (CHK-012)
   - Idempotency verified: re-calling winner request_id returned `is_retry: true`.
   - Idempotency conflict verified: calling with existing request_id but mutated payload was strictly rejected.
 
-#### CHK-009: Synthetic Authenticated Operator Lifecycle on Live Database (AC-006)
+#### CHK-009: Trusted Service-Role RPC Lifecycle & Actor-Role Enforcement (AC-006)
 
-- **Command:** `node systems/mgbos/scripts/operational-exception-assurance.mjs` (Phase 3 & 4)
+- **Command:** `$env:MGBOS_DESTRUCTIVE_LOCAL_E2E='1'; node systems/mgbos/scripts/operational-exception-assurance.mjs` (Phase 3 & 4)
 - **Result:** **PASS** (Exit Code: 0).
+- **Assurance Boundary & Terminology (P2A48-F02):**
+  This check verifies trusted database-level RPC execution via `service_role` authority with explicit actor UUIDs (`p_actor_id`), verifying database-level transactionality, optimistic concurrency (`current_revision`), and role enforcement (`OWNER` vs `ADMIN` vs non-authorized roles). It does not test logged-in Next.js operator sessions (GoTrue cookies/JWT or browser UI forms), which belong to higher-level application E2E testing.
 - **Lifecycle Sequence:**
   1. `open_operational_exception`: unassigned exception created against Order `TS-O-2026-000001` (status: `OPEN`, rev: 1).
   2. `assign_operational_exception`: assigned to Admin Operator user (status: `OPEN`, principal set, rev: 2).
@@ -168,11 +172,11 @@ AC-008 (Attributable Evidence Reflection):PASS (CHK-012)
   - Order `TS-O-2026-000001`: status remained `ACTIVE`, `grand_total` remained unchanged.
   - Production Job `TS-J-2026-000001`: status remained `PLANNED`, `estimated_cost` remained unchanged.
   - Operational exception lifecycle caused zero side-effects on source domain tables.
-- **Negative Security Verification (AC-008):**
+- **Negative Security Verification (AC-008, P2A48-F01):**
   - Direct `INSERT` on `app.operational_exceptions` denied (HTTP 403).
   - Direct `PATCH` on `app.operational_exception_audit` denied (HTTP 403).
   - Direct `DELETE` on `app.operational_exception_audit` denied (HTTP 403).
-  - Anon role RPC execution denied (HTTP 401).
+  - Valid canonical local anon/publishable credentials (`sb_publishable_...`) recognized as anon and denied with PostgreSQL error code `42501` (HTTP 401: `permission denied for schema app`).
   - Staff (`OPERATIONS`) open exception attempt denied (`Not authorized to open operational exceptions`).
   - Cross-tenant mutation attempt by foreign organization user strictly denied (`not found in organization`).
 
@@ -204,11 +208,14 @@ Every changed and created file strictly conforms to the approved `WP-P2A-04` all
 
 ## 5. Findings & Defect Disposition
 
-| Finding ID | Classification         | Description                                                                          | Resolution / Status                                                                                                      |
-| :--------- | :--------------------- | :----------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| **F-001**  | Observation (Resolved) | Prettier formatting warnings in initial authoring of the two assurance script files. | Resolved: ran scoped Prettier write on the two files; `pnpm format:check` now 100% green.                                |
-| **F-002**  | Observation (Resolved) | Unused import warnings detected by ESLint in new test file.                          | Resolved: cleaned up unused imports; `pnpm lint` and `pnpm typecheck` now 100% green with 0 warnings.                    |
-| **F-003**  | Observation (Resolved) | Database state pollution when executing `pnpm db:test` after running live script.    | Resolved: pgTAP expects pristine seed data; running `pnpm db:reset` restores baseline. Documented clean execution order. |
+| Finding ID    | Classification           | Description                                                                                                                | Resolution / Status                                                                                                                                                                           |
+| :------------ | :----------------------- | :------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **F-001**     | Observation (Resolved)   | Prettier formatting warnings in initial authoring of the two assurance script files.                                       | Resolved: ran scoped Prettier write on the two files; `pnpm format:check` now 100% green.                                                                                                     |
+| **F-002**     | Observation (Resolved)   | Unused import warnings detected by ESLint in new test file.                                                                | Resolved: cleaned up unused imports; `pnpm lint` and `pnpm typecheck` now 100% green with 0 warnings.                                                                                         |
+| **F-003**     | Observation (Resolved)   | Database state pollution when executing `pnpm db:test` after running live script.                                          | Resolved: pgTAP expects pristine seed data; running `pnpm db:reset` restores baseline. Documented clean execution order.                                                                      |
+| **P2A48-F01** | Audit Finding (Resolved) | Invalid test credential ending `CRXP1A_error` made anon denial test inconclusive.                                          | Resolved: Replaced with canonical local publishable/anon key (`sb_publishable_...`) and JWT; verified PostgREST returns HTTP 401 and PostgreSQL `42501` (`permission denied for schema app`). |
+| **P2A48-F02** | Audit Finding (Resolved) | CHK-009 script exercises service-role RPC with actor UUIDs, not logged-in operator sessions.                               | Resolved: Corrected all claims and documentation in script, README, and assurance report to precisely specify trusted service-role RPC with database actor-role enforcement.                  |
+| **P2A48-F03** | Audit Finding (Resolved) | Integration baseline drift after SEC-01 merged into main (`64f72a99...`) and internal technical plan status contradiction. | Resolved: Safely incorporated `origin/main` (`64f72a9`), re-verified all 28 pgTAP files / 578 assertions, updated baseline tables, and reconciled technical plan WP04 candidate status.       |
 
 **Zero runtime bugs or security vulnerabilities were discovered in the underlying Phase 2-A codebase.** All business invariants, advisory locks, deduplication rules, and security policies functioned exactly as designed.
 
@@ -223,6 +230,6 @@ Every changed and created file strictly conforms to the approved `WP-P2A-04` all
 
 ### Next Allowed Actions
 
-1. **Push Branch & Open Reviewable PR:** Push branch `assurance/mgbos-p2a-wp04` and open a PR with base `main` (`2d9d2a43f66da81e870d636c5e8abc8b4c785630`).
-2. **Hand Off to Head Engineering:** Hand off exact PR SHA to ChatGPT (`auditor` and `qa`) for independent semantic and assurance review (`CHK-010`, `CHK-011`).
-3. **No Automatic Merge:** Await Owner merge consideration. Post-merge verification (`CHK-012`) must follow before closing P2-A.
+1. **Push Remediation to PR #48:** Push updated branch `assurance/mgbos-p2a-wp04` to `origin/assurance/mgbos-p2a-wp04` (PR #48).
+2. **Await Independent Head Engineering Audit:** Submit exact candidate HEAD SHA to Head Engineering (`ChatGPT`) for re-audit of findings P2A48-F01, P2A48-F02, and P2A48-F03.
+3. **No Automatic Merge:** Await Owner merge consideration. Under consequence risk R4, Builder retains zero merge authority. Post-merge verification must follow before closing P2-A.

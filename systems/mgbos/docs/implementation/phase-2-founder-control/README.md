@@ -331,15 +331,15 @@ Branch:
 assurance/mgbos-p2a-wp04
 
 Scope Executed:
-- full workspace check: format, lint, lint:sql, typecheck (11 pkgs), full Vitest (65 files / 527 tests), Next.js builds
+- full workspace check: format, lint, lint:sql, typecheck (11 pkgs), full Vitest (66 files / 535 tests passed, 5 skipped), Next.js builds
 - local HTTP production smoke (:3101 & :3102)
-- disposable local Supabase reset, 27 pgTAP files / 541 tests passed
+- disposable local Supabase reset, 28 pgTAP files / 578 tests passed (integrated with SEC-01 baseline)
 - double database type generation determinism (database.types.ts unchanged)
 - forward migration upgrade rehearsal from prior Phase 1 schema on isolated clone
 - 20-request concurrency race proving active deduplication, 1 active row, 20 audit receipts (CHK-008 / AC-004)
-- live local operator console lifecycle: Open -> Assign -> Acknowledge -> Reassign -> Severity -> Non-owner ACCEPTED_RISK denial -> Owner ACCEPTED_RISK resolution -> Reopen -> Dismiss (CHK-009 / AC-006)
+- trusted service-role RPC lifecycle with database actor-role enforcement: Open -> Assign -> Acknowledge -> Reassign -> Severity -> Non-owner ACCEPTED_RISK denial -> Owner ACCEPTED_RISK resolution -> Reopen -> Dismiss (CHK-009 / AC-006)
 - source-domain independence verified on Order and Production Job (AC-005)
-- negative security: direct table INSERT/UPDATE/DELETE denied, anon denied, staff denied, cross-tenant denied (AC-008)
+- negative security: direct table INSERT/UPDATE/DELETE denied (HTTP 403), valid local anon RPC denied with PostgreSQL 42501 (HTTP 401), staff denied, cross-tenant denied (AC-008)
 
 Status:
 IN_REVIEW_CANDIDATE (Awaiting Pull Request audit by Head Engineering)
