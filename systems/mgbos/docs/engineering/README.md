@@ -41,7 +41,7 @@ Kerangka kerja bounded AI engineering dan control plane MGBOS:
 Artefak penemuan teknis, investigasi basis kode sumber aktual, dan rencana implementasi teknis terikat:
 
 - [Founder Control Engineering Discovery](founder-control-engineering-discovery.md) — Artefak provenance historis discovery W3, mengikat inspeksi kode sumber aktual ke baseline `main@88a8a28f1b64a624717a8e03038c63f4520f8978`, mengidentifikasi kesenjangan schema/auth/query/UI, dan merekomendasikan arah implementasi fisik P2-A.
-- [Founder Control P2-A Operational Exception Technical Plan](founder-control-p2a-operational-exception-technical-plan.md) — Rencana teknis aktif (v1.3 pada baseline `23d4fd3d184d5bf60c9d41e57a1c01fe3517c132`) untuk program P2-A. Mencatat WP-P2A-01 (Database + Domain Foundation) telah selesai dan diverifikasi pasca-merge (PR #42); WP-P2A-02 (Validation + Authorization + Server Command Path) telah selesai, dimerge (PR #44), dan diverifikasi pasca-merge; WP-P2A-03 (Operational Exception Console) telah selesai, dimerge (PR #46), dan diverifikasi pasca-merge; menetapkan WP-P2A-04 (Integrated Assurance & Reflection) sebagai kandidat work package berikutnya tanpa otorisasi runtime sebelum kontrak disahkan.
+- [Founder Control P2-A Operational Exception Technical Plan](founder-control-p2a-operational-exception-technical-plan.md) — Rencana teknis aktif (v1.4 pada baseline `77fbcbf08f2699ab85a0682ec4c981235c9c18cf`) untuk program P2-A. Mencatat WP-P2A-01 (Database + Domain Foundation, PR #42), WP-P2A-02 (Validation + Authorization + Server Command Path, PR #44), WP-P2A-03 (Operational Exception Console, PR #46), dan WP-P2A-04 (Integrated Assurance & Reflection, PR #48) telah selesai, dimerge, dan diverifikasi pasca-merge; menyatakan gate software completion P2-A terpenuhi pada lapisan integrasi; menetapkan P2-B Founder Attention sebagai area perencanaan Head Engineering berikutnya tanpa otorisasi implementasi Builder saat ini.
 
 ---
 
@@ -50,7 +50,7 @@ Artefak penemuan teknis, investigasi basis kode sumber aktual, dan rencana imple
 Perencanaan kerja terikat dan pelacakan fase pengembangan aktif:
 
 - [MGBOS Implementation Index](../implementation/README.md) — Rencana fase, backlog eksekusi, audit implementasi, uji penerimaan operator, dan laporan penyelesaian. _Catatan backlog historis lama tidak boleh diperlakukan sebagai backlog aktif._
-- [Phase 2 Founder Control Implementation Index](../implementation/phase-2-founder-control/README.md) — Indeks navigasi eksekusi Phase 2 (Founder Control), mencatat batasan paket bounded, status WP-P2A-01, WP-P2A-02, dan WP-P2A-03 yang telah selesai dan diverifikasi pasca-merge, serta WP-P2A-04 sebagai work package berikutnya yang memerlukan kontrak Head Engineering.
+- [Phase 2 Founder Control Implementation Index](../implementation/phase-2-founder-control/README.md) — Indeks navigasi eksekusi Phase 2 (Founder Control), mencatat batasan paket bounded, status WP-P2A-01 hingga WP-P2A-04 yang telah selesai, dimerge, dan diverifikasi pasca-merge, penutupan software slice P2-A, serta P2-B sebagai kandidat perencanaan Head Engineering berikutnya tanpa paket kerja aktif.
 
 ---
 

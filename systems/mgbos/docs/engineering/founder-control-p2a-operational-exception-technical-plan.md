@@ -1,7 +1,7 @@
 ---
 canonical_id: mgbos.engineering.founder-control-p2a-operational-exception-technical-plan
 status: ACTIVE
-version: 1.3
+version: 1.4
 owner: Rizky
 author: OpenAI / ChatGPT
 approver: Rizky
@@ -19,18 +19,18 @@ program:
     wp01: POST_MERGE_VERIFIED
     wp02: POST_MERGE_VERIFIED
     wp03: POST_MERGE_VERIFIED
-    wp04: IN_ASSURANCE_CANDIDATE
-  active_work_package: WP-P2A-04 (BRANCH_CANDIDATE)
-  implementation_authorization: WP04_BOUNDED_ASSURANCE
-  builder_authorization: WP04_ASSURANCE_ONLY
+    wp04: POST_MERGE_VERIFIED
+  active_work_package: NONE
+  implementation_authorization: NONE
+  builder_authorization: NONE_CURRENT
   deployment_authorization: NONE
 
 repository_baseline:
   repository: Rizkybuilds/bisnishub
   branch: main
-  commit: 23d4fd3d184d5bf60c9d41e57a1c01fe3517c132
-  tree: 1f8b7f60848d000e405410f4574d0306b923fa56
-  reviewed_at: 2026-10-08
+  commit: 77fbcbf08f2699ab85a0682ec4c981235c9c18cf
+  tree: bd8c5061c5cadb87d09793fd7e39e35ed1370066
+  reviewed_at: 2026-10-09
 
 risk:
   proposed_classification: R4
@@ -91,10 +91,10 @@ depends_on:
   - ../../../../.agents/contracts/work-package.schema.json
 
 supersedes:
-  - mgbos.engineering.founder-control-p2a-operational-exception-technical-plan@1.2
+  - mgbos.engineering.founder-control-p2a-operational-exception-technical-plan@1.3
 ---
 
-# Founder Control P2-A — Operational Exception Foundation Technical Implementation Plan v1.3
+# Founder Control P2-A — Operational Exception Foundation Technical Implementation Plan v1.4
 
 ## 1. Purpose
 
@@ -189,20 +189,24 @@ Operational Exception UI / Operator Console
 =
 CURRENT (LANDED IN WP-P2A-03)
 
+Operational Exception Assurance & Reflection
+=
+CURRENT (LANDED IN WP-P2A-04, PR #48 @ 77fbcbf08f2699ab85a0682ec4c981235c9c18cf)
+
 Founder Attention runtime
 =
 NOT IMPLEMENTED
 
 ACTIVE WORK PACKAGE
 =
-WP-P2A-04 (BRANCH_CANDIDATE — BOUNDED ASSURANCE ONLY)
+NONE
 
 NEXT WORK PACKAGE CANDIDATE
 =
-WP-P2A-04 (IN_ASSURANCE_CANDIDATE)
+P2-B FOUNDER ATTENTION PLANNING (NOT AUTHORIZED FOR BUILDER)
 ```
 
-No open PR existed at baseline.
+No active Work Package or unreviewed PR exists at baseline.
 
 ---
 
@@ -3220,10 +3224,10 @@ Operational Exception console UI
 
 P2A-WP04
 Integrated verification + documentation reflection
-= IN_ASSURANCE_CANDIDATE (BRANCH_CANDIDATE / AWAITING PULL REQUEST AUDIT)
+= COMPLETE / MERGED / POST-MERGE VERIFIED (PR #48 @ 77fbcbf08f2699ab85a0682ec4c981235c9c18cf)
 ```
 
-Only one bounded Work Package should be active for Builder by default. Active candidate is WP-P2A-04 (BOUNDED ASSURANCE ONLY).
+All four P2-A work packages are completed and post-merge verified. Active work package is currently NONE. Implementation authorization is NONE.
 
 ---
 
@@ -3379,22 +3383,29 @@ WP03 delivered and verified:
 Status:
 
 ```text
-IN_ASSURANCE_CANDIDATE (BRANCH_CANDIDATE / AWAITING PULL REQUEST AUDIT)
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #48 @ 77fbcbf08f2699ab85a0682ec4c981235c9c18cf)
 ```
 
-Scope:
+Scope Executed & Verified:
 
 ```text
-full regression
-DB replay
-focused security tests
-migration verification
-application build
-operator synthetic scenario
-documentation state reflection
+full regression: format, lint, lint:sql, typecheck (11 pkgs), full Vitest (66 files / 535 tests passed, 5 skipped)
+DB replay: disposable local Supabase reset, 28 pgTAP files / 578 tests passed (integrated with SEC-01 baseline)
+type generation: determinism confirmed (database.types.ts unchanged)
+migration upgrade rehearsal: forward migration from prior Phase 1 schema on isolated clone
+concurrency race: 20-request concurrent open proving active deduplication, 1 active row, 20 audit receipts
+lifecycle assurance: trusted service-role RPC lifecycle with database actor-role enforcement
+source-domain independence: verified on Order and Production Job
+security tests: direct mutation denial, anon RPC denial (42501), staff denial, cross-tenant denial
+application build & smoke: Next.js production builds and HTTP smoke (:3101 & :3102)
+documentation state reflection: completed and verified
 ```
 
-This Work Package must not secretly expand runtime scope.
+Residual Evidence Limitation:
+
+WP04 verified trusted service-role RPC lifecycle execution and database actor-role enforcement. Durable hosted browser → GoTrue authenticated session → Next.js operator journey E2E remains to be established prior to real operational pilot or production readiness.
+
+PR #48 was independently audited, merged, and post-merge verified at `77fbcbf08f2699ab85a0682ec4c981235c9c18cf`.
 
 ---
 
@@ -3980,25 +3991,33 @@ WP-P2A-03
 =
 COMPLETE / MERGED / POST-MERGE VERIFIED (PR #46)
 
+WP-P2A-04
+=
+COMPLETE / MERGED / POST-MERGE VERIFIED (PR #48 @ 77fbcbf08f2699ab85a0682ec4c981235c9c18cf)
+
+P2-A
+=
+SOFTWARE COMPLETE (INTEGRATION LAYER)
+
 ACTIVE WORK PACKAGE
 =
-WP-P2A-04 (BRANCH_CANDIDATE — BOUNDED ASSURANCE ONLY)
+NONE
 
 NEXT WORK PACKAGE CANDIDATE
 =
-WP-P2A-04 (IN_ASSURANCE_CANDIDATE)
+P2-B FOUNDER ATTENTION PLANNING (NOT AUTHORIZED FOR BUILDER)
 ```
 
 Presence of this technical plan provides technical direction. It does NOT authorize blanket implementation. Each work package requires its own governed contract and approval.
 
 ---
 
-# 137. Implementation Contract Gate (Historical for WP01, WP02 & WP03 — Satisfied)
+# 137. Implementation Contract Gate (Historical for WP01–WP04 — Satisfied)
 
-Pre-WP01, Pre-WP02 & Pre-WP03 Gate Status:
+Pre-WP01 through Pre-WP04 Gate Status:
 
 ```text
-SATISFIED (IC-MGBOS-P2A-WP01, IC-MGBOS-P2A-WP02 & IC-MGBOS-P2A-WP03 PROMOTED, EXECUTED, & CLOSED)
+SATISFIED (IC-MGBOS-P2A-WP01, IC-MGBOS-P2A-WP02 & IC-MGBOS-P2A-WP03 PROMOTED, EXECUTED, & CLOSED; WP04 EXECUTION/CONTRACT GATE SUFFICIENT FOR GOVERNED EXECUTION; WP-P2A-04 COMPLETE / MERGED / POST-MERGE VERIFIED IN PR #48)
 ```
 
 Before Builder receives code authority, Head Engineering must produce a schema-valid:
@@ -4033,16 +4052,16 @@ stop conditions
 work-package IDs
 ```
 
-This gate was satisfied for WP01, WP02, and WP03. It remains mandatory for subsequent work packages (WP04).
+This gate was satisfied for WP01 through WP04. It remains mandatory for subsequent programs and work packages (P2-B).
 
 ---
 
-# 138. Work Package Gate (Historical for WP01, WP02 & WP03 — Satisfied)
+# 138. Work Package Gate (Historical for WP01, WP02, WP03 & WP04 — Satisfied)
 
-Pre-WP01, Pre-WP02 & Pre-WP03 Gate Status:
+Pre-WP01 through Pre-WP04 Gate Status:
 
 ```text
-SATISFIED (WP-P2A-01 COMPLETED & MERGED IN PR #42; WP-P2A-02 COMPLETED & MERGED IN PR #44; WP-P2A-03 COMPLETED & MERGED IN PR #46)
+SATISFIED (WP-P2A-01 COMPLETED & MERGED IN PR #42; WP-P2A-02 COMPLETED & MERGED IN PR #44; WP-P2A-03 COMPLETED & MERGED IN PR #46; WP-P2A-04 COMPLETED & MERGED IN PR #48)
 ```
 
 After the Implementation Contract is accepted, produce one bounded work package first.
@@ -4150,36 +4169,42 @@ Builder must NOT automatically fix it unless required for P2A-WP01 correctness.
 
 # 142. P2-A Completion Gate
 
-P2-A may be declared software-complete only when:
+Gate Status:
 
 ```text
-database foundation verified
+SATISFIED (SOFTWARE COMPLETE AT GOVERNED INTEGRATION LAYER)
+```
 
-all lifecycle commands verified
+P2-A software-completion criteria satisfied:
 
-all negative transitions verified
+```text
+database foundation verified (WP01, PR #42)
 
-Owner accepted-risk rule verified
+all lifecycle commands verified (WP01, WP02, WP03, WP04)
 
-Organization isolation verified
+all negative transitions verified (WP01, WP04)
 
-business dedup verified
+Owner accepted-risk rule verified (WP01, WP02, WP03, WP04)
 
-idempotency verified
+Organization isolation verified (WP01, WP02, WP04)
 
-stale-revision behavior verified
+business dedup verified (WP01, WP04)
 
-audit immutability verified
+idempotency verified (WP01, WP02, WP04)
 
-source-domain independence verified
+stale-revision behavior verified (WP01, WP02, WP03, WP04)
 
-application lifecycle console verified
+audit immutability verified (WP01, WP04)
 
-required CI green
+source-domain independence verified (WP01, WP04)
 
-candidate PR independently audited
+application lifecycle console verified (WP03, PR #46)
 
-merged revision post-merge verified
+required CI green (PR #42, PR #44, PR #46, PR #48)
+
+candidate PR independently audited (PR #48)
+
+merged revision post-merge verified (77fbcbf08f2699ab85a0682ec4c981235c9c18cf)
 ```
 
 ---
@@ -4312,18 +4337,18 @@ Head Engineering must audit the exact PR rather than rely on Builder summary.
 
 P2-A deliberately avoids unresolved commercial-policy decisions.
 
-No Vendor SLA, margin threshold, Due-Soon window, or automation authority decision is required to build the manual Exception foundation.
+No Vendor SLA, margin threshold, Due-Soon window, or automation authority decision was required to build the manual Exception foundation.
 
-Therefore, no known business-policy blocker currently prevents governed preparation of subsequent P2-A work-package contracts such as WP-P2A-04 (without implying WP-P2A-04 is authorized).
+With P2-A software complete, commercial policies for attention derivation (P2-B) and automated detection (P2-C) will be evaluated during subsequent program planning under governed authority.
 
 ---
 
-# 149. Remaining Approval Boundary
+# 149. Next Program Governance Boundary
 
-The remaining boundary is engineering authorization for subsequent work packages:
+With P2-A work packages completed and post-merge verified, the governance boundary transitions to P2-B:
 
 ```text
-TECHNICAL PLAN (ACTIVE v1.3)
+TECHNICAL PLAN (ACTIVE v1.4)
         ↓
 WP-P2A-01 (COMPLETE / MERGED / POST-MERGE VERIFIED)
         ↓
@@ -4331,11 +4356,12 @@ WP-P2A-02 (COMPLETE / MERGED / POST-MERGE VERIFIED)
         ↓
 WP-P2A-03 (COMPLETE / MERGED / POST-MERGE VERIFIED)
         ↓
-WP-P2A-04 IMPLEMENTATION CONTRACT + WORK PACKAGE
+WP-P2A-04 (COMPLETE / MERGED / POST-MERGE VERIFIED)
         ↓
-OWNER / GOVERNED ACCEPTANCE
+P2-A SOFTWARE COMPLETION GATE (SATISFIED)
         ↓
-BUILDER EXECUTION
+P2-B FOUNDER ATTENTION PLANNING & TECHNICAL DESIGN
+(HEAD ENGINEERING / NO BUILDER IMPLEMENTATION AUTHORIZED)
 ```
 
 ---
@@ -4345,25 +4371,17 @@ BUILDER EXECUTION
 Immediate next Head Engineering artifact:
 
 ```text
-WP-P2A-04 IMPLEMENTATION CONTRACT
-+
-WORK PACKAGE
+P2-B FOUNDER ATTENTION
+TECHNICAL SPECIFICATION / IMPLEMENTATION PLANNING
 ```
 
-for:
+The future P2-B planning candidate will bind:
 
 ```text
-P2A-WP04
-Assurance & Reflection
+main@77fbcbf08f2699ab85a0682ec4c981235c9c18cf
 ```
 
-The contract must bind:
-
-```text
-main@23d4fd3d184d5bf60c9d41e57a1c01fe3517c132
-```
-
-unless repository state changes before authoring.
+unless repository state changes before authoring. Builder has no active implementation authorization.
 
 ---
 
