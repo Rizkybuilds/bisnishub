@@ -12,15 +12,11 @@ const loginSource = readFileSync(
 const loginInputs = loginSource.match(/<input\b[\s\S]*?\/>/g) ?? [];
 
 describe('SEC-01 login form credential hygiene (Issue #57 Scope A)', () => {
-  it.each(['email', 'password'])(
-    'does not prefill the %s field with a hardcoded credential',
-    (fieldName) => {
-      const input = loginInputs.find((tag) =>
-        tag.includes(`name="${fieldName}"`),
-      );
+  it.each(['email', 'password'])('does not prefill %s', (fieldName) => {
+    const fieldAttribute = `name="${fieldName}"`;
+    const input = loginInputs.find((tag) => tag.includes(fieldAttribute));
 
-      expect(input).toBeDefined();
-      expect(input).not.toMatch(/\b(?:defaultValue|value)\s*=/);
-    },
-  );
+    expect(input).toBeDefined();
+    expect(input).not.toMatch(/\b(?:defaultValue|value)\s*=/);
+  });
 });
