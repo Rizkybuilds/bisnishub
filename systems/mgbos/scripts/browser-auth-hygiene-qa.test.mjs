@@ -2,11 +2,13 @@ import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import {
   existsSync,
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
   writeFileSync,
 } from 'node:fs';
+import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
@@ -1397,7 +1399,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     }
   });
 
-  it('refuses to report verified cleanup when fixture creation exceeds quiescence limit and cleans up late-settling records without mutating finalized trace', async () => {
+  it('refuses to report verified cleanup when fixture creation exceeds quiescence limit and cleans up late-settling records before harness return without mutating finalized trace', async () => {
     const stages = [
       {
         label: 'beyond quiescence before auth completion',
@@ -1426,10 +1428,6 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         const appUsers = new Map();
         const orgMembers = [];
         const mutationCalls = [];
-        let releaseStalledRequest;
-        const stalledPromise = new Promise((resolve) => {
-          releaseStalledRequest = resolve;
-        });
 
         const jsonResponse = (status, payload) => ({
           ok: status >= 200 && status < 300,
@@ -1462,7 +1460,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
             setTimeout(() => {
               process.emit('SIGTERM', 'SIGTERM');
             }, 10);
-            await stalledPromise;
+            // Settles at 110ms: exceeds quiescenceTimeoutMs (40ms) but completes
+            // within fixtureDrainTimeoutMs (350ms) before runQaHarness returns.
+            await new Promise((resolve) => setTimeout(resolve, 110));
           }
 
           if (endpointKey === 'POST /auth/v1/admin/users') {
@@ -1568,78 +1568,183 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         };
 
         const deps = defaultStubDependencies({
-          createFixtureFn: (key) => createFixture(key, { fetchFn }),
-          cleanupFn: (key, fixture) => cleanup(key, fixture, { fetchFn }),
+          createFixtureFn: (key, options) =>
+            createFixture(key, { ...options, fetchFn }),
+          cleanupFn: (key, fixture, options) =>
+            cleanup(key, fixture, { ...options, fetchFn }),
         });
 
-        try {
-          const { evidence, failure, tracePath } = await runQaHarness({
-            ...deps,
-            artifactDir,
-            negativeControl: true,
-            quiescenceTimeoutMs: 45,
-          });
+        const { evidence, failure, tracePath } = await runQaHarness({
+          ...deps,
+          artifactDir,
+          negativeControl: true,
+          quiescenceTimeoutMs: 40,
+          fixtureDrainTimeoutMs: 350,
+        });
 
-          const traceBeforeRelease = readFileSync(tracePath, 'utf8');
-          const evidenceSnapshot = JSON.stringify(evidence);
+        const immediateTrace = readFileSync(tracePath, 'utf8');
+        const evidenceSnapshot = JSON.stringify(evidence);
 
-          assert.equal(failure, true, scenario.label);
-          assert.equal(evidence.overall, 'FAIL', scenario.label);
-          assert.equal(evidence.cleanup.attempted, true, scenario.label);
-          assert.equal(evidence.cleanup.status, 'UNVERIFIED', scenario.label);
-          assert.equal(
-            evidence.cleanup.executionQuiesced,
-            false,
-            scenario.label,
-          );
-          assert.equal(evidence.failure?.stage, 'CLEANUP', scenario.label);
-          assert.equal(
-            evidence.failure?.code,
-            'SUBPROCESS_TEARDOWN_FAILED',
-            scenario.label,
-          );
-          assert.equal(
-            evidence.failure?.priorStage,
-            'FIXTURE_CREATION',
-            scenario.label,
-          );
-          assert.equal(
-            evidence.failure?.priorCode,
-            'PROCESS_SIGNAL_TERMINATED',
-            scenario.label,
-          );
+        assert.equal(failure, true, scenario.label);
+        assert.equal(evidence.overall, 'FAIL', scenario.label);
+        assert.equal(evidence.cleanup.attempted, true, scenario.label);
+        assert.equal(evidence.cleanup.status, 'UNVERIFIED', scenario.label);
+        assert.equal(evidence.cleanup.executionQuiesced, false, scenario.label);
+        assert.equal(evidence.failure?.stage, 'CLEANUP', scenario.label);
+        assert.equal(
+          evidence.failure?.code,
+          'SUBPROCESS_TEARDOWN_FAILED',
+          scenario.label,
+        );
+        assert.equal(
+          evidence.failure?.priorStage,
+          'FIXTURE_CREATION',
+          scenario.label,
+        );
+        assert.equal(
+          evidence.failure?.priorCode,
+          'PROCESS_SIGNAL_TERMINATED',
+          scenario.label,
+        );
 
-          const verification = verifyTraceFile(tracePath, {
-            expectedMode: 'intentional-broken-login',
-            exitStatus: 1,
-          });
-          assert.equal(verification.valid, false, scenario.label);
-          assert.equal(
-            verification.code,
-            'SUBPROCESS_TEARDOWN_NOT_VERIFIED',
-            scenario.label,
-          );
+        // Immediately upon runQaHarness return (before process.exit would run in CLI),
+        // compensating cleanup has already completed and zero synthetic records remain.
+        assert.deepEqual(
+          mutationCalls,
+          scenario.expectedMutations,
+          scenario.label,
+        );
+        assert.equal(authUsers.size, 0, scenario.label);
+        assert.equal(appUsers.size, 0, scenario.label);
+        assert.equal(orgMembers.length, 0, scenario.label);
 
-          // Release the stalled in-flight operation and verify compensating cleanup
-          // removes any late-committed record without starting subsequent steps or mutating trace.json.
-          releaseStalledRequest();
-          await new Promise((resolve) => setTimeout(resolve, 40));
+        const verification = verifyTraceFile(tracePath, {
+          expectedMode: 'intentional-broken-login',
+          exitStatus: 1,
+        });
+        assert.equal(verification.valid, false, scenario.label);
+        assert.equal(
+          verification.code,
+          'SUBPROCESS_TEARDOWN_NOT_VERIFIED',
+          scenario.label,
+        );
 
-          assert.deepEqual(
-            mutationCalls,
-            scenario.expectedMutations,
-            scenario.label,
-          );
-          assert.equal(authUsers.size, 0, scenario.label);
-          assert.equal(appUsers.size, 0, scenario.label);
-          assert.equal(orgMembers.length, 0, scenario.label);
-          assert.equal(JSON.stringify(evidence), evidenceSnapshot);
-          assert.equal(readFileSync(tracePath, 'utf8'), traceBeforeRelease);
-        } finally {
-          releaseStalledRequest?.();
-        }
+        assert.equal(JSON.stringify(evidence), evidenceSnapshot);
+        assert.equal(readFileSync(tracePath, 'utf8'), immediateTrace);
       });
     }
+
+    // Also verify when an in-flight request hangs beyond BOTH quiescenceTimeoutMs AND
+    // fixtureDrainTimeoutMs: drainSignal aborts the hung request, prior step records are
+    // cleaned up before return, and cleanup.status remains UNVERIFIED (fail-closed).
+    await withTempDir(async (artifactDir) => {
+      const authUsers = new Map();
+      const appUsers = new Map();
+      const orgMembers = [];
+      let drainAbortObserved = false;
+
+      const jsonResponse = (status, payload) => ({
+        ok: status >= 200 && status < 300,
+        status,
+        json: async () => payload,
+      });
+
+      const fetchFn = async (url, options = {}) => {
+        const parsed = new URL(String(url));
+        const method = options.method ?? 'GET';
+        const pathname = parsed.pathname;
+        const endpointKey = `${method} ${pathname}`;
+
+        if (method === 'GET' && pathname === '/rest/v1/organizations') {
+          return jsonResponse(200, [
+            { id: '00000000-0000-4000-8000-000000000010' },
+          ]);
+        }
+        if (method === 'GET' && pathname === '/rest/v1/roles') {
+          return jsonResponse(200, [
+            { id: '00000000-0000-4000-8000-000000000020' },
+          ]);
+        }
+        if (endpointKey === 'POST /auth/v1/admin/users') {
+          const body = JSON.parse(options.body);
+          const user = {
+            id: '00000000-0000-4000-8000-000000000199',
+            email: body.email,
+          };
+          authUsers.set(user.id, user);
+          return jsonResponse(200, user);
+        }
+        if (endpointKey === 'POST /rest/v1/users') {
+          setTimeout(() => {
+            process.emit('SIGTERM', 'SIGTERM');
+          }, 10);
+          await new Promise((_, reject) => {
+            options.signal?.addEventListener(
+              'abort',
+              () => {
+                drainAbortObserved = true;
+                const err = new Error('Aborted by drainSignal');
+                err.name = 'AbortError';
+                reject(err);
+              },
+              { once: true },
+            );
+          });
+        }
+        if (method === 'GET' && pathname === '/auth/v1/admin/users') {
+          return jsonResponse(200, { users: Array.from(authUsers.values()) });
+        }
+        if (pathname.startsWith('/auth/v1/admin/users/')) {
+          const authId = pathname.slice('/auth/v1/admin/users/'.length);
+          if (method === 'DELETE') {
+            const existed = authUsers.delete(authId);
+            return jsonResponse(existed ? 200 : 404, {});
+          }
+          if (method === 'GET') {
+            return authUsers.has(authId)
+              ? jsonResponse(200, authUsers.get(authId))
+              : jsonResponse(404, {});
+          }
+        }
+        if (pathname === '/rest/v1/users') {
+          if (method === 'GET') return jsonResponse(200, []);
+          if (method === 'DELETE') {
+            return { ok: true, status: 204, json: async () => null };
+          }
+        }
+        if (pathname === '/rest/v1/organization_members') {
+          if (method === 'GET') return jsonResponse(200, []);
+          if (method === 'DELETE') {
+            return { ok: true, status: 204, json: async () => null };
+          }
+        }
+        throw new Error(`Unhandled mock endpoint: ${endpointKey}`);
+      };
+
+      const deps = defaultStubDependencies({
+        createFixtureFn: (key, options) =>
+          createFixture(key, { ...options, fetchFn }),
+        cleanupFn: (key, fixture, options) =>
+          cleanup(key, fixture, { ...options, fetchFn }),
+      });
+
+      const { evidence, failure } = await runQaHarness({
+        ...deps,
+        artifactDir,
+        negativeControl: true,
+        quiescenceTimeoutMs: 35,
+        fixtureDrainTimeoutMs: 70,
+      });
+
+      assert.equal(failure, true);
+      assert.equal(drainAbortObserved, true);
+      assert.equal(evidence.cleanup.status, 'UNVERIFIED');
+      assert.equal(evidence.cleanup.executionQuiesced, false);
+      assert.equal(evidence.failure?.code, 'SUBPROCESS_TEARDOWN_FAILED');
+      assert.equal(authUsers.size, 0);
+      assert.equal(appUsers.size, 0);
+      assert.equal(orgMembers.length, 0);
+    });
   });
 
   it('reconciles server-side commit followed by lost or aborted HTTP response using tightly scoped synthetic fixture identity', async () => {
@@ -1869,6 +1974,429 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
 
         const rawTrace = readFileSync(tracePath, 'utf8');
         assert.doesNotMatch(rawTrace, new RegExp(trackedFixture.email));
+      });
+    }
+  });
+
+  it('spawns real CLI child process across process.exit boundary and verifies fixture cancellation and compensating cleanup over loopback HTTP', async () => {
+    const cliScenarios = [
+      {
+        label:
+          'CLI child process interrupted during auth creation (within quiescence)',
+        stallEndpoint: 'POST /auth/v1/admin/users',
+        delayMs: 35,
+        quiescenceTimeoutMs: 450,
+        fixtureDrainTimeoutMs: 450,
+        expectedCleanupStatus: 'PASS',
+        expectedQuiesced: true,
+        expectedFailureStage: 'FIXTURE_CREATION',
+        expectedFailureCode: 'PROCESS_SIGNAL_TERMINATED',
+        expectedMutations: ['POST /auth/v1/admin/users'],
+      },
+      {
+        label:
+          'CLI child process interrupted during profile creation (within quiescence)',
+        stallEndpoint: 'POST /rest/v1/users',
+        delayMs: 35,
+        quiescenceTimeoutMs: 450,
+        fixtureDrainTimeoutMs: 450,
+        expectedCleanupStatus: 'PASS',
+        expectedQuiesced: true,
+        expectedFailureStage: 'FIXTURE_CREATION',
+        expectedFailureCode: 'PROCESS_SIGNAL_TERMINATED',
+        expectedMutations: ['POST /auth/v1/admin/users', 'POST /rest/v1/users'],
+      },
+      {
+        label:
+          'CLI child process interrupted during membership creation (within quiescence)',
+        stallEndpoint: 'POST /rest/v1/organization_members',
+        delayMs: 35,
+        quiescenceTimeoutMs: 450,
+        fixtureDrainTimeoutMs: 450,
+        expectedCleanupStatus: 'PASS',
+        expectedQuiesced: true,
+        expectedFailureStage: 'FIXTURE_CREATION',
+        expectedFailureCode: 'PROCESS_SIGNAL_TERMINATED',
+        expectedMutations: [
+          'POST /auth/v1/admin/users',
+          'POST /rest/v1/users',
+          'POST /rest/v1/organization_members',
+        ],
+      },
+      {
+        label:
+          'CLI child process interrupted during auth creation (beyond quiescence, drained before process.exit)',
+        stallEndpoint: 'POST /auth/v1/admin/users',
+        delayMs: 140,
+        quiescenceTimeoutMs: 45,
+        fixtureDrainTimeoutMs: 500,
+        expectedCleanupStatus: 'UNVERIFIED',
+        expectedQuiesced: false,
+        expectedFailureStage: 'CLEANUP',
+        expectedFailureCode: 'SUBPROCESS_TEARDOWN_FAILED',
+        expectedMutations: ['POST /auth/v1/admin/users'],
+      },
+      {
+        label:
+          'CLI child process interrupted during profile creation (beyond quiescence, drained before process.exit)',
+        stallEndpoint: 'POST /rest/v1/users',
+        delayMs: 140,
+        quiescenceTimeoutMs: 45,
+        fixtureDrainTimeoutMs: 500,
+        expectedCleanupStatus: 'UNVERIFIED',
+        expectedQuiesced: false,
+        expectedFailureStage: 'CLEANUP',
+        expectedFailureCode: 'SUBPROCESS_TEARDOWN_FAILED',
+        expectedMutations: ['POST /auth/v1/admin/users', 'POST /rest/v1/users'],
+      },
+      {
+        label:
+          'CLI child process interrupted during membership creation (beyond quiescence, drained before process.exit)',
+        stallEndpoint: 'POST /rest/v1/organization_members',
+        delayMs: 140,
+        quiescenceTimeoutMs: 45,
+        fixtureDrainTimeoutMs: 500,
+        expectedCleanupStatus: 'UNVERIFIED',
+        expectedQuiesced: false,
+        expectedFailureStage: 'CLEANUP',
+        expectedFailureCode: 'SUBPROCESS_TEARDOWN_FAILED',
+        expectedMutations: [
+          'POST /auth/v1/admin/users',
+          'POST /rest/v1/users',
+          'POST /rest/v1/organization_members',
+        ],
+      },
+      {
+        label:
+          'CLI child process interrupted when profile request hangs beyond both quiescence and drain window',
+        stallEndpoint: 'POST /rest/v1/users',
+        hangBeyondDrain: true,
+        delayMs: 5000,
+        quiescenceTimeoutMs: 40,
+        fixtureDrainTimeoutMs: 90,
+        expectedCleanupStatus: 'UNVERIFIED',
+        expectedQuiesced: false,
+        expectedFailureStage: 'CLEANUP',
+        expectedFailureCode: 'SUBPROCESS_TEARDOWN_FAILED',
+        expectedMutations: ['POST /auth/v1/admin/users', 'POST /rest/v1/users'],
+      },
+    ];
+
+    for (const scenario of cliScenarios) {
+      await withTempDir(async (tempRoot) => {
+        const authUsers = new Map();
+        const appUsers = new Map();
+        const orgMembers = [];
+        const mutationCalls = [];
+        let activeChild = null;
+        let signalSent = false;
+
+        const sendJson = (res, status, payload) => {
+          const raw =
+            status === 204 || payload === null ? '' : JSON.stringify(payload);
+          res.writeHead(status, { 'Content-Type': 'application/json' });
+          res.end(raw);
+        };
+
+        const readJsonBody = (req) =>
+          new Promise((resolve, reject) => {
+            let data = '';
+            req.setEncoding('utf8');
+            req.on('data', (chunk) => {
+              data += chunk;
+            });
+            req.on('end', () => {
+              try {
+                resolve(data ? JSON.parse(data) : {});
+              } catch (err) {
+                reject(err);
+              }
+            });
+            req.on('error', reject);
+          });
+
+        const server = createServer(async (req, res) => {
+          const parsed = new URL(req.url ?? '/', 'http://127.0.0.1');
+          const method = req.method ?? 'GET';
+          const pathname = parsed.pathname;
+          const endpointKey = `${method} ${pathname}`;
+
+          if (method === 'GET' && pathname === '/rest/v1/organizations') {
+            return sendJson(res, 200, [
+              { id: '00000000-0000-4000-8000-000000000010' },
+            ]);
+          }
+          if (method === 'GET' && pathname === '/rest/v1/roles') {
+            return sendJson(res, 200, [
+              { id: '00000000-0000-4000-8000-000000000020' },
+            ]);
+          }
+
+          if (method === 'POST') {
+            mutationCalls.push(endpointKey);
+          }
+
+          const body =
+            method === 'POST' ? await readJsonBody(req).catch(() => ({})) : {};
+
+          if (endpointKey === scenario.stallEndpoint && !signalSent) {
+            signalSent = true;
+            setTimeout(() => {
+              if (!activeChild) return;
+              if (process.platform !== 'win32') {
+                activeChild.kill('SIGTERM');
+              } else if (activeChild.connected) {
+                activeChild.send({
+                  type: 'QA_TEST_SIGNAL',
+                  signal: 'SIGTERM',
+                });
+              }
+            }, 10);
+
+            if (scenario.hangBeyondDrain) {
+              await new Promise((resolve) => {
+                const timer = setTimeout(resolve, scenario.delayMs);
+                res.on('close', () => {
+                  clearTimeout(timer);
+                  resolve();
+                });
+              });
+              if (res.writableEnded || res.destroyed) {
+                return;
+              }
+            } else {
+              await new Promise((resolve) =>
+                setTimeout(resolve, scenario.delayMs),
+              );
+            }
+          }
+
+          if (endpointKey === 'POST /auth/v1/admin/users') {
+            const user = {
+              id: '00000000-0000-4000-8000-000000000511',
+              email: body.email,
+            };
+            authUsers.set(user.id, user);
+            return sendJson(res, 200, user);
+          }
+
+          if (endpointKey === 'POST /rest/v1/users') {
+            const row = {
+              id: '00000000-0000-4000-8000-000000000522',
+              auth_user_id: body.auth_user_id,
+              email: body.email,
+              name: body.name,
+              status: body.status,
+            };
+            appUsers.set(row.id, row);
+            return sendJson(res, 201, [row]);
+          }
+
+          if (endpointKey === 'POST /rest/v1/organization_members') {
+            orgMembers.push({ ...body });
+            return sendJson(res, 201, [body]);
+          }
+
+          if (method === 'GET' && pathname === '/auth/v1/admin/users') {
+            return sendJson(res, 200, {
+              users: Array.from(authUsers.values()),
+            });
+          }
+
+          if (pathname.startsWith('/auth/v1/admin/users/')) {
+            const authId = pathname.slice('/auth/v1/admin/users/'.length);
+            if (method === 'DELETE') {
+              const existed = authUsers.delete(authId);
+              return sendJson(res, existed ? 200 : 404, {});
+            }
+            if (method === 'GET') {
+              return authUsers.has(authId)
+                ? sendJson(res, 200, authUsers.get(authId))
+                : sendJson(res, 404, {});
+            }
+          }
+
+          if (pathname === '/rest/v1/users') {
+            const idFilter = parsed.searchParams.get('id');
+            const emailFilter = parsed.searchParams.get('email');
+            const matchRow = (row) => {
+              if (idFilter?.startsWith('eq.')) {
+                return row.id === idFilter.slice(3);
+              }
+              if (emailFilter?.startsWith('eq.')) {
+                return row.email === emailFilter.slice(3);
+              }
+              return true;
+            };
+            if (method === 'GET') {
+              return sendJson(
+                res,
+                200,
+                Array.from(appUsers.values()).filter(matchRow),
+              );
+            }
+            if (method === 'DELETE') {
+              for (const [id, row] of appUsers.entries()) {
+                if (matchRow(row)) {
+                  appUsers.delete(id);
+                }
+              }
+              return sendJson(res, 204, null);
+            }
+          }
+
+          if (pathname === '/rest/v1/organization_members') {
+            const userIdFilter = parsed.searchParams.get('user_id');
+            const targetUserId = userIdFilter?.startsWith('eq.')
+              ? userIdFilter.slice(3)
+              : null;
+            if (method === 'GET') {
+              return sendJson(
+                res,
+                200,
+                orgMembers.filter((m) =>
+                  targetUserId ? m.user_id === targetUserId : true,
+                ),
+              );
+            }
+            if (method === 'DELETE') {
+              for (let i = orgMembers.length - 1; i >= 0; i -= 1) {
+                if (!targetUserId || orgMembers[i].user_id === targetUserId) {
+                  orgMembers.splice(i, 1);
+                }
+              }
+              return sendJson(res, 204, null);
+            }
+          }
+
+          sendJson(res, 404, { error: `Unhandled: ${endpointKey}` });
+        });
+
+        await new Promise((resolve) =>
+          server.listen(0, '127.0.0.1', () => resolve()),
+        );
+        const { port } = server.address();
+        const apiOrigin = `http://127.0.0.1:${port}`;
+
+        const fakeWorkdir = path.join(tempRoot, 'workdir');
+        const artifactDir = path.join(tempRoot, 'artifacts');
+        const supabaseDir = path.join(
+          fakeWorkdir,
+          'node_modules',
+          'supabase',
+          'dist',
+        );
+        mkdirSync(supabaseDir, { recursive: true });
+        mkdirSync(artifactDir, { recursive: true });
+
+        writeFileSync(
+          path.join(fakeWorkdir, 'package.json'),
+          JSON.stringify({
+            name: '@mgbos/app',
+            private: true,
+            scripts: {
+              build: 'node -e "process.exit(0)"',
+            },
+          }),
+          'utf8',
+        );
+
+        writeFileSync(
+          path.join(supabaseDir, 'supabase.js'),
+          [
+            `console.log('API_URL="${apiOrigin}"');`,
+            `console.log('ANON_KEY="synthetic_cli_anon_key_for_test"');`,
+            `console.log('SERVICE_ROLE_KEY="synthetic_cli_service_key_for_test"');`,
+            `console.log('DB_URL="postgresql://postgres:postgres@127.0.0.1:55432/postgres"');`,
+          ].join('\n'),
+          'utf8',
+        );
+
+        try {
+          activeChild = spawn(
+            process.execPath,
+            [
+              scriptPath,
+              '--workdir',
+              fakeWorkdir,
+              '--artifact-dir',
+              artifactDir,
+              '--api-origin',
+              apiOrigin,
+              '--quiescence-timeout-ms',
+              String(scenario.quiescenceTimeoutMs),
+              '--fixture-drain-timeout-ms',
+              String(scenario.fixtureDrainTimeoutMs),
+            ],
+            {
+              cwd: fakeWorkdir,
+              env: {
+                ...process.env,
+                MGBOS_QA_NEGATIVE_CONTROL: '1',
+                NEXT_PUBLIC_SUPABASE_URL: apiOrigin,
+                SUPABASE_URL: apiOrigin,
+              },
+              stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+            },
+          );
+
+          const exitResult = await new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              activeChild?.kill('SIGKILL');
+              reject(
+                new Error(`CLI child process timed out: ${scenario.label}`),
+              );
+            }, 25000);
+            activeChild.on('close', (code, sig) => {
+              clearTimeout(timeout);
+              resolve({ code, sig });
+            });
+            activeChild.on('error', (err) => {
+              clearTimeout(timeout);
+              reject(err);
+            });
+          });
+
+          // At the exact moment the CLI child process exits via process.exit(exitCode),
+          // all compensating cleanup over loopback HTTP must already have completed.
+          assert.equal(exitResult.code, 1, scenario.label);
+          assert.deepEqual(
+            mutationCalls,
+            scenario.expectedMutations,
+            scenario.label,
+          );
+          assert.equal(authUsers.size, 0, scenario.label);
+          assert.equal(appUsers.size, 0, scenario.label);
+          assert.equal(orgMembers.length, 0, scenario.label);
+
+          const tracePath = path.join(artifactDir, 'trace.json');
+          assert.equal(existsSync(tracePath), true, scenario.label);
+          const trace = JSON.parse(readFileSync(tracePath, 'utf8'));
+          assert.equal(trace.overall, 'FAIL', scenario.label);
+          assert.equal(trace.cleanup?.attempted, true, scenario.label);
+          assert.equal(
+            trace.cleanup?.status,
+            scenario.expectedCleanupStatus,
+            scenario.label,
+          );
+          assert.equal(
+            trace.cleanup?.executionQuiesced,
+            scenario.expectedQuiesced,
+            scenario.label,
+          );
+          assert.equal(
+            trace.failure?.stage,
+            scenario.expectedFailureStage,
+            scenario.label,
+          );
+          assert.equal(
+            trace.failure?.code,
+            scenario.expectedFailureCode,
+            scenario.label,
+          );
+        } finally {
+          await new Promise((resolve) => server.close(() => resolve()));
+        }
       });
     }
   });

@@ -167,6 +167,27 @@ export function localStatus({
   env = process.env,
   spawnSyncFn = spawnSync,
 } = {}) {
+  let parsedApiUrl;
+  try {
+    parsedApiUrl = new URL(api);
+  } catch {
+    throw new QaError(
+      'LOCAL_STATUS',
+      'LOCAL_STATUS_FAILED',
+      'Refusing a nonlocal Supabase target',
+    );
+  }
+  if (
+    parsedApiUrl.protocol !== 'http:' ||
+    parsedApiUrl.hostname !== '127.0.0.1' ||
+    parsedApiUrl.origin !== api
+  ) {
+    throw new QaError(
+      'LOCAL_STATUS',
+      'LOCAL_STATUS_FAILED',
+      'Refusing a nonlocal Supabase target',
+    );
+  }
   for (const key of ['NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_URL']) {
     if (env[key] && env[key] !== api) {
       throw new QaError(
@@ -272,6 +293,7 @@ async function db(
     api = CANONICAL_API_ORIGIN,
     fetchFn = fetch,
     signal,
+    requestSignal,
     stage = 'FIXTURE_CREATION',
   } = {},
 ) {
@@ -288,23 +310,30 @@ async function db(
     headers['Accept-Profile'] = schema;
     headers['Content-Profile'] = schema;
   }
+  const effectiveRequestSignal = requestSignal ?? signal;
   let response;
   try {
     response = await fetchFn(url, {
       method,
       headers,
       body: body === undefined ? undefined : JSON.stringify(body),
-      signal: createRequestSignal(signal, 15000),
+      signal: createRequestSignal(effectiveRequestSignal, 15000),
     });
   } catch (error) {
     if (signal?.aborted) {
       throwIfSignalAborted(signal, stage);
+    }
+    if (effectiveRequestSignal?.aborted) {
+      throwIfSignalAborted(effectiveRequestSignal, stage);
     }
     throw error;
   }
   if (!response.ok) {
     if (signal?.aborted) {
       throwIfSignalAborted(signal, stage);
+    }
+    if (effectiveRequestSignal?.aborted) {
+      throwIfSignalAborted(effectiveRequestSignal, stage);
     }
     throw new Error(
       `Disposable database operation failed: HTTP ${response.status}`,
@@ -318,6 +347,9 @@ async function db(
   } catch (error) {
     if (signal?.aborted) {
       throwIfSignalAborted(signal, stage);
+    }
+    if (effectiveRequestSignal?.aborted) {
+      throwIfSignalAborted(effectiveRequestSignal, stage);
     }
     throw error;
   }
@@ -537,12 +569,15 @@ export async function createFixture(
     api = CANONICAL_API_ORIGIN,
     fetchFn = fetch,
     signal,
+    drainSignal,
     fixture: providedFixture,
     deferCleanup,
   } = {},
 ) {
   const activeContext = harnessContextStorage.getStore();
   const effectiveSignal = signal ?? activeContext?.signal;
+  const effectiveDrainSignal =
+    drainSignal ?? activeContext?.drainSignal ?? effectiveSignal;
   const fixture =
     providedFixture ?? activeContext?.fixture ?? createFixtureState();
   const effectiveDeferCleanup =
@@ -581,6 +616,7 @@ export async function createFixture(
         api,
         fetchFn,
         signal: effectiveSignal,
+        requestSignal: effectiveDrainSignal,
         stage: 'FIXTURE_CREATION',
       },
     );
@@ -595,6 +631,7 @@ export async function createFixture(
         api,
         fetchFn,
         signal: effectiveSignal,
+        requestSignal: effectiveDrainSignal,
         stage: 'FIXTURE_CREATION',
       },
     );
@@ -628,6 +665,7 @@ export async function createFixture(
       api,
       fetchFn,
       signal: effectiveSignal,
+      requestSignal: effectiveDrainSignal,
       stage: 'FIXTURE_CREATION',
     });
     fixture.pendingMutation = false;
@@ -648,6 +686,7 @@ export async function createFixture(
       api,
       fetchFn,
       signal: effectiveSignal,
+      requestSignal: effectiveDrainSignal,
       stage: 'FIXTURE_CREATION',
     });
     fixture.pendingMutation = false;
@@ -668,6 +707,7 @@ export async function createFixture(
       api,
       fetchFn,
       signal: effectiveSignal,
+      requestSignal: effectiveDrainSignal,
       stage: 'FIXTURE_CREATION',
     });
     fixture.pendingMutation = false;
@@ -676,7 +716,7 @@ export async function createFixture(
     return fixture;
   } catch (error) {
     fixture.pendingMutation = false;
-    if (!effectiveDeferCleanup || activeContext?.isQuiescenceTimedOut?.()) {
+    if (!effectiveDeferCleanup) {
       await cleanup(key, fixture, { api, fetchFn }).catch(() => {});
     }
     if (effectiveSignal?.aborted) {
@@ -2104,6 +2144,7 @@ export async function runQaHarness({
   rmSyncFn = rmSync,
   loginTimeoutMs = 30000,
   quiescenceTimeoutMs = 5000,
+  fixtureDrainTimeoutMs = 5000,
 } = {}) {
   mkdirSync(artifactDir, { recursive: true });
   const tracePath = path.join(artifactDir, 'trace.json');
@@ -2146,6 +2187,8 @@ export async function runQaHarness({
   let signalError = null;
   const abortController = new AbortController();
   const { signal } = abortController;
+  const drainAbortController = new AbortController();
+  const { signal: drainSignal } = drainAbortController;
 
   const assertActive = (activeStage = stage) => {
     if (signalError) {
@@ -2249,17 +2292,25 @@ export async function runQaHarness({
   for (const sig of trackedSignals) {
     process.on(sig, onSignal);
   }
+  const onIpcMessage = (message) => {
+    if (
+      message &&
+      typeof message === 'object' &&
+      message.type === 'QA_TEST_SIGNAL' &&
+      trackedSignals.includes(message.signal)
+    ) {
+      onSignal(message.signal);
+    }
+  };
+  process.on('message', onIpcMessage);
 
   let executionPromise;
-  let quiescenceTimedOut = false;
   const harnessContext = {
     signal,
+    drainSignal,
     deferCleanup: true,
     get fixture() {
       return fixture;
-    },
-    isQuiescenceTimedOut() {
-      return quiescenceTimedOut;
     },
   };
   try {
@@ -2286,6 +2337,7 @@ export async function runQaHarness({
       const createdFixture = await createFixtureFn(localKey, {
         api,
         signal,
+        drainSignal,
         fixture,
         deferCleanup: true,
       });
@@ -2343,6 +2395,7 @@ export async function runQaHarness({
     for (const sig of trackedSignals) {
       process.removeListener(sig, onSignal);
     }
+    process.removeListener('message', onIpcMessage);
     tearingDown = true;
     if (!signal.aborted) {
       abortController.abort(
@@ -2372,10 +2425,52 @@ export async function runQaHarness({
           setTimeout(() => resolve(false), quiescenceTimeoutMs),
         ),
       ]);
-      quiescenceTimedOut = !executionQuiesced;
     }
 
-    // Checkpoint execution state after in-flight work quiesces and before teardown.
+    const fixtureQuiescenceUnverified =
+      !executionQuiesced &&
+      (stage === 'FIXTURE_CREATION' || Boolean(fixture?.pendingMutation));
+
+    // When fixture creation exceeds quiescenceTimeoutMs, executionQuiesced remains
+    // permanently false (fail-closed), but we await a bounded fixture drain window
+    // before cleanupFn and before returning so compensating cleanup never relies
+    // on unawaited post-return callbacks cut off by process.exit().
+    if (
+      fixtureQuiescenceUnverified &&
+      executionPromise &&
+      fixtureDrainTimeoutMs > 0
+    ) {
+      await Promise.race([
+        executionPromise.then(
+          () => true,
+          () => true,
+        ),
+        new Promise((resolve) =>
+          setTimeout(() => resolve(false), fixtureDrainTimeoutMs),
+        ),
+      ]);
+    }
+    if (!drainSignal.aborted) {
+      drainAbortController.abort(
+        signalError ??
+          new QaError(
+            stage,
+            'PROCESS_SIGNAL_TERMINATED',
+            'QA harness fixture drain window expired',
+          ),
+      );
+    }
+    if (fixtureQuiescenceUnverified && executionPromise) {
+      await Promise.race([
+        executionPromise.then(
+          () => true,
+          () => true,
+        ),
+        new Promise((resolve) => setTimeout(() => resolve(false), 25)),
+      ]);
+    }
+
+    // Checkpoint execution state after in-flight work quiesces/drains and before teardown.
     try {
       persistTraceCheckpoint();
     } catch {
@@ -2425,10 +2520,6 @@ export async function runQaHarness({
       }
     }
 
-    const fixtureQuiescenceUnverified =
-      !executionQuiesced &&
-      (stage === 'FIXTURE_CREATION' || Boolean(fixture?.pendingMutation));
-
     let cleanupAttempted = Boolean(localKey && fixture);
     let cleanupStatus = cleanupAttempted ? 'PASS' : 'SKIPPED';
     if (cleanupAttempted) {
@@ -2455,17 +2546,6 @@ export async function runQaHarness({
     } else if (fixtureQuiescenceUnverified) {
       failure = true;
       cleanupStatus = 'UNVERIFIED';
-    }
-
-    if (
-      fixtureQuiescenceUnverified &&
-      executionPromise &&
-      localKey &&
-      fixture
-    ) {
-      executionPromise
-        .finally(() => cleanupFn(localKey, fixture, { api }))
-        .catch(() => {});
     }
 
     if (
@@ -2513,6 +2593,14 @@ export async function runQaHarness({
   return { evidence, failure, tracePath };
 }
 
+function readFlagValue(argv, flag) {
+  const index = argv.indexOf(flag);
+  if (index === -1 || index + 1 >= argv.length) {
+    return undefined;
+  }
+  return argv[index + 1];
+}
+
 export async function runCli(argv = process.argv.slice(2)) {
   const verifyIndex = argv.indexOf('--verify-trace');
   if (verifyIndex !== -1) {
@@ -2542,7 +2630,38 @@ export async function runCli(argv = process.argv.slice(2)) {
     return 0;
   }
 
-  const { evidence, failure } = await runQaHarness();
+  const harnessOptions = {};
+  const cliWorkdir = readFlagValue(argv, '--workdir');
+  if (cliWorkdir) {
+    harnessOptions.workdir = path.resolve(cliWorkdir);
+  }
+  const cliArtifactDir = readFlagValue(argv, '--artifact-dir');
+  if (cliArtifactDir) {
+    harnessOptions.artifactDir = path.resolve(cliArtifactDir);
+  }
+  const cliApiOrigin = readFlagValue(argv, '--api-origin');
+  if (cliApiOrigin) {
+    harnessOptions.api = cliApiOrigin;
+  }
+  const cliQuiescenceTimeout = readFlagValue(argv, '--quiescence-timeout-ms');
+  if (cliQuiescenceTimeout !== undefined) {
+    const parsed = Number.parseInt(cliQuiescenceTimeout, 10);
+    if (!Number.isNaN(parsed) && parsed > 0) {
+      harnessOptions.quiescenceTimeoutMs = parsed;
+    }
+  }
+  const cliFixtureDrainTimeout = readFlagValue(
+    argv,
+    '--fixture-drain-timeout-ms',
+  );
+  if (cliFixtureDrainTimeout !== undefined) {
+    const parsed = Number.parseInt(cliFixtureDrainTimeout, 10);
+    if (!Number.isNaN(parsed) && parsed >= 0) {
+      harnessOptions.fixtureDrainTimeoutMs = parsed;
+    }
+  }
+
+  const { evidence, failure } = await runQaHarness(harnessOptions);
   if (failure) {
     console.error(
       `Browser-auth QA failed (${evidence.failure?.stage ?? 'UNKNOWN'}:${evidence.failure?.code ?? 'QA_EXECUTION_FAILED'}); review sanitized case evidence.`,
