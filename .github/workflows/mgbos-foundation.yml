@@ -156,8 +156,6 @@ jobs:
         with:
           name: mgbos-browser-auth-qa
           path: systems/mgbos/.qa-evidence/browser-auth/
-          if-no-files-found: warn
-          retention-days: 7
       - name: Stop local Supabase
         if: always()
         shell: bash
