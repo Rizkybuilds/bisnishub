@@ -17,7 +17,13 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const api = 'http://127.0.0.1:55431';
 const app = 'http://127.0.0.1:3101';
-const artifactDir = path.join(root, '.qa-evidence', 'browser-auth');
+const negativeControl = process.env.MGBOS_QA_NEGATIVE_CONTROL === '1';
+const artifactDir = path.join(
+  root,
+  '.qa-evidence',
+  'browser-auth',
+  negativeControl ? 'negative-control' : 'positive',
+);
 const cases = [];
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -112,27 +118,55 @@ async function db(key, route, { method = 'GET', body, schema } = {}) {
 
 async function cleanup(key, fixture) {
   if (!key || !fixture) return;
+  let failed = false;
+  // Each operation is independently attempted, even if an earlier deletion failed.
+  const attempt = async (operation) => {
+    try {
+      await operation();
+    } catch {
+      failed = true;
+    }
+  };
   if (fixture.profile) {
-    await db(
-      key,
-      `/rest/v1/organization_members?user_id=eq.${fixture.profile}`,
-      {
+    await attempt(() =>
+      db(key, `/rest/v1/organization_members?user_id=eq.${fixture.profile}`, {
         method: 'DELETE',
         schema: 'app',
-      },
+      }),
     );
-    await db(key, `/rest/v1/users?id=eq.${fixture.profile}`, {
-      method: 'DELETE',
-      schema: 'app',
+    await attempt(() =>
+      db(key, `/rest/v1/users?id=eq.${fixture.profile}`, {
+        method: 'DELETE',
+        schema: 'app',
+      }),
+    );
+  }
+  if (fixture.auth) {
+    await attempt(() =>
+      db(key, `/auth/v1/admin/users/${fixture.auth}`, { method: 'DELETE' }),
+    );
+  }
+  if (fixture.profile) {
+    await attempt(async () => {
+      const remaining = await db(
+        key,
+        `/rest/v1/users?id=eq.${fixture.profile}&select=id`,
+        { schema: 'app' },
+      );
+      assert.deepEqual(remaining, [], 'Synthetic profile must be absent');
     });
   }
   if (fixture.auth) {
-    await db(key, `/auth/v1/admin/users/${fixture.auth}`, {
-      method: 'DELETE',
+    await attempt(async () => {
+      const response = await fetch(`${api}/auth/v1/admin/users/${fixture.auth}`, {
+        headers: { apikey: key, Authorization: `Bearer ${key}` },
+        signal: AbortSignal.timeout(15000),
+      });
+      assert.equal(response.status, 404, 'Synthetic auth user must be absent');
     });
   }
+  if (failed) throw new Error('Synthetic fixture cleanup verification failed');
 }
-
 async function createFixture(key) {
   const [org] = await db(
     key,
@@ -437,7 +471,10 @@ async function runBrowser(cdp, fixture) {
   });
 
   const validPosts = cdp.posts('/login');
-  await submit(fixture.email, fixture.password);
+  await submit(
+    fixture.email,
+    negativeControl ? `${fixture.password}${randomUUID()}` : fixture.password,
+  );
   await until(
     () =>
       cdp.eval(
@@ -486,13 +523,25 @@ async function runBrowser(cdp, fixture) {
   });
 
   // Invalid token rejection is not proof of revoking an earlier valid JWT.
-  await cdp.send('Network.setCookie', {
+  const invalidToken = `ci-invalid-${randomUUID()}`;
+  const inserted = await cdp.send('Network.setCookie', {
     name: 'mgbos_session',
-    value: `ci-invalid-${randomUUID()}`,
+    value: invalidToken,
     url: app,
     httpOnly: true,
     sameSite: 'Lax',
     secure: false,
+  });
+  const cookieJar = await cdp.send('Network.getCookies', { urls: [app] });
+  const cookieInstalled =
+    inserted.success === true &&
+    cookieJar.cookies.some(
+      (cookie) =>
+        cookie.name === 'mgbos_session' && cookie.value === invalidToken,
+    );
+  // Cookie values must never be retained in traces or console output.
+  result('AUTH-INVALID-TOKEN-SETUP-01', cookieInstalled, {
+    testCookieInstalled: cookieInstalled,
   });
   await cdp.goto('/dashboard', '/login');
   result(
@@ -514,12 +563,14 @@ async function main() {
     checkoutSha: git.status === 0 ? git.stdout.trim() : 'unknown',
     ciEventSha: process.env.GITHUB_SHA ?? null,
     cases,
+    mode: negativeControl ? 'intentional-broken-login' : 'normal',
   };
   let localKey;
   let fixture;
   let application;
   let browser;
   let failure = false;
+  let stage = 'LOCAL_STATUS';
 
   try {
     const local = localStatus();
@@ -531,13 +582,16 @@ async function main() {
       SUPABASE_SERVICE_ROLE_KEY: localKey,
       NEXT_TELEMETRY_DISABLED: '1',
     };
+    stage = 'APP_BUILD';
     const build = spawnSync('pnpm', ['--filter', '@mgbos/app', 'build'], {
       cwd: root,
       env,
-      stdio: 'inherit',
+      // Build output is intentionally suppressed: no environment or key values in CI logs.
+      stdio: 'ignore',
       timeout: 180000,
     });
     assert.equal(build.status, 0, 'Isolated app build failed');
+    stage = 'FIXTURE_CREATION';
     fixture = await createFixture(localKey);
     application = spawn('pnpm', ['--filter', '@mgbos/app', 'start'], {
       cwd: root,
@@ -551,10 +605,24 @@ async function main() {
       });
       return response.ok;
     }, 'Local MGBOS health');
+    stage = 'BROWSER_AUTH';
     browser = await startBrowser();
     await runBrowser(browser.cdp, fixture);
-  } catch {
+  } catch (error) {
     failure = true;
+    const message = error instanceof Error ? error.message : '';
+    evidence.failure = {
+      stage,
+      code: message === 'Timed out: Authenticated dashboard'
+        ? 'AUTH_VALID_LOGIN_DID_NOT_COMPLETE'
+        : message.startsWith('Authentication invariant not satisfied:')
+          ? 'AUTH_ASSERTION_FAILED'
+          : stage === 'APP_BUILD'
+            ? 'BUILD_FAILED'
+            : stage === 'FIXTURE_CREATION'
+              ? 'FIXTURE_CREATION_FAILED'
+              : 'QA_EXECUTION_FAILED',
+    };
   } finally {
     browser?.cdp.close();
     browser?.browser.kill('SIGKILL');
@@ -566,6 +634,7 @@ async function main() {
       await cleanup(localKey, fixture);
     } catch {
       failure = true;
+      evidence.failure = { stage: 'CLEANUP', code: 'FIXTURE_CLEANUP_FAILED' };
     }
     evidence.overall = failure ? 'FAIL' : 'PASS';
     writeFileSync(
