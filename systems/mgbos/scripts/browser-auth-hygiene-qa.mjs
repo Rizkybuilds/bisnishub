@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { spawn, spawnSync } from 'node:child_process';
 import { randomBytes, randomUUID } from 'node:crypto';
 import {
@@ -16,6 +17,7 @@ import { fileURLToPath } from 'node:url';
 
 // Never log credentials, browser request bodies, JWTs, cookie values or tokens.
 const root = fileURLToPath(new URL('../', import.meta.url));
+const harnessContextStorage = new AsyncLocalStorage();
 export const CANONICAL_API_ORIGIN = 'http://127.0.0.1:55431';
 export const CANONICAL_APP_ORIGIN = 'http://127.0.0.1:3101';
 
@@ -226,6 +228,40 @@ export function localStatus({
   return parsed;
 }
 
+const SYNTHETIC_FIXTURE_EMAIL_PATTERN = /^ci-auth-[0-9a-f-]+@example\.test$/i;
+
+export function createFixtureState() {
+  return {
+    email: `ci-auth-${randomUUID()}@example.test`,
+    password: randomBytes(32).toString('base64url'),
+    auth: null,
+    profile: null,
+    organizationId: null,
+    membershipCreated: false,
+    mutationStarted: false,
+    pendingMutation: false,
+  };
+}
+
+function createRequestSignal(signal, timeoutMs = 15000) {
+  const timeoutSignal = AbortSignal.timeout(timeoutMs);
+  if (!signal) {
+    return timeoutSignal;
+  }
+  if (typeof AbortSignal.any === 'function') {
+    return AbortSignal.any([signal, timeoutSignal]);
+  }
+  const controller = new AbortController();
+  const onAbort = () => controller.abort(signal.reason ?? timeoutSignal.reason);
+  if (signal.aborted || timeoutSignal.aborted) {
+    onAbort();
+  } else {
+    signal.addEventListener('abort', onAbort, { once: true });
+    timeoutSignal.addEventListener('abort', onAbort, { once: true });
+  }
+  return controller.signal;
+}
+
 async function db(
   key,
   route,
@@ -235,8 +271,11 @@ async function db(
     schema,
     api = CANONICAL_API_ORIGIN,
     fetchFn = fetch,
+    signal,
+    stage = 'FIXTURE_CREATION',
   } = {},
 ) {
+  throwIfSignalAborted(signal, stage);
   const url = new URL(`${api}${route}`);
   assert.equal(url.origin, api, 'Local Supabase access only');
   const headers = {
@@ -249,28 +288,57 @@ async function db(
     headers['Accept-Profile'] = schema;
     headers['Content-Profile'] = schema;
   }
-  const response = await fetchFn(url, {
-    method,
-    headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
-    signal: AbortSignal.timeout(15000),
-  });
+  let response;
+  try {
+    response = await fetchFn(url, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal: createRequestSignal(signal, 15000),
+    });
+  } catch (error) {
+    if (signal?.aborted) {
+      throwIfSignalAborted(signal, stage);
+    }
+    throw error;
+  }
   if (!response.ok) {
+    if (signal?.aborted) {
+      throwIfSignalAborted(signal, stage);
+    }
     throw new Error(
       `Disposable database operation failed: HTTP ${response.status}`,
     );
   }
-  return response.status === 204 ? null : response.json();
+  if (response.status === 204) {
+    return null;
+  }
+  try {
+    return await response.json();
+  } catch (error) {
+    if (signal?.aborted) {
+      throwIfSignalAborted(signal, stage);
+    }
+    throw error;
+  }
 }
 
 export async function cleanup(
   key,
   fixture,
-  { api = CANONICAL_API_ORIGIN, fetchFn = fetch } = {},
+  { api = CANONICAL_API_ORIGIN, fetchFn } = {},
 ) {
+  const effectiveFetchFn = fetchFn ?? fixture?.fetchFn ?? fetch;
   if (!key || !fixture) {
     return { attempted: false, status: 'SKIPPED' };
   }
+  const hasSyntheticEmail =
+    typeof fixture.email === 'string' &&
+    SYNTHETIC_FIXTURE_EMAIL_PATTERN.test(fixture.email);
+  if (!fixture.profile && !fixture.auth && !hasSyntheticEmail) {
+    return { attempted: false, status: 'SKIPPED' };
+  }
+
   let failed = false;
   // Each operation is independently attempted, even if an earlier deletion failed.
   const attempt = async (operation) => {
@@ -280,13 +348,62 @@ export async function cleanup(
       failed = true;
     }
   };
+
+  // Reconcile commit/response ambiguity using the tightly scoped synthetic email
+  // when profile or auth user IDs were not captured before request interruption.
+  if (!fixture.profile && hasSyntheticEmail) {
+    await attempt(async () => {
+      const profiles = await db(
+        key,
+        `/rest/v1/users?email=eq.${encodeURIComponent(fixture.email)}&select=id,auth_user_id`,
+        {
+          schema: 'app',
+          api,
+          fetchFn: effectiveFetchFn,
+        },
+      );
+      if (Array.isArray(profiles) && profiles.length > 0) {
+        fixture.profile = profiles[0]?.id ?? fixture.profile;
+        if (!fixture.auth && profiles[0]?.auth_user_id) {
+          fixture.auth = profiles[0].auth_user_id;
+        }
+      }
+    });
+  }
+
+  const matchedAuthIds = new Set();
+  if (fixture.auth) {
+    matchedAuthIds.add(fixture.auth);
+  }
+  if (!fixture.auth && hasSyntheticEmail) {
+    await attempt(async () => {
+      const authPayload = await db(key, '/auth/v1/admin/users?per_page=1000', {
+        api,
+        fetchFn: effectiveFetchFn,
+      });
+      const users = Array.isArray(authPayload)
+        ? authPayload
+        : Array.isArray(authPayload?.users)
+          ? authPayload.users
+          : [];
+      for (const candidate of users) {
+        if (candidate?.email === fixture.email && candidate?.id) {
+          matchedAuthIds.add(candidate.id);
+          if (!fixture.auth) {
+            fixture.auth = candidate.id;
+          }
+        }
+      }
+    });
+  }
+
   if (fixture.profile) {
     await attempt(() =>
       db(key, `/rest/v1/organization_members?user_id=eq.${fixture.profile}`, {
         method: 'DELETE',
         schema: 'app',
         api,
-        fetchFn,
+        fetchFn: effectiveFetchFn,
       }),
     );
     await attempt(() =>
@@ -294,41 +411,116 @@ export async function cleanup(
         method: 'DELETE',
         schema: 'app',
         api,
-        fetchFn,
+        fetchFn: effectiveFetchFn,
       }),
     );
-  }
-  if (fixture.auth) {
+  } else if (hasSyntheticEmail) {
     await attempt(() =>
-      db(key, `/auth/v1/admin/users/${fixture.auth}`, {
+      db(key, `/rest/v1/users?email=eq.${encodeURIComponent(fixture.email)}`, {
         method: 'DELETE',
+        schema: 'app',
         api,
-        fetchFn,
+        fetchFn: effectiveFetchFn,
       }),
     );
   }
+
+  for (const authId of matchedAuthIds) {
+    await attempt(async () => {
+      const url = new URL(`${api}/auth/v1/admin/users/${authId}`);
+      assert.equal(url.origin, api, 'Local Supabase access only');
+      const response = await effectiveFetchFn(url, {
+        method: 'DELETE',
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json',
+        },
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!response.ok && response.status !== 404) {
+        throw new Error(
+          `Disposable database operation failed: HTTP ${response.status}`,
+        );
+      }
+    });
+  }
+
   if (fixture.profile) {
+    await attempt(async () => {
+      const remainingMemberships = await db(
+        key,
+        `/rest/v1/organization_members?user_id=eq.${fixture.profile}&select=user_id`,
+        { schema: 'app', api, fetchFn: effectiveFetchFn },
+      );
+      assert.deepEqual(
+        remainingMemberships,
+        [],
+        'Synthetic organization membership must be absent',
+      );
+    });
     await attempt(async () => {
       const remaining = await db(
         key,
         `/rest/v1/users?id=eq.${fixture.profile}&select=id`,
-        { schema: 'app', api, fetchFn },
+        { schema: 'app', api, fetchFn: effectiveFetchFn },
       );
       assert.deepEqual(remaining, [], 'Synthetic profile must be absent');
     });
-  }
-  if (fixture.auth) {
+  } else if (hasSyntheticEmail) {
     await attempt(async () => {
-      const response = await fetchFn(
-        `${api}/auth/v1/admin/users/${fixture.auth}`,
-        {
-          headers: { apikey: key, Authorization: `Bearer ${key}` },
-          signal: AbortSignal.timeout(15000),
-        },
+      const remainingByEmail = await db(
+        key,
+        `/rest/v1/users?email=eq.${encodeURIComponent(fixture.email)}&select=id`,
+        { schema: 'app', api, fetchFn: effectiveFetchFn },
       );
-      assert.equal(response.status, 404, 'Synthetic auth user must be absent');
+      assert.deepEqual(
+        remainingByEmail,
+        [],
+        'Synthetic profile by email must be absent',
+      );
     });
   }
+
+  if (matchedAuthIds.size > 0) {
+    for (const authId of matchedAuthIds) {
+      await attempt(async () => {
+        const response = await effectiveFetchFn(
+          `${api}/auth/v1/admin/users/${authId}`,
+          {
+            headers: { apikey: key, Authorization: `Bearer ${key}` },
+            signal: AbortSignal.timeout(15000),
+          },
+        );
+        assert.equal(
+          response.status,
+          404,
+          'Synthetic auth user must be absent',
+        );
+      });
+    }
+  } else if (hasSyntheticEmail) {
+    await attempt(async () => {
+      const authPayload = await db(key, '/auth/v1/admin/users?per_page=1000', {
+        api,
+        fetchFn: effectiveFetchFn,
+      });
+      const users = Array.isArray(authPayload)
+        ? authPayload
+        : Array.isArray(authPayload?.users)
+          ? authPayload.users
+          : [];
+      const lingering = users.filter(
+        (candidate) => candidate?.email === fixture.email,
+      );
+      assert.deepEqual(
+        lingering,
+        [],
+        'Synthetic auth user by email must be absent',
+      );
+    });
+  }
+
   if (failed) {
     throw new QaError(
       'CLEANUP',
@@ -341,24 +533,80 @@ export async function cleanup(
 
 export async function createFixture(
   key,
-  { api = CANONICAL_API_ORIGIN, fetchFn = fetch } = {},
+  {
+    api = CANONICAL_API_ORIGIN,
+    fetchFn = fetch,
+    signal,
+    fixture: providedFixture,
+    deferCleanup,
+  } = {},
 ) {
+  const activeContext = harnessContextStorage.getStore();
+  const effectiveSignal = signal ?? activeContext?.signal;
+  const fixture =
+    providedFixture ?? activeContext?.fixture ?? createFixtureState();
+  const effectiveDeferCleanup =
+    deferCleanup ?? activeContext?.deferCleanup ?? false;
+  if (!fixture.email) {
+    fixture.email = `ci-auth-${randomUUID()}@example.test`;
+  }
+  if (!fixture.password) {
+    fixture.password = randomBytes(32).toString('base64url');
+  }
+  if (fixture.auth === undefined) fixture.auth = null;
+  if (fixture.profile === undefined) fixture.profile = null;
+  if (fixture.organizationId === undefined) fixture.organizationId = null;
+  if (fixture.membershipCreated === undefined) {
+    fixture.membershipCreated = false;
+  }
+  if (fixture.mutationStarted === undefined) fixture.mutationStarted = false;
+  if (fixture.pendingMutation === undefined) fixture.pendingMutation = false;
+  Object.defineProperty(fixture, 'fetchFn', {
+    value: fetchFn,
+    enumerable: false,
+    configurable: true,
+    writable: true,
+  });
+
+  throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
+
   let org;
   let role;
   try {
     [org] = await db(
       key,
       '/rest/v1/organizations?select=id&status=eq.ACTIVE&limit=1',
-      { schema: 'app', api, fetchFn },
+      {
+        schema: 'app',
+        api,
+        fetchFn,
+        signal: effectiveSignal,
+        stage: 'FIXTURE_CREATION',
+      },
     );
+    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
     assert.ok(org?.id, 'Disposable organization missing');
+    fixture.organizationId = org.id;
     [role] = await db(
       key,
       `/rest/v1/roles?select=id&organization_id=eq.${org.id}&code=eq.OWNER&limit=1`,
-      { schema: 'app', api, fetchFn },
+      {
+        schema: 'app',
+        api,
+        fetchFn,
+        signal: effectiveSignal,
+        stage: 'FIXTURE_CREATION',
+      },
     );
+    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
     assert.ok(role?.id, 'Disposable OWNER role missing');
   } catch (error) {
+    if (effectiveSignal?.aborted) {
+      throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
+    }
+    if (error instanceof QaError) {
+      throw error;
+    }
     throw new QaError(
       'FIXTURE_CREATION',
       'FIXTURE_CREATION_FAILED',
@@ -366,13 +614,10 @@ export async function createFixture(
     );
   }
 
-  const fixture = {
-    email: `ci-auth-${randomUUID()}@example.test`,
-    password: randomBytes(32).toString('base64url'),
-    auth: null,
-    profile: null,
-  };
   try {
+    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
+    fixture.mutationStarted = true;
+    fixture.pendingMutation = true;
     const user = await db(key, '/auth/v1/admin/users', {
       method: 'POST',
       body: {
@@ -382,9 +627,15 @@ export async function createFixture(
       },
       api,
       fetchFn,
+      signal: effectiveSignal,
+      stage: 'FIXTURE_CREATION',
     });
-    fixture.auth = user.id;
+    fixture.pendingMutation = false;
+    fixture.auth = user?.id ?? null;
     assert.ok(fixture.auth, 'Synthetic identity creation failed');
+
+    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
+    fixture.pendingMutation = true;
     const profiles = await db(key, '/rest/v1/users', {
       method: 'POST',
       schema: 'app',
@@ -396,9 +647,15 @@ export async function createFixture(
       },
       api,
       fetchFn,
+      signal: effectiveSignal,
+      stage: 'FIXTURE_CREATION',
     });
-    fixture.profile = profiles[0]?.id;
+    fixture.pendingMutation = false;
+    fixture.profile = profiles?.[0]?.id ?? null;
     assert.ok(fixture.profile, 'Synthetic app user creation failed');
+
+    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
+    fixture.pendingMutation = true;
     await db(key, '/rest/v1/organization_members', {
       method: 'POST',
       schema: 'app',
@@ -410,10 +667,24 @@ export async function createFixture(
       },
       api,
       fetchFn,
+      signal: effectiveSignal,
+      stage: 'FIXTURE_CREATION',
     });
+    fixture.pendingMutation = false;
+    fixture.membershipCreated = true;
+    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
     return fixture;
   } catch (error) {
-    await cleanup(key, fixture, { api, fetchFn }).catch(() => {});
+    fixture.pendingMutation = false;
+    if (!effectiveDeferCleanup || activeContext?.isQuiescenceTimedOut?.()) {
+      await cleanup(key, fixture, { api, fetchFn }).catch(() => {});
+    }
+    if (effectiveSignal?.aborted) {
+      throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
+    }
+    if (error instanceof QaError) {
+      throw error;
+    }
     throw new QaError(
       'FIXTURE_CREATION',
       'FIXTURE_CREATION_FAILED',
@@ -1980,8 +2251,19 @@ export async function runQaHarness({
   }
 
   let executionPromise;
+  let quiescenceTimedOut = false;
+  const harnessContext = {
+    signal,
+    deferCleanup: true,
+    get fixture() {
+      return fixture;
+    },
+    isQuiescenceTimedOut() {
+      return quiescenceTimedOut;
+    },
+  };
   try {
-    executionPromise = (async () => {
+    executionPromise = harnessContextStorage.run(harnessContext, async () => {
       enterStage('LOCAL_STATUS');
       const local = await localStatusFn({ workdir, api, signal });
       assertActive('LOCAL_STATUS');
@@ -2000,7 +2282,16 @@ export async function runQaHarness({
       assertActive('APP_BUILD');
 
       enterStage('FIXTURE_CREATION');
-      fixture = await createFixtureFn(localKey, { api, signal });
+      fixture = createFixtureState();
+      const createdFixture = await createFixtureFn(localKey, {
+        api,
+        signal,
+        fixture,
+        deferCleanup: true,
+      });
+      if (createdFixture && typeof createdFixture === 'object') {
+        Object.assign(fixture, createdFixture);
+      }
       assertActive('FIXTURE_CREATION');
 
       enterStage('APP_START');
@@ -2036,7 +2327,7 @@ export async function runQaHarness({
       stage = 'COMPLETED';
       evidence.stage = stage;
       delete evidence.failure;
-    })();
+    });
     executionPromise.catch(() => {});
 
     await Promise.race([executionPromise, signalPromise]);
@@ -2081,6 +2372,7 @@ export async function runQaHarness({
           setTimeout(() => resolve(false), quiescenceTimeoutMs),
         ),
       ]);
+      quiescenceTimedOut = !executionQuiesced;
     }
 
     // Checkpoint execution state after in-flight work quiesces and before teardown.
@@ -2133,11 +2425,19 @@ export async function runQaHarness({
       }
     }
 
+    const fixtureQuiescenceUnverified =
+      !executionQuiesced &&
+      (stage === 'FIXTURE_CREATION' || Boolean(fixture?.pendingMutation));
+
     let cleanupAttempted = Boolean(localKey && fixture);
     let cleanupStatus = cleanupAttempted ? 'PASS' : 'SKIPPED';
     if (cleanupAttempted) {
       try {
         await cleanupFn(localKey, fixture, { api });
+        if (fixtureQuiescenceUnverified) {
+          failure = true;
+          cleanupStatus = 'UNVERIFIED';
+        }
       } catch {
         failure = true;
         cleanupStatus = 'FAIL';
@@ -2152,6 +2452,20 @@ export async function runQaHarness({
             : {}),
         };
       }
+    } else if (fixtureQuiescenceUnverified) {
+      failure = true;
+      cleanupStatus = 'UNVERIFIED';
+    }
+
+    if (
+      fixtureQuiescenceUnverified &&
+      executionPromise &&
+      localKey &&
+      fixture
+    ) {
+      executionPromise
+        .finally(() => cleanupFn(localKey, fixture, { api }))
+        .catch(() => {});
     }
 
     if (

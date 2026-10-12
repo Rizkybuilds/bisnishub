@@ -18,6 +18,8 @@ import {
   QaError,
   assertSanitizedEvidence,
   cleanup,
+  createFixture,
+  createFixtureState,
   localStatus,
   runBrowser,
   runQaHarness,
@@ -1119,5 +1121,755 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
   it('keeps runBrowser and CANONICAL_APP_ORIGIN exports aligned with harness defaults', () => {
     assert.equal(typeof runBrowser, 'function');
     assert.equal(CANONICAL_APP_ORIGIN, 'http://127.0.0.1:3101');
+  });
+
+  it('prevents subsequent fixture mutations and cleans up partial state when interrupted within quiescence limit across all fixture stages', async () => {
+    function createMockFixtureStore({ onMutation } = {}) {
+      const authUsers = new Map();
+      const appUsers = new Map();
+      const orgMembers = [];
+      const mutationCalls = [];
+      let authSeq = 0;
+      let profileSeq = 0;
+
+      const jsonResponse = (status, payload) => ({
+        ok: status >= 200 && status < 300,
+        status,
+        json: async () => payload,
+      });
+
+      const fetchFn = async (url, options = {}) => {
+        const parsed = new URL(String(url));
+        const method = options.method ?? 'GET';
+        const pathname = parsed.pathname;
+
+        if (method === 'GET' && pathname === '/rest/v1/organizations') {
+          return jsonResponse(200, [
+            { id: '00000000-0000-4000-8000-000000000010' },
+          ]);
+        }
+        if (method === 'GET' && pathname === '/rest/v1/roles') {
+          return jsonResponse(200, [
+            { id: '00000000-0000-4000-8000-000000000020' },
+          ]);
+        }
+
+        if (method === 'POST' && pathname === '/auth/v1/admin/users') {
+          mutationCalls.push('POST /auth/v1/admin/users');
+          const body = JSON.parse(options.body);
+          if (onMutation) {
+            await onMutation({
+              stage: 'before_auth_commit',
+              options,
+              commit: () => {
+                authSeq += 1;
+                const id = `00000000-0000-4000-8000-00000000010${authSeq}`;
+                const user = { id, email: body.email };
+                authUsers.set(id, user);
+                return user;
+              },
+            });
+          }
+          authSeq += 1;
+          const id = `00000000-0000-4000-8000-00000000010${authSeq}`;
+          const user = { id, email: body.email };
+          authUsers.set(id, user);
+          if (onMutation) {
+            await onMutation({ stage: 'after_auth_commit', options, user });
+          }
+          return jsonResponse(200, user);
+        }
+
+        if (method === 'POST' && pathname === '/rest/v1/users') {
+          mutationCalls.push('POST /rest/v1/users');
+          const body = JSON.parse(options.body);
+          profileSeq += 1;
+          const id = `00000000-0000-4000-8000-00000000020${profileSeq}`;
+          const row = {
+            id,
+            auth_user_id: body.auth_user_id,
+            email: body.email,
+            name: body.name,
+            status: body.status,
+          };
+          appUsers.set(id, row);
+          if (onMutation) {
+            await onMutation({ stage: 'after_profile_commit', options, row });
+          }
+          return jsonResponse(201, [row]);
+        }
+
+        if (method === 'POST' && pathname === '/rest/v1/organization_members') {
+          mutationCalls.push('POST /rest/v1/organization_members');
+          const body = JSON.parse(options.body);
+          const row = {
+            organization_id: body.organization_id,
+            user_id: body.user_id,
+            role_id: body.role_id,
+            status: body.status,
+          };
+          orgMembers.push(row);
+          if (onMutation) {
+            await onMutation({
+              stage: 'after_membership_commit',
+              options,
+              row,
+            });
+          }
+          return jsonResponse(201, [row]);
+        }
+
+        if (method === 'GET' && pathname === '/auth/v1/admin/users') {
+          return jsonResponse(200, {
+            users: Array.from(authUsers.values()),
+          });
+        }
+
+        if (pathname.startsWith('/auth/v1/admin/users/')) {
+          const authId = pathname.slice('/auth/v1/admin/users/'.length);
+          if (method === 'DELETE') {
+            const existed = authUsers.delete(authId);
+            return jsonResponse(existed ? 200 : 404, {});
+          }
+          if (method === 'GET') {
+            return authUsers.has(authId)
+              ? jsonResponse(200, authUsers.get(authId))
+              : jsonResponse(404, {});
+          }
+        }
+
+        if (pathname === '/rest/v1/users') {
+          const idFilter = parsed.searchParams.get('id');
+          const emailFilter = parsed.searchParams.get('email');
+          const matchRow = (row) => {
+            if (idFilter?.startsWith('eq.')) {
+              return row.id === idFilter.slice(3);
+            }
+            if (emailFilter?.startsWith('eq.')) {
+              return row.email === emailFilter.slice(3);
+            }
+            return true;
+          };
+          if (method === 'GET') {
+            return jsonResponse(
+              200,
+              Array.from(appUsers.values()).filter(matchRow),
+            );
+          }
+          if (method === 'DELETE') {
+            for (const [id, row] of appUsers.entries()) {
+              if (matchRow(row)) {
+                appUsers.delete(id);
+              }
+            }
+            return { ok: true, status: 204, json: async () => null };
+          }
+        }
+
+        if (pathname === '/rest/v1/organization_members') {
+          const userIdFilter = parsed.searchParams.get('user_id');
+          const targetUserId = userIdFilter?.startsWith('eq.')
+            ? userIdFilter.slice(3)
+            : null;
+          if (method === 'GET') {
+            return jsonResponse(
+              200,
+              orgMembers.filter((m) =>
+                targetUserId ? m.user_id === targetUserId : true,
+              ),
+            );
+          }
+          if (method === 'DELETE') {
+            for (let i = orgMembers.length - 1; i >= 0; i -= 1) {
+              if (!targetUserId || orgMembers[i].user_id === targetUserId) {
+                orgMembers.splice(i, 1);
+              }
+            }
+            return { ok: true, status: 204, json: async () => null };
+          }
+        }
+
+        throw new Error(`Unhandled mock endpoint: ${method} ${pathname}`);
+      };
+
+      return {
+        authUsers,
+        appUsers,
+        orgMembers,
+        mutationCalls,
+        fetchFn,
+      };
+    }
+
+    const scenarios = [
+      {
+        label:
+          'signal before synthetic auth account creation (within quiescence)',
+        triggerStage: 'before_auth_commit',
+        abortBeforeCommit: true,
+        expectedMutations: ['POST /auth/v1/admin/users'],
+      },
+      {
+        label:
+          'signal after auth account creation but before application profile completion (within quiescence)',
+        triggerStage: 'after_auth_commit',
+        abortBeforeCommit: false,
+        expectedMutations: ['POST /auth/v1/admin/users'],
+      },
+      {
+        label:
+          'signal during organization membership creation (within quiescence)',
+        triggerStage: 'after_membership_commit',
+        abortBeforeCommit: false,
+        expectedMutations: [
+          'POST /auth/v1/admin/users',
+          'POST /rest/v1/users',
+          'POST /rest/v1/organization_members',
+        ],
+      },
+    ];
+
+    for (const scenario of scenarios) {
+      await withTempDir(async (artifactDir) => {
+        const store = createMockFixtureStore({
+          onMutation: async ({ stage }) => {
+            if (stage !== scenario.triggerStage) {
+              return;
+            }
+            process.emit('SIGTERM', 'SIGTERM');
+            await new Promise((resolve) => setTimeout(resolve, 15));
+            if (scenario.abortBeforeCommit) {
+              throw new Error('Request aborted before server-side commit');
+            }
+          },
+        });
+
+        const deps = defaultStubDependencies({
+          createFixtureFn: (key, options) =>
+            createFixture(key, { ...options, fetchFn: store.fetchFn }),
+          cleanupFn: (key, fixture, options) =>
+            cleanup(key, fixture, { ...options, fetchFn: store.fetchFn }),
+        });
+
+        const { evidence, failure, tracePath } = await runQaHarness({
+          ...deps,
+          artifactDir,
+          negativeControl: true,
+          quiescenceTimeoutMs: 300,
+        });
+
+        assert.equal(failure, true, scenario.label);
+        assert.equal(evidence.overall, 'FAIL', scenario.label);
+        assert.equal(
+          evidence.failure?.stage,
+          'FIXTURE_CREATION',
+          scenario.label,
+        );
+        assert.equal(
+          evidence.failure?.code,
+          'PROCESS_SIGNAL_TERMINATED',
+          scenario.label,
+        );
+        assert.equal(evidence.failure?.signal, 'SIGTERM', scenario.label);
+        assert.equal(evidence.cleanup.attempted, true, scenario.label);
+        assert.equal(evidence.cleanup.status, 'PASS', scenario.label);
+        assert.equal(evidence.cleanup.executionQuiesced, true, scenario.label);
+        assert.deepEqual(
+          store.mutationCalls,
+          scenario.expectedMutations,
+          scenario.label,
+        );
+        assert.equal(store.authUsers.size, 0, scenario.label);
+        assert.equal(store.appUsers.size, 0, scenario.label);
+        assert.equal(store.orgMembers.length, 0, scenario.label);
+
+        const verification = verifyTraceFile(tracePath, {
+          expectedMode: 'intentional-broken-login',
+          exitStatus: 1,
+        });
+        assert.equal(verification.valid, false, scenario.label);
+        assert.equal(
+          verification.code,
+          'NEGATIVE_CONTROL_CLASSIFICATION_MISMATCH',
+          scenario.label,
+        );
+      });
+    }
+  });
+
+  it('refuses to report verified cleanup when fixture creation exceeds quiescence limit and cleans up late-settling records without mutating finalized trace', async () => {
+    const stages = [
+      {
+        label: 'beyond quiescence before auth completion',
+        stallEndpoint: 'POST /auth/v1/admin/users',
+        expectedMutations: ['POST /auth/v1/admin/users'],
+      },
+      {
+        label: 'beyond quiescence after auth before profile completion',
+        stallEndpoint: 'POST /rest/v1/users',
+        expectedMutations: ['POST /auth/v1/admin/users', 'POST /rest/v1/users'],
+      },
+      {
+        label: 'beyond quiescence during organization membership creation',
+        stallEndpoint: 'POST /rest/v1/organization_members',
+        expectedMutations: [
+          'POST /auth/v1/admin/users',
+          'POST /rest/v1/users',
+          'POST /rest/v1/organization_members',
+        ],
+      },
+    ];
+
+    for (const scenario of stages) {
+      await withTempDir(async (artifactDir) => {
+        const authUsers = new Map();
+        const appUsers = new Map();
+        const orgMembers = [];
+        const mutationCalls = [];
+        let releaseStalledRequest;
+        const stalledPromise = new Promise((resolve) => {
+          releaseStalledRequest = resolve;
+        });
+
+        const jsonResponse = (status, payload) => ({
+          ok: status >= 200 && status < 300,
+          status,
+          json: async () => payload,
+        });
+
+        const fetchFn = async (url, options = {}) => {
+          const parsed = new URL(String(url));
+          const method = options.method ?? 'GET';
+          const pathname = parsed.pathname;
+          const endpointKey = `${method} ${pathname}`;
+
+          if (method === 'GET' && pathname === '/rest/v1/organizations') {
+            return jsonResponse(200, [
+              { id: '00000000-0000-4000-8000-000000000010' },
+            ]);
+          }
+          if (method === 'GET' && pathname === '/rest/v1/roles') {
+            return jsonResponse(200, [
+              { id: '00000000-0000-4000-8000-000000000020' },
+            ]);
+          }
+
+          if (method === 'POST') {
+            mutationCalls.push(endpointKey);
+          }
+
+          if (endpointKey === scenario.stallEndpoint) {
+            setTimeout(() => {
+              process.emit('SIGTERM', 'SIGTERM');
+            }, 10);
+            await stalledPromise;
+          }
+
+          if (endpointKey === 'POST /auth/v1/admin/users') {
+            const body = JSON.parse(options.body);
+            const user = {
+              id: '00000000-0000-4000-8000-000000000111',
+              email: body.email,
+            };
+            authUsers.set(user.id, user);
+            return jsonResponse(200, user);
+          }
+
+          if (endpointKey === 'POST /rest/v1/users') {
+            const body = JSON.parse(options.body);
+            const row = {
+              id: '00000000-0000-4000-8000-000000000222',
+              auth_user_id: body.auth_user_id,
+              email: body.email,
+              name: body.name,
+              status: body.status,
+            };
+            appUsers.set(row.id, row);
+            return jsonResponse(201, [row]);
+          }
+
+          if (endpointKey === 'POST /rest/v1/organization_members') {
+            const body = JSON.parse(options.body);
+            orgMembers.push({ ...body });
+            return jsonResponse(201, [body]);
+          }
+
+          if (method === 'GET' && pathname === '/auth/v1/admin/users') {
+            return jsonResponse(200, {
+              users: Array.from(authUsers.values()),
+            });
+          }
+
+          if (pathname.startsWith('/auth/v1/admin/users/')) {
+            const authId = pathname.slice('/auth/v1/admin/users/'.length);
+            if (method === 'DELETE') {
+              const existed = authUsers.delete(authId);
+              return jsonResponse(existed ? 200 : 404, {});
+            }
+            if (method === 'GET') {
+              return authUsers.has(authId)
+                ? jsonResponse(200, authUsers.get(authId))
+                : jsonResponse(404, {});
+            }
+          }
+
+          if (pathname === '/rest/v1/users') {
+            const idFilter = parsed.searchParams.get('id');
+            const emailFilter = parsed.searchParams.get('email');
+            const matchRow = (row) => {
+              if (idFilter?.startsWith('eq.')) {
+                return row.id === idFilter.slice(3);
+              }
+              if (emailFilter?.startsWith('eq.')) {
+                return row.email === emailFilter.slice(3);
+              }
+              return true;
+            };
+            if (method === 'GET') {
+              return jsonResponse(
+                200,
+                Array.from(appUsers.values()).filter(matchRow),
+              );
+            }
+            if (method === 'DELETE') {
+              for (const [id, row] of appUsers.entries()) {
+                if (matchRow(row)) {
+                  appUsers.delete(id);
+                }
+              }
+              return { ok: true, status: 204, json: async () => null };
+            }
+          }
+
+          if (pathname === '/rest/v1/organization_members') {
+            const userIdFilter = parsed.searchParams.get('user_id');
+            const targetUserId = userIdFilter?.startsWith('eq.')
+              ? userIdFilter.slice(3)
+              : null;
+            if (method === 'GET') {
+              return jsonResponse(
+                200,
+                orgMembers.filter((m) =>
+                  targetUserId ? m.user_id === targetUserId : true,
+                ),
+              );
+            }
+            if (method === 'DELETE') {
+              for (let i = orgMembers.length - 1; i >= 0; i -= 1) {
+                if (!targetUserId || orgMembers[i].user_id === targetUserId) {
+                  orgMembers.splice(i, 1);
+                }
+              }
+              return { ok: true, status: 204, json: async () => null };
+            }
+          }
+
+          throw new Error(`Unhandled mock endpoint: ${endpointKey}`);
+        };
+
+        const deps = defaultStubDependencies({
+          createFixtureFn: (key) => createFixture(key, { fetchFn }),
+          cleanupFn: (key, fixture) => cleanup(key, fixture, { fetchFn }),
+        });
+
+        try {
+          const { evidence, failure, tracePath } = await runQaHarness({
+            ...deps,
+            artifactDir,
+            negativeControl: true,
+            quiescenceTimeoutMs: 45,
+          });
+
+          const traceBeforeRelease = readFileSync(tracePath, 'utf8');
+          const evidenceSnapshot = JSON.stringify(evidence);
+
+          assert.equal(failure, true, scenario.label);
+          assert.equal(evidence.overall, 'FAIL', scenario.label);
+          assert.equal(evidence.cleanup.attempted, true, scenario.label);
+          assert.equal(evidence.cleanup.status, 'UNVERIFIED', scenario.label);
+          assert.equal(
+            evidence.cleanup.executionQuiesced,
+            false,
+            scenario.label,
+          );
+          assert.equal(evidence.failure?.stage, 'CLEANUP', scenario.label);
+          assert.equal(
+            evidence.failure?.code,
+            'SUBPROCESS_TEARDOWN_FAILED',
+            scenario.label,
+          );
+          assert.equal(
+            evidence.failure?.priorStage,
+            'FIXTURE_CREATION',
+            scenario.label,
+          );
+          assert.equal(
+            evidence.failure?.priorCode,
+            'PROCESS_SIGNAL_TERMINATED',
+            scenario.label,
+          );
+
+          const verification = verifyTraceFile(tracePath, {
+            expectedMode: 'intentional-broken-login',
+            exitStatus: 1,
+          });
+          assert.equal(verification.valid, false, scenario.label);
+          assert.equal(
+            verification.code,
+            'SUBPROCESS_TEARDOWN_NOT_VERIFIED',
+            scenario.label,
+          );
+
+          // Release the stalled in-flight operation and verify compensating cleanup
+          // removes any late-committed record without starting subsequent steps or mutating trace.json.
+          releaseStalledRequest();
+          await new Promise((resolve) => setTimeout(resolve, 40));
+
+          assert.deepEqual(
+            mutationCalls,
+            scenario.expectedMutations,
+            scenario.label,
+          );
+          assert.equal(authUsers.size, 0, scenario.label);
+          assert.equal(appUsers.size, 0, scenario.label);
+          assert.equal(orgMembers.length, 0, scenario.label);
+          assert.equal(JSON.stringify(evidence), evidenceSnapshot);
+          assert.equal(readFileSync(tracePath, 'utf8'), traceBeforeRelease);
+        } finally {
+          releaseStalledRequest?.();
+        }
+      });
+    }
+  });
+
+  it('reconciles server-side commit followed by lost or aborted HTTP response using tightly scoped synthetic fixture identity', async () => {
+    for (const lostStage of ['auth_response_lost', 'profile_response_lost']) {
+      await withTempDir(async (artifactDir) => {
+        const authUsers = new Map([
+          [
+            '00000000-0000-4000-8000-000000000999',
+            {
+              id: '00000000-0000-4000-8000-000000000999',
+              email: 'unrelated-operator@example.test',
+            },
+          ],
+        ]);
+        const appUsers = new Map([
+          [
+            '00000000-0000-4000-8000-000000000888',
+            {
+              id: '00000000-0000-4000-8000-000000000888',
+              auth_user_id: '00000000-0000-4000-8000-000000000999',
+              email: 'unrelated-operator@example.test',
+              name: 'Unrelated Operator',
+              status: 'ACTIVE',
+            },
+          ],
+        ]);
+        const orgMembers = [];
+        const mutationCalls = [];
+
+        const jsonResponse = (status, payload) => ({
+          ok: status >= 200 && status < 300,
+          status,
+          json: async () => payload,
+        });
+
+        const fetchFn = async (url, options = {}) => {
+          const parsed = new URL(String(url));
+          const method = options.method ?? 'GET';
+          const pathname = parsed.pathname;
+
+          if (method === 'GET' && pathname === '/rest/v1/organizations') {
+            return jsonResponse(200, [
+              { id: '00000000-0000-4000-8000-000000000010' },
+            ]);
+          }
+          if (method === 'GET' && pathname === '/rest/v1/roles') {
+            return jsonResponse(200, [
+              { id: '00000000-0000-4000-8000-000000000020' },
+            ]);
+          }
+
+          if (method === 'POST' && pathname === '/auth/v1/admin/users') {
+            mutationCalls.push('POST /auth/v1/admin/users');
+            const body = JSON.parse(options.body);
+            const committedUser = {
+              id: '00000000-0000-4000-8000-000000000301',
+              email: body.email,
+            };
+            // Server-side commit succeeds before the response is lost/interrupted.
+            authUsers.set(committedUser.id, committedUser);
+            if (lostStage === 'auth_response_lost') {
+              process.emit('SIGTERM', 'SIGTERM');
+              const abortErr = new Error('Socket hang up after server commit');
+              abortErr.name = 'AbortError';
+              throw abortErr;
+            }
+            return jsonResponse(200, committedUser);
+          }
+
+          if (method === 'POST' && pathname === '/rest/v1/users') {
+            mutationCalls.push('POST /rest/v1/users');
+            const body = JSON.parse(options.body);
+            const committedProfile = {
+              id: '00000000-0000-4000-8000-000000000401',
+              auth_user_id: body.auth_user_id,
+              email: body.email,
+              name: body.name,
+              status: body.status,
+            };
+            // Server-side commit succeeds before the response is lost/interrupted.
+            appUsers.set(committedProfile.id, committedProfile);
+            if (lostStage === 'profile_response_lost') {
+              process.emit('SIGTERM', 'SIGTERM');
+              const abortErr = new Error('Socket hang up after server commit');
+              abortErr.name = 'AbortError';
+              throw abortErr;
+            }
+            return jsonResponse(201, [committedProfile]);
+          }
+
+          if (
+            method === 'POST' &&
+            pathname === '/rest/v1/organization_members'
+          ) {
+            mutationCalls.push('POST /rest/v1/organization_members');
+            const body = JSON.parse(options.body);
+            orgMembers.push({ ...body });
+            return jsonResponse(201, [body]);
+          }
+
+          if (method === 'GET' && pathname === '/auth/v1/admin/users') {
+            return jsonResponse(200, {
+              users: Array.from(authUsers.values()),
+            });
+          }
+
+          if (pathname.startsWith('/auth/v1/admin/users/')) {
+            const authId = pathname.slice('/auth/v1/admin/users/'.length);
+            if (method === 'DELETE') {
+              const existed = authUsers.delete(authId);
+              return jsonResponse(existed ? 200 : 404, {});
+            }
+            if (method === 'GET') {
+              return authUsers.has(authId)
+                ? jsonResponse(200, authUsers.get(authId))
+                : jsonResponse(404, {});
+            }
+          }
+
+          if (pathname === '/rest/v1/users') {
+            const idFilter = parsed.searchParams.get('id');
+            const emailFilter = parsed.searchParams.get('email');
+            const matchRow = (row) => {
+              if (idFilter?.startsWith('eq.')) {
+                return row.id === idFilter.slice(3);
+              }
+              if (emailFilter?.startsWith('eq.')) {
+                return row.email === emailFilter.slice(3);
+              }
+              return true;
+            };
+            if (method === 'GET') {
+              return jsonResponse(
+                200,
+                Array.from(appUsers.values()).filter(matchRow),
+              );
+            }
+            if (method === 'DELETE') {
+              for (const [id, row] of appUsers.entries()) {
+                if (matchRow(row)) {
+                  appUsers.delete(id);
+                }
+              }
+              return { ok: true, status: 204, json: async () => null };
+            }
+          }
+
+          if (pathname === '/rest/v1/organization_members') {
+            const userIdFilter = parsed.searchParams.get('user_id');
+            const targetUserId = userIdFilter?.startsWith('eq.')
+              ? userIdFilter.slice(3)
+              : null;
+            if (method === 'GET') {
+              return jsonResponse(
+                200,
+                orgMembers.filter((m) =>
+                  targetUserId ? m.user_id === targetUserId : true,
+                ),
+              );
+            }
+            if (method === 'DELETE') {
+              for (let i = orgMembers.length - 1; i >= 0; i -= 1) {
+                if (!targetUserId || orgMembers[i].user_id === targetUserId) {
+                  orgMembers.splice(i, 1);
+                }
+              }
+              return { ok: true, status: 204, json: async () => null };
+            }
+          }
+
+          throw new Error(`Unhandled mock endpoint: ${method} ${pathname}`);
+        };
+
+        const trackedFixture = createFixtureState();
+        const deps = defaultStubDependencies({
+          createFixtureFn: (key, options) => {
+            Object.assign(trackedFixture, options.fixture);
+            return createFixture(key, { ...options, fetchFn });
+          },
+          cleanupFn: (key, fixture, options) =>
+            cleanup(key, fixture, { ...options, fetchFn }),
+        });
+
+        const { evidence, failure, tracePath } = await runQaHarness({
+          ...deps,
+          artifactDir,
+          negativeControl: true,
+          quiescenceTimeoutMs: 300,
+        });
+
+        assert.equal(failure, true, lostStage);
+        assert.equal(evidence.overall, 'FAIL', lostStage);
+        assert.equal(evidence.failure?.stage, 'FIXTURE_CREATION', lostStage);
+        assert.equal(
+          evidence.failure?.code,
+          'PROCESS_SIGNAL_TERMINATED',
+          lostStage,
+        );
+        assert.equal(evidence.cleanup.attempted, true, lostStage);
+        assert.equal(evidence.cleanup.status, 'PASS', lostStage);
+        assert.equal(evidence.cleanup.executionQuiesced, true, lostStage);
+
+        // No subsequent mutations were started after the lost response + signal.
+        assert.deepEqual(
+          mutationCalls,
+          lostStage === 'auth_response_lost'
+            ? ['POST /auth/v1/admin/users']
+            : ['POST /auth/v1/admin/users', 'POST /rest/v1/users'],
+          lostStage,
+        );
+
+        // Committed synthetic records were reconciled by synthetic email and removed,
+        // while unrelated records in the database were preserved intact.
+        assert.equal(authUsers.size, 1, lostStage);
+        assert.equal(
+          authUsers.has('00000000-0000-4000-8000-000000000999'),
+          true,
+          lostStage,
+        );
+        assert.equal(appUsers.size, 1, lostStage);
+        assert.equal(
+          appUsers.has('00000000-0000-4000-8000-000000000888'),
+          true,
+          lostStage,
+        );
+        assert.equal(orgMembers.length, 0, lostStage);
+
+        const rawTrace = readFileSync(tracePath, 'utf8');
+        assert.doesNotMatch(rawTrace, new RegExp(trackedFixture.email));
+      });
+    }
   });
 });
