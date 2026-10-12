@@ -251,6 +251,28 @@ export function localStatus({
 
 const SYNTHETIC_FIXTURE_EMAIL_PATTERN = /^ci-auth-[0-9a-f-]+@example\.test$/i;
 
+export const FIXTURE_MUTATION_STAGES = Object.freeze([
+  'auth',
+  'profile',
+  'membership',
+]);
+
+const FIXTURE_MUTATION_ENDPOINTS = Object.freeze({
+  auth: 'POST /auth/v1/admin/users',
+  profile: 'POST /rest/v1/users',
+  membership: 'POST /rest/v1/organization_members',
+});
+
+function createMutationStageState(endpoint) {
+  return {
+    endpoint,
+    status: 'NOT_STARTED',
+    dispatched: false,
+    confirmed: false,
+    ambiguous: false,
+  };
+}
+
 export function createFixtureState() {
   return {
     email: `ci-auth-${randomUUID()}@example.test`,
@@ -261,7 +283,148 @@ export function createFixtureState() {
     membershipCreated: false,
     mutationStarted: false,
     pendingMutation: false,
+    mutationOutcomeAmbiguous: false,
+    ambiguousMutations: [],
+    mutations: {
+      auth: createMutationStageState(FIXTURE_MUTATION_ENDPOINTS.auth),
+      profile: createMutationStageState(FIXTURE_MUTATION_ENDPOINTS.profile),
+      membership: createMutationStageState(
+        FIXTURE_MUTATION_ENDPOINTS.membership,
+      ),
+    },
   };
+}
+
+function ensureFixtureMutationTracking(fixture) {
+  if (!fixture || typeof fixture !== 'object') {
+    return;
+  }
+  if (!fixture.mutations || typeof fixture.mutations !== 'object') {
+    fixture.mutations = {};
+  }
+  for (const stageKey of FIXTURE_MUTATION_STAGES) {
+    const existing = fixture.mutations[stageKey];
+    if (!existing || typeof existing !== 'object') {
+      fixture.mutations[stageKey] = createMutationStageState(
+        FIXTURE_MUTATION_ENDPOINTS[stageKey],
+      );
+    } else {
+      if (typeof existing.endpoint !== 'string') {
+        existing.endpoint = FIXTURE_MUTATION_ENDPOINTS[stageKey];
+      }
+      if (typeof existing.status !== 'string') {
+        existing.status = 'NOT_STARTED';
+      }
+      existing.dispatched = Boolean(existing.dispatched);
+      existing.confirmed = Boolean(existing.confirmed);
+      existing.ambiguous = Boolean(existing.ambiguous);
+    }
+  }
+  if (typeof fixture.mutationOutcomeAmbiguous !== 'boolean') {
+    fixture.mutationOutcomeAmbiguous = false;
+  }
+  if (!Array.isArray(fixture.ambiguousMutations)) {
+    fixture.ambiguousMutations = [];
+  }
+}
+
+function syncFixtureMutationSummary(fixture) {
+  if (!fixture || typeof fixture !== 'object') {
+    return;
+  }
+  ensureFixtureMutationTracking(fixture);
+  const ambiguousStages = FIXTURE_MUTATION_STAGES.filter((stageKey) => {
+    const state = fixture.mutations[stageKey];
+    return Boolean(
+      state &&
+      (state.ambiguous === true ||
+        state.status === 'DISPATCHED' ||
+        state.status === 'AMBIGUOUS' ||
+        (state.dispatched === true && state.confirmed !== true)),
+    );
+  });
+  fixture.ambiguousMutations = ambiguousStages;
+  fixture.mutationOutcomeAmbiguous = ambiguousStages.length > 0;
+  fixture.pendingMutation = FIXTURE_MUTATION_STAGES.some(
+    (stageKey) => fixture.mutations[stageKey]?.status === 'DISPATCHED',
+  );
+}
+
+function getAmbiguousMutationStages(fixture) {
+  if (!fixture || typeof fixture !== 'object') {
+    return [];
+  }
+  syncFixtureMutationSummary(fixture);
+  return [...fixture.ambiguousMutations];
+}
+
+function hasAmbiguousFixtureMutation(fixture) {
+  if (!fixture || typeof fixture !== 'object') {
+    return false;
+  }
+  return (
+    fixture.mutationOutcomeAmbiguous === true ||
+    getAmbiguousMutationStages(fixture).length > 0
+  );
+}
+
+function prepareFixtureMutation(fixture, stageKey) {
+  ensureFixtureMutationTracking(fixture);
+  const state = fixture.mutations[stageKey];
+  if (state && !state.dispatched && !state.confirmed) {
+    state.status = 'PREPARED';
+    state.dispatched = false;
+    state.confirmed = false;
+    state.ambiguous = false;
+  }
+  syncFixtureMutationSummary(fixture);
+}
+
+function markFixtureMutationDispatched(fixture, stageKey) {
+  ensureFixtureMutationTracking(fixture);
+  const state = fixture.mutations[stageKey];
+  state.status = 'DISPATCHED';
+  state.dispatched = true;
+  state.confirmed = false;
+  state.ambiguous = true;
+  fixture.mutationStarted = true;
+  syncFixtureMutationSummary(fixture);
+}
+
+function markFixtureMutationConfirmed(fixture, stageKey) {
+  ensureFixtureMutationTracking(fixture);
+  const state = fixture.mutations[stageKey];
+  state.status = 'CONFIRMED';
+  state.dispatched = true;
+  state.confirmed = true;
+  state.ambiguous = false;
+  syncFixtureMutationSummary(fixture);
+}
+
+function finalizeFailedFixtureMutations(fixture) {
+  if (!fixture || typeof fixture !== 'object') {
+    return;
+  }
+  ensureFixtureMutationTracking(fixture);
+  for (const stageKey of FIXTURE_MUTATION_STAGES) {
+    const state = fixture.mutations[stageKey];
+    if (!state) continue;
+    if (state.status === 'PREPARED' && !state.dispatched) {
+      state.status = 'FAILED_BEFORE_DISPATCH';
+      state.dispatched = false;
+      state.confirmed = false;
+      state.ambiguous = false;
+    } else if (
+      state.status === 'DISPATCHED' ||
+      (state.dispatched && !state.confirmed)
+    ) {
+      state.status = 'AMBIGUOUS';
+      state.dispatched = true;
+      state.confirmed = false;
+      state.ambiguous = true;
+    }
+  }
+  syncFixtureMutationSummary(fixture);
 }
 
 function createRequestSignal(signal, timeoutMs = 15000) {
@@ -295,6 +458,7 @@ async function db(
     signal,
     requestSignal,
     stage = 'FIXTURE_CREATION',
+    onBeforeDispatch,
   } = {},
 ) {
   throwIfSignalAborted(signal, stage);
@@ -311,13 +475,19 @@ async function db(
     headers['Content-Profile'] = schema;
   }
   const effectiveRequestSignal = requestSignal ?? signal;
+  const serializedBody = body === undefined ? undefined : JSON.stringify(body);
+  const fetchSignal = createRequestSignal(effectiveRequestSignal, 15000);
+  throwIfSignalAborted(signal, stage);
+  if (typeof onBeforeDispatch === 'function') {
+    onBeforeDispatch();
+  }
   let response;
   try {
     response = await fetchFn(url, {
       method,
       headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
-      signal: createRequestSignal(effectiveRequestSignal, 15000),
+      body: serializedBody,
+      signal: fetchSignal,
     });
   } catch (error) {
     if (signal?.aborted) {
@@ -560,6 +730,14 @@ export async function cleanup(
       'Synthetic fixture cleanup verification failed',
     );
   }
+  if (hasAmbiguousFixtureMutation(fixture)) {
+    return {
+      attempted: true,
+      status: 'UNVERIFIED',
+      reason: 'MUTATION_OUTCOME_AMBIGUOUS',
+      ambiguousMutations: getAmbiguousMutationStages(fixture),
+    };
+  }
   return { attempted: true, status: 'PASS' };
 }
 
@@ -596,6 +774,7 @@ export async function createFixture(
   }
   if (fixture.mutationStarted === undefined) fixture.mutationStarted = false;
   if (fixture.pendingMutation === undefined) fixture.pendingMutation = false;
+  ensureFixtureMutationTracking(fixture);
   Object.defineProperty(fixture, 'fetchFn', {
     value: fetchFn,
     enumerable: false,
@@ -603,11 +782,12 @@ export async function createFixture(
     writable: true,
   });
 
-  throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
+  prepareFixtureMutation(fixture, 'auth');
 
   let org;
   let role;
   try {
+    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
     [org] = await db(
       key,
       '/rest/v1/organizations?select=id&status=eq.ACTIVE&limit=1',
@@ -616,7 +796,7 @@ export async function createFixture(
         api,
         fetchFn,
         signal: effectiveSignal,
-        requestSignal: effectiveDrainSignal,
+        requestSignal: effectiveSignal,
         stage: 'FIXTURE_CREATION',
       },
     );
@@ -631,13 +811,14 @@ export async function createFixture(
         api,
         fetchFn,
         signal: effectiveSignal,
-        requestSignal: effectiveDrainSignal,
+        requestSignal: effectiveSignal,
         stage: 'FIXTURE_CREATION',
       },
     );
     throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
     assert.ok(role?.id, 'Disposable OWNER role missing');
   } catch (error) {
+    finalizeFailedFixtureMutations(fixture);
     if (effectiveSignal?.aborted) {
       throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
     }
@@ -652,9 +833,8 @@ export async function createFixture(
   }
 
   try {
+    prepareFixtureMutation(fixture, 'auth');
     throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    fixture.mutationStarted = true;
-    fixture.pendingMutation = true;
     const user = await db(key, '/auth/v1/admin/users', {
       method: 'POST',
       body: {
@@ -667,13 +847,14 @@ export async function createFixture(
       signal: effectiveSignal,
       requestSignal: effectiveDrainSignal,
       stage: 'FIXTURE_CREATION',
+      onBeforeDispatch: () => markFixtureMutationDispatched(fixture, 'auth'),
     });
-    fixture.pendingMutation = false;
     fixture.auth = user?.id ?? null;
     assert.ok(fixture.auth, 'Synthetic identity creation failed');
+    markFixtureMutationConfirmed(fixture, 'auth');
 
+    prepareFixtureMutation(fixture, 'profile');
     throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    fixture.pendingMutation = true;
     const profiles = await db(key, '/rest/v1/users', {
       method: 'POST',
       schema: 'app',
@@ -688,14 +869,15 @@ export async function createFixture(
       signal: effectiveSignal,
       requestSignal: effectiveDrainSignal,
       stage: 'FIXTURE_CREATION',
+      onBeforeDispatch: () => markFixtureMutationDispatched(fixture, 'profile'),
     });
-    fixture.pendingMutation = false;
     fixture.profile = profiles?.[0]?.id ?? null;
     assert.ok(fixture.profile, 'Synthetic app user creation failed');
+    markFixtureMutationConfirmed(fixture, 'profile');
 
+    prepareFixtureMutation(fixture, 'membership');
     throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    fixture.pendingMutation = true;
-    await db(key, '/rest/v1/organization_members', {
+    const memberships = await db(key, '/rest/v1/organization_members', {
       method: 'POST',
       schema: 'app',
       body: {
@@ -709,13 +891,25 @@ export async function createFixture(
       signal: effectiveSignal,
       requestSignal: effectiveDrainSignal,
       stage: 'FIXTURE_CREATION',
+      onBeforeDispatch: () =>
+        markFixtureMutationDispatched(fixture, 'membership'),
     });
-    fixture.pendingMutation = false;
+    const createdMembership = Array.isArray(memberships)
+      ? memberships[0]
+      : memberships;
+    assert.ok(
+      createdMembership &&
+        typeof createdMembership === 'object' &&
+        (createdMembership.user_id === fixture.profile ||
+          createdMembership.organization_id === org.id),
+      'Synthetic organization membership creation failed',
+    );
+    markFixtureMutationConfirmed(fixture, 'membership');
     fixture.membershipCreated = true;
     throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
     return fixture;
   } catch (error) {
-    fixture.pendingMutation = false;
+    finalizeFailedFixtureMutations(fixture);
     if (!effectiveDeferCleanup) {
       await cleanup(key, fixture, { api, fetchFn }).catch(() => {});
     }
@@ -1781,6 +1975,10 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
     exitCode: report.failure?.exitCode ?? null,
     signal: report.failure?.signal ?? null,
     cleanupStatus: report.cleanup?.status ?? null,
+    cleanupReason: report.cleanup?.reason ?? null,
+    ambiguousMutations: Array.isArray(report.cleanup?.ambiguousMutations)
+      ? report.cleanup.ambiguousMutations
+      : null,
     executionQuiesced: report.cleanup?.executionQuiesced ?? null,
     casesRecorded: Array.isArray(report.cases) ? report.cases.length : null,
     exitStatus: exitStatus ?? null,
@@ -1832,6 +2030,18 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
       code: 'SUBPROCESS_TEARDOWN_NOT_VERIFIED',
       summary:
         'Subprocess or temporary profile teardown did not complete cleanly',
+      diagnostics,
+    };
+  }
+
+  if (
+    report.failure?.code === 'FIXTURE_CLEANUP_UNVERIFIED' ||
+    report.cleanup?.status === 'UNVERIFIED'
+  ) {
+    return {
+      valid: false,
+      code: 'FIXTURE_CLEANUP_NOT_VERIFIED',
+      summary: `Expected fixture cleanup status PASS, got "${String(report.cleanup?.status)}"`,
       diagnostics,
     };
   }
@@ -2520,18 +2730,37 @@ export async function runQaHarness({
       }
     }
 
+    const ambiguousMutations = getAmbiguousMutationStages(fixture);
+    const mutationOutcomeAmbiguous =
+      hasAmbiguousFixtureMutation(fixture) || ambiguousMutations.length > 0;
     let cleanupAttempted = Boolean(localKey && fixture);
     let cleanupStatus = cleanupAttempted ? 'PASS' : 'SKIPPED';
+    let cleanupReason = null;
     if (cleanupAttempted) {
       try {
-        await cleanupFn(localKey, fixture, { api });
-        if (fixtureQuiescenceUnverified) {
+        const cleanupResult = await cleanupFn(localKey, fixture, { api });
+        if (
+          cleanupResult &&
+          typeof cleanupResult === 'object' &&
+          typeof cleanupResult.status === 'string'
+        ) {
+          cleanupStatus = cleanupResult.status;
+        }
+        if (
+          fixtureQuiescenceUnverified ||
+          mutationOutcomeAmbiguous ||
+          cleanupStatus === 'UNVERIFIED'
+        ) {
           failure = true;
           cleanupStatus = 'UNVERIFIED';
+          cleanupReason = mutationOutcomeAmbiguous
+            ? 'MUTATION_OUTCOME_AMBIGUOUS'
+            : (cleanupResult?.reason ?? 'FIXTURE_QUIESCENCE_TIMEOUT');
         }
       } catch {
         failure = true;
         cleanupStatus = 'FAIL';
+        cleanupReason = 'FIXTURE_CLEANUP_FAILED';
         evidence.failure = {
           stage: 'CLEANUP',
           code: 'FIXTURE_CLEANUP_FAILED',
@@ -2543,9 +2772,12 @@ export async function runQaHarness({
             : {}),
         };
       }
-    } else if (fixtureQuiescenceUnverified) {
+    } else if (fixtureQuiescenceUnverified || mutationOutcomeAmbiguous) {
       failure = true;
       cleanupStatus = 'UNVERIFIED';
+      cleanupReason = mutationOutcomeAmbiguous
+        ? 'MUTATION_OUTCOME_AMBIGUOUS'
+        : 'FIXTURE_QUIESCENCE_TIMEOUT';
     }
 
     if (
@@ -2569,6 +2801,23 @@ export async function runQaHarness({
       }
     }
 
+    if (cleanupStatus === 'UNVERIFIED') {
+      failure = true;
+      if (!evidence.failure) {
+        evidence.failure = {
+          stage: 'CLEANUP',
+          code: 'FIXTURE_CLEANUP_UNVERIFIED',
+        };
+      }
+      evidence.failure.cleanupStatus = 'UNVERIFIED';
+      evidence.failure.cleanupUncertainty = mutationOutcomeAmbiguous
+        ? 'Dispatched synthetic fixture mutation outcome was not confirmed before response failure or cancellation; point-in-time absence query cannot rule out a late server commit.'
+        : 'Synthetic fixture creation did not quiesce within the bounded timeout before cleanup verification.';
+      if (ambiguousMutations.length > 0) {
+        evidence.failure.ambiguousMutations = [...ambiguousMutations];
+      }
+    }
+
     evidence.cleanup = {
       attempted: cleanupAttempted,
       status: cleanupStatus,
@@ -2576,6 +2825,10 @@ export async function runQaHarness({
       applicationTerminated,
       profileRemoved,
       executionQuiesced,
+      ...(cleanupReason ? { reason: cleanupReason } : {}),
+      ...(ambiguousMutations.length > 0
+        ? { ambiguousMutations: [...ambiguousMutations] }
+        : {}),
     };
     evidence.overall = failure ? 'FAIL' : 'PASS';
 

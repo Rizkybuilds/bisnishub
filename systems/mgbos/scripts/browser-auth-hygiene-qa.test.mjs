@@ -1125,11 +1125,37 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     assert.equal(CANONICAL_APP_ORIGIN, 'http://127.0.0.1:3101');
   });
 
-  it('prevents subsequent fixture mutations and cleans up partial state when interrupted within quiescence limit across all fixture stages', async () => {
-    function createMockFixtureStore({ onMutation } = {}) {
-      const authUsers = new Map();
-      const appUsers = new Map();
-      const orgMembers = [];
+  it('prevents subsequent fixture mutations and cleans up partial state when interrupted before dispatch or while in flight within quiescence limit across all fixture stages', async () => {
+    function createMockFixtureStore({ onSeedLookup, onMutation } = {}) {
+      const authUsers = new Map([
+        [
+          '00000000-0000-4000-8000-000000000999',
+          {
+            id: '00000000-0000-4000-8000-000000000999',
+            email: 'unrelated-operator@example.test',
+          },
+        ],
+      ]);
+      const appUsers = new Map([
+        [
+          '00000000-0000-4000-8000-000000000888',
+          {
+            id: '00000000-0000-4000-8000-000000000888',
+            auth_user_id: '00000000-0000-4000-8000-000000000999',
+            email: 'unrelated-operator@example.test',
+            name: 'Unrelated Operator',
+            status: 'ACTIVE',
+          },
+        ],
+      ]);
+      const orgMembers = [
+        {
+          organization_id: '00000000-0000-4000-8000-000000000010',
+          user_id: '00000000-0000-4000-8000-000000000888',
+          role_id: '00000000-0000-4000-8000-000000000020',
+          status: 'ACTIVE',
+        },
+      ];
       const mutationCalls = [];
       let authSeq = 0;
       let profileSeq = 0;
@@ -1151,6 +1177,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           ]);
         }
         if (method === 'GET' && pathname === '/rest/v1/roles') {
+          if (onSeedLookup) {
+            await onSeedLookup();
+          }
           return jsonResponse(200, [
             { id: '00000000-0000-4000-8000-000000000020' },
           ]);
@@ -1159,25 +1188,12 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         if (method === 'POST' && pathname === '/auth/v1/admin/users') {
           mutationCalls.push('POST /auth/v1/admin/users');
           const body = JSON.parse(options.body);
-          if (onMutation) {
-            await onMutation({
-              stage: 'before_auth_commit',
-              options,
-              commit: () => {
-                authSeq += 1;
-                const id = `00000000-0000-4000-8000-00000000010${authSeq}`;
-                const user = { id, email: body.email };
-                authUsers.set(id, user);
-                return user;
-              },
-            });
-          }
           authSeq += 1;
           const id = `00000000-0000-4000-8000-00000000010${authSeq}`;
           const user = { id, email: body.email };
           authUsers.set(id, user);
           if (onMutation) {
-            await onMutation({ stage: 'after_auth_commit', options, user });
+            await onMutation({ stage: 'in_flight_auth', options, user });
           }
           return jsonResponse(200, user);
         }
@@ -1196,7 +1212,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           };
           appUsers.set(id, row);
           if (onMutation) {
-            await onMutation({ stage: 'after_profile_commit', options, row });
+            await onMutation({ stage: 'in_flight_profile', options, row });
           }
           return jsonResponse(201, [row]);
         }
@@ -1213,7 +1229,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           orgMembers.push(row);
           if (onMutation) {
             await onMutation({
-              stage: 'after_membership_commit',
+              stage: 'in_flight_membership',
               options,
               row,
             });
@@ -1303,52 +1319,108 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       };
     }
 
+    // 1. Normal acknowledged success: all three stages transition to CONFIRMED with zero ambiguity.
+    {
+      const normalStore = createMockFixtureStore();
+      const fixtureState = createFixtureState();
+      await createFixture('synthetic_service_key', {
+        fetchFn: normalStore.fetchFn,
+        fixture: fixtureState,
+        deferCleanup: true,
+      });
+      assert.equal(fixtureState.mutations.auth.status, 'CONFIRMED');
+      assert.equal(fixtureState.mutations.profile.status, 'CONFIRMED');
+      assert.equal(fixtureState.mutations.membership.status, 'CONFIRMED');
+      assert.equal(fixtureState.mutationOutcomeAmbiguous, false);
+      assert.deepEqual(fixtureState.ambiguousMutations, []);
+      const cleanupResult = await cleanup(
+        'synthetic_service_key',
+        fixtureState,
+        {
+          fetchFn: normalStore.fetchFn,
+        },
+      );
+      assert.deepEqual(cleanupResult, { attempted: true, status: 'PASS' });
+      assert.equal(normalStore.authUsers.size, 1);
+      assert.equal(normalStore.appUsers.size, 1);
+      assert.equal(normalStore.orgMembers.length, 1);
+    }
+
+    // 2. Interruption before mutation dispatch & interruption while mutation is in flight (settling within quiescence).
     const scenarios = [
       {
         label:
-          'signal before synthetic auth account creation (within quiescence)',
-        triggerStage: 'before_auth_commit',
-        abortBeforeCommit: true,
-        expectedMutations: ['POST /auth/v1/admin/users'],
+          'signal before synthetic auth mutation dispatch (during seed lookup)',
+        triggerOnSeedLookup: true,
+        expectedMutations: [],
+        expectedStageStatuses: {
+          auth: 'FAILED_BEFORE_DISPATCH',
+          profile: 'NOT_STARTED',
+          membership: 'NOT_STARTED',
+        },
       },
       {
         label:
-          'signal after auth account creation but before application profile completion (within quiescence)',
-        triggerStage: 'after_auth_commit',
-        abortBeforeCommit: false,
+          'signal while auth mutation is in flight (completes within quiescence; blocks profile dispatch)',
+        triggerStage: 'in_flight_auth',
         expectedMutations: ['POST /auth/v1/admin/users'],
+        expectedStageStatuses: {
+          auth: 'CONFIRMED',
+          profile: 'FAILED_BEFORE_DISPATCH',
+          membership: 'NOT_STARTED',
+        },
       },
       {
         label:
-          'signal during organization membership creation (within quiescence)',
-        triggerStage: 'after_membership_commit',
-        abortBeforeCommit: false,
+          'signal while profile mutation is in flight (completes within quiescence; blocks membership dispatch)',
+        triggerStage: 'in_flight_profile',
+        expectedMutations: ['POST /auth/v1/admin/users', 'POST /rest/v1/users'],
+        expectedStageStatuses: {
+          auth: 'CONFIRMED',
+          profile: 'CONFIRMED',
+          membership: 'FAILED_BEFORE_DISPATCH',
+        },
+      },
+      {
+        label:
+          'signal while organization membership mutation is in flight (completes within quiescence)',
+        triggerStage: 'in_flight_membership',
         expectedMutations: [
           'POST /auth/v1/admin/users',
           'POST /rest/v1/users',
           'POST /rest/v1/organization_members',
         ],
+        expectedStageStatuses: {
+          auth: 'CONFIRMED',
+          profile: 'CONFIRMED',
+          membership: 'CONFIRMED',
+        },
       },
     ];
 
     for (const scenario of scenarios) {
       await withTempDir(async (artifactDir) => {
+        let capturedFixture = null;
         const store = createMockFixtureStore({
+          onSeedLookup: async () => {
+            if (!scenario.triggerOnSeedLookup) return;
+            process.emit('SIGTERM', 'SIGTERM');
+            await new Promise((resolve) => setTimeout(resolve, 15));
+          },
           onMutation: async ({ stage }) => {
             if (stage !== scenario.triggerStage) {
               return;
             }
             process.emit('SIGTERM', 'SIGTERM');
             await new Promise((resolve) => setTimeout(resolve, 15));
-            if (scenario.abortBeforeCommit) {
-              throw new Error('Request aborted before server-side commit');
-            }
           },
         });
 
         const deps = defaultStubDependencies({
-          createFixtureFn: (key, options) =>
-            createFixture(key, { ...options, fetchFn: store.fetchFn }),
+          createFixtureFn: (key, options) => {
+            capturedFixture = options.fixture;
+            return createFixture(key, { ...options, fetchFn: store.fetchFn });
+          },
           cleanupFn: (key, fixture, options) =>
             cleanup(key, fixture, { ...options, fetchFn: store.fetchFn }),
         });
@@ -1376,14 +1448,45 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         assert.equal(evidence.cleanup.attempted, true, scenario.label);
         assert.equal(evidence.cleanup.status, 'PASS', scenario.label);
         assert.equal(evidence.cleanup.executionQuiesced, true, scenario.label);
+        assert.equal(
+          capturedFixture?.mutationOutcomeAmbiguous,
+          false,
+          scenario.label,
+        );
+        assert.equal(
+          capturedFixture?.mutations?.auth?.status,
+          scenario.expectedStageStatuses.auth,
+          scenario.label,
+        );
+        assert.equal(
+          capturedFixture?.mutations?.profile?.status,
+          scenario.expectedStageStatuses.profile,
+          scenario.label,
+        );
+        assert.equal(
+          capturedFixture?.mutations?.membership?.status,
+          scenario.expectedStageStatuses.membership,
+          scenario.label,
+        );
         assert.deepEqual(
           store.mutationCalls,
           scenario.expectedMutations,
           scenario.label,
         );
-        assert.equal(store.authUsers.size, 0, scenario.label);
-        assert.equal(store.appUsers.size, 0, scenario.label);
-        assert.equal(store.orgMembers.length, 0, scenario.label);
+        // Only the pre-existing unrelated operator records remain.
+        assert.equal(store.authUsers.size, 1, scenario.label);
+        assert.equal(
+          store.authUsers.has('00000000-0000-4000-8000-000000000999'),
+          true,
+          scenario.label,
+        );
+        assert.equal(store.appUsers.size, 1, scenario.label);
+        assert.equal(
+          store.appUsers.has('00000000-0000-4000-8000-000000000888'),
+          true,
+          scenario.label,
+        );
+        assert.equal(store.orgMembers.length, 1, scenario.label);
 
         const verification = verifyTraceFile(tracePath, {
           expectedMode: 'intentional-broken-login',
@@ -1747,8 +1850,12 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     });
   });
 
-  it('reconciles server-side commit followed by lost or aborted HTTP response using tightly scoped synthetic fixture identity', async () => {
-    for (const lostStage of ['auth_response_lost', 'profile_response_lost']) {
+  it('reconciles server-side commit followed by lost or aborted HTTP response using tightly scoped synthetic fixture identity while marking cleanup UNVERIFIED', async () => {
+    for (const lostStage of [
+      'auth_response_lost',
+      'profile_response_lost',
+      'membership_response_lost',
+    ]) {
       await withTempDir(async (artifactDir) => {
         const authUsers = new Map([
           [
@@ -1771,7 +1878,14 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
             },
           ],
         ]);
-        const orgMembers = [];
+        const orgMembers = [
+          {
+            organization_id: '00000000-0000-4000-8000-000000000010',
+            user_id: '00000000-0000-4000-8000-000000000888',
+            role_id: '00000000-0000-4000-8000-000000000020',
+            status: 'ACTIVE',
+          },
+        ];
         const mutationCalls = [];
 
         const jsonResponse = (status, payload) => ({
@@ -1842,6 +1956,12 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
             mutationCalls.push('POST /rest/v1/organization_members');
             const body = JSON.parse(options.body);
             orgMembers.push({ ...body });
+            if (lostStage === 'membership_response_lost') {
+              process.emit('SIGTERM', 'SIGTERM');
+              const abortErr = new Error('Socket hang up after server commit');
+              abortErr.name = 'AbortError';
+              throw abortErr;
+            }
             return jsonResponse(201, [body]);
           }
 
@@ -1918,10 +2038,10 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           throw new Error(`Unhandled mock endpoint: ${method} ${pathname}`);
         };
 
-        const trackedFixture = createFixtureState();
+        let capturedFixture = null;
         const deps = defaultStubDependencies({
           createFixtureFn: (key, options) => {
-            Object.assign(trackedFixture, options.fixture);
+            capturedFixture = options.fixture;
             return createFixture(key, { ...options, fetchFn });
           },
           cleanupFn: (key, fixture, options) =>
@@ -1944,15 +2064,27 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           lostStage,
         );
         assert.equal(evidence.cleanup.attempted, true, lostStage);
-        assert.equal(evidence.cleanup.status, 'PASS', lostStage);
+        assert.equal(evidence.cleanup.status, 'UNVERIFIED', lostStage);
+        assert.equal(
+          evidence.cleanup.reason,
+          'MUTATION_OUTCOME_AMBIGUOUS',
+          lostStage,
+        );
         assert.equal(evidence.cleanup.executionQuiesced, true, lostStage);
+        assert.equal(evidence.failure?.cleanupStatus, 'UNVERIFIED', lostStage);
 
         // No subsequent mutations were started after the lost response + signal.
         assert.deepEqual(
           mutationCalls,
           lostStage === 'auth_response_lost'
             ? ['POST /auth/v1/admin/users']
-            : ['POST /auth/v1/admin/users', 'POST /rest/v1/users'],
+            : lostStage === 'profile_response_lost'
+              ? ['POST /auth/v1/admin/users', 'POST /rest/v1/users']
+              : [
+                  'POST /auth/v1/admin/users',
+                  'POST /rest/v1/users',
+                  'POST /rest/v1/organization_members',
+                ],
           lostStage,
         );
 
@@ -1970,11 +2102,398 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           true,
           lostStage,
         );
-        assert.equal(orgMembers.length, 0, lostStage);
+        assert.equal(orgMembers.length, 1, lostStage);
 
         const rawTrace = readFileSync(tracePath, 'utf8');
-        assert.doesNotMatch(rawTrace, new RegExp(trackedFixture.email));
+        assert.doesNotMatch(rawTrace, new RegExp(capturedFixture.email));
+
+        const verification = verifyTraceFile(tracePath, {
+          expectedMode: 'intentional-broken-login',
+          exitStatus: 1,
+        });
+        assert.equal(verification.valid, false, lostStage);
+        assert.equal(
+          verification.code,
+          'FIXTURE_CLEANUP_NOT_VERIFIED',
+          lostStage,
+        );
       });
+    }
+  });
+
+  it('never reports cleanup PASS when client response fails before server commit or when server commits after early cleanup reconciliation across all three mutation stages', async () => {
+    const mutationStages = [
+      {
+        stageKey: 'auth',
+        endpoint: 'POST /auth/v1/admin/users',
+        expectedDispatched: ['POST /auth/v1/admin/users'],
+      },
+      {
+        stageKey: 'profile',
+        endpoint: 'POST /rest/v1/users',
+        expectedDispatched: [
+          'POST /auth/v1/admin/users',
+          'POST /rest/v1/users',
+        ],
+      },
+      {
+        stageKey: 'membership',
+        endpoint: 'POST /rest/v1/organization_members',
+        expectedDispatched: [
+          'POST /auth/v1/admin/users',
+          'POST /rest/v1/users',
+          'POST /rest/v1/organization_members',
+        ],
+      },
+    ];
+
+    for (const mode of [
+      'client_failure_before_commit',
+      'late_commit_after_cleanup_and_trace_finalization',
+    ]) {
+      for (const target of mutationStages) {
+        await withTempDir(async (artifactDir) => {
+          const label = `${mode}:${target.stageKey}`;
+          const authUsers = new Map([
+            [
+              '00000000-0000-4000-8000-000000000999',
+              {
+                id: '00000000-0000-4000-8000-000000000999',
+                email: 'unrelated-operator@example.test',
+              },
+            ],
+          ]);
+          const appUsers = new Map([
+            [
+              '00000000-0000-4000-8000-000000000888',
+              {
+                id: '00000000-0000-4000-8000-000000000888',
+                auth_user_id: '00000000-0000-4000-8000-000000000999',
+                email: 'unrelated-operator@example.test',
+                name: 'Unrelated Operator',
+                status: 'ACTIVE',
+              },
+            ],
+          ]);
+          const orgMembers = [
+            {
+              organization_id: '00000000-0000-4000-8000-000000000010',
+              user_id: '00000000-0000-4000-8000-000000000888',
+              role_id: '00000000-0000-4000-8000-000000000020',
+              status: 'ACTIVE',
+            },
+          ];
+          const mutationCalls = [];
+          let deferredServerCommit = null;
+          let cleanupObservedZeroTargetRecords = false;
+
+          const jsonResponse = (status, payload) => ({
+            ok: status >= 200 && status < 300,
+            status,
+            json: async () => payload,
+          });
+
+          const fetchFn = async (url, options = {}) => {
+            const parsed = new URL(String(url));
+            const method = options.method ?? 'GET';
+            const pathname = parsed.pathname;
+            const endpointKey = `${method} ${pathname}`;
+
+            if (method === 'GET' && pathname === '/rest/v1/organizations') {
+              return jsonResponse(200, [
+                { id: '00000000-0000-4000-8000-000000000010' },
+              ]);
+            }
+            if (method === 'GET' && pathname === '/rest/v1/roles') {
+              return jsonResponse(200, [
+                { id: '00000000-0000-4000-8000-000000000020' },
+              ]);
+            }
+
+            if (method === 'POST') {
+              mutationCalls.push(endpointKey);
+            }
+
+            if (endpointKey === 'POST /auth/v1/admin/users') {
+              const body = JSON.parse(options.body);
+              const user = {
+                id: '00000000-0000-4000-8000-000000000701',
+                email: body.email,
+              };
+              if (target.stageKey === 'auth') {
+                if (
+                  mode === 'late_commit_after_cleanup_and_trace_finalization'
+                ) {
+                  deferredServerCommit = () => {
+                    authUsers.set(user.id, user);
+                  };
+                }
+                process.emit('SIGTERM', 'SIGTERM');
+                const err = new Error(
+                  'Client HTTP response failed before server commit outcome known',
+                );
+                err.name = 'AbortError';
+                throw err;
+              }
+              authUsers.set(user.id, user);
+              return jsonResponse(200, user);
+            }
+
+            if (endpointKey === 'POST /rest/v1/users') {
+              const body = JSON.parse(options.body);
+              const row = {
+                id: '00000000-0000-4000-8000-000000000702',
+                auth_user_id: body.auth_user_id,
+                email: body.email,
+                name: body.name,
+                status: body.status,
+              };
+              if (target.stageKey === 'profile') {
+                if (
+                  mode === 'late_commit_after_cleanup_and_trace_finalization'
+                ) {
+                  deferredServerCommit = () => {
+                    appUsers.set(row.id, row);
+                  };
+                }
+                process.emit('SIGTERM', 'SIGTERM');
+                const err = new Error(
+                  'Client HTTP response failed before server commit outcome known',
+                );
+                err.name = 'AbortError';
+                throw err;
+              }
+              appUsers.set(row.id, row);
+              return jsonResponse(201, [row]);
+            }
+
+            if (endpointKey === 'POST /rest/v1/organization_members') {
+              const body = JSON.parse(options.body);
+              const row = { ...body };
+              if (target.stageKey === 'membership') {
+                if (
+                  mode === 'late_commit_after_cleanup_and_trace_finalization'
+                ) {
+                  deferredServerCommit = () => {
+                    orgMembers.push(row);
+                  };
+                }
+                process.emit('SIGTERM', 'SIGTERM');
+                const err = new Error(
+                  'Client HTTP response failed before server commit outcome known',
+                );
+                err.name = 'AbortError';
+                throw err;
+              }
+              orgMembers.push(row);
+              return jsonResponse(201, [row]);
+            }
+
+            if (method === 'GET' && pathname === '/auth/v1/admin/users') {
+              if (target.stageKey === 'auth' && authUsers.size === 1) {
+                cleanupObservedZeroTargetRecords = true;
+              }
+              return jsonResponse(200, {
+                users: Array.from(authUsers.values()),
+              });
+            }
+
+            if (pathname.startsWith('/auth/v1/admin/users/')) {
+              const authId = pathname.slice('/auth/v1/admin/users/'.length);
+              if (method === 'DELETE') {
+                const existed = authUsers.delete(authId);
+                return jsonResponse(existed ? 200 : 404, {});
+              }
+              if (method === 'GET') {
+                return authUsers.has(authId)
+                  ? jsonResponse(200, authUsers.get(authId))
+                  : jsonResponse(404, {});
+              }
+            }
+
+            if (pathname === '/rest/v1/users') {
+              const idFilter = parsed.searchParams.get('id');
+              const emailFilter = parsed.searchParams.get('email');
+              const matchRow = (row) => {
+                if (idFilter?.startsWith('eq.')) {
+                  return row.id === idFilter.slice(3);
+                }
+                if (emailFilter?.startsWith('eq.')) {
+                  return row.email === emailFilter.slice(3);
+                }
+                return true;
+              };
+              if (method === 'GET') {
+                const matched = Array.from(appUsers.values()).filter(matchRow);
+                if (target.stageKey === 'profile' && matched.length === 0) {
+                  cleanupObservedZeroTargetRecords = true;
+                }
+                return jsonResponse(200, matched);
+              }
+              if (method === 'DELETE') {
+                for (const [id, row] of appUsers.entries()) {
+                  if (matchRow(row)) {
+                    appUsers.delete(id);
+                  }
+                }
+                return { ok: true, status: 204, json: async () => null };
+              }
+            }
+
+            if (pathname === '/rest/v1/organization_members') {
+              const userIdFilter = parsed.searchParams.get('user_id');
+              const targetUserId = userIdFilter?.startsWith('eq.')
+                ? userIdFilter.slice(3)
+                : null;
+              if (method === 'GET') {
+                const matched = orgMembers.filter((m) =>
+                  targetUserId ? m.user_id === targetUserId : true,
+                );
+                if (target.stageKey === 'membership' && matched.length === 0) {
+                  cleanupObservedZeroTargetRecords = true;
+                }
+                return jsonResponse(200, matched);
+              }
+              if (method === 'DELETE') {
+                for (let i = orgMembers.length - 1; i >= 0; i -= 1) {
+                  if (!targetUserId || orgMembers[i].user_id === targetUserId) {
+                    orgMembers.splice(i, 1);
+                  }
+                }
+                return { ok: true, status: 204, json: async () => null };
+              }
+            }
+
+            throw new Error(`Unhandled mock endpoint: ${endpointKey}`);
+          };
+
+          let capturedFixture = null;
+          const deps = defaultStubDependencies({
+            createFixtureFn: (key, options) => {
+              capturedFixture = options.fixture;
+              return createFixture(key, { ...options, fetchFn });
+            },
+            cleanupFn: (key, fixture, options) =>
+              cleanup(key, fixture, { ...options, fetchFn }),
+          });
+
+          const { evidence, failure, tracePath } = await runQaHarness({
+            ...deps,
+            artifactDir,
+            negativeControl: true,
+            quiescenceTimeoutMs: 300,
+          });
+
+          const traceBeforeLateCommit = readFileSync(tracePath, 'utf8');
+          const evidenceSnapshotBeforeLateCommit = JSON.stringify(evidence);
+
+          // Cleanup queried the server while 0 records existed for the target stage,
+          // and deleted all prior confirmed stage records while leaving unrelated records intact.
+          assert.equal(cleanupObservedZeroTargetRecords, true, label);
+          assert.equal(authUsers.size, 1, label);
+          assert.equal(
+            authUsers.has('00000000-0000-4000-8000-000000000999'),
+            true,
+            label,
+          );
+          assert.equal(appUsers.size, 1, label);
+          assert.equal(
+            appUsers.has('00000000-0000-4000-8000-000000000888'),
+            true,
+            label,
+          );
+          assert.equal(orgMembers.length, 1, label);
+
+          // Now execute the late server commit AFTER cleanup and trace finalization.
+          if (deferredServerCommit) {
+            deferredServerCommit();
+          }
+
+          // Never reports cleanup PASS on an ambiguous mutation outcome.
+          assert.equal(failure, true, label);
+          assert.equal(evidence.overall, 'FAIL', label);
+          assert.equal(evidence.cleanup.attempted, true, label);
+          assert.equal(evidence.cleanup.status, 'UNVERIFIED', label);
+          assert.notEqual(evidence.cleanup.status, 'PASS', label);
+          assert.equal(
+            evidence.cleanup.reason,
+            'MUTATION_OUTCOME_AMBIGUOUS',
+            label,
+          );
+          assert.deepEqual(
+            evidence.cleanup.ambiguousMutations,
+            [target.stageKey],
+            label,
+          );
+          assert.equal(evidence.cleanup.executionQuiesced, true, label);
+          assert.equal(evidence.failure?.cleanupStatus, 'UNVERIFIED', label);
+          assert.equal(
+            typeof evidence.failure?.cleanupUncertainty,
+            'string',
+            label,
+          );
+          assert.deepEqual(
+            evidence.failure?.ambiguousMutations,
+            [target.stageKey],
+            label,
+          );
+
+          // Sticky mutation tracking state on fixture object.
+          assert.equal(capturedFixture?.mutationOutcomeAmbiguous, true, label);
+          assert.equal(capturedFixture?.pendingMutation, false, label);
+          assert.equal(
+            capturedFixture?.mutations?.[target.stageKey]?.status,
+            'AMBIGUOUS',
+            label,
+          );
+          assert.equal(
+            capturedFixture?.mutations?.[target.stageKey]?.dispatched,
+            true,
+            label,
+          );
+          assert.equal(
+            capturedFixture?.mutations?.[target.stageKey]?.confirmed,
+            false,
+            label,
+          );
+          assert.equal(
+            capturedFixture?.mutations?.[target.stageKey]?.ambiguous,
+            true,
+            label,
+          );
+
+          // No subsequent fixture mutation is dispatched after cancellation.
+          assert.deepEqual(mutationCalls, target.expectedDispatched, label);
+
+          // Trace is sanitized and never mutated after finalization.
+          assert.doesNotMatch(
+            traceBeforeLateCommit,
+            new RegExp(capturedFixture.email),
+            label,
+          );
+          assert.equal(
+            readFileSync(tracePath, 'utf8'),
+            traceBeforeLateCommit,
+            label,
+          );
+          assert.equal(
+            JSON.stringify(evidence),
+            evidenceSnapshotBeforeLateCommit,
+            label,
+          );
+
+          const verification = verifyTraceFile(tracePath, {
+            expectedMode: 'intentional-broken-login',
+            exitStatus: 1,
+          });
+          assert.equal(verification.valid, false, label);
+          assert.equal(
+            verification.code,
+            'FIXTURE_CLEANUP_NOT_VERIFIED',
+            label,
+          );
+        });
+      }
     }
   });
 
@@ -2080,16 +2599,92 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         expectedFailureCode: 'SUBPROCESS_TEARDOWN_FAILED',
         expectedMutations: ['POST /auth/v1/admin/users', 'POST /rest/v1/users'],
       },
+      {
+        label:
+          'CLI child process over loopback HTTP where server commits synthetic auth mutation after client disconnect and cleanup query',
+        stallEndpoint: 'POST /auth/v1/admin/users',
+        lateCommitAfterDisconnect: true,
+        quiescenceTimeoutMs: 450,
+        fixtureDrainTimeoutMs: 450,
+        expectedCleanupStatus: 'UNVERIFIED',
+        expectedCleanupReason: 'MUTATION_OUTCOME_AMBIGUOUS',
+        expectedAmbiguousMutations: ['auth'],
+        expectedQuiesced: true,
+        expectedFailureStage: 'FIXTURE_CREATION',
+        expectedFailureCode: 'PROCESS_SIGNAL_TERMINATED',
+        expectedMutations: ['POST /auth/v1/admin/users'],
+      },
+      {
+        label:
+          'CLI child process over loopback HTTP where server commits synthetic profile mutation after client disconnect and cleanup query',
+        stallEndpoint: 'POST /rest/v1/users',
+        lateCommitAfterDisconnect: true,
+        quiescenceTimeoutMs: 450,
+        fixtureDrainTimeoutMs: 450,
+        expectedCleanupStatus: 'UNVERIFIED',
+        expectedCleanupReason: 'MUTATION_OUTCOME_AMBIGUOUS',
+        expectedAmbiguousMutations: ['profile'],
+        expectedQuiesced: true,
+        expectedFailureStage: 'FIXTURE_CREATION',
+        expectedFailureCode: 'PROCESS_SIGNAL_TERMINATED',
+        expectedMutations: ['POST /auth/v1/admin/users', 'POST /rest/v1/users'],
+      },
+      {
+        label:
+          'CLI child process over loopback HTTP where server commits synthetic membership mutation after client disconnect and cleanup query',
+        stallEndpoint: 'POST /rest/v1/organization_members',
+        lateCommitAfterDisconnect: true,
+        quiescenceTimeoutMs: 450,
+        fixtureDrainTimeoutMs: 450,
+        expectedCleanupStatus: 'UNVERIFIED',
+        expectedCleanupReason: 'MUTATION_OUTCOME_AMBIGUOUS',
+        expectedAmbiguousMutations: ['membership'],
+        expectedQuiesced: true,
+        expectedFailureStage: 'FIXTURE_CREATION',
+        expectedFailureCode: 'PROCESS_SIGNAL_TERMINATED',
+        expectedMutations: [
+          'POST /auth/v1/admin/users',
+          'POST /rest/v1/users',
+          'POST /rest/v1/organization_members',
+        ],
+      },
     ];
 
     for (const scenario of cliScenarios) {
       await withTempDir(async (tempRoot) => {
-        const authUsers = new Map();
-        const appUsers = new Map();
-        const orgMembers = [];
+        const authUsers = new Map([
+          [
+            '00000000-0000-4000-8000-000000000999',
+            {
+              id: '00000000-0000-4000-8000-000000000999',
+              email: 'unrelated-operator@example.test',
+            },
+          ],
+        ]);
+        const appUsers = new Map([
+          [
+            '00000000-0000-4000-8000-000000000888',
+            {
+              id: '00000000-0000-4000-8000-000000000888',
+              auth_user_id: '00000000-0000-4000-8000-000000000999',
+              email: 'unrelated-operator@example.test',
+              name: 'Unrelated Operator',
+              status: 'ACTIVE',
+            },
+          ],
+        ]);
+        const orgMembers = [
+          {
+            organization_id: '00000000-0000-4000-8000-000000000010',
+            user_id: '00000000-0000-4000-8000-000000000888',
+            role_id: '00000000-0000-4000-8000-000000000020',
+            status: 'ACTIVE',
+          },
+        ];
         const mutationCalls = [];
         let activeChild = null;
         let signalSent = false;
+        let deferredLoopbackCommit = null;
 
         const sendJson = (res, status, payload) => {
           const raw =
@@ -2141,6 +2736,47 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
 
           if (endpointKey === scenario.stallEndpoint && !signalSent) {
             signalSent = true;
+            if (scenario.lateCommitAfterDisconnect) {
+              if (endpointKey === 'POST /auth/v1/admin/users') {
+                const user = {
+                  id: '00000000-0000-4000-8000-000000000511',
+                  email: body.email,
+                };
+                deferredLoopbackCommit = () => {
+                  authUsers.set(user.id, user);
+                };
+              } else if (endpointKey === 'POST /rest/v1/users') {
+                const row = {
+                  id: '00000000-0000-4000-8000-000000000522',
+                  auth_user_id: body.auth_user_id,
+                  email: body.email,
+                  name: body.name,
+                  status: body.status,
+                };
+                deferredLoopbackCommit = () => {
+                  appUsers.set(row.id, row);
+                };
+              } else if (endpointKey === 'POST /rest/v1/organization_members') {
+                deferredLoopbackCommit = () => {
+                  orgMembers.push({ ...body });
+                };
+              }
+              if (activeChild) {
+                if (process.platform !== 'win32') {
+                  activeChild.kill('SIGTERM');
+                } else if (activeChild.connected) {
+                  activeChild.send({
+                    type: 'QA_TEST_SIGNAL',
+                    signal: 'SIGTERM',
+                  });
+                }
+              }
+              // Destroy socket before committing so client HTTP response fails while
+              // server commit is still pending (commits after client disconnects & exits).
+              res.destroy();
+              return;
+            }
+
             setTimeout(() => {
               if (!activeChild) return;
               if (process.platform !== 'win32') {
@@ -2358,20 +2994,44 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           });
 
           // At the exact moment the CLI child process exits via process.exit(exitCode),
-          // all compensating cleanup over loopback HTTP must already have completed.
+          // all compensating cleanup over loopback HTTP must already have completed,
+          // and unrelated operator records must remain intact.
           assert.equal(exitResult.code, 1, scenario.label);
           assert.deepEqual(
             mutationCalls,
             scenario.expectedMutations,
             scenario.label,
           );
-          assert.equal(authUsers.size, 0, scenario.label);
-          assert.equal(appUsers.size, 0, scenario.label);
-          assert.equal(orgMembers.length, 0, scenario.label);
+          assert.equal(authUsers.size, 1, scenario.label);
+          assert.equal(
+            authUsers.has('00000000-0000-4000-8000-000000000999'),
+            true,
+            scenario.label,
+          );
+          assert.equal(appUsers.size, 1, scenario.label);
+          assert.equal(
+            appUsers.has('00000000-0000-4000-8000-000000000888'),
+            true,
+            scenario.label,
+          );
+          assert.equal(orgMembers.length, 1, scenario.label);
 
           const tracePath = path.join(artifactDir, 'trace.json');
           assert.equal(existsSync(tracePath), true, scenario.label);
+          const rawTraceBeforeLateCommit = readFileSync(tracePath, 'utf8');
+
+          // If this scenario tests server commit after client disconnect & cleanup query,
+          // trigger the late server commit now and verify trace never claimed cleanup PASS.
+          if (deferredLoopbackCommit) {
+            deferredLoopbackCommit();
+          }
+
           const trace = JSON.parse(readFileSync(tracePath, 'utf8'));
+          assert.equal(
+            readFileSync(tracePath, 'utf8'),
+            rawTraceBeforeLateCommit,
+            scenario.label,
+          );
           assert.equal(trace.overall, 'FAIL', scenario.label);
           assert.equal(trace.cleanup?.attempted, true, scenario.label);
           assert.equal(
@@ -2379,6 +3039,33 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
             scenario.expectedCleanupStatus,
             scenario.label,
           );
+          if (scenario.expectedCleanupReason) {
+            assert.equal(
+              trace.cleanup?.reason,
+              scenario.expectedCleanupReason,
+              scenario.label,
+            );
+            assert.deepEqual(
+              trace.cleanup?.ambiguousMutations,
+              scenario.expectedAmbiguousMutations,
+              scenario.label,
+            );
+            assert.equal(
+              trace.failure?.cleanupStatus,
+              'UNVERIFIED',
+              scenario.label,
+            );
+            const verification = verifyTraceFile(tracePath, {
+              expectedMode: 'intentional-broken-login',
+              exitStatus: 1,
+            });
+            assert.equal(verification.valid, false, scenario.label);
+            assert.equal(
+              verification.code,
+              'FIXTURE_CLEANUP_NOT_VERIFIED',
+              scenario.label,
+            );
+          }
           assert.equal(
             trace.cleanup?.executionQuiesced,
             scenario.expectedQuiesced,
