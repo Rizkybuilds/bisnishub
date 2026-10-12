@@ -158,10 +158,13 @@ async function cleanup(key, fixture) {
   }
   if (fixture.auth) {
     await attempt(async () => {
-      const response = await fetch(`${api}/auth/v1/admin/users/${fixture.auth}`, {
-        headers: { apikey: key, Authorization: `Bearer ${key}` },
-        signal: AbortSignal.timeout(15000),
-      });
+      const response = await fetch(
+        `${api}/auth/v1/admin/users/${fixture.auth}`,
+        {
+          headers: { apikey: key, Authorization: `Bearer ${key}` },
+          signal: AbortSignal.timeout(15000),
+        },
+      );
       assert.equal(response.status, 404, 'Synthetic auth user must be absent');
     });
   }
@@ -613,15 +616,16 @@ async function main() {
     const message = error instanceof Error ? error.message : '';
     evidence.failure = {
       stage,
-      code: message === 'Timed out: Authenticated dashboard'
-        ? 'AUTH_VALID_LOGIN_DID_NOT_COMPLETE'
-        : message.startsWith('Authentication invariant not satisfied:')
-          ? 'AUTH_ASSERTION_FAILED'
-          : stage === 'APP_BUILD'
-            ? 'BUILD_FAILED'
-            : stage === 'FIXTURE_CREATION'
-              ? 'FIXTURE_CREATION_FAILED'
-              : 'QA_EXECUTION_FAILED',
+      code:
+        message === 'Timed out: Authenticated dashboard'
+          ? 'AUTH_VALID_LOGIN_DID_NOT_COMPLETE'
+          : message.startsWith('Authentication invariant not satisfied:')
+            ? 'AUTH_ASSERTION_FAILED'
+            : stage === 'APP_BUILD'
+              ? 'BUILD_FAILED'
+              : stage === 'FIXTURE_CREATION'
+                ? 'FIXTURE_CREATION_FAILED'
+                : 'QA_EXECUTION_FAILED',
     };
   } finally {
     browser?.cdp.close();
