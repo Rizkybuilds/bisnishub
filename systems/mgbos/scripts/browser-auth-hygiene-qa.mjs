@@ -51,13 +51,20 @@ function localStatus() {
       throw new Error('Refusing a nonlocal Supabase target');
     }
   }
-  const binary = path.join(root, 'node_modules', 'supabase', 'dist', 'supabase.js');
+  const binary = path.join(
+    root,
+    'node_modules',
+    'supabase',
+    'dist',
+    'supabase.js',
+  );
   const output = spawnSync(
     process.execPath,
     [binary, 'status', '-o', 'env', '--workdir', root],
     { cwd: root, encoding: 'utf8', timeout: 30000 },
   );
-  if (output.status !== 0) throw new Error('Disposable Supabase is unavailable');
+  if (output.status !== 0)
+    throw new Error('Disposable Supabase is unavailable');
   const parsed = Object.fromEntries(
     output.stdout.split(/\r?\n/).flatMap((line) => {
       const match = line.match(/^([A-Z_]+)=(.*)$/);
@@ -69,9 +76,7 @@ function localStatus() {
   }
   if (
     parsed.DB_URL &&
-    !/^postgres(?:ql)?:\/\/(?:[^@]+@)?127\.0\.0\.1:55432\//.test(
-      parsed.DB_URL,
-    )
+    !/^postgres(?:ql)?:\/\/(?:[^@]+@)?127\.0\.0\.1:55432\//.test(parsed.DB_URL)
   ) {
     throw new Error('Refusing nonlocal database identity');
   }
@@ -98,7 +103,9 @@ async function db(key, route, { method = 'GET', body, schema } = {}) {
     signal: AbortSignal.timeout(15000),
   });
   if (!response.ok) {
-    throw new Error(`Disposable database operation failed: HTTP ${response.status}`);
+    throw new Error(
+      `Disposable database operation failed: HTTP ${response.status}`,
+    );
   }
   return response.status === 204 ? null : response.json();
 }
@@ -106,10 +113,14 @@ async function db(key, route, { method = 'GET', body, schema } = {}) {
 async function cleanup(key, fixture) {
   if (!key || !fixture) return;
   if (fixture.profile) {
-    await db(key, `/rest/v1/organization_members?user_id=eq.${fixture.profile}`, {
-      method: 'DELETE',
-      schema: 'app',
-    });
+    await db(
+      key,
+      `/rest/v1/organization_members?user_id=eq.${fixture.profile}`,
+      {
+        method: 'DELETE',
+        schema: 'app',
+      },
+    );
     await db(key, `/rest/v1/users?id=eq.${fixture.profile}`, {
       method: 'DELETE',
       schema: 'app',
@@ -331,12 +342,16 @@ async function startBrowser() {
   );
   try {
     const filename = path.join(profile, 'DevToolsActivePort');
-    const port = await until(() => {
-      if (browser.exitCode !== null) return false;
-      return existsSync(filename)
-        ? Number(readFileSync(filename, 'utf8').split('\n')[0])
-        : false;
-    }, 'Local browser debugging endpoint', 20000);
+    const port = await until(
+      () => {
+        if (browser.exitCode !== null) return false;
+        return existsSync(filename)
+          ? Number(readFileSync(filename, 'utf8').split('\n')[0])
+          : false;
+      },
+      'Local browser debugging endpoint',
+      20000,
+    );
     const response = await fetch(
       `http://127.0.0.1:${port}/json/new?${encodeURIComponent(`${app}/login`)}`,
       { method: 'PUT' },
