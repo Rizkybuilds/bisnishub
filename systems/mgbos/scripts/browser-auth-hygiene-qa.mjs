@@ -57,7 +57,42 @@ export class QaError extends Error {
   }
 }
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+function throwIfSignalAborted(signal, fallbackStage = 'BROWSER_AUTH') {
+  if (!signal?.aborted) return;
+  if (signal.reason instanceof QaError) {
+    throw signal.reason;
+  }
+  throw new QaError(
+    fallbackStage,
+    'PROCESS_SIGNAL_TERMINATED',
+    'QA harness execution aborted',
+  );
+}
+
+const sleep = (ms, signal, fallbackStage = 'BROWSER_AUTH') =>
+  new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      try {
+        throwIfSignalAborted(signal, fallbackStage);
+      } catch (error) {
+        reject(error);
+      }
+      return;
+    }
+    const onAbort = () => {
+      clearTimeout(timer);
+      try {
+        throwIfSignalAborted(signal, fallbackStage);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    const timer = setTimeout(() => {
+      signal?.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    signal?.addEventListener('abort', onAbort, { once: true });
+  });
 
 export function assertProcessAlive(proc, processName, stage) {
   if (!proc) return;
@@ -75,28 +110,37 @@ export function assertProcessAlive(proc, processName, stage) {
   }
 }
 
-export async function until(fn, label, ms = 30000, { checkHealth } = {}) {
+export async function until(
+  fn,
+  label,
+  ms = 30000,
+  { checkHealth, signal, stage = 'BROWSER_AUTH' } = {},
+) {
   const deadline = Date.now() + ms;
   let lastError;
   while (Date.now() < deadline) {
+    throwIfSignalAborted(signal, stage);
     if (checkHealth) {
       await checkHealth();
     }
     try {
       const result = await fn();
+      throwIfSignalAborted(signal, stage);
       if (result) return result;
     } catch (error) {
       if (error instanceof QaError) {
         throw error;
       }
+      throwIfSignalAborted(signal, stage);
       // Page navigations temporarily destroy the execution context.
       lastError = error;
     }
     if (checkHealth) {
       await checkHealth();
     }
-    await sleep(250);
+    await sleep(250, signal, stage);
   }
+  throwIfSignalAborted(signal, stage);
   if (checkHealth) {
     await checkHealth();
   }
@@ -538,8 +582,10 @@ class Cdp {
     return response.result?.value;
   }
 
-  async goto(route, expected = route, { checkHealth } = {}) {
+  async goto(route, expected = route, { checkHealth, signal } = {}) {
+    throwIfSignalAborted(signal, 'BROWSER_AUTH');
     const before = await this.eval('performance.timeOrigin');
+    throwIfSignalAborted(signal, 'BROWSER_AUTH');
     await this.send('Page.navigate', { url: `${this.app}${route}` });
     await until(
       async () => {
@@ -556,7 +602,7 @@ class Cdp {
       },
       `Navigation ${route}`,
       30000,
-      { checkHealth },
+      { checkHealth, signal, stage: 'BROWSER_AUTH' },
     );
   }
 
@@ -591,6 +637,13 @@ class Cdp {
     this.closeReason = this.closeReason ?? 'explicit_close';
     for (const [, entry] of this.pending) {
       clearTimeout(entry.timer);
+      entry.reject(
+        new QaError(
+          'BROWSER_AUTH',
+          'CDP_CONNECTION_CLOSED',
+          `Chromium DevTools connection closed (${this.closeReason})`,
+        ),
+      );
     }
     this.pending.clear();
     try {
@@ -630,7 +683,9 @@ export async function startBrowser({
   app = CANONICAL_APP_ORIGIN,
   spawnFn = spawn,
   fetchFn = fetch,
+  signal,
 } = {}) {
+  throwIfSignalAborted(signal, 'BROWSER_START');
   const profile = mkdtempSync(path.join(tmpdir(), 'mgbos-ci-cdp-'));
   const browser = spawnFn(
     chromeExecutable(),
@@ -673,10 +728,12 @@ export async function startBrowser({
       },
       'Local browser debugging endpoint',
       20000,
+      { signal, stage: 'BROWSER_START' },
     );
+    throwIfSignalAborted(signal, 'BROWSER_START');
     const response = await fetchFn(
       `http://127.0.0.1:${port}/json/new?${encodeURIComponent(`${app}/login`)}`,
-      { method: 'PUT' },
+      { method: 'PUT', signal },
     );
     assert.ok(response.ok, 'Browser debugging target unavailable');
     const target = await response.json();
@@ -686,6 +743,7 @@ export async function startBrowser({
     );
     const cdp = new Cdp(target.webSocketDebuggerUrl, { app });
     await cdp.connect();
+    throwIfSignalAborted(signal, 'BROWSER_START');
     return { browser, cdp, profile };
   } catch (error) {
     await terminateSubprocess(browser, {
@@ -962,6 +1020,146 @@ function recordResult(cases, caseId, passed, proof = {}) {
   }
 }
 
+const MUTATING_ARRAY_METHODS = new Set([
+  'copyWithin',
+  'fill',
+  'pop',
+  'push',
+  'reverse',
+  'shift',
+  'sort',
+  'splice',
+  'unshift',
+]);
+
+async function raceWithSignal(fn, signal, assertActive) {
+  assertActive();
+  let onAbort;
+  const abortPromise = new Promise((_, reject) => {
+    onAbort = () => {
+      try {
+        assertActive();
+      } catch (error) {
+        reject(error);
+        return;
+      }
+      reject(
+        new QaError(
+          'BROWSER_AUTH',
+          'PROCESS_SIGNAL_TERMINATED',
+          'QA harness execution aborted',
+        ),
+      );
+    };
+    if (signal?.aborted) {
+      onAbort();
+      return;
+    }
+    signal?.addEventListener('abort', onAbort, { once: true });
+  });
+  abortPromise.catch(() => {});
+  const operationPromise = Promise.resolve().then(() => {
+    assertActive();
+    return fn();
+  });
+  operationPromise.catch(() => {});
+  try {
+    const result = await Promise.race([operationPromise, abortPromise]);
+    assertActive();
+    return result;
+  } finally {
+    if (onAbort) {
+      signal?.removeEventListener('abort', onAbort);
+    }
+  }
+}
+
+function createGuardedCdp(rawCdp, assertActive, signal) {
+  if (!rawCdp) return rawCdp;
+  return {
+    assertConnected(stage = 'BROWSER_AUTH') {
+      assertActive();
+      return rawCdp.assertConnected?.(stage);
+    },
+    posts(route) {
+      assertActive();
+      return rawCdp.posts(route);
+    },
+    async send(method, params = {}) {
+      return raceWithSignal(
+        () => rawCdp.send(method, params),
+        signal,
+        assertActive,
+      );
+    },
+    async eval(expression) {
+      return raceWithSignal(
+        () => rawCdp.eval(expression),
+        signal,
+        assertActive,
+      );
+    },
+    async goto(route, expected = route, options = {}) {
+      return raceWithSignal(
+        () => rawCdp.goto(route, expected, { ...options, signal }),
+        signal,
+        assertActive,
+      );
+    },
+    async session() {
+      return raceWithSignal(() => rawCdp.session(), signal, assertActive);
+    },
+    async screenshot(file) {
+      return raceWithSignal(
+        () => rawCdp.screenshot(file),
+        signal,
+        assertActive,
+      );
+    },
+    close() {
+      return rawCdp.close?.();
+    },
+  };
+}
+
+function createGuardedCases(rawCases, assertActive) {
+  return new Proxy(rawCases, {
+    get(target, prop, receiver) {
+      const value = Reflect.get(target, prop, receiver);
+      if (typeof prop === 'string' && MUTATING_ARRAY_METHODS.has(prop)) {
+        return (...args) => {
+          assertActive();
+          return value.apply(target, args);
+        };
+      }
+      return typeof value === 'function' ? value.bind(target) : value;
+    },
+    set(target, prop, value, receiver) {
+      assertActive();
+      return Reflect.set(target, prop, value, receiver);
+    },
+    defineProperty(target, prop, descriptor) {
+      assertActive();
+      return Reflect.defineProperty(target, prop, descriptor);
+    },
+    deleteProperty(target, prop) {
+      assertActive();
+      return Reflect.deleteProperty(target, prop);
+    },
+  });
+}
+
+function deepFreeze(value) {
+  if (!value || typeof value !== 'object' || Object.isFrozen(value)) {
+    return value;
+  }
+  Object.freeze(value);
+  for (const key of Object.keys(value)) {
+    deepFreeze(value[key]);
+  }
+  return value;
+}
+
 export async function runBrowser(
   cdp,
   fixture,
@@ -972,9 +1170,11 @@ export async function runBrowser(
     app = CANONICAL_APP_ORIGIN,
     checkHealth,
     loginTimeoutMs = 30000,
+    signal,
   },
 ) {
   const ensureHealthy = async () => {
+    throwIfSignalAborted(signal, 'BROWSER_AUTH');
     if (checkHealth) await checkHealth();
     if (typeof cdp.assertConnected === 'function') {
       cdp.assertConnected('BROWSER_AUTH');
@@ -983,12 +1183,12 @@ export async function runBrowser(
 
   await ensureHealthy();
   await cdp.send('Network.clearBrowserCookies');
-  await cdp.goto('/login', '/login', { checkHealth: ensureHealthy });
+  await cdp.goto('/login', '/login', { checkHealth: ensureHealthy, signal });
   await until(
     () => cdp.eval('Boolean(document.querySelector(\'input[name="email"]\'))'),
     'Login form',
     30000,
-    { checkHealth: ensureHealthy },
+    { checkHealth: ensureHealthy, signal, stage: 'BROWSER_AUTH' },
   );
 
   const empty = await cdp.eval(`(() => {
@@ -1037,7 +1237,7 @@ export async function runBrowser(
       ),
     'Invalid login error',
     30000,
-    { checkHealth: ensureHealthy },
+    { checkHealth: ensureHealthy, signal, stage: 'BROWSER_AUTH' },
   );
   const invalidPostObserved = cdp.posts('/login') > invalidPosts;
   recordResult(
@@ -1048,7 +1248,7 @@ export async function runBrowser(
   );
 
   for (const route of ['/dashboard', '/orders', '/exceptions']) {
-    await cdp.goto(route, '/login', { checkHealth: ensureHealthy });
+    await cdp.goto(route, '/login', { checkHealth: ensureHealthy, signal });
   }
   recordResult(cases, 'AUTH-DENY-01', (await cdp.session()).length === 0, {
     routes: ['/dashboard', '/orders', '/exceptions'],
@@ -1101,7 +1301,7 @@ export async function runBrowser(
       },
       'Authenticated dashboard',
       loginTimeoutMs,
-      { checkHealth: ensureHealthy },
+      { checkHealth: ensureHealthy, signal, stage: 'BROWSER_AUTH' },
     );
   } catch (error) {
     if (error instanceof QaError) {
@@ -1177,6 +1377,8 @@ export async function runBrowser(
     30000,
     {
       checkHealth: ensureHealthy,
+      signal,
+      stage: 'BROWSER_AUTH',
     },
   );
   const logoutPostObserved = cdp.posts('/dashboard') > logoutPosts;
@@ -1187,7 +1389,10 @@ export async function runBrowser(
     { route: '/login', logoutPostObserved, sessionCookiePresent: false },
   );
 
-  await cdp.goto('/dashboard', '/login', { checkHealth: ensureHealthy });
+  await cdp.goto('/dashboard', '/login', {
+    checkHealth: ensureHealthy,
+    signal,
+  });
   recordResult(
     cases,
     'AUTH-AFTER-LOGOUT-01',
@@ -1218,7 +1423,10 @@ export async function runBrowser(
   recordResult(cases, 'AUTH-INVALID-TOKEN-SETUP-01', cookieInstalled, {
     testCookieInstalled: cookieInstalled,
   });
-  await cdp.goto('/dashboard', '/login', { checkHealth: ensureHealthy });
+  await cdp.goto('/dashboard', '/login', {
+    checkHealth: ensureHealthy,
+    signal,
+  });
   recordResult(
     cases,
     'AUTH-INVALID-TOKEN-01',
@@ -1262,6 +1470,7 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
     exitCode: report.failure?.exitCode ?? null,
     signal: report.failure?.signal ?? null,
     cleanupStatus: report.cleanup?.status ?? null,
+    executionQuiesced: report.cleanup?.executionQuiesced ?? null,
     casesRecorded: Array.isArray(report.cases) ? report.cases.length : null,
     exitStatus: exitStatus ?? null,
   };
@@ -1328,7 +1537,8 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
     if (
       report.cleanup?.browserTerminated !== true ||
       report.cleanup?.applicationTerminated !== true ||
-      report.cleanup?.profileRemoved !== true
+      report.cleanup?.profileRemoved !== true ||
+      report.cleanup?.executionQuiesced !== true
     ) {
       return {
         valid: false,
@@ -1536,7 +1746,9 @@ async function defaultStartApp({
   app = CANONICAL_APP_ORIGIN,
   spawnFn = spawn,
   fetchFn = fetch,
+  signal,
 }) {
+  throwIfSignalAborted(signal, 'APP_START');
   try {
     const staleProbe = await fetchFn(`${app}/health`, {
       signal: AbortSignal.timeout(1000),
@@ -1553,6 +1765,7 @@ async function defaultStartApp({
     // Expected when no prior server is listening on port 3101.
   }
 
+  throwIfSignalAborted(signal, 'APP_START');
   const application = spawnFn('pnpm', ['--filter', '@mgbos/app', 'start'], {
     cwd: workdir,
     env,
@@ -1560,29 +1773,39 @@ async function defaultStartApp({
     detached: process.platform !== 'win32',
     shell: process.platform === 'win32',
   });
-  await until(
-    async () => {
-      if (application.exitCode !== null || application.signalCode !== null) {
-        throw new QaError(
-          'APP_START',
-          'APP_START_FAILED',
-          'Application server exited during startup',
-          {
-            process: 'application',
-            exitCode: application.exitCode,
-            signal: application.signalCode,
-          },
-        );
-      }
-      const response = await fetchFn(`${app}/health`, {
-        signal: AbortSignal.timeout(1500),
-      });
-      return response.ok;
-    },
-    'Local MGBOS health',
-    30000,
-  );
-  return application;
+  try {
+    await until(
+      async () => {
+        if (application.exitCode !== null || application.signalCode !== null) {
+          throw new QaError(
+            'APP_START',
+            'APP_START_FAILED',
+            'Application server exited during startup',
+            {
+              process: 'application',
+              exitCode: application.exitCode,
+              signal: application.signalCode,
+            },
+          );
+        }
+        const response = await fetchFn(`${app}/health`, {
+          signal: AbortSignal.timeout(1500),
+        });
+        return response.ok;
+      },
+      'Local MGBOS health',
+      30000,
+      { signal, stage: 'APP_START' },
+    );
+    return application;
+  } catch (error) {
+    await terminateSubprocess(application, {
+      initialSignal: 'SIGTERM',
+      forceSignal: 'SIGKILL',
+      graceMs: 3000,
+    }).catch(() => {});
+    throw error;
+  }
 }
 
 export async function runQaHarness({
@@ -1609,6 +1832,7 @@ export async function runQaHarness({
   readFileSyncFn = readFileSync,
   rmSyncFn = rmSync,
   loginTimeoutMs = 30000,
+  quiescenceTimeoutMs = 5000,
 } = {}) {
   mkdirSync(artifactDir, { recursive: true });
   const tracePath = path.join(artifactDir, 'trace.json');
@@ -1634,6 +1858,7 @@ export async function runQaHarness({
       browserTerminated: true,
       applicationTerminated: true,
       profileRemoved: true,
+      executionQuiesced: true,
     },
     overall: 'INCOMPLETE',
   };
@@ -1645,6 +1870,29 @@ export async function runQaHarness({
   let browser;
   let failure = false;
   let stage = 'LOCAL_STATUS';
+  let tearingDown = false;
+  let finalized = false;
+  let signalError = null;
+  const abortController = new AbortController();
+  const { signal } = abortController;
+
+  const assertActive = (activeStage = stage) => {
+    if (signalError) {
+      throw signalError;
+    }
+    throwIfSignalAborted(signal, activeStage);
+    if (tearingDown || finalized) {
+      throw new QaError(
+        activeStage,
+        'PROCESS_SIGNAL_TERMINATED',
+        'QA harness execution is no longer active',
+      );
+    }
+  };
+
+  const guardedCases = createGuardedCases(cases, () =>
+    assertActive('BROWSER_AUTH'),
+  );
 
   const getForbiddenValues = () => [
     localKey,
@@ -1654,6 +1902,7 @@ export async function runQaHarness({
   ];
 
   const persistTraceCheckpoint = () => {
+    if (finalized) return;
     writeSanitizedTrace(tracePath, evidence, {
       forbiddenValues: getForbiddenValues(),
       writeFileSyncFn,
@@ -1664,6 +1913,7 @@ export async function runQaHarness({
   };
 
   const enterStage = (nextStage) => {
+    assertActive(nextStage);
     stage = nextStage;
     evidence.stage = nextStage;
     evidence.failure = {
@@ -1684,6 +1934,8 @@ export async function runQaHarness({
     evidence.stage = 'ARTIFACT_WRITE';
     evidence.failure = classifyFailure('ARTIFACT_WRITE', error);
     evidence.overall = 'FAIL';
+    finalized = true;
+    deepFreeze(evidence);
     return { evidence, failure: true, tracePath };
   }
 
@@ -1694,22 +1946,32 @@ export async function runQaHarness({
   // Avoid unhandled rejection if signalPromise is never raced or settles late.
   signalPromise.catch(() => {});
 
-  const onSignal = (signal) => {
-    const err = new QaError(
-      stage,
+  const onSignal = (receivedSignal) => {
+    if (signalError || tearingDown || finalized) {
+      return;
+    }
+    const activeStage = stage === 'COMPLETED' ? 'CLEANUP' : stage;
+    signalError = new QaError(
+      activeStage,
       'PROCESS_SIGNAL_TERMINATED',
-      `QA harness received termination signal ${signal}`,
-      { signal },
+      `QA harness received termination signal ${receivedSignal}`,
+      { signal: receivedSignal },
     );
     failure = true;
-    evidence.stage = stage;
-    evidence.failure = classifyFailure(stage, err);
+    evidence.stage = activeStage;
+    evidence.failure = classifyFailure(activeStage, signalError);
+    abortController.abort(signalError);
+    try {
+      browser?.cdp?.close?.();
+    } catch {
+      // Ignore close errors during signal cancellation.
+    }
     try {
       persistTraceCheckpoint();
     } catch {
       // Best-effort synchronous write on signal.
     }
-    rejectOnSignal(err);
+    rejectOnSignal(signalError);
   };
 
   const trackedSignals = ['SIGINT', 'SIGTERM', 'SIGHUP'];
@@ -1717,62 +1979,111 @@ export async function runQaHarness({
     process.on(sig, onSignal);
   }
 
+  let executionPromise;
   try {
-    await Promise.race([
-      (async () => {
-        enterStage('LOCAL_STATUS');
-        const local = await localStatusFn({ workdir, api });
-        localKey = local.SERVICE_ROLE_KEY;
-        anonKey = local.ANON_KEY;
-        const env = {
-          ...process.env,
-          NEXT_PUBLIC_SUPABASE_URL: api,
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: anonKey,
-          SUPABASE_SERVICE_ROLE_KEY: localKey,
-          NEXT_TELEMETRY_DISABLED: '1',
-        };
+    executionPromise = (async () => {
+      enterStage('LOCAL_STATUS');
+      const local = await localStatusFn({ workdir, api, signal });
+      assertActive('LOCAL_STATUS');
+      localKey = local.SERVICE_ROLE_KEY;
+      anonKey = local.ANON_KEY;
+      const env = {
+        ...process.env,
+        NEXT_PUBLIC_SUPABASE_URL: api,
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: anonKey,
+        SUPABASE_SERVICE_ROLE_KEY: localKey,
+        NEXT_TELEMETRY_DISABLED: '1',
+      };
 
-        enterStage('APP_BUILD');
-        await buildAppFn({ env, workdir });
+      enterStage('APP_BUILD');
+      await buildAppFn({ env, workdir, signal });
+      assertActive('APP_BUILD');
 
-        enterStage('FIXTURE_CREATION');
-        fixture = await createFixtureFn(localKey, { api });
+      enterStage('FIXTURE_CREATION');
+      fixture = await createFixtureFn(localKey, { api, signal });
+      assertActive('FIXTURE_CREATION');
 
-        enterStage('APP_START');
-        application = await startAppFn({ env, workdir, app });
+      enterStage('APP_START');
+      application = await startAppFn({ env, workdir, app, signal });
+      assertActive('APP_START');
 
-        enterStage('BROWSER_START');
-        browser = await startBrowserFn({ app });
+      enterStage('BROWSER_START');
+      browser = await startBrowserFn({ app, signal });
+      assertActive('BROWSER_START');
 
-        enterStage('BROWSER_AUTH');
-        const checkHealth = () => {
-          assertProcessAlive(application, 'application', 'BROWSER_AUTH');
-          assertProcessAlive(browser?.browser, 'browser', 'BROWSER_AUTH');
-        };
-        await runBrowserFn(browser.cdp, fixture, {
-          cases,
-          artifactDir,
-          negativeControl,
-          app,
-          checkHealth,
-          loginTimeoutMs,
-        });
+      enterStage('BROWSER_AUTH');
+      const guardedCdp = createGuardedCdp(
+        browser.cdp,
+        () => assertActive('BROWSER_AUTH'),
+        signal,
+      );
+      const checkHealth = () => {
+        assertActive('BROWSER_AUTH');
+        assertProcessAlive(application, 'application', 'BROWSER_AUTH');
+        assertProcessAlive(browser?.browser, 'browser', 'BROWSER_AUTH');
+      };
+      await runBrowserFn(guardedCdp, fixture, {
+        cases: guardedCases,
+        artifactDir,
+        negativeControl,
+        app,
+        checkHealth,
+        loginTimeoutMs,
+        signal,
+      });
 
-        stage = 'COMPLETED';
-        evidence.stage = stage;
-        delete evidence.failure;
-      })(),
-      signalPromise,
-    ]);
+      assertActive('BROWSER_AUTH');
+      stage = 'COMPLETED';
+      evidence.stage = stage;
+      delete evidence.failure;
+    })();
+    executionPromise.catch(() => {});
+
+    await Promise.race([executionPromise, signalPromise]);
   } catch (error) {
+    const effectiveError = signalError ?? error;
     failure = true;
-    evidence.stage = stage;
-    evidence.failure = classifyFailure(stage, error);
+    evidence.stage =
+      effectiveError instanceof QaError && effectiveError.stage
+        ? effectiveError.stage
+        : stage;
+    evidence.failure = classifyFailure(stage, effectiveError);
   } finally {
     for (const sig of trackedSignals) {
       process.removeListener(sig, onSignal);
     }
-    // Checkpoint execution state before running teardown operations.
+    tearingDown = true;
+    if (!signal.aborted) {
+      abortController.abort(
+        signalError ??
+          new QaError(
+            stage,
+            'PROCESS_SIGNAL_TERMINATED',
+            'QA harness entering teardown',
+          ),
+      );
+    }
+
+    try {
+      browser?.cdp?.close?.();
+    } catch {
+      // Ignore CDP close errors during teardown.
+    }
+
+    let executionQuiesced = true;
+    if (executionPromise) {
+      executionQuiesced = await Promise.race([
+        executionPromise.then(
+          () => true,
+          () => true,
+        ),
+        new Promise((resolve) =>
+          setTimeout(() => resolve(false), quiescenceTimeoutMs),
+        ),
+      ]);
+    }
+
+    // Checkpoint execution state after in-flight work quiesces and before teardown.
     try {
       persistTraceCheckpoint();
     } catch {
@@ -1782,12 +2093,6 @@ export async function runQaHarness({
     let browserTerminated = true;
     let applicationTerminated = true;
     let profileRemoved = true;
-
-    try {
-      browser?.cdp?.close();
-    } catch {
-      // Ignore CDP close errors during teardown.
-    }
 
     if (browser?.browser) {
       try {
@@ -1849,7 +2154,12 @@ export async function runQaHarness({
       }
     }
 
-    if (!browserTerminated || !applicationTerminated || !profileRemoved) {
+    if (
+      !browserTerminated ||
+      !applicationTerminated ||
+      !profileRemoved ||
+      !executionQuiesced
+    ) {
       failure = true;
       if (evidence.failure?.code !== 'FIXTURE_CLEANUP_FAILED') {
         evidence.failure = {
@@ -1871,6 +2181,7 @@ export async function runQaHarness({
       browserTerminated,
       applicationTerminated,
       profileRemoved,
+      executionQuiesced,
     };
     evidence.overall = failure ? 'FAIL' : 'PASS';
 
@@ -1881,6 +2192,8 @@ export async function runQaHarness({
       evidence.overall = 'FAIL';
       evidence.failure = classifyFailure('ARTIFACT_WRITE', error);
     }
+    finalized = true;
+    deepFreeze(evidence);
   }
 
   return { evidence, failure, tracePath };

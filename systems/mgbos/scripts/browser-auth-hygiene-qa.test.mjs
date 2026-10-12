@@ -546,14 +546,87 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     });
   });
 
-  it('classifies process termination signal during execution as PROCESS_SIGNAL_TERMINATED', async () => {
+  it('classifies process termination signal during execution as PROCESS_SIGNAL_TERMINATED and enforces post-signal quiescence and stable finalized evidence', async () => {
     await withTempDir(async (artifactDir) => {
-      const deps = defaultStubDependencies({
-        runBrowserFn: async () => {
+      let signalFired = false;
+      let rawCdpCallsAfterSignal = 0;
+      const lifecycleOrder = [];
+      const baseCdp = createMockCdp({
+        validLoginOutcome: 'hang-no-alert',
+        onValidSubmit: async () => {
           setTimeout(() => {
+            signalFired = true;
+            lifecycleOrder.push('signal_emitted');
             process.emit('SIGTERM', 'SIGTERM');
           }, 20);
-          await new Promise((resolve) => setTimeout(resolve, 5000));
+        },
+      });
+
+      const instrumentedCdp = {
+        ...baseCdp,
+        async eval(expression) {
+          if (signalFired) rawCdpCallsAfterSignal += 1;
+          return baseCdp.eval(expression);
+        },
+        async goto(route, expected, options) {
+          if (signalFired) rawCdpCallsAfterSignal += 1;
+          return baseCdp.goto(route, expected, options);
+        },
+        async send(method, params) {
+          if (signalFired) rawCdpCallsAfterSignal += 1;
+          return baseCdp.send(method, params);
+        },
+        async session() {
+          if (signalFired) rawCdpCallsAfterSignal += 1;
+          return baseCdp.session();
+        },
+        async screenshot(file) {
+          if (signalFired) rawCdpCallsAfterSignal += 1;
+          return baseCdp.screenshot(file);
+        },
+      };
+
+      let lateCdpError = null;
+      let lateCasesMutationError = null;
+
+      const deps = defaultStubDependencies({
+        startBrowserFn: async () => ({
+          browser: createFakeProcess(),
+          cdp: instrumentedCdp,
+          profile: null,
+        }),
+        runBrowserFn: async (cdp, fixture, options) => {
+          try {
+            await runBrowser(cdp, fixture, options);
+          } catch (error) {
+            // Attempt post-signal browser operation and case mutation before settling.
+            await new Promise((resolve) => setTimeout(resolve, 25));
+            try {
+              await cdp.eval('location.pathname');
+            } catch (cdpErr) {
+              lateCdpError = cdpErr;
+            }
+            try {
+              options.cases.push({
+                caseId: 'LATE-MUTATION-01',
+                verdict: 'PASS',
+                timestamp: new Date().toISOString(),
+                proof: {},
+              });
+            } catch (mutErr) {
+              lateCasesMutationError = mutErr;
+            }
+            lifecycleOrder.push('in_flight_settled');
+            throw error;
+          }
+        },
+        terminateSubprocessFn: async () => {
+          lifecycleOrder.push('subprocess_terminated');
+          return { terminated: true, forced: false };
+        },
+        cleanupFn: async () => {
+          lifecycleOrder.push('fixture_cleaned');
+          return { attempted: true, status: 'PASS' };
         },
       });
 
@@ -561,12 +634,48 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         ...deps,
         artifactDir,
         negativeControl: true,
+        loginTimeoutMs: 5000,
       });
+
+      const immediateEvidenceSnapshot = JSON.stringify(evidence);
+      const immediateTraceSnapshot = readFileSync(tracePath, 'utf8');
 
       assert.equal(failure, true);
       assert.equal(evidence.failure?.stage, 'BROWSER_AUTH');
       assert.equal(evidence.failure?.code, 'PROCESS_SIGNAL_TERMINATED');
       assert.equal(evidence.failure?.signal, 'SIGTERM');
+      assert.equal(evidence.cleanup.executionQuiesced, true);
+      assert.equal(rawCdpCallsAfterSignal, 0);
+      assert.ok(
+        lateCdpError instanceof QaError &&
+          lateCdpError.code === 'PROCESS_SIGNAL_TERMINATED',
+        'Post-signal CDP operation must be rejected before reaching raw browser client',
+      );
+      assert.ok(
+        lateCasesMutationError instanceof QaError &&
+          lateCasesMutationError.code === 'PROCESS_SIGNAL_TERMINATED',
+        'Post-signal cases mutation must be rejected',
+      );
+      assert.ok(
+        !evidence.cases.some((item) => item.caseId === 'LATE-MUTATION-01'),
+      );
+      assert.deepEqual(lifecycleOrder, [
+        'signal_emitted',
+        'in_flight_settled',
+        'subprocess_terminated',
+        'subprocess_terminated',
+        'fixture_cleaned',
+      ]);
+      assert.equal(Object.isFrozen(evidence), true);
+      assert.equal(Object.isFrozen(evidence.cases), true);
+      assert.equal(Object.isFrozen(evidence.failure), true);
+      assert.equal(Object.isFrozen(evidence.cleanup), true);
+
+      // Wait after harness return and verify finalized evidence and trace file remain stable.
+      await new Promise((resolve) => setTimeout(resolve, 80));
+      assert.equal(JSON.stringify(evidence), immediateEvidenceSnapshot);
+      assert.equal(readFileSync(tracePath, 'utf8'), immediateTraceSnapshot);
+      assert.equal(rawCdpCallsAfterSignal, 0);
 
       const verification = verifyTraceFile(tracePath, {
         expectedMode: 'intentional-broken-login',
@@ -577,6 +686,47 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         verification.code,
         'NEGATIVE_CONTROL_CLASSIFICATION_MISMATCH',
       );
+    });
+  });
+
+  it('fails closed with SUBPROCESS_TEARDOWN_FAILED when in-flight work fails to quiesce after signal', async () => {
+    await withTempDir(async (artifactDir) => {
+      let releaseHangingWork;
+      const hangingPromise = new Promise((resolve) => {
+        releaseHangingWork = resolve;
+      });
+      const deps = defaultStubDependencies({
+        runBrowserFn: async () => {
+          setTimeout(() => {
+            process.emit('SIGTERM', 'SIGTERM');
+          }, 15);
+          await hangingPromise;
+        },
+      });
+
+      try {
+        const { evidence, failure, tracePath } = await runQaHarness({
+          ...deps,
+          artifactDir,
+          negativeControl: true,
+          quiescenceTimeoutMs: 60,
+        });
+
+        assert.equal(failure, true);
+        assert.equal(evidence.cleanup.executionQuiesced, false);
+        assert.equal(evidence.failure?.stage, 'CLEANUP');
+        assert.equal(evidence.failure?.code, 'SUBPROCESS_TEARDOWN_FAILED');
+        assert.equal(evidence.failure?.priorCode, 'PROCESS_SIGNAL_TERMINATED');
+
+        const verification = verifyTraceFile(tracePath, {
+          expectedMode: 'intentional-broken-login',
+          exitStatus: 1,
+        });
+        assert.equal(verification.valid, false);
+        assert.equal(verification.code, 'SUBPROCESS_TEARDOWN_NOT_VERIFIED');
+      } finally {
+        releaseHangingWork?.();
+      }
     });
   });
 
