@@ -27,7 +27,8 @@
     "db:stop": "node scripts/database.mjs stop",
     "db:reset": "node scripts/database.mjs reset",
     "db:types": "node scripts/database.mjs types",
-    "db:test": "node scripts/database.mjs test"
+    "db:test": "node scripts/database.mjs test",
+    "qa:browser-auth": "node scripts/browser-auth-hygiene-qa.mjs"
   },
   "devDependencies": {
     "@types/node": "22.20.4",
