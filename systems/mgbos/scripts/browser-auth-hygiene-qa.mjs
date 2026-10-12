@@ -1,5 +1,6 @@
+import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import {
   existsSync,
   mkdirSync,
@@ -13,6 +14,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+// Never log credentials, browser request bodies, JWTs, cookie values or tokens.
 const root = fileURLToPath(new URL('../', import.meta.url));
 export const CANONICAL_API_ORIGIN = 'http://127.0.0.1:55431';
 export const CANONICAL_APP_ORIGIN = 'http://127.0.0.1:3101';
@@ -55,9 +57,7 @@ export class QaError extends Error {
   }
 }
 
-function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function assertProcessAlive(proc, processName, stage) {
   if (!proc) return;
@@ -75,31 +75,27 @@ export function assertProcessAlive(proc, processName, stage) {
   }
 }
 
-export async function until(
-  fn,
-  label,
-  timeoutMs = 30000,
-  { checkHealth } = {},
-) {
-  const started = Date.now();
+export async function until(fn, label, ms = 30000, { checkHealth } = {}) {
+  const deadline = Date.now() + ms;
   let lastError;
-  while (Date.now() - started < timeoutMs) {
+  while (Date.now() < deadline) {
     if (checkHealth) {
       await checkHealth();
     }
     try {
-      const value = await fn();
-      if (value) return value;
+      const result = await fn();
+      if (result) return result;
     } catch (error) {
       if (error instanceof QaError) {
         throw error;
       }
+      // Page navigations temporarily destroy the execution context.
       lastError = error;
     }
     if (checkHealth) {
       await checkHealth();
     }
-    await wait(150);
+    await sleep(250);
   }
   if (checkHealth) {
     await checkHealth();
@@ -111,39 +107,12 @@ export async function until(
 }
 
 export function parseEnvLines(text) {
-  const values = {};
-  for (const line of text.split(/\r?\n/)) {
-    const match = line.match(/^([A-Z0-9_]+)=(?:"(.*)"|(.*))$/);
-    if (match) values[match[1]] = match[2] ?? match[3] ?? '';
-  }
-  return values;
-}
-
-function assertLocalhostUrl(rawUrl, label, expectedOrigin) {
-  let parsed;
-  try {
-    parsed = new URL(rawUrl);
-  } catch {
-    throw new QaError(
-      'LOCAL_STATUS',
-      'LOCAL_STATUS_FAILED',
-      `${label} is not a valid URL`,
-    );
-  }
-  if (parsed.hostname !== '127.0.0.1' && parsed.hostname !== 'localhost') {
-    throw new QaError(
-      'LOCAL_STATUS',
-      'LOCAL_STATUS_FAILED',
-      `${label} must target a disposable local host`,
-    );
-  }
-  if (expectedOrigin && parsed.origin !== expectedOrigin) {
-    throw new QaError(
-      'LOCAL_STATUS',
-      'LOCAL_STATUS_FAILED',
-      `${label} did not match isolated local origin ${expectedOrigin}`,
-    );
-  }
+  return Object.fromEntries(
+    text.split(/\r?\n/).flatMap((line) => {
+      const match = line.match(/^([A-Z0-9_]+)=(.*)$/);
+      return match ? [[match[1], match[2].replace(/^"|"$/g, '')]] : [];
+    }),
+  );
 }
 
 export function localStatus({
@@ -153,153 +122,101 @@ export function localStatus({
   spawnSyncFn = spawnSync,
 } = {}) {
   for (const key of ['NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_URL']) {
-    if (env[key]) {
-      assertLocalhostUrl(env[key], key, api);
+    if (env[key] && env[key] !== api) {
+      throw new QaError(
+        'LOCAL_STATUS',
+        'LOCAL_STATUS_FAILED',
+        'Refusing a nonlocal Supabase target',
+      );
     }
   }
-  const result = spawnSyncFn(
-    'pnpm',
-    ['exec', 'supabase', 'status', '-o', 'env'],
+  const binary = path.join(
+    workdir,
+    'node_modules',
+    'supabase',
+    'dist',
+    'supabase.js',
+  );
+  const output = spawnSyncFn(
+    process.execPath,
+    [binary, 'status', '-o', 'env', '--workdir', workdir],
     {
       cwd: workdir,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
       timeout: 30000,
-      shell: process.platform === 'win32',
     },
   );
-  if (result.error?.code === 'ETIMEDOUT') {
+  if (output.error?.code === 'ETIMEDOUT') {
     throw new QaError(
       'LOCAL_STATUS',
       'LOCAL_STATUS_TIMED_OUT',
-      'Disposable local Supabase status check timed out',
+      'Disposable Supabase status check timed out',
     );
   }
-  if (result.status !== 0) {
+  if (output.status !== 0) {
     throw new QaError(
       'LOCAL_STATUS',
       'LOCAL_STATUS_FAILED',
-      'Disposable local Supabase is not running',
+      'Disposable Supabase is unavailable',
     );
   }
-  // Parse in memory only; never print `supabase status -o env` because it contains local keys.
-  const values = parseEnvLines(result.stdout ?? '');
-  if (values.API_URL !== api || !values.ANON_KEY || !values.SERVICE_ROLE_KEY) {
+  const parsed = parseEnvLines(output.stdout ?? '');
+  if (parsed.API_URL !== api || !parsed.ANON_KEY || !parsed.SERVICE_ROLE_KEY) {
     throw new QaError(
       'LOCAL_STATUS',
       'LOCAL_STATUS_FAILED',
-      'Supabase status did not return isolated local MGBOS settings',
+      'Local Supabase identity or keys could not be verified',
     );
   }
-  if (values.DB_URL) {
-    assertLocalhostUrl(values.DB_URL, 'DB_URL');
+  if (
+    parsed.DB_URL &&
+    !/^postgres(?:ql)?:\/\/(?:[^@]+@)?127\.0\.0\.1:55432\//.test(parsed.DB_URL)
+  ) {
+    throw new QaError(
+      'LOCAL_STATUS',
+      'LOCAL_STATUS_FAILED',
+      'Refusing nonlocal database identity',
+    );
   }
-  return values;
+  return parsed;
 }
 
-function secretHeaders(key, extra = {}) {
-  return {
+async function db(
+  key,
+  route,
+  {
+    method = 'GET',
+    body,
+    schema,
+    api = CANONICAL_API_ORIGIN,
+    fetchFn = fetch,
+  } = {},
+) {
+  const url = new URL(`${api}${route}`);
+  assert.equal(url.origin, api, 'Local Supabase access only');
+  const headers = {
     apikey: key,
     Authorization: `Bearer ${key}`,
     'Content-Type': 'application/json',
-    ...extra,
+    Prefer: 'return=representation',
   };
-}
-
-export async function createFixture(
-  key,
-  { api = CANONICAL_API_ORIGIN, fetchFn = fetch } = {},
-) {
-  const runId = randomUUID();
-  const email = `ci-auth-${runId}@example.test`;
-  const password = `CiAuth!${randomUUID()}Aa1`;
-
-  let created;
-  try {
-    created = await fetchFn(`${api}/auth/v1/admin/users`, {
-      method: 'POST',
-      headers: secretHeaders(key),
-      body: JSON.stringify({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: { display_name: 'CI Synthetic Operator' },
-      }),
-    });
-  } catch {
-    throw new QaError(
-      'FIXTURE_CREATION',
-      'FIXTURE_CREATION_FAILED',
-      'Synthetic auth user creation request failed',
+  if (schema) {
+    headers['Accept-Profile'] = schema;
+    headers['Content-Profile'] = schema;
+  }
+  const response = await fetchFn(url, {
+    method,
+    headers,
+    body: body === undefined ? undefined : JSON.stringify(body),
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!response.ok) {
+    throw new Error(
+      `Disposable database operation failed: HTTP ${response.status}`,
     );
   }
-  if (!created.ok) {
-    throw new QaError(
-      'FIXTURE_CREATION',
-      'FIXTURE_CREATION_FAILED',
-      `Synthetic auth user creation failed (${created.status})`,
-    );
-  }
-  const userPayload = await created.json();
-  const userId = userPayload?.id ?? userPayload?.user?.id;
-  if (!userId) {
-    throw new QaError(
-      'FIXTURE_CREATION',
-      'FIXTURE_CREATION_FAILED',
-      'Synthetic auth user id was not returned',
-    );
-  }
-
-  let profileResponse;
-  try {
-    profileResponse = await fetchFn(`${api}/rest/v1/user_profiles`, {
-      method: 'POST',
-      headers: secretHeaders(key, { Prefer: 'return=representation' }),
-      body: JSON.stringify({
-        auth_user_id: userId,
-        email,
-        display_name: 'CI Synthetic Operator',
-        role: 'super_admin',
-        status: 'active',
-      }),
-    });
-  } catch {
-    await fetchFn(`${api}/auth/v1/admin/users/${userId}`, {
-      method: 'DELETE',
-      headers: secretHeaders(key),
-    }).catch(() => {});
-    throw new QaError(
-      'FIXTURE_CREATION',
-      'FIXTURE_CREATION_FAILED',
-      'Synthetic operator profile creation request failed',
-    );
-  }
-  if (!profileResponse.ok) {
-    await fetchFn(`${api}/auth/v1/admin/users/${userId}`, {
-      method: 'DELETE',
-      headers: secretHeaders(key),
-    }).catch(() => {});
-    throw new QaError(
-      'FIXTURE_CREATION',
-      'FIXTURE_CREATION_FAILED',
-      `Synthetic operator profile creation failed (${profileResponse.status})`,
-    );
-  }
-  const profiles = await profileResponse.json();
-  const profileId = Array.isArray(profiles) ? profiles[0]?.id : profiles?.id;
-  if (!profileId) {
-    await fetchFn(`${api}/auth/v1/admin/users/${userId}`, {
-      method: 'DELETE',
-      headers: secretHeaders(key),
-    }).catch(() => {});
-    throw new QaError(
-      'FIXTURE_CREATION',
-      'FIXTURE_CREATION_FAILED',
-      'Synthetic operator profile id was not returned',
-    );
-  }
-
-  return { email, password, auth: userId, profile: profileId };
+  return response.status === 204 ? null : response.json();
 }
 
 export async function cleanup(
@@ -310,134 +227,173 @@ export async function cleanup(
   if (!key || !fixture) {
     return { attempted: false, status: 'SKIPPED' };
   }
-  let cleanupError = null;
-  if (fixture.profile) {
+  let failed = false;
+  // Each operation is independently attempted, even if an earlier deletion failed.
+  const attempt = async (operation) => {
     try {
-      const delProfile = await fetchFn(
-        `${api}/rest/v1/user_profiles?id=eq.${encodeURIComponent(fixture.profile)}`,
-        {
-          method: 'DELETE',
-          headers: secretHeaders(key, { Prefer: 'return=minimal' }),
-        },
-      );
-      if (!delProfile.ok && delProfile.status !== 404) {
-        cleanupError = new QaError(
-          'CLEANUP',
-          'FIXTURE_CLEANUP_FAILED',
-          `Synthetic profile delete returned ${delProfile.status}`,
-        );
-      }
+      await operation();
     } catch {
-      cleanupError = new QaError(
-        'CLEANUP',
-        'FIXTURE_CLEANUP_FAILED',
-        'Synthetic profile delete request failed',
-      );
+      failed = true;
     }
+  };
+  if (fixture.profile) {
+    await attempt(() =>
+      db(key, `/rest/v1/organization_members?user_id=eq.${fixture.profile}`, {
+        method: 'DELETE',
+        schema: 'app',
+        api,
+        fetchFn,
+      }),
+    );
+    await attempt(() =>
+      db(key, `/rest/v1/users?id=eq.${fixture.profile}`, {
+        method: 'DELETE',
+        schema: 'app',
+        api,
+        fetchFn,
+      }),
+    );
   }
   if (fixture.auth) {
-    try {
-      const delAuth = await fetchFn(
-        `${api}/auth/v1/admin/users/${encodeURIComponent(fixture.auth)}`,
-        {
-          method: 'DELETE',
-          headers: secretHeaders(key),
-        },
-      );
-      if (!delAuth.ok && delAuth.status !== 404) {
-        cleanupError =
-          cleanupError ??
-          new QaError(
-            'CLEANUP',
-            'FIXTURE_CLEANUP_FAILED',
-            `Synthetic auth user delete returned ${delAuth.status}`,
-          );
-      }
-    } catch {
-      cleanupError =
-        cleanupError ??
-        new QaError(
-          'CLEANUP',
-          'FIXTURE_CLEANUP_FAILED',
-          'Synthetic auth user delete request failed',
-        );
-    }
+    await attempt(() =>
+      db(key, `/auth/v1/admin/users/${fixture.auth}`, {
+        method: 'DELETE',
+        api,
+        fetchFn,
+      }),
+    );
   }
   if (fixture.profile) {
-    try {
-      const verify = await fetchFn(
-        `${api}/rest/v1/user_profiles?select=id&id=eq.${encodeURIComponent(fixture.profile)}`,
-        { headers: secretHeaders(key) },
+    await attempt(async () => {
+      const remaining = await db(
+        key,
+        `/rest/v1/users?id=eq.${fixture.profile}&select=id`,
+        { schema: 'app', api, fetchFn },
       );
-      if (!verify.ok) {
-        cleanupError =
-          cleanupError ??
-          new QaError(
-            'CLEANUP',
-            'FIXTURE_CLEANUP_FAILED',
-            `Synthetic fixture cleanup verification returned ${verify.status}`,
-          );
-      } else {
-        const rows = await verify.json();
-        if (!Array.isArray(rows) || rows.length !== 0) {
-          cleanupError =
-            cleanupError ??
-            new QaError(
-              'CLEANUP',
-              'FIXTURE_CLEANUP_FAILED',
-              'Synthetic fixture cleanup verification failed',
-            );
-        }
-      }
-    } catch {
-      cleanupError =
-        cleanupError ??
-        new QaError(
-          'CLEANUP',
-          'FIXTURE_CLEANUP_FAILED',
-          'Synthetic fixture cleanup verification request failed',
-        );
-    }
+      assert.deepEqual(remaining, [], 'Synthetic profile must be absent');
+    });
   }
-  if (cleanupError) {
-    throw cleanupError;
+  if (fixture.auth) {
+    await attempt(async () => {
+      const response = await fetchFn(
+        `${api}/auth/v1/admin/users/${fixture.auth}`,
+        {
+          headers: { apikey: key, Authorization: `Bearer ${key}` },
+          signal: AbortSignal.timeout(15000),
+        },
+      );
+      assert.equal(response.status, 404, 'Synthetic auth user must be absent');
+    });
+  }
+  if (failed) {
+    throw new QaError(
+      'CLEANUP',
+      'FIXTURE_CLEANUP_FAILED',
+      'Synthetic fixture cleanup verification failed',
+    );
   }
   return { attempted: true, status: 'PASS' };
 }
 
-function findBrowser() {
-  const candidates = [
-    process.env.CHROME_PATH,
-    'google-chrome',
-    'google-chrome-stable',
-    'chromium',
-    'chromium-browser',
-    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
-  ].filter(Boolean);
-
-  for (const candidate of candidates) {
-    const check = spawnSync(candidate, ['--version'], { stdio: 'ignore' });
-    if (check.status === 0) return candidate;
+export async function createFixture(
+  key,
+  { api = CANONICAL_API_ORIGIN, fetchFn = fetch } = {},
+) {
+  let org;
+  let role;
+  try {
+    [org] = await db(
+      key,
+      '/rest/v1/organizations?select=id&status=eq.ACTIVE&limit=1',
+      { schema: 'app', api, fetchFn },
+    );
+    assert.ok(org?.id, 'Disposable organization missing');
+    [role] = await db(
+      key,
+      `/rest/v1/roles?select=id&organization_id=eq.${org.id}&code=eq.OWNER&limit=1`,
+      { schema: 'app', api, fetchFn },
+    );
+    assert.ok(role?.id, 'Disposable OWNER role missing');
+  } catch (error) {
+    throw new QaError(
+      'FIXTURE_CREATION',
+      'FIXTURE_CREATION_FAILED',
+      error instanceof Error ? error.message : 'Disposable seed lookup failed',
+    );
   }
-  throw new QaError(
-    'BROWSER_START',
-    'BROWSER_BINARY_NOT_FOUND',
-    'No headless Chromium/Chrome/Edge binary found for QA run',
-  );
+
+  const fixture = {
+    email: `ci-auth-${randomUUID()}@example.test`,
+    password: randomBytes(32).toString('base64url'),
+    auth: null,
+    profile: null,
+  };
+  try {
+    const user = await db(key, '/auth/v1/admin/users', {
+      method: 'POST',
+      body: {
+        email: fixture.email,
+        password: fixture.password,
+        email_confirm: true,
+      },
+      api,
+      fetchFn,
+    });
+    fixture.auth = user.id;
+    assert.ok(fixture.auth, 'Synthetic identity creation failed');
+    const profiles = await db(key, '/rest/v1/users', {
+      method: 'POST',
+      schema: 'app',
+      body: {
+        auth_user_id: fixture.auth,
+        name: 'CI Synthetic Operator',
+        email: fixture.email,
+        status: 'ACTIVE',
+      },
+      api,
+      fetchFn,
+    });
+    fixture.profile = profiles[0]?.id;
+    assert.ok(fixture.profile, 'Synthetic app user creation failed');
+    await db(key, '/rest/v1/organization_members', {
+      method: 'POST',
+      schema: 'app',
+      body: {
+        organization_id: org.id,
+        user_id: fixture.profile,
+        role_id: role.id,
+        status: 'ACTIVE',
+      },
+      api,
+      fetchFn,
+    });
+    return fixture;
+  } catch (error) {
+    await cleanup(key, fixture, { api, fetchFn }).catch(() => {});
+    throw new QaError(
+      'FIXTURE_CREATION',
+      'FIXTURE_CREATION_FAILED',
+      error instanceof Error
+        ? error.message
+        : 'Synthetic fixture creation failed',
+    );
+  }
 }
 
-class CdpSession {
-  constructor(wsUrl, { app = CANONICAL_APP_ORIGIN } = {}) {
-    this.ws = new WebSocket(wsUrl);
+class Cdp {
+  constructor(url, { app = CANONICAL_APP_ORIGIN } = {}) {
+    this.url = url;
     this.app = app;
-    this.nextId = 0;
+    this.id = 0;
     this.pending = new Map();
     this.requests = [];
     this.closed = false;
     this.closeReason = null;
+  }
 
-    this.ready = new Promise((resolve, reject) => {
+  async connect() {
+    this.ws = new WebSocket(this.url);
+    await new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         reject(
           new QaError(
@@ -472,37 +428,34 @@ class CdpSession {
     });
 
     this.ws.addEventListener('message', (event) => {
-      let payload;
+      let packet;
       try {
-        payload = JSON.parse(String(event.data));
+        packet = JSON.parse(String(event.data));
       } catch {
         return;
       }
-      if (payload.id && this.pending.has(payload.id)) {
-        const { resolve, reject, timer } = this.pending.get(payload.id);
-        clearTimeout(timer);
-        this.pending.delete(payload.id);
-        if (payload.error) {
-          reject(
-            new Error(payload.error.message ?? 'CDP protocol command failed'),
-          );
-        } else {
-          resolve(payload.result);
-        }
-      }
-      if (payload.method === 'Network.requestWillBeSent') {
+      if (packet.method === 'Network.requestWillBeSent') {
         try {
-          const url = new URL(payload.params.request.url);
+          const url = new URL(packet.params.request.url);
           if (url.origin === this.app) {
-            // Retain only method and pathname; never retain headers, cookies, or request bodies.
             this.requests.push({
-              method: payload.params.request.method,
-              route: url.pathname,
+              method: packet.params.request.method,
+              path: url.pathname,
             });
           }
         } catch {
-          // Ignore malformed non-HTTP URLs.
+          // Non-HTTP events are not stored.
         }
+      }
+      if (!packet.id) return;
+      const pending = this.pending.get(packet.id);
+      if (!pending) return;
+      clearTimeout(pending.timer);
+      this.pending.delete(packet.id);
+      if (packet.error) {
+        pending.reject(new Error(`CDP command failed: ${pending.method}`));
+      } else {
+        pending.resolve(packet.result);
       }
     });
 
@@ -524,6 +477,10 @@ class CdpSession {
 
     this.ws.addEventListener('close', () => markClosed('socket_close'));
     this.ws.addEventListener('error', () => markClosed('socket_error'));
+
+    await this.send('Page.enable');
+    await this.send('Runtime.enable');
+    await this.send('Network.enable');
   }
 
   assertConnected(stage = 'BROWSER_AUTH') {
@@ -536,23 +493,22 @@ class CdpSession {
     }
   }
 
-  async send(method, params = {}, timeoutMs = 15000) {
-    await this.ready;
+  send(method, params = {}) {
     this.assertConnected();
-    const id = ++this.nextId;
     return new Promise((resolve, reject) => {
+      const id = ++this.id;
       const timer = setTimeout(() => {
         this.pending.delete(id);
         reject(
           new QaError(
             'BROWSER_AUTH',
             'CDP_COMMAND_TIMED_OUT',
-            `Timed out waiting for CDP command ${method}`,
+            `Browser protocol timed out: ${method}`,
             { cdpMethod: method },
           ),
         );
-      }, timeoutMs);
-      this.pending.set(id, { resolve, reject, timer });
+      }, 15000);
+      this.pending.set(id, { method, resolve, reject, timer });
       try {
         this.ws.send(JSON.stringify({ id, method, params }));
       } catch {
@@ -562,7 +518,7 @@ class CdpSession {
           new QaError(
             'BROWSER_AUTH',
             'CDP_CONNECTION_CLOSED',
-            `Failed to send CDP command ${method}`,
+            `Failed to send CDP command: ${method}`,
             { cdpMethod: method },
           ),
         );
@@ -571,55 +527,56 @@ class CdpSession {
   }
 
   async eval(expression) {
-    const result = await this.send('Runtime.evaluate', {
+    const response = await this.send('Runtime.evaluate', {
       expression,
       awaitPromise: true,
       returnByValue: true,
     });
-    return result?.result?.value;
+    if (response.exceptionDetails) {
+      throw new Error('Browser assertion expression failed');
+    }
+    return response.result?.value;
   }
 
-  async goto(route, expectedRoute = route, { checkHealth } = {}) {
-    const previousOrigin = await this.eval('performance.timeOrigin').catch(
-      () => null,
-    );
+  async goto(route, expected = route, { checkHealth } = {}) {
+    const before = await this.eval('performance.timeOrigin');
     await this.send('Page.navigate', { url: `${this.app}${route}` });
     await until(
       async () => {
-        const state = await this.eval(
-          '({ route: location.pathname, origin: performance.timeOrigin, ready: document.readyState })',
-        );
+        const state = await this.eval(`({
+          route: location.pathname,
+          origin: performance.timeOrigin,
+          ready: document.readyState
+        })`);
         return (
-          state &&
-          state.route === expectedRoute &&
-          state.origin !== previousOrigin &&
-          (state.ready === 'interactive' || state.ready === 'complete')
+          state.origin !== before &&
+          state.route === expected &&
+          state.ready !== 'loading'
         );
       },
-      `route ${expectedRoute}`,
+      `Navigation ${route}`,
       30000,
       { checkHealth },
     );
   }
 
+  posts(route) {
+    return this.requests.filter(
+      (request) => request.method === 'POST' && request.path === route,
+    ).length;
+  }
+
   async session() {
-    const { cookies } = await this.send('Network.getCookies', {
+    const response = await this.send('Network.getCookies', {
       urls: [this.app],
     });
-    // Strip cookie values immediately; keep only non-sensitive metadata.
-    return cookies
+    return response.cookies
       .filter((cookie) => cookie.name === 'mgbos_session')
       .map((cookie) => ({
         httpOnly: cookie.httpOnly,
         sameSite: cookie.sameSite,
         secure: cookie.secure,
       }));
-  }
-
-  posts(route) {
-    return this.requests.filter(
-      (request) => request.method === 'POST' && request.route === route,
-    ).length;
   }
 
   async screenshot(file) {
@@ -637,31 +594,55 @@ class CdpSession {
     }
     this.pending.clear();
     try {
-      this.ws.close();
+      this.ws?.close();
     } catch {
       // Ignore close errors during teardown.
     }
   }
 }
 
+function chromeExecutable() {
+  for (const name of [
+    process.env.CHROME_BIN,
+    process.env.CHROME_PATH,
+    'google-chrome',
+    'google-chrome-stable',
+    'chromium',
+    'chromium-browser',
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+  ]) {
+    if (!name) continue;
+    if (process.platform !== 'win32') {
+      const probe = spawnSync('which', [name], { encoding: 'utf8' });
+      if (probe.status === 0) return probe.stdout.trim();
+    }
+    if (existsSync(name)) return name;
+  }
+  throw new QaError(
+    'BROWSER_START',
+    'BROWSER_START_FAILED',
+    'Chromium is unavailable in isolated QA runner',
+  );
+}
+
 export async function startBrowser({
   app = CANONICAL_APP_ORIGIN,
-  port = 9333,
   spawnFn = spawn,
   fetchFn = fetch,
 } = {}) {
-  const profile = mkdtempSync(path.join(tmpdir(), 'mgbos-auth-qa-'));
-  const browserBin = findBrowser();
+  const profile = mkdtempSync(path.join(tmpdir(), 'mgbos-ci-cdp-'));
   const browser = spawnFn(
-    browserBin,
+    chromeExecutable(),
     [
       '--headless=new',
       '--no-sandbox',
       '--disable-gpu',
-      '--disable-dev-shm-usage',
       '--no-first-run',
-      '--no-default-browser-check',
-      `--remote-debugging-port=${port}`,
+      '--disable-background-networking',
+      '--remote-debugging-address=127.0.0.1',
+      '--remote-debugging-port=0',
+      '--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1',
       `--user-data-dir=${profile}`,
       'about:blank',
     ],
@@ -670,10 +651,10 @@ export async function startBrowser({
       detached: process.platform !== 'win32',
     },
   );
-
   try {
-    const target = await until(
-      async () => {
+    const filename = path.join(profile, 'DevToolsActivePort');
+    const port = await until(
+      () => {
         if (browser.exitCode !== null || browser.signalCode !== null) {
           throw new QaError(
             'BROWSER_START',
@@ -686,23 +667,25 @@ export async function startBrowser({
             },
           );
         }
-        const res = await fetchFn(`http://127.0.0.1:${port}/json/list`, {
-          signal: AbortSignal.timeout(1500),
-        });
-        if (!res.ok) return null;
-        const targets = await res.json();
-        return targets.find(
-          (item) => item.type === 'page' && item.webSocketDebuggerUrl,
-        );
+        return existsSync(filename)
+          ? Number(readFileSync(filename, 'utf8').split('\n')[0])
+          : false;
       },
-      'Browser DevTools target',
+      'Local browser debugging endpoint',
       20000,
     );
-
-    const cdp = new CdpSession(target.webSocketDebuggerUrl, { app });
-    await cdp.send('Page.enable');
-    await cdp.send('Runtime.enable');
-    await cdp.send('Network.enable');
+    const response = await fetchFn(
+      `http://127.0.0.1:${port}/json/new?${encodeURIComponent(`${app}/login`)}`,
+      { method: 'PUT' },
+    );
+    assert.ok(response.ok, 'Browser debugging target unavailable');
+    const target = await response.json();
+    assert.ok(
+      target.webSocketDebuggerUrl?.startsWith('ws://127.0.0.1:'),
+      'Browser debugging must bind to loopback',
+    );
+    const cdp = new Cdp(target.webSocketDebuggerUrl, { app });
+    await cdp.connect();
     return { browser, cdp, profile };
   } catch (error) {
     await terminateSubprocess(browser, {
@@ -726,7 +709,9 @@ export async function startBrowser({
     throw new QaError(
       'BROWSER_START',
       'BROWSER_START_FAILED',
-      'Headless Chromium failed to initialize DevTools session',
+      error instanceof Error
+        ? error.message
+        : 'Headless Chromium failed to initialize DevTools session',
     );
   }
 }
@@ -944,26 +929,30 @@ export function classifyFailure(stage, error) {
             ? 'AUTH_LOGOUT_TIMEOUT'
             : message === 'Timed out: Local MGBOS health'
               ? 'APP_START_TIMED_OUT'
-              : message === 'Timed out: Browser DevTools target'
+              : message === 'Timed out: Local browser debugging endpoint'
                 ? 'BROWSER_START_TIMED_OUT'
-                : message.startsWith('Timed out: route ')
+                : message.startsWith('Timed out: Navigation ')
                   ? 'BROWSER_NAVIGATION_TIMED_OUT'
                   : message.startsWith(
                         'Authentication invariant not satisfied:',
                       )
                     ? 'AUTH_ASSERTION_FAILED'
-                    : 'QA_EXECUTION_FAILED';
+                    : stage === 'APP_BUILD'
+                      ? 'BUILD_FAILED'
+                      : stage === 'FIXTURE_CREATION'
+                        ? 'FIXTURE_CREATION_FAILED'
+                        : 'QA_EXECUTION_FAILED';
   return { stage, code };
 }
 
-function recordResult(cases, caseId, pass, proof) {
+function recordResult(cases, caseId, passed, proof = {}) {
   cases.push({
     caseId,
-    verdict: pass ? 'PASS' : 'FAIL',
+    verdict: passed ? 'PASS' : 'FAIL',
     timestamp: new Date().toISOString(),
     proof,
   });
-  if (!pass) {
+  if (!passed) {
     throw new QaError(
       'BROWSER_AUTH',
       'AUTH_ASSERTION_FAILED',
@@ -1929,11 +1918,11 @@ export async function runCli(argv = process.argv.slice(2)) {
   const { evidence, failure } = await runQaHarness();
   if (failure) {
     console.error(
-      `Browser authentication QA failed (${evidence.failure?.stage ?? 'UNKNOWN'}:${evidence.failure?.code ?? 'QA_EXECUTION_FAILED'})`,
+      `Browser-auth QA failed (${evidence.failure?.stage ?? 'UNKNOWN'}:${evidence.failure?.code ?? 'QA_EXECUTION_FAILED'}); review sanitized case evidence.`,
     );
     return 1;
   }
-  console.log('Browser authentication QA passed');
+  console.log('Browser-auth QA passed in disposable local environment.');
   return 0;
 }
 
