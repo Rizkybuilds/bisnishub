@@ -47,19 +47,6 @@ export default async function LoginPage() {
         </header>
 
         <LoginForm />
-
-        <footer
-          style={{
-            marginTop: '28px',
-            textAlign: 'center',
-            fontSize: '0.75rem',
-            color: '#64748b',
-          }}
-        >
-          <p style={{ margin: 0 }}>
-            Akun lokal bawaan seed: <code>founder@multigraph.id</code>
-          </p>
-        </footer>
       </div>
     </div>
   );
