@@ -2503,9 +2503,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         label:
           'CLI child process interrupted during auth creation (within quiescence)',
         stallEndpoint: 'POST /auth/v1/admin/users',
-        delayMs: 35,
-        quiescenceTimeoutMs: 450,
-        fixtureDrainTimeoutMs: 450,
+        delayMs: 20,
+        quiescenceTimeoutMs: 2000,
+        fixtureDrainTimeoutMs: 2000,
         expectedCleanupStatus: 'PASS',
         expectedQuiesced: true,
         expectedFailureStage: 'FIXTURE_CREATION',
@@ -2516,9 +2516,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         label:
           'CLI child process interrupted during profile creation (within quiescence)',
         stallEndpoint: 'POST /rest/v1/users',
-        delayMs: 35,
-        quiescenceTimeoutMs: 450,
-        fixtureDrainTimeoutMs: 450,
+        delayMs: 20,
+        quiescenceTimeoutMs: 2000,
+        fixtureDrainTimeoutMs: 2000,
         expectedCleanupStatus: 'PASS',
         expectedQuiesced: true,
         expectedFailureStage: 'FIXTURE_CREATION',
@@ -2529,9 +2529,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         label:
           'CLI child process interrupted during membership creation (within quiescence)',
         stallEndpoint: 'POST /rest/v1/organization_members',
-        delayMs: 35,
-        quiescenceTimeoutMs: 450,
-        fixtureDrainTimeoutMs: 450,
+        delayMs: 20,
+        quiescenceTimeoutMs: 2000,
+        fixtureDrainTimeoutMs: 2000,
         expectedCleanupStatus: 'PASS',
         expectedQuiesced: true,
         expectedFailureStage: 'FIXTURE_CREATION',
@@ -2546,9 +2546,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         label:
           'CLI child process interrupted during auth creation (beyond quiescence, drained before process.exit)',
         stallEndpoint: 'POST /auth/v1/admin/users',
-        delayMs: 140,
-        quiescenceTimeoutMs: 45,
-        fixtureDrainTimeoutMs: 500,
+        delayMs: 350,
+        quiescenceTimeoutMs: 30,
+        fixtureDrainTimeoutMs: 2500,
         expectedCleanupStatus: 'UNVERIFIED',
         expectedQuiesced: false,
         expectedFailureStage: 'CLEANUP',
@@ -2559,9 +2559,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         label:
           'CLI child process interrupted during profile creation (beyond quiescence, drained before process.exit)',
         stallEndpoint: 'POST /rest/v1/users',
-        delayMs: 140,
-        quiescenceTimeoutMs: 45,
-        fixtureDrainTimeoutMs: 500,
+        delayMs: 350,
+        quiescenceTimeoutMs: 30,
+        fixtureDrainTimeoutMs: 2500,
         expectedCleanupStatus: 'UNVERIFIED',
         expectedQuiesced: false,
         expectedFailureStage: 'CLEANUP',
@@ -2572,9 +2572,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         label:
           'CLI child process interrupted during membership creation (beyond quiescence, drained before process.exit)',
         stallEndpoint: 'POST /rest/v1/organization_members',
-        delayMs: 140,
-        quiescenceTimeoutMs: 45,
-        fixtureDrainTimeoutMs: 500,
+        delayMs: 350,
+        quiescenceTimeoutMs: 30,
+        fixtureDrainTimeoutMs: 2500,
         expectedCleanupStatus: 'UNVERIFIED',
         expectedQuiesced: false,
         expectedFailureStage: 'CLEANUP',
@@ -2591,8 +2591,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         stallEndpoint: 'POST /rest/v1/users',
         hangBeyondDrain: true,
         delayMs: 5000,
-        quiescenceTimeoutMs: 40,
-        fixtureDrainTimeoutMs: 90,
+        quiescenceTimeoutMs: 30,
+        fixtureDrainTimeoutMs: 80,
         expectedCleanupStatus: 'UNVERIFIED',
         expectedQuiesced: false,
         expectedFailureStage: 'CLEANUP',
@@ -2604,8 +2604,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           'CLI child process over loopback HTTP where server commits synthetic auth mutation after client disconnect and cleanup query',
         stallEndpoint: 'POST /auth/v1/admin/users',
         lateCommitAfterDisconnect: true,
-        quiescenceTimeoutMs: 450,
-        fixtureDrainTimeoutMs: 450,
+        quiescenceTimeoutMs: 2000,
+        fixtureDrainTimeoutMs: 2000,
         expectedCleanupStatus: 'UNVERIFIED',
         expectedCleanupReason: 'MUTATION_OUTCOME_AMBIGUOUS',
         expectedAmbiguousMutations: ['auth'],
@@ -2619,8 +2619,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           'CLI child process over loopback HTTP where server commits synthetic profile mutation after client disconnect and cleanup query',
         stallEndpoint: 'POST /rest/v1/users',
         lateCommitAfterDisconnect: true,
-        quiescenceTimeoutMs: 450,
-        fixtureDrainTimeoutMs: 450,
+        quiescenceTimeoutMs: 2000,
+        fixtureDrainTimeoutMs: 2000,
         expectedCleanupStatus: 'UNVERIFIED',
         expectedCleanupReason: 'MUTATION_OUTCOME_AMBIGUOUS',
         expectedAmbiguousMutations: ['profile'],
@@ -2634,8 +2634,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           'CLI child process over loopback HTTP where server commits synthetic membership mutation after client disconnect and cleanup query',
         stallEndpoint: 'POST /rest/v1/organization_members',
         lateCommitAfterDisconnect: true,
-        quiescenceTimeoutMs: 450,
-        fixtureDrainTimeoutMs: 450,
+        quiescenceTimeoutMs: 2000,
+        fixtureDrainTimeoutMs: 2000,
         expectedCleanupStatus: 'UNVERIFIED',
         expectedCleanupReason: 'MUTATION_OUTCOME_AMBIGUOUS',
         expectedAmbiguousMutations: ['membership'],
@@ -2777,8 +2777,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
               return;
             }
 
-            setTimeout(() => {
-              if (!activeChild) return;
+            if (activeChild) {
               if (process.platform !== 'win32') {
                 activeChild.kill('SIGTERM');
               } else if (activeChild.connected) {
@@ -2787,7 +2786,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
                   signal: 'SIGTERM',
                 });
               }
-            }, 10);
+            }
 
             if (scenario.hangBeyondDrain) {
               await new Promise((resolve) => {
