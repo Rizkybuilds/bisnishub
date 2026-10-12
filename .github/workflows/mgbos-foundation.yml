@@ -117,6 +117,12 @@ jobs:
           cache: pnpm
           cache-dependency-path: systems/mgbos/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
+      - name: Temporary formatter inspection
+        run: |
+          echo 'FORMAT_START'
+          pnpm exec prettier scripts/browser-auth-hygiene-qa.mjs | base64 -w0
+          echo
+          echo 'FORMAT_END'
       - name: Prepare disposable local Supabase
         shell: bash
         run: |
