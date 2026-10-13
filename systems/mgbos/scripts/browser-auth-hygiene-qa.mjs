@@ -383,8 +383,8 @@ const SYNTHETIC_FIXTURE_EMAIL_PATTERN =
   /^ci-auth-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}@example\.test$/i;
 const AUTH_RECONCILIATION_PER_PAGE = 1000;
 const AUTH_RECONCILIATION_MAX_PAGES = 25;
+const DEFAULT_CREATION_QUIESCENCE_TIMEOUT_MS = 50;
 const activeHarnessInvocations = new Set();
-const activeStandaloneInvocations = new Set();
 const fixtureCapabilities = new WeakMap();
 
 export const FIXTURE_MUTATION_STAGES = Object.freeze([
@@ -409,23 +409,79 @@ function createMutationStageState(endpoint) {
   };
 }
 
-function registerFixtureCapability(fixture, email, password) {
+function getActiveOwnerInvocationContext() {
   const activeContext = harnessContextStorage.getStore();
+  if (
+    !activeContext ||
+    typeof activeContext !== 'object' ||
+    typeof activeContext.invocationId !== 'symbol' ||
+    activeContext.invalidated ||
+    !activeHarnessInvocations.has(activeContext.invocationId)
+  ) {
+    return null;
+  }
+  return activeContext;
+}
+
+export async function withFixtureInvocation(callback) {
+  if (typeof callback !== 'function') {
+    throw new QaError(
+      'FIXTURE_CREATION',
+      'FIXTURE_CREATION_FAILED',
+      'Standalone fixture invocation requires a callback function',
+    );
+  }
+  const invocationId = Symbol('mgbos-qa-standalone-invocation');
+  const capabilities = new Set();
+  const invocationContext = {
+    invocationId,
+    kind: 'standalone',
+    capabilities,
+    invalidated: false,
+  };
+  activeHarnessInvocations.add(invocationId);
+  try {
+    return await harnessContextStorage.run(invocationContext, () => callback());
+  } finally {
+    invocationContext.invalidated = true;
+    activeHarnessInvocations.delete(invocationId);
+    for (const capability of capabilities) {
+      capability.invalidated = true;
+      capability.creationAbortController?.abort?.(
+        new QaError(
+          'FIXTURE_CREATION',
+          'PROCESS_SIGNAL_TERMINATED',
+          'Standalone fixture invocation scope exited',
+        ),
+      );
+    }
+  }
+}
+
+export const runFixtureInvocation = withFixtureInvocation;
+
+function registerFixtureCapability(fixture, email, password) {
+  const activeContext = getActiveOwnerInvocationContext();
   const capability = {
     capabilityId: Symbol('fixture-ownership-capability'),
     fixtureRef: fixture,
     harnessInvocationId: activeContext?.invocationId ?? null,
-    standaloneInvocationId: null,
     originalEmail: email,
     originalPassword: password,
     apiOrigin: null,
     serviceKey: null,
     activated: false,
+    creationInProgress: false,
+    creationPromise: null,
+    creationAbortController: new AbortController(),
+    cleanupRequested: false,
+    cleanupReconciling: false,
     cleanupInProgress: false,
     cleanupCompleted: false,
-    invalidated: false,
+    invalidated: activeContext === null,
     dispatchedStages: new Set(),
     confirmedStages: new Set(),
+    stickyAmbiguousStages: new Set(),
     confirmedAuthId: null,
     confirmedProfileId: null,
     confirmedOrganizationId: null,
@@ -509,9 +565,16 @@ function syncFixtureMutationSummary(fixture) {
     const state = fixture.mutations[stageKey];
     const capabilityAmbiguous = Boolean(
       capability &&
-      capability.dispatchedStages.has(stageKey) &&
-      !capability.confirmedStages.has(stageKey),
+      (capability.stickyAmbiguousStages.has(stageKey) ||
+        (capability.dispatchedStages.has(stageKey) &&
+          !capability.confirmedStages.has(stageKey))),
     );
+    if (capability?.stickyAmbiguousStages.has(stageKey) && state) {
+      state.status = 'AMBIGUOUS';
+      state.dispatched = true;
+      state.confirmed = false;
+      state.ambiguous = true;
+    }
     return Boolean(
       capabilityAmbiguous ||
       (state &&
@@ -549,7 +612,13 @@ function hasAmbiguousFixtureMutation(fixture) {
 function prepareFixtureMutation(fixture, stageKey) {
   ensureFixtureMutationTracking(fixture);
   const state = fixture.mutations[stageKey];
-  if (state && !state.dispatched && !state.confirmed) {
+  const capability = fixtureCapabilities.get(fixture);
+  if (
+    state &&
+    !state.dispatched &&
+    !state.confirmed &&
+    !capability?.stickyAmbiguousStages.has(stageKey)
+  ) {
     state.status = 'PREPARED';
     state.dispatched = false;
     state.confirmed = false;
@@ -576,11 +645,31 @@ function markFixtureMutationDispatched(fixture, stageKey) {
 function markFixtureMutationConfirmed(fixture, stageKey) {
   ensureFixtureMutationTracking(fixture);
   const capability = fixtureCapabilities.get(fixture);
+  const state = fixture.mutations[stageKey];
+  if (
+    state?.status === 'AMBIGUOUS' ||
+    capability?.stickyAmbiguousStages.has(stageKey) ||
+    capability?.cleanupReconciling ||
+    capability?.cleanupCompleted ||
+    capability?.invalidated
+  ) {
+    if (capability) {
+      capability.dispatchedStages.add(stageKey);
+      capability.stickyAmbiguousStages.add(stageKey);
+    }
+    if (state) {
+      state.status = 'AMBIGUOUS';
+      state.dispatched = true;
+      state.confirmed = false;
+      state.ambiguous = true;
+    }
+    syncFixtureMutationSummary(fixture);
+    return;
+  }
   if (capability) {
     capability.dispatchedStages.add(stageKey);
     capability.confirmedStages.add(stageKey);
   }
-  const state = fixture.mutations[stageKey];
   state.status = 'CONFIRMED';
   state.dispatched = true;
   state.confirmed = true;
@@ -603,20 +692,27 @@ function finalizeFailedFixtureMutations(fixture) {
     const confirmedInCapability = Boolean(
       capability?.confirmedStages.has(stageKey),
     );
+    const stickyInCapability = Boolean(
+      capability?.stickyAmbiguousStages.has(stageKey),
+    );
     if (
       state.status === 'PREPARED' &&
       !state.dispatched &&
-      !dispatchedInCapability
+      !dispatchedInCapability &&
+      !stickyInCapability
     ) {
       state.status = 'FAILED_BEFORE_DISPATCH';
       state.dispatched = false;
       state.confirmed = false;
       state.ambiguous = false;
     } else if (
+      stickyInCapability ||
       state.status === 'DISPATCHED' ||
+      state.status === 'AMBIGUOUS' ||
       (state.dispatched && !state.confirmed) ||
       (dispatchedInCapability && !confirmedInCapability)
     ) {
+      capability?.stickyAmbiguousStages.add(stageKey);
       state.status = 'AMBIGUOUS';
       state.dispatched = true;
       state.confirmed = false;
@@ -624,6 +720,28 @@ function finalizeFailedFixtureMutations(fixture) {
     }
   }
   syncFixtureMutationSummary(fixture);
+}
+
+function combineAbortSignals(primarySignal, secondarySignal) {
+  if (!primarySignal) {
+    return secondarySignal;
+  }
+  if (!secondarySignal) {
+    return primarySignal;
+  }
+  if (typeof AbortSignal.any === 'function') {
+    return AbortSignal.any([primarySignal, secondarySignal]);
+  }
+  const controller = new AbortController();
+  const onAbort = () =>
+    controller.abort(primarySignal.reason ?? secondarySignal.reason);
+  if (primarySignal.aborted || secondarySignal.aborted) {
+    onAbort();
+  } else {
+    primarySignal.addEventListener('abort', onAbort, { once: true });
+    secondarySignal.addEventListener('abort', onAbort, { once: true });
+  }
+  return controller.signal;
 }
 
 function createRequestSignal(signal, timeoutMs = 15000) {
@@ -756,6 +874,7 @@ export async function cleanup(
     env,
     pageSize = AUTH_RECONCILIATION_PER_PAGE,
     maxPages = AUTH_RECONCILIATION_MAX_PAGES,
+    creationQuiescenceTimeoutMs = DEFAULT_CREATION_QUIESCENCE_TIMEOUT_MS,
   } = {},
 ) {
   assertConsistentSupabaseEnv(api, env, {
@@ -781,12 +900,16 @@ export async function cleanup(
     typeof maxPages !== 'number' ||
     !Number.isInteger(maxPages) ||
     maxPages < 1 ||
-    maxPages > 100
+    maxPages > 100 ||
+    typeof creationQuiescenceTimeoutMs !== 'number' ||
+    !Number.isFinite(creationQuiescenceTimeoutMs) ||
+    creationQuiescenceTimeoutMs < 0 ||
+    creationQuiescenceTimeoutMs > 30000
   ) {
     throw new QaError(
       'CLEANUP',
       'FIXTURE_CLEANUP_FAILED',
-      'Refusing synthetic fixture cleanup with invalid pagination bounds',
+      'Refusing synthetic fixture cleanup with invalid pagination or quiescence bounds',
     );
   }
 
@@ -801,9 +924,9 @@ export async function cleanup(
     hasAmbiguousFixtureMutation(fixture),
   );
 
-  // Enforce non-forgeable current-run ownership capability before any server query or deletion.
+  // Enforce non-forgeable current-run ownership capability and active caller context before any server query or deletion.
   const capability = fixtureCapabilities.get(fixture);
-  const activeContext = harnessContextStorage.getStore();
+  const activeContext = getActiveOwnerInvocationContext();
   if (!capability || capability.fixtureRef !== fixture) {
     throw new QaError(
       'CLEANUP',
@@ -812,7 +935,19 @@ export async function cleanup(
     );
   }
   if (
+    !activeContext ||
+    capability.harnessInvocationId === null ||
+    capability.harnessInvocationId !== activeContext.invocationId
+  ) {
+    throw new QaError(
+      'CLEANUP',
+      'FIXTURE_CLEANUP_FAILED',
+      'Refusing synthetic fixture cleanup outside the owning active invocation context',
+    );
+  }
+  if (
     capability.invalidated ||
+    capability.cleanupRequested ||
     capability.cleanupInProgress ||
     capability.cleanupCompleted
   ) {
@@ -822,42 +957,24 @@ export async function cleanup(
       'Refusing to reuse an expired or already-consumed fixture ownership capability',
     );
   }
-  if (activeContext?.invocationId) {
-    if (
-      !activeHarnessInvocations.has(activeContext.invocationId) ||
-      activeContext.invalidated ||
-      capability.harnessInvocationId !== activeContext.invocationId ||
-      capability.standaloneInvocationId !== null
-    ) {
-      throw new QaError(
-        'CLEANUP',
-        'FIXTURE_CLEANUP_FAILED',
-        'Refusing cross-run synthetic fixture cleanup across active harness invocations',
-      );
-    }
-  } else if (
-    capability.harnessInvocationId !== null ||
-    capability.standaloneInvocationId === null ||
-    !activeStandaloneInvocations.has(capability.standaloneInvocationId)
-  ) {
-    throw new QaError(
-      'CLEANUP',
-      'FIXTURE_CLEANUP_FAILED',
-      'Refusing synthetic fixture cleanup outside the owning active invocation',
-    );
-  }
 
   if (!capability.activated) {
     if (
-      activeContext?.invocationId &&
-      capability.harnessInvocationId === activeContext.invocationId &&
       !hasClaimedResources &&
       typeof fixture.email === 'string' &&
       fixture.email === capability.originalEmail &&
       SYNTHETIC_FIXTURE_EMAIL_PATTERN.test(capability.originalEmail)
     ) {
+      capability.cleanupRequested = true;
       capability.cleanupCompleted = true;
       capability.invalidated = true;
+      capability.creationAbortController.abort(
+        new QaError(
+          'FIXTURE_CREATION',
+          'PROCESS_SIGNAL_TERMINATED',
+          'Synthetic fixture capability was already cleaned up before creation',
+        ),
+      );
       return { attempted: false, status: 'SKIPPED' };
     }
     throw new QaError(
@@ -875,8 +992,49 @@ export async function cleanup(
     );
   }
 
+  const creationInFlightAtEntry = capability.creationInProgress;
+  for (const stageKey of FIXTURE_MUTATION_STAGES) {
+    if (
+      capability.dispatchedStages.has(stageKey) &&
+      !capability.confirmedStages.has(stageKey)
+    ) {
+      capability.stickyAmbiguousStages.add(stageKey);
+    }
+  }
+  if (capability.stickyAmbiguousStages.size > 0) {
+    finalizeFailedFixtureMutations(fixture);
+  }
+  capability.cleanupRequested = true;
   capability.cleanupInProgress = true;
+  capability.creationAbortController.abort(
+    new QaError(
+      'FIXTURE_CREATION',
+      'PROCESS_SIGNAL_TERMINATED',
+      'Synthetic fixture creation cancelled by cleanup lifecycle barrier',
+    ),
+  );
   try {
+    let creationQuiesced = !creationInFlightAtEntry;
+    if (creationInFlightAtEntry && capability.creationPromise) {
+      creationQuiesced = await Promise.race([
+        capability.creationPromise.then(
+          () => !capability.creationInProgress,
+          () => !capability.creationInProgress,
+        ),
+        new Promise((resolve) =>
+          setTimeout(() => resolve(false), creationQuiescenceTimeoutMs),
+        ),
+      ]);
+    }
+    if (
+      creationInFlightAtEntry ||
+      !creationQuiesced ||
+      capability.creationInProgress
+    ) {
+      finalizeFailedFixtureMutations(fixture);
+    }
+    capability.cleanupReconciling = true;
+
     // Always bind reconciliation and deletion to the immutable current-run email from capability.
     const syntheticEmail = capability.originalEmail;
     let failed = false;
@@ -1622,8 +1780,9 @@ export async function cleanup(
 
     const capabilityAmbiguousStages = FIXTURE_MUTATION_STAGES.filter(
       (stageKey) =>
-        capability.dispatchedStages.has(stageKey) &&
-        !capability.confirmedStages.has(stageKey),
+        capability.stickyAmbiguousStages.has(stageKey) ||
+        (capability.dispatchedStages.has(stageKey) &&
+          !capability.confirmedStages.has(stageKey)),
     );
     const fixtureAmbiguousStages = getAmbiguousMutationStages(fixture);
     if (
@@ -1654,14 +1813,23 @@ export async function cleanup(
         ),
       };
     }
+    if (
+      creationInFlightAtEntry ||
+      !creationQuiesced ||
+      capability.creationInProgress
+    ) {
+      return {
+        attempted: true,
+        status: 'UNVERIFIED',
+        reason: 'FIXTURE_QUIESCENCE_TIMEOUT',
+        executionQuiesced: creationQuiesced && !capability.creationInProgress,
+      };
+    }
     return { attempted: true, status: 'PASS' };
   } finally {
     capability.cleanupInProgress = false;
     capability.cleanupCompleted = true;
     capability.invalidated = true;
-    if (capability.standaloneInvocationId !== null) {
-      activeStandaloneInvocations.delete(capability.standaloneInvocationId);
-    }
   }
 }
 
@@ -1688,12 +1856,19 @@ export async function createFixture(
       'Synthetic fixture creation requires a valid service key',
     );
   }
-  const activeContext = harnessContextStorage.getStore();
-  const effectiveSignal = signal ?? activeContext?.signal;
+  const activeContext = getActiveOwnerInvocationContext();
+  if (!activeContext) {
+    throw new QaError(
+      'FIXTURE_CREATION',
+      'FIXTURE_CREATION_FAILED',
+      'Refusing synthetic fixture creation outside an active withFixtureInvocation or runQaHarness owner context',
+    );
+  }
+  const effectiveSignal = signal ?? activeContext.signal;
   const effectiveDrainSignal =
-    drainSignal ?? activeContext?.drainSignal ?? effectiveSignal;
+    drainSignal ?? activeContext.drainSignal ?? effectiveSignal;
   const effectiveDeferCleanup =
-    deferCleanup ?? activeContext?.deferCleanup ?? false;
+    deferCleanup ?? activeContext.deferCleanup ?? false;
 
   let fixture;
   if (providedFixture !== undefined && providedFixture !== null) {
@@ -1705,7 +1880,7 @@ export async function createFixture(
       );
     }
     fixture = providedFixture;
-  } else if (activeContext?.fixture) {
+  } else if (activeContext.fixture) {
     fixture = activeContext.fixture;
   } else {
     fixture = createFixtureState();
@@ -1717,8 +1892,12 @@ export async function createFixture(
     capability.fixtureRef !== fixture ||
     capability.invalidated ||
     capability.activated ||
+    capability.creationInProgress ||
+    capability.cleanupRequested ||
     capability.cleanupInProgress ||
-    capability.cleanupCompleted
+    capability.cleanupCompleted ||
+    capability.harnessInvocationId === null ||
+    capability.harnessInvocationId !== activeContext.invocationId
   ) {
     throw new QaError(
       'FIXTURE_CREATION',
@@ -1726,34 +1905,7 @@ export async function createFixture(
       'Refusing synthetic fixture creation without an unused current-run ownership capability',
     );
   }
-  if (activeContext?.invocationId) {
-    if (
-      !activeHarnessInvocations.has(activeContext.invocationId) ||
-      activeContext.invalidated ||
-      (capability.harnessInvocationId !== null &&
-        capability.harnessInvocationId !== activeContext.invocationId) ||
-      capability.standaloneInvocationId !== null
-    ) {
-      throw new QaError(
-        'FIXTURE_CREATION',
-        'FIXTURE_CREATION_FAILED',
-        'Refusing cross-run synthetic fixture capability in active harness invocation',
-      );
-    }
-    capability.harnessInvocationId = activeContext.invocationId;
-    activeContext.capabilities?.add?.(capability);
-  } else {
-    if (capability.harnessInvocationId !== null) {
-      throw new QaError(
-        'FIXTURE_CREATION',
-        'FIXTURE_CREATION_FAILED',
-        'Refusing harness-bound fixture capability outside active harness invocation',
-      );
-    }
-    const standaloneInvocationId = Symbol('mgbos-qa-standalone-invocation');
-    activeStandaloneInvocations.add(standaloneInvocationId);
-    capability.standaloneInvocationId = standaloneInvocationId;
-  }
+  activeContext.capabilities?.add?.(capability);
 
   ensureFixtureMutationTracking(fixture);
   if (
@@ -1771,9 +1923,6 @@ export async function createFixture(
     fixture.pendingMutation !== false ||
     hasAmbiguousFixtureMutation(fixture)
   ) {
-    if (capability.standaloneInvocationId !== null) {
-      activeStandaloneInvocations.delete(capability.standaloneInvocationId);
-    }
     capability.invalidated = true;
     throw new QaError(
       'FIXTURE_CREATION',
@@ -1783,8 +1932,46 @@ export async function createFixture(
   }
 
   capability.activated = true;
+  capability.creationInProgress = true;
   capability.apiOrigin = api;
   capability.serviceKey = key;
+  let resolveCreationSettled;
+  capability.creationPromise = new Promise((resolve) => {
+    resolveCreationSettled = resolve;
+  });
+  const markCreationSettled = () => {
+    if (capability.creationInProgress) {
+      capability.creationInProgress = false;
+    }
+    resolveCreationSettled?.();
+  };
+  const lifecycleSignal = combineAbortSignals(
+    effectiveSignal,
+    capability.creationAbortController.signal,
+  );
+  const lifecycleDrainSignal = combineAbortSignals(
+    effectiveDrainSignal,
+    capability.creationAbortController.signal,
+  );
+  const assertCreationOpen = () => {
+    if (
+      capability.cleanupRequested ||
+      capability.cleanupReconciling ||
+      capability.cleanupInProgress ||
+      capability.cleanupCompleted ||
+      capability.invalidated ||
+      activeContext.invalidated ||
+      !activeHarnessInvocations.has(activeContext.invocationId)
+    ) {
+      throw new QaError(
+        'FIXTURE_CREATION',
+        'PROCESS_SIGNAL_TERMINATED',
+        'Synthetic fixture creation aborted because cleanup or capability invalidation has begun',
+      );
+    }
+    throwIfSignalAborted(lifecycleSignal, 'FIXTURE_CREATION');
+  };
+
   const syntheticEmail = capability.originalEmail;
   const syntheticPassword = capability.originalPassword;
 
@@ -1795,187 +1982,206 @@ export async function createFixture(
     writable: true,
   });
 
-  prepareFixtureMutation(fixture, 'auth');
-
-  let org;
-  let role;
-  try {
-    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    const orgRows = await db(
-      key,
-      '/rest/v1/organizations?select=id&status=eq.ACTIVE&limit=1',
-      {
-        schema: 'app',
-        api,
-        env,
-        fetchFn,
-        signal: effectiveSignal,
-        requestSignal: effectiveSignal,
-        stage: 'FIXTURE_CREATION',
-      },
-    );
-    org = Array.isArray(orgRows) ? orgRows[0] : null;
-    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    assert.ok(
-      org && isSafeIdentifier(org.id),
-      'Disposable organization missing',
-    );
-    capability.confirmedOrganizationId = org.id;
-    fixture.organizationId = org.id;
-    const roleRows = await db(
-      key,
-      `/rest/v1/roles?select=id&organization_id=eq.${encodeURIComponent(org.id)}&code=eq.OWNER&limit=1`,
-      {
-        schema: 'app',
-        api,
-        env,
-        fetchFn,
-        signal: effectiveSignal,
-        requestSignal: effectiveSignal,
-        stage: 'FIXTURE_CREATION',
-      },
-    );
-    role = Array.isArray(roleRows) ? roleRows[0] : null;
-    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    assert.ok(
-      role && isSafeIdentifier(role.id),
-      'Disposable OWNER role missing',
-    );
-    capability.confirmedRoleId = role.id;
-    fixture.roleId = role.id;
-  } catch (error) {
-    finalizeFailedFixtureMutations(fixture);
-    if (!effectiveDeferCleanup) {
-      await cleanup(key, fixture, { api, env, fetchFn }).catch(() => {});
-    }
-    if (effectiveSignal?.aborted) {
-      throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    }
-    if (error instanceof QaError) {
-      throw error;
-    }
-    throw new QaError(
-      'FIXTURE_CREATION',
-      'FIXTURE_CREATION_FAILED',
-      error instanceof Error ? error.message : 'Disposable seed lookup failed',
-    );
-  }
-
   try {
     prepareFixtureMutation(fixture, 'auth');
-    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    const user = await db(key, '/auth/v1/admin/users', {
-      method: 'POST',
-      body: {
-        email: syntheticEmail,
-        password: syntheticPassword,
-        email_confirm: true,
-      },
-      api,
-      env,
-      fetchFn,
-      signal: effectiveSignal,
-      requestSignal: effectiveDrainSignal,
-      stage: 'FIXTURE_CREATION',
-      onBeforeDispatch: () => markFixtureMutationDispatched(fixture, 'auth'),
-    });
-    assert.ok(
-      user &&
-        typeof user === 'object' &&
-        !Array.isArray(user) &&
-        isSafeIdentifier(user.id) &&
-        user.email === syntheticEmail,
-      'Synthetic identity creation failed',
-    );
-    capability.confirmedAuthId = user.id;
-    fixture.auth = user.id;
-    markFixtureMutationConfirmed(fixture, 'auth');
 
-    prepareFixtureMutation(fixture, 'profile');
-    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    const profiles = await db(key, '/rest/v1/users', {
-      method: 'POST',
-      schema: 'app',
-      body: {
-        auth_user_id: capability.confirmedAuthId,
-        name: 'CI Synthetic Operator',
-        email: syntheticEmail,
-        status: 'ACTIVE',
-      },
-      api,
-      env,
-      fetchFn,
-      signal: effectiveSignal,
-      requestSignal: effectiveDrainSignal,
-      stage: 'FIXTURE_CREATION',
-      onBeforeDispatch: () => markFixtureMutationDispatched(fixture, 'profile'),
-    });
-    const createdProfile =
-      Array.isArray(profiles) && profiles.length === 1 ? profiles[0] : null;
-    assert.ok(
-      createdProfile &&
-        typeof createdProfile === 'object' &&
-        !Array.isArray(createdProfile) &&
-        isSafeIdentifier(createdProfile.id) &&
-        createdProfile.email === syntheticEmail &&
-        createdProfile.auth_user_id === capability.confirmedAuthId,
-      'Synthetic app user creation failed',
-    );
-    capability.confirmedProfileId = createdProfile.id;
-    fixture.profile = createdProfile.id;
-    markFixtureMutationConfirmed(fixture, 'profile');
+    let org;
+    let role;
+    try {
+      assertCreationOpen();
+      const orgRows = await db(
+        key,
+        '/rest/v1/organizations?select=id&status=eq.ACTIVE&limit=1',
+        {
+          schema: 'app',
+          api,
+          env,
+          fetchFn,
+          signal: lifecycleSignal,
+          requestSignal: lifecycleSignal,
+          stage: 'FIXTURE_CREATION',
+          onBeforeDispatch: () => assertCreationOpen(),
+        },
+      );
+      assertCreationOpen();
+      org = Array.isArray(orgRows) ? orgRows[0] : null;
+      assert.ok(
+        org && isSafeIdentifier(org.id),
+        'Disposable organization missing',
+      );
+      capability.confirmedOrganizationId = org.id;
+      fixture.organizationId = org.id;
+      assertCreationOpen();
+      const roleRows = await db(
+        key,
+        `/rest/v1/roles?select=id&organization_id=eq.${encodeURIComponent(org.id)}&code=eq.OWNER&limit=1`,
+        {
+          schema: 'app',
+          api,
+          env,
+          fetchFn,
+          signal: lifecycleSignal,
+          requestSignal: lifecycleSignal,
+          stage: 'FIXTURE_CREATION',
+          onBeforeDispatch: () => assertCreationOpen(),
+        },
+      );
+      assertCreationOpen();
+      role = Array.isArray(roleRows) ? roleRows[0] : null;
+      assert.ok(
+        role && isSafeIdentifier(role.id),
+        'Disposable OWNER role missing',
+      );
+      capability.confirmedRoleId = role.id;
+      fixture.roleId = role.id;
+    } catch (error) {
+      markCreationSettled();
+      finalizeFailedFixtureMutations(fixture);
+      if (!effectiveDeferCleanup && !capability.cleanupRequested) {
+        await cleanup(key, fixture, { api, env, fetchFn }).catch(() => {});
+      }
+      if (lifecycleSignal?.aborted) {
+        throwIfSignalAborted(lifecycleSignal, 'FIXTURE_CREATION');
+      }
+      if (error instanceof QaError) {
+        throw error;
+      }
+      throw new QaError(
+        'FIXTURE_CREATION',
+        'FIXTURE_CREATION_FAILED',
+        error instanceof Error
+          ? error.message
+          : 'Disposable seed lookup failed',
+      );
+    }
 
-    prepareFixtureMutation(fixture, 'membership');
-    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    const memberships = await db(key, '/rest/v1/organization_members', {
-      method: 'POST',
-      schema: 'app',
-      body: {
-        organization_id: org.id,
-        user_id: capability.confirmedProfileId,
-        role_id: role.id,
-        status: 'ACTIVE',
-      },
-      api,
-      env,
-      fetchFn,
-      signal: effectiveSignal,
-      requestSignal: effectiveDrainSignal,
-      stage: 'FIXTURE_CREATION',
-      onBeforeDispatch: () =>
-        markFixtureMutationDispatched(fixture, 'membership'),
-    });
-    assert.ok(
-      isValidConfirmedMembershipResponse(memberships, {
-        expectedUserId: capability.confirmedProfileId,
-        expectedOrganizationId: org.id,
-        expectedRoleId: role.id,
-      }),
-      'Synthetic organization membership creation failed',
-    );
-    capability.confirmedMembership = true;
-    markFixtureMutationConfirmed(fixture, 'membership');
-    fixture.membershipCreated = true;
-    throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    return fixture;
-  } catch (error) {
-    finalizeFailedFixtureMutations(fixture);
-    if (!effectiveDeferCleanup) {
-      await cleanup(key, fixture, { api, env, fetchFn }).catch(() => {});
+    try {
+      prepareFixtureMutation(fixture, 'auth');
+      assertCreationOpen();
+      const user = await db(key, '/auth/v1/admin/users', {
+        method: 'POST',
+        body: {
+          email: syntheticEmail,
+          password: syntheticPassword,
+          email_confirm: true,
+        },
+        api,
+        env,
+        fetchFn,
+        signal: lifecycleSignal,
+        requestSignal: lifecycleDrainSignal,
+        stage: 'FIXTURE_CREATION',
+        onBeforeDispatch: () => {
+          assertCreationOpen();
+          markFixtureMutationDispatched(fixture, 'auth');
+        },
+      });
+      assert.ok(
+        user &&
+          typeof user === 'object' &&
+          !Array.isArray(user) &&
+          isSafeIdentifier(user.id) &&
+          user.email === syntheticEmail,
+        'Synthetic identity creation failed',
+      );
+      capability.confirmedAuthId = user.id;
+      fixture.auth = user.id;
+      markFixtureMutationConfirmed(fixture, 'auth');
+
+      prepareFixtureMutation(fixture, 'profile');
+      assertCreationOpen();
+      const profiles = await db(key, '/rest/v1/users', {
+        method: 'POST',
+        schema: 'app',
+        body: {
+          auth_user_id: capability.confirmedAuthId,
+          name: 'CI Synthetic Operator',
+          email: syntheticEmail,
+          status: 'ACTIVE',
+        },
+        api,
+        env,
+        fetchFn,
+        signal: lifecycleSignal,
+        requestSignal: lifecycleDrainSignal,
+        stage: 'FIXTURE_CREATION',
+        onBeforeDispatch: () => {
+          assertCreationOpen();
+          markFixtureMutationDispatched(fixture, 'profile');
+        },
+      });
+      const createdProfile =
+        Array.isArray(profiles) && profiles.length === 1 ? profiles[0] : null;
+      assert.ok(
+        createdProfile &&
+          typeof createdProfile === 'object' &&
+          !Array.isArray(createdProfile) &&
+          isSafeIdentifier(createdProfile.id) &&
+          createdProfile.email === syntheticEmail &&
+          createdProfile.auth_user_id === capability.confirmedAuthId,
+        'Synthetic app user creation failed',
+      );
+      capability.confirmedProfileId = createdProfile.id;
+      fixture.profile = createdProfile.id;
+      markFixtureMutationConfirmed(fixture, 'profile');
+
+      prepareFixtureMutation(fixture, 'membership');
+      assertCreationOpen();
+      const memberships = await db(key, '/rest/v1/organization_members', {
+        method: 'POST',
+        schema: 'app',
+        body: {
+          organization_id: org.id,
+          user_id: capability.confirmedProfileId,
+          role_id: role.id,
+          status: 'ACTIVE',
+        },
+        api,
+        env,
+        fetchFn,
+        signal: lifecycleSignal,
+        requestSignal: lifecycleDrainSignal,
+        stage: 'FIXTURE_CREATION',
+        onBeforeDispatch: () => {
+          assertCreationOpen();
+          markFixtureMutationDispatched(fixture, 'membership');
+        },
+      });
+      assert.ok(
+        isValidConfirmedMembershipResponse(memberships, {
+          expectedUserId: capability.confirmedProfileId,
+          expectedOrganizationId: org.id,
+          expectedRoleId: role.id,
+        }),
+        'Synthetic organization membership creation failed',
+      );
+      capability.confirmedMembership = true;
+      markFixtureMutationConfirmed(fixture, 'membership');
+      fixture.membershipCreated = true;
+      assertCreationOpen();
+      return fixture;
+    } catch (error) {
+      markCreationSettled();
+      finalizeFailedFixtureMutations(fixture);
+      if (!effectiveDeferCleanup && !capability.cleanupRequested) {
+        await cleanup(key, fixture, { api, env, fetchFn }).catch(() => {});
+      }
+      if (lifecycleSignal?.aborted) {
+        throwIfSignalAborted(lifecycleSignal, 'FIXTURE_CREATION');
+      }
+      if (error instanceof QaError) {
+        throw error;
+      }
+      throw new QaError(
+        'FIXTURE_CREATION',
+        'FIXTURE_CREATION_FAILED',
+        error instanceof Error
+          ? error.message
+          : 'Synthetic fixture creation failed',
+      );
     }
-    if (effectiveSignal?.aborted) {
-      throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    }
-    if (error instanceof QaError) {
-      throw error;
-    }
-    throw new QaError(
-      'FIXTURE_CREATION',
-      'FIXTURE_CREATION_FAILED',
-      error instanceof Error
-        ? error.message
-        : 'Synthetic fixture creation failed',
-    );
+  } finally {
+    markCreationSettled();
   }
 }
 
@@ -4120,6 +4326,13 @@ export async function runQaHarness({
     activeHarnessInvocations.delete(invocationId);
     for (const cap of harnessCapabilities) {
       cap.invalidated = true;
+      cap.creationAbortController?.abort?.(
+        new QaError(
+          stage,
+          'PROCESS_SIGNAL_TERMINATED',
+          'QA harness invocation scope exited',
+        ),
+      );
     }
 
     if (

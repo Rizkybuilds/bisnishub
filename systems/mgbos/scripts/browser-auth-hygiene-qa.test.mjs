@@ -34,6 +34,7 @@ import {
   terminateSubprocess,
   validateTraceReport,
   verifyTraceFile,
+  withFixtureInvocation,
   writeSanitizedTrace,
 } from './browser-auth-hygiene-qa.mjs';
 
@@ -1326,7 +1327,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     }
 
     // 1. Normal acknowledged success: all three stages transition to CONFIRMED with zero ambiguity.
-    {
+    await withFixtureInvocation(async () => {
       const normalStore = createMockFixtureStore();
       const fixtureState = createFixtureState();
       await createFixture('synthetic_service_key', {
@@ -1350,7 +1351,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       assert.equal(normalStore.authUsers.size, 1);
       assert.equal(normalStore.appUsers.size, 1);
       assert.equal(normalStore.orgMembers.length, 1);
-    }
+    });
 
     // 2. Interruption before mutation dispatch & interruption while mutation is in flight (settling within quiescence).
     const scenarios = [
@@ -3393,7 +3394,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     }
 
     // 3. Owned current-run fixture whose server-side profile links to an unrelated auth_user_id.
-    {
+    await withFixtureInvocation(async () => {
       const store = createOwnershipTestStore();
       const fixture = await createFixture('synthetic_service_key', {
         fetchFn: store.fetchFn,
@@ -3416,7 +3417,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       assert.equal(store.appUsers.has(SYNTH_PROFILE_ID), true);
       assert.equal(store.authUsers.has(SYNTH_AUTH_ID), false);
       assertUnrelatedPreserved(store, 'mismatched auth_user_id');
-    }
+    });
 
     // 4. Owned current-run fixture whose membership points to another organization, role, or non-ACTIVE status is never deleted and fails closed.
     for (const badMember of [
@@ -3439,43 +3440,49 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         status: 'SUSPENDED',
       },
     ]) {
-      const store = createOwnershipTestStore();
-      const fixture = await createFixture('synthetic_service_key', {
-        fetchFn: store.fetchFn,
-        deferCleanup: true,
+      await withFixtureInvocation(async () => {
+        const store = createOwnershipTestStore();
+        const fixture = await createFixture('synthetic_service_key', {
+          fetchFn: store.fetchFn,
+          deferCleanup: true,
+        });
+        // Corrupt the synthetic membership row in the store.
+        const memberIdx = store.orgMembers.findIndex(
+          (m) => m.user_id === SYNTH_PROFILE_ID,
+        );
+        store.orgMembers[memberIdx] = {
+          user_id: SYNTH_PROFILE_ID,
+          organization_id: badMember.organization_id,
+          role_id: badMember.role_id,
+          status: badMember.status,
+        };
+        await assert.rejects(
+          () =>
+            cleanup('synthetic_service_key', fixture, {
+              fetchFn: store.fetchFn,
+            }),
+          (err) =>
+            err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+          badMember.label,
+        );
+        // Mismatched membership was not deleted; verified synthetic profile and auth were cleaned up.
+        assert.equal(store.orgMembers.length, 2, badMember.label);
+        assert.equal(
+          store.appUsers.has(SYNTH_PROFILE_ID),
+          false,
+          badMember.label,
+        );
+        assert.equal(
+          store.authUsers.has(SYNTH_AUTH_ID),
+          false,
+          badMember.label,
+        );
+        assertUnrelatedPreserved(store, badMember.label);
       });
-      // Corrupt the synthetic membership row in the store.
-      const memberIdx = store.orgMembers.findIndex(
-        (m) => m.user_id === SYNTH_PROFILE_ID,
-      );
-      store.orgMembers[memberIdx] = {
-        user_id: SYNTH_PROFILE_ID,
-        organization_id: badMember.organization_id,
-        role_id: badMember.role_id,
-        status: badMember.status,
-      };
-      await assert.rejects(
-        () =>
-          cleanup('synthetic_service_key', fixture, {
-            fetchFn: store.fetchFn,
-          }),
-        (err) =>
-          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
-        badMember.label,
-      );
-      // Mismatched membership was not deleted; verified synthetic profile and auth were cleaned up.
-      assert.equal(store.orgMembers.length, 2, badMember.label);
-      assert.equal(
-        store.appUsers.has(SYNTH_PROFILE_ID),
-        false,
-        badMember.label,
-      );
-      assert.equal(store.authUsers.has(SYNTH_AUTH_ID), false, badMember.label);
-      assertUnrelatedPreserved(store, badMember.label);
     }
 
     // 5. Duplicate identity matches (duplicate auth users, duplicate profiles, duplicate memberships) and contradictory auth responses on an owned current-run fixture.
-    {
+    await withFixtureInvocation(async () => {
       const dupAuthStore = createOwnershipTestStore();
       const dupAuthFixture = await createFixture('synthetic_service_key', {
         fetchFn: dupAuthStore.fetchFn,
@@ -3584,10 +3591,10 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       );
       assert.equal(dupMembershipStore.orgMembers.length, 3);
       assertUnrelatedPreserved(dupMembershipStore, 'duplicate memberships');
-    }
+    });
 
     // 6. Missing identity fields on server responses fail closed without deleting.
-    {
+    await withFixtureInvocation(async () => {
       const missingFieldsStore = createOwnershipTestStore();
       const missingFieldsFixture = await createFixture(
         'synthetic_service_key',
@@ -3611,7 +3618,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       );
       assert.equal(missingFieldsStore.appUsers.has(SYNTH_PROFILE_ID), true);
       assertUnrelatedPreserved(missingFieldsStore, 'missing auth_user_id');
-    }
+    });
 
     // 7. Mixed valid and invalid fixture references on an owned current-run fixture:
     // after createFixture succeeds, caller corrupts fixture.auth/fixture.profile to point to unrelated user.
@@ -3669,14 +3676,21 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     });
   });
 
-  it('SEC64-01A: enforces non-forgeable current-run ownership provenance across foreign runs, email-only/full-ID foreign fixtures, reused/expired capabilities, caller-mutated emails, concurrent invocations, and partial-creation compensating cleanup', async () => {
+  it('SEC64-01A: enforces non-forgeable current-run and standalone per-invocation ownership provenance across foreign runs, live cross-invocation references, email-only/full-ID foreign fixtures, reused/expired capabilities, caller-mutated emails, concurrent invocations, and partial-creation compensating cleanup', async () => {
     const UNRELATED_AUTH_ID = '00000000-0000-4000-8000-000000000999';
     const UNRELATED_PROFILE_ID = '00000000-0000-4000-8000-000000000888';
     const UNRELATED_EMAIL = 'unrelated-operator@example.test';
     const SEED_ORG_ID = '00000000-0000-4000-8000-000000000010';
     const SEED_ROLE_ID = '00000000-0000-4000-8000-000000000020';
 
-    function createSharedMockDatabase({ failStage = null } = {}) {
+    function createSharedMockDatabase({
+      failStage = null,
+      onOrganizationsGet = null,
+      onRolesGet = null,
+      onAuthPost = null,
+      onProfilePost = null,
+      onMembershipPost = null,
+    } = {}) {
       const authUsers = new Map([
         [UNRELATED_AUTH_ID, { id: UNRELATED_AUTH_ID, email: UNRELATED_EMAIL }],
       ]);
@@ -3700,6 +3714,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           status: 'ACTIVE',
         },
       ];
+      const getCalls = [];
+      const postCalls = [];
       const deleteCalls = [];
       let authCounter = 0;
       let profileCounter = 0;
@@ -3715,18 +3731,31 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         const method = options.method ?? 'GET';
         const pathname = parsed.pathname;
 
-        if (method === 'DELETE') {
+        if (method === 'GET') {
+          getCalls.push(`${pathname}${parsed.search}`);
+        } else if (method === 'POST') {
+          postCalls.push(`${pathname}${parsed.search}`);
+        } else if (method === 'DELETE') {
           deleteCalls.push(`${pathname}${parsed.search}`);
         }
 
         if (method === 'GET' && pathname === '/rest/v1/organizations') {
+          if (onOrganizationsGet) {
+            await onOrganizationsGet({ options });
+          }
           return jsonResponse(200, [{ id: SEED_ORG_ID }]);
         }
         if (method === 'GET' && pathname === '/rest/v1/roles') {
+          if (onRolesGet) {
+            await onRolesGet({ options });
+          }
           return jsonResponse(200, [{ id: SEED_ROLE_ID }]);
         }
 
         if (method === 'POST' && pathname === '/auth/v1/admin/users') {
+          if (onAuthPost) {
+            await onAuthPost({ options });
+          }
           if (failStage === 'auth') {
             return jsonResponse(500, { error: 'simulated auth failure' });
           }
@@ -3739,6 +3768,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         }
 
         if (method === 'POST' && pathname === '/rest/v1/users') {
+          if (onProfilePost) {
+            await onProfilePost({ options });
+          }
           if (failStage === 'profile') {
             return jsonResponse(500, { error: 'simulated profile failure' });
           }
@@ -3757,6 +3789,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         }
 
         if (method === 'POST' && pathname === '/rest/v1/organization_members') {
+          if (onMembershipPost) {
+            await onMembershipPost({ options });
+          }
           if (failStage === 'membership') {
             return jsonResponse(500, { error: 'simulated membership failure' });
           }
@@ -3881,96 +3916,180 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         throw new Error(`Unhandled mock endpoint: ${method} ${pathname}`);
       };
 
-      return { authUsers, appUsers, orgMembers, deleteCalls, fetchFn };
+      return {
+        authUsers,
+        appUsers,
+        orgMembers,
+        getCalls,
+        postCalls,
+        deleteCalls,
+        fetchFn,
+      };
     }
 
-    // 1. Current-run fixture cleanup succeeds and leaves unrelated records untouched.
+    // 1. Valid standalone owner cleans up its own completed fixture and leaves unrelated records untouched;
+    // unscoped calls outside withFixtureInvocation / runQaHarness fail closed before any GET/POST/DELETE.
     {
       const dbStore = createSharedMockDatabase();
-      const ownFixture = await createFixture('synthetic_service_key', {
-        fetchFn: dbStore.fetchFn,
-        deferCleanup: true,
-      });
-      assert.equal(dbStore.authUsers.size, 2);
-      assert.equal(dbStore.appUsers.size, 2);
-      assert.equal(dbStore.orgMembers.length, 2);
 
-      const res = await cleanup('synthetic_service_key', ownFixture, {
-        fetchFn: dbStore.fetchFn,
+      // 1a. Unscoped createFixture outside withFixtureInvocation fails closed before any GET/POST:
+      await assert.rejects(
+        () =>
+          createFixture('synthetic_service_key', {
+            fetchFn: dbStore.fetchFn,
+            deferCleanup: true,
+          }),
+        (err) =>
+          err instanceof QaError && err.code === 'FIXTURE_CREATION_FAILED',
+      );
+      assert.deepEqual(dbStore.getCalls, []);
+      assert.deepEqual(dbStore.postCalls, []);
+
+      // 1b. Unscoped createFixtureState() + cleanup outside withFixtureInvocation fails closed before any GET/DELETE:
+      const unscopedState = createFixtureState();
+      await assert.rejects(
+        () =>
+          cleanup('synthetic_service_key', unscopedState, {
+            fetchFn: dbStore.fetchFn,
+          }),
+        (err) =>
+          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+      );
+      assert.deepEqual(dbStore.getCalls, []);
+      assert.deepEqual(dbStore.deleteCalls, []);
+
+      // 1c. Scoped standalone owner creates and cleans up its own fixture cleanly:
+      await withFixtureInvocation(async () => {
+        const ownFixture = await createFixture('synthetic_service_key', {
+          fetchFn: dbStore.fetchFn,
+          deferCleanup: true,
+        });
+        assert.equal(dbStore.authUsers.size, 2);
+        assert.equal(dbStore.appUsers.size, 2);
+        assert.equal(dbStore.orgMembers.length, 2);
+
+        const res = await cleanup('synthetic_service_key', ownFixture, {
+          fetchFn: dbStore.fetchFn,
+        });
+        assert.deepEqual(res, { attempted: true, status: 'PASS' });
+        assert.equal(dbStore.authUsers.size, 1);
+        assert.equal(dbStore.authUsers.has(UNRELATED_AUTH_ID), true);
+        assert.equal(dbStore.appUsers.size, 1);
+        assert.equal(dbStore.appUsers.has(UNRELATED_PROFILE_ID), true);
+        assert.equal(dbStore.orgMembers.length, 1);
       });
-      assert.deepEqual(res, { attempted: true, status: 'PASS' });
-      assert.equal(dbStore.authUsers.size, 1);
-      assert.equal(dbStore.authUsers.has(UNRELATED_AUTH_ID), true);
-      assert.equal(dbStore.appUsers.size, 1);
-      assert.equal(dbStore.appUsers.has(UNRELATED_PROFILE_ID), true);
-      assert.equal(dbStore.orgMembers.length, 1);
     }
 
-    // 2. Foreign-run UUID-shaped synthetic identity, email-only foreign fixture, and full-ID foreign fixture are rejected without deleting foreign resources.
+    // 2. Standalone cross-invocation isolation (Failure A):
+    // Separate standalone caller (withFixtureInvocation A), unscoped caller, nested invocation, or runQaHarness
+    // CANNOT clean up another active standalone invocation (withFixtureInvocation B) even when possessing B's
+    // genuine live fixture reference and matching local service key.
     {
       const dbStore = createSharedMockDatabase();
-      // Foreign Run A creates a real synthetic fixture in the shared local database.
-      const foreignFixture = await createFixture('synthetic_service_key', {
-        fetchFn: dbStore.fetchFn,
-        deferCleanup: true,
+      let foreignFixture = null;
+      let foreignAuthId = null;
+      let foreignProfileId = null;
+      let foreignEmail = null;
+      let notifyInvocationBReady;
+      const invocationBReady = new Promise((resolve) => {
+        notifyInvocationBReady = resolve;
       });
-      const foreignAuthId = foreignFixture.auth;
-      const foreignProfileId = foreignFixture.profile;
-      const foreignEmail = foreignFixture.email;
+      let releaseInvocationB;
+      const invocationBGate = new Promise((resolve) => {
+        releaseInvocationB = resolve;
+      });
 
-      // 2a. Plain object with foreign UUID-shaped synthetic email only:
+      // Start Standalone Invocation B and keep it active while Foreign Callers probe it.
+      const invocationBPromise = withFixtureInvocation(async () => {
+        foreignFixture = await createFixture('synthetic_service_key', {
+          fetchFn: dbStore.fetchFn,
+          deferCleanup: true,
+        });
+        foreignAuthId = foreignFixture.auth;
+        foreignProfileId = foreignFixture.profile;
+        foreignEmail = foreignFixture.email;
+
+        // 2a. Nested withFixtureInvocation inside B cannot clean up parent B's fixture:
+        dbStore.getCalls.length = 0;
+        dbStore.deleteCalls.length = 0;
+        await withFixtureInvocation(async () => {
+          await assert.rejects(
+            () =>
+              cleanup('synthetic_service_key', foreignFixture, {
+                fetchFn: dbStore.fetchFn,
+              }),
+            (err) =>
+              err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+          );
+        });
+        assert.deepEqual(dbStore.getCalls, []);
+        assert.deepEqual(dbStore.deleteCalls, []);
+
+        notifyInvocationBReady();
+        await invocationBGate;
+
+        // After all foreign attacks are rejected, B cleans up its own fixture and gets PASS!
+        const foreignCleanRes = await cleanup(
+          'synthetic_service_key',
+          foreignFixture,
+          {
+            fetchFn: dbStore.fetchFn,
+          },
+        );
+        assert.deepEqual(foreignCleanRes, { attempted: true, status: 'PASS' });
+      });
+
+      await invocationBReady;
+      dbStore.getCalls.length = 0;
+      dbStore.deleteCalls.length = 0;
+
+      // 2b. Unscoped caller with B's genuine live fixture reference and service key:
       await assert.rejects(
         () =>
-          cleanup(
-            'synthetic_service_key',
-            { email: foreignEmail },
-            { fetchFn: dbStore.fetchFn },
-          ),
+          cleanup('synthetic_service_key', foreignFixture, {
+            fetchFn: dbStore.fetchFn,
+          }),
         (err) =>
           err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
       );
+      assert.deepEqual(dbStore.getCalls, []);
       assert.deepEqual(dbStore.deleteCalls, []);
 
-      // 2b. Plain object with foreign email + mutationStarted / ambiguous marker:
-      await assert.rejects(
-        () =>
-          cleanup(
-            'synthetic_service_key',
-            {
-              email: foreignEmail,
-              mutationStarted: true,
-              mutationOutcomeAmbiguous: true,
-            },
-            { fetchFn: dbStore.fetchFn },
-          ),
-        (err) =>
-          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
-      );
-      assert.deepEqual(dbStore.deleteCalls, []);
-
-      // 2c. Plain/cloned object containing all matching foreign IDs:
-      await assert.rejects(
-        () =>
-          cleanup(
-            'synthetic_service_key',
-            {
-              email: foreignEmail,
-              password: foreignFixture.password,
-              auth: foreignAuthId,
-              profile: foreignProfileId,
-              organizationId: SEED_ORG_ID,
-              roleId: SEED_ROLE_ID,
-              membershipCreated: true,
-            },
-            { fetchFn: dbStore.fetchFn },
-          ),
-        (err) =>
-          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
-      );
-      assert.deepEqual(dbStore.deleteCalls, []);
+      // 2c. Separate standalone Invocation A with B's genuine live fixture reference, email-only, or full-ID clone:
+      await withFixtureInvocation(async () => {
+        for (const candidate of [
+          foreignFixture,
+          { email: foreignEmail },
+          {
+            email: foreignEmail,
+            mutationStarted: true,
+            mutationOutcomeAmbiguous: true,
+          },
+          {
+            email: foreignEmail,
+            password: foreignFixture.password,
+            auth: foreignAuthId,
+            profile: foreignProfileId,
+            organizationId: SEED_ORG_ID,
+            roleId: SEED_ROLE_ID,
+            membershipCreated: true,
+          },
+        ]) {
+          await assert.rejects(
+            () =>
+              cleanup('synthetic_service_key', candidate, {
+                fetchFn: dbStore.fetchFn,
+              }),
+            (err) =>
+              err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+          );
+          assert.deepEqual(dbStore.getCalls, []);
+          assert.deepEqual(dbStore.deleteCalls, []);
+        }
+      });
 
       // 2d. Another runQaHarness invocation attempting to clean up either a foreign email-only object,
-      // a foreign full-ID plain object, or the live foreignFixture reference itself:
+      // a foreign full-ID plain object, or the live foreignFixture reference itself while B is active:
       for (const foreignCandidate of [
         { label: 'email-only foreign object', value: { email: foreignEmail } },
         {
@@ -3985,11 +4104,14 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           },
         },
         {
-          label: 'actual foreignFixture object from another run',
+          label:
+            'actual foreignFixture object from another active standalone run',
           value: foreignFixture,
         },
       ]) {
         await withTempDir(async (artifactDir) => {
+          dbStore.getCalls.length = 0;
+          dbStore.deleteCalls.length = 0;
           const deps = defaultStubDependencies({
             localStatusFn: async () => ({
               API_URL: CANONICAL_API_ORIGIN,
@@ -4013,6 +4135,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
             'FIXTURE_CLEANUP_FAILED',
             foreignCandidate.label,
           );
+          assert.deepEqual(dbStore.getCalls, [], foreignCandidate.label);
           assert.deepEqual(dbStore.deleteCalls, [], foreignCandidate.label);
           assert.equal(
             dbStore.authUsers.has(foreignAuthId),
@@ -4027,50 +4150,106 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         });
       }
 
-      // Foreign Run A's own capability remains intact and can still clean up its own fixture!
-      const foreignCleanRes = await cleanup(
-        'synthetic_service_key',
-        foreignFixture,
-        {
-          fetchFn: dbStore.fetchFn,
-        },
-      );
-      assert.deepEqual(foreignCleanRes, { attempted: true, status: 'PASS' });
+      // Release Invocation B so it cleans up its own fixture and completes.
+      releaseInvocationB();
+      await invocationBPromise;
       assert.equal(dbStore.authUsers.has(foreignAuthId), false);
       assert.equal(dbStore.appUsers.has(foreignProfileId), false);
     }
 
-    // 3. Reused or expired fixture capability is rejected.
+    // 3. Reused, expired, or mismatched-key/origin fixture capability is rejected before any GET/DELETE.
     {
       const dbStore = createSharedMockDatabase();
-      const fixture = await createFixture('synthetic_service_key', {
-        fetchFn: dbStore.fetchFn,
-        deferCleanup: true,
+
+      await withFixtureInvocation(async () => {
+        const fixture = await createFixture('synthetic_service_key', {
+          fetchFn: dbStore.fetchFn,
+          deferCleanup: true,
+        });
+
+        // 3a. Mismatched service key or api origin rejected before any GET/DELETE without burning the capability:
+        dbStore.getCalls.length = 0;
+        dbStore.deleteCalls.length = 0;
+        await assert.rejects(
+          () =>
+            cleanup('wrong_service_key', fixture, {
+              fetchFn: dbStore.fetchFn,
+            }),
+          (err) =>
+            err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+        );
+        await assert.rejects(
+          () =>
+            cleanup('synthetic_service_key', fixture, {
+              api: 'http://127.0.0.1:59999',
+              fetchFn: dbStore.fetchFn,
+            }),
+          (err) =>
+            err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+        );
+        assert.deepEqual(dbStore.getCalls, []);
+        assert.deepEqual(dbStore.deleteCalls, []);
+
+        // 3b. Valid cleanup consumes the capability:
+        const firstClean = await cleanup('synthetic_service_key', fixture, {
+          fetchFn: dbStore.fetchFn,
+        });
+        assert.deepEqual(firstClean, { attempted: true, status: 'PASS' });
+        dbStore.getCalls.length = 0;
+        dbStore.deleteCalls.length = 0;
+
+        // 3c. Re-insert matching records and attempt to reuse the consumed fixture capability inside the same invocation:
+        dbStore.authUsers.set(fixture.auth, {
+          id: fixture.auth,
+          email: fixture.email,
+        });
+        await assert.rejects(
+          () =>
+            cleanup('synthetic_service_key', fixture, {
+              fetchFn: dbStore.fetchFn,
+            }),
+          (err) =>
+            err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+        );
+        assert.deepEqual(dbStore.getCalls, []);
+        assert.deepEqual(dbStore.deleteCalls, []);
+        assert.equal(dbStore.authUsers.has(fixture.auth), true);
+        dbStore.authUsers.delete(fixture.auth);
       });
-      const firstClean = await cleanup('synthetic_service_key', fixture, {
-        fetchFn: dbStore.fetchFn,
+
+      // 3d. Standalone capability is invalidated when withFixtureInvocation exits even if not yet cleaned up:
+      let uncleanedEscapedFixture = null;
+      await withFixtureInvocation(async () => {
+        uncleanedEscapedFixture = await createFixture('synthetic_service_key', {
+          fetchFn: dbStore.fetchFn,
+          deferCleanup: true,
+        });
       });
-      assert.deepEqual(firstClean, { attempted: true, status: 'PASS' });
+      dbStore.getCalls.length = 0;
       dbStore.deleteCalls.length = 0;
-
-      // Re-insert matching records and attempt to reuse the consumed fixture capability:
-      dbStore.authUsers.set(fixture.auth, {
-        id: fixture.auth,
-        email: fixture.email,
+      await withFixtureInvocation(async () => {
+        await assert.rejects(
+          () =>
+            cleanup('synthetic_service_key', uncleanedEscapedFixture, {
+              fetchFn: dbStore.fetchFn,
+            }),
+          (err) =>
+            err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+        );
       });
-      await assert.rejects(
-        () =>
-          cleanup('synthetic_service_key', fixture, {
-            fetchFn: dbStore.fetchFn,
-          }),
-        (err) =>
-          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
-      );
+      assert.deepEqual(dbStore.getCalls, []);
       assert.deepEqual(dbStore.deleteCalls, []);
-      assert.equal(dbStore.authUsers.has(fixture.auth), true);
-      dbStore.authUsers.delete(fixture.auth);
+      assert.equal(dbStore.authUsers.has(uncleanedEscapedFixture.auth), true);
+      dbStore.authUsers.delete(uncleanedEscapedFixture.auth);
+      dbStore.appUsers.delete(uncleanedEscapedFixture.profile);
+      dbStore.orgMembers.splice(
+        dbStore.orgMembers.findIndex(
+          (m) => m.user_id === uncleanedEscapedFixture.profile,
+        ),
+        1,
+      );
 
-      // Also verify capability from a completed runQaHarness is invalidated after the run completes:
+      // 3e. Also verify capability from a completed runQaHarness is invalidated after the run completes:
       let capturedHarnessFixture = null;
       await withTempDir(async (artifactDir) => {
         const deps = defaultStubDependencies({
@@ -4098,25 +4277,54 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         assert.equal(evidence.cleanup.status, 'PASS');
       });
 
+      dbStore.getCalls.length = 0;
       dbStore.deleteCalls.length = 0;
-      await assert.rejects(
-        () =>
-          cleanup('synthetic_service_key', capturedHarnessFixture, {
-            fetchFn: dbStore.fetchFn,
-          }),
-        (err) =>
-          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
-      );
+      await withFixtureInvocation(async () => {
+        await assert.rejects(
+          () =>
+            cleanup('synthetic_service_key', capturedHarnessFixture, {
+              fetchFn: dbStore.fetchFn,
+            }),
+          (err) =>
+            err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+        );
+      });
+      assert.deepEqual(dbStore.getCalls, []);
       assert.deepEqual(dbStore.deleteCalls, []);
     }
 
     // 4. Caller-mutated fixture identity cannot redirect cleanup to another synthetic user.
     {
       const dbStore = createSharedMockDatabase();
-      const victimFixture = await createFixture('synthetic_service_key', {
-        fetchFn: dbStore.fetchFn,
-        deferCleanup: true,
+      let victimFixture = null;
+      let releaseVictim;
+      const victimGate = new Promise((resolve) => {
+        releaseVictim = resolve;
       });
+      let notifyVictimCreated;
+      const victimCreated = new Promise((resolve) => {
+        notifyVictimCreated = resolve;
+      });
+
+      const victimPromise = withFixtureInvocation(async () => {
+        victimFixture = await createFixture('synthetic_service_key', {
+          fetchFn: dbStore.fetchFn,
+          deferCleanup: true,
+        });
+        notifyVictimCreated();
+        await victimGate;
+        const victimClean = await cleanup(
+          'synthetic_service_key',
+          victimFixture,
+          {
+            fetchFn: dbStore.fetchFn,
+          },
+        );
+        assert.deepEqual(victimClean, { attempted: true, status: 'PASS' });
+      });
+
+      await victimCreated;
+
       let ownOriginalEmail = null;
       let ownAuthId = null;
       let ownProfileId = null;
@@ -4190,17 +4398,87 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       });
 
       // Victim run can still clean up its own fixture cleanly.
-      const victimClean = await cleanup(
-        'synthetic_service_key',
-        victimFixture,
-        {
-          fetchFn: dbStore.fetchFn,
-        },
-      );
-      assert.deepEqual(victimClean, { attempted: true, status: 'PASS' });
+      releaseVictim();
+      await victimPromise;
     }
 
-    // 5. Two concurrent QA runs cannot delete each other's resources.
+    // 5a. Two concurrent standalone invocations (withFixtureInvocation) cannot delete each other's resources.
+    {
+      const dbStore = createSharedMockDatabase();
+      let standalone1Fixture = null;
+      let standalone2Fixture = null;
+      let notifyBothCreated;
+      let createdCount = 0;
+      const bothCreated = new Promise((resolve) => {
+        notifyBothCreated = () => {
+          createdCount += 1;
+          if (createdCount === 2) resolve();
+        };
+      });
+      let releaseStandalone2;
+      const standalone2Gate = new Promise((resolve) => {
+        releaseStandalone2 = resolve;
+      });
+
+      const [resA, resB] = await Promise.all([
+        withFixtureInvocation(async () => {
+          standalone1Fixture = await createFixture('synthetic_service_key', {
+            fetchFn: dbStore.fetchFn,
+            deferCleanup: true,
+          });
+          notifyBothCreated();
+          await bothCreated;
+
+          // Standalone 1 attempts to clean up Standalone 2's live fixture -> rejected before any GET/DELETE!
+          const deletesBefore = dbStore.deleteCalls.length;
+          await assert.rejects(
+            () =>
+              cleanup('synthetic_service_key', standalone2Fixture, {
+                fetchFn: dbStore.fetchFn,
+              }),
+            (err) =>
+              err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+          );
+          assert.equal(dbStore.deleteCalls.length, deletesBefore);
+
+          // Standalone 1 cleans up its own fixture:
+          const ownRes = await cleanup(
+            'synthetic_service_key',
+            standalone1Fixture,
+            {
+              fetchFn: dbStore.fetchFn,
+            },
+          );
+          releaseStandalone2();
+          return ownRes;
+        }),
+        withFixtureInvocation(async () => {
+          standalone2Fixture = await createFixture('synthetic_service_key', {
+            fetchFn: dbStore.fetchFn,
+            deferCleanup: true,
+          });
+          notifyBothCreated();
+          await bothCreated;
+          await standalone2Gate;
+
+          // Standalone 2's resources are still intact after Standalone 1 finished cleanup:
+          assert.equal(dbStore.authUsers.has(standalone2Fixture.auth), true);
+          assert.equal(dbStore.appUsers.has(standalone2Fixture.profile), true);
+
+          return cleanup('synthetic_service_key', standalone2Fixture, {
+            fetchFn: dbStore.fetchFn,
+          });
+        }),
+      ]);
+
+      assert.deepEqual(resA, { attempted: true, status: 'PASS' });
+      assert.deepEqual(resB, { attempted: true, status: 'PASS' });
+      assert.equal(dbStore.authUsers.size, 1);
+      assert.equal(dbStore.appUsers.size, 1);
+      assert.equal(dbStore.orgMembers.length, 1);
+    }
+
+    // 5b. Two concurrent QA harness runs cannot delete each other's resources.
     await withTempDir(async (rootArtifactDir) => {
       const dbStore = createSharedMockDatabase();
       let run1Fixture = null;
@@ -4305,15 +4583,17 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     // 6. Partially created current-run fixture still receives safe compensating cleanup (standalone and harness).
     for (const failStage of ['profile', 'membership']) {
       const dbStore = createSharedMockDatabase({ failStage });
-      await assert.rejects(
-        () =>
-          createFixture('synthetic_service_key', {
-            fetchFn: dbStore.fetchFn,
-            deferCleanup: false,
-          }),
-        (err) => err instanceof QaError && err.stage === 'FIXTURE_CREATION',
-      );
-      // Partial current-run records were safely cleaned up by standalone compensating cleanup.
+      await withFixtureInvocation(async () => {
+        await assert.rejects(
+          () =>
+            createFixture('synthetic_service_key', {
+              fetchFn: dbStore.fetchFn,
+              deferCleanup: false,
+            }),
+          (err) => err instanceof QaError && err.stage === 'FIXTURE_CREATION',
+        );
+      });
+      // Partial current-run records were safely cleaned up by standalone compensating cleanup without self-deadlock.
       assert.equal(dbStore.authUsers.size, 1);
       assert.equal(dbStore.authUsers.has(UNRELATED_AUTH_ID), true);
       assert.equal(dbStore.appUsers.size, 1);
@@ -4353,6 +4633,502 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         assert.equal(harnessStore.authUsers.size, 1);
         assert.equal(harnessStore.appUsers.size, 1);
         assert.equal(harnessStore.orgMembers.length, 1);
+      });
+    }
+  });
+
+  it('SEC64-01C: enforces the creation/cleanup lifecycle barrier so cleanup never returns PASS while createFixture is in flight and createFixture never creates synthetic records after cleanup starts', async () => {
+    const UNRELATED_AUTH_ID = '00000000-0000-4000-8000-000000000999';
+    const UNRELATED_PROFILE_ID = '00000000-0000-4000-8000-000000000888';
+    const UNRELATED_EMAIL = 'unrelated-operator@example.test';
+    const SEED_ORG_ID = '00000000-0000-4000-8000-000000000010';
+    const SEED_ROLE_ID = '00000000-0000-4000-8000-000000000020';
+
+    function createBarrierTestDatabase({
+      onOrganizationsGet = null,
+      onRolesGet = null,
+      onAuthPost = null,
+      onProfilePost = null,
+      onMembershipPost = null,
+    } = {}) {
+      const authUsers = new Map([
+        [UNRELATED_AUTH_ID, { id: UNRELATED_AUTH_ID, email: UNRELATED_EMAIL }],
+      ]);
+      const appUsers = new Map([
+        [
+          UNRELATED_PROFILE_ID,
+          {
+            id: UNRELATED_PROFILE_ID,
+            auth_user_id: UNRELATED_AUTH_ID,
+            email: UNRELATED_EMAIL,
+            name: 'Unrelated Operator',
+            status: 'ACTIVE',
+          },
+        ],
+      ]);
+      const orgMembers = [
+        {
+          organization_id: SEED_ORG_ID,
+          user_id: UNRELATED_PROFILE_ID,
+          role_id: SEED_ROLE_ID,
+          status: 'ACTIVE',
+        },
+      ];
+      const getCalls = [];
+      const postCalls = [];
+      const deleteCalls = [];
+      let authCounter = 0;
+      let profileCounter = 0;
+
+      const jsonResponse = (status, payload) => ({
+        ok: status >= 200 && status < 300,
+        status,
+        json: async () => payload,
+      });
+
+      const fetchFn = async (url, options = {}) => {
+        const parsed = new URL(String(url));
+        const method = options.method ?? 'GET';
+        const pathname = parsed.pathname;
+
+        if (method === 'GET') {
+          getCalls.push(`${pathname}${parsed.search}`);
+        } else if (method === 'POST') {
+          postCalls.push(`${pathname}${parsed.search}`);
+        } else if (method === 'DELETE') {
+          deleteCalls.push(`${pathname}${parsed.search}`);
+        }
+
+        if (method === 'GET' && pathname === '/rest/v1/organizations') {
+          if (onOrganizationsGet) {
+            await onOrganizationsGet({ options });
+          }
+          return jsonResponse(200, [{ id: SEED_ORG_ID }]);
+        }
+        if (method === 'GET' && pathname === '/rest/v1/roles') {
+          if (onRolesGet) {
+            await onRolesGet({ options });
+          }
+          return jsonResponse(200, [{ id: SEED_ROLE_ID }]);
+        }
+
+        if (method === 'POST' && pathname === '/auth/v1/admin/users') {
+          if (onAuthPost) {
+            await onAuthPost({ options });
+          }
+          const body = JSON.parse(options.body);
+          authCounter += 1;
+          const id = `00000000-0000-4000-8000-${String(1000 + authCounter).padStart(12, '0')}`;
+          const user = { id, email: body.email };
+          authUsers.set(id, user);
+          return jsonResponse(200, user);
+        }
+
+        if (method === 'POST' && pathname === '/rest/v1/users') {
+          if (onProfilePost) {
+            await onProfilePost({ options });
+          }
+          const body = JSON.parse(options.body);
+          profileCounter += 1;
+          const id = `00000000-0000-4000-8000-${String(2000 + profileCounter).padStart(12, '0')}`;
+          const row = {
+            id,
+            auth_user_id: body.auth_user_id,
+            email: body.email,
+            name: body.name,
+            status: body.status,
+          };
+          appUsers.set(id, row);
+          return jsonResponse(201, [row]);
+        }
+
+        if (method === 'POST' && pathname === '/rest/v1/organization_members') {
+          if (onMembershipPost) {
+            await onMembershipPost({ options });
+          }
+          const body = JSON.parse(options.body);
+          const row = {
+            organization_id: body.organization_id,
+            user_id: body.user_id,
+            role_id: body.role_id,
+            status: body.status,
+          };
+          orgMembers.push(row);
+          return jsonResponse(201, [row]);
+        }
+
+        if (method === 'GET' && pathname === '/auth/v1/admin/users') {
+          const all = Array.from(authUsers.values());
+          return jsonResponse(200, { users: all });
+        }
+
+        if (pathname.startsWith('/auth/v1/admin/users/')) {
+          const authId = decodeURIComponent(
+            pathname.slice('/auth/v1/admin/users/'.length),
+          );
+          if (method === 'GET') {
+            return authUsers.has(authId)
+              ? jsonResponse(200, authUsers.get(authId))
+              : jsonResponse(404, {});
+          }
+          if (method === 'DELETE') {
+            const existed = authUsers.delete(authId);
+            return jsonResponse(existed ? 200 : 404, {});
+          }
+        }
+
+        if (pathname === '/rest/v1/users') {
+          const idFilter = parsed.searchParams.get('id');
+          const emailFilter = parsed.searchParams.get('email');
+          const authUserFilter = parsed.searchParams.get('auth_user_id');
+          const matchRow = (row) => {
+            if (idFilter?.startsWith('eq.') && row.id !== idFilter.slice(3)) {
+              return false;
+            }
+            if (
+              emailFilter?.startsWith('eq.') &&
+              row.email !== emailFilter.slice(3)
+            ) {
+              return false;
+            }
+            if (
+              authUserFilter?.startsWith('eq.') &&
+              row.auth_user_id !== authUserFilter.slice(3)
+            ) {
+              return false;
+            }
+            return true;
+          };
+          if (method === 'GET') {
+            return jsonResponse(
+              200,
+              Array.from(appUsers.values()).filter(matchRow),
+            );
+          }
+          if (method === 'DELETE') {
+            for (const [id, row] of appUsers.entries()) {
+              if (matchRow(row)) {
+                appUsers.delete(id);
+              }
+            }
+            return { ok: true, status: 204, json: async () => null };
+          }
+        }
+
+        if (pathname === '/rest/v1/organization_members') {
+          const userIdFilter = parsed.searchParams.get('user_id');
+          const orgIdFilter = parsed.searchParams.get('organization_id');
+          const roleIdFilter = parsed.searchParams.get('role_id');
+          const matchMember = (m) => {
+            if (
+              userIdFilter?.startsWith('eq.') &&
+              m.user_id !== userIdFilter.slice(3)
+            ) {
+              return false;
+            }
+            if (
+              orgIdFilter?.startsWith('eq.') &&
+              m.organization_id !== orgIdFilter.slice(3)
+            ) {
+              return false;
+            }
+            if (
+              roleIdFilter?.startsWith('eq.') &&
+              m.role_id !== roleIdFilter.slice(3)
+            ) {
+              return false;
+            }
+            return true;
+          };
+          if (method === 'GET') {
+            return jsonResponse(200, orgMembers.filter(matchMember));
+          }
+          if (method === 'DELETE') {
+            for (let i = orgMembers.length - 1; i >= 0; i -= 1) {
+              if (matchMember(orgMembers[i])) {
+                orgMembers.splice(i, 1);
+              }
+            }
+            return { ok: true, status: 204, json: async () => null };
+          }
+        }
+
+        throw new Error(`Unhandled mock endpoint: ${method} ${pathname}`);
+      };
+
+      return {
+        authUsers,
+        appUsers,
+        orgMembers,
+        getCalls,
+        postCalls,
+        deleteCalls,
+        fetchFn,
+      };
+    }
+
+    // 1. Pre-dispatch race paused at organization GET and role GET (non-abort-responsive fetch):
+    // - Foreign invocation attempting cleanup while paused is rejected before any GET/DELETE.
+    // - Owning invocation calling cleanup while paused returns UNVERIFIED / FIXTURE_QUIESCENCE_TIMEOUT (never PASS).
+    // - Resuming createFixture rejects with PROCESS_SIGNAL_TERMINATED, dispatches zero POST requests,
+    //   creates zero synthetic records, and leaves unrelated records intact.
+    for (const pauseStage of ['organizations', 'roles']) {
+      let notifyPaused;
+      const pausedPromise = new Promise((resolve) => {
+        notifyPaused = resolve;
+      });
+      let resumePausedGet;
+      const pauseGate = new Promise((resolve) => {
+        resumePausedGet = resolve;
+      });
+
+      const dbStore = createBarrierTestDatabase({
+        onOrganizationsGet:
+          pauseStage === 'organizations'
+            ? async () => {
+                notifyPaused();
+                await pauseGate;
+              }
+            : null,
+        onRolesGet:
+          pauseStage === 'roles'
+            ? async () => {
+                notifyPaused();
+                await pauseGate;
+              }
+            : null,
+      });
+
+      await withFixtureInvocation(async () => {
+        const fixture = createFixtureState();
+        const createPromise = createFixture('synthetic_service_key', {
+          fetchFn: dbStore.fetchFn,
+          fixture,
+          deferCleanup: true,
+        });
+
+        await pausedPromise;
+        const getsBeforeForeign = dbStore.getCalls.length;
+
+        // 1a. Foreign invocation attempts cleanup on the paused live fixture -> rejected before any GET/DELETE:
+        await withFixtureInvocation(async () => {
+          await assert.rejects(
+            () =>
+              cleanup('synthetic_service_key', fixture, {
+                fetchFn: dbStore.fetchFn,
+              }),
+            (err) =>
+              err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+            `Foreign cleanup during ${pauseStage} GET must be rejected`,
+          );
+        });
+        assert.equal(dbStore.getCalls.length, getsBeforeForeign);
+        assert.deepEqual(dbStore.deleteCalls, []);
+
+        // 1b. Owning invocation calls cleanup while createFixture is still paused at GET:
+        const cleanRes = await cleanup('synthetic_service_key', fixture, {
+          fetchFn: dbStore.fetchFn,
+          creationQuiescenceTimeoutMs: 15,
+        });
+        assert.notEqual(
+          cleanRes.status,
+          'PASS',
+          `Cleanup during ${pauseStage} GET must never return PASS`,
+        );
+        assert.deepEqual(cleanRes, {
+          attempted: true,
+          status: 'UNVERIFIED',
+          reason: 'FIXTURE_QUIESCENCE_TIMEOUT',
+          executionQuiesced: false,
+        });
+
+        // 1c. Resume the paused GET and verify createFixture aborts before any POST:
+        resumePausedGet();
+        await assert.rejects(
+          () => createPromise,
+          (err) =>
+            err instanceof QaError && err.code === 'PROCESS_SIGNAL_TERMINATED',
+          `Resumed createFixture after cleanup at ${pauseStage} GET must reject`,
+        );
+        assert.deepEqual(
+          dbStore.postCalls,
+          [],
+          `Zero POST requests allowed after cleanup during ${pauseStage} GET`,
+        );
+        assert.equal(dbStore.authUsers.size, 1);
+        assert.equal(dbStore.authUsers.has(UNRELATED_AUTH_ID), true);
+        assert.equal(dbStore.appUsers.size, 1);
+        assert.equal(dbStore.appUsers.has(UNRELATED_PROFILE_ID), true);
+        assert.equal(dbStore.orgMembers.length, 1);
+      });
+    }
+
+    // 2. Pre-dispatch race paused at organization GET and role GET with abort-responsive fetchFn:
+    // cleanup() aborts the in-flight GET via creationAbortController within creationQuiescenceTimeoutMs,
+    // creation settles cleanly (executionQuiesced: true), cleanup returns UNVERIFIED / FIXTURE_QUIESCENCE_TIMEOUT,
+    // and zero POST requests occur.
+    for (const pauseStage of ['organizations', 'roles']) {
+      let notifyPaused;
+      const pausedPromise = new Promise((resolve) => {
+        notifyPaused = resolve;
+      });
+
+      const waitUntilAborted = ({ options }) =>
+        new Promise((_, reject) => {
+          notifyPaused();
+          const sig = options.signal;
+          if (sig?.aborted) {
+            const err = new Error('Aborted');
+            err.name = 'AbortError';
+            reject(err);
+            return;
+          }
+          sig?.addEventListener(
+            'abort',
+            () => {
+              const err = new Error('Aborted');
+              err.name = 'AbortError';
+              reject(err);
+            },
+            { once: true },
+          );
+        });
+
+      const dbStore = createBarrierTestDatabase({
+        onOrganizationsGet:
+          pauseStage === 'organizations' ? waitUntilAborted : null,
+        onRolesGet: pauseStage === 'roles' ? waitUntilAborted : null,
+      });
+
+      await withFixtureInvocation(async () => {
+        const fixture = createFixtureState();
+        const createPromise = createFixture('synthetic_service_key', {
+          fetchFn: dbStore.fetchFn,
+          fixture,
+          deferCleanup: true,
+        });
+
+        await pausedPromise;
+        const cleanRes = await cleanup('synthetic_service_key', fixture, {
+          fetchFn: dbStore.fetchFn,
+          creationQuiescenceTimeoutMs: 100,
+        });
+        assert.deepEqual(cleanRes, {
+          attempted: true,
+          status: 'UNVERIFIED',
+          reason: 'FIXTURE_QUIESCENCE_TIMEOUT',
+          executionQuiesced: true,
+        });
+
+        await assert.rejects(
+          () => createPromise,
+          (err) =>
+            err instanceof QaError && err.code === 'PROCESS_SIGNAL_TERMINATED',
+        );
+        assert.deepEqual(dbStore.postCalls, []);
+        assert.equal(dbStore.authUsers.size, 1);
+        assert.equal(dbStore.appUsers.size, 1);
+        assert.equal(dbStore.orgMembers.length, 1);
+      });
+    }
+
+    // 3. Calling cleanup() on an unactivated createFixtureState() returns SKIPPED and permanently blocks subsequent createFixture({ fixture }).
+    {
+      const dbStore = createBarrierTestDatabase();
+      await withFixtureInvocation(async () => {
+        const fixture = createFixtureState();
+        const skipRes = await cleanup('synthetic_service_key', fixture, {
+          fetchFn: dbStore.fetchFn,
+        });
+        assert.deepEqual(skipRes, { attempted: false, status: 'SKIPPED' });
+
+        await assert.rejects(
+          () =>
+            createFixture('synthetic_service_key', {
+              fetchFn: dbStore.fetchFn,
+              fixture,
+              deferCleanup: true,
+            }),
+          (err) =>
+            err instanceof QaError && err.code === 'FIXTURE_CREATION_FAILED',
+        );
+        assert.deepEqual(dbStore.getCalls, []);
+        assert.deepEqual(dbStore.postCalls, []);
+      });
+    }
+
+    // 4. Concurrent cleanup() while auth, profile, or membership POST is in flight:
+    // - cancels remaining creation steps
+    // - reconciles and deletes any already-created current-run records
+    // - returns UNVERIFIED / MUTATION_OUTCOME_AMBIGUOUS (never PASS)
+    // - sticky ambiguity cannot be cleared by caller mutating fixture fields or late response completion.
+    for (const inFlightStage of ['auth', 'profile', 'membership']) {
+      let notifyPostInFlight;
+      const postInFlight = new Promise((resolve) => {
+        notifyPostInFlight = resolve;
+      });
+      let resumeInFlightPost;
+      const postGate = new Promise((resolve) => {
+        resumeInFlightPost = resolve;
+      });
+
+      const pauseHook = async () => {
+        notifyPostInFlight();
+        await postGate;
+      };
+
+      const dbStore = createBarrierTestDatabase({
+        onAuthPost: inFlightStage === 'auth' ? pauseHook : null,
+        onProfilePost: inFlightStage === 'profile' ? pauseHook : null,
+        onMembershipPost: inFlightStage === 'membership' ? pauseHook : null,
+      });
+
+      await withFixtureInvocation(async () => {
+        const fixture = createFixtureState();
+        const createPromise = createFixture('synthetic_service_key', {
+          fetchFn: dbStore.fetchFn,
+          fixture,
+          deferCleanup: true,
+        });
+
+        await postInFlight;
+        const expectedPostCount =
+          inFlightStage === 'auth' ? 1 : inFlightStage === 'profile' ? 2 : 3;
+        assert.equal(dbStore.postCalls.length, expectedPostCount);
+
+        // Caller attempts to clear ambiguity flags on the mutable fixture object before calling cleanup:
+        fixture.mutationOutcomeAmbiguous = false;
+        fixture.ambiguousMutations = [];
+
+        // Start cleanup while POST is still in flight; then let the in-flight POST finish within quiescence window
+        // so we also verify sticky ambiguity when the response arrives after cleanup has started!
+        setTimeout(() => {
+          resumeInFlightPost();
+        }, 5);
+
+        const cleanRes = await cleanup('synthetic_service_key', fixture, {
+          fetchFn: dbStore.fetchFn,
+          creationQuiescenceTimeoutMs: 100,
+        });
+
+        assert.equal(cleanRes.status, 'UNVERIFIED');
+        assert.equal(cleanRes.reason, 'MUTATION_OUTCOME_AMBIGUOUS');
+        assert.deepEqual(cleanRes.ambiguousMutations, [inFlightStage]);
+
+        await assert.rejects(
+          () => createPromise,
+          (err) =>
+            err instanceof QaError && err.code === 'PROCESS_SIGNAL_TERMINATED',
+        );
+
+        // No subsequent POST stages were dispatched after the interrupted stage!
+        assert.equal(dbStore.postCalls.length, expectedPostCount);
+        // All already-created current-run records were reconciled and deleted!
+        assert.equal(dbStore.authUsers.size, 1);
+        assert.equal(dbStore.authUsers.has(UNRELATED_AUTH_ID), true);
+        assert.equal(dbStore.appUsers.size, 1);
+        assert.equal(dbStore.appUsers.has(UNRELATED_PROFILE_ID), true);
+        assert.equal(dbStore.orgMembers.length, 1);
       });
     }
   });
@@ -4584,7 +5360,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     // 1a. Auth-only fixture beyond page 1 (>1,000 users, at index 1,206) where signal aborts before profile dispatch
     // and fixture.auth = null (email-only lookup): found on page 2, deleted, verified absent across all pages,
     // returns PASS, and leaves all 1,205 unrelated users intact.
-    {
+    await withFixtureInvocation(async () => {
       const ac = new AbortController();
       const store = createPaginatedAuthStore({
         onAfterAuthCreated: () => ac.abort(),
@@ -4620,11 +5396,11 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       assert.deepEqual(store.deleteCalls, [
         `/auth/v1/admin/users/${createdAuthId}`,
       ]);
-    }
+    });
 
     // 1b. Auth-only fixture beyond page 1 (>1,000 users, at index 1,206) where profile POST was dispatched and failed:
     // found on page 2 via email-only reconciliation, deleted, verified absent across all pages, and returns UNVERIFIED.
-    {
+    await withFixtureInvocation(async () => {
       const store = createPaginatedAuthStore({ failProfilePost: true });
       const fixtureState = createFixtureState();
       await assert.rejects(
@@ -4651,10 +5427,10 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       assert.equal(store.authUsers.has(createdAuthId), false);
       assert.equal(store.authUsers.size, UNRELATED_COUNT);
       assert.ok(store.listPageRequests.some((req) => req.page === 2));
-    }
+    });
 
     // 2. Full fixture with auth user on page 3 (using pageSize=5, 12 unrelated users -> page 3) reconciles and cleans up cleanly.
-    {
+    await withFixtureInvocation(async () => {
       const store = createPaginatedAuthStore({ unrelatedCount: 12 });
       const fixture = await createFixture('synthetic_service_key', {
         fetchFn: store.fetchFn,
@@ -4667,7 +5443,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       assert.deepEqual(cleanRes, { attempted: true, status: 'PASS' });
       assert.equal(store.authUsers.size, 12);
       assert.ok(store.listPageRequests.some((req) => req.page === 3));
-    }
+    });
 
     // 3. Incomplete pagination, failed page, truncated flag, total mismatch, duplicate IDs across pages,
     // duplicate synthetic email matches across pages, and maxPages overflow all fail closed (never false PASS).
@@ -4744,34 +5520,36 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     ];
 
     for (const scenario of paginationFailureScenarios) {
-      const store = createPaginatedAuthStore({
-        unrelatedCount: 8,
-        failProfilePost: true,
-        customListResponse: scenario.customListResponse,
-      });
-      const fixtureState = createFixtureState();
-      await assert.rejects(
-        () =>
-          createFixture('synthetic_service_key', {
-            fetchFn: store.fetchFn,
-            fixture: fixtureState,
-            deferCleanup: true,
-          }),
-        (err) => err instanceof QaError && err.stage === 'FIXTURE_CREATION',
-      );
-      fixtureState.auth = null;
+      await withFixtureInvocation(async () => {
+        const store = createPaginatedAuthStore({
+          unrelatedCount: 8,
+          failProfilePost: true,
+          customListResponse: scenario.customListResponse,
+        });
+        const fixtureState = createFixtureState();
+        await assert.rejects(
+          () =>
+            createFixture('synthetic_service_key', {
+              fetchFn: store.fetchFn,
+              fixture: fixtureState,
+              deferCleanup: true,
+            }),
+          (err) => err instanceof QaError && err.stage === 'FIXTURE_CREATION',
+        );
+        fixtureState.auth = null;
 
-      await assert.rejects(
-        () =>
-          cleanup('synthetic_service_key', fixtureState, {
-            fetchFn: store.fetchFn,
-            pageSize: scenario.pageSize ?? 5,
-            maxPages: scenario.maxPages ?? 25,
-          }),
-        (err) =>
-          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
-        scenario.label,
-      );
+        await assert.rejects(
+          () =>
+            cleanup('synthetic_service_key', fixtureState, {
+              fetchFn: store.fetchFn,
+              pageSize: scenario.pageSize ?? 5,
+              maxPages: scenario.maxPages ?? 25,
+            }),
+          (err) =>
+            err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+          scenario.label,
+        );
+      });
     }
   });
 
