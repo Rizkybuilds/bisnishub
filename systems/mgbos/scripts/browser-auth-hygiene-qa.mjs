@@ -161,42 +161,167 @@ export function parseEnvLines(text) {
   );
 }
 
+const SAFE_IDENTIFIER_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/;
+const LOOPBACK_HTTP_ORIGIN_PATTERN =
+  /^http:\/\/127\.0\.0\.1:([1-9][0-9]{0,4})$/;
+
+export function isSafeIdentifier(value) {
+  return typeof value === 'string' && SAFE_IDENTIFIER_PATTERN.test(value);
+}
+
+export function assertLoopbackHttpOrigin(originInput, options = {}) {
+  const {
+    stage = 'FIXTURE_CREATION',
+    code = 'NONLOCAL_TARGET_BLOCKED',
+    message = 'Refusing a nonlocal or malformed target origin',
+  } = typeof options === 'string' ? { stage: options } : options;
+  if (
+    typeof originInput !== 'string' ||
+    originInput.length === 0 ||
+    originInput !== originInput.trim() ||
+    !LOOPBACK_HTTP_ORIGIN_PATTERN.test(originInput)
+  ) {
+    throw new QaError(stage, code, message);
+  }
+  let parsed;
+  try {
+    parsed = new URL(originInput);
+  } catch {
+    throw new QaError(stage, code, message);
+  }
+  const portNum = Number(parsed.port);
+  if (
+    parsed.protocol !== 'http:' ||
+    parsed.hostname !== '127.0.0.1' ||
+    parsed.username !== '' ||
+    parsed.password !== '' ||
+    parsed.pathname !== '/' ||
+    parsed.search !== '' ||
+    parsed.hash !== '' ||
+    parsed.origin !== originInput ||
+    !Number.isInteger(portNum) ||
+    portNum < 1 ||
+    portNum > 65535
+  ) {
+    throw new QaError(stage, code, message);
+  }
+  return originInput;
+}
+
+export function assertConsistentSupabaseEnv(apiOrigin, env, options = {}) {
+  const {
+    stage = 'FIXTURE_CREATION',
+    code = 'NONLOCAL_TARGET_BLOCKED',
+    message = 'Refusing a nonlocal Supabase target',
+  } = typeof options === 'string' ? { stage: options } : options;
+  assertLoopbackHttpOrigin(apiOrigin, { stage, code, message });
+  if (!env || typeof env !== 'object') {
+    return;
+  }
+  for (const key of ['NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_URL']) {
+    const candidate = env[key];
+    if (candidate !== undefined && candidate !== null && candidate !== '') {
+      assertLoopbackHttpOrigin(String(candidate), { stage, code, message });
+      if (String(candidate) !== apiOrigin) {
+        throw new QaError(stage, code, message);
+      }
+    }
+  }
+}
+
+export function resolveLoopbackRequestUrl(
+  apiOrigin,
+  route,
+  {
+    stage = 'FIXTURE_CREATION',
+    code = 'NONLOCAL_TARGET_BLOCKED',
+    message = 'Refusing a nonlocal or malformed request URL',
+  } = {},
+) {
+  const validatedOrigin = assertLoopbackHttpOrigin(apiOrigin, {
+    stage,
+    code,
+    message,
+  });
+  if (
+    typeof route !== 'string' ||
+    !route.startsWith('/') ||
+    route.startsWith('//') ||
+    /[\\\r\n\0@#]/.test(route)
+  ) {
+    throw new QaError(stage, code, message);
+  }
+  const [routePathname] = route.split('?');
+  const pathSegments = routePathname.split('/');
+  if (pathSegments.some((segment) => segment === '..' || segment === '.')) {
+    throw new QaError(stage, code, message);
+  }
+  let url;
+  try {
+    url = new URL(route, validatedOrigin);
+  } catch {
+    throw new QaError(stage, code, message);
+  }
+  if (
+    url.origin !== validatedOrigin ||
+    url.protocol !== 'http:' ||
+    url.hostname !== '127.0.0.1' ||
+    url.username !== '' ||
+    url.password !== '' ||
+    url.hash !== '' ||
+    `${url.origin}${url.pathname}${url.search}` !== `${validatedOrigin}${route}`
+  ) {
+    throw new QaError(stage, code, message);
+  }
+  return url;
+}
+
+export function isValidConfirmedMembershipResponse(
+  memberships,
+  { expectedUserId, expectedOrganizationId, expectedRoleId } = {},
+) {
+  if (
+    !isSafeIdentifier(expectedUserId) ||
+    !isSafeIdentifier(expectedOrganizationId) ||
+    !isSafeIdentifier(expectedRoleId)
+  ) {
+    return false;
+  }
+  if (!Array.isArray(memberships) || memberships.length !== 1) {
+    return false;
+  }
+  const record = memberships[0];
+  if (!record || typeof record !== 'object' || Array.isArray(record)) {
+    return false;
+  }
+  if (
+    typeof record.user_id !== 'string' ||
+    typeof record.organization_id !== 'string' ||
+    typeof record.role_id !== 'string'
+  ) {
+    return false;
+  }
+  if (record.status !== undefined && record.status !== 'ACTIVE') {
+    return false;
+  }
+  return (
+    record.user_id === expectedUserId &&
+    record.organization_id === expectedOrganizationId &&
+    record.role_id === expectedRoleId
+  );
+}
+
 export function localStatus({
   workdir = root,
   api = CANONICAL_API_ORIGIN,
   env = process.env,
   spawnSyncFn = spawnSync,
 } = {}) {
-  let parsedApiUrl;
-  try {
-    parsedApiUrl = new URL(api);
-  } catch {
-    throw new QaError(
-      'LOCAL_STATUS',
-      'LOCAL_STATUS_FAILED',
-      'Refusing a nonlocal Supabase target',
-    );
-  }
-  if (
-    parsedApiUrl.protocol !== 'http:' ||
-    parsedApiUrl.hostname !== '127.0.0.1' ||
-    parsedApiUrl.origin !== api
-  ) {
-    throw new QaError(
-      'LOCAL_STATUS',
-      'LOCAL_STATUS_FAILED',
-      'Refusing a nonlocal Supabase target',
-    );
-  }
-  for (const key of ['NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_URL']) {
-    if (env[key] && env[key] !== api) {
-      throw new QaError(
-        'LOCAL_STATUS',
-        'LOCAL_STATUS_FAILED',
-        'Refusing a nonlocal Supabase target',
-      );
-    }
-  }
+  assertConsistentSupabaseEnv(api, env, {
+    stage: 'LOCAL_STATUS',
+    code: 'LOCAL_STATUS_FAILED',
+    message: 'Refusing a nonlocal Supabase target',
+  });
   const binary = path.join(
     workdir,
     'node_modules',
@@ -236,6 +361,11 @@ export function localStatus({
       'Local Supabase identity or keys could not be verified',
     );
   }
+  assertLoopbackHttpOrigin(parsed.API_URL, {
+    stage: 'LOCAL_STATUS',
+    code: 'LOCAL_STATUS_FAILED',
+    message: 'Refusing a nonlocal Supabase target',
+  });
   if (
     parsed.DB_URL &&
     !/^postgres(?:ql)?:\/\/(?:[^@]+@)?127\.0\.0\.1:55432\//.test(parsed.DB_URL)
@@ -280,6 +410,7 @@ export function createFixtureState() {
     auth: null,
     profile: null,
     organizationId: null,
+    roleId: null,
     membershipCreated: false,
     mutationStarted: false,
     pendingMutation: false,
@@ -446,7 +577,7 @@ function createRequestSignal(signal, timeoutMs = 15000) {
   return controller.signal;
 }
 
-async function db(
+export async function db(
   key,
   route,
   {
@@ -454,16 +585,34 @@ async function db(
     body,
     schema,
     api = CANONICAL_API_ORIGIN,
+    env,
     fetchFn = fetch,
     signal,
     requestSignal,
     stage = 'FIXTURE_CREATION',
     onBeforeDispatch,
+    allowStatuses = [],
+    returnRawResponse = false,
   } = {},
 ) {
+  assertConsistentSupabaseEnv(api, env, {
+    stage,
+    code: 'NONLOCAL_TARGET_BLOCKED',
+  });
+  const url = resolveLoopbackRequestUrl(api, route, {
+    stage,
+    code: 'NONLOCAL_TARGET_BLOCKED',
+  });
+  if (typeof key !== 'string' || key.trim().length === 0) {
+    throw new QaError(
+      stage,
+      stage === 'CLEANUP'
+        ? 'FIXTURE_CLEANUP_FAILED'
+        : 'FIXTURE_CREATION_FAILED',
+      'Refusing privileged disposable database request without service key',
+    );
+  }
   throwIfSignalAborted(signal, stage);
-  const url = new URL(`${api}${route}`);
-  assert.equal(url.origin, api, 'Local Supabase access only');
   const headers = {
     apikey: key,
     Authorization: `Bearer ${key}`,
@@ -498,7 +647,9 @@ async function db(
     }
     throw error;
   }
-  if (!response.ok) {
+  const allowedStatus =
+    Array.isArray(allowStatuses) && allowStatuses.includes(response.status);
+  if (!response.ok && !allowedStatus) {
     if (signal?.aborted) {
       throwIfSignalAborted(signal, stage);
     }
@@ -509,7 +660,10 @@ async function db(
       `Disposable database operation failed: HTTP ${response.status}`,
     );
   }
-  if (response.status === 204) {
+  if (returnRawResponse) {
+    return response;
+  }
+  if (response.status === 204 || allowedStatus) {
     return null;
   }
   try {
@@ -528,21 +682,47 @@ async function db(
 export async function cleanup(
   key,
   fixture,
-  { api = CANONICAL_API_ORIGIN, fetchFn } = {},
+  { api = CANONICAL_API_ORIGIN, fetchFn, env } = {},
 ) {
+  assertConsistentSupabaseEnv(api, env, {
+    stage: 'CLEANUP',
+    code: 'NONLOCAL_TARGET_BLOCKED',
+  });
   const effectiveFetchFn = fetchFn ?? fixture?.fetchFn ?? fetch;
-  if (!key || !fixture) {
+  if (!key || !fixture || typeof fixture !== 'object') {
     return { attempted: false, status: 'SKIPPED' };
+  }
+  if (typeof key !== 'string' || key.trim().length === 0) {
+    throw new QaError(
+      'CLEANUP',
+      'FIXTURE_CLEANUP_FAILED',
+      'Synthetic fixture cleanup requires a valid service key',
+    );
   }
   const hasSyntheticEmail =
     typeof fixture.email === 'string' &&
     SYNTHETIC_FIXTURE_EMAIL_PATTERN.test(fixture.email);
-  if (!fixture.profile && !fixture.auth && !hasSyntheticEmail) {
-    return { attempted: false, status: 'SKIPPED' };
+  const hasClaimedResources = Boolean(
+    fixture.profile ||
+    fixture.auth ||
+    fixture.membership ||
+    fixture.membershipCreated ||
+    fixture.mutationStarted ||
+    hasAmbiguousFixtureMutation(fixture),
+  );
+  if (!hasSyntheticEmail) {
+    if (!hasClaimedResources) {
+      return { attempted: false, status: 'SKIPPED' };
+    }
+    throw new QaError(
+      'CLEANUP',
+      'FIXTURE_CLEANUP_FAILED',
+      'Refusing to delete fixture resources without verified synthetic fixture identity',
+    );
   }
 
+  const syntheticEmail = fixture.email;
   let failed = false;
-  // Each operation is independently attempted, even if an earlier deletion failed.
   const attempt = async (operation) => {
     try {
       await operation();
@@ -551,109 +731,439 @@ export async function cleanup(
     }
   };
 
-  // Reconcile commit/response ambiguity using the tightly scoped synthetic email
-  // when profile or auth user IDs were not captured before request interruption.
-  if (!fixture.profile && hasSyntheticEmail) {
-    await attempt(async () => {
-      const profiles = await db(
+  // 1. Verify synthetic auth identity ownership (never trust unverified fixture.auth).
+  const providedAuthId =
+    fixture.auth !== undefined && fixture.auth !== null ? fixture.auth : null;
+  let verifiedProvidedAuthId = null;
+  let verifiedAuthId = null;
+
+  if (providedAuthId !== null) {
+    if (!isSafeIdentifier(providedAuthId)) {
+      failed = true;
+    } else {
+      await attempt(async () => {
+        const response = await db(
+          key,
+          `/auth/v1/admin/users/${encodeURIComponent(providedAuthId)}`,
+          {
+            api,
+            env,
+            fetchFn: effectiveFetchFn,
+            stage: 'CLEANUP',
+            allowStatuses: [404],
+            returnRawResponse: true,
+          },
+        );
+        if (response.status !== 200) {
+          failed = true;
+          return;
+        }
+        const payload = await response.json();
+        const userObj =
+          payload && typeof payload === 'object' && !Array.isArray(payload)
+            ? (payload.user ?? payload)
+            : null;
+        if (
+          userObj &&
+          typeof userObj === 'object' &&
+          !Array.isArray(userObj) &&
+          typeof userObj.id === 'string' &&
+          userObj.id === providedAuthId &&
+          typeof userObj.email === 'string' &&
+          userObj.email === syntheticEmail
+        ) {
+          verifiedProvidedAuthId = providedAuthId;
+        } else {
+          failed = true;
+        }
+      });
+    }
+  }
+
+  await attempt(async () => {
+    const authPayload = await db(key, '/auth/v1/admin/users?per_page=1000', {
+      api,
+      env,
+      fetchFn: effectiveFetchFn,
+      stage: 'CLEANUP',
+    });
+    const users = Array.isArray(authPayload)
+      ? authPayload
+      : authPayload &&
+          typeof authPayload === 'object' &&
+          Array.isArray(authPayload.users)
+        ? authPayload.users
+        : null;
+    if (!users) {
+      failed = true;
+      verifiedAuthId = null;
+      return;
+    }
+    if (
+      verifiedProvidedAuthId !== null &&
+      users.some(
+        (candidate) =>
+          candidate &&
+          typeof candidate === 'object' &&
+          candidate.id === verifiedProvidedAuthId &&
+          candidate.email !== syntheticEmail,
+      )
+    ) {
+      failed = true;
+      verifiedProvidedAuthId = null;
+    }
+    const matchingAuthUsers = users.filter(
+      (candidate) =>
+        candidate &&
+        typeof candidate === 'object' &&
+        candidate.email === syntheticEmail,
+    );
+    if (matchingAuthUsers.length > 1) {
+      failed = true;
+      verifiedAuthId = null;
+      return;
+    }
+    if (matchingAuthUsers.length === 1) {
+      const matched = matchingAuthUsers[0];
+      if (!isSafeIdentifier(matched?.id)) {
+        failed = true;
+        verifiedAuthId = null;
+        return;
+      }
+      if (
+        verifiedProvidedAuthId !== null &&
+        verifiedProvidedAuthId !== matched.id
+      ) {
+        failed = true;
+        verifiedAuthId = null;
+        return;
+      }
+      if (verifiedProvidedAuthId === matched.id) {
+        verifiedAuthId = matched.id;
+        return;
+      }
+      const singleResp = await db(
         key,
-        `/rest/v1/users?email=eq.${encodeURIComponent(fixture.email)}&select=id,auth_user_id`,
+        `/auth/v1/admin/users/${encodeURIComponent(matched.id)}`,
+        {
+          api,
+          env,
+          fetchFn: effectiveFetchFn,
+          stage: 'CLEANUP',
+          allowStatuses: [404],
+          returnRawResponse: true,
+        },
+      );
+      if (singleResp.status !== 200) {
+        failed = true;
+        verifiedAuthId = null;
+        return;
+      }
+      const singlePayload = await singleResp.json();
+      const singleUser =
+        singlePayload &&
+        typeof singlePayload === 'object' &&
+        !Array.isArray(singlePayload)
+          ? (singlePayload.user ?? singlePayload)
+          : null;
+      if (
+        singleUser &&
+        typeof singleUser === 'object' &&
+        !Array.isArray(singleUser) &&
+        singleUser.id === matched.id &&
+        singleUser.email === syntheticEmail
+      ) {
+        verifiedAuthId = matched.id;
+      } else {
+        failed = true;
+        verifiedAuthId = null;
+      }
+      return;
+    }
+    if (verifiedProvidedAuthId !== null) {
+      // Single-user lookup succeeded, but list lookup returned 0 matches for syntheticEmail.
+      failed = true;
+      verifiedAuthId = null;
+    }
+  });
+
+  // 2. Verify application profile ownership (id, synthetic email, and linked verifiedAuthId).
+  const providedProfileId =
+    fixture.profile !== undefined && fixture.profile !== null
+      ? fixture.profile
+      : null;
+  let verifiedProvidedProfileId = null;
+  let verifiedProfileId = null;
+
+  const isValidSyntheticProfileRow = (row, expectedId = null) =>
+    Boolean(
+      row &&
+      typeof row === 'object' &&
+      !Array.isArray(row) &&
+      isSafeIdentifier(row.id) &&
+      (expectedId === null || row.id === expectedId) &&
+      typeof row.email === 'string' &&
+      row.email === syntheticEmail &&
+      isSafeIdentifier(row.auth_user_id) &&
+      verifiedAuthId !== null &&
+      row.auth_user_id === verifiedAuthId,
+    );
+
+  if (providedProfileId !== null) {
+    if (!isSafeIdentifier(providedProfileId)) {
+      failed = true;
+    } else {
+      await attempt(async () => {
+        const rowsById = await db(
+          key,
+          `/rest/v1/users?id=eq.${encodeURIComponent(providedProfileId)}&select=id,auth_user_id,email`,
+          {
+            schema: 'app',
+            api,
+            env,
+            fetchFn: effectiveFetchFn,
+            stage: 'CLEANUP',
+          },
+        );
+        if (
+          Array.isArray(rowsById) &&
+          rowsById.length === 1 &&
+          isValidSyntheticProfileRow(rowsById[0], providedProfileId)
+        ) {
+          verifiedProvidedProfileId = providedProfileId;
+        } else {
+          failed = true;
+        }
+      });
+    }
+  }
+
+  await attempt(async () => {
+    const rowsByEmail = await db(
+      key,
+      `/rest/v1/users?email=eq.${encodeURIComponent(syntheticEmail)}&select=id,auth_user_id,email`,
+      {
+        schema: 'app',
+        api,
+        env,
+        fetchFn: effectiveFetchFn,
+        stage: 'CLEANUP',
+      },
+    );
+    if (!Array.isArray(rowsByEmail)) {
+      failed = true;
+      verifiedProfileId = null;
+      return;
+    }
+    if (rowsByEmail.length > 1) {
+      failed = true;
+      verifiedProfileId = null;
+      return;
+    }
+    if (rowsByEmail.length === 1) {
+      const emailRow = rowsByEmail[0];
+      if (!isValidSyntheticProfileRow(emailRow)) {
+        failed = true;
+        verifiedProfileId = null;
+        return;
+      }
+      if (
+        verifiedProvidedProfileId !== null &&
+        verifiedProvidedProfileId !== emailRow.id
+      ) {
+        failed = true;
+        verifiedProfileId = null;
+        return;
+      }
+      if (verifiedProvidedProfileId === emailRow.id) {
+        verifiedProfileId = emailRow.id;
+        return;
+      }
+      const rowsById = await db(
+        key,
+        `/rest/v1/users?id=eq.${encodeURIComponent(emailRow.id)}&select=id,auth_user_id,email`,
         {
           schema: 'app',
           api,
+          env,
           fetchFn: effectiveFetchFn,
+          stage: 'CLEANUP',
         },
       );
-      if (Array.isArray(profiles) && profiles.length > 0) {
-        fixture.profile = profiles[0]?.id ?? fixture.profile;
-        if (!fixture.auth && profiles[0]?.auth_user_id) {
-          fixture.auth = profiles[0].auth_user_id;
-        }
+      if (
+        Array.isArray(rowsById) &&
+        rowsById.length === 1 &&
+        isValidSyntheticProfileRow(rowsById[0], emailRow.id)
+      ) {
+        verifiedProfileId = emailRow.id;
+      } else {
+        failed = true;
+        verifiedProfileId = null;
       }
-    });
+      return;
+    }
+    if (verifiedProvidedProfileId !== null) {
+      failed = true;
+      verifiedProfileId = null;
+    }
+  });
+
+  // 3. Verify organization membership ownership and association with verifiedProfileId, organizationId, and roleId.
+  let expectedOrganizationId = null;
+  if (fixture.organizationId !== undefined && fixture.organizationId !== null) {
+    if (isSafeIdentifier(fixture.organizationId)) {
+      expectedOrganizationId = fixture.organizationId;
+    } else {
+      failed = true;
+    }
+  }
+  let expectedRoleId = null;
+  if (fixture.roleId !== undefined && fixture.roleId !== null) {
+    if (isSafeIdentifier(fixture.roleId)) {
+      expectedRoleId = fixture.roleId;
+    } else {
+      failed = true;
+    }
+  }
+  if (fixture.membership !== undefined && fixture.membership !== null) {
+    const mRef = fixture.membership;
+    if (
+      typeof mRef !== 'object' ||
+      Array.isArray(mRef) ||
+      !verifiedProfileId ||
+      mRef.user_id !== verifiedProfileId ||
+      !expectedOrganizationId ||
+      mRef.organization_id !== expectedOrganizationId ||
+      !isSafeIdentifier(mRef.role_id) ||
+      (expectedRoleId !== null && mRef.role_id !== expectedRoleId) ||
+      (mRef.status !== undefined && mRef.status !== 'ACTIVE')
+    ) {
+      failed = true;
+    }
   }
 
-  const matchedAuthIds = new Set();
-  if (fixture.auth) {
-    matchedAuthIds.add(fixture.auth);
-  }
-  if (!fixture.auth && hasSyntheticEmail) {
+  let verifiedMembership = null;
+  if (verifiedProfileId !== null) {
     await attempt(async () => {
-      const authPayload = await db(key, '/auth/v1/admin/users?per_page=1000', {
-        api,
-        fetchFn: effectiveFetchFn,
-      });
-      const users = Array.isArray(authPayload)
-        ? authPayload
-        : Array.isArray(authPayload?.users)
-          ? authPayload.users
-          : [];
-      for (const candidate of users) {
-        if (candidate?.email === fixture.email && candidate?.id) {
-          matchedAuthIds.add(candidate.id);
-          if (!fixture.auth) {
-            fixture.auth = candidate.id;
-          }
-        }
-      }
-    });
-  }
-
-  if (fixture.profile) {
-    await attempt(() =>
-      db(key, `/rest/v1/organization_members?user_id=eq.${fixture.profile}`, {
-        method: 'DELETE',
-        schema: 'app',
-        api,
-        fetchFn: effectiveFetchFn,
-      }),
-    );
-    await attempt(() =>
-      db(key, `/rest/v1/users?id=eq.${fixture.profile}`, {
-        method: 'DELETE',
-        schema: 'app',
-        api,
-        fetchFn: effectiveFetchFn,
-      }),
-    );
-  } else if (hasSyntheticEmail) {
-    await attempt(() =>
-      db(key, `/rest/v1/users?email=eq.${encodeURIComponent(fixture.email)}`, {
-        method: 'DELETE',
-        schema: 'app',
-        api,
-        fetchFn: effectiveFetchFn,
-      }),
-    );
-  }
-
-  for (const authId of matchedAuthIds) {
-    await attempt(async () => {
-      const url = new URL(`${api}/auth/v1/admin/users/${authId}`);
-      assert.equal(url.origin, api, 'Local Supabase access only');
-      const response = await effectiveFetchFn(url, {
-        method: 'DELETE',
-        headers: {
-          apikey: key,
-          Authorization: `Bearer ${key}`,
-          'Content-Type': 'application/json',
+      const membershipRows = await db(
+        key,
+        `/rest/v1/organization_members?user_id=eq.${encodeURIComponent(verifiedProfileId)}&select=organization_id,user_id,role_id,status`,
+        {
+          schema: 'app',
+          api,
+          env,
+          fetchFn: effectiveFetchFn,
+          stage: 'CLEANUP',
         },
-        signal: AbortSignal.timeout(15000),
-      });
-      if (!response.ok && response.status !== 404) {
-        throw new Error(
-          `Disposable database operation failed: HTTP ${response.status}`,
+      );
+      if (!Array.isArray(membershipRows)) {
+        failed = true;
+        return;
+      }
+      if (membershipRows.length > 1) {
+        failed = true;
+        return;
+      }
+      if (membershipRows.length === 1) {
+        const mRow = membershipRows[0];
+        const validMembershipRow = Boolean(
+          mRow &&
+          typeof mRow === 'object' &&
+          !Array.isArray(mRow) &&
+          mRow.user_id === verifiedProfileId &&
+          isSafeIdentifier(mRow.organization_id) &&
+          expectedOrganizationId !== null &&
+          mRow.organization_id === expectedOrganizationId &&
+          isSafeIdentifier(mRow.role_id) &&
+          (expectedRoleId === null || mRow.role_id === expectedRoleId) &&
+          (mRow.status === undefined || mRow.status === 'ACTIVE'),
         );
+        if (validMembershipRow) {
+          verifiedMembership = {
+            user_id: mRow.user_id,
+            organization_id: mRow.organization_id,
+            role_id: mRow.role_id,
+          };
+        } else {
+          failed = true;
+        }
+        return;
+      }
+      if (
+        fixture.membershipCreated === true ||
+        fixture.mutations?.membership?.confirmed === true
+      ) {
+        failed = true;
       }
     });
+  } else if (
+    fixture.membershipCreated === true ||
+    fixture.mutations?.membership?.confirmed === true
+  ) {
+    failed = true;
   }
 
-  if (fixture.profile) {
+  // 4. Execute strictly scoped deletions only for ownership-verified synthetic resources.
+  if (verifiedMembership !== null) {
+    await attempt(() =>
+      db(
+        key,
+        `/rest/v1/organization_members?user_id=eq.${encodeURIComponent(verifiedMembership.user_id)}&organization_id=eq.${encodeURIComponent(verifiedMembership.organization_id)}&role_id=eq.${encodeURIComponent(verifiedMembership.role_id)}`,
+        {
+          method: 'DELETE',
+          schema: 'app',
+          api,
+          env,
+          fetchFn: effectiveFetchFn,
+          stage: 'CLEANUP',
+        },
+      ),
+    );
+  }
+
+  if (verifiedProfileId !== null && verifiedAuthId !== null) {
+    await attempt(() =>
+      db(
+        key,
+        `/rest/v1/users?id=eq.${encodeURIComponent(verifiedProfileId)}&email=eq.${encodeURIComponent(syntheticEmail)}&auth_user_id=eq.${encodeURIComponent(verifiedAuthId)}`,
+        {
+          method: 'DELETE',
+          schema: 'app',
+          api,
+          env,
+          fetchFn: effectiveFetchFn,
+          stage: 'CLEANUP',
+        },
+      ),
+    );
+  }
+
+  if (verifiedAuthId !== null) {
+    await attempt(() =>
+      db(key, `/auth/v1/admin/users/${encodeURIComponent(verifiedAuthId)}`, {
+        method: 'DELETE',
+        api,
+        env,
+        fetchFn: effectiveFetchFn,
+        stage: 'CLEANUP',
+        allowStatuses: [404],
+      }),
+    );
+  }
+
+  // 5. Post-deletion absence verification for verified synthetic resources.
+  if (verifiedMembership !== null) {
     await attempt(async () => {
       const remainingMemberships = await db(
         key,
-        `/rest/v1/organization_members?user_id=eq.${fixture.profile}&select=user_id`,
-        { schema: 'app', api, fetchFn: effectiveFetchFn },
+        `/rest/v1/organization_members?user_id=eq.${encodeURIComponent(verifiedMembership.user_id)}&organization_id=eq.${encodeURIComponent(verifiedMembership.organization_id)}&role_id=eq.${encodeURIComponent(verifiedMembership.role_id)}&select=user_id`,
+        {
+          schema: 'app',
+          api,
+          env,
+          fetchFn: effectiveFetchFn,
+          stage: 'CLEANUP',
+        },
       );
       assert.deepEqual(
         remainingMemberships,
@@ -661,20 +1171,34 @@ export async function cleanup(
         'Synthetic organization membership must be absent',
       );
     });
+  }
+
+  if (verifiedProfileId !== null) {
     await attempt(async () => {
       const remaining = await db(
         key,
-        `/rest/v1/users?id=eq.${fixture.profile}&select=id`,
-        { schema: 'app', api, fetchFn: effectiveFetchFn },
+        `/rest/v1/users?id=eq.${encodeURIComponent(verifiedProfileId)}&select=id`,
+        {
+          schema: 'app',
+          api,
+          env,
+          fetchFn: effectiveFetchFn,
+          stage: 'CLEANUP',
+        },
       );
       assert.deepEqual(remaining, [], 'Synthetic profile must be absent');
     });
-  } else if (hasSyntheticEmail) {
     await attempt(async () => {
       const remainingByEmail = await db(
         key,
-        `/rest/v1/users?email=eq.${encodeURIComponent(fixture.email)}&select=id`,
-        { schema: 'app', api, fetchFn: effectiveFetchFn },
+        `/rest/v1/users?email=eq.${encodeURIComponent(syntheticEmail)}&select=id`,
+        {
+          schema: 'app',
+          api,
+          env,
+          fetchFn: effectiveFetchFn,
+          stage: 'CLEANUP',
+        },
       );
       assert.deepEqual(
         remainingByEmail,
@@ -684,42 +1208,21 @@ export async function cleanup(
     });
   }
 
-  if (matchedAuthIds.size > 0) {
-    for (const authId of matchedAuthIds) {
-      await attempt(async () => {
-        const response = await effectiveFetchFn(
-          `${api}/auth/v1/admin/users/${authId}`,
-          {
-            headers: { apikey: key, Authorization: `Bearer ${key}` },
-            signal: AbortSignal.timeout(15000),
-          },
-        );
-        assert.equal(
-          response.status,
-          404,
-          'Synthetic auth user must be absent',
-        );
-      });
-    }
-  } else if (hasSyntheticEmail) {
+  if (verifiedAuthId !== null) {
     await attempt(async () => {
-      const authPayload = await db(key, '/auth/v1/admin/users?per_page=1000', {
-        api,
-        fetchFn: effectiveFetchFn,
-      });
-      const users = Array.isArray(authPayload)
-        ? authPayload
-        : Array.isArray(authPayload?.users)
-          ? authPayload.users
-          : [];
-      const lingering = users.filter(
-        (candidate) => candidate?.email === fixture.email,
+      const response = await db(
+        key,
+        `/auth/v1/admin/users/${encodeURIComponent(verifiedAuthId)}`,
+        {
+          api,
+          env,
+          fetchFn: effectiveFetchFn,
+          stage: 'CLEANUP',
+          allowStatuses: [404],
+          returnRawResponse: true,
+        },
       );
-      assert.deepEqual(
-        lingering,
-        [],
-        'Synthetic auth user by email must be absent',
-      );
+      assert.equal(response.status, 404, 'Synthetic auth user must be absent');
     });
   }
 
@@ -745,6 +1248,7 @@ export async function createFixture(
   key,
   {
     api = CANONICAL_API_ORIGIN,
+    env,
     fetchFn = fetch,
     signal,
     drainSignal,
@@ -752,6 +1256,17 @@ export async function createFixture(
     deferCleanup,
   } = {},
 ) {
+  assertConsistentSupabaseEnv(api, env, {
+    stage: 'FIXTURE_CREATION',
+    code: 'NONLOCAL_TARGET_BLOCKED',
+  });
+  if (typeof key !== 'string' || key.trim().length === 0) {
+    throw new QaError(
+      'FIXTURE_CREATION',
+      'FIXTURE_CREATION_FAILED',
+      'Synthetic fixture creation requires a valid service key',
+    );
+  }
   const activeContext = harnessContextStorage.getStore();
   const effectiveSignal = signal ?? activeContext?.signal;
   const effectiveDrainSignal =
@@ -763,12 +1278,23 @@ export async function createFixture(
   if (!fixture.email) {
     fixture.email = `ci-auth-${randomUUID()}@example.test`;
   }
+  if (
+    typeof fixture.email !== 'string' ||
+    !SYNTHETIC_FIXTURE_EMAIL_PATTERN.test(fixture.email)
+  ) {
+    throw new QaError(
+      'FIXTURE_CREATION',
+      'FIXTURE_CREATION_FAILED',
+      'Synthetic fixture email must match current-run synthetic format',
+    );
+  }
   if (!fixture.password) {
     fixture.password = randomBytes(32).toString('base64url');
   }
   if (fixture.auth === undefined) fixture.auth = null;
   if (fixture.profile === undefined) fixture.profile = null;
   if (fixture.organizationId === undefined) fixture.organizationId = null;
+  if (fixture.roleId === undefined) fixture.roleId = null;
   if (fixture.membershipCreated === undefined) {
     fixture.membershipCreated = false;
   }
@@ -788,35 +1314,46 @@ export async function createFixture(
   let role;
   try {
     throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    [org] = await db(
+    const orgRows = await db(
       key,
       '/rest/v1/organizations?select=id&status=eq.ACTIVE&limit=1',
       {
         schema: 'app',
         api,
+        env,
         fetchFn,
         signal: effectiveSignal,
         requestSignal: effectiveSignal,
         stage: 'FIXTURE_CREATION',
       },
     );
+    org = Array.isArray(orgRows) ? orgRows[0] : null;
     throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    assert.ok(org?.id, 'Disposable organization missing');
+    assert.ok(
+      org && isSafeIdentifier(org.id),
+      'Disposable organization missing',
+    );
     fixture.organizationId = org.id;
-    [role] = await db(
+    const roleRows = await db(
       key,
-      `/rest/v1/roles?select=id&organization_id=eq.${org.id}&code=eq.OWNER&limit=1`,
+      `/rest/v1/roles?select=id&organization_id=eq.${encodeURIComponent(org.id)}&code=eq.OWNER&limit=1`,
       {
         schema: 'app',
         api,
+        env,
         fetchFn,
         signal: effectiveSignal,
         requestSignal: effectiveSignal,
         stage: 'FIXTURE_CREATION',
       },
     );
+    role = Array.isArray(roleRows) ? roleRows[0] : null;
     throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
-    assert.ok(role?.id, 'Disposable OWNER role missing');
+    assert.ok(
+      role && isSafeIdentifier(role.id),
+      'Disposable OWNER role missing',
+    );
+    fixture.roleId = role.id;
   } catch (error) {
     finalizeFailedFixtureMutations(fixture);
     if (effectiveSignal?.aborted) {
@@ -843,14 +1380,22 @@ export async function createFixture(
         email_confirm: true,
       },
       api,
+      env,
       fetchFn,
       signal: effectiveSignal,
       requestSignal: effectiveDrainSignal,
       stage: 'FIXTURE_CREATION',
       onBeforeDispatch: () => markFixtureMutationDispatched(fixture, 'auth'),
     });
-    fixture.auth = user?.id ?? null;
-    assert.ok(fixture.auth, 'Synthetic identity creation failed');
+    assert.ok(
+      user &&
+        typeof user === 'object' &&
+        !Array.isArray(user) &&
+        isSafeIdentifier(user.id) &&
+        user.email === fixture.email,
+      'Synthetic identity creation failed',
+    );
+    fixture.auth = user.id;
     markFixtureMutationConfirmed(fixture, 'auth');
 
     prepareFixtureMutation(fixture, 'profile');
@@ -865,14 +1410,25 @@ export async function createFixture(
         status: 'ACTIVE',
       },
       api,
+      env,
       fetchFn,
       signal: effectiveSignal,
       requestSignal: effectiveDrainSignal,
       stage: 'FIXTURE_CREATION',
       onBeforeDispatch: () => markFixtureMutationDispatched(fixture, 'profile'),
     });
-    fixture.profile = profiles?.[0]?.id ?? null;
-    assert.ok(fixture.profile, 'Synthetic app user creation failed');
+    const createdProfile =
+      Array.isArray(profiles) && profiles.length === 1 ? profiles[0] : null;
+    assert.ok(
+      createdProfile &&
+        typeof createdProfile === 'object' &&
+        !Array.isArray(createdProfile) &&
+        isSafeIdentifier(createdProfile.id) &&
+        createdProfile.email === fixture.email &&
+        createdProfile.auth_user_id === fixture.auth,
+      'Synthetic app user creation failed',
+    );
+    fixture.profile = createdProfile.id;
     markFixtureMutationConfirmed(fixture, 'profile');
 
     prepareFixtureMutation(fixture, 'membership');
@@ -887,6 +1443,7 @@ export async function createFixture(
         status: 'ACTIVE',
       },
       api,
+      env,
       fetchFn,
       signal: effectiveSignal,
       requestSignal: effectiveDrainSignal,
@@ -894,14 +1451,12 @@ export async function createFixture(
       onBeforeDispatch: () =>
         markFixtureMutationDispatched(fixture, 'membership'),
     });
-    const createdMembership = Array.isArray(memberships)
-      ? memberships[0]
-      : memberships;
     assert.ok(
-      createdMembership &&
-        typeof createdMembership === 'object' &&
-        (createdMembership.user_id === fixture.profile ||
-          createdMembership.organization_id === org.id),
+      isValidConfirmedMembershipResponse(memberships, {
+        expectedUserId: fixture.profile,
+        expectedOrganizationId: org.id,
+        expectedRoleId: role.id,
+      }),
       'Synthetic organization membership creation failed',
     );
     markFixtureMutationConfirmed(fixture, 'membership');
@@ -911,7 +1466,7 @@ export async function createFixture(
   } catch (error) {
     finalizeFailedFixtureMutations(fixture);
     if (!effectiveDeferCleanup) {
-      await cleanup(key, fixture, { api, fetchFn }).catch(() => {});
+      await cleanup(key, fixture, { api, env, fetchFn }).catch(() => {});
     }
     if (effectiveSignal?.aborted) {
       throwIfSignalAborted(effectiveSignal, 'FIXTURE_CREATION');
@@ -1191,6 +1746,7 @@ export async function startBrowser({
   signal,
 } = {}) {
   throwIfSignalAborted(signal, 'BROWSER_START');
+  assertLoopbackHttpOrigin(app, 'BROWSER_START');
   const profile = mkdtempSync(path.join(tmpdir(), 'mgbos-ci-cdp-'));
   const browser = spawnFn(
     chromeExecutable(),
@@ -1444,38 +2000,155 @@ export function writeSanitizedTrace(
   }
 }
 
+const ALLOWED_TRACE_MODES = new Set(['normal', 'intentional-broken-login']);
+const ALLOWED_TRACE_OVERALL = new Set(['PASS', 'FAIL', 'INCOMPLETE']);
+const ALLOWED_TRACE_STAGES = new Set([
+  'STARTUP',
+  'LOCAL_STATUS',
+  'APP_BUILD',
+  'FIXTURE_CREATION',
+  'APP_START',
+  'BROWSER_START',
+  'BROWSER_AUTH',
+  'COMPLETED',
+  'CLEANUP',
+  'ARTIFACT_WRITE',
+  'QA_EXECUTION',
+]);
+const ALLOWED_FAILURE_CODES = new Set([
+  'TRACE_INCOMPLETE_OR_ABORTED',
+  'NONLOCAL_TARGET_BLOCKED',
+  'LOCAL_STATUS_FAILED',
+  'LOCAL_STATUS_TIMED_OUT',
+  'BUILD_TIMED_OUT',
+  'BUILD_FAILED',
+  'FIXTURE_CREATION_FAILED',
+  'APP_PORT_ALREADY_IN_USE',
+  'APP_START_FAILED',
+  'APP_START_TIMED_OUT',
+  'BROWSER_START_FAILED',
+  'BROWSER_START_TIMED_OUT',
+  'CDP_CONNECT_TIMED_OUT',
+  'CDP_SOCKET_ERROR',
+  'CDP_CONNECTION_CLOSED',
+  'CDP_COMMAND_TIMED_OUT',
+  'BROWSER_NAVIGATION_TIMED_OUT',
+  'AUTH_LOGIN_FORM_TIMEOUT',
+  'AUTH_INVALID_LOGIN_ERROR_NOT_SHOWN',
+  'AUTH_LOGIN_POST_NOT_OBSERVED',
+  'AUTH_VALID_LOGIN_DID_NOT_COMPLETE',
+  'AUTH_LOGOUT_TIMEOUT',
+  'AUTH_ASSERTION_FAILED',
+  'CHILD_PROCESS_TERMINATED',
+  'PROCESS_SIGNAL_TERMINATED',
+  'FIXTURE_CLEANUP_FAILED',
+  'FIXTURE_CLEANUP_UNVERIFIED',
+  'SUBPROCESS_TEARDOWN_FAILED',
+  'ARTIFACT_SERIALIZATION_FAILED',
+  'ARTIFACT_SENSITIVE_DATA_BLOCKED',
+  'TRACE_WRITE_FAILED',
+  'TRACE_READBACK_FAILED',
+  'TRACE_CORRUPT_AFTER_WRITE',
+  'QA_EXECUTION_FAILED',
+]);
+const ALLOWED_PROCESS_NAMES = new Set(['application', 'browser']);
+const ALLOWED_SIGNALS = new Set([
+  'SIGINT',
+  'SIGTERM',
+  'SIGHUP',
+  'SIGKILL',
+  'SIGABRT',
+  'SIGQUIT',
+]);
+const ALLOWED_CLEANUP_STATUSES = new Set([
+  'PASS',
+  'FAIL',
+  'UNVERIFIED',
+  'SKIPPED',
+  'PENDING',
+]);
+const ALLOWED_CLEANUP_REASONS = new Set([
+  'MUTATION_OUTCOME_AMBIGUOUS',
+  'FIXTURE_QUIESCENCE_TIMEOUT',
+  'FIXTURE_CLEANUP_FAILED',
+]);
+const ALLOWED_MUTATION_STAGES = new Set(FIXTURE_MUTATION_STAGES);
+const ALLOWED_CASE_IDS = new Set([
+  ...EXPECTED_POSITIVE_CASE_IDS,
+  ...EXPECTED_NEGATIVE_PRE_LOGIN_CASE_IDS,
+]);
+
+function allowlistedString(value, allowedSet, fallback = null) {
+  return typeof value === 'string' && allowedSet.has(value) ? value : fallback;
+}
+
 export function classifyFailure(stage, error) {
+  const fallbackStage = allowlistedString(
+    stage,
+    ALLOWED_TRACE_STAGES,
+    'QA_EXECUTION',
+  );
   if (error instanceof QaError) {
-    const resolvedStage = error.stage || stage;
+    const resolvedStage = allowlistedString(
+      error.stage || fallbackStage,
+      ALLOWED_TRACE_STAGES,
+      fallbackStage,
+    );
+    const resolvedCode = allowlistedString(
+      error.code,
+      ALLOWED_FAILURE_CODES,
+      'QA_EXECUTION_FAILED',
+    );
     const result = {
       stage: resolvedStage,
-      code: error.code,
+      code: resolvedCode,
     };
-    if (typeof error.details?.process === 'string') {
-      result.process = error.details.process;
+    const safeProcess = allowlistedString(
+      error.details?.process,
+      ALLOWED_PROCESS_NAMES,
+      null,
+    );
+    if (safeProcess) {
+      result.process = safeProcess;
     }
     if (
-      typeof error.details?.exitCode === 'number' ||
+      (typeof error.details?.exitCode === 'number' &&
+        Number.isInteger(error.details.exitCode)) ||
       error.details?.exitCode === null
     ) {
-      if (error.details.exitCode !== undefined) {
-        result.exitCode = error.details.exitCode;
-      }
+      result.exitCode = error.details.exitCode;
     }
-    if (
-      typeof error.details?.signal === 'string' &&
-      error.details.signal.length > 0
-    ) {
-      result.signal = error.details.signal;
+    const safeSignal = allowlistedString(
+      error.details?.signal,
+      ALLOWED_SIGNALS,
+      null,
+    );
+    if (safeSignal) {
+      result.signal = safeSignal;
     }
-    if (typeof error.details?.failedCaseId === 'string') {
-      result.failedCaseId = error.details.failedCaseId;
+    const safeCaseId = allowlistedString(
+      error.details?.failedCaseId,
+      ALLOWED_CASE_IDS,
+      null,
+    );
+    if (safeCaseId) {
+      result.failedCaseId = safeCaseId;
     }
-    if (typeof error.details?.priorStage === 'string') {
-      result.priorStage = error.details.priorStage;
+    const safePriorStage = allowlistedString(
+      error.details?.priorStage,
+      ALLOWED_TRACE_STAGES,
+      null,
+    );
+    if (safePriorStage) {
+      result.priorStage = safePriorStage;
     }
-    if (typeof error.details?.priorCode === 'string') {
-      result.priorCode = error.details.priorCode;
+    const safePriorCode = allowlistedString(
+      error.details?.priorCode,
+      ALLOWED_FAILURE_CODES,
+      null,
+    );
+    if (safePriorCode) {
+      result.priorCode = safePriorCode;
     }
     return result;
   }
@@ -1500,12 +2173,12 @@ export function classifyFailure(stage, error) {
                         'Authentication invariant not satisfied:',
                       )
                     ? 'AUTH_ASSERTION_FAILED'
-                    : stage === 'APP_BUILD'
+                    : fallbackStage === 'APP_BUILD'
                       ? 'BUILD_FAILED'
-                      : stage === 'FIXTURE_CREATION'
+                      : fallbackStage === 'FIXTURE_CREATION'
                         ? 'FIXTURE_CREATION_FAILED'
                         : 'QA_EXECUTION_FAILED';
-  return { stage, code };
+  return { stage: fallbackStage, code };
 }
 
 function recordResult(cases, caseId, passed, proof = {}) {
@@ -1587,7 +2260,6 @@ function createGuardedCdp(rawCdp, assertActive, signal) {
       return rawCdp.assertConnected?.(stage);
     },
     posts(route) {
-      assertActive();
       return rawCdp.posts(route);
     },
     async send(method, params = {}) {
@@ -1678,6 +2350,7 @@ export async function runBrowser(
     signal,
   },
 ) {
+  assertLoopbackHttpOrigin(app, 'BROWSER_AUTH');
   const ensureHealthy = async () => {
     throwIfSignalAborted(signal, 'BROWSER_AUTH');
     if (checkHealth) await checkHealth();
@@ -1941,48 +2614,108 @@ export async function runBrowser(
   await cdp.send('Network.clearBrowserCookies');
 }
 
+function buildSafeTraceDiagnostics(report, safeExitStatus) {
+  const rawFailure =
+    report?.failure &&
+    typeof report.failure === 'object' &&
+    !Array.isArray(report.failure)
+      ? report.failure
+      : null;
+  const rawCleanup =
+    report?.cleanup &&
+    typeof report.cleanup === 'object' &&
+    !Array.isArray(report.cleanup)
+      ? report.cleanup
+      : null;
+
+  const ambiguousMutations = Array.isArray(rawCleanup?.ambiguousMutations)
+    ? rawCleanup.ambiguousMutations.filter((item) =>
+        allowlistedString(item, ALLOWED_MUTATION_STAGES, null),
+      )
+    : null;
+
+  return {
+    mode: allowlistedString(report?.mode, ALLOWED_TRACE_MODES, null),
+    overall: allowlistedString(report?.overall, ALLOWED_TRACE_OVERALL, null),
+    stage: allowlistedString(report?.stage, ALLOWED_TRACE_STAGES, null),
+    failureStage: allowlistedString(
+      rawFailure?.stage,
+      ALLOWED_TRACE_STAGES,
+      null,
+    ),
+    failureCode: allowlistedString(
+      rawFailure?.code,
+      ALLOWED_FAILURE_CODES,
+      null,
+    ),
+    process: allowlistedString(
+      rawFailure?.process,
+      ALLOWED_PROCESS_NAMES,
+      null,
+    ),
+    exitCode:
+      typeof rawFailure?.exitCode === 'number' &&
+      Number.isInteger(rawFailure.exitCode)
+        ? rawFailure.exitCode
+        : null,
+    signal: allowlistedString(rawFailure?.signal, ALLOWED_SIGNALS, null),
+    cleanupStatus: allowlistedString(
+      rawCleanup?.status,
+      ALLOWED_CLEANUP_STATUSES,
+      null,
+    ),
+    cleanupReason: allowlistedString(
+      rawCleanup?.reason,
+      ALLOWED_CLEANUP_REASONS,
+      null,
+    ),
+    ambiguousMutations,
+    executionQuiesced:
+      typeof rawCleanup?.executionQuiesced === 'boolean'
+        ? rawCleanup.executionQuiesced
+        : null,
+    casesRecorded: Array.isArray(report?.cases) ? report.cases.length : null,
+    exitStatus: safeExitStatus,
+  };
+}
+
 export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
+  const safeExitStatus =
+    typeof exitStatus === 'number' && Number.isInteger(exitStatus)
+      ? exitStatus
+      : null;
+
   if (!report || typeof report !== 'object' || Array.isArray(report)) {
     return {
       valid: false,
       code: 'TRACE_CORRUPT',
       summary: 'Trace report is not a JSON object',
-      diagnostics: {},
+      diagnostics: { exitStatus: safeExitStatus },
     };
   }
 
   try {
     assertSanitizedEvidence(report);
-  } catch (error) {
+  } catch {
     return {
       valid: false,
       code: 'TRACE_SENSITIVE_DATA_DETECTED',
-      summary:
-        error instanceof Error
-          ? error.message
-          : 'Sensitive pattern detected in trace report',
-      diagnostics: { mode: report.mode ?? null },
+      summary: 'Sensitive or credential-like pattern detected in trace report',
+      diagnostics: { exitStatus: safeExitStatus },
     };
   }
 
-  const diagnostics = {
-    mode: report.mode ?? null,
-    overall: report.overall ?? null,
-    stage: report.stage ?? null,
-    failureStage: report.failure?.stage ?? null,
-    failureCode: report.failure?.code ?? null,
-    process: report.failure?.process ?? null,
-    exitCode: report.failure?.exitCode ?? null,
-    signal: report.failure?.signal ?? null,
-    cleanupStatus: report.cleanup?.status ?? null,
-    cleanupReason: report.cleanup?.reason ?? null,
-    ambiguousMutations: Array.isArray(report.cleanup?.ambiguousMutations)
-      ? report.cleanup.ambiguousMutations
-      : null,
-    executionQuiesced: report.cleanup?.executionQuiesced ?? null,
-    casesRecorded: Array.isArray(report.cases) ? report.cases.length : null,
-    exitStatus: exitStatus ?? null,
-  };
+  const diagnostics = buildSafeTraceDiagnostics(report, safeExitStatus);
+  try {
+    assertSanitizedEvidence(diagnostics);
+  } catch {
+    return {
+      valid: false,
+      code: 'TRACE_SENSITIVE_DATA_DETECTED',
+      summary: 'Sensitive or credential-like pattern detected in trace report',
+      diagnostics: { exitStatus: safeExitStatus },
+    };
+  }
 
   if (
     typeof report.checkoutSha !== 'string' ||
@@ -2006,11 +2739,20 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
     };
   }
 
+  if (expectedMode !== undefined && !ALLOWED_TRACE_MODES.has(expectedMode)) {
+    return {
+      valid: false,
+      code: 'UNSUPPORTED_EXPECTED_MODE',
+      summary: 'Unsupported expectedMode argument',
+      diagnostics,
+    };
+  }
+
   if (expectedMode && report.mode !== expectedMode) {
     return {
       valid: false,
       code: 'TRACE_MODE_MISMATCH',
-      summary: `Expected trace mode "${expectedMode}", got "${String(report.mode)}"`,
+      summary: 'Trace report mode does not match expected execution mode',
       diagnostics,
     };
   }
@@ -2019,7 +2761,7 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
     return {
       valid: false,
       code: 'FIXTURE_CLEANUP_NOT_VERIFIED',
-      summary: `Expected fixture cleanup status PASS, got "${String(report.cleanup?.status)}"`,
+      summary: 'Expected fixture cleanup status PASS',
       diagnostics,
     };
   }
@@ -2041,7 +2783,7 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
     return {
       valid: false,
       code: 'FIXTURE_CLEANUP_NOT_VERIFIED',
-      summary: `Expected fixture cleanup status PASS, got "${String(report.cleanup?.status)}"`,
+      summary: 'Expected fixture cleanup status PASS',
       diagnostics,
     };
   }
@@ -2051,7 +2793,7 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
       return {
         valid: false,
         code: 'FIXTURE_CLEANUP_NOT_VERIFIED',
-        summary: `Expected fixture cleanup status PASS, got "${String(report.cleanup?.status)}"`,
+        summary: 'Expected fixture cleanup status PASS',
         diagnostics,
       };
     }
@@ -2073,11 +2815,11 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
   };
 
   if (expectedMode === 'normal') {
-    if (exitStatus !== undefined && exitStatus !== 0) {
+    if (safeExitStatus !== null && safeExitStatus !== 0) {
       return {
         valid: false,
         code: 'POSITIVE_EXIT_STATUS_NONZERO',
-        summary: `Positive browser-auth run exited with status ${exitStatus}`,
+        summary: 'Positive browser-auth run exited with nonzero status',
         diagnostics,
       };
     }
@@ -2115,7 +2857,7 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
   }
 
   if (expectedMode === 'intentional-broken-login') {
-    if (exitStatus !== undefined && exitStatus === 0) {
+    if (safeExitStatus !== null && safeExitStatus === 0) {
       return {
         valid: false,
         code: 'NEGATIVE_CONTROL_UNEXPECTED_ZERO_EXIT',
@@ -2127,7 +2869,7 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
       return {
         valid: false,
         code: 'NEGATIVE_CONTROL_OVERALL_MISMATCH',
-        summary: `Expected negative-control overall FAIL, got "${String(report.overall)}"`,
+        summary: 'Expected negative-control overall FAIL',
         diagnostics,
       };
     }
@@ -2138,7 +2880,8 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
       return {
         valid: false,
         code: 'NEGATIVE_CONTROL_CLASSIFICATION_MISMATCH',
-        summary: `Expected BROWSER_AUTH/AUTH_VALID_LOGIN_DID_NOT_COMPLETE, got stage=${String(report.failure?.stage)} code=${String(report.failure?.code)}`,
+        summary:
+          'Expected BROWSER_AUTH/AUTH_VALID_LOGIN_DID_NOT_COMPLETE classification',
         diagnostics,
       };
     }
@@ -2182,7 +2925,7 @@ export function validateTraceReport(report, { expectedMode, exitStatus } = {}) {
   return {
     valid: false,
     code: 'UNSUPPORTED_EXPECTED_MODE',
-    summary: `Unsupported expectedMode "${String(expectedMode)}"`,
+    summary: 'Unsupported expectedMode argument',
     diagnostics,
   };
 }
@@ -2191,12 +2934,25 @@ export function verifyTraceFile(
   tracePath,
   { expectedMode, exitStatus, readFileSyncFn = readFileSync } = {},
 ) {
+  const safeExitStatus =
+    typeof exitStatus === 'number' && Number.isInteger(exitStatus)
+      ? exitStatus
+      : null;
+
+  if (typeof tracePath !== 'string' || tracePath.trim().length === 0) {
+    return {
+      valid: false,
+      code: 'TRACE_MISSING',
+      summary: 'Trace artifact path is missing',
+      diagnostics: { exitStatus: safeExitStatus },
+    };
+  }
   if (!existsSync(tracePath)) {
     return {
       valid: false,
       code: 'TRACE_MISSING',
-      summary: `Trace artifact is missing at ${tracePath}`,
-      diagnostics: { tracePath, exitStatus: exitStatus ?? null },
+      summary: 'Trace artifact is missing',
+      diagnostics: { exitStatus: safeExitStatus },
     };
   }
   let raw;
@@ -2206,16 +2962,16 @@ export function verifyTraceFile(
     return {
       valid: false,
       code: 'TRACE_UNREADABLE',
-      summary: `Trace artifact could not be read at ${tracePath}`,
-      diagnostics: { tracePath, exitStatus: exitStatus ?? null },
+      summary: 'Trace artifact could not be read',
+      diagnostics: { exitStatus: safeExitStatus },
     };
   }
   if (typeof raw !== 'string' || raw.trim().length === 0) {
     return {
       valid: false,
       code: 'TRACE_CORRUPT',
-      summary: `Trace artifact is empty at ${tracePath}`,
-      diagnostics: { tracePath, exitStatus: exitStatus ?? null },
+      summary: 'Trace artifact is empty',
+      diagnostics: { exitStatus: safeExitStatus },
     };
   }
   let parsed;
@@ -2225,11 +2981,14 @@ export function verifyTraceFile(
     return {
       valid: false,
       code: 'TRACE_CORRUPT',
-      summary: `Trace artifact is not valid JSON at ${tracePath}`,
-      diagnostics: { tracePath, exitStatus: exitStatus ?? null },
+      summary: 'Trace artifact is not valid JSON',
+      diagnostics: { exitStatus: safeExitStatus },
     };
   }
-  return validateTraceReport(parsed, { expectedMode, exitStatus });
+  return validateTraceReport(parsed, {
+    expectedMode,
+    exitStatus: safeExitStatus,
+  });
 }
 
 function defaultBuildApp({ env, workdir = root, spawnSyncFn = spawnSync }) {
@@ -2270,6 +3029,7 @@ async function defaultStartApp({
   signal,
 }) {
   throwIfSignalAborted(signal, 'APP_START');
+  assertLoopbackHttpOrigin(app, 'APP_START');
   try {
     const staleProbe = await fetchFn(`${app}/health`, {
       signal: AbortSignal.timeout(1000),
@@ -2526,8 +3286,39 @@ export async function runQaHarness({
   try {
     executionPromise = harnessContextStorage.run(harnessContext, async () => {
       enterStage('LOCAL_STATUS');
+      assertConsistentSupabaseEnv(api, process.env, {
+        stage: 'LOCAL_STATUS',
+        code: 'LOCAL_STATUS_FAILED',
+      });
+      assertLoopbackHttpOrigin(app, {
+        stage: 'LOCAL_STATUS',
+        code: 'LOCAL_STATUS_FAILED',
+      });
       const local = await localStatusFn({ workdir, api, signal });
       assertActive('LOCAL_STATUS');
+      if (
+        !local ||
+        typeof local !== 'object' ||
+        assertLoopbackHttpOrigin(local.API_URL, {
+          stage: 'LOCAL_STATUS',
+          code: 'LOCAL_STATUS_FAILED',
+        }) !== api ||
+        typeof local.SERVICE_ROLE_KEY !== 'string' ||
+        local.SERVICE_ROLE_KEY.trim().length === 0 ||
+        typeof local.ANON_KEY !== 'string' ||
+        local.ANON_KEY.trim().length === 0 ||
+        (local.DB_URL !== undefined &&
+          (typeof local.DB_URL !== 'string' ||
+            !/^postgres(?:ql)?:\/\/(?:[^@/\s]+@)?127\.0\.0\.1:\d+\//.test(
+              local.DB_URL,
+            )))
+      ) {
+        throw new QaError(
+          'LOCAL_STATUS',
+          'LOCAL_STATUS_FAILED',
+          'Disposable local Supabase status validation failed',
+        );
+      }
       localKey = local.SERVICE_ROLE_KEY;
       anonKey = local.ANON_KEY;
       const env = {
@@ -2598,7 +3389,7 @@ export async function runQaHarness({
     failure = true;
     evidence.stage =
       effectiveError instanceof QaError && effectiveError.stage
-        ? effectiveError.stage
+        ? allowlistedString(effectiveError.stage, ALLOWED_TRACE_STAGES, stage)
         : stage;
     evidence.failure = classifyFailure(stage, effectiveError);
   } finally {
@@ -2744,9 +3535,16 @@ export async function runQaHarness({
           typeof cleanupResult === 'object' &&
           typeof cleanupResult.status === 'string'
         ) {
-          cleanupStatus = cleanupResult.status;
+          cleanupStatus = allowlistedString(
+            cleanupResult.status,
+            ALLOWED_CLEANUP_STATUSES,
+            'FAIL',
+          );
         }
-        if (
+        if (cleanupStatus === 'FAIL') {
+          failure = true;
+          cleanupReason = 'FIXTURE_CLEANUP_FAILED';
+        } else if (
           fixtureQuiescenceUnverified ||
           mutationOutcomeAmbiguous ||
           cleanupStatus === 'UNVERIFIED'
@@ -2755,7 +3553,11 @@ export async function runQaHarness({
           cleanupStatus = 'UNVERIFIED';
           cleanupReason = mutationOutcomeAmbiguous
             ? 'MUTATION_OUTCOME_AMBIGUOUS'
-            : (cleanupResult?.reason ?? 'FIXTURE_QUIESCENCE_TIMEOUT');
+            : allowlistedString(
+                cleanupResult?.reason,
+                ALLOWED_CLEANUP_REASONS,
+                'FIXTURE_QUIESCENCE_TIMEOUT',
+              );
         }
       } catch {
         failure = true;
@@ -2766,8 +3568,16 @@ export async function runQaHarness({
           code: 'FIXTURE_CLEANUP_FAILED',
           ...(evidence.failure
             ? {
-                priorStage: evidence.failure.stage,
-                priorCode: evidence.failure.code,
+                priorStage: allowlistedString(
+                  evidence.failure.stage,
+                  ALLOWED_TRACE_STAGES,
+                  'QA_EXECUTION',
+                ),
+                priorCode: allowlistedString(
+                  evidence.failure.code,
+                  ALLOWED_FAILURE_CODES,
+                  'QA_EXECUTION_FAILED',
+                ),
               }
             : {}),
         };
@@ -2793,8 +3603,16 @@ export async function runQaHarness({
           code: 'SUBPROCESS_TEARDOWN_FAILED',
           ...(evidence.failure
             ? {
-                priorStage: evidence.failure.stage,
-                priorCode: evidence.failure.code,
+                priorStage: allowlistedString(
+                  evidence.failure.stage,
+                  ALLOWED_TRACE_STAGES,
+                  'QA_EXECUTION',
+                ),
+                priorCode: allowlistedString(
+                  evidence.failure.code,
+                  ALLOWED_FAILURE_CODES,
+                  'QA_EXECUTION_FAILED',
+                ),
               }
             : {}),
         };
@@ -2865,16 +3683,41 @@ export async function runCli(argv = process.argv.slice(2)) {
       statusIndex !== -1 && argv[statusIndex + 1] !== undefined
         ? Number.parseInt(argv[statusIndex + 1], 10)
         : undefined;
+    const safeExitStatus = Number.isNaN(exitStatus)
+      ? null
+      : (exitStatus ?? null);
     const result = verifyTraceFile(tracePath, {
       expectedMode,
-      exitStatus: Number.isNaN(exitStatus) ? undefined : exitStatus,
+      exitStatus: safeExitStatus ?? undefined,
     });
-    const payload = JSON.stringify({
-      code: result.code,
-      valid: result.valid,
-      summary: result.summary,
-      diagnostics: result.diagnostics,
-    });
+    const candidatePayload = {
+      code: typeof result.code === 'string' ? result.code : 'TRACE_CORRUPT',
+      valid: result.valid === true,
+      summary:
+        typeof result.summary === 'string'
+          ? result.summary
+          : 'Trace validation failed',
+      diagnostics:
+        result.diagnostics &&
+        typeof result.diagnostics === 'object' &&
+        !Array.isArray(result.diagnostics)
+          ? result.diagnostics
+          : { exitStatus: safeExitStatus },
+    };
+    let payload;
+    try {
+      payload = assertSanitizedEvidence(candidatePayload);
+    } catch {
+      payload = JSON.stringify({
+        code: 'TRACE_SENSITIVE_DATA_DETECTED',
+        valid: false,
+        summary:
+          'Sensitive or credential-like pattern detected in trace report',
+        diagnostics: { exitStatus: safeExitStatus },
+      });
+      console.error(payload);
+      return 1;
+    }
     if (!result.valid) {
       console.error(payload);
       return 1;
@@ -2916,8 +3759,18 @@ export async function runCli(argv = process.argv.slice(2)) {
 
   const { evidence, failure } = await runQaHarness(harnessOptions);
   if (failure) {
+    const safeStage = allowlistedString(
+      evidence.failure?.stage,
+      ALLOWED_TRACE_STAGES,
+      'UNKNOWN',
+    );
+    const safeCode = allowlistedString(
+      evidence.failure?.code,
+      ALLOWED_FAILURE_CODES,
+      'QA_EXECUTION_FAILED',
+    );
     console.error(
-      `Browser-auth QA failed (${evidence.failure?.stage ?? 'UNKNOWN'}:${evidence.failure?.code ?? 'QA_EXECUTION_FAILED'}); review sanitized case evidence.`,
+      `Browser-auth QA failed (${safeStage}:${safeCode}); review sanitized case evidence.`,
     );
     return 1;
   }

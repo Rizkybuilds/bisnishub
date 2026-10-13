@@ -18,13 +18,19 @@ import {
   CANONICAL_APP_ORIGIN,
   EXPECTED_POSITIVE_CASE_IDS,
   QaError,
+  assertConsistentSupabaseEnv,
+  assertLoopbackHttpOrigin,
   assertSanitizedEvidence,
   cleanup,
   createFixture,
   createFixtureState,
+  db,
+  isValidConfirmedMembershipResponse,
   localStatus,
+  resolveLoopbackRequestUrl,
   runBrowser,
   runQaHarness,
+  startBrowser,
   terminateSubprocess,
   validateTraceReport,
   verifyTraceFile,
@@ -3085,5 +3091,1195 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         }
       });
     }
+  });
+
+  it('SEC64-01: enforces verified synthetic ownership before deletion across wrong IDs, mismatched links, duplicates, missing fields, and mixed references', async () => {
+    const UNRELATED_AUTH_ID = '00000000-0000-4000-8000-000000000999';
+    const UNRELATED_PROFILE_ID = '00000000-0000-4000-8000-000000000888';
+    const UNRELATED_EMAIL = 'unrelated-operator@example.test';
+    const SEED_ORG_ID = '00000000-0000-4000-8000-000000000010';
+    const OTHER_ORG_ID = '00000000-0000-4000-8000-000000000019';
+    const SEED_ROLE_ID = '00000000-0000-4000-8000-000000000020';
+    const OTHER_ROLE_ID = '00000000-0000-4000-8000-000000000029';
+    const SYNTH_EMAIL =
+      'ci-auth-11111111-2222-4333-8444-555555555555@example.test';
+    const SYNTH_AUTH_ID = '00000000-0000-4000-8000-000000000111';
+    const SYNTH_PROFILE_ID = '00000000-0000-4000-8000-000000000222';
+
+    function createOwnershipTestStore({
+      extraAuthUsers = [],
+      extraAppUsers = [],
+      extraOrgMembers = [],
+      overrideAuthGetById,
+      overrideAuthList,
+    } = {}) {
+      const authUsers = new Map([
+        [UNRELATED_AUTH_ID, { id: UNRELATED_AUTH_ID, email: UNRELATED_EMAIL }],
+        ...extraAuthUsers.map((u) => [u.id, { ...u }]),
+      ]);
+      const appUsers = new Map([
+        [
+          UNRELATED_PROFILE_ID,
+          {
+            id: UNRELATED_PROFILE_ID,
+            auth_user_id: UNRELATED_AUTH_ID,
+            email: UNRELATED_EMAIL,
+            name: 'Unrelated Operator',
+            status: 'ACTIVE',
+          },
+        ],
+        ...extraAppUsers.map((u) => [u.id, { ...u }]),
+      ]);
+      const orgMembers = [
+        {
+          organization_id: SEED_ORG_ID,
+          user_id: UNRELATED_PROFILE_ID,
+          role_id: SEED_ROLE_ID,
+          status: 'ACTIVE',
+        },
+        ...extraOrgMembers.map((m) => ({ ...m })),
+      ];
+      const deleteCalls = [];
+
+      const jsonResponse = (status, payload) => ({
+        ok: status >= 200 && status < 300,
+        status,
+        json: async () => payload,
+      });
+
+      const fetchFn = async (url, options = {}) => {
+        const parsed = new URL(String(url));
+        const method = options.method ?? 'GET';
+        const pathname = parsed.pathname;
+
+        if (method === 'DELETE') {
+          deleteCalls.push(`${pathname}${parsed.search}`);
+        }
+
+        if (method === 'GET' && pathname === '/auth/v1/admin/users') {
+          if (overrideAuthList) {
+            return jsonResponse(200, overrideAuthList(authUsers));
+          }
+          return jsonResponse(200, {
+            users: Array.from(authUsers.values()),
+          });
+        }
+
+        if (pathname.startsWith('/auth/v1/admin/users/')) {
+          const authId = decodeURIComponent(
+            pathname.slice('/auth/v1/admin/users/'.length),
+          );
+          if (method === 'GET') {
+            if (overrideAuthGetById) {
+              const custom = overrideAuthGetById(authId, authUsers);
+              if (custom) return jsonResponse(custom.status, custom.body);
+            }
+            return authUsers.has(authId)
+              ? jsonResponse(200, authUsers.get(authId))
+              : jsonResponse(404, {});
+          }
+          if (method === 'DELETE') {
+            const existed = authUsers.delete(authId);
+            return jsonResponse(existed ? 200 : 404, {});
+          }
+        }
+
+        if (pathname === '/rest/v1/users') {
+          const idFilter = parsed.searchParams.get('id');
+          const emailFilter = parsed.searchParams.get('email');
+          const authUserFilter = parsed.searchParams.get('auth_user_id');
+          const matchRow = (row) => {
+            if (idFilter?.startsWith('eq.') && row.id !== idFilter.slice(3)) {
+              return false;
+            }
+            if (
+              emailFilter?.startsWith('eq.') &&
+              row.email !== emailFilter.slice(3)
+            ) {
+              return false;
+            }
+            if (
+              authUserFilter?.startsWith('eq.') &&
+              row.auth_user_id !== authUserFilter.slice(3)
+            ) {
+              return false;
+            }
+            return true;
+          };
+          if (method === 'GET') {
+            return jsonResponse(
+              200,
+              Array.from(appUsers.values()).filter(matchRow),
+            );
+          }
+          if (method === 'DELETE') {
+            for (const [id, row] of appUsers.entries()) {
+              if (matchRow(row)) {
+                appUsers.delete(id);
+              }
+            }
+            return { ok: true, status: 204, json: async () => null };
+          }
+        }
+
+        if (pathname === '/rest/v1/organization_members') {
+          const userIdFilter = parsed.searchParams.get('user_id');
+          const orgIdFilter = parsed.searchParams.get('organization_id');
+          const roleIdFilter = parsed.searchParams.get('role_id');
+          const matchMember = (m) => {
+            if (
+              userIdFilter?.startsWith('eq.') &&
+              m.user_id !== userIdFilter.slice(3)
+            ) {
+              return false;
+            }
+            if (
+              orgIdFilter?.startsWith('eq.') &&
+              m.organization_id !== orgIdFilter.slice(3)
+            ) {
+              return false;
+            }
+            if (
+              roleIdFilter?.startsWith('eq.') &&
+              m.role_id !== roleIdFilter.slice(3)
+            ) {
+              return false;
+            }
+            return true;
+          };
+          if (method === 'GET') {
+            return jsonResponse(200, orgMembers.filter(matchMember));
+          }
+          if (method === 'DELETE') {
+            for (let i = orgMembers.length - 1; i >= 0; i -= 1) {
+              if (matchMember(orgMembers[i])) {
+                orgMembers.splice(i, 1);
+              }
+            }
+            return { ok: true, status: 204, json: async () => null };
+          }
+        }
+
+        throw new Error(`Unhandled mock endpoint: ${method} ${pathname}`);
+      };
+
+      return { authUsers, appUsers, orgMembers, deleteCalls, fetchFn };
+    }
+
+    const assertUnrelatedPreserved = (store, label) => {
+      assert.equal(store.authUsers.has(UNRELATED_AUTH_ID), true, label);
+      assert.equal(store.appUsers.has(UNRELATED_PROFILE_ID), true, label);
+      assert.equal(
+        store.orgMembers.some(
+          (m) =>
+            m.user_id === UNRELATED_PROFILE_ID &&
+            m.organization_id === SEED_ORG_ID &&
+            m.role_id === SEED_ROLE_ID,
+        ),
+        true,
+        label,
+      );
+    };
+
+    // 1. Auditor's isolated reproduction: wrong auth ID and wrong profile ID pointing to unrelated records.
+    {
+      const store = createOwnershipTestStore();
+      await assert.rejects(
+        () =>
+          cleanup(
+            'synthetic_service_key',
+            {
+              email: SYNTH_EMAIL,
+              auth: UNRELATED_AUTH_ID,
+              profile: UNRELATED_PROFILE_ID,
+              organizationId: SEED_ORG_ID,
+              roleId: SEED_ROLE_ID,
+            },
+            { fetchFn: store.fetchFn },
+          ),
+        (err) =>
+          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+      );
+      assert.deepEqual(store.deleteCalls, []);
+      assertUnrelatedPreserved(store, 'auditor isolated wrong-ID scenario');
+    }
+
+    // 2. Non-synthetic email or missing email with claimed IDs fails closed without issuing DELETE.
+    for (const badEmail of [
+      null,
+      '',
+      'operator@bisnishub.id',
+      'ci-auth-not-valid@other.org',
+    ]) {
+      const store = createOwnershipTestStore();
+      await assert.rejects(
+        () =>
+          cleanup(
+            'synthetic_service_key',
+            {
+              email: badEmail,
+              auth: UNRELATED_AUTH_ID,
+              profile: UNRELATED_PROFILE_ID,
+            },
+            { fetchFn: store.fetchFn },
+          ),
+        (err) =>
+          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+      );
+      assert.deepEqual(store.deleteCalls, []);
+      assertUnrelatedPreserved(store, `bad email: ${String(badEmail)}`);
+    }
+
+    // 3. Profile has synthetic email but links to an unrelated auth_user_id.
+    {
+      const store = createOwnershipTestStore({
+        extraAuthUsers: [{ id: SYNTH_AUTH_ID, email: SYNTH_EMAIL }],
+        extraAppUsers: [
+          {
+            id: SYNTH_PROFILE_ID,
+            auth_user_id: UNRELATED_AUTH_ID,
+            email: SYNTH_EMAIL,
+            name: 'Mismatched Link',
+            status: 'ACTIVE',
+          },
+        ],
+      });
+      await assert.rejects(
+        () =>
+          cleanup(
+            'synthetic_service_key',
+            {
+              email: SYNTH_EMAIL,
+              auth: SYNTH_AUTH_ID,
+              profile: SYNTH_PROFILE_ID,
+              organizationId: SEED_ORG_ID,
+              roleId: SEED_ROLE_ID,
+            },
+            { fetchFn: store.fetchFn },
+          ),
+        (err) =>
+          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+      );
+      // Profile with wrong auth_user_id must NOT be deleted; verified synthetic auth user IS cleaned up.
+      assert.equal(store.appUsers.has(SYNTH_PROFILE_ID), true);
+      assert.equal(store.authUsers.has(SYNTH_AUTH_ID), false);
+      assertUnrelatedPreserved(store, 'mismatched auth_user_id');
+    }
+
+    // 4. Membership pointing to another organization or another role is never deleted and fails closed.
+    for (const badMember of [
+      {
+        label: 'wrong organization_id on membership',
+        organization_id: OTHER_ORG_ID,
+        role_id: SEED_ROLE_ID,
+        status: 'ACTIVE',
+      },
+      {
+        label: 'wrong role_id on membership',
+        organization_id: SEED_ORG_ID,
+        role_id: OTHER_ROLE_ID,
+        status: 'ACTIVE',
+      },
+      {
+        label: 'non-ACTIVE status on membership',
+        organization_id: SEED_ORG_ID,
+        role_id: SEED_ROLE_ID,
+        status: 'SUSPENDED',
+      },
+    ]) {
+      const store = createOwnershipTestStore({
+        extraAuthUsers: [{ id: SYNTH_AUTH_ID, email: SYNTH_EMAIL }],
+        extraAppUsers: [
+          {
+            id: SYNTH_PROFILE_ID,
+            auth_user_id: SYNTH_AUTH_ID,
+            email: SYNTH_EMAIL,
+            name: 'CI Synthetic Operator',
+            status: 'ACTIVE',
+          },
+        ],
+        extraOrgMembers: [
+          {
+            user_id: SYNTH_PROFILE_ID,
+            organization_id: badMember.organization_id,
+            role_id: badMember.role_id,
+            status: badMember.status,
+          },
+        ],
+      });
+      await assert.rejects(
+        () =>
+          cleanup(
+            'synthetic_service_key',
+            {
+              email: SYNTH_EMAIL,
+              auth: SYNTH_AUTH_ID,
+              profile: SYNTH_PROFILE_ID,
+              organizationId: SEED_ORG_ID,
+              roleId: SEED_ROLE_ID,
+            },
+            { fetchFn: store.fetchFn },
+          ),
+        (err) =>
+          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+        badMember.label,
+      );
+      // Mismatched membership was not deleted; verified synthetic profile and auth were cleaned up.
+      assert.equal(store.orgMembers.length, 2, badMember.label);
+      assert.equal(
+        store.appUsers.has(SYNTH_PROFILE_ID),
+        false,
+        badMember.label,
+      );
+      assert.equal(store.authUsers.has(SYNTH_AUTH_ID), false, badMember.label);
+      assertUnrelatedPreserved(store, badMember.label);
+    }
+
+    // 5. Duplicate identity matches (duplicate auth users, duplicate profiles, duplicate memberships) and contradictory auth responses.
+    {
+      const dupAuthStore = createOwnershipTestStore({
+        extraAuthUsers: [
+          { id: SYNTH_AUTH_ID, email: SYNTH_EMAIL },
+          { id: '00000000-0000-4000-8000-000000000112', email: SYNTH_EMAIL },
+        ],
+      });
+      await assert.rejects(
+        () =>
+          cleanup(
+            'synthetic_service_key',
+            { email: SYNTH_EMAIL, auth: SYNTH_AUTH_ID },
+            { fetchFn: dupAuthStore.fetchFn },
+          ),
+        (err) =>
+          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+      );
+      assert.deepEqual(dupAuthStore.deleteCalls, []);
+      assertUnrelatedPreserved(dupAuthStore, 'duplicate auth users');
+
+      const contradictoryAuthStore = createOwnershipTestStore({
+        extraAuthUsers: [{ id: SYNTH_AUTH_ID, email: SYNTH_EMAIL }],
+        overrideAuthGetById: (id) =>
+          id === SYNTH_AUTH_ID
+            ? {
+                status: 200,
+                body: {
+                  id: '00000000-0000-4000-8000-000000000119',
+                  email: SYNTH_EMAIL,
+                },
+              }
+            : null,
+      });
+      await assert.rejects(
+        () =>
+          cleanup(
+            'synthetic_service_key',
+            { email: SYNTH_EMAIL, auth: SYNTH_AUTH_ID },
+            { fetchFn: contradictoryAuthStore.fetchFn },
+          ),
+        (err) =>
+          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+      );
+      assert.deepEqual(contradictoryAuthStore.deleteCalls, []);
+
+      const dupProfileStore = createOwnershipTestStore({
+        extraAuthUsers: [{ id: SYNTH_AUTH_ID, email: SYNTH_EMAIL }],
+        extraAppUsers: [
+          {
+            id: SYNTH_PROFILE_ID,
+            auth_user_id: SYNTH_AUTH_ID,
+            email: SYNTH_EMAIL,
+          },
+          {
+            id: '00000000-0000-4000-8000-000000000223',
+            auth_user_id: SYNTH_AUTH_ID,
+            email: SYNTH_EMAIL,
+          },
+        ],
+      });
+      await assert.rejects(
+        () =>
+          cleanup(
+            'synthetic_service_key',
+            {
+              email: SYNTH_EMAIL,
+              auth: SYNTH_AUTH_ID,
+              profile: SYNTH_PROFILE_ID,
+            },
+            { fetchFn: dupProfileStore.fetchFn },
+          ),
+        (err) =>
+          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+      );
+      // Duplicate profiles are not deleted; verified single synthetic auth user is cleaned up.
+      assert.equal(dupProfileStore.appUsers.size, 3);
+      assert.equal(dupProfileStore.authUsers.has(SYNTH_AUTH_ID), false);
+      assertUnrelatedPreserved(dupProfileStore, 'duplicate profiles');
+
+      const dupMembershipStore = createOwnershipTestStore({
+        extraAuthUsers: [{ id: SYNTH_AUTH_ID, email: SYNTH_EMAIL }],
+        extraAppUsers: [
+          {
+            id: SYNTH_PROFILE_ID,
+            auth_user_id: SYNTH_AUTH_ID,
+            email: SYNTH_EMAIL,
+          },
+        ],
+        extraOrgMembers: [
+          {
+            user_id: SYNTH_PROFILE_ID,
+            organization_id: SEED_ORG_ID,
+            role_id: SEED_ROLE_ID,
+            status: 'ACTIVE',
+          },
+          {
+            user_id: SYNTH_PROFILE_ID,
+            organization_id: SEED_ORG_ID,
+            role_id: OTHER_ROLE_ID,
+            status: 'ACTIVE',
+          },
+        ],
+      });
+      await assert.rejects(
+        () =>
+          cleanup(
+            'synthetic_service_key',
+            {
+              email: SYNTH_EMAIL,
+              auth: SYNTH_AUTH_ID,
+              profile: SYNTH_PROFILE_ID,
+              organizationId: SEED_ORG_ID,
+              roleId: SEED_ROLE_ID,
+            },
+            { fetchFn: dupMembershipStore.fetchFn },
+          ),
+        (err) =>
+          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+      );
+      assert.equal(dupMembershipStore.orgMembers.length, 3);
+      assertUnrelatedPreserved(dupMembershipStore, 'duplicate memberships');
+    }
+
+    // 6. Missing identity fields on server responses fail closed without deleting.
+    {
+      const missingFieldsStore = createOwnershipTestStore({
+        extraAuthUsers: [{ id: SYNTH_AUTH_ID, email: SYNTH_EMAIL }],
+        extraAppUsers: [
+          {
+            id: SYNTH_PROFILE_ID,
+            auth_user_id: null,
+            email: SYNTH_EMAIL,
+          },
+        ],
+      });
+      await assert.rejects(
+        () =>
+          cleanup(
+            'synthetic_service_key',
+            {
+              email: SYNTH_EMAIL,
+              auth: SYNTH_AUTH_ID,
+              profile: SYNTH_PROFILE_ID,
+              organizationId: SEED_ORG_ID,
+              roleId: SEED_ROLE_ID,
+            },
+            { fetchFn: missingFieldsStore.fetchFn },
+          ),
+        (err) =>
+          err instanceof QaError && err.code === 'FIXTURE_CLEANUP_FAILED',
+      );
+      assert.equal(missingFieldsStore.appUsers.has(SYNTH_PROFILE_ID), true);
+      assertUnrelatedPreserved(missingFieldsStore, 'missing auth_user_id');
+    }
+
+    // 7. Mixed valid and invalid fixture references: fixture.auth/fixture.profile point to unrelated user,
+    // while real synthetic records for SYNTH_EMAIL exist in the database.
+    // Unrelated records MUST remain untouched, verified synthetic records ARE cleaned up (best-effort),
+    // and cleanup() still fails closed with FIXTURE_CLEANUP_FAILED.
+    await withTempDir(async (artifactDir) => {
+      const mixedStore = createOwnershipTestStore({
+        extraAuthUsers: [{ id: SYNTH_AUTH_ID, email: SYNTH_EMAIL }],
+        extraAppUsers: [
+          {
+            id: SYNTH_PROFILE_ID,
+            auth_user_id: SYNTH_AUTH_ID,
+            email: SYNTH_EMAIL,
+            name: 'CI Synthetic Operator',
+            status: 'ACTIVE',
+          },
+        ],
+        extraOrgMembers: [
+          {
+            user_id: SYNTH_PROFILE_ID,
+            organization_id: SEED_ORG_ID,
+            role_id: SEED_ROLE_ID,
+            status: 'ACTIVE',
+          },
+        ],
+      });
+
+      const deps = defaultStubDependencies({
+        createFixtureFn: async (_key, { fixture }) => {
+          Object.assign(fixture, {
+            email: SYNTH_EMAIL,
+            password: 'synthetic_password_value_for_unit_test_only',
+            auth: UNRELATED_AUTH_ID,
+            profile: UNRELATED_PROFILE_ID,
+            organizationId: SEED_ORG_ID,
+            roleId: SEED_ROLE_ID,
+          });
+          return fixture;
+        },
+        cleanupFn: (key, fixture, options) =>
+          cleanup(key, fixture, { ...options, fetchFn: mixedStore.fetchFn }),
+      });
+
+      const { evidence, failure, tracePath } = await runQaHarness({
+        ...deps,
+        artifactDir,
+        negativeControl: false,
+      });
+
+      assert.equal(failure, true);
+      assert.equal(evidence.overall, 'FAIL');
+      assert.equal(evidence.cleanup.status, 'FAIL');
+      assert.equal(evidence.cleanup.reason, 'FIXTURE_CLEANUP_FAILED');
+      assert.equal(evidence.failure?.stage, 'CLEANUP');
+      assert.equal(evidence.failure?.code, 'FIXTURE_CLEANUP_FAILED');
+
+      // Unrelated records were preserved; independently verified synthetic records were cleaned up.
+      assertUnrelatedPreserved(mixedStore, 'mixed valid/invalid references');
+      assert.equal(mixedStore.authUsers.has(SYNTH_AUTH_ID), false);
+      assert.equal(mixedStore.appUsers.has(SYNTH_PROFILE_ID), false);
+      assert.equal(mixedStore.orgMembers.length, 1);
+
+      // Every DELETE call used verified synthetic IDs and full tuple filters.
+      assert.deepEqual(mixedStore.deleteCalls, [
+        `/rest/v1/organization_members?user_id=eq.${SYNTH_PROFILE_ID}&organization_id=eq.${SEED_ORG_ID}&role_id=eq.${SEED_ROLE_ID}`,
+        `/rest/v1/users?id=eq.${SYNTH_PROFILE_ID}&email=eq.${encodeURIComponent(SYNTH_EMAIL)}&auth_user_id=eq.${SYNTH_AUTH_ID}`,
+        `/auth/v1/admin/users/${SYNTH_AUTH_ID}`,
+      ]);
+
+      const rawTrace = readFileSync(tracePath, 'utf8');
+      assert.doesNotMatch(rawTrace, new RegExp(SYNTH_EMAIL));
+      assert.doesNotMatch(rawTrace, new RegExp(UNRELATED_EMAIL));
+    });
+  });
+
+  it('SEC64-02: never reflects unsanitized or non-allowlisted trace fields into diagnostics, summary, stdout, or stderr', async () => {
+    const injectedPayloads = [
+      {
+        label: 'synthetic email in mode',
+        token: 'ci-auth-deadbeef-1234-4567-89ab-cdef01234567@example.test',
+        mutate: (trace) => {
+          trace.mode =
+            'ci-auth-deadbeef-1234-4567-89ab-cdef01234567@example.test';
+        },
+      },
+      {
+        label: 'JWT in overall',
+        token:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U',
+        mutate: (trace) => {
+          trace.overall =
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U';
+        },
+      },
+      {
+        label: 'Bearer token in stage and failure.stage',
+        token: 'Bearer secret_live_token_value_999',
+        mutate: (trace) => {
+          trace.stage = 'Bearer secret_live_token_value_999';
+          trace.failure = {
+            stage: 'Bearer secret_live_token_value_999',
+            code: 'Bearer secret_live_token_value_999',
+          };
+        },
+      },
+      {
+        label: 'Supabase secret key in failure.process and failure.signal',
+        token: 'sb_secret_live_key_abcdef1234567890',
+        mutate: (trace) => {
+          trace.failure = {
+            stage: 'BROWSER_AUTH',
+            code: 'CHILD_PROCESS_TERMINATED',
+            process: 'sb_secret_live_key_abcdef1234567890',
+            signal: 'sb_secret_live_key_abcdef1234567890',
+          };
+        },
+      },
+      {
+        label: 'service_role assignment in cleanup.status and cleanup.reason',
+        token: 'SUPABASE_SERVICE_ROLE_KEY=super_secret_service_role_value',
+        mutate: (trace) => {
+          trace.cleanup = {
+            attempted: true,
+            status: 'SUPABASE_SERVICE_ROLE_KEY=super_secret_service_role_value',
+            reason: 'SUPABASE_SERVICE_ROLE_KEY=super_secret_service_role_value',
+            ambiguousMutations: [
+              'SUPABASE_SERVICE_ROLE_KEY=super_secret_service_role_value',
+            ],
+          };
+        },
+      },
+      {
+        label:
+          'non-pattern untrusted string in mode, cleanup.status, and failure.code',
+        token: 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ',
+        expectedCode: 'TRACE_MODE_MISMATCH',
+        mutate: (trace) => {
+          trace.mode = 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ';
+          trace.overall = 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ';
+          trace.stage = 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ';
+          trace.failure = {
+            stage: 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ',
+            code: 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ',
+            process: 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ',
+            signal: 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ',
+            exitCode: 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ',
+          };
+          trace.cleanup = {
+            status: 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ',
+            reason: 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ',
+            ambiguousMutations: ['UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ'],
+            executionQuiesced: 'UNTRUSTED_DIAGNOSTIC_INJECTION_MARKER_XYZ',
+          };
+        },
+      },
+      {
+        label: 'malformed metadata types in trace report',
+        token: 'MALFORMED_OBJECT_VALUE_MARKER',
+        expectedCode: 'TRACE_MODE_MISMATCH',
+        mutate: (trace) => {
+          trace.mode = { nested: 'MALFORMED_OBJECT_VALUE_MARKER' };
+          trace.overall = ['MALFORMED_OBJECT_VALUE_MARKER'];
+          trace.stage = 12345;
+          trace.failure = ['MALFORMED_OBJECT_VALUE_MARKER'];
+          trace.cleanup = 'MALFORMED_OBJECT_VALUE_MARKER';
+        },
+      },
+    ];
+
+    await withTempDir(async (artifactDir) => {
+      for (let i = 0; i < injectedPayloads.length; i += 1) {
+        const item = injectedPayloads[i];
+        const candidate = {
+          checkoutSha: 'c21e675698489cf396719226b673050e30840c4a',
+          ciEventSha: null,
+          cases: [],
+          mode: 'normal',
+          stage: 'COMPLETED',
+          cleanup: {
+            attempted: true,
+            status: 'PASS',
+            browserTerminated: true,
+            applicationTerminated: true,
+            profileRemoved: true,
+            executionQuiesced: true,
+          },
+          overall: 'PASS',
+        };
+        item.mutate(candidate);
+
+        const reportResult = validateTraceReport(candidate, {
+          expectedMode: 'normal',
+          exitStatus: 1,
+        });
+        assert.equal(reportResult.valid, false, item.label);
+        assert.equal(
+          reportResult.code,
+          item.expectedCode ?? 'TRACE_SENSITIVE_DATA_DETECTED',
+          item.label,
+        );
+        const serializedResult = JSON.stringify(reportResult);
+        assert.equal(
+          serializedResult.includes(item.token),
+          false,
+          `validateTraceReport must not reflect injected token (${item.label})`,
+        );
+
+        const tracePath = path.join(artifactDir, `sec64-02-${i}.json`);
+        writeFileSync(tracePath, JSON.stringify(candidate), 'utf8');
+
+        const cliRun = spawnSync(
+          process.execPath,
+          [
+            scriptPath,
+            '--verify-trace',
+            tracePath,
+            '--expected-mode',
+            'normal',
+            '--exit-status',
+            '1',
+          ],
+          { cwd: workdir, encoding: 'utf8' },
+        );
+        assert.equal(cliRun.status, 1, item.label);
+        assert.equal(cliRun.stdout, '', item.label);
+        assert.equal(
+          cliRun.stderr.includes(item.token),
+          false,
+          `CLI stderr must not reflect injected token (${item.label})`,
+        );
+        const parsedStderr = JSON.parse(cliRun.stderr.trim());
+        assert.equal(parsedStderr.valid, false, item.label);
+        assert.equal(
+          parsedStderr.code,
+          item.expectedCode ?? 'TRACE_SENSITIVE_DATA_DETECTED',
+          item.label,
+        );
+      }
+
+      // Also verify --expected-mode and missing tracePath containing sensitive strings are never reflected.
+      const sensitiveArg = 'sb_secret_cli_arg_leak_test_999';
+      const badModeRun = spawnSync(
+        process.execPath,
+        [
+          scriptPath,
+          '--verify-trace',
+          path.join(artifactDir, `${sensitiveArg}.json`),
+          '--expected-mode',
+          sensitiveArg,
+          '--exit-status',
+          '1',
+        ],
+        { cwd: workdir, encoding: 'utf8' },
+      );
+      assert.equal(badModeRun.status, 1);
+      assert.equal(badModeRun.stdout.includes(sensitiveArg), false);
+      assert.equal(badModeRun.stderr.includes(sensitiveArg), false);
+    });
+  });
+
+  it('SEC64-03: enforces strict loopback-only HTTP origin and path boundaries across db, createFixture, cleanup, localStatus, startBrowser, runBrowser, and runQaHarness', async () => {
+    const invalidOrigins = [
+      'https://example.supabase.co',
+      'http://localhost:55431',
+      'http://0.0.0.0:55431',
+      'http://127.0.0.2:55431',
+      'http://[::1]:55431',
+      'https://127.0.0.1:55431',
+      'ws://127.0.0.1:55431',
+      'http://127.0.0.1',
+      'http://127.0.0.1:0',
+      'http://127.0.0.1:65536',
+      'http://user:pass@127.0.0.1:55431',
+      'http://127.0.0.1:55431/path',
+      'http://127.0.0.1:55431?query=1',
+      'http://127.0.0.1:55431#hash',
+    ];
+
+    for (const badOrigin of invalidOrigins) {
+      assert.throws(
+        () => assertLoopbackHttpOrigin(badOrigin),
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        `assertLoopbackHttpOrigin must reject ${badOrigin}`,
+      );
+
+      let fetchCalled = false;
+      const forbidFetch = async () => {
+        fetchCalled = true;
+        throw new Error('fetchFn must not be invoked for invalid origin');
+      };
+
+      await assert.rejects(
+        () =>
+          db('synthetic_key', '/rest/v1/users', {
+            api: badOrigin,
+            fetchFn: forbidFetch,
+          }),
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        `db must reject ${badOrigin}`,
+      );
+
+      await assert.rejects(
+        () =>
+          createFixture('synthetic_key', {
+            api: badOrigin,
+            fetchFn: forbidFetch,
+          }),
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        `createFixture must reject ${badOrigin}`,
+      );
+
+      await assert.rejects(
+        () =>
+          cleanup(
+            'synthetic_key',
+            {
+              email:
+                'ci-auth-11111111-2222-4333-8444-555555555555@example.test',
+              auth: '00000000-0000-4000-8000-000000000111',
+            },
+            { api: badOrigin, fetchFn: forbidFetch },
+          ),
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        `cleanup must reject ${badOrigin}`,
+      );
+
+      assert.throws(
+        () => localStatus({ api: badOrigin, env: {} }),
+        (err) => err instanceof QaError && err.code === 'LOCAL_STATUS_FAILED',
+        `localStatus must reject ${badOrigin}`,
+      );
+
+      await assert.rejects(
+        () => startBrowser({ app: badOrigin, fetchFn: forbidFetch }),
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        `startBrowser must reject ${badOrigin}`,
+      );
+
+      await assert.rejects(
+        () =>
+          runBrowser(createMockCdp(), createFixtureState(), {
+            cases: [],
+            artifactDir: tmpdir(),
+            app: badOrigin,
+          }),
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        `runBrowser must reject ${badOrigin}`,
+      );
+
+      assert.equal(fetchCalled, false, `No fetch allowed for ${badOrigin}`);
+    }
+
+    // Route traversal and malformed route checks at db / resolveLoopbackRequestUrl boundary.
+    for (const badRoute of [
+      'http://evil.example.com/rest/v1/users',
+      '//evil.example.com/rest/v1/users',
+      '/rest/v1/../admin',
+      '/rest/v1/users/..',
+      '/auth/v1/admin/users/bad@host',
+      '/rest/v1/users\\admin',
+      '/rest/v1/users#fragment',
+    ]) {
+      assert.throws(
+        () => resolveLoopbackRequestUrl(CANONICAL_API_ORIGIN, badRoute),
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        `resolveLoopbackRequestUrl must reject ${badRoute}`,
+      );
+      await assert.rejects(
+        () =>
+          db('synthetic_key', badRoute, {
+            api: CANONICAL_API_ORIGIN,
+            fetchFn: async () => {
+              throw new Error('fetch must not be called');
+            },
+          }),
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        `db must reject route ${badRoute}`,
+      );
+    }
+
+    // Environment consistency check: mismatched or nonlocal env vars must fail closed.
+    assert.throws(
+      () =>
+        assertConsistentSupabaseEnv('http://127.0.0.1:55431', {
+          NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:55432',
+        }),
+      (err) => err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+    );
+    assert.throws(
+      () =>
+        assertConsistentSupabaseEnv('http://127.0.0.1:55431', {
+          SUPABASE_URL: 'https://example.supabase.co',
+        }),
+      (err) => err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+    );
+
+    // Valid ephemeral loopback ports remain supported.
+    assert.equal(
+      assertLoopbackHttpOrigin('http://127.0.0.1:59123'),
+      'http://127.0.0.1:59123',
+    );
+
+    // Mocked localStatusFn returning nonlocal API_URL or DB_URL in runQaHarness must fail closed at LOCAL_STATUS.
+    await withTempDir(async (artifactDir) => {
+      const badLocalRun = await runQaHarness({
+        ...defaultStubDependencies({
+          localStatusFn: async () => ({
+            API_URL: 'https://example.supabase.co',
+            ANON_KEY: 'synthetic_anon_key',
+            SERVICE_ROLE_KEY: 'synthetic_service_key',
+          }),
+        }),
+        artifactDir,
+        negativeControl: false,
+      });
+      assert.equal(badLocalRun.failure, true);
+      assert.equal(badLocalRun.evidence.stage, 'LOCAL_STATUS');
+      assert.equal(badLocalRun.evidence.failure?.code, 'LOCAL_STATUS_FAILED');
+
+      const badDbRun = await runQaHarness({
+        ...defaultStubDependencies({
+          localStatusFn: async () => ({
+            API_URL: CANONICAL_API_ORIGIN,
+            ANON_KEY: 'synthetic_anon_key',
+            SERVICE_ROLE_KEY: 'synthetic_service_key',
+            DB_URL:
+              'postgresql://postgres:postgres@remote.example.com:5432/postgres',
+          }),
+        }),
+        artifactDir: path.join(artifactDir, 'bad-db'),
+        negativeControl: false,
+      });
+      assert.equal(badDbRun.failure, true);
+      assert.equal(badDbRun.evidence.stage, 'LOCAL_STATUS');
+      assert.equal(badDbRun.evidence.failure?.code, 'LOCAL_STATUS_FAILED');
+    });
+  });
+
+  it('SEC64-04: requires conjunctive user_id, organization_id, role_id, cardinality 1, and status validation before confirming membership creation', async () => {
+    const EXPECTED_USER_ID = '00000000-0000-4000-8000-000000000222';
+    const EXPECTED_ORG_ID = '00000000-0000-4000-8000-000000000010';
+    const EXPECTED_ROLE_ID = '00000000-0000-4000-8000-000000000020';
+
+    const invalidMembershipResponses = [
+      {
+        label: 'correct organization, wrong user',
+        payload: [
+          {
+            user_id: '00000000-0000-4000-8000-000000000888',
+            organization_id: EXPECTED_ORG_ID,
+            role_id: EXPECTED_ROLE_ID,
+            status: 'ACTIVE',
+          },
+        ],
+      },
+      {
+        label: 'correct user, wrong organization',
+        payload: [
+          {
+            user_id: EXPECTED_USER_ID,
+            organization_id: '00000000-0000-4000-8000-000000000099',
+            role_id: EXPECTED_ROLE_ID,
+            status: 'ACTIVE',
+          },
+        ],
+      },
+      {
+        label: 'wrong role_id',
+        payload: [
+          {
+            user_id: EXPECTED_USER_ID,
+            organization_id: EXPECTED_ORG_ID,
+            role_id: '00000000-0000-4000-8000-000000000099',
+            status: 'ACTIVE',
+          },
+        ],
+      },
+      {
+        label: 'missing role_id',
+        payload: [
+          {
+            user_id: EXPECTED_USER_ID,
+            organization_id: EXPECTED_ORG_ID,
+            status: 'ACTIVE',
+          },
+        ],
+      },
+      {
+        label: 'non-ACTIVE status',
+        payload: [
+          {
+            user_id: EXPECTED_USER_ID,
+            organization_id: EXPECTED_ORG_ID,
+            role_id: EXPECTED_ROLE_ID,
+            status: 'INACTIVE',
+          },
+        ],
+      },
+      {
+        label: 'malformed non-array response',
+        payload: {
+          user_id: EXPECTED_USER_ID,
+          organization_id: EXPECTED_ORG_ID,
+          role_id: EXPECTED_ROLE_ID,
+        },
+      },
+      {
+        label: 'empty array response',
+        payload: [],
+      },
+      {
+        label: 'duplicate membership rows in response',
+        payload: [
+          {
+            user_id: EXPECTED_USER_ID,
+            organization_id: EXPECTED_ORG_ID,
+            role_id: EXPECTED_ROLE_ID,
+            status: 'ACTIVE',
+          },
+          {
+            user_id: EXPECTED_USER_ID,
+            organization_id: EXPECTED_ORG_ID,
+            role_id: EXPECTED_ROLE_ID,
+            status: 'ACTIVE',
+          },
+        ],
+      },
+    ];
+
+    for (const item of invalidMembershipResponses) {
+      assert.equal(
+        isValidConfirmedMembershipResponse(item.payload, {
+          expectedUserId: EXPECTED_USER_ID,
+          expectedOrganizationId: EXPECTED_ORG_ID,
+          expectedRoleId: EXPECTED_ROLE_ID,
+        }),
+        false,
+        item.label,
+      );
+
+      await withTempDir(async (artifactDir) => {
+        const authUsers = new Map();
+        const appUsers = new Map();
+        const jsonResponse = (status, payload) => ({
+          ok: status >= 200 && status < 300,
+          status,
+          json: async () => payload,
+        });
+
+        const fetchFn = async (url, options = {}) => {
+          const parsed = new URL(String(url));
+          const method = options.method ?? 'GET';
+          const pathname = parsed.pathname;
+
+          if (method === 'GET' && pathname === '/rest/v1/organizations') {
+            return jsonResponse(200, [{ id: EXPECTED_ORG_ID }]);
+          }
+          if (method === 'GET' && pathname === '/rest/v1/roles') {
+            return jsonResponse(200, [{ id: EXPECTED_ROLE_ID }]);
+          }
+          if (method === 'POST' && pathname === '/auth/v1/admin/users') {
+            const body = JSON.parse(options.body);
+            const user = {
+              id: '00000000-0000-4000-8000-000000000111',
+              email: body.email,
+            };
+            authUsers.set(user.id, user);
+            return jsonResponse(200, user);
+          }
+          if (method === 'POST' && pathname === '/rest/v1/users') {
+            const body = JSON.parse(options.body);
+            const row = {
+              id: EXPECTED_USER_ID,
+              auth_user_id: body.auth_user_id,
+              email: body.email,
+              name: body.name,
+              status: body.status,
+            };
+            appUsers.set(row.id, row);
+            return jsonResponse(201, [row]);
+          }
+          if (
+            method === 'POST' &&
+            pathname === '/rest/v1/organization_members'
+          ) {
+            return jsonResponse(201, item.payload);
+          }
+          if (method === 'GET' && pathname === '/auth/v1/admin/users') {
+            return jsonResponse(200, { users: Array.from(authUsers.values()) });
+          }
+          if (pathname.startsWith('/auth/v1/admin/users/')) {
+            const authId = pathname.slice('/auth/v1/admin/users/'.length);
+            if (method === 'GET') {
+              return authUsers.has(authId)
+                ? jsonResponse(200, authUsers.get(authId))
+                : jsonResponse(404, {});
+            }
+            if (method === 'DELETE') {
+              authUsers.delete(authId);
+              return jsonResponse(200, {});
+            }
+          }
+          if (pathname === '/rest/v1/users') {
+            if (method === 'GET') {
+              return jsonResponse(200, Array.from(appUsers.values()));
+            }
+            if (method === 'DELETE') {
+              appUsers.clear();
+              return { ok: true, status: 204, json: async () => null };
+            }
+          }
+          if (pathname === '/rest/v1/organization_members') {
+            if (method === 'GET') return jsonResponse(200, []);
+            if (method === 'DELETE') {
+              return { ok: true, status: 204, json: async () => null };
+            }
+          }
+          throw new Error(`Unhandled endpoint: ${method} ${pathname}`);
+        };
+
+        let capturedFixture = null;
+        const deps = defaultStubDependencies({
+          createFixtureFn: (key, options) => {
+            capturedFixture = options.fixture;
+            return createFixture(key, { ...options, fetchFn });
+          },
+          cleanupFn: (key, fixture, options) =>
+            cleanup(key, fixture, { ...options, fetchFn }),
+        });
+
+        const { evidence, failure } = await runQaHarness({
+          ...deps,
+          artifactDir,
+          negativeControl: false,
+        });
+
+        assert.equal(failure, true, item.label);
+        assert.equal(evidence.overall, 'FAIL', item.label);
+        assert.equal(
+          capturedFixture?.mutations?.membership?.confirmed,
+          false,
+          item.label,
+        );
+        assert.equal(
+          capturedFixture?.mutations?.membership?.status,
+          'AMBIGUOUS',
+          item.label,
+        );
+        assert.equal(capturedFixture?.membershipCreated, false, item.label);
+        assert.equal(
+          capturedFixture?.mutationOutcomeAmbiguous,
+          true,
+          item.label,
+        );
+        assert.notEqual(evidence.cleanup.status, 'PASS', item.label);
+        assert.equal(evidence.cleanup.status, 'UNVERIFIED', item.label);
+        assert.deepEqual(
+          evidence.cleanup.ambiguousMutations,
+          ['membership'],
+          item.label,
+        );
+      });
+    }
+
+    // Valid conjunctive response passes validation.
+    assert.equal(
+      isValidConfirmedMembershipResponse(
+        [
+          {
+            user_id: EXPECTED_USER_ID,
+            organization_id: EXPECTED_ORG_ID,
+            role_id: EXPECTED_ROLE_ID,
+            status: 'ACTIVE',
+          },
+        ],
+        {
+          expectedUserId: EXPECTED_USER_ID,
+          expectedOrganizationId: EXPECTED_ORG_ID,
+          expectedRoleId: EXPECTED_ROLE_ID,
+        },
+      ),
+      true,
+    );
   });
 });
