@@ -423,7 +423,7 @@ function getActiveOwnerInvocationContext() {
   return activeContext;
 }
 
-export async function withFixtureInvocation(callback) {
+export async function withFixtureInvocation(callback, options = {}) {
   if (typeof callback !== 'function') {
     throw new QaError(
       'FIXTURE_CREATION',
@@ -437,11 +437,338 @@ export async function withFixtureInvocation(callback) {
     invocationId,
     kind: 'standalone',
     capabilities,
+    scopeTeardownInProgress: false,
     invalidated: false,
   };
   activeHarnessInvocations.add(invocationId);
   try {
-    return await harnessContextStorage.run(invocationContext, () => callback());
+    return await harnessContextStorage.run(invocationContext, async () => {
+      let callbackResult;
+      let callbackError = null;
+      let callbackThrew = false;
+      try {
+        callbackResult = await callback();
+      } catch (error) {
+        callbackError = error;
+        callbackThrew = true;
+      }
+
+      invocationContext.scopeTeardownInProgress = true;
+      const ownedCapabilities = Array.from(capabilities);
+
+      // Phase 1: Immediately signal cancellation and freeze in-flight mutation ambiguity
+      // across all owned capabilities that have not yet finished cleanup.
+      for (const capability of ownedCapabilities) {
+        if (!capability.cleanupCompleted) {
+          capability.scopeTeardownRequested = true;
+          if (capability.creationInProgress) {
+            capability.teardownTriggeredWhileCreating = true;
+          }
+          for (const stageKey of FIXTURE_MUTATION_STAGES) {
+            if (
+              capability.dispatchedStages.has(stageKey) &&
+              !capability.confirmedStages.has(stageKey)
+            ) {
+              capability.stickyAmbiguousStages.add(stageKey);
+            }
+          }
+          if (
+            capability.stickyAmbiguousStages.size > 0 ||
+            capability.creationInProgress
+          ) {
+            finalizeFailedFixtureMutations(capability.fixtureRef);
+          }
+          capability.creationAbortController?.abort?.(
+            new QaError(
+              'FIXTURE_CREATION',
+              'PROCESS_SIGNAL_TERMINATED',
+              'Standalone fixture invocation scope exit cancelled in-flight fixture creation',
+            ),
+          );
+        }
+      }
+
+      // Phase 2: Supervised, bounded cleanup/reconciliation for all owned capabilities
+      // while the owning AsyncLocalStorage context and capability remain valid.
+      const cleanupResults = [];
+      const cleanupFailures = [];
+
+      const recordCapabilityOutcome = (capability, result, error) => {
+        const fixtureAmbiguous = getAmbiguousMutationStages(
+          capability.fixtureRef,
+        );
+        const capabilityAmbiguous = FIXTURE_MUTATION_STAGES.filter(
+          (stageKey) =>
+            capability.stickyAmbiguousStages.has(stageKey) ||
+            (capability.dispatchedStages.has(stageKey) &&
+              !capability.confirmedStages.has(stageKey)),
+        );
+        const ambiguousMutations = Array.from(
+          new Set([
+            ...(Array.isArray(result?.ambiguousMutations)
+              ? result.ambiguousMutations
+              : []),
+            ...fixtureAmbiguous,
+            ...capabilityAmbiguous,
+          ]),
+        ).filter((stageKey) => ALLOWED_MUTATION_STAGES.has(stageKey));
+
+        if (error) {
+          const entry = {
+            attempted: true,
+            status: 'FAIL',
+            code: 'FIXTURE_CLEANUP_FAILED',
+            reason: 'FIXTURE_CLEANUP_FAILED',
+            ...(ambiguousMutations.length > 0 ? { ambiguousMutations } : {}),
+          };
+          cleanupResults.push(entry);
+          cleanupFailures.push(entry);
+          return;
+        }
+
+        const status = allowlistedString(
+          result?.status,
+          ALLOWED_CLEANUP_STATUSES,
+          'FAIL',
+        );
+        if (status === 'SKIPPED') {
+          cleanupResults.push({ attempted: false, status: 'SKIPPED' });
+          return;
+        }
+        if (
+          status === 'PASS' &&
+          ambiguousMutations.length === 0 &&
+          !hasAmbiguousFixtureMutation(capability.fixtureRef) &&
+          !capability.teardownTriggeredWhileCreating &&
+          !capability.creationInProgress
+        ) {
+          cleanupResults.push({ attempted: true, status: 'PASS' });
+          return;
+        }
+        if (status === 'FAIL') {
+          const entry = {
+            attempted: true,
+            status: 'FAIL',
+            code: 'FIXTURE_CLEANUP_FAILED',
+            reason: 'FIXTURE_CLEANUP_FAILED',
+            ...(ambiguousMutations.length > 0 ? { ambiguousMutations } : {}),
+          };
+          cleanupResults.push(entry);
+          cleanupFailures.push(entry);
+          return;
+        }
+        const reason =
+          ambiguousMutations.length > 0 ||
+          hasAmbiguousFixtureMutation(capability.fixtureRef)
+            ? 'MUTATION_OUTCOME_AMBIGUOUS'
+            : allowlistedString(
+                result?.reason,
+                ALLOWED_CLEANUP_REASONS,
+                'FIXTURE_QUIESCENCE_TIMEOUT',
+              );
+        const entry = {
+          attempted: true,
+          status: 'UNVERIFIED',
+          code: 'FIXTURE_CLEANUP_UNVERIFIED',
+          reason,
+          ...(ambiguousMutations.length > 0 ? { ambiguousMutations } : {}),
+          ...(typeof result?.executionQuiesced === 'boolean'
+            ? { executionQuiesced: result.executionQuiesced }
+            : {}),
+        };
+        cleanupResults.push(entry);
+        cleanupFailures.push(entry);
+      };
+
+      for (const capability of ownedCapabilities) {
+        if (capability.cleanupInProgress && capability.cleanupPromise) {
+          try {
+            const res = await capability.cleanupPromise;
+            recordCapabilityOutcome(capability, res, null);
+          } catch (cleanupErr) {
+            recordCapabilityOutcome(capability, null, cleanupErr);
+          }
+          continue;
+        }
+
+        if (capability.cleanupCompleted) {
+          recordCapabilityOutcome(
+            capability,
+            capability.lastCleanupResult,
+            capability.lastCleanupError,
+          );
+          continue;
+        }
+
+        const fixture = capability.fixtureRef;
+        const hasClaimedResources = Boolean(
+          fixture &&
+          typeof fixture === 'object' &&
+          (fixture.profile ||
+            fixture.auth ||
+            fixture.organizationId ||
+            fixture.roleId ||
+            fixture.membership ||
+            fixture.membershipCreated ||
+            fixture.mutationStarted ||
+            hasAmbiguousFixtureMutation(fixture)),
+        );
+
+        if (!capability.activated) {
+          if (
+            !hasClaimedResources &&
+            fixture &&
+            typeof fixture.email === 'string' &&
+            fixture.email === capability.originalEmail &&
+            SYNTHETIC_FIXTURE_EMAIL_PATTERN.test(capability.originalEmail)
+          ) {
+            capability.cleanupRequested = true;
+            capability.cleanupCompleted = true;
+            capability.invalidated = true;
+            const skipResult = { attempted: false, status: 'SKIPPED' };
+            capability.lastCleanupResult = skipResult;
+            recordCapabilityOutcome(capability, skipResult, null);
+          } else {
+            const tamperErr = new QaError(
+              'CLEANUP',
+              'FIXTURE_CLEANUP_FAILED',
+              'Refusing to exit standalone fixture invocation with tampered unactivated fixture state',
+            );
+            capability.cleanupRequested = true;
+            capability.cleanupCompleted = true;
+            capability.invalidated = true;
+            capability.lastCleanupError = tamperErr;
+            recordCapabilityOutcome(capability, null, tamperErr);
+          }
+          continue;
+        }
+
+        const cleanupOptions = {
+          api: capability.apiOrigin ?? CANONICAL_API_ORIGIN,
+          env: options?.env ?? capability.env,
+          fetchFn:
+            options?.fetchFn ??
+            capability.fetchFn ??
+            capability.fixtureRef?.fetchFn ??
+            fetch,
+        };
+        const effectivePageSize = options?.pageSize ?? capability.pageSize;
+        if (effectivePageSize !== undefined) {
+          cleanupOptions.pageSize = effectivePageSize;
+        }
+        const effectiveMaxPages = options?.maxPages ?? capability.maxPages;
+        if (effectiveMaxPages !== undefined) {
+          cleanupOptions.maxPages = effectiveMaxPages;
+        }
+        const effectiveQuiescenceTimeoutMs =
+          options?.creationQuiescenceTimeoutMs ??
+          capability.creationQuiescenceTimeoutMs;
+        if (effectiveQuiescenceTimeoutMs !== undefined) {
+          cleanupOptions.creationQuiescenceTimeoutMs =
+            effectiveQuiescenceTimeoutMs;
+        }
+
+        try {
+          const res = await cleanup(
+            capability.serviceKey,
+            capability.fixtureRef,
+            cleanupOptions,
+          );
+          recordCapabilityOutcome(capability, res, null);
+        } catch (cleanupErr) {
+          recordCapabilityOutcome(capability, null, cleanupErr);
+        }
+      }
+
+      if (cleanupFailures.length === 0) {
+        if (callbackThrew) {
+          throw callbackError;
+        }
+        return callbackResult;
+      }
+
+      if (
+        callbackThrew &&
+        cleanupFailures.length === 1 &&
+        ownedCapabilities.some((cap) => cap.lastCleanupError === callbackError)
+      ) {
+        throw callbackError;
+      }
+
+      const hasHardCleanupFailure = cleanupFailures.some(
+        (entry) => entry.status === 'FAIL',
+      );
+      const cleanupCode = hasHardCleanupFailure
+        ? 'FIXTURE_CLEANUP_FAILED'
+        : 'FIXTURE_CLEANUP_UNVERIFIED';
+      const cleanupStatus = hasHardCleanupFailure ? 'FAIL' : 'UNVERIFIED';
+      const allAmbiguousMutations = Array.from(
+        new Set(
+          cleanupFailures.flatMap((entry) =>
+            Array.isArray(entry.ambiguousMutations)
+              ? entry.ambiguousMutations
+              : [],
+          ),
+        ),
+      );
+      const primaryReason = hasHardCleanupFailure
+        ? 'FIXTURE_CLEANUP_FAILED'
+        : allAmbiguousMutations.length > 0
+          ? 'MUTATION_OUTCOME_AMBIGUOUS'
+          : (cleanupFailures.find((entry) => typeof entry.reason === 'string')
+              ?.reason ?? 'FIXTURE_QUIESCENCE_TIMEOUT');
+
+      const details = {
+        cleanupStatus,
+        cleanupReason: primaryReason,
+        ...(allAmbiguousMutations.length > 0
+          ? { ambiguousMutations: allAmbiguousMutations }
+          : {}),
+        cleanupResults,
+        cleanupFailures,
+      };
+
+      let sanitizedCallbackFailure = null;
+      if (callbackThrew) {
+        sanitizedCallbackFailure = classifyFailure(
+          'QA_EXECUTION',
+          callbackError,
+        );
+        details.priorStage = sanitizedCallbackFailure.stage;
+        details.priorCode = sanitizedCallbackFailure.code;
+      }
+
+      const scopeError = new QaError(
+        'CLEANUP',
+        cleanupCode,
+        hasHardCleanupFailure
+          ? 'Standalone fixture invocation cleanup verification failed'
+          : `Standalone fixture invocation cleanup remained unverified (${primaryReason})`,
+        details,
+      );
+      scopeError.cleanupStatus = cleanupStatus;
+      scopeError.cleanupReason = primaryReason;
+      scopeError.cleanupResults = cleanupResults;
+      scopeError.cleanupFailures = cleanupFailures;
+      if (allAmbiguousMutations.length > 0) {
+        scopeError.ambiguousMutations = allAmbiguousMutations;
+      }
+      if (sanitizedCallbackFailure) {
+        scopeError.callbackFailure = sanitizedCallbackFailure;
+        const sanitizedCause = new QaError(
+          sanitizedCallbackFailure.stage,
+          sanitizedCallbackFailure.code,
+          `Callback failed (${sanitizedCallbackFailure.stage}/${sanitizedCallbackFailure.code}) prior to standalone scope-exit cleanup failure`,
+        );
+        Object.defineProperty(scopeError, 'cause', {
+          value: sanitizedCause,
+          enumerable: false,
+          configurable: true,
+          writable: true,
+        });
+      }
+      throw scopeError;
+    });
   } finally {
     invocationContext.invalidated = true;
     activeHarnessInvocations.delete(invocationId);
@@ -470,6 +797,11 @@ function registerFixtureCapability(fixture, email, password) {
     originalPassword: password,
     apiOrigin: null,
     serviceKey: null,
+    fetchFn: null,
+    env: undefined,
+    pageSize: undefined,
+    maxPages: undefined,
+    creationQuiescenceTimeoutMs: undefined,
     activated: false,
     creationInProgress: false,
     creationPromise: null,
@@ -478,6 +810,11 @@ function registerFixtureCapability(fixture, email, password) {
     cleanupReconciling: false,
     cleanupInProgress: false,
     cleanupCompleted: false,
+    cleanupPromise: null,
+    lastCleanupResult: null,
+    lastCleanupError: null,
+    teardownTriggeredWhileCreating: false,
+    scopeTeardownRequested: false,
     invalidated: activeContext === null,
     dispatchedStages: new Set(),
     confirmedStages: new Set(),
@@ -968,6 +1305,8 @@ export async function cleanup(
       capability.cleanupRequested = true;
       capability.cleanupCompleted = true;
       capability.invalidated = true;
+      const skipResult = { attempted: false, status: 'SKIPPED' };
+      capability.lastCleanupResult = skipResult;
       capability.creationAbortController.abort(
         new QaError(
           'FIXTURE_CREATION',
@@ -975,13 +1314,18 @@ export async function cleanup(
           'Synthetic fixture capability was already cleaned up before creation',
         ),
       );
-      return { attempted: false, status: 'SKIPPED' };
+      return skipResult;
     }
-    throw new QaError(
+    const unprovisionedError = new QaError(
       'CLEANUP',
       'FIXTURE_CLEANUP_FAILED',
       'Refusing to clean up an unprovisioned or tampered synthetic fixture state',
     );
+    capability.cleanupRequested = true;
+    capability.cleanupCompleted = true;
+    capability.invalidated = true;
+    capability.lastCleanupError = unprovisionedError;
+    throw unprovisionedError;
   }
 
   if (capability.apiOrigin !== api || capability.serviceKey !== key) {
@@ -992,7 +1336,8 @@ export async function cleanup(
     );
   }
 
-  const creationInFlightAtEntry = capability.creationInProgress;
+  const creationInFlightAtEntry =
+    capability.creationInProgress || capability.teardownTriggeredWhileCreating;
   for (const stageKey of FIXTURE_MUTATION_STAGES) {
     if (
       capability.dispatchedStages.has(stageKey) &&
@@ -1013,437 +1358,511 @@ export async function cleanup(
       'Synthetic fixture creation cancelled by cleanup lifecycle barrier',
     ),
   );
-  try {
-    let creationQuiesced = !creationInFlightAtEntry;
-    if (creationInFlightAtEntry && capability.creationPromise) {
-      creationQuiesced = await Promise.race([
-        capability.creationPromise.then(
-          () => !capability.creationInProgress,
-          () => !capability.creationInProgress,
-        ),
-        new Promise((resolve) =>
-          setTimeout(() => resolve(false), creationQuiescenceTimeoutMs),
-        ),
-      ]);
-    }
-    if (
-      creationInFlightAtEntry ||
-      !creationQuiesced ||
-      capability.creationInProgress
-    ) {
-      finalizeFailedFixtureMutations(fixture);
-    }
-    capability.cleanupReconciling = true;
+  const cleanupExecutionPromise = (async () => {
+    try {
+      let creationQuiesced = !creationInFlightAtEntry;
+      if (creationInFlightAtEntry && capability.creationPromise) {
+        creationQuiesced = await Promise.race([
+          capability.creationPromise.then(
+            () => !capability.creationInProgress,
+            () => !capability.creationInProgress,
+          ),
+          new Promise((resolve) =>
+            setTimeout(() => resolve(false), creationQuiescenceTimeoutMs),
+          ),
+        ]);
+      }
+      if (
+        creationInFlightAtEntry ||
+        !creationQuiesced ||
+        capability.creationInProgress
+      ) {
+        finalizeFailedFixtureMutations(fixture);
+      }
+      capability.cleanupReconciling = true;
 
-    // Always bind reconciliation and deletion to the immutable current-run email from capability.
-    const syntheticEmail = capability.originalEmail;
-    let failed = false;
-    if (
-      typeof syntheticEmail !== 'string' ||
-      !SYNTHETIC_FIXTURE_EMAIL_PATTERN.test(syntheticEmail) ||
-      typeof fixture.email !== 'string' ||
-      fixture.email !== syntheticEmail
-    ) {
-      failed = true;
-    }
-
-    const attempt = async (operation) => {
-      try {
-        await operation();
-      } catch {
+      // Always bind reconciliation and deletion to the immutable current-run email from capability.
+      const syntheticEmail = capability.originalEmail;
+      let failed = false;
+      if (
+        typeof syntheticEmail !== 'string' ||
+        !SYNTHETIC_FIXTURE_EMAIL_PATTERN.test(syntheticEmail) ||
+        typeof fixture.email !== 'string' ||
+        fixture.email !== syntheticEmail
+      ) {
         failed = true;
       }
-    };
 
-    const verifySingleAuthUserById = async (candidateId) => {
-      const response = await db(
-        key,
-        `/auth/v1/admin/users/${encodeURIComponent(candidateId)}`,
-        {
-          api,
-          env,
-          fetchFn: effectiveFetchFn,
-          stage: 'CLEANUP',
-          allowStatuses: [404],
-          returnRawResponse: true,
-        },
-      );
-      if (response.status !== 200) {
-        return {
-          verified: false,
-          status: response.status,
-          contradictory: false,
-        };
-      }
-      const payload = await response.json();
-      const userObj =
-        payload && typeof payload === 'object' && !Array.isArray(payload)
-          ? (payload.user ?? payload)
+      const attempt = async (operation) => {
+        try {
+          await operation();
+        } catch {
+          failed = true;
+        }
+      };
+
+      const verifySingleAuthUserById = async (candidateId) => {
+        const response = await db(
+          key,
+          `/auth/v1/admin/users/${encodeURIComponent(candidateId)}`,
+          {
+            api,
+            env,
+            fetchFn: effectiveFetchFn,
+            stage: 'CLEANUP',
+            allowStatuses: [404],
+            returnRawResponse: true,
+          },
+        );
+        if (response.status !== 200) {
+          return {
+            verified: false,
+            status: response.status,
+            contradictory: false,
+          };
+        }
+        const payload = await response.json();
+        const userObj =
+          payload && typeof payload === 'object' && !Array.isArray(payload)
+            ? (payload.user ?? payload)
+            : null;
+        if (
+          userObj &&
+          typeof userObj === 'object' &&
+          !Array.isArray(userObj) &&
+          typeof userObj.id === 'string' &&
+          userObj.id === candidateId &&
+          typeof userObj.email === 'string' &&
+          userObj.email === syntheticEmail
+        ) {
+          return { verified: true, status: 200, contradictory: false };
+        }
+        return { verified: false, status: 200, contradictory: true };
+      };
+
+      // 1. Verify synthetic auth identity ownership (never trust unverified or mutated fixture.auth).
+      const providedAuthId =
+        fixture.auth !== undefined && fixture.auth !== null
+          ? fixture.auth
           : null;
-      if (
-        userObj &&
-        typeof userObj === 'object' &&
-        !Array.isArray(userObj) &&
-        typeof userObj.id === 'string' &&
-        userObj.id === candidateId &&
-        typeof userObj.email === 'string' &&
-        userObj.email === syntheticEmail
-      ) {
-        return { verified: true, status: 200, contradictory: false };
+      let verifiedProvidedAuthId = null;
+      let verifiedAuthId = null;
+      let contradictoryAuthDetected = false;
+
+      if (providedAuthId !== null) {
+        if (
+          !isSafeIdentifier(providedAuthId) ||
+          (capability.confirmedAuthId !== null &&
+            providedAuthId !== capability.confirmedAuthId) ||
+          (capability.confirmedAuthId === null &&
+            !capability.dispatchedStages.has('auth'))
+        ) {
+          failed = true;
+        } else {
+          await attempt(async () => {
+            const check = await verifySingleAuthUserById(providedAuthId);
+            if (check.verified) {
+              verifiedProvidedAuthId = providedAuthId;
+            } else {
+              failed = true;
+              if (check.contradictory) {
+                contradictoryAuthDetected = true;
+              }
+            }
+          });
+        }
       }
-      return { verified: false, status: 200, contradictory: true };
-    };
 
-    // 1. Verify synthetic auth identity ownership (never trust unverified or mutated fixture.auth).
-    const providedAuthId =
-      fixture.auth !== undefined && fixture.auth !== null ? fixture.auth : null;
-    let verifiedProvidedAuthId = null;
-    let verifiedAuthId = null;
-    let contradictoryAuthDetected = false;
+      // Also bounded-reconcile across all auth user pages so auth-only or email-only resources
+      // beyond page 1 (>1000 users) are found and incomplete/duplicated pagination fails closed.
+      await attempt(async () => {
+        const seenAuthUserIds = new Set();
+        const matchingAuthUsers = [];
+        let declaredTotal = null;
+        let declaredLastPage = null;
+        let paginationComplete = false;
 
-    if (providedAuthId !== null) {
-      if (
-        !isSafeIdentifier(providedAuthId) ||
-        (capability.confirmedAuthId !== null &&
-          providedAuthId !== capability.confirmedAuthId) ||
-        (capability.confirmedAuthId === null &&
-          !capability.dispatchedStages.has('auth'))
-      ) {
-        failed = true;
-      } else {
-        await attempt(async () => {
-          const check = await verifySingleAuthUserById(providedAuthId);
-          if (check.verified) {
-            verifiedProvidedAuthId = providedAuthId;
+        for (let page = 1; page <= maxPages; page += 1) {
+          const authPayload = await db(
+            key,
+            `/auth/v1/admin/users?per_page=${pageSize}&page=${page}`,
+            {
+              api,
+              env,
+              fetchFn: effectiveFetchFn,
+              stage: 'CLEANUP',
+            },
+          );
+          const isArrayPayload = Array.isArray(authPayload);
+          const isObjectPayload =
+            Boolean(authPayload) &&
+            typeof authPayload === 'object' &&
+            !isArrayPayload;
+          const users = isArrayPayload
+            ? authPayload
+            : isObjectPayload && Array.isArray(authPayload.users)
+              ? authPayload.users
+              : null;
+          if (!users) {
+            failed = true;
+            break;
+          }
+
+          if (isObjectPayload) {
+            if (
+              authPayload.truncated === true ||
+              authPayload.incomplete === true
+            ) {
+              failed = true;
+            }
+            const rawTotal = authPayload.total ?? authPayload.total_users;
+            if (rawTotal !== undefined && rawTotal !== null) {
+              if (
+                typeof rawTotal !== 'number' ||
+                !Number.isInteger(rawTotal) ||
+                rawTotal < 0 ||
+                (declaredTotal !== null && declaredTotal !== rawTotal)
+              ) {
+                failed = true;
+                break;
+              }
+              declaredTotal = rawTotal;
+            }
+            const rawLastPage = authPayload.lastPage ?? authPayload.last_page;
+            if (rawLastPage !== undefined && rawLastPage !== null) {
+              if (
+                typeof rawLastPage !== 'number' ||
+                !Number.isInteger(rawLastPage) ||
+                rawLastPage < 0 ||
+                (declaredLastPage !== null && declaredLastPage !== rawLastPage)
+              ) {
+                failed = true;
+                break;
+              }
+              declaredLastPage = rawLastPage;
+            }
+          }
+
+          const rawNextPage = isObjectPayload
+            ? (authPayload.nextPage ?? authPayload.next_page)
+            : undefined;
+          let hasExplicitNextPage = false;
+          if (
+            rawNextPage !== undefined &&
+            rawNextPage !== null &&
+            rawNextPage !== '' &&
+            rawNextPage !== false &&
+            rawNextPage !== 0
+          ) {
+            if (
+              typeof rawNextPage !== 'number' ||
+              !Number.isInteger(rawNextPage) ||
+              rawNextPage !== page + 1
+            ) {
+              failed = true;
+              break;
+            }
+            hasExplicitNextPage = true;
+          }
+
+          const rawHasMore = isObjectPayload
+            ? (authPayload.hasMore ?? authPayload.has_more)
+            : undefined;
+          let hasMoreFlag = false;
+          if (rawHasMore !== undefined && rawHasMore !== null) {
+            if (typeof rawHasMore !== 'boolean') {
+              failed = true;
+              break;
+            }
+            hasMoreFlag = rawHasMore;
+          }
+
+          if (users.length > pageSize) {
+            failed = true;
+          }
+
+          let pageHadDuplicateIds = false;
+          let newIdsOnPage = 0;
+          for (const candidate of users) {
+            if (
+              !candidate ||
+              typeof candidate !== 'object' ||
+              Array.isArray(candidate) ||
+              !isSafeIdentifier(candidate.id) ||
+              typeof candidate.email !== 'string' ||
+              candidate.email.length === 0
+            ) {
+              failed = true;
+              continue;
+            }
+            if (seenAuthUserIds.has(candidate.id)) {
+              failed = true;
+              pageHadDuplicateIds = true;
+            } else {
+              seenAuthUserIds.add(candidate.id);
+              newIdsOnPage += 1;
+            }
+            if (
+              (verifiedProvidedAuthId !== null &&
+                candidate.id === verifiedProvidedAuthId &&
+                candidate.email !== syntheticEmail) ||
+              (capability.confirmedAuthId !== null &&
+                candidate.id === capability.confirmedAuthId &&
+                candidate.email !== syntheticEmail)
+            ) {
+              failed = true;
+              contradictoryAuthDetected = true;
+              verifiedProvidedAuthId = null;
+            }
+            if (candidate.email === syntheticEmail) {
+              if (!matchingAuthUsers.some((item) => item.id === candidate.id)) {
+                matchingAuthUsers.push(candidate);
+              } else {
+                failed = true;
+              }
+            }
+          }
+
+          const moreByTotal =
+            declaredTotal !== null && seenAuthUserIds.size < declaredTotal;
+          const moreByLastPage =
+            declaredLastPage !== null && page < declaredLastPage;
+          const fullPage = users.length === pageSize;
+          const needsMorePages =
+            hasExplicitNextPage ||
+            hasMoreFlag ||
+            moreByTotal ||
+            moreByLastPage ||
+            fullPage;
+
+          if (
+            users.length === 0 &&
+            (hasExplicitNextPage ||
+              hasMoreFlag ||
+              moreByTotal ||
+              moreByLastPage)
+          ) {
+            failed = true;
+            break;
+          }
+          if (pageHadDuplicateIds && newIdsOnPage === 0) {
+            failed = true;
+            break;
+          }
+          if (needsMorePages) {
+            if (page >= maxPages) {
+              failed = true;
+              break;
+            }
+            continue;
+          }
+
+          if (
+            declaredTotal !== null &&
+            seenAuthUserIds.size !== declaredTotal
+          ) {
+            failed = true;
+            break;
+          }
+          if (
+            declaredLastPage !== null &&
+            page !== declaredLastPage &&
+            !(declaredLastPage === 0 && seenAuthUserIds.size === 0)
+          ) {
+            failed = true;
+            break;
+          }
+          paginationComplete = true;
+          break;
+        }
+
+        if (!paginationComplete) {
+          failed = true;
+        }
+
+        if (matchingAuthUsers.length > 1 || contradictoryAuthDetected) {
+          failed = true;
+          contradictoryAuthDetected = true;
+          verifiedAuthId = null;
+          return;
+        }
+
+        if (matchingAuthUsers.length === 1) {
+          const matched = matchingAuthUsers[0];
+          if (!isSafeIdentifier(matched?.id)) {
+            failed = true;
+            contradictoryAuthDetected = true;
+            verifiedAuthId = null;
+            return;
+          }
+          if (
+            (verifiedProvidedAuthId !== null &&
+              verifiedProvidedAuthId !== matched.id) ||
+            (capability.confirmedAuthId !== null &&
+              capability.confirmedAuthId !== matched.id)
+          ) {
+            failed = true;
+            contradictoryAuthDetected = true;
+            verifiedAuthId = null;
+            return;
+          }
+          if (verifiedProvidedAuthId === matched.id) {
+            verifiedAuthId = matched.id;
+            return;
+          }
+          const singleCheck = await verifySingleAuthUserById(matched.id);
+          if (singleCheck.verified) {
+            verifiedAuthId = matched.id;
           } else {
             failed = true;
-            if (check.contradictory) {
-              contradictoryAuthDetected = true;
-            }
+            contradictoryAuthDetected = true;
+            verifiedAuthId = null;
+          }
+          return;
+        }
+
+        // matchingAuthUsers.length === 0 across inspected pages
+        if (verifiedProvidedAuthId !== null) {
+          failed = true;
+          verifiedAuthId = verifiedProvidedAuthId;
+          return;
+        }
+        if (capability.confirmedAuthId !== null && !contradictoryAuthDetected) {
+          failed = true;
+          const confirmedCheck = await verifySingleAuthUserById(
+            capability.confirmedAuthId,
+          );
+          if (confirmedCheck.verified) {
+            verifiedAuthId = capability.confirmedAuthId;
+          }
+          return;
+        }
+        if (
+          capability.confirmedStages.has('auth') ||
+          fixture.mutations?.auth?.confirmed === true
+        ) {
+          failed = true;
+        }
+      });
+
+      if (
+        verifiedAuthId === null &&
+        !contradictoryAuthDetected &&
+        capability.confirmedAuthId !== null
+      ) {
+        await attempt(async () => {
+          const confirmedCheck = await verifySingleAuthUserById(
+            capability.confirmedAuthId,
+          );
+          if (confirmedCheck.verified) {
+            verifiedAuthId = capability.confirmedAuthId;
           }
         });
       }
-    }
 
-    // Also bounded-reconcile across all auth user pages so auth-only or email-only resources
-    // beyond page 1 (>1000 users) are found and incomplete/duplicated pagination fails closed.
-    await attempt(async () => {
-      const seenAuthUserIds = new Set();
-      const matchingAuthUsers = [];
-      let declaredTotal = null;
-      let declaredLastPage = null;
-      let paginationComplete = false;
+      // 2. Verify application profile ownership (id, synthetic email, and linked verifiedAuthId).
+      const providedProfileId =
+        fixture.profile !== undefined && fixture.profile !== null
+          ? fixture.profile
+          : null;
+      let verifiedProvidedProfileId = null;
+      let verifiedProfileId = null;
 
-      for (let page = 1; page <= maxPages; page += 1) {
-        const authPayload = await db(
+      const isValidSyntheticProfileRow = (row, expectedId = null) =>
+        Boolean(
+          row &&
+          typeof row === 'object' &&
+          !Array.isArray(row) &&
+          isSafeIdentifier(row.id) &&
+          (expectedId === null || row.id === expectedId) &&
+          (capability.confirmedProfileId === null ||
+            row.id === capability.confirmedProfileId) &&
+          typeof row.email === 'string' &&
+          row.email === syntheticEmail &&
+          isSafeIdentifier(row.auth_user_id) &&
+          verifiedAuthId !== null &&
+          row.auth_user_id === verifiedAuthId,
+        );
+
+      if (providedProfileId !== null) {
+        if (
+          !isSafeIdentifier(providedProfileId) ||
+          (capability.confirmedProfileId !== null &&
+            providedProfileId !== capability.confirmedProfileId) ||
+          (capability.confirmedProfileId === null &&
+            !capability.dispatchedStages.has('profile'))
+        ) {
+          failed = true;
+        } else {
+          await attempt(async () => {
+            const rowsById = await db(
+              key,
+              `/rest/v1/users?id=eq.${encodeURIComponent(providedProfileId)}&select=id,auth_user_id,email`,
+              {
+                schema: 'app',
+                api,
+                env,
+                fetchFn: effectiveFetchFn,
+                stage: 'CLEANUP',
+              },
+            );
+            if (
+              Array.isArray(rowsById) &&
+              rowsById.length === 1 &&
+              isValidSyntheticProfileRow(rowsById[0], providedProfileId)
+            ) {
+              verifiedProvidedProfileId = providedProfileId;
+            } else {
+              failed = true;
+            }
+          });
+        }
+      }
+
+      await attempt(async () => {
+        const rowsByEmail = await db(
           key,
-          `/auth/v1/admin/users?per_page=${pageSize}&page=${page}`,
+          `/rest/v1/users?email=eq.${encodeURIComponent(syntheticEmail)}&select=id,auth_user_id,email`,
           {
+            schema: 'app',
             api,
             env,
             fetchFn: effectiveFetchFn,
             stage: 'CLEANUP',
           },
         );
-        const isArrayPayload = Array.isArray(authPayload);
-        const isObjectPayload =
-          Boolean(authPayload) &&
-          typeof authPayload === 'object' &&
-          !isArrayPayload;
-        const users = isArrayPayload
-          ? authPayload
-          : isObjectPayload && Array.isArray(authPayload.users)
-            ? authPayload.users
-            : null;
-        if (!users) {
+        if (!Array.isArray(rowsByEmail)) {
           failed = true;
-          break;
-        }
-
-        if (isObjectPayload) {
-          if (
-            authPayload.truncated === true ||
-            authPayload.incomplete === true
-          ) {
-            failed = true;
-          }
-          const rawTotal = authPayload.total ?? authPayload.total_users;
-          if (rawTotal !== undefined && rawTotal !== null) {
-            if (
-              typeof rawTotal !== 'number' ||
-              !Number.isInteger(rawTotal) ||
-              rawTotal < 0 ||
-              (declaredTotal !== null && declaredTotal !== rawTotal)
-            ) {
-              failed = true;
-              break;
-            }
-            declaredTotal = rawTotal;
-          }
-          const rawLastPage = authPayload.lastPage ?? authPayload.last_page;
-          if (rawLastPage !== undefined && rawLastPage !== null) {
-            if (
-              typeof rawLastPage !== 'number' ||
-              !Number.isInteger(rawLastPage) ||
-              rawLastPage < 0 ||
-              (declaredLastPage !== null && declaredLastPage !== rawLastPage)
-            ) {
-              failed = true;
-              break;
-            }
-            declaredLastPage = rawLastPage;
-          }
-        }
-
-        const rawNextPage = isObjectPayload
-          ? (authPayload.nextPage ?? authPayload.next_page)
-          : undefined;
-        let hasExplicitNextPage = false;
-        if (
-          rawNextPage !== undefined &&
-          rawNextPage !== null &&
-          rawNextPage !== '' &&
-          rawNextPage !== false &&
-          rawNextPage !== 0
-        ) {
-          if (
-            typeof rawNextPage !== 'number' ||
-            !Number.isInteger(rawNextPage) ||
-            rawNextPage !== page + 1
-          ) {
-            failed = true;
-            break;
-          }
-          hasExplicitNextPage = true;
-        }
-
-        const rawHasMore = isObjectPayload
-          ? (authPayload.hasMore ?? authPayload.has_more)
-          : undefined;
-        let hasMoreFlag = false;
-        if (rawHasMore !== undefined && rawHasMore !== null) {
-          if (typeof rawHasMore !== 'boolean') {
-            failed = true;
-            break;
-          }
-          hasMoreFlag = rawHasMore;
-        }
-
-        if (users.length > pageSize) {
-          failed = true;
-        }
-
-        let pageHadDuplicateIds = false;
-        let newIdsOnPage = 0;
-        for (const candidate of users) {
-          if (
-            !candidate ||
-            typeof candidate !== 'object' ||
-            Array.isArray(candidate) ||
-            !isSafeIdentifier(candidate.id) ||
-            typeof candidate.email !== 'string' ||
-            candidate.email.length === 0
-          ) {
-            failed = true;
-            continue;
-          }
-          if (seenAuthUserIds.has(candidate.id)) {
-            failed = true;
-            pageHadDuplicateIds = true;
-          } else {
-            seenAuthUserIds.add(candidate.id);
-            newIdsOnPage += 1;
-          }
-          if (
-            (verifiedProvidedAuthId !== null &&
-              candidate.id === verifiedProvidedAuthId &&
-              candidate.email !== syntheticEmail) ||
-            (capability.confirmedAuthId !== null &&
-              candidate.id === capability.confirmedAuthId &&
-              candidate.email !== syntheticEmail)
-          ) {
-            failed = true;
-            contradictoryAuthDetected = true;
-            verifiedProvidedAuthId = null;
-          }
-          if (candidate.email === syntheticEmail) {
-            if (!matchingAuthUsers.some((item) => item.id === candidate.id)) {
-              matchingAuthUsers.push(candidate);
-            } else {
-              failed = true;
-            }
-          }
-        }
-
-        const moreByTotal =
-          declaredTotal !== null && seenAuthUserIds.size < declaredTotal;
-        const moreByLastPage =
-          declaredLastPage !== null && page < declaredLastPage;
-        const fullPage = users.length === pageSize;
-        const needsMorePages =
-          hasExplicitNextPage ||
-          hasMoreFlag ||
-          moreByTotal ||
-          moreByLastPage ||
-          fullPage;
-
-        if (
-          users.length === 0 &&
-          (hasExplicitNextPage || hasMoreFlag || moreByTotal || moreByLastPage)
-        ) {
-          failed = true;
-          break;
-        }
-        if (pageHadDuplicateIds && newIdsOnPage === 0) {
-          failed = true;
-          break;
-        }
-        if (needsMorePages) {
-          if (page >= maxPages) {
-            failed = true;
-            break;
-          }
-          continue;
-        }
-
-        if (declaredTotal !== null && seenAuthUserIds.size !== declaredTotal) {
-          failed = true;
-          break;
-        }
-        if (
-          declaredLastPage !== null &&
-          page !== declaredLastPage &&
-          !(declaredLastPage === 0 && seenAuthUserIds.size === 0)
-        ) {
-          failed = true;
-          break;
-        }
-        paginationComplete = true;
-        break;
-      }
-
-      if (!paginationComplete) {
-        failed = true;
-      }
-
-      if (matchingAuthUsers.length > 1 || contradictoryAuthDetected) {
-        failed = true;
-        contradictoryAuthDetected = true;
-        verifiedAuthId = null;
-        return;
-      }
-
-      if (matchingAuthUsers.length === 1) {
-        const matched = matchingAuthUsers[0];
-        if (!isSafeIdentifier(matched?.id)) {
-          failed = true;
-          contradictoryAuthDetected = true;
-          verifiedAuthId = null;
+          verifiedProfileId = null;
           return;
         }
-        if (
-          (verifiedProvidedAuthId !== null &&
-            verifiedProvidedAuthId !== matched.id) ||
-          (capability.confirmedAuthId !== null &&
-            capability.confirmedAuthId !== matched.id)
-        ) {
+        if (rowsByEmail.length > 1) {
           failed = true;
-          contradictoryAuthDetected = true;
-          verifiedAuthId = null;
+          verifiedProfileId = null;
           return;
         }
-        if (verifiedProvidedAuthId === matched.id) {
-          verifiedAuthId = matched.id;
-          return;
-        }
-        const singleCheck = await verifySingleAuthUserById(matched.id);
-        if (singleCheck.verified) {
-          verifiedAuthId = matched.id;
-        } else {
-          failed = true;
-          contradictoryAuthDetected = true;
-          verifiedAuthId = null;
-        }
-        return;
-      }
-
-      // matchingAuthUsers.length === 0 across inspected pages
-      if (verifiedProvidedAuthId !== null) {
-        failed = true;
-        verifiedAuthId = verifiedProvidedAuthId;
-        return;
-      }
-      if (capability.confirmedAuthId !== null && !contradictoryAuthDetected) {
-        failed = true;
-        const confirmedCheck = await verifySingleAuthUserById(
-          capability.confirmedAuthId,
-        );
-        if (confirmedCheck.verified) {
-          verifiedAuthId = capability.confirmedAuthId;
-        }
-        return;
-      }
-      if (
-        capability.confirmedStages.has('auth') ||
-        fixture.mutations?.auth?.confirmed === true
-      ) {
-        failed = true;
-      }
-    });
-
-    if (
-      verifiedAuthId === null &&
-      !contradictoryAuthDetected &&
-      capability.confirmedAuthId !== null
-    ) {
-      await attempt(async () => {
-        const confirmedCheck = await verifySingleAuthUserById(
-          capability.confirmedAuthId,
-        );
-        if (confirmedCheck.verified) {
-          verifiedAuthId = capability.confirmedAuthId;
-        }
-      });
-    }
-
-    // 2. Verify application profile ownership (id, synthetic email, and linked verifiedAuthId).
-    const providedProfileId =
-      fixture.profile !== undefined && fixture.profile !== null
-        ? fixture.profile
-        : null;
-    let verifiedProvidedProfileId = null;
-    let verifiedProfileId = null;
-
-    const isValidSyntheticProfileRow = (row, expectedId = null) =>
-      Boolean(
-        row &&
-        typeof row === 'object' &&
-        !Array.isArray(row) &&
-        isSafeIdentifier(row.id) &&
-        (expectedId === null || row.id === expectedId) &&
-        (capability.confirmedProfileId === null ||
-          row.id === capability.confirmedProfileId) &&
-        typeof row.email === 'string' &&
-        row.email === syntheticEmail &&
-        isSafeIdentifier(row.auth_user_id) &&
-        verifiedAuthId !== null &&
-        row.auth_user_id === verifiedAuthId,
-      );
-
-    if (providedProfileId !== null) {
-      if (
-        !isSafeIdentifier(providedProfileId) ||
-        (capability.confirmedProfileId !== null &&
-          providedProfileId !== capability.confirmedProfileId) ||
-        (capability.confirmedProfileId === null &&
-          !capability.dispatchedStages.has('profile'))
-      ) {
-        failed = true;
-      } else {
-        await attempt(async () => {
+        if (rowsByEmail.length === 1) {
+          const emailRow = rowsByEmail[0];
+          if (!isValidSyntheticProfileRow(emailRow)) {
+            failed = true;
+            verifiedProfileId = null;
+            return;
+          }
+          if (
+            verifiedProvidedProfileId !== null &&
+            verifiedProvidedProfileId !== emailRow.id
+          ) {
+            failed = true;
+            verifiedProfileId = null;
+            return;
+          }
+          if (verifiedProvidedProfileId === emailRow.id) {
+            verifiedProfileId = emailRow.id;
+            return;
+          }
           const rowsById = await db(
             key,
-            `/rest/v1/users?id=eq.${encodeURIComponent(providedProfileId)}&select=id,auth_user_id,email`,
+            `/rest/v1/users?id=eq.${encodeURIComponent(emailRow.id)}&select=id,auth_user_id,email`,
             {
               schema: 'app',
               api,
@@ -1455,382 +1874,334 @@ export async function cleanup(
           if (
             Array.isArray(rowsById) &&
             rowsById.length === 1 &&
-            isValidSyntheticProfileRow(rowsById[0], providedProfileId)
+            isValidSyntheticProfileRow(rowsById[0], emailRow.id)
           ) {
-            verifiedProvidedProfileId = providedProfileId;
+            verifiedProfileId = emailRow.id;
           } else {
+            failed = true;
+            verifiedProfileId = null;
+          }
+          return;
+        }
+        if (
+          verifiedProvidedProfileId !== null ||
+          capability.confirmedProfileId !== null ||
+          capability.confirmedStages.has('profile') ||
+          fixture.mutations?.profile?.confirmed === true
+        ) {
+          failed = true;
+          verifiedProfileId = null;
+        }
+      });
+
+      // 3. Verify organization membership ownership and association with verifiedProfileId, organizationId, and roleId.
+      if (
+        fixture.organizationId !== undefined &&
+        fixture.organizationId !== null &&
+        (!isSafeIdentifier(fixture.organizationId) ||
+          (capability.confirmedOrganizationId !== null &&
+            fixture.organizationId !== capability.confirmedOrganizationId))
+      ) {
+        failed = true;
+      }
+      if (
+        fixture.roleId !== undefined &&
+        fixture.roleId !== null &&
+        (!isSafeIdentifier(fixture.roleId) ||
+          (capability.confirmedRoleId !== null &&
+            fixture.roleId !== capability.confirmedRoleId))
+      ) {
+        failed = true;
+      }
+
+      const expectedOrganizationId =
+        capability.confirmedOrganizationId ??
+        (isSafeIdentifier(fixture.organizationId)
+          ? fixture.organizationId
+          : null);
+      const expectedRoleId =
+        capability.confirmedRoleId ??
+        (isSafeIdentifier(fixture.roleId) ? fixture.roleId : null);
+
+      if (fixture.membership !== undefined && fixture.membership !== null) {
+        const mRef = fixture.membership;
+        if (
+          typeof mRef !== 'object' ||
+          Array.isArray(mRef) ||
+          !verifiedProfileId ||
+          mRef.user_id !== verifiedProfileId ||
+          !expectedOrganizationId ||
+          mRef.organization_id !== expectedOrganizationId ||
+          !isSafeIdentifier(mRef.role_id) ||
+          (expectedRoleId !== null && mRef.role_id !== expectedRoleId) ||
+          (mRef.status !== undefined && mRef.status !== 'ACTIVE')
+        ) {
+          failed = true;
+        }
+      }
+
+      let verifiedMembership = null;
+      if (verifiedProfileId !== null) {
+        await attempt(async () => {
+          const membershipRows = await db(
+            key,
+            `/rest/v1/organization_members?user_id=eq.${encodeURIComponent(verifiedProfileId)}&select=organization_id,user_id,role_id,status`,
+            {
+              schema: 'app',
+              api,
+              env,
+              fetchFn: effectiveFetchFn,
+              stage: 'CLEANUP',
+            },
+          );
+          if (!Array.isArray(membershipRows)) {
+            failed = true;
+            return;
+          }
+          if (membershipRows.length > 1) {
+            failed = true;
+            return;
+          }
+          if (membershipRows.length === 1) {
+            const mRow = membershipRows[0];
+            const validMembershipRow = Boolean(
+              mRow &&
+              typeof mRow === 'object' &&
+              !Array.isArray(mRow) &&
+              mRow.user_id === verifiedProfileId &&
+              isSafeIdentifier(mRow.organization_id) &&
+              expectedOrganizationId !== null &&
+              mRow.organization_id === expectedOrganizationId &&
+              isSafeIdentifier(mRow.role_id) &&
+              (expectedRoleId === null || mRow.role_id === expectedRoleId) &&
+              (mRow.status === undefined || mRow.status === 'ACTIVE'),
+            );
+            if (validMembershipRow) {
+              verifiedMembership = {
+                user_id: mRow.user_id,
+                organization_id: mRow.organization_id,
+                role_id: mRow.role_id,
+              };
+            } else {
+              failed = true;
+            }
+            return;
+          }
+          if (
+            capability.confirmedMembership === true ||
+            capability.confirmedStages.has('membership') ||
+            fixture.membershipCreated === true ||
+            fixture.mutations?.membership?.confirmed === true
+          ) {
             failed = true;
           }
         });
-      }
-    }
-
-    await attempt(async () => {
-      const rowsByEmail = await db(
-        key,
-        `/rest/v1/users?email=eq.${encodeURIComponent(syntheticEmail)}&select=id,auth_user_id,email`,
-        {
-          schema: 'app',
-          api,
-          env,
-          fetchFn: effectiveFetchFn,
-          stage: 'CLEANUP',
-        },
-      );
-      if (!Array.isArray(rowsByEmail)) {
-        failed = true;
-        verifiedProfileId = null;
-        return;
-      }
-      if (rowsByEmail.length > 1) {
-        failed = true;
-        verifiedProfileId = null;
-        return;
-      }
-      if (rowsByEmail.length === 1) {
-        const emailRow = rowsByEmail[0];
-        if (!isValidSyntheticProfileRow(emailRow)) {
-          failed = true;
-          verifiedProfileId = null;
-          return;
-        }
-        if (
-          verifiedProvidedProfileId !== null &&
-          verifiedProvidedProfileId !== emailRow.id
-        ) {
-          failed = true;
-          verifiedProfileId = null;
-          return;
-        }
-        if (verifiedProvidedProfileId === emailRow.id) {
-          verifiedProfileId = emailRow.id;
-          return;
-        }
-        const rowsById = await db(
-          key,
-          `/rest/v1/users?id=eq.${encodeURIComponent(emailRow.id)}&select=id,auth_user_id,email`,
-          {
-            schema: 'app',
-            api,
-            env,
-            fetchFn: effectiveFetchFn,
-            stage: 'CLEANUP',
-          },
-        );
-        if (
-          Array.isArray(rowsById) &&
-          rowsById.length === 1 &&
-          isValidSyntheticProfileRow(rowsById[0], emailRow.id)
-        ) {
-          verifiedProfileId = emailRow.id;
-        } else {
-          failed = true;
-          verifiedProfileId = null;
-        }
-        return;
-      }
-      if (
-        verifiedProvidedProfileId !== null ||
-        capability.confirmedProfileId !== null ||
-        capability.confirmedStages.has('profile') ||
-        fixture.mutations?.profile?.confirmed === true
-      ) {
-        failed = true;
-        verifiedProfileId = null;
-      }
-    });
-
-    // 3. Verify organization membership ownership and association with verifiedProfileId, organizationId, and roleId.
-    if (
-      fixture.organizationId !== undefined &&
-      fixture.organizationId !== null &&
-      (!isSafeIdentifier(fixture.organizationId) ||
-        (capability.confirmedOrganizationId !== null &&
-          fixture.organizationId !== capability.confirmedOrganizationId))
-    ) {
-      failed = true;
-    }
-    if (
-      fixture.roleId !== undefined &&
-      fixture.roleId !== null &&
-      (!isSafeIdentifier(fixture.roleId) ||
-        (capability.confirmedRoleId !== null &&
-          fixture.roleId !== capability.confirmedRoleId))
-    ) {
-      failed = true;
-    }
-
-    const expectedOrganizationId =
-      capability.confirmedOrganizationId ??
-      (isSafeIdentifier(fixture.organizationId)
-        ? fixture.organizationId
-        : null);
-    const expectedRoleId =
-      capability.confirmedRoleId ??
-      (isSafeIdentifier(fixture.roleId) ? fixture.roleId : null);
-
-    if (fixture.membership !== undefined && fixture.membership !== null) {
-      const mRef = fixture.membership;
-      if (
-        typeof mRef !== 'object' ||
-        Array.isArray(mRef) ||
-        !verifiedProfileId ||
-        mRef.user_id !== verifiedProfileId ||
-        !expectedOrganizationId ||
-        mRef.organization_id !== expectedOrganizationId ||
-        !isSafeIdentifier(mRef.role_id) ||
-        (expectedRoleId !== null && mRef.role_id !== expectedRoleId) ||
-        (mRef.status !== undefined && mRef.status !== 'ACTIVE')
+      } else if (
+        capability.confirmedMembership === true ||
+        capability.confirmedStages.has('membership') ||
+        fixture.membershipCreated === true ||
+        fixture.mutations?.membership?.confirmed === true
       ) {
         failed = true;
       }
-    }
 
-    let verifiedMembership = null;
-    if (verifiedProfileId !== null) {
-      await attempt(async () => {
-        const membershipRows = await db(
-          key,
-          `/rest/v1/organization_members?user_id=eq.${encodeURIComponent(verifiedProfileId)}&select=organization_id,user_id,role_id,status`,
-          {
-            schema: 'app',
-            api,
-            env,
-            fetchFn: effectiveFetchFn,
-            stage: 'CLEANUP',
-          },
+      // 4. Execute strictly scoped deletions only for ownership-verified current-run synthetic resources.
+      if (verifiedMembership !== null) {
+        await attempt(() =>
+          db(
+            key,
+            `/rest/v1/organization_members?user_id=eq.${encodeURIComponent(verifiedMembership.user_id)}&organization_id=eq.${encodeURIComponent(verifiedMembership.organization_id)}&role_id=eq.${encodeURIComponent(verifiedMembership.role_id)}`,
+            {
+              method: 'DELETE',
+              schema: 'app',
+              api,
+              env,
+              fetchFn: effectiveFetchFn,
+              stage: 'CLEANUP',
+            },
+          ),
         );
-        if (!Array.isArray(membershipRows)) {
-          failed = true;
-          return;
-        }
-        if (membershipRows.length > 1) {
-          failed = true;
-          return;
-        }
-        if (membershipRows.length === 1) {
-          const mRow = membershipRows[0];
-          const validMembershipRow = Boolean(
-            mRow &&
-            typeof mRow === 'object' &&
-            !Array.isArray(mRow) &&
-            mRow.user_id === verifiedProfileId &&
-            isSafeIdentifier(mRow.organization_id) &&
-            expectedOrganizationId !== null &&
-            mRow.organization_id === expectedOrganizationId &&
-            isSafeIdentifier(mRow.role_id) &&
-            (expectedRoleId === null || mRow.role_id === expectedRoleId) &&
-            (mRow.status === undefined || mRow.status === 'ACTIVE'),
+      }
+
+      if (verifiedProfileId !== null && verifiedAuthId !== null) {
+        await attempt(() =>
+          db(
+            key,
+            `/rest/v1/users?id=eq.${encodeURIComponent(verifiedProfileId)}&email=eq.${encodeURIComponent(syntheticEmail)}&auth_user_id=eq.${encodeURIComponent(verifiedAuthId)}`,
+            {
+              method: 'DELETE',
+              schema: 'app',
+              api,
+              env,
+              fetchFn: effectiveFetchFn,
+              stage: 'CLEANUP',
+            },
+          ),
+        );
+      }
+
+      if (verifiedAuthId !== null) {
+        await attempt(() =>
+          db(
+            key,
+            `/auth/v1/admin/users/${encodeURIComponent(verifiedAuthId)}`,
+            {
+              method: 'DELETE',
+              api,
+              env,
+              fetchFn: effectiveFetchFn,
+              stage: 'CLEANUP',
+              allowStatuses: [404],
+            },
+          ),
+        );
+      }
+
+      // 5. Post-deletion absence verification for verified synthetic resources.
+      if (verifiedMembership !== null) {
+        await attempt(async () => {
+          const remainingMemberships = await db(
+            key,
+            `/rest/v1/organization_members?user_id=eq.${encodeURIComponent(verifiedMembership.user_id)}&organization_id=eq.${encodeURIComponent(verifiedMembership.organization_id)}&role_id=eq.${encodeURIComponent(verifiedMembership.role_id)}&select=user_id`,
+            {
+              schema: 'app',
+              api,
+              env,
+              fetchFn: effectiveFetchFn,
+              stage: 'CLEANUP',
+            },
           );
-          if (validMembershipRow) {
-            verifiedMembership = {
-              user_id: mRow.user_id,
-              organization_id: mRow.organization_id,
-              role_id: mRow.role_id,
-            };
-          } else {
-            failed = true;
-          }
-          return;
-        }
-        if (
-          capability.confirmedMembership === true ||
-          capability.confirmedStages.has('membership') ||
-          fixture.membershipCreated === true ||
-          fixture.mutations?.membership?.confirmed === true
-        ) {
-          failed = true;
-        }
-      });
-    } else if (
-      capability.confirmedMembership === true ||
-      capability.confirmedStages.has('membership') ||
-      fixture.membershipCreated === true ||
-      fixture.mutations?.membership?.confirmed === true
-    ) {
-      failed = true;
-    }
+          assert.deepEqual(
+            remainingMemberships,
+            [],
+            'Synthetic organization membership must be absent',
+          );
+        });
+      }
 
-    // 4. Execute strictly scoped deletions only for ownership-verified current-run synthetic resources.
-    if (verifiedMembership !== null) {
-      await attempt(() =>
-        db(
-          key,
-          `/rest/v1/organization_members?user_id=eq.${encodeURIComponent(verifiedMembership.user_id)}&organization_id=eq.${encodeURIComponent(verifiedMembership.organization_id)}&role_id=eq.${encodeURIComponent(verifiedMembership.role_id)}`,
-          {
-            method: 'DELETE',
-            schema: 'app',
-            api,
-            env,
-            fetchFn: effectiveFetchFn,
-            stage: 'CLEANUP',
-          },
-        ),
+      if (verifiedProfileId !== null) {
+        await attempt(async () => {
+          const remaining = await db(
+            key,
+            `/rest/v1/users?id=eq.${encodeURIComponent(verifiedProfileId)}&select=id`,
+            {
+              schema: 'app',
+              api,
+              env,
+              fetchFn: effectiveFetchFn,
+              stage: 'CLEANUP',
+            },
+          );
+          assert.deepEqual(remaining, [], 'Synthetic profile must be absent');
+        });
+        await attempt(async () => {
+          const remainingByEmail = await db(
+            key,
+            `/rest/v1/users?email=eq.${encodeURIComponent(syntheticEmail)}&select=id`,
+            {
+              schema: 'app',
+              api,
+              env,
+              fetchFn: effectiveFetchFn,
+              stage: 'CLEANUP',
+            },
+          );
+          assert.deepEqual(
+            remainingByEmail,
+            [],
+            'Synthetic profile by email must be absent',
+          );
+        });
+      }
+
+      if (verifiedAuthId !== null) {
+        await attempt(async () => {
+          const response = await db(
+            key,
+            `/auth/v1/admin/users/${encodeURIComponent(verifiedAuthId)}`,
+            {
+              api,
+              env,
+              fetchFn: effectiveFetchFn,
+              stage: 'CLEANUP',
+              allowStatuses: [404],
+              returnRawResponse: true,
+            },
+          );
+          assert.equal(
+            response.status,
+            404,
+            'Synthetic auth user must be absent',
+          );
+        });
+      }
+
+      const capabilityAmbiguousStages = FIXTURE_MUTATION_STAGES.filter(
+        (stageKey) =>
+          capability.stickyAmbiguousStages.has(stageKey) ||
+          (capability.dispatchedStages.has(stageKey) &&
+            !capability.confirmedStages.has(stageKey)),
       );
-    }
+      const fixtureAmbiguousStages = getAmbiguousMutationStages(fixture);
+      if (
+        capabilityAmbiguousStages.some(
+          (stageKey) => !fixtureAmbiguousStages.includes(stageKey),
+        )
+      ) {
+        failed = true;
+      }
 
-    if (verifiedProfileId !== null && verifiedAuthId !== null) {
-      await attempt(() =>
-        db(
-          key,
-          `/rest/v1/users?id=eq.${encodeURIComponent(verifiedProfileId)}&email=eq.${encodeURIComponent(syntheticEmail)}&auth_user_id=eq.${encodeURIComponent(verifiedAuthId)}`,
-          {
-            method: 'DELETE',
-            schema: 'app',
-            api,
-            env,
-            fetchFn: effectiveFetchFn,
-            stage: 'CLEANUP',
-          },
-        ),
-      );
-    }
-
-    if (verifiedAuthId !== null) {
-      await attempt(() =>
-        db(key, `/auth/v1/admin/users/${encodeURIComponent(verifiedAuthId)}`, {
-          method: 'DELETE',
-          api,
-          env,
-          fetchFn: effectiveFetchFn,
-          stage: 'CLEANUP',
-          allowStatuses: [404],
-        }),
-      );
-    }
-
-    // 5. Post-deletion absence verification for verified synthetic resources.
-    if (verifiedMembership !== null) {
-      await attempt(async () => {
-        const remainingMemberships = await db(
-          key,
-          `/rest/v1/organization_members?user_id=eq.${encodeURIComponent(verifiedMembership.user_id)}&organization_id=eq.${encodeURIComponent(verifiedMembership.organization_id)}&role_id=eq.${encodeURIComponent(verifiedMembership.role_id)}&select=user_id`,
-          {
-            schema: 'app',
-            api,
-            env,
-            fetchFn: effectiveFetchFn,
-            stage: 'CLEANUP',
-          },
+      if (failed) {
+        throw new QaError(
+          'CLEANUP',
+          'FIXTURE_CLEANUP_FAILED',
+          'Synthetic fixture cleanup verification failed',
         );
-        assert.deepEqual(
-          remainingMemberships,
-          [],
-          'Synthetic organization membership must be absent',
-        );
-      });
+      }
+      if (
+        hasAmbiguousFixtureMutation(fixture) ||
+        capabilityAmbiguousStages.length > 0
+      ) {
+        const unverifiedResult = {
+          attempted: true,
+          status: 'UNVERIFIED',
+          reason: 'MUTATION_OUTCOME_AMBIGUOUS',
+          ambiguousMutations: Array.from(
+            new Set([...fixtureAmbiguousStages, ...capabilityAmbiguousStages]),
+          ),
+        };
+        capability.lastCleanupResult = unverifiedResult;
+        return unverifiedResult;
+      }
+      if (
+        creationInFlightAtEntry ||
+        !creationQuiesced ||
+        capability.creationInProgress
+      ) {
+        const quiescenceResult = {
+          attempted: true,
+          status: 'UNVERIFIED',
+          reason: 'FIXTURE_QUIESCENCE_TIMEOUT',
+          executionQuiesced: creationQuiesced && !capability.creationInProgress,
+        };
+        capability.lastCleanupResult = quiescenceResult;
+        return quiescenceResult;
+      }
+      const passResult = { attempted: true, status: 'PASS' };
+      capability.lastCleanupResult = passResult;
+      return passResult;
+    } catch (cleanupError) {
+      capability.lastCleanupError = cleanupError;
+      throw cleanupError;
+    } finally {
+      capability.cleanupInProgress = false;
+      capability.cleanupCompleted = true;
+      capability.invalidated = true;
     }
-
-    if (verifiedProfileId !== null) {
-      await attempt(async () => {
-        const remaining = await db(
-          key,
-          `/rest/v1/users?id=eq.${encodeURIComponent(verifiedProfileId)}&select=id`,
-          {
-            schema: 'app',
-            api,
-            env,
-            fetchFn: effectiveFetchFn,
-            stage: 'CLEANUP',
-          },
-        );
-        assert.deepEqual(remaining, [], 'Synthetic profile must be absent');
-      });
-      await attempt(async () => {
-        const remainingByEmail = await db(
-          key,
-          `/rest/v1/users?email=eq.${encodeURIComponent(syntheticEmail)}&select=id`,
-          {
-            schema: 'app',
-            api,
-            env,
-            fetchFn: effectiveFetchFn,
-            stage: 'CLEANUP',
-          },
-        );
-        assert.deepEqual(
-          remainingByEmail,
-          [],
-          'Synthetic profile by email must be absent',
-        );
-      });
-    }
-
-    if (verifiedAuthId !== null) {
-      await attempt(async () => {
-        const response = await db(
-          key,
-          `/auth/v1/admin/users/${encodeURIComponent(verifiedAuthId)}`,
-          {
-            api,
-            env,
-            fetchFn: effectiveFetchFn,
-            stage: 'CLEANUP',
-            allowStatuses: [404],
-            returnRawResponse: true,
-          },
-        );
-        assert.equal(
-          response.status,
-          404,
-          'Synthetic auth user must be absent',
-        );
-      });
-    }
-
-    const capabilityAmbiguousStages = FIXTURE_MUTATION_STAGES.filter(
-      (stageKey) =>
-        capability.stickyAmbiguousStages.has(stageKey) ||
-        (capability.dispatchedStages.has(stageKey) &&
-          !capability.confirmedStages.has(stageKey)),
-    );
-    const fixtureAmbiguousStages = getAmbiguousMutationStages(fixture);
-    if (
-      capabilityAmbiguousStages.some(
-        (stageKey) => !fixtureAmbiguousStages.includes(stageKey),
-      )
-    ) {
-      failed = true;
-    }
-
-    if (failed) {
-      throw new QaError(
-        'CLEANUP',
-        'FIXTURE_CLEANUP_FAILED',
-        'Synthetic fixture cleanup verification failed',
-      );
-    }
-    if (
-      hasAmbiguousFixtureMutation(fixture) ||
-      capabilityAmbiguousStages.length > 0
-    ) {
-      return {
-        attempted: true,
-        status: 'UNVERIFIED',
-        reason: 'MUTATION_OUTCOME_AMBIGUOUS',
-        ambiguousMutations: Array.from(
-          new Set([...fixtureAmbiguousStages, ...capabilityAmbiguousStages]),
-        ),
-      };
-    }
-    if (
-      creationInFlightAtEntry ||
-      !creationQuiesced ||
-      capability.creationInProgress
-    ) {
-      return {
-        attempted: true,
-        status: 'UNVERIFIED',
-        reason: 'FIXTURE_QUIESCENCE_TIMEOUT',
-        executionQuiesced: creationQuiesced && !capability.creationInProgress,
-      };
-    }
-    return { attempted: true, status: 'PASS' };
-  } finally {
-    capability.cleanupInProgress = false;
-    capability.cleanupCompleted = true;
-    capability.invalidated = true;
-  }
+  })();
+  cleanupExecutionPromise.catch(() => {});
+  capability.cleanupPromise = cleanupExecutionPromise;
+  return cleanupExecutionPromise;
 }
 
 export async function createFixture(
@@ -1843,6 +2214,9 @@ export async function createFixture(
     drainSignal,
     fixture: providedFixture,
     deferCleanup,
+    pageSize,
+    maxPages,
+    creationQuiescenceTimeoutMs,
   } = {},
 ) {
   assertConsistentSupabaseEnv(api, env, {
@@ -1896,6 +2270,8 @@ export async function createFixture(
     capability.cleanupRequested ||
     capability.cleanupInProgress ||
     capability.cleanupCompleted ||
+    capability.scopeTeardownRequested ||
+    activeContext.scopeTeardownInProgress ||
     capability.harnessInvocationId === null ||
     capability.harnessInvocationId !== activeContext.invocationId
   ) {
@@ -1935,6 +2311,17 @@ export async function createFixture(
   capability.creationInProgress = true;
   capability.apiOrigin = api;
   capability.serviceKey = key;
+  capability.fetchFn = fetchFn;
+  capability.env = env;
+  if (pageSize !== undefined) {
+    capability.pageSize = pageSize;
+  }
+  if (maxPages !== undefined) {
+    capability.maxPages = maxPages;
+  }
+  if (creationQuiescenceTimeoutMs !== undefined) {
+    capability.creationQuiescenceTimeoutMs = creationQuiescenceTimeoutMs;
+  }
   let resolveCreationSettled;
   capability.creationPromise = new Promise((resolve) => {
     resolveCreationSettled = resolve;
@@ -1959,6 +2346,8 @@ export async function createFixture(
       capability.cleanupReconciling ||
       capability.cleanupInProgress ||
       capability.cleanupCompleted ||
+      capability.scopeTeardownRequested ||
+      activeContext.scopeTeardownInProgress ||
       capability.invalidated ||
       activeContext.invalidated ||
       !activeHarnessInvocations.has(activeContext.invocationId)
@@ -1982,207 +2371,221 @@ export async function createFixture(
     writable: true,
   });
 
-  try {
-    prepareFixtureMutation(fixture, 'auth');
-
-    let org;
-    let role;
-    try {
-      assertCreationOpen();
-      const orgRows = await db(
-        key,
-        '/rest/v1/organizations?select=id&status=eq.ACTIVE&limit=1',
-        {
-          schema: 'app',
-          api,
-          env,
-          fetchFn,
-          signal: lifecycleSignal,
-          requestSignal: lifecycleSignal,
-          stage: 'FIXTURE_CREATION',
-          onBeforeDispatch: () => assertCreationOpen(),
-        },
-      );
-      assertCreationOpen();
-      org = Array.isArray(orgRows) ? orgRows[0] : null;
-      assert.ok(
-        org && isSafeIdentifier(org.id),
-        'Disposable organization missing',
-      );
-      capability.confirmedOrganizationId = org.id;
-      fixture.organizationId = org.id;
-      assertCreationOpen();
-      const roleRows = await db(
-        key,
-        `/rest/v1/roles?select=id&organization_id=eq.${encodeURIComponent(org.id)}&code=eq.OWNER&limit=1`,
-        {
-          schema: 'app',
-          api,
-          env,
-          fetchFn,
-          signal: lifecycleSignal,
-          requestSignal: lifecycleSignal,
-          stage: 'FIXTURE_CREATION',
-          onBeforeDispatch: () => assertCreationOpen(),
-        },
-      );
-      assertCreationOpen();
-      role = Array.isArray(roleRows) ? roleRows[0] : null;
-      assert.ok(
-        role && isSafeIdentifier(role.id),
-        'Disposable OWNER role missing',
-      );
-      capability.confirmedRoleId = role.id;
-      fixture.roleId = role.id;
-    } catch (error) {
-      markCreationSettled();
-      finalizeFailedFixtureMutations(fixture);
-      if (!effectiveDeferCleanup && !capability.cleanupRequested) {
-        await cleanup(key, fixture, { api, env, fetchFn }).catch(() => {});
-      }
-      if (lifecycleSignal?.aborted) {
-        throwIfSignalAborted(lifecycleSignal, 'FIXTURE_CREATION');
-      }
-      if (error instanceof QaError) {
-        throw error;
-      }
-      throw new QaError(
-        'FIXTURE_CREATION',
-        'FIXTURE_CREATION_FAILED',
-        error instanceof Error
-          ? error.message
-          : 'Disposable seed lookup failed',
-      );
-    }
-
+  const creationExecutionPromise = (async () => {
     try {
       prepareFixtureMutation(fixture, 'auth');
-      assertCreationOpen();
-      const user = await db(key, '/auth/v1/admin/users', {
-        method: 'POST',
-        body: {
-          email: syntheticEmail,
-          password: syntheticPassword,
-          email_confirm: true,
-        },
-        api,
-        env,
-        fetchFn,
-        signal: lifecycleSignal,
-        requestSignal: lifecycleDrainSignal,
-        stage: 'FIXTURE_CREATION',
-        onBeforeDispatch: () => {
-          assertCreationOpen();
-          markFixtureMutationDispatched(fixture, 'auth');
-        },
-      });
-      assert.ok(
-        user &&
-          typeof user === 'object' &&
-          !Array.isArray(user) &&
-          isSafeIdentifier(user.id) &&
-          user.email === syntheticEmail,
-        'Synthetic identity creation failed',
-      );
-      capability.confirmedAuthId = user.id;
-      fixture.auth = user.id;
-      markFixtureMutationConfirmed(fixture, 'auth');
 
-      prepareFixtureMutation(fixture, 'profile');
-      assertCreationOpen();
-      const profiles = await db(key, '/rest/v1/users', {
-        method: 'POST',
-        schema: 'app',
-        body: {
-          auth_user_id: capability.confirmedAuthId,
-          name: 'CI Synthetic Operator',
-          email: syntheticEmail,
-          status: 'ACTIVE',
-        },
-        api,
-        env,
-        fetchFn,
-        signal: lifecycleSignal,
-        requestSignal: lifecycleDrainSignal,
-        stage: 'FIXTURE_CREATION',
-        onBeforeDispatch: () => {
-          assertCreationOpen();
-          markFixtureMutationDispatched(fixture, 'profile');
-        },
-      });
-      const createdProfile =
-        Array.isArray(profiles) && profiles.length === 1 ? profiles[0] : null;
-      assert.ok(
-        createdProfile &&
-          typeof createdProfile === 'object' &&
-          !Array.isArray(createdProfile) &&
-          isSafeIdentifier(createdProfile.id) &&
-          createdProfile.email === syntheticEmail &&
-          createdProfile.auth_user_id === capability.confirmedAuthId,
-        'Synthetic app user creation failed',
-      );
-      capability.confirmedProfileId = createdProfile.id;
-      fixture.profile = createdProfile.id;
-      markFixtureMutationConfirmed(fixture, 'profile');
+      let org;
+      let role;
+      try {
+        assertCreationOpen();
+        const orgRows = await db(
+          key,
+          '/rest/v1/organizations?select=id&status=eq.ACTIVE&limit=1',
+          {
+            schema: 'app',
+            api,
+            env,
+            fetchFn,
+            signal: lifecycleSignal,
+            requestSignal: lifecycleSignal,
+            stage: 'FIXTURE_CREATION',
+            onBeforeDispatch: () => assertCreationOpen(),
+          },
+        );
+        assertCreationOpen();
+        org = Array.isArray(orgRows) ? orgRows[0] : null;
+        assert.ok(
+          org && isSafeIdentifier(org.id),
+          'Disposable organization missing',
+        );
+        capability.confirmedOrganizationId = org.id;
+        fixture.organizationId = org.id;
+        assertCreationOpen();
+        const roleRows = await db(
+          key,
+          `/rest/v1/roles?select=id&organization_id=eq.${encodeURIComponent(org.id)}&code=eq.OWNER&limit=1`,
+          {
+            schema: 'app',
+            api,
+            env,
+            fetchFn,
+            signal: lifecycleSignal,
+            requestSignal: lifecycleSignal,
+            stage: 'FIXTURE_CREATION',
+            onBeforeDispatch: () => assertCreationOpen(),
+          },
+        );
+        assertCreationOpen();
+        role = Array.isArray(roleRows) ? roleRows[0] : null;
+        assert.ok(
+          role && isSafeIdentifier(role.id),
+          'Disposable OWNER role missing',
+        );
+        capability.confirmedRoleId = role.id;
+        fixture.roleId = role.id;
+      } catch (error) {
+        markCreationSettled();
+        finalizeFailedFixtureMutations(fixture);
+        if (
+          !effectiveDeferCleanup &&
+          !capability.cleanupRequested &&
+          !capability.scopeTeardownRequested &&
+          !activeContext.scopeTeardownInProgress
+        ) {
+          await cleanup(key, fixture, { api, env, fetchFn }).catch(() => {});
+        }
+        if (lifecycleSignal?.aborted) {
+          throwIfSignalAborted(lifecycleSignal, 'FIXTURE_CREATION');
+        }
+        if (error instanceof QaError) {
+          throw error;
+        }
+        throw new QaError(
+          'FIXTURE_CREATION',
+          'FIXTURE_CREATION_FAILED',
+          error instanceof Error
+            ? error.message
+            : 'Disposable seed lookup failed',
+        );
+      }
 
-      prepareFixtureMutation(fixture, 'membership');
-      assertCreationOpen();
-      const memberships = await db(key, '/rest/v1/organization_members', {
-        method: 'POST',
-        schema: 'app',
-        body: {
-          organization_id: org.id,
-          user_id: capability.confirmedProfileId,
-          role_id: role.id,
-          status: 'ACTIVE',
-        },
-        api,
-        env,
-        fetchFn,
-        signal: lifecycleSignal,
-        requestSignal: lifecycleDrainSignal,
-        stage: 'FIXTURE_CREATION',
-        onBeforeDispatch: () => {
-          assertCreationOpen();
-          markFixtureMutationDispatched(fixture, 'membership');
-        },
-      });
-      assert.ok(
-        isValidConfirmedMembershipResponse(memberships, {
-          expectedUserId: capability.confirmedProfileId,
-          expectedOrganizationId: org.id,
-          expectedRoleId: role.id,
-        }),
-        'Synthetic organization membership creation failed',
-      );
-      capability.confirmedMembership = true;
-      markFixtureMutationConfirmed(fixture, 'membership');
-      fixture.membershipCreated = true;
-      assertCreationOpen();
-      return fixture;
-    } catch (error) {
+      try {
+        prepareFixtureMutation(fixture, 'auth');
+        assertCreationOpen();
+        const user = await db(key, '/auth/v1/admin/users', {
+          method: 'POST',
+          body: {
+            email: syntheticEmail,
+            password: syntheticPassword,
+            email_confirm: true,
+          },
+          api,
+          env,
+          fetchFn,
+          signal: lifecycleSignal,
+          requestSignal: lifecycleDrainSignal,
+          stage: 'FIXTURE_CREATION',
+          onBeforeDispatch: () => {
+            assertCreationOpen();
+            markFixtureMutationDispatched(fixture, 'auth');
+          },
+        });
+        assert.ok(
+          user &&
+            typeof user === 'object' &&
+            !Array.isArray(user) &&
+            isSafeIdentifier(user.id) &&
+            user.email === syntheticEmail,
+          'Synthetic identity creation failed',
+        );
+        capability.confirmedAuthId = user.id;
+        fixture.auth = user.id;
+        markFixtureMutationConfirmed(fixture, 'auth');
+
+        prepareFixtureMutation(fixture, 'profile');
+        assertCreationOpen();
+        const profiles = await db(key, '/rest/v1/users', {
+          method: 'POST',
+          schema: 'app',
+          body: {
+            auth_user_id: capability.confirmedAuthId,
+            name: 'CI Synthetic Operator',
+            email: syntheticEmail,
+            status: 'ACTIVE',
+          },
+          api,
+          env,
+          fetchFn,
+          signal: lifecycleSignal,
+          requestSignal: lifecycleDrainSignal,
+          stage: 'FIXTURE_CREATION',
+          onBeforeDispatch: () => {
+            assertCreationOpen();
+            markFixtureMutationDispatched(fixture, 'profile');
+          },
+        });
+        const createdProfile =
+          Array.isArray(profiles) && profiles.length === 1 ? profiles[0] : null;
+        assert.ok(
+          createdProfile &&
+            typeof createdProfile === 'object' &&
+            !Array.isArray(createdProfile) &&
+            isSafeIdentifier(createdProfile.id) &&
+            createdProfile.email === syntheticEmail &&
+            createdProfile.auth_user_id === capability.confirmedAuthId,
+          'Synthetic app user creation failed',
+        );
+        capability.confirmedProfileId = createdProfile.id;
+        fixture.profile = createdProfile.id;
+        markFixtureMutationConfirmed(fixture, 'profile');
+
+        prepareFixtureMutation(fixture, 'membership');
+        assertCreationOpen();
+        const memberships = await db(key, '/rest/v1/organization_members', {
+          method: 'POST',
+          schema: 'app',
+          body: {
+            organization_id: org.id,
+            user_id: capability.confirmedProfileId,
+            role_id: role.id,
+            status: 'ACTIVE',
+          },
+          api,
+          env,
+          fetchFn,
+          signal: lifecycleSignal,
+          requestSignal: lifecycleDrainSignal,
+          stage: 'FIXTURE_CREATION',
+          onBeforeDispatch: () => {
+            assertCreationOpen();
+            markFixtureMutationDispatched(fixture, 'membership');
+          },
+        });
+        assert.ok(
+          isValidConfirmedMembershipResponse(memberships, {
+            expectedUserId: capability.confirmedProfileId,
+            expectedOrganizationId: org.id,
+            expectedRoleId: role.id,
+          }),
+          'Synthetic organization membership creation failed',
+        );
+        capability.confirmedMembership = true;
+        markFixtureMutationConfirmed(fixture, 'membership');
+        fixture.membershipCreated = true;
+        assertCreationOpen();
+        return fixture;
+      } catch (error) {
+        markCreationSettled();
+        finalizeFailedFixtureMutations(fixture);
+        if (
+          !effectiveDeferCleanup &&
+          !capability.cleanupRequested &&
+          !capability.scopeTeardownRequested &&
+          !activeContext.scopeTeardownInProgress
+        ) {
+          await cleanup(key, fixture, { api, env, fetchFn }).catch(() => {});
+        }
+        if (lifecycleSignal?.aborted) {
+          throwIfSignalAborted(lifecycleSignal, 'FIXTURE_CREATION');
+        }
+        if (error instanceof QaError) {
+          throw error;
+        }
+        throw new QaError(
+          'FIXTURE_CREATION',
+          'FIXTURE_CREATION_FAILED',
+          error instanceof Error
+            ? error.message
+            : 'Synthetic fixture creation failed',
+        );
+      }
+    } finally {
       markCreationSettled();
-      finalizeFailedFixtureMutations(fixture);
-      if (!effectiveDeferCleanup && !capability.cleanupRequested) {
-        await cleanup(key, fixture, { api, env, fetchFn }).catch(() => {});
-      }
-      if (lifecycleSignal?.aborted) {
-        throwIfSignalAborted(lifecycleSignal, 'FIXTURE_CREATION');
-      }
-      if (error instanceof QaError) {
-        throw error;
-      }
-      throw new QaError(
-        'FIXTURE_CREATION',
-        'FIXTURE_CREATION_FAILED',
-        error instanceof Error
-          ? error.message
-          : 'Synthetic fixture creation failed',
-      );
     }
-  } finally {
-    markCreationSettled();
-  }
+  })();
+  creationExecutionPromise.catch(() => {});
+  return creationExecutionPromise;
 }
 
 class Cdp {
