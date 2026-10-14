@@ -73,8 +73,18 @@ jobs:
           cache-dependency-path: systems/mgbos/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
       - run: node scripts/lint-migrations.mjs
-      - run: pnpm db:start
-      - run: pnpm db:reset
+      - name: Start disposable database without disclosing local credentials
+        run: |
+          if ! pnpm db:start > /dev/null 2>&1; then
+            echo "::error::Disposable database start failed (sensitive output suppressed)"
+            exit 1
+          fi
+      - name: Reset disposable database without disclosing local credentials
+        run: |
+          if ! pnpm db:reset > /dev/null 2>&1; then
+            echo "::error::Disposable database reset failed (sensitive output suppressed)"
+            exit 1
+          fi
       - run: pnpm db:test
       - name: Generate database types reproducibly
         run: |
@@ -87,4 +97,77 @@ jobs:
           name: mgbos-database-types
           path: systems/mgbos/packages/database/generated/database.types.ts
       - if: always()
-        run: pnpm db:stop
+        run: pnpm db:stop > /dev/null 2>&1
+
+  browser-authentication:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: systems/mgbos/.node-version
+          cache: pnpm
+          cache-dependency-path: systems/mgbos/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Run browser authentication harness regression tests
+        run: node --test scripts/browser-auth-hygiene-qa.test.mjs
+      - name: Prepare disposable local Supabase
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Supabase CLI prints local privileged keys and storage credentials.
+          # Never write its raw output to public CI logs or uploaded artifacts.
+          if ! pnpm db:start > /dev/null 2>&1; then
+            echo "::error::Local Supabase startup failed (sensitive output suppressed)"
+            exit 1
+          fi
+          if ! pnpm db:reset > /dev/null 2>&1; then
+            echo "::error::Local Supabase reset failed (sensitive output suppressed)"
+            exit 1
+          fi
+      - name: Run real browser authentication verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .qa-evidence/browser-auth/positive
+          pos_status=0
+          pnpm qa:browser-auth || pos_status=$?
+          node scripts/browser-auth-hygiene-qa.mjs \
+            --verify-trace .qa-evidence/browser-auth/positive/trace.json \
+            --expected-mode normal \
+            --exit-status "$pos_status"
+      - name: Prove broken form login fails the browser gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .qa-evidence/browser-auth/negative-control
+          neg_status=0
+          MGBOS_QA_NEGATIVE_CONTROL=1 pnpm qa:browser-auth > /dev/null 2>&1 || neg_status=$?
+          if [ "$neg_status" -eq 0 ]; then
+            echo "::error::Intentional broken-login control incorrectly returned success"
+            exit 1
+          fi
+          node scripts/browser-auth-hygiene-qa.mjs \
+            --verify-trace .qa-evidence/browser-auth/negative-control/trace.json \
+            --expected-mode intentional-broken-login \
+            --exit-status "$neg_status"
+      - name: Upload sanitized browser verification evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: mgbos-browser-auth-qa
+          path: systems/mgbos/.qa-evidence/browser-auth/
+      - name: Stop local Supabase
+        if: always()
+        shell: bash
+        run: |
+          if ! pnpm db:stop > /dev/null 2>&1; then
+            echo "::error::Disposable Supabase teardown failed (sensitive output suppressed)"
+            exit 1
+          fi
