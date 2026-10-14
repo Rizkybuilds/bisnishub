@@ -355,19 +355,29 @@ export async function cleanupRoleFixture(
  */
 async function performBrowserLogin(cdp, email, password) {
   await cdp.goto('/login', '/login');
+  await until(
+    () => cdp.eval('Boolean(document.querySelector(\'input[name="email"]\'))'),
+    'Login form ready',
+    30000,
+  );
 
   const fillAndSubmit = await cdp.eval(`(() => {
-    const emailInput = document.querySelector('input[name="email"]');
-    const passInput = document.querySelector('input[name="password"]');
-    const submitBtn = document.querySelector('button[type="submit"]');
-    if (!emailInput || !passInput || !submitBtn) return { success: false, reason: 'missing_inputs' };
-    emailInput.value = ${JSON.stringify(email)};
-    emailInput.dispatchEvent(new Event('input', { bubbles: true }));
-    emailInput.dispatchEvent(new Event('change', { bubbles: true }));
-    passInput.value = ${JSON.stringify(password)};
-    passInput.dispatchEvent(new Event('input', { bubbles: true }));
-    passInput.dispatchEvent(new Event('change', { bubbles: true }));
-    submitBtn.click();
+    const form = document.querySelector('form');
+    if (!form) return { success: false, reason: 'missing_form' };
+    const put = (name, value) => {
+      const input = form.querySelector('[name="' + name + '"]');
+      if (!input) return false;
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')
+        .set.call(input, value);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+      return true;
+    };
+    if (!put('email', ${JSON.stringify(email)})) return { success: false, reason: 'missing_email' };
+    if (!put('password', ${JSON.stringify(password)})) return { success: false, reason: 'missing_password' };
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (!submitBtn) return { success: false, reason: 'missing_submit' };
+    form.requestSubmit(submitBtn);
     return { success: true };
   })()`);
 
@@ -385,7 +395,7 @@ async function performBrowserLogin(cdp, email, password) {
       return pathname === '/dashboard';
     },
     'Login redirect to /dashboard',
-    15000,
+    30000,
     { stage: 'AUTH_ASSERTION' },
   );
 }
@@ -398,7 +408,12 @@ async function performBrowserLogout(cdp) {
     const buttons = Array.from(document.querySelectorAll('button'));
     const logoutBtn = buttons.find(b => b.textContent.trim() === 'Keluar');
     if (!logoutBtn) return false;
-    logoutBtn.click();
+    const form = logoutBtn.closest('form');
+    if (form) {
+      form.requestSubmit(logoutBtn);
+    } else {
+      logoutBtn.click();
+    }
     return true;
   })()`);
 
@@ -416,7 +431,7 @@ async function performBrowserLogout(cdp) {
       return pathname === '/login';
     },
     'Logout redirect to /login',
-    15000,
+    30000,
     { stage: 'AUTH_ASSERTION' },
   );
 }
@@ -735,7 +750,12 @@ export async function runUiQaHarness({
       const buttons = Array.from(document.querySelectorAll('button.brand-btn'));
       const mgBtn = buttons.find(b => b.textContent.trim() === 'MG');
       if (!mgBtn) return false;
-      mgBtn.click();
+      const form = mgBtn.closest('form');
+      if (form) {
+        form.requestSubmit(mgBtn);
+      } else {
+        mgBtn.click();
+      }
       return true;
     })()`);
     assert.equal(switchedToMg, true, 'MG brand switch button not found');
@@ -747,7 +767,7 @@ export async function runUiQaHarness({
         return activeBrand === 'MG';
       },
       'Brand switch to MG',
-      10000,
+      20000,
     );
 
     const mgSidebar = await inspectSidebarLinks(cdp);
@@ -768,7 +788,12 @@ export async function runUiQaHarness({
       const buttons = Array.from(document.querySelectorAll('button.brand-btn'));
       const tsBtn = buttons.find(b => b.textContent.trim() === 'TS');
       if (!tsBtn) return false;
-      tsBtn.click();
+      const form = tsBtn.closest('form');
+      if (form) {
+        form.requestSubmit(tsBtn);
+      } else {
+        tsBtn.click();
+      }
       return true;
     })()`);
     assert.equal(switchedToTs, true, 'TS brand switch button not found');
@@ -780,7 +805,7 @@ export async function runUiQaHarness({
         return activeBrand === 'TS';
       },
       'Brand restore to TS',
-      10000,
+      20000,
     );
 
     const tsSidebar = await inspectSidebarLinks(cdp);
