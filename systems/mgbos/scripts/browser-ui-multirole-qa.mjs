@@ -159,7 +159,7 @@ export async function createRoleFixture(
     // 1. Resolve organization (MultiGraph Group)
     const orgRows = await db(
       serviceKey,
-      '/rest/v1/organizations?code=eq.multigraph-group&select=id&limit=1',
+      '/rest/v1/organizations?select=id&status=eq.ACTIVE&limit=1',
       {
         schema: 'app',
         api,
@@ -176,7 +176,7 @@ export async function createRoleFixture(
     // 2. Resolve role ID for roleCode
     const roleRows = await db(
       serviceKey,
-      `/rest/v1/roles?organization_id=eq.${encodeURIComponent(org.id)}&code=eq.${encodeURIComponent(roleCode)}&select=id&limit=1`,
+      `/rest/v1/roles?select=id&organization_id=eq.${encodeURIComponent(org.id)}&code=eq.${encodeURIComponent(roleCode)}&limit=1`,
       {
         schema: 'app',
         api,
@@ -212,11 +212,9 @@ export async function createRoleFixture(
       method: 'POST',
       schema: 'app',
       body: {
-        id: authUser.id,
         auth_user_id: authUser.id,
+        name: displayName,
         email,
-        full_name: displayName,
-        display_name: displayName,
         status: 'ACTIVE',
       },
       api,
