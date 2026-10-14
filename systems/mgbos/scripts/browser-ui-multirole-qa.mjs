@@ -3,11 +3,12 @@
  *
  * Automates and verifies multi-role app shell and dashboard behavior:
  * - OWNER: full permitted dashboard shortcuts, active nav, TS/MG brand switching, logout
- * - SALES: prohibited exceptions shortcut absent, direct /exceptions denial
+ * - SALES: prohibited exceptions shortcut absent, direct /exceptions denial, authorized /quotes access
  * - QC: prohibited quotes shortcut absent, direct /quotes denial
- * - Responsive viewports: 1440x900 & 1024x768, zero horizontal overflow
- * - Keyboard focus navigation
- * - Deterministic synthetic fixtures with guaranteed fail-closed cleanup
+ * - Responsive viewports: 1440x900 & 1024x768, zero horizontal overflow, header bounding boxes
+ * - Keyboard Tab progression and Enter activation
+ * - Realistic founder and role display names
+ * - Deterministic synthetic fixtures with guaranteed fail-closed cleanup and absence verification
  * - Sanitized trace reporting and negative-control verification
  */
 
@@ -86,25 +87,140 @@ export const EXPECTED_UI_CASE_IDS = Object.freeze([
   'OWNER_LOGIN',
   'OWNER_DASHBOARD_1440',
   'OWNER_DASHBOARD_1024',
+  'OWNER_HEADER_LAYOUT_1440',
+  'OWNER_HEADER_LAYOUT_1024',
   'OWNER_NAV_LEADS',
   'OWNER_NAV_ORDERS',
   'OWNER_NAV_EXCEPTIONS',
   'OWNER_BRAND_SWITCH_MG',
   'OWNER_BRAND_RESTORE_TS',
-  'OWNER_KEYBOARD_FOCUS',
+  'OWNER_KEYBOARD_NAVIGATION',
+  'OWNER_SHORTCUTS_DEEP_EQUALITY',
   'OWNER_LOGOUT',
+  'POST_LOGOUT_PROTECTED_DENIAL',
   'SALES_LOGIN',
   'SALES_DASHBOARD',
+  'SALES_AUTHORIZED_QUOTES_ACCESS',
   'SALES_DIRECT_EXCEPTIONS_DENIAL',
   'SALES_LOGOUT',
   'QC_LOGIN',
   'QC_DASHBOARD',
   'QC_DIRECT_QUOTES_DENIAL',
   'QC_LOGOUT',
+  'FIXTURE_CLEANUP_VERIFICATION',
 ]);
 
 const SYNTHETIC_UI_EMAIL_PATTERN =
   /^ci-ui-qa-[a-z]+-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}@example\.test$/i;
+
+/**
+ * Classifies an observed browser navigation to determine whether access was denied
+ * or whether the page rendered in an authorized state.
+ *
+ * Distinguishes:
+ * - AUTHORIZED_PAGE: HTTP 200, domain heading/content present, error boundary absent
+ * - ERROR_BOUNDARY_500: Server error boundary rendered from thrown permission check, no domain data leaked
+ * - EXPLICIT_403: Explicit HTTP 403 status or forbidden response, no domain data leaked
+ * - ACCESS_DENIED_200: HTTP 200 containing access-denied UI alert without domain content
+ * - ERROR_WITH_DATA_LEAK: Error state where domain data was nonetheless exposed (FAIL)
+ * - UNEXPECTED_STATE: Unrecognized response code or layout (FAIL)
+ */
+export function classifyRouteDenial({
+  responseStatus,
+  pathname,
+  pageText = '',
+  hasDomainHeading = false,
+  hasDomainContent = false,
+  hasErrorBoundary = false,
+  domainHeadingText = '',
+}) {
+  const normText = (pageText || '').toLowerCase();
+  const headingMatch =
+    hasDomainHeading ||
+    (Boolean(domainHeadingText) &&
+      pageText.includes(domainHeadingText));
+
+  // If domain heading is present or domain content is exposed:
+  if (headingMatch || hasDomainContent) {
+    if (responseStatus === 200 && !hasErrorBoundary) {
+      return {
+        denied: false,
+        uiDenied: false,
+        status: 'AUTHORIZED_PAGE',
+        domainDataExposed: true,
+        summary: `Authorized route rendered successfully with domain content at ${pathname}`,
+      };
+    }
+    // If error boundary or non-200 but domain content was exposed:
+    return {
+      denied: false,
+      uiDenied: false,
+      status: 'ERROR_WITH_DATA_LEAK',
+      domainDataExposed: true,
+      summary: `Forbidden route ${pathname} encountered error but exposed domain data`,
+    };
+  }
+
+  // Check for explicit 403
+  if (
+    responseStatus === 403 ||
+    normText.includes('403 forbidden') ||
+    normText.includes('akses ditolak: 403')
+  ) {
+    return {
+      denied: true,
+      uiDenied: true,
+      status: 'EXPLICIT_403',
+      domainDataExposed: false,
+      summary: `Explicit 403 forbidden denial verified at ${pathname}`,
+    };
+  }
+
+  // Check for 200 with access denied message and no domain content
+  if (
+    responseStatus === 200 &&
+    (normText.includes('akses ditolak') ||
+      normText.includes('unauthorized') ||
+      normText.includes('tidak memiliki akses'))
+  ) {
+    return {
+      denied: true,
+      uiDenied: true,
+      status: 'ACCESS_DENIED_200',
+      domainDataExposed: false,
+      summary: `Access denied notification rendered at ${pathname} without domain data`,
+    };
+  }
+
+  // Check for server component error boundary (HTTP 500)
+  const is500OrBoundary =
+    responseStatus === 500 ||
+    hasErrorBoundary ||
+    normText.includes("this page couldn't load") ||
+    normText.includes('internal server error') ||
+    normText.includes('application error') ||
+    normText.includes('server error') ||
+    (responseStatus !== 200 && normText.includes('akses ditolak'));
+
+  if (is500OrBoundary) {
+    return {
+      denied: true,
+      uiDenied: true,
+      status: 'ERROR_BOUNDARY_500',
+      domainDataExposed: false,
+      summary: `Server-side permission denial rendered via error boundary (500) at ${pathname}`,
+    };
+  }
+
+  // Unexpected state: e.g. 200 empty page without domain heading, or unexpected status code
+  return {
+    denied: false,
+    uiDenied: false,
+    status: 'UNEXPECTED_STATE',
+    domainDataExposed: false,
+    summary: `Unexpected response status ${responseStatus} or page state at ${pathname}`,
+  };
+}
 
 /**
  * Creates a synthetic user fixture with the specified role in local Supabase.
@@ -112,7 +228,13 @@ const SYNTHETIC_UI_EMAIL_PATTERN =
 export async function createRoleFixture(
   serviceKey,
   roleCode,
-  { api = CANONICAL_API_ORIGIN, env, fetchFn = fetch, signal } = {},
+  {
+    api = CANONICAL_API_ORIGIN,
+    env,
+    fetchFn = fetch,
+    signal,
+    onRegistered,
+  } = {},
 ) {
   assertLoopbackHttpOrigin(api, {
     stage: 'FIXTURE_CREATION',
@@ -140,7 +262,12 @@ export async function createRoleFixture(
 
   const email = `ci-ui-qa-${roleCode.toLowerCase()}-${randomUUID()}@example.test`;
   const password = randomBytes(32).toString('base64url');
-  const displayName = `QA Synthetic ${roleCode} User`;
+  const displayNames = {
+    OWNER: 'Rizky Pratama Kusuma Atmadja (Founder & Group Managing Director)',
+    SALES: 'Siti Nurhaliza Rahmawati (Senior Enterprise Account Executive)',
+    QC: 'Bambang Tri Utomo (Lead Garment Quality Assurance Inspector)',
+  };
+  const displayName = displayNames[roleCode] ?? `QA Synthetic ${roleCode} User`;
 
   const fixture = {
     roleCode,
@@ -206,6 +333,9 @@ export async function createRoleFixture(
     });
     assert.ok(authUser?.id, 'Synthetic auth user creation failed');
     fixture.authUserId = authUser.id;
+    if (typeof onRegistered === 'function') {
+      onRegistered(fixture);
+    }
 
     // 4. Create profile in app.users
     const profileRows = await db(serviceKey, '/rest/v1/users', {
@@ -261,7 +391,7 @@ export async function createRoleFixture(
 }
 
 /**
- * Cleans up a synthetic user fixture.
+ * Cleans up a synthetic user fixture with independent post-cleanup absence verification.
  */
 export async function cleanupRoleFixture(
   serviceKey,
@@ -338,16 +468,79 @@ export async function cleanupRoleFixture(
     }
   }
 
+  // 4. Independent post-cleanup verification of resource absence
+  if (!error) {
+    if (fixture.profileId) {
+      try {
+        const remainingMembers = await db(
+          serviceKey,
+          `/rest/v1/organization_members?user_id=eq.${encodeURIComponent(fixture.profileId)}&select=id`,
+          { schema: 'app', api, env, fetchFn, stage: 'CLEANUP' },
+        );
+        if (Array.isArray(remainingMembers) && remainingMembers.length > 0) {
+          throw new QaError(
+            'CLEANUP',
+            'FIXTURE_RESOURCE_NOT_ABSENT',
+            `Organization membership record still present after deletion for profile ${fixture.profileId}`,
+          );
+        }
+
+        const remainingProfiles = await db(
+          serviceKey,
+          `/rest/v1/users?id=eq.${encodeURIComponent(fixture.profileId)}&select=id`,
+          { schema: 'app', api, env, fetchFn, stage: 'CLEANUP' },
+        );
+        if (Array.isArray(remainingProfiles) && remainingProfiles.length > 0) {
+          throw new QaError(
+            'CLEANUP',
+            'FIXTURE_RESOURCE_NOT_ABSENT',
+            `User profile record still present after deletion for profile ${fixture.profileId}`,
+          );
+        }
+      } catch (e) {
+        error = error ?? e;
+      }
+    }
+
+    if (fixture.authUserId) {
+      try {
+        const authRes = await db(
+          serviceKey,
+          `/auth/v1/admin/users/${fixture.authUserId}`,
+          {
+            api,
+            env,
+            fetchFn,
+            stage: 'CLEANUP',
+            allowStatuses: [404],
+            returnRawResponse: true,
+          },
+        );
+        if (authRes && authRes.status !== 404) {
+          throw new QaError(
+            'CLEANUP',
+            'FIXTURE_RESOURCE_NOT_ABSENT',
+            `Auth user record still present after deletion for user ${fixture.authUserId} (status: ${authRes.status})`,
+          );
+        }
+      } catch (e) {
+        error = error ?? e;
+      }
+    }
+  }
+
   if (error) {
-    throw new QaError(
-      'CLEANUP',
-      'FIXTURE_CLEANUP_FAILED',
-      error instanceof Error ? error.message : 'Fixture cleanup failed',
-    );
+    throw error instanceof QaError
+      ? error
+      : new QaError(
+          'CLEANUP',
+          'FIXTURE_CLEANUP_FAILED',
+          error instanceof Error ? error.message : 'Fixture cleanup failed',
+        );
   }
 
   fixture.cleanupCompleted = true;
-  return { attempted: true, status: 'PASS' };
+  return { attempted: true, status: 'PASS', verifiedAbsent: true };
 }
 
 /**
@@ -468,6 +661,33 @@ async function performBrowserLogout(cdp) {
     'Logout redirect to /login',
     30000,
     { stage: 'AUTH_ASSERTION' },
+  );
+}
+
+/**
+ * Clicks a sidebar link directly in the browser DOM.
+ */
+async function clickSidebarLink(cdp, href) {
+  const clicked = await cdp.eval(`(() => {
+    const link = document.querySelector(\`aside.shell-sidebar a[href="\${${JSON.stringify(href)}}"]\`);
+    if (!link) return false;
+    link.click();
+    return true;
+  })()`);
+  if (!clicked) {
+    throw new QaError(
+      'NAVIGATION',
+      'NAVIGATION_FAILED',
+      `Sidebar link ${href} not found for interactive click`,
+    );
+  }
+  await until(
+    async () => {
+      const p = await cdp.eval('location.pathname');
+      return p === href;
+    },
+    `Interactive navigation via click to ${href}`,
+    15000,
   );
 }
 
@@ -668,11 +888,25 @@ export async function runUiQaHarness({
   );
   mkdirSync(resolvedArtifactDir, { recursive: true });
 
+  const git = spawnSync('git', ['rev-parse', 'HEAD'], {
+    encoding: 'utf8',
+    cwd: resolvedWorkdir,
+  });
+  const checkoutSha =
+    git.status === 0 ? git.stdout.trim() : (process.env.GITHUB_SHA ?? 'unknown');
+
   const evidence = {
     harness: 'mgbos-browser-ui-multirole-qa',
     version: '1.0.0',
     mode: isNegativeControl ? 'intentional-broken-control' : 'normal',
     target: { api, app },
+    provenance: {
+      checkoutSha,
+      ciEventSha: process.env.GITHUB_SHA ?? null,
+      nodeVersion: process.version,
+      platform: process.platform,
+      timestamp: new Date().toISOString(),
+    },
     cases: {},
     cleanup: { attempted: false, status: 'NOT_RUN' },
     overall: 'PENDING',
@@ -686,6 +920,12 @@ export async function runUiQaHarness({
   let appProcess = null;
   let appWasRunning = false;
   const createdFixtures = [];
+
+  const registerFixture = (fixture) => {
+    if (fixture && !createdFixtures.includes(fixture)) {
+      createdFixtures.push(fixture);
+    }
+  };
 
   try {
     // 1. Ensure Application Server is running
@@ -709,24 +949,27 @@ export async function runUiQaHarness({
     browserHandle = await startBrowser({ app, signal });
     const { cdp } = browserHandle;
 
-    // 2. Provision synthetic multi-role fixtures
+    // 3. Provision synthetic multi-role fixtures with immediate registration
     const ownerFixture = await createRoleFixture(serviceKey, 'OWNER', {
       api,
       signal,
+      onRegistered: registerFixture,
     });
-    createdFixtures.push(ownerFixture);
+    registerFixture(ownerFixture);
 
     const salesFixture = await createRoleFixture(serviceKey, 'SALES', {
       api,
       signal,
+      onRegistered: registerFixture,
     });
-    createdFixtures.push(salesFixture);
+    registerFixture(salesFixture);
 
     const qcFixture = await createRoleFixture(serviceKey, 'QC', {
       api,
       signal,
+      onRegistered: registerFixture,
     });
-    createdFixtures.push(qcFixture);
+    registerFixture(qcFixture);
 
     // ==========================================
     // SCENARIO 1: OWNER
@@ -748,13 +991,18 @@ export async function runUiQaHarness({
       .filter((h) => h !== '/dashboard');
     const ownerExpected = EXPECTED_SHORTCUT_HREFS_BY_ROLE.OWNER;
 
-    const ownerHasAllExpected = ownerExpected.every((href) =>
-      ownerShortcutHrefs.includes(href),
+    // Deep equality check for shortcuts
+    const actualOwnerSorted = [...ownerShortcutHrefs].sort();
+    const expectedOwnerSorted = [...ownerExpected].sort();
+    assert.deepEqual(
+      actualOwnerSorted,
+      expectedOwnerSorted,
+      'OWNER shortcuts must match expected list with deep equality',
     );
-    assert.ok(
-      ownerHasAllExpected,
-      `OWNER dashboard missing expected shortcuts. Found: ${JSON.stringify(ownerShortcutHrefs)}`,
-    );
+    evidence.cases.OWNER_SHORTCUTS_DEEP_EQUALITY = {
+      status: 'PASS',
+      shortcutsCount: actualOwnerSorted.length,
+    };
 
     const owner1440Overflow = await cdp.eval(
       'document.documentElement.scrollWidth > window.innerWidth',
@@ -768,6 +1016,46 @@ export async function runUiQaHarness({
       status: 'PASS',
       shortcutsCount: ownerShortcutHrefs.length,
       hasOverflow: owner1440Overflow,
+    };
+
+    // Header layout bounding boxes at 1440x900
+    const owner1440HeaderLayout = await cdp.eval(`(() => {
+      const header = document.querySelector('header.shell-header, header');
+      if (!header) return { valid: false, reason: 'missing_header' };
+      const headerRect = header.getBoundingClientRect();
+      const brandBtns = Array.from(document.querySelectorAll('button.brand-btn'));
+      const logoutBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Keluar');
+
+      const brandBtnsValid = brandBtns.length > 0 && brandBtns.every(b => {
+        const r = b.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && r.right <= window.innerWidth && r.left >= 0;
+      });
+
+      const logoutBtnValid = Boolean(logoutBtn && (() => {
+        const r = logoutBtn.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && r.right <= window.innerWidth && r.left >= 0;
+      })());
+
+      const overflow = document.documentElement.scrollWidth > window.innerWidth;
+
+      return {
+        valid: brandBtnsValid && logoutBtnValid && !overflow,
+        headerWidth: headerRect.width,
+        headerHeight: headerRect.height,
+        brandButtonsCount: brandBtns.length,
+        brandBtnsValid,
+        logoutBtnValid,
+        overflow,
+      };
+    })()`);
+    assert.equal(
+      owner1440HeaderLayout.valid,
+      true,
+      `1440px Header layout invalid: ${JSON.stringify(owner1440HeaderLayout)}`,
+    );
+    evidence.cases.OWNER_HEADER_LAYOUT_1440 = {
+      status: 'PASS',
+      ...owner1440HeaderLayout,
     };
 
     // Inspect 1024x768 Dashboard (Responsive)
@@ -791,6 +1079,42 @@ export async function runUiQaHarness({
       hasOverflow: owner1024Overflow,
     };
 
+    // Header layout bounding boxes at 1024x768
+    const owner1024HeaderLayout = await cdp.eval(`(() => {
+      const header = document.querySelector('header.shell-header, header');
+      if (!header) return { valid: false, reason: 'missing_header' };
+      const brandBtns = Array.from(document.querySelectorAll('button.brand-btn'));
+      const logoutBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Keluar');
+
+      const brandBtnsValid = brandBtns.length > 0 && brandBtns.every(b => {
+        const r = b.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && r.right <= window.innerWidth && r.left >= 0;
+      });
+
+      const logoutBtnValid = Boolean(logoutBtn && (() => {
+        const r = logoutBtn.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && r.right <= window.innerWidth && r.left >= 0;
+      })());
+
+      const overflow = document.documentElement.scrollWidth > window.innerWidth;
+
+      return {
+        valid: brandBtnsValid && logoutBtnValid && !overflow,
+        brandBtnsValid,
+        logoutBtnValid,
+        overflow,
+      };
+    })()`);
+    assert.equal(
+      owner1024HeaderLayout.valid,
+      true,
+      `1024px Header layout invalid: ${JSON.stringify(owner1024HeaderLayout)}`,
+    );
+    evidence.cases.OWNER_HEADER_LAYOUT_1024 = {
+      status: 'PASS',
+      ...owner1024HeaderLayout,
+    };
+
     // Restore 1440x900 for navigation walkthrough
     await cdp.send('Emulation.setDeviceMetricsOverride', {
       width: 1440,
@@ -799,30 +1123,39 @@ export async function runUiQaHarness({
       mobile: false,
     });
 
-    // Navigate Leads
-    await cdp.goto('/leads', '/leads');
+    // Navigate Leads via interactive sidebar link click
+    await clickSidebarLink(cdp, '/leads');
     const leadsSidebar = await inspectSidebarLinks(cdp);
     const leadsActive = leadsSidebar.find((l) => l.href === '/leads')?.active;
     assert.equal(leadsActive, true, 'Sidebar /leads link is not active');
-    evidence.cases.OWNER_NAV_LEADS = { status: 'PASS', route: '/leads' };
+    evidence.cases.OWNER_NAV_LEADS = {
+      status: 'PASS',
+      route: '/leads',
+      clicked: true,
+    };
 
-    // Navigate Orders
-    await cdp.goto('/orders', '/orders');
+    // Navigate Orders via interactive sidebar link click
+    await clickSidebarLink(cdp, '/orders');
     const ordersSidebar = await inspectSidebarLinks(cdp);
     const ordersActive = ordersSidebar.find(
       (l) => l.href === '/orders',
     )?.active;
     assert.equal(ordersActive, true, 'Sidebar /orders link is not active');
-    evidence.cases.OWNER_NAV_ORDERS = { status: 'PASS', route: '/orders' };
+    evidence.cases.OWNER_NAV_ORDERS = {
+      status: 'PASS',
+      route: '/orders',
+      clicked: true,
+    };
 
-    // Navigate Exceptions
-    await cdp.goto('/exceptions', '/exceptions');
+    // Navigate Exceptions via interactive sidebar link click
+    await clickSidebarLink(cdp, '/exceptions');
     const exSidebar = await inspectSidebarLinks(cdp);
     const exActive = exSidebar.find((l) => l.href === '/exceptions')?.active;
     assert.equal(exActive, true, 'Sidebar /exceptions link is not active');
     evidence.cases.OWNER_NAV_EXCEPTIONS = {
       status: 'PASS',
       route: '/exceptions',
+      clicked: true,
     };
 
     // Brand Switch: TS -> MG
@@ -902,32 +1235,105 @@ export async function runUiQaHarness({
       designsRestored: true,
     };
 
-    // Keyboard Focus Smoke
+    // Visible Keyboard Tab progression and Enter activation
+    await cdp.eval('document.body.focus()');
+    const tabProgression = [];
+    for (let i = 0; i < 3; i++) {
+      await cdp.send('Input.dispatchKeyEvent', {
+        type: 'keyDown',
+        key: 'Tab',
+        code: 'Tab',
+        windowsVirtualKeyCode: 9,
+      });
+      await cdp.send('Input.dispatchKeyEvent', {
+        type: 'keyUp',
+        key: 'Tab',
+        code: 'Tab',
+        windowsVirtualKeyCode: 9,
+      });
+      const elInfo = await cdp.eval(`(() => {
+        const el = document.activeElement;
+        return {
+          tag: el?.tagName,
+          text: (el?.textContent || '').trim().slice(0, 30),
+          href: el?.getAttribute?.('href'),
+        };
+      })()`);
+      tabProgression.push(elInfo);
+    }
+    assert.ok(
+      tabProgression.every((p) => p.tag && p.tag !== 'BODY'),
+      'Keyboard Tab progression failed to move focus through interactive elements',
+    );
+
+    // Enter activation on brand switch button
+    const enterActivation = await cdp.eval(`(() => {
+      const mgBtn = Array.from(document.querySelectorAll('button.brand-btn')).find(b => b.textContent.trim() === 'MG');
+      if (mgBtn) {
+        mgBtn.focus();
+        return { focused: document.activeElement === mgBtn, target: 'MG_BTN' };
+      }
+      return { focused: false, target: 'NONE' };
+    })()`);
+    assert.equal(
+      enterActivation.focused,
+      true,
+      'Target element focused for Enter activation test',
+    );
+
     await cdp.send('Input.dispatchKeyEvent', {
       type: 'keyDown',
-      key: 'Tab',
-      code: 'Tab',
-      windowsVirtualKeyCode: 9,
+      key: 'Enter',
+      code: 'Enter',
+      windowsVirtualKeyCode: 13,
     });
     await cdp.send('Input.dispatchKeyEvent', {
       type: 'keyUp',
-      key: 'Tab',
-      code: 'Tab',
-      windowsVirtualKeyCode: 9,
+      key: 'Enter',
+      code: 'Enter',
+      windowsVirtualKeyCode: 13,
     });
-    const focusedTag = await cdp.eval('document.activeElement?.tagName');
-    assert.ok(
-      focusedTag && focusedTag !== 'BODY',
-      'Keyboard Tab did not move focus to an interactive element',
+
+    await until(
+      async () => {
+        const activeBrand = await cdp.eval(
+          "document.querySelector('button.brand-btn.active')?.textContent.trim()",
+        );
+        return activeBrand === 'MG';
+      },
+      'Enter key activation on brand switch button',
+      15000,
     );
-    evidence.cases.OWNER_KEYBOARD_FOCUS = {
+    evidence.cases.OWNER_KEYBOARD_NAVIGATION = {
       status: 'PASS',
-      activeElementTag: focusedTag,
+      tabProgressionCount: tabProgression.length,
+      enterActivated: true,
     };
 
     // Logout OWNER
     await performBrowserLogout(cdp);
     evidence.cases.OWNER_LOGOUT = { status: 'PASS' };
+
+    // Post-Logout Protected Route Denial:
+    await cdp.goto('/dashboard', '/dashboard');
+    await until(
+      async () => {
+        const p = await cdp.eval('location.pathname');
+        return p === '/login';
+      },
+      'Post-logout access to /dashboard redirected to /login',
+      15000,
+    );
+    const cookies = await cdp.eval('document.cookie');
+    assert.ok(
+      !cookies.includes('sb-') && !cookies.includes('access_token'),
+      'Post-logout must clear session cookies',
+    );
+    evidence.cases.POST_LOGOUT_PROTECTED_DENIAL = {
+      status: 'PASS',
+      redirectedToLogin: true,
+      sessionCookiesCleared: true,
+    };
 
     // ==========================================
     // SCENARIO 2: SALES
@@ -958,6 +1364,16 @@ export async function runUiQaHarness({
       'SALES must NOT have /exceptions shortcut on dashboard',
     );
 
+    const actualSalesSorted = [...salesShortcutHrefs].sort();
+    const expectedSalesSorted = [
+      ...EXPECTED_SHORTCUT_HREFS_BY_ROLE.SALES,
+    ].sort();
+    assert.deepEqual(
+      actualSalesSorted,
+      expectedSalesSorted,
+      'SALES shortcuts must match expected list with deep equality',
+    );
+
     const salesSidebar = await inspectSidebarLinks(cdp);
     const salesHasExceptionsInSidebar = salesSidebar.some(
       (l) => l.href === '/exceptions',
@@ -971,9 +1387,49 @@ export async function runUiQaHarness({
       status: 'PASS',
       shortcutsCount: salesShortcutHrefs.length,
       exceptionsOmitted: true,
+      deepEquality: true,
     };
 
-    // Direct /exceptions route denial
+    // SALES authorized comparison: visits /quotes (authorized for SALES)
+    await cdp.goto('/quotes', '/quotes');
+    const salesQuotesInspection = await cdp.eval(`(() => {
+      const navEntry = performance.getEntriesByType('navigation')[0];
+      const responseStatus = navEntry?.responseStatus || 200;
+      const pageText = document.body ? (document.body.innerText || '') : '';
+      const h1Text = Array.from(document.querySelectorAll('h1')).map(h => h.textContent.trim()).join(' ');
+      const hasDomainHeading = h1Text.includes('Penawaran & HPP');
+      const hasQuoteForm = Boolean(document.querySelector('details summary'));
+      return {
+        responseStatus,
+        pathname: location.pathname,
+        pageText: pageText.slice(0, 500),
+        hasDomainHeading,
+        hasDomainContent: hasQuoteForm,
+        hasErrorBoundary: false,
+      };
+    })()`);
+    const salesQuotesClassified = classifyRouteDenial({
+      ...salesQuotesInspection,
+      domainHeadingText: 'Penawaran & HPP',
+    });
+    assert.equal(
+      salesQuotesClassified.denied,
+      false,
+      'SALES must be authorized to access /quotes',
+    );
+    assert.equal(
+      salesQuotesInspection.hasDomainHeading,
+      true,
+      'SALES must see Penawaran & HPP heading',
+    );
+    evidence.cases.SALES_AUTHORIZED_QUOTES_ACCESS = {
+      status: 'PASS',
+      route: '/quotes',
+      authorized: true,
+      domainHeadingPresent: true,
+    };
+
+    // SALES direct /exceptions route denial
     await cdp.send('Page.navigate', { url: `${app}/exceptions` });
     await until(
       async () => {
@@ -981,33 +1437,51 @@ export async function runUiQaHarness({
         return ready !== 'loading';
       },
       'SALES direct navigation to /exceptions',
-      10000,
+      15000,
     );
 
-    const salesExceptionsPageText = await cdp.eval(
-      'document.body.innerText || ""',
-    );
-    const salesExceptionsHasDataTable = await cdp.eval(
-      'Boolean(document.querySelector("table.data-table"))',
+    const salesExInspection = await cdp.eval(`(() => {
+      const navEntry = performance.getEntriesByType('navigation')[0];
+      const responseStatus = navEntry?.responseStatus || 0;
+      const pageText = document.body ? (document.body.innerText || '') : '';
+      const h1Text = Array.from(document.querySelectorAll('h1')).map(h => h.textContent.trim()).join(' ');
+      const hasDomainHeading = h1Text.includes('Operational Exceptions') || h1Text.includes('Pusat Abnormalitas');
+      const hasDataTable = Boolean(document.querySelector('table.data-table, .exception-card, [data-exception-id]'));
+      const hasErrorBoundary = pageText.includes("This page couldn't load") ||
+        pageText.includes('Application error') ||
+        pageText.includes('Internal Server Error') ||
+        pageText.includes('server error');
+      return {
+        responseStatus,
+        pathname: location.pathname,
+        pageText: pageText.slice(0, 1000),
+        hasDomainHeading,
+        hasDomainContent: hasDataTable,
+        hasErrorBoundary,
+      };
+    })()`);
+
+    const salesExDenial = classifyRouteDenial({
+      ...salesExInspection,
+      domainHeadingText: 'Operational Exceptions',
+    });
+
+    assert.equal(
+      salesExDenial.denied,
+      true,
+      `SALES /exceptions must be denied: ${salesExDenial.summary}`,
     );
     assert.equal(
-      salesExceptionsHasDataTable,
+      salesExDenial.domainDataExposed,
       false,
-      'SALES direct route to /exceptions must not render data table',
+      'SALES /exceptions must not expose domain data',
     );
-
-    const isServerErrorDenial =
-      salesExceptionsPageText.includes("This page couldn't load") ||
-      salesExceptionsPageText.includes('server error') ||
-      salesExceptionsPageText.includes('Akses ditolak');
 
     evidence.cases.SALES_DIRECT_EXCEPTIONS_DENIAL = {
       status: 'PASS',
       route: '/exceptions',
       uiDenied: true,
-      observedResponse: isServerErrorDenial
-        ? 'SERVER_ERROR_PAGE_500'
-        : 'RESTRICTED_CONTENT',
+      observedResponse: salesExDenial.status,
       domainDataExposed: false,
     };
 
@@ -1031,6 +1505,14 @@ export async function runUiQaHarness({
       'QC must NOT have /quotes shortcut on dashboard',
     );
 
+    const actualQcSorted = [...qcShortcutHrefs].sort();
+    const expectedQcSorted = [...EXPECTED_SHORTCUT_HREFS_BY_ROLE.QC].sort();
+    assert.deepEqual(
+      actualQcSorted,
+      expectedQcSorted,
+      'QC shortcuts must match expected list with deep equality',
+    );
+
     const qcSidebar = await inspectSidebarLinks(cdp);
     const qcHasQuotesInSidebar = qcSidebar.some((l) => l.href === '/quotes');
     assert.equal(
@@ -1042,9 +1524,10 @@ export async function runUiQaHarness({
       status: 'PASS',
       shortcutsCount: qcShortcutHrefs.length,
       quotesOmitted: true,
+      deepEquality: true,
     };
 
-    // Direct /quotes route denial
+    // QC direct /quotes route denial
     await cdp.send('Page.navigate', { url: `${app}/quotes` });
     await until(
       async () => {
@@ -1052,27 +1535,51 @@ export async function runUiQaHarness({
         return ready !== 'loading';
       },
       'QC direct navigation to /quotes',
-      10000,
+      15000,
     );
 
-    const qcQuotesHasCreateForm = await cdp.eval(
-      'Boolean(document.querySelector("details summary"))',
-    );
-    const qcQuotesText = await cdp.eval('document.body.innerText || ""');
+    const qcQuotesInspection = await cdp.eval(`(() => {
+      const navEntry = performance.getEntriesByType('navigation')[0];
+      const responseStatus = navEntry?.responseStatus || 0;
+      const pageText = document.body ? (document.body.innerText || '') : '';
+      const h1Text = Array.from(document.querySelectorAll('h1')).map(h => h.textContent.trim()).join(' ');
+      const hasDomainHeading = h1Text.includes('Penawaran & HPP');
+      const hasQuoteForm = Boolean(document.querySelector('details summary, form[action*="quote"], [data-quote-id]'));
+      const hasErrorBoundary = pageText.includes("This page couldn't load") ||
+        pageText.includes('Application error') ||
+        pageText.includes('Internal Server Error') ||
+        pageText.includes('server error');
+      return {
+        responseStatus,
+        pathname: location.pathname,
+        pageText: pageText.slice(0, 1000),
+        hasDomainHeading,
+        hasDomainContent: hasQuoteForm,
+        hasErrorBoundary,
+      };
+    })()`);
+
+    const qcQuotesDenial = classifyRouteDenial({
+      ...qcQuotesInspection,
+      domainHeadingText: 'Penawaran & HPP',
+    });
+
     assert.equal(
-      qcQuotesHasCreateForm,
+      qcQuotesDenial.denied,
+      true,
+      `QC /quotes must be denied: ${qcQuotesDenial.summary}`,
+    );
+    assert.equal(
+      qcQuotesDenial.domainDataExposed,
       false,
-      'QC direct route to /quotes must not allow creating quotes',
+      'QC /quotes must not expose domain data',
     );
 
     evidence.cases.QC_DIRECT_QUOTES_DENIAL = {
       status: 'PASS',
       route: '/quotes',
       uiDenied: true,
-      createFormOmitted: true,
-      observedResponse: qcQuotesText.includes('Belum ada penawaran')
-        ? 'EMPTY_RESTRICTED_LISTING'
-        : 'PAGE_RENDERED',
+      observedResponse: qcQuotesDenial.status,
       domainDataExposed: false,
     };
 
@@ -1105,19 +1612,26 @@ export async function runUiQaHarness({
       }
     }
 
-    // Teardown synthetic fixtures
+    // Teardown synthetic fixtures with independent absence verification
     let allCleaned = true;
     for (const fix of createdFixtures) {
       try {
         await cleanupRoleFixture(serviceKey, fix, { api });
-      } catch {
+      } catch (err) {
         allCleaned = false;
+        evidence.failure = evidence.failure ?? classifyFailure('CLEANUP', err);
       }
     }
     evidence.cleanup = {
       attempted: createdFixtures.length > 0,
       status: allCleaned ? 'PASS' : 'FAIL',
       fixturesCount: createdFixtures.length,
+      verifiedAbsent: allCleaned,
+    };
+    evidence.cases.FIXTURE_CLEANUP_VERIFICATION = {
+      status: allCleaned ? 'PASS' : 'FAIL',
+      fixturesCleaned: createdFixtures.length,
+      verifiedAbsent: allCleaned,
     };
 
     if (!allCleaned) {
@@ -1193,11 +1707,34 @@ export function verifyTraceFile(
     };
   }
 
+  if (!trace || typeof trace !== 'object' || Array.isArray(trace)) {
+    return {
+      valid: false,
+      code: 'TRACE_CORRUPT',
+      summary: 'Trace payload must be an object',
+    };
+  }
+
   if (trace.mode !== expectedMode) {
     return {
       valid: false,
       code: 'TRACE_MODE_MISMATCH',
       summary: `Trace mode '${trace.mode}' does not match expected '${expectedMode}'`,
+    };
+  }
+
+  // Provenance check
+  const checkoutSha = trace.provenance?.checkoutSha;
+  if (
+    !checkoutSha ||
+    typeof checkoutSha !== 'string' ||
+    checkoutSha.trim().length === 0 ||
+    checkoutSha === 'unknown'
+  ) {
+    return {
+      valid: false,
+      code: 'TRACE_PROVENANCE_MISSING',
+      summary: 'Trace is missing verified checkoutSha in provenance',
     };
   }
 
@@ -1207,6 +1744,13 @@ export function verifyTraceFile(
         valid: false,
         code: 'TRACE_OVERALL_FAILED',
         summary: `Trace overall status is '${trace.overall}', expected 'PASS'`,
+      };
+    }
+    if (trace.failure !== null) {
+      return {
+        valid: false,
+        code: 'TRACE_CONTRADICTORY_FIELDS',
+        summary: 'Trace has overall PASS but failure object is not null',
       };
     }
     if (trace.cleanup?.status !== 'PASS') {
@@ -1223,12 +1767,56 @@ export function verifyTraceFile(
         summary: `Exit status was ${exitStatus}, expected 0`,
       };
     }
+
+    // Verify all mandatory case IDs are present and marked PASS
+    if (!trace.cases || typeof trace.cases !== 'object') {
+      return {
+        valid: false,
+        code: 'TRACE_CASES_MISSING',
+        summary: 'Trace is missing cases object',
+      };
+    }
+
+    for (const caseId of EXPECTED_UI_CASE_IDS) {
+      const caseResult = trace.cases[caseId];
+      if (!caseResult) {
+        return {
+          valid: false,
+          code: 'CASE_MISSING',
+          summary: `Mandatory test case '${caseId}' is missing from trace`,
+        };
+      }
+      if (caseResult.status !== 'PASS') {
+        return {
+          valid: false,
+          code: 'CASE_FAILED',
+          summary: `Test case '${caseId}' has status '${caseResult.status}', expected 'PASS'`,
+        };
+      }
+    }
   } else if (expectedMode === 'intentional-broken-control') {
     if (trace.overall !== 'FAIL') {
       return {
         valid: false,
         code: 'NEGATIVE_CONTROL_MISMATCH',
         summary: `Expected FAIL for negative control, received '${trace.overall}'`,
+      };
+    }
+    if (!trace.failure || typeof trace.failure !== 'object') {
+      return {
+        valid: false,
+        code: 'NEGATIVE_CONTROL_FAILURE_MISSING',
+        summary: 'Negative control trace missing failure record',
+      };
+    }
+    if (
+      trace.failure.code !== 'QA_EXECUTION_FAILED' &&
+      trace.failure.code !== 'NEGATIVE_CONTROL_FAILED'
+    ) {
+      return {
+        valid: false,
+        code: 'NEGATIVE_CONTROL_CODE_MISMATCH',
+        summary: `Expected failure code 'QA_EXECUTION_FAILED' or 'NEGATIVE_CONTROL_FAILED', received '${trace.failure.code}'`,
       };
     }
     if (exitStatus !== undefined && exitStatus === 0) {
@@ -1248,6 +1836,8 @@ export function verifyTraceFile(
       mode: trace.mode,
       overall: trace.overall,
       cleanup: trace.cleanup?.status,
+      checkoutSha,
+      casesCount: Object.keys(trace.cases || {}).length,
     },
   };
 }
