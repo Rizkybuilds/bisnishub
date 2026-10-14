@@ -71,6 +71,175 @@ function createFakeProcess() {
   };
 }
 
+export async function dispatchAndAwaitSignalAck(
+  activeChild,
+  signal = 'SIGTERM',
+  { timeoutMs = 2000 } = {},
+) {
+  if (
+    !activeChild ||
+    typeof activeChild.on !== 'function' ||
+    (process.platform !== 'win32' && typeof activeChild.kill !== 'function') ||
+    (process.platform === 'win32' && typeof activeChild.send !== 'function')
+  ) {
+    const err = new Error('SIGNAL_DISPATCH_FAILED: invalid child process');
+    err.code = 'SIGNAL_DISPATCH_FAILED';
+    throw err;
+  }
+
+  if (activeChild.exitCode !== null && activeChild.exitCode !== undefined) {
+    const err = new Error(
+      `SIGNAL_DISPATCH_FAILED: child process already exited with code ${activeChild.exitCode}`,
+    );
+    err.code = 'SIGNAL_DISPATCH_FAILED';
+    throw err;
+  }
+  if (activeChild.signalCode !== null && activeChild.signalCode !== undefined) {
+    const err = new Error(
+      `SIGNAL_DISPATCH_FAILED: child process already terminated with signal ${activeChild.signalCode}`,
+    );
+    err.code = 'SIGNAL_DISPATCH_FAILED';
+    throw err;
+  }
+
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    let timer = null;
+    const startTime = Date.now();
+
+    const cleanup = () => {
+      if (settled) return;
+      settled = true;
+      if (timer !== null) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      if (typeof activeChild.off === 'function') {
+        activeChild.off('message', onMsg);
+        activeChild.off('exit', onExit);
+        activeChild.off('error', onError);
+      } else if (typeof activeChild.removeListener === 'function') {
+        activeChild.removeListener('message', onMsg);
+        activeChild.removeListener('exit', onExit);
+        activeChild.removeListener('error', onError);
+      }
+    };
+
+    const onMsg = (msg) => {
+      if (!msg || typeof msg !== 'object') {
+        return;
+      }
+      if (msg.type === 'QA_SIGNAL_RECEIVED') {
+        if (msg.signal === signal) {
+          cleanup();
+          resolve({
+            signal,
+            acknowledged: true,
+            latencyMs: Date.now() - startTime,
+          });
+        } else {
+          cleanup();
+          const err = new Error(
+            `SIGNAL_ACK_MISMATCH: Expected signal ${signal} but received ACK for ${msg.signal}`,
+          );
+          err.code = 'SIGNAL_ACK_MISMATCH';
+          err.expectedSignal = signal;
+          err.receivedSignal = msg.signal;
+          reject(err);
+        }
+      }
+    };
+
+    const onExit = (code, exitSignal) => {
+      cleanup();
+      const err = new Error(
+        `SIGNAL_ACK_MISSING: Child process exited (code: ${code}, signal: ${exitSignal}) before sending signal ACK for ${signal}`,
+      );
+      err.code = 'SIGNAL_ACK_MISSING';
+      err.exitCode = code;
+      err.exitSignal = exitSignal;
+      reject(err);
+    };
+
+    const onError = (childErr) => {
+      cleanup();
+      const err = new Error(
+        `SIGNAL_DISPATCH_FAILED: Child process emitted error: ${childErr?.message ?? childErr}`,
+      );
+      err.code = 'SIGNAL_DISPATCH_FAILED';
+      err.cause = childErr;
+      reject(err);
+    };
+
+    activeChild.on('message', onMsg);
+    activeChild.on('exit', onExit);
+    activeChild.on('error', onError);
+
+    timer = setTimeout(() => {
+      cleanup();
+      const err = new Error(
+        `SIGNAL_ACK_TIMEOUT: Signal acknowledgment not received within ${timeoutMs}ms for ${signal}`,
+      );
+      err.code = 'SIGNAL_ACK_TIMEOUT';
+      err.timeoutMs = timeoutMs;
+      reject(err);
+    }, timeoutMs);
+
+    if (process.platform !== 'win32') {
+      try {
+        const success = activeChild.kill(signal);
+        if (!success) {
+          cleanup();
+          const err = new Error(
+            `SIGNAL_DISPATCH_FAILED: kill(${signal}) returned false`,
+          );
+          err.code = 'SIGNAL_DISPATCH_FAILED';
+          return reject(err);
+        }
+      } catch (dispatchErr) {
+        cleanup();
+        const err = new Error(
+          `SIGNAL_DISPATCH_FAILED: kill(${signal}) threw: ${dispatchErr.message}`,
+        );
+        err.code = 'SIGNAL_DISPATCH_FAILED';
+        err.cause = dispatchErr;
+        return reject(err);
+      }
+    } else {
+      if (!activeChild.connected) {
+        cleanup();
+        const err = new Error(
+          `SIGNAL_DISPATCH_FAILED: Child process IPC is not connected for signal ${signal}`,
+        );
+        err.code = 'SIGNAL_DISPATCH_FAILED';
+        return reject(err);
+      }
+      try {
+        const sent = activeChild.send({
+          type: 'QA_TEST_SIGNAL',
+          signal,
+        });
+        if (sent === false) {
+          cleanup();
+          const err = new Error(
+            `SIGNAL_DISPATCH_FAILED: IPC send returned false for signal ${signal}`,
+          );
+          err.code = 'SIGNAL_DISPATCH_FAILED';
+          return reject(err);
+        }
+      } catch (dispatchErr) {
+        cleanup();
+        const err = new Error(
+          `SIGNAL_DISPATCH_FAILED: IPC send threw for signal ${signal}: ${dispatchErr.message}`,
+        );
+        err.code = 'SIGNAL_DISPATCH_FAILED';
+        err.cause = dispatchErr;
+        return reject(err);
+      }
+    }
+  });
+}
+
 function createMockCdp({
   validLoginOutcome = 'authenticated',
   emitValidLoginPost = true,
@@ -2771,34 +2940,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
                 };
               }
               if (activeChild) {
-                const signalAckPromise = new Promise((resolve) => {
-                  const onMsg = (msg) => {
-                    if (
-                      msg &&
-                      typeof msg === 'object' &&
-                      msg.type === 'QA_SIGNAL_RECEIVED'
-                    ) {
-                      activeChild.off('message', onMsg);
-                      resolve();
-                    }
-                  };
-                  activeChild.on('message', onMsg);
-                  setTimeout(() => {
-                    activeChild.off('message', onMsg);
-                    resolve();
-                  }, 250);
+                await dispatchAndAwaitSignalAck(activeChild, 'SIGTERM', {
+                  timeoutMs: 2000,
                 });
-
-                if (process.platform !== 'win32') {
-                  activeChild.kill('SIGTERM');
-                } else if (activeChild.connected) {
-                  activeChild.send({
-                    type: 'QA_TEST_SIGNAL',
-                    signal: 'SIGTERM',
-                  });
-                }
-
-                await signalAckPromise;
               }
               // Destroy socket before committing so client HTTP response fails while
               // server commit is still pending (commits after client disconnects & exits).
@@ -3114,6 +3258,204 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         }
       });
     }
+  });
+
+  it('QA64-IPC-ACK-01: rejects missing, delayed, wrong, and failed signal dispatch acknowledgments deterministically', async () => {
+    // 1. A child that never ACKs fails synchronization with SIGNAL_ACK_TIMEOUT
+    await (async () => {
+      const childCode = `
+        process.on('SIGTERM', () => {});
+        process.on('message', () => {});
+        setInterval(() => {}, 1000);
+      `;
+      const child = spawn(process.execPath, ['-e', childCode], {
+        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+      });
+      try {
+        await assert.rejects(
+          dispatchAndAwaitSignalAck(child, 'SIGTERM', { timeoutMs: 100 }),
+          (err) => {
+            assert.equal(err.code, 'SIGNAL_ACK_TIMEOUT');
+            assert.equal(err.timeoutMs, 100);
+            assert.match(err.message, /SIGNAL_ACK_TIMEOUT/);
+            return true;
+          },
+        );
+      } finally {
+        child.kill('SIGKILL');
+        await new Promise((resolve) => child.on('exit', resolve));
+      }
+    })();
+
+    // 2. An ACK arriving after timeout fails synchronization (late ACK does not resolve or cause unhandled rejections)
+    await (async () => {
+      const childCode = `
+        const sendLate = (sig) => {
+          setTimeout(() => {
+            if (typeof process.send === 'function') {
+              try {
+                process.send({ type: 'QA_SIGNAL_RECEIVED', signal: sig });
+              } catch {}
+            }
+          }, 200);
+        };
+        process.on('SIGTERM', () => sendLate('SIGTERM'));
+        process.on('message', (msg) => {
+          if (msg?.type === 'QA_TEST_SIGNAL') {
+            sendLate(msg.signal);
+          }
+        });
+        setInterval(() => {}, 1000);
+      `;
+      const child = spawn(process.execPath, ['-e', childCode], {
+        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+      });
+      try {
+        const syncPromise = dispatchAndAwaitSignalAck(child, 'SIGTERM', {
+          timeoutMs: 60,
+        });
+        await assert.rejects(syncPromise, (err) => {
+          assert.equal(err.code, 'SIGNAL_ACK_TIMEOUT');
+          assert.equal(err.timeoutMs, 60);
+          return true;
+        });
+        // Wait for late ACK to arrive from child; verify no unhandled rejection occurs
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      } finally {
+        child.kill('SIGKILL');
+        await new Promise((resolve) => child.on('exit', resolve));
+      }
+    })();
+
+    // 3. An ACK with the wrong signal payload fails synchronization with SIGNAL_ACK_MISMATCH
+    await (async () => {
+      const childCode = `
+        const sendWrong = () => {
+          if (typeof process.send === 'function') {
+            try {
+              process.send({ type: 'QA_SIGNAL_RECEIVED', signal: 'SIGINT' });
+            } catch {}
+          }
+        };
+        process.on('SIGTERM', sendWrong);
+        process.on('message', (msg) => {
+          if (msg?.type === 'QA_TEST_SIGNAL') {
+            sendWrong();
+          }
+        });
+        setInterval(() => {}, 1000);
+      `;
+      const child = spawn(process.execPath, ['-e', childCode], {
+        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+      });
+      try {
+        await assert.rejects(
+          dispatchAndAwaitSignalAck(child, 'SIGTERM', { timeoutMs: 2000 }),
+          (err) => {
+            assert.equal(err.code, 'SIGNAL_ACK_MISMATCH');
+            assert.equal(err.expectedSignal, 'SIGTERM');
+            assert.equal(err.receivedSignal, 'SIGINT');
+            assert.match(err.message, /SIGNAL_ACK_MISMATCH/);
+            return true;
+          },
+        );
+      } finally {
+        child.kill('SIGKILL');
+        await new Promise((resolve) => child.on('exit', resolve));
+      }
+    })();
+
+    // 4. A dead or unreachable child fails signal dispatch immediately with SIGNAL_DISPATCH_FAILED
+    await (async () => {
+      // 4a. Child process already terminated before dispatch
+      const deadChild = spawn(process.execPath, ['-e', 'process.exit(0)'], {
+        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+      });
+      await new Promise((resolve) => deadChild.on('exit', resolve));
+      await assert.rejects(
+        dispatchAndAwaitSignalAck(deadChild, 'SIGTERM', { timeoutMs: 2000 }),
+        (err) => {
+          assert.equal(err.code, 'SIGNAL_DISPATCH_FAILED');
+          assert.match(err.message, /SIGNAL_DISPATCH_FAILED/);
+          return true;
+        },
+      );
+
+      // 4b. Missing/invalid child object
+      await assert.rejects(
+        dispatchAndAwaitSignalAck(null, 'SIGTERM'),
+        (err) => {
+          assert.equal(err.code, 'SIGNAL_DISPATCH_FAILED');
+          return true;
+        },
+      );
+
+      // 4c. Child process terminates before sending signal ACK
+      const exitChildCode = `
+        process.on('SIGTERM', () => { process.exit(42); });
+        process.on('message', (msg) => {
+          if (msg?.type === 'QA_TEST_SIGNAL') {
+            process.exit(42);
+          }
+        });
+        setInterval(() => {}, 1000);
+      `;
+      const exitingChild = spawn(process.execPath, ['-e', exitChildCode], {
+        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+      });
+      try {
+        await assert.rejects(
+          dispatchAndAwaitSignalAck(exitingChild, 'SIGTERM', {
+            timeoutMs: 2000,
+          }),
+          (err) => {
+            assert.equal(err.code, 'SIGNAL_ACK_MISSING');
+            assert.equal(err.exitCode, 42);
+            assert.match(err.message, /SIGNAL_ACK_MISSING/);
+            return true;
+          },
+        );
+      } finally {
+        if (exitingChild.exitCode === null) {
+          exitingChild.kill('SIGKILL');
+          await new Promise((resolve) => exitingChild.on('exit', resolve));
+        }
+      }
+    })();
+
+    // 5. Positive case: A healthy child sending matching ACK completes successfully
+    await (async () => {
+      const childCode = `
+        const sendAck = (sig) => {
+          if (typeof process.send === 'function') {
+            try {
+              process.send({ type: 'QA_SIGNAL_RECEIVED', signal: sig });
+            } catch {}
+          }
+        };
+        process.on('SIGTERM', () => sendAck('SIGTERM'));
+        process.on('message', (msg) => {
+          if (msg?.type === 'QA_TEST_SIGNAL') {
+            sendAck(msg.signal);
+          }
+        });
+        setInterval(() => {}, 1000);
+      `;
+      const child = spawn(process.execPath, ['-e', childCode], {
+        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+      });
+      try {
+        const result = await dispatchAndAwaitSignalAck(child, 'SIGTERM', {
+          timeoutMs: 2000,
+        });
+        assert.equal(result.acknowledged, true);
+        assert.equal(result.signal, 'SIGTERM');
+        assert.equal(typeof result.latencyMs, 'number');
+      } finally {
+        child.kill('SIGKILL');
+        await new Promise((resolve) => child.on('exit', resolve));
+      }
+    })();
   });
 
   it('SEC64-01: enforces verified synthetic ownership before deletion across wrong IDs, mismatched links, duplicates, missing fields, and mixed references', async () => {
