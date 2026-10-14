@@ -422,7 +422,7 @@ async function performBrowserLogin(cdp, email, password) {
  * Executes logout in the browser via header logout button.
  */
 async function performBrowserLogout(cdp) {
-  const clicked = await cdp.eval(`(() => {
+  let clicked = await cdp.eval(`(() => {
     const buttons = Array.from(document.querySelectorAll('button'));
     const logoutBtn = buttons.find(b => b.textContent.trim() === 'Keluar');
     if (!logoutBtn) return false;
@@ -434,6 +434,23 @@ async function performBrowserLogout(cdp) {
     }
     return true;
   })()`);
+
+  if (!clicked) {
+    // Current page might be an error boundary without layout header; return to /dashboard
+    await cdp.goto('/dashboard', '/dashboard');
+    clicked = await cdp.eval(`(() => {
+      const buttons = Array.from(document.querySelectorAll('button'));
+      const logoutBtn = buttons.find(b => b.textContent.trim() === 'Keluar');
+      if (!logoutBtn) return false;
+      const form = logoutBtn.closest('form');
+      if (form) {
+        form.requestSubmit(logoutBtn);
+      } else {
+        logoutBtn.click();
+      }
+      return true;
+    })()`);
+  }
 
   if (!clicked) {
     throw new QaError(
