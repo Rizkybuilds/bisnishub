@@ -204,11 +204,6 @@ jobs:
             echo "::error::Local Supabase reset failed (sensitive output suppressed)"
             exit 1
           fi
-      - name: Build Next.js application
-        shell: bash
-        run: |
-          set -euo pipefail
-          pnpm --filter @mgbos/app build
       - name: Run real browser UI acceptance verification
         shell: bash
         run: |

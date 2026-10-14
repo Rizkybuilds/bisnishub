@@ -12,7 +12,7 @@
  */
 
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import path from 'node:path';
@@ -391,8 +391,26 @@ async function performBrowserLogin(cdp, email, password) {
 
   await until(
     async () => {
-      const pathname = await cdp.eval('location.pathname');
-      return pathname === '/dashboard';
+      const state = await cdp.eval(`(() => {
+        const alert = document.querySelector('[role="alert"]');
+        return {
+          pathname: location.pathname,
+          rejected:
+            location.pathname === '/login' &&
+            document.readyState !== 'loading' &&
+            Boolean(alert),
+          alertText: alert ? alert.textContent.trim() : null,
+          authenticated: location.pathname === '/dashboard',
+        };
+      })()`);
+      if (state.rejected) {
+        throw new QaError(
+          'AUTH_ASSERTION',
+          'AUTH_ASSERTION_FAILED',
+          `Login rejected on /login: ${state.alertText || 'unknown alert'}`,
+        );
+      }
+      return state.authenticated;
     },
     'Login redirect to /dashboard',
     30000,
@@ -469,6 +487,44 @@ export async function terminateBrowser(browserHandle) {
 }
 
 /**
+ * Builds the Next.js application in an isolated subprocess with provided environment variables.
+ */
+export function defaultBuildApp({
+  env,
+  workdir,
+  spawnSyncFn = spawnSync,
+} = {}) {
+  const appWorkdir =
+    workdir ?? path.resolve(fileURLToPath(new URL('../', import.meta.url)));
+  const build = spawnSyncFn('pnpm', ['--filter', '@mgbos/app', 'build'], {
+    cwd: appWorkdir,
+    env,
+    // Build output is intentionally suppressed: no environment or key values in CI logs.
+    stdio: 'ignore',
+    timeout: 180000,
+    shell: process.platform === 'win32',
+  });
+  if (build.error?.code === 'ETIMEDOUT') {
+    throw new QaError(
+      'APP_BUILD',
+      'BUILD_TIMED_OUT',
+      'Isolated app build timed out',
+    );
+  }
+  if (build.status !== 0) {
+    throw new QaError(
+      'APP_BUILD',
+      'BUILD_FAILED',
+      'Isolated app build failed',
+      {
+        exitCode: build.status ?? null,
+        signal: build.signal ?? null,
+      },
+    );
+  }
+}
+
+/**
  * Ensures the MGBOS Next.js application server is running and healthy.
  * Reuses existing running instance on loopback if available, otherwise starts one.
  */
@@ -479,6 +535,7 @@ export async function ensureAppServer({
   signal,
   fetchFn = fetch,
   spawnFn = spawn,
+  buildAppFn,
 } = {}) {
   assertLoopbackHttpOrigin(app, { stage: 'APP_START' });
   try {
@@ -494,6 +551,11 @@ export async function ensureAppServer({
 
   const appWorkdir =
     workdir ?? path.resolve(fileURLToPath(new URL('../', import.meta.url)));
+
+  if (buildAppFn) {
+    await buildAppFn({ env, workdir: appWorkdir, signal });
+  }
+
   const proc = spawnFn('pnpm', ['--filter', '@mgbos/app', 'start'], {
     cwd: appWorkdir,
     env: env ?? process.env,
@@ -570,6 +632,7 @@ export async function runUiQaHarness({
   app = CANONICAL_APP_ORIGIN,
   isNegativeControl = false,
   signal,
+  buildAppFn = defaultBuildApp,
 } = {}) {
   assertLoopbackHttpOrigin(api, { stage: 'PREFLIGHT' });
   assertLoopbackHttpOrigin(app, { stage: 'PREFLIGHT' });
@@ -620,6 +683,7 @@ export async function runUiQaHarness({
         NEXT_TELEMETRY_DISABLED: '1',
       },
       signal,
+      buildAppFn,
     });
     appProcess = appServer.process;
     appWasRunning = appServer.wasRunning;
@@ -1050,7 +1114,12 @@ export async function runUiQaHarness({
     // Persist sanitized trace
     try {
       const traceFile = path.join(resolvedArtifactDir, 'trace.json');
-      writeSanitizedTrace(traceFile, evidence);
+      const forbiddenValues = [
+        serviceKey,
+        status?.ANON_KEY,
+        ...createdFixtures.flatMap((f) => [f.password, f.email]),
+      ].filter(Boolean);
+      writeSanitizedTrace(traceFile, evidence, { forbiddenValues });
     } catch {
       // Artifact write error handling
     }

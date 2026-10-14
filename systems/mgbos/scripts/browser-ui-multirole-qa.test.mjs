@@ -9,6 +9,7 @@ import {
   EXPECTED_UI_CASE_IDS,
   cleanupRoleFixture,
   createRoleFixture,
+  defaultBuildApp,
   ensureAppServer,
   terminateBrowser,
   verifyTraceFile,
@@ -233,5 +234,62 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       }),
     );
     assert.equal(closed, true);
+  });
+
+  it('defaultBuildApp handles build errors and timeout safely', () => {
+    assert.throws(
+      () =>
+        defaultBuildApp({
+          spawnSyncFn: () => ({ status: 1, signal: null }),
+        }),
+      /Isolated app build failed/i,
+    );
+
+    assert.throws(
+      () =>
+        defaultBuildApp({
+          spawnSyncFn: () => ({
+            error: { code: 'ETIMEDOUT' },
+            status: null,
+            signal: null,
+          }),
+        }),
+      /Isolated app build timed out/i,
+    );
+  });
+
+  it('ensureAppServer invokes buildAppFn when server is not already running', async () => {
+    let buildCalled = false;
+    let spawnCalled = false;
+    const mockSpawn = () => {
+      spawnCalled = true;
+      return {
+        exitCode: null,
+        signalCode: null,
+      };
+    };
+    const mockBuild = async () => {
+      buildCalled = true;
+    };
+
+    let fetchCount = 0;
+    const probeFetch = async () => {
+      fetchCount++;
+      if (fetchCount === 1) {
+        throw new Error('Connection refused');
+      }
+      return { ok: true };
+    };
+
+    const result = await ensureAppServer({
+      app: 'http://127.0.0.1:3101',
+      fetchFn: probeFetch,
+      spawnFn: mockSpawn,
+      buildAppFn: mockBuild,
+    });
+
+    assert.equal(buildCalled, true);
+    assert.equal(spawnCalled, true);
+    assert.equal(result.wasRunning, false);
   });
 });
