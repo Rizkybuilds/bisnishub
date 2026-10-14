@@ -2771,6 +2771,24 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
                 };
               }
               if (activeChild) {
+                const signalAckPromise = new Promise((resolve) => {
+                  const onMsg = (msg) => {
+                    if (
+                      msg &&
+                      typeof msg === 'object' &&
+                      msg.type === 'QA_SIGNAL_RECEIVED'
+                    ) {
+                      activeChild.off('message', onMsg);
+                      resolve();
+                    }
+                  };
+                  activeChild.on('message', onMsg);
+                  setTimeout(() => {
+                    activeChild.off('message', onMsg);
+                    resolve();
+                  }, 250);
+                });
+
                 if (process.platform !== 'win32') {
                   activeChild.kill('SIGTERM');
                 } else if (activeChild.connected) {
@@ -2779,6 +2797,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
                     signal: 'SIGTERM',
                   });
                 }
+
+                await signalAckPromise;
               }
               // Destroy socket before committing so client HTTP response fails while
               // server commit is still pending (commits after client disconnects & exits).

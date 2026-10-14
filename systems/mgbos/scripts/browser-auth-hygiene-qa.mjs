@@ -2566,6 +2566,9 @@ export async function createFixture(
         ) {
           await cleanup(key, fixture, { api, env, fetchFn }).catch(() => {});
         }
+        if (!lifecycleSignal?.aborted) {
+          await new Promise((resolve) => setImmediate(resolve));
+        }
         if (lifecycleSignal?.aborted) {
           throwIfSignalAborted(lifecycleSignal, 'FIXTURE_CREATION');
         }
@@ -4350,7 +4353,7 @@ export async function runQaHarness({
   signalPromise.catch(() => {});
 
   const onSignal = (receivedSignal) => {
-    if (signalError || tearingDown || finalized) {
+    if (signalError || finalized) {
       return;
     }
     const activeStage = stage === 'COMPLETED' ? 'CLEANUP' : stage;
@@ -4364,6 +4367,16 @@ export async function runQaHarness({
     evidence.stage = activeStage;
     evidence.failure = classifyFailure(activeStage, signalError);
     abortController.abort(signalError);
+    if (typeof process.send === 'function') {
+      try {
+        process.send({
+          type: 'QA_SIGNAL_RECEIVED',
+          signal: receivedSignal,
+        });
+      } catch {
+        // Best-effort IPC notification for deterministic test synchronization.
+      }
+    }
     try {
       browser?.cdp?.close?.();
     } catch {
@@ -4514,9 +4527,11 @@ export async function runQaHarness({
       delete evidence.failure;
     });
     executionPromise.catch(() => {});
-
     await Promise.race([executionPromise, signalPromise]);
   } catch (error) {
+    if (!signalError) {
+      await new Promise((resolve) => setImmediate(resolve));
+    }
     const effectiveError = signalError ?? error;
     failure = true;
     evidence.stage =
@@ -4525,10 +4540,6 @@ export async function runQaHarness({
         : stage;
     evidence.failure = classifyFailure(stage, effectiveError);
   } finally {
-    for (const sig of trackedSignals) {
-      process.removeListener(sig, onSignal);
-    }
-    process.removeListener('message', onIpcMessage);
     tearingDown = true;
     if (!signal.aborted) {
       abortController.abort(
@@ -4807,6 +4818,10 @@ export async function runQaHarness({
     }
     finalized = true;
     deepFreeze(evidence);
+    for (const sig of trackedSignals) {
+      process.removeListener(sig, onSignal);
+    }
+    process.removeListener('message', onIpcMessage);
   }
 
   return { evidence, failure, tracePath };
