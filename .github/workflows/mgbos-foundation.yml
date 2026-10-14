@@ -115,6 +115,8 @@ jobs:
           cache: pnpm
           cache-dependency-path: systems/mgbos/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
+      - name: Run browser authentication harness regression tests
+        run: node --test scripts/browser-auth-hygiene-qa.test.mjs
       - name: Prepare disposable local Supabase
         shell: bash
         run: |
@@ -130,26 +132,31 @@ jobs:
             exit 1
           fi
       - name: Run real browser authentication verification
-        run: pnpm qa:browser-auth
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .qa-evidence/browser-auth/positive
+          pos_status=0
+          pnpm qa:browser-auth || pos_status=$?
+          node scripts/browser-auth-hygiene-qa.mjs \
+            --verify-trace .qa-evidence/browser-auth/positive/trace.json \
+            --expected-mode normal \
+            --exit-status "$pos_status"
       - name: Prove broken form login fails the browser gate
         shell: bash
         run: |
           set -euo pipefail
-          if MGBOS_QA_NEGATIVE_CONTROL=1 pnpm qa:browser-auth > /dev/null 2>&1; then
+          rm -rf .qa-evidence/browser-auth/negative-control
+          neg_status=0
+          MGBOS_QA_NEGATIVE_CONTROL=1 pnpm qa:browser-auth > /dev/null 2>&1 || neg_status=$?
+          if [ "$neg_status" -eq 0 ]; then
             echo "::error::Intentional broken-login control incorrectly returned success"
             exit 1
           fi
-          node -e '
-            const fs = require("node:fs");
-            const report = JSON.parse(fs.readFileSync(".qa-evidence/browser-auth/negative-control/trace.json", "utf8"));
-            if (report.mode !== "intentional-broken-login" ||
-                report.overall !== "FAIL" ||
-                report.failure?.code !== "AUTH_VALID_LOGIN_DID_NOT_COMPLETE") {
-              console.error("Negative-control classification mismatch");
-              process.exit(1);
-            }
-            console.log("Negative-control verified: broken login is rejected by the harness");
-          '
+          node scripts/browser-auth-hygiene-qa.mjs \
+            --verify-trace .qa-evidence/browser-auth/negative-control/trace.json \
+            --expected-mode intentional-broken-login \
+            --exit-status "$neg_status"
       - name: Upload sanitized browser verification evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
