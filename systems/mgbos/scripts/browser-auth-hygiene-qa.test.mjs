@@ -3261,16 +3261,69 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
   });
 
   it('QA64-IPC-ACK-01: rejects missing, delayed, wrong, and failed signal dispatch acknowledgments deterministically', async () => {
+    function safelyTerminateChild(child) {
+      if (!child || child.exitCode !== null || child.signalCode !== null) {
+        return Promise.resolve();
+      }
+      return new Promise((resolve) => {
+        if (child.exitCode !== null || child.signalCode !== null) {
+          return resolve();
+        }
+        const onDone = () => {
+          child.removeListener('exit', onDone);
+          child.removeListener('close', onDone);
+          resolve();
+        };
+        child.once('exit', onDone);
+        child.once('close', onDone);
+        try {
+          child.kill('SIGKILL');
+        } catch {
+          resolve();
+        }
+      });
+    }
+
+    function spawnReadyChild(code) {
+      const wrappedCode = `
+        ${code}
+        if (typeof process.send === 'function') {
+          try { process.send({ type: 'CHILD_READY' }); } catch {}
+        }
+      `;
+      const child = spawn(process.execPath, ['-e', wrappedCode], {
+        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+      });
+      const readyPromise = new Promise((resolve, reject) => {
+        const onMsg = (msg) => {
+          if (msg?.type === 'CHILD_READY') {
+            child.off('message', onMsg);
+            child.off('exit', onExit);
+            resolve(child);
+          }
+        };
+        const onExit = (exitCode, sig) => {
+          child.off('message', onMsg);
+          reject(
+            new Error(
+              `Child process exited prematurely (code: ${exitCode}, signal: ${sig}) before READY handshake`,
+            ),
+          );
+        };
+        child.on('message', onMsg);
+        child.once('exit', onExit);
+      });
+      return { child, readyPromise };
+    }
+
     // 1. A child that never ACKs fails synchronization with SIGNAL_ACK_TIMEOUT
     await (async () => {
-      const childCode = `
+      const { child, readyPromise } = spawnReadyChild(`
         process.on('SIGTERM', () => {});
         process.on('message', () => {});
         setInterval(() => {}, 1000);
-      `;
-      const child = spawn(process.execPath, ['-e', childCode], {
-        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
-      });
+      `);
+      await readyPromise;
       try {
         await assert.rejects(
           dispatchAndAwaitSignalAck(child, 'SIGTERM', { timeoutMs: 100 }),
@@ -3282,14 +3335,13 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           },
         );
       } finally {
-        child.kill('SIGKILL');
-        await new Promise((resolve) => child.on('exit', resolve));
+        await safelyTerminateChild(child);
       }
     })();
 
     // 2. An ACK arriving after timeout fails synchronization (late ACK does not resolve or cause unhandled rejections)
     await (async () => {
-      const childCode = `
+      const { child, readyPromise } = spawnReadyChild(`
         const sendLate = (sig) => {
           setTimeout(() => {
             if (typeof process.send === 'function') {
@@ -3306,10 +3358,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           }
         });
         setInterval(() => {}, 1000);
-      `;
-      const child = spawn(process.execPath, ['-e', childCode], {
-        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
-      });
+      `);
+      await readyPromise;
       try {
         const syncPromise = dispatchAndAwaitSignalAck(child, 'SIGTERM', {
           timeoutMs: 60,
@@ -3322,14 +3372,13 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         // Wait for late ACK to arrive from child; verify no unhandled rejection occurs
         await new Promise((resolve) => setTimeout(resolve, 300));
       } finally {
-        child.kill('SIGKILL');
-        await new Promise((resolve) => child.on('exit', resolve));
+        await safelyTerminateChild(child);
       }
     })();
 
     // 3. An ACK with the wrong signal payload fails synchronization with SIGNAL_ACK_MISMATCH
     await (async () => {
-      const childCode = `
+      const { child, readyPromise } = spawnReadyChild(`
         const sendWrong = () => {
           if (typeof process.send === 'function') {
             try {
@@ -3344,10 +3393,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           }
         });
         setInterval(() => {}, 1000);
-      `;
-      const child = spawn(process.execPath, ['-e', childCode], {
-        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
-      });
+      `);
+      await readyPromise;
       try {
         await assert.rejects(
           dispatchAndAwaitSignalAck(child, 'SIGTERM', { timeoutMs: 2000 }),
@@ -3360,8 +3407,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           },
         );
       } finally {
-        child.kill('SIGKILL');
-        await new Promise((resolve) => child.on('exit', resolve));
+        await safelyTerminateChild(child);
       }
     })();
 
@@ -3371,7 +3417,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       const deadChild = spawn(process.execPath, ['-e', 'process.exit(0)'], {
         stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
       });
-      await new Promise((resolve) => deadChild.on('exit', resolve));
+      await safelyTerminateChild(deadChild);
       await assert.rejects(
         dispatchAndAwaitSignalAck(deadChild, 'SIGTERM', { timeoutMs: 2000 }),
         (err) => {
@@ -3391,7 +3437,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       );
 
       // 4c. Child process terminates before sending signal ACK
-      const exitChildCode = `
+      const { child: exitingChild, readyPromise } = spawnReadyChild(`
         process.on('SIGTERM', () => { process.exit(42); });
         process.on('message', (msg) => {
           if (msg?.type === 'QA_TEST_SIGNAL') {
@@ -3399,10 +3445,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           }
         });
         setInterval(() => {}, 1000);
-      `;
-      const exitingChild = spawn(process.execPath, ['-e', exitChildCode], {
-        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
-      });
+      `);
+      await readyPromise;
       try {
         await assert.rejects(
           dispatchAndAwaitSignalAck(exitingChild, 'SIGTERM', {
@@ -3416,16 +3460,13 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           },
         );
       } finally {
-        if (exitingChild.exitCode === null) {
-          exitingChild.kill('SIGKILL');
-          await new Promise((resolve) => exitingChild.on('exit', resolve));
-        }
+        await safelyTerminateChild(exitingChild);
       }
     })();
 
     // 5. Positive case: A healthy child sending matching ACK completes successfully
     await (async () => {
-      const childCode = `
+      const { child, readyPromise } = spawnReadyChild(`
         const sendAck = (sig) => {
           if (typeof process.send === 'function') {
             try {
@@ -3440,10 +3481,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           }
         });
         setInterval(() => {}, 1000);
-      `;
-      const child = spawn(process.execPath, ['-e', childCode], {
-        stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
-      });
+      `);
+      await readyPromise;
       try {
         const result = await dispatchAndAwaitSignalAck(child, 'SIGTERM', {
           timeoutMs: 2000,
@@ -3452,8 +3491,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         assert.equal(result.signal, 'SIGTERM');
         assert.equal(typeof result.latencyMs, 'number');
       } finally {
-        child.kill('SIGKILL');
-        await new Promise((resolve) => child.on('exit', resolve));
+        await safelyTerminateChild(child);
       }
     })();
   });
