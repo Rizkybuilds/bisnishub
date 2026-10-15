@@ -3,7 +3,7 @@
 -- Covers Acceptance Criteria: AC-001 through AC-010 (ORG-01 to ORG-10)
 
 begin;
-select plan(32);
+select plan(54);
 
 -- ============================================================================
 -- 1. Database Privilege Catalog Verification (ORG-08 Fail-Closed Hardening)
@@ -44,6 +44,71 @@ select ok(
   has_function_privilege('service_role', 'app.create_retail_order(uuid,uuid,uuid,uuid,jsonb,uuid,jsonb,bigint,text,boolean,text,text,text)', 'EXECUTE'),
   'ORG-08: service_role granted EXECUTE on app.create_retail_order'
 );
+
+-- Direct low-privilege RPC execution denial tests (R4-QA-04)
+set local role anon;
+select throws_ok(
+  $q$
+    select app.create_order_from_quote(
+      'a2222222-2222-4000-8000-000000000001'::uuid,
+      'a1111111-1111-4000-8000-000000000001'::uuid,
+      gen_random_uuid(),
+      gen_random_uuid(),
+      '{}'::jsonb
+    )
+  $q$,
+  '42501',
+  null,
+  'ORG-08: Direct RPC execution of create_order_from_quote as anon is denied with 42501'
+);
+
+select throws_ok(
+  $q$
+    select app.create_retail_order(
+      'a2222222-2222-4000-8000-000000000001'::uuid,
+      'a1111111-1111-4000-8000-000000000001'::uuid,
+      'a2222222-2222-4000-8000-000000000002'::uuid,
+      'a2222222-2222-4000-8000-000000000005'::uuid,
+      '[]'::jsonb
+    )
+  $q$,
+  '42501',
+  null,
+  'ORG-08: Direct RPC execution of create_retail_order as anon is denied with 42501'
+);
+
+set local role authenticated;
+select throws_ok(
+  $q$
+    select app.create_order_from_quote(
+      'a2222222-2222-4000-8000-000000000001'::uuid,
+      'a1111111-1111-4000-8000-000000000001'::uuid,
+      gen_random_uuid(),
+      gen_random_uuid(),
+      '{}'::jsonb
+    )
+  $q$,
+  '42501',
+  null,
+  'ORG-08: Direct RPC execution of create_order_from_quote as authenticated is denied with 42501'
+);
+
+select throws_ok(
+  $q$
+    select app.create_retail_order(
+      'a2222222-2222-4000-8000-000000000001'::uuid,
+      'a1111111-1111-4000-8000-000000000001'::uuid,
+      'a2222222-2222-4000-8000-000000000002'::uuid,
+      'a2222222-2222-4000-8000-000000000005'::uuid,
+      '[]'::jsonb
+    )
+  $q$,
+  '42501',
+  null,
+  'ORG-08: Direct RPC execution of create_retail_order as authenticated is denied with 42501'
+);
+
+reset role;
 
 
 -- ============================================================================
@@ -508,6 +573,273 @@ end;
 $$;
 
 select ok(true, 'ORG-10: Tenant nondisclosure verified; error message leaks no foreign organization or constraint data');
+
+-- ============================================================================
+-- 8. Genuine INSERT unique_violation Collision Isolation (R4-QA-02)
+-- ============================================================================
+
+-- Setup second B2B accepted quote for genuine unique collision test
+create temporary table test_b2b_req_2 as select app.create_requirement_with_initial_version(
+  p_organization_id => org1,
+  p_brand_id => brand1,
+  p_title => 'SEC02 Test B2B Collision Requirement',
+  p_summary => '25 pcs Custom Polos',
+  p_customer_account_id => cust1,
+  p_quantity => 25,
+  p_actor_id => 'a1111111-1111-4000-8000-000000000001'
+) result from test_ctx;
+
+select app.transition_requirement_status(org1, (result->>'requirement_id')::uuid, 'READY', 'a1111111-1111-4000-8000-000000000001')
+from test_ctx, test_b2b_req_2;
+
+create temporary table test_b2b_quote_2 as select app.save_quote_version(
+  p_organization_id => org1,
+  p_actor_id => 'a1111111-1111-4000-8000-000000000001',
+  p_request_id => 'b1111111-1111-4000-8000-000000000002',
+  p_requirement_version_id => (result->>'version_id')::uuid,
+  p_customer_id => cust1,
+  p_unit_price => 120000,
+  p_discount => 0,
+  p_shipping => 25000,
+  p_costs => jsonb_build_array(
+    jsonb_build_object('cost_type', 'GARMENT', 'description', 'Polo Cotton', 'quantity', 25, 'unit_cost', 60000)
+  ),
+  p_valid_until => current_date + 14,
+  p_terms => 'DP 50%',
+  p_lead_time => '7 hari',
+  p_notes => 'SEC02 Quote 2 Org 1'
+) result from test_ctx, test_b2b_req_2;
+
+select app.mark_quote_sent(org1, 'a1111111-1111-4000-8000-000000000001', (result->>'version_id')::uuid)
+from test_ctx, test_b2b_quote_2;
+
+select app.mark_quote_accepted(
+  org1,
+  'a1111111-1111-4000-8000-000000000001',
+  (result->>'version_id')::uuid,
+  'DIRECT',
+  null,
+  'Customer accepted quote 2'
+) from test_ctx, test_b2b_quote_2;
+
+-- Pre-insert an order that intentionally occupies order_number 'TS-O-2026-000003'
+insert into app.orders (
+  id, organization_id, brand_id, customer_account_id,
+  order_number, status, currency, subtotal, discount_total,
+  shipping_total, grand_total, estimated_cost_total, estimated_gross_profit,
+  customer_snapshot, shipping_address_snapshot, payment_terms_snapshot,
+  created_by_user_id, request_id, order_type
+)
+select
+  gen_random_uuid(), org1, brand1, cust1,
+  'TS-O-2026-000003', 'CONFIRMED', 'IDR', 100000, 0,
+  10000, 110000, 50000, 50000,
+  '{"name":"Pre-colliding Order"}'::jsonb,
+  '{"recipient_name":"Test","phone":"081234","street":"Jl. Test No. 1","city":"Bandung"}'::jsonb,
+  '{"terms":"CASH"}'::jsonb,
+  'a1111111-1111-4000-8000-000000000001', gen_random_uuid(), 'RETAIL_DIRECT'
+from test_ctx;
+
+-- Record baseline counts before collision attempt
+create temporary table b2b_collision_pre as select
+  (select count(*)::integer from app.order_items oi join app.orders o on o.id = oi.order_id where o.organization_id = (select org1 from test_ctx)) as items_count,
+  (select count(*)::integer from app.order_audit where organization_id = (select org1 from test_ctx)) as audit_count;
+
+-- ORG-09: Genuine uniqueness collision on orders_organization_id_order_number_key in create_order_from_quote
+select throws_ok(
+  $q$
+    select app.create_order_from_quote(
+      p_organization_id => (select org1 from test_ctx),
+      p_actor_id => 'a1111111-1111-4000-8000-000000000001',
+      p_request_id => 'f1111111-1111-4000-8000-000000000001',
+      p_quote_version_id => (select (result->>'version_id')::uuid from test_b2b_quote_2),
+      p_shipping_address => '{"recipient_name":"Colliding B2B","phone":"081234567","street":"Jl. Test","city":"Bandung"}'::jsonb
+    )
+  $q$,
+  'P0001',
+  'Unauthorized or request invalid',
+  'ORG-09: Genuine B2B unique order_number constraint violation handled fail-closed with generic denial'
+);
+
+select is(
+  (select count(*)::integer from app.order_items oi join app.orders o on o.id = oi.order_id where o.organization_id = (select org1 from test_ctx)),
+  (select items_count from b2b_collision_pre),
+  'ORG-09: Genuine B2B unique violation causes zero new order items'
+);
+
+select is(
+  (select count(*)::integer from app.order_audit where organization_id = (select org1 from test_ctx)),
+  (select audit_count from b2b_collision_pre),
+  'ORG-09: Genuine B2B unique violation causes zero new audit entries'
+);
+
+-- Baseline for Retail collision
+create temporary table retail_collision_pre as select
+  (select count(*)::integer from app.order_items oi join app.orders o on o.id = oi.order_id where o.organization_id = (select org1 from test_ctx)) as items_count,
+  (select count(*)::integer from app.invoices where organization_id = (select org1 from test_ctx)) as invoice_count,
+  (select count(*)::integer from app.inventory_reservations where organization_id = (select org1 from test_ctx)) as res_count;
+
+-- ORG-09: Genuine uniqueness collision on orders_organization_id_order_number_key in create_retail_order
+select throws_ok(
+  $q$
+    select app.create_retail_order(
+      p_organization_id => (select org1 from test_ctx),
+      p_actor_id => 'a1111111-1111-4000-8000-000000000001',
+      p_brand_id => (select brand1 from test_ctx),
+      p_customer_account_id => (select cust1 from test_ctx),
+      p_items => jsonb_build_array(
+        jsonb_build_object(
+          'inventory_item_id', (select (result->>'inventory_item_id')::uuid from test_retail_sku),
+          'quantity', 1,
+          'unit_price', 65000::bigint
+        )
+      ),
+      p_request_id => 'f1111111-1111-4000-8000-000000000002',
+      p_auto_pay => false
+    )
+  $q$,
+  'P0001',
+  'Unauthorized or request invalid',
+  'ORG-09: Genuine Retail unique order_number constraint violation handled fail-closed with generic denial'
+);
+
+select is(
+  (select count(*)::integer from app.order_items oi join app.orders o on o.id = oi.order_id where o.organization_id = (select org1 from test_ctx)),
+  (select items_count from retail_collision_pre),
+  'ORG-09: Genuine Retail unique violation causes zero new order items'
+);
+
+select is(
+  (select count(*)::integer from app.invoices where organization_id = (select org1 from test_ctx)),
+  (select invoice_count from retail_collision_pre),
+  'ORG-09: Genuine Retail unique violation causes zero new invoices'
+);
+
+select is(
+  (select count(*)::integer from app.inventory_reservations where organization_id = (select org1 from test_ctx)),
+  (select res_count from retail_collision_pre),
+  'ORG-09: Genuine Retail unique violation causes zero new inventory reservations'
+);
+
+
+-- ============================================================================
+-- 9. Committed Response Lost & Retry Isolation (R4-QA-03 / ORG-10)
+-- ============================================================================
+
+-- ORG-10: Committed response lost scenario for B2B order
+create temporary table b2b_retry_lost as select app.create_order_from_quote(
+  p_organization_id => org1,
+  p_actor_id => 'a1111111-1111-4000-8000-000000000001',
+  p_request_id => 'd1111111-1111-4000-8000-000000000001',
+  p_quote_version_id => (result->>'version_id')::uuid,
+  p_shipping_address => '{"recipient_name":"Budi","phone":"0812","street":"Jl. Bandung","city":"Bandung"}'::jsonb
+) result from test_ctx, test_b2b_quote;
+
+select is(
+  (select (result->>'order_id') from b2b_retry_lost),
+  (select (result->>'order_id') from b2b_order_1),
+  'ORG-10: Committed lost-response B2B retry in same org returns original order_id'
+);
+
+select is(
+  (select (result->>'is_retry')::boolean from b2b_retry_lost),
+  true,
+  'ORG-10: Committed lost-response B2B retry returns is_retry = true'
+);
+
+select throws_ok(
+  $q$
+    select app.create_order_from_quote(
+      p_organization_id => (select org2 from test_ctx),
+      p_actor_id => 'a1111111-1111-4000-8000-000000000001',
+      p_request_id => 'd1111111-1111-4000-8000-000000000001',
+      p_quote_version_id => gen_random_uuid(),
+      p_shipping_address => '{"recipient_name":"Attacker","phone":"0812","street":"Jl. Bandung","city":"Bandung"}'::jsonb
+    )
+  $q$,
+  'P0001',
+  'Unauthorized or request invalid',
+  'ORG-10: Committed lost-response B2B retry in foreign org fails closed with generic denial'
+);
+
+-- ORG-10: Committed response lost scenario for Retail order
+create temporary table retail_retry_lost as select app.create_retail_order(
+  p_organization_id => org1,
+  p_actor_id => 'a1111111-1111-4000-8000-000000000001',
+  p_brand_id => brand1,
+  p_customer_account_id => cust1,
+  p_items => jsonb_build_array(
+    jsonb_build_object(
+      'inventory_item_id', (select (result->>'inventory_item_id')::uuid from test_retail_sku),
+      'quantity', 4,
+      'unit_price', 65000::bigint
+    )
+  ),
+  p_request_id => 'e1111111-1111-4000-8000-000000000001'
+) result from test_ctx;
+
+select is(
+  (select (result->>'order_id') from retail_retry_lost),
+  (select (result->>'order_id') from retail_order_1),
+  'ORG-10: Committed lost-response Retail retry in same org returns original order_id'
+);
+
+select is(
+  (select (result->>'is_idempotent')::boolean from retail_retry_lost),
+  true,
+  'ORG-10: Committed lost-response Retail retry returns is_idempotent = true'
+);
+
+select throws_ok(
+  $q$
+    select app.create_retail_order(
+      p_organization_id => (select org2 from test_ctx),
+      p_actor_id => 'a1111111-1111-4000-8000-000000000001',
+      p_brand_id => (select brand2 from test_ctx),
+      p_customer_account_id => (select cust2 from test_ctx),
+      p_items => '[]'::jsonb,
+      p_request_id => 'e1111111-1111-4000-8000-000000000001'
+    )
+  $q$,
+  'P0001',
+  'Unauthorized or request invalid',
+  'ORG-10: Committed lost-response Retail retry in foreign org fails closed with generic denial'
+);
+
+
+-- ============================================================================
+-- 10. Negative Assurance: Foreign Org Zero Side Effects (R4-QA-04)
+-- ============================================================================
+
+select is(
+  (select count(*)::integer from app.orders where organization_id = (select org2 from test_ctx)),
+  0,
+  'ORG-10: Zero orders exist in Org 2 across all tests'
+);
+
+select is(
+  (select count(*)::integer from app.order_items oi join app.orders o on o.id = oi.order_id where o.organization_id = (select org2 from test_ctx)),
+  0,
+  'ORG-10: Zero order items exist in Org 2 across all tests'
+);
+
+select is(
+  (select count(*)::integer from app.order_audit where organization_id = (select org2 from test_ctx)),
+  0,
+  'ORG-10: Zero order audit records exist in Org 2 across all tests'
+);
+
+select is(
+  (select count(*)::integer from app.invoices where organization_id = (select org2 from test_ctx)),
+  0,
+  'ORG-10: Zero invoices exist in Org 2 across all tests'
+);
+
+select is(
+  (select count(*)::integer from app.inventory_reservations where organization_id = (select org2 from test_ctx)),
+  0,
+  'ORG-10: Zero inventory reservations exist in Org 2 across all tests'
+);
 
 select * from finish();
 rollback;
