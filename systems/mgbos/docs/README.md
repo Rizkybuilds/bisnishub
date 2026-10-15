@@ -17,11 +17,15 @@ prepared_against:
   commit: 2800c474563309bda49d84d712f79b68c9dde36a
   reviewed_at: 2026-10-15
 
+current_product_program: FOUNDER_CONTROL
+current_implementation_phase: PHASE_2_FOUNDER_CONTROL
+current_program_state: P2A_SOFTWARE_COMPLETE_WP04_VERIFIED_NO_ACTIVE_WP
+
 documentation_program:
-  program: FOUNDER_CONTROL_PRODUCT_PACKAGE_RECONCILIATION
-  prior_program: W0_CURRENT_STATE_RECONCILIATION
-  status: CLOSING_RECONCILIATION
-  next_gate: ARCHITECTURE_IMPACT_REVIEW
+  program: FOUNDER_CONTROL_ENTRYPOINT_RECONCILIATION
+  prior_program: FOUNDER_CONTROL_PRODUCT_PACKAGE_RECONCILIATION
+  status: ACTIVE
+  next_gate: P2_B_HEAD_ENGINEERING_PLANNING
 
 authoritative_for:
   - MGBOS documentation navigation
@@ -558,12 +562,24 @@ PRODUCT PACKAGE
 =
 DEFINED
 
+ARCHITECTURE IMPACT REVIEW
+=
+COMPLETE
+
+PHASE 2 P2-A SOFTWARE
+=
+COMPLETE / POST-MERGE VERIFIED
+
+ACTIVE WORK PACKAGE
+=
+NONE
+
 NEXT GATE
 =
-ARCHITECTURE IMPACT REVIEW
+P2-B HEAD ENGINEERING PLANNING
 ```
 
-The document is verified present and active on remote `main`. The product index routes current Founder Control product work through this plan and its companion specifications (D1 through D4) toward Architecture Impact Review.
+The document is verified present and active on remote `main`. The product index routes Founder Control product work through this plan and its companion specifications (D1 through D4). Architecture Impact Review was completed, Phase 2 P2-A Operational Exception Foundation is software complete and post-merge verified, and the next gate is P2-B Head Engineering technical planning (no active work package, no Builder implementation authorized).
 
 ---
 
@@ -706,20 +722,32 @@ Primary entrypoint:
 implementation/README.md
 ```
 
-Current interpretation (W0 reconciliation complete):
+Current interpretation:
 
 ```text
 PHASE 1
 =
 CLOSED
 
-ACTIVE NEW IMPLEMENTATION PHASE
+ACTIVE MGBOS IMPLEMENTATION PHASE
+=
+PHASE_2_FOUNDER_CONTROL
+
+P2-A OPERATIONAL EXCEPTION FOUNDATION
+=
+SOFTWARE COMPLETE / POST-MERGE VERIFIED
+
+ACTIVE WORK PACKAGE
 =
 NONE
 
-CURRENT PRODUCT PROGRAM
+NEXT PROGRAM DIRECTION
 =
-FOUNDER CONTROL PRODUCT DEFINITION
+P2_B_FOUNDER_ATTENTION_HEAD_ENGINEERING_PLANNING
+
+BUILDER AUTHORIZATION
+=
+NONE
 ```
 
 ---
@@ -1044,32 +1072,39 @@ These are independent evidence classes.
 
 ---
 
-# 39. No Active MGBOS Implementation Phase
+# 39. Active Implementation Phase & Work Package Status
 
 Current intended program state:
 
 ```text
 ACTIVE MGBOS IMPLEMENTATION PHASE
 =
+PHASE_2_FOUNDER_CONTROL
+
+P2-A OPERATIONAL EXCEPTION FOUNDATION
+=
+SOFTWARE COMPLETE / POST-MERGE VERIFIED
+
+ACTIVE WORK PACKAGE
+=
+NONE
+
+NEXT PROGRAM DIRECTION
+=
+P2-B FOUNDER ATTENTION — HEAD ENGINEERING PLANNING
+
+BUILDER AUTHORIZATION
+=
 NONE
 ```
 
-Founder Control remains in product-definition/reconciliation work until applicable gates pass.
+Phase 1 is closed. Phase 2 Founder Control bounded implementation is active, with P2-A Operational Exception Foundation software complete and post-merge verified. No active work package currently exists, and P2-B technical planning is the next Head Engineering direction (no Builder implementation is authorized).
 
 ---
 
-# 40. Phase 2 Creation Gate
+# 40. Phase 2 Creation Gate (Historical Gate — Satisfied)
 
-Do not create:
-
-```text
-implementation/
-phase-2-founder-control/
-```
-
-merely because Founder Control is the next product program.
-
-Create a new implementation phase only after:
+The Phase 2 creation gate was formally satisfied prior to WP-P2A-01:
 
 ```text
 product scope
@@ -1101,7 +1136,7 @@ completion gate
 defined
 ```
 
-Historical Note: The Phase 2 creation gate was formally satisfied prior to WP-P2A-01, and `phase-2-founder-control/` is physically present for the software-completed P2-A slice. Future implementation work (such as P2-B) requires its own bounded Head Engineering technical plan and implementation contract before execution is authorized.
+The directory `implementation/phase-2-founder-control/` is physically present for the software-completed P2-A slice (WP-P2A-01 through WP-P2A-04, post-merge verified). Future increments (such as P2-B) require their own bounded Head Engineering technical plan, Implementation Contract, and Work Package before any Builder implementation is authorized. Do not treat historical creation criteria as instructions to recreate or delete existing directories.
 
 ---
 
@@ -2197,20 +2232,24 @@ W0 CURRENT-STATE RECONCILIATION
 =
 COMPLETE
 
-CURRENT PROGRAM
+PRIOR PROGRAM
 =
-FOUNDER CONTROL PRODUCT PACKAGE RECONCILIATION
+FOUNDER CONTROL PRODUCT PACKAGE RECONCILIATION (COMPLETE)
+
+CURRENT DOCUMENTATION PROGRAM
+=
+FOUNDER CONTROL ENTRYPOINT RECONCILIATION
 
 STATUS
 =
-CLOSING RECONCILIATION
+ACTIVE
 
 NEXT GATE
 =
-ARCHITECTURE IMPACT REVIEW
+P2-B HEAD ENGINEERING PLANNING
 ```
 
-W0 removed false current-state signals after Phase 1 closure. The Founder Control product definition family (D0–D4) is now active and defined, with Architecture Impact Review as the next material gate.
+W0 removed false current-state signals after Phase 1 closure. The Founder Control product definition family (D0–D4) was defined and underwent Architecture Impact Review. Phase 2 P2-A Operational Exception Foundation is software complete and post-merge verified. The current documentation program reconciles repository entrypoints and documentation indices, with P2-B Head Engineering technical planning as the next material program direction.
 
 ---
 
@@ -2255,9 +2294,9 @@ All W0 documentation changes have been applied, reconciled, and verified on `mai
 
 ---
 
-# 85. W0 Reconciled Outcome
+# 85. W0 Reconciled Outcome (Historical Baseline)
 
-With the W0 patch set completed, a fresh machine resolves:
+At the completion of the W0 documentation reconciliation patch set, a fresh machine resolved:
 
 ```text
 MGBOS PHASE 1
@@ -2276,9 +2315,9 @@ FOUNDER CONTROL PRODUCT PACKAGE (D0-D4)
 =
 ACTIVE / DEFINED
 
-ACTIVE NEW IMPLEMENTATION PHASE
+HISTORICAL IMPLEMENTATION PHASE AT W0
 =
-NONE
+NONE (PHASE 2 UNOPENED AT W0)
 
 PRODUCTION READINESS
 =
@@ -2288,12 +2327,12 @@ REAL TRANSACTION READINESS
 =
 GATED
 
-NEXT MATERIAL GATE
+HISTORICAL GATE AT W0
 =
 ARCHITECTURE IMPACT REVIEW
 ```
 
-without relying on private conversation history.
+without relying on private conversation history. (Note: Subsequent to W0, Architecture Impact Review was conducted, Phase 2 Founder Control was opened, and P2-A Operational Exception Foundation was completed and verified; see Section 39.)
 
 ---
 
@@ -2337,13 +2376,13 @@ D3: operational-exception-spec.md (ACTIVE)
 D4: teestock-operational-pilot-plan.md (ACTIVE)
 ```
 
-The Founder Control product package is defined, active implementation phase is none, and the next gate is Architecture Impact Review.
+Historically at W0/D0 release, the Founder Control product package was defined, the active implementation phase was none, and the next gate was Architecture Impact Review. Subsequently, Architecture Impact Review was completed, Phase 2 P2-A software was completed and post-merge verified, and the active program direction is now P2-B Head Engineering planning.
 
 ---
 
-# 88. D1 Does Not Open Phase 2
+# 88. D1 Does Not Open Phase 2 (Governed Principle)
 
-Creating D1 does NOT mean:
+Creating D1 did NOT automatically mean:
 
 ```text
 PHASE 2 IMPLEMENTATION
@@ -2351,7 +2390,7 @@ PHASE 2 IMPLEMENTATION
 OPEN
 ```
 
-Product definition still needs:
+Product definition required:
 
 ```text
 Founder Attention specification
@@ -2367,7 +2406,7 @@ architecture impact review
 engineering discovery
 ```
 
-before implementation authorization.
+before implementation authorization. These requirements were historically satisfied prior to the authorization and execution of Phase 2 P2-A. The principle remains authoritative for future product-to-implementation transitions (such as P2-B and beyond).
 
 ---
 
@@ -2518,7 +2557,7 @@ systems/mgbos/
 
 # 94. Current Program Summary
 
-Current program interpretation (W0 complete, D0–D4 active):
+Current program interpretation:
 
 ```text
 ARCHITECTURE
@@ -2539,6 +2578,14 @@ DEFINED
 
 ACTIVE IMPLEMENTATION PHASE
 =
+PHASE_2_FOUNDER_CONTROL
+
+P2-A OPERATIONAL EXCEPTION FOUNDATION
+=
+SOFTWARE COMPLETE / POST-MERGE VERIFIED
+
+ACTIVE WORK PACKAGE
+=
 NONE
 
 OPERATIONAL READINESS
@@ -2547,7 +2594,7 @@ NOT PRODUCTION READY
 
 NEXT GATE
 =
-ARCHITECTURE IMPACT REVIEW
+P2-B HEAD ENGINEERING PLANNING
 ```
 
 ---
@@ -2624,10 +2671,13 @@ Question:
 Answer:
 
 ```text
-DO NOT ASSUME.
+YES.
 
-Resolve product specification
-and current canonical architecture first.
+Operational Exception was implemented as a canonical domain entity, database schema, and console foundation under P2-A (WP-P2A-01 through WP-P2A-04).
+
+See:
+systems/mgbos/docs/implementation/phase-2-founder-control/README.md
+systems/mgbos/supabase/migrations/20261006000000_operational_exception_foundation.sql
 ```
 
 ---
@@ -2694,4 +2744,4 @@ GUESS CURRENT STATE
 
 Current MGBOS documentation direction is therefore:
 
-> **Phase 1 is a closed implementation chapter. Founder Control is the next product-definition program. No new MGBOS implementation phase is currently authorized, production readiness remains separately gated, and future documentation directories must not be represented as current physical reality until they actually exist.**
+> **Phase 1 is a closed implementation chapter. Phase 2 Founder Control bounded implementation is active, with P2-A Operational Exception Foundation software complete and post-merge verified. No active work package currently exists, P2-B Founder Attention technical planning is the next Head Engineering direction (no Builder implementation is authorized), production readiness remains separately gated, and future documentation directories must not be represented as current physical reality until they actually exist.**
