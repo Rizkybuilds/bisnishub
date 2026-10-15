@@ -12,17 +12,123 @@ export const metadata = {
   title: 'Customer 360 — MultiGraph Business OS',
 };
 
+function isValidCustomerContact(c: unknown): boolean {
+  if (typeof c !== 'object' || c === null) return false;
+  const contact = c as Record<string, unknown>;
+  if (typeof contact.id !== 'string') return false;
+  if (typeof contact.name !== 'string') return false;
+  if (typeof contact.is_primary !== 'boolean') return false;
+  if (
+    contact.email !== undefined &&
+    contact.email !== null &&
+    typeof contact.email !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    contact.phone !== undefined &&
+    contact.phone !== null &&
+    typeof contact.phone !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    contact.position !== undefined &&
+    contact.position !== null &&
+    typeof contact.position !== 'string'
+  ) {
+    return false;
+  }
+  return true;
+}
+
+function isValidCustomerBrandRelationship(rel: unknown): boolean {
+  if (typeof rel !== 'object' || rel === null) return false;
+  const r = rel as Record<string, unknown>;
+  if (typeof r.id !== 'string') return false;
+  if (r.brand_id !== undefined && typeof r.brand_id !== 'string') return false;
+  if (
+    r.customer_segment !== undefined &&
+    r.customer_segment !== null &&
+    typeof r.customer_segment !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.relationship_status !== undefined &&
+    r.relationship_status !== null &&
+    typeof r.relationship_status !== 'string'
+  ) {
+    return false;
+  }
+  if (r.brands !== undefined && r.brands !== null) {
+    if (typeof r.brands !== 'object') return false;
+    const b = r.brands as Record<string, unknown>;
+    if (b.code !== undefined && typeof b.code !== 'string') return false;
+    if (b.name !== undefined && typeof b.name !== 'string') return false;
+  }
+  return true;
+}
+
 function isValidCustomerRecord(record: unknown): record is CustomerData {
   if (typeof record !== 'object' || record === null) return false;
   const r = record as Record<string, unknown>;
-  return (
-    typeof r.id === 'string' &&
-    (r.account_type === 'PERSON' || r.account_type === 'COMPANY') &&
-    typeof r.display_name === 'string' &&
-    typeof r.status === 'string' &&
-    Array.isArray(r.customer_contacts) &&
-    Array.isArray(r.customer_brand_relationships)
-  );
+  if (typeof r.id !== 'string') return false;
+  if (r.account_type !== 'PERSON' && r.account_type !== 'COMPANY') return false;
+  if (typeof r.display_name !== 'string') return false;
+  if (typeof r.status !== 'string') return false;
+
+  if (
+    r.legal_name !== undefined &&
+    r.legal_name !== null &&
+    typeof r.legal_name !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.primary_email !== undefined &&
+    r.primary_email !== null &&
+    typeof r.primary_email !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.primary_phone !== undefined &&
+    r.primary_phone !== null &&
+    typeof r.primary_phone !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.tax_id !== undefined &&
+    r.tax_id !== null &&
+    typeof r.tax_id !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.customer_since !== undefined &&
+    r.customer_since !== null &&
+    typeof r.customer_since !== 'string'
+  ) {
+    return false;
+  }
+
+  if (
+    !Array.isArray(r.customer_contacts) ||
+    !r.customer_contacts.every(isValidCustomerContact)
+  ) {
+    return false;
+  }
+
+  if (
+    !Array.isArray(r.customer_brand_relationships) ||
+    !r.customer_brand_relationships.every(isValidCustomerBrandRelationship)
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 async function fetchCustomersData(
@@ -105,7 +211,7 @@ function computeCustomerKpis(
     personCount: customers.filter((c) => c.account_type === 'PERSON').length,
     activeBrandCustomers: customers.filter((c) =>
       c.customer_brand_relationships?.some(
-        (r) => r.brands?.code === activeBrandCode,
+        (r) => r && r.brands?.code === activeBrandCode,
       ),
     ).length,
   };

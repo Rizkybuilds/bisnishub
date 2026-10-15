@@ -402,7 +402,38 @@ describe('UXR02-A Customers Server Component & Data States Acceptance Suite', ()
       expect(tableElement.props.dataState.status).toBe('UNAVAILABLE');
     });
 
-    it('AC-A05 & F03: detects malformed responses and synthetic corrupt records safely', async () => {
+    it('AC-A05, F03 & F04: detects malformed responses, corrupt records, and malformed nested arrays safely', async () => {
+      const validBaseCustomer = {
+        id: 'cust-99',
+        account_type: 'COMPANY',
+        display_name: 'PT Valid Outer',
+        legal_name: 'PT Valid Outer Mandiri',
+        primary_email: 'outer@valid.co.id',
+        primary_phone: '081200001111',
+        tax_id: '01.234.567.8-999.000',
+        status: 'ACTIVE',
+        customer_since: '2026-01-01T00:00:00Z',
+        customer_contacts: [
+          {
+            id: 'pic-1',
+            name: 'Budi Santoso',
+            email: 'budi@valid.co.id',
+            phone: '081200001111',
+            position: 'Director',
+            is_primary: true,
+          },
+        ],
+        customer_brand_relationships: [
+          {
+            id: 'rel-1',
+            brand_id: 'br-ts',
+            customer_segment: 'CORPORATE_BULK',
+            relationship_status: 'ACTIVE',
+            brands: { id: 'br-ts', code: 'TS', name: 'TeeStock' },
+          },
+        ],
+      };
+
       const malformedPayloads = [
         { desc: 'non-array object', json: { error: 'invalid payload' } },
         { desc: 'array with null element', json: [null] },
@@ -417,6 +448,127 @@ describe('UXR02-A Customers Server Component & Data States Acceptance Suite', ()
               display_name: 'PT Invalid',
               status: 'ACTIVE',
               // missing customer_contacts & customer_brand_relationships
+            },
+          ],
+        },
+        {
+          desc: 'F04: customer_brand_relationships containing null element',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_brand_relationships: [null],
+            },
+          ],
+        },
+        {
+          desc: 'F04: customer_contacts containing null element',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_contacts: [null],
+            },
+          ],
+        },
+        {
+          desc: 'F04: customer_brand_relationships with primitive string brand',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_brand_relationships: [
+                {
+                  id: 'rel-1',
+                  brand_id: 'br-ts',
+                  customer_segment: 'CORPORATE_BULK',
+                  relationship_status: 'ACTIVE',
+                  brands: 'invalid-brand-string',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          desc: 'F04: customer_brand_relationships with non-string brand code',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_brand_relationships: [
+                {
+                  id: 'rel-1',
+                  brand_id: 'br-ts',
+                  customer_segment: 'CORPORATE_BULK',
+                  relationship_status: 'ACTIVE',
+                  brands: { id: 'br-ts', code: 12345, name: 'TeeStock' },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          desc: 'F04: customer_contacts with missing required name and is_primary',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_contacts: [{ id: 'pic-1' }],
+            },
+          ],
+        },
+        {
+          desc: 'F04: customer_contacts with non-boolean is_primary',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_contacts: [
+                {
+                  id: 'pic-1',
+                  name: 'Budi',
+                  is_primary: 'yes-is-primary',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          desc: 'F04: customer_contacts is string instead of array',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_contacts: 'not-an-array',
+            },
+          ],
+        },
+        {
+          desc: 'F04: customer_brand_relationships is string instead of array',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_brand_relationships: 'not-an-array',
+            },
+          ],
+        },
+        {
+          desc: 'F04: optional legal_name has wrong type number',
+          json: [
+            {
+              ...validBaseCustomer,
+              legal_name: 123456,
+            },
+          ],
+        },
+        {
+          desc: 'F04: optional tax_id has wrong type boolean',
+          json: [
+            {
+              ...validBaseCustomer,
+              tax_id: true,
+            },
+          ],
+        },
+        {
+          desc: 'F04: optional primary_email has wrong type array',
+          json: [
+            {
+              ...validBaseCustomer,
+              primary_email: ['invalid@email.com'],
             },
           ],
         },
@@ -435,6 +587,7 @@ describe('UXR02-A Customers Server Component & Data States Acceptance Suite', ()
         // Fails closed as UNAVAILABLE, never turning corrupt records into SUCCESS
         expect(text).toContain('Format data customer tidak valid.');
         expect(text).not.toContain('0 Akun');
+        expect(text).toContain('—');
 
         const tableElement = requireComponentInJsx(
           pageJsx,
@@ -445,6 +598,82 @@ describe('UXR02-A Customers Server Component & Data States Acceptance Suite', ()
           message: 'Format data customer tidak valid.',
         });
       }
+    });
+
+    it('AC-A05 & F04: accepts valid PostgREST records with empty or nullable nested relations', async () => {
+      const validCustomersWithEdgeCases = [
+        {
+          id: 'cust-edge-01',
+          account_type: 'COMPANY',
+          display_name: 'PT Minimal Relations',
+          legal_name: null,
+          primary_email: null,
+          primary_phone: null,
+          tax_id: null,
+          status: 'ACTIVE',
+          customer_since: null,
+          customer_contacts: [],
+          customer_brand_relationships: [],
+        },
+        {
+          id: 'cust-edge-02',
+          account_type: 'PERSON',
+          display_name: 'Siti Rahma',
+          legal_name: null,
+          primary_email: 'siti@example.com',
+          primary_phone: null,
+          tax_id: null,
+          status: 'ACTIVE',
+          customer_since: '2026-02-15T00:00:00Z',
+          customer_contacts: [
+            {
+              id: 'pic-e1',
+              name: 'Siti Rahma',
+              email: null,
+              phone: null,
+              position: null,
+              is_primary: true,
+            },
+          ],
+          customer_brand_relationships: [
+            {
+              id: 'rel-e1',
+              brand_id: 'br-ts',
+              customer_segment: 'INDIVIDUAL',
+              relationship_status: 'ACTIVE',
+              brands: null,
+            },
+            {
+              id: 'rel-e2',
+              brand_id: 'br-ts',
+              customer_segment: 'INDIVIDUAL',
+              relationship_status: 'ACTIVE',
+              brands: { id: 'br-ts', code: 'TS', name: 'TeeStock' },
+            },
+          ],
+        },
+      ];
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => validCustomersWithEdgeCases,
+      });
+
+      const pageJsx = await CustomersPage();
+      const text = extractTextFromJsx(pageJsx);
+
+      expect(text).toContain('2 Akun');
+      expect(text).toContain('1 Perusahaan');
+      expect(text).toContain('1 Individu');
+      expect(text).toContain('1 Customer');
+      expect(text).not.toContain('Format data customer tidak valid.');
+
+      const tableElement = requireComponentInJsx(pageJsx, 'CustomerListTable');
+      expect(tableElement.props.dataState).toEqual({
+        status: 'SUCCESS',
+        data: validCustomersWithEdgeCases,
+      });
     });
 
     it('AC-A07: provides authorized server-side retry action without business mutation', async () => {

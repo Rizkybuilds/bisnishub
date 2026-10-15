@@ -57,7 +57,7 @@ export function filterCustomers(
     // Brand filter
     if (brandFilter === 'ACTIVE') {
       const hasBrand = cust.customer_brand_relationships?.some(
-        (rel) => rel.brands?.code === activeBrandCode,
+        (rel) => rel && rel.brands?.code === activeBrandCode,
       );
       if (!hasBrand) return false;
     }
@@ -415,7 +415,7 @@ export function CustomerListTable({
             ) : (
               filtered.map((cust) => {
                 const primaryContact =
-                  cust.customer_contacts?.find((c) => c.is_primary) ??
+                  cust.customer_contacts?.find((c) => c && c.is_primary) ??
                   cust.customer_contacts?.[0];
                 const otherContactsCount =
                   (cust.customer_contacts?.length ?? 0) > 1

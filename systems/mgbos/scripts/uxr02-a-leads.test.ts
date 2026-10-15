@@ -382,7 +382,35 @@ describe('UXR02-A Leads Server Component & Data States Acceptance Suite', () => 
       expect(tableElement.props.dataState.status).toBe('UNAVAILABLE');
     });
 
-    it('AC-A05 & F03: detects malformed responses and synthetic corrupt records safely', async () => {
+    it('AC-A05, F03 & F04: detects malformed responses, corrupt records, and malformed nested arrays safely', async () => {
+      const validBaseLead = {
+        id: 'lead-99',
+        lead_number: 'LEAD-99',
+        title: 'Kaos Komunitas',
+        status: 'NEW',
+        contact_name: 'Budi Santoso',
+        company_name: 'Komunitas Motor',
+        phone: '08123456789',
+        email: 'budi@example.com',
+        raw_inquiry: 'Mau pesan 100 pcs kaos',
+        estimated_quantity: 100,
+        estimated_budget: 7500000,
+        qualification_result: null,
+        qualification_score: null,
+        qualification_notes: null,
+        disqualification_reason: null,
+        created_at: '2026-01-01T00:00:00Z',
+        brands: { id: 'br-ts', code: 'TS', name: 'TeeStock' },
+        channels: {
+          id: 'ch-1',
+          code: 'WA',
+          name: 'WhatsApp',
+          channel_type: 'CHAT',
+        },
+        customer_accounts: null,
+        requirements: null,
+      };
+
       const malformedPayloads = [
         { desc: 'non-array object', json: { error: 'not an array' } },
         { desc: 'array with null element', json: [null] },
@@ -391,6 +419,96 @@ describe('UXR02-A Leads Server Component & Data States Acceptance Suite', () => 
         {
           desc: 'array with record missing required title and status',
           json: [{ id: 'lead-99', lead_number: 'LEAD-99' }],
+        },
+        {
+          desc: 'F04: requirements is string instead of array or null',
+          json: [
+            {
+              ...validBaseLead,
+              requirements: 'bad-data',
+            },
+          ],
+        },
+        {
+          desc: 'F04: requirements array containing null element',
+          json: [
+            {
+              ...validBaseLead,
+              requirements: [null],
+            },
+          ],
+        },
+        {
+          desc: 'F04: requirements array containing item with non-string title',
+          json: [
+            {
+              ...validBaseLead,
+              requirements: [{ id: 'req-1', title: 999 }],
+            },
+          ],
+        },
+        {
+          desc: 'F04: requirements array containing item missing required id',
+          json: [
+            {
+              ...validBaseLead,
+              requirements: [{ title: 'Missing ID' }],
+            },
+          ],
+        },
+        {
+          desc: 'F04: brands is string instead of object or null',
+          json: [
+            {
+              ...validBaseLead,
+              brands: 'bad-brand-string',
+            },
+          ],
+        },
+        {
+          desc: 'F04: brands object has non-string code',
+          json: [
+            {
+              ...validBaseLead,
+              brands: { id: 'br-ts', code: 12345, name: 'TeeStock' },
+            },
+          ],
+        },
+        {
+          desc: 'F04: channels is string instead of object or null',
+          json: [
+            {
+              ...validBaseLead,
+              channels: 'bad-channel-string',
+            },
+          ],
+        },
+        {
+          desc: 'F04: optional phone has wrong type number',
+          json: [
+            {
+              ...validBaseLead,
+              phone: 123456789,
+            },
+          ],
+        },
+        {
+          desc: 'F04: optional estimated_budget has wrong type string',
+          json: [
+            {
+              ...validBaseLead,
+              estimated_budget: 'five-million',
+            },
+          ],
+        },
+        {
+          desc: 'F04: optional estimated_quantity has wrong type string',
+          json: [
+            {
+              ...validBaseLead,
+              estimated_quantity: 'hundred-pcs',
+            },
+          ],
         },
       ];
 
@@ -407,6 +525,7 @@ describe('UXR02-A Leads Server Component & Data States Acceptance Suite', () => 
         // Fails closed as UNAVAILABLE, never turning corrupt records into SUCCESS
         expect(text).toContain('Format data leads tidak valid.');
         expect(text).not.toContain('0 Leads');
+        expect(text).toContain('—');
 
         const tableElement = requireComponentInJsx(pageJsx, 'LeadListTable');
         expect(tableElement.props.dataState).toEqual({
@@ -414,6 +533,88 @@ describe('UXR02-A Leads Server Component & Data States Acceptance Suite', () => 
           message: 'Format data leads tidak valid.',
         });
       }
+    });
+
+    it('AC-A05 & F04: accepts valid PostgREST records with nullable requirements or valid requirements array', async () => {
+      const validLeadsWithEdgeCases = [
+        {
+          id: 'lead-edge-01',
+          lead_number: 'LEAD-2026-E1',
+          title: 'Jaket Angkatan (Null Requirements)',
+          status: 'NEW',
+          contact_name: null,
+          company_name: null,
+          phone: null,
+          email: null,
+          raw_inquiry: null,
+          estimated_quantity: null,
+          estimated_budget: null,
+          qualification_result: null,
+          qualification_score: null,
+          qualification_notes: null,
+          disqualification_reason: null,
+          created_at: '2026-02-01T00:00:00Z',
+          brands: null,
+          channels: null,
+          customer_accounts: null,
+          requirements: null,
+        },
+        {
+          id: 'lead-edge-02',
+          lead_number: 'LEAD-2026-E2',
+          title: 'Jersey Futsal (Array Requirements)',
+          status: 'QUALIFIED',
+          contact_name: 'Andi',
+          company_name: 'FC Jakarta',
+          phone: '0812334455',
+          email: 'andi@fcjkt.com',
+          raw_inquiry: 'Jersey 24 set',
+          estimated_quantity: 24,
+          estimated_budget: 4800000,
+          qualification_result: 'QUALIFIED',
+          qualification_score: 85,
+          qualification_notes: 'Budget siap',
+          disqualification_reason: null,
+          created_at: '2026-02-02T00:00:00Z',
+          brands: { id: 'br-ts', code: 'TS', name: 'TeeStock' },
+          channels: {
+            id: 'ch-w',
+            code: 'WEB',
+            name: 'Web Store',
+            channel_type: 'WEB',
+          },
+          customer_accounts: null,
+          requirements: [
+            {
+              id: 'req-01',
+              requirement_number: 'REQ-2026-001',
+              status: 'OPEN',
+              title: 'Jersey Futsal Dryfit 24 pcs',
+            },
+          ],
+        },
+      ];
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => validLeadsWithEdgeCases,
+      });
+
+      const pageJsx = await LeadsPage();
+      const text = extractTextFromJsx(pageJsx);
+
+      expect(text).toContain('2 Leads');
+      expect(text).toContain('1 Inquiry'); // NEW
+      expect(text).toContain('1 Lead'); // QUALIFIED
+      expect(text).toContain('1 Lead'); // TS active brand
+      expect(text).not.toContain('Format data leads tidak valid.');
+
+      const tableElement = requireComponentInJsx(pageJsx, 'LeadListTable');
+      expect(tableElement.props.dataState).toEqual({
+        status: 'SUCCESS',
+        data: validLeadsWithEdgeCases,
+      });
     });
 
     it('AC-A07: provides authorized server-side retry action without business mutation', async () => {

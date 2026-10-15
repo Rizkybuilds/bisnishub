@@ -9,15 +9,150 @@ export const metadata = {
   title: 'Inbound Leads & Qualification — MultiGraph Business OS',
 };
 
+function isValidLeadRequirement(req: unknown): boolean {
+  if (typeof req !== 'object' || req === null) return false;
+  const r = req as Record<string, unknown>;
+  if (typeof r.id !== 'string') return false;
+  if (r.title !== undefined && typeof r.title !== 'string') return false;
+  if (
+    r.requirement_number !== undefined &&
+    typeof r.requirement_number !== 'string'
+  ) {
+    return false;
+  }
+  if (r.status !== undefined && typeof r.status !== 'string') return false;
+  return true;
+}
+
 function isValidLeadRecord(record: unknown): record is LeadDetailData {
   if (typeof record !== 'object' || record === null) return false;
   const r = record as Record<string, unknown>;
-  return (
-    typeof r.id === 'string' &&
-    typeof r.lead_number === 'string' &&
-    typeof r.title === 'string' &&
-    typeof r.status === 'string'
-  );
+  if (
+    typeof r.id !== 'string' ||
+    typeof r.lead_number !== 'string' ||
+    typeof r.title !== 'string' ||
+    typeof r.status !== 'string'
+  ) {
+    return false;
+  }
+
+  // Optional string / number / date fields
+  if (
+    r.contact_name !== undefined &&
+    r.contact_name !== null &&
+    typeof r.contact_name !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.company_name !== undefined &&
+    r.company_name !== null &&
+    typeof r.company_name !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.phone !== undefined &&
+    r.phone !== null &&
+    typeof r.phone !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.email !== undefined &&
+    r.email !== null &&
+    typeof r.email !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.raw_inquiry !== undefined &&
+    r.raw_inquiry !== null &&
+    typeof r.raw_inquiry !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.estimated_budget !== undefined &&
+    r.estimated_budget !== null &&
+    typeof r.estimated_budget !== 'number'
+  ) {
+    return false;
+  }
+  if (
+    r.estimated_quantity !== undefined &&
+    r.estimated_quantity !== null &&
+    typeof r.estimated_quantity !== 'number'
+  ) {
+    return false;
+  }
+  if (
+    r.qualification_result !== undefined &&
+    r.qualification_result !== null &&
+    typeof r.qualification_result !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.qualification_score !== undefined &&
+    r.qualification_score !== null &&
+    typeof r.qualification_score !== 'number'
+  ) {
+    return false;
+  }
+  if (
+    r.qualification_notes !== undefined &&
+    r.qualification_notes !== null &&
+    typeof r.qualification_notes !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.disqualification_reason !== undefined &&
+    r.disqualification_reason !== null &&
+    typeof r.disqualification_reason !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.created_at !== undefined &&
+    r.created_at !== null &&
+    typeof r.created_at !== 'string'
+  ) {
+    return false;
+  }
+
+  // Optional nested brands
+  if (r.brands !== undefined && r.brands !== null) {
+    if (typeof r.brands !== 'object') return false;
+    const b = r.brands as Record<string, unknown>;
+    if (b.code !== undefined && typeof b.code !== 'string') return false;
+    if (b.name !== undefined && typeof b.name !== 'string') return false;
+  }
+
+  // Optional nested channels
+  if (r.channels !== undefined && r.channels !== null) {
+    if (typeof r.channels !== 'object') return false;
+    const c = r.channels as Record<string, unknown>;
+    if (c.code !== undefined && typeof c.code !== 'string') return false;
+  }
+
+  // Optional nested customer_accounts
+  if (r.customer_accounts !== undefined && r.customer_accounts !== null) {
+    if (typeof r.customer_accounts !== 'object') return false;
+  }
+
+  // Optional nested requirements
+  if (r.requirements !== undefined && r.requirements !== null) {
+    if (
+      !Array.isArray(r.requirements) ||
+      !r.requirements.every(isValidLeadRequirement)
+    ) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 async function fetchLeadsData(
@@ -100,8 +235,9 @@ function computeLeadKpis(
     total: leads.length,
     newCount: leads.filter((l) => l.status === 'NEW').length,
     qualifiedCount: leads.filter((l) => l.status === 'QUALIFIED').length,
-    activeBrandLeads: leads.filter((l) => l.brands?.code === activeBrandCode)
-      .length,
+    activeBrandLeads: leads.filter(
+      (l) => l.brands && l.brands.code === activeBrandCode,
+    ).length,
     convertedCount: leads.filter((l) => l.status === 'CONVERTED').length,
   };
 }
