@@ -214,6 +214,11 @@ jobs:
         run: |
           set -euo pipefail
           cd systems/mgbos
-          pnpm db:stop > /dev/null 2>&1 || true
+          teardown_failed=0
+          pnpm db:stop || teardown_failed=1
           git worktree remove /tmp/pr68-candidate-app --force 2>/dev/null || true
           rm -rf /tmp/pr68-candidate-app /tmp/mgbos-app.log
+          if [ "$teardown_failed" -ne 0 ]; then
+            echo "::error::Disposable Supabase runner teardown failed"
+            exit 1
+          fi

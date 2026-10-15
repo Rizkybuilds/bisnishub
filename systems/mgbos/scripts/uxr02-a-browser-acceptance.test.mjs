@@ -455,3 +455,157 @@ test('CrmFaultProxy: starts, injects fault, decrements, logs requests, and close
     await proxy.close();
   }
 });
+
+test('CrmFaultProxy: supports transportError connection drop', async () => {
+  const proxy = new CrmFaultProxy({ targetOrigin: 'http://127.0.0.1:55431' });
+  const proxyOrigin = await proxy.start();
+  try {
+    proxy.setFaultRule({
+      method: 'GET',
+      pathPrefix: '/rest/v1/leads',
+      transportError: true,
+      remaining: 1,
+    });
+
+    await assert.rejects(
+      async () => {
+        await fetch(`${proxyOrigin}/rest/v1/leads`, {
+          headers: { apikey: 'mock_key' },
+        });
+      },
+      (err) => {
+        assert.ok(
+          err instanceof TypeError ||
+            (err.message && err.message.includes('fetch failed')),
+        );
+        return true;
+      },
+    );
+
+    const logEntries = proxy.getRequestLog({ pathPrefix: '/rest/v1/leads' });
+    assert.equal(logEntries.length, 1);
+    assert.equal(logEntries[0].transportErrorInjected, true);
+  } finally {
+    await proxy.close();
+  }
+});
+
+test('verifyTraceFile: rejects trace with inconclusive absence queries', () => {
+  const tmpDir = mkdtempSync(path.join(tmpdir(), 'uxr02-test-'));
+  const tracePath = path.join(tmpDir, 'trace.json');
+  try {
+    const trace = createMockValidTrace();
+    trace.cleanup.inconclusive = [
+      { entity: 'lead', id: '123', error: 'Connection timeout to PostgREST' },
+    ];
+    writeFileSync(tracePath, JSON.stringify(trace), 'utf8');
+
+    const result = verifyTraceFile(tracePath, { expectedMode: 'normal' });
+    assert.equal(result.valid, false);
+    assert.equal(result.code, 'CLEANUP_INCONCLUSIVE');
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('verifyTraceFile: rejects trace with cleanup deletion errors', () => {
+  const tmpDir = mkdtempSync(path.join(tmpdir(), 'uxr02-test-'));
+  const tracePath = path.join(tmpDir, 'trace.json');
+  try {
+    const trace = createMockValidTrace();
+    trace.cleanup.deletionErrors = [
+      { entity: 'lead', id: '123', error: 'Foreign key constraint violation' },
+    ];
+    writeFileSync(tracePath, JSON.stringify(trace), 'utf8');
+
+    const result = verifyTraceFile(tracePath, { expectedMode: 'normal' });
+    assert.equal(result.valid, false);
+    assert.equal(result.code, 'CLEANUP_DELETION_FAILED');
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('verifyTraceFile: rejects negative control trace with inconclusive absence queries', () => {
+  const tmpDir = mkdtempSync(path.join(tmpdir(), 'uxr02-test-'));
+  const tracePath = path.join(tmpDir, 'trace.json');
+  try {
+    const negTrace = {
+      version: '1.0.0',
+      mode: 'intentional-broken-control',
+      overall: 'FAIL',
+      provenance: {
+        appSha: EXPECTED_PR68_HEAD_SHA,
+        appTreeSha: '1'.repeat(40),
+        harnessSha: '2'.repeat(40),
+        harnessTreeSha: '3'.repeat(40),
+      },
+      cleanup: {
+        attempted: true,
+        verifiedAbsent: true,
+        status: 'CLEANED_AND_ABSENT',
+        inconclusive: [
+          { entity: 'authUser', id: 'user-1', error: 'Network dropped' },
+        ],
+      },
+      failure: {
+        stage: 'NEGATIVE_CONTROL',
+        code: 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED',
+        message: 'Canary triggered',
+      },
+      sanitized: true,
+    };
+    writeFileSync(tracePath, JSON.stringify(negTrace), 'utf8');
+
+    const result = verifyTraceFile(tracePath, {
+      expectedMode: 'intentional-broken-control',
+      exitStatus: 1,
+    });
+    assert.equal(result.valid, false);
+    assert.equal(result.code, 'CLEANUP_INCONCLUSIVE');
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('verifyTraceFile: rejects negative control trace with deletion errors', () => {
+  const tmpDir = mkdtempSync(path.join(tmpdir(), 'uxr02-test-'));
+  const tracePath = path.join(tmpDir, 'trace.json');
+  try {
+    const negTrace = {
+      version: '1.0.0',
+      mode: 'intentional-broken-control',
+      overall: 'FAIL',
+      provenance: {
+        appSha: EXPECTED_PR68_HEAD_SHA,
+        appTreeSha: '1'.repeat(40),
+        harnessSha: '2'.repeat(40),
+        harnessTreeSha: '3'.repeat(40),
+      },
+      cleanup: {
+        attempted: true,
+        verifiedAbsent: true,
+        status: 'CLEANED_AND_ABSENT',
+        deletionErrors: [
+          { entity: 'lead', id: '123', error: 'Database unavailable' },
+        ],
+      },
+      failure: {
+        stage: 'NEGATIVE_CONTROL',
+        code: 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED',
+        message: 'Canary triggered',
+      },
+      sanitized: true,
+    };
+    writeFileSync(tracePath, JSON.stringify(negTrace), 'utf8');
+
+    const result = verifyTraceFile(tracePath, {
+      expectedMode: 'intentional-broken-control',
+      exitStatus: 1,
+    });
+    assert.equal(result.valid, false);
+    assert.equal(result.code, 'CLEANUP_DELETION_FAILED');
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});

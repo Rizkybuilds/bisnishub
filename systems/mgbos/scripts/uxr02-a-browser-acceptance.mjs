@@ -135,6 +135,7 @@ export class CrmFaultProxy {
     body = '{"message":"Simulated CRM upstream fault"}',
     headers = { 'content-type': 'application/json' },
     remaining = 1,
+    transportError = false,
   }) {
     this.rules.push({
       method: method.toUpperCase(),
@@ -143,6 +144,7 @@ export class CrmFaultProxy {
       body,
       headers,
       remaining,
+      transportError,
     });
   }
 
@@ -162,6 +164,7 @@ export class CrmFaultProxy {
     const parsedUrl = new URL(clientReq.url, this.activeOrigin);
     const reqPath = parsedUrl.pathname;
     const reqMethod = (clientReq.method || 'GET').toUpperCase();
+    const reqUrl = clientReq.url;
 
     // Check for matched fault rule
     const ruleIndex = this.rules.findIndex(
@@ -172,29 +175,38 @@ export class CrmFaultProxy {
     );
 
     const isFault = ruleIndex !== -1;
+    const matchedRule = isFault ? this.rules[ruleIndex] : null;
 
     // Record request in audit log for AC-A07 retry and boundary verification
     this.requestLog.push({
       method: reqMethod,
       path: reqPath,
+      url: reqUrl,
+      search: parsedUrl.search,
       headers: { ...clientReq.headers },
       timestamp: Date.now(),
       faultInjected: isFault,
+      transportErrorInjected: Boolean(matchedRule?.transportError),
     });
 
     if (isFault) {
-      const rule = this.rules[ruleIndex];
-      rule.remaining -= 1;
-      if (rule.remaining <= 0) {
+      matchedRule.remaining -= 1;
+      if (matchedRule.remaining <= 0) {
         this.rules.splice(ruleIndex, 1);
       }
       this.interceptedCount += 1;
 
-      clientRes.writeHead(rule.statusCode, {
-        ...rule.headers,
+      if (matchedRule.transportError) {
+        // Destroy client socket immediately to simulate genuine TCP transport drop
+        clientReq.socket.destroy();
+        return;
+      }
+
+      clientRes.writeHead(matchedRule.statusCode, {
+        ...matchedRule.headers,
         'x-mgbos-fault-injected': '1',
       });
-      clientRes.end(rule.body);
+      clientRes.end(matchedRule.body);
       return;
     }
 
@@ -585,137 +597,184 @@ export class Uxr02FixtureManager {
   }
 
   async cleanupAll() {
-    const errors = [];
+    const deletionErrors = [];
+
+    const deleteEntity = async (table, schema, label, id) => {
+      try {
+        await db(
+          this.serviceKey,
+          `/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`,
+          { method: 'DELETE', schema, api: this.api },
+        );
+      } catch (err) {
+        deletionErrors.push({
+          entity: label,
+          id: String(id),
+          error: err?.message || String(err),
+        });
+      }
+    };
 
     // Delete in reverse dependency order
     for (const id of this.registry.customerBrandRels) {
-      await db(
-        this.serviceKey,
-        `/rest/v1/customer_brand_relationships?id=eq.${encodeURIComponent(id)}`,
-        { method: 'DELETE', schema: 'app', api: this.api },
-      ).catch((e) => errors.push(e));
+      await deleteEntity(
+        'customer_brand_relationships',
+        'app',
+        'customerBrandRel',
+        id,
+      );
     }
     for (const id of this.registry.customerContacts) {
-      await db(
-        this.serviceKey,
-        `/rest/v1/customer_contacts?id=eq.${encodeURIComponent(id)}`,
-        { method: 'DELETE', schema: 'app', api: this.api },
-      ).catch((e) => errors.push(e));
+      await deleteEntity('customer_contacts', 'app', 'customerContact', id);
     }
     for (const id of this.registry.customerAccounts) {
-      await db(
-        this.serviceKey,
-        `/rest/v1/customer_accounts?id=eq.${encodeURIComponent(id)}`,
-        { method: 'DELETE', schema: 'app', api: this.api },
-      ).catch((e) => errors.push(e));
+      await deleteEntity('customer_accounts', 'app', 'customerAccount', id);
     }
     for (const id of this.registry.leads) {
-      await db(
-        this.serviceKey,
-        `/rest/v1/leads?id=eq.${encodeURIComponent(id)}`,
-        { method: 'DELETE', schema: 'app', api: this.api },
-      ).catch((e) => errors.push(e));
+      await deleteEntity('leads', 'app', 'lead', id);
     }
     for (const id of this.registry.memberships) {
-      await db(
-        this.serviceKey,
-        `/rest/v1/organization_members?id=eq.${encodeURIComponent(id)}`,
-        { method: 'DELETE', schema: 'app', api: this.api },
-      ).catch((e) => errors.push(e));
+      await deleteEntity('organization_members', 'app', 'membership', id);
     }
     for (const id of this.registry.profiles) {
-      await db(
-        this.serviceKey,
-        `/rest/v1/users?id=eq.${encodeURIComponent(id)}`,
-        { method: 'DELETE', schema: 'app', api: this.api },
-      ).catch((e) => errors.push(e));
+      await deleteEntity('users', 'app', 'profile', id);
     }
     for (const id of this.registry.authUsers) {
-      await db(
-        this.serviceKey,
-        `/auth/v1/admin/users/${encodeURIComponent(id)}`,
-        {
-          method: 'DELETE',
-          api: this.api,
-        },
-      ).catch((e) => errors.push(e));
+      try {
+        await db(
+          this.serviceKey,
+          `/auth/v1/admin/users/${encodeURIComponent(id)}`,
+          {
+            method: 'DELETE',
+            api: this.api,
+          },
+        );
+      } catch (err) {
+        deletionErrors.push({
+          entity: 'authUser',
+          id: String(id),
+          error: err?.message || String(err),
+        });
+      }
     }
     for (const id of this.registry.channels) {
-      await db(
-        this.serviceKey,
-        `/rest/v1/channels?id=eq.${encodeURIComponent(id)}`,
-        { method: 'DELETE', schema: 'app', api: this.api },
-      ).catch((e) => errors.push(e));
+      await deleteEntity('channels', 'app', 'channel', id);
     }
     for (const id of this.registry.brands) {
-      await db(
-        this.serviceKey,
-        `/rest/v1/brands?id=eq.${encodeURIComponent(id)}`,
-        { method: 'DELETE', schema: 'app', api: this.api },
-      ).catch((e) => errors.push(e));
+      await deleteEntity('brands', 'app', 'brand', id);
     }
     for (const id of this.registry.roles) {
-      await db(
-        this.serviceKey,
-        `/rest/v1/roles?id=eq.${encodeURIComponent(id)}`,
-        { method: 'DELETE', schema: 'app', api: this.api },
-      ).catch((e) => errors.push(e));
+      await deleteEntity('roles', 'app', 'role', id);
     }
     for (const id of this.registry.organizations) {
-      await db(
-        this.serviceKey,
-        `/rest/v1/organizations?id=eq.${encodeURIComponent(id)}`,
-        { method: 'DELETE', schema: 'app', api: this.api },
-      ).catch((e) => errors.push(e));
+      await deleteEntity('organizations', 'app', 'organization', id);
     }
 
-    return { errors };
+    return { errors: deletionErrors, deletionErrors };
   }
 
   async verifyAbsence() {
     const uncleaned = [];
+    const inconclusive = [];
 
-    for (const id of this.registry.leads) {
-      const rows = await db(
-        this.serviceKey,
-        `/rest/v1/leads?id=eq.${encodeURIComponent(id)}`,
-        { schema: 'app', api: this.api },
-      ).catch(() => []);
-      if (Array.isArray(rows) && rows.length > 0) uncleaned.push(`lead:${id}`);
-    }
+    const checkEntityAbsence = async (table, schema, label, ids) => {
+      for (const id of ids) {
+        try {
+          const rows = await db(
+            this.serviceKey,
+            `/rest/v1/${table}?id=eq.${encodeURIComponent(id)}&select=id`,
+            { schema, api: this.api },
+          );
+          if (Array.isArray(rows) && rows.length > 0) {
+            uncleaned.push(`${label}:${id}`);
+          }
+        } catch (err) {
+          inconclusive.push({
+            entity: label,
+            id: String(id),
+            error: err?.message || String(err),
+          });
+        }
+      }
+    };
 
-    for (const id of this.registry.customerAccounts) {
-      const rows = await db(
-        this.serviceKey,
-        `/rest/v1/customer_accounts?id=eq.${encodeURIComponent(id)}`,
-        { schema: 'app', api: this.api },
-      ).catch(() => []);
-      if (Array.isArray(rows) && rows.length > 0)
-        uncleaned.push(`customer_account:${id}`);
-    }
-
-    for (const id of this.registry.organizations) {
-      const rows = await db(
-        this.serviceKey,
-        `/rest/v1/organizations?id=eq.${encodeURIComponent(id)}`,
-        { schema: 'app', api: this.api },
-      ).catch(() => []);
-      if (Array.isArray(rows) && rows.length > 0)
-        uncleaned.push(`organization:${id}`);
-    }
+    // Check all 11 registry entity types
+    await checkEntityAbsence(
+      'customer_brand_relationships',
+      'app',
+      'customerBrandRel',
+      this.registry.customerBrandRels,
+    );
+    await checkEntityAbsence(
+      'customer_contacts',
+      'app',
+      'customerContact',
+      this.registry.customerContacts,
+    );
+    await checkEntityAbsence(
+      'customer_accounts',
+      'app',
+      'customerAccount',
+      this.registry.customerAccounts,
+    );
+    await checkEntityAbsence('leads', 'app', 'lead', this.registry.leads);
+    await checkEntityAbsence(
+      'organization_members',
+      'app',
+      'membership',
+      this.registry.memberships,
+    );
+    await checkEntityAbsence('users', 'app', 'profile', this.registry.profiles);
+    await checkEntityAbsence(
+      'channels',
+      'app',
+      'channel',
+      this.registry.channels,
+    );
+    await checkEntityAbsence('brands', 'app', 'brand', this.registry.brands);
+    await checkEntityAbsence('roles', 'app', 'role', this.registry.roles);
+    await checkEntityAbsence(
+      'organizations',
+      'app',
+      'organization',
+      this.registry.organizations,
+    );
 
     for (const id of this.registry.authUsers) {
-      const user = await db(
-        this.serviceKey,
-        `/auth/v1/admin/users/${encodeURIComponent(id)}`,
-        { api: this.api },
-      ).catch(() => null);
-      if (user?.id) uncleaned.push(`authUser:${id}`);
+      try {
+        const user = await db(
+          this.serviceKey,
+          `/auth/v1/admin/users/${encodeURIComponent(id)}`,
+          { api: this.api },
+        );
+        if (user && user.id) {
+          uncleaned.push(`authUser:${id}`);
+        }
+      } catch (err) {
+        const msg = (err?.message || '').toLowerCase();
+        const status = err?.status || err?.statusCode;
+        if (
+          status === 404 ||
+          msg.includes('not found') ||
+          msg.includes('404')
+        ) {
+          // Explicitly verified absent
+        } else {
+          inconclusive.push({
+            entity: 'authUser',
+            id: String(id),
+            error: err?.message || String(err),
+          });
+        }
+      }
     }
 
+    const verifiedAbsent = uncleaned.length === 0 && inconclusive.length === 0;
+
     return {
-      verifiedAbsent: uncleaned.length === 0,
+      verifiedAbsent,
       uncleaned,
+      inconclusive,
     };
   }
 }
@@ -847,6 +906,27 @@ export function verifyTraceFile(
         summary: 'Trace did not verify complete absence of synthetic fixtures',
       };
     }
+    if ((trace.cleanup?.deletionErrors || []).length > 0) {
+      return {
+        valid: false,
+        code: 'CLEANUP_DELETION_FAILED',
+        summary: `Trace recorded deletion errors during cleanup: ${JSON.stringify(trace.cleanup.deletionErrors)}`,
+      };
+    }
+    if ((trace.cleanup?.inconclusive || []).length > 0) {
+      return {
+        valid: false,
+        code: 'CLEANUP_INCONCLUSIVE',
+        summary: `Trace recorded inconclusive absence check queries: ${JSON.stringify(trace.cleanup.inconclusive)}`,
+      };
+    }
+    if ((trace.cleanup?.uncleaned || []).length > 0) {
+      return {
+        valid: false,
+        code: 'RESOURCE_NOT_ABSENT',
+        summary: `Trace recorded uncleaned fixtures: ${JSON.stringify(trace.cleanup.uncleaned)}`,
+      };
+    }
 
     // 6. Browser provenance check
     const browser = trace.provenance?.browser;
@@ -887,6 +967,27 @@ export function verifyTraceFile(
         code: 'CLEANUP_NOT_VERIFIED_IN_NEGATIVE_CONTROL',
         summary:
           'Negative control failed to verify complete absence of fixtures during teardown',
+      };
+    }
+    if ((trace.cleanup?.deletionErrors || []).length > 0) {
+      return {
+        valid: false,
+        code: 'CLEANUP_DELETION_FAILED',
+        summary: `Negative control trace recorded deletion errors during cleanup: ${JSON.stringify(trace.cleanup.deletionErrors)}`,
+      };
+    }
+    if ((trace.cleanup?.inconclusive || []).length > 0) {
+      return {
+        valid: false,
+        code: 'CLEANUP_INCONCLUSIVE',
+        summary: `Negative control trace recorded inconclusive absence queries: ${JSON.stringify(trace.cleanup.inconclusive)}`,
+      };
+    }
+    if ((trace.cleanup?.uncleaned || []).length > 0) {
+      return {
+        valid: false,
+        code: 'RESOURCE_NOT_ABSENT',
+        summary: `Negative control trace recorded uncleaned fixtures: ${JSON.stringify(trace.cleanup.uncleaned)}`,
       };
     }
   }
@@ -1123,6 +1224,25 @@ export async function runUxr02AcceptanceHarness({
       protocolVersion: browserVersionInfo.jsVersion || '1.3',
     };
 
+    // Capture console output and runtime errors for AC-A08 and crash verification
+    const browserLogs = [];
+    await cdp.send('Console.enable').catch(() => {});
+    await cdp.send('Runtime.enable').catch(() => {});
+    cdp.on('Runtime.consoleAPICalled', (params) => {
+      const text = (params.args || [])
+        .map((a) =>
+          a.value !== undefined ? String(a.value) : a.description || '',
+        )
+        .join(' ');
+      browserLogs.push({ type: params.type, text });
+    });
+    cdp.on('Runtime.exceptionThrown', (params) => {
+      browserLogs.push({
+        type: 'exception',
+        text: params.exceptionDetails?.text || 'Uncaught exception',
+      });
+    });
+
     // Helper: set viewport
     const setViewport = async (width, height) => {
       await cdp.send('Emulation.setDeviceMetricsOverride', {
@@ -1195,20 +1315,16 @@ export async function runUxr02AcceptanceHarness({
     const pressKeyboardKey = async (key, code) => {
       const vk =
         key === 'Enter' ? 13 : key === ' ' ? 32 : key === 'Tab' ? 9 : 0;
+      const text = key === 'Enter' ? '\r' : key === ' ' ? ' ' : '';
       await cdp.send('Input.dispatchKeyEvent', {
-        type: 'rawKeyDown',
+        type: 'keyDown',
         key,
         code,
         windowsVirtualKeyCode: vk,
         nativeVirtualKeyCode: vk,
+        text,
+        unmodifiedText: text,
       });
-      if (key === 'Enter') {
-        await cdp.send('Input.dispatchKeyEvent', {
-          type: 'char',
-          text: '\r',
-          unmodifiedText: '\r',
-        });
-      }
       await cdp.send('Input.dispatchKeyEvent', {
         type: 'keyUp',
         key,
@@ -1216,6 +1332,38 @@ export async function runUxr02AcceptanceHarness({
         windowsVirtualKeyCode: vk,
         nativeVirtualKeyCode: vk,
       });
+    };
+
+    // Helper: verify no sensitive tokens or upstream error details leaked into browser state
+    const sensitiveTokens = [
+      { name: 'serviceKey', value: serviceKey },
+      { name: 'userA.password', value: userA.password },
+      { name: 'userB.password', value: userB.password },
+      { name: 'userSalesB.password', value: userSalesB.password },
+      { name: 'userQcB.password', value: userQcB.password },
+      { name: 'upstreamErrorMarker1', value: 'Simulated CRM upstream fault' },
+      { name: 'upstreamErrorMarker2', value: 'Bad Gateway Transport Error' },
+    ].filter((t) => typeof t.value === 'string' && t.value.length > 0);
+
+    const assertNoSensitiveLeakage = async (contextLabel) => {
+      const fullHtml =
+        (await evaluate('document.documentElement.outerHTML')) || '';
+      const scriptContents =
+        (await evaluate(`(() => {
+          const scripts = Array.from(document.querySelectorAll('script'));
+          return scripts.map(s => s.textContent || s.innerHTML).join('\\n');
+        })()`)) || '';
+      const consoleOutput = browserLogs.map((l) => l.text).join('\n');
+      const combined = `${fullHtml}\n${scriptContents}\n${consoleOutput}`;
+
+      for (const token of sensitiveTokens) {
+        if (combined.includes(token.value)) {
+          throw new QaError(
+            `Sensitive value [REDACTED_${token.name}] detected in browser output for ${contextLabel}`,
+            'SENSITIVE_DATA_DISCLOSED',
+          );
+        }
+      }
     };
 
     // Helper: perform login via form interaction
@@ -1696,22 +1844,42 @@ export async function runUxr02AcceptanceHarness({
     };
 
     // 3. Missing / unavailable auth config (simulated upstream auth failure)
+    // Restore valid authenticated session for User B first so verifySessionToken passes
+    // and requireAuth actually reaches the PostgREST /rest/v1/users boundary
+    await loginUser(userB.email, userB.password);
+    proxy.clearRules();
+    proxy.requestLog = [];
     proxy.setFaultRule({
       method: 'GET',
       pathPrefix: '/rest/v1/users',
       statusCode: 500,
       body: JSON.stringify({ error: 'Auth database unavailable' }),
-      remaining: 2,
+      remaining: 5,
     });
     await cdp.send('Page.navigate', { url: `${appOrigin}/leads` });
     await until(
       async () => (await evaluate('window.location.pathname')) === '/login',
       { timeoutMs: 15000, desc: 'Unavailable auth backend redirect' },
     );
+
+    // Verify proxy audit log to confirm that the request actually reached /rest/v1/users boundary
+    const authBoundaryRequests = proxy.getRequestLog({
+      pathPrefix: '/rest/v1/users',
+    });
+    assert.ok(
+      authBoundaryRequests.length > 0,
+      'Auth failure did not reach /rest/v1/users PostgREST boundary',
+    );
+    assert.ok(
+      authBoundaryRequests.some((r) => r.faultInjected),
+      'Injected fault was not consumed on /rest/v1/users',
+    );
     proxy.clearRules();
+
     trace.cases.AC_A04_UNAVAILABLE_AUTH_CONFIG = {
       status: 'PASS',
       backendUnavailable: true,
+      authBoundaryReached: true,
       safeFallbackToLogin: true,
     };
 
@@ -1782,27 +1950,83 @@ export async function runUxr02AcceptanceHarness({
     };
     proxy.clearRules();
 
-    // 3. Controlled transport / connection gateway error (HTTP 502)
+    // 3. Controlled transport / connection gateway error:
+    // 3a. Genuine transport network error: socket destroy (network drop)
     proxy.setFaultRule({
       method: 'GET',
       pathPrefix: '/rest/v1/leads',
-      statusCode: 502,
-      body: '{"error":"Bad Gateway Transport Error"}',
+      transportError: true,
       remaining: 1,
     });
     await cdp.send('Page.navigate', { url: `${appOrigin}/leads` });
     await until(
-      async () => (await evaluate('document.readyState')) === 'complete',
-      { timeoutMs: 15000, desc: 'Transport 502 error' },
+      async () => {
+        const text = await evaluate('document.body.innerText');
+        return text.includes(
+          'Terjadi gangguan jaringan saat memuat data leads',
+        );
+      },
+      { timeoutMs: 15000, desc: 'Genuine transport network error leads' },
     );
-    const leads502Text = await evaluate('document.body.innerText');
+    const leadsTransportText = await evaluate('document.body.innerText');
     assert.ok(
-      !leads502Text.includes('Application error: a client-side exception'),
-      'Unhandled client crash on gateway transport failure',
+      leadsTransportText.includes(
+        'Terjadi gangguan jaringan saat memuat data leads',
+      ),
+      'Genuine transport error message missing on /leads',
     );
+    assert.ok(
+      leadsTransportText.includes('Coba Lagi'),
+      'Retry link missing in transport error banner',
+    );
+    assert.ok(
+      !leadsTransportText.includes(
+        'Application error: a client-side exception',
+      ),
+      'Unhandled client crash on genuine transport network drop',
+    );
+    proxy.clearRules();
+
+    // 3b. Controlled HTTP 502 gateway error
+    proxy.setFaultRule({
+      method: 'GET',
+      pathPrefix: '/rest/v1/customers',
+      statusCode: 502,
+      body: '{"error":"Bad Gateway Transport Error"}',
+      remaining: 1,
+    });
+    await cdp.send('Page.navigate', { url: `${appOrigin}/customers` });
+    await until(
+      async () => {
+        const text = await evaluate('document.body.innerText');
+        return text.includes(
+          'Layanan data customer tidak dapat diakses saat ini',
+        );
+      },
+      { timeoutMs: 15000, desc: 'Gateway 502 error customers' },
+    );
+    const cust502Text = await evaluate('document.body.innerText');
+    assert.ok(
+      cust502Text.includes(
+        'Layanan data customer tidak dapat diakses saat ini',
+      ),
+      'HTTP 502 gateway error message missing on /customers',
+    );
+    assert.ok(
+      cust502Text.includes('Coba Lagi'),
+      'Retry link missing in 502 error banner',
+    );
+    assert.ok(
+      !cust502Text.includes('Application error: a client-side exception'),
+      'Unhandled client crash on HTTP 502 gateway error',
+    );
+    proxy.clearRules();
+
     trace.cases.AC_A05_TRANSPORT_NETWORK_ERROR = {
       status: 'PASS',
       route: '/leads',
+      genuineTransportSocketDestroyHandled: true,
+      gateway502Handled: true,
       handledGracefully: true,
     };
     proxy.clearRules();
@@ -1906,13 +2130,8 @@ export async function runUxr02AcceptanceHarness({
     })()`);
     assert.ok(focusedReset, 'Reset Filter button could not receive focus');
 
-    // Trigger action via real CDP Enter key event
+    // Trigger action purely via real CDP Enter key event (no programmatic click fallback)
     await pressKeyboardKey('Enter', 'Enter');
-    await evaluate(`(() => {
-      if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
-        document.activeElement.click();
-      }
-    })()`);
 
     await until(
       async () => {
@@ -1978,7 +2197,16 @@ export async function runUxr02AcceptanceHarness({
       { timeoutMs: 15000, desc: 'Leads recovered post-retry' },
     );
 
-    // Verify proxy request audit log
+    // Verify proxy request audit log for read-only safety and authorized scoping
+    const leadsMutatingRequests = proxy.requestLog.filter((entry) =>
+      ['POST', 'PUT', 'PATCH', 'DELETE'].includes(entry.method),
+    );
+    assert.equal(
+      leadsMutatingRequests.length,
+      0,
+      `Unexpected mutation observed during read-only leads retry: ${JSON.stringify(leadsMutatingRequests)}`,
+    );
+
     const leadsRetryRequests = proxy.getRequestLog({
       method: 'GET',
       pathPrefix: '/rest/v1/leads',
@@ -1990,12 +2218,23 @@ export async function runUxr02AcceptanceHarness({
     const retryReq = leadsRetryRequests[leadsRetryRequests.length - 1];
     assert.equal(retryReq.method, 'GET', 'Retry request must be read-only GET');
     assert.ok(
-      Boolean(retryReq.headers.authorization),
-      'Retry request missing authorization header',
+      retryReq.url && retryReq.url.includes(`organization_id=eq.${orgB.id}`),
+      `Retry request not scoped to authorized organization: ${retryReq.url}`,
     );
-    assert.ok(
-      Boolean(retryReq.headers.apikey),
-      'Retry request missing apikey header',
+    assert.equal(
+      retryReq.headers.authorization,
+      `Bearer ${serviceKey}`,
+      'Retry request authorization bearer token does not match authorized service key',
+    );
+    assert.equal(
+      retryReq.headers.apikey,
+      serviceKey,
+      'Retry request apikey does not match service key',
+    );
+    assert.equal(
+      retryReq.headers['accept-profile'],
+      'app',
+      'Retry request Accept-Profile header must be app schema',
     );
 
     trace.cases.AC_A07_LEADS_RETRY_RECOVERY = {
@@ -2043,6 +2282,15 @@ export async function runUxr02AcceptanceHarness({
       { timeoutMs: 15000, desc: 'Customers recovered post-retry' },
     );
 
+    const custMutatingRequests = proxy.requestLog.filter((entry) =>
+      ['POST', 'PUT', 'PATCH', 'DELETE'].includes(entry.method),
+    );
+    assert.equal(
+      custMutatingRequests.length,
+      0,
+      `Unexpected mutation observed during read-only customers retry: ${JSON.stringify(custMutatingRequests)}`,
+    );
+
     const custRetryRequests = proxy.getRequestLog({
       method: 'GET',
       pathPrefix: '/rest/v1/customer_accounts',
@@ -2051,6 +2299,33 @@ export async function runUxr02AcceptanceHarness({
       custRetryRequests.length >= 2,
       'Retry did not trigger a new server-side GET to /rest/v1/customer_accounts',
     );
+    const retryCustReq = custRetryRequests[custRetryRequests.length - 1];
+    assert.equal(
+      retryCustReq.method,
+      'GET',
+      'Retry request must be read-only GET',
+    );
+    assert.ok(
+      retryCustReq.url &&
+        retryCustReq.url.includes(`organization_id=eq.${orgB.id}`),
+      `Retry request not scoped to authorized organization: ${retryCustReq.url}`,
+    );
+    assert.equal(
+      retryCustReq.headers.authorization,
+      `Bearer ${serviceKey}`,
+      'Retry request authorization bearer token does not match authorized service key',
+    );
+    assert.equal(
+      retryCustReq.headers.apikey,
+      serviceKey,
+      'Retry request apikey does not match service key',
+    );
+    assert.equal(
+      retryCustReq.headers['accept-profile'],
+      'app',
+      'Retry request Accept-Profile header must be app schema',
+    );
+
     trace.cases.AC_A07_CUSTOMERS_RETRY_RECOVERY = {
       status: 'PASS',
       route: '/customers',
@@ -2067,25 +2342,25 @@ export async function runUxr02AcceptanceHarness({
 
     // =========================================================================
     // AC-A08: No service-role key or credentials leak to browser output
-    // Inspects DOM, scripts, comments, and network attributes
+    // Inspects DOM HTML, Next.js RSC scripts, and console output on both routes
     // =========================================================================
-    const fullHtml = await evaluate('document.documentElement.outerHTML');
-    assert.ok(
-      !fullHtml.includes(serviceKey),
-      'SUPABASE_SERVICE_ROLE_KEY leaked in browser DOM',
+    await assertNoSensitiveLeakage('/customers');
+
+    await cdp.send('Page.navigate', { url: `${appOrigin}/leads` });
+    await until(
+      async () => (await evaluate('document.readyState')) === 'complete',
+      { timeoutMs: 15000, desc: 'Leads load for AC-A08' },
     );
-    assert.ok(
-      !fullHtml.includes(userB.password),
-      'Synthetic user password leaked in browser DOM',
-    );
-    assert.ok(
-      !fullHtml.includes(userA.password),
-      'Synthetic user password leaked in browser DOM',
-    );
+    await assertNoSensitiveLeakage('/leads');
+
     trace.cases.AC_A08_CREDENTIAL_NONDISCLOSURE = {
       status: 'PASS',
-      domLength: fullHtml.length,
-      credentialsDetected: false,
+      htmlChecked: true,
+      rscChecked: true,
+      consoleChecked: true,
+      serviceKeyProtected: true,
+      credentialsProtected: true,
+      upstreamFaultMarkersProtected: true,
     };
     trace.acceptanceMatrix['AC-A08'] = {
       status: 'PASS',
@@ -2173,6 +2448,111 @@ export async function runUxr02AcceptanceHarness({
       async () => (await evaluate('document.readyState')) === 'complete',
       { timeoutMs: 15000, desc: 'QC User /leads load' },
     );
+    const qcLeadsText = await evaluate('document.body.innerText');
+    assert.ok(
+      qcLeadsText.includes('LEAD-2026-B001'),
+      'QC role cannot read authorized leads',
+    );
+    assert.ok(
+      !qcLeadsText.includes('LEAD-2026-A001'),
+      "Cross-org leakage: Org A's lead visible to QC User B",
+    );
+
+    // QC role on /customers
+    await cdp.send('Page.navigate', { url: `${appOrigin}/customers` });
+    await until(
+      async () => (await evaluate('document.readyState')) === 'complete',
+      { timeoutMs: 15000, desc: 'QC User /customers load' },
+    );
+    const qcCustText = await evaluate('document.body.innerText');
+    assert.ok(
+      qcCustText.includes('PT Bima Kreatif Mandiri'),
+      'QC role cannot read authorized customers',
+    );
+    assert.ok(
+      !qcCustText.includes('PT Anugerah Mandiri'),
+      "Cross-org leakage: Org A's customer visible to QC User B",
+    );
+
+    // Detail modal read regression with QC role
+    await cdp.send('Page.navigate', { url: `${appOrigin}/leads` });
+    await until(
+      async () => (await evaluate('document.readyState')) === 'complete',
+      { timeoutMs: 15000, desc: 'QC User /leads reload for detail modal' },
+    );
+    await evaluate(`(() => {
+      const btns = Array.from(document.querySelectorAll('button'));
+      const detailBtn = btns.find(b => b.textContent.includes('Detail'));
+      if (detailBtn) detailBtn.click();
+    })()`);
+    await until(
+      async () => {
+        const text = await evaluate('document.body.innerText');
+        return text.includes('Seragam Komunitas Motor Bandung');
+      },
+      { timeoutMs: 10000, desc: 'Detail modal opened for QC user' },
+    );
+    // Close detail modal
+    await evaluate(`(() => {
+      const btns = Array.from(document.querySelectorAll('button'));
+      const closeBtn = btns.find(b => b.textContent.includes('Tutup') || b.textContent.includes('×'));
+      if (closeBtn) closeBtn.click();
+    })()`);
+
+    // QC role mutation rejection verification (QC role lacks leads:create)
+    await evaluate(`(() => {
+      const btns = Array.from(document.querySelectorAll('button'));
+      const createBtn = btns.find(b => b.textContent.includes('Catat Inbound Lead'));
+      if (createBtn) createBtn.click();
+    })()`);
+    await until(
+      async () => {
+        const text = await evaluate('document.body.innerText');
+        return text.includes('Pusat Penangkapan Inbound Inquiry');
+      },
+      { timeoutMs: 10000, desc: 'Create lead modal opened for QC' },
+    );
+    await evaluate(`(() => {
+      const titleInput = document.querySelector('input[name="title"]');
+      if (titleInput) {
+        const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+        setter.call(titleInput, 'QC Unauthorized Lead Test');
+        titleInput.dispatchEvent(new Event('input', { bubbles: true }));
+        titleInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      const contactInput = document.querySelector('input[name="contactName"]');
+      if (contactInput) {
+        const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+        setter.call(contactInput, 'QC Tester');
+        contactInput.dispatchEvent(new Event('input', { bubbles: true }));
+        contactInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    })()`);
+    await evaluate(`(() => {
+      const submitBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Simpan Inbound Lead'));
+      if (submitBtn) submitBtn.click();
+    })()`);
+    await until(
+      async () => {
+        const text = await evaluate('document.body.innerText');
+        return text.includes('tidak memiliki izin');
+      },
+      {
+        timeoutMs: 10000,
+        desc: 'Permission denial message displayed for QC create mutation',
+      },
+    );
+    const qcDeniedText = await evaluate('document.body.innerText');
+    assert.ok(
+      qcDeniedText.includes('tidak memiliki izin'),
+      'QC role was not denied on createLeadAction mutation',
+    );
+    // Close create modal
+    await evaluate(`(() => {
+      const btns = Array.from(document.querySelectorAll('button'));
+      const cancelBtn = btns.find(b => b.textContent.includes('Batal'));
+      if (cancelBtn) cancelBtn.click();
+    })()`);
 
     // Invalid membership denial test: User with no organization membership
     await loginUser(userNoOrg.email, userNoOrg.password, {
@@ -2192,42 +2572,14 @@ export async function runUxr02AcceptanceHarness({
       orgBIsolationVerified: true,
       salesRoleVerified: true,
       qcRoleVerified: true,
+      qcMutationDeniedVerified: true,
       unaffiliatedMembershipDenied: true,
     };
-
-    // Detail modal read regression test with User B
-    await loginUser(userB.email, userB.password);
-    await cdp.send('Page.navigate', { url: `${appOrigin}/leads` });
-    await until(
-      async () => (await evaluate('document.readyState')) === 'complete',
-      { timeoutMs: 15000, desc: '/leads load for modal test' },
-    );
-
-    // Open detail modal via 'Detail ->' button
-    await evaluate(`(() => {
-      const btns = Array.from(document.querySelectorAll('button'));
-      const detailBtn = btns.find(b => b.textContent.includes('Detail'));
-      if (detailBtn) detailBtn.click();
-    })()`);
-
-    await until(
-      async () => {
-        const text = await evaluate('document.body.innerText');
-        return text.includes('Seragam Komunitas Motor Bandung');
-      },
-      { timeoutMs: 10000, desc: 'Detail modal opened' },
-    );
-
-    // Close detail modal
-    await evaluate(`(() => {
-      const btns = Array.from(document.querySelectorAll('button'));
-      const closeBtn = btns.find(b => b.textContent.includes('Tutup') || b.textContent.includes('×'));
-      if (closeBtn) closeBtn.click();
-    })()`);
 
     trace.cases.AC_A09_ROLE_BOUNDARIES_AND_DETAIL_READ = {
       status: 'PASS',
       detailModalOpenedAndClosed: true,
+      qcDetailReadVerified: true,
     };
 
     trace.acceptanceMatrix['AC-A09'] = {
@@ -2235,6 +2587,9 @@ export async function runUxr02AcceptanceHarness({
       description:
         'Two-organization isolation, applicable role permissions and invalid-membership denial behave correctly',
     };
+
+    // Re-login User B for viewport tests
+    await loginUser(userB.email, userB.password);
 
     // =========================================================================
     // Viewport responsiveness: 1440x900 and 1024x768
@@ -2251,12 +2606,12 @@ export async function runUxr02AcceptanceHarness({
       },
       { timeoutMs: 15000, desc: 'Populated /leads on 1440x900' },
     );
-    const leads1440Overflow = await evaluate(
-      'document.documentElement.scrollWidth <= window.innerWidth',
+    const leads1440Metrics = await evaluate(
+      '({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth })',
     );
     assert.ok(
-      leads1440Overflow,
-      'Horizontal overflow detected on /leads at 1440x900',
+      leads1440Metrics.scrollWidth <= leads1440Metrics.innerWidth,
+      `Horizontal overflow detected on /leads at 1440x900: scrollWidth=${leads1440Metrics.scrollWidth}, innerWidth=${leads1440Metrics.innerWidth}`,
     );
 
     // Desktop: 1440x900 on /customers
@@ -2271,12 +2626,12 @@ export async function runUxr02AcceptanceHarness({
       },
       { timeoutMs: 15000, desc: 'Populated /customers on 1440x900' },
     );
-    const cust1440Overflow = await evaluate(
-      'document.documentElement.scrollWidth <= window.innerWidth',
+    const cust1440Metrics = await evaluate(
+      '({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth })',
     );
     assert.ok(
-      cust1440Overflow,
-      'Horizontal overflow detected on /customers at 1440x900',
+      cust1440Metrics.scrollWidth <= cust1440Metrics.innerWidth,
+      `Horizontal overflow detected on /customers at 1440x900: scrollWidth=${cust1440Metrics.scrollWidth}, innerWidth=${cust1440Metrics.innerWidth}`,
     );
 
     trace.cases.VIEWPORT_RESPONSIVE_DESKTOP_1440 = {
@@ -2284,28 +2639,106 @@ export async function runUxr02AcceptanceHarness({
       viewport: '1440x900',
       routesVerified: ['/leads', '/customers'],
       horizontalOverflow: false,
+      elementsUsable: true,
     };
 
-    // Compact Desktop / Tablet: 1024x768 on /dashboard
+    // Compact Desktop / Tablet: 1024x768 on real populated /leads and /customers
     await setViewport(1024, 768);
-    await cdp.send('Page.navigate', { url: `${appOrigin}/dashboard` });
+
+    // 1024x768 on /leads
+    await cdp.send('Page.navigate', { url: `${appOrigin}/leads` });
     await until(
       async () => {
         const pathVal = await evaluate('window.location.pathname');
-        return pathVal === '/dashboard';
+        const text = await evaluate('document.body.innerText');
+        return pathVal === '/leads' && text.includes('LEAD-2026-B001');
       },
-      { timeoutMs: 15000, desc: 'Dashboard on 1024x768' },
+      { timeoutMs: 15000, desc: 'Populated /leads on 1024x768' },
     );
-    const tabletOverflow = await evaluate(
-      'document.documentElement.scrollWidth <= window.innerWidth',
+    const leads1024Route = await evaluate('window.location.pathname');
+    const leads1024Text = await evaluate('document.body.innerText');
+    assert.equal(
+      leads1024Route,
+      '/leads',
+      'Route identity must be /leads on 1024x768',
     );
-    assert.ok(tabletOverflow, 'Horizontal overflow detected at 1024x768');
+    assert.ok(
+      leads1024Text.includes(orgB.displayName),
+      'Authorized organization name missing on /leads at 1024x768',
+    );
+    assert.ok(
+      leads1024Text.includes('LEAD-2026-B001'),
+      'Populated lead record missing on /leads at 1024x768',
+    );
+    const leads1024Interactive = await evaluate(`(() => {
+      const search = document.querySelector('input[type="text"]');
+      const createBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Catat Inbound Lead'));
+      const statusBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Semua'));
+      return Boolean(search && createBtn && statusBtn);
+    })()`);
+    assert.ok(
+      leads1024Interactive,
+      'Interactive controls unusable on /leads at 1024x768',
+    );
+    const leads1024Metrics = await evaluate(
+      '({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth })',
+    );
+    assert.ok(
+      leads1024Metrics.scrollWidth <= leads1024Metrics.innerWidth,
+      `Horizontal overflow detected on /leads at 1024x768: scrollWidth=${leads1024Metrics.scrollWidth}, innerWidth=${leads1024Metrics.innerWidth}`,
+    );
+
+    // 1024x768 on /customers
+    await cdp.send('Page.navigate', { url: `${appOrigin}/customers` });
+    await until(
+      async () => {
+        const pathVal = await evaluate('window.location.pathname');
+        const text = await evaluate('document.body.innerText');
+        return (
+          pathVal === '/customers' && text.includes('PT Bima Kreatif Mandiri')
+        );
+      },
+      { timeoutMs: 15000, desc: 'Populated /customers on 1024x768' },
+    );
+    const cust1024Route = await evaluate('window.location.pathname');
+    const cust1024Text = await evaluate('document.body.innerText');
+    assert.equal(
+      cust1024Route,
+      '/customers',
+      'Route identity must be /customers on 1024x768',
+    );
+    assert.ok(
+      cust1024Text.includes(orgB.displayName),
+      'Authorized organization name missing on /customers at 1024x768',
+    );
+    assert.ok(
+      cust1024Text.includes('PT Bima Kreatif Mandiri'),
+      'Populated customer record missing on /customers at 1024x768',
+    );
+    const cust1024Interactive = await evaluate(`(() => {
+      const search = document.querySelector('input[type="text"]');
+      const createBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Tambah Customer'));
+      const typeBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Perusahaan'));
+      return Boolean(search && createBtn && typeBtn);
+    })()`);
+    assert.ok(
+      cust1024Interactive,
+      'Interactive controls unusable on /customers at 1024x768',
+    );
+    const cust1024Metrics = await evaluate(
+      '({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth })',
+    );
+    assert.ok(
+      cust1024Metrics.scrollWidth <= cust1024Metrics.innerWidth,
+      `Horizontal overflow detected on /customers at 1024x768: scrollWidth=${cust1024Metrics.scrollWidth}, innerWidth=${cust1024Metrics.innerWidth}`,
+    );
 
     trace.cases.VIEWPORT_RESPONSIVE_TABLET_1024 = {
       status: 'PASS',
       viewport: '1024x768',
-      routesVerified: ['/dashboard'],
+      routesVerified: ['/leads', '/customers'],
       horizontalOverflow: false,
+      elementsUsable: true,
     };
 
     trace.overall = 'PASS';
@@ -2339,17 +2772,57 @@ export async function runUxr02AcceptanceHarness({
     // Teardown & verify fixture absence
     if (fixtureMgr) {
       trace.cleanup.attempted = true;
-      await fixtureMgr.cleanupAll().catch(() => {});
-      const absence = await fixtureMgr.verifyAbsence().catch(() => ({
-        verifiedAbsent: false,
-        uncleaned: ['EXCEPTION_IN_ABSENCE_CHECK'],
+      const cleanRes = await fixtureMgr.cleanupAll().catch((err) => ({
+        errors: [
+          {
+            entity: 'fixtureMgr',
+            id: 'all',
+            error: err?.message || String(err),
+          },
+        ],
+        deletionErrors: [
+          {
+            entity: 'fixtureMgr',
+            id: 'all',
+            error: err?.message || String(err),
+          },
+        ],
       }));
-      trace.cleanup.verifiedAbsent = absence.verifiedAbsent;
-      trace.cleanup.status = absence.verifiedAbsent
-        ? 'CLEANED_AND_ABSENT'
-        : 'RESOURCE_NOT_ABSENT';
-      if (!absence.verifiedAbsent) {
-        trace.cleanup.uncleaned = absence.uncleaned;
+      trace.cleanup.deletionErrors = cleanRes?.deletionErrors || [];
+
+      const absence = await fixtureMgr.verifyAbsence().catch((err) => ({
+        verifiedAbsent: false,
+        uncleaned: [],
+        inconclusive: [
+          {
+            entity: 'fixtureMgr',
+            id: 'all',
+            error: err?.message || String(err),
+          },
+        ],
+      }));
+
+      const hasDeletionErrors = (trace.cleanup.deletionErrors || []).length > 0;
+      const hasInconclusive = (absence.inconclusive || []).length > 0;
+      const hasUncleaned = (absence.uncleaned || []).length > 0;
+
+      trace.cleanup.verifiedAbsent =
+        absence.verifiedAbsent === true &&
+        !hasDeletionErrors &&
+        !hasInconclusive &&
+        !hasUncleaned;
+
+      trace.cleanup.inconclusive = absence.inconclusive || [];
+      trace.cleanup.uncleaned = absence.uncleaned || [];
+
+      if (trace.cleanup.verifiedAbsent) {
+        trace.cleanup.status = 'CLEANED_AND_ABSENT';
+      } else if (hasInconclusive) {
+        trace.cleanup.status = 'CLEANUP_INCONCLUSIVE';
+      } else if (hasDeletionErrors) {
+        trace.cleanup.status = 'CLEANUP_DELETION_FAILED';
+      } else {
+        trace.cleanup.status = 'RESOURCE_NOT_ABSENT';
       }
     }
 
