@@ -15,15 +15,18 @@ This runbook documents the multi-role automated browser acceptance harness for *
 
 The harness independently automates real browser sessions using Headless Chromium over Chrome DevTools Protocol (CDP) against a live Next.js application on `http://127.0.0.1:3101` backed by a disposable local Supabase instance on `http://127.0.0.1:55431`.
 
-### Core Objectives & Remediations (PR #66 R1 & R2)
+### Core Objectives & Remediations (PR #66 R1, R2, R3, R4 & R5)
 
 1. **Multi-Role RBAC Verification & Deep Equality:** Confirm dashboard operational shortcuts and sidebar items accurately reflect server-side session role permissions for `OWNER` (14 shortcuts), `SALES` (13 shortcuts), and `QC` (12 shortcuts) using exact deep equality against canonical definitions. Wait for asynchronous React tree hydration before shortcut inspection.
 2. **Robust Direct Route Denial Classification (`QA66-F01`, `QA66-R2-03`):** Use `classifyRouteDenial` to evaluate HTTP response status, error boundaries, and rendered content. Verify that prohibited routes (`/exceptions` for `SALES`, `/quotes` for `QC`) fail closed without leaking domain data, while verifying that authorized routes (`/quotes` for `SALES`) render HTTP 200 with domain content. Normal empty pages are never misclassified as denials. Generic HTTP 500 crashes lacking access-denied or error boundary presentation are classified as `UNHANDLED_SERVER_CRASH` (`denied: false`).
-3. **Trace Verification Rigor (`QA66-F02`, `QA66-R2-03`):** Validate all 24 mandatory case IDs, case statuses (`PASS`), tested commit provenance (exact 40-character hexadecimal `checkoutSha` with optional `--expected-checkout-sha` verification), `cleanup.verifiedAbsent === true`, and negative control failure code `INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED` fail-closed.
+3. **Trace Verification Rigor (`QA66-F02`, `QA66-R2-03`, `R5-F01`, `R5-F02`):** Validate all 24 mandatory case IDs, case statuses (`PASS`), tested commit provenance (exact 40-character hexadecimal `checkoutSha` with optional `--expected-checkout-sha` verification), `cleanup.verifiedAbsent === true`, browser identity (`product`, `browserVersion`, `protocolVersion`), numeric direct-route HTTP response status (`httpStatus`), and negative control failure code `INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED` fail-closed.
 4. **Complete UI Acceptance & Headless CDP Alignment (`QA66-F03`, `QA66-R2-02`):** Validate realistic long Indonesian founder display names, header bounding boxes and non-clipped controls across 1440×900 and 1024×768 breakpoints, visible keyboard `Tab` progression and CDP `Enter` activation (synthesizing carriage return `\r`), interactive sidebar clicks, and protected route redirection to `/login` post-logout.
 5. **Deterministic Fixture Lifecycle & Absence Verification (`QA66-F04`):** Guarantee that all synthetic test fixtures are registered immediately via callback, cleaned up deterministically in `finally`, and independently verified absent via post-deletion database queries before returning `PASS`.
 6. **Negative Control Assurance:** Provide a deterministic mode (`MGBOS_QA_NEGATIVE_CONTROL=1`) that records explicit failure code `INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED` and proves assertion failure gates correctly block invalid UI states in CI.
 7. **CI Governance Trigger Architecture (`QA66-F05`, `QA66-R2-01`):** Ensure consistent workspace formatting across QA files and clarify workflow trigger architecture across stacked branch hierarchies.
+8. **Browser Identity & Version Provenance (`R5-F01`):** Capture CDP `Browser.getVersion` immediately after browser launch and persist an allowlisted subset (`product`, `browserName`, `browserVersion`, `protocolVersion`) in `trace.provenance.browser`, failing closed if missing or placeholder (`unknown`).
+9. **Authoritative Raw HTTP Response Status (`R5-F02`):** Use `NavigationResponseTracker` to capture CDP `Network.responseReceived` Document events correlated with target navigation paths (`/exceptions` and `/quotes`). Persist the observed numeric HTTP status (`httpStatus`) separately from the rendered UI classifier (`uiClassifier` / `observedResponse`), failing closed if unverified or contradictory.
+10. **Nested-Route Evidence Reconciliation (`R5-F03`):** Source-level verification of PR #53's `AppSidebar` active matching predicate (`pathname === item.href || pathname.startsWith(item.href + '/')`). Live-browser execution against nested dynamic routes is retained as `NOT_VERIFIED` to avoid manufacturing synthetic domain records or modifying PR #53.
 
 ---
 
@@ -102,8 +105,10 @@ Classification logic guarantees:
   `node scripts/browser-ui-multirole-qa.mjs --verify-trace <path> --expected-mode <mode> --exit-status <status> [--expected-checkout-sha <sha>]`
 - Verification asserts:
   - Provenance checkout SHA is a valid 40-character hexadecimal string matching `--expected-checkout-sha` if supplied, or automatically bound to `GITHUB_SHA` in GitHub Actions CI.
+  - Provenance browser identity is present and valid (`product`, `browserVersion`, `protocolVersion`), rejecting empty or placeholder values (`R5-F01`).
   - `cleanup.status === 'PASS'` and `cleanup.verifiedAbsent === true` (verifying all synthetic fixture rows were confirmed absent in the database).
   - All 24 cases marked `PASS` in normal mode; exact code `INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED` in negative control mode (rejecting any unrelated setup, fixture, or assertion errors).
+  - Normal mode verifies that `SALES_DIRECT_EXCEPTIONS_DENIAL` and `QC_DIRECT_QUOTES_DENIAL` independently record valid numeric HTTP status (`httpStatus`) and `httpStatusVerified === true` (`R5-F02`).
 
 ---
 

@@ -40,6 +40,8 @@ import {
   until,
 } from './browser-auth-hygiene-qa.mjs';
 
+export { QaError };
+
 export const ALLOWED_ROLES = Object.freeze(['OWNER', 'SALES', 'QC']);
 
 export const EXPECTED_SHORTCUT_HREFS_BY_ROLE = Object.freeze({
@@ -119,6 +121,240 @@ export const EXPECTED_UI_CASE_IDS = Object.freeze([
 
 const SYNTHETIC_UI_EMAIL_PATTERN =
   /^ci-ui-qa-[a-z]+-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}@example\.test$/i;
+
+/**
+ * Parses and strictly validates browser version provenance metadata obtained from CDP Browser.getVersion (Finding R5-F01).
+ * Enforces an allowlisted subset (product, browserName, browserVersion, protocolVersion).
+ * Rejects missing, empty, or placeholder values (such as 'unknown').
+ */
+export function parseAndValidateBrowserProvenance(versionInfo) {
+  if (
+    !versionInfo ||
+    typeof versionInfo !== 'object' ||
+    Array.isArray(versionInfo)
+  ) {
+    throw new QaError(
+      'BROWSER_PROVENANCE',
+      'BROWSER_IDENTITY_MISSING',
+      'Browser identity payload must be a non-empty object',
+    );
+  }
+
+  const product =
+    typeof versionInfo.product === 'string' ? versionInfo.product.trim() : '';
+  const protocolVersion =
+    typeof versionInfo.protocolVersion === 'string'
+      ? versionInfo.protocolVersion.trim()
+      : '';
+
+  if (!product || product.toLowerCase() === 'unknown') {
+    throw new QaError(
+      'BROWSER_PROVENANCE',
+      'BROWSER_IDENTITY_INVALID',
+      'Browser product is missing, empty, or placeholder',
+    );
+  }
+
+  if (!protocolVersion || protocolVersion.toLowerCase() === 'unknown') {
+    throw new QaError(
+      'BROWSER_PROVENANCE',
+      'BROWSER_IDENTITY_INVALID',
+      'Browser protocolVersion is missing, empty, or placeholder',
+    );
+  }
+
+  let browserName = product;
+  let browserVersion = product;
+  const slashIdx = product.indexOf('/');
+  if (slashIdx !== -1) {
+    browserName = product.slice(0, slashIdx).trim();
+    browserVersion = product.slice(slashIdx + 1).trim();
+  } else if (
+    typeof versionInfo.version === 'string' &&
+    versionInfo.version.trim()
+  ) {
+    browserVersion = versionInfo.version.trim();
+  }
+
+  if (!browserVersion || browserVersion.toLowerCase() === 'unknown') {
+    throw new QaError(
+      'BROWSER_PROVENANCE',
+      'BROWSER_IDENTITY_INVALID',
+      'Browser version is missing or placeholder',
+    );
+  }
+
+  return {
+    product,
+    browserName,
+    browserVersion,
+    protocolVersion,
+  };
+}
+
+/**
+ * Tracks Network.responseReceived events emitted over Chrome DevTools Protocol (CDP) (Finding R5-F02).
+ */
+export class NavigationResponseTracker {
+  constructor(cdp, appOrigin) {
+    this.cdp = cdp;
+    this.appOrigin = appOrigin;
+    this.responses = [];
+    this._onMessage = (evt) => {
+      try {
+        const raw =
+          typeof evt.data === 'string'
+            ? evt.data
+            : evt.data?.toString?.() || (typeof evt === 'string' ? evt : '');
+        if (!raw) return;
+        const msg = JSON.parse(raw);
+        if (msg.method === 'Network.responseReceived' && msg.params?.response) {
+          const res = msg.params.response;
+          const type = msg.params.type;
+          this.responses.push({
+            requestId: msg.params.requestId,
+            type,
+            url: res.url,
+            status: typeof res.status === 'number' ? res.status : null,
+            statusText: res.statusText || '',
+            headers: res.headers || {},
+            timestamp: Date.now(),
+          });
+        }
+      } catch {}
+    };
+
+    if (this.cdp?.ws?.addEventListener) {
+      this.cdp.ws.addEventListener('message', this._onMessage);
+    }
+  }
+
+  clear() {
+    this.responses.length = 0;
+  }
+
+  getResponses() {
+    return [...this.responses];
+  }
+
+  stop() {
+    if (this.cdp?.ws?.removeEventListener) {
+      this.cdp.ws.removeEventListener('message', this._onMessage);
+    }
+  }
+}
+
+/**
+ * Correlates observed HTTP responses with the expected target navigation route (Finding R5-F02).
+ * Prioritizes authoritative CDP Network 'Document' responses over ambiguous asset/RSC fetches.
+ * Validates consistency against PerformanceNavigationTiming if available.
+ */
+export function correlateNavigationResponse({
+  responses = [],
+  appOrigin = CANONICAL_APP_ORIGIN,
+  targetPath,
+  navTimingStatus = null,
+}) {
+  if (!targetPath || typeof targetPath !== 'string') {
+    return {
+      verified: false,
+      httpStatus: null,
+      source: 'INVALID_INPUT',
+      code: 'HTTP_STATUS_NOT_VERIFIED',
+      summary: 'Missing or invalid targetPath for response correlation',
+    };
+  }
+
+  let expectedUrl;
+  let expectedOrigin;
+  try {
+    expectedUrl = new URL(targetPath, appOrigin);
+    expectedOrigin = expectedUrl.origin;
+  } catch {
+    return {
+      verified: false,
+      httpStatus: null,
+      source: 'INVALID_INPUT',
+      code: 'HTTP_STATUS_NOT_VERIFIED',
+      summary: `Failed to construct valid target URL from ${appOrigin} and ${targetPath}`,
+    };
+  }
+
+  // 1. Filter candidate responses matching origin and target pathname
+  const matchingResponses = responses.filter((r) => {
+    if (!r.url || typeof r.url !== 'string') return false;
+    try {
+      const parsed = new URL(r.url);
+      return (
+        parsed.origin === expectedOrigin &&
+        parsed.pathname === expectedUrl.pathname
+      );
+    } catch {
+      return false;
+    }
+  });
+
+  // 2. Identify top-level Document responses (main HTML frame navigation)
+  const documentResponses = matchingResponses.filter(
+    (r) =>
+      r.type === 'Document' && typeof r.status === 'number' && r.status > 0,
+  );
+
+  let observedHttpStatus = null;
+  let source = 'NONE';
+
+  if (documentResponses.length > 0) {
+    const docRes = documentResponses[documentResponses.length - 1];
+    observedHttpStatus = docRes.status;
+    source = 'CDP_NETWORK';
+  } else if (
+    typeof navTimingStatus === 'number' &&
+    Number.isInteger(navTimingStatus) &&
+    navTimingStatus > 0
+  ) {
+    observedHttpStatus = navTimingStatus;
+    source = 'PERFORMANCE_NAVIGATION_TIMING';
+  }
+
+  // 3. Detect contradictions if both CDP and NavigationTiming are valid numbers > 0
+  if (
+    documentResponses.length > 0 &&
+    typeof navTimingStatus === 'number' &&
+    Number.isInteger(navTimingStatus) &&
+    navTimingStatus > 0 &&
+    navTimingStatus !== documentResponses[documentResponses.length - 1].status
+  ) {
+    return {
+      verified: false,
+      httpStatus: null,
+      source: 'CONTRADICTORY',
+      code: 'HTTP_STATUS_CONTRADICTORY',
+      summary: `CDP response status (${documentResponses[documentResponses.length - 1].status}) contradicted NavigationTiming status (${navTimingStatus}) for ${targetPath}`,
+    };
+  }
+
+  if (
+    observedHttpStatus === null ||
+    typeof observedHttpStatus !== 'number' ||
+    observedHttpStatus <= 0
+  ) {
+    return {
+      verified: false,
+      httpStatus: null,
+      source,
+      code: 'HTTP_STATUS_NOT_VERIFIED',
+      summary: `Authoritative numeric HTTP response status could not be observed for ${targetPath}`,
+    };
+  }
+
+  return {
+    verified: true,
+    httpStatus: observedHttpStatus,
+    source,
+    code: 'HTTP_STATUS_VERIFIED',
+    summary: `Observed HTTP ${observedHttpStatus} for ${targetPath} via ${source}`,
+  };
+}
 
 /**
  * Classifies an observed browser navigation to determine whether access was denied
@@ -980,6 +1216,7 @@ export async function runUiQaHarness({
   const serviceKey = status.SERVICE_ROLE_KEY;
 
   let browserHandle = null;
+  let navTracker = null;
   let appProcess = null;
   let appWasRunning = false;
   const createdFixtures = [];
@@ -1011,6 +1248,21 @@ export async function runUiQaHarness({
     // 2. Launch Browser
     browserHandle = await startBrowser({ app, signal });
     const { cdp } = browserHandle;
+
+    // Extract and bind Chromium version provenance via DevTools Protocol (Finding R5-F01)
+    try {
+      const versionInfo = await cdp.send('Browser.getVersion');
+      evidence.provenance.browser =
+        parseAndValidateBrowserProvenance(versionInfo);
+    } catch (err) {
+      throw new QaError(
+        'BROWSER_PROVENANCE',
+        'BROWSER_IDENTITY_MISSING',
+        `Failed to retrieve browser identity via DevTools protocol: ${err?.message || err}`,
+      );
+    }
+
+    navTracker = new NavigationResponseTracker(cdp, app);
 
     // 3. Provision synthetic multi-role fixtures with immediate registration
     const ownerFixture = await createRoleFixture(serviceKey, 'OWNER', {
@@ -1553,6 +1805,7 @@ export async function runUiQaHarness({
     };
 
     // SALES direct /exceptions route denial
+    navTracker.clear();
     await cdp.send('Page.navigate', { url: `${app}/exceptions` });
     await until(
       async () => {
@@ -1599,8 +1852,24 @@ export async function runUiQaHarness({
       };
     })()`);
 
+    const correlatedSalesExResponse = correlateNavigationResponse({
+      responses: navTracker.getResponses(),
+      appOrigin: app,
+      targetPath: '/exceptions',
+      navTimingStatus: salesExInspection.responseStatus,
+    });
+
+    if (!correlatedSalesExResponse.verified) {
+      throw new QaError(
+        'ROUTE_DENIAL',
+        correlatedSalesExResponse.code,
+        correlatedSalesExResponse.summary,
+      );
+    }
+
     const salesExDenial = classifyRouteDenial({
       ...salesExInspection,
+      responseStatus: correlatedSalesExResponse.httpStatus,
       domainHeadingText: 'Operational Exceptions',
     });
 
@@ -1620,6 +1889,9 @@ export async function runUiQaHarness({
       route: '/exceptions',
       uiDenied: true,
       observedResponse: salesExDenial.status,
+      uiClassifier: salesExDenial.status,
+      httpStatus: correlatedSalesExResponse.httpStatus,
+      httpStatusVerified: true,
       domainDataExposed: false,
     };
 
@@ -1676,6 +1948,7 @@ export async function runUiQaHarness({
     };
 
     // QC direct /quotes route denial
+    navTracker.clear();
     await cdp.send('Page.navigate', { url: `${app}/quotes` });
     await until(
       async () => {
@@ -1723,8 +1996,24 @@ export async function runUiQaHarness({
       };
     })()`);
 
+    const correlatedQcQuotesResponse = correlateNavigationResponse({
+      responses: navTracker.getResponses(),
+      appOrigin: app,
+      targetPath: '/quotes',
+      navTimingStatus: qcQuotesInspection.responseStatus,
+    });
+
+    if (!correlatedQcQuotesResponse.verified) {
+      throw new QaError(
+        'ROUTE_DENIAL',
+        correlatedQcQuotesResponse.code,
+        correlatedQcQuotesResponse.summary,
+      );
+    }
+
     const qcQuotesDenial = classifyRouteDenial({
       ...qcQuotesInspection,
+      responseStatus: correlatedQcQuotesResponse.httpStatus,
       domainHeadingText: 'Penawaran & HPP',
     });
 
@@ -1744,6 +2033,9 @@ export async function runUiQaHarness({
       route: '/quotes',
       uiDenied: true,
       observedResponse: qcQuotesDenial.status,
+      uiClassifier: qcQuotesDenial.status,
+      httpStatus: correlatedQcQuotesResponse.httpStatus,
+      httpStatusVerified: true,
       domainDataExposed: false,
     };
 
@@ -1776,6 +2068,10 @@ export async function runUiQaHarness({
       }
     }
   } finally {
+    if (navTracker) {
+      navTracker.stop();
+    }
+
     // Teardown Browser
     if (browserHandle) {
       await terminateBrowser(browserHandle);
@@ -1982,6 +2278,62 @@ export function verifyTraceFile(
     }
   }
 
+  // Browser identity verification (mandatory for all execution modes, Finding R5-F01)
+  const browserProv = trace.provenance?.browser;
+  if (
+    !browserProv ||
+    typeof browserProv !== 'object' ||
+    Array.isArray(browserProv)
+  ) {
+    return {
+      valid: false,
+      code: 'TRACE_BROWSER_PROVENANCE_MISSING',
+      summary: 'Trace is missing verified browser identity in provenance',
+    };
+  }
+
+  if (
+    !browserProv.product ||
+    typeof browserProv.product !== 'string' ||
+    browserProv.product.trim().length === 0 ||
+    browserProv.product.toLowerCase() === 'unknown'
+  ) {
+    return {
+      valid: false,
+      code: 'TRACE_BROWSER_PROVENANCE_INVALID',
+      summary:
+        'Trace browser provenance has missing, empty, or placeholder product',
+    };
+  }
+
+  if (
+    !browserProv.browserVersion ||
+    typeof browserProv.browserVersion !== 'string' ||
+    browserProv.browserVersion.trim().length === 0 ||
+    browserProv.browserVersion.toLowerCase() === 'unknown'
+  ) {
+    return {
+      valid: false,
+      code: 'TRACE_BROWSER_PROVENANCE_INVALID',
+      summary:
+        'Trace browser provenance has missing, empty, or placeholder browserVersion',
+    };
+  }
+
+  if (
+    !browserProv.protocolVersion ||
+    typeof browserProv.protocolVersion !== 'string' ||
+    browserProv.protocolVersion.trim().length === 0 ||
+    browserProv.protocolVersion.toLowerCase() === 'unknown'
+  ) {
+    return {
+      valid: false,
+      code: 'TRACE_BROWSER_PROVENANCE_INVALID',
+      summary:
+        'Trace browser provenance has missing, empty, or placeholder protocolVersion',
+    };
+  }
+
   // Cleanup absence verification (mandatory for all execution modes)
   if (trace.cleanup?.status !== 'PASS') {
     return {
@@ -2048,6 +2400,51 @@ export function verifyTraceFile(
         };
       }
     }
+
+    // Verify SALES_DIRECT_EXCEPTIONS_DENIAL numeric HTTP status (Finding R5-F02)
+    const salesDenial = trace.cases?.SALES_DIRECT_EXCEPTIONS_DENIAL;
+    if (
+      !salesDenial ||
+      typeof salesDenial.httpStatus !== 'number' ||
+      !Number.isInteger(salesDenial.httpStatus) ||
+      salesDenial.httpStatus <= 0
+    ) {
+      return {
+        valid: false,
+        code: 'TRACE_HTTP_STATUS_INVALID',
+        summary: `SALES_DIRECT_EXCEPTIONS_DENIAL missing valid numeric httpStatus, received '${salesDenial?.httpStatus}'`,
+      };
+    }
+    if (salesDenial.httpStatusVerified !== true) {
+      return {
+        valid: false,
+        code: 'TRACE_HTTP_STATUS_UNVERIFIED',
+        summary:
+          'SALES_DIRECT_EXCEPTIONS_DENIAL httpStatusVerified must be true',
+      };
+    }
+
+    // Verify QC_DIRECT_QUOTES_DENIAL numeric HTTP status (Finding R5-F02)
+    const qcDenial = trace.cases?.QC_DIRECT_QUOTES_DENIAL;
+    if (
+      !qcDenial ||
+      typeof qcDenial.httpStatus !== 'number' ||
+      !Number.isInteger(qcDenial.httpStatus) ||
+      qcDenial.httpStatus <= 0
+    ) {
+      return {
+        valid: false,
+        code: 'TRACE_HTTP_STATUS_INVALID',
+        summary: `QC_DIRECT_QUOTES_DENIAL missing valid numeric httpStatus, received '${qcDenial?.httpStatus}'`,
+      };
+    }
+    if (qcDenial.httpStatusVerified !== true) {
+      return {
+        valid: false,
+        code: 'TRACE_HTTP_STATUS_UNVERIFIED',
+        summary: 'QC_DIRECT_QUOTES_DENIAL httpStatusVerified must be true',
+      };
+    }
   } else if (expectedMode === 'intentional-broken-control') {
     if (trace.overall !== 'FAIL') {
       return {
@@ -2088,6 +2485,8 @@ export function verifyTraceFile(
       overall: trace.overall,
       cleanup: trace.cleanup?.status,
       checkoutSha,
+      browserProduct: browserProv?.product,
+      browserVersion: browserProv?.browserVersion,
       casesCount: Object.keys(trace.cases || {}).length,
     },
   };

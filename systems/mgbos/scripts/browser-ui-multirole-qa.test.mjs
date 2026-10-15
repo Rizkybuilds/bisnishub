@@ -7,12 +7,16 @@ import {
   ALLOWED_ROLES,
   EXPECTED_SHORTCUT_HREFS_BY_ROLE,
   EXPECTED_UI_CASE_IDS,
+  NavigationResponseTracker,
+  QaError,
   classifyRouteDenial,
   cleanupRoleFixture,
+  correlateNavigationResponse,
   createRoleFixture,
   defaultBuildApp,
   ensureAppServer,
   inspectActiveElement,
+  parseAndValidateBrowserProvenance,
   terminateBrowser,
   verifyTraceFile,
 } from './browser-ui-multirole-qa.mjs';
@@ -411,11 +415,37 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       for (const id of EXPECTED_UI_CASE_IDS) {
         cases[id] = { status: 'PASS' };
       }
+      cases.SALES_DIRECT_EXCEPTIONS_DENIAL = {
+        status: 'PASS',
+        route: '/exceptions',
+        uiDenied: true,
+        observedResponse: 'ERROR_BOUNDARY_500',
+        uiClassifier: 'ERROR_BOUNDARY_500',
+        httpStatus: 500,
+        httpStatusVerified: true,
+        domainDataExposed: false,
+      };
+      cases.QC_DIRECT_QUOTES_DENIAL = {
+        status: 'PASS',
+        route: '/quotes',
+        uiDenied: true,
+        observedResponse: 'ERROR_BOUNDARY_500',
+        uiClassifier: 'ERROR_BOUNDARY_500',
+        httpStatus: 500,
+        httpStatusVerified: true,
+        domainDataExposed: false,
+      };
       return {
         harness: 'mgbos-browser-ui-multirole-qa',
         mode: 'normal',
         provenance: {
           checkoutSha: 'a01d375d07e9fdbc00411cb4b568a1610f1582d8',
+          browser: {
+            product: 'Chrome/155.0.8059.40',
+            browserName: 'Chrome',
+            browserVersion: '155.0.8059.40',
+            protocolVersion: '1.3',
+          },
         },
         overall: 'PASS',
         failure: null,
@@ -592,6 +622,12 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
             mode: 'normal',
             provenance: {
               checkoutSha: 'a01d375d07e9fdbc00411cb4b568a1610f1582d8',
+              browser: {
+                product: 'Chrome/155.0.8059.40',
+                browserName: 'Chrome',
+                browserVersion: '155.0.8059.40',
+                protocolVersion: '1.3',
+              },
             },
             overall: 'FAIL',
             failure: { code: 'ERR' },
@@ -645,6 +681,12 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
           mode: 'intentional-broken-control',
           provenance: {
             checkoutSha: 'a01d375d07e9fdbc00411cb4b568a1610f1582d8',
+            browser: {
+              product: 'Chrome/155.0.8059.40',
+              browserName: 'Chrome',
+              browserVersion: '155.0.8059.40',
+              protocolVersion: '1.3',
+            },
           },
           overall: 'FAIL',
           cleanup: { status: 'PASS', verifiedAbsent: true },
@@ -687,6 +729,12 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
           mode: 'intentional-broken-control',
           provenance: {
             checkoutSha: 'a01d375d07e9fdbc00411cb4b568a1610f1582d8',
+            browser: {
+              product: 'Chrome/155.0.8059.40',
+              browserName: 'Chrome',
+              browserVersion: '155.0.8059.40',
+              protocolVersion: '1.3',
+            },
           },
           overall: 'FAIL',
           cleanup: { status: 'PASS', verifiedAbsent: true },
@@ -824,6 +872,99 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       });
     });
 
+    it('rejects trace when browser identity is missing from provenance (Finding R5-F01)', async () => {
+      await withTempDir(async (dir) => {
+        const tracePath = path.join(dir, 'trace_no_browser.json');
+        const trace = generateValid24CaseTrace();
+        delete trace.provenance.browser;
+        writeFileSync(tracePath, JSON.stringify(trace), 'utf8');
+
+        const result = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
+        });
+        assert.equal(result.valid, false);
+        assert.equal(result.code, 'TRACE_BROWSER_PROVENANCE_MISSING');
+      });
+    });
+
+    it('rejects trace when browser identity has missing, empty, or placeholder values (Finding R5-F01)', async () => {
+      await withTempDir(async (dir) => {
+        const invalidCombinations = [
+          { product: '' },
+          { product: 'unknown' },
+          { browserVersion: '' },
+          { browserVersion: 'unknown' },
+          { protocolVersion: '' },
+          { protocolVersion: 'unknown' },
+        ];
+
+        for (const override of invalidCombinations) {
+          const tracePath = path.join(dir, 'trace_invalid_browser.json');
+          const trace = generateValid24CaseTrace();
+          trace.provenance.browser = {
+            ...trace.provenance.browser,
+            ...override,
+          };
+          writeFileSync(tracePath, JSON.stringify(trace), 'utf8');
+
+          const result = verifyTraceFile(tracePath, {
+            expectedMode: 'normal',
+            env: TEST_ISOLATED_ENV,
+          });
+          assert.equal(
+            result.valid,
+            false,
+            `Expected invalid for override: ${JSON.stringify(override)}`,
+          );
+          assert.equal(result.code, 'TRACE_BROWSER_PROVENANCE_INVALID');
+        }
+      });
+    });
+
+    it('rejects normal trace when direct denial cases have missing or non-numeric httpStatus (Finding R5-F02)', async () => {
+      await withTempDir(async (dir) => {
+        // Missing httpStatus in SALES_DIRECT_EXCEPTIONS_DENIAL
+        const tracePath1 = path.join(dir, 'trace_missing_sales_http.json');
+        const trace1 = generateValid24CaseTrace();
+        delete trace1.cases.SALES_DIRECT_EXCEPTIONS_DENIAL.httpStatus;
+        writeFileSync(tracePath1, JSON.stringify(trace1), 'utf8');
+
+        const result1 = verifyTraceFile(tracePath1, {
+          expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
+        });
+        assert.equal(result1.valid, false);
+        assert.equal(result1.code, 'TRACE_HTTP_STATUS_INVALID');
+
+        // Non-numeric httpStatus in QC_DIRECT_QUOTES_DENIAL
+        const tracePath2 = path.join(dir, 'trace_invalid_qc_http.json');
+        const trace2 = generateValid24CaseTrace();
+        trace2.cases.QC_DIRECT_QUOTES_DENIAL.httpStatus = '500';
+        writeFileSync(tracePath2, JSON.stringify(trace2), 'utf8');
+
+        const result2 = verifyTraceFile(tracePath2, {
+          expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
+        });
+        assert.equal(result2.valid, false);
+        assert.equal(result2.code, 'TRACE_HTTP_STATUS_INVALID');
+
+        // httpStatusVerified is false
+        const tracePath3 = path.join(dir, 'trace_unverified_http.json');
+        const trace3 = generateValid24CaseTrace();
+        trace3.cases.SALES_DIRECT_EXCEPTIONS_DENIAL.httpStatusVerified = false;
+        writeFileSync(tracePath3, JSON.stringify(trace3), 'utf8');
+
+        const result3 = verifyTraceFile(tracePath3, {
+          expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
+        });
+        assert.equal(result3.valid, false);
+        assert.equal(result3.code, 'TRACE_HTTP_STATUS_UNVERIFIED');
+      });
+    });
+
     it('evaluates inspectActiveElement for interactive tags and focus-visible styling (Finding R3-F02)', async () => {
       const mockCdp = {
         async eval() {
@@ -948,6 +1089,344 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       assert.equal(buildCalled, true);
       assert.equal(spawnCalled, true);
       assert.equal(result.wasRunning, false);
+    });
+  });
+
+  describe('parseAndValidateBrowserProvenance (Finding R5-F01)', () => {
+    it('parses and validates valid Chrome version metadata', () => {
+      const parsed = parseAndValidateBrowserProvenance({
+        product: 'Chrome/155.0.8059.40',
+        protocolVersion: '1.3',
+        revision: '@cfaadc5a132d78e1828635aa8405a499f3e14864',
+        userAgent: 'Mozilla/5.0 ...',
+        jsVersion: '15.5.35.20',
+      });
+      assert.deepEqual(parsed, {
+        product: 'Chrome/155.0.8059.40',
+        browserName: 'Chrome',
+        browserVersion: '155.0.8059.40',
+        protocolVersion: '1.3',
+      });
+      assert.equal(
+        'userAgent' in parsed,
+        false,
+        'userAgent must NOT be retained',
+      );
+      assert.equal(
+        'revision' in parsed,
+        false,
+        'revision must NOT be retained',
+      );
+    });
+
+    it('parses and validates valid HeadlessChrome version metadata', () => {
+      const parsed = parseAndValidateBrowserProvenance({
+        product: 'HeadlessChrome/130.0.6723.69',
+        protocolVersion: '1.3',
+      });
+      assert.equal(parsed.browserName, 'HeadlessChrome');
+      assert.equal(parsed.browserVersion, '130.0.6723.69');
+      assert.equal(parsed.protocolVersion, '1.3');
+    });
+
+    it('throws BROWSER_IDENTITY_MISSING for null or non-object payloads', () => {
+      assert.throws(
+        () => parseAndValidateBrowserProvenance(null),
+        (err) =>
+          err instanceof QaError && err.code === 'BROWSER_IDENTITY_MISSING',
+      );
+      assert.throws(
+        () => parseAndValidateBrowserProvenance('not-an-object'),
+        (err) =>
+          err instanceof QaError && err.code === 'BROWSER_IDENTITY_MISSING',
+      );
+    });
+
+    it('throws BROWSER_IDENTITY_INVALID for empty or placeholder product/versions', () => {
+      assert.throws(
+        () =>
+          parseAndValidateBrowserProvenance({
+            product: '',
+            protocolVersion: '1.3',
+          }),
+        (err) =>
+          err instanceof QaError && err.code === 'BROWSER_IDENTITY_INVALID',
+      );
+      assert.throws(
+        () =>
+          parseAndValidateBrowserProvenance({
+            product: 'unknown',
+            protocolVersion: '1.3',
+          }),
+        (err) =>
+          err instanceof QaError && err.code === 'BROWSER_IDENTITY_INVALID',
+      );
+      assert.throws(
+        () =>
+          parseAndValidateBrowserProvenance({
+            product: 'Chrome/155.0.8059.40',
+            protocolVersion: 'unknown',
+          }),
+        (err) =>
+          err instanceof QaError && err.code === 'BROWSER_IDENTITY_INVALID',
+      );
+      assert.throws(
+        () =>
+          parseAndValidateBrowserProvenance({
+            product: 'Chrome/unknown',
+            protocolVersion: '1.3',
+          }),
+        (err) =>
+          err instanceof QaError && err.code === 'BROWSER_IDENTITY_INVALID',
+      );
+    });
+  });
+
+  describe('NavigationResponseTracker & correlateNavigationResponse (Finding R5-F02)', () => {
+    it('correlates top-level Document response matching target path and extracts numeric status', () => {
+      const responses = [
+        {
+          type: 'Document',
+          url: 'http://127.0.0.1:3101/exceptions',
+          status: 500,
+          statusText: 'Internal Server Error',
+        },
+      ];
+
+      const result = correlateNavigationResponse({
+        responses,
+        appOrigin: 'http://127.0.0.1:3101',
+        targetPath: '/exceptions',
+        navTimingStatus: 500,
+      });
+
+      assert.equal(result.verified, true);
+      assert.equal(result.httpStatus, 500);
+      assert.equal(result.source, 'CDP_NETWORK');
+    });
+
+    it('correlates explicit 403 Document response', () => {
+      const responses = [
+        {
+          type: 'Document',
+          url: 'http://127.0.0.1:3101/quotes',
+          status: 403,
+          statusText: 'Forbidden',
+        },
+      ];
+
+      const result = correlateNavigationResponse({
+        responses,
+        appOrigin: 'http://127.0.0.1:3101',
+        targetPath: '/quotes',
+        navTimingStatus: 403,
+      });
+
+      assert.equal(result.verified, true);
+      assert.equal(result.httpStatus, 403);
+    });
+
+    it('ignores non-Document responses such as scripts, stylesheets, and RSC fetches', () => {
+      const responses = [
+        {
+          type: 'Stylesheet',
+          url: 'http://127.0.0.1:3101/_next/static/css/app.css',
+          status: 200,
+        },
+        {
+          type: 'Script',
+          url: 'http://127.0.0.1:3101/_next/static/chunks/main.js',
+          status: 200,
+        },
+        {
+          type: 'Fetch',
+          url: 'http://127.0.0.1:3101/exceptions?_rsc=abc',
+          status: 200,
+        },
+        {
+          type: 'Document',
+          url: 'http://127.0.0.1:3101/exceptions',
+          status: 500,
+        },
+      ];
+
+      const result = correlateNavigationResponse({
+        responses,
+        appOrigin: 'http://127.0.0.1:3101',
+        targetPath: '/exceptions',
+        navTimingStatus: 500,
+      });
+
+      assert.equal(result.verified, true);
+      assert.equal(result.httpStatus, 500);
+      assert.equal(result.source, 'CDP_NETWORK');
+    });
+
+    it('ignores responses for previous routes or unrelated endpoints', () => {
+      const responses = [
+        {
+          type: 'Document',
+          url: 'http://127.0.0.1:3101/dashboard',
+          status: 200,
+        },
+        {
+          type: 'Document',
+          url: 'http://127.0.0.1:3101/exceptions',
+          status: 500,
+        },
+      ];
+
+      const result = correlateNavigationResponse({
+        responses,
+        appOrigin: 'http://127.0.0.1:3101',
+        targetPath: '/exceptions',
+        navTimingStatus: 500,
+      });
+
+      assert.equal(result.verified, true);
+      assert.equal(result.httpStatus, 500);
+    });
+
+    it('falls back to PerformanceNavigationTiming when no CDP Document response is present', () => {
+      const result = correlateNavigationResponse({
+        responses: [],
+        appOrigin: 'http://127.0.0.1:3101',
+        targetPath: '/exceptions',
+        navTimingStatus: 500,
+      });
+
+      assert.equal(result.verified, true);
+      assert.equal(result.httpStatus, 500);
+      assert.equal(result.source, 'PERFORMANCE_NAVIGATION_TIMING');
+    });
+
+    it('detects contradiction between CDP Document response and NavigationTiming', () => {
+      const responses = [
+        {
+          type: 'Document',
+          url: 'http://127.0.0.1:3101/exceptions',
+          status: 500,
+        },
+      ];
+
+      const result = correlateNavigationResponse({
+        responses,
+        appOrigin: 'http://127.0.0.1:3101',
+        targetPath: '/exceptions',
+        navTimingStatus: 200,
+      });
+
+      assert.equal(result.verified, false);
+      assert.equal(result.code, 'HTTP_STATUS_CONTRADICTORY');
+    });
+
+    it('fails closed when status is missing, 0, or negative', () => {
+      const result1 = correlateNavigationResponse({
+        responses: [],
+        appOrigin: 'http://127.0.0.1:3101',
+        targetPath: '/exceptions',
+        navTimingStatus: 0,
+      });
+      assert.equal(result1.verified, false);
+      assert.equal(result1.code, 'HTTP_STATUS_NOT_VERIFIED');
+
+      const result2 = correlateNavigationResponse({
+        responses: [
+          {
+            type: 'Document',
+            url: 'http://127.0.0.1:3101/exceptions',
+            status: null,
+          },
+        ],
+        appOrigin: 'http://127.0.0.1:3101',
+        targetPath: '/exceptions',
+      });
+      assert.equal(result2.verified, false);
+      assert.equal(result2.code, 'HTTP_STATUS_NOT_VERIFIED');
+    });
+
+    it('handles NavigationResponseTracker message listening and cleanup cleanly', () => {
+      let listenerRef = null;
+      let removedRef = null;
+      const mockWs = {
+        addEventListener(event, fn) {
+          if (event === 'message') listenerRef = fn;
+        },
+        removeEventListener(event, fn) {
+          if (event === 'message') removedRef = fn;
+        },
+      };
+
+      const tracker = new NavigationResponseTracker(
+        { ws: mockWs },
+        'http://127.0.0.1:3101',
+      );
+      assert.ok(listenerRef);
+
+      // Simulate incoming CDP packet
+      listenerRef({
+        data: JSON.stringify({
+          method: 'Network.responseReceived',
+          params: {
+            requestId: 'req-1',
+            type: 'Document',
+            response: {
+              url: 'http://127.0.0.1:3101/exceptions',
+              status: 500,
+              statusText: 'Internal Server Error',
+            },
+          },
+        }),
+      });
+
+      assert.equal(tracker.getResponses().length, 1);
+      assert.equal(tracker.getResponses()[0].status, 500);
+
+      tracker.clear();
+      assert.equal(tracker.getResponses().length, 0);
+
+      tracker.stop();
+      assert.equal(removedRef, listenerRef);
+    });
+  });
+
+  describe('AppSidebar Nested-Route Matching Logic (Finding R5-F03)', () => {
+    // Evaluates the exact predicate used in PR #53 AppSidebar component:
+    // pathname === item.href || pathname.startsWith(item.href + '/')
+    const isSidebarItemActive = (itemHref, currentPathname) =>
+      itemHref === '/dashboard'
+        ? currentPathname === '/dashboard'
+        : currentPathname === itemHref ||
+          currentPathname.startsWith(itemHref + '/');
+
+    it('matches exact routes and nested sub-routes correctly', () => {
+      // /dashboard is exact match only
+      assert.equal(isSidebarItemActive('/dashboard', '/dashboard'), true);
+      assert.equal(isSidebarItemActive('/dashboard', '/dashboard/sub'), false);
+
+      // Root item matches exact route
+      assert.equal(isSidebarItemActive('/orders', '/orders'), true);
+      assert.equal(isSidebarItemActive('/exceptions', '/exceptions'), true);
+      assert.equal(isSidebarItemActive('/quotes', '/quotes'), true);
+
+      // Root item matches nested dynamic routes
+      assert.equal(
+        isSidebarItemActive('/orders', '/orders/ord-2026-001'),
+        true,
+      );
+      assert.equal(
+        isSidebarItemActive('/exceptions', '/exceptions/exp-999'),
+        true,
+      );
+      assert.equal(
+        isSidebarItemActive('/quotes', '/quotes/q-123/versions/v-1'),
+        true,
+      );
+
+      // Disjoint or prefix-overlap routes do NOT match
+      assert.equal(isSidebarItemActive('/orders', '/orders-archive'), false);
+      assert.equal(isSidebarItemActive('/orders', '/leads'), false);
+      assert.equal(isSidebarItemActive('/exceptions', '/exceptions_v2'), false);
     });
   });
 });
