@@ -12,6 +12,7 @@ import {
   createRoleFixture,
   defaultBuildApp,
   ensureAppServer,
+  inspectActiveElement,
   terminateBrowser,
   verifyTraceFile,
 } from './browser-ui-multirole-qa.mjs';
@@ -643,6 +644,137 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
         assert.equal(wrongResult.valid, false);
         assert.equal(wrongResult.code, 'NEGATIVE_CONTROL_CODE_MISMATCH');
       });
+    });
+
+    it('strictly rejects unrelated setup, fixture, browser, and assertion errors in negative control mode (Finding R3-F01)', () => {
+      withTempDir((dir) => {
+        const baseNegTrace = {
+          harness: 'mgbos-browser-ui-multirole-qa',
+          mode: 'intentional-broken-control',
+          provenance: {
+            checkoutSha: 'a01d375d07e9fdbc00411cb4b568a1610f1582d8',
+          },
+          overall: 'FAIL',
+          cleanup: { status: 'PASS', verifiedAbsent: true },
+        };
+
+        const unrelatedFailureCodes = [
+          'FIXTURE_CREATION_FAILED',
+          'BROWSER_STARTUP_FAILED',
+          'APP_STARTUP_FAILED',
+          'ASSERTION_FAILED',
+          'QA_EXECUTION_FAILED',
+          'NONLOCAL_TARGET_BLOCKED',
+          'TIMED_OUT',
+        ];
+
+        for (const code of unrelatedFailureCodes) {
+          const tracePath = path.join(dir, `trace-${code}.json`);
+          writeFileSync(
+            tracePath,
+            JSON.stringify({
+              ...baseNegTrace,
+              failure: {
+                stage: 'SETUP_OR_QA',
+                code,
+                message: `Unrelated failure: ${code}`,
+              },
+            }),
+            'utf8',
+          );
+
+          const result = verifyTraceFile(tracePath, {
+            expectedMode: 'intentional-broken-control',
+            exitStatus: 1,
+          });
+          assert.equal(
+            result.valid,
+            false,
+            `Trace with failure code ${code} must NOT be accepted as intentional negative control`,
+          );
+          assert.equal(
+            result.code,
+            'NEGATIVE_CONTROL_CODE_MISMATCH',
+            `Expected NEGATIVE_CONTROL_CODE_MISMATCH for code ${code}`,
+          );
+        }
+      });
+    });
+
+    it('enforces CI evidence binding against GITHUB_SHA under verified CI conditions (Finding R3-F03)', () => {
+      withTempDir((dir) => {
+        const tracePath = path.join(dir, 'trace_ci_sha.json');
+        const trace = generateValid24CaseTrace();
+        trace.provenance.checkoutSha =
+          '1111111111111111111111111111111111111111';
+        writeFileSync(tracePath, JSON.stringify(trace), 'utf8');
+
+        // Case 1: In CI environment where GITHUB_SHA matches checkoutSha -> PASS
+        const passResult = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: {
+            GITHUB_ACTIONS: 'true',
+            GITHUB_SHA: '1111111111111111111111111111111111111111',
+          },
+        });
+        assert.equal(passResult.valid, true);
+        assert.equal(passResult.code, 'TRACE_VERIFIED');
+
+        // Case 2: In CI environment where GITHUB_SHA mismatches checkoutSha -> FAIL with TRACE_PROVENANCE_MISMATCH
+        const mismatchResult = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: {
+            GITHUB_ACTIONS: 'true',
+            GITHUB_SHA: '2222222222222222222222222222222222222222',
+          },
+        });
+        assert.equal(mismatchResult.valid, false);
+        assert.equal(mismatchResult.code, 'TRACE_PROVENANCE_MISMATCH');
+
+        // Case 3: Explicit --expected-checkout-sha overrides GITHUB_SHA in CI
+        const overrideResult = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          expectedCheckoutSha: '1111111111111111111111111111111111111111',
+          env: {
+            GITHUB_ACTIONS: 'true',
+            GITHUB_SHA: '2222222222222222222222222222222222222222',
+          },
+        });
+        assert.equal(overrideResult.valid, true);
+
+        // Case 4: Non-CI environment without expectedCheckoutSha does not require GITHUB_SHA match
+        const nonCiResult = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: {},
+        });
+        assert.equal(nonCiResult.valid, true);
+      });
+    });
+
+    it('evaluates inspectActiveElement for interactive tags and focus-visible styling (Finding R3-F02)', async () => {
+      const mockCdp = {
+        async eval() {
+          return {
+            isBody: false,
+            tag: 'BUTTON',
+            text: 'MG',
+            href: null,
+            isInteractive: true,
+            hasFocusVisible: true,
+            outlineStyle: 'solid',
+            outlineWidth: '2px',
+            outlineColor: 'rgb(56, 189, 248)',
+            hasObservableFocus: true,
+          };
+        },
+      };
+
+      const result = await inspectActiveElement(mockCdp);
+      assert.equal(result.isBody, false);
+      assert.equal(result.isInteractive, true);
+      assert.equal(result.hasObservableFocus, true);
+      assert.equal(result.tag, 'BUTTON');
+      assert.equal(result.text, 'MG');
     });
   });
 

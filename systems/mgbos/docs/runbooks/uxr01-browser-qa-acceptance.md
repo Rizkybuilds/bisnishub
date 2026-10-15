@@ -29,32 +29,32 @@ The harness independently automates real browser sessions using Headless Chromiu
 
 ## 2. Complete 24-Case Acceptance Matrix
 
-| Case ID                            | Role      | Viewport | Required Assertions & Behavior                                                                  | Target Outcome |
-| :--------------------------------- | :-------- | :------- | :---------------------------------------------------------------------------------------------- | :------------- |
-| **OWNER_LOGIN**                    | `OWNER`   | 1440×900 | Real form login via `/login` redirects to `/dashboard` with long founder display name           | `PASS`         |
-| **OWNER_DASHBOARD_1440**           | `OWNER`   | 1440×900 | Exactly 14 shortcuts present; `document.documentElement.scrollWidth <= innerWidth`              | `PASS`         |
-| **OWNER_DASHBOARD_1024**           | `OWNER`   | 1024×768 | Responsive layout intact; zero horizontal overflow                                              | `PASS`         |
-| **OWNER_HEADER_LAYOUT_1440**       | `OWNER`   | 1440×900 | Header bounding boxes valid, brand buttons visible, logout button not clipped, zero overflow    | `PASS`         |
-| **OWNER_HEADER_LAYOUT_1024**       | `OWNER`   | 1024×768 | Responsive header layout intact, brand and logout buttons fully within viewport                 | `PASS`         |
-| **OWNER_NAV_LEADS**                | `OWNER`   | 1440×900 | Interactive click on sidebar `/leads` link; URL updates; sidebar active class applied           | `PASS`         |
-| **OWNER_NAV_ORDERS**               | `OWNER`   | 1440×900 | Interactive click on sidebar `/orders` link; URL updates; sidebar active class applied          | `PASS`         |
-| **OWNER_NAV_EXCEPTIONS**           | `OWNER`   | 1440×900 | Interactive click on sidebar `/exceptions` link; URL updates; sidebar active class applied      | `PASS`         |
-| **OWNER_BRAND_SWITCH_MG**          | `OWNER`   | 1440×900 | Click brand button `MG`; brand switcher active; `/designs` omitted from sidebar                 | `PASS`         |
-| **OWNER_BRAND_RESTORE_TS**         | `OWNER`   | 1440×900 | Click brand button `TS`; brand switcher active; `/designs` restored to sidebar                  | `PASS`         |
-| **OWNER_KEYBOARD_NAVIGATION**      | `OWNER`   | 1440×900 | 3-step visible `Tab` progression off `BODY`; `Enter` keypress activates focused brand button    | `PASS`         |
-| **OWNER_SHORTCUTS_DEEP_EQUALITY**  | `OWNER`   | 1440×900 | Sorted shortcut hrefs match canonical 14-item list with deep equality                           | `PASS`         |
-| **OWNER_LOGOUT**                   | `OWNER`   | 1440×900 | Header logout form submission redirects to `/login`                                             | `PASS`         |
-| **POST_LOGOUT_PROTECTED_DENIAL**   | Anonymous | 1440×900 | Post-logout navigation to `/dashboard` redirects to `/login`; session cookies cleared           | `PASS`         |
-| **SALES_LOGIN**                    | `SALES`   | 1440×900 | Real form login redirects to `/dashboard`                                                       | `PASS`         |
-| **SALES_DASHBOARD**                | `SALES`   | 1440×900 | Exactly 13 shortcuts; `/exceptions` omitted; deep equality with canonical list                  | `PASS`         |
-| **SALES_AUTHORIZED_QUOTES_ACCESS** | `SALES`   | 1440×900 | Direct navigation to `/quotes` renders HTTP 200, "Penawaran & HPP" heading, and create form     | `PASS`         |
-| **SALES_DIRECT_EXCEPTIONS_DENIAL** | `SALES`   | 1440×900 | Direct navigation to `/exceptions` denied (500 boundary); zero domain data leaked               | `PASS`         |
-| **SALES_LOGOUT**                   | `SALES`   | 1440×900 | Header logout form submission redirects to `/login`                                             | `PASS`         |
-| **QC_LOGIN**                       | `QC`      | 1440×900 | Real form login redirects to `/dashboard`                                                       | `PASS`         |
-| **QC_DASHBOARD**                   | `QC`      | 1440×900 | Exactly 12 shortcuts; `/quotes` & `/exceptions` omitted; deep equality with canonical list      | `PASS`         |
-| **QC_DIRECT_QUOTES_DENIAL**        | `QC`      | 1440×900 | Direct navigation to `/quotes` denied (500 boundary); zero quotation data leaked                | `PASS`         |
-| **QC_LOGOUT**                      | `QC`      | 1440×900 | Header logout form submission redirects to `/login`                                             | `PASS`         |
-| **FIXTURE_CLEANUP_VERIFICATION**   | System    | N/A      | Independent database absence verification for all created fixtures (`members`, `users`, `auth`) | `PASS`         |
+| Case ID                            | Role      | Viewport | Required Assertions & Behavior                                                                                                                                               | Target Outcome |
+| :--------------------------------- | :-------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------- |
+| **OWNER_LOGIN**                    | `OWNER`   | 1440×900 | Real form login via `/login` redirects to `/dashboard` with long founder display name                                                                                        | `PASS`         |
+| **OWNER_DASHBOARD_1440**           | `OWNER`   | 1440×900 | Exactly 14 shortcuts present; `document.documentElement.scrollWidth <= innerWidth`                                                                                           | `PASS`         |
+| **OWNER_DASHBOARD_1024**           | `OWNER`   | 1024×768 | Responsive layout intact; zero horizontal overflow                                                                                                                           | `PASS`         |
+| **OWNER_HEADER_LAYOUT_1440**       | `OWNER`   | 1440×900 | Header bounding boxes valid, brand buttons visible, logout button not clipped, zero overflow                                                                                 | `PASS`         |
+| **OWNER_HEADER_LAYOUT_1024**       | `OWNER`   | 1024×768 | Responsive header layout intact, brand and logout buttons fully within viewport                                                                                              | `PASS`         |
+| **OWNER_NAV_LEADS**                | `OWNER`   | 1440×900 | Interactive click on sidebar `/leads` link; URL updates; sidebar active class applied                                                                                        | `PASS`         |
+| **OWNER_NAV_ORDERS**               | `OWNER`   | 1440×900 | Interactive click on sidebar `/orders` link; URL updates; sidebar active class applied                                                                                       | `PASS`         |
+| **OWNER_NAV_EXCEPTIONS**           | `OWNER`   | 1440×900 | Interactive click on sidebar `/exceptions` link; URL updates; sidebar active class applied                                                                                   | `PASS`         |
+| **OWNER_BRAND_SWITCH_MG**          | `OWNER`   | 1440×900 | Click brand button `MG`; brand switcher active; `/designs` omitted from sidebar                                                                                              | `PASS`         |
+| **OWNER_BRAND_RESTORE_TS**         | `OWNER`   | 1440×900 | Click brand button `TS`; brand switcher active; `/designs` restored to sidebar                                                                                               | `PASS`         |
+| **OWNER_KEYBOARD_NAVIGATION**      | `OWNER`   | 1440×900 | 3-step sequential `Tab` progression across distinct interactive elements with observable `:focus-visible` styling; `Enter` keypress naturally activates focused brand button | `PASS`         |
+| **OWNER_SHORTCUTS_DEEP_EQUALITY**  | `OWNER`   | 1440×900 | Sorted shortcut hrefs match canonical 14-item list with deep equality                                                                                                        | `PASS`         |
+| **OWNER_LOGOUT**                   | `OWNER`   | 1440×900 | Header logout form submission redirects to `/login`                                                                                                                          | `PASS`         |
+| **POST_LOGOUT_PROTECTED_DENIAL**   | Anonymous | 1440×900 | Post-logout navigation to `/dashboard` redirects to `/login`; session cookies cleared                                                                                        | `PASS`         |
+| **SALES_LOGIN**                    | `SALES`   | 1440×900 | Real form login redirects to `/dashboard`                                                                                                                                    | `PASS`         |
+| **SALES_DASHBOARD**                | `SALES`   | 1440×900 | Exactly 13 shortcuts; `/exceptions` omitted; deep equality with canonical list                                                                                               | `PASS`         |
+| **SALES_AUTHORIZED_QUOTES_ACCESS** | `SALES`   | 1440×900 | Direct navigation to `/quotes` renders HTTP 200, "Penawaran & HPP" heading, and create form                                                                                  | `PASS`         |
+| **SALES_DIRECT_EXCEPTIONS_DENIAL** | `SALES`   | 1440×900 | Direct navigation to `/exceptions` denied (500 boundary); zero domain data leaked                                                                                            | `PASS`         |
+| **SALES_LOGOUT**                   | `SALES`   | 1440×900 | Header logout form submission redirects to `/login`                                                                                                                          | `PASS`         |
+| **QC_LOGIN**                       | `QC`      | 1440×900 | Real form login redirects to `/dashboard`                                                                                                                                    | `PASS`         |
+| **QC_DASHBOARD**                   | `QC`      | 1440×900 | Exactly 12 shortcuts; `/quotes` & `/exceptions` omitted; deep equality with canonical list                                                                                   | `PASS`         |
+| **QC_DIRECT_QUOTES_DENIAL**        | `QC`      | 1440×900 | Direct navigation to `/quotes` denied (500 boundary); zero quotation data leaked                                                                                             | `PASS`         |
+| **QC_LOGOUT**                      | `QC`      | 1440×900 | Header logout form submission redirects to `/login`                                                                                                                          | `PASS`         |
+| **FIXTURE_CLEANUP_VERIFICATION**   | System    | N/A      | Independent database absence verification for all created fixtures (`members`, `users`, `auth`)                                                                              | `PASS`         |
 
 ---
 
@@ -101,9 +101,9 @@ Classification logic guarantees:
 - Verification is performed using:
   `node scripts/browser-ui-multirole-qa.mjs --verify-trace <path> --expected-mode <mode> --exit-status <status> [--expected-checkout-sha <sha>]`
 - Verification asserts:
-  - Provenance checkout SHA is a valid 40-character hexadecimal string matching `--expected-checkout-sha` if supplied.
+  - Provenance checkout SHA is a valid 40-character hexadecimal string matching `--expected-checkout-sha` if supplied, or automatically bound to `GITHUB_SHA` in GitHub Actions CI.
   - `cleanup.status === 'PASS'` and `cleanup.verifiedAbsent === true` (verifying all synthetic fixture rows were confirmed absent in the database).
-  - All 24 cases marked `PASS` in normal mode; exact code `INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED` in negative control mode.
+  - All 24 cases marked `PASS` in normal mode; exact code `INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED` in negative control mode (rejecting any unrelated setup, fixture, or assertion errors).
 
 ---
 

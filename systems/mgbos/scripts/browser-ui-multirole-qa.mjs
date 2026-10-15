@@ -881,6 +881,46 @@ async function inspectSidebarLinks(cdp) {
 }
 
 /**
+ * Evaluates the active focused element and its focus-visible accessibility styling.
+ */
+export async function inspectActiveElement(cdp) {
+  return await cdp.eval(`(() => {
+    const el = document.activeElement;
+    if (!el || el === document.body) {
+      return {
+        isBody: true,
+        tag: el?.tagName || 'UNKNOWN',
+        text: '',
+        href: null,
+        isInteractive: false,
+        hasFocusVisible: false,
+        hasObservableFocus: false,
+      };
+    }
+    const tag = (el.tagName || '').toUpperCase();
+    const isInteractive =
+      ['A', 'BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'].includes(tag) ||
+      el.hasAttribute('tabindex');
+    const hasFocusVisible = el.matches(':focus-visible');
+    const cs = window.getComputedStyle(el);
+    const outlineVisible =
+      cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth || '0') > 0;
+    return {
+      isBody: false,
+      tag,
+      text: (el.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 30),
+      href: el.getAttribute('href') || null,
+      isInteractive,
+      hasFocusVisible,
+      outlineStyle: cs.outlineStyle,
+      outlineWidth: cs.outlineWidth,
+      outlineColor: cs.outlineColor,
+      hasObservableFocus: hasFocusVisible || outlineVisible,
+    };
+  })()`);
+}
+
+/**
  * Runs the full multi-role browser acceptance QA harness.
  */
 export async function runUiQaHarness({
@@ -1269,7 +1309,9 @@ export async function runUiQaHarness({
     };
 
     // Visible Keyboard Tab progression and Enter activation
-    await cdp.eval('document.body.focus()');
+    await cdp.eval(
+      'if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur(); document.body.focus();',
+    );
     const tabProgression = [];
     for (let i = 0; i < 3; i++) {
       await cdp.send('Input.dispatchKeyEvent', {
@@ -1284,36 +1326,55 @@ export async function runUiQaHarness({
         code: 'Tab',
         windowsVirtualKeyCode: 9,
       });
-      const elInfo = await cdp.eval(`(() => {
-        const el = document.activeElement;
-        return {
-          tag: el?.tagName,
-          text: (el?.textContent || '').trim().slice(0, 30),
-          href: el?.getAttribute?.('href'),
-        };
-      })()`);
+      const elInfo = await inspectActiveElement(cdp);
       tabProgression.push(elInfo);
     }
+    assert.equal(
+      tabProgression.length,
+      3,
+      'Must record exactly 3 Tab progression steps',
+    );
     assert.ok(
-      tabProgression.every((p) => p.tag && p.tag !== 'BODY'),
+      tabProgression.every((p) => !p.isBody && p.isInteractive),
       'Keyboard Tab progression failed to move focus through interactive elements',
     );
 
-    // Enter activation on brand switch button
-    const enterActivation = await cdp.eval(`(() => {
-      const mgBtn = Array.from(document.querySelectorAll('button.brand-btn')).find(b => b.textContent.trim() === 'MG');
-      if (mgBtn) {
-        mgBtn.focus();
-        return { focused: document.activeElement === mgBtn, target: 'MG_BTN' };
-      }
-      return { focused: false, target: 'NONE' };
-    })()`);
-    assert.equal(
-      enterActivation.focused,
-      true,
-      'Target element focused for Enter activation test',
+    // Verify actual progression: each Tab step moves to a distinct element
+    for (let i = 1; i < tabProgression.length; i++) {
+      const prev = tabProgression[i - 1];
+      const curr = tabProgression[i];
+      const isDistinct =
+        prev.tag !== curr.tag ||
+        prev.text !== curr.text ||
+        prev.href !== curr.href;
+      assert.ok(
+        isDistinct,
+        `Tab step ${i + 1} must move focus to a distinct interactive element (step ${i}: ${prev.tag}[${prev.text}], step ${i + 1}: ${curr.tag}[${curr.text}])`,
+      );
+    }
+
+    // Verify observable :focus-visible styling or outline on all focused elements
+    assert.ok(
+      tabProgression.every((p) => p.hasObservableFocus),
+      'All focused elements in keyboard progression must display observable :focus-visible styling or outline',
     );
 
+    // Verify target element for Enter activation:
+    // Natural Tab sequence: Topbar Link (step 1) -> Brand TS (step 2) -> Brand MG (step 3)
+    let focusedOnMg =
+      tabProgression[2]?.tag === 'BUTTON' && tabProgression[2]?.text === 'MG';
+    if (!focusedOnMg) {
+      const currentActive = await inspectActiveElement(cdp);
+      if (currentActive.tag === 'BUTTON' && currentActive.text === 'MG') {
+        focusedOnMg = true;
+      }
+    }
+    assert.ok(
+      focusedOnMg,
+      `Keyboard progression must reach the MG brand button control (observed: ${tabProgression[2]?.tag}[${tabProgression[2]?.text}])`,
+    );
+
+    // Enter activation directly on the naturally focused MG button
     await cdp.send('Input.dispatchKeyEvent', {
       type: 'keyDown',
       key: 'Enter',
@@ -1342,7 +1403,15 @@ export async function runUiQaHarness({
     evidence.cases.OWNER_KEYBOARD_NAVIGATION = {
       status: 'PASS',
       tabProgressionCount: tabProgression.length,
+      tabElements: tabProgression.map((p) => ({
+        tag: p.tag,
+        text: p.text,
+        isInteractive: p.isInteractive,
+        hasObservableFocus: p.hasObservableFocus,
+        hasFocusVisible: p.hasFocusVisible,
+      })),
       enterActivated: true,
+      activatedBrand: 'MG',
     };
 
     // Logout OWNER
@@ -1684,13 +1753,14 @@ export async function runUiQaHarness({
     evidence.overall = 'PASS';
   } catch (error) {
     evidence.overall = 'FAIL';
-    if (
-      isNegativeControl ||
-      error?.code === 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED' ||
-      error?.message?.includes('INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED')
-    ) {
+    const isIntentionalNegative =
+      (error instanceof QaError &&
+        error.code === 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED') ||
+      error?.code === 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED';
+
+    if (isIntentionalNegative) {
       evidence.failure = {
-        stage: 'QA_EXECUTION',
+        stage: error?.stage || 'QA_EXECUTION',
         code: 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED',
         message:
           error instanceof Error
@@ -1795,7 +1865,12 @@ export async function runUiQaHarness({
  */
 export function verifyTraceFile(
   tracePath,
-  { expectedMode = 'normal', exitStatus, expectedCheckoutSha } = {},
+  {
+    expectedMode = 'normal',
+    exitStatus,
+    expectedCheckoutSha,
+    env = process.env,
+  } = {},
 ) {
   if (!tracePath || typeof tracePath !== 'string') {
     return {
@@ -1874,12 +1949,23 @@ export function verifyTraceFile(
     };
   }
 
-  if (expectedCheckoutSha) {
-    if (checkoutSha.toLowerCase() !== expectedCheckoutSha.toLowerCase()) {
+  // Narrowly scoped CLI / CI default under verified CI conditions (Finding R3-F03):
+  // When expectedCheckoutSha is not explicitly provided and running in CI,
+  // bind to env.GITHUB_SHA if it represents a valid 40-character hex SHA.
+  let targetExpectedSha = expectedCheckoutSha;
+  if (!targetExpectedSha && env?.GITHUB_ACTIONS === 'true') {
+    const ciSha = env?.GITHUB_SHA?.trim();
+    if (ciSha && SHA_40_PATTERN.test(ciSha)) {
+      targetExpectedSha = ciSha;
+    }
+  }
+
+  if (targetExpectedSha) {
+    if (checkoutSha.toLowerCase() !== targetExpectedSha.toLowerCase()) {
       return {
         valid: false,
         code: 'TRACE_PROVENANCE_MISMATCH',
-        summary: `Trace checkoutSha '${checkoutSha}' does not match expected '${expectedCheckoutSha}'`,
+        summary: `Trace checkoutSha '${checkoutSha}' does not match expected '${targetExpectedSha}'`,
       };
     }
   }
