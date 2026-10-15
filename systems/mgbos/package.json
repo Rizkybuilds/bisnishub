@@ -28,7 +28,8 @@
     "db:reset": "node scripts/database.mjs reset",
     "db:types": "node scripts/database.mjs types",
     "db:test": "node scripts/database.mjs test",
-    "qa:browser-auth": "node scripts/browser-auth-hygiene-qa.mjs"
+    "qa:browser-auth": "node scripts/browser-auth-hygiene-qa.mjs",
+    "qa:browser-ui": "node scripts/browser-ui-multirole-qa.mjs"
   },
   "devDependencies": {
     "@types/node": "22.20.4",

@@ -39,8 +39,8 @@ class TestCISupplyChain(unittest.TestCase):
             result,
             {
                 "workflows": 5,
-                "external_action_uses": 21,
-                "checkout_steps": 8,
+                "external_action_uses": 25,
+                "checkout_steps": 9,
                 "allowed_action_repositories": 5,
             },
         )
