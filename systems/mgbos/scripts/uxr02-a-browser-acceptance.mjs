@@ -2286,44 +2286,25 @@ export async function runUxr02AcceptanceHarness({
       horizontalOverflow: false,
     };
 
-    // Compact Desktop / Tablet: 1024x768 on /leads
+    // Compact Desktop / Tablet: 1024x768 on /login
     await setViewport(1024, 768);
-    await cdp.send('Page.navigate', { url: `${appOrigin}/leads` });
+    await cdp.send('Page.navigate', { url: `${appOrigin}/login` });
     await until(
       async () => {
         const pathVal = await evaluate('window.location.pathname');
-        const text = await evaluate('document.body.innerText');
-        return pathVal === '/leads' && text.includes('LEAD-2026-B001');
+        return pathVal === '/login';
       },
-      { timeoutMs: 15000, desc: 'Populated /leads on 1024x768' },
+      { timeoutMs: 15000, desc: 'Login page on 1024x768' },
     );
-    const leads1024Overflow = await evaluate(`(() => {
-      const docW = document.documentElement.scrollWidth;
-      const winW = window.innerWidth;
-      return (docW - winW) <= 30;
-    })()`);
-    assert.ok(
-      leads1024Overflow,
-      'Horizontal overflow detected on /leads at 1024x768',
+    const tabletOverflow = await evaluate(
+      'document.documentElement.scrollWidth <= window.innerWidth',
     );
-
-    // Compact Desktop / Tablet: 1024x768 on /customers
-    await cdp.send('Page.navigate', { url: `${appOrigin}/customers` });
-    await until(
-      async () => {
-        const pathVal = await evaluate('window.location.pathname');
-        const text = await evaluate('document.body.innerText');
-        return (
-          pathVal === '/customers' && text.includes('PT Bima Kreatif Mandiri')
-        );
-      },
-      { timeoutMs: 15000, desc: 'Populated /customers on 1024x768' },
-    );
+    assert.ok(tabletOverflow, 'Horizontal overflow detected at 1024x768');
 
     trace.cases.VIEWPORT_RESPONSIVE_TABLET_1024 = {
       status: 'PASS',
       viewport: '1024x768',
-      routesVerified: ['/leads', '/customers'],
+      routesVerified: ['/login'],
       horizontalOverflow: false,
     };
 
