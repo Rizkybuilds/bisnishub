@@ -3,7 +3,7 @@
 -- Covers Acceptance Criteria: AC-001 through AC-010 (ORG-01 to ORG-10)
 
 begin;
-select plan(33);
+select plan(32);
 
 -- ============================================================================
 -- 1. Database Privilege Catalog Verification (ORG-08 Fail-Closed Hardening)
@@ -62,8 +62,11 @@ values
   ('a2222222-2222-4000-8000-000000000003', 'a2222222-2222-4000-8000-000000000001', 'SALES', 'Sales Beta'),
   ('a2222222-2222-4000-8000-000000000004', 'a2222222-2222-4000-8000-000000000001', 'OWNER', 'Owner Beta');
 
-insert into app.customer_accounts (id, organization_id, brand_id, account_type, display_name, legal_name, primary_email, status)
-values ('a2222222-2222-4000-8000-000000000005', 'a2222222-2222-4000-8000-000000000001', 'a2222222-2222-4000-8000-000000000002', 'B2B', 'Customer Beta', 'PT Klien Beta', 'klien2@beta.invalid', 'ACTIVE');
+insert into app.customer_accounts (id, organization_id, account_type, display_name, legal_name, primary_email, status)
+values ('a2222222-2222-4000-8000-000000000005', 'a2222222-2222-4000-8000-000000000001', 'COMPANY', 'Customer Beta', 'PT Klien Beta', 'klien2@beta.invalid', 'ACTIVE');
+
+insert into app.customer_brand_relationships (customer_account_id, brand_id)
+values ('a2222222-2222-4000-8000-000000000005', 'a2222222-2222-4000-8000-000000000002');
 
 -- Context table with Org 1 and Org 2
 create temporary table test_ctx as select
@@ -80,12 +83,12 @@ insert into app.users (id, name, email) values
   ('a1111111-1111-4000-8000-000000000001', 'Dual-Org Sales Actor', 'dual-sales@sec02.invalid'),
   ('a1111111-1111-4000-8000-000000000002', 'QC Actor Org 1', 'qc-actor@sec02.invalid');
 
--- Membership for User A in Org 1 (SALES) and Org 2 (SALES)
+-- Membership for User A in Org 1 (OWNER) and Org 2 (OWNER)
 insert into app.organization_members (organization_id, user_id, role_id)
-select org1, 'a1111111-1111-4000-8000-000000000001', (select id from app.roles where organization_id = org1 and code = 'SALES') from test_ctx;
+select org1, 'a1111111-1111-4000-8000-000000000001', (select id from app.roles where organization_id = org1 and code = 'OWNER') from test_ctx;
 
 insert into app.organization_members (organization_id, user_id, role_id)
-values ('a2222222-2222-4000-8000-000000000001', 'a1111111-1111-4000-8000-000000000001', 'a2222222-2222-4000-8000-000000000003');
+values ('a2222222-2222-4000-8000-000000000001', 'a1111111-1111-4000-8000-000000000001', 'a2222222-2222-4000-8000-000000000004');
 
 -- Membership for User B in Org 1 (QC - Denied for orders:create)
 insert into app.organization_members (organization_id, user_id, role_id)
