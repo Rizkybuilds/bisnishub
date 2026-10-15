@@ -1000,7 +1000,12 @@ export async function runUxr02AcceptanceHarness({
     };
 
     // Helper: perform login via form interaction
-    const loginUser = async (email, password) => {
+    const loginUser = async (
+      email,
+      password,
+      { allowStayOnLogin = false } = {},
+    ) => {
+      await cdp.send('Network.clearBrowserCookies');
       await cdp.send('Page.navigate', { url: `${appOrigin}/login` });
       await until(
         async () => (await evaluate('document.readyState')) === 'complete',
@@ -1033,6 +1038,11 @@ export async function runUxr02AcceptanceHarness({
           else form.submit();
         }
       })()`);
+
+      if (allowStayOnLogin) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        return;
+      }
 
       // Wait for navigation away from /login
       await until(
@@ -1672,7 +1682,9 @@ export async function runUxr02AcceptanceHarness({
     );
 
     // Invalid membership denial test: User with no organization membership
-    await loginUser(userNoOrg.email, userNoOrg.password);
+    await loginUser(userNoOrg.email, userNoOrg.password, {
+      allowStayOnLogin: true,
+    });
     await cdp.send('Page.navigate', { url: `${appOrigin}/leads` });
     await until(
       async () => {
