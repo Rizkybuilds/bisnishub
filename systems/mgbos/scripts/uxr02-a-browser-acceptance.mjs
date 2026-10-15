@@ -2687,6 +2687,115 @@ export async function runUxr02AcceptanceHarness({
     // Compact Desktop / Tablet: 1024x768 on real populated /leads and /customers
     await setViewport(1024, 768);
 
+    // Helper: collect sanitized layout and overflow geometry diagnostics
+    const collectOverflowDiagnostics = async (routeName) => {
+      return await evaluate(`(() => {
+        const docEl = document.documentElement;
+        const body = document.body;
+        const innerWidth = window.innerWidth;
+        const innerHeight = window.innerHeight;
+        const docScrollWidth = docEl.scrollWidth;
+        const docClientWidth = docEl.clientWidth;
+        const bodyScrollWidth = body.scrollWidth;
+
+        const overflowingElements = [];
+        const allElements = Array.from(document.querySelectorAll('*'));
+        for (const el of allElements) {
+          const rect = el.getBoundingClientRect();
+          const style = window.getComputedStyle(el);
+          if (rect.right > innerWidth || rect.width > innerWidth) {
+            const ancestry = [];
+            let curr = el.parentElement;
+            while (curr && curr !== document.documentElement) {
+              let tag = curr.tagName.toLowerCase();
+              if (curr.id) tag += '#' + curr.id;
+              else if (curr.className && typeof curr.className === 'string') {
+                const cls = curr.className.trim().split(/\\s+/).slice(0, 2).join('.');
+                if (cls) tag += '.' + cls;
+              }
+              ancestry.push(tag);
+              curr = curr.parentElement;
+            }
+
+            overflowingElements.push({
+              tag: el.tagName.toLowerCase(),
+              id: el.id || null,
+              className: (typeof el.className === 'string' && el.className.trim()) ? el.className.trim() : null,
+              ancestry: ancestry.reverse().join(' > '),
+              rect: {
+                left: Math.round(rect.left),
+                top: Math.round(rect.top),
+                right: Math.round(rect.right),
+                bottom: Math.round(rect.bottom),
+                width: Math.round(rect.width),
+                height: Math.round(rect.height),
+              },
+              computed: {
+                display: style.display,
+                flex: style.flex,
+                flexDirection: style.flexDirection,
+                minWidth: style.minWidth,
+                width: style.width,
+                maxWidth: style.maxWidth,
+                overflowX: style.overflowX,
+                overflowY: style.overflowY,
+                boxSizing: style.boxSizing,
+                gridTemplateColumns: style.gridTemplateColumns !== 'none' ? style.gridTemplateColumns : undefined,
+              },
+            });
+          }
+        }
+
+        overflowingElements.sort((a, b) => b.rect.right - a.rect.right);
+
+        const shellInspect = {};
+        for (const selector of ['.shell-wrapper', '.shell-body', '.shell-sidebar', '.shell-content', '.card', '.table-wrapper', '.table-container', 'table']) {
+          const target = document.querySelector(selector);
+          if (target) {
+            const r = target.getBoundingClientRect();
+            const s = window.getComputedStyle(target);
+            shellInspect[selector] = {
+              scrollWidth: target.scrollWidth,
+              clientWidth: target.clientWidth,
+              offsetWidth: target.offsetWidth,
+              rect: {
+                left: Math.round(r.left),
+                top: Math.round(r.top),
+                right: Math.round(r.right),
+                bottom: Math.round(r.bottom),
+                width: Math.round(r.width),
+                height: Math.round(r.height),
+              },
+              computed: {
+                display: s.display,
+                flex: s.flex,
+                minWidth: s.minWidth,
+                width: s.width,
+                maxWidth: s.maxWidth,
+                overflowX: s.overflowX,
+                boxSizing: s.boxSizing,
+              },
+            };
+          }
+        }
+
+        return {
+          route: ${JSON.stringify(routeName)},
+          viewport: { innerWidth, innerHeight },
+          document: {
+            scrollWidth: docScrollWidth,
+            clientWidth: docClientWidth,
+            bodyScrollWidth: bodyScrollWidth,
+          },
+          overflowPixels: Math.max(0, docScrollWidth - innerWidth),
+          hasOverflow: docScrollWidth > innerWidth,
+          shellContainers: shellInspect,
+          overflowingElementsCount: overflowingElements.length,
+          topOverflowingElements: overflowingElements.slice(0, 10),
+        };
+      })()`);
+    };
+
     // 1024x768 on /leads
     await cdp.send('Page.navigate', { url: `${appOrigin}/leads` });
     await until(
@@ -2725,10 +2834,7 @@ export async function runUxr02AcceptanceHarness({
     const leads1024Metrics = await evaluate(
       '({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth })',
     );
-    assert.ok(
-      leads1024Metrics.scrollWidth <= leads1024Metrics.innerWidth,
-      `Horizontal overflow detected on /leads at 1024x768: scrollWidth=${leads1024Metrics.scrollWidth}, innerWidth=${leads1024Metrics.innerWidth}`,
-    );
+    const leads1024Diag = await collectOverflowDiagnostics('/leads');
 
     // 1024x768 on /customers
     await cdp.send('Page.navigate', { url: `${appOrigin}/customers` });
@@ -2769,6 +2875,17 @@ export async function runUxr02AcceptanceHarness({
     );
     const cust1024Metrics = await evaluate(
       '({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth })',
+    );
+    const cust1024Diag = await collectOverflowDiagnostics('/customers');
+
+    trace.cases.VIEWPORT_RESPONSIVE_TABLET_1024_DIAGNOSTICS = {
+      leads: leads1024Diag,
+      customers: cust1024Diag,
+    };
+
+    assert.ok(
+      leads1024Metrics.scrollWidth <= leads1024Metrics.innerWidth,
+      `Horizontal overflow detected on /leads at 1024x768: scrollWidth=${leads1024Metrics.scrollWidth}, innerWidth=${leads1024Metrics.innerWidth}`,
     );
     assert.ok(
       cust1024Metrics.scrollWidth <= cust1024Metrics.innerWidth,
