@@ -2550,7 +2550,7 @@ export async function runUxr02AcceptanceHarness({
     await until(
       async () => {
         const text = await evaluate('document.body.innerText');
-        return text.includes('Pusat Penangkapan Inbound Inquiry');
+        return text.includes('Catat Inbound Lead Baru');
       },
       { timeoutMs: 10000, desc: 'Create lead modal opened for QC' },
     );
@@ -2571,7 +2571,7 @@ export async function runUxr02AcceptanceHarness({
       }
     })()`);
     await evaluate(`(() => {
-      const submitBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Simpan Inbound Lead'));
+      const submitBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Simpan Lead') || b.textContent.includes('Simpan Inbound Lead'));
       if (submitBtn) submitBtn.click();
     })()`);
     await until(
