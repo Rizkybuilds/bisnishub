@@ -841,6 +841,10 @@ export async function runUxr02AcceptanceHarness({
 
   mkdirSync(outDir, { recursive: true });
 
+  // Ensure harness environment points consistently to real local Supabase apiOrigin
+  process.env.NEXT_PUBLIC_SUPABASE_URL = apiOrigin;
+  delete process.env.SUPABASE_URL;
+
   const trace = {
     version: '1.0.0',
     mode: isNegativeControl ? 'intentional-broken-control' : 'normal',
@@ -893,7 +897,11 @@ export async function runUxr02AcceptanceHarness({
     assertLoopbackHttpOrigin(apiOrigin, { stage: 'STARTUP' });
 
     // 2. Resolve Supabase Service Key from localStatus
-    const status = localStatus({ api: apiOrigin, workdir: rootDir });
+    const status = localStatus({
+      api: apiOrigin,
+      workdir: rootDir,
+      env: { NEXT_PUBLIC_SUPABASE_URL: apiOrigin },
+    });
     const serviceKey =
       status.SERVICE_ROLE_KEY ||
       status.serviceRoleKey ||

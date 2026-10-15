@@ -123,7 +123,7 @@ jobs:
           cd - > /dev/null
           rm -rf systems/mgbos/.qa-evidence/uxr02-a/positive
           pos_status=0
-          node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
+          NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:55431" node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --app-dir "$APP_DIR" \
             --proxy-port 55430 \
             --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" || pos_status=$?
@@ -139,7 +139,7 @@ jobs:
           APP_DIR="/tmp/pr68-candidate-app"
           rm -rf systems/mgbos/.qa-evidence/uxr02-a/negative-control
           neg_status=0
-          MGBOS_QA_NEGATIVE_CONTROL=1 node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
+          NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:55431" MGBOS_QA_NEGATIVE_CONTROL=1 node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --app-dir "$APP_DIR" \
             --proxy-port 55430 \
             --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" > /dev/null 2>&1 || neg_status=$?
