@@ -125,7 +125,8 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       const result = classifyRouteDenial({
         responseStatus: 200,
         pathname: '/quotes',
-        pageText: 'Penawaran & HPP · Belum ada penawaran untuk brand ini. Buat penawaran baru.',
+        pageText:
+          'Penawaran & HPP · Belum ada penawaran untuk brand ini. Buat penawaran baru.',
         hasDomainHeading: true,
         hasDomainContent: false,
         hasErrorBoundary: false,
@@ -141,7 +142,8 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       const result = classifyRouteDenial({
         responseStatus: 500,
         pathname: '/exceptions',
-        pageText: 'Internal Server Error. Operational Exceptions (Pusat Abnormalitas)',
+        pageText:
+          'Internal Server Error. Operational Exceptions (Pusat Abnormalitas)',
         hasDomainHeading: true,
         hasDomainContent: true,
         hasErrorBoundary: true,
@@ -150,6 +152,22 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       assert.equal(result.denied, false);
       assert.equal(result.status, 'ERROR_WITH_DATA_LEAK');
       assert.equal(result.domainDataExposed, true);
+    });
+
+    it('treats generic 500 status without explicit denial or error boundary as UNHANDLED_SERVER_CRASH (NOT denied)', () => {
+      const result = classifyRouteDenial({
+        responseStatus: 500,
+        pathname: '/exceptions',
+        pageText: 'Internal Server Error',
+        hasDomainHeading: false,
+        hasDomainContent: false,
+        hasErrorBoundary: false,
+        domainHeadingText: 'Operational Exceptions',
+      });
+      assert.equal(result.denied, false);
+      assert.equal(result.uiDenied, false);
+      assert.equal(result.status, 'UNHANDLED_SERVER_CRASH');
+      assert.equal(result.domainDataExposed, false);
     });
 
     it('returns UNEXPECTED_STATE for unknown status codes without error boundary or domain content', () => {
@@ -233,7 +251,8 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       };
 
       const fixture = {
-        email: 'ci-ui-qa-owner-11111111-2222-3333-4444-555555555555@example.test',
+        email:
+          'ci-ui-qa-owner-11111111-2222-3333-4444-555555555555@example.test',
         profileId: '00000000-0000-0000-0000-000000000001',
         authUserId: '00000000-0000-0000-0000-000000000002',
       };
@@ -271,7 +290,8 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       };
 
       const fixture = {
-        email: 'ci-ui-qa-sales-11111111-2222-3333-4444-555555555555@example.test',
+        email:
+          'ci-ui-qa-sales-11111111-2222-3333-4444-555555555555@example.test',
         profileId: '00000000-0000-0000-0000-000000000001',
         authUserId: '00000000-0000-0000-0000-000000000002',
       };
@@ -337,7 +357,10 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
             status: 200,
           });
         }
-        if (urlStr.includes('/auth/v1/admin/users') && opts?.method === 'POST') {
+        if (
+          urlStr.includes('/auth/v1/admin/users') &&
+          opts?.method === 'POST'
+        ) {
           return new Response(JSON.stringify({ id: 'auth-user-1' }), {
             status: 200,
           });
@@ -371,7 +394,11 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
 
       assert.ok(registeredFixture, 'Fixture must be registered via callback');
       assert.equal(registeredFixture.authUserId, 'auth-user-1');
-      assert.equal(cleanupInvoked, true, 'Compensating cleanup must be invoked on partial failure');
+      assert.equal(
+        cleanupInvoked,
+        true,
+        'Compensating cleanup must be invoked on partial failure',
+      );
     });
   });
 
@@ -389,7 +416,7 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
         },
         overall: 'PASS',
         failure: null,
-        cleanup: { status: 'PASS' },
+        cleanup: { status: 'PASS', verifiedAbsent: true },
         cases,
       };
     }
@@ -451,6 +478,60 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       });
     });
 
+    it('rejects trace when provenance checkoutSha is not a valid 40-character hex SHA', () => {
+      withTempDir((dir) => {
+        const tracePath = path.join(dir, 'trace_invalid_sha.json');
+        const invalidShaTrace = generateValid24CaseTrace();
+        invalidShaTrace.provenance.checkoutSha = 'abc123notashalength';
+        writeFileSync(tracePath, JSON.stringify(invalidShaTrace), 'utf8');
+
+        const result = verifyTraceFile(tracePath, { expectedMode: 'normal' });
+        assert.equal(result.valid, false);
+        assert.equal(result.code, 'TRACE_PROVENANCE_INVALID');
+      });
+    });
+
+    it('validates expectedCheckoutSha when specified and rejects mismatch', () => {
+      withTempDir((dir) => {
+        const tracePath = path.join(dir, 'trace_sha_check.json');
+        const validTrace = generateValid24CaseTrace();
+        writeFileSync(tracePath, JSON.stringify(validTrace), 'utf8');
+
+        const matchResult = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          expectedCheckoutSha: 'a01d375d07e9fdbc00411cb4b568a1610f1582d8',
+        });
+        assert.equal(matchResult.valid, true);
+
+        const mismatchResult = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          expectedCheckoutSha: 'ffffffffffffffffffffffffffffffffffffffff',
+        });
+        assert.equal(mismatchResult.valid, false);
+        assert.equal(mismatchResult.code, 'TRACE_PROVENANCE_MISMATCH');
+      });
+    });
+
+    it('rejects trace when cleanup.verifiedAbsent is not true', () => {
+      withTempDir((dir) => {
+        const tracePath = path.join(dir, 'trace_unverified_cleanup.json');
+        const unverifiedCleanupTrace = generateValid24CaseTrace();
+        unverifiedCleanupTrace.cleanup = {
+          status: 'PASS',
+          verifiedAbsent: false,
+        };
+        writeFileSync(
+          tracePath,
+          JSON.stringify(unverifiedCleanupTrace),
+          'utf8',
+        );
+
+        const result = verifyTraceFile(tracePath, { expectedMode: 'normal' });
+        assert.equal(result.valid, false);
+        assert.equal(result.code, 'TRACE_CLEANUP_UNVERIFIED');
+      });
+    });
+
     it('rejects trace with contradictory fields (PASS overall but failure object present)', () => {
       withTempDir((dir) => {
         const tracePath = path.join(dir, 'trace_contradictory.json');
@@ -481,10 +562,12 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
           failedPath,
           JSON.stringify({
             mode: 'normal',
-            provenance: { checkoutSha: 'abc' },
+            provenance: {
+              checkoutSha: 'a01d375d07e9fdbc00411cb4b568a1610f1582d8',
+            },
             overall: 'FAIL',
             failure: { code: 'ERR' },
-            cleanup: { status: 'PASS' },
+            cleanup: { status: 'PASS', verifiedAbsent: true },
           }),
           'utf8',
         );
@@ -494,7 +577,7 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
 
         const failedCleanupPath = path.join(dir, 'failed_cleanup.json');
         const failedCleanupTrace = generateValid24CaseTrace();
-        failedCleanupTrace.cleanup = { status: 'FAIL' };
+        failedCleanupTrace.cleanup = { status: 'FAIL', verifiedAbsent: false };
         writeFileSync(
           failedCleanupPath,
           JSON.stringify(failedCleanupTrace),
@@ -527,12 +610,14 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
         const negTrace = {
           harness: 'mgbos-browser-ui-multirole-qa',
           mode: 'intentional-broken-control',
-          provenance: { checkoutSha: 'abc' },
+          provenance: {
+            checkoutSha: 'a01d375d07e9fdbc00411cb4b568a1610f1582d8',
+          },
           overall: 'FAIL',
-          cleanup: { status: 'PASS' },
+          cleanup: { status: 'PASS', verifiedAbsent: true },
           failure: {
             stage: 'QA_EXECUTION',
-            code: 'QA_EXECUTION_FAILED',
+            code: 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED',
           },
         };
         writeFileSync(negTracePath, JSON.stringify(negTrace), 'utf8');

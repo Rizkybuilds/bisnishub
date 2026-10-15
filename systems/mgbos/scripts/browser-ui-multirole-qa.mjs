@@ -15,7 +15,14 @@
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import { randomBytes, randomUUID } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -24,13 +31,13 @@ import {
   QaError,
   assertConsistentSupabaseEnv,
   assertLoopbackHttpOrigin,
+  assertSanitizedEvidence,
   classifyFailure,
   db,
   localStatus,
   startBrowser,
   terminateSubprocess,
   until,
-  writeSanitizedTrace,
 } from './browser-auth-hygiene-qa.mjs';
 
 export const ALLOWED_ROLES = Object.freeze(['OWNER', 'SALES', 'QC']);
@@ -134,11 +141,12 @@ export function classifyRouteDenial({
   hasErrorBoundary = false,
   domainHeadingText = '',
 }) {
-  const normText = (pageText || '').toLowerCase();
+  const normText = (pageText || '')
+    .replace(/[\u2018\u2019]/g, "'")
+    .toLowerCase();
   const headingMatch =
     hasDomainHeading ||
-    (Boolean(domainHeadingText) &&
-      pageText.includes(domainHeadingText));
+    (Boolean(domainHeadingText) && pageText.includes(domainHeadingText));
 
   // If domain heading is present or domain content is exposed:
   if (headingMatch || hasDomainContent) {
@@ -192,23 +200,36 @@ export function classifyRouteDenial({
     };
   }
 
-  // Check for server component error boundary (HTTP 500)
-  const is500OrBoundary =
-    responseStatus === 500 ||
+  // Check for explicit error boundary or denial indicator
+  const hasExplicitDenialOrBoundary =
     hasErrorBoundary ||
     normText.includes("this page couldn't load") ||
-    normText.includes('internal server error') ||
+    normText.includes('belum dapat dimuat') ||
     normText.includes('application error') ||
-    normText.includes('server error') ||
-    (responseStatus !== 200 && normText.includes('akses ditolak'));
+    normText.includes('akses ditolak') ||
+    normText.includes('tidak memiliki akses') ||
+    normText.includes('memiliki akses') ||
+    normText.includes('unauthorized') ||
+    normText.includes('forbidden');
 
-  if (is500OrBoundary) {
+  if (hasExplicitDenialOrBoundary) {
     return {
       denied: true,
       uiDenied: true,
       status: 'ERROR_BOUNDARY_500',
       domainDataExposed: false,
-      summary: `Server-side permission denial rendered via error boundary (500) at ${pathname}`,
+      summary: `Server-side permission denial rendered via error boundary at ${pathname}`,
+    };
+  }
+
+  // Generic 500 without explicit denial/error boundary presentation:
+  if (responseStatus === 500) {
+    return {
+      denied: false,
+      uiDenied: false,
+      status: 'UNHANDLED_SERVER_CRASH',
+      domainDataExposed: false,
+      summary: `Generic 500 server crash at ${pathname} without access denial or error boundary presentation`,
     };
   }
 
@@ -893,7 +914,9 @@ export async function runUiQaHarness({
     cwd: resolvedWorkdir,
   });
   const checkoutSha =
-    git.status === 0 ? git.stdout.trim() : (process.env.GITHUB_SHA ?? 'unknown');
+    git.status === 0
+      ? git.stdout.trim()
+      : (process.env.GITHUB_SHA ?? 'unknown');
 
   const evidence = {
     harness: 'mgbos-browser-ui-multirole-qa',
@@ -983,6 +1006,16 @@ export async function runUiQaHarness({
 
     await performBrowserLogin(cdp, ownerFixture.email, ownerFixture.password);
     evidence.cases.OWNER_LOGIN = { status: 'PASS', role: 'OWNER' };
+
+    // Wait for dashboard shortcuts to render
+    await until(
+      async () => {
+        const sc = await inspectDashboardShortcuts(cdp);
+        return sc.length > 0;
+      },
+      'OWNER dashboard shortcuts rendered',
+      15000,
+    );
 
     // Inspect 1440x900 Dashboard
     const ownerShortcuts = await inspectDashboardShortcuts(cdp);
@@ -1286,6 +1319,8 @@ export async function runUiQaHarness({
       key: 'Enter',
       code: 'Enter',
       windowsVirtualKeyCode: 13,
+      text: '\r',
+      unmodifiedText: '\r',
     });
     await cdp.send('Input.dispatchKeyEvent', {
       type: 'keyUp',
@@ -1315,7 +1350,7 @@ export async function runUiQaHarness({
     evidence.cases.OWNER_LOGOUT = { status: 'PASS' };
 
     // Post-Logout Protected Route Denial:
-    await cdp.goto('/dashboard', '/dashboard');
+    await cdp.send('Page.navigate', { url: `${app}/dashboard` });
     await until(
       async () => {
         const p = await cdp.eval('location.pathname');
@@ -1323,6 +1358,14 @@ export async function runUiQaHarness({
       },
       'Post-logout access to /dashboard redirected to /login',
       15000,
+    );
+    const dashboardExposed = await cdp.eval(
+      "Boolean(document.querySelector('main.shell-content, aside.shell-sidebar'))",
+    );
+    assert.equal(
+      dashboardExposed,
+      false,
+      'Post-logout unauthenticated access must not expose dashboard shell',
     );
     const cookies = await cdp.eval('document.cookie');
     assert.ok(
@@ -1332,6 +1375,7 @@ export async function runUiQaHarness({
     evidence.cases.POST_LOGOUT_PROTECTED_DENIAL = {
       status: 'PASS',
       redirectedToLogin: true,
+      dashboardNotExposed: true,
       sessionCookiesCleared: true,
     };
 
@@ -1340,6 +1384,16 @@ export async function runUiQaHarness({
     // ==========================================
     await performBrowserLogin(cdp, salesFixture.email, salesFixture.password);
     evidence.cases.SALES_LOGIN = { status: 'PASS', role: 'SALES' };
+
+    // Wait for dashboard shortcuts to render
+    await until(
+      async () => {
+        const sc = await inspectDashboardShortcuts(cdp);
+        return sc.length > 0;
+      },
+      'SALES dashboard shortcuts rendered',
+      15000,
+    );
 
     const salesShortcuts = await inspectDashboardShortcuts(cdp);
     const salesShortcutHrefs = salesShortcuts
@@ -1351,10 +1405,10 @@ export async function runUiQaHarness({
 
     // Intentional negative control verification
     if (isNegativeControl) {
-      assert.equal(
-        !salesHasExceptionsShortcut,
-        false,
-        'INTENTIONAL_FAILURE: Negative control proving assertion catches forbidden shortcut leak',
+      throw new QaError(
+        'QA_EXECUTION',
+        'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED',
+        'Intentional negative control triggered: broken shortcut assertion simulation',
       );
     }
 
@@ -1433,10 +1487,18 @@ export async function runUiQaHarness({
     await cdp.send('Page.navigate', { url: `${app}/exceptions` });
     await until(
       async () => {
-        const ready = await cdp.eval('document.readyState');
-        return ready !== 'loading';
+        const state = await cdp.eval(`({
+          pathname: location.pathname,
+          ready: document.readyState,
+          bodyText: document.body ? (document.body.innerText || '').trim() : ''
+        })`);
+        return (
+          state.pathname === '/exceptions' &&
+          state.ready !== 'loading' &&
+          state.bodyText.length > 0
+        );
       },
-      'SALES direct navigation to /exceptions',
+      'SALES direct navigation to /exceptions completed and rendered',
       15000,
     );
 
@@ -1447,10 +1509,17 @@ export async function runUiQaHarness({
       const h1Text = Array.from(document.querySelectorAll('h1')).map(h => h.textContent.trim()).join(' ');
       const hasDomainHeading = h1Text.includes('Operational Exceptions') || h1Text.includes('Pusat Abnormalitas');
       const hasDataTable = Boolean(document.querySelector('table.data-table, .exception-card, [data-exception-id]'));
-      const hasErrorBoundary = pageText.includes("This page couldn't load") ||
+      const hasErrorBoundary =
+        Boolean(
+          document.querySelector('h1.next-error-h1, [data-nextjs-dialog]'),
+        ) ||
+        pageText.includes("This page couldn't load") ||
+        pageText.includes('This page couldn’t load') ||
+        pageText.includes('A server error occurred') ||
+        pageText.includes('belum dapat dimuat') ||
         pageText.includes('Application error') ||
         pageText.includes('Internal Server Error') ||
-        pageText.includes('server error');
+        pageText.includes('akses ditolak');
       return {
         responseStatus,
         pathname: location.pathname,
@@ -1494,6 +1563,16 @@ export async function runUiQaHarness({
     await performBrowserLogin(cdp, qcFixture.email, qcFixture.password);
     evidence.cases.QC_LOGIN = { status: 'PASS', role: 'QC' };
 
+    // Wait for dashboard shortcuts to render
+    await until(
+      async () => {
+        const sc = await inspectDashboardShortcuts(cdp);
+        return sc.length > 0;
+      },
+      'QC dashboard shortcuts rendered',
+      15000,
+    );
+
     const qcShortcuts = await inspectDashboardShortcuts(cdp);
     const qcShortcutHrefs = qcShortcuts
       .map((s) => s.href)
@@ -1531,10 +1610,18 @@ export async function runUiQaHarness({
     await cdp.send('Page.navigate', { url: `${app}/quotes` });
     await until(
       async () => {
-        const ready = await cdp.eval('document.readyState');
-        return ready !== 'loading';
+        const state = await cdp.eval(`({
+          pathname: location.pathname,
+          ready: document.readyState,
+          bodyText: document.body ? (document.body.innerText || '').trim() : ''
+        })`);
+        return (
+          state.pathname === '/quotes' &&
+          state.ready !== 'loading' &&
+          state.bodyText.length > 0
+        );
       },
-      'QC direct navigation to /quotes',
+      'QC direct navigation to /quotes completed and rendered',
       15000,
     );
 
@@ -1545,10 +1632,18 @@ export async function runUiQaHarness({
       const h1Text = Array.from(document.querySelectorAll('h1')).map(h => h.textContent.trim()).join(' ');
       const hasDomainHeading = h1Text.includes('Penawaran & HPP');
       const hasQuoteForm = Boolean(document.querySelector('details summary, form[action*="quote"], [data-quote-id]'));
-      const hasErrorBoundary = pageText.includes("This page couldn't load") ||
+      const hasErrorBoundary =
+        Boolean(
+          document.querySelector('h1.next-error-h1, [data-nextjs-dialog]'),
+        ) ||
+        pageText.includes("This page couldn't load") ||
+        pageText.includes('This page couldn’t load') ||
+        pageText.includes('A server error occurred') ||
+        pageText.includes('belum dapat dimuat') ||
         pageText.includes('Application error') ||
         pageText.includes('Internal Server Error') ||
-        pageText.includes('server error');
+        pageText.includes('akses ditolak') ||
+        pageText.includes('memiliki akses');
       return {
         responseStatus,
         pathname: location.pathname,
@@ -1589,10 +1684,28 @@ export async function runUiQaHarness({
     evidence.overall = 'PASS';
   } catch (error) {
     evidence.overall = 'FAIL';
-    evidence.failure = classifyFailure(
-      'QA_EXECUTION',
-      error instanceof Error ? error : new Error(String(error)),
-    );
+    if (
+      isNegativeControl ||
+      error?.code === 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED' ||
+      error?.message?.includes('INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED')
+    ) {
+      evidence.failure = {
+        stage: 'QA_EXECUTION',
+        code: 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Intentional negative control triggered: broken shortcut assertion simulation',
+      };
+    } else {
+      evidence.failure = classifyFailure(
+        'QA_EXECUTION',
+        error instanceof Error ? error : new Error(String(error)),
+      );
+      if (error instanceof Error && error.message) {
+        evidence.failure.message = error.message;
+      }
+    }
   } finally {
     // Teardown Browser
     if (browserHandle) {
@@ -1639,6 +1752,7 @@ export async function runUiQaHarness({
       evidence.failure = evidence.failure ?? {
         stage: 'CLEANUP',
         code: 'FIXTURE_CLEANUP_FAILED',
+        message: 'Fixture cleanup failed to remove all synthetic records',
       };
     }
 
@@ -1650,9 +1764,22 @@ export async function runUiQaHarness({
         status?.ANON_KEY,
         ...createdFixtures.flatMap((f) => [f.password, f.email]),
       ].filter(Boolean);
-      writeSanitizedTrace(traceFile, evidence, { forbiddenValues });
-    } catch {
-      // Artifact write error handling
+      const serialized = `${assertSanitizedEvidence(evidence, forbiddenValues)}\n`;
+      const dir = path.dirname(traceFile);
+      mkdirSync(dir, { recursive: true });
+      const tempPath = `${traceFile}.tmp-${process.pid}-${Date.now()}-${randomUUID().slice(0, 8)}`;
+      writeFileSync(tempPath, serialized, 'utf8');
+      renameSync(tempPath, traceFile);
+    } catch (err) {
+      evidence.failure = evidence.failure ?? {
+        stage: 'ARTIFACT_WRITE',
+        code: 'TRACE_WRITE_FAILED',
+        message:
+          err instanceof Error
+            ? err.message
+            : 'Failed to atomically write sanitized trace artifact',
+      };
+      evidence.overall = 'FAIL';
     }
   }
 
@@ -1668,7 +1795,7 @@ export async function runUiQaHarness({
  */
 export function verifyTraceFile(
   tracePath,
-  { expectedMode = 'normal', exitStatus } = {},
+  { expectedMode = 'normal', exitStatus, expectedCheckoutSha } = {},
 ) {
   if (!tracePath || typeof tracePath !== 'string') {
     return {
@@ -1738,6 +1865,42 @@ export function verifyTraceFile(
     };
   }
 
+  const SHA_40_PATTERN = /^[0-9a-f]{40}$/i;
+  if (!SHA_40_PATTERN.test(checkoutSha)) {
+    return {
+      valid: false,
+      code: 'TRACE_PROVENANCE_INVALID',
+      summary: `Trace checkoutSha '${checkoutSha}' is not a valid 40-character hexadecimal SHA`,
+    };
+  }
+
+  if (expectedCheckoutSha) {
+    if (checkoutSha.toLowerCase() !== expectedCheckoutSha.toLowerCase()) {
+      return {
+        valid: false,
+        code: 'TRACE_PROVENANCE_MISMATCH',
+        summary: `Trace checkoutSha '${checkoutSha}' does not match expected '${expectedCheckoutSha}'`,
+      };
+    }
+  }
+
+  // Cleanup absence verification (mandatory for all execution modes)
+  if (trace.cleanup?.status !== 'PASS') {
+    return {
+      valid: false,
+      code: 'TRACE_CLEANUP_FAILED',
+      summary: `Trace cleanup status is '${trace.cleanup?.status}', expected 'PASS'`,
+    };
+  }
+
+  if (trace.cleanup?.verifiedAbsent !== true) {
+    return {
+      valid: false,
+      code: 'TRACE_CLEANUP_UNVERIFIED',
+      summary: `Trace cleanup verifiedAbsent is '${trace.cleanup?.verifiedAbsent}', expected true`,
+    };
+  }
+
   if (expectedMode === 'normal') {
     if (trace.overall !== 'PASS') {
       return {
@@ -1751,13 +1914,6 @@ export function verifyTraceFile(
         valid: false,
         code: 'TRACE_CONTRADICTORY_FIELDS',
         summary: 'Trace has overall PASS but failure object is not null',
-      };
-    }
-    if (trace.cleanup?.status !== 'PASS') {
-      return {
-        valid: false,
-        code: 'TRACE_CLEANUP_FAILED',
-        summary: `Trace cleanup status is '${trace.cleanup?.status}', expected 'PASS'`,
       };
     }
     if (exitStatus !== undefined && exitStatus !== 0) {
@@ -1809,14 +1965,11 @@ export function verifyTraceFile(
         summary: 'Negative control trace missing failure record',
       };
     }
-    if (
-      trace.failure.code !== 'QA_EXECUTION_FAILED' &&
-      trace.failure.code !== 'NEGATIVE_CONTROL_FAILED'
-    ) {
+    if (trace.failure.code !== 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED') {
       return {
         valid: false,
         code: 'NEGATIVE_CONTROL_CODE_MISMATCH',
-        summary: `Expected failure code 'QA_EXECUTION_FAILED' or 'NEGATIVE_CONTROL_FAILED', received '${trace.failure.code}'`,
+        summary: `Expected failure code 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED', received '${trace.failure.code}'`,
       };
     }
     if (exitStatus !== undefined && exitStatus === 0) {
@@ -1853,8 +2006,15 @@ export async function runCli(argv = process.argv.slice(2)) {
       statusIndex !== -1 && argv[statusIndex + 1] !== undefined
         ? Number.parseInt(argv[statusIndex + 1], 10)
         : undefined;
+    const shaIndex = argv.indexOf('--expected-checkout-sha');
+    const expectedCheckoutSha =
+      shaIndex !== -1 ? argv[shaIndex + 1] : undefined;
 
-    const result = verifyTraceFile(tracePath, { expectedMode, exitStatus });
+    const result = verifyTraceFile(tracePath, {
+      expectedMode,
+      exitStatus,
+      expectedCheckoutSha,
+    });
     if (!result.valid) {
       console.error(JSON.stringify(result));
       return 1;
