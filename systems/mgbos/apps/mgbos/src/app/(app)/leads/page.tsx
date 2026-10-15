@@ -2,8 +2,7 @@ import { requireAuth } from '@/lib/session.server';
 import { serverEnvironment } from '@/lib/env.server';
 import { publicEnvironment } from '@/lib/env.client';
 import { CreateLeadModal } from './CreateLeadModal';
-import { LeadListTable } from './LeadListTable';
-import type { LeadDetailData } from './LeadDetailModal';
+import { LeadListTable, loadLeadsData, computeLeadKpis } from './LeadListTable';
 
 export const metadata = {
   title: 'Inbound Leads & Qualification — MultiGraph Business OS',
@@ -15,34 +14,13 @@ export default async function LeadsPage() {
     publicEnvironment.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:55431';
   const serviceKey = serverEnvironment.SUPABASE_SERVICE_ROLE_KEY;
 
-  let leads: LeadDetailData[] = [];
+  const leadsState = await loadLeadsData(
+    supabaseUrl,
+    serviceKey,
+    session.organization.id,
+  );
 
-  if (serviceKey) {
-    const endpoint = `${supabaseUrl.replace(/\/+$/, '')}/rest/v1/leads?organization_id=eq.${session.organization.id}&select=id,lead_number,title,contact_name,company_name,phone,email,raw_inquiry,estimated_quantity,estimated_budget,status,qualification_result,qualification_score,qualification_notes,disqualification_reason,created_at,qualified_at,disqualified_at,converted_at,channels(id,code,name,channel_type),brands(id,code,name),customer_accounts(id,display_name,account_type),requirements(id,requirement_number,status,title)&order=created_at.desc`;
-
-    const headers: Record<string, string> = {
-      apikey: serviceKey,
-      Authorization: `Bearer ${serviceKey}`,
-      'Accept-Profile': 'app',
-    };
-
-    const response = await fetch(endpoint, {
-      method: 'GET',
-      headers,
-      cache: 'no-store',
-    });
-
-    if (response.ok) {
-      leads = await response.json();
-    }
-  }
-
-  const newCount = leads.filter((l) => l.status === 'NEW').length;
-  const qualifiedCount = leads.filter((l) => l.status === 'QUALIFIED').length;
-  const convertedCount = leads.filter((l) => l.status === 'CONVERTED').length;
-  const activeBrandLeads = leads.filter(
-    (l) => l.brands?.code === session.activeBrand.code,
-  ).length;
+  const kpis = computeLeadKpis(leadsState, session.activeBrand.code);
 
   return (
     <div>
@@ -87,12 +65,70 @@ export default async function LeadsPage() {
         <CreateLeadModal activeBrandName={session.activeBrand.name} />
       </div>
 
+      {/* Unavailable Alert Banner if server-side data fetch was unsuccessful */}
+      {leadsState.status === 'UNAVAILABLE' && (
+        <div
+          role="alert"
+          style={{
+            background: '#1e1b4b',
+            border: '1px solid #4338ca',
+            borderRadius: '8px',
+            padding: '16px 20px',
+            marginBottom: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+            <div>
+              <div
+                style={{
+                  color: '#f8fafc',
+                  fontWeight: 600,
+                  fontSize: '0.95rem',
+                }}
+              >
+                Layanan data leads tidak dapat diakses saat ini
+              </div>
+              <div
+                style={{
+                  color: '#94a3b8',
+                  fontSize: '0.85rem',
+                  marginTop: '2px',
+                }}
+              >
+                {leadsState.message}
+              </div>
+            </div>
+          </div>
+          <a
+            href="/leads"
+            style={{
+              background: '#38bdf8',
+              color: '#0f172a',
+              padding: '6px 14px',
+              borderRadius: '4px',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Coba Lagi
+          </a>
+        </div>
+      )}
+
       {/* KPI Cards */}
       <div className="kpi-grid">
         <div className="kpi-card">
           <div className="kpi-title">TOTAL INBOUND LEADS</div>
           <div className="kpi-value" style={{ color: '#38bdf8' }}>
-            {leads.length} Leads
+            {kpis.total !== null ? `${kpis.total} Leads` : '—'}
           </div>
           <div className="kpi-desc">MultiGraph Group Inbound Pipeline</div>
         </div>
@@ -100,7 +136,7 @@ export default async function LeadsPage() {
         <div className="kpi-card">
           <div className="kpi-title">INQUIRY BARU (UNTOUCHED)</div>
           <div className="kpi-value" style={{ color: '#facc15' }}>
-            {newCount} Inquiry
+            {kpis.newCount !== null ? `${kpis.newCount} Inquiry` : '—'}
           </div>
           <div className="kpi-desc">Menunggu respon awal / kualifikasi</div>
         </div>
@@ -108,7 +144,7 @@ export default async function LeadsPage() {
         <div className="kpi-card">
           <div className="kpi-title">SIAP QUOTE (QUALIFIED)</div>
           <div className="kpi-value" style={{ color: '#4ade80' }}>
-            {qualifiedCount} Lead
+            {kpis.qualifiedCount !== null ? `${kpis.qualifiedCount} Lead` : '—'}
           </div>
           <div className="kpi-desc">
             Lolos kualifikasi kebutuhan &amp; kontak
@@ -118,11 +154,14 @@ export default async function LeadsPage() {
         <div className="kpi-card">
           <div className="kpi-title">AKTIF DI {session.activeBrand.code}</div>
           <div className="kpi-value" style={{ color: '#a855f7' }}>
-            {activeBrandLeads} Lead
+            {kpis.activeBrandLeads !== null
+              ? `${kpis.activeBrandLeads} Lead`
+              : '—'}
           </div>
           <div className="kpi-desc">
-            Pipeline Brand {session.activeBrand.name} ({convertedCount}{' '}
-            Terkonversi)
+            {kpis.convertedCount !== null
+              ? `Pipeline Brand ${session.activeBrand.name} (${kpis.convertedCount} Terkonversi)`
+              : `Pipeline Brand ${session.activeBrand.name}`}
           </div>
         </div>
       </div>
@@ -151,7 +190,8 @@ export default async function LeadsPage() {
         </div>
 
         <LeadListTable
-          leads={leads}
+          leads={leadsState.status === 'SUCCESS' ? leadsState.data : []}
+          dataState={leadsState}
           activeBrandCode={session.activeBrand.code}
         />
       </div>

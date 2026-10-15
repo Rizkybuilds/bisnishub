@@ -2,7 +2,11 @@ import { requireAuth } from '@/lib/session.server';
 import { serverEnvironment } from '@/lib/env.server';
 import { publicEnvironment } from '@/lib/env.client';
 import { CreateCustomerModal } from './CreateCustomerModal';
-import { CustomerListTable, type CustomerData } from './CustomerListTable';
+import {
+  CustomerListTable,
+  loadCustomersData,
+  computeCustomerKpis,
+} from './CustomerListTable';
 
 export const metadata = {
   title: 'Customer 360 — MultiGraph Business OS',
@@ -14,40 +18,13 @@ export default async function CustomersPage() {
     publicEnvironment.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:55431';
   const serviceKey = serverEnvironment.SUPABASE_SERVICE_ROLE_KEY;
 
-  let customers: CustomerData[] = [];
+  const customersState = await loadCustomersData(
+    supabaseUrl,
+    serviceKey,
+    session.organization.id,
+  );
 
-  if (serviceKey) {
-    // Fetch customers with nested contacts and brand relationships
-    const endpoint = `${supabaseUrl.replace(/\/+$/, '')}/rest/v1/customer_accounts?organization_id=eq.${session.organization.id}&select=id,account_type,display_name,legal_name,primary_email,primary_phone,tax_id,status,customer_since,customer_contacts(id,name,email,phone,position,is_primary),customer_brand_relationships(id,brand_id,customer_segment,relationship_status,brands(id,code,name))&order=display_name.asc`;
-
-    const headers: Record<string, string> = {
-      apikey: serviceKey,
-      Authorization: `Bearer ${serviceKey}`,
-      'Accept-Profile': 'app',
-    };
-
-    const response = await fetch(endpoint, {
-      method: 'GET',
-      headers,
-      cache: 'no-store',
-    });
-
-    if (response.ok) {
-      customers = await response.json();
-    }
-  }
-
-  const companyCount = customers.filter(
-    (c) => c.account_type === 'COMPANY',
-  ).length;
-  const personCount = customers.filter(
-    (c) => c.account_type === 'PERSON',
-  ).length;
-  const activeBrandCustomers = customers.filter((c) =>
-    c.customer_brand_relationships.some(
-      (r) => r.brands?.code === session.activeBrand.code,
-    ),
-  ).length;
+  const kpis = computeCustomerKpis(customersState, session.activeBrand.code);
 
   return (
     <div>
@@ -91,32 +68,98 @@ export default async function CustomersPage() {
         <CreateCustomerModal activeBrandName={session.activeBrand.name} />
       </div>
 
+      {/* Unavailable Alert Banner if server-side data fetch was unsuccessful */}
+      {customersState.status === 'UNAVAILABLE' && (
+        <div
+          role="alert"
+          style={{
+            background: '#1e1b4b',
+            border: '1px solid #4338ca',
+            borderRadius: '8px',
+            padding: '16px 20px',
+            marginBottom: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+            <div>
+              <div
+                style={{
+                  color: '#f8fafc',
+                  fontWeight: 600,
+                  fontSize: '0.95rem',
+                }}
+              >
+                Layanan data customer tidak dapat diakses saat ini
+              </div>
+              <div
+                style={{
+                  color: '#94a3b8',
+                  fontSize: '0.85rem',
+                  marginTop: '2px',
+                }}
+              >
+                {customersState.message}
+              </div>
+            </div>
+          </div>
+          <a
+            href="/customers"
+            style={{
+              background: '#38bdf8',
+              color: '#0f172a',
+              padding: '6px 14px',
+              borderRadius: '4px',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Coba Lagi
+          </a>
+        </div>
+      )}
+
       {/* KPI Cards */}
       <div className="kpi-grid">
         <div className="kpi-card">
           <div className="kpi-title">TOTAL CUSTOMER HOLDING</div>
           <div className="kpi-value" style={{ color: '#38bdf8' }}>
-            {customers.length} Akun
+            {kpis.total !== null ? `${kpis.total} Akun` : '—'}
           </div>
           <div className="kpi-desc">MultiGraph Group Central CRM</div>
         </div>
 
         <div className="kpi-card">
           <div className="kpi-title">B2B / CORPORATE ACCOUNTS</div>
-          <div className="kpi-value">{companyCount} Perusahaan</div>
+          <div className="kpi-value">
+            {kpis.companyCount !== null
+              ? `${kpis.companyCount} Perusahaan`
+              : '—'}
+          </div>
           <div className="kpi-desc">Akun dengan Multi-Contact PIC</div>
         </div>
 
         <div className="kpi-card">
           <div className="kpi-title">RETAIL / PERSON ACCOUNTS</div>
-          <div className="kpi-value">{personCount} Individu</div>
+          <div className="kpi-value">
+            {kpis.personCount !== null ? `${kpis.personCount} Individu` : '—'}
+          </div>
           <div className="kpi-desc">Pembeli Ritel &amp; Kolaborator</div>
         </div>
 
         <div className="kpi-card">
           <div className="kpi-title">AKTIF DI {session.activeBrand.code}</div>
           <div className="kpi-value" style={{ color: '#4ade80' }}>
-            {activeBrandCustomers} Customer
+            {kpis.activeBrandCustomers !== null
+              ? `${kpis.activeBrandCustomers} Customer`
+              : '—'}
           </div>
           <div className="kpi-desc">
             Relasi Brand {session.activeBrand.name}
@@ -147,7 +190,10 @@ export default async function CustomersPage() {
         </div>
 
         <CustomerListTable
-          customers={customers}
+          customers={
+            customersState.status === 'SUCCESS' ? customersState.data : []
+          }
+          dataState={customersState}
           activeBrandCode={session.activeBrand.code}
         />
       </div>
