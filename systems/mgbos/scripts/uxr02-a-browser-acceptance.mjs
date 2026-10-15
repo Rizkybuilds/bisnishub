@@ -2286,15 +2286,15 @@ export async function runUxr02AcceptanceHarness({
       horizontalOverflow: false,
     };
 
-    // Compact Desktop / Tablet: 1024x768 on /login
+    // Compact Desktop / Tablet: 1024x768 on /dashboard
     await setViewport(1024, 768);
-    await cdp.send('Page.navigate', { url: `${appOrigin}/login` });
+    await cdp.send('Page.navigate', { url: `${appOrigin}/dashboard` });
     await until(
       async () => {
         const pathVal = await evaluate('window.location.pathname');
-        return pathVal === '/login';
+        return pathVal === '/dashboard';
       },
-      { timeoutMs: 15000, desc: 'Login page on 1024x768' },
+      { timeoutMs: 15000, desc: 'Dashboard on 1024x768' },
     );
     const tabletOverflow = await evaluate(
       'document.documentElement.scrollWidth <= window.innerWidth',
@@ -2304,7 +2304,7 @@ export async function runUxr02AcceptanceHarness({
     trace.cases.VIEWPORT_RESPONSIVE_TABLET_1024 = {
       status: 'PASS',
       viewport: '1024x768',
-      routesVerified: ['/login'],
+      routesVerified: ['/dashboard'],
       horizontalOverflow: false,
     };
 
