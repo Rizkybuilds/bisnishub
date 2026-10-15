@@ -1228,20 +1228,48 @@ export async function runUxr02AcceptanceHarness({
     const browserLogs = [];
     await cdp.send('Console.enable').catch(() => {});
     await cdp.send('Runtime.enable').catch(() => {});
-    cdp.on('Runtime.consoleAPICalled', (params) => {
-      const text = (params.args || [])
-        .map((a) =>
-          a.value !== undefined ? String(a.value) : a.description || '',
-        )
-        .join(' ');
-      browserLogs.push({ type: params.type, text });
-    });
-    cdp.on('Runtime.exceptionThrown', (params) => {
-      browserLogs.push({
-        type: 'exception',
-        text: params.exceptionDetails?.text || 'Uncaught exception',
+    const onCdpMessage = (data) => {
+      let packet;
+      try {
+        packet = JSON.parse(typeof data === 'string' ? data : String(data));
+      } catch {
+        return;
+      }
+      if (packet.method === 'Runtime.consoleAPICalled') {
+        const text = (packet.params?.args || [])
+          .map((a) =>
+            a.value !== undefined ? String(a.value) : a.description || '',
+          )
+          .join(' ');
+        browserLogs.push({ type: packet.params?.type, text });
+      }
+      if (packet.method === 'Runtime.exceptionThrown') {
+        browserLogs.push({
+          type: 'exception',
+          text: packet.params?.exceptionDetails?.text || 'Uncaught exception',
+        });
+      }
+    };
+    if (cdp.ws && typeof cdp.ws.addEventListener === 'function') {
+      cdp.ws.addEventListener('message', (event) => onCdpMessage(event.data));
+    } else if (cdp.ws && typeof cdp.ws.on === 'function') {
+      cdp.ws.on('message', (data) => onCdpMessage(data));
+    } else if (typeof cdp.on === 'function') {
+      cdp.on('Runtime.consoleAPICalled', (params) => {
+        const text = (params.args || [])
+          .map((a) =>
+            a.value !== undefined ? String(a.value) : a.description || '',
+          )
+          .join(' ');
+        browserLogs.push({ type: params.type, text });
       });
-    });
+      cdp.on('Runtime.exceptionThrown', (params) => {
+        browserLogs.push({
+          type: 'exception',
+          text: params.exceptionDetails?.text || 'Uncaught exception',
+        });
+      });
+    }
 
     // Helper: set viewport
     const setViewport = async (width, height) => {
