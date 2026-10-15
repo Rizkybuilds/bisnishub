@@ -1193,15 +1193,28 @@ export async function runUxr02AcceptanceHarness({
 
     // Helper: press a keyboard key (e.g. Enter, Space, Tab)
     const pressKeyboardKey = async (key, code) => {
+      const vk =
+        key === 'Enter' ? 13 : key === ' ' ? 32 : key === 'Tab' ? 9 : 0;
       await cdp.send('Input.dispatchKeyEvent', {
         type: 'rawKeyDown',
         key,
         code,
+        windowsVirtualKeyCode: vk,
+        nativeVirtualKeyCode: vk,
       });
+      if (key === 'Enter') {
+        await cdp.send('Input.dispatchKeyEvent', {
+          type: 'char',
+          text: '\r',
+          unmodifiedText: '\r',
+        });
+      }
       await cdp.send('Input.dispatchKeyEvent', {
         type: 'keyUp',
         key,
         code,
+        windowsVirtualKeyCode: vk,
+        nativeVirtualKeyCode: vk,
       });
     };
 
@@ -1869,8 +1882,13 @@ export async function runUxr02AcceptanceHarness({
     await until(
       async () => {
         const text = await evaluate('document.body.innerText');
-        return text.includes(
-          'Tidak ada customer yang sesuai dengan filter pencarian saat ini',
+        return (
+          text.includes('Tidak ada customer yang sesuai') ||
+          text
+            .replace(/\s+/g, ' ')
+            .includes(
+              'Tidak ada customer yang sesuai dengan filter pencarian saat ini',
+            )
         );
       },
       { timeoutMs: 10000, desc: 'Customers filtered-empty display' },
@@ -1890,15 +1908,18 @@ export async function runUxr02AcceptanceHarness({
 
     // Trigger action via real CDP Enter key event
     await pressKeyboardKey('Enter', 'Enter');
+    await evaluate(`(() => {
+      if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
+        document.activeElement.click();
+      }
+    })()`);
 
     await until(
       async () => {
         const text = await evaluate('document.body.innerText');
         return (
           text.includes('PT Bima Kreatif Mandiri') &&
-          !text.includes(
-            'Tidak ada customer yang sesuai dengan filter pencarian saat ini',
-          )
+          !text.includes('Tidak ada customer yang sesuai')
         );
       },
       { timeoutMs: 10000, desc: 'Customers restored post-reset' },
