@@ -79,6 +79,15 @@ jobs:
           echo "Verified candidate PR #68 checkout at $ACTUAL_APP_SHA"
           cd "$APP_DIR/systems/mgbos"
           pnpm install --frozen-lockfile
+          eval $(node --input-type=module -e '
+            import { localStatus } from "'"$GITHUB_WORKSPACE"'/systems/mgbos/scripts/browser-auth-hygiene-qa.mjs";
+            const s = localStatus();
+            process.stdout.write(`export NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:55430"\n`);
+            process.stdout.write(`export NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="${s.ANON_KEY}"\n`);
+            process.stdout.write(`export SUPABASE_SERVICE_ROLE_KEY="${s.SERVICE_ROLE_KEY}"\n`);
+          ')
+          export NEXT_TELEMETRY_DISABLED=1
+          export PORT=3101
           pnpm --filter @mgbos/app build
       - name: Start PR #68 application and run real browser CRM acceptance
         shell: bash
@@ -86,6 +95,15 @@ jobs:
           set -euo pipefail
           APP_DIR="/tmp/pr68-candidate-app"
           cd "$APP_DIR/systems/mgbos"
+          eval $(node --input-type=module -e '
+            import { localStatus } from "'"$GITHUB_WORKSPACE"'/systems/mgbos/scripts/browser-auth-hygiene-qa.mjs";
+            const s = localStatus();
+            process.stdout.write(`export NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:55430"\n`);
+            process.stdout.write(`export NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="${s.ANON_KEY}"\n`);
+            process.stdout.write(`export SUPABASE_SERVICE_ROLE_KEY="${s.SERVICE_ROLE_KEY}"\n`);
+          ')
+          export NEXT_TELEMETRY_DISABLED=1
+          export PORT=3101
           pnpm --filter @mgbos/app start > /tmp/mgbos-app.log 2>&1 &
           app_pid=$!
           trap 'kill "$app_pid" 2>/dev/null || true' EXIT
@@ -107,6 +125,7 @@ jobs:
           pos_status=0
           node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --app-dir "$APP_DIR" \
+            --proxy-port 55430 \
             --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" || pos_status=$?
           node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --verify-trace systems/mgbos/.qa-evidence/uxr02-a/positive/trace.json \
@@ -122,6 +141,7 @@ jobs:
           neg_status=0
           MGBOS_QA_NEGATIVE_CONTROL=1 node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --app-dir "$APP_DIR" \
+            --proxy-port 55430 \
             --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" > /dev/null 2>&1 || neg_status=$?
           if [ "$neg_status" -eq 0 ]; then
             echo "::error::Intentional negative control incorrectly returned success"

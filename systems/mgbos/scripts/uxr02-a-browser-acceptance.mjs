@@ -108,7 +108,19 @@ export class CrmFaultProxy {
       this.server = http.createServer((req, res) =>
         this._handleRequest(req, res),
       );
-      this.server.on('error', reject);
+      this.server.on('error', (err) => {
+        if (err.code === 'EADDRINUSE' && this.port !== 0) {
+          this.port = 0;
+          this.server.listen(0, '127.0.0.1', () => {
+            const address = this.server.address();
+            this.port = address.port;
+            this.activeOrigin = `http://127.0.0.1:${this.port}`;
+            resolve(this.activeOrigin);
+          });
+        } else {
+          reject(err);
+        }
+      });
       this.server.listen(this.port, '127.0.0.1', () => {
         const address = this.server.address();
         this.port = address.port;
@@ -171,11 +183,12 @@ export class CrmFaultProxy {
 
     // Default: proxy to canonical loopback Supabase target
     const targetUrl = new URL(clientReq.url, this.targetOrigin);
+    const headers = { ...clientReq.headers, host: targetUrl.host };
     const proxyReq = http.request(
       targetUrl,
       {
         method: clientReq.method,
-        headers: clientReq.headers,
+        headers,
       },
       (proxyRes) => {
         clientRes.writeHead(proxyRes.statusCode, proxyRes.headers);
@@ -811,6 +824,7 @@ export async function runUxr02AcceptanceHarness({
   appDir = null,
   appOrigin = CANONICAL_APP_ORIGIN,
   apiOrigin = CANONICAL_API_ORIGIN,
+  proxyPort = 55430,
   expectedCheckoutSha = EXPECTED_PR68_HEAD_SHA,
   evidenceDir = null,
 } = {}) {
@@ -879,14 +893,21 @@ export async function runUxr02AcceptanceHarness({
     assertLoopbackHttpOrigin(apiOrigin, { stage: 'STARTUP' });
 
     // 2. Resolve Supabase Service Key from localStatus
-    const status = localStatus(rootDir);
+    const status = localStatus({ api: apiOrigin, workdir: rootDir });
     const serviceKey =
+      status.SERVICE_ROLE_KEY ||
       status.serviceRoleKey ||
-      process.env.SUPABASE_SERVICE_ROLE_KEY ||
-      'test-service-key-placeholder';
+      process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!serviceKey) {
+      throw new QaError(
+        'STARTUP',
+        'SERVICE_ROLE_KEY_MISSING',
+        'Unable to resolve Supabase service role key from local status',
+      );
+    }
 
     // 3. Start Fault Injection Proxy
-    proxy = new CrmFaultProxy({ targetOrigin: apiOrigin });
+    proxy = new CrmFaultProxy({ port: proxyPort, targetOrigin: apiOrigin });
     const proxyOrigin = await proxy.start();
 
     // 4. Initialize Fixture Manager
@@ -1792,9 +1813,16 @@ export async function runCli(argv = process.argv.slice(2)) {
   const expectedCheckoutSha =
     shaIndex !== -1 ? argv[shaIndex + 1] : EXPECTED_PR68_HEAD_SHA;
 
+  const proxyPortIndex = argv.indexOf('--proxy-port');
+  const proxyPort =
+    proxyPortIndex !== -1
+      ? Number.parseInt(argv[proxyPortIndex + 1], 10)
+      : 55430;
+
   const { overall, failure } = await runUxr02AcceptanceHarness({
     isNegativeControl: isNeg,
     appDir,
+    proxyPort,
     expectedCheckoutSha,
   });
 
