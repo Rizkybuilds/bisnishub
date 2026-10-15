@@ -34,9 +34,23 @@ import {
   db,
   localStatus,
   startBrowser,
-  until,
+  until as baseUntil,
 } from './browser-auth-hygiene-qa.mjs';
 import { terminateBrowser } from './browser-ui-multirole-qa.mjs';
+
+const until = async (fn, labelOrOpts, ms = 30000, opts = {}) => {
+  let label = 'condition';
+  let timeout = ms;
+  if (typeof labelOrOpts === 'string') {
+    label = labelOrOpts;
+  } else if (labelOrOpts && typeof labelOrOpts === 'object') {
+    label = labelOrOpts.desc || labelOrOpts.description || 'condition';
+    if (typeof labelOrOpts.timeoutMs === 'number') {
+      timeout = labelOrOpts.timeoutMs;
+    }
+  }
+  return baseUntil(fn, label, timeout, opts);
+};
 
 export { QaError };
 
@@ -2018,7 +2032,7 @@ export async function runUxr02AcceptanceHarness({
     // 3b. Controlled HTTP 502 gateway error
     proxy.setFaultRule({
       method: 'GET',
-      pathPrefix: '/rest/v1/customers',
+      pathPrefix: '/rest/v1/customer_accounts',
       statusCode: 502,
       body: '{"error":"Bad Gateway Transport Error"}',
       remaining: 1,
