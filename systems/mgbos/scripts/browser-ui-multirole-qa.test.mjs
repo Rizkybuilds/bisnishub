@@ -17,14 +17,16 @@ import {
   verifyTraceFile,
 } from './browser-ui-multirole-qa.mjs';
 
-function withTempDir(fn) {
+async function withTempDir(fn) {
   const dir = mkdtempSync(path.join(tmpdir(), 'mgbos-ui-qa-test-'));
-  return Promise.resolve()
-    .then(() => fn(dir))
-    .finally(() => {
-      rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
-    });
+  try {
+    return await fn(dir);
+  } finally {
+    rmSync(dir, { recursive: true, force: true, maxRetries: 3 });
+  }
 }
+
+const TEST_ISOLATED_ENV = Object.freeze({});
 
 describe('MGBOS Multi-Role Browser UI QA Harness', () => {
   it('enforces canonical role permissions and shortcut expectations', () => {
@@ -422,8 +424,8 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       };
     }
 
-    it('verifies valid normal trace with all 24 cases cleanly', () => {
-      withTempDir((dir) => {
+    it('verifies valid normal trace with all 24 cases cleanly', async () => {
+      await withTempDir(async (dir) => {
         const tracePath = path.join(dir, 'trace.json');
         const validTrace = generateValid24CaseTrace();
         writeFileSync(tracePath, JSON.stringify(validTrace), 'utf8');
@@ -431,6 +433,7 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
         const result = verifyTraceFile(tracePath, {
           expectedMode: 'normal',
           exitStatus: 0,
+          env: TEST_ISOLATED_ENV,
         });
         assert.equal(result.valid, true);
         assert.equal(result.code, 'TRACE_VERIFIED');
@@ -438,62 +441,74 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       });
     });
 
-    it('rejects trace when mandatory cases are missing', () => {
-      withTempDir((dir) => {
+    it('rejects trace when mandatory cases are missing', async () => {
+      await withTempDir(async (dir) => {
         const tracePath = path.join(dir, 'trace_missing_case.json');
         const incompleteTrace = generateValid24CaseTrace();
         delete incompleteTrace.cases.SALES_AUTHORIZED_QUOTES_ACCESS;
         writeFileSync(tracePath, JSON.stringify(incompleteTrace), 'utf8');
 
-        const result = verifyTraceFile(tracePath, { expectedMode: 'normal' });
+        const result = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
+        });
         assert.equal(result.valid, false);
         assert.equal(result.code, 'CASE_MISSING');
         assert.ok(result.summary.includes('SALES_AUTHORIZED_QUOTES_ACCESS'));
       });
     });
 
-    it('rejects trace when a mandatory case failed', () => {
-      withTempDir((dir) => {
+    it('rejects trace when a mandatory case failed', async () => {
+      await withTempDir(async (dir) => {
         const tracePath = path.join(dir, 'trace_failed_case.json');
         const failedCaseTrace = generateValid24CaseTrace();
         failedCaseTrace.cases.QC_DIRECT_QUOTES_DENIAL = { status: 'FAIL' };
         writeFileSync(tracePath, JSON.stringify(failedCaseTrace), 'utf8');
 
-        const result = verifyTraceFile(tracePath, { expectedMode: 'normal' });
+        const result = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
+        });
         assert.equal(result.valid, false);
         assert.equal(result.code, 'CASE_FAILED');
         assert.ok(result.summary.includes('QC_DIRECT_QUOTES_DENIAL'));
       });
     });
 
-    it('rejects trace when provenance checkoutSha is missing or unknown', () => {
-      withTempDir((dir) => {
+    it('rejects trace when provenance checkoutSha is missing or unknown', async () => {
+      await withTempDir(async (dir) => {
         const tracePath = path.join(dir, 'trace_no_sha.json');
         const noShaTrace = generateValid24CaseTrace();
         delete noShaTrace.provenance.checkoutSha;
         writeFileSync(tracePath, JSON.stringify(noShaTrace), 'utf8');
 
-        const result = verifyTraceFile(tracePath, { expectedMode: 'normal' });
+        const result = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
+        });
         assert.equal(result.valid, false);
         assert.equal(result.code, 'TRACE_PROVENANCE_MISSING');
       });
     });
 
-    it('rejects trace when provenance checkoutSha is not a valid 40-character hex SHA', () => {
-      withTempDir((dir) => {
+    it('rejects trace when provenance checkoutSha is not a valid 40-character hex SHA', async () => {
+      await withTempDir(async (dir) => {
         const tracePath = path.join(dir, 'trace_invalid_sha.json');
         const invalidShaTrace = generateValid24CaseTrace();
         invalidShaTrace.provenance.checkoutSha = 'abc123notashalength';
         writeFileSync(tracePath, JSON.stringify(invalidShaTrace), 'utf8');
 
-        const result = verifyTraceFile(tracePath, { expectedMode: 'normal' });
+        const result = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
+        });
         assert.equal(result.valid, false);
         assert.equal(result.code, 'TRACE_PROVENANCE_INVALID');
       });
     });
 
-    it('validates expectedCheckoutSha when specified and rejects mismatch', () => {
-      withTempDir((dir) => {
+    it('validates expectedCheckoutSha when specified and rejects mismatch', async () => {
+      await withTempDir(async (dir) => {
         const tracePath = path.join(dir, 'trace_sha_check.json');
         const validTrace = generateValid24CaseTrace();
         writeFileSync(tracePath, JSON.stringify(validTrace), 'utf8');
@@ -501,20 +516,22 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
         const matchResult = verifyTraceFile(tracePath, {
           expectedMode: 'normal',
           expectedCheckoutSha: 'a01d375d07e9fdbc00411cb4b568a1610f1582d8',
+          env: TEST_ISOLATED_ENV,
         });
         assert.equal(matchResult.valid, true);
 
         const mismatchResult = verifyTraceFile(tracePath, {
           expectedMode: 'normal',
           expectedCheckoutSha: 'ffffffffffffffffffffffffffffffffffffffff',
+          env: TEST_ISOLATED_ENV,
         });
         assert.equal(mismatchResult.valid, false);
         assert.equal(mismatchResult.code, 'TRACE_PROVENANCE_MISMATCH');
       });
     });
 
-    it('rejects trace when cleanup.verifiedAbsent is not true', () => {
-      withTempDir((dir) => {
+    it('rejects trace when cleanup.verifiedAbsent is not true', async () => {
+      await withTempDir(async (dir) => {
         const tracePath = path.join(dir, 'trace_unverified_cleanup.json');
         const unverifiedCleanupTrace = generateValid24CaseTrace();
         unverifiedCleanupTrace.cleanup = {
@@ -527,34 +544,44 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
           'utf8',
         );
 
-        const result = verifyTraceFile(tracePath, { expectedMode: 'normal' });
+        const result = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
+        });
         assert.equal(result.valid, false);
         assert.equal(result.code, 'TRACE_CLEANUP_UNVERIFIED');
       });
     });
 
-    it('rejects trace with contradictory fields (PASS overall but failure object present)', () => {
-      withTempDir((dir) => {
+    it('rejects trace with contradictory fields (PASS overall but failure object present)', async () => {
+      await withTempDir(async (dir) => {
         const tracePath = path.join(dir, 'trace_contradictory.json');
         const contradictoryTrace = generateValid24CaseTrace();
         contradictoryTrace.failure = { stage: 'QA', code: 'SOME_ERROR' };
         writeFileSync(tracePath, JSON.stringify(contradictoryTrace), 'utf8');
 
-        const result = verifyTraceFile(tracePath, { expectedMode: 'normal' });
+        const result = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
+        });
         assert.equal(result.valid, false);
         assert.equal(result.code, 'TRACE_CONTRADICTORY_FIELDS');
       });
     });
 
-    it('fails closed on missing, unreadable, corrupt, or failed traces', () => {
-      withTempDir((dir) => {
-        const missing = verifyTraceFile(path.join(dir, 'nonexistent.json'));
+    it('fails closed on missing, unreadable, corrupt, or failed traces', async () => {
+      await withTempDir(async (dir) => {
+        const missing = verifyTraceFile(path.join(dir, 'nonexistent.json'), {
+          env: TEST_ISOLATED_ENV,
+        });
         assert.equal(missing.valid, false);
         assert.equal(missing.code, 'TRACE_MISSING');
 
         const corruptPath = path.join(dir, 'corrupt.json');
         writeFileSync(corruptPath, '{invalid-json', 'utf8');
-        const corrupt = verifyTraceFile(corruptPath);
+        const corrupt = verifyTraceFile(corruptPath, {
+          env: TEST_ISOLATED_ENV,
+        });
         assert.equal(corrupt.valid, false);
         assert.equal(corrupt.code, 'TRACE_CORRUPT');
 
@@ -572,7 +599,10 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
           }),
           'utf8',
         );
-        const failed = verifyTraceFile(failedPath, { expectedMode: 'normal' });
+        const failed = verifyTraceFile(failedPath, {
+          expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
+        });
         assert.equal(failed.valid, false);
         assert.equal(failed.code, 'TRACE_OVERALL_FAILED');
 
@@ -586,6 +616,7 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
         );
         const failedCleanup = verifyTraceFile(failedCleanupPath, {
           expectedMode: 'normal',
+          env: TEST_ISOLATED_ENV,
         });
         assert.equal(failedCleanup.valid, false);
         assert.equal(failedCleanup.code, 'TRACE_CLEANUP_FAILED');
@@ -599,14 +630,15 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
         const exitMismatch = verifyTraceFile(exitMismatchPath, {
           expectedMode: 'normal',
           exitStatus: 1,
+          env: TEST_ISOLATED_ENV,
         });
         assert.equal(exitMismatch.valid, false);
         assert.equal(exitMismatch.code, 'EXIT_STATUS_MISMATCH');
       });
     });
 
-    it('verifies intentional negative control trace correctly and validates failure code', () => {
-      withTempDir((dir) => {
+    it('verifies intentional negative control trace correctly and validates failure code', async () => {
+      await withTempDir(async (dir) => {
         const negTracePath = path.join(dir, 'trace-neg.json');
         const negTrace = {
           harness: 'mgbos-browser-ui-multirole-qa',
@@ -626,6 +658,7 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
         const result = verifyTraceFile(negTracePath, {
           expectedMode: 'intentional-broken-control',
           exitStatus: 1,
+          env: TEST_ISOLATED_ENV,
         });
         assert.equal(result.valid, true);
         assert.equal(result.code, 'TRACE_VERIFIED');
@@ -640,14 +673,15 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
         const wrongResult = verifyTraceFile(wrongCodePath, {
           expectedMode: 'intentional-broken-control',
           exitStatus: 1,
+          env: TEST_ISOLATED_ENV,
         });
         assert.equal(wrongResult.valid, false);
         assert.equal(wrongResult.code, 'NEGATIVE_CONTROL_CODE_MISMATCH');
       });
     });
 
-    it('strictly rejects unrelated setup, fixture, browser, and assertion errors in negative control mode (Finding R3-F01)', () => {
-      withTempDir((dir) => {
+    it('strictly rejects unrelated setup, fixture, browser, and assertion errors in negative control mode (Finding R3-F01, R4-F04)', async () => {
+      await withTempDir(async (dir) => {
         const baseNegTrace = {
           harness: 'mgbos-browser-ui-multirole-qa',
           mode: 'intentional-broken-control',
@@ -686,6 +720,7 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
           const result = verifyTraceFile(tracePath, {
             expectedMode: 'intentional-broken-control',
             exitStatus: 1,
+            env: TEST_ISOLATED_ENV,
           });
           assert.equal(
             result.valid,
@@ -701,8 +736,8 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
       });
     });
 
-    it('enforces CI evidence binding against GITHUB_SHA under verified CI conditions (Finding R3-F03)', () => {
-      withTempDir((dir) => {
+    it('enforces CI evidence binding against GITHUB_SHA under verified CI conditions (Finding R3-F03, R4-F02, R4-F03)', async () => {
+      await withTempDir(async (dir) => {
         const tracePath = path.join(dir, 'trace_ci_sha.json');
         const trace = generateValid24CaseTrace();
         trace.provenance.checkoutSha =
@@ -731,7 +766,39 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
         assert.equal(mismatchResult.valid, false);
         assert.equal(mismatchResult.code, 'TRACE_PROVENANCE_MISMATCH');
 
-        // Case 3: Explicit --expected-checkout-sha overrides GITHUB_SHA in CI
+        // Case 3: In CI environment where GITHUB_SHA is missing -> FAIL closed with TRACE_CI_PROVENANCE_MISSING
+        const missingShaResult = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: {
+            GITHUB_ACTIONS: 'true',
+          },
+        });
+        assert.equal(missingShaResult.valid, false);
+        assert.equal(missingShaResult.code, 'TRACE_CI_PROVENANCE_MISSING');
+
+        // Case 4: In CI environment where GITHUB_SHA is empty -> FAIL closed with TRACE_CI_PROVENANCE_MISSING
+        const emptyShaResult = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: {
+            GITHUB_ACTIONS: 'true',
+            GITHUB_SHA: '   ',
+          },
+        });
+        assert.equal(emptyShaResult.valid, false);
+        assert.equal(emptyShaResult.code, 'TRACE_CI_PROVENANCE_MISSING');
+
+        // Case 5: In CI environment where GITHUB_SHA is malformed -> FAIL closed with TRACE_CI_PROVENANCE_INVALID
+        const invalidShaResult = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: {
+            GITHUB_ACTIONS: 'true',
+            GITHUB_SHA: 'not-a-40-char-hex-sha',
+          },
+        });
+        assert.equal(invalidShaResult.valid, false);
+        assert.equal(invalidShaResult.code, 'TRACE_CI_PROVENANCE_INVALID');
+
+        // Case 6: Explicit --expected-checkout-sha overrides GITHUB_SHA in CI
         const overrideResult = verifyTraceFile(tracePath, {
           expectedMode: 'normal',
           expectedCheckoutSha: '1111111111111111111111111111111111111111',
@@ -742,12 +809,18 @@ describe('MGBOS Multi-Role Browser UI QA Harness', () => {
         });
         assert.equal(overrideResult.valid, true);
 
-        // Case 4: Non-CI environment without expectedCheckoutSha does not require GITHUB_SHA match
+        // Case 7: Non-CI environment without expectedCheckoutSha does not require GITHUB_SHA match
         const nonCiResult = verifyTraceFile(tracePath, {
           expectedMode: 'normal',
           env: {},
         });
         assert.equal(nonCiResult.valid, true);
+
+        const nonCiFalseResult = verifyTraceFile(tracePath, {
+          expectedMode: 'normal',
+          env: { GITHUB_ACTIONS: 'false' },
+        });
+        assert.equal(nonCiFalseResult.valid, true);
       });
     });
 

@@ -1754,9 +1754,8 @@ export async function runUiQaHarness({
   } catch (error) {
     evidence.overall = 'FAIL';
     const isIntentionalNegative =
-      (error instanceof QaError &&
-        error.code === 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED') ||
-      error?.code === 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED';
+      error instanceof QaError &&
+      error.code === 'INTENTIONAL_NEGATIVE_CONTROL_TRIGGERED';
 
     if (isIntentionalNegative) {
       evidence.failure = {
@@ -1949,15 +1948,28 @@ export function verifyTraceFile(
     };
   }
 
-  // Narrowly scoped CLI / CI default under verified CI conditions (Finding R3-F03):
+  // Narrowly scoped CLI / CI default under verified CI conditions (Finding R3-F03, R4-F03):
   // When expectedCheckoutSha is not explicitly provided and running in CI,
-  // bind to env.GITHUB_SHA if it represents a valid 40-character hex SHA.
+  // require valid GITHUB_SHA and bind to it (fail closed if missing or malformed).
   let targetExpectedSha = expectedCheckoutSha;
   if (!targetExpectedSha && env?.GITHUB_ACTIONS === 'true') {
     const ciSha = env?.GITHUB_SHA?.trim();
-    if (ciSha && SHA_40_PATTERN.test(ciSha)) {
-      targetExpectedSha = ciSha;
+    if (!ciSha) {
+      return {
+        valid: false,
+        code: 'TRACE_CI_PROVENANCE_MISSING',
+        summary:
+          'Running in GitHub Actions environment but GITHUB_SHA is missing or empty',
+      };
     }
+    if (!SHA_40_PATTERN.test(ciSha)) {
+      return {
+        valid: false,
+        code: 'TRACE_CI_PROVENANCE_INVALID',
+        summary: `Running in GitHub Actions environment but GITHUB_SHA '${ciSha}' is not a valid 40-character hexadecimal SHA`,
+      };
+    }
+    targetExpectedSha = ciSha;
   }
 
   if (targetExpectedSha) {
