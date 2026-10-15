@@ -572,6 +572,74 @@ describe('UXR02-A Customers Server Component & Data States Acceptance Suite', ()
             },
           ],
         },
+        {
+          desc: 'F05: customer_brand_relationships with brands as array',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_brand_relationships: [
+                {
+                  id: 'rel-1',
+                  brand_id: 'br-ts',
+                  customer_segment: 'CORPORATE_BULK',
+                  relationship_status: 'ACTIVE',
+                  brands: [],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          desc: 'F05: customer_brand_relationships with non-string brands name',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_brand_relationships: [
+                {
+                  id: 'rel-1',
+                  brand_id: 'br-ts',
+                  customer_segment: 'CORPORATE_BULK',
+                  relationship_status: 'ACTIVE',
+                  brands: {
+                    id: 'br-ts',
+                    code: 'TS',
+                    name: { unexpected: true },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          desc: 'F05: customer_brand_relationships with non-string brands id',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_brand_relationships: [
+                {
+                  id: 'rel-1',
+                  brand_id: 'br-ts',
+                  customer_segment: 'CORPORATE_BULK',
+                  relationship_status: 'ACTIVE',
+                  brands: {
+                    id: 12345,
+                    code: 'TS',
+                    name: 'TeeStock',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          desc: 'F05: customer_contacts containing array element',
+          json: [
+            {
+              ...validBaseCustomer,
+              customer_contacts: [[]],
+            },
+          ],
+        },
       ];
 
       for (const payload of malformedPayloads) {

@@ -13,7 +13,7 @@ export const metadata = {
 };
 
 function isValidCustomerContact(c: unknown): boolean {
-  if (typeof c !== 'object' || c === null) return false;
+  if (typeof c !== 'object' || c === null || Array.isArray(c)) return false;
   const contact = c as Record<string, unknown>;
   if (typeof contact.id !== 'string') return false;
   if (typeof contact.name !== 'string') return false;
@@ -43,7 +43,8 @@ function isValidCustomerContact(c: unknown): boolean {
 }
 
 function isValidCustomerBrandRelationship(rel: unknown): boolean {
-  if (typeof rel !== 'object' || rel === null) return false;
+  if (typeof rel !== 'object' || rel === null || Array.isArray(rel))
+    return false;
   const r = rel as Record<string, unknown>;
   if (typeof r.id !== 'string') return false;
   if (r.brand_id !== undefined && typeof r.brand_id !== 'string') return false;
@@ -62,8 +63,9 @@ function isValidCustomerBrandRelationship(rel: unknown): boolean {
     return false;
   }
   if (r.brands !== undefined && r.brands !== null) {
-    if (typeof r.brands !== 'object') return false;
+    if (typeof r.brands !== 'object' || Array.isArray(r.brands)) return false;
     const b = r.brands as Record<string, unknown>;
+    if (b.id !== undefined && typeof b.id !== 'string') return false;
     if (b.code !== undefined && typeof b.code !== 'string') return false;
     if (b.name !== undefined && typeof b.name !== 'string') return false;
   }

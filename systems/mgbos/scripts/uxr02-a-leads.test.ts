@@ -510,6 +510,127 @@ describe('UXR02-A Leads Server Component & Data States Acceptance Suite', () => 
             },
           ],
         },
+        {
+          desc: 'F05: customer_accounts is array instead of object or null',
+          json: [
+            {
+              ...validBaseLead,
+              customer_accounts: [],
+            },
+          ],
+        },
+        {
+          desc: 'F05: customer_accounts object has object display_name (counterexample)',
+          json: [
+            {
+              ...validBaseLead,
+              customer_accounts: {
+                id: 'synthetic-ca-01',
+                display_name: { unexpected: true },
+                account_type: 'COMPANY',
+              },
+            },
+          ],
+        },
+        {
+          desc: 'F05: customer_accounts object has non-string account_type',
+          json: [
+            {
+              ...validBaseLead,
+              customer_accounts: {
+                id: 'synthetic-ca-01',
+                display_name: 'PT Maju Bersama',
+                account_type: 12345,
+              },
+            },
+          ],
+        },
+        {
+          desc: 'F05: customer_accounts object has non-string id',
+          json: [
+            {
+              ...validBaseLead,
+              customer_accounts: {
+                id: 99999,
+                display_name: 'PT Maju Bersama',
+                account_type: 'COMPANY',
+              },
+            },
+          ],
+        },
+        {
+          desc: 'F05: channels is array instead of object or null',
+          json: [
+            {
+              ...validBaseLead,
+              channels: [],
+            },
+          ],
+        },
+        {
+          desc: 'F05: channels object has non-string name',
+          json: [
+            {
+              ...validBaseLead,
+              channels: {
+                id: 'ch-01',
+                code: 'WHATSAPP',
+                name: { unexpected: true },
+                channel_type: 'CHAT',
+              },
+            },
+          ],
+        },
+        {
+          desc: 'F05: channels object has non-string id',
+          json: [
+            {
+              ...validBaseLead,
+              channels: {
+                id: 12345,
+                code: 'WHATSAPP',
+                name: 'WhatsApp Business',
+                channel_type: 'CHAT',
+              },
+            },
+          ],
+        },
+        {
+          desc: 'F05: brands is array instead of object or null',
+          json: [
+            {
+              ...validBaseLead,
+              brands: [],
+            },
+          ],
+        },
+        {
+          desc: 'F05: brands object has non-string name',
+          json: [
+            {
+              ...validBaseLead,
+              brands: {
+                id: 'br-ts',
+                code: 'TS',
+                name: { unexpected: true },
+              },
+            },
+          ],
+        },
+        {
+          desc: 'F05: requirements array containing item with non-string title',
+          json: [
+            {
+              ...validBaseLead,
+              requirements: [
+                {
+                  id: 'req-01',
+                  title: { bad: true },
+                },
+              ],
+            },
+          ],
+        },
       ];
 
       for (const payload of malformedPayloads) {
@@ -535,7 +656,7 @@ describe('UXR02-A Leads Server Component & Data States Acceptance Suite', () => 
       }
     });
 
-    it('AC-A05 & F04: accepts valid PostgREST records with nullable requirements or valid requirements array', async () => {
+    it('AC-A05 & F05: accepts valid PostgREST records with nullable relations, connected customer account, and valid requirements', async () => {
       const validLeadsWithEdgeCases = [
         {
           id: 'lead-edge-01',
@@ -593,6 +714,37 @@ describe('UXR02-A Leads Server Component & Data States Acceptance Suite', () => 
             },
           ],
         },
+        {
+          id: 'lead-edge-03',
+          lead_number: 'LEAD-2026-E3',
+          title: 'Polo Shirt Seragam (Connected Customer Account)',
+          status: 'CONVERTED',
+          contact_name: 'Budi Santoso',
+          company_name: 'PT Sinar Abadi',
+          phone: '081234567890',
+          email: 'budi@sinarabadi.com',
+          raw_inquiry: 'Polo shirt 50 pcs',
+          estimated_quantity: 50,
+          estimated_budget: 6000000,
+          qualification_result: 'QUALIFIED',
+          qualification_score: 95,
+          qualification_notes: 'Sudah terhubung ke customer',
+          disqualification_reason: null,
+          created_at: '2026-02-03T00:00:00Z',
+          brands: { id: 'br-ts', code: 'TS', name: 'TeeStock' },
+          channels: {
+            id: 'ch-wa',
+            code: 'WHATSAPP',
+            name: 'WhatsApp Business',
+            channel_type: 'CHAT',
+          },
+          customer_accounts: {
+            id: 'cust-acc-01',
+            display_name: 'PT Sinar Abadi',
+            account_type: 'COMPANY',
+          },
+          requirements: null,
+        },
       ];
 
       global.fetch = vi.fn().mockResolvedValue({
@@ -604,10 +756,10 @@ describe('UXR02-A Leads Server Component & Data States Acceptance Suite', () => 
       const pageJsx = await LeadsPage();
       const text = extractTextFromJsx(pageJsx);
 
-      expect(text).toContain('2 Leads');
+      expect(text).toContain('3 Leads');
       expect(text).toContain('1 Inquiry'); // NEW
       expect(text).toContain('1 Lead'); // QUALIFIED
-      expect(text).toContain('1 Lead'); // TS active brand
+      expect(text).toContain('2 Lead'); // TS active brand
       expect(text).not.toContain('Format data leads tidak valid.');
 
       const tableElement = requireComponentInJsx(pageJsx, 'LeadListTable');

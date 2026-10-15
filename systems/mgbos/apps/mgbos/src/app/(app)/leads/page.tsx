@@ -10,7 +10,8 @@ export const metadata = {
 };
 
 function isValidLeadRequirement(req: unknown): boolean {
-  if (typeof req !== 'object' || req === null) return false;
+  if (typeof req !== 'object' || req === null || Array.isArray(req))
+    return false;
   const r = req as Record<string, unknown>;
   if (typeof r.id !== 'string') return false;
   if (r.title !== undefined && typeof r.title !== 'string') return false;
@@ -121,25 +122,62 @@ function isValidLeadRecord(record: unknown): record is LeadDetailData {
   ) {
     return false;
   }
+  if (
+    r.qualified_at !== undefined &&
+    r.qualified_at !== null &&
+    typeof r.qualified_at !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.disqualified_at !== undefined &&
+    r.disqualified_at !== null &&
+    typeof r.disqualified_at !== 'string'
+  ) {
+    return false;
+  }
+  if (
+    r.converted_at !== undefined &&
+    r.converted_at !== null &&
+    typeof r.converted_at !== 'string'
+  ) {
+    return false;
+  }
 
   // Optional nested brands
   if (r.brands !== undefined && r.brands !== null) {
-    if (typeof r.brands !== 'object') return false;
+    if (typeof r.brands !== 'object' || Array.isArray(r.brands)) return false;
     const b = r.brands as Record<string, unknown>;
+    if (b.id !== undefined && typeof b.id !== 'string') return false;
     if (b.code !== undefined && typeof b.code !== 'string') return false;
     if (b.name !== undefined && typeof b.name !== 'string') return false;
   }
 
   // Optional nested channels
   if (r.channels !== undefined && r.channels !== null) {
-    if (typeof r.channels !== 'object') return false;
+    if (typeof r.channels !== 'object' || Array.isArray(r.channels))
+      return false;
     const c = r.channels as Record<string, unknown>;
+    if (c.id !== undefined && typeof c.id !== 'string') return false;
     if (c.code !== undefined && typeof c.code !== 'string') return false;
+    if (c.name !== undefined && typeof c.name !== 'string') return false;
+    if (c.channel_type !== undefined && typeof c.channel_type !== 'string') {
+      return false;
+    }
   }
 
   // Optional nested customer_accounts
   if (r.customer_accounts !== undefined && r.customer_accounts !== null) {
-    if (typeof r.customer_accounts !== 'object') return false;
+    if (
+      typeof r.customer_accounts !== 'object' ||
+      Array.isArray(r.customer_accounts)
+    ) {
+      return false;
+    }
+    const ca = r.customer_accounts as Record<string, unknown>;
+    if (typeof ca.id !== 'string') return false;
+    if (typeof ca.display_name !== 'string') return false;
+    if (typeof ca.account_type !== 'string') return false;
   }
 
   // Optional nested requirements
