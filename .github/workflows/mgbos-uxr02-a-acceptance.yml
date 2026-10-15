@@ -176,6 +176,7 @@ jobs:
             --expected-harness-sha "${{ github.event.pull_request.head.sha }}" \
             --exit-status "$pos_status"
       - name: Prove broken assertion fails the UXR02-A gate (negative control)
+        if: success() || failure()
         shell: bash
         run: |
           set -euo pipefail
