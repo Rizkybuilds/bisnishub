@@ -33,40 +33,9 @@ export interface CustomerData {
   }>;
 }
 
-export type CrmDataState<T> =
-  { status: 'SUCCESS'; data: T[] } | { status: 'UNAVAILABLE'; message: string };
-
-export interface CustomerKpis {
-  total: number | null;
-  companyCount: number | null;
-  personCount: number | null;
-  activeBrandCustomers: number | null;
-}
-
-export function computeCustomerKpis(
-  state: CrmDataState<CustomerData>,
-  activeBrandCode: string,
-): CustomerKpis {
-  if (state.status !== 'SUCCESS') {
-    return {
-      total: null,
-      companyCount: null,
-      personCount: null,
-      activeBrandCustomers: null,
-    };
-  }
-  const customers = state.data;
-  return {
-    total: customers.length,
-    companyCount: customers.filter((c) => c.account_type === 'COMPANY').length,
-    personCount: customers.filter((c) => c.account_type === 'PERSON').length,
-    activeBrandCustomers: customers.filter((c) =>
-      c.customer_brand_relationships.some(
-        (r) => r.brands?.code === activeBrandCode,
-      ),
-    ).length,
-  };
-}
+export type CustomerListTableDataState =
+  | { status: 'SUCCESS'; data: CustomerData[] }
+  | { status: 'UNAVAILABLE'; message: string };
 
 export interface CustomerFilterOptions {
   search: string;
@@ -87,7 +56,7 @@ export function filterCustomers(
 
     // Brand filter
     if (brandFilter === 'ACTIVE') {
-      const hasBrand = cust.customer_brand_relationships.some(
+      const hasBrand = cust.customer_brand_relationships?.some(
         (rel) => rel.brands?.code === activeBrandCode,
       );
       if (!hasBrand) return false;
@@ -96,86 +65,32 @@ export function filterCustomers(
     // Search filter
     if (!search.trim()) return true;
     const q = search.toLowerCase();
-    const matchName = cust.display_name.toLowerCase().includes(q);
+    const matchName = cust.display_name?.toLowerCase().includes(q) ?? false;
     const matchLegal = cust.legal_name?.toLowerCase().includes(q) ?? false;
     const matchEmail = cust.primary_email?.toLowerCase().includes(q) ?? false;
     const matchPhone = cust.primary_phone?.toLowerCase().includes(q) ?? false;
-    const matchContact = cust.customer_contacts.some(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        (c.position?.toLowerCase().includes(q) ?? false) ||
-        (c.email?.toLowerCase().includes(q) ?? false),
-    );
+    const matchContact =
+      cust.customer_contacts?.some(
+        (c) =>
+          c.name?.toLowerCase().includes(q) ||
+          (c.position?.toLowerCase().includes(q) ?? false) ||
+          (c.email?.toLowerCase().includes(q) ?? false),
+      ) ?? false;
 
     return matchName || matchLegal || matchEmail || matchPhone || matchContact;
   });
 }
 
-export async function loadCustomersData(
-  supabaseUrl: string,
-  serviceKey: string | undefined,
-  organizationId: string,
-  fetchFn: typeof fetch = fetch,
-): Promise<CrmDataState<CustomerData>> {
-  if (!serviceKey) {
-    return {
-      status: 'UNAVAILABLE',
-      message: 'Layanan data customer tidak tersedia saat ini.',
-    };
-  }
-
-  const endpoint = `${supabaseUrl.replace(/\/+$/, '')}/rest/v1/customer_accounts?organization_id=eq.${organizationId}&select=id,account_type,display_name,legal_name,primary_email,primary_phone,tax_id,status,customer_since,customer_contacts(id,name,email,phone,position,is_primary),customer_brand_relationships(id,brand_id,customer_segment,relationship_status,brands(id,code,name))&order=display_name.asc`;
-
-  const headers: Record<string, string> = {
-    apikey: serviceKey,
-    Authorization: `Bearer ${serviceKey}`,
-    'Accept-Profile': 'app',
-  };
-
-  try {
-    const response = await fetchFn(endpoint, {
-      method: 'GET',
-      headers,
-      cache: 'no-store',
-    });
-
-    if (!response.ok) {
-      return {
-        status: 'UNAVAILABLE',
-        message: 'Layanan data customer tidak dapat diakses saat ini.',
-      };
-    }
-
-    const json = await response.json();
-    if (!Array.isArray(json)) {
-      return {
-        status: 'UNAVAILABLE',
-        message: 'Format data customer tidak valid.',
-      };
-    }
-
-    return {
-      status: 'SUCCESS',
-      data: json as CustomerData[],
-    };
-  } catch {
-    return {
-      status: 'UNAVAILABLE',
-      message: 'Terjadi gangguan jaringan saat memuat data customer.',
-    };
-  }
-}
-
 export function CustomerListTable({
-  customers,
   dataState,
+  customers,
   activeBrandCode,
 }: {
+  dataState?: CustomerListTableDataState;
   customers?: CustomerData[];
-  dataState?: CrmDataState<CustomerData>;
   activeBrandCode: string;
 }) {
-  const resolvedState: CrmDataState<CustomerData> = dataState ?? {
+  const resolvedState: CustomerListTableDataState = dataState ?? {
     status: 'SUCCESS',
     data: customers ?? [],
   };
@@ -500,9 +415,12 @@ export function CustomerListTable({
             ) : (
               filtered.map((cust) => {
                 const primaryContact =
-                  cust.customer_contacts.find((c) => c.is_primary) ??
-                  cust.customer_contacts[0];
-                const otherContactsCount = cust.customer_contacts.length - 1;
+                  cust.customer_contacts?.find((c) => c.is_primary) ??
+                  cust.customer_contacts?.[0];
+                const otherContactsCount =
+                  (cust.customer_contacts?.length ?? 0) > 1
+                    ? cust.customer_contacts.length - 1
+                    : 0;
 
                 return (
                   <tr key={cust.id}>
@@ -624,7 +542,7 @@ export function CustomerListTable({
                           gap: '6px',
                         }}
                       >
-                        {cust.customer_brand_relationships.map((rel) => {
+                        {cust.customer_brand_relationships?.map((rel) => {
                           const isCurrentActive =
                             rel.brands?.code === activeBrandCode;
                           return (

@@ -1,10 +1,30 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
+
+// Hoisted mocks for session.server and env.server
+const sessionMock = vi.hoisted(() => ({
+  requireAuth: vi.fn(),
+}));
+
+const envMock = vi.hoisted(() => ({
+  serverEnvironment: {
+    SUPABASE_SERVICE_ROLE_KEY: 'test-service-key-cust-888',
+  },
+}));
+
+vi.mock('@/lib/session.server', () => ({
+  requireAuth: sessionMock.requireAuth,
+}));
+
+vi.mock('@/lib/env.server', () => ({
+  serverEnvironment: envMock.serverEnvironment,
+}));
+
+import CustomersPage from '../apps/mgbos/src/app/(app)/customers/page';
 import {
-  loadCustomersData,
-  computeCustomerKpis,
   filterCustomers,
   type CustomerData,
-  type CrmDataState,
 } from '../apps/mgbos/src/app/(app)/customers/CustomerListTable';
 
 const sampleCustomers: CustomerData[] = [
@@ -115,154 +135,340 @@ const sampleCustomers: CustomerData[] = [
   },
 ];
 
-describe('UXR02-A Customers Data States & Acceptance Criteria', () => {
-  describe('loadCustomersData', () => {
-    it('AC-A01: returns SUCCESS with empty array on HTTP 200 with zero records', async () => {
-      const mockFetch = vi.fn().mockResolvedValue({
+// Helper to extract all text recursively from a React element tree
+function extractTextFromJsx(node: unknown): string {
+  if (typeof node === 'string' || typeof node === 'number') {
+    return String(node);
+  }
+  if (!node || typeof node !== 'object') {
+    return '';
+  }
+  if (Array.isArray(node)) {
+    return node.map(extractTextFromJsx).join(' ');
+  }
+  const element = node as { props?: { children?: unknown } };
+  if (element.props && 'children' in element.props) {
+    return extractTextFromJsx(element.props.children);
+  }
+  return '';
+}
+
+interface ReactElementNode {
+  type?: unknown;
+  props?: {
+    children?: unknown;
+    dataState?: { status: string; message?: string; data?: unknown };
+    activeBrandCode?: string;
+    [key: string]: unknown;
+  };
+}
+
+// Helper to locate a specific React element in a tree
+function findComponentInJsx(
+  node: unknown,
+  componentName: string,
+): ReactElementNode | null {
+  if (!node || typeof node !== 'object') return null;
+  if (Array.isArray(node)) {
+    for (const child of node) {
+      const found = findComponentInJsx(child, componentName);
+      if (found) return found;
+    }
+    return null;
+  }
+  const element = node as ReactElementNode;
+  if (
+    typeof element.type === 'function' &&
+    'name' in element.type &&
+    element.type.name === componentName
+  ) {
+    return element;
+  }
+  if (element.props && element.props.children) {
+    return findComponentInJsx(element.props.children, componentName);
+  }
+  return null;
+}
+
+interface RequiredComponentNode {
+  props: {
+    dataState: { status: string; message?: string; data?: unknown };
+    activeBrandCode?: string;
+    [key: string]: unknown;
+  };
+}
+
+function requireComponentInJsx(
+  node: unknown,
+  componentName: string,
+): RequiredComponentNode {
+  const el = findComponentInJsx(node, componentName);
+  if (!el || !el.props || !el.props.dataState) {
+    throw new Error(
+      `Component ${componentName} with dataState not found in JSX`,
+    );
+  }
+  return el as RequiredComponentNode;
+}
+
+describe('UXR02-A Customers Server Component & Data States Acceptance Suite', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    sessionMock.requireAuth.mockResolvedValue({
+      organization: { id: 'org-tenant-123', displayName: 'Holding Org' },
+      activeBrand: { code: 'TS', name: 'TeeStock' },
+    });
+    envMock.serverEnvironment.SUPABASE_SERVICE_ROLE_KEY =
+      'test-service-key-cust-888';
+  });
+
+  describe('Server-Client Boundary Invariants (Finding F01)', () => {
+    it('verifies CustomerListTable is a pure Client Component with no server data loaders', () => {
+      const filePath = path.resolve(
+        __dirname,
+        '../apps/mgbos/src/app/(app)/customers/CustomerListTable.tsx',
+      );
+      const content = fs.readFileSync(filePath, 'utf8');
+
+      // Must start with 'use client'
+      expect(content.trim().startsWith("'use client'")).toBe(true);
+
+      // Must not export loadCustomersData or server fetchers
+      expect(content).not.toContain('loadCustomersData');
+      expect(content).not.toContain('fetchCustomersData');
+
+      // Must not reference server-only modules or service keys
+      expect(content).not.toContain('SUPABASE_SERVICE_ROLE_KEY');
+      expect(content).not.toContain('@/lib/env.server');
+      expect(content).not.toContain('@/lib/session.server');
+    });
+
+    it('verifies customers/page.tsx does not import functions from Client Component and has no invalid exports', () => {
+      const filePath = path.resolve(
+        __dirname,
+        '../apps/mgbos/src/app/(app)/customers/page.tsx',
+      );
+      const content = fs.readFileSync(filePath, 'utf8');
+
+      // Must not be a client component
+      expect(content).not.toContain("'use client'");
+
+      // Imports from CustomerListTable must be restricted to component and types
+      const importMatches = content.match(
+        /import\s+\{([^}]+)\}\s+from\s+['"]\.\/CustomerListTable['"]/,
+      );
+      expect(importMatches).not.toBeNull();
+      const matchGroup = importMatches?.[1] ?? '';
+      const importedTokens = matchGroup.split(',').map((t) => t.trim());
+      expect(importedTokens).toContain('CustomerListTable');
+      expect(importedTokens).not.toContain('loadCustomersData');
+      expect(importedTokens).not.toContain('computeCustomerKpis');
+
+      // No arbitrary custom function exports from Next.js route page
+      expect(content).not.toMatch(
+        /^export\s+(async\s+)?function\s+(?!default)/m,
+      );
+      expect(content).not.toMatch(/^export\s+const\s+(?!metadata)/m);
+    });
+  });
+
+  describe('Server Component Execution: CustomersPage()', () => {
+    it('AC-A01: HTTP 200 with zero records renders truthful empty state and valid KPI 0', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
         ok: true,
         status: 200,
         json: async () => [],
       });
 
-      const result = await loadCustomersData(
-        'http://127.0.0.1:55431',
-        'valid-service-key',
-        'org-tenant-123',
-        mockFetch as unknown as typeof fetch,
+      const pageJsx = await CustomersPage();
+      const text = extractTextFromJsx(pageJsx);
+
+      // KPIs must display valid 0 counts
+      expect(text).toContain('0 Akun');
+      expect(text).toContain('0 Perusahaan');
+      expect(text).toContain('0 Individu');
+      expect(text).toContain('0 Customer');
+      expect(text).not.toContain('— Akun');
+
+      // No alert banner on successful read
+      expect(text).not.toContain(
+        'Layanan data customer tidak dapat diakses saat ini',
       );
 
-      expect(result.status).toBe('SUCCESS');
-      if (result.status === 'SUCCESS') {
-        expect(result.data).toEqual([]);
-      }
-      expect(mockFetch).toHaveBeenCalledTimes(1);
+      // Table component receives SUCCESS with data: []
+      const tableElement = requireComponentInJsx(pageJsx, 'CustomerListTable');
+      expect(tableElement).not.toBeNull();
+      expect(tableElement.props.dataState).toEqual({
+        status: 'SUCCESS',
+        data: [],
+      });
+      expect(tableElement.props.activeBrandCode).toBe('TS');
     });
 
-    it('AC-A02: returns SUCCESS with populated records on HTTP 200', async () => {
-      const mockFetch = vi.fn().mockResolvedValue({
+    it('AC-A02: HTTP 200 with valid records preserves rows and accurate KPI metrics', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
         ok: true,
         status: 200,
         json: async () => sampleCustomers,
       });
 
-      const result = await loadCustomersData(
-        'http://127.0.0.1:55431',
-        'valid-service-key',
-        'org-tenant-123',
-        mockFetch as unknown as typeof fetch,
-      );
+      const pageJsx = await CustomersPage();
+      const text = extractTextFromJsx(pageJsx);
 
-      expect(result.status).toBe('SUCCESS');
-      if (result.status === 'SUCCESS') {
-        expect(result.data).toHaveLength(3);
-        expect(result.data[0]?.display_name).toBe('PT Sinar Digital Nusantara');
-      }
+      // Verify accurate KPI values
+      expect(text).toContain('3 Akun');
+      expect(text).toContain('2 Perusahaan');
+      expect(text).toContain('1 Individu');
+      expect(text).toContain('2 Customer'); // TS active brand customers
+
+      // Table component receives SUCCESS with sample customers
+      const tableElement = requireComponentInJsx(pageJsx, 'CustomerListTable');
+      expect(tableElement).not.toBeNull();
+      expect(tableElement.props.dataState).toEqual({
+        status: 'SUCCESS',
+        data: sampleCustomers,
+      });
     });
 
-    it('AC-A03: returns UNAVAILABLE with sanitized message on HTTP non-2xx', async () => {
+    it('AC-A03: HTTP non-2xx produces sanitized error banner, never a fabricated zero', async () => {
       for (const status of [401, 403, 404, 500, 502, 503]) {
-        const mockFetch = vi.fn().mockResolvedValue({
+        global.fetch = vi.fn().mockResolvedValue({
           ok: false,
           status,
           json: async () => ({
-            error: 'Upstream connection error 500: psql timeout',
+            error: 'Database error: connection pool timeout 500',
           }),
         });
 
-        const result = await loadCustomersData(
-          'http://127.0.0.1:55431',
-          'valid-service-key',
-          'org-tenant-123',
-          mockFetch as unknown as typeof fetch,
+        const pageJsx = await CustomersPage();
+        const text = extractTextFromJsx(pageJsx);
+
+        // Never fabricated zero
+        expect(text).not.toContain('0 Akun');
+
+        // Placeholder — is rendered
+        expect(text).toContain('—');
+
+        // Sanitized alert banner is present
+        expect(text).toContain(
+          'Layanan data customer tidak dapat diakses saat ini',
         );
 
-        expect(result.status).toBe('UNAVAILABLE');
-        if (result.status === 'UNAVAILABLE') {
-          expect(result.message).toBe(
-            'Layanan data customer tidak dapat diakses saat ini.',
-          );
-          // AC-A08: ensure sensitive upstream internal error is not leaked
-          expect(result.message).not.toContain('psql');
-          expect(result.message).not.toContain(String(status));
-        }
+        // AC-A08: No leaked internal error or status
+        expect(text).not.toContain('connection pool');
+        expect(text).not.toContain(String(status));
+
+        // Table component receives UNAVAILABLE state
+        const tableElement = requireComponentInJsx(
+          pageJsx,
+          'CustomerListTable',
+        );
+        expect(tableElement.props.dataState.status).toBe('UNAVAILABLE');
       }
     });
 
-    it('AC-A04: returns UNAVAILABLE when service key is missing without invoking fetch', async () => {
-      const mockFetch = vi.fn();
+    it('AC-A04: missing service key produces unavailable state without network call or credential leakage', async () => {
+      envMock.serverEnvironment.SUPABASE_SERVICE_ROLE_KEY = '';
+      global.fetch = vi.fn();
 
-      const resultUndefined = await loadCustomersData(
-        'http://127.0.0.1:55431',
-        undefined,
-        'org-tenant-123',
-        mockFetch as unknown as typeof fetch,
-      );
+      const pageJsx = await CustomersPage();
+      const text = extractTextFromJsx(pageJsx);
 
-      expect(resultUndefined.status).toBe('UNAVAILABLE');
-      if (resultUndefined.status === 'UNAVAILABLE') {
-        expect(resultUndefined.message).toBe(
-          'Layanan data customer tidak tersedia saat ini.',
-        );
-        // AC-A08: No credential name leaked
-        expect(resultUndefined.message).not.toContain(
-          'SUPABASE_SERVICE_ROLE_KEY',
-        );
-        expect(resultUndefined.message).not.toContain('serviceKey');
-      }
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(text).not.toContain('0 Akun');
+      expect(text).toContain('Layanan data customer tidak tersedia saat ini.');
+      expect(text).not.toContain('SUPABASE_SERVICE_ROLE_KEY');
 
-      const resultEmpty = await loadCustomersData(
-        'http://127.0.0.1:55431',
-        '',
-        'org-tenant-123',
-        mockFetch as unknown as typeof fetch,
-      );
-      expect(resultEmpty.status).toBe('UNAVAILABLE');
-      expect(mockFetch).not.toHaveBeenCalled();
-    });
-
-    it('AC-A05: returns UNAVAILABLE when network request throws or response is malformed', async () => {
-      // Network failure
-      const mockFetchThrow = vi
-        .fn()
-        .mockRejectedValue(new Error('Fetch network error'));
-      const resultNet = await loadCustomersData(
-        'http://127.0.0.1:55431',
-        'key',
-        'org-123',
-        mockFetchThrow as unknown as typeof fetch,
-      );
-      expect(resultNet.status).toBe('UNAVAILABLE');
-      if (resultNet.status === 'UNAVAILABLE') {
-        expect(resultNet.message).toBe(
-          'Terjadi gangguan jaringan saat memuat data customer.',
-        );
-        expect(resultNet.message).not.toContain('Fetch network error');
-      }
-
-      // Malformed non-array response
-      const mockFetchObject = vi.fn().mockResolvedValue({
-        ok: true,
-        status: 200,
-        json: async () => ({ error: 'Invalid schema' }),
+      const tableElement = requireComponentInJsx(pageJsx, 'CustomerListTable');
+      expect(tableElement.props.dataState).toEqual({
+        status: 'UNAVAILABLE',
+        message: 'Layanan data customer tidak tersedia saat ini.',
       });
-      const resultMalformed = await loadCustomersData(
-        'http://127.0.0.1:55431',
-        'key',
-        'org-123',
-        mockFetchObject as unknown as typeof fetch,
+    });
+
+    it('AC-A05: network exception is safely handled without throwing uncaught error', async () => {
+      global.fetch = vi.fn().mockRejectedValue(new Error('ETIMEDOUT'));
+
+      const pageJsx = await CustomersPage();
+      const text = extractTextFromJsx(pageJsx);
+
+      expect(text).not.toContain('0 Akun');
+      expect(text).toContain(
+        'Terjadi gangguan jaringan saat memuat data customer.',
       );
-      expect(resultMalformed.status).toBe('UNAVAILABLE');
-      if (resultMalformed.status === 'UNAVAILABLE') {
-        expect(resultMalformed.message).toBe(
-          'Format data customer tidak valid.',
+      expect(text).not.toContain('ETIMEDOUT');
+
+      const tableElement = requireComponentInJsx(pageJsx, 'CustomerListTable');
+      expect(tableElement.props.dataState.status).toBe('UNAVAILABLE');
+    });
+
+    it('AC-A05 & F03: detects malformed responses and synthetic corrupt records safely', async () => {
+      const malformedPayloads = [
+        { desc: 'non-array object', json: { error: 'invalid payload' } },
+        { desc: 'array with null element', json: [null] },
+        { desc: 'array with primitive element', json: [42] },
+        { desc: 'array with empty object', json: [{}] },
+        {
+          desc: 'array with record missing required contact/brand arrays',
+          json: [
+            {
+              id: 'cust-99',
+              account_type: 'COMPANY',
+              display_name: 'PT Invalid',
+              status: 'ACTIVE',
+              // missing customer_contacts & customer_brand_relationships
+            },
+          ],
+        },
+      ];
+
+      for (const payload of malformedPayloads) {
+        global.fetch = vi.fn().mockResolvedValue({
+          ok: true,
+          status: 200,
+          json: async () => payload.json,
+        });
+
+        const pageJsx = await CustomersPage();
+        const text = extractTextFromJsx(pageJsx);
+
+        // Fails closed as UNAVAILABLE, never turning corrupt records into SUCCESS
+        expect(text).toContain('Format data customer tidak valid.');
+        expect(text).not.toContain('0 Akun');
+
+        const tableElement = requireComponentInJsx(
+          pageJsx,
+          'CustomerListTable',
         );
+        expect(tableElement.props.dataState).toEqual({
+          status: 'UNAVAILABLE',
+          message: 'Format data customer tidak valid.',
+        });
       }
     });
 
-    it('AC-A09: strictly includes organization_id filter and headers in request', async () => {
+    it('AC-A07: provides authorized server-side retry action without business mutation', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+        json: async () => ({}),
+      });
+
+      const pageJsx = await CustomersPage();
+      const text = extractTextFromJsx(pageJsx);
+
+      // Alert banner retry link
+      expect(text).toContain('Coba Lagi');
+
+      // Table component is rendered with unavailable action
+      const tableElement = requireComponentInJsx(pageJsx, 'CustomerListTable');
+      expect(tableElement.props.dataState.status).toBe('UNAVAILABLE');
+    });
+
+    it('AC-A09: strictly enforces tenant organization isolation query parameter', async () => {
       let capturedUrl = '';
       let capturedOptions: RequestInit | undefined;
-      const mockFetch = vi
+      global.fetch = vi
         .fn()
         .mockImplementation(async (url: string, options: RequestInit) => {
           capturedUrl = url;
@@ -270,70 +476,19 @@ describe('UXR02-A Customers Data States & Acceptance Criteria', () => {
           return { ok: true, status: 200, json: async () => [] };
         });
 
-      await loadCustomersData(
-        'http://127.0.0.1:55431',
-        'test-service-key-xyz',
-        'org-tenant-isolated-42',
-        mockFetch as unknown as typeof fetch,
-      );
+      await CustomersPage();
 
-      expect(capturedUrl).toContain(
-        'organization_id=eq.org-tenant-isolated-42',
-      );
+      expect(capturedUrl).toContain('organization_id=eq.org-tenant-123');
       expect(capturedOptions?.method).toBe('GET');
       expect(capturedOptions?.cache).toBe('no-store');
       const headers = capturedOptions?.headers as Record<string, string>;
-      expect(headers['apikey']).toBe('test-service-key-xyz');
-      expect(headers['Authorization']).toBe('Bearer test-service-key-xyz');
+      expect(headers['apikey']).toBe('test-service-key-cust-888');
+      expect(headers['Authorization']).toBe('Bearer test-service-key-cust-888');
       expect(headers['Accept-Profile']).toBe('app');
     });
   });
 
-  describe('computeCustomerKpis', () => {
-    it('AC-A01: computes valid numeric 0 KPIs on genuine empty dataset (HTTP 200, data: [])', () => {
-      const state: CrmDataState<CustomerData> = {
-        status: 'SUCCESS',
-        data: [],
-      };
-
-      const kpis = computeCustomerKpis(state, 'TS');
-      expect(kpis.total).toBe(0);
-      expect(kpis.companyCount).toBe(0);
-      expect(kpis.personCount).toBe(0);
-      expect(kpis.activeBrandCustomers).toBe(0);
-    });
-
-    it('AC-A02: correctly computes brand-relative and type KPIs on populated dataset', () => {
-      const state: CrmDataState<CustomerData> = {
-        status: 'SUCCESS',
-        data: sampleCustomers,
-      };
-
-      const kpisTS = computeCustomerKpis(state, 'TS');
-      expect(kpisTS.total).toBe(3);
-      expect(kpisTS.companyCount).toBe(2); // cust-001, cust-003
-      expect(kpisTS.personCount).toBe(1); // cust-002
-      expect(kpisTS.activeBrandCustomers).toBe(2); // cust-001 (TS & MG), cust-002 (TS)
-
-      const kpisMG = computeCustomerKpis(state, 'MG');
-      expect(kpisMG.activeBrandCustomers).toBe(2); // cust-001 (TS & MG), cust-003 (MG)
-    });
-
-    it('AC-A03, AC-A04, AC-A05: returns null for all KPIs when status is UNAVAILABLE (never fabricated zero)', () => {
-      const unavailableState: CrmDataState<CustomerData> = {
-        status: 'UNAVAILABLE',
-        message: 'Layanan data customer tidak tersedia saat ini.',
-      };
-
-      const kpis = computeCustomerKpis(unavailableState, 'TS');
-      expect(kpis.total).toBeNull();
-      expect(kpis.companyCount).toBeNull();
-      expect(kpis.personCount).toBeNull();
-      expect(kpis.activeBrandCustomers).toBeNull();
-    });
-  });
-
-  describe('filterCustomers (AC-A06)', () => {
+  describe('Client-Side Filter Behavior: filterCustomers (AC-A06)', () => {
     it('returns empty array when dataset is originally empty (True Empty)', () => {
       const filtered = filterCustomers([], {
         search: '',
@@ -352,7 +507,6 @@ describe('UXR02-A Customers Data States & Acceptance Criteria', () => {
         activeBrandCode: 'TS',
       });
       expect(filtered).toHaveLength(0);
-      // Original dataset still has length 3!
       expect(sampleCustomers).toHaveLength(3);
     });
 
@@ -383,7 +537,7 @@ describe('UXR02-A Customers Data States & Acceptance Criteria', () => {
         brandFilter: 'ACTIVE',
         activeBrandCode: 'TS',
       });
-      expect(tsOnly).toHaveLength(2); // cust-001 and cust-002
+      expect(tsOnly).toHaveLength(2);
 
       const mgOnly = filterCustomers(sampleCustomers, {
         search: '',
@@ -391,11 +545,10 @@ describe('UXR02-A Customers Data States & Acceptance Criteria', () => {
         brandFilter: 'ACTIVE',
         activeBrandCode: 'MG',
       });
-      expect(mgOnly).toHaveLength(2); // cust-001 and cust-003
+      expect(mgOnly).toHaveLength(2);
     });
 
     it('searches across display_name, legal_name, email, phone, and contact names', () => {
-      // By display_name
       expect(
         filterCustomers(sampleCustomers, {
           search: 'Sinar Digital',
@@ -405,7 +558,6 @@ describe('UXR02-A Customers Data States & Acceptance Criteria', () => {
         }),
       ).toHaveLength(1);
 
-      // By legal_name
       expect(
         filterCustomers(sampleCustomers, {
           search: 'Makmur Sejahtera Abadi',
@@ -415,7 +567,6 @@ describe('UXR02-A Customers Data States & Acceptance Criteria', () => {
         }),
       ).toHaveLength(1);
 
-      // By email
       expect(
         filterCustomers(sampleCustomers, {
           search: 'procurement@sinardigital.co.id',
@@ -425,7 +576,6 @@ describe('UXR02-A Customers Data States & Acceptance Criteria', () => {
         }),
       ).toHaveLength(1);
 
-      // By phone
       expect(
         filterCustomers(sampleCustomers, {
           search: '031-8889999',
@@ -435,7 +585,6 @@ describe('UXR02-A Customers Data States & Acceptance Criteria', () => {
         }),
       ).toHaveLength(1);
 
-      // By PIC contact name
       expect(
         filterCustomers(sampleCustomers, {
           search: 'Hendro Gunawan',
@@ -445,7 +594,6 @@ describe('UXR02-A Customers Data States & Acceptance Criteria', () => {
         }),
       ).toHaveLength(1);
 
-      // By secondary contact name
       expect(
         filterCustomers(sampleCustomers, {
           search: 'Dewi Lestari',

@@ -2,11 +2,109 @@ import { requireAuth } from '@/lib/session.server';
 import { serverEnvironment } from '@/lib/env.server';
 import { publicEnvironment } from '@/lib/env.client';
 import { CreateLeadModal } from './CreateLeadModal';
-import { LeadListTable, loadLeadsData, computeLeadKpis } from './LeadListTable';
+import { LeadListTable, type LeadListTableDataState } from './LeadListTable';
+import type { LeadDetailData } from './LeadDetailModal';
 
 export const metadata = {
   title: 'Inbound Leads & Qualification — MultiGraph Business OS',
 };
+
+function isValidLeadRecord(record: unknown): record is LeadDetailData {
+  if (typeof record !== 'object' || record === null) return false;
+  const r = record as Record<string, unknown>;
+  return (
+    typeof r.id === 'string' &&
+    typeof r.lead_number === 'string' &&
+    typeof r.title === 'string' &&
+    typeof r.status === 'string'
+  );
+}
+
+async function fetchLeadsData(
+  supabaseUrl: string,
+  serviceKey: string | undefined,
+  organizationId: string,
+): Promise<LeadListTableDataState> {
+  if (!serviceKey) {
+    return {
+      status: 'UNAVAILABLE',
+      message: 'Layanan data leads tidak tersedia saat ini.',
+    };
+  }
+
+  const endpoint = `${supabaseUrl.replace(/\/+$/, '')}/rest/v1/leads?organization_id=eq.${organizationId}&select=id,lead_number,title,contact_name,company_name,phone,email,raw_inquiry,estimated_quantity,estimated_budget,status,qualification_result,qualification_score,qualification_notes,disqualification_reason,created_at,qualified_at,disqualified_at,converted_at,channels(id,code,name,channel_type),brands(id,code,name),customer_accounts(id,display_name,account_type),requirements(id,requirement_number,status,title)&order=created_at.desc`;
+
+  const headers: Record<string, string> = {
+    apikey: serviceKey,
+    Authorization: `Bearer ${serviceKey}`,
+    'Accept-Profile': 'app',
+  };
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'GET',
+      headers,
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      return {
+        status: 'UNAVAILABLE',
+        message: 'Layanan data leads tidak dapat diakses saat ini.',
+      };
+    }
+
+    const json = await response.json();
+    if (!Array.isArray(json) || !json.every(isValidLeadRecord)) {
+      return {
+        status: 'UNAVAILABLE',
+        message: 'Format data leads tidak valid.',
+      };
+    }
+
+    return {
+      status: 'SUCCESS',
+      data: json,
+    };
+  } catch {
+    return {
+      status: 'UNAVAILABLE',
+      message: 'Terjadi gangguan jaringan saat memuat data leads.',
+    };
+  }
+}
+
+interface LeadKpis {
+  total: number | null;
+  newCount: number | null;
+  qualifiedCount: number | null;
+  activeBrandLeads: number | null;
+  convertedCount: number | null;
+}
+
+function computeLeadKpis(
+  state: LeadListTableDataState,
+  activeBrandCode: string,
+): LeadKpis {
+  if (state.status !== 'SUCCESS') {
+    return {
+      total: null,
+      newCount: null,
+      qualifiedCount: null,
+      activeBrandLeads: null,
+      convertedCount: null,
+    };
+  }
+  const leads = state.data;
+  return {
+    total: leads.length,
+    newCount: leads.filter((l) => l.status === 'NEW').length,
+    qualifiedCount: leads.filter((l) => l.status === 'QUALIFIED').length,
+    activeBrandLeads: leads.filter((l) => l.brands?.code === activeBrandCode)
+      .length,
+    convertedCount: leads.filter((l) => l.status === 'CONVERTED').length,
+  };
+}
 
 export default async function LeadsPage() {
   const session = await requireAuth();
@@ -14,7 +112,7 @@ export default async function LeadsPage() {
     publicEnvironment.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:55431';
   const serviceKey = serverEnvironment.SUPABASE_SERVICE_ROLE_KEY;
 
-  const leadsState = await loadLeadsData(
+  const leadsState = await fetchLeadsData(
     supabaseUrl,
     serviceKey,
     session.organization.id,
@@ -190,7 +288,6 @@ export default async function LeadsPage() {
         </div>
 
         <LeadListTable
-          leads={leadsState.status === 'SUCCESS' ? leadsState.data : []}
           dataState={leadsState}
           activeBrandCode={session.activeBrand.code}
         />

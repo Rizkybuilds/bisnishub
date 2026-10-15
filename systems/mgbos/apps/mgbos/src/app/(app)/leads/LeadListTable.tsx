@@ -5,40 +5,9 @@ import Link from 'next/link';
 import { formatLeadStatus, getLeadStatusBadgeColor } from '@mgbos/domain';
 import { LeadDetailModal, type LeadDetailData } from './LeadDetailModal';
 
-export type CrmDataState<T> =
-  { status: 'SUCCESS'; data: T[] } | { status: 'UNAVAILABLE'; message: string };
-
-export interface LeadKpis {
-  total: number | null;
-  newCount: number | null;
-  qualifiedCount: number | null;
-  activeBrandLeads: number | null;
-  convertedCount: number | null;
-}
-
-export function computeLeadKpis(
-  state: CrmDataState<LeadDetailData>,
-  activeBrandCode: string,
-): LeadKpis {
-  if (state.status !== 'SUCCESS') {
-    return {
-      total: null,
-      newCount: null,
-      qualifiedCount: null,
-      activeBrandLeads: null,
-      convertedCount: null,
-    };
-  }
-  const leads = state.data;
-  return {
-    total: leads.length,
-    newCount: leads.filter((l) => l.status === 'NEW').length,
-    qualifiedCount: leads.filter((l) => l.status === 'QUALIFIED').length,
-    activeBrandLeads: leads.filter((l) => l.brands?.code === activeBrandCode)
-      .length,
-    convertedCount: leads.filter((l) => l.status === 'CONVERTED').length,
-  };
-}
+export type LeadListTableDataState =
+  | { status: 'SUCCESS'; data: LeadDetailData[] }
+  | { status: 'UNAVAILABLE'; message: string };
 
 export interface LeadFilterOptions {
   search: string;
@@ -67,13 +36,13 @@ export function filterLeads(
     // Search query
     if (search.trim()) {
       const q = search.toLowerCase();
-      const matchNumber = lead.lead_number.toLowerCase().includes(q);
-      const matchTitle = lead.title.toLowerCase().includes(q);
+      const matchNumber = lead.lead_number?.toLowerCase().includes(q) ?? false;
+      const matchTitle = lead.title?.toLowerCase().includes(q) ?? false;
       const matchContact =
-        lead.contact_name?.toLowerCase().includes(q) || false;
+        lead.contact_name?.toLowerCase().includes(q) ?? false;
       const matchCompany =
-        lead.company_name?.toLowerCase().includes(q) || false;
-      const matchPhone = lead.phone?.toLowerCase().includes(q) || false;
+        lead.company_name?.toLowerCase().includes(q) ?? false;
+      const matchPhone = lead.phone?.toLowerCase().includes(q) ?? false;
       if (
         !matchNumber &&
         !matchTitle &&
@@ -89,71 +58,16 @@ export function filterLeads(
   });
 }
 
-export async function loadLeadsData(
-  supabaseUrl: string,
-  serviceKey: string | undefined,
-  organizationId: string,
-  fetchFn: typeof fetch = fetch,
-): Promise<CrmDataState<LeadDetailData>> {
-  if (!serviceKey) {
-    return {
-      status: 'UNAVAILABLE',
-      message: 'Layanan data leads tidak tersedia saat ini.',
-    };
-  }
-
-  const endpoint = `${supabaseUrl.replace(/\/+$/, '')}/rest/v1/leads?organization_id=eq.${organizationId}&select=id,lead_number,title,contact_name,company_name,phone,email,raw_inquiry,estimated_quantity,estimated_budget,status,qualification_result,qualification_score,qualification_notes,disqualification_reason,created_at,qualified_at,disqualified_at,converted_at,channels(id,code,name,channel_type),brands(id,code,name),customer_accounts(id,display_name,account_type),requirements(id,requirement_number,status,title)&order=created_at.desc`;
-
-  const headers: Record<string, string> = {
-    apikey: serviceKey,
-    Authorization: `Bearer ${serviceKey}`,
-    'Accept-Profile': 'app',
-  };
-
-  try {
-    const response = await fetchFn(endpoint, {
-      method: 'GET',
-      headers,
-      cache: 'no-store',
-    });
-
-    if (!response.ok) {
-      return {
-        status: 'UNAVAILABLE',
-        message: 'Layanan data leads tidak dapat diakses saat ini.',
-      };
-    }
-
-    const json = await response.json();
-    if (!Array.isArray(json)) {
-      return {
-        status: 'UNAVAILABLE',
-        message: 'Format data leads tidak valid.',
-      };
-    }
-
-    return {
-      status: 'SUCCESS',
-      data: json as LeadDetailData[],
-    };
-  } catch {
-    return {
-      status: 'UNAVAILABLE',
-      message: 'Terjadi gangguan jaringan saat memuat data leads.',
-    };
-  }
-}
-
 export function LeadListTable({
-  leads,
   dataState,
+  leads,
   activeBrandCode,
 }: {
+  dataState?: LeadListTableDataState;
   leads?: LeadDetailData[];
-  dataState?: CrmDataState<LeadDetailData>;
   activeBrandCode: string;
 }) {
-  const resolvedState: CrmDataState<LeadDetailData> = dataState ?? {
+  const resolvedState: LeadListTableDataState = dataState ?? {
     status: 'SUCCESS',
     data: leads ?? [],
   };

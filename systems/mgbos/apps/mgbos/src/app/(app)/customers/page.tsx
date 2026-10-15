@@ -4,13 +4,112 @@ import { publicEnvironment } from '@/lib/env.client';
 import { CreateCustomerModal } from './CreateCustomerModal';
 import {
   CustomerListTable,
-  loadCustomersData,
-  computeCustomerKpis,
+  type CustomerData,
+  type CustomerListTableDataState,
 } from './CustomerListTable';
 
 export const metadata = {
   title: 'Customer 360 — MultiGraph Business OS',
 };
+
+function isValidCustomerRecord(record: unknown): record is CustomerData {
+  if (typeof record !== 'object' || record === null) return false;
+  const r = record as Record<string, unknown>;
+  return (
+    typeof r.id === 'string' &&
+    (r.account_type === 'PERSON' || r.account_type === 'COMPANY') &&
+    typeof r.display_name === 'string' &&
+    typeof r.status === 'string' &&
+    Array.isArray(r.customer_contacts) &&
+    Array.isArray(r.customer_brand_relationships)
+  );
+}
+
+async function fetchCustomersData(
+  supabaseUrl: string,
+  serviceKey: string | undefined,
+  organizationId: string,
+): Promise<CustomerListTableDataState> {
+  if (!serviceKey) {
+    return {
+      status: 'UNAVAILABLE',
+      message: 'Layanan data customer tidak tersedia saat ini.',
+    };
+  }
+
+  const endpoint = `${supabaseUrl.replace(/\/+$/, '')}/rest/v1/customer_accounts?organization_id=eq.${organizationId}&select=id,account_type,display_name,legal_name,primary_email,primary_phone,tax_id,status,customer_since,customer_contacts(id,name,email,phone,position,is_primary),customer_brand_relationships(id,brand_id,customer_segment,relationship_status,brands(id,code,name))&order=display_name.asc`;
+
+  const headers: Record<string, string> = {
+    apikey: serviceKey,
+    Authorization: `Bearer ${serviceKey}`,
+    'Accept-Profile': 'app',
+  };
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'GET',
+      headers,
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      return {
+        status: 'UNAVAILABLE',
+        message: 'Layanan data customer tidak dapat diakses saat ini.',
+      };
+    }
+
+    const json = await response.json();
+    if (!Array.isArray(json) || !json.every(isValidCustomerRecord)) {
+      return {
+        status: 'UNAVAILABLE',
+        message: 'Format data customer tidak valid.',
+      };
+    }
+
+    return {
+      status: 'SUCCESS',
+      data: json,
+    };
+  } catch {
+    return {
+      status: 'UNAVAILABLE',
+      message: 'Terjadi gangguan jaringan saat memuat data customer.',
+    };
+  }
+}
+
+interface CustomerKpis {
+  total: number | null;
+  companyCount: number | null;
+  personCount: number | null;
+  activeBrandCustomers: number | null;
+}
+
+function computeCustomerKpis(
+  state: CustomerListTableDataState,
+  activeBrandCode: string,
+): CustomerKpis {
+  if (state.status !== 'SUCCESS') {
+    return {
+      total: null,
+      companyCount: null,
+      personCount: null,
+      activeBrandCustomers: null,
+    };
+  }
+  const customers = state.data;
+  return {
+    total: customers.length,
+    companyCount: customers.filter((c) => c.account_type === 'COMPANY').length,
+    personCount: customers.filter((c) => c.account_type === 'PERSON').length,
+    activeBrandCustomers: customers.filter((c) =>
+      c.customer_brand_relationships?.some(
+        (r) => r.brands?.code === activeBrandCode,
+      ),
+    ).length,
+  };
+}
 
 export default async function CustomersPage() {
   const session = await requireAuth();
@@ -18,7 +117,7 @@ export default async function CustomersPage() {
     publicEnvironment.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:55431';
   const serviceKey = serverEnvironment.SUPABASE_SERVICE_ROLE_KEY;
 
-  const customersState = await loadCustomersData(
+  const customersState = await fetchCustomersData(
     supabaseUrl,
     serviceKey,
     session.organization.id,
@@ -190,9 +289,6 @@ export default async function CustomersPage() {
         </div>
 
         <CustomerListTable
-          customers={
-            customersState.status === 'SUCCESS' ? customersState.data : []
-          }
           dataState={customersState}
           activeBrandCode={session.activeBrand.code}
         />
