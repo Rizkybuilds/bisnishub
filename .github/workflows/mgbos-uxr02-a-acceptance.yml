@@ -24,10 +24,35 @@ jobs:
             echo "::error::Fork workflow execution rejected"
             exit 1
           fi
+          if [ "${{ github.event.pull_request.number }}" != "72" ]; then
+            echo "::error::Untrusted PR context: expected PR #72, got PR #${{ github.event.pull_request.number }}"
+            exit 1
+          fi
+          if [ "${{ github.event.pull_request.base.ref }}" != "main" ]; then
+            echo "::error::Untrusted base branch: expected main, got ${{ github.event.pull_request.base.ref }}"
+            exit 1
+          fi
+          if [ "${{ github.event.pull_request.head.ref }}" != "qa/mgbos-uxr02-a-acceptance" ]; then
+            echo "::error::Untrusted head branch: expected qa/mgbos-uxr02-a-acceptance, got ${{ github.event.pull_request.head.ref }}"
+            exit 1
+          fi
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Verify and checkout exact PR #72 harness HEAD
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED_HARNESS_HEAD="${{ github.event.pull_request.head.sha }}"
+          git checkout "$EXPECTED_HARNESS_HEAD"
+          ACTUAL_HARNESS_HEAD="$(git rev-parse HEAD)"
+          if [ "$ACTUAL_HARNESS_HEAD" != "$EXPECTED_HARNESS_HEAD" ]; then
+            echo "::error::Harness checkout SHA mismatch: expected $EXPECTED_HARNESS_HEAD, got $ACTUAL_HARNESS_HEAD"
+            exit 1
+          fi
+          ACTUAL_HARNESS_TREE="$(git rev-parse HEAD^{tree})"
+          echo "Verified harness checkout at commit $ACTUAL_HARNESS_HEAD (tree $ACTUAL_HARNESS_TREE)"
       - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
         with:
           version: 10.34.5
@@ -53,6 +78,11 @@ jobs:
         run: |
           set -euo pipefail
           cd systems/mgbos
+          # Confirm ephemeral runner environment
+          if [ "${CI:-}" != "true" ] || [ "${GITHUB_ACTIONS:-}" != "true" ]; then
+            echo "::error::Must execute on authorized GitHub Actions runner"
+            exit 1
+          fi
           # Verify loopback endpoints before start
           if ! pnpm db:start > /dev/null 2>&1; then
             echo "::error::Disposable Supabase startup failed (sensitive output suppressed)"
@@ -69,14 +99,20 @@ jobs:
           EXPECTED_PR68_SHA="decf14628cb2a5b439220f2eead823ef4907664d"
           APP_DIR="/tmp/pr68-candidate-app"
           rm -rf "$APP_DIR"
-          git fetch origin "$EXPECTED_PR68_SHA"
+          git fetch origin feat/mgbos-uxr02-a-data-states
+          REMOTE_PR68_SHA="$(git rev-parse origin/feat/mgbos-uxr02-a-data-states)"
+          if [ "$REMOTE_PR68_SHA" != "$EXPECTED_PR68_SHA" ]; then
+            echo "::error::Candidate branch head drift: expected $EXPECTED_PR68_SHA, got $REMOTE_PR68_SHA"
+            exit 1
+          fi
           git worktree add "$APP_DIR" "$EXPECTED_PR68_SHA"
           ACTUAL_APP_SHA="$(git -C "$APP_DIR" rev-parse HEAD)"
+          ACTUAL_APP_TREE_SHA="$(git -C "$APP_DIR" rev-parse HEAD^{tree})"
           if [ "$ACTUAL_APP_SHA" != "$EXPECTED_PR68_SHA" ]; then
             echo "::error::Candidate SHA drift: expected $EXPECTED_PR68_SHA, got $ACTUAL_APP_SHA"
             exit 1
           fi
-          echo "Verified candidate PR #68 checkout at $ACTUAL_APP_SHA"
+          echo "Verified candidate PR #68 checkout at commit $ACTUAL_APP_SHA (tree $ACTUAL_APP_TREE_SHA)"
           cd "$APP_DIR/systems/mgbos"
           pnpm install --frozen-lockfile
           eval $(node --input-type=module -e '
@@ -123,14 +159,21 @@ jobs:
           cd - > /dev/null
           rm -rf systems/mgbos/.qa-evidence/uxr02-a/positive
           pos_status=0
+          export GITHUB_RUN_ID="${{ github.run_id }}"
+          export GITHUB_RUN_ATTEMPT="${{ github.run_attempt }}"
+          export GITHUB_REPOSITORY="${{ github.repository }}"
+          export PR_NUMBER="${{ github.event.pull_request.number }}"
+          export PR_HEAD_SHA="${{ github.event.pull_request.head.sha }}"
           NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:55431" node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --app-dir "$APP_DIR" \
             --proxy-port 55430 \
-            --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" || pos_status=$?
+            --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" \
+            --expected-harness-sha "${{ github.event.pull_request.head.sha }}" || pos_status=$?
           node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --verify-trace systems/mgbos/.qa-evidence/uxr02-a/positive/trace.json \
             --expected-mode normal \
             --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" \
+            --expected-harness-sha "${{ github.event.pull_request.head.sha }}" \
             --exit-status "$pos_status"
       - name: Prove broken assertion fails the UXR02-A gate (negative control)
         shell: bash
@@ -139,10 +182,16 @@ jobs:
           APP_DIR="/tmp/pr68-candidate-app"
           rm -rf systems/mgbos/.qa-evidence/uxr02-a/negative-control
           neg_status=0
+          export GITHUB_RUN_ID="${{ github.run_id }}"
+          export GITHUB_RUN_ATTEMPT="${{ github.run_attempt }}"
+          export GITHUB_REPOSITORY="${{ github.repository }}"
+          export PR_NUMBER="${{ github.event.pull_request.number }}"
+          export PR_HEAD_SHA="${{ github.event.pull_request.head.sha }}"
           NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:55431" MGBOS_QA_NEGATIVE_CONTROL=1 node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --app-dir "$APP_DIR" \
             --proxy-port 55430 \
-            --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" > /dev/null 2>&1 || neg_status=$?
+            --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" \
+            --expected-harness-sha "${{ github.event.pull_request.head.sha }}" > /dev/null 2>&1 || neg_status=$?
           if [ "$neg_status" -eq 0 ]; then
             echo "::error::Intentional negative control incorrectly returned success"
             exit 1
@@ -151,6 +200,7 @@ jobs:
             --verify-trace systems/mgbos/.qa-evidence/uxr02-a/negative-control/trace.json \
             --expected-mode intentional-broken-control \
             --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" \
+            --expected-harness-sha "${{ github.event.pull_request.head.sha }}" \
             --exit-status "$neg_status"
       - name: Upload sanitized UXR02-A browser acceptance evidence
         if: always()
