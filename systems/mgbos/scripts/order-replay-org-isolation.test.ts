@@ -782,6 +782,14 @@ export async function executeTeardown(ctx: TeardownContext): Promise<{
   // 3. Clean up safely deletable transient organizational fixtures
   // (Transients with zero transactional records: synthetic Org 2 hierarchy)
   if (ctx.liveOrg2Id) {
+    if (ctx.liveItem2Id) {
+      await safeDelete('inventory_items', `id=eq.${ctx.liveItem2Id}`);
+    } else {
+      await safeDelete(
+        'inventory_items',
+        `organization_id=eq.${ctx.liveOrg2Id}`,
+      );
+    }
     await safeDelete(
       'organization_members',
       `organization_id=eq.${ctx.liveOrg2Id}`,
@@ -803,6 +811,17 @@ export async function executeTeardown(ctx: TeardownContext): Promise<{
 
   // 4. Verify absence of safely deletable transient fixtures
   if (ctx.liveOrg2Id) {
+    if (ctx.liveItem2Id) {
+      const remainingItem = await queryTable<{ id: string }>(
+        'inventory_items',
+        `id=eq.${ctx.liveItem2Id}&select=id`,
+      );
+      if (remainingItem.length > 0) {
+        cleanupErrors.push(
+          `Synthetic SKU in Org 2 (${ctx.liveItem2Id}) still exists after teardown`,
+        );
+      }
+    }
     const remainingOrg = await queryTable<{ id: string }>(
       'organizations',
       `id=eq.${ctx.liveOrg2Id}&select=id`,
@@ -1524,7 +1543,7 @@ describe.skipIf(!isLiveE2E)(
           p_unit: 'pcs',
           p_cost_price: 35000,
           p_min_stock_alert: 10,
-          p_initial_stock: 50,
+          p_initial_stock: 0,
           p_location_code: 'MAIN_WORKSHOP',
         });
         if (!createSku2Res.ok || !createSku2Res.data.inventory_item_id) {
