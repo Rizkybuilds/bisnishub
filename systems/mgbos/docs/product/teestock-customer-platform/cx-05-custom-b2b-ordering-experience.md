@@ -786,23 +786,23 @@ The rows below are generated from `CX-PKG-TRACE-R1.csv` (the sole package-wide m
 
 | CX-01 master ID | Exact declared detail IDs in this document | Selected existing acceptance | Candidate slice |
 | --------------- | ------------------------------------------ | ---------------------------- | --------------- |
-| `CX1-FR-003`    | `CX5-FR-001`                               | `CX8-AC-001`                 | `CX-S0`         |
+| `CX1-FR-003`    | `CX5-FR-001`                               | `CX5-AC-001`                 | `CX-S0`         |
 | `CX1-FR-004`    | `CX5-FR-002`                               | `CX9-AC-005`                 | `CX-S0`         |
 | `CX1-FR-009`    | `CX5-FR-003`, `CX5-FR-011`                 | `CX8-AC-006`                 | `CX-S0`         |
 | `CX1-FR-010`    | `CX5-FR-003`, `CX5-FR-005`                 | `CX8-AC-006`                 | `CX-S0`         |
-| `CX1-FR-011`    | `CX5-FR-008`, `CX5-FR-009`                 | `CX8-AC-028`                 | `CX-S0`         |
+| `CX1-FR-011`    | `CX5-FR-008`, `CX5-FR-009`                 | `CX5-AC-002`                 | `CX-S0`         |
 | `CX1-FR-012`    | `CX5-FR-007`, `CX5-FR-018`                 | `CX8-AC-007`                 | `CX-S0`         |
 | `CX1-FR-013`    | `CX5-FR-012`, `CX5-FR-013`                 | `CX8-AC-005`                 | `CX-S0`         |
 | `CX1-FR-014`    | `CX5-FR-014`                               | `CX5-AC-007`                 | `CX-S0`         |
-| `CX1-FR-015`    | `CX5-FR-016`                               | `CX9-AC-005`                 | `CX-S0`         |
+| `CX1-FR-015`    | `CX5-FR-016`                               | `CX5-AC-013`                 | `CX-S0`         |
 | `CX1-FR-016`    | `CX5-FR-024`, `CX5-FR-025`                 | `CX8-AC-027`                 | `CX-S2`         |
 | `CX1-FR-017`    | `CX5-FR-028`                               | `CX8-AC-025`                 | `CX-S2`         |
-| `CX1-FR-018`    | `CX5-FR-039`, `CX5-FR-040`                 | `CX9-AC-025`                 | `CX-S3`         |
+| `CX1-FR-018`    | `CX5-FR-039`, `CX5-FR-040`                 | `CX5-AC-036`                 | `CX-S3`         |
 | `CX1-FR-019`    | `CX5-FR-041`                               | `CX8-AC-029`                 | `CX-S3`         |
 | `CX1-FR-034`    | `CX5-FR-029`                               | `CX5-AC-027`                 | `CX-S2`         |
 | `CX1-FR-035`    | `CX5-FR-035`                               | `CX8-AC-034`                 | `CX-S2`         |
-| `CX1-FR-038`    | `CX5-FR-021`                               | `CX8-AC-005`                 | `CX-S0`         |
-| `CX1-FR-039`    | `CX5-FR-021`                               | `CX9-AC-035`                 | `CX-S0`         |
+| `CX1-FR-038`    | `CX5-FR-021`                               | `CX5-AC-011`                 | `CX-S0`         |
+| `CX1-FR-039`    | `CX5-FR-021`                               | `CX5-AC-016`                 | `CX-S0`         |
 | `CX1-FR-040`    | `CX5-FR-022`                               | `CX8-AC-012`                 | `CX-S0`         |
 | `CX1-FR-044`    | `CX5-FR-046`                               | `CX6-AC-044`                 | `CX-S2`         |
 | `CX1-FR-046`    | `CX5-FR-044`                               | `CX6-AC-043`                 | `CX-S3`         |

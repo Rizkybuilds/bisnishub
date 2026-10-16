@@ -952,12 +952,12 @@ The rows below are generated from `CX-PKG-TRACE-R1.csv` (the sole package-wide m
 | `CX1-FR-020`    | `CX4-FR-003`, `CX4-FR-005`                 | `CX8-AC-013`                 | `CX-S1`         |
 | `CX1-FR-021`    | `CX4-FR-011`, `CX4-FR-012`, `CX4-FR-013`   | `CX8-AC-015`                 | `CX-S1`         |
 | `CX1-FR-022`    | `CX4-FR-018`                               | `CX8-AC-017`                 | `CX-S1`         |
-| `CX1-FR-023`    | `CX4-FR-021`, `CX4-FR-022`                 | `CX8-AC-015`                 | `CX-S1`         |
+| `CX1-FR-023`    | `CX4-FR-021`, `CX4-FR-022`                 | `CX4-AC-023`                 | `CX-S1`         |
 | `CX1-FR-024`    | `CX4-FR-024`                               | `CX8-AC-019`                 | `CX-S1`         |
-| `CX1-FR-025`    | `CX4-FR-026`                               | `CX8-AC-018`                 | `CX-S1`         |
+| `CX1-FR-025`    | `CX4-FR-026`                               | `CX4-AC-028`                 | `CX-S1`         |
 | `CX1-FR-026`    | `CX4-FR-016`, `CX4-FR-021`                 | `CX8-AC-016`                 | `CX-S1`         |
-| `CX1-FR-027`    | `CX4-FR-007`                               | `CX9-AC-011`                 | `CX-S1`         |
-| `CX1-FR-028`    | `CX4-FR-010`, `CX4-FR-039`                 | `CX9-AC-029`                 | `CX-S3`         |
+| `CX1-FR-027`    | `CX4-FR-007`                               | `CX4-AC-010`                 | `CX-S1`         |
+| `CX1-FR-028`    | `CX4-FR-010`, `CX4-FR-039`                 | `CX4-AC-016`                 | `CX-S3`         |
 | `CX1-FR-032`    | `CX4-FR-031`                               | `CX6-AC-023`                 | `CX-S2`         |
 
 **Review state:** `R1_AUTHOR_SEMANTIC_MAPPING_ONLY`; requires Owner/Head Engineering decision and independent product review before canonical activation.

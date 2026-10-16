@@ -950,9 +950,9 @@ The rows below are generated from `CX-PKG-TRACE-R1.csv` (the sole package-wide m
 | `CX1-FR-017`    | `CX6-FR-036`                               | `CX8-AC-025`                 | `CX-S2`         |
 | `CX1-FR-019`    | `CX6-FR-020`                               | `CX8-AC-029`                 | `CX-S3`         |
 | `CX1-FR-022`    | `CX6-FR-015`                               | `CX8-AC-017`                 | `CX-S1`         |
-| `CX1-FR-025`    | `CX6-FR-013`                               | `CX8-AC-018`                 | `CX-S1`         |
+| `CX1-FR-025`    | `CX6-FR-013`                               | `CX4-AC-028`                 | `CX-S1`         |
 | `CX1-FR-029`    | `CX6-FR-002`                               | `CX8-AC-005`                 | `CX-S0`         |
-| `CX1-FR-030`    | `CX6-FR-003`, `CX6-FR-008`                 | `CX8-AC-030`                 | `CX-S0`         |
+| `CX1-FR-030`    | `CX6-FR-003`, `CX6-FR-008`                 | `CX6-AC-003`                 | `CX-S0`         |
 | `CX1-FR-031`    | `CX6-FR-011`, `CX6-FR-012`                 | `CX6-AC-007`                 | `CX-S2`         |
 | `CX1-FR-032`    | `CX6-FR-023`                               | `CX6-AC-023`                 | `CX-S2`         |
 | `CX1-FR-033`    | `CX6-FR-027`, `CX6-FR-028`                 | `CX8-AC-032`                 | `CX-S2`         |

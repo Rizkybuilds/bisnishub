@@ -979,3 +979,49 @@ Before declaring `ACTIVE` or giving implementation directives:
 - Google web.dev, **Optimize LCP** — https://web.dev/articles/optimize-lcp (critical visual resource discoverability and priority).
 
 **Final disposition:** CX-03 v0.1.1 is a **proposed, self-reviewed product specification**, not canonical project state. No code, PR, implementation, external provider action or production data was modified. Product planning can proceed to CX-04 without confusing proposed UX with verified engineering readiness.
+
+## Remediation R1 — explicit master requirement trace (generated draft, non-authoritative)
+
+The rows below are generated from `CX-PKG-TRACE-R1.csv` (the sole package-wide mapping table). They link master requirements (`CX1-FR-*`) to the interaction specifications, responsive/a11y behaviors, and error handling criteria defined natively in this document (`CX3-AC-*`). They do not introduce additional product requirements, approve a release stage, change any domain/architecture policy, or prove acceptance.
+
+| CX-01 master ID | Exact declared detail IDs in this document             | Selected existing acceptance | Candidate slice |
+| :-------------- | :----------------------------------------------------- | :--------------------------- | :-------------- |
+| `CX1-FR-001`    | `CX3-AC-001`                                           | `CX8-AC-001`                 | `CX-S0`         |
+| `CX1-FR-002`    | `CX3-AC-003`                                           | `CX9-AC-006`                 | `CX-S0`         |
+| `CX1-FR-003`    | `CX3-AC-001`, `CX3-AC-008`                             | `CX5-AC-001`                 | `CX-S0`         |
+| `CX1-FR-004`    | `CX3-AC-008`                                           | `CX9-AC-005`                 | `CX-S0`         |
+| `CX1-FR-005`    | `CX3-AC-002`, `CX3-AC-004`, `CX3-AC-005`, `CX3-AC-007` | `CX8-AC-003`                 | `CX-S0`         |
+| `CX1-FR-006`    | `CX3-AC-019`                                           | `CX8-AC-013`                 | `CX-S1`         |
+| `CX1-FR-007`    | `CX3-AC-018`                                           | `CX8-AC-014`                 | `CX-S1`         |
+| `CX1-FR-009`    | `CX3-AC-009`                                           | `CX8-AC-006`                 | `CX-S0`         |
+| `CX1-FR-010`    | `CX3-AC-010`                                           | `CX8-AC-006`                 | `CX-S0`         |
+| `CX1-FR-011`    | `CX3-AC-011`, `CX3-AC-012`                             | `CX5-AC-002`                 | `CX-S0`         |
+| `CX1-FR-012`    | `CX3-AC-013`                                           | `CX8-AC-007`                 | `CX-S0`         |
+| `CX1-FR-013`    | `CX3-AC-014`, `CX3-AC-015`                             | `CX8-AC-005`                 | `CX-S0`         |
+| `CX1-FR-014`    | `CX3-AC-017`                                           | `CX5-AC-007`                 | `CX-S0`         |
+| `CX1-FR-015`    | `CX3-AC-017`                                           | `CX5-AC-013`                 | `CX-S0`         |
+| `CX1-FR-016`    | `CX3-AC-023`                                           | `CX8-AC-027`                 | `CX-S2`         |
+| `CX1-FR-017`    | `CX3-AC-022`                                           | `CX8-AC-025`                 | `CX-S2`         |
+| `CX1-FR-018`    | `CX3-AC-027`                                           | `CX5-AC-036`                 | `CX-S3`         |
+| `CX1-FR-019`    | `CX3-AC-023`                                           | `CX8-AC-029`                 | `CX-S3`         |
+| `CX1-FR-020`    | `CX3-AC-018`                                           | `CX8-AC-013`                 | `CX-S1`         |
+| `CX1-FR-021`    | `CX3-AC-020`                                           | `CX8-AC-015`                 | `CX-S1`         |
+| `CX1-FR-023`    | `CX3-AC-020`                                           | `CX4-AC-023`                 | `CX-S1`         |
+| `CX1-FR-024`    | `CX3-AC-021`                                           | `CX8-AC-019`                 | `CX-S1`         |
+| `CX1-FR-025`    | `CX3-AC-030`                                           | `CX4-AC-028`                 | `CX-S1`         |
+| `CX1-FR-026`    | `CX3-AC-020`                                           | `CX8-AC-016`                 | `CX-S1`         |
+| `CX1-FR-027`    | `CX3-AC-018`                                           | `CX4-AC-010`                 | `CX-S1`         |
+| `CX1-FR-028`    | `CX3-AC-020`                                           | `CX4-AC-016`                 | `CX-S3`         |
+| `CX1-FR-029`    | `CX3-AC-014`                                           | `CX8-AC-005`                 | `CX-S0`         |
+| `CX1-FR-030`    | `CX3-AC-022`                                           | `CX6-AC-003`                 | `CX-S0`         |
+| `CX1-FR-031`    | `CX3-AC-025`                                           | `CX6-AC-007`                 | `CX-S2`         |
+| `CX1-FR-033`    | `CX3-AC-024`                                           | `CX8-AC-032`                 | `CX-S2`         |
+| `CX1-FR-034`    | `CX3-AC-023`                                           | `CX5-AC-027`                 | `CX-S2`         |
+| `CX1-FR-038`    | `CX3-AC-014`                                           | `CX5-AC-011`                 | `CX-S0`         |
+| `CX1-FR-039`    | `CX3-AC-030`                                           | `CX5-AC-016`                 | `CX-S0`         |
+| `CX1-FR-040`    | `CX3-AC-026`                                           | `CX8-AC-012`                 | `CX-S0`         |
+| `CX1-FR-041`    | `CX3-AC-029`                                           | `CX7-AC-010`                 | `CX-S2`         |
+| `CX1-FR-042`    | `CX3-AC-030`                                           | `CX7-AC-029`                 | `CX-S2`         |
+| `CX1-FR-043`    | `CX3-AC-026`                                           | `CX6-AC-043`                 | `CX-S3`         |
+| `CX1-FR-045`    | `CX3-AC-029`                                           | `CX7-AC-042`                 | `CX-S2`         |
+| `CX1-FR-046`    | `CX3-AC-026`                                           | `CX6-AC-043`                 | `CX-S3`         |

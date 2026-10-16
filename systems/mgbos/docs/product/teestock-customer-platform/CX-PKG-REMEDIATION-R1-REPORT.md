@@ -93,3 +93,26 @@ implementation_authorization: NONE
 | `cx-09-phased-delivery-product-validation-plan.md`       | `b0e5e23d44f6083b3142e83963c4ca53372f8f7605a39cd64208841a86ca2cb9` |
 
 Final candidate package archive checksum will be supplied separately; source files above are manifest-bound.
+
+## 7. Remediation R2 — Independent QA Findings Resolution (PR #75)
+
+Addressing the two major findings from Independent QA audit on PR #75:
+
+1. **Finding 1 — Semantic Traceability:**
+   - Audited all 46 rows in `CX-PKG-TRACE-R1.csv` for true semantic alignment between parent requirements and acceptance scenarios.
+   - Corrected priority misalignments:
+     - `CX1-FR-003` (contextual contact/quote CTA) mapped to `CX5-AC-001` (Custom inquiry action without domain jargon).
+     - `CX1-FR-011` (artwork submission & 'not ready' path) mapped to `CX5-AC-002` (assisted route on no artwork, avoiding forced upload).
+     - `CX1-FR-015` (honest quote/estimate terminology) mapped to `CX5-AC-013` (intelligible scope, totals, validity and conditions).
+     - `CX1-FR-028` (promotions & discounts) mapped to `CX4-AC-016` (coupon expiry and discount invalidation test).
+     - `CX1-FR-030` (customer status/help data protection) mapped to `CX6-AC-003` (prevent private order and customer identity disclosure).
+     - Additional verified semantic alignments applied to `CX1-FR-018` (`CX5-AC-036`), `CX1-FR-023` (`CX4-AC-023`), `CX1-FR-025` (`CX4-AC-028`), `CX1-FR-027` (`CX4-AC-010`), `CX1-FR-038` (`CX5-AC-011`), and `CX1-FR-039` (`CX5-AC-016`).
+   - Synchronized all derivative trace tables in `cx-02`, `cx-04`, `cx-05`, `cx-06`, and `cx-08`.
+
+2. **Finding 2 — CX-03 Interaction Specification Traceability:**
+   - Integrated native interaction, navigation, mobile/responsive, accessibility, progressive disclosure, and degraded mode criteria (`CX3-AC-001..030`) into `declared_child_ids` across all relevant rows in `CX-PKG-TRACE-R1.csv`.
+   - Appended matching Remediation R1 explicit trace slice table to `cx-03-experience-design-interaction-spec.md` for complete package symmetry.
+
+3. **Governance & Hygiene:**
+   - Annotated `CX-PKG-AUDIT-01.md` as historical pre-remediation audit baseline.
+   - Preserved `DRAFT` status and pending Product Owner decisions.

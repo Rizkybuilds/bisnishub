@@ -1008,14 +1008,14 @@ The rows below are generated from `CX-PKG-TRACE-R1.csv` (the sole package-wide m
 | CX-01 master ID | Exact declared detail IDs in this document | Selected existing acceptance | Candidate slice |
 | --------------- | ------------------------------------------ | ---------------------------- | --------------- |
 | `CX1-FR-001`    | `CX8-QR-002`                               | `CX8-AC-001`                 | `CX-S0`         |
-| `CX1-FR-003`    | `CX8-QR-002`                               | `CX8-AC-001`                 | `CX-S0`         |
+| `CX1-FR-003`    | `CX8-QR-002`                               | `CX5-AC-001`                 | `CX-S0`         |
 | `CX1-FR-005`    | `CX8-QR-010`, `CX8-QR-012`                 | `CX8-AC-003`                 | `CX-S0`         |
 | `CX1-FR-008`    | `CX8-QR-007`                               | `CX8-AC-012`                 | `CX-S3`         |
-| `CX1-FR-011`    | `CX8-QR-027`                               | `CX8-AC-028`                 | `CX-S0`         |
-| `CX1-FR-027`    | `CX8-QR-022`                               | `CX9-AC-011`                 | `CX-S1`         |
-| `CX1-FR-030`    | `CX8-QR-025`                               | `CX8-AC-030`                 | `CX-S0`         |
-| `CX1-FR-038`    | `CX8-QR-038`                               | `CX8-AC-005`                 | `CX-S0`         |
-| `CX1-FR-039`    | `CX8-QR-039`                               | `CX9-AC-035`                 | `CX-S0`         |
+| `CX1-FR-011`    | `CX8-QR-027`                               | `CX5-AC-002`                 | `CX-S0`         |
+| `CX1-FR-027`    | `CX8-QR-022`                               | `CX4-AC-010`                 | `CX-S1`         |
+| `CX1-FR-030`    | `CX8-QR-025`                               | `CX6-AC-003`                 | `CX-S0`         |
+| `CX1-FR-038`    | `CX8-QR-038`                               | `CX5-AC-011`                 | `CX-S0`         |
+| `CX1-FR-039`    | `CX8-QR-039`                               | `CX5-AC-016`                 | `CX-S0`         |
 | `CX1-FR-043`    | `CX8-QR-032`                               | `CX6-AC-043`                 | `CX-S3`         |
 | `CX1-FR-044`    | `CX8-QR-046`                               | `CX6-AC-044`                 | `CX-S2`         |
 

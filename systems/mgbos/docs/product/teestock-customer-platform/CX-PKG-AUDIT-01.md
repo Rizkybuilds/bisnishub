@@ -23,6 +23,13 @@ supersedes: null
 
 # CX-PKG-AUDIT-01 — TeeStock Customer Platform, Whole-Package Product Consistency Audit
 
+> [!NOTE]
+> **Historical Pre-Remediation Audit Record (Provenance Only)**
+> This document records the initial author-environment consistency audit conducted on 2026-10-16 **before**
+> Candidate R1/R2 remediation and full traceability matrix generation (`CX-PKG-TRACE-R1.csv`).
+> Findings identified herein (such as partial direct reference counts or unlinked IDs) served as the direct basis
+> for remediation and are preserved here unaltered for provenance and audit trail purposes.
+
 **Disposition: `NEEDS_TARGETED_DOCUMENT_REMEDIATION` / CANONICAL PUBLICATION NOT READY.**
 
 **Review mode:** Read-only against ten locally provided Markdown drafts and the corresponding ZIP; selected source validation against GitHub `main` at exact commit `2800c474563309bda49d84d712f79b68c9dde36a`; checked active documentation-routing PR #73 at HEAD `78eadf46d3a8efeb1d7e184f98d126003cccf257` (open/draft as checked). This review was carried out by the same ChatGPT environment that helped create the drafts, so it is **not an independent audit**. No execution of application tests, CI, hosted browser, provider sandboxes or production. No repo writes.
