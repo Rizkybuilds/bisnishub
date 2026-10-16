@@ -232,20 +232,15 @@ jobs:
           if [ "$pos_status" -ne 0 ]; then
             echo "::error::Live C-SEC-02 security suite failed with status $pos_status"
             cat /tmp/raw-live-test.log
-            python3 -c '
-import sys
-with open("/tmp/raw-live-test.log", "r", encoding="utf-8", errors="replace") as f:
-    text = f.read()
-
-marker = "Failed Tests"
-if marker in text:
-    fail_part = text[text.index(marker):]
-else:
-    fail_part = text[-3500:]
-
-escaped = fail_part[:3500].replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
-print(f"::error title=Vitest Failure::{escaped}")
-'
+            node -e "
+              const fs = require('fs');
+              const text = fs.readFileSync('/tmp/raw-live-test.log', 'utf8');
+              const marker = 'Failed Tests';
+              const idx = text.indexOf(marker);
+              const part = idx !== -1 ? text.slice(idx) : text.slice(-3500);
+              const escaped = part.slice(0, 3500).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+              console.log('::error title=Vitest Failure::' + escaped);
+            "
             exit 1
           fi
 
