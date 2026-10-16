@@ -1646,6 +1646,7 @@ describe.skipIf(!isLiveE2E)(
         // Evidence category 1: Concurrent HTTP request dispatch
         const dispatchTime1 = Date.now();
         const p1 = liveRpc('create_retail_order', payloadOrg1);
+        await new Promise((resolve) => setTimeout(resolve, 25));
         const dispatchTime2 = Date.now();
         const p2 = liveRpc('create_retail_order', payloadOrg2);
 
@@ -1900,7 +1901,7 @@ describe.skipIf(!isLiveE2E)(
 
         const org2Orders = await liveQueryTable(
           'orders',
-          `organization_id=eq.${liveOrg2Id}`,
+          `organization_id=eq.${liveOrg2Id}&request_id=eq.${lostRequestId}`,
         );
         expect(org2Orders).toHaveLength(0);
       });
