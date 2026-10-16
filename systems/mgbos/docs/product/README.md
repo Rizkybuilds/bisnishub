@@ -579,10 +579,12 @@ product/
 ├── teestock-asset-readiness.md
 ├── teestock-curated-strategy.md
 ├── teestock-design-library-spec.md
-└── teestock-development-plan.md
+├── teestock-development-plan.md
+└── teestock-customer-platform/
+    └── README.md (CX-00..09 package)
 ```
 
-The Founder Control plan is being introduced through the current documentation program.
+The Founder Control plan is being introduced through the current documentation program. The TeeStock Customer Platform package (`teestock-customer-platform/`) contains proposed customer-experience specifications (`CX-00..09`, DRAFT).
 
 ---
 
@@ -975,6 +977,7 @@ at its audit snapshot.
 | `teestock-curated-strategy.md`          | Legacy/domain-specific planning reference                          |                NONE |
 | `teestock-design-library-spec.md`       | Proposed/experimental product specification                        |                NONE |
 | `teestock-asset-readiness.md`           | Historical bounded evidence reference                              |                NONE |
+| `teestock-customer-platform/README.md`   | Proposed TeeStock Customer Platform package (CX-00..09, DRAFT)      |                NONE |
 
 No document in this table independently grants Builder authority.
 
