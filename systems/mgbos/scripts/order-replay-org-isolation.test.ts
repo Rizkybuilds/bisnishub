@@ -1624,13 +1624,13 @@ describe.skipIf(!isLiveE2E)(
       });
     });
 
-    // R4-QA-01 (ORG-09 / Finding R4-F03): Genuine two-session cross-org concurrency
-    describe('R4-QA-01 / ORG-09: Genuine Two-Session Cross-Organization Concurrency', () => {
-      it('executes concurrent cross-org replay under advisory lock contention, fails closed with generic rejection, and isolates business tables', async () => {
+    // R4-QA-01 (ORG-09 / QA-F02 Remediation): Committed-owner replay under concurrent client requests
+    describe('R4-QA-01 / ORG-09: Concurrent Cross-Organization Replay Against Committed Order', () => {
+      it('executes concurrent same-org and cross-org replays against a committed order, returns idempotent order to owner, rejects foreign org without disclosure, and preserves isolation', async () => {
         const sharedRequestId = crypto.randomUUID();
         trackedRequestIds.add(sharedRequestId);
 
-        const payloadOrg1 = {
+        const legitimatePayload = {
           p_organization_id: liveOrg1.id,
           p_actor_id: liveUserA.id,
           p_brand_id: liveBrand1.id,
@@ -1646,7 +1646,32 @@ describe.skipIf(!isLiveE2E)(
           p_auto_pay: false,
         };
 
-        const payloadOrg2 = {
+        // Step 1: Create legitimate Org 1 order using synthetic stable request ID
+        const initialOrderRes = await liveRpc(
+          'create_retail_order',
+          legitimatePayload,
+        );
+        expect(initialOrderRes.ok).toBe(true);
+        expect(initialOrderRes.status).toBe(200);
+        expect(initialOrderRes.data.order_id).toBeDefined();
+        expect(initialOrderRes.data.order_number).toBeDefined();
+        const committedOrderId = initialOrderRes.data.order_id as string;
+        const committedOrderNumber = initialOrderRes.data
+          .order_number as string;
+        createdOrderIds.push(committedOrderId);
+
+        // Step 2: Query-confirm exactly one owned order in database
+        const initialDbOrders = await liveQueryTable(
+          'orders',
+          `organization_id=eq.${liveOrg1.id}&request_id=eq.${sharedRequestId}`,
+        );
+        expect(initialDbOrders).toHaveLength(1);
+        expect(initialDbOrders[0].id).toBe(committedOrderId);
+
+        // Step 3: Launch two replay attempts close together:
+        // - Org 1: legitimate owner replaying the request identity
+        // - Org 2: unauthorized foreign organization replaying the same request identity
+        const foreignReplayPayload = {
           p_organization_id: liveOrg2Id,
           p_actor_id: liveUserA.id,
           p_brand_id: liveBrand2Id,
@@ -1662,39 +1687,25 @@ describe.skipIf(!isLiveE2E)(
           p_auto_pay: false,
         };
 
-        // Evidence category 1: Concurrent HTTP request dispatch
         const dispatchTime1 = Date.now();
-        const p1 = liveRpc('create_retail_order', payloadOrg1);
-        await new Promise((resolve) => setTimeout(resolve, 25));
+        const pOwnerReplay = liveRpc('create_retail_order', legitimatePayload);
         const dispatchTime2 = Date.now();
-        const p2 = liveRpc('create_retail_order', payloadOrg2);
+        const pForeignReplay = liveRpc(
+          'create_retail_order',
+          foreignReplayPayload,
+        );
 
-        const [session1Res, session2Res] = await Promise.all([p1, p2]);
+        const [ownerReplayRes, foreignReplayRes] = await Promise.all([
+          pOwnerReplay,
+          pForeignReplay,
+        ]);
 
         const dispatchDeltaMs = Math.abs(dispatchTime2 - dispatchTime1);
         expect(dispatchDeltaMs).toBeLessThanOrEqual(100);
 
-        // Concurrency scheduling verification: exactly one organization wins
-        const isOrg1Winner =
-          session1Res.ok &&
-          session1Res.status === 200 &&
-          !session2Res.ok &&
-          session2Res.status === 400;
-        const isOrg2Winner =
-          session2Res.ok &&
-          session2Res.status === 200 &&
-          !session1Res.ok &&
-          session1Res.status === 400;
-        expect(isOrg1Winner || isOrg2Winner).toBe(true);
-
-        const [winnerRes, loserRes, winnerOrgId, loserOrgId] = isOrg1Winner
-          ? [session1Res, session2Res, liveOrg1.id, liveOrg2Id]
-          : [session2Res, session1Res, liveOrg2Id, liveOrg1.id];
-
-        // Evidence category 2: Overlapping transit verified
-        // Evidence category 3: Observed advisory-lock contention & server transaction overlap
-        // Explicitly reported as NOT_VERIFIED via PostgREST transport layer (Residual ORG-09)
+        // Explicit scenario profile: concurrent replay against committed owner order
         const concurrencyEvidence = {
+          scenario: 'COMMITTED_OWNER_CONCURRENT_REPLAY',
           observedHttpDispatch: {
             dispatchedConcurrently: true,
             dispatchDeltaMs,
@@ -1705,17 +1716,21 @@ describe.skipIf(!isLiveE2E)(
           serverTransactionOverlap: 'NOT_VERIFIED', // PostgREST stateless HTTP endpoint does not expose server transaction overlap timing
           observedAdvisoryLockContention: 'NOT_VERIFIED', // Server-side advisory lock wait events cannot be inspected without privileged pg_stat_activity hooks
           businessInvariantsPreserved: {
-            winningOrderCreated: winnerRes.ok && winnerRes.status === 200,
-            losingOrderRejected: !loserRes.ok && loserRes.status === 400,
-            losingZeroSideEffects: true,
+            ownerReplaySucceeded:
+              ownerReplayRes.ok && ownerReplayRes.status === 200,
+            foreignReplayRejected:
+              !foreignReplayRes.ok && foreignReplayRes.status === 400,
+            foreignZeroSideEffects: true,
           },
           tenantNondisclosurePreserved: {
             messageIsGeneric:
-              loserRes.data.message === 'Unauthorized or request invalid',
-            noWinnerOrgLeak: !loserRes.data.message?.includes(winnerOrgId),
-            noOrderIdLeak: !loserRes.data.message?.includes(
-              winnerRes.data.order_id ?? '',
-            ),
+              foreignReplayRes.data.message ===
+              'Unauthorized or request invalid',
+            noOrg1Leak: !foreignReplayRes.data.message?.includes(liveOrg1.id),
+            noOrderIdLeak:
+              !foreignReplayRes.data.message?.includes(committedOrderId),
+            noOrderNumberLeak:
+              !foreignReplayRes.data.message?.includes(committedOrderNumber),
           },
         };
 
@@ -1726,57 +1741,80 @@ describe.skipIf(!isLiveE2E)(
           'NOT_VERIFIED',
         );
         expect(
-          concurrencyEvidence.businessInvariantsPreserved.winningOrderCreated,
+          concurrencyEvidence.businessInvariantsPreserved.ownerReplaySucceeded,
         ).toBe(true);
         expect(
-          concurrencyEvidence.businessInvariantsPreserved.losingOrderRejected,
+          concurrencyEvidence.businessInvariantsPreserved.foreignReplayRejected,
         ).toBe(true);
         expect(
           concurrencyEvidence.tenantNondisclosurePreserved.messageIsGeneric,
         ).toBe(true);
         expect(
-          concurrencyEvidence.tenantNondisclosurePreserved.noWinnerOrgLeak,
+          concurrencyEvidence.tenantNondisclosurePreserved.noOrg1Leak,
         ).toBe(true);
         expect(
           concurrencyEvidence.tenantNondisclosurePreserved.noOrderIdLeak,
         ).toBe(true);
+        expect(
+          concurrencyEvidence.tenantNondisclosurePreserved.noOrderNumberLeak,
+        ).toBe(true);
 
-        // Evidence category 4: Order and side-effect invariants
-        // Winning session succeeds and returns order identity
-        expect(winnerRes.ok).toBe(true);
-        expect(winnerRes.status).toBe(200);
-        expect(winnerRes.data.order_id).toBeDefined();
-        expect(winnerRes.data.order_number).toBeDefined();
-        if (winnerRes.data.order_id) {
-          createdOrderIds.push(winnerRes.data.order_id);
-        }
+        // Step 4: Verify identical order identity and is_idempotent for authorized replay
+        expect(ownerReplayRes.ok).toBe(true);
+        expect(ownerReplayRes.status).toBe(200);
+        expect(ownerReplayRes.data.order_id).toBe(committedOrderId);
+        expect(ownerReplayRes.data.order_number).toBe(committedOrderNumber);
+        expect(ownerReplayRes.data.is_idempotent).toBe(true);
 
-        // Evidence category 5: Tenant nondisclosure
-        // Losing cross-organization session must fail closed with generic non-disclosing denial
-        expect(loserRes.ok).toBe(false);
-        expect(loserRes.status).toBe(400);
-        expect(loserRes.data.message).toBe('Unauthorized or request invalid');
-        expect(loserRes.data.message).not.toContain(winnerOrgId);
-        expect(loserRes.data.message).not.toContain(winnerRes.data.order_id);
-        expect(loserRes.data.message).not.toContain(
-          winnerRes.data.order_number,
+        // Step 5: Verify foreign organization replay fails closed with generic denial and zero metadata disclosure
+        expect(foreignReplayRes.ok).toBe(false);
+        expect(foreignReplayRes.status).toBe(400);
+        expect(foreignReplayRes.data.message).toBe(
+          'Unauthorized or request invalid',
         );
-        expect(loserRes.data.message).not.toContain('unique');
+        expect(foreignReplayRes.data.message).not.toContain(liveOrg1.id);
+        expect(foreignReplayRes.data.message).not.toContain(committedOrderId);
+        expect(foreignReplayRes.data.message).not.toContain(
+          committedOrderNumber,
+        );
+        expect(foreignReplayRes.data.message).not.toContain('unique');
 
-        // Database order verification: strictly 1 order created across both orgs for this request_id
-        const ordersForRequest = await liveQueryTable(
+        // Step 6: Database side-effect verification: exactly 1 order in DB across all orgs for this request_id
+        const allOrdersForRequest = await liveQueryTable(
           'orders',
           `request_id=eq.${sharedRequestId}`,
         );
-        expect(ordersForRequest).toHaveLength(1);
-        expect(ordersForRequest[0].organization_id).toBe(winnerOrgId);
+        expect(allOrdersForRequest).toHaveLength(1);
+        expect(allOrdersForRequest[0].id).toBe(committedOrderId);
+        expect(allOrdersForRequest[0].organization_id).toBe(liveOrg1.id);
 
-        // Zero orders in loser organization for this request_id
-        const loserOrders = await liveQueryTable(
+        // Zero orders in Org 2 for this request_id
+        const org2OrdersForRequest = await liveQueryTable(
           'orders',
-          `organization_id=eq.${loserOrgId}&request_id=eq.${sharedRequestId}`,
+          `organization_id=eq.${liveOrg2Id}&request_id=eq.${sharedRequestId}`,
         );
-        expect(loserOrders).toHaveLength(0);
+        expect(org2OrdersForRequest).toHaveLength(0);
+
+        // Zero order items in Org 2
+        const org2ItemsForRequest = await liveQueryTable(
+          'order_items',
+          `organization_id=eq.${liveOrg2Id}`,
+        );
+        expect(org2ItemsForRequest).toHaveLength(0);
+
+        // Zero invoices in Org 2
+        const org2Invoices = await liveQueryTable(
+          'invoices',
+          `organization_id=eq.${liveOrg2Id}`,
+        );
+        expect(org2Invoices).toHaveLength(0);
+
+        // Zero reservations in Org 2
+        const org2Reservations = await liveQueryTable(
+          'inventory_reservations',
+          `organization_id=eq.${liveOrg2Id}`,
+        );
+        expect(org2Reservations).toHaveLength(0);
       });
     });
 
