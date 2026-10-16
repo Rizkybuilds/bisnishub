@@ -55,7 +55,7 @@ const until = async (fn, labelOrOpts, ms = 30000, opts = {}) => {
 export { QaError };
 
 export const EXPECTED_PR68_HEAD_SHA =
-  'd1dcc490275656c12472daeb618bd3099d12c5ca';
+  '13c5866a92d3b778e298af9689cdf6952e89ad72';
 
 export const MANDATORY_UXR02_AC_IDS = Object.freeze([
   'AC-A01',
