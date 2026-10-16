@@ -121,7 +121,7 @@ jobs:
           fi
 
           # 2. Verify git checkout ancestry against expected PR #70 HEAD
-          EXPECTED_PR70_HEAD="26a45c1568fbd8de124ee048903aabf5667d94f7"
+          EXPECTED_PR70_HEAD="f731dfd17dec7bd571de8f0d9a2c9358e7c7f0e3"
 
           if ! git merge-base --is-ancestor "$EXPECTED_PR70_HEAD" HEAD; then
             echo "::error::Execution rejected: current commit does not descend from expected PR #70 HEAD ($EXPECTED_PR70_HEAD)"
@@ -179,7 +179,7 @@ jobs:
             repository: process.env.GITHUB_REPOSITORY || "unknown",
             ref: process.env.GITHUB_REF || "unknown",
             headSha: process.env.CURRENT_HEAD_SHA || process.env.GITHUB_SHA || "unknown",
-            pr70BaseSha: "26a45c1568fbd8de124ee048903aabf5667d94f7",
+            pr70BaseSha: "f731dfd17dec7bd571de8f0d9a2c9358e7c7f0e3",
             canonicalOrigin: "http://127.0.0.1:55431",
             disposableTargetConfirmed: true,
             baselineOrganizations: 1,
