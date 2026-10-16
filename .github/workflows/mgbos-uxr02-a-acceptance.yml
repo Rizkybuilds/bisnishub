@@ -96,7 +96,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          EXPECTED_PR68_SHA="decf14628cb2a5b439220f2eead823ef4907664d"
+          EXPECTED_PR68_SHA="d1dcc490275656c12472daeb618bd3099d12c5ca"
           APP_DIR="/tmp/pr68-candidate-app"
           rm -rf "$APP_DIR"
           git fetch origin feat/mgbos-uxr02-a-data-states
@@ -167,12 +167,12 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:55431" node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --app-dir "$APP_DIR" \
             --proxy-port 55430 \
-            --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" \
+            --expected-checkout-sha "d1dcc490275656c12472daeb618bd3099d12c5ca" \
             --expected-harness-sha "${{ github.event.pull_request.head.sha }}" || pos_status=$?
           node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --verify-trace systems/mgbos/.qa-evidence/uxr02-a/positive/trace.json \
             --expected-mode normal \
-            --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" \
+            --expected-checkout-sha "d1dcc490275656c12472daeb618bd3099d12c5ca" \
             --expected-harness-sha "${{ github.event.pull_request.head.sha }}" \
             --exit-status "$pos_status"
       - name: Prove broken assertion fails the UXR02-A gate (negative control)
@@ -191,7 +191,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:55431" MGBOS_QA_NEGATIVE_CONTROL=1 node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --app-dir "$APP_DIR" \
             --proxy-port 55430 \
-            --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" \
+            --expected-checkout-sha "d1dcc490275656c12472daeb618bd3099d12c5ca" \
             --expected-harness-sha "${{ github.event.pull_request.head.sha }}" > /dev/null 2>&1 || neg_status=$?
           if [ "$neg_status" -eq 0 ]; then
             echo "::error::Intentional negative control incorrectly returned success"
@@ -200,7 +200,7 @@ jobs:
           node systems/mgbos/scripts/uxr02-a-browser-acceptance.mjs \
             --verify-trace systems/mgbos/.qa-evidence/uxr02-a/negative-control/trace.json \
             --expected-mode intentional-broken-control \
-            --expected-checkout-sha "decf14628cb2a5b439220f2eead823ef4907664d" \
+            --expected-checkout-sha "d1dcc490275656c12472daeb618bd3099d12c5ca" \
             --expected-harness-sha "${{ github.event.pull_request.head.sha }}" \
             --exit-status "$neg_status"
       - name: Upload sanitized UXR02-A browser acceptance evidence
