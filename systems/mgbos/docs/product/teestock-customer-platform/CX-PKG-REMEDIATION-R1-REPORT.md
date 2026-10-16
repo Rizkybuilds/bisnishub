@@ -94,25 +94,37 @@ implementation_authorization: NONE
 
 Final candidate package archive checksum will be supplied separately; source files above are manifest-bound.
 
-## 7. Remediation R2 — Independent QA Findings Resolution (PR #75)
+## 7. Remediation R2 — Final Independent QA Re-Acceptance Resolution (PR #75)
 
-Addressing the two major findings from Independent QA audit on PR #75:
+This section documents the complete resolution of all remaining findings from the Final Independent QA Re-Acceptance review on PR #75:
 
-1. **Finding 1 — Semantic Traceability:**
-   - Audited all 46 rows in `CX-PKG-TRACE-R1.csv` for true semantic alignment between parent requirements and acceptance scenarios.
-   - Corrected priority misalignments:
-     - `CX1-FR-003` (contextual contact/quote CTA) mapped to `CX5-AC-001` (Custom inquiry action without domain jargon).
-     - `CX1-FR-011` (artwork submission & 'not ready' path) mapped to `CX5-AC-002` (assisted route on no artwork, avoiding forced upload).
-     - `CX1-FR-015` (honest quote/estimate terminology) mapped to `CX5-AC-013` (intelligible scope, totals, validity and conditions).
-     - `CX1-FR-028` (promotions & discounts) mapped to `CX4-AC-016` (coupon expiry and discount invalidation test).
-     - `CX1-FR-030` (customer status/help data protection) mapped to `CX6-AC-003` (prevent private order and customer identity disclosure).
-     - Additional verified semantic alignments applied to `CX1-FR-018` (`CX5-AC-036`), `CX1-FR-023` (`CX4-AC-023`), `CX1-FR-025` (`CX4-AC-028`), `CX1-FR-027` (`CX4-AC-010`), `CX1-FR-038` (`CX5-AC-011`), and `CX1-FR-039` (`CX5-AC-016`).
-   - Synchronized all derivative trace tables in `cx-02`, `cx-04`, `cx-05`, `cx-06`, and `cx-08`.
+### 1. Task A — Semantic Traceability Realigned
 
-2. **Finding 2 — CX-03 Interaction Specification Traceability:**
-   - Integrated native interaction, navigation, mobile/responsive, accessibility, progressive disclosure, and degraded mode criteria (`CX3-AC-001..030`) into `declared_child_ids` across all relevant rows in `CX-PKG-TRACE-R1.csv`.
-   - Appended matching Remediation R1 explicit trace slice table to `cx-03-experience-design-interaction-spec.md` for complete package symmetry.
+- Audited all 46 parent functional requirements (`CX1-FR-001..046`) in `CX-PKG-TRACE-R1.csv` to ensure acceptance scenarios directly and completely verify the actual requirement behaviors, avoiding generic or tangential tests.
+- Implemented consistent multi-scenario acceptance criteria where a requirement has compound material behaviors:
+  - **`CX1-FR-003`** (Contextual contact/quote CTA & readable service expectations): Linked to `CX5-AC-001` (mobile Custom inquiry reaches real actionable destination without jargon) **and** `CX8-AC-001` (unfamiliar mobile user identifies actual service entry and supported offerings without internal department confusion).
+  - **`CX1-FR-010`** (Progressive disclosure of advanced questions): Linked to `CX5-AC-005` (50+ quantity or invoice selection dynamically reveals billing/tax fields) **and** `CX8-AC-006` (progressive reveal/collapse without destructive loss of valid prior inputs).
+  - **`CX1-FR-011`** (Artwork upload & explicit "not ready" path): Linked to `CX5-AC-002` (customer choosing "no artwork" routes to assistance without forced upload block) **and** `CX8-AC-028` (safe upload validation, MIME/size limits, quarantine, and received-not-approved proof).
+  - **`CX1-FR-015`** (Quote/estimate terminology distinguished honestly): Linked to `CX5-AC-012` (unapproved quote labeled draft/unavailable; customer cannot accept an invalid offer) **and** `CX5-AC-013` (reviewed formal quote makes identity, version, scope, totals, validity, and conditions intelligible).
+  - **`CX1-FR-028`** (Advanced promotions, bundles, and personalization): Linked to `CX4-AC-016` (coupon expiry and discount invalidation test) **and** `CX9-AC-029` (research/deferred gate for unproven bundles and personalization held at CX-S3 boundary without asserting unverified capabilities).
+  - **`CX1-FR-030`** (Authorized status/help access & customer data protection): Linked to `CX6-AC-001` (public support home explains help without forced login), `CX6-AC-003` (invalid private order lookup does not expose customer identity, order existence, or address), **and** `CX8-AC-030` (truthful order status without internal label or unverified dispatch claims).
+  - **`CX1-FR-038`** (Structured records/queues, not chat-only memory): Fully synchronized across all derivative matrices linking `CX5-AC-011` (operator structured field retrieval without manual transcription) **and** `CX8-AC-005` (durable intake acceptance reference, preventing chat-only loss).
+  - **`CX1-FR-046`** (AI-supported configuration & proactive account help): Linked to `CX5-AC-036` (guided custom builder placement constraints) **and** `CX6-AC-043` (grounded tool authorization safeguards and non-speculative bounding).
 
-3. **Governance & Hygiene:**
-   - Annotated `CX-PKG-AUDIT-01.md` as historical pre-remediation audit baseline.
-   - Preserved `DRAFT` status and pending Product Owner decisions.
+### 2. Task B — CX-03 Interaction Specification Traceability Cleaned
+
+- Audited all `CX3-*` references to ensure only genuine interaction, navigation, mobile, accessibility, and degraded-mode specifications are mapped, eliminating forced associations:
+  - **Removed `CX3-AC-017` from `CX1-FR-015`:** Business routing is an assisted intake workflow, not a test of distinguishing quote/estimate terminology. Retained on `CX1-FR-014`.
+  - **Removed `CX3-AC-029` from `CX1-FR-045`:** Marketplace external link/handoff UX is not channel sync of listing/price/ATS/status. Retained on `CX1-FR-041`.
+  - **Removed tangential CX-03 mappings:** Removed `CX3-AC-023` from `CX1-FR-016` (proof versioning is not quote acceptance); removed `CX3-AC-018` from `CX1-FR-020` and `CX1-FR-027`; removed `CX3-AC-020` from `CX1-FR-023` and `CX1-FR-028`; removed `CX3-AC-014` from `CX1-FR-038` and `CX3-AC-030` from `CX1-FR-039`.
+  - Exactly 30 requirements retain legitimate, native `CX3-*` interaction specifications.
+
+### 3. Task C — Full Matrix Consistency Enforced
+
+- Synchronized all 7 derivative tables in `cx-02`, `cx-03`, `cx-04`, `cx-05`, `cx-06`, `cx-07`, and `cx-08` line-by-line with `CX-PKG-TRACE-R1.csv`.
+- Validated via automated checker (`validate_full_matrix.py`):
+  - 46/46 unique master requirements matching CX-01.
+  - All 589 native IDs verified with zero missing child or acceptance references.
+  - 100% synchronization across all derivative tables.
+  - All 10 documents preserved in `status: DRAFT` with normalized `v0.1.1` versioning.
+  - Zero application code, SQL, or out-of-scope files modified.

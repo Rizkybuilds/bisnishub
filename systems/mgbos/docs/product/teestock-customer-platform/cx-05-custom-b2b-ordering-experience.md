@@ -785,32 +785,24 @@ Source URLs point to the audited baseline; before canonical promotion or later b
 The rows below are generated from `CX-PKG-TRACE-R1.csv` (the sole package-wide mapping table). They do not introduce additional product requirements, approve a release stage, change any domain/architecture policy, or prove acceptance. Only exact locally declared IDs are linked; review the complete matrix for gates, ambiguities and candidate staging.
 
 | CX-01 master ID | Exact declared detail IDs in this document | Selected existing acceptance | Candidate slice |
-| --------------- | ------------------------------------------ | ---------------------------- | --------------- |
-| `CX1-FR-003`    | `CX5-FR-001`                               | `CX5-AC-001`                 | `CX-S0`         |
+| :-------------- | :----------------------------------------- | :--------------------------- | :-------------- |
+| `CX1-FR-003`    | `CX5-FR-001`                               | `CX5-AC-001`, `CX8-AC-001`   | `CX-S0`         |
 | `CX1-FR-004`    | `CX5-FR-002`                               | `CX9-AC-005`                 | `CX-S0`         |
 | `CX1-FR-009`    | `CX5-FR-003`, `CX5-FR-011`                 | `CX8-AC-006`                 | `CX-S0`         |
-| `CX1-FR-010`    | `CX5-FR-003`, `CX5-FR-005`                 | `CX8-AC-006`                 | `CX-S0`         |
-| `CX1-FR-011`    | `CX5-FR-008`, `CX5-FR-009`                 | `CX5-AC-002`                 | `CX-S0`         |
+| `CX1-FR-010`    | `CX5-FR-003`, `CX5-FR-005`                 | `CX5-AC-005`, `CX8-AC-006`   | `CX-S0`         |
+| `CX1-FR-011`    | `CX5-FR-008`, `CX5-FR-009`                 | `CX5-AC-002`, `CX8-AC-028`   | `CX-S0`         |
 | `CX1-FR-012`    | `CX5-FR-007`, `CX5-FR-018`                 | `CX8-AC-007`                 | `CX-S0`         |
 | `CX1-FR-013`    | `CX5-FR-012`, `CX5-FR-013`                 | `CX8-AC-005`                 | `CX-S0`         |
 | `CX1-FR-014`    | `CX5-FR-014`                               | `CX5-AC-007`                 | `CX-S0`         |
-| `CX1-FR-015`    | `CX5-FR-016`                               | `CX5-AC-013`                 | `CX-S0`         |
+| `CX1-FR-015`    | `CX5-FR-016`                               | `CX5-AC-012`, `CX5-AC-013`   | `CX-S0`         |
 | `CX1-FR-016`    | `CX5-FR-024`, `CX5-FR-025`                 | `CX8-AC-027`                 | `CX-S2`         |
 | `CX1-FR-017`    | `CX5-FR-028`                               | `CX8-AC-025`                 | `CX-S2`         |
 | `CX1-FR-018`    | `CX5-FR-039`, `CX5-FR-040`                 | `CX5-AC-036`                 | `CX-S3`         |
 | `CX1-FR-019`    | `CX5-FR-041`                               | `CX8-AC-029`                 | `CX-S3`         |
 | `CX1-FR-034`    | `CX5-FR-029`                               | `CX5-AC-027`                 | `CX-S2`         |
 | `CX1-FR-035`    | `CX5-FR-035`                               | `CX8-AC-034`                 | `CX-S2`         |
-| `CX1-FR-038`    | `CX5-FR-021`                               | `CX5-AC-011`                 | `CX-S0`         |
+| `CX1-FR-038`    | `CX5-FR-021`                               | `CX5-AC-011`, `CX8-AC-005`   | `CX-S0`         |
 | `CX1-FR-039`    | `CX5-FR-021`                               | `CX5-AC-016`                 | `CX-S0`         |
 | `CX1-FR-040`    | `CX5-FR-022`                               | `CX8-AC-012`                 | `CX-S0`         |
 | `CX1-FR-044`    | `CX5-FR-046`                               | `CX6-AC-044`                 | `CX-S2`         |
-| `CX1-FR-046`    | `CX5-FR-044`                               | `CX6-AC-043`                 | `CX-S3`         |
-
-**Review state:** `R1_AUTHOR_SEMANTIC_MAPPING_ONLY`; requires Owner/Head Engineering decision and independent product review before canonical activation.
-
-### CX-REM-R1-001 — Corrected invalid journey IDs and parent-semantic link
-
-- Eight previous `CX2-JRN-*` references in functional requirement rows now point to actual declared `CX2-BP-01/02/03/05/06` headings, chosen per row meaning. No new blueprint ID was invented.
-- `CX5-FR-032` formerly linked to master `CX1-FR-032/033` (support and return request). Its product meaning is governed order/production-status presentation, and it now links to `CX1-FR-030` (authorized status/help), `CX1-FR-031` (scoped order status) and `CX2-BP-06` (customer progress/service blueprint).
-- These updates fix trace semantics only. They **do not** upgrade the public portal, formal approval system, or current physical order state to implemented.
+| `CX1-FR-046`    | `CX5-FR-044`                               | `CX5-AC-036`, `CX6-AC-043`   | `CX-S3`         |

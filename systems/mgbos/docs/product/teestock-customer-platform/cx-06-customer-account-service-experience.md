@@ -944,24 +944,22 @@ This draft provides a unified customer-account/support behavioral contract and t
 
 The rows below are generated from `CX-PKG-TRACE-R1.csv` (the sole package-wide mapping table). They do not introduce additional product requirements, approve a release stage, change any domain/architecture policy, or prove acceptance. Only exact locally declared IDs are linked; review the complete matrix for gates, ambiguities and candidate staging.
 
-| CX-01 master ID | Exact declared detail IDs in this document | Selected existing acceptance | Candidate slice |
-| --------------- | ------------------------------------------ | ---------------------------- | --------------- |
-| `CX1-FR-016`    | `CX6-FR-018`                               | `CX8-AC-027`                 | `CX-S2`         |
-| `CX1-FR-017`    | `CX6-FR-036`                               | `CX8-AC-025`                 | `CX-S2`         |
-| `CX1-FR-019`    | `CX6-FR-020`                               | `CX8-AC-029`                 | `CX-S3`         |
-| `CX1-FR-022`    | `CX6-FR-015`                               | `CX8-AC-017`                 | `CX-S1`         |
-| `CX1-FR-025`    | `CX6-FR-013`                               | `CX4-AC-028`                 | `CX-S1`         |
-| `CX1-FR-029`    | `CX6-FR-002`                               | `CX8-AC-005`                 | `CX-S0`         |
-| `CX1-FR-030`    | `CX6-FR-003`, `CX6-FR-008`                 | `CX6-AC-003`                 | `CX-S0`         |
-| `CX1-FR-031`    | `CX6-FR-011`, `CX6-FR-012`                 | `CX6-AC-007`                 | `CX-S2`         |
-| `CX1-FR-032`    | `CX6-FR-023`                               | `CX6-AC-023`                 | `CX-S2`         |
-| `CX1-FR-033`    | `CX6-FR-027`, `CX6-FR-028`                 | `CX8-AC-032`                 | `CX-S2`         |
-| `CX1-FR-034`    | `CX6-FR-019`                               | `CX5-AC-027`                 | `CX-S2`         |
-| `CX1-FR-035`    | `CX6-FR-030`                               | `CX8-AC-034`                 | `CX-S2`         |
-| `CX1-FR-036`    | `CX6-FR-031`, `CX6-FR-032`                 | `CX6-AC-033`                 | `CX-S2`         |
-| `CX1-FR-037`    | `CX6-FR-042`, `CX6-FR-044`                 | `CX6-AC-041`                 | `CX-S2`         |
-| `CX1-FR-043`    | `CX6-FR-045`                               | `CX6-AC-043`                 | `CX-S3`         |
-| `CX1-FR-044`    | `CX6-FR-048`                               | `CX6-AC-044`                 | `CX-S2`         |
-| `CX1-FR-046`    | `CX6-FR-045`                               | `CX6-AC-043`                 | `CX-S3`         |
-
-**Review state:** `R1_AUTHOR_SEMANTIC_MAPPING_ONLY`; requires Owner/Head Engineering decision and independent product review before canonical activation.
+| CX-01 master ID | Exact declared detail IDs in this document | Selected existing acceptance             | Candidate slice |
+| :-------------- | :----------------------------------------- | :--------------------------------------- | :-------------- |
+| `CX1-FR-016`    | `CX6-FR-018`                               | `CX8-AC-027`                             | `CX-S2`         |
+| `CX1-FR-017`    | `CX6-FR-036`                               | `CX8-AC-025`                             | `CX-S2`         |
+| `CX1-FR-019`    | `CX6-FR-020`                               | `CX8-AC-029`                             | `CX-S3`         |
+| `CX1-FR-022`    | `CX6-FR-015`                               | `CX8-AC-017`                             | `CX-S1`         |
+| `CX1-FR-025`    | `CX6-FR-013`                               | `CX4-AC-028`                             | `CX-S1`         |
+| `CX1-FR-029`    | `CX6-FR-002`                               | `CX8-AC-005`                             | `CX-S0`         |
+| `CX1-FR-030`    | `CX6-FR-003`, `CX6-FR-008`                 | `CX6-AC-001`, `CX6-AC-003`, `CX8-AC-030` | `CX-S0`         |
+| `CX1-FR-031`    | `CX6-FR-011`, `CX6-FR-012`                 | `CX6-AC-007`                             | `CX-S2`         |
+| `CX1-FR-032`    | `CX6-FR-023`                               | `CX6-AC-023`                             | `CX-S2`         |
+| `CX1-FR-033`    | `CX6-FR-027`, `CX6-FR-028`                 | `CX8-AC-032`                             | `CX-S2`         |
+| `CX1-FR-034`    | `CX6-FR-019`                               | `CX5-AC-027`                             | `CX-S2`         |
+| `CX1-FR-035`    | `CX6-FR-030`                               | `CX8-AC-034`                             | `CX-S2`         |
+| `CX1-FR-036`    | `CX6-FR-031`, `CX6-FR-032`                 | `CX6-AC-033`                             | `CX-S2`         |
+| `CX1-FR-037`    | `CX6-FR-042`, `CX6-FR-044`                 | `CX6-AC-041`                             | `CX-S2`         |
+| `CX1-FR-043`    | `CX6-FR-045`                               | `CX6-AC-043`                             | `CX-S3`         |
+| `CX1-FR-044`    | `CX6-FR-048`                               | `CX6-AC-044`                             | `CX-S2`         |
+| `CX1-FR-046`    | `CX6-FR-045`                               | `CX5-AC-036`, `CX6-AC-043`               | `CX-S3`         |

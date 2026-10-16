@@ -869,12 +869,10 @@ Source navigation: `https://github.com/Rizkybuilds/bisnishub/tree/2800c474563309
 The rows below are generated from `CX-PKG-TRACE-R1.csv` (the sole package-wide mapping table). They do not introduce additional product requirements, approve a release stage, change any domain/architecture policy, or prove acceptance. Only exact locally declared IDs are linked; review the complete matrix for gates, ambiguities and candidate staging.
 
 | CX-01 master ID | Exact declared detail IDs in this document | Selected existing acceptance | Candidate slice |
-| --------------- | ------------------------------------------ | ---------------------------- | --------------- |
+| :-------------- | :----------------------------------------- | :--------------------------- | :-------------- |
 | `CX1-FR-024`    | `CX7-FR-020`                               | `CX8-AC-019`                 | `CX-S1`         |
-| `CX1-FR-038`    | `CX7-FR-003`                               | `CX8-AC-005`                 | `CX-S0`         |
+| `CX1-FR-038`    | `CX7-FR-003`                               | `CX5-AC-011`, `CX8-AC-005`   | `CX-S0`         |
 | `CX1-FR-040`    | `CX7-FR-004`                               | `CX8-AC-012`                 | `CX-S0`         |
 | `CX1-FR-041`    | `CX7-FR-006`, `CX7-FR-014`                 | `CX7-AC-010`                 | `CX-S2`         |
 | `CX1-FR-042`    | `CX7-FR-029`, `CX7-FR-030`                 | `CX7-AC-029`                 | `CX-S2`         |
 | `CX1-FR-045`    | `CX7-FR-043`, `CX7-FR-044`, `CX7-FR-045`   | `CX7-AC-042`                 | `CX-S2`         |
-
-**Review state:** `R1_AUTHOR_SEMANTIC_MAPPING_ONLY`; requires Owner/Head Engineering decision and independent product review before canonical activation.

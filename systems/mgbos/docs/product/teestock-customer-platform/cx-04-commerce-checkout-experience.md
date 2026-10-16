@@ -942,7 +942,7 @@ Test a small number of **real eligible retail transactions only after** the dedi
 The rows below are generated from `CX-PKG-TRACE-R1.csv` (the sole package-wide mapping table). They do not introduce additional product requirements, approve a release stage, change any domain/architecture policy, or prove acceptance. Only exact locally declared IDs are linked; review the complete matrix for gates, ambiguities and candidate staging.
 
 | CX-01 master ID | Exact declared detail IDs in this document | Selected existing acceptance | Candidate slice |
-| --------------- | ------------------------------------------ | ---------------------------- | --------------- |
+| :-------------- | :----------------------------------------- | :--------------------------- | :-------------- |
 | `CX1-FR-001`    | `CX4-FR-001`                               | `CX8-AC-001`                 | `CX-S0`         |
 | `CX1-FR-002`    | `CX4-FR-001`, `CX4-FR-002`                 | `CX9-AC-006`                 | `CX-S0`         |
 | `CX1-FR-004`    | `CX4-FR-002`                               | `CX9-AC-005`                 | `CX-S0`         |
@@ -957,7 +957,5 @@ The rows below are generated from `CX-PKG-TRACE-R1.csv` (the sole package-wide m
 | `CX1-FR-025`    | `CX4-FR-026`                               | `CX4-AC-028`                 | `CX-S1`         |
 | `CX1-FR-026`    | `CX4-FR-016`, `CX4-FR-021`                 | `CX8-AC-016`                 | `CX-S1`         |
 | `CX1-FR-027`    | `CX4-FR-007`                               | `CX4-AC-010`                 | `CX-S1`         |
-| `CX1-FR-028`    | `CX4-FR-010`, `CX4-FR-039`                 | `CX4-AC-016`                 | `CX-S3`         |
+| `CX1-FR-028`    | `CX4-FR-010`, `CX4-FR-039`                 | `CX4-AC-016`, `CX9-AC-029`   | `CX-S3`         |
 | `CX1-FR-032`    | `CX4-FR-031`                               | `CX6-AC-023`                 | `CX-S2`         |
-
-**Review state:** `R1_AUTHOR_SEMANTIC_MAPPING_ONLY`; requires Owner/Head Engineering decision and independent product review before canonical activation.
