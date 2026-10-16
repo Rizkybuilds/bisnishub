@@ -200,7 +200,7 @@ jobs:
         run: |
           set -euo pipefail
           neg_status=0
-          pnpm exec vitest run scripts/order-replay-org-isolation.test.ts 2>&1 | tee /tmp/raw-negative-control.log || neg_status=$?
+          pnpm exec vitest run scripts/order-replay-org-isolation.test.ts > /tmp/raw-negative-control.log 2>&1 || neg_status=$?
 
           if [ "$neg_status" -eq 0 ]; then
             echo "::error::Intentional negative control without disposable confirmation unexpectedly succeeded!"
@@ -225,23 +225,32 @@ jobs:
         run: |
           set -euo pipefail
           pos_status=0
-          pnpm exec vitest run scripts/order-replay-org-isolation.test.ts --reporter=verbose 2>&1 | tee /tmp/raw-live-test.log || pos_status=$?
+          pnpm exec vitest run scripts/order-replay-org-isolation.test.ts --reporter=verbose > /tmp/raw-live-test.log 2>&1 || pos_status=$?
 
           sed -E 's/(eyJ[a-zA-Z0-9_\-]{10,}\.[a-zA-Z0-9_\-]{10,}\.[a-zA-Z0-9_\-]{10,})/[REDACTED_JWT]/g' /tmp/raw-live-test.log > .qa-evidence/r4-live-assurance/positive-test-output.log
 
           if [ "$pos_status" -ne 0 ]; then
             echo "::error::Live C-SEC-02 security suite failed with status $pos_status"
             cat /tmp/raw-live-test.log
+            tail -n 40 /tmp/raw-live-test.log | while IFS= read -r line; do
+              echo "::error::$line"
+            done
             exit 1
           fi
 
           if grep -E '[1-9][0-9]* skipped' /tmp/raw-live-test.log; then
             echo "::error::Live security suite reported skipped tests; live cases did not execute fully"
+            tail -n 25 /tmp/raw-live-test.log | while IFS= read -r line; do
+              echo "::error::$line"
+            done
             exit 1
           fi
 
           if ! grep -q "33 passed" /tmp/raw-live-test.log; then
             echo "::error::Expected 33 passed tests in live security suite output"
+            tail -n 25 /tmp/raw-live-test.log | while IFS= read -r line; do
+              echo "::error::$line"
+            done
             exit 1
           fi
 
