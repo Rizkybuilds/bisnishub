@@ -1795,12 +1795,19 @@ describe.skipIf(!isLiveE2E)(
         );
         expect(org2OrdersForRequest).toHaveLength(0);
 
-        // Zero order items in Org 2
-        const org2ItemsForRequest = await liveQueryTable(
-          'order_items',
+        // Zero orders in Org 2 across all requests
+        const allOrg2Orders = await liveQueryTable(
+          'orders',
           `organization_id=eq.${liveOrg2Id}`,
         );
-        expect(org2ItemsForRequest).toHaveLength(0);
+        expect(allOrg2Orders).toHaveLength(0);
+
+        // Zero audit records in Org 2
+        const org2Audit = await liveQueryTable(
+          'order_audit',
+          `organization_id=eq.${liveOrg2Id}`,
+        );
+        expect(org2Audit).toHaveLength(0);
 
         // Zero invoices in Org 2
         const org2Invoices = await liveQueryTable(
