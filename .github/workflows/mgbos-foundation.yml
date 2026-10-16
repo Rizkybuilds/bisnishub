@@ -261,7 +261,7 @@ jobs:
           fi
 
       - name: Verify post-test fixture cleanup and absence (R4 QA)
-        if: github.ref == 'refs/heads/qa/mgbos-sec02-r4-live-assurance' || github.base_ref == 'security/mgbos-sec02-order-replay-isolation'
+        if: always() && (github.ref == 'refs/heads/qa/mgbos-sec02-r4-live-assurance' || github.base_ref == 'security/mgbos-sec02-order-replay-isolation')
         shell: bash
         run: |
           set -euo pipefail
@@ -283,11 +283,17 @@ jobs:
 
           node -e '
           const fs = require("fs");
+          const logText = fs.existsSync("/tmp/raw-live-test.log") ? fs.readFileSync("/tmp/raw-live-test.log", "utf8") : "";
+          const passedMatch = logText.match(/(\d+) passed/);
+          const failedMatch = logText.match(/(\d+) failed/);
+          const passedCount = passedMatch ? parseInt(passedMatch[1], 10) : 0;
+          const failedCount = failedMatch ? parseInt(failedMatch[1], 10) : 0;
           fs.writeFileSync(".qa-evidence/r4-live-assurance/summary.json", JSON.stringify({
             testSuite: "scripts/order-replay-org-isolation.test.ts",
-            executedLiveTests: 5,
-            skippedTests: 0,
-            passedTotalTests: 33,
+            totalTestsExecuted: passedCount + failedCount,
+            passedCount,
+            failedCount,
+            skippedCount: 0,
             negativeControlVerified: true,
             fixtureCleanupVerified: true,
             postRunAbsenceVerified: true,
