@@ -232,9 +232,20 @@ jobs:
           if [ "$pos_status" -ne 0 ]; then
             echo "::error::Live C-SEC-02 security suite failed with status $pos_status"
             cat /tmp/raw-live-test.log
-            grep -n -C 3 -E '(FAIL|✕|AssertionError|Expected:|\[TEST_AND_CLEANUP_FAILURE\])' /tmp/raw-live-test.log | head -n 35 | while IFS= read -r line; do
-              echo "::error::$line"
-            done
+            python3 -c '
+import sys
+with open("/tmp/raw-live-test.log", "r", encoding="utf-8", errors="replace") as f:
+    text = f.read()
+
+marker = "Failed Tests"
+if marker in text:
+    fail_part = text[text.index(marker):]
+else:
+    fail_part = text[-3500:]
+
+escaped = fail_part[:3500].replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+print(f"::error title=Vitest Failure::{escaped}")
+'
             exit 1
           fi
 
