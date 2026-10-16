@@ -90,15 +90,15 @@ This document MUST NOT define/override: R0–R5 semantics; organization and comm
 
 Canonical owners include:
 
-| Concern | Source of authority | CX-08 ownership |
-|---|---|---|
-| Business offer/brand/copy | `bisnis/teestock/` brand, commerce, service, legal-policy documents | Customer comprehension and honest presentation tests |
-| Order, invoice, financial, inventory and production truth | `systems/mgbos/docs/architecture/` + actual approved commands/source | User-visible outcome and negative acceptance |
-| Risk and evidence meaning | Root `docs/governance/` and Engineering Control Plane | Explicit evidence needs; **no new risk scale** |
-| Software implementation QA | `systems/mgbos/docs/engineering/maintenance-policy.md` + current implementation policy | Additional customer-level outcomes where applicable |
-| JARVIS / n8n / external provider | Their scoped owners and contracts | Accessible fallback, safe interaction, honest state and handoff |
-| Legal and data protection policy | Business/legal owners and applicable law | No dark patterns, consent affordances, sensitive-data leaks; escalate policy questions |
-| Customer-experience product definition | CX-01..CX-07 once approved and routed | Quality thresholds and evidence mapping |
+| Concern                                                   | Source of authority                                                                    | CX-08 ownership                                                                        |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Business offer/brand/copy                                 | `bisnis/teestock/` brand, commerce, service, legal-policy documents                    | Customer comprehension and honest presentation tests                                   |
+| Order, invoice, financial, inventory and production truth | `systems/mgbos/docs/architecture/` + actual approved commands/source                   | User-visible outcome and negative acceptance                                           |
+| Risk and evidence meaning                                 | Root `docs/governance/` and Engineering Control Plane                                  | Explicit evidence needs; **no new risk scale**                                         |
+| Software implementation QA                                | `systems/mgbos/docs/engineering/maintenance-policy.md` + current implementation policy | Additional customer-level outcomes where applicable                                    |
+| JARVIS / n8n / external provider                          | Their scoped owners and contracts                                                      | Accessible fallback, safe interaction, honest state and handoff                        |
+| Legal and data protection policy                          | Business/legal owners and applicable law                                               | No dark patterns, consent affordances, sensitive-data leaks; escalate policy questions |
+| Customer-experience product definition                    | CX-01..CX-07 once approved and routed                                                  | Quality thresholds and evidence mapping                                                |
 
 ### 2.3 Revision and current reality
 
@@ -108,22 +108,22 @@ Source inspection used `main` at `2800c474563309bda49d84d712f79b68c9dde36a`, 202
 
 ## 3. Vocabulary and evidence lifecycle
 
-| Term | Meaning | Prohibited inference |
-|---|---|---|
-| `SPECIFIED` | Requirement or expected outcome written | Does not mean built or tested |
-| `IMPLEMENTED` | Exact source contains candidate functionality | Does not mean correct |
-| `SELF_REVIEWED` | Author checked own specification or code | Does not prove independent assurance |
-| `LOCAL_VERIFIED` | Repeatable tests on identified local/disposable target and exact revision | Does not prove hosted CI or production |
-| `HOSTED_CI_VERIFIED` | Required hosted checks passed on exact candidate and real enforcement is checked | Does not prove business pilot or accessibility conformance |
-| `LAB_MEASURED` | Controlled browser/profile tests have recorded repeatable results | Not real-user Core Web Vitals field p75 |
-| `FIELD_MEASURED` | Real-user instrumentation has valid, privacy-reviewed sample and cohort | Not automatically representative without counts and collection period |
-| `ACCESSIBILITY_REVIEWED` | Manual keyboard/AT, page-level and flow-level scope recorded | Not necessarily full-site WCAG conformity |
-| `SANDBOX_VERIFIED` | Approved provider sandbox test for that provider/contract | Not permission to charge/notify real customers |
-| `DEPLOYED` | Identified release deployed to named environment with deployment evidence | Not operationally accepted |
-| `OPERATIONALLY_ACCEPTED` | Business owners verify actual supported flow, runbooks, recovery and physical handoffs | Not approval for untested future channels |
-| `NOT_VERIFIED` | No sufficient valid evidence | Must never be displayed as `PASS` |
-| `BLOCKED` | Mandatory gate not met, failed or unresolved | Requires documented remediation and re-audit |
-| `NOT_APPLICABLE` | Not part of declared release slice, with justification | Cannot be used to hide applicable high-risk checks |
+| Term                     | Meaning                                                                                | Prohibited inference                                                  |
+| ------------------------ | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `SPECIFIED`              | Requirement or expected outcome written                                                | Does not mean built or tested                                         |
+| `IMPLEMENTED`            | Exact source contains candidate functionality                                          | Does not mean correct                                                 |
+| `SELF_REVIEWED`          | Author checked own specification or code                                               | Does not prove independent assurance                                  |
+| `LOCAL_VERIFIED`         | Repeatable tests on identified local/disposable target and exact revision              | Does not prove hosted CI or production                                |
+| `HOSTED_CI_VERIFIED`     | Required hosted checks passed on exact candidate and real enforcement is checked       | Does not prove business pilot or accessibility conformance            |
+| `LAB_MEASURED`           | Controlled browser/profile tests have recorded repeatable results                      | Not real-user Core Web Vitals field p75                               |
+| `FIELD_MEASURED`         | Real-user instrumentation has valid, privacy-reviewed sample and cohort                | Not automatically representative without counts and collection period |
+| `ACCESSIBILITY_REVIEWED` | Manual keyboard/AT, page-level and flow-level scope recorded                           | Not necessarily full-site WCAG conformity                             |
+| `SANDBOX_VERIFIED`       | Approved provider sandbox test for that provider/contract                              | Not permission to charge/notify real customers                        |
+| `DEPLOYED`               | Identified release deployed to named environment with deployment evidence              | Not operationally accepted                                            |
+| `OPERATIONALLY_ACCEPTED` | Business owners verify actual supported flow, runbooks, recovery and physical handoffs | Not approval for untested future channels                             |
+| `NOT_VERIFIED`           | No sufficient valid evidence                                                           | Must never be displayed as `PASS`                                     |
+| `BLOCKED`                | Mandatory gate not met, failed or unresolved                                           | Requires documented remediation and re-audit                          |
+| `NOT_APPLICABLE`         | Not part of declared release slice, with justification                                 | Cannot be used to hide applicable high-risk checks                    |
 
 **No single synthetic score is an aggregate release verdict.** A green dashboard can coexist with a blocking cross-tenant disclosure, payment mismatch, inaccessible checkout or unsupported customer promise.
 
@@ -131,28 +131,28 @@ Source inspection used `main` at `2800c474563309bda49d84d712f79b68c9dde36a`, 202
 
 ### 4.1 Quality dimensions
 
-| ID | Dimension | User-facing outcome | Key evidence |
-|---|---|---|---|
-| `CX8-QD-01` | Clarity | Can select the appropriate Shop/Custom/Business/Merch path without insider language | Task test + content review |
-| `CX8-QD-02` | Speed | Important content appears promptly and interaction remains responsive | Field/lab CWV + traces |
-| `CX8-QD-03` | Accessibility | Essential task can be completed with keyboard/AT and expected viewports | Manual WCAG mapping + browser flows |
-| `CX8-QD-04` | Commercial integrity | Prices, commitments, approvals and payments reflect authoritative facts | Domain/API negative tests + customer screens |
-| `CX8-QD-05` | Privacy/security | User sees only permitted customer/order/company data | Server/API and UI negative tests |
-| `CX8-QD-06` | Recovery | Interruptions do not silently lose accepted work or duplicate effects | Fault injection + retry/reconciliation |
-| `CX8-QD-07` | Operational transfer | Accepted customer request yields governed next work, without re-entry | End-to-end operating evidence |
-| `CX8-QD-08` | Sustainability | Added features do not make core pages heavy or force paid AI per visit | Bundle, CPU, inference and founder-effort measurement |
-| `CX8-QD-09` | Trust & transparency | User distinguishes requested, estimated, approved, paid, dispatched, delivered | State-mapping review + negative scenarios |
-| `CX8-QD-10` | Observability | Teams can distinguish success, unknown and failure with privacy-aware correlation | Structured logs/metrics + incident exercise |
+| ID          | Dimension            | User-facing outcome                                                                 | Key evidence                                          |
+| ----------- | -------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `CX8-QD-01` | Clarity              | Can select the appropriate Shop/Custom/Business/Merch path without insider language | Task test + content review                            |
+| `CX8-QD-02` | Speed                | Important content appears promptly and interaction remains responsive               | Field/lab CWV + traces                                |
+| `CX8-QD-03` | Accessibility        | Essential task can be completed with keyboard/AT and expected viewports             | Manual WCAG mapping + browser flows                   |
+| `CX8-QD-04` | Commercial integrity | Prices, commitments, approvals and payments reflect authoritative facts             | Domain/API negative tests + customer screens          |
+| `CX8-QD-05` | Privacy/security     | User sees only permitted customer/order/company data                                | Server/API and UI negative tests                      |
+| `CX8-QD-06` | Recovery             | Interruptions do not silently lose accepted work or duplicate effects               | Fault injection + retry/reconciliation                |
+| `CX8-QD-07` | Operational transfer | Accepted customer request yields governed next work, without re-entry               | End-to-end operating evidence                         |
+| `CX8-QD-08` | Sustainability       | Added features do not make core pages heavy or force paid AI per visit              | Bundle, CPU, inference and founder-effort measurement |
+| `CX8-QD-09` | Trust & transparency | User distinguishes requested, estimated, approved, paid, dispatched, delivered      | State-mapping review + negative scenarios             |
+| `CX8-QD-10` | Observability        | Teams can distinguish success, unknown and failure with privacy-aware correlation   | Structured logs/metrics + incident exercise           |
 
 ### 4.2 Release slices are **not** general software versions
 
-| Slice | Product definition | Quality applicability |
-|---|---|---|
-| `P0_ASSISTED_ENTRY` | Premium public content, clear routes, truthful Custom/Business inquiry, approved contact/receipt/recovery where implemented | All critical relevant P0 tests; public marketing performance and accessible intake; no full checkout obligation |
-| `P1_GOVERNED_SELF_SERVICE` | Catalog, eligible cart/checkout, account, support/order status, select providers where explicitly approved | Adds transactional, authorization, PII, integration and task/recovery gates for each new surface |
-| `P2_ADVANCED_CAPABILITY` | Rich custom builder, AI assistance, personalization, broad marketplace/creator extensions where justified | Adds editor/AI/provider-specific assurance and **P0/P1 non-regression** |
+| Slice                      | Product definition                                                                                                          | Quality applicability                                                                                           |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `P0_ASSISTED_ENTRY`        | Premium public content, clear routes, truthful Custom/Business inquiry, approved contact/receipt/recovery where implemented | All critical relevant P0 tests; public marketing performance and accessible intake; no full checkout obligation |
+| `P1_GOVERNED_SELF_SERVICE` | Catalog, eligible cart/checkout, account, support/order status, select providers where explicitly approved                  | Adds transactional, authorization, PII, integration and task/recovery gates for each new surface                |
+| `P2_ADVANCED_CAPABILITY`   | Rich custom builder, AI assistance, personalization, broad marketplace/creator extensions where justified                   | Adds editor/AI/provider-specific assurance and **P0/P1 non-regression**                                         |
 
-P0 is an **experience quality target**, not a requirement to delay the existing approved Custom/Business *operational* pilot until a storefront ships. The current pilot's mandatory security, payment and operational requirements remain applicable even if customer interactions are human-assisted.
+P0 is an **experience quality target**, not a requirement to delay the existing approved Custom/Business _operational_ pilot until a storefront ships. The current pilot's mandatory security, payment and operational requirements remain applicable even if customer interactions are human-assisted.
 
 ### 4.3 Critical journeys under protection
 
@@ -162,11 +162,11 @@ P0 is an **experience quality target**, not a requirement to delay the existing 
 
 ### 5.1 Customer experience goals proposed for approval
 
-| Metric | Target | Basis | What it means |
-|---|---:|---|---|
-| Largest Contentful Paint (`LCP`) | **≤ 2.5 seconds** | Google Core Web Vitals good threshold | Major visible content loaded promptly |
-| Interaction to Next Paint (`INP`) | **≤ 200 milliseconds** | Google Core Web Vitals good threshold | Interactions respond promptly |
-| Cumulative Layout Shift (`CLS`) | **≤ 0.1** | Google Core Web Vitals good threshold | Visual elements do not jump unexpectedly |
+| Metric                            |                 Target | Basis                                 | What it means                            |
+| --------------------------------- | ---------------------: | ------------------------------------- | ---------------------------------------- |
+| Largest Contentful Paint (`LCP`)  |      **≤ 2.5 seconds** | Google Core Web Vitals good threshold | Major visible content loaded promptly    |
+| Interaction to Next Paint (`INP`) | **≤ 200 milliseconds** | Google Core Web Vitals good threshold | Interactions respond promptly            |
+| Cumulative Layout Shift (`CLS`)   |              **≤ 0.1** | Google Core Web Vitals good threshold | Visual elements do not jump unexpectedly |
 
 Measurement interpretation: **75th percentile of relevant real page visits**, separately reported for **mobile and desktop**. Per-template/route-group segmentation is a product diagnostic requirement; low-volume groups may be `NOT_VERIFIED_FIELD`. Report collection period, sample size, URL/template coverage, geography and device/cohort limitations. Site-wide aggregate can conceal a failing checkout or Custom form. Do not substitute averages, desktop-only scores or one best lab result.
 
@@ -194,16 +194,16 @@ Each tested route must record all of the following:
 
 ### 5.3 Route-level performance budget registry (template, not invented numbers)
 
-| Template | LCP element | Main risks | Initial lab budget | Budget owner / activation |
-|---|---|---|---|---|
-| Home/landing | Main hero/copy/primary image | image/fonts, campaign video, personalization | `TBD_BASELINE` | Head Engineering + Frontend QA before P0 slice |
-| Custom request | Form title/main content | unnecessary editor SDK, upload previews | `TBD_BASELINE` | Head Engineering before P0 custom slice |
-| Business request | CTA/form area | CRM widget/third-party embed | `TBD_BASELINE` | Head Engineering before P0 business slice |
-| Product listing | First visible product cards | images/search facets/cross-sell scripts | `TBD_BASELINE` | Before P1 catalog |
-| Product detail | Hero product media | hi-res media/variant rerenders | `TBD_BASELINE` | Before P1 PDP |
-| Cart/checkout | Order summary/payment start | dynamic pricing/provider SDK/hydration | `TBD_BASELINE` | Before P1 checkout |
-| Customer portal | Main dashboard/status | unnecessary broad data fetch/polling | `TBD_BASELINE` | Before P1 account |
-| Custom editor | Canvas/preview | fonts/rendering/image memory | `TBD_BASELINE` | Before P2 editor |
+| Template         | LCP element                  | Main risks                                   | Initial lab budget | Budget owner / activation                      |
+| ---------------- | ---------------------------- | -------------------------------------------- | ------------------ | ---------------------------------------------- |
+| Home/landing     | Main hero/copy/primary image | image/fonts, campaign video, personalization | `TBD_BASELINE`     | Head Engineering + Frontend QA before P0 slice |
+| Custom request   | Form title/main content      | unnecessary editor SDK, upload previews      | `TBD_BASELINE`     | Head Engineering before P0 custom slice        |
+| Business request | CTA/form area                | CRM widget/third-party embed                 | `TBD_BASELINE`     | Head Engineering before P0 business slice      |
+| Product listing  | First visible product cards  | images/search facets/cross-sell scripts      | `TBD_BASELINE`     | Before P1 catalog                              |
+| Product detail   | Hero product media           | hi-res media/variant rerenders               | `TBD_BASELINE`     | Before P1 PDP                                  |
+| Cart/checkout    | Order summary/payment start  | dynamic pricing/provider SDK/hydration       | `TBD_BASELINE`     | Before P1 checkout                             |
+| Customer portal  | Main dashboard/status        | unnecessary broad data fetch/polling         | `TBD_BASELINE`     | Before P1 account                              |
+| Custom editor    | Canvas/preview               | fonts/rendering/image memory                 | `TBD_BASELINE`     | Before P2 editor                               |
 
 **Rule:** never mark `TBD_BASELINE` as passed, yet do not block unrelated P0 public landing for a future P2 editor budget.
 
@@ -236,23 +236,23 @@ Official W3C references:
 
 ### 6.2 Test coverage matrix
 
-| Area | Test contract | Evidence |
-|---|---|---|
-| Keyboard navigation | Tab/Shift+Tab logical order, visible focus, no traps; Escape behavior for cancellable overlays | Manual keyboard recording |
-| Dialog/drawer | Appropriate semantics; focus moves in, stays managed, returns on close; background does not receive unintended focus | Browser + AT tests |
-| Semantic structure | Headings, landmarks, buttons/links, labels, status roles reflect meaning | Accessibility tree inspection |
-| Form instructions | Required/optional clear, not placeholders alone; per-field errors associated and announced; validation preserves values | Keyboard/AT/browser task test |
-| Pointer/touch | No hover-only action; drag alternative where needed; targets meet applicable WCAG minimum and generous design goal | Mobile + accessible input test |
-| Focus obscured | Fixed header/sticky CTA/keyboard do not fully obscure focus; mobile input remains accessible | Viewport/focus test |
-| Resize/reflow/zoom | Core tasks survive supported narrow viewport, zoom and text spacing without hidden content or horizontal scroll unless legitimate content exception | Browser responsive tests |
-| Contrast and status | Text/UI contrast meets applicable WCAG; state not conveyed only by color, shape or animation | Contrast + visual review |
-| Motion | `prefers-reduced-motion` honored where relevant; loading/progress understandable without motion | Reduced-motion test |
-| Time limits | Session expiry warns where relevant; user receives accessible recovery without unauthorized persistence | Expiry simulation |
-| Authentication | Accessible login and alternative consistent with applicable WCAG; prevent unnecessary cognitive reauthentication tasks | Browser/AT flow |
-| Dynamic updates | Async errors/progress/confirmations have screen-reader discoverable status, not only toast disappearance | Live-region and focus test |
-| Media/imagery | Correct alt text/empty alt, captions where relevant, no essential information exclusively inside promotional imagery | Content/AT test |
-| Language | Correct document language and understandable wording for chosen Indonesian cohort | Content/DOM review |
-| Third-party components | Payment/auth widgets tested in the real intended embed/redirect context; limitations escalated | Provider scope + full-flow test |
+| Area                   | Test contract                                                                                                                                       | Evidence                        |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| Keyboard navigation    | Tab/Shift+Tab logical order, visible focus, no traps; Escape behavior for cancellable overlays                                                      | Manual keyboard recording       |
+| Dialog/drawer          | Appropriate semantics; focus moves in, stays managed, returns on close; background does not receive unintended focus                                | Browser + AT tests              |
+| Semantic structure     | Headings, landmarks, buttons/links, labels, status roles reflect meaning                                                                            | Accessibility tree inspection   |
+| Form instructions      | Required/optional clear, not placeholders alone; per-field errors associated and announced; validation preserves values                             | Keyboard/AT/browser task test   |
+| Pointer/touch          | No hover-only action; drag alternative where needed; targets meet applicable WCAG minimum and generous design goal                                  | Mobile + accessible input test  |
+| Focus obscured         | Fixed header/sticky CTA/keyboard do not fully obscure focus; mobile input remains accessible                                                        | Viewport/focus test             |
+| Resize/reflow/zoom     | Core tasks survive supported narrow viewport, zoom and text spacing without hidden content or horizontal scroll unless legitimate content exception | Browser responsive tests        |
+| Contrast and status    | Text/UI contrast meets applicable WCAG; state not conveyed only by color, shape or animation                                                        | Contrast + visual review        |
+| Motion                 | `prefers-reduced-motion` honored where relevant; loading/progress understandable without motion                                                     | Reduced-motion test             |
+| Time limits            | Session expiry warns where relevant; user receives accessible recovery without unauthorized persistence                                             | Expiry simulation               |
+| Authentication         | Accessible login and alternative consistent with applicable WCAG; prevent unnecessary cognitive reauthentication tasks                              | Browser/AT flow                 |
+| Dynamic updates        | Async errors/progress/confirmations have screen-reader discoverable status, not only toast disappearance                                            | Live-region and focus test      |
+| Media/imagery          | Correct alt text/empty alt, captions where relevant, no essential information exclusively inside promotional imagery                                | Content/AT test                 |
+| Language               | Correct document language and understandable wording for chosen Indonesian cohort                                                                   | Content/DOM review              |
+| Third-party components | Payment/auth widgets tested in the real intended embed/redirect context; limitations escalated                                                      | Provider scope + full-flow test |
 
 **Important distinction:** target `~44px` frequent touch controls in CX-03 is a product-design preference; it is **not** a quotation of the exact WCAG 2.2 AA target-size criterion. Test WCAG 2.2's applicable Success Criterion **2.5.8 Target Size (Minimum)**, including defined exceptions, rather than incorrectly claiming that 44px is mandatory AA.
 
@@ -311,20 +311,20 @@ OWASP **ASVS 5.0.0** is an external reference for security verification planning
 
 ### 8.2 Negative outcome contracts by capability
 
-| Capability | Mandatory failure test | Block condition |
-|---|---|---|
-| Public inquiry | Duplicate submit, invalid input, lost response, unauthorized upload | Two committed requests for one intended submission; fabricated receipt; data loss beyond approved policy |
-| Quote acceptance | Wrong company/actor, stale version, expired quote, altered payload | Quote accepted or production released without authorized version-specific decision |
-| Customer account | Cross-customer/cross-org direct object ID, revoked membership, deep link and API | Protected information readable through URL/API even if hidden in UI |
-| Artwork | Malicious/invalid MIME, active content, unauthorized file URL, wrong version | Private artwork exposed, unsafe rendering, or unreviewed file treated as approved |
-| Cart/checkout | Stale stock/price, invalid coupons, double-click, order retry | Silent price change, oversell, duplicate economic effect, bypassed guard |
-| Payment | Spoofed/duplicate/out-of-order callback, unknown timeout, refund/settlement mismatch | Paid/refunded shown or recorded without verified authoritative effect |
-| Shipment/tracking | Label created vs physical handoff, out-of-order carrier events | Customer told shipped/delivered without verified appropriate evidence |
-| Returns/support | Return request vs approved return vs refund, missing owner | Refund or claim approval fabricated; case closed without resolution trace |
-| Marketplace | Duplicate import, wrong seller scope, stock sync lag, auth expiration | Wrong-tenant order, duplicate effects, unsupported availability promise |
-| Messaging | Wrong recipient, duplicated high-impact send, opt-out mismatch | Data disclosure, marketing sent under transactional basis, false delivery claim |
-| AI advice/action | Prompt injection, stale evidence, unauthorized tool call, model unavailable | Autonomous money/contract authority; invented stock/status; no fallback |
-| Analytics | PII in URL, log, metric labels or third-party event; consent gap | Sensitive artwork/customer data exposure or unjustified tracking |
+| Capability        | Mandatory failure test                                                               | Block condition                                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| Public inquiry    | Duplicate submit, invalid input, lost response, unauthorized upload                  | Two committed requests for one intended submission; fabricated receipt; data loss beyond approved policy |
+| Quote acceptance  | Wrong company/actor, stale version, expired quote, altered payload                   | Quote accepted or production released without authorized version-specific decision                       |
+| Customer account  | Cross-customer/cross-org direct object ID, revoked membership, deep link and API     | Protected information readable through URL/API even if hidden in UI                                      |
+| Artwork           | Malicious/invalid MIME, active content, unauthorized file URL, wrong version         | Private artwork exposed, unsafe rendering, or unreviewed file treated as approved                        |
+| Cart/checkout     | Stale stock/price, invalid coupons, double-click, order retry                        | Silent price change, oversell, duplicate economic effect, bypassed guard                                 |
+| Payment           | Spoofed/duplicate/out-of-order callback, unknown timeout, refund/settlement mismatch | Paid/refunded shown or recorded without verified authoritative effect                                    |
+| Shipment/tracking | Label created vs physical handoff, out-of-order carrier events                       | Customer told shipped/delivered without verified appropriate evidence                                    |
+| Returns/support   | Return request vs approved return vs refund, missing owner                           | Refund or claim approval fabricated; case closed without resolution trace                                |
+| Marketplace       | Duplicate import, wrong seller scope, stock sync lag, auth expiration                | Wrong-tenant order, duplicate effects, unsupported availability promise                                  |
+| Messaging         | Wrong recipient, duplicated high-impact send, opt-out mismatch                       | Data disclosure, marketing sent under transactional basis, false delivery claim                          |
+| AI advice/action  | Prompt injection, stale evidence, unauthorized tool call, model unavailable          | Autonomous money/contract authority; invented stock/status; no fallback                                  |
+| Analytics         | PII in URL, log, metric labels or third-party event; consent gap                     | Sensitive artwork/customer data exposure or unjustified tracking                                         |
 
 ### 8.3 Canonical truth and trust boundaries
 
@@ -347,20 +347,20 @@ Security/transaction integration tests use a **proven new disposable database** 
 
 ### 9.1 Product-level failure classes
 
-| Class | Example | Customer experience | Behind-the-scenes expectation |
-|---|---|---|---|
-| `UNAVAILABLE_BEFORE_COMMIT` | Request API fails before durable acceptance | Explain not accepted; preserve permissible inputs, retry/manual route | No orphan accepted record |
-| `UNKNOWN_AFTER_SEND` | Timeout after customer submits or payment attempt | “Sedang diperiksa”/unknown; avoid duplicate resubmit | Query/reconcile by stable logical intent before retry |
-| `ACCEPTED_NOTIFICATION_FAILED` | Inquiry accepted, WhatsApp/email fails | Durable reference still shown; next step truthful | Failed notification visible for recovery |
-| `EXTERNAL_STALE` | Courier/marketplace data delayed | Timestamp/qualification, no fabricated status | Reconcile source and stale age |
-| `AUTH_EXPIRED` | Session expires mid-form | Clear re-auth/recovery without unauthorized persistence | Revalidate authorization on every mutation |
-| `RECONCILIATION_BLOCKED` | Provider data conflicts with internal payment | Pending/manual review, no double charge | Ownership, escalation, audit trail |
-| `CAPABILITY_UNAVAILABLE` | AI/editor/marketplace integration down | Core website usable; assisted fallback | Feature isolated/circuit-breaker where designed |
-| `PHYSICAL_HOLD` | Vendor unconfirmed, QC unresolved, courier not collected | Honest progress/hold wording where permissible | Handoff requires actual physical evidence |
+| Class                          | Example                                                  | Customer experience                                                   | Behind-the-scenes expectation                         |
+| ------------------------------ | -------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------- |
+| `UNAVAILABLE_BEFORE_COMMIT`    | Request API fails before durable acceptance              | Explain not accepted; preserve permissible inputs, retry/manual route | No orphan accepted record                             |
+| `UNKNOWN_AFTER_SEND`           | Timeout after customer submits or payment attempt        | “Sedang diperiksa”/unknown; avoid duplicate resubmit                  | Query/reconcile by stable logical intent before retry |
+| `ACCEPTED_NOTIFICATION_FAILED` | Inquiry accepted, WhatsApp/email fails                   | Durable reference still shown; next step truthful                     | Failed notification visible for recovery              |
+| `EXTERNAL_STALE`               | Courier/marketplace data delayed                         | Timestamp/qualification, no fabricated status                         | Reconcile source and stale age                        |
+| `AUTH_EXPIRED`                 | Session expires mid-form                                 | Clear re-auth/recovery without unauthorized persistence               | Revalidate authorization on every mutation            |
+| `RECONCILIATION_BLOCKED`       | Provider data conflicts with internal payment            | Pending/manual review, no double charge                               | Ownership, escalation, audit trail                    |
+| `CAPABILITY_UNAVAILABLE`       | AI/editor/marketplace integration down                   | Core website usable; assisted fallback                                | Feature isolated/circuit-breaker where designed       |
+| `PHYSICAL_HOLD`                | Vendor unconfirmed, QC unresolved, courier not collected | Honest progress/hold wording where permissible                        | Handoff requires actual physical evidence             |
 
 ### 9.2 Retry and exactly-once customer effect
 
-A repeated click, lost response, background retry, duplicated webhook or concurrent request **must not** create unintended duplicate payment, order, inventory reservation, vendor assignment or customer support action. Distributed delivery may be *at-least-once*; correctness is achieved by governed idempotency/replay semantics and reconciliation rather than pretending the network is exactly-once. An unknown outcome requires inquiry/reconciliation, not blind high-risk retry.
+A repeated click, lost response, background retry, duplicated webhook or concurrent request **must not** create unintended duplicate payment, order, inventory reservation, vendor assignment or customer support action. Distributed delivery may be _at-least-once_; correctness is achieved by governed idempotency/replay semantics and reconciliation rather than pretending the network is exactly-once. An unknown outcome requires inquiry/reconciliation, not blind high-risk retry.
 
 ### 9.3 Quality of fallback
 
@@ -376,129 +376,129 @@ Each row is a **product acceptance candidate**, not an instruction to implement 
 
 ### 10.1 Performance and operational efficiency (`CX8-QR-001..008`)
 
-| ID | Tier | Requirement | Observable acceptance obligation |
-|---|---|---|---|
-| `CX8-QR-001` | P0+ | Every released public route reports LCP/INP/CLS with separate field/lab provenance | Field p75 values only when sample valid; otherwise `NOT_VERIFIED_FIELD`; reproducible lab evidence remains available |
-| `CX8-QR-002` | P0+ | Representative mobile user can load key content and reach primary action without unnecessary work | Real/mobile or explicitly labelled emulation task, waterfall, visual recording and critical-action trace |
-| `CX8-QR-003` | P0+ | Basic route remains independent of optional AI/editor/recommendation services | Disable those services; home, offer and assisted inquiry work within scoped fallback |
-| `CX8-QR-004` | P0+ | Images, fonts and media remain usable without unexpected movement or illegible fallback | Asset/CLS review in cold/warm cache, relevant viewports and slow connection |
-| `CX8-QR-005` | P0+ | Every approved page template has a reproducible lab budget and named owner before code approval | Signed budget registry with baseline evidence; no invented budget for unbuilt templates |
-| `CX8-QR-006` | P1 | Catalog/cart/checkout responsiveness maintained under realistic item/variant volumes | Task trace with synthetic representative list/cart sizes and stale-state transitions |
-| `CX8-QR-007` | P2 | Advanced editor/AI is lazily isolated and its failure cannot block standard journeys | Bundle comparison + disabled-feature test + fallback evidence |
-| `CX8-QR-008` | P0+ | New release does not regress existing protected customer critical paths silently | Exact-revision before/after comparison; failing cases remediated or independently dispositioned |
+| ID           | Tier | Requirement                                                                                       | Observable acceptance obligation                                                                                     |
+| ------------ | ---- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `CX8-QR-001` | P0+  | Every released public route reports LCP/INP/CLS with separate field/lab provenance                | Field p75 values only when sample valid; otherwise `NOT_VERIFIED_FIELD`; reproducible lab evidence remains available |
+| `CX8-QR-002` | P0+  | Representative mobile user can load key content and reach primary action without unnecessary work | Real/mobile or explicitly labelled emulation task, waterfall, visual recording and critical-action trace             |
+| `CX8-QR-003` | P0+  | Basic route remains independent of optional AI/editor/recommendation services                     | Disable those services; home, offer and assisted inquiry work within scoped fallback                                 |
+| `CX8-QR-004` | P0+  | Images, fonts and media remain usable without unexpected movement or illegible fallback           | Asset/CLS review in cold/warm cache, relevant viewports and slow connection                                          |
+| `CX8-QR-005` | P0+  | Every approved page template has a reproducible lab budget and named owner before code approval   | Signed budget registry with baseline evidence; no invented budget for unbuilt templates                              |
+| `CX8-QR-006` | P1   | Catalog/cart/checkout responsiveness maintained under realistic item/variant volumes              | Task trace with synthetic representative list/cart sizes and stale-state transitions                                 |
+| `CX8-QR-007` | P2   | Advanced editor/AI is lazily isolated and its failure cannot block standard journeys              | Bundle comparison + disabled-feature test + fallback evidence                                                        |
+| `CX8-QR-008` | P0+  | New release does not regress existing protected customer critical paths silently                  | Exact-revision before/after comparison; failing cases remediated or independently dispositioned                      |
 
 ### 10.2 Accessibility and content (`CX8-QR-009..016`)
 
-| ID | Tier | Requirement | Observable acceptance obligation |
-|---|---|---|---|
-| `CX8-QR-009` | P0+ | WCAG 2.2 AA target applies to all released customer-controlled states and full paths | Item-level manual/automated findings and scope; no blanket conformance claim from scanning alone |
-| `CX8-QR-010` | P0+ | Every critical task works with keyboard-only navigation, including error and retry | Keyboard record shows reachability, order, focus visibility and restoration |
-| `CX8-QR-011` | P0+ | Screen reader can identify task, required inputs, errors, live status and result | Explicit assistive tech/browser profile, role/name/state checks and manual task evidence |
-| `CX8-QR-012` | P0+ | Zoom, narrow layouts, virtual keyboards and touch do not hide actions | Device matrix: no major inaccessible CTA, scroll trap, covered focus or text loss |
-| `CX8-QR-013` | P0+ | Reduced motion and non-color-only status cues preserve meaning | OS preference simulation and status comprehension check |
-| `CX8-QR-014` | P0+ | Errors contain helpful Indonesian copy and preserve recoverable fields | Negative form UX test; labels and remedy understood without internal codes |
-| `CX8-QR-015` | P1 | Authentication, checkout, proof review and portal retain accessible completion path | End-to-end keyboard/AT tasks, third-party embed or redirect included |
-| `CX8-QR-016` | P2 | Rich editor uses operable alternative for any nonessential drag/canvas-dependent action | Applicable keyboard/mobile assistive task or expressly approved equivalent service path |
+| ID           | Tier | Requirement                                                                             | Observable acceptance obligation                                                                 |
+| ------------ | ---- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `CX8-QR-009` | P0+  | WCAG 2.2 AA target applies to all released customer-controlled states and full paths    | Item-level manual/automated findings and scope; no blanket conformance claim from scanning alone |
+| `CX8-QR-010` | P0+  | Every critical task works with keyboard-only navigation, including error and retry      | Keyboard record shows reachability, order, focus visibility and restoration                      |
+| `CX8-QR-011` | P0+  | Screen reader can identify task, required inputs, errors, live status and result        | Explicit assistive tech/browser profile, role/name/state checks and manual task evidence         |
+| `CX8-QR-012` | P0+  | Zoom, narrow layouts, virtual keyboards and touch do not hide actions                   | Device matrix: no major inaccessible CTA, scroll trap, covered focus or text loss                |
+| `CX8-QR-013` | P0+  | Reduced motion and non-color-only status cues preserve meaning                          | OS preference simulation and status comprehension check                                          |
+| `CX8-QR-014` | P0+  | Errors contain helpful Indonesian copy and preserve recoverable fields                  | Negative form UX test; labels and remedy understood without internal codes                       |
+| `CX8-QR-015` | P1   | Authentication, checkout, proof review and portal retain accessible completion path     | End-to-end keyboard/AT tasks, third-party embed or redirect included                             |
+| `CX8-QR-016` | P2   | Rich editor uses operable alternative for any nonessential drag/canvas-dependent action | Applicable keyboard/mobile assistive task or expressly approved equivalent service path          |
 
 ### 10.3 Transaction truth and critical state (`CX8-QR-017..024`)
 
-| ID | Tier | Requirement | Observable acceptance obligation |
-|---|---|---|---|
-| `CX8-QR-017` | P0 | Inquiry success only shown after durable, traceable acceptance | Simulated lost/failed response does not create fabricated reference or uncontrolled duplicate |
-| `CX8-QR-018` | P0 | Requested delivery date is distinguished from confirmed feasibility | Customer copy and governed state inspection agree; no unconditional promise |
-| `CX8-QR-019` | P0+ | Estimate, current quote, accepted quote and production approval are visually/semantically distinct | Stale/version/rejected states tested against authoritative source |
-| `CX8-QR-020` | P1 | Cart price and stock are revalidated before order commitment | Changed price/stock prompts appropriate review; no silent charge/oversell |
-| `CX8-QR-021` | P1 | Payment state uses verified governed evidence, not gateway redirect | Duplicate/spoofed/late callback and unknown outcome all fail safely |
-| `CX8-QR-022` | P1 | Shipment status distinguishes label created, handoff, transit and delivery | Simulated out-of-order carrier signal does not cause false confirmation |
-| `CX8-QR-023` | P1 | Return request, approved return, refund and resolution remain separate in customer copy | Distinct transitions and negative financial outcome verified |
-| `CX8-QR-024` | P1/P2 | Reorder is a fresh transaction with current checks, not blind copying of old terms | Historical price/rights/configuration/organization changes trigger revalidation |
+| ID           | Tier  | Requirement                                                                                        | Observable acceptance obligation                                                              |
+| ------------ | ----- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `CX8-QR-017` | P0    | Inquiry success only shown after durable, traceable acceptance                                     | Simulated lost/failed response does not create fabricated reference or uncontrolled duplicate |
+| `CX8-QR-018` | P0    | Requested delivery date is distinguished from confirmed feasibility                                | Customer copy and governed state inspection agree; no unconditional promise                   |
+| `CX8-QR-019` | P0+   | Estimate, current quote, accepted quote and production approval are visually/semantically distinct | Stale/version/rejected states tested against authoritative source                             |
+| `CX8-QR-020` | P1    | Cart price and stock are revalidated before order commitment                                       | Changed price/stock prompts appropriate review; no silent charge/oversell                     |
+| `CX8-QR-021` | P1    | Payment state uses verified governed evidence, not gateway redirect                                | Duplicate/spoofed/late callback and unknown outcome all fail safely                           |
+| `CX8-QR-022` | P1    | Shipment status distinguishes label created, handoff, transit and delivery                         | Simulated out-of-order carrier signal does not cause false confirmation                       |
+| `CX8-QR-023` | P1    | Return request, approved return, refund and resolution remain separate in customer copy            | Distinct transitions and negative financial outcome verified                                  |
+| `CX8-QR-024` | P1/P2 | Reorder is a fresh transaction with current checks, not blind copying of old terms                 | Historical price/rights/configuration/organization changes trigger revalidation               |
 
 ### 10.4 Privacy, security and authorization (`CX8-QR-025..032`)
 
-| ID | Tier | Requirement | Observable acceptance obligation |
-|---|---|---|---|
-| `CX8-QR-025` | P0+ | Customer content/private business data inaccessible to unrelated actors | API/direct URL, guessed object ID and nested-resource negative tests where relevant |
-| `CX8-QR-026` | P1 | B2B user actions checked by identity, membership, capability and resource scope | Cross-organization and revoked membership tests; request submitter ≠ automatic approver |
-| `CX8-QR-027` | P0/P1 | Artwork intake and storage cannot bypass file and IP/privacy review | Invalid type, malicious active content, oversized and unauthorized-link test |
-| `CX8-QR-028` | P0+ | Public input, redirects and errors cannot expose secrets/private documents | Server-side validation and secure-response review; adverse traces redact sensitive data |
-| `CX8-QR-029` | P1 | Guest tracking requires a specifically approved proof-of-access mechanism | Enumeration/rate/expiry tests and no authorization from guessable order ID alone |
-| `CX8-QR-030` | P0+ | Consent and communication purpose cannot be silently conflated | Transactional/marketing opt-out negative matrix and logging audit |
-| `CX8-QR-031` | P1/P2 | External integrations validate identity, signature, replay and tenant mapping under approved contracts | Spoofed callback, wrong seller/tenant, duplicate signal tests |
-| `CX8-QR-032` | P1/P2 | AI has no implicit authority for financial, refund, credit, price or production commitments | Tool/direct API denial and prompt-injection/unsupported-claim tests |
+| ID           | Tier  | Requirement                                                                                            | Observable acceptance obligation                                                        |
+| ------------ | ----- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| `CX8-QR-025` | P0+   | Customer content/private business data inaccessible to unrelated actors                                | API/direct URL, guessed object ID and nested-resource negative tests where relevant     |
+| `CX8-QR-026` | P1    | B2B user actions checked by identity, membership, capability and resource scope                        | Cross-organization and revoked membership tests; request submitter ≠ automatic approver |
+| `CX8-QR-027` | P0/P1 | Artwork intake and storage cannot bypass file and IP/privacy review                                    | Invalid type, malicious active content, oversized and unauthorized-link test            |
+| `CX8-QR-028` | P0+   | Public input, redirects and errors cannot expose secrets/private documents                             | Server-side validation and secure-response review; adverse traces redact sensitive data |
+| `CX8-QR-029` | P1    | Guest tracking requires a specifically approved proof-of-access mechanism                              | Enumeration/rate/expiry tests and no authorization from guessable order ID alone        |
+| `CX8-QR-030` | P0+   | Consent and communication purpose cannot be silently conflated                                         | Transactional/marketing opt-out negative matrix and logging audit                       |
+| `CX8-QR-031` | P1/P2 | External integrations validate identity, signature, replay and tenant mapping under approved contracts | Spoofed callback, wrong seller/tenant, duplicate signal tests                           |
+| `CX8-QR-032` | P1/P2 | AI has no implicit authority for financial, refund, credit, price or production commitments            | Tool/direct API denial and prompt-injection/unsupported-claim tests                     |
 
 ### 10.5 Recovery, channels and physical handoff (`CX8-QR-033..040`)
 
-| ID | Tier | Requirement | Observable acceptance obligation |
-|---|---|---|---|
-| `CX8-QR-033` | P0+ | Customer receives truthful recovery actions for offline, timeout and unknown outcome | Cannot lose accepted action silently; can resume or get owned assistance |
-| `CX8-QR-034` | P0+ | Repeat submission and concurrency cannot duplicate intended business effect | Same-intent replay with concurrency and lost response; inspect durable effect count |
-| `CX8-QR-035` | P0+ | Notification failure never rolls back/erases already accepted customer request | Accepted reference persists; alert/queue is recoverable |
-| `CX8-QR-036` | P1 | Provider outages are isolated with monitoring, retry/reconcile and explicit owner | Synthetic sandbox fault exercise shows no blind retry of high-risk action |
-| `CX8-QR-037` | P1 | Customer sees accurate freshness/uncertainty of cross-channel order and shipment facts | Stale and conflicting sources produce qualified state, not invented real-time data |
-| `CX8-QR-038` | P0+ | Customer request context persists into governed operations without founder retyping | Source-to-operator trace/reconciliation and exception handoff evidence |
-| `CX8-QR-039` | P0+ | Physical work completion requires appropriate real-world evidence | No software-only “QC passed”, “packed”, “dispatched” by timer, animated screen or AI guess |
-| `CX8-QR-040` | P0+ | Founder must be able to identify and resolve relevant exceptional work | Pilot/bounded ops test identifies owner, next action, unknowns and no shadow spreadsheet truth |
+| ID           | Tier | Requirement                                                                            | Observable acceptance obligation                                                               |
+| ------------ | ---- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `CX8-QR-033` | P0+  | Customer receives truthful recovery actions for offline, timeout and unknown outcome   | Cannot lose accepted action silently; can resume or get owned assistance                       |
+| `CX8-QR-034` | P0+  | Repeat submission and concurrency cannot duplicate intended business effect            | Same-intent replay with concurrency and lost response; inspect durable effect count            |
+| `CX8-QR-035` | P0+  | Notification failure never rolls back/erases already accepted customer request         | Accepted reference persists; alert/queue is recoverable                                        |
+| `CX8-QR-036` | P1   | Provider outages are isolated with monitoring, retry/reconcile and explicit owner      | Synthetic sandbox fault exercise shows no blind retry of high-risk action                      |
+| `CX8-QR-037` | P1   | Customer sees accurate freshness/uncertainty of cross-channel order and shipment facts | Stale and conflicting sources produce qualified state, not invented real-time data             |
+| `CX8-QR-038` | P0+  | Customer request context persists into governed operations without founder retyping    | Source-to-operator trace/reconciliation and exception handoff evidence                         |
+| `CX8-QR-039` | P0+  | Physical work completion requires appropriate real-world evidence                      | No software-only “QC passed”, “packed”, “dispatched” by timer, animated screen or AI guess     |
+| `CX8-QR-040` | P0+  | Founder must be able to identify and resolve relevant exceptional work                 | Pilot/bounded ops test identifies owner, next action, unknowns and no shadow spreadsheet truth |
 
 ### 10.6 Measurement and release evidence (`CX8-QR-041..048`)
 
-| ID | Tier | Requirement | Observable acceptance obligation |
-|---|---|---|---|
-| `CX8-QR-041` | P0+ | Every candidate release declares exact commit/build/environment/scope | QA artifact has provenance; changes invalidate affected evidence |
-| `CX8-QR-042` | P0+ | Applicable test matrix covers positive, negative, authorized/unauthorized and failure recovery | AC traceability, fixtures, results, blocked/not-run statuses; no unsourced 100% |
-| `CX8-QR-043` | P0+ | Product acceptance includes a real browser/user workflow, not tests or screenshots alone | Recorded task completion, UX comprehension and assistive test where applicable |
-| `CX8-QR-044` | P0+ | Operational pilot readiness remains separate from public customer frontend readiness | Launch gate checklist cites exact authoritative business roadmap; no cross-gate assumption |
-| `CX8-QR-045` | P0+ | Independent review required where risk governance demands it | Reviewer identity/context, exact HEAD, scope, unresolved findings and explicit disposition |
-| `CX8-QR-046` | P0+ | Relevant failures and customer effort can be observed without leaking sensitive information | Telemetry dictionary, retention/consent review, correlation and alert verification |
-| `CX8-QR-047` | P1/P2 | Provider sandbox result and later live readiness are separately recorded | Provider/version/tenant/sandbox details; no live PASS inferred from mocks |
-| `CX8-QR-048` | P0+ | Only Owner or authorized release governance can permit promotion after mandatory gates | Written decision, known `NOT_VERIFIED`, exceptions, release/rollback owner |
+| ID           | Tier  | Requirement                                                                                    | Observable acceptance obligation                                                           |
+| ------------ | ----- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `CX8-QR-041` | P0+   | Every candidate release declares exact commit/build/environment/scope                          | QA artifact has provenance; changes invalidate affected evidence                           |
+| `CX8-QR-042` | P0+   | Applicable test matrix covers positive, negative, authorized/unauthorized and failure recovery | AC traceability, fixtures, results, blocked/not-run statuses; no unsourced 100%            |
+| `CX8-QR-043` | P0+   | Product acceptance includes a real browser/user workflow, not tests or screenshots alone       | Recorded task completion, UX comprehension and assistive test where applicable             |
+| `CX8-QR-044` | P0+   | Operational pilot readiness remains separate from public customer frontend readiness           | Launch gate checklist cites exact authoritative business roadmap; no cross-gate assumption |
+| `CX8-QR-045` | P0+   | Independent review required where risk governance demands it                                   | Reviewer identity/context, exact HEAD, scope, unresolved findings and explicit disposition |
+| `CX8-QR-046` | P0+   | Relevant failures and customer effort can be observed without leaking sensitive information    | Telemetry dictionary, retention/consent review, correlation and alert verification         |
+| `CX8-QR-047` | P1/P2 | Provider sandbox result and later live readiness are separately recorded                       | Provider/version/tenant/sandbox details; no live PASS inferred from mocks                  |
+| `CX8-QR-048` | P0+   | Only Owner or authorized release governance can permit promotion after mandatory gates         | Written decision, known `NOT_VERIFIED`, exceptions, release/rollback owner                 |
 
 ## 11. Business and experience rules (`CX8-BR-001..024`)
 
-| ID | Rule |
-|---|---|
-| `CX8-BR-001` | `DRAFT` docs, accepted product definition, implemented code, verified QA and operational launch are different statuses. |
-| `CX8-BR-002` | No quality badge, claim or CI report may imply a metric was measured when it was not. |
-| `CX8-BR-003` | Product quality scopes follow approved capability slices; absent P1/P2 features are not automatic P0 blockers. |
+| ID           | Rule                                                                                                                                                     |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CX8-BR-001` | `DRAFT` docs, accepted product definition, implemented code, verified QA and operational launch are different statuses.                                  |
+| `CX8-BR-002` | No quality badge, claim or CI report may imply a metric was measured when it was not.                                                                    |
+| `CX8-BR-003` | Product quality scopes follow approved capability slices; absent P1/P2 features are not automatic P0 blockers.                                           |
 | `CX8-BR-004` | A release-blocking cross-organization leak, duplicate financial effect or unauthorized approval cannot be waived by visual quality or Lighthouse scores. |
-| `CX8-BR-005` | Full-page WCAG target includes interaction states and relevant third-party components; automated scans are supporting evidence only. |
-| `CX8-BR-006` | A critical mobile journey remains usable despite optional rich-feature or provider outage. |
-| `CX8-BR-007` | UI success means only the business fact independently and durably proven at the relevant layer. |
-| `CX8-BR-008` | A receipt reference implies actual receipt only; it does not itself mean quote accepted, payment received or production started. |
-| `CX8-BR-009` | Stale quote, artwork, price, capacity and shipment data cannot be silently promoted to current authorized state. |
-| `CX8-BR-010` | Input validation and hiding UI controls do not replace server-side authorization or invariants. |
-| `CX8-BR-011` | Strong retry/reconciliation must preserve logical business intent and avoid duplicate economic effects. |
-| `CX8-BR-012` | The customer may receive a safe unknown/pending status rather than a false success or false failure. |
-| `CX8-BR-013` | Sensitive financial, organization and artwork fields never become analytics labels or third-party URLs without approved policy. |
-| `CX8-BR-014` | P0 minimum assisted contact must be truthful and actually routed to a responsible owner; avoid dead “coming soon” transactional CTAs. |
-| `CX8-BR-015` | Brand expression may vary, but accessible interaction grammar, status semantics and reasonable performance are shared. |
-| `CX8-BR-016` | A production or courier milestone must be derived from authenticated human/provider/physical evidence, never merely elapsed time. |
-| `CX8-BR-017` | AI may explain and recommend within approved policy but cannot invent records or override deterministic money/permission controls. |
-| `CX8-BR-018` | Guest checkout/inquiry is low-friction; guest access to private results is not an authorization bypass. |
-| `CX8-BR-019` | P2 editor/AI cannot impose a new global dependency or unacceptable regression on approved P0/P1 journeys. |
-| `CX8-BR-020` | Unknown CI enforcement, environment identity, third-party terms or test result must remain `NOT_VERIFIED`, not inferred PASS. |
-| `CX8-BR-021` | An engineering finding can block a release even when a product acceptance script succeeds. |
-| `CX8-BR-022` | A product acceptance review can block a customer release even when the software build/security/CI checks pass. |
-| `CX8-BR-023` | The Owner does not authorize implementation, financial exposure or production merely by accepting this draft's wording. |
-| `CX8-BR-024` | No new numerical SLO, performance lab budget or legal policy is finalized without baseline, domain owner and evidence review. |
+| `CX8-BR-005` | Full-page WCAG target includes interaction states and relevant third-party components; automated scans are supporting evidence only.                     |
+| `CX8-BR-006` | A critical mobile journey remains usable despite optional rich-feature or provider outage.                                                               |
+| `CX8-BR-007` | UI success means only the business fact independently and durably proven at the relevant layer.                                                          |
+| `CX8-BR-008` | A receipt reference implies actual receipt only; it does not itself mean quote accepted, payment received or production started.                         |
+| `CX8-BR-009` | Stale quote, artwork, price, capacity and shipment data cannot be silently promoted to current authorized state.                                         |
+| `CX8-BR-010` | Input validation and hiding UI controls do not replace server-side authorization or invariants.                                                          |
+| `CX8-BR-011` | Strong retry/reconciliation must preserve logical business intent and avoid duplicate economic effects.                                                  |
+| `CX8-BR-012` | The customer may receive a safe unknown/pending status rather than a false success or false failure.                                                     |
+| `CX8-BR-013` | Sensitive financial, organization and artwork fields never become analytics labels or third-party URLs without approved policy.                          |
+| `CX8-BR-014` | P0 minimum assisted contact must be truthful and actually routed to a responsible owner; avoid dead “coming soon” transactional CTAs.                    |
+| `CX8-BR-015` | Brand expression may vary, but accessible interaction grammar, status semantics and reasonable performance are shared.                                   |
+| `CX8-BR-016` | A production or courier milestone must be derived from authenticated human/provider/physical evidence, never merely elapsed time.                        |
+| `CX8-BR-017` | AI may explain and recommend within approved policy but cannot invent records or override deterministic money/permission controls.                       |
+| `CX8-BR-018` | Guest checkout/inquiry is low-friction; guest access to private results is not an authorization bypass.                                                  |
+| `CX8-BR-019` | P2 editor/AI cannot impose a new global dependency or unacceptable regression on approved P0/P1 journeys.                                                |
+| `CX8-BR-020` | Unknown CI enforcement, environment identity, third-party terms or test result must remain `NOT_VERIFIED`, not inferred PASS.                            |
+| `CX8-BR-021` | An engineering finding can block a release even when a product acceptance script succeeds.                                                               |
+| `CX8-BR-022` | A product acceptance review can block a customer release even when the software build/security/CI checks pass.                                           |
+| `CX8-BR-023` | The Owner does not authorize implementation, financial exposure or production merely by accepting this draft's wording.                                  |
+| `CX8-BR-024` | No new numerical SLO, performance lab budget or legal policy is finalized without baseline, domain owner and evidence review.                            |
 
 ## 12. Measurement plan and proposed experience scorecard
 
-| Key | Question | Measure | Baseline | Review cadence |
-|---|---|---|---|---|
-| `CX8-M01` | Is mobile page loading performant? | p75 mobile LCP by route group + sample counts | `NOT_VERIFIED_FIELD` | Post-launch with valid volume |
-| `CX8-M02` | Can people interact promptly? | p75 mobile/desktop INP by group | `NOT_VERIFIED_FIELD` | Post-launch with valid volume |
-| `CX8-M03` | Does UI visually jump? | p75 CLS by device and route group | `NOT_VERIFIED_FIELD` | Post-launch with valid volume |
-| `CX8-M04` | Are pages light on target mobile? | Lab route budget, load trace, JS/media bytes | `NOT_MEASURED` | Every scoped frontend change |
-| `CX8-M05` | Can customers finish the task unaided? | Task completion, reason for error and observed friction | `NOT_TESTED` | Pre-launch + post-change |
-| `CX8-M06` | Are key tasks inclusive? | Severity and incidence of WCAG/AT blockers in tested scope | `NOT_REVIEWED` | Before each applicable release |
-| `CX8-M07` | Is quote/checkout truth correct? | Contradictory status defects and negative tests | `NOT_TESTED` | Each transactional change |
-| `CX8-M08` | Are requests being lost/duplicated? | Durable unique-intent acceptance and duplicate effect rate | `NOT_MEASURED` | Relevant P0/P1 release + live pilot |
-| `CX8-M09` | Are founders manually reconstructing requests? | Manual re-entry count and minutes per accepted request | `NOT_MEASURED` | Pilot, before/after automation |
-| `CX8-M10` | Is provider failure recoverable? | Unknown-outcome age, recovery time and unresolved attempts | `NOT_MEASURED` | Each live provider launch |
-| `CX8-M11` | Does support become less repetitive? | Avoidable status inquiries and repeat-contact rate | `NOT_MEASURED` | P1 after enough cases |
-| `CX8-M12` | Do customers trust the information? | Comprehension of quote/price/status/lead time | `NOT_TESTED` | Pre-launch user task tests |
-| `CX8-M13` | Is AI useful enough to justify complexity? | Resolved task % without unsupported claims, escalation and cost | `NOT_MEASURED` | Only if AI feature approved |
-| `CX8-M14` | Is demand within capacity? | Open actionable work vs capacity, delayed promises, founder escalations | `NOT_MEASURED` | Operational pilot and launch review |
+| Key       | Question                                       | Measure                                                                 | Baseline             | Review cadence                      |
+| --------- | ---------------------------------------------- | ----------------------------------------------------------------------- | -------------------- | ----------------------------------- |
+| `CX8-M01` | Is mobile page loading performant?             | p75 mobile LCP by route group + sample counts                           | `NOT_VERIFIED_FIELD` | Post-launch with valid volume       |
+| `CX8-M02` | Can people interact promptly?                  | p75 mobile/desktop INP by group                                         | `NOT_VERIFIED_FIELD` | Post-launch with valid volume       |
+| `CX8-M03` | Does UI visually jump?                         | p75 CLS by device and route group                                       | `NOT_VERIFIED_FIELD` | Post-launch with valid volume       |
+| `CX8-M04` | Are pages light on target mobile?              | Lab route budget, load trace, JS/media bytes                            | `NOT_MEASURED`       | Every scoped frontend change        |
+| `CX8-M05` | Can customers finish the task unaided?         | Task completion, reason for error and observed friction                 | `NOT_TESTED`         | Pre-launch + post-change            |
+| `CX8-M06` | Are key tasks inclusive?                       | Severity and incidence of WCAG/AT blockers in tested scope              | `NOT_REVIEWED`       | Before each applicable release      |
+| `CX8-M07` | Is quote/checkout truth correct?               | Contradictory status defects and negative tests                         | `NOT_TESTED`         | Each transactional change           |
+| `CX8-M08` | Are requests being lost/duplicated?            | Durable unique-intent acceptance and duplicate effect rate              | `NOT_MEASURED`       | Relevant P0/P1 release + live pilot |
+| `CX8-M09` | Are founders manually reconstructing requests? | Manual re-entry count and minutes per accepted request                  | `NOT_MEASURED`       | Pilot, before/after automation      |
+| `CX8-M10` | Is provider failure recoverable?               | Unknown-outcome age, recovery time and unresolved attempts              | `NOT_MEASURED`       | Each live provider launch           |
+| `CX8-M11` | Does support become less repetitive?           | Avoidable status inquiries and repeat-contact rate                      | `NOT_MEASURED`       | P1 after enough cases               |
+| `CX8-M12` | Do customers trust the information?            | Comprehension of quote/price/status/lead time                           | `NOT_TESTED`         | Pre-launch user task tests          |
+| `CX8-M13` | Is AI useful enough to justify complexity?     | Resolved task % without unsupported claims, escalation and cost         | `NOT_MEASURED`       | Only if AI feature approved         |
+| `CX8-M14` | Is demand within capacity?                     | Open actionable work vs capacity, delayed promises, founder escalations | `NOT_MEASURED`       | Operational pilot and launch review |
 
 **Telemetry implementation direction only:** product analytics events must be privacy reviewed and must never be confused with authoritative payment/order events. Do not invent `customer_success` if the customer merely viewed a thank-you screen. High-risk error/correlation logs require pseudonymization, access control and retention review. A telemetry SDK itself is a new privacy/performance dependency that must pass CX8-QR-003/028/030.
 
@@ -508,71 +508,71 @@ All tests below are **requirements for future bounded engineering slices**, not 
 
 ### 13.1 P0 customer entry, mobile and inquiry (`CX8-AC-001..012`)
 
-| ID | Given / When / Then | Required evidence |
-|---|---|---|
-| `CX8-AC-001` | **Given** unfamiliar mobile user; **when** they open Home; **then** they identify actual Shop/Custom/Business/Merch entry and know which is currently supported, without navigating an internal department taxonomy | Moderated/unmoderated task + mobile recording |
-| `CX8-AC-002` | **Given** approved P0 landing; **when** loaded cold under declared mobile profile; **then** meaningful hero, CTA and content are measured with trace, loading errors and layout stability documented | Lab trace, browser/snapshot, LCP/CLS |
-| `CX8-AC-003` | **Given** mobile or keyboard user accessing Home, Custom/Business, or direct customer links; **when** customer navigates via menu/CTA/form or revisits/refreshes deep links (quotes, proofs, tracking, cart, order); **then** correct order, visible focus, accessible labels, state restoration, and clean recovery on invalid/expired links without credential leakage are verified | Accessible navigation and deep-link recovery evidence |
-| `CX8-AC-004` | **Given** a screen reader user; **when** required form errors occur; **then** error reason, field and correction are discoverable without sight; values remain intact | AT recording + form/API negative test |
-| `CX8-AC-005` | **Given** user submits a valid Custom inquiry; **when** durable acceptance succeeds; **then** one correct reference, next action and human-owned follow-up appear; no order/payment/production status is implied | Browser acceptance + canonical record inspection |
+| ID           | Given / When / Then                                                                                                                                                                                                                                                                                                                                                                                                                          | Required evidence                                         |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `CX8-AC-001` | **Given** unfamiliar mobile user; **when** they open Home; **then** they identify actual Shop/Custom/Business/Merch entry and know which is currently supported, without navigating an internal department taxonomy                                                                                                                                                                                                                          | Moderated/unmoderated task + mobile recording             |
+| `CX8-AC-002` | **Given** approved P0 landing; **when** loaded cold under declared mobile profile; **then** meaningful hero, CTA and content are measured with trace, loading errors and layout stability documented                                                                                                                                                                                                                                         | Lab trace, browser/snapshot, LCP/CLS                      |
+| `CX8-AC-003` | **Given** mobile or keyboard user accessing Home, Custom/Business, or direct customer links; **when** customer navigates via menu/CTA/form or revisits/refreshes deep links (quotes, proofs, tracking, cart, order); **then** correct order, visible focus, accessible labels, state restoration, and clean recovery on invalid/expired links without credential leakage are verified                                                        | Accessible navigation and deep-link recovery evidence     |
+| `CX8-AC-004` | **Given** a screen reader user; **when** required form errors occur; **then** error reason, field and correction are discoverable without sight; values remain intact                                                                                                                                                                                                                                                                        | AT recording + form/API negative test                     |
+| `CX8-AC-005` | **Given** user submits a valid Custom inquiry; **when** durable acceptance succeeds; **then** one correct reference, next action and human-owned follow-up appear; no order/payment/production status is implied                                                                                                                                                                                                                             | Browser acceptance + canonical record inspection          |
 | `CX8-AC-006` | **Given** custom inquiry form with conditional inputs or missing quantity/invalid contact/artwork; **when** customer toggles options or submits form; **then** advanced fields (quantity breakdown, print placement, deadline qualifiers, tax/invoice) reveal or collapse progressively without loss of valid prior inputs, validation errors are specific and non-destructive, and no accepted business effect occurs on invalid submission | Negative browser/API + progressive disclosure state proof |
-| `CX8-AC-007` | **Given** deadline requested sooner than approved feasibility; **when** customer submits; **then** system preserves request as unconfirmed rather than promising date or enabling unsupported rush purchase | Content review + domain handoff trace |
-| `CX8-AC-008` | **Given** accepted request but message provider offline; **when** notification fails; **then** receipt remains valid and failed follow-up is visible for recovery without duplicate lead | Simulated provider failure + state inspection |
-| `CX8-AC-009` | **Given** user clicks submit twice/loses response; **when** stable-intent request retries; **then** exactly one intended accepted effect exists, including concurrent retry | Concurrency + duplicate-effect assertion |
-| `CX8-AC-010` | **Given** network drops before acceptance; **when** request cannot be persisted; **then** UI does not claim receipt; customer sees permitted restore/retry/human route | Fault injection + task recording |
-| `CX8-AC-011` | **Given** `prefers-reduced-motion`, large text and virtual keyboard; **when** mobile visitor submits; **then** no motion-only feedback or covered action, and complete result is readable | Real/mobile browser matrix |
-| `CX8-AC-012` | **Given** AI, analytics and rich editor unreachable; **when** visitor opens and uses declared P0 routes; **then** the core browsing and assisted inquiry remain usable | Network interception + no-third-party flow |
+| `CX8-AC-007` | **Given** deadline requested sooner than approved feasibility; **when** customer submits; **then** system preserves request as unconfirmed rather than promising date or enabling unsupported rush purchase                                                                                                                                                                                                                                  | Content review + domain handoff trace                     |
+| `CX8-AC-008` | **Given** accepted request but message provider offline; **when** notification fails; **then** receipt remains valid and failed follow-up is visible for recovery without duplicate lead                                                                                                                                                                                                                                                     | Simulated provider failure + state inspection             |
+| `CX8-AC-009` | **Given** user clicks submit twice/loses response; **when** stable-intent request retries; **then** exactly one intended accepted effect exists, including concurrent retry                                                                                                                                                                                                                                                                  | Concurrency + duplicate-effect assertion                  |
+| `CX8-AC-010` | **Given** network drops before acceptance; **when** request cannot be persisted; **then** UI does not claim receipt; customer sees permitted restore/retry/human route                                                                                                                                                                                                                                                                       | Fault injection + task recording                          |
+| `CX8-AC-011` | **Given** `prefers-reduced-motion`, large text and virtual keyboard; **when** mobile visitor submits; **then** no motion-only feedback or covered action, and complete result is readable                                                                                                                                                                                                                                                    | Real/mobile browser matrix                                |
+| `CX8-AC-012` | **Given** AI, analytics and rich editor unreachable; **when** visitor opens and uses declared P0 routes; **then** the core browsing and assisted inquiry remain usable                                                                                                                                                                                                                                                                       | Network interception + no-third-party flow                |
 
 ### 13.2 P1 retail/catalog and payments (`CX8-AC-013..024`)
 
-| ID | Given / When / Then | Required evidence |
-|---|---|---|
+| ID           | Given / When / Then                                                                                                                                                                                                                                                                                                                                                                                                        | Required evidence                               |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | `CX8-AC-013` | **Given** published catalog with valid/invalid variants and stock states; **when** customer searches, applies category/material/fit/price filters, sorts, or resets controls; **then** only active sellable items appear, filter/sort state persists and resets cleanly, variant selection reflects real SKU, and empty or out-of-stock results offer helpful next steps without exposing hidden internal inventory states | Catalog contract and discovery filter/sort test |
-| `CX8-AC-014` | **Given** current product photo/font assets; **when** constrained mobile user sees PDP; **then** selected item and purchase controls are legible and accessible without severe layout jump | Media trace + browser/AT review |
-| `CX8-AC-015` | **Given** item in cart and price changes before checkout; **when** validation occurs; **then** customer reviews correct new terms and cannot silently pay old/new unexpected price | UI + domain transaction test |
-| `CX8-AC-016` | **Given** stock runs out after item selected; **when** checkout commits; **then** system prevents unapproved oversell and shows appropriate alternate action | Reservation/race + UI test |
-| `CX8-AC-017` | **Given** customer uses guest checkout; **when** personal/contact details processed; **then** no forced account solely for vanity; private order later accessed only through approved proof-of-access | UX task + security negative test |
-| `CX8-AC-018` | **Given** duplicate checkout action; **when** user retries under concurrency; **then** exactly one intended commercial order/charge occurs and response aligns with durable result | Idempotency + financial-effect assertion |
-| `CX8-AC-019` | **Given** gateway redirect says success but verified provider outcome missing; **when** user returns; **then** UI shows pending/unknown and does not falsely assert payment recorded | Provider sandbox/simulator + finance read |
-| `CX8-AC-020` | **Given** payment callback signed incorrectly/duplicated/out of order; **when** processed; **then** canonical amount/state remains valid, malicious events denied, later valid correction reconciled properly | Signature/auth, replay, domain ledger test |
-| `CX8-AC-021` | **Given** provider creates attempt then network times out; **when** customer retries; **then** system determines prior outcome before potential new charge and preserves trace | Unknown-outcome fault injection + sandbox |
-| `CX8-AC-022` | **Given** payment accepted; **when** notification fails; **then** payment truth remains and user can retrieve status, not trigger a duplicate charge via notification resend | Message outage + end-to-end accounting read |
-| `CX8-AC-023` | **Given** screen-reader/keyboard-only customer; **when** full supported checkout runs; **then** delivery, payment, error, redirect/return and confirmation are accessible in intended provider context | Full-path AT + browser test |
-| `CX8-AC-024` | **Given** new checkout SDK bundle; **when** compared with approved P0 routes; **then** P0 remains within approved performance budgets with no global provider dependency | Template bundle/waterfall diff |
+| `CX8-AC-014` | **Given** current product photo/font assets; **when** constrained mobile user sees PDP; **then** selected item and purchase controls are legible and accessible without severe layout jump                                                                                                                                                                                                                                 | Media trace + browser/AT review                 |
+| `CX8-AC-015` | **Given** item in cart and price changes before checkout; **when** validation occurs; **then** customer reviews correct new terms and cannot silently pay old/new unexpected price                                                                                                                                                                                                                                         | UI + domain transaction test                    |
+| `CX8-AC-016` | **Given** stock runs out after item selected; **when** checkout commits; **then** system prevents unapproved oversell and shows appropriate alternate action                                                                                                                                                                                                                                                               | Reservation/race + UI test                      |
+| `CX8-AC-017` | **Given** customer uses guest checkout; **when** personal/contact details processed; **then** no forced account solely for vanity; private order later accessed only through approved proof-of-access                                                                                                                                                                                                                      | UX task + security negative test                |
+| `CX8-AC-018` | **Given** duplicate checkout action; **when** user retries under concurrency; **then** exactly one intended commercial order/charge occurs and response aligns with durable result                                                                                                                                                                                                                                         | Idempotency + financial-effect assertion        |
+| `CX8-AC-019` | **Given** gateway redirect says success but verified provider outcome missing; **when** user returns; **then** UI shows pending/unknown and does not falsely assert payment recorded                                                                                                                                                                                                                                       | Provider sandbox/simulator + finance read       |
+| `CX8-AC-020` | **Given** payment callback signed incorrectly/duplicated/out of order; **when** processed; **then** canonical amount/state remains valid, malicious events denied, later valid correction reconciled properly                                                                                                                                                                                                              | Signature/auth, replay, domain ledger test      |
+| `CX8-AC-021` | **Given** provider creates attempt then network times out; **when** customer retries; **then** system determines prior outcome before potential new charge and preserves trace                                                                                                                                                                                                                                             | Unknown-outcome fault injection + sandbox       |
+| `CX8-AC-022` | **Given** payment accepted; **when** notification fails; **then** payment truth remains and user can retrieve status, not trigger a duplicate charge via notification resend                                                                                                                                                                                                                                               | Message outage + end-to-end accounting read     |
+| `CX8-AC-023` | **Given** screen-reader/keyboard-only customer; **when** full supported checkout runs; **then** delivery, payment, error, redirect/return and confirmation are accessible in intended provider context                                                                                                                                                                                                                     | Full-path AT + browser test                     |
+| `CX8-AC-024` | **Given** new checkout SDK bundle; **when** compared with approved P0 routes; **then** P0 remains within approved performance budgets with no global provider dependency                                                                                                                                                                                                                                                   | Template bundle/waterfall diff                  |
 
 ### 13.3 Account, quote, artwork, service, and fulfillment (`CX8-AC-025..036`)
 
-| ID | Given / When / Then | Required evidence |
-|---|---|---|
-| `CX8-AC-025` | **Given** logged-in user from Company A; **when** opening Company B quote via deep link/API; **then** content and existence details are not leaked and no mutation permitted | Cross-organization API/direct-route negative tests |
-| `CX8-AC-026` | **Given** valid company requester lacking approval capability; **when** approving quote; **then** request is denied even if the UI displays an old button or forwarded link | Authorization + API bypass attempt |
-| `CX8-AC-027` | **Given** approved quote v1 superseded by v2; **when** stale v1 approve clicked; **then** commercial commitment not made silently; latest terms require active review | Version concurrency + customer UI outcome |
-| `CX8-AC-028` | **Given** artwork upload MIME mismatch, malicious SVG or unauthorized URL; **when** file submitted/viewed; **then** safe rejection/quarantine or approved sanitized handling; no unintended disclosure | File/URL security + UI recovery test |
-| `CX8-AC-029` | **Given** proof preview accepted by customer; **when** operational production gate unmet; **then** UI does not claim production-ready or start vendor work by implication | Proof-version acceptance + production guard test |
-| `CX8-AC-030` | **Given** customer accesses own order status; **when** shipment label exists but parcel not handed over; **then** no “shipped” assertion unsupported by handoff proof | State mapping + carrier synthetic test |
-| `CX8-AC-031` | **Given** delivered scan followed by older transit scan; **when** adapter updates; **then** truthful customer status and event history preserved without unsupported regression | Out-of-order event test |
-| `CX8-AC-032` | **Given** valid customer raises return request; **when** submitted; **then** reference links to request/case, not necessarily approved return/refund | Customer journey + state inspection |
-| `CX8-AC-033` | **Given** support case needs finance/production action; **when** escalated; **then** a responsible case owner remains visible and private internal notes stay hidden from customer | Role-based UI/API + operator case test |
-| `CX8-AC-034` | **Given** historical Custom/B2B order; **when** customer reorders; **then** old price, stock, artwork rights, capacity, payment and roles are revalidated as required | Fresh quote/order + negative test |
-| `CX8-AC-035` | **Given** guest receives valid tracking link; **when** link expires/is enumerated; **then** no order info leaks and accessible re-verification path appears | Expiry, enumeration and assistive UI tests |
-| `CX8-AC-036` | **Given** customer requests physical state correction; **when** QC or courier evidence unresolved; **then** safe pending/assisted state persists without fake completion | Service-to-operations end-to-end trace |
+| ID           | Given / When / Then                                                                                                                                                                                    | Required evidence                                  |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| `CX8-AC-025` | **Given** logged-in user from Company A; **when** opening Company B quote via deep link/API; **then** content and existence details are not leaked and no mutation permitted                           | Cross-organization API/direct-route negative tests |
+| `CX8-AC-026` | **Given** valid company requester lacking approval capability; **when** approving quote; **then** request is denied even if the UI displays an old button or forwarded link                            | Authorization + API bypass attempt                 |
+| `CX8-AC-027` | **Given** approved quote v1 superseded by v2; **when** stale v1 approve clicked; **then** commercial commitment not made silently; latest terms require active review                                  | Version concurrency + customer UI outcome          |
+| `CX8-AC-028` | **Given** artwork upload MIME mismatch, malicious SVG or unauthorized URL; **when** file submitted/viewed; **then** safe rejection/quarantine or approved sanitized handling; no unintended disclosure | File/URL security + UI recovery test               |
+| `CX8-AC-029` | **Given** proof preview accepted by customer; **when** operational production gate unmet; **then** UI does not claim production-ready or start vendor work by implication                              | Proof-version acceptance + production guard test   |
+| `CX8-AC-030` | **Given** customer accesses own order status; **when** shipment label exists but parcel not handed over; **then** no “shipped” assertion unsupported by handoff proof                                  | State mapping + carrier synthetic test             |
+| `CX8-AC-031` | **Given** delivered scan followed by older transit scan; **when** adapter updates; **then** truthful customer status and event history preserved without unsupported regression                        | Out-of-order event test                            |
+| `CX8-AC-032` | **Given** valid customer raises return request; **when** submitted; **then** reference links to request/case, not necessarily approved return/refund                                                   | Customer journey + state inspection                |
+| `CX8-AC-033` | **Given** support case needs finance/production action; **when** escalated; **then** a responsible case owner remains visible and private internal notes stay hidden from customer                     | Role-based UI/API + operator case test             |
+| `CX8-AC-034` | **Given** historical Custom/B2B order; **when** customer reorders; **then** old price, stock, artwork rights, capacity, payment and roles are revalidated as required                                  | Fresh quote/order + negative test                  |
+| `CX8-AC-035` | **Given** guest receives valid tracking link; **when** link expires/is enumerated; **then** no order info leaks and accessible re-verification path appears                                            | Expiry, enumeration and assistive UI tests         |
+| `CX8-AC-036` | **Given** customer requests physical state correction; **when** QC or courier evidence unresolved; **then** safe pending/assisted state persists without fake completion                               | Service-to-operations end-to-end trace             |
 
 ### 13.4 Integrations, AI, observability, and release process (`CX8-AC-037..048`)
 
-| ID | Given / When / Then | Required evidence |
-|---|---|---|
-| `CX8-AC-037` | **Given** marketplace order webhook repeated 10 times; **when** replayed plus one legitimate revision; **then** one original order effect, subsequent revision separately governed, no duplicate inventory/vendor effect | Integration concurrency/idempotency test |
-| `CX8-AC-038` | **Given** wrong-seller or wrong-tenant external event; **when** received; **then** no cross-org mutation, event quarantined/denied without leaking private order existence | Provider scope/security test |
-| `CX8-AC-039` | **Given** payment, courier or WhatsApp provider unavailable; **when** a scoped customer task starts; **then** truthful blocked/pending path and owned recovery exist | Sandbox/fault exercise + operational owner |
-| `CX8-AC-040` | **Given** recipient opted out of marketing only; **when** promotion is scheduled; **then** system blocks promotional send despite transactional message eligibility | Consent purpose + negative send test |
-| `CX8-AC-041` | **Given** provider says message “accepted”; **when** UI/ops view shows delivery; **then** system distinguishes accepted, sent and actual delivered evidence | Provider state mapping + UI copy review |
-| `CX8-AC-042` | **Given** an AI prompt asks for refund or reveals private quote; **when** model/tool attempts action; **then** approved deterministic authorization denies forbidden action and human fallback works | Adversarial AI/tool authorization test |
-| `CX8-AC-043` | **Given** customer analytics enabled; **when** events recorded; **then** no card data, quote contents, private artwork, credentials or raw PII in event labels/URLs | Privacy and outbound-request inspection |
-| `CX8-AC-044` | **Given** all named product test cases pass; **when** hosted required CI or R4/R5 gate is unproven; **then** overall release remains blocked/not verified, not green by aggregation | Evidence-gate audit exercise |
-| `CX8-AC-045` | **Given** all required hosted CI checks pass; **when** keyboard customer cannot submit P0 form; **then** product release blocks until remediated or formally addressed per authority | Independent accessibility/product gate evidence |
-| `CX8-AC-046` | **Given** previously approved candidate HEAD is changed; **when** review package is reused; **then** affected assurance is stale and reverification scope is recorded before merge | Revision diff/evidence audit |
-| `CX8-AC-047` | **Given** customer pilot without valid real-user sample; **when** performance report generated; **then** field p75 is `NOT_VERIFIED_FIELD`, never a fabricated zero or PASS | Analytics evidence-provenance review |
-| `CX8-AC-048` | **Given** a production release request; **when** operational owner, backup/recovery, environment isolation or capacity gate is missing; **then** deployment/launch does not proceed despite passing demo flows | Launch-gate rehearsal + Owner decision |
+| ID           | Given / When / Then                                                                                                                                                                                                      | Required evidence                               |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| `CX8-AC-037` | **Given** marketplace order webhook repeated 10 times; **when** replayed plus one legitimate revision; **then** one original order effect, subsequent revision separately governed, no duplicate inventory/vendor effect | Integration concurrency/idempotency test        |
+| `CX8-AC-038` | **Given** wrong-seller or wrong-tenant external event; **when** received; **then** no cross-org mutation, event quarantined/denied without leaking private order existence                                               | Provider scope/security test                    |
+| `CX8-AC-039` | **Given** payment, courier or WhatsApp provider unavailable; **when** a scoped customer task starts; **then** truthful blocked/pending path and owned recovery exist                                                     | Sandbox/fault exercise + operational owner      |
+| `CX8-AC-040` | **Given** recipient opted out of marketing only; **when** promotion is scheduled; **then** system blocks promotional send despite transactional message eligibility                                                      | Consent purpose + negative send test            |
+| `CX8-AC-041` | **Given** provider says message “accepted”; **when** UI/ops view shows delivery; **then** system distinguishes accepted, sent and actual delivered evidence                                                              | Provider state mapping + UI copy review         |
+| `CX8-AC-042` | **Given** an AI prompt asks for refund or reveals private quote; **when** model/tool attempts action; **then** approved deterministic authorization denies forbidden action and human fallback works                     | Adversarial AI/tool authorization test          |
+| `CX8-AC-043` | **Given** customer analytics enabled; **when** events recorded; **then** no card data, quote contents, private artwork, credentials or raw PII in event labels/URLs                                                      | Privacy and outbound-request inspection         |
+| `CX8-AC-044` | **Given** all named product test cases pass; **when** hosted required CI or R4/R5 gate is unproven; **then** overall release remains blocked/not verified, not green by aggregation                                      | Evidence-gate audit exercise                    |
+| `CX8-AC-045` | **Given** all required hosted CI checks pass; **when** keyboard customer cannot submit P0 form; **then** product release blocks until remediated or formally addressed per authority                                     | Independent accessibility/product gate evidence |
+| `CX8-AC-046` | **Given** previously approved candidate HEAD is changed; **when** review package is reused; **then** affected assurance is stale and reverification scope is recorded before merge                                       | Revision diff/evidence audit                    |
+| `CX8-AC-047` | **Given** customer pilot without valid real-user sample; **when** performance report generated; **then** field p75 is `NOT_VERIFIED_FIELD`, never a fabricated zero or PASS                                              | Analytics evidence-provenance review            |
+| `CX8-AC-048` | **Given** a production release request; **when** operational owner, backup/recovery, environment isolation or capacity gate is missing; **then** deployment/launch does not proceed despite passing demo flows           | Launch-gate rehearsal + Owner decision          |
 
 ### 13.5 Additional mandatory edge-case coverage on actual scoped features
 
@@ -604,20 +604,20 @@ Do not assign historical CI records to a newly written product case unless they 
 
 ## 14. Test coverage matrix and quality evidence pyramid
 
-| Level | Main responsibility | Typical fixtures | Does NOT prove |
-|---|---|---|---|
-| Product/editorial review | Requirements, status semantics, copy, consent and expected task | PRD references, screen specimens, policy map | UI or backend implementation |
-| Unit/component | Field/error behavior, state view, formatting, form help | Synthetic isolated components | Whole transactional flow |
-| Domain/DB | Invariants, permission, version/amount/role, rollback/idempotency | New disposable DB and isolated transaction fixtures | Customer understands interface |
-| API/integration | Transport + validated command boundary, provider mapping/retry | Mock/sandbox with controlled contract | Live provider performance or field UX |
-| Browser E2E | Actual clicks, focus, submit/confirm, navigation/recovery | Production-like synthetic content | WCAG conformance without manual AT review |
-| Accessibility audit | Full page/flow, screen reader, keyboard, zoom/contrast | Approved device/AT matrix | Backend authorization correctness |
-| Performance lab | Repeatable cold/warm mobile/desktop template load and interaction | Captured CPU/network/device profiles | Representative real-world p75 |
-| Field analytics | Real visitor experience where lawful/sample sufficient | Privacy-reviewed real-user data | Transaction truth or security assurance |
-| UX research | Understanding, usability, actual user effort and confidence | Representative recruited cohorts | Correct database state or deployment safety |
-| Independent security QA | Adversarial/negative tests and architecture/invariant gate | Exact HEAD, isolated environment | Production operational readiness |
-| Operational pilot | Customer-to-founder handoff, physical proof, recovery, capacity | Controlled real or formally approved pilot | Universal ecommerce scale |
-| Live provider/canary | Provider delivery/settlement and monitoring under controlled authorization | Explicit account/environment and release plan | All future feature/provider readiness |
+| Level                    | Main responsibility                                                        | Typical fixtures                                    | Does NOT prove                              |
+| ------------------------ | -------------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------- |
+| Product/editorial review | Requirements, status semantics, copy, consent and expected task            | PRD references, screen specimens, policy map        | UI or backend implementation                |
+| Unit/component           | Field/error behavior, state view, formatting, form help                    | Synthetic isolated components                       | Whole transactional flow                    |
+| Domain/DB                | Invariants, permission, version/amount/role, rollback/idempotency          | New disposable DB and isolated transaction fixtures | Customer understands interface              |
+| API/integration          | Transport + validated command boundary, provider mapping/retry             | Mock/sandbox with controlled contract               | Live provider performance or field UX       |
+| Browser E2E              | Actual clicks, focus, submit/confirm, navigation/recovery                  | Production-like synthetic content                   | WCAG conformance without manual AT review   |
+| Accessibility audit      | Full page/flow, screen reader, keyboard, zoom/contrast                     | Approved device/AT matrix                           | Backend authorization correctness           |
+| Performance lab          | Repeatable cold/warm mobile/desktop template load and interaction          | Captured CPU/network/device profiles                | Representative real-world p75               |
+| Field analytics          | Real visitor experience where lawful/sample sufficient                     | Privacy-reviewed real-user data                     | Transaction truth or security assurance     |
+| UX research              | Understanding, usability, actual user effort and confidence                | Representative recruited cohorts                    | Correct database state or deployment safety |
+| Independent security QA  | Adversarial/negative tests and architecture/invariant gate                 | Exact HEAD, isolated environment                    | Production operational readiness            |
+| Operational pilot        | Customer-to-founder handoff, physical proof, recovery, capacity            | Controlled real or formally approved pilot          | Universal ecommerce scale                   |
+| Live provider/canary     | Provider delivery/settlement and monitoring under controlled authorization | Explicit account/environment and release plan       | All future feature/provider readiness       |
 
 **Do not flatten these levels into “48/48 tests PASS” without identifying which were only specified, which ran, what skipped, what failed, and the exact environment.** Historical MGBOS CI or security evidence may help establish existing engine readiness but cannot automatically prove customer-facing checkout, field metrics, guest authorization or third-party operation.
 
@@ -712,72 +712,72 @@ Existing `docs/roadmaps/solo-founder-launch-roadmap.md` and `systems/mgbos/docs/
 
 ## 16. Decisions requiring formal owner and domain review
 
-| ID | Proposed direction (not yet binding) | Decision owner / condition |
-|---|---|---|
-| `CX8-DEC-01` | Treat customer **trust and transaction truth** as release blockers, not nice-to-have | Owner + Head Engineering; reconcile canonical R4/R5 gates |
-| `CX8-DEC-02` | Use Google's good CWV LCP/INP/CLS **p75** targets for real user field measurements | Owner + Frontend/QA; approve measurement policy |
-| `CX8-DEC-03` | Adopt WCAG 2.2 Level AA as default customer-experience accessibility quality target | Owner + accessibility/QA/legal as relevant |
-| `CX8-DEC-04` | Declare P0 as premium **assisted entry**, independent of full checkout/portal completion | Owner; comply with existing roadmap |
-| `CX8-DEC-05` | Require representative mobile-device lab profiling before public feature acceptance | Head Engineering + QA; select actual devices/profiles |
-| `CX8-DEC-06` | Set JS/CSS/CPU/network/media route budgets only **after representative baseline**, not from current shell | Frontend Architect + QA + Owner budget approval |
-| `CX8-DEC-07` | Manual keyboard and assistive-tech tests are mandatory for critical customer paths | Accessibility specialist + QA; device/AT selection |
-| `CX8-DEC-08` | Treat source state and customer presentation as separate: no redirected payment success or estimated delivery as confirmed truth | Product + business and MGBOS domain owners |
-| `CX8-DEC-09` | Gate higher-risk scenarios through current BisnisHub risk/assurance, not a separate CX risk scale | Head Engineering / governance authority |
-| `CX8-DEC-10` | Allow truthful owned assisted fallback rather than demanding full self-service in P0 | Product Owner + operating owner |
-| `CX8-DEC-11` | Protect P0 performance whenever adding P1/P2 SDK, assistant, editor or personalization | Product + Frontend QA / acceptance |
-| `CX8-DEC-12` | Distinguish lab verification, field p75 and provider sandbox/production evidence in every release report | QA/Head Engineering / evidence model |
-| `CX8-DEC-13` | Require UX comprehension/critical path review in addition to CI for customer release | Product Owner + independent UX reviewer when needed |
-| `CX8-DEC-14` | Select explicit human-service availability and customer-response wording based on **real owner capacity**, not marketing ambition | Owner + operations |
-| `CX8-DEC-15` | Use selected OWASP ASVS 5.0 requirements as a **reference**, never generic compliance claim | Security/Head Engineering; scoped control mapping |
-| `CX8-DEC-16` | Define named performance/quality/incident monitors and data retention rules before live analytics | QA/Operations/Security/Privacy |
+| ID           | Proposed direction (not yet binding)                                                                                              | Decision owner / condition                                |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `CX8-DEC-01` | Treat customer **trust and transaction truth** as release blockers, not nice-to-have                                              | Owner + Head Engineering; reconcile canonical R4/R5 gates |
+| `CX8-DEC-02` | Use Google's good CWV LCP/INP/CLS **p75** targets for real user field measurements                                                | Owner + Frontend/QA; approve measurement policy           |
+| `CX8-DEC-03` | Adopt WCAG 2.2 Level AA as default customer-experience accessibility quality target                                               | Owner + accessibility/QA/legal as relevant                |
+| `CX8-DEC-04` | Declare P0 as premium **assisted entry**, independent of full checkout/portal completion                                          | Owner; comply with existing roadmap                       |
+| `CX8-DEC-05` | Require representative mobile-device lab profiling before public feature acceptance                                               | Head Engineering + QA; select actual devices/profiles     |
+| `CX8-DEC-06` | Set JS/CSS/CPU/network/media route budgets only **after representative baseline**, not from current shell                         | Frontend Architect + QA + Owner budget approval           |
+| `CX8-DEC-07` | Manual keyboard and assistive-tech tests are mandatory for critical customer paths                                                | Accessibility specialist + QA; device/AT selection        |
+| `CX8-DEC-08` | Treat source state and customer presentation as separate: no redirected payment success or estimated delivery as confirmed truth  | Product + business and MGBOS domain owners                |
+| `CX8-DEC-09` | Gate higher-risk scenarios through current BisnisHub risk/assurance, not a separate CX risk scale                                 | Head Engineering / governance authority                   |
+| `CX8-DEC-10` | Allow truthful owned assisted fallback rather than demanding full self-service in P0                                              | Product Owner + operating owner                           |
+| `CX8-DEC-11` | Protect P0 performance whenever adding P1/P2 SDK, assistant, editor or personalization                                            | Product + Frontend QA / acceptance                        |
+| `CX8-DEC-12` | Distinguish lab verification, field p75 and provider sandbox/production evidence in every release report                          | QA/Head Engineering / evidence model                      |
+| `CX8-DEC-13` | Require UX comprehension/critical path review in addition to CI for customer release                                              | Product Owner + independent UX reviewer when needed       |
+| `CX8-DEC-14` | Select explicit human-service availability and customer-response wording based on **real owner capacity**, not marketing ambition | Owner + operations                                        |
+| `CX8-DEC-15` | Use selected OWASP ASVS 5.0 requirements as a **reference**, never generic compliance claim                                       | Security/Head Engineering; scoped control mapping         |
+| `CX8-DEC-16` | Define named performance/quality/incident monitors and data retention rules before live analytics                                 | QA/Operations/Security/Privacy                            |
 
 Any decision affecting existing canonical business rights, authorization, customer policy or roadmap must follow the actual owner/ADR/governance mechanism. A Product Owner choosing “yes” to this draft is **not** automatic permission for Antigravity to make database, auth, payment or production changes.
 
 ## 17. Risks and planned response
 
-| Risk ID | Severity proposal | Risk | Risk treatment / closure evidence |
-|---|---|---|---|
-| `CX8-RISK-01` | Critical | Nice UI masks false paid/order/production status | Require authoritative source trace + negative transactional tests |
-| `CX8-RISK-02` | Critical | Guest/B2B portal leaks unrelated customer data | Server-side isolation and object-level direct API/deep-link tests |
-| `CX8-RISK-03` | Critical | Repeat/timeout creates duplicate financial effect | Strong idempotency + replay/commit race evidence on isolated DB |
-| `CX8-RISK-04` | High | Accessibility scanner PASS misrepresented as full WCAG AA conformance | Manual keyboard/AT + criteria mapping and scope declaration |
-| `CX8-RISK-05` | High | Lighthouse/one desktop score misrepresented as p75 actual UX | Field/lab provenance, mobile cohort segmentation and unverified status |
-| `CX8-RISK-06` | High | Third-party payment/marketplace SDK burdens P0 | Route bundle ownership, optional loading, regression budget |
-| `CX8-RISK-07` | High | Missing CI or R4/R5 verification silently waived by product enthusiasm | Risk ownership, exact SHA + independent disposition before release |
-| `CX8-RISK-08` | High | Artwork upload enables active content/exfiltration or rights breach | File quarantine, server validation and legal owner approval |
-| `CX8-RISK-09` | High | Overpromised delivery or support hours exceed solo founder capacity | Honest UX copy, demand/capacity gate, fallback owner |
-| `CX8-RISK-10` | High | UI success persists after canonical request failed | Browser/API trace, unknown-outcome failure exercise |
-| `CX8-RISK-11` | High | Customer self-service creates unowned support/return cases | Case owner/next-action, customer notification, reconciliation |
-| `CX8-RISK-12` | High | AI authorizes or fabricates financial/operational outcome | Governed tool denial tests, grounded responses, human route |
-| `CX8-RISK-13` | High | Baselines absent; team invents budgets to get green dashboard | Baseline-first protocol, `TBD_BASELINE`, explicit approval |
-| `CX8-RISK-14` | Medium/High | Sensitive analytics exhausts privacy, cost or frontend performance | Telemetry minimization, outbound audit, vendor/retention review |
-| `CX8-RISK-15` | Medium/High | Test data labeled synthetic but targets an existing non-disposable database | Proven environment identity and destructive-test stop rule |
-| `CX8-RISK-16` | Medium/High | Doc indexing collides with PR #73 and creates contradictory authority | Defer repository adoption until routing reconciliation |
+| Risk ID       | Severity proposal | Risk                                                                        | Risk treatment / closure evidence                                      |
+| ------------- | ----------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `CX8-RISK-01` | Critical          | Nice UI masks false paid/order/production status                            | Require authoritative source trace + negative transactional tests      |
+| `CX8-RISK-02` | Critical          | Guest/B2B portal leaks unrelated customer data                              | Server-side isolation and object-level direct API/deep-link tests      |
+| `CX8-RISK-03` | Critical          | Repeat/timeout creates duplicate financial effect                           | Strong idempotency + replay/commit race evidence on isolated DB        |
+| `CX8-RISK-04` | High              | Accessibility scanner PASS misrepresented as full WCAG AA conformance       | Manual keyboard/AT + criteria mapping and scope declaration            |
+| `CX8-RISK-05` | High              | Lighthouse/one desktop score misrepresented as p75 actual UX                | Field/lab provenance, mobile cohort segmentation and unverified status |
+| `CX8-RISK-06` | High              | Third-party payment/marketplace SDK burdens P0                              | Route bundle ownership, optional loading, regression budget            |
+| `CX8-RISK-07` | High              | Missing CI or R4/R5 verification silently waived by product enthusiasm      | Risk ownership, exact SHA + independent disposition before release     |
+| `CX8-RISK-08` | High              | Artwork upload enables active content/exfiltration or rights breach         | File quarantine, server validation and legal owner approval            |
+| `CX8-RISK-09` | High              | Overpromised delivery or support hours exceed solo founder capacity         | Honest UX copy, demand/capacity gate, fallback owner                   |
+| `CX8-RISK-10` | High              | UI success persists after canonical request failed                          | Browser/API trace, unknown-outcome failure exercise                    |
+| `CX8-RISK-11` | High              | Customer self-service creates unowned support/return cases                  | Case owner/next-action, customer notification, reconciliation          |
+| `CX8-RISK-12` | High              | AI authorizes or fabricates financial/operational outcome                   | Governed tool denial tests, grounded responses, human route            |
+| `CX8-RISK-13` | High              | Baselines absent; team invents budgets to get green dashboard               | Baseline-first protocol, `TBD_BASELINE`, explicit approval             |
+| `CX8-RISK-14` | Medium/High       | Sensitive analytics exhausts privacy, cost or frontend performance          | Telemetry minimization, outbound audit, vendor/retention review        |
+| `CX8-RISK-15` | Medium/High       | Test data labeled synthetic but targets an existing non-disposable database | Proven environment identity and destructive-test stop rule             |
+| `CX8-RISK-16` | Medium/High       | Doc indexing collides with PR #73 and creates contradictory authority       | Defer repository adoption until routing reconciliation                 |
 
 Severity values above are **product-impact descriptions only**, not BisnisHub engineering R-classifications. Final risk levels must be assigned using `docs/governance/cross-system-risk-classification.md` by the responsible engineering owner.
 
 ## 18. Open research and engineering unknowns
 
-| ID | Open question | Why it matters | Owner / next evidence |
-|---|---|---|---|
-| `CX8-UNK-01` | What exact approved P0 public routes and capabilities will be available on the first customer-facing release? | Cannot test nonexistent surfaces | Product Owner + roadmap review |
-| `CX8-UNK-02` | What representative Android/iOS/desktop device/browser matrix matches actual target customers? | Determines realistic performance/AT coverage | UX research + QA |
-| `CX8-UNK-03` | What are current mobile CWV field values? | No production customer traffic evidence | Instrument after launch; meanwhile `NOT_VERIFIED_FIELD` |
-| `CX8-UNK-04` | What initial per-template JS/media/CPU lab budgets are feasible? | Prevents invented size/time gates | Profile approved reference build |
-| `CX8-UNK-05` | Which supported screen-reader/browser combinations can reliably be tested? | Accessibility evidence completeness | UX/accessibility QA |
-| `CX8-UNK-06` | Which exact reusable design components/assets already meet brand and copyright requirements? | Image/font load, visual consistency | Brand/content + Frontend |
-| `CX8-UNK-07` | Which approved customer identity/guest-link mechanics will be used in P1? | Prevents data leakage | Security, architecture, product |
-| `CX8-UNK-08` | Does every live payment provider and merchant account support required sandbox/reconciliation controls? | Payment readiness | Financial/Backend + provider evidence |
-| `CX8-UNK-09` | Which MGBOS commands and outbox/event capabilities are actually ready at the P1 implementation date? | Avoid imaginary cross-channel event readiness | Head Engineering fresh exact-source audit |
-| `CX8-UNK-10` | What legal/contractual product return/refund/customer policy is approved for the intended audience? | Determines user rights, tests and copy | Legal/business owner |
-| `CX8-UNK-11` | What are real business hours, response capacity and customer case ownership? | Avoid false SLA promises | Owner/Operations |
-| `CX8-UNK-12` | How will browser UX metrics be collected with appropriate consent, storage, sampling and redaction? | Privacy and operating cost | Product Analytics + Security |
-| `CX8-UNK-13` | Who independently signs UX/accessibility acceptance for a solo-founder engineering workflow? | Independence and provenance | Head Engineering governance routing |
-| `CX8-UNK-14` | Which CI browser/E2E runners and branch rules are actually enforced for TeeStock app? | No false coverage claims | Engineering + hosted CI proof |
-| `CX8-UNK-15` | What proof of physical handoff, vendor acceptance and QC is adequate for customer status? | Prevent false production/delivery signals | Operations/Production/QC owners |
-| `CX8-UNK-16` | What release rollback/safe disable action is supported for each new provider/AI/widget? | Outage containment | Ops + Engineering |
-| `CX8-UNK-17` | Can proposed package paths be adopted without PR #73 routing conflicts? | Canonical source ownership | Docs owner + Head Engineering after PR result |
-| `CX8-UNK-18` | How much founder time is removed vs added per order and exception? | Solo founder viability | Pilot measurement, CX-09 roadmap |
+| ID           | Open question                                                                                                 | Why it matters                                | Owner / next evidence                                   |
+| ------------ | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------- |
+| `CX8-UNK-01` | What exact approved P0 public routes and capabilities will be available on the first customer-facing release? | Cannot test nonexistent surfaces              | Product Owner + roadmap review                          |
+| `CX8-UNK-02` | What representative Android/iOS/desktop device/browser matrix matches actual target customers?                | Determines realistic performance/AT coverage  | UX research + QA                                        |
+| `CX8-UNK-03` | What are current mobile CWV field values?                                                                     | No production customer traffic evidence       | Instrument after launch; meanwhile `NOT_VERIFIED_FIELD` |
+| `CX8-UNK-04` | What initial per-template JS/media/CPU lab budgets are feasible?                                              | Prevents invented size/time gates             | Profile approved reference build                        |
+| `CX8-UNK-05` | Which supported screen-reader/browser combinations can reliably be tested?                                    | Accessibility evidence completeness           | UX/accessibility QA                                     |
+| `CX8-UNK-06` | Which exact reusable design components/assets already meet brand and copyright requirements?                  | Image/font load, visual consistency           | Brand/content + Frontend                                |
+| `CX8-UNK-07` | Which approved customer identity/guest-link mechanics will be used in P1?                                     | Prevents data leakage                         | Security, architecture, product                         |
+| `CX8-UNK-08` | Does every live payment provider and merchant account support required sandbox/reconciliation controls?       | Payment readiness                             | Financial/Backend + provider evidence                   |
+| `CX8-UNK-09` | Which MGBOS commands and outbox/event capabilities are actually ready at the P1 implementation date?          | Avoid imaginary cross-channel event readiness | Head Engineering fresh exact-source audit               |
+| `CX8-UNK-10` | What legal/contractual product return/refund/customer policy is approved for the intended audience?           | Determines user rights, tests and copy        | Legal/business owner                                    |
+| `CX8-UNK-11` | What are real business hours, response capacity and customer case ownership?                                  | Avoid false SLA promises                      | Owner/Operations                                        |
+| `CX8-UNK-12` | How will browser UX metrics be collected with appropriate consent, storage, sampling and redaction?           | Privacy and operating cost                    | Product Analytics + Security                            |
+| `CX8-UNK-13` | Who independently signs UX/accessibility acceptance for a solo-founder engineering workflow?                  | Independence and provenance                   | Head Engineering governance routing                     |
+| `CX8-UNK-14` | Which CI browser/E2E runners and branch rules are actually enforced for TeeStock app?                         | No false coverage claims                      | Engineering + hosted CI proof                           |
+| `CX8-UNK-15` | What proof of physical handoff, vendor acceptance and QC is adequate for customer status?                     | Prevent false production/delivery signals     | Operations/Production/QC owners                         |
+| `CX8-UNK-16` | What release rollback/safe disable action is supported for each new provider/AI/widget?                       | Outage containment                            | Ops + Engineering                                       |
+| `CX8-UNK-17` | Can proposed package paths be adopted without PR #73 routing conflicts?                                       | Canonical source ownership                    | Docs owner + Head Engineering after PR result           |
+| `CX8-UNK-18` | How much founder time is removed vs added per order and exception?                                            | Solo founder viability                        | Pilot measurement, CX-09 roadmap                        |
 
 Do not resolve an unknown by inventing an implementation detail, choosing a provider without research, or describing an unfinished integration as “already supported.”
 
@@ -785,18 +785,18 @@ Do not resolve an unknown by inventing an implementation detail, choosing a prov
 
 ### 19.1 CX package responsibilities
 
-| Product spec | Quality cases most directly linked | Scope boundary |
-|---|---|---|
-| CX-00 audit | `CX8-GATE-A`, provenance and documentation conflict checks | Research input, not implementation evidence |
-| CX-01 Master PRD | All `CX8-QD-*`; `CX8-QR-001..048`; `CX8-GATE-A..F` | Parent outcomes and capability definitions |
-| CX-02 Customer Journeys | `CX8-AC-001..012`, `030..036`, `039` | End-to-end customer/backstage/physical truth |
-| CX-03 Experience Design | `CX8-QR-001..016`, `CX8-AC-001..004`, `011..014`, `023..024` | Visual/interaction standards, not new brand authority |
-| CX-04 Commerce & Checkout | `CX8-QR-017`, `020..024`, `CX8-AC-013..024` | Retail commerce only when P1 approved |
-| CX-05 Custom & B2B | `CX8-QR-017..019`, `027`, `CX8-AC-005..010`, `025..029`, `034` | Approvals/quotes/print proof rules remain canonical elsewhere |
-| CX-06 Customer Account/Service | `CX8-QR-025..030`, `CX8-AC-025..036` | Identity/cases/refunds architecture remains MGBOS-owned |
-| CX-07 Omnichannel Integrations | `CX8-QR-031..037`, `CX8-AC-037..043` | Provider actual capability must be separately proven |
-| CX-08 (this) | All product quality goals, evidence and release-gate outcomes | No technical implementation permissions |
-| CX-09 (next) | Slice selection, dependencies, validation roadmap, measurable investment | Must not change canonical business roadmap without approved reconciliation |
+| Product spec                   | Quality cases most directly linked                                       | Scope boundary                                                             |
+| ------------------------------ | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| CX-00 audit                    | `CX8-GATE-A`, provenance and documentation conflict checks               | Research input, not implementation evidence                                |
+| CX-01 Master PRD               | All `CX8-QD-*`; `CX8-QR-001..048`; `CX8-GATE-A..F`                       | Parent outcomes and capability definitions                                 |
+| CX-02 Customer Journeys        | `CX8-AC-001..012`, `030..036`, `039`                                     | End-to-end customer/backstage/physical truth                               |
+| CX-03 Experience Design        | `CX8-QR-001..016`, `CX8-AC-001..004`, `011..014`, `023..024`             | Visual/interaction standards, not new brand authority                      |
+| CX-04 Commerce & Checkout      | `CX8-QR-017`, `020..024`, `CX8-AC-013..024`                              | Retail commerce only when P1 approved                                      |
+| CX-05 Custom & B2B             | `CX8-QR-017..019`, `027`, `CX8-AC-005..010`, `025..029`, `034`           | Approvals/quotes/print proof rules remain canonical elsewhere              |
+| CX-06 Customer Account/Service | `CX8-QR-025..030`, `CX8-AC-025..036`                                     | Identity/cases/refunds architecture remains MGBOS-owned                    |
+| CX-07 Omnichannel Integrations | `CX8-QR-031..037`, `CX8-AC-037..043`                                     | Provider actual capability must be separately proven                       |
+| CX-08 (this)                   | All product quality goals, evidence and release-gate outcomes            | No technical implementation permissions                                    |
+| CX-09 (next)                   | Slice selection, dependencies, validation roadmap, measurable investment | Must not change canonical business roadmap without approved reconciliation |
 
 ### 19.2 Machine and human reading order
 
@@ -929,22 +929,22 @@ When and only when the Owner authorizes engineering **planning** for a feature, 
 
 ## 23. Self-review checklist, provenance and current verification status
 
-| Item | CX-08 author check | Current classification |
-|---|---|---|
-| Identified customer/business goal and bounded quality dimensions | Written | `DRAFT_DEFINED` |
-| Reused CX-01..07 identifiers as inputs, without treating them as canon | Reviewed selected companion documents | `SELF_REVIEWED` |
-| Authoritative root documentation, MGBOS governance and roadmap consulted | Read-only at pinned revision | `SOURCE_REVIEWED` |
-| CWV thresholds checked against Google official guidance | URLs documented; p75, field/lab split explicit | `EXTERNAL_STANDARD_REFERENCED` |
-| WCAG 2.2 AA guidance checked against W3C | URL and manual-review caveat documented | `EXTERNAL_STANDARD_REFERENCED` |
-| OWASP ASVS version/usage caveat | Stable 5.0 external reference only | `EXTERNAL_STANDARD_REFERENCED` |
-| Protected actual TeeStock source inspected | Public app is placeholder in inspected snapshot | `READ_ONLY_SOURCE_INSPECTED` |
-| Test cases described | Candidate expected outcomes, no execution | `SPECIFIED_NOT_RUN` |
-| Current Core Web Vitals field data | No justified real-user data | `NOT_VERIFIED_FIELD` |
-| Actual customer UX/AT/device trials | Not conducted | `NOT_RUN` |
-| Actual live provider sandbox/payment/marketplace | Not conducted | `NOT_RUN` |
-| Independent review of CX-08 and exact candidate code | Not conducted | `NOT_VERIFIED` |
-| Actual package status, product authority activation | Not submitted to owner for formal adoption | `DRAFT` |
-| GitHub changed, PR merged, deployment performed | None by this drafting activity | `NOT_PERFORMED` |
+| Item                                                                     | CX-08 author check                              | Current classification         |
+| ------------------------------------------------------------------------ | ----------------------------------------------- | ------------------------------ |
+| Identified customer/business goal and bounded quality dimensions         | Written                                         | `DRAFT_DEFINED`                |
+| Reused CX-01..07 identifiers as inputs, without treating them as canon   | Reviewed selected companion documents           | `SELF_REVIEWED`                |
+| Authoritative root documentation, MGBOS governance and roadmap consulted | Read-only at pinned revision                    | `SOURCE_REVIEWED`              |
+| CWV thresholds checked against Google official guidance                  | URLs documented; p75, field/lab split explicit  | `EXTERNAL_STANDARD_REFERENCED` |
+| WCAG 2.2 AA guidance checked against W3C                                 | URL and manual-review caveat documented         | `EXTERNAL_STANDARD_REFERENCED` |
+| OWASP ASVS version/usage caveat                                          | Stable 5.0 external reference only              | `EXTERNAL_STANDARD_REFERENCED` |
+| Protected actual TeeStock source inspected                               | Public app is placeholder in inspected snapshot | `READ_ONLY_SOURCE_INSPECTED`   |
+| Test cases described                                                     | Candidate expected outcomes, no execution       | `SPECIFIED_NOT_RUN`            |
+| Current Core Web Vitals field data                                       | No justified real-user data                     | `NOT_VERIFIED_FIELD`           |
+| Actual customer UX/AT/device trials                                      | Not conducted                                   | `NOT_RUN`                      |
+| Actual live provider sandbox/payment/marketplace                         | Not conducted                                   | `NOT_RUN`                      |
+| Independent review of CX-08 and exact candidate code                     | Not conducted                                   | `NOT_VERIFIED`                 |
+| Actual package status, product authority activation                      | Not submitted to owner for formal adoption      | `DRAFT`                        |
+| GitHub changed, PR merged, deployment performed                          | None by this drafting activity                  | `NOT_PERFORMED`                |
 
 **No evidence row above should be interpreted as an engineering test pass.** Content completeness/self-review is not independent QA. The QA audit for adopting the whole CX program remains a follow-on work package, not a task silently completed here.
 
@@ -1006,17 +1006,17 @@ Repository reference: https://github.com/Rizkybuilds/bisnishub/tree/2800c4745633
 The rows below are generated from `CX-PKG-TRACE-R1.csv` (the sole package-wide mapping table). They do not introduce additional product requirements, approve a release stage, change any domain/architecture policy, or prove acceptance. Only exact locally declared IDs are linked; review the complete matrix for gates, ambiguities and candidate staging.
 
 | CX-01 master ID | Exact declared detail IDs in this document | Selected existing acceptance | Candidate slice |
-|---|---|---|---|
-| `CX1-FR-001` | `CX8-QR-002` | `CX8-AC-001` | `CX-S0` |
-| `CX1-FR-003` | `CX8-QR-002` | `CX8-AC-001` | `CX-S0` |
-| `CX1-FR-005` | `CX8-QR-010`, `CX8-QR-012` | `CX8-AC-003` | `CX-S0` |
-| `CX1-FR-008` | `CX8-QR-007` | `CX8-AC-012` | `CX-S3` |
-| `CX1-FR-011` | `CX8-QR-027` | `CX8-AC-028` | `CX-S0` |
-| `CX1-FR-027` | `CX8-QR-022` | `CX9-AC-011` | `CX-S1` |
-| `CX1-FR-030` | `CX8-QR-025` | `CX8-AC-030` | `CX-S0` |
-| `CX1-FR-038` | `CX8-QR-038` | `CX8-AC-005` | `CX-S0` |
-| `CX1-FR-039` | `CX8-QR-039` | `CX9-AC-035` | `CX-S0` |
-| `CX1-FR-043` | `CX8-QR-032` | `CX6-AC-043` | `CX-S3` |
-| `CX1-FR-044` | `CX8-QR-046` | `CX6-AC-044` | `CX-S2` |
+| --------------- | ------------------------------------------ | ---------------------------- | --------------- |
+| `CX1-FR-001`    | `CX8-QR-002`                               | `CX8-AC-001`                 | `CX-S0`         |
+| `CX1-FR-003`    | `CX8-QR-002`                               | `CX8-AC-001`                 | `CX-S0`         |
+| `CX1-FR-005`    | `CX8-QR-010`, `CX8-QR-012`                 | `CX8-AC-003`                 | `CX-S0`         |
+| `CX1-FR-008`    | `CX8-QR-007`                               | `CX8-AC-012`                 | `CX-S3`         |
+| `CX1-FR-011`    | `CX8-QR-027`                               | `CX8-AC-028`                 | `CX-S0`         |
+| `CX1-FR-027`    | `CX8-QR-022`                               | `CX9-AC-011`                 | `CX-S1`         |
+| `CX1-FR-030`    | `CX8-QR-025`                               | `CX8-AC-030`                 | `CX-S0`         |
+| `CX1-FR-038`    | `CX8-QR-038`                               | `CX8-AC-005`                 | `CX-S0`         |
+| `CX1-FR-039`    | `CX8-QR-039`                               | `CX9-AC-035`                 | `CX-S0`         |
+| `CX1-FR-043`    | `CX8-QR-032`                               | `CX6-AC-043`                 | `CX-S3`         |
+| `CX1-FR-044`    | `CX8-QR-046`                               | `CX6-AC-044`                 | `CX-S2`         |
 
 **Review state:** `R1_AUTHOR_SEMANTIC_MAPPING_ONLY`; requires Owner/Head Engineering decision and independent product review before canonical activation.

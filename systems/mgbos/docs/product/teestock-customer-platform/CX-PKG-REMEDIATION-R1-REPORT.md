@@ -39,29 +39,29 @@ implementation_authorization: NONE
 
 ## 3. Nine targeted CX-05 corrections
 
-| Requirement | Wrong reference | R1 corrected target |
-|---|---|---|
-| `CX5-FR-002` | `CX2-JRN-01` | `CX2-BP-01` |
-| `CX5-FR-009` | `CX2-JRN-05` | `CX2-BP-05` |
-| `CX5-FR-013` | `CX2-JRN-02` | `CX2-BP-02` |
-| `CX5-FR-019` | `CX2-JRN-03` | `CX2-BP-03` |
-| `CX5-FR-020` | `CX2-JRN-05` | `CX2-BP-05` |
-| `CX5-FR-023` | `CX2-JRN-06` | `CX2-BP-06` |
-| `CX5-FR-030` | `CX2-JRN-05` | `CX2-BP-05` |
-| `CX5-FR-031` | `CX2-JRN-06` | `CX2-BP-06` |
+| Requirement  | Wrong reference  | R1 corrected target                   |
+| ------------ | ---------------- | ------------------------------------- |
+| `CX5-FR-002` | `CX2-JRN-01`     | `CX2-BP-01`                           |
+| `CX5-FR-009` | `CX2-JRN-05`     | `CX2-BP-05`                           |
+| `CX5-FR-013` | `CX2-JRN-02`     | `CX2-BP-02`                           |
+| `CX5-FR-019` | `CX2-JRN-03`     | `CX2-BP-03`                           |
+| `CX5-FR-020` | `CX2-JRN-05`     | `CX2-BP-05`                           |
+| `CX5-FR-023` | `CX2-JRN-06`     | `CX2-BP-06`                           |
+| `CX5-FR-030` | `CX2-JRN-05`     | `CX2-BP-05`                           |
+| `CX5-FR-031` | `CX2-JRN-06`     | `CX2-BP-06`                           |
 | `CX5-FR-032` | `CX1-FR-032/033` | `CX1-FR-030 / CX1-FR-031 / CX2-BP-06` |
 
 ## 4. Traceability verification results
 
-| Item | Result |
-|---|---|
-| CX-01 parent FR distinct | 46/46 |
-| Fully resolved parent rows in CSV | 46/46 |
-| Parent IDs named explicitly in CX-02..08 | 46/46 |
-| Every mapped detail ID exists at exact declared heading/row | PASS (author-script) |
+| Item                                                          | Result               |
+| ------------------------------------------------------------- | -------------------- |
+| CX-01 parent FR distinct                                      | 46/46                |
+| Fully resolved parent rows in CSV                             | 46/46                |
+| Parent IDs named explicitly in CX-02..08                      | 46/46                |
+| Every mapped detail ID exists at exact declared heading/row   | PASS (author-script) |
 | Every mapped acceptance ID exists at exact declared table row | PASS (author-script) |
-| Undefined CX2-JRN-* references remaining in CX-05 | 0 |
-| CI/browser/provider tests | NOT RUN |
+| Undefined CX2-JRN-* references remaining in CX-05             | 0                    |
+| CI/browser/provider tests                                     | NOT RUN              |
 
 **Important:** Coverage of 46/46 here is exact reference integrity **plus author semantic mapping**, not acceptance-test execution and not proof that full feature implementation exists. Some parent FRs are mapped to supporting quality/journey contracts instead of a child functional row; independent review should assess whether additional lower-level design is required.
 
@@ -75,21 +75,21 @@ implementation_authorization: NONE
 
 ## 6. Exact local candidate file manifest
 
-| Artifact | SHA-256 |
-|---|---|
-| `CX-PKG-DECISIONS-R1.md` | `ffc538c56cd37ca0f23db1ae370d6f89bf3d74a96a6ebfd034b36875c75c922b` |
-| `CX-PKG-STAGE-CROSSWALK-R1.md` | `6a85b18f252a681705a414bc7ef2fbdea42adb96ae3646a365d7f21ab5a0ea02` |
-| `CX-PKG-TRACE-R1.csv` | `c012f79edee152d67e18833c80f809965e5ad24466c733ab98bf9174f7dcca7b` |
-| `README.md` | `f96bf2b43c45fdce59811c87105aa06a6e7887ceee6365926fbaded54b01f461` |
-| `cx-00-source-gap-audit.md` | `89c37cd8d84e32de79a56cbca0e307992c56e26e16aebd37e09bd806bd9bc287` |
-| `cx-01-master-prd.md` | `293d1249cd7eeca624a297268c7965c253884d9c35630b5c9d87078ba250562e` |
-| `cx-02-customer-journeys-service-blueprint.md` | `99f1135a12f9f4c3224378cdcf0f253b12955450954fc4b850e036d7d856b8ec` |
-| `cx-03-experience-design-interaction-spec.md` | `872cb993cfd36957b3278738901d2c22ba097eb2ff9267f6e2de597cbb1ac493` |
-| `cx-04-commerce-checkout-experience.md` | `5120e4ac6cf402260e3913e9a4273116b6479f1ae4758f5774d6c09fadcaea56` |
-| `cx-05-custom-b2b-ordering-experience.md` | `18ee0f07cb2c358845cdd22cc54f987c9c8929ee13ed23ddd3c61b6511d370ec` |
-| `cx-06-customer-account-service-experience.md` | `5096952c0f1a2bf2e8e5d91dc5369683ad140d6fd6519c8e55c829283fa790ad` |
+| Artifact                                                 | SHA-256                                                            |
+| -------------------------------------------------------- | ------------------------------------------------------------------ |
+| `CX-PKG-DECISIONS-R1.md`                                 | `ffc538c56cd37ca0f23db1ae370d6f89bf3d74a96a6ebfd034b36875c75c922b` |
+| `CX-PKG-STAGE-CROSSWALK-R1.md`                           | `6a85b18f252a681705a414bc7ef2fbdea42adb96ae3646a365d7f21ab5a0ea02` |
+| `CX-PKG-TRACE-R1.csv`                                    | `c012f79edee152d67e18833c80f809965e5ad24466c733ab98bf9174f7dcca7b` |
+| `README.md`                                              | `f96bf2b43c45fdce59811c87105aa06a6e7887ceee6365926fbaded54b01f461` |
+| `cx-00-source-gap-audit.md`                              | `89c37cd8d84e32de79a56cbca0e307992c56e26e16aebd37e09bd806bd9bc287` |
+| `cx-01-master-prd.md`                                    | `293d1249cd7eeca624a297268c7965c253884d9c35630b5c9d87078ba250562e` |
+| `cx-02-customer-journeys-service-blueprint.md`           | `99f1135a12f9f4c3224378cdcf0f253b12955450954fc4b850e036d7d856b8ec` |
+| `cx-03-experience-design-interaction-spec.md`            | `872cb993cfd36957b3278738901d2c22ba097eb2ff9267f6e2de597cbb1ac493` |
+| `cx-04-commerce-checkout-experience.md`                  | `5120e4ac6cf402260e3913e9a4273116b6479f1ae4758f5774d6c09fadcaea56` |
+| `cx-05-custom-b2b-ordering-experience.md`                | `18ee0f07cb2c358845cdd22cc54f987c9c8929ee13ed23ddd3c61b6511d370ec` |
+| `cx-06-customer-account-service-experience.md`           | `5096952c0f1a2bf2e8e5d91dc5369683ad140d6fd6519c8e55c829283fa790ad` |
 | `cx-07-omnichannel-external-integration-requirements.md` | `f82ea350fbe3536ffabc36b5a8224df49a11bff4bae98ddeed990cb799449a78` |
-| `cx-08-experience-quality-acceptance-contract.md` | `92e3e4e01339bb5b3c017a177549ecd53425fa3356208718fff739ec9d99aa77` |
-| `cx-09-phased-delivery-product-validation-plan.md` | `b0e5e23d44f6083b3142e83963c4ca53372f8f7605a39cd64208841a86ca2cb9` |
+| `cx-08-experience-quality-acceptance-contract.md`        | `92e3e4e01339bb5b3c017a177549ecd53425fa3356208718fff739ec9d99aa77` |
+| `cx-09-phased-delivery-product-validation-plan.md`       | `b0e5e23d44f6083b3142e83963c4ca53372f8f7605a39cd64208841a86ca2cb9` |
 
 Final candidate package archive checksum will be supplied separately; source files above are manifest-bound.

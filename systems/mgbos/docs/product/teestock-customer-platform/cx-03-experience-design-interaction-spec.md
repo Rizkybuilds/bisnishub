@@ -89,18 +89,18 @@ source_dependencies:
 5. Distinct separation between visual UI state, customer-facing business projection and canonical business truth.
 6. Observable, maintainable performance on affordable mobile devices, not desktop-only demos.
 
-**P0 means a premium *assisted-sales* entry experience**, not a fake complete commerce platform. P1 extends valid retail/customer self-service; P2 adds evidence-gated complex configurators, integrations and AI. Existing operational pilot authority is unchanged.
+**P0 means a premium _assisted-sales_ entry experience**, not a fake complete commerce platform. P1 extends valid retail/customer self-service; P2 adds evidence-gated complex configurators, integrations and AI. Existing operational pilot authority is unchanged.
 
 ### 0.1 Authority vocabulary
 
-| Tag | Meaning |
-|---|---|
-| `SOURCE_BRAND` | Derived from existing TeeStock Brand Identity/Voice. CX-03 references; does not overwrite. |
-| `SOURCE_IA` | Existing TeeStock website information architecture; no covert navigation rewrite. |
-| `CX03_PROPOSED` | New design behavior offered for Owner review, NOT approved authority. |
-| `REQUIRES_CX04_05_06` | Interaction depends on specific downstream commerce/custom/account contract. |
-| `REQUIRES_ENGINEERING_REVIEW` | Cannot freeze until technical and security impact are evaluated. |
-| `NOT_VERIFIED` | No real-world/customer/lab field evidence supports a maturity claim yet. |
+| Tag                           | Meaning                                                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------------------ |
+| `SOURCE_BRAND`                | Derived from existing TeeStock Brand Identity/Voice. CX-03 references; does not overwrite. |
+| `SOURCE_IA`                   | Existing TeeStock website information architecture; no covert navigation rewrite.          |
+| `CX03_PROPOSED`               | New design behavior offered for Owner review, NOT approved authority.                      |
+| `REQUIRES_CX04_05_06`         | Interaction depends on specific downstream commerce/custom/account contract.               |
+| `REQUIRES_ENGINEERING_REVIEW` | Cannot freeze until technical and security impact are evaluated.                           |
+| `NOT_VERIFIED`                | No real-world/customer/lab field evidence supports a maturity claim yet.                   |
 
 ### 0.2 What this document does not do
 
@@ -115,17 +115,17 @@ source_dependencies:
 
 ### 1.1 Source hierarchy
 
-| Concern | Upstream/source of truth | CX-03 ownership |
-|---|---|---|
-| Brand personality, master visual character, approved assets | `bisnis/teestock/02-brand/brand-identity-system.md` | Product UI application, not new identity |
-| Voice, customer-facing terms and tonal contexts | `bisnis/teestock/02-brand/voice-and-copy-system.md` | Clarity patterns and UI content structure |
-| Customer jobs, sitemap and navigation priorities | `bisnis/teestock/10-product-tech/website-information-architecture.md` | Interaction behavior, accessibility, progressive disclosure |
-| Commerce product/stock/pricing truth | TeeStock Commerce Platform/Pricing + MGBOS canon | Faithful UI representation only |
-| Customer journey and handoffs | CX-01 `JRN-01..08`; CX-02 `CX2-BP-01..08` | Screen/task-level interaction behavior |
-| UI/interaction acceptance | CX-01 NFR/AC and this proposed spec | Draft quality acceptance; CX-08 owns test execution contract |
-| Security/auth/customer private data | MGBOS permissions and approved security owners | Safe failure messages, privacy-aware presentation |
-| Runtime/integration/AI limits | MGBOS/JARVIS/adapter canonical owners | Optional progressive UX and bounded fallbacks |
-| Current website | `systems/mgbos/apps/teestock/src/app/*` on baseline SHA | Evidence that public app remains a shell, not a live commerce experience |
+| Concern                                                     | Upstream/source of truth                                              | CX-03 ownership                                                          |
+| ----------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Brand personality, master visual character, approved assets | `bisnis/teestock/02-brand/brand-identity-system.md`                   | Product UI application, not new identity                                 |
+| Voice, customer-facing terms and tonal contexts             | `bisnis/teestock/02-brand/voice-and-copy-system.md`                   | Clarity patterns and UI content structure                                |
+| Customer jobs, sitemap and navigation priorities            | `bisnis/teestock/10-product-tech/website-information-architecture.md` | Interaction behavior, accessibility, progressive disclosure              |
+| Commerce product/stock/pricing truth                        | TeeStock Commerce Platform/Pricing + MGBOS canon                      | Faithful UI representation only                                          |
+| Customer journey and handoffs                               | CX-01 `JRN-01..08`; CX-02 `CX2-BP-01..08`                             | Screen/task-level interaction behavior                                   |
+| UI/interaction acceptance                                   | CX-01 NFR/AC and this proposed spec                                   | Draft quality acceptance; CX-08 owns test execution contract             |
+| Security/auth/customer private data                         | MGBOS permissions and approved security owners                        | Safe failure messages, privacy-aware presentation                        |
+| Runtime/integration/AI limits                               | MGBOS/JARVIS/adapter canonical owners                                 | Optional progressive UX and bounded fallbacks                            |
+| Current website                                             | `systems/mgbos/apps/teestock/src/app/*` on baseline SHA               | Evidence that public app remains a shell, not a live commerce experience |
 
 ### 1.2 Existing identity preserved (`SOURCE_BRAND`)
 
@@ -147,36 +147,36 @@ As inspected at `2800c474563309bda49d84d712f79b68c9dde36a`: `systems/mgbos/apps/
 
 ## 2. Experience design principles — `CX3-DP-*`
 
-| ID | Principle | Practical UX consequence | Anti-pattern |
-|---|---|---|---|
-| `CX3-DP-01` | **Content before ornament** | Offer, eligibility, facts and next action appear before nonessential showpieces | Beautiful hero hides actual service entry |
-| `CX3-DP-02` | **Calm canvas, expressive products** | Master UI has visual restraint; photos/campaign stories can be expressive | Every page uses loud, competing effects |
-| `CX3-DP-03` | **Reveal depth on demand** | Basic flow first; advanced controls by need and capability | Print jargon and every option in first form |
-| `CX3-DP-04` | **One primary task per context** | Clear primary CTA plus visible alternatives where relevant | Four identical high-emphasis buttons |
-| `CX3-DP-05` | **Truth has visible status** | Estimate/draft/approved; pending/confirmed; received/reviewed visibly differ | "Order confirmed" after only form submit |
-| `CX3-DP-06` | **Every wait has a meaning** | Known progress vs indeterminate wait vs unknown server state shown honestly | Endless spinner or invented percentage |
-| `CX3-DP-07` | **Recover where possible** | Preserve safe entries, explain fixes, provide retry/manual path | Entire form clears on server timeout |
-| `CX3-DP-08` | **Accessible by design** | Semantic structure, keyboard, focus, contrast and reduced motion are first-class | Accessibility left to late QA |
-| `CX3-DP-09` | **Mobile is the baseline** | Thumb-reachable common actions; inputs unaffected by virtual keyboard | Desktop navigation compressed into phone |
-| `CX3-DP-10` | **Lightweight default** | No paid AI, design editor, 3D/animation package required for normal browsing | Home blocked by large interactive bundle |
-| `CX3-DP-11` | **Visible capability boundaries** | Supported, assisted, coming later, temporarily unavailable distinctly labelled | Disabled buy CTA implying product actually purchasable |
-| `CX3-DP-12` | **Consistency without sameness** | Shared interaction grammar; product/Business/Originals surface personality can differ | Same generic SaaS dashboard for all customers |
-| `CX3-DP-13` | **Explain without exposing internals** | Customer-friendly statuses and next step; no raw state machine | "QC_WORK_ORDER_BLOCKED" exposed to user |
-| `CX3-DP-14` | **Make physical reality legible** | Lead-time, proof, QC and shipping explained as externally verifiable steps | Animation advances production magically |
-| `CX3-DP-15` | **Measure work eliminated** | Valid submitted context reaches operations without founder retyping | Chat summary lost; founder fills another sheet |
+| ID          | Principle                              | Practical UX consequence                                                              | Anti-pattern                                           |
+| ----------- | -------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `CX3-DP-01` | **Content before ornament**            | Offer, eligibility, facts and next action appear before nonessential showpieces       | Beautiful hero hides actual service entry              |
+| `CX3-DP-02` | **Calm canvas, expressive products**   | Master UI has visual restraint; photos/campaign stories can be expressive             | Every page uses loud, competing effects                |
+| `CX3-DP-03` | **Reveal depth on demand**             | Basic flow first; advanced controls by need and capability                            | Print jargon and every option in first form            |
+| `CX3-DP-04` | **One primary task per context**       | Clear primary CTA plus visible alternatives where relevant                            | Four identical high-emphasis buttons                   |
+| `CX3-DP-05` | **Truth has visible status**           | Estimate/draft/approved; pending/confirmed; received/reviewed visibly differ          | "Order confirmed" after only form submit               |
+| `CX3-DP-06` | **Every wait has a meaning**           | Known progress vs indeterminate wait vs unknown server state shown honestly           | Endless spinner or invented percentage                 |
+| `CX3-DP-07` | **Recover where possible**             | Preserve safe entries, explain fixes, provide retry/manual path                       | Entire form clears on server timeout                   |
+| `CX3-DP-08` | **Accessible by design**               | Semantic structure, keyboard, focus, contrast and reduced motion are first-class      | Accessibility left to late QA                          |
+| `CX3-DP-09` | **Mobile is the baseline**             | Thumb-reachable common actions; inputs unaffected by virtual keyboard                 | Desktop navigation compressed into phone               |
+| `CX3-DP-10` | **Lightweight default**                | No paid AI, design editor, 3D/animation package required for normal browsing          | Home blocked by large interactive bundle               |
+| `CX3-DP-11` | **Visible capability boundaries**      | Supported, assisted, coming later, temporarily unavailable distinctly labelled        | Disabled buy CTA implying product actually purchasable |
+| `CX3-DP-12` | **Consistency without sameness**       | Shared interaction grammar; product/Business/Originals surface personality can differ | Same generic SaaS dashboard for all customers          |
+| `CX3-DP-13` | **Explain without exposing internals** | Customer-friendly statuses and next step; no raw state machine                        | "QC_WORK_ORDER_BLOCKED" exposed to user                |
+| `CX3-DP-14` | **Make physical reality legible**      | Lead-time, proof, QC and shipping explained as externally verifiable steps            | Animation advances production magically                |
+| `CX3-DP-15` | **Measure work eliminated**            | Valid submitted context reaches operations without founder retyping                   | Chat summary lost; founder fills another sheet         |
 
 ## 3. Audience and device contexts
 
-| Audience/context | High-value action | Interaction focus | Privacy/trust constraint |
-|---|---|---|---|
-| First-time individual buyer | Choose Shop or Custom | Explain offer, avoid jargon, no mandatory account for inquiry | No fake stock or guaranteed price |
-| Repeat retail customer | Discover/compare/reorder (P1) | Familiar patterns, contextual history | Authenticated authorized history only |
-| Individual Custom buyer | Express idea; upload optional artwork | Guided questions, preview is not proof | Source file privacy and file state clarity |
-| Business purchaser | Request quote, specify project | Structured requirements, commercial review, documents | Organization role/approver boundaries |
-| Low-bandwidth mobile customer | Reach action and submit | Low JS, readable images, recoverable drafts | No silent data loss |
-| Assistive-technology/keyboard user | Complete same legitimate task | Native controls, proper names/roles/errors | No inaccessible drag-only flow |
-| Customer with partial information | Seek guidance | Explicit unknown/"belum tahu" paths | Avoid fabrication of inputs/price |
-| Customer returning after interruption | Continue within approved session | Clearly scoped persistence and status refresh | Shared-device/privacy and stale quote guards |
+| Audience/context                      | High-value action                     | Interaction focus                                             | Privacy/trust constraint                     |
+| ------------------------------------- | ------------------------------------- | ------------------------------------------------------------- | -------------------------------------------- |
+| First-time individual buyer           | Choose Shop or Custom                 | Explain offer, avoid jargon, no mandatory account for inquiry | No fake stock or guaranteed price            |
+| Repeat retail customer                | Discover/compare/reorder (P1)         | Familiar patterns, contextual history                         | Authenticated authorized history only        |
+| Individual Custom buyer               | Express idea; upload optional artwork | Guided questions, preview is not proof                        | Source file privacy and file state clarity   |
+| Business purchaser                    | Request quote, specify project        | Structured requirements, commercial review, documents         | Organization role/approver boundaries        |
+| Low-bandwidth mobile customer         | Reach action and submit               | Low JS, readable images, recoverable drafts                   | No silent data loss                          |
+| Assistive-technology/keyboard user    | Complete same legitimate task         | Native controls, proper names/roles/errors                    | No inaccessible drag-only flow               |
+| Customer with partial information     | Seek guidance                         | Explicit unknown/"belum tahu" paths                           | Avoid fabrication of inputs/price            |
+| Customer returning after interruption | Continue within approved session      | Clearly scoped persistence and status refresh                 | Shared-device/privacy and stale quote guards |
 
 **Minimum product study contexts (proposed):** Indonesian mobile-first browsing; lower-end Android/desktop reference cohort, slow network, touch + keyboard, screen reader, zoom/reflow, reduced motion, interrupted connection, assistive and cognitive-accessibility evaluation. Sampling protocol defined with CX-08 / UX research owner.
 
@@ -193,17 +193,17 @@ These are intent labels from TeeStock website IA. The eventual URL paths and ava
 
 ### 4.2 Header and global navigation interaction rules
 
-| Situation | Proposed contract |
-|---|---|
-| Desktop navigation | Primary intents visible without scrolling or exposing internal sub-brands as top-level clutter; clear utility search/account/cart only where active |
-| Small-screen navigation | Accessible menu toggle with accessible name, expanded state, logical focus, close by button/Escape where modal, and restored focus |
-| Deep-link entry | User can orient via clear page title, breadcrumb/back navigation where useful, persistent next step; no requirement to visit homepage first |
-| Search unavailable | Do not render an apparently functioning search control if no reliable index/action exists; provide category discovery |
-| Cart unavailable in P0 | No persistent empty/disabled cart icon suggesting live ecommerce; truthful CTA goes to assisted order if approved |
-| Account unavailable | Do not force signup or expose dummy profile links; guest inquiry still has safe confirmation/contact |
-| Sticky header | Must not cover focused fields, headings, dialogs, anchor targets or touch controls |
-| Navigation change | Preserve semantic landmarks, update document title and manage focus appropriately on route transitions |
-| External marketplace link | Clearly communicate leaving TeeStock/site and any meaningful transaction-policy difference |
+| Situation                 | Proposed contract                                                                                                                                   |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Desktop navigation        | Primary intents visible without scrolling or exposing internal sub-brands as top-level clutter; clear utility search/account/cart only where active |
+| Small-screen navigation   | Accessible menu toggle with accessible name, expanded state, logical focus, close by button/Escape where modal, and restored focus                  |
+| Deep-link entry           | User can orient via clear page title, breadcrumb/back navigation where useful, persistent next step; no requirement to visit homepage first         |
+| Search unavailable        | Do not render an apparently functioning search control if no reliable index/action exists; provide category discovery                               |
+| Cart unavailable in P0    | No persistent empty/disabled cart icon suggesting live ecommerce; truthful CTA goes to assisted order if approved                                   |
+| Account unavailable       | Do not force signup or expose dummy profile links; guest inquiry still has safe confirmation/contact                                                |
+| Sticky header             | Must not cover focused fields, headings, dialogs, anchor targets or touch controls                                                                  |
+| Navigation change         | Preserve semantic landmarks, update document title and manage focus appropriately on route transitions                                              |
+| External marketplace link | Clearly communicate leaving TeeStock/site and any meaningful transaction-policy difference                                                          |
 
 ### 4.3 Journey-level content hierarchy
 
@@ -229,37 +229,37 @@ Do not hide policy/fulfillment qualifiers just to make visual design minimal.
 
 **Product-level recommendation:** stable composition, disciplined spacing, clear typographic hierarchy, generous white/negative space, useful image ratios, visible CTA hierarchy and selective tactility. **Do not** infer a specific color palette, font family, icon pack, exact grid-unit system or dark-mode default from this document. Existing TeeStock brand assets remain authoritative.
 
-| Visual domain | Required design-system decision | Acceptance behavior |
-|---|---|---|
-| Color | Approved brand core, surfaces, border, foreground, interactive and semantic feedback tokens; light/dark variants only if supported | Contrast remains sufficient and state does not rely only on color |
-| Typography | Licensed/applicable brand fonts plus system fallback; display, heading, body, label, caption scale | Text readable when browser fonts fail and at 200% resize |
-| Spacing | Consistent responsive spacing/rhythm tokens across page, panel, form and card | Content hierarchy evident; no cramped interactive touch targets |
-| Layout | Responsive content max-width, useful line lengths, image alignment and page container patterns | No essential clipping at tested viewport/zoom |
-| Imagery | Quality real garment/detail/print proof photos; cropping and aspect-ratio rules | User can evaluate size/material/placement without deceptive render |
-| Shape/elevation | Purposeful component grouping and overlay layering | Cards distinguish content; shadows not primary information encoding |
-| Iconography | Consistent meaning, labels on ambiguous actions, accessible names | Icon-only actionable controls still discoverable and labeled |
-| Motion | Subtle state transitions, never required to understand state | Reduced motion route equally complete |
-| Original/label expression | Distinct product/campaign art allowed within stable checkout/interaction grammar | Cross-brand expression does not compromise trust |
-| Theme | Product owner to confirm supported theme modes | No arbitrary preference mismatch or low-contrast theme flip |
+| Visual domain             | Required design-system decision                                                                                                    | Acceptance behavior                                                 |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Color                     | Approved brand core, surfaces, border, foreground, interactive and semantic feedback tokens; light/dark variants only if supported | Contrast remains sufficient and state does not rely only on color   |
+| Typography                | Licensed/applicable brand fonts plus system fallback; display, heading, body, label, caption scale                                 | Text readable when browser fonts fail and at 200% resize            |
+| Spacing                   | Consistent responsive spacing/rhythm tokens across page, panel, form and card                                                      | Content hierarchy evident; no cramped interactive touch targets     |
+| Layout                    | Responsive content max-width, useful line lengths, image alignment and page container patterns                                     | No essential clipping at tested viewport/zoom                       |
+| Imagery                   | Quality real garment/detail/print proof photos; cropping and aspect-ratio rules                                                    | User can evaluate size/material/placement without deceptive render  |
+| Shape/elevation           | Purposeful component grouping and overlay layering                                                                                 | Cards distinguish content; shadows not primary information encoding |
+| Iconography               | Consistent meaning, labels on ambiguous actions, accessible names                                                                  | Icon-only actionable controls still discoverable and labeled        |
+| Motion                    | Subtle state transitions, never required to understand state                                                                       | Reduced motion route equally complete                               |
+| Original/label expression | Distinct product/campaign art allowed within stable checkout/interaction grammar                                                   | Cross-brand expression does not compromise trust                    |
+| Theme                     | Product owner to confirm supported theme modes                                                                                     | No arbitrary preference mismatch or low-contrast theme flip         |
 
-### 5.2 Proposed token *categories* (`CX3-DS-001..12`)
+### 5.2 Proposed token _categories_ (`CX3-DS-001..12`)
 
 The following are **contract names/categories**, not CSS variable declarations or implementation choices. Token names may be translated after engineering/design-system reconciliation.
 
-| ID | Category | Minimum semantic variants |
-|---|---|---|
-| `CX3-DS-001` | Brand core | logo usage, core foreground/accent/reference palette source |
-| `CX3-DS-002` | Surface | page, raised panel, subtle panel, inverted/overlay |
-| `CX3-DS-003` | Text | primary, secondary, muted, inverse, interactive |
-| `CX3-DS-004` | Borders/dividers | default, subtle, emphasized, focus, error |
-| `CX3-DS-005` | Actions | primary, secondary, tertiary, destructive where legitimate; hover/focus/disabled/busy |
-| `CX3-DS-006` | Feedback | success, information, caution, error, uncertain/unknown, pending |
-| `CX3-DS-007` | Typography | heading levels, body, labels, helper/error, numeric display |
-| `CX3-DS-008` | Spacing/sizing | section rhythm, content gap, control gap, touch target, responsive margin |
-| `CX3-DS-009` | Radius/elevation | card, sheet/dialog, media, sticky affordance |
-| `CX3-DS-010` | Media | product listing, detail, artwork preview, hero, thumbnail; optimized aspect variants |
-| `CX3-DS-011` | Motion | duration/easing categories, entry, state change, loading, reduced motion alternatives |
-| `CX3-DS-012` | Layering | base, sticky header, contextual overlay, dialog, system message, skip-link/focus |
+| ID           | Category         | Minimum semantic variants                                                             |
+| ------------ | ---------------- | ------------------------------------------------------------------------------------- |
+| `CX3-DS-001` | Brand core       | logo usage, core foreground/accent/reference palette source                           |
+| `CX3-DS-002` | Surface          | page, raised panel, subtle panel, inverted/overlay                                    |
+| `CX3-DS-003` | Text             | primary, secondary, muted, inverse, interactive                                       |
+| `CX3-DS-004` | Borders/dividers | default, subtle, emphasized, focus, error                                             |
+| `CX3-DS-005` | Actions          | primary, secondary, tertiary, destructive where legitimate; hover/focus/disabled/busy |
+| `CX3-DS-006` | Feedback         | success, information, caution, error, uncertain/unknown, pending                      |
+| `CX3-DS-007` | Typography       | heading levels, body, labels, helper/error, numeric display                           |
+| `CX3-DS-008` | Spacing/sizing   | section rhythm, content gap, control gap, touch target, responsive margin             |
+| `CX3-DS-009` | Radius/elevation | card, sheet/dialog, media, sticky affordance                                          |
+| `CX3-DS-010` | Media            | product listing, detail, artwork preview, hero, thumbnail; optimized aspect variants  |
+| `CX3-DS-011` | Motion           | duration/easing categories, entry, state change, loading, reduced motion alternatives |
+| `CX3-DS-012` | Layering         | base, sticky header, contextual overlay, dialog, system message, skip-link/focus      |
 
 **No magic values:** precise colors, font sizes, spacing pixels, animation durations, elevation levels, breakpoint choices and implementation naming belong in an approved design-system token inventory after review of TeeStock brand assets and real device tests. The goal is to prevent an AI Builder from choosing random brand elements.
 
@@ -282,71 +282,71 @@ The following are **contract names/categories**, not CSS variable declarations o
 
 Every interactive reusable component needs: semantic purpose, accessible name, displayed label/copy, focus order, state descriptions, keyboard/touch behavior, responsive behavior, and screenshot/prototype for default/error/loading/disabled where relevant. Scope-specific business effects and server command authorization are **not** defined by the component.
 
-| Family | UX contract | Common error to avoid |
-|---|---|---|
-| Link vs button | Link navigates; button acts; both discernible and focusable | Clickable `div` with no keyboard behavior |
-| Primary CTA | Exactly one primary action per local decision context; supporting links remain discoverable | Several same-color checkout/order CTAs |
-| Navigation/menu | Clear expanded/collapsed state; Escape/focus rules for true dialogs | Hover-only dropdown unusable on mobile |
-| Product card | Image, title, key attributes, reliable price/availability representation, one legitimate entry | Entire card ambiguous and hides unavailable product |
-| Product variant picker | Selected option text/shape, unavailable explanation, keyboard semantics | Color chip alone conveys selection |
-| Quantity selector | Numeric input, bounds shown, correction guidance, affected price qualifiers | Direct uncontrolled negative/zero quantity |
-| Form field | Visible label, optional/required cue, helper, validation and error association | Placeholder used as sole label |
-| Conditional group | Reveals only relevant questions and explains why; retains/revalidates suitable values | Hidden stale fields sent silently |
-| Upload | Approved type/size guidance, upload/scan/review state separation, cancel/retry | Progress animation says "artwork approved" |
-| Alert/banner | Severity, action, accessible announcement proportional to urgency | Every warning is a blocking modal |
-| Toast | Only transient, non-critical acknowledgement; persistent confirmations remain visible | "Order placed" only in disappearing toast |
-| Dialog/sheet | Accessible title, focus trap as appropriate, Escape/cancel behavior and restore focus | Dialog traps user or loses work |
-| Tabs/accordion | Correct roles, keyboard operation and progressive disclosure; critical info accessible | Tabs hiding essential terms/CTA |
-| Skeleton/progress | Preserved layout, clear loading meaning, non-fabricated progress | Endless loading replacing error |
-| Empty state | No legitimate items found; context + next useful action | "Belum ada pesanan" when server down |
-| Status stepper | Customer-friendly projection from governed facts; unknown state explicit | Stepper advances because local timer completed |
-| Sticky action bar | Contextual action remains reachable without blocking inputs, focus or content | Buy bar covers keyboard and summary |
-| Search/filter/sort (P1) | Query state, active filters, reset, no-results vs failure, shareable state where valid | Decorative search with no real index |
-| AI entry (optional) | Clearly AI-assisted, limitations, handoff, dismissible | Chat panel blocks purchase route |
+| Family                  | UX contract                                                                                    | Common error to avoid                               |
+| ----------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| Link vs button          | Link navigates; button acts; both discernible and focusable                                    | Clickable `div` with no keyboard behavior           |
+| Primary CTA             | Exactly one primary action per local decision context; supporting links remain discoverable    | Several same-color checkout/order CTAs              |
+| Navigation/menu         | Clear expanded/collapsed state; Escape/focus rules for true dialogs                            | Hover-only dropdown unusable on mobile              |
+| Product card            | Image, title, key attributes, reliable price/availability representation, one legitimate entry | Entire card ambiguous and hides unavailable product |
+| Product variant picker  | Selected option text/shape, unavailable explanation, keyboard semantics                        | Color chip alone conveys selection                  |
+| Quantity selector       | Numeric input, bounds shown, correction guidance, affected price qualifiers                    | Direct uncontrolled negative/zero quantity          |
+| Form field              | Visible label, optional/required cue, helper, validation and error association                 | Placeholder used as sole label                      |
+| Conditional group       | Reveals only relevant questions and explains why; retains/revalidates suitable values          | Hidden stale fields sent silently                   |
+| Upload                  | Approved type/size guidance, upload/scan/review state separation, cancel/retry                 | Progress animation says "artwork approved"          |
+| Alert/banner            | Severity, action, accessible announcement proportional to urgency                              | Every warning is a blocking modal                   |
+| Toast                   | Only transient, non-critical acknowledgement; persistent confirmations remain visible          | "Order placed" only in disappearing toast           |
+| Dialog/sheet            | Accessible title, focus trap as appropriate, Escape/cancel behavior and restore focus          | Dialog traps user or loses work                     |
+| Tabs/accordion          | Correct roles, keyboard operation and progressive disclosure; critical info accessible         | Tabs hiding essential terms/CTA                     |
+| Skeleton/progress       | Preserved layout, clear loading meaning, non-fabricated progress                               | Endless loading replacing error                     |
+| Empty state             | No legitimate items found; context + next useful action                                        | "Belum ada pesanan" when server down                |
+| Status stepper          | Customer-friendly projection from governed facts; unknown state explicit                       | Stepper advances because local timer completed      |
+| Sticky action bar       | Contextual action remains reachable without blocking inputs, focus or content                  | Buy bar covers keyboard and summary                 |
+| Search/filter/sort (P1) | Query state, active filters, reset, no-results vs failure, shareable state where valid         | Decorative search with no real index                |
+| AI entry (optional)     | Clearly AI-assisted, limitations, handoff, dismissible                                         | Chat panel blocks purchase route                    |
 
 ### 6.2 Universal presentational state set — `CX3-STATE-01..12`
 
-| ID | UI state | Visible requirement | Never imply |
-|---|---|---|---|
-| `CX3-STATE-01` | `READY` | Enabled input/action with known prerequisites | Current inventory/payment validity without check |
-| `CX3-STATE-02` | `NOT_APPLICABLE` | Control omitted/explained when irrelevant | User did something wrong |
-| `CX3-STATE-03` | `UNAVAILABLE` | Why feature/offer cannot be used now; alternative | Legitimate backend operation exists |
-| `CX3-STATE-04` | `LOADING` | Waiting feedback without fixed invented percentage | Data known/empty |
-| `CX3-STATE-05` | `SUBMITTING` | Prevent accidental extra intent and signal processing | Transaction committed |
-| `CX3-STATE-06` | `RECEIVED` | Acknowledgement only after authorized durable receipt evidence | Quote/order/payment approved |
-| `CX3-STATE-07` | `VALIDATION_ERROR` | Field-level guidance; preserved non-sensitive entries | Backend is unavailable |
-| `CX3-STATE-08` | `UNAVAILABLE_DATA` | Data could not be fetched; retry/contact | "No records" |
-| `CX3-STATE-09` | `EMPTY_RESULT` | Legitimate successful fetch returned none; clear filter/next step | Server failed |
-| `CX3-STATE-10` | `UNAUTHORIZED` | Safe refusal or re-authentication without exposing existence | User's organization/customer records are present |
-| `CX3-STATE-11` | `STALE` | Recheck/review changed price, quote, stock, proof or session | Old action is still valid |
-| `CX3-STATE-12` | `RECOVERY_REQUIRED` | Visible source of uncertainty and stable next action | An uncertain external operation already succeeded |
+| ID             | UI state            | Visible requirement                                               | Never imply                                       |
+| -------------- | ------------------- | ----------------------------------------------------------------- | ------------------------------------------------- |
+| `CX3-STATE-01` | `READY`             | Enabled input/action with known prerequisites                     | Current inventory/payment validity without check  |
+| `CX3-STATE-02` | `NOT_APPLICABLE`    | Control omitted/explained when irrelevant                         | User did something wrong                          |
+| `CX3-STATE-03` | `UNAVAILABLE`       | Why feature/offer cannot be used now; alternative                 | Legitimate backend operation exists               |
+| `CX3-STATE-04` | `LOADING`           | Waiting feedback without fixed invented percentage                | Data known/empty                                  |
+| `CX3-STATE-05` | `SUBMITTING`        | Prevent accidental extra intent and signal processing             | Transaction committed                             |
+| `CX3-STATE-06` | `RECEIVED`          | Acknowledgement only after authorized durable receipt evidence    | Quote/order/payment approved                      |
+| `CX3-STATE-07` | `VALIDATION_ERROR`  | Field-level guidance; preserved non-sensitive entries             | Backend is unavailable                            |
+| `CX3-STATE-08` | `UNAVAILABLE_DATA`  | Data could not be fetched; retry/contact                          | "No records"                                      |
+| `CX3-STATE-09` | `EMPTY_RESULT`      | Legitimate successful fetch returned none; clear filter/next step | Server failed                                     |
+| `CX3-STATE-10` | `UNAUTHORIZED`      | Safe refusal or re-authentication without exposing existence      | User's organization/customer records are present  |
+| `CX3-STATE-11` | `STALE`             | Recheck/review changed price, quote, stock, proof or session      | Old action is still valid                         |
+| `CX3-STATE-12` | `RECOVERY_REQUIRED` | Visible source of uncertainty and stable next action              | An uncertain external operation already succeeded |
 
 **State namespace is UI-only.** `CX3-STATE-*` cannot be reused as canonical status values in databases or cross-domain commands. `UNAVAILABLE_DATA` and `EMPTY_RESULT` must remain distinct, aligning with ongoing internal UXR data-state QA concerns without extending their PR scope.
 
 ### 6.3 Component behavior inventory — `CX3-IC-01..20`
 
-| ID | Interaction contract | Stage | Trace |
-|---|---|---|---|
-| `CX3-IC-01` | Discoverable primary CTA with real destination | P0 | `FR-001..003`, `JRN-01` |
-| `CX3-IC-02` | Accessible responsive menu with orientation and focus control | P0 | `FR-001/005` |
-| `CX3-IC-03` | Visible eligibility and non-purchasability cues | P0 | `FR-002/004` |
-| `CX3-IC-04` | Form labels, field guidance, required/optional distinction | P0 | `FR-009/010` |
-| `CX3-IC-05` | Progressive disclosure for Custom/Business | P0 | `FR-010/014` |
-| `CX3-IC-06` | File selection/status/error/alternative affordance | P0 where approved | `FR-011` |
-| `CX3-IC-07` | Requested-date vs confirmed-date presentation | P0 | `FR-012` |
-| `CX3-IC-08` | Explicit authenticated receipt/unknown-submit recovery | P0 | `FR-013` |
-| `CX3-IC-09` | Estimated vs reviewed/accepted quote visual grammar | P0/P1 | `FR-015/016` |
-| `CX3-IC-10` | Useful backend-empty vs backend-error screens | P0/P1 | `BR-007`, `NFR-006` |
-| `CX3-IC-11` | Catalog filter/search/sort state and recovery | P1 | `FR-006/007` |
-| `CX3-IC-12` | Variant selection/availability qualification | P1 | `FR-020..022` |
-| `CX3-IC-13` | Cart verification/reconfirmation of changed terms | P1 | `FR-023..027` |
-| `CX3-IC-14` | Pending vs verified payment outcome display | P1 | `FR-024/025` |
-| `CX3-IC-15` | Protected customer status/history projection | P0 assisted/P1 portal | `FR-029..031` |
-| `CX3-IC-16` | Support/case creation and human fallback | P0 basic/P1 | `FR-032..034` |
-| `CX3-IC-17` | Proof preview vs exact version approval | P1/P2 gated | `FR-019/034` |
-| `CX3-IC-18` | Auth/role-aware B2B account navigation | P1/P2 gated | `FR-017` |
-| `CX3-IC-19` | Graceful optional assistant with handoff | P1/P2 optional | `FR-040/043/046` |
-| `CX3-IC-20` | Modular heavy builder isolated from regular route performance | P2 gated | `FR-018/019`, `NFR-004` |
+| ID          | Interaction contract                                          | Stage                 | Trace                   |
+| ----------- | ------------------------------------------------------------- | --------------------- | ----------------------- |
+| `CX3-IC-01` | Discoverable primary CTA with real destination                | P0                    | `FR-001..003`, `JRN-01` |
+| `CX3-IC-02` | Accessible responsive menu with orientation and focus control | P0                    | `FR-001/005`            |
+| `CX3-IC-03` | Visible eligibility and non-purchasability cues               | P0                    | `FR-002/004`            |
+| `CX3-IC-04` | Form labels, field guidance, required/optional distinction    | P0                    | `FR-009/010`            |
+| `CX3-IC-05` | Progressive disclosure for Custom/Business                    | P0                    | `FR-010/014`            |
+| `CX3-IC-06` | File selection/status/error/alternative affordance            | P0 where approved     | `FR-011`                |
+| `CX3-IC-07` | Requested-date vs confirmed-date presentation                 | P0                    | `FR-012`                |
+| `CX3-IC-08` | Explicit authenticated receipt/unknown-submit recovery        | P0                    | `FR-013`                |
+| `CX3-IC-09` | Estimated vs reviewed/accepted quote visual grammar           | P0/P1                 | `FR-015/016`            |
+| `CX3-IC-10` | Useful backend-empty vs backend-error screens                 | P0/P1                 | `BR-007`, `NFR-006`     |
+| `CX3-IC-11` | Catalog filter/search/sort state and recovery                 | P1                    | `FR-006/007`            |
+| `CX3-IC-12` | Variant selection/availability qualification                  | P1                    | `FR-020..022`           |
+| `CX3-IC-13` | Cart verification/reconfirmation of changed terms             | P1                    | `FR-023..027`           |
+| `CX3-IC-14` | Pending vs verified payment outcome display                   | P1                    | `FR-024/025`            |
+| `CX3-IC-15` | Protected customer status/history projection                  | P0 assisted/P1 portal | `FR-029..031`           |
+| `CX3-IC-16` | Support/case creation and human fallback                      | P0 basic/P1           | `FR-032..034`           |
+| `CX3-IC-17` | Proof preview vs exact version approval                       | P1/P2 gated           | `FR-019/034`            |
+| `CX3-IC-18` | Auth/role-aware B2B account navigation                        | P1/P2 gated           | `FR-017`                |
+| `CX3-IC-19` | Graceful optional assistant with handoff                      | P1/P2 optional        | `FR-040/043/046`        |
+| `CX3-IC-20` | Modular heavy builder isolated from regular route performance | P2 gated              | `FR-018/019`, `NFR-004` |
 
 ## 7. Interaction grammar — `CX3-IX-*`
 
@@ -354,24 +354,24 @@ These are **customer-facing interaction expectations**, not code handlers, API c
 
 ### 7.1 Feedback timing and intent
 
-| ID | Trigger | Expected interaction | Guardrail |
-|---|---|---|---|
-| `CX3-IX-01` | Press valid local action | Immediate visual/semantic acknowledgement that action was triggered | Feedback must not claim durable external success |
-| `CX3-IX-02` | Start asynchronous request | Determinate only when real progress is known; otherwise honest indeterminate progress | No fake progress 80% for unknown backend |
-| `CX3-IX-03` | Repeated click/tap on submit | Guard duplicate user intent; preserve actual retry availability if unresolved | Client suppression does not replace server idempotency |
-| `CX3-IX-04` | Request accepted by authoritative endpoint | Stable receipt, relevant reference, next step, allowed contact/recovery | Receipt not interchangeable with quote/order |
-| `CX3-IX-05` | Request timeout, outcome unknown | Show "unable to confirm" and safe retry/check path | No blind retry that duplicates financial effect |
-| `CX3-IX-06` | Invalid user input | Focusable error summary where appropriate, inline correction, retain safe fields | No destructive form reset |
-| `CX3-IX-07` | Validation or source rule changes | Explain what needs reconfirmation; retain compatible user intent | No hidden acceptance of stale quote |
-| `CX3-IX-08` | Network disconnect | Non-alarming connection state, saved draft only if permitted, retry path | Never show last cached order as fresh verified truth |
-| `CX3-IX-09` | Navigate back or change step | Preserve entered data where lawful/feasible; warn before truly destructive exit | Do not add modal confirmation for every harmless action |
-| `CX3-IX-10` | Modal opens/closes | Deliberate initial focus; accessible label; focus return after dismissal | No focus loss behind overlay |
-| `CX3-IX-11` | Task completes | Visible durable summary and next action, with accessible announcement | Not toast-only if reference/terms must be retained |
-| `CX3-IX-12` | User enables advanced experience | Explain loading/capability and preserve regular alternate path | Optional feature cannot monopolize primary interaction |
-| `CX3-IX-13` | Price/status/availability update | Update from governed data; preserve context; request reconfirmation if terms materially change | No silent price increase at payable action |
-| `CX3-IX-14` | User requests human assistance | Provide valid channel/hand-off status, not pretend a human already responded | No invented guaranteed response time |
-| `CX3-IX-15` | User selects a destructive action | Explain consequences; require confirmation only when irreversible/material | No ambiguous icon-only cancellation |
-| `CX3-IX-16` | User activates external checkout/channel | Set expectation about leaving TeeStock and who governs transaction | No fabricated in-platform cancellation/return privileges |
+| ID          | Trigger                                    | Expected interaction                                                                           | Guardrail                                                |
+| ----------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `CX3-IX-01` | Press valid local action                   | Immediate visual/semantic acknowledgement that action was triggered                            | Feedback must not claim durable external success         |
+| `CX3-IX-02` | Start asynchronous request                 | Determinate only when real progress is known; otherwise honest indeterminate progress          | No fake progress 80% for unknown backend                 |
+| `CX3-IX-03` | Repeated click/tap on submit               | Guard duplicate user intent; preserve actual retry availability if unresolved                  | Client suppression does not replace server idempotency   |
+| `CX3-IX-04` | Request accepted by authoritative endpoint | Stable receipt, relevant reference, next step, allowed contact/recovery                        | Receipt not interchangeable with quote/order             |
+| `CX3-IX-05` | Request timeout, outcome unknown           | Show "unable to confirm" and safe retry/check path                                             | No blind retry that duplicates financial effect          |
+| `CX3-IX-06` | Invalid user input                         | Focusable error summary where appropriate, inline correction, retain safe fields               | No destructive form reset                                |
+| `CX3-IX-07` | Validation or source rule changes          | Explain what needs reconfirmation; retain compatible user intent                               | No hidden acceptance of stale quote                      |
+| `CX3-IX-08` | Network disconnect                         | Non-alarming connection state, saved draft only if permitted, retry path                       | Never show last cached order as fresh verified truth     |
+| `CX3-IX-09` | Navigate back or change step               | Preserve entered data where lawful/feasible; warn before truly destructive exit                | Do not add modal confirmation for every harmless action  |
+| `CX3-IX-10` | Modal opens/closes                         | Deliberate initial focus; accessible label; focus return after dismissal                       | No focus loss behind overlay                             |
+| `CX3-IX-11` | Task completes                             | Visible durable summary and next action, with accessible announcement                          | Not toast-only if reference/terms must be retained       |
+| `CX3-IX-12` | User enables advanced experience           | Explain loading/capability and preserve regular alternate path                                 | Optional feature cannot monopolize primary interaction   |
+| `CX3-IX-13` | Price/status/availability update           | Update from governed data; preserve context; request reconfirmation if terms materially change | No silent price increase at payable action               |
+| `CX3-IX-14` | User requests human assistance             | Provide valid channel/hand-off status, not pretend a human already responded                   | No invented guaranteed response time                     |
+| `CX3-IX-15` | User selects a destructive action          | Explain consequences; require confirmation only when irreversible/material                     | No ambiguous icon-only cancellation                      |
+| `CX3-IX-16` | User activates external checkout/channel   | Set expectation about leaving TeeStock and who governs transaction                             | No fabricated in-platform cancellation/return privileges |
 
 ### 7.2 Disabled versus unavailable versus unauthorized
 
@@ -382,14 +382,14 @@ These are **customer-facing interaction expectations**, not code handlers, API c
 
 ### 7.3 Notification and announcement severity
 
-| Severity | UI treatment | Announce behavior | Persistence |
-|---|---|---|---|
-| Helpful hint | Inline/helper | No interruptive live region | Available when context useful |
-| Non-critical success | Inline status or nonblocking toast | Polite, only as needed | Critical reference also shown persistently |
-| Validation error | Error summary and field association | Announce errors after action; move focus intentionally | Until corrected |
-| Processing/unknown | Inline ongoing status | Avoid repeating messages as animation updates | Until authoritative outcome or next step |
-| Material safety/commitment issue | Persistent banner/clear blocking summary where necessary | Appropriate accessible announcement | Until reviewed or resolved |
-| Critical outage | Clear outage/recovery surface, unaffected navigation/support | Announce once appropriately | Until service truth restores |
+| Severity                         | UI treatment                                                 | Announce behavior                                      | Persistence                                |
+| -------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------ |
+| Helpful hint                     | Inline/helper                                                | No interruptive live region                            | Available when context useful              |
+| Non-critical success             | Inline status or nonblocking toast                           | Polite, only as needed                                 | Critical reference also shown persistently |
+| Validation error                 | Error summary and field association                          | Announce errors after action; move focus intentionally | Until corrected                            |
+| Processing/unknown               | Inline ongoing status                                        | Avoid repeating messages as animation updates          | Until authoritative outcome or next step   |
+| Material safety/commitment issue | Persistent banner/clear blocking summary where necessary     | Appropriate accessible announcement                    | Until reviewed or resolved                 |
+| Critical outage                  | Clear outage/recovery surface, unaffected navigation/support | Announce once appropriately                            | Until service truth restores               |
 
 Avoid modal overuse, forced marketing popups, autoplay chat greetings, automatic scroll jumps, and animation-induced context changes.
 
@@ -399,15 +399,15 @@ Avoid modal overuse, forced marketing popups, autoplay chat greetings, automatic
 
 **Entry:** customer understands what is required for the next step. **Submission:** only approved minimum inputs are mandatory; advanced details conditional. **Exit:** durable, authorized receipt + explanation of review and next step. **Backstage:** founder can use submitted context without manual transcription; CX-02 owns handoff.
 
-| Stage | Screen behavior | Error state | Avoid |
-|---|---|---|---|
-| 1. Intent | Choose `Custom`/`Business` on legitimate offer | Unsupported offer routes to explanatory human option | Company jargon |
-| 2. Essentials | Product kind, rough quantity, contact, purpose, requested timeline as appropriate | Field-specific errors; visible optionality | Forcing expert print method choices |
-| 3. Progressive details | Garment/style, size split, artwork readiness, business specifics only if necessary | Can choose "butuh bantuan" / unknown options where safe | Implicitly treating blanks as final artwork |
-| 4. Upload (conditional) | Allowed file criteria, upload receipt, no proof-approval assertion | Retry/replace/review with secure alternative | Raw file URL displayed to unauthorized viewers |
-| 5. Review | Concise summary: input, possible missing items, **requested** date, estimate/quote state | Correct/back without losing fields | Fine print hiding a price change |
-| 6. Submit | Explicit customer consent where appropriate, processing state, duplicate-intent guard | Unknown-outcome recovery | Fake "order accepted" |
-| 7. Receipt | Reference, meaning of receipt, next human/system step | Support/recovery if confirmation unavailable | Promised response SLA without policy |
+| Stage                   | Screen behavior                                                                          | Error state                                             | Avoid                                          |
+| ----------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------- |
+| 1. Intent               | Choose `Custom`/`Business` on legitimate offer                                           | Unsupported offer routes to explanatory human option    | Company jargon                                 |
+| 2. Essentials           | Product kind, rough quantity, contact, purpose, requested timeline as appropriate        | Field-specific errors; visible optionality              | Forcing expert print method choices            |
+| 3. Progressive details  | Garment/style, size split, artwork readiness, business specifics only if necessary       | Can choose "butuh bantuan" / unknown options where safe | Implicitly treating blanks as final artwork    |
+| 4. Upload (conditional) | Allowed file criteria, upload receipt, no proof-approval assertion                       | Retry/replace/review with secure alternative            | Raw file URL displayed to unauthorized viewers |
+| 5. Review               | Concise summary: input, possible missing items, **requested** date, estimate/quote state | Correct/back without losing fields                      | Fine print hiding a price change               |
+| 6. Submit               | Explicit customer consent where appropriate, processing state, duplicate-intent guard    | Unknown-outcome recovery                                | Fake "order accepted"                          |
+| 7. Receipt              | Reference, meaning of receipt, next human/system step                                    | Support/recovery if confirmation unavailable            | Promised response SLA without policy           |
 
 ### 8.2 Field-level rules
 
@@ -422,20 +422,20 @@ Avoid modal overuse, forced marketing popups, autoplay chat greetings, automatic
 
 ### 8.3 Artwork: five visually distinct concepts
 
-| Term | Meaning in customer UX | Visual/copy distinction | Authority |
-|---|---|---|---|
-| Selected file | Local user chose an asset | "File dipilih" only | Browser/local state |
-| Uploaded/received | Server confirmed permitted file receipt | "File diterima; belum diperiksa" | Approved upload flow |
-| Reviewed | Authorized assessment/technical verification exists | "File sedang/dinyatakan diperiksa" with precise qualifier | Design/production owner |
-| Proof presented | Specific version offered for review | Version identity and preview disclaimer | Approved proof artifact owner |
-| Proof approved | Authorized actor approves exact current version | Clear irreversible consequence and audit outcome | MGBOS/approved business command |
+| Term              | Meaning in customer UX                              | Visual/copy distinction                                   | Authority                       |
+| ----------------- | --------------------------------------------------- | --------------------------------------------------------- | ------------------------------- |
+| Selected file     | Local user chose an asset                           | "File dipilih" only                                       | Browser/local state             |
+| Uploaded/received | Server confirmed permitted file receipt             | "File diterima; belum diperiksa"                          | Approved upload flow            |
+| Reviewed          | Authorized assessment/technical verification exists | "File sedang/dinyatakan diperiksa" with precise qualifier | Design/production owner         |
+| Proof presented   | Specific version offered for review                 | Version identity and preview disclaimer                   | Approved proof artifact owner   |
+| Proof approved    | Authorized actor approves exact current version     | Clear irreversible consequence and audit outcome          | MGBOS/approved business command |
 
 Preview, placement mockup or AI artwork feedback **cannot** claim production feasibility, design ownership, copyright permission or proof approval. A customer can proceed via assisted option if visual tooling fails.
 
 ### 8.4 Secure drafts, resume and interruption
 
 - **P0 aspiration:** avoid retyping after normal back/forward navigation. Whether a draft persists after reload/session loss needs CX-05, CX-06 and security/privacy review.
-- Local draft is *not* an accepted lead/order. Show unsent status and explicit re-submission if needed.
+- Local draft is _not_ an accepted lead/order. Show unsent status and explicit re-submission if needed.
 - On resume, revalidate any price, legal term, promised date, inventory or eligibility with authoritative service. Stale data is a warning, not automatically reconfirmed.
 - Do not store payment secrets, raw artwork tokens or sensitive business pricing in browser analytics or unapproved local storage.
 - Support a safe abandon/restart path; not every partial form has to be retained forever.
@@ -545,7 +545,7 @@ Patterns below define the **experience contract** for possible surfaces. A stage
 - The ordinary deterministic journey remains accessible even if assistant, model, retrieval, or vector service fails.
 - AI drafts/suggestions are distinguishable from verified business offers; no unreviewed pricing, promise, stock, refund or final authority.
 - Advanced designer is selectively loaded only inside eligible flow, with accessible non-drag controls, undo/cancel, version clarity, fallback.
-- Mobile feature parity means *task success*, not forcing desktop's exact canvas interactions onto narrow screen.
+- Mobile feature parity means _task success_, not forcing desktop's exact canvas interactions onto narrow screen.
 - Adversarial or prompt-injection/unsafe outputs require bounded escalation in separate JARVIS/security contracts.
 
 ## 10. Responsive and input adaptation
@@ -554,16 +554,16 @@ Patterns below define the **experience contract** for possible surfaces. A stage
 
 A fluid design may use breakpoints, but **these are test fixtures, not locked CSS implementation breakpoints**. Final layout/container and art direction decisions need visual/UI validation and Head Engineering consultation.
 
-| Fixture | Proposed evaluation (CSS viewport dimensions/condition) | Specific concern |
-|---|---|---|
-| Compact mobile | Width 320 px | No horizontal clip, usable menu/forms/sticky CTA |
-| Common mobile | Width 360–390 px | Keyboard, touch target, copy and image balance |
-| Larger mobile / compact tablet | Width ~430–768 px | Form grouping, variant selectors, drawer layout |
-| Tablet/landscape | Width ~768–1024 px | Two-column choices only when readable |
-| Desktop | Width ~1280–1440 px | Constrained line-length, intentional whitespace and content density |
-| Zoom | Text zoom 200%; overall zoom and reflow checks | No hidden/overlapped controls; WCAG reflow evaluation |
-| System settings | Reduced motion; high contrast/forced colors as applicable | Visible states without animation/color alone |
-| Input | Touch, mouse, keyboard, screen reader | Equivalent completion of core tasks |
+| Fixture                        | Proposed evaluation (CSS viewport dimensions/condition)   | Specific concern                                                    |
+| ------------------------------ | --------------------------------------------------------- | ------------------------------------------------------------------- |
+| Compact mobile                 | Width 320 px                                              | No horizontal clip, usable menu/forms/sticky CTA                    |
+| Common mobile                  | Width 360–390 px                                          | Keyboard, touch target, copy and image balance                      |
+| Larger mobile / compact tablet | Width ~430–768 px                                         | Form grouping, variant selectors, drawer layout                     |
+| Tablet/landscape               | Width ~768–1024 px                                        | Two-column choices only when readable                               |
+| Desktop                        | Width ~1280–1440 px                                       | Constrained line-length, intentional whitespace and content density |
+| Zoom                           | Text zoom 200%; overall zoom and reflow checks            | No hidden/overlapped controls; WCAG reflow evaluation               |
+| System settings                | Reduced motion; high contrast/forced colors as applicable | Visible states without animation/color alone                        |
+| Input                          | Touch, mouse, keyboard, screen reader                     | Equivalent completion of core tasks                                 |
 
 No assumption that `320px` or `768px` equals a specific device model. Test by actual available browsers/device environments and record exact environment.
 
@@ -577,7 +577,7 @@ No assumption that `320px` or `768px` equals a specific device model. Test by ac
 
 ### 10.3 Touch and pointer targets
 
-**Product preference:** prominent tap targets around **44 × 44 CSS pixels** for frequently used customer controls, subject to visual and layout suitability. This is a *design preference*, not a claim that WCAG 2.2 AA universally mandates 44px. WCAG 2.2 AA Success Criterion 2.5.8 has a **24 × 24 CSS-pixel minimum with defined exceptions**; the 44px enhanced target is Level AAA SC 2.5.5. Small inline text links follow standard's applicable exceptions. Refer to W3C normative criteria, not folk rules.
+**Product preference:** prominent tap targets around **44 × 44 CSS pixels** for frequently used customer controls, subject to visual and layout suitability. This is a _design preference_, not a claim that WCAG 2.2 AA universally mandates 44px. WCAG 2.2 AA Success Criterion 2.5.8 has a **24 × 24 CSS-pixel minimum with defined exceptions**; the 44px enhanced target is Level AAA SC 2.5.5. Small inline text links follow standard's applicable exceptions. Refer to W3C normative criteria, not folk rules.
 
 ### 10.4 Content density and reading
 
@@ -591,23 +591,23 @@ No assumption that `320px` or `768px` equals a specific device model. Test by ac
 
 **Target (proposed):** WCAG **2.2 Level AA**, evaluated by accessibility specialists including manual checks and assistive-technology journeys; complete conformance cannot be certified by an automated scanner. Source: https://www.w3.org/TR/WCAG22/ . This document establishes expectations but **no certification or legal compliance claim**.
 
-| Area | Customer experience obligation | Verification candidate |
-|---|---|---|
-| Semantics | Landmarks, meaningful headings, native button/link/form semantics | DOM and browser inspection |
-| Keyboard | All essential interactions without mouse; no trap; sensible Tab/Shift+Tab order | Manual-only keyboard run |
-| Focus | Visible focus, managed focus after dialog and route changes; not hidden behind sticky UI | Manual + screenshot check |
-| Forms | Accessible label/help/error, required hints not color-only, sensible summary/inline error | Assistive-technology scenario |
-| Visual contrast | Standard AA thresholds for normal/large text; important UI nontext distinguishability | Token and rendered color/contrast audit |
-| Zoom and reflow | Readable at 200% text and required reflow without losing core functionality | Browser zoom/device matrix |
-| Touch | Target sizing/spacing meeting applicable WCAG AA criterion; generous preferred targets for high-frequency actions | Measurement + touch test |
-| Dialog and sheets | Accessible title, focus containment/return as needed, Escape/cancel semantics and background handling | Keyboard/screen-reader run |
-| Tabs and custom pickers | Appropriate component roles and keyboard pattern; avoid invented semantics | Manual interaction audit |
-| Motion | `prefers-reduced-motion` respected; no dependence on motion for critical updates | OS setting + journey replay |
-| Async updates | Live regions used selectively; no repeated noisy announcements | Screen-reader check |
-| Authentication | No unnecessary memory/cognitive challenge; approved alternatives per applicable standard | Security + accessibility review |
-| Dragging/custom editor | Equivalent controls for functionality when dragging isn't essential | Alternative-input validation |
-| Color/size variants | Selected and unavailable states in text/shape/semantics | Keyboard/assistive check |
-| Language | Document language and multilingual excerpts appropriately identified | Markup and AT speech inspection |
+| Area                    | Customer experience obligation                                                                                    | Verification candidate                  |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| Semantics               | Landmarks, meaningful headings, native button/link/form semantics                                                 | DOM and browser inspection              |
+| Keyboard                | All essential interactions without mouse; no trap; sensible Tab/Shift+Tab order                                   | Manual-only keyboard run                |
+| Focus                   | Visible focus, managed focus after dialog and route changes; not hidden behind sticky UI                          | Manual + screenshot check               |
+| Forms                   | Accessible label/help/error, required hints not color-only, sensible summary/inline error                         | Assistive-technology scenario           |
+| Visual contrast         | Standard AA thresholds for normal/large text; important UI nontext distinguishability                             | Token and rendered color/contrast audit |
+| Zoom and reflow         | Readable at 200% text and required reflow without losing core functionality                                       | Browser zoom/device matrix              |
+| Touch                   | Target sizing/spacing meeting applicable WCAG AA criterion; generous preferred targets for high-frequency actions | Measurement + touch test                |
+| Dialog and sheets       | Accessible title, focus containment/return as needed, Escape/cancel semantics and background handling             | Keyboard/screen-reader run              |
+| Tabs and custom pickers | Appropriate component roles and keyboard pattern; avoid invented semantics                                        | Manual interaction audit                |
+| Motion                  | `prefers-reduced-motion` respected; no dependence on motion for critical updates                                  | OS setting + journey replay             |
+| Async updates           | Live regions used selectively; no repeated noisy announcements                                                    | Screen-reader check                     |
+| Authentication          | No unnecessary memory/cognitive challenge; approved alternatives per applicable standard                          | Security + accessibility review         |
+| Dragging/custom editor  | Equivalent controls for functionality when dragging isn't essential                                               | Alternative-input validation            |
+| Color/size variants     | Selected and unavailable states in text/shape/semantics                                                           | Keyboard/assistive check                |
+| Language                | Document language and multilingual excerpts appropriately identified                                              | Markup and AT speech inspection         |
 
 **Specific high-risk checks:** focus not obscured (`2.4.11` AA), dragging alternatives (`2.5.7` AA), target size (`2.5.8` AA), redundant entry (`3.3.7` A), accessible authentication (`3.3.8` AA). Differences between AA and AAA must be documented precisely. An exception from third-party iframe or provider is not automatically accepted; CX-08 must classify provider responsibility and fallback.
 
@@ -615,16 +615,16 @@ No assumption that `320px` or `768px` equals a specific device model. Test by ac
 
 ### 12.1 Motion decision model
 
-| Motion purpose | Allowed direction | Constraint |
-|---|---|---|
-| Orientation | Gentle reveal of content after user navigation when it does not delay reading | No critical delay or forced scrolling |
-| Selection | Brief transition/highlight indicating selected variant or field state | Persistent visible selected state remains |
-| Processing | Honest spinner/skeleton during unknown duration; determinate only when known | No fabricated progress or browser-only success |
-| Campaign expression | Tasteful optional animation near content | No autoplay blocking tasks or CWV regression |
-| Product image | Responsive transitions/zoom with accessible still alternatives | No hover-only information |
-| Dialog/drawer | Predictable opening/closing with managed focus | Respect reduced-motion settings |
-| Error | Inline explanation and intentional focus/announcement | Never shake-only error indication |
-| Advanced builder | Optional feedback only inside eligible advanced tool | Separate loading and reduced-motion fallback |
+| Motion purpose      | Allowed direction                                                             | Constraint                                     |
+| ------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------- |
+| Orientation         | Gentle reveal of content after user navigation when it does not delay reading | No critical delay or forced scrolling          |
+| Selection           | Brief transition/highlight indicating selected variant or field state         | Persistent visible selected state remains      |
+| Processing          | Honest spinner/skeleton during unknown duration; determinate only when known  | No fabricated progress or browser-only success |
+| Campaign expression | Tasteful optional animation near content                                      | No autoplay blocking tasks or CWV regression   |
+| Product image       | Responsive transitions/zoom with accessible still alternatives                | No hover-only information                      |
+| Dialog/drawer       | Predictable opening/closing with managed focus                                | Respect reduced-motion settings                |
+| Error               | Inline explanation and intentional focus/announcement                         | Never shake-only error indication              |
+| Advanced builder    | Optional feedback only inside eligible advanced tool                          | Separate loading and reduced-motion fallback   |
 
 ### 12.2 Microinteraction rules
 
@@ -649,24 +649,24 @@ The platform must ship progressively: text, offer clarity, navigation and simple
 - Interaction to Next Paint (INP) **≤ 200 milliseconds** at p75.
 - Cumulative Layout Shift (CLS) **≤ 0.1** at p75.
 
-Report *mobile and desktop separately* with sample count, time range, route cohort and any missing-field-data limitation. These are Google "good" thresholds (https://web.dev/articles/vitals), not measurements of TeeStock. Pre-launch laboratory runs cannot be treated as real-user p75 success. CX-08 owns reproducible methodology, budgets, gating and exceptions.
+Report _mobile and desktop separately_ with sample count, time range, route cohort and any missing-field-data limitation. These are Google "good" thresholds (https://web.dev/articles/vitals), not measurements of TeeStock. Pre-launch laboratory runs cannot be treated as real-user p75 success. CX-08 owns reproducible methodology, budgets, gating and exceptions.
 
 ### 13.2 Recommended guardrails (`CX03_PROPOSED`)
 
-| Concern | Product constraint | Evidence required later |
-|---|---|---|
-| Initial JS | Heavy UI/editor/assistant code absent from basic route's critical path | Per-template bundle analysis |
-| Font loading | Fallback readable and layout stable; licensed brand font choice confirmed | Browser render / CLS / asset audit |
-| Image loading | Responsive encoding/sizes, aspect preservation; hero/LCP asset prioritized; below-fold lazy | Network waterfall + visual review |
-| Media | Autoplay/large video not required for P0 task | Disabled-media journey remains complete |
-| Third-party embeds | Never block normal customer flow; consent/privacy review | Failure simulation + request inventory |
-| Animation | Low-cost transforms/state; reduced-motion alternative | CPU/long-task analysis on mobile profile |
-| Form hydration | Critical actions usable promptly after content display; nonessential widgets deferred | Lab interaction tests |
-| Dynamic lists | Avoid rendering long catalogs/projections all at once | P1 interaction/memory checks |
-| Preview customizer | Lazy, optional, recoverable, audited resource/latency burden | P2 isolated performance checks |
-| AI assistant | No mandatory inference for search, product reading or quote form | AI-disabled journey test and cost trace |
-| Caching | Marketing content cache separate from business/customer state freshness policy | Correctness + stale view tests |
-| Route transitions | No blank screen, invisible action or lost form content | Browser flows under constrained network |
+| Concern            | Product constraint                                                                          | Evidence required later                  |
+| ------------------ | ------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| Initial JS         | Heavy UI/editor/assistant code absent from basic route's critical path                      | Per-template bundle analysis             |
+| Font loading       | Fallback readable and layout stable; licensed brand font choice confirmed                   | Browser render / CLS / asset audit       |
+| Image loading      | Responsive encoding/sizes, aspect preservation; hero/LCP asset prioritized; below-fold lazy | Network waterfall + visual review        |
+| Media              | Autoplay/large video not required for P0 task                                               | Disabled-media journey remains complete  |
+| Third-party embeds | Never block normal customer flow; consent/privacy review                                    | Failure simulation + request inventory   |
+| Animation          | Low-cost transforms/state; reduced-motion alternative                                       | CPU/long-task analysis on mobile profile |
+| Form hydration     | Critical actions usable promptly after content display; nonessential widgets deferred       | Lab interaction tests                    |
+| Dynamic lists      | Avoid rendering long catalogs/projections all at once                                       | P1 interaction/memory checks             |
+| Preview customizer | Lazy, optional, recoverable, audited resource/latency burden                                | P2 isolated performance checks           |
+| AI assistant       | No mandatory inference for search, product reading or quote form                            | AI-disabled journey test and cost trace  |
+| Caching            | Marketing content cache separate from business/customer state freshness policy              | Correctness + stale view tests           |
+| Route transitions  | No blank screen, invisible action or lost form content                                      | Browser flows under constrained network  |
 
 **Do not invent fixed transfer/CPU budgets in this draft.** Head Engineering must establish realistic per-template critical-path JS, CSS, media, font and interaction budgets against an actual representative baseline; CX-08 converts them to enforceable release gates. Image lazy loading must **not** defer likely LCP images just to minimize image requests. Source: https://web.dev/articles/lazy-loading-best-practices and https://web.dev/articles/optimize-lcp/ .
 
@@ -683,16 +683,16 @@ Report *mobile and desktop separately* with sample count, time range, route coho
 
 ### 14.1 Copy patterns — illustrative, not approved final brand copy
 
-| Risky/ambiguous | Preferred meaning (illustrative Indonesian) | Why |
-|---|---|---|
-| "Order berhasil" after lead form | "Permintaan diterima. Tim akan meninjau detailnya." | Distinguishes request from contract/order |
-| "Harga final Rp…" from unreviewed estimate | "Estimasi harga—akan dikonfirmasi setelah spesifikasi ditinjau." | Avoids unapproved monetary authority |
-| "Sampai pada 20 November" from requested date | "Tanggal dibutuhkan: 20 November (belum dikonfirmasi)." | Desired deadline is not promise |
-| "Pembayaran sukses" after provider redirect | "Pembayaran sedang diverifikasi." when source pending | Redirect isn't settlement proof |
-| "Bukti desain disetujui" after preview | "Pratinjau visual; menunggu peninjauan/approval yang sah." | Prevents false proof state |
-| "Belum ada pesanan" when API failed | "Status pesanan belum dapat ditampilkan. Coba lagi." | Failure ≠ empty |
-| "Refund pasti dikirim" after claim | "Permintaan penanganan diterima dan akan ditinjau." | Request ≠ refund approval |
-| "AI sudah mengubah order" without command evidence | "Saya bisa membantu menyiapkan permintaan perubahan." | AI suggestion ≠ executed action |
+| Risky/ambiguous                                    | Preferred meaning (illustrative Indonesian)                      | Why                                       |
+| -------------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------- |
+| "Order berhasil" after lead form                   | "Permintaan diterima. Tim akan meninjau detailnya."              | Distinguishes request from contract/order |
+| "Harga final Rp…" from unreviewed estimate         | "Estimasi harga—akan dikonfirmasi setelah spesifikasi ditinjau." | Avoids unapproved monetary authority      |
+| "Sampai pada 20 November" from requested date      | "Tanggal dibutuhkan: 20 November (belum dikonfirmasi)."          | Desired deadline is not promise           |
+| "Pembayaran sukses" after provider redirect        | "Pembayaran sedang diverifikasi." when source pending            | Redirect isn't settlement proof           |
+| "Bukti desain disetujui" after preview             | "Pratinjau visual; menunggu peninjauan/approval yang sah."       | Prevents false proof state                |
+| "Belum ada pesanan" when API failed                | "Status pesanan belum dapat ditampilkan. Coba lagi."             | Failure ≠ empty                           |
+| "Refund pasti dikirim" after claim                 | "Permintaan penanganan diterima dan akan ditinjau."              | Request ≠ refund approval                 |
+| "AI sudah mengubah order" without command evidence | "Saya bisa membantu menyiapkan permintaan perubahan."            | AI suggestion ≠ executed action           |
 
 Final wording must be reconciled with TeeStock Voice & Copy System and legal/commercial policy. Copy is a design requirement for comprehension and trustworthy state, not authority to issue guarantees.
 
@@ -713,22 +713,22 @@ A feature may be hidden, marked as an upcoming capability or routed to a real as
 
 A **product specification alone is not a pixel-perfect asset pack**. After Owner adoption and without assuming implementation, design work should produce the following evidence-rich artifacts. No Figma/other provider is mandated by this document.
 
-| Artifact ID | Artifact | Minimum contents | Primary reviewer |
-|---|---|---|---|
-| `CX3-DEL-01` | Visual direction board | Reference brand identity, page mood, example treatments, expressiveness boundaries, explicit exclusions | Brand/Product Owner |
-| `CX3-DEL-02` | Token decision inventory | Color/type/spacing/motion/layout semantic tokens, source and contrast checks | Product Designer + Frontend Architect |
-| `CX3-DEL-03` | Component inventory | Anatomy, size variants, disabled/loading/error/success/uncertain states, keyboard/touch semantics | UX + Frontend + A11y reviewer |
-| `CX3-DEL-04` | Responsive wireflows | P0 home, Custom, Business, confirmation, failure; P1 conditional later | UX + business operator |
-| `CX3-DEL-05` | Interaction prototypes | Menu, progressive form, upload/error/retry, confirmation, keyboard alternatives | UX Researcher |
-| `CX3-DEL-06` | Content/terminology reference | Approved customer-visible vocabulary for requested/estimate/approved/pending/unknown | Brand Copy + domain owners |
-| `CX3-DEL-07` | Journey-to-component matrix | Links active screens to `JRN-*`, `CX3-SP-*`, CX-01 FR, acceptance case | Product owner |
-| `CX3-DEL-08` | Accessibility audit artifacts | Focus routes, semantic roles, checks for 2.2 AA and manual/AT results | Independent accessibility reviewer |
-| `CX3-DEL-09` | Performance feasibility note | Asset expectations, likely LCP, loading plans, route-level budget candidates | Head Engineering / frontend specialist |
-| `CX3-DEL-10` | Usability study pack | Tasks, participant criteria, observations, issues, changes and retests | UX Researcher |
-| `CX3-DEL-11` | High-fidelity P0 specimens | Mobile + desktop for critical route states, including negative cases | Designer + Owner |
-| `CX3-DEL-12` | Final UX-to-engineering handoff register | Accepted, unresolved, deferred, blocked requirement and linked tests, versioned assets | Head Engineering |
+| Artifact ID  | Artifact                                 | Minimum contents                                                                                        | Primary reviewer                       |
+| ------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| `CX3-DEL-01` | Visual direction board                   | Reference brand identity, page mood, example treatments, expressiveness boundaries, explicit exclusions | Brand/Product Owner                    |
+| `CX3-DEL-02` | Token decision inventory                 | Color/type/spacing/motion/layout semantic tokens, source and contrast checks                            | Product Designer + Frontend Architect  |
+| `CX3-DEL-03` | Component inventory                      | Anatomy, size variants, disabled/loading/error/success/uncertain states, keyboard/touch semantics       | UX + Frontend + A11y reviewer          |
+| `CX3-DEL-04` | Responsive wireflows                     | P0 home, Custom, Business, confirmation, failure; P1 conditional later                                  | UX + business operator                 |
+| `CX3-DEL-05` | Interaction prototypes                   | Menu, progressive form, upload/error/retry, confirmation, keyboard alternatives                         | UX Researcher                          |
+| `CX3-DEL-06` | Content/terminology reference            | Approved customer-visible vocabulary for requested/estimate/approved/pending/unknown                    | Brand Copy + domain owners             |
+| `CX3-DEL-07` | Journey-to-component matrix              | Links active screens to `JRN-*`, `CX3-SP-*`, CX-01 FR, acceptance case                                  | Product owner                          |
+| `CX3-DEL-08` | Accessibility audit artifacts            | Focus routes, semantic roles, checks for 2.2 AA and manual/AT results                                   | Independent accessibility reviewer     |
+| `CX3-DEL-09` | Performance feasibility note             | Asset expectations, likely LCP, loading plans, route-level budget candidates                            | Head Engineering / frontend specialist |
+| `CX3-DEL-10` | Usability study pack                     | Tasks, participant criteria, observations, issues, changes and retests                                  | UX Researcher                          |
+| `CX3-DEL-11` | High-fidelity P0 specimens               | Mobile + desktop for critical route states, including negative cases                                    | Designer + Owner                       |
+| `CX3-DEL-12` | Final UX-to-engineering handoff register | Accepted, unresolved, deferred, blocked requirement and linked tests, versioned assets                  | Head Engineering                       |
 
-**Required distinction:** Draft CX-03 is a *specification for the future design system*. It does not claim `CX3-DEL-01..12` currently exist. Before development of a customer-facing slice, the corresponding specimens must be prepared/reviewed or intentionally waived with risk justification.
+**Required distinction:** Draft CX-03 is a _specification for the future design system_. It does not claim `CX3-DEL-01..12` currently exist. Before development of a customer-facing slice, the corresponding specimens must be prepared/reviewed or intentionally waived with risk justification.
 
 ### 15.1 High-fidelity screen coverage, proposed initial set
 
@@ -746,53 +746,53 @@ All cases are **PROPOSED / NOT_EXECUTED**. A PASS requires test environment, exa
 
 ### 16.1 P0 foundational comprehension and navigation
 
-| ID | Given / When / Then | Evidence category | Primary trace |
-|---|---|---|---|
-| `CX3-AC-001` | Given first visitor, when page renders without animation/images, then genuine TeeStock offer and available next customer step remain understandable | Usability + disabled-assets visual review | `SP-01`, `FR-001..004` |
-| `CX3-AC-002` | Given mobile viewport, when opening/closing global navigation with touch/keyboard, then focus/order and active paths remain usable | Browser keyboard/mobile | `IC-02`, `FR-005` |
-| `CX3-AC-003` | Given unavailable Shop/checkout, when viewing CTA/navigation, then no functioning buy/cart is falsely implied | Content state + route test | `SP-01/02`, `FR-002` |
-| `CX3-AC-004` | Given deep-linked Custom/Business visitor, when landing, then purpose/next action are discoverable without returning home | Usability, desktop/mobile | `SP-04/05`, `JRN-02/03` |
-| `CX3-AC-005` | Given compact mobile screen and expanded text, when rendering P0, then no critical content/action/field is clipped or hidden | Viewport + zoom + keyboard | `NFR-001/005`, `DP-09` |
-| `CX3-AC-006` | Given restricted motion preference, when navigating/form submitting, then information, feedback and progress remain intelligible | Reduced-motion test | `DP-08/10` |
-| `CX3-AC-007` | Given keyboard-only navigation, when reaching all P0 actions, then focus visible, logical, not obscured and not trapped | Manual keyboard audit | `NFR-005`, `IX-10` |
-| `CX3-AC-008` | Given nonexpert customer, when reading P0 Custom offer, then unknown technical options have plain-language explanation/assisted alternative | Comprehension study | `DP-03`, `FR-010` |
+| ID           | Given / When / Then                                                                                                                                 | Evidence category                         | Primary trace           |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ----------------------- |
+| `CX3-AC-001` | Given first visitor, when page renders without animation/images, then genuine TeeStock offer and available next customer step remain understandable | Usability + disabled-assets visual review | `SP-01`, `FR-001..004`  |
+| `CX3-AC-002` | Given mobile viewport, when opening/closing global navigation with touch/keyboard, then focus/order and active paths remain usable                  | Browser keyboard/mobile                   | `IC-02`, `FR-005`       |
+| `CX3-AC-003` | Given unavailable Shop/checkout, when viewing CTA/navigation, then no functioning buy/cart is falsely implied                                       | Content state + route test                | `SP-01/02`, `FR-002`    |
+| `CX3-AC-004` | Given deep-linked Custom/Business visitor, when landing, then purpose/next action are discoverable without returning home                           | Usability, desktop/mobile                 | `SP-04/05`, `JRN-02/03` |
+| `CX3-AC-005` | Given compact mobile screen and expanded text, when rendering P0, then no critical content/action/field is clipped or hidden                        | Viewport + zoom + keyboard                | `NFR-001/005`, `DP-09`  |
+| `CX3-AC-006` | Given restricted motion preference, when navigating/form submitting, then information, feedback and progress remain intelligible                    | Reduced-motion test                       | `DP-08/10`              |
+| `CX3-AC-007` | Given keyboard-only navigation, when reaching all P0 actions, then focus visible, logical, not obscured and not trapped                             | Manual keyboard audit                     | `NFR-005`, `IX-10`      |
+| `CX3-AC-008` | Given nonexpert customer, when reading P0 Custom offer, then unknown technical options have plain-language explanation/assisted alternative         | Comprehension study                       | `DP-03`, `FR-010`       |
 
 ### 16.2 P0 form, asset handling and truthful confirmation
 
-| ID | Given / When / Then | Evidence category | Primary trace |
-|---|---|---|---|
-| `CX3-AC-009` | Given invalid required fields, when submit attempted, then errors associated with fields, meaningful summary and preserved valid input appear | UI + accessibility scenario | `IX-06`, `IC-04` |
-| `CX3-AC-010` | Given irrelevant Business-only details, when personal Custom selected, then hidden fields do not obstruct or silently alter request | Conditional flow inspection | `IC-05`, `FR-010/014` |
-| `CX3-AC-011` | Given selected file, when upload only receives server acknowledgement, then customer sees received-not-reviewed, not approved | File UI + source boundary | `SP-07`, `FR-011` |
-| `CX3-AC-012` | Given unsupported/oversize file, when uploading, then clear secure recovery/help path available and safe entries not erased | Negative upload case | `IC-06`, `FR-011` |
-| `CX3-AC-013` | Given requested deadline, when reviewing, then UI labels it as requested/unconfirmed unless actual promise authority exists | Copy and business-source review | `IC-07`, `FR-012` |
-| `CX3-AC-014` | Given valid form, when authoritative receipt is accepted, then stable receipt and next human/system step shown; no order guarantee | UI + source-of-truth check | `SP-06`, `FR-013` |
-| `CX3-AC-015` | Given submit timeout with unknown effect, when customer retries/checks, then uncertain state visible and no duplicate authoritative request is created | Fault injection + backend E2E | `IX-03/05`, `FR-013` |
-| `CX3-AC-016` | Given mid-form navigation/reload, when safe resume is supported, then approved draft semantics observed; current quote/state revalidated | Browser + privacy review | `NFR-011`, `IX-09` |
-| `CX3-AC-017` | Given reviewer-defined complex business inquiry, when assisted path chosen, then customer understanding and captured context preserved without fake instant quote | UX + operator walkthrough | `SP-05`, `JRN-03` |
+| ID           | Given / When / Then                                                                                                                                               | Evidence category               | Primary trace         |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | --------------------- |
+| `CX3-AC-009` | Given invalid required fields, when submit attempted, then errors associated with fields, meaningful summary and preserved valid input appear                     | UI + accessibility scenario     | `IX-06`, `IC-04`      |
+| `CX3-AC-010` | Given irrelevant Business-only details, when personal Custom selected, then hidden fields do not obstruct or silently alter request                               | Conditional flow inspection     | `IC-05`, `FR-010/014` |
+| `CX3-AC-011` | Given selected file, when upload only receives server acknowledgement, then customer sees received-not-reviewed, not approved                                     | File UI + source boundary       | `SP-07`, `FR-011`     |
+| `CX3-AC-012` | Given unsupported/oversize file, when uploading, then clear secure recovery/help path available and safe entries not erased                                       | Negative upload case            | `IC-06`, `FR-011`     |
+| `CX3-AC-013` | Given requested deadline, when reviewing, then UI labels it as requested/unconfirmed unless actual promise authority exists                                       | Copy and business-source review | `IC-07`, `FR-012`     |
+| `CX3-AC-014` | Given valid form, when authoritative receipt is accepted, then stable receipt and next human/system step shown; no order guarantee                                | UI + source-of-truth check      | `SP-06`, `FR-013`     |
+| `CX3-AC-015` | Given submit timeout with unknown effect, when customer retries/checks, then uncertain state visible and no duplicate authoritative request is created            | Fault injection + backend E2E   | `IX-03/05`, `FR-013`  |
+| `CX3-AC-016` | Given mid-form navigation/reload, when safe resume is supported, then approved draft semantics observed; current quote/state revalidated                          | Browser + privacy review        | `NFR-011`, `IX-09`    |
+| `CX3-AC-017` | Given reviewer-defined complex business inquiry, when assisted path chosen, then customer understanding and captured context preserved without fake instant quote | UX + operator walkthrough       | `SP-05`, `JRN-03`     |
 
 ### 16.3 P1 gated customer commerce / account experience
 
-| ID | Given / When / Then | Evidence category | Primary trace |
-|---|---|---|---|
-| `CX3-AC-018` | Given product with variants, when changing option, then updated attributes are available to keyboard/screen reader and unsupported stock isn't asserted | Accessibility + domain state test | `SP-03`, `IC-12` |
-| `CX3-AC-019` | Given filtered catalog, when no product matches, then clear no-results state distinguished from failed search retrieval | Search/negative state test | `IC-11`, `STATE-08/09` |
-| `CX3-AC-020` | Given cart price/stock changes before final commitment, when checkout resumes, then updated terms explicitly re-confirmed | UI + transactional test | `SP-08`, `IC-13` |
-| `CX3-AC-021` | Given provider redirect without verified payment event, when status is viewed, then pending/unknown shown instead of paid | UI + financial E2E | `IC-14`, `SP-08` |
-| `CX3-AC-022` | Given unauthorized guest/org, when opening private status or quote, then no private information/existence leak | Independent security E2E | `IC-15/18`, `STATE-10` |
-| `CX3-AC-023` | Given superseded proof, when old version approval attempted, then stale UX explains re-review and server blocks old approval | Proof version + authority test | `IC-17`, `STATE-11` |
-| `CX3-AC-024` | Given return request receipt, when success UI renders, then customer is not told refund was approved unless actually governed | Support/copy/source review | `SP-11`, `BR-012` |
-| `CX3-AC-025` | Given tracking backend unavailable, when status page loads, then no "no orders"/"delivered" false state appears | Fault injection + UI audit | `SP-09`, `STATE-08/09` |
+| ID           | Given / When / Then                                                                                                                                     | Evidence category                 | Primary trace          |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- | ---------------------- |
+| `CX3-AC-018` | Given product with variants, when changing option, then updated attributes are available to keyboard/screen reader and unsupported stock isn't asserted | Accessibility + domain state test | `SP-03`, `IC-12`       |
+| `CX3-AC-019` | Given filtered catalog, when no product matches, then clear no-results state distinguished from failed search retrieval                                 | Search/negative state test        | `IC-11`, `STATE-08/09` |
+| `CX3-AC-020` | Given cart price/stock changes before final commitment, when checkout resumes, then updated terms explicitly re-confirmed                               | UI + transactional test           | `SP-08`, `IC-13`       |
+| `CX3-AC-021` | Given provider redirect without verified payment event, when status is viewed, then pending/unknown shown instead of paid                               | UI + financial E2E                | `IC-14`, `SP-08`       |
+| `CX3-AC-022` | Given unauthorized guest/org, when opening private status or quote, then no private information/existence leak                                          | Independent security E2E          | `IC-15/18`, `STATE-10` |
+| `CX3-AC-023` | Given superseded proof, when old version approval attempted, then stale UX explains re-review and server blocks old approval                            | Proof version + authority test    | `IC-17`, `STATE-11`    |
+| `CX3-AC-024` | Given return request receipt, when success UI renders, then customer is not told refund was approved unless actually governed                           | Support/copy/source review        | `SP-11`, `BR-012`      |
+| `CX3-AC-025` | Given tracking backend unavailable, when status page loads, then no "no orders"/"delivered" false state appears                                         | Fault injection + UI audit        | `SP-09`, `STATE-08/09` |
 
 ### 16.4 P2 advanced and cross-feature nonregression
 
-| ID | Given / When / Then | Evidence category | Primary trace |
-|---|---|---|---|
-| `CX3-AC-026` | Given AI unavailable, when customer performs ordinary P0/P1 action, then task still usable and no invented AI result appears | Fault injection / no-AI scenario | `SP-12`, `DP-10` |
-| `CX3-AC-027` | Given advanced designer, when customer cannot drag, then equivalent controls allow supported configuration, or approved assisted path works | Keyboard/touch alternate UX | `SP-12`, WCAG 2.5.7 |
-| `CX3-AC-028` | Given new large optional media/builder/AI dependency, when P0 route loads, then it remains outside critical path and meets approved lab/CWV gates | Bundle + performance regression | `NFR-002..004` |
-| `CX3-AC-029` | Given marketplace deep link/action, when customer leaves platform, then context/ownership limitations accurately explained | Integration UX + policy review | `IX-16`, `JRN-07` |
-| `CX3-AC-030` | Given UI confirmation/animation or notification, when true domain state is pending/failed, then no transaction/production/shipping success is implied | Adversarial copy/state review | `DP-05`, `SR-03..06` |
+| ID           | Given / When / Then                                                                                                                                   | Evidence category                | Primary trace        |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | -------------------- |
+| `CX3-AC-026` | Given AI unavailable, when customer performs ordinary P0/P1 action, then task still usable and no invented AI result appears                          | Fault injection / no-AI scenario | `SP-12`, `DP-10`     |
+| `CX3-AC-027` | Given advanced designer, when customer cannot drag, then equivalent controls allow supported configuration, or approved assisted path works           | Keyboard/touch alternate UX      | `SP-12`, WCAG 2.5.7  |
+| `CX3-AC-028` | Given new large optional media/builder/AI dependency, when P0 route loads, then it remains outside critical path and meets approved lab/CWV gates     | Bundle + performance regression  | `NFR-002..004`       |
+| `CX3-AC-029` | Given marketplace deep link/action, when customer leaves platform, then context/ownership limitations accurately explained                            | Integration UX + policy review   | `IX-16`, `JRN-07`    |
+| `CX3-AC-030` | Given UI confirmation/animation or notification, when true domain state is pending/failed, then no transaction/production/shipping success is implied | Adversarial copy/state review    | `DP-05`, `SR-03..06` |
 
 **Case ID lineage:** all `FR-*` and `BR-*` mentions in these tables are shorthand for CX-01 `CX1-FR-*` / `CX1-BR-*`; `SR-*` refers to CX-02 `CX2-SR-*`, and `SP/IC/DP/STATE/IX` refer to CX-03. Preserve these namespaces in future test metadata; do not merge identifiers with actual MGBOS domain test IDs.
 
@@ -800,16 +800,16 @@ All cases are **PROPOSED / NOT_EXECUTED**. A PASS requires test environment, exa
 
 ### 17.1 Test before pretending a choice is objective
 
-| Hypothesis ID | Proposed hypothesis | Example user-task evidence |
-|---|---|---|
-| `CX3-HYP-01` | Intent routing is clearer than business division labels | Time/confusion/errors when selecting Shop/Custom/Business |
-| `CX3-HYP-02` | Progressive Custom intake reduces abandonment and irrelevant answers | Completion, correction, remaining founder clarification per request |
-| `CX3-HYP-03` | Plain terms for estimate/approval reduce mistaken customer expectations | Comprehension test before confirmation |
-| `CX3-HYP-04` | A non-synthetic handoff reduces founder re-keying | Count/time admin touches after one validated request |
-| `CX3-HYP-05` | Restrained motion improves speed without making site feel low quality | Qualitative preference + load/interaction measurements |
-| `CX3-HYP-06` | No mandatory AI chat reduces customer blockage | Success with chat disabled vs enabled |
-| `CX3-HYP-07` | Trustworthy uncertainty states are preferable to optimistic ambiguous progress | User understanding of unknown/pending/error state |
-| `CX3-HYP-08` | Mobile task-first design improves Custom inquiry accessibility | End-to-end mobile completion with keyboard/AT cohorts |
+| Hypothesis ID | Proposed hypothesis                                                            | Example user-task evidence                                          |
+| ------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| `CX3-HYP-01`  | Intent routing is clearer than business division labels                        | Time/confusion/errors when selecting Shop/Custom/Business           |
+| `CX3-HYP-02`  | Progressive Custom intake reduces abandonment and irrelevant answers           | Completion, correction, remaining founder clarification per request |
+| `CX3-HYP-03`  | Plain terms for estimate/approval reduce mistaken customer expectations        | Comprehension test before confirmation                              |
+| `CX3-HYP-04`  | A non-synthetic handoff reduces founder re-keying                              | Count/time admin touches after one validated request                |
+| `CX3-HYP-05`  | Restrained motion improves speed without making site feel low quality          | Qualitative preference + load/interaction measurements              |
+| `CX3-HYP-06`  | No mandatory AI chat reduces customer blockage                                 | Success with chat disabled vs enabled                               |
+| `CX3-HYP-07`  | Trustworthy uncertainty states are preferable to optimistic ambiguous progress | User understanding of unknown/pending/error state                   |
+| `CX3-HYP-08`  | Mobile task-first design improves Custom inquiry accessibility                 | End-to-end mobile completion with keyboard/AT cohorts               |
 
 ### 17.2 Recommended moderated tasks (proposed fixtures)
 
@@ -832,64 +832,64 @@ Candidate metrics: first-valid-path rate; qualified inquiry task completion; nee
 
 ### 18.1 Owner/product decisions — `CX3-DEC-01..10`
 
-| ID | Decision | Proposed default | Resolution owner/status |
-|---|---|---|---|
-| `CX3-DEC-01` | Visual expression | Apply TeeStock **Neutral Core + Expressive Product Layer**; do not create a new brand | Brand owner / PROPOSED_APPLICATION |
-| `CX3-DEC-02` | P0 release appearance | Premium, functional entry/inquiry pages; no fake checkout | Owner after CX-01 approval |
-| `CX3-DEC-03` | Custom form structure | Progressive only where justified; compare simple single-page vs guided multi-step | UX research / UNVERIFIED |
-| `CX3-DEC-04` | Theme support | Do not force dark-mode; derive from brand guidance and readability testing | Brand/product/UX / OPEN |
-| `CX3-DEC-05` | Typography and exact palette | Respect existing approved brand assets; no new token values presumed | Brand owner / OPEN-ASSET-INVENTORY |
-| `CX3-DEC-06` | Motion intensity | Restrained, functional, reduced-motion compliant | Product owner / PROPOSED |
-| `CX3-DEC-07` | Assisted account policy | Inquiry route without premature mandatory registration, subject to security/privacy | Owner/security / OPEN |
-| `CX3-DEC-08` | Accessibility quality | Aim for WCAG 2.2 AA with full-journey manual verification | Product, accessibility, legal/engineering / PROPOSED |
-| `CX3-DEC-09` | Mobile touch policy | Prefer generous ~44px frequent controls; comply with AA as minimum | UX/accessibility / PROPOSED |
-| `CX3-DEC-10` | Global optional tools | No mandatory chat/video/builder code on P0 critical route | Product/Head Engineering / PROPOSED |
+| ID           | Decision                     | Proposed default                                                                      | Resolution owner/status                              |
+| ------------ | ---------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `CX3-DEC-01` | Visual expression            | Apply TeeStock **Neutral Core + Expressive Product Layer**; do not create a new brand | Brand owner / PROPOSED_APPLICATION                   |
+| `CX3-DEC-02` | P0 release appearance        | Premium, functional entry/inquiry pages; no fake checkout                             | Owner after CX-01 approval                           |
+| `CX3-DEC-03` | Custom form structure        | Progressive only where justified; compare simple single-page vs guided multi-step     | UX research / UNVERIFIED                             |
+| `CX3-DEC-04` | Theme support                | Do not force dark-mode; derive from brand guidance and readability testing            | Brand/product/UX / OPEN                              |
+| `CX3-DEC-05` | Typography and exact palette | Respect existing approved brand assets; no new token values presumed                  | Brand owner / OPEN-ASSET-INVENTORY                   |
+| `CX3-DEC-06` | Motion intensity             | Restrained, functional, reduced-motion compliant                                      | Product owner / PROPOSED                             |
+| `CX3-DEC-07` | Assisted account policy      | Inquiry route without premature mandatory registration, subject to security/privacy   | Owner/security / OPEN                                |
+| `CX3-DEC-08` | Accessibility quality        | Aim for WCAG 2.2 AA with full-journey manual verification                             | Product, accessibility, legal/engineering / PROPOSED |
+| `CX3-DEC-09` | Mobile touch policy          | Prefer generous ~44px frequent controls; comply with AA as minimum                    | UX/accessibility / PROPOSED                          |
+| `CX3-DEC-10` | Global optional tools        | No mandatory chat/video/builder code on P0 critical route                             | Product/Head Engineering / PROPOSED                  |
 
 ### 18.2 Material risks — `CX3-RISK-01..10`
 
-| ID | Risk | Impact | Product mitigation |
-|---|---|---|---|
-| `CX3-RISK-01` | Brand identity overwritten by random UI kit | Unrecognizable TeeStock | Brand token-source reconciliation, high-fidelity review |
-| `CX3-RISK-02` | Premium translated as heavy animations | Poor mobile CWV, maintenance overhead | Route performance budgets, optional heavy media |
-| `CX3-RISK-03` | UI implements business states | False order/payment/proof/shipping claims | Customer projections only; backend truth checks |
-| `CX3-RISK-04` | Form complexity merely moves labor to customers | Low conversion and bad service | Progressive relevance, comprehension tasks |
-| `CX3-RISK-05` | Founder still rekeys everything | Negated automation goal | Handoff tests and manual touch metrics |
-| `CX3-RISK-06` | Hidden/accessibility-only failures missed | Exclusion and task block | Manual AT + keyboard + contrast audit |
-| `CX3-RISK-07` | Asset/font licensing unknown | Legal and operational delay | Brand approval and asset provenance gate |
-| `CX3-RISK-08` | UI paths conflict with official website IA | Broken navigation/SEO and doc authority | Canonical routing and ADR if changes needed |
-| `CX3-RISK-09` | Third-party provider outage displayed as success | Customer harm, dispute | Explicit pending/unknown/recovery states |
-| `CX3-RISK-10` | P2 editor/chat leaks into all page bundles | Slow default route; high inference cost | Feature isolation and performance nonregression |
+| ID            | Risk                                             | Impact                                    | Product mitigation                                      |
+| ------------- | ------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------- |
+| `CX3-RISK-01` | Brand identity overwritten by random UI kit      | Unrecognizable TeeStock                   | Brand token-source reconciliation, high-fidelity review |
+| `CX3-RISK-02` | Premium translated as heavy animations           | Poor mobile CWV, maintenance overhead     | Route performance budgets, optional heavy media         |
+| `CX3-RISK-03` | UI implements business states                    | False order/payment/proof/shipping claims | Customer projections only; backend truth checks         |
+| `CX3-RISK-04` | Form complexity merely moves labor to customers  | Low conversion and bad service            | Progressive relevance, comprehension tasks              |
+| `CX3-RISK-05` | Founder still rekeys everything                  | Negated automation goal                   | Handoff tests and manual touch metrics                  |
+| `CX3-RISK-06` | Hidden/accessibility-only failures missed        | Exclusion and task block                  | Manual AT + keyboard + contrast audit                   |
+| `CX3-RISK-07` | Asset/font licensing unknown                     | Legal and operational delay               | Brand approval and asset provenance gate                |
+| `CX3-RISK-08` | UI paths conflict with official website IA       | Broken navigation/SEO and doc authority   | Canonical routing and ADR if changes needed             |
+| `CX3-RISK-09` | Third-party provider outage displayed as success | Customer harm, dispute                    | Explicit pending/unknown/recovery states                |
+| `CX3-RISK-10` | P2 editor/chat leaks into all page bundles       | Slow default route; high inference cost   | Feature isolation and performance nonregression         |
 
 ### 18.3 Unresolved facts — `CX3-UNK-01..10`
 
-| ID | Unknown | Evidence required before normative freeze |
-|---|---|---|
-| `CX3-UNK-01` | Exactly approved logo, photography, product imagery and usable webfont assets | Brand asset/licensing register |
-| `CX3-UNK-02` | Expected first target customer device mix and network | Real customer research / initial target assumptions explicitly recorded |
-| `CX3-UNK-03` | Paid/deployed actual web hosting and current metrics | Exact environment and measured baseline; do not infer from shell |
-| `CX3-UNK-04` | Functional public Custom intake backend and file-storage authorization | Engineering discovery and secure tested environment |
-| `CX3-UNK-05` | Whether guest order status is safely viable at P0 | Identity/permission decision and privacy threat model |
-| `CX3-UNK-06` | Valid service level, deadline and quote-review communications | Approved commercial/operational policy |
-| `CX3-UNK-07` | Which products/methods/artwork inputs are eligible for configurator | Standardized catalog/price/production rules |
-| `CX3-UNK-08` | Browser/device/a11y support baseline | CX-08 fixture and QA policy |
-| `CX3-UNK-09` | Pilot usability outcomes and founder effort baseline | Controlled operator/customer research |
-| `CX3-UNK-10` | Whether full storefront/checkout phase should change due to capital/sales | Owner strategy + current roadmap decision |
+| ID           | Unknown                                                                       | Evidence required before normative freeze                               |
+| ------------ | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `CX3-UNK-01` | Exactly approved logo, photography, product imagery and usable webfont assets | Brand asset/licensing register                                          |
+| `CX3-UNK-02` | Expected first target customer device mix and network                         | Real customer research / initial target assumptions explicitly recorded |
+| `CX3-UNK-03` | Paid/deployed actual web hosting and current metrics                          | Exact environment and measured baseline; do not infer from shell        |
+| `CX3-UNK-04` | Functional public Custom intake backend and file-storage authorization        | Engineering discovery and secure tested environment                     |
+| `CX3-UNK-05` | Whether guest order status is safely viable at P0                             | Identity/permission decision and privacy threat model                   |
+| `CX3-UNK-06` | Valid service level, deadline and quote-review communications                 | Approved commercial/operational policy                                  |
+| `CX3-UNK-07` | Which products/methods/artwork inputs are eligible for configurator           | Standardized catalog/price/production rules                             |
+| `CX3-UNK-08` | Browser/device/a11y support baseline                                          | CX-08 fixture and QA policy                                             |
+| `CX3-UNK-09` | Pilot usability outcomes and founder effort baseline                          | Controlled operator/customer research                                   |
+| `CX3-UNK-10` | Whether full storefront/checkout phase should change due to capital/sales     | Owner strategy + current roadmap decision                               |
 
 ## 19. Traceability and dependent product documents
 
 ### 19.1 Upstream-to-CX03 matrix
 
-| Upstream requirement group | CX-03 application | Future owner for business specifics |
-|---|---|---|
-| `CX1-FR-001..005` / `JRN-01` | `SP-01`, `IC-01..03`, `AC-001..008` | IA/brand owners; CX-08 validation |
-| `CX1-FR-009..015` / `JRN-02/03` | `SP-04..06`, `IC-04..10`, `AC-009..017` | CX-05 Custom/Business |
-| `CX1-FR-011/019/034` / `JRN-05` | `SP-07`, upload/proof distinction | CX-05 proof/artwork + MGBOS approval |
-| `CX1-FR-006..008/020..028` / `JRN-04` | `SP-02/03/08`, `IC-11..14`, `AC-018..021` | CX-04 Commerce |
-| `CX1-FR-029..037` / `JRN-06` | `SP-09..11`, `IC-15/16/18`, `AC-022..025` | CX-06 Account & Support |
-| `CX1-FR-041/045` / `JRN-07` | `IX-16`, `AC-029` | CX-07 Omnichannel |
-| `CX1-FR-040/043/046` / `JRN-08` | `SP-12`, `IC-19/20`, `AC-026..028` | CX-06/08 + JARVIS governance |
-| `CX1-NFR-001..015` | Sections 10–14, `AC-005..008/028` | CX-08 Quality & Acceptance |
-| `CX2-SR-01..20` | All truthful/failure patterns | CX-02 service blueprint and authoritative domain owner |
+| Upstream requirement group            | CX-03 application                         | Future owner for business specifics                    |
+| ------------------------------------- | ----------------------------------------- | ------------------------------------------------------ |
+| `CX1-FR-001..005` / `JRN-01`          | `SP-01`, `IC-01..03`, `AC-001..008`       | IA/brand owners; CX-08 validation                      |
+| `CX1-FR-009..015` / `JRN-02/03`       | `SP-04..06`, `IC-04..10`, `AC-009..017`   | CX-05 Custom/Business                                  |
+| `CX1-FR-011/019/034` / `JRN-05`       | `SP-07`, upload/proof distinction         | CX-05 proof/artwork + MGBOS approval                   |
+| `CX1-FR-006..008/020..028` / `JRN-04` | `SP-02/03/08`, `IC-11..14`, `AC-018..021` | CX-04 Commerce                                         |
+| `CX1-FR-029..037` / `JRN-06`          | `SP-09..11`, `IC-15/16/18`, `AC-022..025` | CX-06 Account & Support                                |
+| `CX1-FR-041/045` / `JRN-07`           | `IX-16`, `AC-029`                         | CX-07 Omnichannel                                      |
+| `CX1-FR-040/043/046` / `JRN-08`       | `SP-12`, `IC-19/20`, `AC-026..028`        | CX-06/08 + JARVIS governance                           |
+| `CX1-NFR-001..015`                    | Sections 10–14, `AC-005..008/028`         | CX-08 Quality & Acceptance                             |
+| `CX2-SR-01..20`                       | All truthful/failure patterns             | CX-02 service blueprint and authoritative domain owner |
 
 ### 19.2 Downstream discipline boundaries
 
@@ -922,18 +922,18 @@ No drafting artifact, prototype, screenshot, or "approved design" substitutes fo
 
 ### 20.1 Self-review (not independent certification)
 
-| Gate | Self-review criterion | Proposed status |
-|---|---|---|
-| `CX3-QA-01` | Owner, status, provenance, upstream references, authority boundary declared | SELF-REVIEW |
-| `CX3-QA-02` | Consistent with brand identity and voice (no fabricated palette/visual asset) | SELF-REVIEW |
-| `CX3-QA-03` | Homepage/Custom/Business P0 distinguish current reality from target design | SELF-REVIEW |
-| `CX3-QA-04` | UI statuses visibly distinct from MGBOS business lifecycle | SELF-REVIEW |
-| `CX3-QA-05` | All core states/error/recovery and optional AI fallbacks addressed | SELF-REVIEW |
-| `CX3-QA-06` | A11y AA vs AAA target-size distinctions correctly acknowledged | SELF-REVIEW |
-| `CX3-QA-07` | CWV goals are proposed p75 field thresholds, not claimed results | SELF-REVIEW |
-| `CX3-QA-08` | No direct APIs/schema/SDK/assets/implementation choices made | SELF-REVIEW |
-| `CX3-QA-09` | Downstream route to CX-04..09 and Owner/Engineering authority preserved | SELF-REVIEW |
-| `CX3-QA-10` | Internal IDs and cross-document references structurally checked | PENDING SCRIPT / SELF-REVIEW |
+| Gate        | Self-review criterion                                                         | Proposed status              |
+| ----------- | ----------------------------------------------------------------------------- | ---------------------------- |
+| `CX3-QA-01` | Owner, status, provenance, upstream references, authority boundary declared   | SELF-REVIEW                  |
+| `CX3-QA-02` | Consistent with brand identity and voice (no fabricated palette/visual asset) | SELF-REVIEW                  |
+| `CX3-QA-03` | Homepage/Custom/Business P0 distinguish current reality from target design    | SELF-REVIEW                  |
+| `CX3-QA-04` | UI statuses visibly distinct from MGBOS business lifecycle                    | SELF-REVIEW                  |
+| `CX3-QA-05` | All core states/error/recovery and optional AI fallbacks addressed            | SELF-REVIEW                  |
+| `CX3-QA-06` | A11y AA vs AAA target-size distinctions correctly acknowledged                | SELF-REVIEW                  |
+| `CX3-QA-07` | CWV goals are proposed p75 field thresholds, not claimed results              | SELF-REVIEW                  |
+| `CX3-QA-08` | No direct APIs/schema/SDK/assets/implementation choices made                  | SELF-REVIEW                  |
+| `CX3-QA-09` | Downstream route to CX-04..09 and Owner/Engineering authority preserved       | SELF-REVIEW                  |
+| `CX3-QA-10` | Internal IDs and cross-document references structurally checked               | PENDING SCRIPT / SELF-REVIEW |
 
 ### 20.2 Canonical promotion prerequisites
 

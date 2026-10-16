@@ -977,7 +977,7 @@ at its audit snapshot.
 | `teestock-curated-strategy.md`          | Legacy/domain-specific planning reference                          |                NONE |
 | `teestock-design-library-spec.md`       | Proposed/experimental product specification                        |                NONE |
 | `teestock-asset-readiness.md`           | Historical bounded evidence reference                              |                NONE |
-| `teestock-customer-platform/README.md`   | Proposed TeeStock Customer Platform package (CX-00..09, DRAFT)      |                NONE |
+| `teestock-customer-platform/README.md`  | Proposed TeeStock Customer Platform package (CX-00..09, DRAFT)     |                NONE |
 
 No document in this table independently grants Builder authority.
 

@@ -79,26 +79,26 @@ source_dependencies:
 
 **Product statement:** TeeStock will provide a premium, fast, mobile-first digital experience through which individual and business customers can understand offers, discover products, request customization, obtain trustworthy commercial information, order when eligible, monitor progress, obtain support and repeat purchases—without learning TeeStock's internal business structure or relying on fragmented chat/manual follow-ups. The underlying transaction and operational truth must remain in the governed MGBOS domain boundaries; AI and channel connectors may assist but never invent monetary or operational authority.
 
-**North Star:** *Feature-rich in capability, minimal in cognitive burden, fast in interaction, reliable in commitments, and efficient for a solo founder.*
+**North Star:** _Feature-rich in capability, minimal in cognitive burden, fast in interaction, reliable in commitments, and efficient for a solo founder._
 
-**Product promise:** *Customers should spend their attention on what they want to make or buy—not on navigating our organization, translating printing terminology, chasing an update, or recovering from our systems' mistakes.*
+**Product promise:** _Customers should spend their attention on what they want to make or buy—not on navigating our organization, translating printing terminology, chasing an update, or recovering from our systems' mistakes._
 
 **Near-term practical reality:** The first controlled Business/Custom pilot may be human-assisted. A complete catalog, payment checkout, automated custom builder and real-time multi-marketplace sync are not prerequisites for that pilot. The customer-facing journey must nonetheless be intentionally designed, legible, trustworthy and pleasant from its first public release.
 
-**Strategic direction:** Define the complete *future* experience now, while implementing capabilities in evidence-gated slices rather than a simultaneous feature launch. P0 quality standards are not a license for P2 functionality, and P2 vision is not an immediate implementation promise.
+**Strategic direction:** Define the complete _future_ experience now, while implementing capabilities in evidence-gated slices rather than a simultaneous feature launch. P0 quality standards are not a license for P2 functionality, and P2 vision is not an immediate implementation promise.
 
 ### 0.1 Product status vocabulary
 
-| Label | Meaning | Authority |
-|---|---|---|
-| `CURRENT_SOURCE` | Seen in actual repository source at inspected SHA; successful runtime not inferred | Evidence only |
-| `EXISTING_BUSINESS_INTENT` | Defined by upstream TeeStock business strategy/commerce/operations documentation | Preserved external authority |
-| `PROPOSED_REQUIREMENT` | Intended new customer product behavior expressed in CX-01 | Draft until Owner approval and canonical integration |
-| `P0_DEFINITION` | Define and verify for the initial high-quality assisted-sales/customer-entry surface | Does not imply immediate implementation |
-| `P1_TARGET` | Target self-service/commerce expansion gated by dependency evidence | Planned |
-| `P2_FUTURE` | Advanced, expensive, risky or unvalidated capability | Proposed, not release commitment |
-| `NOT_VERIFIED` | No sufficient evidence of implementation, customer outcome, provider support or runtime behavior | Must not be reported as PASS |
-| `NON_GOAL` | Explicitly not included in this product program/slice | Normative only after approval |
+| Label                      | Meaning                                                                                          | Authority                                            |
+| -------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| `CURRENT_SOURCE`           | Seen in actual repository source at inspected SHA; successful runtime not inferred               | Evidence only                                        |
+| `EXISTING_BUSINESS_INTENT` | Defined by upstream TeeStock business strategy/commerce/operations documentation                 | Preserved external authority                         |
+| `PROPOSED_REQUIREMENT`     | Intended new customer product behavior expressed in CX-01                                        | Draft until Owner approval and canonical integration |
+| `P0_DEFINITION`            | Define and verify for the initial high-quality assisted-sales/customer-entry surface             | Does not imply immediate implementation              |
+| `P1_TARGET`                | Target self-service/commerce expansion gated by dependency evidence                              | Planned                                              |
+| `P2_FUTURE`                | Advanced, expensive, risky or unvalidated capability                                             | Proposed, not release commitment                     |
+| `NOT_VERIFIED`             | No sufficient evidence of implementation, customer outcome, provider support or runtime behavior | Must not be reported as PASS                         |
+| `NON_GOAL`                 | Explicitly not included in this product program/slice                                            | Normative only after approval                        |
 
 ### 0.2 Evidence snapshot and source reality
 
@@ -111,7 +111,7 @@ source_dependencies:
 - The controlled operational pilot spec is Business/Custom **assisted-sales**, with no full public storefront prerequisite. The pilot does not validate retail direct checkout by proxy.
 - PR #73 is an active documentation-entrypoint reconciliation candidate at time of preparation; do not edit overlapping routing/index files without current-state review.
 
-**Audit provenance:** See companion `cx-00-source-gap-audit.md` for file-by-file sources, limitations, findings `CXF-01..CXF-11`, risks `CX-R01..CX-R12`, and source mappings. The CX-00 companion itself is a *DRAFT research input*, not a second normative requirements document.
+**Audit provenance:** See companion `cx-00-source-gap-audit.md` for file-by-file sources, limitations, findings `CXF-01..CXF-11`, risks `CX-R01..CX-R12`, and source mappings. The CX-00 companion itself is a _DRAFT research input_, not a second normative requirements document.
 
 ---
 
@@ -152,18 +152,18 @@ A release is not accepted merely because all routes render. It must demonstrate 
 
 ## 2. Target customer and actor model
 
-| Actor ID | Segment / actor | Primary job | Early mode | Expansion condition |
-|---|---|---|---|---|
-| `ACT-CX-01` | First-time retail visitor | Decide what fits, compare options, buy without confusion | Discovery; selected purchase channels | Retail sellable catalog/checkout verified |
-| `ACT-CX-02` | Returning retail customer | Track, find prior products, repeat purchase or request support | Guest/assisted status as approved | Verified self-service account/order model |
-| `ACT-CX-03` | Personal custom buyer | Explain garment, quantity, artwork and deadline, obtain credible quote | Structured inquiry + human review | Stable price/production config and self-service eligibility |
-| `ACT-CX-04` | Business buyer / purchaser | Specify larger or recurring order, obtain quote, document decision | Business inquiry + assisted quote | Repeat-order, account authority and credit rules proven |
-| `ACT-CX-05` | Business approver/contact | Review and approve commercial proposal within delegated authority | Documented assisted approval | Organization-scoped digital approvals with audit trail |
-| `ACT-CX-06` | Guest customer | Access own inquiry/order without unwanted account creation | Secure minimal access where approved | Secure identity and object-claim verification |
-| `ACT-CX-07` | Founder / operating staff | Resolve only operational actions not safely automated | Physical work, commercial judgment, QC, exception handling | Automated deterministic routing, QA and integration maturity |
-| `ACT-CX-08` | MGBOS / governed services | Own business transactions and immutable evidence | Authoritative backend | Existing owned semantics preserved |
-| `ACT-CX-09` | JARVIS / bounded AI | Explain, draft, extract, recommend, triage under policy | Optional assistance; never required for transaction truth | Tool and evaluation contract approved |
-| `ACT-CX-10` | External channel/provider | Originate authorized orders and confirmations | Manual/semi-manual where needed | Provider-specific rights and reconciliation tested |
+| Actor ID    | Segment / actor            | Primary job                                                            | Early mode                                                 | Expansion condition                                          |
+| ----------- | -------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
+| `ACT-CX-01` | First-time retail visitor  | Decide what fits, compare options, buy without confusion               | Discovery; selected purchase channels                      | Retail sellable catalog/checkout verified                    |
+| `ACT-CX-02` | Returning retail customer  | Track, find prior products, repeat purchase or request support         | Guest/assisted status as approved                          | Verified self-service account/order model                    |
+| `ACT-CX-03` | Personal custom buyer      | Explain garment, quantity, artwork and deadline, obtain credible quote | Structured inquiry + human review                          | Stable price/production config and self-service eligibility  |
+| `ACT-CX-04` | Business buyer / purchaser | Specify larger or recurring order, obtain quote, document decision     | Business inquiry + assisted quote                          | Repeat-order, account authority and credit rules proven      |
+| `ACT-CX-05` | Business approver/contact  | Review and approve commercial proposal within delegated authority      | Documented assisted approval                               | Organization-scoped digital approvals with audit trail       |
+| `ACT-CX-06` | Guest customer             | Access own inquiry/order without unwanted account creation             | Secure minimal access where approved                       | Secure identity and object-claim verification                |
+| `ACT-CX-07` | Founder / operating staff  | Resolve only operational actions not safely automated                  | Physical work, commercial judgment, QC, exception handling | Automated deterministic routing, QA and integration maturity |
+| `ACT-CX-08` | MGBOS / governed services  | Own business transactions and immutable evidence                       | Authoritative backend                                      | Existing owned semantics preserved                           |
+| `ACT-CX-09` | JARVIS / bounded AI        | Explain, draft, extract, recommend, triage under policy                | Optional assistance; never required for transaction truth  | Tool and evaluation contract approved                        |
+| `ACT-CX-10` | External channel/provider  | Originate authorized orders and confirmations                          | Manual/semi-manual where needed                            | Provider-specific rights and reconciliation tested           |
 
 **Identity note:** A retail customer, an organizational buyer, a guest inquiry, and an internal operator are not automatically interchangeable identities. Public actor permissions must be explicitly designed and independently reviewed against organization isolation; this PRD does not assume current internal authentication already solves customer access.
 
@@ -181,18 +181,18 @@ A release is not accepted merely because all routes render. It must demonstrate 
 
 ### 2.2 Experience principles (proposed stable standards)
 
-| Principle ID | Principle | Failure that violates it |
-|---|---|---|
-| `XP-01` | Expose customer intent; hide internal departments | Customer must know CRM vs production module to request a product |
-| `XP-02` | High capability, low initial complexity | Every advanced option loads or appears before user needs it |
-| `XP-03` | Price and delivery truth over conversion tricks | Unsupported price/date presented as guaranteed |
-| `XP-04` | A mobile customer is a first-class user | Critical CTA/form is inaccessible or requires desktop |
-| `XP-05` | Every irreversible action provides clear acknowledgement | Customer cannot tell whether request/order was submitted |
-| `XP-06` | Recover instead of restart | Network failure erases lengthy custom requirements |
-| `XP-07` | Accessible design is not optional polish | Keyboard or assistive technology users cannot complete task |
-| `XP-08` | AI is assistive, bounded and replaceable | Customer cannot finish a deterministic workflow without AI |
-| `XP-09` | Channel experience is coherent, not falsely uniform | Website promises actions that external marketplace forbids |
-| `XP-10` | Every customer self-service win reduces back-office effort | Same details must be retyped manually by founder |
+| Principle ID | Principle                                                  | Failure that violates it                                         |
+| ------------ | ---------------------------------------------------------- | ---------------------------------------------------------------- |
+| `XP-01`      | Expose customer intent; hide internal departments          | Customer must know CRM vs production module to request a product |
+| `XP-02`      | High capability, low initial complexity                    | Every advanced option loads or appears before user needs it      |
+| `XP-03`      | Price and delivery truth over conversion tricks            | Unsupported price/date presented as guaranteed                   |
+| `XP-04`      | A mobile customer is a first-class user                    | Critical CTA/form is inaccessible or requires desktop            |
+| `XP-05`      | Every irreversible action provides clear acknowledgement   | Customer cannot tell whether request/order was submitted         |
+| `XP-06`      | Recover instead of restart                                 | Network failure erases lengthy custom requirements               |
+| `XP-07`      | Accessible design is not optional polish                   | Keyboard or assistive technology users cannot complete task      |
+| `XP-08`      | AI is assistive, bounded and replaceable                   | Customer cannot finish a deterministic workflow without AI       |
+| `XP-09`      | Channel experience is coherent, not falsely uniform        | Website promises actions that external marketplace forbids       |
+| `XP-10`      | Every customer self-service win reduces back-office effort | Same details must be retyped manually by founder                 |
 
 ---
 
@@ -200,22 +200,22 @@ A release is not accepted merely because all routes render. It must demonstrate 
 
 **Authority boundary:** Existing `TS-TEC-002` owns the TeeStock business website IA. CX-01 defines **requirements for user outcomes**, and CX-02/CX-03 later refine navigation/interaction without silently replacing that IA. The `SHOP / CUSTOMIZE / FOR BUSINESS / BUILD MERCH` intent framework is reused.
 
-| Surface | Customer-facing purpose | Definition stage | Contract owner after this PRD |
-|---|---|---|---|
-| Public homepage + offer routing | Explain TeeStock and choose relevant job | `P0_DEFINITION` | CX-02/03 |
-| Custom entry + structured inquiry | Ask for personalized products or production | `P0_DEFINITION` | CX-05 |
-| Business entry + qualified request | Request business/uniform/merch quote | `P0_DEFINITION` | CX-05 |
-| Selected products / catalog | Browse approved products and transparent offer details | P0 content entry where sellable; full catalog P1 | CX-04 |
-| Product detail / variant | Review attributes, sizing, photos, availability and service qualifiers | P1 | CX-04 |
-| Cart and direct checkout | Transact safely for eligible items | P1, not pilot prerequisite | CX-04 |
-| Guest inquiry/order access | Receive acknowledgement, access permitted own status | P0 minimum; expanded P1 | CX-06 |
-| Customer account and self-service | Track, reorder, contact support, manage authorized profile | P1 | CX-06 |
-| B2B account workspace | Quotes, approvals, documents and repeats | P1/P2 gated by demand/authority | CX-05/06 |
-| Guided custom configurator | Select standardized options, upload assets, receive estimate/quote | Structured intake P0; advanced builder P2 | CX-05 |
-| Support/help and returns request | Resolve real issues with minimal customer burden | Basic P0, expanded P1 | CX-06 |
-| Marketplace/social channels | External discovery/order context, consistent internal record | Manual P0 if used; integrations P1/P2 | CX-07 |
-| AI customer assistant | Inform, qualify, summarize; escalate uncertainty | Optional P1; autonomy P2 subject to policy | CX-06/08 and JARVIS owner |
-| Creator/partner portals | Participant tools and separate ecosystems | OUT OF SCOPE for CX-01 first package | Future product tracks |
+| Surface                            | Customer-facing purpose                                                | Definition stage                                 | Contract owner after this PRD |
+| ---------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------- |
+| Public homepage + offer routing    | Explain TeeStock and choose relevant job                               | `P0_DEFINITION`                                  | CX-02/03                      |
+| Custom entry + structured inquiry  | Ask for personalized products or production                            | `P0_DEFINITION`                                  | CX-05                         |
+| Business entry + qualified request | Request business/uniform/merch quote                                   | `P0_DEFINITION`                                  | CX-05                         |
+| Selected products / catalog        | Browse approved products and transparent offer details                 | P0 content entry where sellable; full catalog P1 | CX-04                         |
+| Product detail / variant           | Review attributes, sizing, photos, availability and service qualifiers | P1                                               | CX-04                         |
+| Cart and direct checkout           | Transact safely for eligible items                                     | P1, not pilot prerequisite                       | CX-04                         |
+| Guest inquiry/order access         | Receive acknowledgement, access permitted own status                   | P0 minimum; expanded P1                          | CX-06                         |
+| Customer account and self-service  | Track, reorder, contact support, manage authorized profile             | P1                                               | CX-06                         |
+| B2B account workspace              | Quotes, approvals, documents and repeats                               | P1/P2 gated by demand/authority                  | CX-05/06                      |
+| Guided custom configurator         | Select standardized options, upload assets, receive estimate/quote     | Structured intake P0; advanced builder P2        | CX-05                         |
+| Support/help and returns request   | Resolve real issues with minimal customer burden                       | Basic P0, expanded P1                            | CX-06                         |
+| Marketplace/social channels        | External discovery/order context, consistent internal record           | Manual P0 if used; integrations P1/P2            | CX-07                         |
+| AI customer assistant              | Inform, qualify, summarize; escalate uncertainty                       | Optional P1; autonomy P2 subject to policy       | CX-06/08 and JARVIS owner     |
+| Creator/partner portals            | Participant tools and separate ecosystems                              | OUT OF SCOPE for CX-01 first package             | Future product tracks         |
 
 **Route labels here are conceptual only.** Final paths/subdomains must honor existing IA, URLs, SEO, redirects and any approved brand decisions. P0 may be accomplished through an intentionally small set of exceptionally designed pages.
 
@@ -230,7 +230,7 @@ A release is not accepted merely because all routes render. It must demonstrate 
 
 ## 4. Customer journeys (master-level contracts)
 
-Full storyboard, swimlanes, field sets, step timing and recovery tests belong to CX-02/04/05/06. CX-01 freezes the *intent and outcomes*, not individual screens or APIs.
+Full storyboard, swimlanes, field sets, step timing and recovery tests belong to CX-02/04/05/06. CX-01 freezes the _intent and outcomes_, not individual screens or APIs.
 
 ### `JRN-01` — First-time customer → appropriate offer
 
@@ -272,7 +272,7 @@ Full storyboard, swimlanes, field sets, step timing and recovery tests belong to
 
 **Priority `P0`:** product contract necessary for a premium assisted-sales/inquiry launch and safe founder operations, subject to active roadmap and technical gates. **Priority `P1`:** self-service commerce/customer operations, after required business truth and identity readiness. **Priority `P2`:** advanced platform features, after validation of repeated demand, cost/benefit, rules and reliability.
 
-**Acceptance syntax:** `Given/When/Then` descriptions in this PRD are product acceptance *requirements*, not reports that tests have passed. The independent engineering acceptance suite and precise synthetic datasets belong to CX-08 and implementation IC/WP.
+**Acceptance syntax:** `Given/When/Then` descriptions in this PRD are product acceptance _requirements_, not reports that tests have passed. The independent engineering acceptance suite and precise synthetic datasets belong to CX-08 and implementation IC/WP.
 
 ---
 
@@ -280,104 +280,105 @@ Full storyboard, swimlanes, field sets, step timing and recovery tests belong to
 
 ### 6.1 Discovery, navigation and public trust
 
-| ID | Priority | Proposed requirement | Product acceptance obligation | Detailed spec |
-|---|---|---|---|---|
-| `CX1-FR-001` | P0 | Route users by primary job (`Shop`, `Customize`, `For Business`, `Build Merch`) instead of internal divisions | User can identify relevant path and reach corresponding actionable destination using desktop/mobile/keyboard | CX-02/03 |
-| `CX1-FR-002` | P0 | Distinguish available offer, planned capability, and currently unavailable service without false purchase CTAs | Unavailable feature does not suggest a working checkout or instant production promise | CX-02/03 |
-| `CX1-FR-003` | P0 | Make core contact/quote action visually clear with contextual CTA and readable expectations | Visitor can see next action and key constraints without reading organizational documentation | CX-02/03 |
-| `CX1-FR-004` | P0 | Show material service facts: available garment/print categories, indicative scope, quantity and lead-time qualifier | Information uses approved business source; unknown values are marked as needing confirmation | CX-02/05 |
-| `CX1-FR-005` | P0 | Provide mobile-first navigation and recoverable deep links | Major customer job remains reachable at supported viewport sizes and accessible focus order | CX-03/08 |
-| `CX1-FR-006` | P1 | Provide search, filtering and sorting over actually published sellable product data | Filter/search empty/error/offline states are useful; unpublished products are not accidentally exposed | CX-04 |
-| `CX1-FR-007` | P1 | Product detail presents variant, imagery, sizing, availability mode, price basis and expectations | Product information is versioned/fresh per approved source; uncertainty is not presented as in-stock | CX-04 |
-| `CX1-FR-008` | P2 | Offer recommendation/personalization without hiding ordinary browsing | User can navigate without recommendation engine, consent choices honored, performance unaffected | CX-03/08 |
+| ID           | Priority | Proposed requirement                                                                                                | Product acceptance obligation                                                                                | Detailed spec |
+| ------------ | -------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------- |
+| `CX1-FR-001` | P0       | Route users by primary job (`Shop`, `Customize`, `For Business`, `Build Merch`) instead of internal divisions       | User can identify relevant path and reach corresponding actionable destination using desktop/mobile/keyboard | CX-02/03      |
+| `CX1-FR-002` | P0       | Distinguish available offer, planned capability, and currently unavailable service without false purchase CTAs      | Unavailable feature does not suggest a working checkout or instant production promise                        | CX-02/03      |
+| `CX1-FR-003` | P0       | Make core contact/quote action visually clear with contextual CTA and readable expectations                         | Visitor can see next action and key constraints without reading organizational documentation                 | CX-02/03      |
+| `CX1-FR-004` | P0       | Show material service facts: available garment/print categories, indicative scope, quantity and lead-time qualifier | Information uses approved business source; unknown values are marked as needing confirmation                 | CX-02/05      |
+| `CX1-FR-005` | P0       | Provide mobile-first navigation and recoverable deep links                                                          | Major customer job remains reachable at supported viewport sizes and accessible focus order                  | CX-03/08      |
+| `CX1-FR-006` | P1       | Provide search, filtering and sorting over actually published sellable product data                                 | Filter/search empty/error/offline states are useful; unpublished products are not accidentally exposed       | CX-04         |
+| `CX1-FR-007` | P1       | Product detail presents variant, imagery, sizing, availability mode, price basis and expectations                   | Product information is versioned/fresh per approved source; uncertainty is not presented as in-stock         | CX-04         |
+| `CX1-FR-008` | P2       | Offer recommendation/personalization without hiding ordinary browsing                                               | User can navigate without recommendation engine, consent choices honored, performance unaffected             | CX-03/08      |
 
 ### 6.2 Assisted custom and B2B customer intake
 
-| ID | Priority | Proposed requirement | Product acceptance obligation | Detailed spec |
-|---|---|---|---|---|
-| `CX1-FR-009` | P0 | Collect structured Custom inquiry inputs with minimum necessary fields | Valid submission creates one traceable permitted request; missing required info produces field-level guidance | CX-05 |
-| `CX1-FR-010` | P0 | Dynamically reveal advanced questions only if customer type/selection requires them | Simple customer not forced to answer production-level questions unrelated to request | CX-03/05 |
-| `CX1-FR-011` | P0 | Allow approved artwork submission or explicit "not ready" path | Errors/format limits shown before or during upload; file receipt ≠ artwork/production approval | CX-05/08 |
-| `CX1-FR-012` | P0 | Capture deadlines as requested dates, not automatic guaranteed dates | Impossible/unverified deadline produces qualification/escalation rather than firm promise | CX-05 |
-| `CX1-FR-013` | P0 | Acknowledge request receipt with stable reference and truthful next step | Repeated submission/network retry does not silently create duplicate actionable requests | CX-02/05/08 |
-| `CX1-FR-014` | P0 | Route complexity/organizational requirements to Business assisted flow | Complex quote path retains entered data and clearly communicates need for human review | CX-05 |
-| `CX1-FR-015` | P0 | Display quote/estimate terminology honestly | Estimate, draft, human-approved quote, and accepted offer cannot be confused visually/textually | CX-05 |
-| `CX1-FR-016` | P1 | Provide secure digital quote review, revision/expiration and acceptance where authorized | Wrong quote version or missing approver cannot be submitted as an accepted commercial commitment | CX-05/08 |
-| `CX1-FR-017` | P1 | Provide signed-in organization workspace for proven repeat B2B needs | Only authorized roles see scoped quotes/orders/invoices; all changes traceable | CX-05/06 |
-| `CX1-FR-018` | P2 | Guided sellable custom configuration over standardized product/method/placement/quantity options | No self-service instant-price/production assertion outside approved deterministic eligibility | CX-05 |
-| `CX1-FR-019` | P2 | Accurate, bounded preview/proof lifecycle for custom artwork | Preview limitations explicit; customer proof acceptance version and scope cannot be mistaken for production-ready validation | CX-05/08 |
+| ID           | Priority | Proposed requirement                                                                             | Product acceptance obligation                                                                                                | Detailed spec |
+| ------------ | -------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `CX1-FR-009` | P0       | Collect structured Custom inquiry inputs with minimum necessary fields                           | Valid submission creates one traceable permitted request; missing required info produces field-level guidance                | CX-05         |
+| `CX1-FR-010` | P0       | Dynamically reveal advanced questions only if customer type/selection requires them              | Simple customer not forced to answer production-level questions unrelated to request                                         | CX-03/05      |
+| `CX1-FR-011` | P0       | Allow approved artwork submission or explicit "not ready" path                                   | Errors/format limits shown before or during upload; file receipt ≠ artwork/production approval                               | CX-05/08      |
+| `CX1-FR-012` | P0       | Capture deadlines as requested dates, not automatic guaranteed dates                             | Impossible/unverified deadline produces qualification/escalation rather than firm promise                                    | CX-05         |
+| `CX1-FR-013` | P0       | Acknowledge request receipt with stable reference and truthful next step                         | Repeated submission/network retry does not silently create duplicate actionable requests                                     | CX-02/05/08   |
+| `CX1-FR-014` | P0       | Route complexity/organizational requirements to Business assisted flow                           | Complex quote path retains entered data and clearly communicates need for human review                                       | CX-05         |
+| `CX1-FR-015` | P0       | Display quote/estimate terminology honestly                                                      | Estimate, draft, human-approved quote, and accepted offer cannot be confused visually/textually                              | CX-05         |
+| `CX1-FR-016` | P1       | Provide secure digital quote review, revision/expiration and acceptance where authorized         | Wrong quote version or missing approver cannot be submitted as an accepted commercial commitment                             | CX-05/08      |
+| `CX1-FR-017` | P1       | Provide signed-in organization workspace for proven repeat B2B needs                             | Only authorized roles see scoped quotes/orders/invoices; all changes traceable                                               | CX-05/06      |
+| `CX1-FR-018` | P2       | Guided sellable custom configuration over standardized product/method/placement/quantity options | No self-service instant-price/production assertion outside approved deterministic eligibility                                | CX-05         |
+| `CX1-FR-019` | P2       | Accurate, bounded preview/proof lifecycle for custom artwork                                     | Preview limitations explicit; customer proof acceptance version and scope cannot be mistaken for production-ready validation | CX-05/08      |
 
 ### 6.3 Retail commerce, order and payment experience
 
-| ID | Priority | Proposed requirement | Product acceptance obligation | Detailed spec |
-|---|---|---|---|---|
-| `CX1-FR-020` | P1 | Browse eligible products/SKUs/variants and current price context | Invalid or retired variant cannot be added as a valid order line | CX-04 |
-| `CX1-FR-021` | P1 | Cart preserves selected eligible items, quantity and clear recalculation boundaries | Cart changes are visible and require transparent revalidation at checkout | CX-04 |
-| `CX1-FR-022` | P1 | Guest checkout when approved by commercial, security and payment policies | Guest can complete without forced account; identity/order lookup remains protected | CX-04/06/08 |
-| `CX1-FR-023` | P1 | Checkout shows product, taxes/fees/shipping where applicable, price status and payment choice | Before committing, customer sees authoritative final payable amount and policy disclosures | CX-04 |
-| `CX1-FR-024` | P1 | Payment UX distinguishes not started, awaiting action, pending confirmation, success and failure | Customer never sees confirmed success merely because browser redirected or webhook is delayed | CX-04/08 |
-| `CX1-FR-025` | P1 | Order confirmation has stable reference, next steps, expected status availability and help path | Browser refresh/retry cannot make customer uncertain about already-completed accepted command | CX-04/06/08 |
-| `CX1-FR-026` | P1 | Unavailable stock/price changes trigger controlled reconciliation before purchase | Customer can correct cart, remove item, request assistance or stop without hidden charges | CX-04 |
-| `CX1-FR-027` | P1 | Represent ready-stock/MTO/preorder availability distinctly according to approved assortment policy | Product detail and checkout use compatible fulfillment language; no fictitious ATS | CX-04 |
-| `CX1-FR-028` | P2 | Optional advanced promotions, bundles and personalization | Promotion rules deterministic, auditable and consistent across order confirmation | CX-04 |
+| ID           | Priority | Proposed requirement                                                                               | Product acceptance obligation                                                                 | Detailed spec |
+| ------------ | -------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------- |
+| `CX1-FR-020` | P1       | Browse eligible products/SKUs/variants and current price context                                   | Invalid or retired variant cannot be added as a valid order line                              | CX-04         |
+| `CX1-FR-021` | P1       | Cart preserves selected eligible items, quantity and clear recalculation boundaries                | Cart changes are visible and require transparent revalidation at checkout                     | CX-04         |
+| `CX1-FR-022` | P1       | Guest checkout when approved by commercial, security and payment policies                          | Guest can complete without forced account; identity/order lookup remains protected            | CX-04/06/08   |
+| `CX1-FR-023` | P1       | Checkout shows product, taxes/fees/shipping where applicable, price status and payment choice      | Before committing, customer sees authoritative final payable amount and policy disclosures    | CX-04         |
+| `CX1-FR-024` | P1       | Payment UX distinguishes not started, awaiting action, pending confirmation, success and failure   | Customer never sees confirmed success merely because browser redirected or webhook is delayed | CX-04/08      |
+| `CX1-FR-025` | P1       | Order confirmation has stable reference, next steps, expected status availability and help path    | Browser refresh/retry cannot make customer uncertain about already-completed accepted command | CX-04/06/08   |
+| `CX1-FR-026` | P1       | Unavailable stock/price changes trigger controlled reconciliation before purchase                  | Customer can correct cart, remove item, request assistance or stop without hidden charges     | CX-04         |
+| `CX1-FR-027` | P1       | Represent ready-stock/MTO/preorder availability distinctly according to approved assortment policy | Product detail and checkout use compatible fulfillment language; no fictitious ATS            | CX-04         |
+| `CX1-FR-028` | P2       | Optional advanced promotions, bundles and personalization                                          | Promotion rules deterministic, auditable and consistent across order confirmation             | CX-04         |
 
 ### 6.4 Customer account, tracking, support and lifecycle
 
-| ID | Priority | Proposed requirement | Product acceptance obligation | Detailed spec |
-|---|---|---|---|---|
-| `CX1-FR-029` | P0 | Give an inquiry customer a clear acknowledgement and legitimate follow-up route | Contact and response expectations use approved policy, no invented SLA | CX-02/06 |
-| `CX1-FR-030` | P0 | Where authorized, provide customer-readable status/help without exposing internal order details | Invalid/unauthorized lookup discloses no customer, order or organization secrets | CX-06/08 |
-| `CX1-FR-031` | P1 | Account shows scoped order history and current understandable status | Current, delayed, canceled and unavailable states are distinguished accurately | CX-06 |
-| `CX1-FR-032` | P1 | Surface support entrypoint tied to selected customer/order context | Customer does not retype accessible facts; case creation respects customer service ownership | CX-06 |
-| `CX1-FR-033` | P1 | Allow eligible return/service request with reason and evidence | Form is a request; automatic approval only where existing policy explicitly allows | CX-06 |
-| `CX1-FR-034` | P1 | Explain artwork corrections, approval and required customer actions safely | Customer sees only relevant and authorized artifacts; approval relates to exact version | CX-05/06 |
-| `CX1-FR-035` | P1 | Enable repeat purchase/inquiry using permitted immutable prior order context | Customer must reconfirm current price, availability, size, quantity and policy before placing repeat | CX-06 |
-| `CX1-FR-036` | P1 | Allow user to manage limited profile/preferences and notification consent as lawful and approved | Data changes are explicit, scoped, reversible where appropriate and consistent with privacy policy | CX-06/08 |
-| `CX1-FR-037` | P2 | B2B customer workspace supports account-approved products, documents and reorders | Multiple contacts/roles remain authorization-scoped with audit trails | CX-05/06 |
+| ID           | Priority | Proposed requirement                                                                             | Product acceptance obligation                                                                        | Detailed spec |
+| ------------ | -------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- | ------------- |
+| `CX1-FR-029` | P0       | Give an inquiry customer a clear acknowledgement and legitimate follow-up route                  | Contact and response expectations use approved policy, no invented SLA                               | CX-02/06      |
+| `CX1-FR-030` | P0       | Where authorized, provide customer-readable status/help without exposing internal order details  | Invalid/unauthorized lookup discloses no customer, order or organization secrets                     | CX-06/08      |
+| `CX1-FR-031` | P1       | Account shows scoped order history and current understandable status                             | Current, delayed, canceled and unavailable states are distinguished accurately                       | CX-06         |
+| `CX1-FR-032` | P1       | Surface support entrypoint tied to selected customer/order context                               | Customer does not retype accessible facts; case creation respects customer service ownership         | CX-06         |
+| `CX1-FR-033` | P1       | Allow eligible return/service request with reason and evidence                                   | Form is a request; automatic approval only where existing policy explicitly allows                   | CX-06         |
+| `CX1-FR-034` | P1       | Explain artwork corrections, approval and required customer actions safely                       | Customer sees only relevant and authorized artifacts; approval relates to exact version              | CX-05/06      |
+| `CX1-FR-035` | P1       | Enable repeat purchase/inquiry using permitted immutable prior order context                     | Customer must reconfirm current price, availability, size, quantity and policy before placing repeat | CX-06         |
+| `CX1-FR-036` | P1       | Allow user to manage limited profile/preferences and notification consent as lawful and approved | Data changes are explicit, scoped, reversible where appropriate and consistent with privacy policy   | CX-06/08      |
+| `CX1-FR-037` | P2       | B2B customer workspace supports account-approved products, documents and reorders                | Multiple contacts/roles remain authorization-scoped with audit trails                                | CX-05/06      |
 
 ### 6.5 Cross-channel, AI and solo-founder operations
 
-| ID | Priority | Proposed requirement | Product acceptance obligation | Detailed spec |
-|---|---|---|---|---|
-| `CX1-FR-038` | P0 | Customer submissions result in structured records/queues, not chat-only memory | Founder can find submitted context, source and next action without duplicate transcription | CX-02/05 |
-| `CX1-FR-039` | P0 | Define operator-required physical actions separately from candidate AI/system actions | Sample journey shows what founder buys, inspects, packs, hands to courier, approves and does not manually repeat | CX-02/09 |
-| `CX1-FR-040` | P0 | When AI or third-party service unavailable, preserve assisted/manual intake path | User can reach safe human-assisted resolution without losing validated information | CX-02/07/08 |
-| `CX1-FR-041` | P1 | Channel-sourced orders preserve provider/source identity and customer expectation boundaries | Duplicate external event/order cannot create duplicate canonical order; mismatches route to reconciliation | CX-07/08 |
-| `CX1-FR-042` | P1 | Customer notification uses event/permission-appropriate state, not guessed workflow completion | Failed notification does not mutate financial/production truth; retry/reconciliation visible internally | CX-06/07 |
-| `CX1-FR-043` | P1 | Optional AI provides grounded explanation, qualification and drafts with human escalation | AI output is clearly non-authoritative; no unsupported price/date/refund/credit promises | CX-06/08 |
-| `CX1-FR-044` | P1 | Capture where customer friction generates operational work | Metrics distinguish normal inquiries, avoidable support contacts and genuine exceptions | CX-02/09 |
-| `CX1-FR-045` | P2 | Channel sync of eligible listing/price/ATS/status under approved adapters | Provider capabilities, idempotency, reconciliation and conflict handling verified per channel | CX-07 |
-| `CX1-FR-046` | P2 | AI-supported configuration and proactive account help within granted tools | Every execution authorized, traceable, rate/cost bounded, undo/compensate if supported; failing safe | CX-05/06/08 |
+| ID           | Priority | Proposed requirement                                                                           | Product acceptance obligation                                                                                    | Detailed spec |
+| ------------ | -------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------- |
+| `CX1-FR-038` | P0       | Customer submissions result in structured records/queues, not chat-only memory                 | Founder can find submitted context, source and next action without duplicate transcription                       | CX-02/05      |
+| `CX1-FR-039` | P0       | Define operator-required physical actions separately from candidate AI/system actions          | Sample journey shows what founder buys, inspects, packs, hands to courier, approves and does not manually repeat | CX-02/09      |
+| `CX1-FR-040` | P0       | When AI or third-party service unavailable, preserve assisted/manual intake path               | User can reach safe human-assisted resolution without losing validated information                               | CX-02/07/08   |
+| `CX1-FR-041` | P1       | Channel-sourced orders preserve provider/source identity and customer expectation boundaries   | Duplicate external event/order cannot create duplicate canonical order; mismatches route to reconciliation       | CX-07/08      |
+| `CX1-FR-042` | P1       | Customer notification uses event/permission-appropriate state, not guessed workflow completion | Failed notification does not mutate financial/production truth; retry/reconciliation visible internally          | CX-06/07      |
+| `CX1-FR-043` | P1       | Optional AI provides grounded explanation, qualification and drafts with human escalation      | AI output is clearly non-authoritative; no unsupported price/date/refund/credit promises                         | CX-06/08      |
+| `CX1-FR-044` | P1       | Capture where customer friction generates operational work                                     | Metrics distinguish normal inquiries, avoidable support contacts and genuine exceptions                          | CX-02/09      |
+| `CX1-FR-045` | P2       | Channel sync of eligible listing/price/ATS/status under approved adapters                      | Provider capabilities, idempotency, reconciliation and conflict handling verified per channel                    | CX-07         |
+| `CX1-FR-046` | P2       | AI-supported configuration and proactive account help within granted tools                     | Every execution authorized, traceable, rate/cost bounded, undo/compensate if supported; failing safe             | CX-05/06/08   |
 
-**Coverage check:** `CX1-FR-001..046` are *product-level requirement candidates*. They do not imply 46 implementation stories, 46 new database objects or that all can be released in one version. CX-02..09 will refine and de-duplicate before conversion to engineering work packages.
+**Coverage check:** `CX1-FR-001..046` are _product-level requirement candidates_. They do not imply 46 implementation stories, 46 new database objects or that all can be released in one version. CX-02..09 will refine and de-duplicate before conversion to engineering work packages.
 
 ---
+
 ## 7. Cross-cutting business and interaction rules
 
 These `CX1-BR-*` rules describe public-product obligations **derived from** upstream policies; they do not override those policies, and conflicting interpretation must be resolved at the canonical owner.
 
-| Rule | Requirement | Referenced authority |
-|---|---|---|
-| `CX1-BR-001` | Only approved commercial data can become a final payable price or accepted quote; AI text and UI calculations alone are never authority | TeeStock Pricing Framework; MGBOS financial/quote invariants |
-| `CX1-BR-002` | Estimated delivery or requested deadline must not be presented as a guaranteed operational commitment absent governed promise authority | TeeStock Custom/Business, fulfillment policy |
-| `CX1-BR-003` | Any apparent inventory availability must reflect approved availability mode, reservation and freshness policy | TeeStock Commerce Platform / MGBOS inventory owner |
-| `CX1-BR-004` | Customer-facing order/payment/progress states are projections; they do not write alternate domain lifecycles | MGBOS state machines and command model |
-| `CX1-BR-005` | Customer actions that can create money/order/approval consequences go through existing approved commands and authorization checks | MGBOS architecture/authorization |
-| `CX1-BR-006` | Customer file upload, receipt, technical validation, proof approval and production release must be distinct concepts | TeeStock Custom/Business and production policies |
-| `CX1-BR-007` | Customer-facing errors shall distinguish unavailable data, empty result, unauthorized result, invalid input and true operational failure | UX reliability and security review |
-| `CX1-BR-008` | A lost network response must not create ambiguous repeated money/order/lead side effects | Idempotency and MGBOS transaction contracts |
-| `CX1-BR-009` | Guest link/account ownership and organization visibility must be independently authorization-reviewed; no "ID-in-URL = access" model | MGBOS security/identity authority |
-| `CX1-BR-010` | Public UX must not expose privileged internal margin, vendor costs, production identity, logs or raw exception data | MGBOS authorization and data ownership |
-| `CX1-BR-011` | External marketplace policy and actual channel truth take precedence where the transaction is contractually owned by the marketplace; internal MGBOS truth still reconciles | Channel Strategy / integration provider agreements |
-| `CX1-BR-012` | Return/refund/credit approval is not created by merely displaying a support request or AI response | Customer Service, Returns & Warranty, payment policy |
-| `CX1-BR-013` | AI recommendations remain replaceable with deterministic/manual journey; AI has no free-standing pricing, credit, contract or refund authority | MGBOS/JARVIS governance and AI boundaries |
-| `CX1-BR-014` | Automation and notifications are consumers of business facts, not new master ledgers or status authorities | Automation Architecture / MGBOS integration |
-| `CX1-BR-015` | Rich interaction uses progressive disclosure, feature gating and progressive enhancement rather than mandatory advanced frontend for every route | Customer experience mandate |
-| `CX1-BR-016` | Public copy states what is actually available now and what is planned; no "coming soon" disguised as working functionality | Truthful customer trust requirement |
-| `CX1-BR-017` | Solo-founder physical tasks must remain explicit; AI cannot be credited with buying, inspecting, packing or courier handoff without real integration/evidence | Solo-founder operating model |
-| `CX1-BR-018` | Product/business policy may differ by retail, Custom, B2B, channel and label; no generic frontend rule silently erases those distinctions | Commerce and Business/Custom policies |
-| `CX1-BR-019` | Customer contact/marketing preferences are not implied by ordering or asking for a quote; lawful permissions and provider rules apply | Marketing / privacy and legal review |
-| `CX1-BR-020` | High-value or irreversible commitments must be gated by correct identity, version, consent and delegated approval | Business authority and MGBOS permission model |
+| Rule         | Requirement                                                                                                                                                                 | Referenced authority                                         |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `CX1-BR-001` | Only approved commercial data can become a final payable price or accepted quote; AI text and UI calculations alone are never authority                                     | TeeStock Pricing Framework; MGBOS financial/quote invariants |
+| `CX1-BR-002` | Estimated delivery or requested deadline must not be presented as a guaranteed operational commitment absent governed promise authority                                     | TeeStock Custom/Business, fulfillment policy                 |
+| `CX1-BR-003` | Any apparent inventory availability must reflect approved availability mode, reservation and freshness policy                                                               | TeeStock Commerce Platform / MGBOS inventory owner           |
+| `CX1-BR-004` | Customer-facing order/payment/progress states are projections; they do not write alternate domain lifecycles                                                                | MGBOS state machines and command model                       |
+| `CX1-BR-005` | Customer actions that can create money/order/approval consequences go through existing approved commands and authorization checks                                           | MGBOS architecture/authorization                             |
+| `CX1-BR-006` | Customer file upload, receipt, technical validation, proof approval and production release must be distinct concepts                                                        | TeeStock Custom/Business and production policies             |
+| `CX1-BR-007` | Customer-facing errors shall distinguish unavailable data, empty result, unauthorized result, invalid input and true operational failure                                    | UX reliability and security review                           |
+| `CX1-BR-008` | A lost network response must not create ambiguous repeated money/order/lead side effects                                                                                    | Idempotency and MGBOS transaction contracts                  |
+| `CX1-BR-009` | Guest link/account ownership and organization visibility must be independently authorization-reviewed; no "ID-in-URL = access" model                                        | MGBOS security/identity authority                            |
+| `CX1-BR-010` | Public UX must not expose privileged internal margin, vendor costs, production identity, logs or raw exception data                                                         | MGBOS authorization and data ownership                       |
+| `CX1-BR-011` | External marketplace policy and actual channel truth take precedence where the transaction is contractually owned by the marketplace; internal MGBOS truth still reconciles | Channel Strategy / integration provider agreements           |
+| `CX1-BR-012` | Return/refund/credit approval is not created by merely displaying a support request or AI response                                                                          | Customer Service, Returns & Warranty, payment policy         |
+| `CX1-BR-013` | AI recommendations remain replaceable with deterministic/manual journey; AI has no free-standing pricing, credit, contract or refund authority                              | MGBOS/JARVIS governance and AI boundaries                    |
+| `CX1-BR-014` | Automation and notifications are consumers of business facts, not new master ledgers or status authorities                                                                  | Automation Architecture / MGBOS integration                  |
+| `CX1-BR-015` | Rich interaction uses progressive disclosure, feature gating and progressive enhancement rather than mandatory advanced frontend for every route                            | Customer experience mandate                                  |
+| `CX1-BR-016` | Public copy states what is actually available now and what is planned; no "coming soon" disguised as working functionality                                                  | Truthful customer trust requirement                          |
+| `CX1-BR-017` | Solo-founder physical tasks must remain explicit; AI cannot be credited with buying, inspecting, packing or courier handoff without real integration/evidence               | Solo-founder operating model                                 |
+| `CX1-BR-018` | Product/business policy may differ by retail, Custom, B2B, channel and label; no generic frontend rule silently erases those distinctions                                   | Commerce and Business/Custom policies                        |
+| `CX1-BR-019` | Customer contact/marketing preferences are not implied by ordering or asking for a quote; lawful permissions and provider rules apply                                       | Marketing / privacy and legal review                         |
+| `CX1-BR-020` | High-value or irreversible commitments must be gated by correct identity, version, consent and delegated approval                                                           | Business authority and MGBOS permission model                |
 
 ### 7.1 Public information confidence levels
 
@@ -394,30 +395,30 @@ These are **product communication categories**, not proposals for new MGBOS data
 
 ### 7.2 Failure and recovery matrix
 
-| Scenario | Required customer behavior | Backstage evidence/guard | Priority |
-|---|---|---|---|
-| Form required field missing | Show field-specific help; preserve correct entered values | No accidental submission | P0 |
-| Large/unsupported artwork | State reason and allowed remedy; retain other fields | No false file approval; upload policy | P0 |
-| Customer deadline not yet assessed | "Requested date—confirmation required" | No unsupported production SLA | P0 |
-| Network timeout during inquiry | Safe retry/check status if available; avoid duplicate actionable record | Stable request correlation/idempotency | P0 |
-| Submitted request returns success but email notification fails | Reference and receipt still available; notification failure does not erase request | Notification out-of-band state | P0 |
-| Login/guest link invalid or expired | Clear safe recovery path without leaking object's existence | Authorization/expiration proof | P0/P1 |
-| Catalog source temporarily unavailable | Honest service state, retry, help route; not "no products" | Data health observed separately | P1 |
-| Price changes between cart and checkout | Revalidate, explain changed amount, reconfirm; no silent charge | Authoritative checkout price snapshot | P1 |
-| Stock becomes unavailable after selection | Explain, offer options/correction, never oversell via UI assumption | Inventory and reservation checks | P1 |
-| Payment returns but provider callback pending | Pending confirmation; no false paid banner | Approved gateway/provider truth and idempotent replay | P1 |
-| Repeat purchase after price/stock changed | Prepopulate permissible historical context; reconfirm current terms | Fresh validation and separate new order ID | P1 |
-| Customer cancels after irreversible production point | Explain eligibility and contact path; do not auto-refund | Canonical return/cancellation policy | P1 |
-| External marketplace sends duplicate event | Customer status unaffected by duplicate event | Canonical dedupe and reconciliation | P1/P2 |
-| External channel stock sync lag | Avoid guaranteed cross-channel live inventory promise | Channel buffer/reconciliation where justified | P2 |
-| AI offers unsupported deadline/price | Disallow commitment; provide grounded clarification and escalation | Evaluated guardrails and recorded failure case | P1/P2 |
-| Service outage after order accepted | Inform without losing order or fabricating data; support/recovery path | Operational incident vs customer order state separated | P1/P2 |
+| Scenario                                                       | Required customer behavior                                                         | Backstage evidence/guard                               | Priority |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------ | -------- |
+| Form required field missing                                    | Show field-specific help; preserve correct entered values                          | No accidental submission                               | P0       |
+| Large/unsupported artwork                                      | State reason and allowed remedy; retain other fields                               | No false file approval; upload policy                  | P0       |
+| Customer deadline not yet assessed                             | "Requested date—confirmation required"                                             | No unsupported production SLA                          | P0       |
+| Network timeout during inquiry                                 | Safe retry/check status if available; avoid duplicate actionable record            | Stable request correlation/idempotency                 | P0       |
+| Submitted request returns success but email notification fails | Reference and receipt still available; notification failure does not erase request | Notification out-of-band state                         | P0       |
+| Login/guest link invalid or expired                            | Clear safe recovery path without leaking object's existence                        | Authorization/expiration proof                         | P0/P1    |
+| Catalog source temporarily unavailable                         | Honest service state, retry, help route; not "no products"                         | Data health observed separately                        | P1       |
+| Price changes between cart and checkout                        | Revalidate, explain changed amount, reconfirm; no silent charge                    | Authoritative checkout price snapshot                  | P1       |
+| Stock becomes unavailable after selection                      | Explain, offer options/correction, never oversell via UI assumption                | Inventory and reservation checks                       | P1       |
+| Payment returns but provider callback pending                  | Pending confirmation; no false paid banner                                         | Approved gateway/provider truth and idempotent replay  | P1       |
+| Repeat purchase after price/stock changed                      | Prepopulate permissible historical context; reconfirm current terms                | Fresh validation and separate new order ID             | P1       |
+| Customer cancels after irreversible production point           | Explain eligibility and contact path; do not auto-refund                           | Canonical return/cancellation policy                   | P1       |
+| External marketplace sends duplicate event                     | Customer status unaffected by duplicate event                                      | Canonical dedupe and reconciliation                    | P1/P2    |
+| External channel stock sync lag                                | Avoid guaranteed cross-channel live inventory promise                              | Channel buffer/reconciliation where justified          | P2       |
+| AI offers unsupported deadline/price                           | Disallow commitment; provide grounded clarification and escalation                 | Evaluated guardrails and recorded failure case         | P1/P2    |
+| Service outage after order accepted                            | Inform without losing order or fabricating data; support/recovery path             | Operational incident vs customer order state separated | P1/P2    |
 
 ---
 
 ## 8. Non-functional product requirements (experience quality)
 
-**NFR status:** all thresholds are *proposed product acceptance direction*, **not current measured performance**. Device mix, network profile, traffic cohorts, visual assets, legal/accessibility compliance obligations, and production monitoring must be determined before converting them to release gates. The Head Engineering team owns technical budget/tooling choices. CX-08 will define tests, environments, evidence and exception policy.
+**NFR status:** all thresholds are _proposed product acceptance direction_, **not current measured performance**. Device mix, network profile, traffic cohorts, visual assets, legal/accessibility compliance obligations, and production monitoring must be determined before converting them to release gates. The Head Engineering team owns technical budget/tooling choices. CX-08 will define tests, environments, evidence and exception policy.
 
 ### `CX1-NFR-001` — Responsive interaction, mobile-first
 
@@ -572,24 +573,24 @@ Given lost responses, repeated requests or conflicting external statuses, when t
 
 **No synthetic number represents current business performance.** The table defines what to measure, how it relates to the founder/customer promise, and conditions for calling the metric meaningful.
 
-| Metric | Working definition | Why | Initial evidence status |
-|---|---|---|---|
-| `CX-M01 Task completion` | Completed valid customer job / initiated comparable eligible jobs, segmented by funnel/cohort | Effectiveness | `NOT_VERIFIED` |
-| `CX-M02 Quote request completion` | Valid accepted Custom/Business inquiries / started qualified intake attempts; keep abandon reasons | Friction | `NOT_VERIFIED` |
-| `CX-M03 Founder manual touches` | Human administrative actions per completed eligible transaction; physical actions separate | Founder capacity | `NOT_VERIFIED` |
-| `CX-M04 Duplicate data entry` | Count of required re-keyings of customer-submitted structured information | Automation value | `NOT_VERIFIED` |
-| `CX-M05 Quote handling time` | Recorded interval from complete qualified request to reviewed customer quote, excluding separately labeled waiting periods | Customer speed, founder time | `NOT_VERIFIED` |
-| `CX-M06 Customer contacts per order` | Avoidable status/questions/complaints divided by comparable fulfilled orders | Self-service effectiveness | `NOT_VERIFIED` |
-| `CX-M07 Order-to-action clarity` | Fraction of accepted customer actions creating traceable owner/next step | Operational readiness | `NOT_VERIFIED` |
-| `CX-M08 Return or rework friction` | Eligible return/service requests requiring repeat customer input | Service quality | `NOT_VERIFIED` |
-| `CX-M09 p75 Core Web Vitals` | Mobile/desktop LCP, INP, CLS measured by route groups with valid sample metadata | Performance | `NOT_VERIFIED_FIELD` |
-| `CX-M10 Task accessibility defects` | Severity of independently observed critical-path failures | Inclusive usability | `NOT_VERIFIED` |
-| `CX-M11 False commitments` | Unsupported price/stock/date/approval claims observed in UX or AI | Trust/financial risk | `NOT_VERIFIED` |
-| `CX-M12 Recovery rate` | Successful safe recovery from expected retry/error scenarios in tested journeys | Resilience | `NOT_VERIFIED` |
-| `CX-M13 Channel margin` | Contribution after platform fees, fulfillment and operational cost per channel using canonical figures | Sustainability | `NOT_VERIFIED` |
-| `CX-M14 Provider/AI cost-to-serve` | Actual integration/model/provider cost per eligible supported task | Capital efficiency | `NOT_VERIFIED` |
-| `CX-M15 Repeat customer effort` | Inputs/actions required for valid reorder vs first order, with term reconfirmation | Retention/efficiency | `NOT_VERIFIED` |
-| `CX-M16 Trust/comprehension` | Research measure of customer understanding of price status, deadline and next step | Prevent misinterpretation | `NOT_VERIFIED` |
+| Metric                               | Working definition                                                                                                         | Why                          | Initial evidence status |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ----------------------- |
+| `CX-M01 Task completion`             | Completed valid customer job / initiated comparable eligible jobs, segmented by funnel/cohort                              | Effectiveness                | `NOT_VERIFIED`          |
+| `CX-M02 Quote request completion`    | Valid accepted Custom/Business inquiries / started qualified intake attempts; keep abandon reasons                         | Friction                     | `NOT_VERIFIED`          |
+| `CX-M03 Founder manual touches`      | Human administrative actions per completed eligible transaction; physical actions separate                                 | Founder capacity             | `NOT_VERIFIED`          |
+| `CX-M04 Duplicate data entry`        | Count of required re-keyings of customer-submitted structured information                                                  | Automation value             | `NOT_VERIFIED`          |
+| `CX-M05 Quote handling time`         | Recorded interval from complete qualified request to reviewed customer quote, excluding separately labeled waiting periods | Customer speed, founder time | `NOT_VERIFIED`          |
+| `CX-M06 Customer contacts per order` | Avoidable status/questions/complaints divided by comparable fulfilled orders                                               | Self-service effectiveness   | `NOT_VERIFIED`          |
+| `CX-M07 Order-to-action clarity`     | Fraction of accepted customer actions creating traceable owner/next step                                                   | Operational readiness        | `NOT_VERIFIED`          |
+| `CX-M08 Return or rework friction`   | Eligible return/service requests requiring repeat customer input                                                           | Service quality              | `NOT_VERIFIED`          |
+| `CX-M09 p75 Core Web Vitals`         | Mobile/desktop LCP, INP, CLS measured by route groups with valid sample metadata                                           | Performance                  | `NOT_VERIFIED_FIELD`    |
+| `CX-M10 Task accessibility defects`  | Severity of independently observed critical-path failures                                                                  | Inclusive usability          | `NOT_VERIFIED`          |
+| `CX-M11 False commitments`           | Unsupported price/stock/date/approval claims observed in UX or AI                                                          | Trust/financial risk         | `NOT_VERIFIED`          |
+| `CX-M12 Recovery rate`               | Successful safe recovery from expected retry/error scenarios in tested journeys                                            | Resilience                   | `NOT_VERIFIED`          |
+| `CX-M13 Channel margin`              | Contribution after platform fees, fulfillment and operational cost per channel using canonical figures                     | Sustainability               | `NOT_VERIFIED`          |
+| `CX-M14 Provider/AI cost-to-serve`   | Actual integration/model/provider cost per eligible supported task                                                         | Capital efficiency           | `NOT_VERIFIED`          |
+| `CX-M15 Repeat customer effort`      | Inputs/actions required for valid reorder vs first order, with term reconfirmation                                         | Retention/efficiency         | `NOT_VERIFIED`          |
+| `CX-M16 Trust/comprehension`         | Research measure of customer understanding of price status, deadline and next step                                         | Prevent misinterpretation    | `NOT_VERIFIED`          |
 
 ### 10.1 Measurement contract
 
@@ -670,23 +671,24 @@ No single CI green mark, attractive demo or complete PRD skips a gate. Validatio
 15. It **does not make** speculative release-date promises or approve new spend.
 
 ---
+
 ## 13. Product dependency and canonical ownership map
 
-| Concern | Upstream owner (do not redefine) | CX-01 representation | Downstream contract |
-|---|---|---|---|
-| Brand character and identity | `bisnis/teestock/02-brand/` | Experience expectations; no new logo/color policy | CX-03 |
-| Homepage, job paths, public IA | `bisnis/teestock/10-product-tech/website-information-architecture.md` | Customer outcomes and surface scope | CX-02/03 |
-| Assortment, labels, product sellability | `bisnis/teestock/03-commerce/` | Valid product discovery requirements | CX-04 |
-| Business pricing, discounts and commercial policy | `bisnis/teestock/08-finance/pricing-framework.md`, `04-services/` | Truthful price, terms and review UX | CX-04/05 |
-| Payment, ledger, refunds, business commands | `systems/mgbos/docs/architecture/` | Safe customer presentation and authorization outcomes | Engineering contract after architecture impact review |
-| Inventory availability and production | TeeStock `07-operations/` and MGBOS canonical model | Valid stock/lead-time display and customization eligibility | CX-04/05 |
-| Core identity and organization isolation | MGBOS permission/auth ownership | Customer/guest/buyer authorization UX requirement | CX-06/08, independent security review |
-| Customer service/return eligibility | `bisnis/teestock/07-operations/customer-service.md`, `returns-and-warranty.md` | Status/help/return request UX | CX-06 |
-| Marketplace roles and commercial feasibility | `bisnis/teestock/09-marketing/channel-strategy.md`, commerce platform | Customer expectation and source-preservation requirements | CX-07 |
-| Channel adapter, retries, settlement implementation | Existing MGBOS architecture, integration boundary | Product desired consequences and recovery | CX-07 -> Head Engineering |
-| AI autonomy, execution permissions, tool semantics | JARVIS docs + MGBOS authorization + root governance | Optional assistance, uncertainty and escalation | CX-06/08 -> JARVIS/Head Engineering |
-| Founder attention / operational exceptions | Existing Founder Control D0-D4 and MGBOS domain authority | Manual action reduction, correct backstage handoff | CX-02/09 |
-| Launch gating / production readiness | `docs/roadmaps/solo-founder-launch-roadmap.md`, MGBOS readiness and governance | Proposal for customer-specific slices only | CX-09 -> Owner/Head Engineering |
+| Concern                                             | Upstream owner (do not redefine)                                               | CX-01 representation                                        | Downstream contract                                   |
+| --------------------------------------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------- | ----------------------------------------------------- |
+| Brand character and identity                        | `bisnis/teestock/02-brand/`                                                    | Experience expectations; no new logo/color policy           | CX-03                                                 |
+| Homepage, job paths, public IA                      | `bisnis/teestock/10-product-tech/website-information-architecture.md`          | Customer outcomes and surface scope                         | CX-02/03                                              |
+| Assortment, labels, product sellability             | `bisnis/teestock/03-commerce/`                                                 | Valid product discovery requirements                        | CX-04                                                 |
+| Business pricing, discounts and commercial policy   | `bisnis/teestock/08-finance/pricing-framework.md`, `04-services/`              | Truthful price, terms and review UX                         | CX-04/05                                              |
+| Payment, ledger, refunds, business commands         | `systems/mgbos/docs/architecture/`                                             | Safe customer presentation and authorization outcomes       | Engineering contract after architecture impact review |
+| Inventory availability and production               | TeeStock `07-operations/` and MGBOS canonical model                            | Valid stock/lead-time display and customization eligibility | CX-04/05                                              |
+| Core identity and organization isolation            | MGBOS permission/auth ownership                                                | Customer/guest/buyer authorization UX requirement           | CX-06/08, independent security review                 |
+| Customer service/return eligibility                 | `bisnis/teestock/07-operations/customer-service.md`, `returns-and-warranty.md` | Status/help/return request UX                               | CX-06                                                 |
+| Marketplace roles and commercial feasibility        | `bisnis/teestock/09-marketing/channel-strategy.md`, commerce platform          | Customer expectation and source-preservation requirements   | CX-07                                                 |
+| Channel adapter, retries, settlement implementation | Existing MGBOS architecture, integration boundary                              | Product desired consequences and recovery                   | CX-07 -> Head Engineering                             |
+| AI autonomy, execution permissions, tool semantics  | JARVIS docs + MGBOS authorization + root governance                            | Optional assistance, uncertainty and escalation             | CX-06/08 -> JARVIS/Head Engineering                   |
+| Founder attention / operational exceptions          | Existing Founder Control D0-D4 and MGBOS domain authority                      | Manual action reduction, correct backstage handoff          | CX-02/09                                              |
+| Launch gating / production readiness                | `docs/roadmaps/solo-founder-launch-roadmap.md`, MGBOS readiness and governance | Proposal for customer-specific slices only                  | CX-09 -> Owner/Head Engineering                       |
 
 ### 13.1 Forward-only reconciliation rule
 
@@ -700,24 +702,24 @@ The desired high-level interaction is `CUSTOMER UI → AUTHORIZED PUBLIC APPLICA
 
 ## 14. Owner decision register
 
-The following proposals are *drafting defaults*. Explicit owner approval of CX-01 does not automatically approve spending, implementation, deployment, changed financial policies, or wider autonomy.
+The following proposals are _drafting defaults_. Explicit owner approval of CX-01 does not automatically approve spending, implementation, deployment, changed financial policies, or wider autonomy.
 
-| ID | Product decision or tension | Proposed default | Owner action trigger |
-|---|---|---|---|
-| `CX1-DEC-001` | What defines premium? | Fast, clear, trustworthy, effortless, visually refined; do not optimize novelty over task success | Approve/change North Star |
-| `CX1-DEC-002` | First business validation route | Retain existing Business/Custom assisted-sales pilot | Only decide if changing canonical roadmap |
-| `CX1-DEC-003` | First public customer release | High-quality entry, Custom/Business inquiry, honest next steps; no fake checkout | Approve before engineering planning |
-| `CX1-DEC-004` | Full retail checkout as P0? | No automatic prerequisite; P1 dependent on core truth and provider readiness | Owner if revenue strategy warrants different ordering |
-| `CX1-DEC-005` | Custom builder at first launch? | No; structured request first, governed builder later | Owner if changing scope and funding |
-| `CX1-DEC-006` | Guest vs mandatory account | Prefer low-friction guest inquiry, account only when warranted by security/business need | Approve customer policy with privacy/security review |
-| `CX1-DEC-007` | Customer portal breadth | Start with status/help; expand after demonstrated repeat customer demand | Owner product phase selection |
-| `CX1-DEC-008` | First marketplace integration | Undecided; determine from channel contribution, actual rights and operational workload | Owner selects channel after CX-07 discovery |
-| `CX1-DEC-009` | Frontend visual expression | Reference existing TeeStock brand identity; CX-03 proposes interaction grammar not new brand | Owner on significant visual identity changes |
-| `CX1-DEC-010` | Accessible quality target | WCAG 2.2 AA proposed with testable full-journey methodology | Owner and compliance/engineering acceptance |
-| `CX1-DEC-011` | Performance target | Core Web Vitals good thresholds proposed; per-template budgets after baseline | Head Engineering/Owner budget discussion |
-| `CX1-DEC-012` | AI customer assistant first release | Not required; deterministic flow/manual fallback wins first | Owner if AI is considered business-critical initially |
-| `CX1-DEC-013` | MultiGraph reuse | Shared principles possible, but MultiGraph customer PRD is separate | Owner for future portfolio scope |
-| `CX1-DEC-014` | Does PRD approval open builder scope? | No, explicit engineering work package required | Always maintain approval boundary |
+| ID            | Product decision or tension           | Proposed default                                                                                  | Owner action trigger                                  |
+| ------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `CX1-DEC-001` | What defines premium?                 | Fast, clear, trustworthy, effortless, visually refined; do not optimize novelty over task success | Approve/change North Star                             |
+| `CX1-DEC-002` | First business validation route       | Retain existing Business/Custom assisted-sales pilot                                              | Only decide if changing canonical roadmap             |
+| `CX1-DEC-003` | First public customer release         | High-quality entry, Custom/Business inquiry, honest next steps; no fake checkout                  | Approve before engineering planning                   |
+| `CX1-DEC-004` | Full retail checkout as P0?           | No automatic prerequisite; P1 dependent on core truth and provider readiness                      | Owner if revenue strategy warrants different ordering |
+| `CX1-DEC-005` | Custom builder at first launch?       | No; structured request first, governed builder later                                              | Owner if changing scope and funding                   |
+| `CX1-DEC-006` | Guest vs mandatory account            | Prefer low-friction guest inquiry, account only when warranted by security/business need          | Approve customer policy with privacy/security review  |
+| `CX1-DEC-007` | Customer portal breadth               | Start with status/help; expand after demonstrated repeat customer demand                          | Owner product phase selection                         |
+| `CX1-DEC-008` | First marketplace integration         | Undecided; determine from channel contribution, actual rights and operational workload            | Owner selects channel after CX-07 discovery           |
+| `CX1-DEC-009` | Frontend visual expression            | Reference existing TeeStock brand identity; CX-03 proposes interaction grammar not new brand      | Owner on significant visual identity changes          |
+| `CX1-DEC-010` | Accessible quality target             | WCAG 2.2 AA proposed with testable full-journey methodology                                       | Owner and compliance/engineering acceptance           |
+| `CX1-DEC-011` | Performance target                    | Core Web Vitals good thresholds proposed; per-template budgets after baseline                     | Head Engineering/Owner budget discussion              |
+| `CX1-DEC-012` | AI customer assistant first release   | Not required; deterministic flow/manual fallback wins first                                       | Owner if AI is considered business-critical initially |
+| `CX1-DEC-013` | MultiGraph reuse                      | Shared principles possible, but MultiGraph customer PRD is separate                               | Owner for future portfolio scope                      |
+| `CX1-DEC-014` | Does PRD approval open builder scope? | No, explicit engineering work package required                                                    | Always maintain approval boundary                     |
 
 **Current disposition:** All entries are `PROPOSED` unless an upstream canonical source already makes the decision. `DEC-002`, for example, **restates the existing assisted-sales pilot boundary**, not a brand-new strategic ruling. No Owner decision is presumed merely because this file exists.
 
@@ -727,40 +729,40 @@ The following proposals are *drafting defaults*. Explicit owner approval of CX-0
 
 ### 15.1 Unknown register
 
-| ID | Unknown | Why material | Evidence needed | Accountable discipline |
-|---|---|---|---|---|
-| `CX1-UNK-01` | Actual priority customer segments and early demand split | Determines whether custom/business or retail receives initial UX depth | Interviews, inbound inquiry patterns, real transactions | Owner/Product |
-| `CX1-UNK-02` | Exact launch sellable assortment and cost/margin | Product detail, availability and checkout cannot be truthful otherwise | Approved offer/product list, cost/pricing policy, vendor readiness | Business/Owner |
-| `CX1-UNK-03` | Public identity model, guests, privacy and org boundaries | Critical security and data exposure risk | Existing auth contracts + threat model + tests | Head Engineering/Security |
-| `CX1-UNK-04` | Reliable actual artwork types, allowed sizes and QC workflow | Determines upload, preview and rework rate | Print/sample specs, file handling decisions, legal/IP review | Business/Production |
-| `CX1-UNK-05` | Realistic performance baseline and user devices | Avoids ornamental speed promises and unrealistic budgets | Representative instrumented build and device/network profiles | UX/Frontend/QA |
-| `CX1-UNK-06` | Real-world quote time and founder manual touch baseline | Determines ROI and release priorities | Controlled operator rehearsals, live pilot timing | Owner/Product Ops |
-| `CX1-UNK-07` | Customer comprehension of price estimate and deadline | Prevents conversion-by-confusion | Moderated usability tests and inquiry transcripts | UX/Product |
-| `CX1-UNK-08` | Marketplace permissions, API access, seller obligations and rate limits | Integration feasibility varies by channel | Provider documentation/account eligibility and sandbox | Integration/Business |
-| `CX1-UNK-09` | Payment, logistics, WhatsApp provider capability/cost | Critical channel/transaction dependencies | Contract/access, sandbox, economic viability | Head Engineering/Business |
-| `CX1-UNK-10` | Real support/returns frequency and patterns | Sets portal and self-service priorities | Customer cohort/real issue classification | Business/Product |
-| `CX1-UNK-11` | Source/component reuse potential from archived TeeStock V1 | Could speed delivery but stale dependencies may carry risks | Read-only review with dependency/license/security evaluation | Head Engineering |
-| `CX1-UNK-12` | Future MultiGraph platform commonality | Avoids overabstracting TeeStock prematurely | Dedicated MultiGraph customer jobs and revenue process research | Portfolio Product |
-| `CX1-UNK-13` | Customer demand for advanced 2D/3D custom preview | Potential high cost and false production expectation | Task testing, willingness-to-pay, revision/rework evidence | Product/Design |
-| `CX1-UNK-14` | Accessibility/legal requirements of third-party components | May block release despite internal UI compliance | W3C assessment, provider reviews, legal as applicable | QA/Legal |
-| `CX1-UNK-15` | Source SHA and active PR changes before PRD integration | Could invalidate current gaps and routing | Fresh `main`/PR review and semantic diff | Head Engineering |
+| ID           | Unknown                                                                 | Why material                                                           | Evidence needed                                                    | Accountable discipline    |
+| ------------ | ----------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------ | ------------------------- |
+| `CX1-UNK-01` | Actual priority customer segments and early demand split                | Determines whether custom/business or retail receives initial UX depth | Interviews, inbound inquiry patterns, real transactions            | Owner/Product             |
+| `CX1-UNK-02` | Exact launch sellable assortment and cost/margin                        | Product detail, availability and checkout cannot be truthful otherwise | Approved offer/product list, cost/pricing policy, vendor readiness | Business/Owner            |
+| `CX1-UNK-03` | Public identity model, guests, privacy and org boundaries               | Critical security and data exposure risk                               | Existing auth contracts + threat model + tests                     | Head Engineering/Security |
+| `CX1-UNK-04` | Reliable actual artwork types, allowed sizes and QC workflow            | Determines upload, preview and rework rate                             | Print/sample specs, file handling decisions, legal/IP review       | Business/Production       |
+| `CX1-UNK-05` | Realistic performance baseline and user devices                         | Avoids ornamental speed promises and unrealistic budgets               | Representative instrumented build and device/network profiles      | UX/Frontend/QA            |
+| `CX1-UNK-06` | Real-world quote time and founder manual touch baseline                 | Determines ROI and release priorities                                  | Controlled operator rehearsals, live pilot timing                  | Owner/Product Ops         |
+| `CX1-UNK-07` | Customer comprehension of price estimate and deadline                   | Prevents conversion-by-confusion                                       | Moderated usability tests and inquiry transcripts                  | UX/Product                |
+| `CX1-UNK-08` | Marketplace permissions, API access, seller obligations and rate limits | Integration feasibility varies by channel                              | Provider documentation/account eligibility and sandbox             | Integration/Business      |
+| `CX1-UNK-09` | Payment, logistics, WhatsApp provider capability/cost                   | Critical channel/transaction dependencies                              | Contract/access, sandbox, economic viability                       | Head Engineering/Business |
+| `CX1-UNK-10` | Real support/returns frequency and patterns                             | Sets portal and self-service priorities                                | Customer cohort/real issue classification                          | Business/Product          |
+| `CX1-UNK-11` | Source/component reuse potential from archived TeeStock V1              | Could speed delivery but stale dependencies may carry risks            | Read-only review with dependency/license/security evaluation       | Head Engineering          |
+| `CX1-UNK-12` | Future MultiGraph platform commonality                                  | Avoids overabstracting TeeStock prematurely                            | Dedicated MultiGraph customer jobs and revenue process research    | Portfolio Product         |
+| `CX1-UNK-13` | Customer demand for advanced 2D/3D custom preview                       | Potential high cost and false production expectation                   | Task testing, willingness-to-pay, revision/rework evidence         | Product/Design            |
+| `CX1-UNK-14` | Accessibility/legal requirements of third-party components              | May block release despite internal UI compliance                       | W3C assessment, provider reviews, legal as applicable              | QA/Legal                  |
+| `CX1-UNK-15` | Source SHA and active PR changes before PRD integration                 | Could invalidate current gaps and routing                              | Fresh `main`/PR review and semantic diff                           | Head Engineering          |
 
 ### 15.2 Risk register
 
-| ID | Risk | Impact | Mitigation / stop condition |
-|---|---|---|---|
-| `CX1-RISK-01` | "Premium" becomes visually heavy, slow or inaccessible | Loss of conversion/trust/mobile reach | CX-03/08 budgets, field/lab proof, progressive loading |
-| `CX1-RISK-02` | Massive launch scope delays first business validation | Burnout, delay, capital risk | Controlled P0, evidence-gated P1/P2, no raw PRD builder handoff |
-| `CX1-RISK-03` | Public interface bypasses MGBOS transaction invariants | Financial/security integrity | Head Engineering review, approved commands, independent negative tests |
-| `CX1-RISK-04` | AI offers unverified price/date/refund promise | Customer harm, cost/claim risk | Deterministic facts, no autonomous high-risk actions, evals + escalation |
-| `CX1-RISK-05` | Marketplace/webhook replay duplicates order/payment | Loss, ops confusion | Idempotency, correlation, reconciliation and tested manual fallback |
-| `CX1-RISK-06` | Upload, account or guest access leaks sensitive data | Privacy/security harm | Threat model, scoped permissions, private storage policy, abuse tests |
-| `CX1-RISK-07` | Overautomation forces founder to babysit systems | No operational efficiency | Manual touch count, actionable exceptions, cost-to-serve metrics |
-| `CX1-RISK-08` | Static/historical information displayed as real-time truth | False availability/commitments | Freshness and confidence labels, source-owned status projection |
-| `CX1-RISK-09` | Documentation duplicates commerce policy or scope | Conflicting AI interpretation | Source mapping, reference-not-copy, one semantic owner |
-| `CX1-RISK-10` | Public customer experience is mistaken for deployment-readiness | Premature live financial flows | Release and operational readiness gates; no PRD-to-prod promotion |
-| `CX1-RISK-11` | Internal MGBOS and public TeeStock UI evolve inconsistently | Rework and brittle integrations | Explicit capability contracts, cross-project impact review |
-| `CX1-RISK-12` | One-size-fits-all retail/custom/B2B flow | User frustration and false assumptions | Separate intent journeys and conditional routing |
+| ID            | Risk                                                            | Impact                                 | Mitigation / stop condition                                              |
+| ------------- | --------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------ |
+| `CX1-RISK-01` | "Premium" becomes visually heavy, slow or inaccessible          | Loss of conversion/trust/mobile reach  | CX-03/08 budgets, field/lab proof, progressive loading                   |
+| `CX1-RISK-02` | Massive launch scope delays first business validation           | Burnout, delay, capital risk           | Controlled P0, evidence-gated P1/P2, no raw PRD builder handoff          |
+| `CX1-RISK-03` | Public interface bypasses MGBOS transaction invariants          | Financial/security integrity           | Head Engineering review, approved commands, independent negative tests   |
+| `CX1-RISK-04` | AI offers unverified price/date/refund promise                  | Customer harm, cost/claim risk         | Deterministic facts, no autonomous high-risk actions, evals + escalation |
+| `CX1-RISK-05` | Marketplace/webhook replay duplicates order/payment             | Loss, ops confusion                    | Idempotency, correlation, reconciliation and tested manual fallback      |
+| `CX1-RISK-06` | Upload, account or guest access leaks sensitive data            | Privacy/security harm                  | Threat model, scoped permissions, private storage policy, abuse tests    |
+| `CX1-RISK-07` | Overautomation forces founder to babysit systems                | No operational efficiency              | Manual touch count, actionable exceptions, cost-to-serve metrics         |
+| `CX1-RISK-08` | Static/historical information displayed as real-time truth      | False availability/commitments         | Freshness and confidence labels, source-owned status projection          |
+| `CX1-RISK-09` | Documentation duplicates commerce policy or scope               | Conflicting AI interpretation          | Source mapping, reference-not-copy, one semantic owner                   |
+| `CX1-RISK-10` | Public customer experience is mistaken for deployment-readiness | Premature live financial flows         | Release and operational readiness gates; no PRD-to-prod promotion        |
+| `CX1-RISK-11` | Internal MGBOS and public TeeStock UI evolve inconsistently     | Rework and brittle integrations        | Explicit capability contracts, cross-project impact review               |
+| `CX1-RISK-12` | One-size-fits-all retail/custom/B2B flow                        | User frustration and false assumptions | Separate intent journeys and conditional routing                         |
 
 **Risk governance:** this is a product risk description, not a replacement for BisnisHub's formal engineering risk classification. Head Engineering determines any R-classification and security assurance obligations at the work-package stage.
 
@@ -770,16 +772,16 @@ The following proposals are *drafting defaults*. Explicit owner approval of CX-0
 
 The following docs may be created only after CX-01 semantic review and scope agreement. They should not restate master requirements in full; they refine them with traced acceptance details.
 
-| Document | Owns | Consumes CX-01 requirements | Must deliver / major prohibitions |
-|---|---|---|---|
-| `CX-02 — Customer Journeys & Service Blueprint` | Service journeys and frontstage/backstage handoffs | `FR-001..005`, `009..015`, `029..030`, `038..040`, `044`; `JRN-*` | Detailed persona scenarios, decision table, founder physical vs software vs AI swimlanes, duplicate effort; no new domain model |
-| `CX-03 — Experience Design & Interaction Spec` | Layout and interaction quality, tokens ownership, responsiveness, accessible states | `FR-001..008`, `010`, `NFR-001..005`, `013` | Component behavior, design constraints, error/empty/loading patterns, prototypes; no unilateral brand rewrite |
-| `CX-04 — Commerce & Checkout Experience` | Customer-facing retail transaction journey | `FR-006..008`, `020..028`, `BR-001..005`, `AC-011..012` | Cart/checkout behavior, failure matrix, validation; no ledger/pricing reimplementation |
-| `CX-05 — Custom & B2B Ordering Experience` | Custom/business request, quote, proofs, configuration eligibility | `FR-009..019`, `034`, `BR-002`, `BR-006` | Field sets, versioned quote/artwork interactions, upgrade gates; no unsupported instant price promise |
-| `CX-06 — Customer Account & Service Experience` | Secure customer status, support/returns, reorder, AI-facing help UX | `FR-029..037`, `042..043` | Scoped views, user-friendly states, permissions questions, service recovery; no new case/refund authority |
-| `CX-07 — Omnichannel Integration Requirements` | Channel experience consistency and business dependency requests | `FR-040..042`, `045`, `BR-008`, `BR-011`, `AC-018` | External ID, source labels, retries, economic/adaptor readiness matrix; no invented platform API rights |
-| `CX-08 — Experience Quality & Acceptance` | Acceptance matrix, browser/visual/accessibility/performance/security evidence | All `NFR-*`, `AC-*`, critical negative scenarios | Measured thresholds, reproducible environments, CI, manual assessment; no unverified PASS |
-| `CX-09 — Phased Delivery & Validation Plan` | Product slices, research/pilot and outcome gates | `CX-S0..S3`, scorecard, risk/unknown register | Exit criteria, human/customer evidence, cost-benefit; does not override existing roadmap without Owner decision |
+| Document                                        | Owns                                                                                | Consumes CX-01 requirements                                       | Must deliver / major prohibitions                                                                                               |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `CX-02 — Customer Journeys & Service Blueprint` | Service journeys and frontstage/backstage handoffs                                  | `FR-001..005`, `009..015`, `029..030`, `038..040`, `044`; `JRN-*` | Detailed persona scenarios, decision table, founder physical vs software vs AI swimlanes, duplicate effort; no new domain model |
+| `CX-03 — Experience Design & Interaction Spec`  | Layout and interaction quality, tokens ownership, responsiveness, accessible states | `FR-001..008`, `010`, `NFR-001..005`, `013`                       | Component behavior, design constraints, error/empty/loading patterns, prototypes; no unilateral brand rewrite                   |
+| `CX-04 — Commerce & Checkout Experience`        | Customer-facing retail transaction journey                                          | `FR-006..008`, `020..028`, `BR-001..005`, `AC-011..012`           | Cart/checkout behavior, failure matrix, validation; no ledger/pricing reimplementation                                          |
+| `CX-05 — Custom & B2B Ordering Experience`      | Custom/business request, quote, proofs, configuration eligibility                   | `FR-009..019`, `034`, `BR-002`, `BR-006`                          | Field sets, versioned quote/artwork interactions, upgrade gates; no unsupported instant price promise                           |
+| `CX-06 — Customer Account & Service Experience` | Secure customer status, support/returns, reorder, AI-facing help UX                 | `FR-029..037`, `042..043`                                         | Scoped views, user-friendly states, permissions questions, service recovery; no new case/refund authority                       |
+| `CX-07 — Omnichannel Integration Requirements`  | Channel experience consistency and business dependency requests                     | `FR-040..042`, `045`, `BR-008`, `BR-011`, `AC-018`                | External ID, source labels, retries, economic/adaptor readiness matrix; no invented platform API rights                         |
+| `CX-08 — Experience Quality & Acceptance`       | Acceptance matrix, browser/visual/accessibility/performance/security evidence       | All `NFR-*`, `AC-*`, critical negative scenarios                  | Measured thresholds, reproducible environments, CI, manual assessment; no unverified PASS                                       |
+| `CX-09 — Phased Delivery & Validation Plan`     | Product slices, research/pilot and outcome gates                                    | `CX-S0..S3`, scorecard, risk/unknown register                     | Exit criteria, human/customer evidence, cost-benefit; does not override existing roadmap without Owner decision                 |
 
 ### 16.1 Detailed flow hierarchy for future CX-02
 
@@ -794,25 +796,25 @@ This hierarchy is intentionally **not** a mandate to place six navigation tabs i
 
 ### 16.2 Requirements traceability starter matrix
 
-| CX-00 finding / candidate | New CX-01 primary owner | Upstream source family |
-|---|---|---|
-| `CXF-01 / CAND-01` | `FR-001..005`, `XP-01..05` | Digital Product Vision; Website IA |
-| `CXF-02` | Snapshot and `FR-002`; product gap remains unresolved until implementation | Active TeeStock source |
-| `CXF-03 / CAND-12` | `NFR-001`, `004`, `005`, `013`; `XP-02`, `XP-07` | Website IA; brand identity |
-| `CXF-04 / CAND-13` | `NFR-002..005`, `AC-008`, `AC-020` | Digital Product Vision; web.dev; W3C |
-| `CXF-05 / CAND-18` | `CX-S0..S3`, `DEC-002..005` | Solo-Founder Roadmap; Pilot Plan |
-| `CXF-06 / CAND-04..07` | `FR-009..019`, `AC-004..005`, `AC-014`, `AC-019` | Custom/Business; Commerce Platform |
-| `CXF-07 / CAND-14` | `FR-041`, `045`, `AC-018` | Commerce Platform; MGBOS Integration |
-| `CXF-08 / CAND-09..11` | `FR-029..037`, `BR-004`, `BR-009`, `AC-010`, `AC-013`, `AC-016` | Customer Service/Returns; MGBOS Security |
-| `CXF-09 / CAND-16..17` | `FR-040`, `043`, `046`, `AC-009`, `AC-021` | Automation Architecture; JARVIS; MGBOS |
-| `CXF-10` | Section 13 authority map / integration gate | Documentation Constitution / Source Map |
-| `CXF-11 / CAND-15` | `FR-038..040`, scorecard `CX-M03..M04`, `AC-007`, `AC-022` | Founder Control; Solo-Founder Roadmap |
+| CX-00 finding / candidate | New CX-01 primary owner                                                    | Upstream source family                   |
+| ------------------------- | -------------------------------------------------------------------------- | ---------------------------------------- |
+| `CXF-01 / CAND-01`        | `FR-001..005`, `XP-01..05`                                                 | Digital Product Vision; Website IA       |
+| `CXF-02`                  | Snapshot and `FR-002`; product gap remains unresolved until implementation | Active TeeStock source                   |
+| `CXF-03 / CAND-12`        | `NFR-001`, `004`, `005`, `013`; `XP-02`, `XP-07`                           | Website IA; brand identity               |
+| `CXF-04 / CAND-13`        | `NFR-002..005`, `AC-008`, `AC-020`                                         | Digital Product Vision; web.dev; W3C     |
+| `CXF-05 / CAND-18`        | `CX-S0..S3`, `DEC-002..005`                                                | Solo-Founder Roadmap; Pilot Plan         |
+| `CXF-06 / CAND-04..07`    | `FR-009..019`, `AC-004..005`, `AC-014`, `AC-019`                           | Custom/Business; Commerce Platform       |
+| `CXF-07 / CAND-14`        | `FR-041`, `045`, `AC-018`                                                  | Commerce Platform; MGBOS Integration     |
+| `CXF-08 / CAND-09..11`    | `FR-029..037`, `BR-004`, `BR-009`, `AC-010`, `AC-013`, `AC-016`            | Customer Service/Returns; MGBOS Security |
+| `CXF-09 / CAND-16..17`    | `FR-040`, `043`, `046`, `AC-009`, `AC-021`                                 | Automation Architecture; JARVIS; MGBOS   |
+| `CXF-10`                  | Section 13 authority map / integration gate                                | Documentation Constitution / Source Map  |
+| `CXF-11 / CAND-15`        | `FR-038..040`, scorecard `CX-M03..M04`, `AC-007`, `AC-022`                 | Founder Control; Solo-Founder Roadmap    |
 
 ---
 
 ## 17. Source register (stable audit references)
 
-All GitHub links below are pinned to the inspected `main` commit for evidence repeatability. They identify *source material*, not necessarily current deployed functionality. Review the updated HEAD and authoritative source map before publishing this PRD.
+All GitHub links below are pinned to the inspected `main` commit for evidence repeatability. They identify _source material_, not necessarily current deployed functionality. Review the updated HEAD and authoritative source map before publishing this PRD.
 
 **Governance and operating direction**
 
@@ -874,7 +876,7 @@ All GitHub links below are pinned to the inspected `main` commit for evidence re
 - [x] Current implementation claims pinned to exact reviewed source revision and limited scope.
 - [x] Founder Control and assisted-sales pilot boundaries preserved.
 - [x] P0/P1/P2 capability distinctions and staged product slices defined.
-- [x] Functional requirements have stable *draft* IDs and acceptance obligations.
+- [x] Functional requirements have stable _draft_ IDs and acceptance obligations.
 - [x] Cross-cutting rules prevent false pricing, stock, deadline and AI promises.
 - [x] Customer errors, timeouts, file problems and external event replay have proposed recovery outcomes.
 - [x] Proposed performance/accessibility direction includes evidence distinction; no fabricated existing scores.
@@ -919,7 +921,7 @@ All GitHub links below are pinned to the inspected `main` commit for evidence re
 
 ---
 
-*Prepared 2026-10-16, Asia/Jakarta. Product planning proposal, not a canonical engineering mandate. Source proof is revision-bound; business outcome proof requires actual controlled validation.*
+_Prepared 2026-10-16, Asia/Jakarta. Product planning proposal, not a canonical engineering mandate. Source proof is revision-bound; business outcome proof requires actual controlled validation._
 
 ---
 

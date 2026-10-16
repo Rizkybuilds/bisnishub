@@ -33,23 +33,23 @@ The central product thesis is broadly internally consistent: premium, mobile-fir
 
 However, **the package is not yet machine-traceable enough for adoption or direct builder handoff**. It has invalid cross-document IDs and mismatched parent-child semantic links, incomplete fully qualified parent ID coverage, unresolved many-to-one product decisions and pending routing integration. These are documentation-quality issues, not proof that proposed user experiences are fundamentally unsound.
 
-**Recommended next decision:** approve *docs-only bounded remediation and independent follow-up review*; do not approve implementation, publication, merge or deployment based on these drafts.
+**Recommended next decision:** approve _docs-only bounded remediation and independent follow-up review_; do not approve implementation, publication, merge or deployment based on these drafts.
 
 ## B. Source and package checks
 
-| Check | Result | Evidence / limitations |
-|---|---|---|
-| Ten CX-00..CX-09 Markdown files | PASS | All ten present and readable locally; file list recorded in package manifest |
-| YAML frontmatter parse | PASS | 10/10 parsed |
-| Distinct proposed canonical IDs | PASS | 10/10 distinct |
-| Lifecycle protection | PASS | 10/10 documents marked `DRAFT`; none asserts ACTIVE |
-| ZIP match | PASS | ZIP versions byte-identical to ten local files |
-| SHA-256 package manifest | PASS | ZIP README lists ten SHA-256 values; all ten match contents |
-| Fresh main source | PASS for snapshot | `main` exact SHA above; **not** a current-runtime or whole-monorepo audit |
-| Active routing work | REVIEW REQUIRED | PR #73 modifies root README, `docs/project-index.md`, `systems/mgbos/README.md`, and `systems/mgbos/docs/README.md` |
-| Parent-child *fully qualified* direct references | INCOMPLETE | 26/46 CX1 functional IDs explicitly mentioned in CX-02..08; 20 IDs lack exact full-string mentions; ranges/unqualified shorthand and semantic equivalents are **not** treated as absent functionality |
-| Proposed specs ready for build | NOT VERIFIED / NOT AUTHORIZED | No product adoption, architecture decision, IC/WP, provider acceptance or launch evidence |
-| Independent source / UX / security acceptance | NOT PERFORMED | This is an author-environment cross-check only |
+| Check                                            | Result                        | Evidence / limitations                                                                                                                                                                                |
+| ------------------------------------------------ | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ten CX-00..CX-09 Markdown files                  | PASS                          | All ten present and readable locally; file list recorded in package manifest                                                                                                                          |
+| YAML frontmatter parse                           | PASS                          | 10/10 parsed                                                                                                                                                                                          |
+| Distinct proposed canonical IDs                  | PASS                          | 10/10 distinct                                                                                                                                                                                        |
+| Lifecycle protection                             | PASS                          | 10/10 documents marked `DRAFT`; none asserts ACTIVE                                                                                                                                                   |
+| ZIP match                                        | PASS                          | ZIP versions byte-identical to ten local files                                                                                                                                                        |
+| SHA-256 package manifest                         | PASS                          | ZIP README lists ten SHA-256 values; all ten match contents                                                                                                                                           |
+| Fresh main source                                | PASS for snapshot             | `main` exact SHA above; **not** a current-runtime or whole-monorepo audit                                                                                                                             |
+| Active routing work                              | REVIEW REQUIRED               | PR #73 modifies root README, `docs/project-index.md`, `systems/mgbos/README.md`, and `systems/mgbos/docs/README.md`                                                                                   |
+| Parent-child _fully qualified_ direct references | INCOMPLETE                    | 26/46 CX1 functional IDs explicitly mentioned in CX-02..08; 20 IDs lack exact full-string mentions; ranges/unqualified shorthand and semantic equivalents are **not** treated as absent functionality |
+| Proposed specs ready for build                   | NOT VERIFIED / NOT AUTHORIZED | No product adoption, architecture decision, IC/WP, provider acceptance or launch evidence                                                                                                             |
+| Independent source / UX / security acceptance    | NOT PERFORMED                 | This is an author-environment cross-check only                                                                                                                                                        |
 
 ## C. Severity model
 
@@ -80,13 +80,13 @@ However, **the package is not yet machine-traceable enough for adoption or direc
 
 ### CX-AUD-003 — Whole-package ID-level traceability not closed (MAJOR)
 
-**Evidence:** strict machine match finds 26/46 distinct master `CX1-FR-###` IDs explicitly cited by CX-02..08; 20 have no exact full-string reference in those child documents. This does **not** prove missing functional coverage because the drafts use broad ranges (`FR-001..005`), headings and colloquial refs. That is exactly why a testable *canonical trace* cannot be inferred safely.
+**Evidence:** strict machine match finds 26/46 distinct master `CX1-FR-###` IDs explicitly cited by CX-02..08; 20 have no exact full-string reference in those child documents. This does **not** prove missing functional coverage because the drafts use broad ranges (`FR-001..005`), headings and colloquial refs. That is exactly why a testable _canonical trace_ cannot be inferred safely.
 
 **Remediation:** Complete a single bidirectional `parent_id → owning detailed spec ID → acceptance case → release slice → business/architecture source` table. Record `EXPLICIT_MATCH`, `SEMANTIC_COVERAGE_REVIEWED`, `INTENTIONALLY_DEFERRED`, or `UNMAPPED`. Resolve missing/ambiguous mappings rather than claiming absence from substring search. See `CX-PKG-TRACE-01.csv`.
 
 ### CX-AUD-004 — P0/P1/P2 priorities and CX-S0..S3 slices need one explicit mapping (MAJOR)
 
-**Evidence:** CX-01 FRs use P0/P1/P2 priority. CX-09 defines four actual proposed delivery slices and acknowledges they do not map one-to-one (`cx-09...md:386`). For example, basic assisted artwork approval and customer proof presentation can be P0/P1, while the sophisticated builder-generated visual preview is P2. That **can be consistent**, but becomes ambiguous when consumers see the same term *proof/preview* without an explicit capability distinction.
+**Evidence:** CX-01 FRs use P0/P1/P2 priority. CX-09 defines four actual proposed delivery slices and acknowledges they do not map one-to-one (`cx-09...md:386`). For example, basic assisted artwork approval and customer proof presentation can be P0/P1, while the sophisticated builder-generated visual preview is P2. That **can be consistent**, but becomes ambiguous when consumers see the same term _proof/preview_ without an explicit capability distinction.
 
 **Remediation:** Approve one authoritative crosswalk that distinguishes `assisted proof shared by human`, `secure exact-version proof approval`, and `configurator visual preview/production-safe generator`. Each gets its prerequisite and slice. Do not relabel all proof interactions as S0 or all previews as S3.
 
@@ -106,7 +106,7 @@ However, **the package is not yet machine-traceable enough for adoption or direc
 
 **Evidence:** No independent QA, exact candidate implementation, customer research results, browser testing, legal review or provider sandbox evidence is in the package. Several UX/performance/security numbers are targets, not measured results. Public TeeStock app source at baseline is a shell; this audit cannot assert production experience performance.
 
-**Remediation:** Product acceptance can be *proposed* after docs fixes, but actual release decisions require applicable independently checked evidence under CX-08 plus canonical QA/risk rules. Do not conflate simulation with release readiness.
+**Remediation:** Product acceptance can be _proposed_ after docs fixes, but actual release decisions require applicable independently checked evidence under CX-08 plus canonical QA/risk rules. Do not conflate simulation with release readiness.
 
 ### CX-AUD-008 — Future activation metadata and navigability need a governed pass (MINOR now)
 
@@ -116,48 +116,48 @@ However, **the package is not yet machine-traceable enough for adoption or direc
 
 ## E. Cross-document semantic coherence tests
 
-| Topic | Result | Rationale / first required action |
-|---|---|---|
-| Assisted-sales first vs full storefront | ALIGNED | P0 pilot can run with governed assisted-sales; CX-S0 public entry is a separate scope, not pilot prerequisite |
-| Product vs domain ownership | ALIGNED SUBJECT TO REVIEW | CX drafts generally defer MGBOS entities, commands and permission semantics to active architecture |
-| AI vs business authority | ALIGNED | AI assistance not a separate payment, commercial approval, capacity or refund authority |
-| Payment success / settlement | ALIGNED | Provider signals require validation/reconciliation before internal confirmed state |
-| Stale quote/artwork approvals | ALIGNED | Exact version/actor/checks required; implementer must prove legitimate command in later slices |
-| Customer Case vs Operational Exception | ALIGNED | Separate proposed product/operational concepts; no automatic new entity commitment |
-| Stock/price/channel freshness | ALIGNED | Cross-channel truth normalized; no assertion of real-time readiness for reserved integration implementation |
-| Physical founder work | ALIGNED | Actual buying, printing, QC and courier delivery remain tied to execution evidence |
-| Release proof and accessibility | ALIGNED AS TARGET | CX-08 sets proposed targets and gate method; not measured or independently accepted |
-| Parent-child identifiers / release eligibility | CONDITIONAL | CX-AUD-001..004 prevent automatic extraction into governed IC/WP |
+| Topic                                          | Result                    | Rationale / first required action                                                                             |
+| ---------------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Assisted-sales first vs full storefront        | ALIGNED                   | P0 pilot can run with governed assisted-sales; CX-S0 public entry is a separate scope, not pilot prerequisite |
+| Product vs domain ownership                    | ALIGNED SUBJECT TO REVIEW | CX drafts generally defer MGBOS entities, commands and permission semantics to active architecture            |
+| AI vs business authority                       | ALIGNED                   | AI assistance not a separate payment, commercial approval, capacity or refund authority                       |
+| Payment success / settlement                   | ALIGNED                   | Provider signals require validation/reconciliation before internal confirmed state                            |
+| Stale quote/artwork approvals                  | ALIGNED                   | Exact version/actor/checks required; implementer must prove legitimate command in later slices                |
+| Customer Case vs Operational Exception         | ALIGNED                   | Separate proposed product/operational concepts; no automatic new entity commitment                            |
+| Stock/price/channel freshness                  | ALIGNED                   | Cross-channel truth normalized; no assertion of real-time readiness for reserved integration implementation   |
+| Physical founder work                          | ALIGNED                   | Actual buying, printing, QC and courier delivery remain tied to execution evidence                            |
+| Release proof and accessibility                | ALIGNED AS TARGET         | CX-08 sets proposed targets and gate method; not measured or independently accepted                           |
+| Parent-child identifiers / release eligibility | CONDITIONAL               | CX-AUD-001..004 prevent automatic extraction into governed IC/WP                                              |
 
 **No evidence of a fundamental policy contradiction was identified in the selected areas.** This is a bounded semantic review, not a full-line independent policy audit.
 
 ## F. Per-document disposition
 
-| Document | Status | Specific finding / next action |
-|---|---|---|
-| CX-00 Source & Gap Audit | `REVIEW_READY_CONDITIONAL` | Provenance/selected-source scope clear; refresh material source status on adoption |
-| CX-01 Master PRD | `NEEDS_TRACE_MATRIX` | Parent ownership and priorities exist; close CX-AUD-003/004 |
-| CX-02 Service Blueprint | `REVIEW_READY_CONDITIONAL` | Blueprint ID `CX2-BP-*` is usable; fix incorrect downstream aliases |
-| CX-03 UX & Interaction | `REVIEW_READY_CONDITIONAL` | Brand policy preserved; complete link/navigation checks and design review |
-| CX-04 Commerce & Checkout | `REVIEW_READY_CONDITIONAL` | Gated payment/stock/checkout direction; no provider/runtime verification |
-| CX-05 Custom/B2B | `NEEDS_REFERENCE_REMEDIATION` | Confirmed broken CX2-JRN IDs and CX1 mis-parent link |
-| CX-06 Account & Service | `REVIEW_READY_CONDITIONAL` | Authorization and Customer Case semantics gated; no live identity tests |
-| CX-07 Omnichannel | `REVIEW_READY_CONDITIONAL` | Adapter/event plans proposed; no unverified sync claims promoted |
-| CX-08 Quality & Acceptance | `REVIEW_READY_CONDITIONAL` | Metrics/test plan proposed, no measured PASS or independent suite |
-| CX-09 Phasing & Validation | `NEEDS_DECISION_AND_TRACE_CLOSURE` | Four slices align conceptually; consolidate product decisions and dependencies |
+| Document                   | Status                             | Specific finding / next action                                                     |
+| -------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------- |
+| CX-00 Source & Gap Audit   | `REVIEW_READY_CONDITIONAL`         | Provenance/selected-source scope clear; refresh material source status on adoption |
+| CX-01 Master PRD           | `NEEDS_TRACE_MATRIX`               | Parent ownership and priorities exist; close CX-AUD-003/004                        |
+| CX-02 Service Blueprint    | `REVIEW_READY_CONDITIONAL`         | Blueprint ID `CX2-BP-*` is usable; fix incorrect downstream aliases                |
+| CX-03 UX & Interaction     | `REVIEW_READY_CONDITIONAL`         | Brand policy preserved; complete link/navigation checks and design review          |
+| CX-04 Commerce & Checkout  | `REVIEW_READY_CONDITIONAL`         | Gated payment/stock/checkout direction; no provider/runtime verification           |
+| CX-05 Custom/B2B           | `NEEDS_REFERENCE_REMEDIATION`      | Confirmed broken CX2-JRN IDs and CX1 mis-parent link                               |
+| CX-06 Account & Service    | `REVIEW_READY_CONDITIONAL`         | Authorization and Customer Case semantics gated; no live identity tests            |
+| CX-07 Omnichannel          | `REVIEW_READY_CONDITIONAL`         | Adapter/event plans proposed; no unverified sync claims promoted                   |
+| CX-08 Quality & Acceptance | `REVIEW_READY_CONDITIONAL`         | Metrics/test plan proposed, no measured PASS or independent suite                  |
+| CX-09 Phasing & Validation | `NEEDS_DECISION_AND_TRACE_CLOSURE` | Four slices align conceptually; consolidate product decisions and dependencies     |
 
 ## G. Bounded docs-only remediation program
 
-| Order | Work ID | Files affected | Outcome | Stop condition |
-|---|---|---|---|---|
-| 1 | `CX-REM-01` | CX-05 + CX-02 if clarification needed | No unresolved `CX2-JRN-*`; correct semantic parent links | Any change to business truth, schema or workflow implementation |
-| 2 | `CX-REM-02` | CX-01..09 + machine trace CSV | All 46 master FRs mapped with validated exact child IDs and acceptance/phase | Ambiguous changes escalate to Owner/Head Eng; no invented mapping |
-| 3 | `CX-REM-03` | CX-01, CX-05, CX-09 | Explicit assisted proof vs secure approval vs advanced builder/preview crosswalk | Do not accelerate unapproved self-service capabilities |
-| 4 | `CX-REM-04` | Consolidated decision packet | First-launch decisions separated from later and delegated questions | No silent answer on behalf of Owner |
-| 5 | `CX-REM-05` | Package README/indices, staged publication proposal | Paths/metadata aligned to current documentation routing and post-PR73 main | No modifying PR #73 or active engineering PRs without authorization |
-| 6 | `CX-REM-06` | Corrected exact draft candidate | Fresh independent source/product/UX/security review as required | No claim of independence by changing assistant role/prompt alone |
+| Order | Work ID     | Files affected                                      | Outcome                                                                          | Stop condition                                                      |
+| ----- | ----------- | --------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| 1     | `CX-REM-01` | CX-05 + CX-02 if clarification needed               | No unresolved `CX2-JRN-*`; correct semantic parent links                         | Any change to business truth, schema or workflow implementation     |
+| 2     | `CX-REM-02` | CX-01..09 + machine trace CSV                       | All 46 master FRs mapped with validated exact child IDs and acceptance/phase     | Ambiguous changes escalate to Owner/Head Eng; no invented mapping   |
+| 3     | `CX-REM-03` | CX-01, CX-05, CX-09                                 | Explicit assisted proof vs secure approval vs advanced builder/preview crosswalk | Do not accelerate unapproved self-service capabilities              |
+| 4     | `CX-REM-04` | Consolidated decision packet                        | First-launch decisions separated from later and delegated questions              | No silent answer on behalf of Owner                                 |
+| 5     | `CX-REM-05` | Package README/indices, staged publication proposal | Paths/metadata aligned to current documentation routing and post-PR73 main       | No modifying PR #73 or active engineering PRs without authorization |
+| 6     | `CX-REM-06` | Corrected exact draft candidate                     | Fresh independent source/product/UX/security review as required                  | No claim of independence by changing assistant role/prompt alone    |
 
-**Authorization:** All remediation above is a recommendation for a later *docs-only* work package; no repository write, canonical activation, implementation or merge authorized by this report.
+**Authorization:** All remediation above is a recommendation for a later _docs-only_ work package; no repository write, canonical activation, implementation or merge authorized by this report.
 
 ## H. Decision and follow-up gate
 
