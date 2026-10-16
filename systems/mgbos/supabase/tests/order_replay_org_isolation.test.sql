@@ -3,7 +3,7 @@
 -- Covers Acceptance Criteria: AC-001 through AC-010 (ORG-01 to ORG-10)
 
 begin;
-select plan(54);
+select plan(60);
 
 -- ============================================================================
 -- 1. Database Privilege Catalog Verification (ORG-08 Fail-Closed Hardening)
@@ -642,8 +642,41 @@ from test_ctx;
 
 -- Record baseline counts before collision attempt
 create temporary table b2b_collision_pre as select
+  (select count(*)::integer from app.orders where organization_id = (select org1 from test_ctx)) as orders_count,
   (select count(*)::integer from app.order_items oi join app.orders o on o.id = oi.order_id where o.organization_id = (select org1 from test_ctx)) as items_count,
   (select count(*)::integer from app.order_audit where organization_id = (select org1 from test_ctx)) as audit_count;
+
+-- ORG-09: Collision source established: pre-inserted order occupies TS-O-2026-000003
+select is(
+  (select count(*)::integer from app.orders where organization_id = (select org1 from test_ctx) and order_number = 'TS-O-2026-000003'),
+  1,
+  'ORG-09: Collision source established: Pre-inserted order occupies TS-O-2026-000003'
+);
+
+-- ORG-09: Uniqueness constraint provenance: direct insert with duplicate order_number triggers 23505 unique_violation
+select throws_ok(
+  $q$
+    insert into app.orders (
+      id, organization_id, brand_id, customer_account_id,
+      order_number, status, currency, subtotal, discount_total,
+      shipping_total, grand_total, estimated_cost_total, estimated_gross_profit,
+      customer_snapshot, shipping_address_snapshot, payment_terms_snapshot,
+      created_by_user_id, request_id, order_type
+    )
+    select
+      gen_random_uuid(), org1, brand1, cust1,
+      'TS-O-2026-000003', 'CONFIRMED', 'IDR', 100000, 0,
+      10000, 110000, 50000, 50000,
+      '{}'::jsonb,
+      '{"recipient_name":"Test","phone":"081234","street":"Jl. Test No. 1","city":"Bandung"}'::jsonb,
+      '{"terms":"CASH"}'::jsonb,
+      'a1111111-1111-4000-8000-000000000001', gen_random_uuid(), 'RETAIL_DIRECT'
+    from test_ctx;
+  $q$,
+  '23505',
+  null,
+  'ORG-09: Collision provenance verified: Duplicate TS-O-2026-000003 directly violates unique constraint (23505)'
+);
 
 -- ORG-09: Genuine uniqueness collision on orders_organization_id_order_number_key in create_order_from_quote
 select throws_ok(
@@ -662,6 +695,12 @@ select throws_ok(
 );
 
 select is(
+  (select count(*)::integer from app.orders where organization_id = (select org1 from test_ctx)),
+  (select orders_count from b2b_collision_pre),
+  'ORG-09: Genuine B2B unique violation causes zero new orders'
+);
+
+select is(
   (select count(*)::integer from app.order_items oi join app.orders o on o.id = oi.order_id where o.organization_id = (select org1 from test_ctx)),
   (select items_count from b2b_collision_pre),
   'ORG-09: Genuine B2B unique violation causes zero new order items'
@@ -675,9 +714,18 @@ select is(
 
 -- Baseline for Retail collision
 create temporary table retail_collision_pre as select
+  (select count(*)::integer from app.orders where organization_id = (select org1 from test_ctx)) as orders_count,
   (select count(*)::integer from app.order_items oi join app.orders o on o.id = oi.order_id where o.organization_id = (select org1 from test_ctx)) as items_count,
+  (select count(*)::integer from app.order_audit where organization_id = (select org1 from test_ctx)) as audit_count,
   (select count(*)::integer from app.invoices where organization_id = (select org1 from test_ctx)) as invoice_count,
   (select count(*)::integer from app.inventory_reservations where organization_id = (select org1 from test_ctx)) as res_count;
+
+-- ORG-09: Retail collision source established
+select is(
+  (select count(*)::integer from app.orders where organization_id = (select org1 from test_ctx) and order_number = 'TS-O-2026-000003'),
+  1,
+  'ORG-09: Retail collision source verified: TS-O-2026-000003 remains occupied in Org 1'
+);
 
 -- ORG-09: Genuine uniqueness collision on orders_organization_id_order_number_key in create_retail_order
 select throws_ok(
@@ -704,9 +752,21 @@ select throws_ok(
 );
 
 select is(
+  (select count(*)::integer from app.orders where organization_id = (select org1 from test_ctx)),
+  (select orders_count from retail_collision_pre),
+  'ORG-09: Genuine Retail unique violation causes zero new orders'
+);
+
+select is(
   (select count(*)::integer from app.order_items oi join app.orders o on o.id = oi.order_id where o.organization_id = (select org1 from test_ctx)),
   (select items_count from retail_collision_pre),
   'ORG-09: Genuine Retail unique violation causes zero new order items'
+);
+
+select is(
+  (select count(*)::integer from app.order_audit where organization_id = (select org1 from test_ctx)),
+  (select audit_count from retail_collision_pre),
+  'ORG-09: Genuine Retail unique violation causes zero new audit entries'
 );
 
 select is(
