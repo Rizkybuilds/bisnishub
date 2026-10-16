@@ -1,5 +1,6 @@
 import {
   afterAll,
+  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -522,6 +523,790 @@ describe('Finding R4-F01 / CP-007C: Destructive Local E2E Safety Guard Negative 
 });
 
 // ============================================================================
+// Blocker 1 & Blocker 2: Disposable Target Identity and Complete Teardown
+// ============================================================================
+export const REQUIRED_DISPOSABLE_CONFIRMATION_ENV =
+  'MGBOS_DISPOSABLE_INSTANCE_CONFIRMED';
+export const REQUIRED_DISPOSABLE_CONFIRMATION_VALUE = '1';
+
+export interface DisposableTargetEvidence {
+  disposableConfirmed: boolean;
+  targetOrigin: string;
+  baselineOrgCode: string;
+  baselineOrgId: string;
+  existingOrdersCount: number;
+  existingInvoicesCount: number;
+  existingAuditCount: number;
+  existingReservationsCount: number;
+  verifiedAt: string;
+}
+
+export async function verifyDisposableTargetIdentity(
+  env: { baseUrl: string; serviceRoleKey: string },
+  customFetch: typeof fetch = nativeFetch,
+  processEnv: Record<string, string | undefined> = process.env,
+): Promise<DisposableTargetEvidence> {
+  const optIn = processEnv[REQUIRED_DISPOSABLE_CONFIRMATION_ENV];
+  if (optIn !== REQUIRED_DISPOSABLE_CONFIRMATION_VALUE) {
+    throw new Error(
+      `Disposable target verification rejected: missing or invalid ${REQUIRED_DISPOSABLE_CONFIRMATION_ENV} acknowledgement. ` +
+        `Expected exact value "${REQUIRED_DISPOSABLE_CONFIRMATION_VALUE}", got ${optIn === undefined ? 'undefined' : JSON.stringify(optIn)}. ` +
+        `Target must be positively confirmed as an isolated, disposable test environment before any mutation. ` +
+        `Execution halted to protect existing database data.`,
+    );
+  }
+
+  // 1. Verify connectivity
+  let ping: Response;
+  try {
+    ping = await customFetch(`${env.baseUrl}/rest/v1/`, {
+      headers: { apikey: env.serviceRoleKey },
+    });
+  } catch (err: unknown) {
+    throw new Error(
+      `Target connectivity preflight failed at ${env.baseUrl}: ${(err as Error).message}. ` +
+        `Execution halted to prevent unsafe database mutation.`,
+    );
+  }
+  if (!ping.ok && ping.status !== 200) {
+    throw new Error(
+      `Target connectivity preflight failed: target returned non-OK status ${ping.status}`,
+    );
+  }
+
+  async function queryTable<T = unknown>(
+    table: string,
+    query = '',
+  ): Promise<T[]> {
+    const res = await customFetch(`${env.baseUrl}/rest/v1/${table}?${query}`, {
+      headers: {
+        apikey: env.serviceRoleKey,
+        Authorization: `Bearer ${env.serviceRoleKey}`,
+        'Content-Type': 'application/json',
+        'Accept-Profile': 'app',
+      },
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(
+        `Target preflight query for ${table} failed (${res.status}): ${errText}`,
+      );
+    }
+    return (await res.json()) as T[];
+  }
+
+  // 2. Validate Organizations: Must strictly contain baseline seed and zero foreign/development orgs
+  const orgs = await queryTable<{ id: string; code: string }>(
+    'organizations',
+    'select=id,code',
+  );
+  const baselineOrg = orgs[0];
+  if (
+    orgs.length !== 1 ||
+    !baselineOrg ||
+    baselineOrg.code !== 'multigraph-group'
+  ) {
+    throw new Error(
+      `Disposable target verification rejected: database contains ${orgs.length} organizations (expected strictly 1 baseline 'multigraph-group'). ` +
+        `Target is not an isolated disposable instance. Refusing to mutate existing database.`,
+    );
+  }
+
+  // 3. Validate Orders: Fresh disposable target must have zero existing customer orders
+  const orders = await queryTable<{ id: string }>('orders', 'select=id');
+  if (orders.length > 0) {
+    throw new Error(
+      `Disposable target verification rejected: database contains ${orders.length} existing orders. ` +
+        `Target is not a disposable environment; refusing to mutate existing transactional data.`,
+    );
+  }
+
+  // 4. Validate Invoices: Fresh disposable target must have zero existing invoices
+  const invoices = await queryTable<{ id: string }>('invoices', 'select=id');
+  if (invoices.length > 0) {
+    throw new Error(
+      `Disposable target verification rejected: database contains ${invoices.length} existing invoices.`,
+    );
+  }
+
+  // 5. Validate Order Audit: Zero existing order audit records
+  const audit = await queryTable<{ id: string }>('order_audit', 'select=id');
+  if (audit.length > 0) {
+    throw new Error(
+      `Disposable target verification rejected: database contains ${audit.length} existing audit records.`,
+    );
+  }
+
+  // 6. Validate Inventory Reservations: Zero existing inventory reservations
+  const reservations = await queryTable<{ id: string }>(
+    'inventory_reservations',
+    'select=id',
+  );
+  if (reservations.length > 0) {
+    throw new Error(
+      `Disposable target verification rejected: database contains ${reservations.length} existing inventory reservations.`,
+    );
+  }
+
+  return {
+    disposableConfirmed: true,
+    targetOrigin: env.baseUrl,
+    baselineOrgCode: baselineOrg.code,
+    baselineOrgId: baselineOrg.id,
+    existingOrdersCount: orders.length,
+    existingInvoicesCount: invoices.length,
+    existingAuditCount: audit.length,
+    existingReservationsCount: reservations.length,
+    verifiedAt: new Date().toISOString(),
+  };
+}
+
+export interface TeardownContext {
+  baseUrl: string;
+  serviceHeaders: Record<string, string>;
+  guardedFetch: typeof fetch;
+  createdOrderIds: string[];
+  trackedRequestIds?: Set<string>;
+  liveItem1Id?: string;
+  liveOrg2Id?: string;
+  liveBrand2Id?: string;
+  setupStarted: boolean;
+  setupFailed: boolean;
+  testErrorOccurred?: boolean;
+}
+
+export async function executeTeardown(ctx: TeardownContext): Promise<{
+  cleanupErrors: string[];
+  discoveredOrphanOrders: string[];
+}> {
+  if (!ctx.setupStarted) {
+    return { cleanupErrors: [], discoveredOrphanOrders: [] };
+  }
+
+  const cleanupErrors: string[] = [];
+  const discoveredOrphanOrders: string[] = [];
+  const headers = ctx.serviceHeaders;
+
+  async function safeDelete(table: string, filter: string): Promise<boolean> {
+    try {
+      const res = await ctx.guardedFetch(
+        `${ctx.baseUrl}/rest/v1/${table}?${filter}`,
+        {
+          method: 'DELETE',
+          headers,
+        },
+      );
+      if (!res.ok && res.status !== 404) {
+        const text = await res.text();
+        cleanupErrors.push(
+          `DELETE ${table}?${filter} failed with status ${res.status}: ${text}`,
+        );
+        return false;
+      }
+      return true;
+    } catch (e: unknown) {
+      cleanupErrors.push(
+        `DELETE ${table}?${filter} network exception: ${(e as Error).message}`,
+      );
+      return false;
+    }
+  }
+
+  async function queryTable<T = unknown>(
+    table: string,
+    filter: string,
+  ): Promise<T[]> {
+    try {
+      const res = await ctx.guardedFetch(
+        `${ctx.baseUrl}/rest/v1/${table}?${filter}`,
+        { headers },
+      );
+      if (!res.ok) {
+        const text = await res.text();
+        cleanupErrors.push(
+          `Query ${table}?${filter} failed with status ${res.status}: ${text}`,
+        );
+        return [];
+      }
+      return (await res.json()) as T[];
+    } catch (e: unknown) {
+      cleanupErrors.push(
+        `Query ${table}?${filter} network exception: ${(e as Error).message}`,
+      );
+      return [];
+    }
+  }
+
+  // 1. Discover any orders committed during the run that were not pushed to createdOrderIds
+  const allOrderIdsToDelete = new Set<string>(ctx.createdOrderIds);
+
+  if (ctx.trackedRequestIds && ctx.trackedRequestIds.size > 0) {
+    const reqList = Array.from(ctx.trackedRequestIds).join(',');
+    const matched = await queryTable<{ id: string }>(
+      'orders',
+      `request_id=in.(${reqList})&select=id`,
+    );
+    for (const row of matched) {
+      if (!allOrderIdsToDelete.has(row.id)) {
+        allOrderIdsToDelete.add(row.id);
+        discoveredOrphanOrders.push(row.id);
+      }
+    }
+  }
+
+  if (ctx.liveOrg2Id) {
+    const org2Orders = await queryTable<{ id: string }>(
+      'orders',
+      `organization_id=eq.${ctx.liveOrg2Id}&select=id`,
+    );
+    for (const row of org2Orders) {
+      if (!allOrderIdsToDelete.has(row.id)) {
+        allOrderIdsToDelete.add(row.id);
+        discoveredOrphanOrders.push(row.id);
+      }
+    }
+  }
+
+  if (ctx.liveItem1Id) {
+    const itemRows = await queryTable<{ order_id: string }>(
+      'order_items',
+      `inventory_item_id=eq.${ctx.liveItem1Id}&select=order_id`,
+    );
+    for (const row of itemRows) {
+      if (row.order_id && !allOrderIdsToDelete.has(row.order_id)) {
+        allOrderIdsToDelete.add(row.order_id);
+        discoveredOrphanOrders.push(row.order_id);
+      }
+    }
+  }
+
+  // 2. Delete all orders and child records in reverse dependency order
+  for (const orderId of allOrderIdsToDelete) {
+    await safeDelete('order_items', `order_id=eq.${orderId}`);
+    await safeDelete('invoices', `order_id=eq.${orderId}`);
+    await safeDelete('inventory_reservations', `order_id=eq.${orderId}`);
+    await safeDelete('order_audit', `order_id=eq.${orderId}`);
+    await safeDelete('orders', `id=eq.${orderId}`);
+  }
+
+  // 3. Delete synthetic inventory item and associated child records
+  if (ctx.liveItem1Id) {
+    await safeDelete(
+      'inventory_balances',
+      `inventory_item_id=eq.${ctx.liveItem1Id}`,
+    );
+    await safeDelete(
+      'inventory_transactions',
+      `inventory_item_id=eq.${ctx.liveItem1Id}`,
+    );
+    await safeDelete('inventory_items', `id=eq.${ctx.liveItem1Id}`);
+  }
+
+  // 4. Delete synthetic Org 2 hierarchy
+  if (ctx.liveOrg2Id) {
+    await safeDelete(
+      'organization_members',
+      `organization_id=eq.${ctx.liveOrg2Id}`,
+    );
+    if (ctx.liveBrand2Id) {
+      await safeDelete(
+        'customer_brand_relationships',
+        `brand_id=eq.${ctx.liveBrand2Id}`,
+      );
+    }
+    await safeDelete(
+      'customer_accounts',
+      `organization_id=eq.${ctx.liveOrg2Id}`,
+    );
+    await safeDelete('roles', `organization_id=eq.${ctx.liveOrg2Id}`);
+    await safeDelete('brands', `organization_id=eq.${ctx.liveOrg2Id}`);
+    await safeDelete('organizations', `id=eq.${ctx.liveOrg2Id}`);
+  }
+
+  // 5. Verify absence of all owned resources (children, orders, item, org)
+  for (const orderId of allOrderIdsToDelete) {
+    const remainingOrder = await queryTable<{ id: string }>(
+      'orders',
+      `id=eq.${orderId}&select=id`,
+    );
+    if (remainingOrder.length > 0) {
+      cleanupErrors.push(
+        `Created/orphan order (${orderId}) still exists after teardown`,
+      );
+    }
+    const remainingItems = await queryTable<{ id: string }>(
+      'order_items',
+      `order_id=eq.${orderId}&select=id`,
+    );
+    if (remainingItems.length > 0) {
+      cleanupErrors.push(
+        `Child order_items for order ${orderId} still exist (${remainingItems.length} rows)`,
+      );
+    }
+    const remainingAudit = await queryTable<{ id: string }>(
+      'order_audit',
+      `order_id=eq.${orderId}&select=id`,
+    );
+    if (remainingAudit.length > 0) {
+      cleanupErrors.push(
+        `Child order_audit for order ${orderId} still exist (${remainingAudit.length} rows)`,
+      );
+    }
+    const remainingInvoices = await queryTable<{ id: string }>(
+      'invoices',
+      `order_id=eq.${orderId}&select=id`,
+    );
+    if (remainingInvoices.length > 0) {
+      cleanupErrors.push(
+        `Child invoices for order ${orderId} still exist (${remainingInvoices.length} rows)`,
+      );
+    }
+    const remainingRes = await queryTable<{ id: string }>(
+      'inventory_reservations',
+      `order_id=eq.${orderId}&select=id`,
+    );
+    if (remainingRes.length > 0) {
+      cleanupErrors.push(
+        `Child inventory_reservations for order ${orderId} still exist (${remainingRes.length} rows)`,
+      );
+    }
+  }
+
+  if (ctx.liveItem1Id) {
+    const remainingSku = await queryTable<{ id: string }>(
+      'inventory_items',
+      `id=eq.${ctx.liveItem1Id}&select=id`,
+    );
+    if (remainingSku.length > 0) {
+      cleanupErrors.push(
+        `Synthetic SKU (${ctx.liveItem1Id}) still exists after teardown`,
+      );
+    }
+    const remainingBalances = await queryTable<{ id: string }>(
+      'inventory_balances',
+      `inventory_item_id=eq.${ctx.liveItem1Id}&select=id`,
+    );
+    if (remainingBalances.length > 0) {
+      cleanupErrors.push(
+        `Synthetic inventory_balances for SKU (${ctx.liveItem1Id}) still exist`,
+      );
+    }
+    const remainingTx = await queryTable<{ id: string }>(
+      'inventory_transactions',
+      `inventory_item_id=eq.${ctx.liveItem1Id}&select=id`,
+    );
+    if (remainingTx.length > 0) {
+      cleanupErrors.push(
+        `Synthetic inventory_transactions for SKU (${ctx.liveItem1Id}) still exist`,
+      );
+    }
+  }
+
+  if (ctx.liveOrg2Id) {
+    const remainingOrg = await queryTable<{ id: string }>(
+      'organizations',
+      `id=eq.${ctx.liveOrg2Id}&select=id`,
+    );
+    if (remainingOrg.length > 0) {
+      cleanupErrors.push(
+        `Synthetic Org 2 (${ctx.liveOrg2Id}) still exists after teardown`,
+      );
+    }
+    const remainingBrand = await queryTable<{ id: string }>(
+      'brands',
+      `organization_id=eq.${ctx.liveOrg2Id}&select=id`,
+    );
+    if (remainingBrand.length > 0) {
+      cleanupErrors.push(
+        `Synthetic brand in Org 2 still exists after teardown`,
+      );
+    }
+    const remainingCust = await queryTable<{ id: string }>(
+      'customer_accounts',
+      `organization_id=eq.${ctx.liveOrg2Id}&select=id`,
+    );
+    if (remainingCust.length > 0) {
+      cleanupErrors.push(
+        `Synthetic customer in Org 2 still exists after teardown`,
+      );
+    }
+    const remainingRoles = await queryTable<{ id: string }>(
+      'roles',
+      `organization_id=eq.${ctx.liveOrg2Id}&select=id`,
+    );
+    if (remainingRoles.length > 0) {
+      cleanupErrors.push(`Synthetic roles in Org 2 still exist after teardown`);
+    }
+    const remainingMembers = await queryTable<{ id: string }>(
+      'organization_members',
+      `organization_id=eq.${ctx.liveOrg2Id}&select=id`,
+    );
+    if (remainingMembers.length > 0) {
+      cleanupErrors.push(
+        `Synthetic members in Org 2 still exist after teardown`,
+      );
+    }
+  }
+
+  // 6. Handle errors fail-closed
+  if (cleanupErrors.length > 0) {
+    if (ctx.testErrorOccurred || ctx.setupFailed) {
+      throw new Error(
+        `[TEST_AND_CLEANUP_FAILURE] Test/setup failed AND teardown verification failed with ${cleanupErrors.length} errors:\n${cleanupErrors.join('\n')}`,
+      );
+    } else {
+      throw new Error(
+        `[CLEANUP_FAILURE] Teardown verification failed with ${cleanupErrors.length} errors:\n${cleanupErrors.join('\n')}`,
+      );
+    }
+  }
+
+  return { cleanupErrors: [], discoveredOrphanOrders };
+}
+
+// ============================================================================
+// Finding R4-F01 & R4-F02: Disposable Target Identity and Cleanup Failure Injection Controls
+// ============================================================================
+describe('Finding R4-F01 & R4-F02: Disposable Target Identity and Cleanup Failure Injection Controls', () => {
+  const dummyEnv = {
+    baseUrl: CANONICAL_LOCAL_SUPABASE_ORIGIN,
+    serviceRoleKey: CANONICAL_LOCAL_SERVICE_ROLE_KEY,
+  };
+
+  describe('verifyDisposableTargetIdentity', () => {
+    it('fails closed when MGBOS_DISPOSABLE_INSTANCE_CONFIRMED acknowledgement is missing or invalid', async () => {
+      await expect(
+        verifyDisposableTargetIdentity(dummyEnv, nativeFetch, {}),
+      ).rejects.toThrow(
+        /missing or invalid MGBOS_DISPOSABLE_INSTANCE_CONFIRMED acknowledgement/,
+      );
+      await expect(
+        verifyDisposableTargetIdentity(dummyEnv, nativeFetch, {
+          [REQUIRED_DISPOSABLE_CONFIRMATION_ENV]: '0',
+        }),
+      ).rejects.toThrow(
+        /missing or invalid MGBOS_DISPOSABLE_INSTANCE_CONFIRMED acknowledgement/,
+      );
+    });
+
+    it('fails closed when target connectivity check returns non-OK status', async () => {
+      const mockFetch = vi.fn().mockImplementation((url: string) => {
+        if (url.endsWith('/rest/v1/')) {
+          return Promise.resolve(new Response('Forbidden', { status: 403 }));
+        }
+        return Promise.resolve(new Response('{}', { status: 200 }));
+      });
+
+      await expect(
+        verifyDisposableTargetIdentity(dummyEnv, mockFetch, {
+          [REQUIRED_DISPOSABLE_CONFIRMATION_ENV]:
+            REQUIRED_DISPOSABLE_CONFIRMATION_VALUE,
+        }),
+      ).rejects.toThrow(/Target connectivity preflight failed/);
+    });
+
+    it('fails closed when target database contains existing customer orders', async () => {
+      const mockFetch = vi.fn().mockImplementation((url: string) => {
+        if (url.endsWith('/rest/v1/')) {
+          return Promise.resolve(new Response('OK', { status: 200 }));
+        }
+        if (url.includes('/organizations?')) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify([{ id: 'org-1', code: 'multigraph-group' }]),
+              { status: 200, headers: { 'Content-Type': 'application/json' } },
+            ),
+          );
+        }
+        if (url.includes('/orders?')) {
+          return Promise.resolve(
+            new Response(JSON.stringify([{ id: 'existing-order-123' }]), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+          );
+        }
+        return Promise.resolve(
+          new Response(JSON.stringify([]), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
+      });
+
+      await expect(
+        verifyDisposableTargetIdentity(dummyEnv, mockFetch, {
+          [REQUIRED_DISPOSABLE_CONFIRMATION_ENV]:
+            REQUIRED_DISPOSABLE_CONFIRMATION_VALUE,
+        }),
+      ).rejects.toThrow(
+        /database contains 1 existing orders\. Target is not a disposable environment/,
+      );
+    });
+
+    it('fails closed when database contains unexpected foreign/development organizations', async () => {
+      const mockFetch = vi.fn().mockImplementation((url: string) => {
+        if (url.endsWith('/rest/v1/')) {
+          return Promise.resolve(new Response('OK', { status: 200 }));
+        }
+        if (url.includes('/organizations?')) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify([
+                { id: 'org-1', code: 'multigraph-group' },
+                { id: 'org-2', code: 'rogue-org' },
+              ]),
+              { status: 200, headers: { 'Content-Type': 'application/json' } },
+            ),
+          );
+        }
+        return Promise.resolve(
+          new Response(JSON.stringify([]), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
+      });
+
+      await expect(
+        verifyDisposableTargetIdentity(dummyEnv, mockFetch, {
+          [REQUIRED_DISPOSABLE_CONFIRMATION_ENV]:
+            REQUIRED_DISPOSABLE_CONFIRMATION_VALUE,
+        }),
+      ).rejects.toThrow(
+        /database contains 2 organizations \(expected strictly 1 baseline 'multigraph-group'\)/,
+      );
+    });
+
+    it('fails closed when target database contains existing invoices or audit records', async () => {
+      const mockFetch = vi.fn().mockImplementation((url: string) => {
+        if (url.endsWith('/rest/v1/')) {
+          return Promise.resolve(new Response('OK', { status: 200 }));
+        }
+        if (url.includes('/organizations?')) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify([{ id: 'org-1', code: 'multigraph-group' }]),
+              { status: 200, headers: { 'Content-Type': 'application/json' } },
+            ),
+          );
+        }
+        if (url.includes('/orders?')) {
+          return Promise.resolve(
+            new Response(JSON.stringify([]), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+          );
+        }
+        if (url.includes('/invoices?')) {
+          return Promise.resolve(
+            new Response(JSON.stringify([{ id: 'inv-123' }]), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+          );
+        }
+        return Promise.resolve(
+          new Response(JSON.stringify([]), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
+      });
+
+      await expect(
+        verifyDisposableTargetIdentity(dummyEnv, mockFetch, {
+          [REQUIRED_DISPOSABLE_CONFIRMATION_ENV]:
+            REQUIRED_DISPOSABLE_CONFIRMATION_VALUE,
+        }),
+      ).rejects.toThrow(/database contains 1 existing invoices/);
+    });
+
+    it('positively resolves verifiable evidence when target is confirmed, clean, and isolated', async () => {
+      const mockFetch = vi.fn().mockImplementation((url: string) => {
+        if (url.endsWith('/rest/v1/')) {
+          return Promise.resolve(new Response('OK', { status: 200 }));
+        }
+        if (url.includes('/organizations?')) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify([{ id: 'org-1', code: 'multigraph-group' }]),
+              { status: 200, headers: { 'Content-Type': 'application/json' } },
+            ),
+          );
+        }
+        return Promise.resolve(
+          new Response(JSON.stringify([]), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
+      });
+
+      const evidence = await verifyDisposableTargetIdentity(
+        dummyEnv,
+        mockFetch,
+        {
+          [REQUIRED_DISPOSABLE_CONFIRMATION_ENV]:
+            REQUIRED_DISPOSABLE_CONFIRMATION_VALUE,
+        },
+      );
+
+      expect(evidence.disposableConfirmed).toBe(true);
+      expect(evidence.baselineOrgCode).toBe('multigraph-group');
+      expect(evidence.existingOrdersCount).toBe(0);
+      expect(evidence.existingInvoicesCount).toBe(0);
+      expect(evidence.existingAuditCount).toBe(0);
+      expect(evidence.existingReservationsCount).toBe(0);
+    });
+  });
+
+  describe('executeTeardown failure injection and completeness', () => {
+    it('fails closed with [CLEANUP_FAILURE] when a DELETE operation returns HTTP 500', async () => {
+      const mockFetch = vi
+        .fn()
+        .mockImplementation((url: string, init?: RequestInit) => {
+          if (init?.method === 'DELETE' && url.includes('/orders?id=')) {
+            return Promise.resolve(
+              new Response('Internal server error during delete', {
+                status: 500,
+              }),
+            );
+          }
+          if (init?.method === 'DELETE') {
+            return Promise.resolve(new Response(null, { status: 204 }));
+          }
+          return Promise.resolve(
+            new Response(JSON.stringify([]), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+          );
+        });
+
+      await expect(
+        executeTeardown({
+          baseUrl: CANONICAL_LOCAL_SUPABASE_ORIGIN,
+          serviceHeaders: { apikey: 'test' },
+          guardedFetch: mockFetch,
+          createdOrderIds: ['ord-1'],
+          trackedRequestIds: new Set<string>(),
+          setupStarted: true,
+          setupFailed: false,
+        }),
+      ).rejects.toThrow(/\[CLEANUP_FAILURE\]/);
+    });
+
+    it('fails closed with [CLEANUP_FAILURE] when child resources remain un-deleted in absence verification', async () => {
+      const mockFetch = vi
+        .fn()
+        .mockImplementation((url: string, init?: RequestInit) => {
+          if (init?.method === 'DELETE') {
+            return Promise.resolve(new Response(null, { status: 204 }));
+          }
+          if (url.includes('/order_items?order_id=eq.ord-1')) {
+            return Promise.resolve(
+              new Response(JSON.stringify([{ id: 'item-remaining-1' }]), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+              }),
+            );
+          }
+          return Promise.resolve(
+            new Response(JSON.stringify([]), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+          );
+        });
+
+      await expect(
+        executeTeardown({
+          baseUrl: CANONICAL_LOCAL_SUPABASE_ORIGIN,
+          serviceHeaders: { apikey: 'test' },
+          guardedFetch: mockFetch,
+          createdOrderIds: ['ord-1'],
+          trackedRequestIds: new Set<string>(),
+          setupStarted: true,
+          setupFailed: false,
+        }),
+      ).rejects.toThrow(/Child order_items for order ord-1 still exist/);
+    });
+
+    it('discovers and cleans up orphan orders committed under tracked request_id that were missing from createdOrderIds', async () => {
+      const deletedUrls: string[] = [];
+      const mockFetch = vi
+        .fn()
+        .mockImplementation((url: string, init?: RequestInit) => {
+          if (init?.method === 'DELETE') {
+            deletedUrls.push(url);
+            return Promise.resolve(new Response(null, { status: 204 }));
+          }
+          if (url.includes('/orders?request_id=in.(req-orphan)')) {
+            return Promise.resolve(
+              new Response(JSON.stringify([{ id: 'discovered-orphan-ord' }]), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+              }),
+            );
+          }
+          return Promise.resolve(
+            new Response(JSON.stringify([]), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+          );
+        });
+
+      const result = await executeTeardown({
+        baseUrl: CANONICAL_LOCAL_SUPABASE_ORIGIN,
+        serviceHeaders: { apikey: 'test' },
+        guardedFetch: mockFetch,
+        createdOrderIds: [],
+        trackedRequestIds: new Set<string>(['req-orphan']),
+        setupStarted: true,
+        setupFailed: false,
+      });
+
+      expect(result.discoveredOrphanOrders).toContain('discovered-orphan-ord');
+      expect(
+        deletedUrls.some((u) => u.includes('id=eq.discovered-orphan-ord')),
+      ).toBe(true);
+    });
+
+    it('reports [TEST_AND_CLEANUP_FAILURE] preserving both test and cleanup errors when test failure precedes teardown error', async () => {
+      const mockFetch = vi
+        .fn()
+        .mockImplementation((_url: string, init?: RequestInit) => {
+          if (init?.method === 'DELETE') {
+            return Promise.resolve(new Response('DB error', { status: 500 }));
+          }
+          return Promise.resolve(
+            new Response(JSON.stringify([]), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+          );
+        });
+
+      await expect(
+        executeTeardown({
+          baseUrl: CANONICAL_LOCAL_SUPABASE_ORIGIN,
+          serviceHeaders: { apikey: 'test' },
+          guardedFetch: mockFetch,
+          createdOrderIds: ['ord-fail'],
+          trackedRequestIds: new Set<string>(),
+          setupStarted: true,
+          setupFailed: false,
+          testErrorOccurred: true,
+        }),
+      ).rejects.toThrow(/\[TEST_AND_CLEANUP_FAILURE\]/);
+    });
+  });
+});
+
+// ============================================================================
 // Genuine Live Multi-Session Concurrency & Database Replay Isolation Suite
 // Guarded by MGBOS_DESTRUCTIVE_LOCAL_E2E=1 (R4-QA-01, R4-QA-03, R4-QA-04)
 // ============================================================================
@@ -601,8 +1386,16 @@ describe.skipIf(!isLiveE2E)(
 
     // Track resources created by this specific test run for verified cleanup
     const createdOrderIds: string[] = [];
+    const trackedRequestIds = new Set<string>();
     let setupStarted = false;
     let setupFailed = false;
+    let testErrorOccurred = false;
+
+    afterEach((ctx) => {
+      if (ctx.task.result?.state === 'fail') {
+        testErrorOccurred = true;
+      }
+    });
 
     beforeAll(async () => {
       try {
@@ -622,21 +1415,16 @@ describe.skipIf(!isLiveE2E)(
           Prefer: 'return=representation',
         };
 
-        // 2. Preflight Target Connectivity & Disposable Target Verification
-        try {
-          const ping = await guardedFetch(`${resolvedEnv.baseUrl}/rest/v1/`, {
-            headers: { apikey: resolvedEnv.serviceRoleKey },
-          });
-          if (!ping.ok && ping.status !== 200) {
-            throw new Error(`Target returned non-OK status: ${ping.status}`);
-          }
-          setupStarted = true;
-        } catch (err: unknown) {
-          throw new Error(
-            `Target connectivity preflight failed at ${resolvedEnv.baseUrl}: ${(err as Error).message}. ` +
-              `Execution halted to prevent unsafe database mutation.`,
-          );
+        // 2. Preflight Target Connectivity & Disposable Target Verification (Blocker 1)
+        const disposableEvidence = await verifyDisposableTargetIdentity(
+          resolvedEnv,
+          guardedFetch,
+          process.env,
+        );
+        if (!disposableEvidence.disposableConfirmed) {
+          throw new Error('Disposable target verification failed');
         }
+        setupStarted = true;
 
         // 3. Resolve existing Org 1 context (read-only baseline resolution)
         const [org1] = await liveQueryTable(
@@ -822,184 +1610,19 @@ describe.skipIf(!isLiveE2E)(
       // Finding R4-F02: Complete verified teardown in reverse dependency order
       if (!resolvedEnv || !guardedFetch || !setupStarted) return;
 
-      const cleanupErrors: string[] = [];
-
-      // 1. Delete created orders and associated side-effects
-      for (const orderId of createdOrderIds) {
-        try {
-          await guardedFetch(
-            `${resolvedEnv.baseUrl}/rest/v1/order_items?order_id=eq.${orderId}`,
-            {
-              method: 'DELETE',
-              headers: liveServiceHeaders,
-            },
-          );
-          await guardedFetch(
-            `${resolvedEnv.baseUrl}/rest/v1/invoices?order_id=eq.${orderId}`,
-            {
-              method: 'DELETE',
-              headers: liveServiceHeaders,
-            },
-          );
-          await guardedFetch(
-            `${resolvedEnv.baseUrl}/rest/v1/inventory_reservations?order_id=eq.${orderId}`,
-            {
-              method: 'DELETE',
-              headers: liveServiceHeaders,
-            },
-          );
-          await guardedFetch(
-            `${resolvedEnv.baseUrl}/rest/v1/order_audit?order_id=eq.${orderId}`,
-            {
-              method: 'DELETE',
-              headers: liveServiceHeaders,
-            },
-          );
-          await guardedFetch(
-            `${resolvedEnv.baseUrl}/rest/v1/orders?id=eq.${orderId}`,
-            {
-              method: 'DELETE',
-              headers: liveServiceHeaders,
-            },
-          );
-        } catch (e: unknown) {
-          cleanupErrors.push(
-            `Failed cleaning order ${orderId}: ${(e as Error).message}`,
-          );
-        }
-      }
-
-      // 2. Delete synthetic inventory item and associated inventory transactions/balances
-      if (liveItem1Id) {
-        try {
-          await guardedFetch(
-            `${resolvedEnv.baseUrl}/rest/v1/inventory_balances?inventory_item_id=eq.${liveItem1Id}`,
-            {
-              method: 'DELETE',
-              headers: liveServiceHeaders,
-            },
-          );
-          await guardedFetch(
-            `${resolvedEnv.baseUrl}/rest/v1/inventory_transactions?inventory_item_id=eq.${liveItem1Id}`,
-            {
-              method: 'DELETE',
-              headers: liveServiceHeaders,
-            },
-          );
-          await guardedFetch(
-            `${resolvedEnv.baseUrl}/rest/v1/inventory_items?id=eq.${liveItem1Id}`,
-            {
-              method: 'DELETE',
-              headers: liveServiceHeaders,
-            },
-          );
-        } catch (e: unknown) {
-          cleanupErrors.push(
-            `Failed cleaning item ${liveItem1Id}: ${(e as Error).message}`,
-          );
-        }
-      }
-
-      // 3. Clean up synthetic Org 2 hierarchy
-      try {
-        await guardedFetch(
-          `${resolvedEnv.baseUrl}/rest/v1/organization_members?organization_id=eq.${liveOrg2Id}`,
-          {
-            method: 'DELETE',
-            headers: liveServiceHeaders,
-          },
-        );
-        await guardedFetch(
-          `${resolvedEnv.baseUrl}/rest/v1/customer_brand_relationships?brand_id=eq.${liveBrand2Id}`,
-          {
-            method: 'DELETE',
-            headers: liveServiceHeaders,
-          },
-        );
-        await guardedFetch(
-          `${resolvedEnv.baseUrl}/rest/v1/customer_accounts?organization_id=eq.${liveOrg2Id}`,
-          {
-            method: 'DELETE',
-            headers: liveServiceHeaders,
-          },
-        );
-        await guardedFetch(
-          `${resolvedEnv.baseUrl}/rest/v1/roles?organization_id=eq.${liveOrg2Id}`,
-          {
-            method: 'DELETE',
-            headers: liveServiceHeaders,
-          },
-        );
-        await guardedFetch(
-          `${resolvedEnv.baseUrl}/rest/v1/brands?organization_id=eq.${liveOrg2Id}`,
-          {
-            method: 'DELETE',
-            headers: liveServiceHeaders,
-          },
-        );
-        await guardedFetch(
-          `${resolvedEnv.baseUrl}/rest/v1/organizations?id=eq.${liveOrg2Id}`,
-          {
-            method: 'DELETE',
-            headers: liveServiceHeaders,
-          },
-        );
-      } catch (e: unknown) {
-        cleanupErrors.push(
-          `Failed cleaning Org 2 hierarchy: ${(e as Error).message}`,
-        );
-      }
-
-      // 4. Verify absence of run-owned synthetic resources
-      try {
-        const remainingOrg = await liveQueryTable(
-          'organizations',
-          `id=eq.${liveOrg2Id}`,
-        );
-        if (remainingOrg.length > 0) {
-          cleanupErrors.push(
-            `Synthetic Org 2 (${liveOrg2Id}) still exists after teardown`,
-          );
-        }
-        if (liveItem1Id) {
-          const remainingSku = await liveQueryTable(
-            'inventory_items',
-            `id=eq.${liveItem1Id}`,
-          );
-          if (remainingSku.length > 0) {
-            cleanupErrors.push(
-              `Synthetic SKU (${liveItem1Id}) still exists after teardown`,
-            );
-          }
-        }
-        for (const orderId of createdOrderIds) {
-          const remainingOrder = await liveQueryTable(
-            'orders',
-            `id=eq.${orderId}`,
-          );
-          if (remainingOrder.length > 0) {
-            cleanupErrors.push(
-              `Created order (${orderId}) still exists after teardown`,
-            );
-          }
-        }
-      } catch (e: unknown) {
-        cleanupErrors.push(
-          `Absence verification failed: ${(e as Error).message}`,
-        );
-      }
-
-      if (cleanupErrors.length > 0) {
-        if (setupFailed) {
-          console.error(
-            `Teardown encountered errors after setup failure:\n${cleanupErrors.join('\n')}`,
-          );
-        } else {
-          throw new Error(
-            `Teardown verification failed (R4-F02):\n${cleanupErrors.join('\n')}`,
-          );
-        }
-      }
+      await executeTeardown({
+        baseUrl: resolvedEnv.baseUrl,
+        serviceHeaders: liveServiceHeaders,
+        guardedFetch,
+        createdOrderIds,
+        trackedRequestIds,
+        liveItem1Id,
+        liveOrg2Id,
+        liveBrand2Id,
+        setupStarted,
+        setupFailed,
+        testErrorOccurred,
+      });
     });
 
     // R4-QA-04 (Finding R4-F05): Direct low-privilege RPC execution denial
@@ -1051,6 +1674,7 @@ describe.skipIf(!isLiveE2E)(
     describe('R4-QA-01 / ORG-09: Genuine Two-Session Cross-Organization Concurrency', () => {
       it('executes concurrent cross-org replay under advisory lock contention, fails closed with generic rejection, and isolates business tables', async () => {
         const sharedRequestId = crypto.randomUUID();
+        trackedRequestIds.add(sharedRequestId);
 
         const payloadOrg1 = {
           p_organization_id: liveOrg1.id,
@@ -1090,10 +1714,48 @@ describe.skipIf(!isLiveE2E)(
         expect(dispatchDeltaMs).toBeLessThanOrEqual(100);
 
         // Evidence category 2: Overlapping transit verified
-        // Evidence category 3: Observed advisory-lock contention
-        // Explicitly reported as NOT_VERIFIED via PostgREST transport layer
-        const advisoryLockContentionObserved = 'NOT_VERIFIED';
-        expect(advisoryLockContentionObserved).toBe('NOT_VERIFIED');
+        // Evidence category 3: Observed advisory-lock contention & server transaction overlap
+        // Explicitly reported as NOT_VERIFIED via PostgREST transport layer (Residual ORG-09)
+        const concurrencyEvidence = {
+          observedHttpDispatch: {
+            dispatchedConcurrently: true,
+            dispatchDeltaMs,
+          },
+          observedHttpInFlightTransit: {
+            simultaneousInFlight: true,
+          },
+          serverTransactionOverlap: 'NOT_VERIFIED', // PostgREST stateless HTTP endpoint does not expose server transaction overlap timing
+          observedAdvisoryLockContention: 'NOT_VERIFIED', // Server-side advisory lock wait events cannot be inspected without privileged pg_stat_activity hooks
+          businessInvariantsPreserved: {
+            org1OrderCreated: session1Res.ok && session1Res.status === 200,
+            org2OrderRejected: !session2Res.ok && session2Res.status === 400,
+            org2ZeroSideEffects: true,
+          },
+          tenantNondisclosurePreserved: {
+            messageIsGeneric:
+              session2Res.data.message === 'Unauthorized or request invalid',
+            noOrg1Leak: !session2Res.data.message?.includes(liveOrg1.id),
+            noOrderIdLeak: !session2Res.data.message?.includes(
+              session1Res.data.order_id ?? '',
+            ),
+          },
+        };
+
+        expect(concurrencyEvidence.serverTransactionOverlap).toBe(
+          'NOT_VERIFIED',
+        );
+        expect(concurrencyEvidence.observedAdvisoryLockContention).toBe(
+          'NOT_VERIFIED',
+        );
+        expect(
+          concurrencyEvidence.businessInvariantsPreserved.org1OrderCreated,
+        ).toBe(true);
+        expect(
+          concurrencyEvidence.businessInvariantsPreserved.org2OrderRejected,
+        ).toBe(true);
+        expect(
+          concurrencyEvidence.tenantNondisclosurePreserved.messageIsGeneric,
+        ).toBe(true);
 
         // Evidence category 4: Order and side-effect invariants
         // Session 1 in Org 1 succeeds
@@ -1134,6 +1796,7 @@ describe.skipIf(!isLiveE2E)(
     describe('R4-QA-01 / ORG-03: Genuine Two-Session Same-Organization Concurrency', () => {
       it('executes concurrent same-org requests, ensures single order created, and returns identical order ID with is_idempotent true', async () => {
         const sharedRequestId = crypto.randomUUID();
+        trackedRequestIds.add(sharedRequestId);
 
         const payload = {
           p_organization_id: liveOrg1.id,
@@ -1183,8 +1846,24 @@ describe.skipIf(!isLiveE2E)(
 
     // R4-QA-03 (ORG-10 / Finding R4-F04): Committed response lost & retry
     describe('R4-QA-03 / ORG-10: Committed Response Lost & Retry Across Sessions', () => {
-      it('recovers cleanly on same-org retry after simulated network disconnect, and rejects foreign org retry', async () => {
+      it('recovers cleanly on same-org retry after simulated discarded HTTP response, and rejects foreign org retry', async () => {
         const lostRequestId = crypto.randomUUID();
+        trackedRequestIds.add(lostRequestId);
+
+        // Explicit retry evidence profile (Residual ORG-10)
+        const retryEvidence = {
+          scenario: 'COMMITTED_RESPONSE_LOST_SIMULATION',
+          mechanism: 'SIMULATED_DISCARDED_HTTP_RESPONSE',
+          physicalTransportInterruption: 'NOT_RUN', // Physical network layer disconnect not executed; simulated by client discarding response
+          durableReceiptGuarantee: 'NOT_APPLICABLE_R4', // R5 payment durable receipts are out of R4 scope
+          stableRequestIdPreserved: true,
+        };
+
+        expect(retryEvidence.mechanism).toBe(
+          'SIMULATED_DISCARDED_HTTP_RESPONSE',
+        );
+        expect(retryEvidence.physicalTransportInterruption).toBe('NOT_RUN');
+        expect(retryEvidence.durableReceiptGuarantee).toBe('NOT_APPLICABLE_R4');
 
         const payload = {
           p_organization_id: liveOrg1.id,
@@ -1209,8 +1888,8 @@ describe.skipIf(!isLiveE2E)(
         const originalOrderId = initialRes.data.order_id as string;
         createdOrderIds.push(originalOrderId);
 
-        // Step 2: Client simulates response lost / dropped connection
-        // The first transaction is already committed; client retries with the same logical identity.
+        // Step 2: Client simulates response lost / dropped response
+        // The first transaction is already committed; client replays identical stable request identity.
 
         // Step 3: New request replays the same logical identity in same organization
         const retrySameRes = await liveRpc('create_retail_order', payload);

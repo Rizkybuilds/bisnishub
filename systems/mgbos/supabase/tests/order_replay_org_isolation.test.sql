@@ -3,7 +3,7 @@
 -- Covers Acceptance Criteria: AC-001 through AC-010 (ORG-01 to ORG-10)
 
 begin;
-select plan(60);
+select plan(65);
 
 -- ============================================================================
 -- 1. Database Privilege Catalog Verification (ORG-08 Fail-Closed Hardening)
@@ -712,6 +712,50 @@ select is(
   'ORG-09: Genuine B2B unique violation causes zero new audit entries'
 );
 
+-- Causal Provenance for B2B: Remove colliding row and verify identical invocation succeeds
+delete from app.orders where organization_id = (select org1 from test_ctx) and order_number = 'TS-O-2026-000003';
+update app.document_sequences set last_number = 2
+where organization_id = (select org1 from test_ctx)
+  and brand_id = (select brand1 from test_ctx)
+  and document_type = 'O';
+
+create temporary table b2b_collision_causal_resolved as select app.create_order_from_quote(
+  p_organization_id => org1,
+  p_actor_id => 'a1111111-1111-4000-8000-000000000001',
+  p_request_id => 'f1111111-1111-4000-8000-000000000001',
+  p_quote_version_id => (select (result->>'version_id')::uuid from test_b2b_quote_2),
+  p_shipping_address => '{"recipient_name":"Causal Proof B2B","phone":"081234567","street":"Jl. Test","city":"Bandung"}'::jsonb
+) result from test_ctx;
+
+select ok(
+  (select (result->>'order_id') from b2b_collision_causal_resolved) is not null,
+  'ORG-09: Causal provenance: create_order_from_quote succeeds immediately once colliding order_number is removed'
+);
+
+select is(
+  (select (result->>'order_number') from b2b_collision_causal_resolved),
+  'TS-O-2026-000003',
+  'ORG-09: Causal provenance: Resolved B2B order receives the previously colliding TS-O-2026-000003'
+);
+
+-- Pre-insert colliding order for Retail collision test: occupies 'TS-O-2026-000004'
+insert into app.orders (
+  id, organization_id, brand_id, customer_account_id,
+  order_number, status, currency, subtotal, discount_total,
+  shipping_total, grand_total, estimated_cost_total, estimated_gross_profit,
+  customer_snapshot, shipping_address_snapshot, payment_terms_snapshot,
+  created_by_user_id, request_id, order_type
+)
+select
+  gen_random_uuid(), org1, brand1, cust1,
+  'TS-O-2026-000004', 'CONFIRMED', 'IDR', 100000, 0,
+  10000, 110000, 50000, 50000,
+  '{"name":"Pre-colliding Retail Order"}'::jsonb,
+  '{"recipient_name":"Test","phone":"081234","street":"Jl. Test No. 2","city":"Bandung"}'::jsonb,
+  '{"terms":"CASH"}'::jsonb,
+  'a1111111-1111-4000-8000-000000000001', gen_random_uuid(), 'RETAIL_DIRECT'
+from test_ctx;
+
 -- Baseline for Retail collision
 create temporary table retail_collision_pre as select
   (select count(*)::integer from app.orders where organization_id = (select org1 from test_ctx)) as orders_count,
@@ -722,9 +766,34 @@ create temporary table retail_collision_pre as select
 
 -- ORG-09: Retail collision source established
 select is(
-  (select count(*)::integer from app.orders where organization_id = (select org1 from test_ctx) and order_number = 'TS-O-2026-000003'),
+  (select count(*)::integer from app.orders where organization_id = (select org1 from test_ctx) and order_number = 'TS-O-2026-000004'),
   1,
-  'ORG-09: Retail collision source verified: TS-O-2026-000003 remains occupied in Org 1'
+  'ORG-09: Retail collision source verified: TS-O-2026-000004 remains occupied in Org 1'
+);
+
+-- ORG-09: Uniqueness constraint provenance for Retail: direct insert triggers 23505
+select throws_ok(
+  $q$
+    insert into app.orders (
+      id, organization_id, brand_id, customer_account_id,
+      order_number, status, currency, subtotal, discount_total,
+      shipping_total, grand_total, estimated_cost_total, estimated_gross_profit,
+      customer_snapshot, shipping_address_snapshot, payment_terms_snapshot,
+      created_by_user_id, request_id, order_type
+    )
+    select
+      gen_random_uuid(), org1, brand1, cust1,
+      'TS-O-2026-000004', 'CONFIRMED', 'IDR', 100000, 0,
+      10000, 110000, 50000, 50000,
+      '{}'::jsonb,
+      '{"recipient_name":"Test","phone":"081234","street":"Jl. Test No. 2","city":"Bandung"}'::jsonb,
+      '{"terms":"CASH"}'::jsonb,
+      'a1111111-1111-4000-8000-000000000001', gen_random_uuid(), 'RETAIL_DIRECT'
+    from test_ctx;
+  $q$,
+  '23505',
+  null,
+  'ORG-09: Retail collision provenance verified: Duplicate TS-O-2026-000004 directly violates unique constraint (23505)'
 );
 
 -- ORG-09: Genuine uniqueness collision on orders_organization_id_order_number_key in create_retail_order
@@ -779,6 +848,40 @@ select is(
   (select count(*)::integer from app.inventory_reservations where organization_id = (select org1 from test_ctx)),
   (select res_count from retail_collision_pre),
   'ORG-09: Genuine Retail unique violation causes zero new inventory reservations'
+);
+
+-- Causal Provenance for Retail: Remove colliding row and verify identical invocation succeeds
+delete from app.orders where organization_id = (select org1 from test_ctx) and order_number = 'TS-O-2026-000004';
+update app.document_sequences set last_number = 3
+where organization_id = (select org1 from test_ctx)
+  and brand_id = (select brand1 from test_ctx)
+  and document_type = 'O';
+
+create temporary table retail_collision_causal_resolved as select app.create_retail_order(
+  p_organization_id => org1,
+  p_actor_id => 'a1111111-1111-4000-8000-000000000001',
+  p_brand_id => brand1,
+  p_customer_account_id => cust1,
+  p_items => jsonb_build_array(
+    jsonb_build_object(
+      'inventory_item_id', (select (result->>'inventory_item_id')::uuid from test_retail_sku),
+      'quantity', 1,
+      'unit_price', 65000::bigint
+    )
+  ),
+  p_request_id => 'f1111111-1111-4000-8000-000000000002',
+  p_auto_pay => false
+) result from test_ctx;
+
+select ok(
+  (select (result->>'order_id') from retail_collision_causal_resolved) is not null,
+  'ORG-09: Causal provenance: create_retail_order succeeds immediately once colliding order_number is removed'
+);
+
+select is(
+  (select (result->>'order_number') from retail_collision_causal_resolved),
+  'TS-O-2026-000004',
+  'ORG-09: Causal provenance: Resolved Retail order receives the previously colliding TS-O-2026-000004'
 );
 
 
