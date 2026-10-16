@@ -194,11 +194,13 @@ jobs:
 
       - name: Prove missing disposable confirmation fails closed before mutation (R4 QA)
         if: github.ref == 'refs/heads/qa/mgbos-sec02-r4-live-assurance' || github.base_ref == 'security/mgbos-sec02-order-replay-isolation'
+        env:
+          MGBOS_DESTRUCTIVE_LOCAL_E2E: "1"
         shell: bash
         run: |
           set -euo pipefail
           neg_status=0
-          MGBOS_DESTRUCTIVE_LOCAL_E2E=1 pnpm exec vitest run scripts/order-replay-org-isolation.test.ts 2>&1 | tee /tmp/raw-negative-control.log || neg_status=$?
+          pnpm exec vitest run scripts/order-replay-org-isolation.test.ts 2>&1 | tee /tmp/raw-negative-control.log || neg_status=$?
 
           if [ "$neg_status" -eq 0 ]; then
             echo "::error::Intentional negative control without disposable confirmation unexpectedly succeeded!"
@@ -216,16 +218,20 @@ jobs:
 
       - name: Execute live C-SEC-02 PostgREST security assurance suite (R4 QA)
         if: github.ref == 'refs/heads/qa/mgbos-sec02-r4-live-assurance' || github.base_ref == 'security/mgbos-sec02-order-replay-isolation'
+        env:
+          MGBOS_DESTRUCTIVE_LOCAL_E2E: "1"
+          MGBOS_DISPOSABLE_INSTANCE_CONFIRMED: "1"
         shell: bash
         run: |
           set -euo pipefail
           pos_status=0
-          MGBOS_DESTRUCTIVE_LOCAL_E2E=1 MGBOS_DISPOSABLE_INSTANCE_CONFIRMED=1 pnpm exec vitest run scripts/order-replay-org-isolation.test.ts --reporter=verbose 2>&1 | tee /tmp/raw-live-test.log || pos_status=$?
+          pnpm exec vitest run scripts/order-replay-org-isolation.test.ts --reporter=verbose 2>&1 | tee /tmp/raw-live-test.log || pos_status=$?
 
           sed -E 's/(eyJ[a-zA-Z0-9_\-]{10,}\.[a-zA-Z0-9_\-]{10,}\.[a-zA-Z0-9_\-]{10,})/[REDACTED_JWT]/g' /tmp/raw-live-test.log > .qa-evidence/r4-live-assurance/positive-test-output.log
 
           if [ "$pos_status" -ne 0 ]; then
             echo "::error::Live C-SEC-02 security suite failed with status $pos_status"
+            cat /tmp/raw-live-test.log
             exit 1
           fi
 
