@@ -121,7 +121,7 @@ jobs:
           fi
 
           # 2. Verify git checkout ancestry against expected PR #70 HEAD
-          EXPECTED_PR70_HEAD="e526ab4181124198713c11057df3ec94595e13f3"
+          EXPECTED_PR70_HEAD="15053595c12c59ed44a7b778c5da8e1fa88802b5"
 
           if ! git merge-base --is-ancestor "$EXPECTED_PR70_HEAD" HEAD; then
             echo "::error::Execution rejected: current commit does not descend from expected PR #70 HEAD ($EXPECTED_PR70_HEAD)"
@@ -179,7 +179,7 @@ jobs:
             repository: process.env.GITHUB_REPOSITORY || "unknown",
             ref: process.env.GITHUB_REF || "unknown",
             headSha: process.env.CURRENT_HEAD_SHA || process.env.GITHUB_SHA || "unknown",
-            pr70BaseSha: "e526ab4181124198713c11057df3ec94595e13f3",
+            pr70BaseSha: "15053595c12c59ed44a7b778c5da8e1fa88802b5",
             canonicalOrigin: "http://127.0.0.1:55431",
             disposableTargetConfirmed: true,
             baselineOrganizations: 1,
@@ -244,21 +244,38 @@ jobs:
             exit 1
           fi
 
-          if grep -E '[1-9][0-9]* skipped' /tmp/raw-live-test.log; then
-            echo "::error::Live security suite reported skipped tests; live cases did not execute fully"
-            tail -n 25 /tmp/raw-live-test.log | while IFS= read -r line; do
-              echo "::error::$line"
-            done
-            exit 1
-          fi
-
-          if ! grep -q "33 passed" /tmp/raw-live-test.log; then
-            echo "::error::Expected 33 passed tests in live security suite output"
-            tail -n 25 /tmp/raw-live-test.log | while IFS= read -r line; do
-              echo "::error::$line"
-            done
-            exit 1
-          fi
+          node -e '
+            const fs = require("fs");
+            function stripAnsi(str) { return str.replace(/\u001b\[[0-9;]*[a-zA-Z]/g, "").replace(/\x1B\[[0-9;]*[a-zA-Z]/g, ""); }
+            function parseVitestSummary(logText) {
+              const clean = stripAnsi(logText);
+              const testLines = clean.split(/\r?\n/).filter(l => /^\s*Tests\s+/.test(l));
+              if (testLines.length !== 1) throw new Error("Expected exactly 1 Tests summary line, found " + testLines.length);
+              const summaryLine = testLines[0].trim();
+              const passedMatch = summaryLine.match(/(\d+)\s+passed/);
+              const failedMatch = summaryLine.match(/(\d+)\s+failed/);
+              const skippedMatch = summaryLine.match(/(\d+)\s+skipped/);
+              const passedCount = passedMatch ? parseInt(passedMatch[1], 10) : 0;
+              const failedCount = failedMatch ? parseInt(failedMatch[1], 10) : 0;
+              const skippedCount = skippedMatch ? parseInt(skippedMatch[1], 10) : 0;
+              return { passedCount, failedCount, skippedCount, total: passedCount + failedCount + skippedCount, summaryLine };
+            }
+            const logContent = fs.readFileSync("/tmp/raw-live-test.log", "utf8");
+            const parsed = parseVitestSummary(logContent);
+            if (parsed.failedCount > 0) {
+              console.error("::error::Live suite reported " + parsed.failedCount + " failures: " + parsed.summaryLine);
+              process.exit(1);
+            }
+            if (parsed.skippedCount > 0) {
+              console.error("::error::Live suite reported " + parsed.skippedCount + " skipped tests; all 33 live tests must execute: " + parsed.summaryLine);
+              process.exit(1);
+            }
+            if (parsed.passedCount !== 33) {
+              console.error("::error::Expected 33 passed live tests, got " + parsed.passedCount + ": " + parsed.summaryLine);
+              process.exit(1);
+            }
+            console.log("Live test suite verified: " + parsed.summaryLine);
+          '
 
       - name: Verify post-test fixture cleanup and absence (R4 QA)
         if: always() && (github.ref == 'refs/heads/qa/mgbos-sec02-r4-live-assurance' || github.base_ref == 'security/mgbos-sec02-order-replay-isolation')
@@ -289,17 +306,61 @@ jobs:
 
           node -e '
           const fs = require("fs");
+
+          function stripAnsi(str) {
+            return str.replace(/\u001b\[[0-9;]*[a-zA-Z]/g, "").replace(/\x1B\[[0-9;]*[a-zA-Z]/g, "");
+          }
+
+          function parseVitestSummary(logText) {
+            const clean = stripAnsi(logText);
+            const lines = clean.split(/\r?\n/);
+            const testLines = lines.filter(l => /^\s*Tests\s+/.test(l));
+            if (testLines.length === 0) throw new Error("No valid Tests summary line found in output");
+            if (testLines.length > 1) throw new Error("Ambiguous Tests summary: found " + testLines.length + " matching lines");
+            const summaryLine = testLines[0].trim();
+            const passedMatch = summaryLine.match(/(\d+)\s+passed/);
+            const failedMatch = summaryLine.match(/(\d+)\s+failed/);
+            const skippedMatch = summaryLine.match(/(\d+)\s+skipped/);
+            const passedCount = passedMatch ? parseInt(passedMatch[1], 10) : 0;
+            const failedCount = failedMatch ? parseInt(failedMatch[1], 10) : 0;
+            const skippedCount = skippedMatch ? parseInt(skippedMatch[1], 10) : 0;
+            const totalTestsExecuted = passedCount + failedCount + skippedCount;
+            if (totalTestsExecuted === 0) throw new Error("Parsed zero total tests");
+            return { passedCount, failedCount, skippedCount, totalTestsExecuted, summaryLine };
+          }
+
+          // 1. Required parser negative controls (QA-F01)
+          const r1 = parseVitestSummary(" Test Files  1 passed (1)\n      Tests  33 passed (33)");
+          if (r1.passedCount !== 33 || r1.failedCount !== 0 || r1.skippedCount !== 0) {
+            throw new Error("Parser Control 1 failed: did not extract 33 passed");
+          }
+          const r2 = parseVitestSummary(" Test Files  1 failed (1)\n      Tests  32 passed | 1 failed (33)");
+          if (r2.passedCount !== 32 || r2.failedCount !== 1) {
+            throw new Error("Parser Control 2 failed: did not detect failure");
+          }
+          const r3 = parseVitestSummary("      Tests  28 passed | 5 skipped (33)");
+          if (r3.passedCount !== 28 || r3.skippedCount !== 5) {
+            throw new Error("Parser Control 3 failed: did not detect skipped");
+          }
+          let threwMissing = false;
+          try { parseVitestSummary("No summary line here\nDone in 5s"); } catch { threwMissing = true; }
+          if (!threwMissing) throw new Error("Parser Control 4 failed: missing summary did not fail closed");
+          let threwAmbiguous = false;
+          try { parseVitestSummary(" Tests  10 passed (10)\n Tests  20 passed (20)"); } catch { threwAmbiguous = true; }
+          if (!threwAmbiguous) throw new Error("Parser Control 5 failed: ambiguous summary did not fail closed");
+
+          // 2. Parse live test log
           const logText = fs.existsSync("/tmp/raw-live-test.log") ? fs.readFileSync("/tmp/raw-live-test.log", "utf8") : "";
-          const passedMatch = logText.match(/(\d+) passed/);
-          const failedMatch = logText.match(/(\d+) failed/);
-          const passedCount = passedMatch ? parseInt(passedMatch[1], 10) : 0;
-          const failedCount = failedMatch ? parseInt(failedMatch[1], 10) : 0;
+          if (!logText) throw new Error("Raw live test log is empty or missing");
+          const parsed = parseVitestSummary(logText);
+
+          // 3. Write summary.json with verified dynamic parsed values
           fs.writeFileSync(".qa-evidence/r4-live-assurance/summary.json", JSON.stringify({
             testSuite: "scripts/order-replay-org-isolation.test.ts",
-            totalTestsExecuted: passedCount + failedCount,
-            passedCount,
-            failedCount,
-            skippedCount: 0,
+            totalTestsExecuted: parsed.totalTestsExecuted,
+            passedCount: parsed.passedCount,
+            failedCount: parsed.failedCount,
+            skippedCount: parsed.skippedCount,
             negativeControlVerified: true,
             fixtureCleanupVerified: true,
             postRunAbsenceVerified: true,
