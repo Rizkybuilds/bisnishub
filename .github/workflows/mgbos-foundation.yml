@@ -150,12 +150,12 @@ jobs:
           # 6. Verify canonical local origin and zero existing transactional data
           CANONICAL_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"
 
-          if ! curl --silent --fail --output /dev/null "http://127.0.0.1:55431/rest/v1/"; then
+          if ! curl --silent --fail -H "apikey: $CANONICAL_KEY" --output /dev/null "http://127.0.0.1:55431/rest/v1/"; then
             echo "::error::Connectivity to canonical local Supabase origin (http://127.0.0.1:55431) failed"
             exit 1
           fi
 
-          orgs_json=$(curl --silent --fail -H "apikey: $CANONICAL_KEY" -H "Authorization: Bearer $CANONICAL_KEY" "http://127.0.0.1:55431/rest/v1/organizations?select=id,code")
+          orgs_json=$(curl --silent --fail -H "apikey: $CANONICAL_KEY" -H "Authorization: Bearer $CANONICAL_KEY" -H "Accept-Profile: app" "http://127.0.0.1:55431/rest/v1/organizations?select=id,code")
           org_count=$(echo "$orgs_json" | node -e "const d=JSON.parse(require('fs').readFileSync(0,'utf8')); if(d.length!==1||d[0].code!=='multigraph-group'){process.exit(1)}else{console.log(d.length)}")
           if [ "$org_count" -ne 1 ]; then
             echo "::error::Target database verification failed: expected strictly 1 'multigraph-group' organization, got: $orgs_json"
@@ -163,7 +163,7 @@ jobs:
           fi
 
           for table in orders invoices inventory_reservations order_audit; do
-            rows=$(curl --silent --fail -H "apikey: $CANONICAL_KEY" -H "Authorization: Bearer $CANONICAL_KEY" "http://127.0.0.1:55431/rest/v1/$table?select=id")
+            rows=$(curl --silent --fail -H "apikey: $CANONICAL_KEY" -H "Authorization: Bearer $CANONICAL_KEY" -H "Accept-Profile: app" "http://127.0.0.1:55431/rest/v1/$table?select=id")
             count=$(echo "$rows" | node -e "console.log(JSON.parse(require('fs').readFileSync(0,'utf8')).length)")
             if [ "$count" -ne 0 ]; then
               echo "::error::Target database is not clean: table $table contains $count rows"
@@ -246,14 +246,14 @@ jobs:
           set -euo pipefail
           CANONICAL_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"
 
-          orgs_json=$(curl --silent --fail -H "apikey: $CANONICAL_KEY" -H "Authorization: Bearer $CANONICAL_KEY" "http://127.0.0.1:55431/rest/v1/organizations?select=id,code")
+          orgs_json=$(curl --silent --fail -H "apikey: $CANONICAL_KEY" -H "Authorization: Bearer $CANONICAL_KEY" -H "Accept-Profile: app" "http://127.0.0.1:55431/rest/v1/organizations?select=id,code")
           post_org_count=$(echo "$orgs_json" | node -e "const d=JSON.parse(require('fs').readFileSync(0,'utf8')); if(d.length!==1||d[0].code!=='multigraph-group'){process.exit(1)}else{console.log(d.length)}")
           if [ "$post_org_count" -ne 1 ]; then
             echo "::error::Post-test cleanup verification failed: foreign organizations remain in database: $orgs_json"
             exit 1
           fi
 
-          skus=$(curl --silent --fail -H "apikey: $CANONICAL_KEY" -H "Authorization: Bearer $CANONICAL_KEY" "http://127.0.0.1:55431/rest/v1/inventory_items?sku=like.SEC02-LIVE-SKU*%25&select=id")
+          skus=$(curl --silent --fail -H "apikey: $CANONICAL_KEY" -H "Authorization: Bearer $CANONICAL_KEY" -H "Accept-Profile: app" "http://127.0.0.1:55431/rest/v1/inventory_items?sku=like.SEC02-LIVE-SKU*%25&select=id")
           sku_count=$(echo "$skus" | node -e "console.log(JSON.parse(require('fs').readFileSync(0,'utf8')).length)")
           if [ "$sku_count" -ne 0 ]; then
             echo "::error::Post-test cleanup verification failed: synthetic inventory items remain: $skus"
