@@ -121,7 +121,7 @@ jobs:
           fi
 
           # 2. Verify git checkout ancestry against expected PR #70 HEAD
-          EXPECTED_PR70_HEAD="7a4bb625b39b85728195254601d88ee92de5e8d2"
+          EXPECTED_PR70_HEAD="26a45c1568fbd8de124ee048903aabf5667d94f7"
 
           if ! git merge-base --is-ancestor "$EXPECTED_PR70_HEAD" HEAD; then
             echo "::error::Execution rejected: current commit does not descend from expected PR #70 HEAD ($EXPECTED_PR70_HEAD)"
@@ -179,7 +179,7 @@ jobs:
             repository: process.env.GITHUB_REPOSITORY || "unknown",
             ref: process.env.GITHUB_REF || "unknown",
             headSha: process.env.CURRENT_HEAD_SHA || process.env.GITHUB_SHA || "unknown",
-            pr70BaseSha: "7a4bb625b39b85728195254601d88ee92de5e8d2",
+            pr70BaseSha: "26a45c1568fbd8de124ee048903aabf5667d94f7",
             canonicalOrigin: "http://127.0.0.1:55431",
             disposableTargetConfirmed: true,
             baselineOrganizations: 1,
@@ -267,6 +267,7 @@ jobs:
           set -euo pipefail
           CANONICAL_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"
 
+          # 1. Verify transient foreign organizations were cleaned up (strictly 1 organization remains: multigraph-group)
           orgs_json=$(curl --silent --fail -H "apikey: $CANONICAL_KEY" -H "Authorization: Bearer $CANONICAL_KEY" -H "Accept-Profile: app" "http://127.0.0.1:55431/rest/v1/organizations?select=id,code")
           post_org_count=$(echo "$orgs_json" | node -e "const d=JSON.parse(require('fs').readFileSync(0,'utf8')); if(d.length!==1||d[0].code!=='multigraph-group'){process.exit(1)}else{console.log(d.length)}")
           if [ "$post_org_count" -ne 1 ]; then
@@ -274,12 +275,17 @@ jobs:
             exit 1
           fi
 
-          skus=$(curl --silent --fail -H "apikey: $CANONICAL_KEY" -H "Authorization: Bearer $CANONICAL_KEY" -H "Accept-Profile: app" "http://127.0.0.1:55431/rest/v1/inventory_items?sku=like.SEC02-LIVE-SKU*%25&select=id")
-          sku_count=$(echo "$skus" | node -e "console.log(JSON.parse(require('fs').readFileSync(0,'utf8')).length)")
-          if [ "$sku_count" -ne 0 ]; then
-            echo "::error::Post-test cleanup verification failed: synthetic inventory items remain: $skus"
-            exit 1
-          fi
+          main_org_id=$(echo "$orgs_json" | node -e "console.log(JSON.parse(require('fs').readFileSync(0,'utf8'))[0].id)")
+
+          # 2. Verify zero transactional records (orders, invoices, inventory_mutations) exist for any foreign organization
+          for table in orders invoices inventory_mutations; do
+            foreign_records=$(curl --silent --fail -H "apikey: $CANONICAL_KEY" -H "Authorization: Bearer $CANONICAL_KEY" -H "Accept-Profile: app" "http://127.0.0.1:55431/rest/v1/$table?organization_id=neq.$main_org_id&select=id")
+            count=$(echo "$foreign_records" | node -e "console.log(JSON.parse(require('fs').readFileSync(0,'utf8')).length)")
+            if [ "$count" -ne 0 ]; then
+              echo "::error::Post-test cleanup verification failed: table $table contains $count foreign records: $foreign_records"
+              exit 1
+            fi
+          done
 
           node -e '
           const fs = require("fs");
@@ -312,6 +318,18 @@ jobs:
         with:
           name: mgbos-r4-live-security-assurance
           path: systems/mgbos/.qa-evidence/r4-live-assurance/
+
+      - name: Dispose isolated database and verify unreachable (R4 QA)
+        if: always() && (github.ref == 'refs/heads/qa/mgbos-sec02-r4-live-assurance' || github.base_ref == 'security/mgbos-sec02-order-replay-isolation')
+        shell: bash
+        run: |
+          pnpm db:stop > /dev/null 2>&1 || true
+          if curl --silent --fail --connect-timeout 2 "http://127.0.0.1:55431/rest/v1/" > /dev/null 2>&1; then
+            echo "::error::Database disposal failed: database is still reachable on canonical port 55431"
+            exit 1
+          fi
+          echo "Database disposal verified: canonical port 55431 is unreachable."
+
       - if: always()
         run: pnpm db:stop > /dev/null 2>&1
 
