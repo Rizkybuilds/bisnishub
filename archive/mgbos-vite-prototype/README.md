@@ -2,7 +2,7 @@
 
 Dipensiunkan pada 2026-09-28 setelah Rizky mengonfirmasi tidak digunakan lagi dan boleh diarsipkan. Hanya referensi UI/histori; jangan deploy atau gunakan sebagai sumber kontrak bisnis MGBOS.
 
-Pengganti aktif: [workspace Next.js MGBOS](../../mgbos/README.md). Lokasi terakhir: `apps/mgbos/`, base `ba4a6d2c7ed4155b3ff8f5ffee1c4a7a30b796dc`.
+Pengganti aktif: [workspace Next.js MGBOS](../../systems/mgbos/README.md). Lokasi terakhir: `apps/mgbos/`, base `ba4a6d2c7ed4155b3ff8f5ffee1c4a7a30b796dc`.
 
 Empat belas file sumber/config/lockfile dipindahkan byte-for-byte. Halaman home berisi metrik contoh, sepuluh rute modul berupa placeholder, dan brand selector hanya state UI. Tidak ada alur transaksi backend yang ditemukan dalam source prototype. Desain shell tetap tersedia untuk referensi, bukan jaminan kesetaraan fitur dengan Next.js.
 

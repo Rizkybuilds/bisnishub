@@ -59,11 +59,11 @@ flowchart LR
 ### 🟢 Sprint 1: Core Foundation & Clean App Bootstrap (Rilis 23 Sep 2026)
 *Target: Aplikasi bersih `apps/mgbos`, skema database holding multi-brand, dan service penomoran dokumen.*
 
-- [x] **MGBOS-001**: Clean App Scaffolding `apps/mgbos` (React 18 + Strict TypeScript + Vite 6 + Tailwind CSS) di Port **3001**.
-- [x] **MGBOS-002**: Database Migration Holding Multi-Brand ([`20260923_mgbos_foundation.sql`](file:///c:/Users/Rizky/bisnishub/supabase/migrations/20260923_mgbos_foundation.sql)) — Tabel `organizations`, `brands`, `business_lines`, `channels` beserta seed data resmi MultiGraph Group.
-- [x] **MGBOS-003**: System Context & Brand Switcher Helper ([`systemContext.ts`](file:///c:/Users/Rizky/bisnishub/packages/shared/src/domain/context/systemContext.ts)) untuk penandaan transaksi multi-brand.
-- [x] **MGBOS-004**: Deterministic Document Number Service ([`documentNumberService.ts`](file:///c:/Users/Rizky/bisnishub/packages/shared/src/domain/common/documentNumberService.ts)) — Generator & validator nomor dokumen resmi (`TS-ORD-2026-0001`, `MG-QUO-2026-0042`, dll.) dengan 100% Vitest pass.
-- [x] **MGBOS Shell & Command Center v0**: Layout sidebar hierarki MGBOS 0.5.1, Active Brand Selector dinamis, dan dashboard Founder Command Center v0 ([`HomePage.tsx`](file:///c:/Users/Rizky/bisnishub/apps/mgbos/src/pages/HomePage.tsx)).
+- [x] **MGBOS-001**: Clean App Scaffolding `apps/mgbos` (React 18 + Strict TypeScript + Vite 6 + Tailwind CSS) di Port **3001** (arsip prototype di `archive/mgbos-vite-prototype/`).
+- [x] **MGBOS-002**: Database Migration Holding Multi-Brand (`20260923_mgbos_foundation.sql`, historis) — Tabel `organizations`, `brands`, `business_lines`, `channels` beserta seed data resmi MultiGraph Group (kini di `systems/mgbos/supabase/migrations/`).
+- [x] **MGBOS-003**: System Context & Brand Switcher Helper (`systemContext.ts`, arsip `archive/teestock-v1/packages/shared/`) untuk penandaan transaksi multi-brand.
+- [x] **MGBOS-004**: Deterministic Document Number Service (`documentNumberService.ts`, arsip `archive/teestock-v1/packages/shared/`) — Generator & validator nomor dokumen resmi (`TS-ORD-2026-0001`, `MG-QUO-2026-0042`, dll.) dengan 100% Vitest pass.
+- [x] **MGBOS Shell & Command Center v0**: Layout sidebar hierarki MGBOS 0.5.1, Active Brand Selector dinamis, dan dashboard Founder Command Center v0 (`HomePage.tsx`, prototype historis).
 
 ---
 

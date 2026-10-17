@@ -258,6 +258,10 @@ bisnis/multigraph/
 bisnis/teestock/
 
 bisnis/rizkybuild/
+
+bisnis/kaskita/
+
+bisnis/titik-buta/
 ```
 
 Business sources own business semantics within their declared scope.

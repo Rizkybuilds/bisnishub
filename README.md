@@ -10,12 +10,12 @@ Mulai dari [indeks proyek](docs/project-index.md), [aturan direktori](docs/engin
 | Bagian | Lokasi | Status |
 | --- | --- | --- |
 | MGBOS | [systems/mgbos](systems/mgbos/README.md) | Implementasi Next.js; validasi kesiapan per revisi |
-| JARVIS | [systems/jarvis/docs](systems/jarvis/docs/charter.md) | Dokumentasi arsitektur; belum ada runtime yang diverifikasi |
-| KasKita | `systems/kaskita/` | Sistem independen di luar holding |
+| JARVIS | [systems/jarvis](systems/jarvis/README.md) | Dokumentasi arsitektur; belum ada runtime yang diverifikasi |
+| KasKita | [systems/kaskita](systems/kaskita/README.md) | Sistem independen di luar holding |
 | Asisten Python | [tools/assistant](tools/assistant/README.md) | CLI existing, terpisah dari JARVIS |
-| Pengetahuan bisnis | `bisnis/` | Brand, SOP, riset, keuangan dan perencanaan |
-| Catatan sesi | `catatan/` | Histori, termasuk dokumentasi 27 September |
-| Implementasi retired | [archive](archive/teestock-v1/README.md) | Referensi; bukan dependency atau deployment aktif |
+| Pengetahuan bisnis | [bisnis](bisnis/README.md) | Brand, SOP, riset, keuangan dan perencanaan |
+| Catatan sesi | [catatan](catatan/README.md) | Histori, termasuk dokumentasi 27 September |
+| Implementasi retired | [archive](archive/README.md) | Referensi; bukan dependency atau deployment aktif |
 
 ## Menjalankan dan memeriksa
 

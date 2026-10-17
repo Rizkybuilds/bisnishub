@@ -101,9 +101,9 @@ Logo resmi TeeStock merupakan siluet kaos lipat dengan kerah crewneck berusuk te
   3. **Line-Weight Heavyweight (Stroke 4.5pt):** Kontur garis tebal yang merefleksikan ketebalan kain katun murni NSA 24s Heavyweight (180 g/m²).
 
 * **Format & Lokasi Aset Master:**
-  - **Aset Asli Master Founder:** [`Logo TeeStock Monokrom.png`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/Logo%20TeeStock%20Monokrom.png) (1024x1024 px hi-res).
-  - **Master Vector SVG (Monokrom):** [`teestock-logo.svg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/brand/teestock-logo.svg) — Vektor murni `viewBox="0 0 100 100"` untuk cetak sablon, hangtag, dan DTF gang sheet.
-  - **App & Favicon Badge SVG:** [`web/public/logo-teestock.svg`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/web/public/logo-teestock.svg) — Emblem Terracotta `#D95D39` kontras tinggi untuk browser tab & mobile PWA.
+  - **Aset Asli Master Founder:** [`Logo TeeStock Monokrom.png`](Logo%20TeeStock%20Monokrom.png) (1024x1024 px hi-res).
+  - **Master Vector SVG (Monokrom):** [`teestock-logo.svg`](teestock-logo.svg) — Vektor murni `viewBox="0 0 100 100"` untuk cetak sablon, hangtag, dan DTF gang sheet.
+  - **App & Favicon Badge SVG:** [`logo-teestock.svg`](../../../../archive/teestock-v1/apps/storefront/public/logo-teestock.svg) — Emblem Terracotta `#D95D39` kontras tinggi untuk browser tab & mobile PWA.
 
 ### 4.2 Wordmark & Tipografi
 * **Wordmark "TeeStock":** Ditulis menggunakan tipe huruf *Plus Jakarta Sans 900 (Black)* dengan tracking super-rapat (`-0.03em`).

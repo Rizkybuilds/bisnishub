@@ -310,7 +310,7 @@ CREATE POLICY "admin_all_cash_ledger" ON ts_cash_ledger FOR ALL TO authenticated
 
 ## 6. CTO: Implementasi ARB Guard Engine di Kode Frontend (`pricing.js`)
 
-Untuk memastikan tidak ada celah di UI atau manipulasi client-side, kita siapkan kalkulator ARB dan guard function di [`src/constants/pricing.js`](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/web/src/constants/pricing.js):
+Untuk memastikan tidak ada celah di UI atau manipulasi client-side, kita siapkan kalkulator ARB dan guard function di [`pricing.js`](../../../../archive/teestock-v1/packages/shared/src/constants/pricing.js):
 
 ```javascript
 /**

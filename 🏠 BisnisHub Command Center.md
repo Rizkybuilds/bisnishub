@@ -46,7 +46,7 @@ Navigasi ke area sistem dan perkakas repositori:
 
 ## 3. Business Knowledge
 
-Pengetahuan bisnis, brand, riset pasar, dan SOP operasional dikelola di bawah direktori [bisnis/](bisnis/):
+Pengetahuan bisnis, brand, riset pasar, dan SOP operasional dikelola di bawah direktori [bisnis/](bisnis/README.md):
 
 - `bisnis/multigraph/` — Domain bisnis MultiGraph (holding industri cetak & kemasan).
 - `bisnis/teestock/` — Domain bisnis TeeStock (apparel, custom atelier & blanks).
@@ -60,8 +60,8 @@ Pengetahuan bisnis, brand, riset pasar, dan SOP operasional dikelola di bawah di
 
 Dokumen histori, arsip kode lama, dan catatan sesi:
 
-- [catatan/](catatan/) — Log harian, histori review mingguan, dan catatan sesi.
-- [archive/](archive/) — Implementasi retired (termasuk TeeStock V1 dan MGBOS Vite prototype).
+- [catatan/](catatan/README.md) — Log harian, histori review mingguan, dan catatan sesi.
+- [archive/](archive/README.md) — Implementasi retired (termasuk TeeStock V1 dan MGBOS Vite prototype).
 
 *Area ini bersifat historis/referensi dan tidak boleh diperlakukan sebagai implementasi aktif atau otoritas kanonikal.*
 

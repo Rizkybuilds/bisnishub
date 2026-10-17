@@ -36,7 +36,7 @@ tags:
 ---
 
 ### Langkah 2: Jalankan Script Tunggal (`schema.sql`)
-1. Buka file [schema.sql](file:///c:/Users/Rizky/bisnishub/bisnis/teestock/database/schema.sql) di text editor.
+1. Buka file [schema.sql](schema.sql) di text editor.
 2. **Copy seluruh isinya** (`Ctrl + A` -> `Ctrl + C`).
 3. Paste ke dalam SQL Editor Supabase.
 4. Klik tombol hijau **"Run"** (atau tekan `Ctrl + Enter`).
