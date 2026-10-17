@@ -66,11 +66,12 @@ describe('TeeStock S0-A Route & Content Invariant Tests', () => {
     expect(contactPage).not.toContain('tel:');
     expect(contactPage).not.toContain('mailto:');
 
-    // Must communicate that contact channels are not yet active
-    expect(contactPage).toContain(
-      'Status Aktivasi Saluran Langsung: Belum Dibuka untuk Publik',
-    );
-    expect(contactPage).toContain('belum diaktifkan');
+    // Must communicate clearly that online contact is not active yet without developer jargon
+    expect(contactPage).toContain('Saluran Kontak Daring Sedang Disiapkan');
+    expect(contactPage).toContain('belum dibuka untuk umum');
+    expect(contactPage).not.toContain('repositori ini');
+    expect(contactPage).not.toContain('public-activation gate');
+    expect(contactPage).not.toContain('tombol inert');
   });
 
   it('ensures Shop and Build Merch are marked unavailable and do not offer purchase actions', () => {
@@ -92,7 +93,7 @@ describe('TeeStock S0-A Route & Content Invariant Tests', () => {
     expect(homePage).toContain('Build Merch');
   });
 
-  it('preserves /custom-atelier deep link with backward-compatibility banner and navigation to /custom', () => {
+  it('preserves /custom-atelier deep link with integration banner and navigation to /custom', () => {
     const atelierPage = fs.readFileSync(
       path.join(teestockAppDir, 'src/app/custom-atelier/page.tsx'),
       'utf8',
@@ -100,9 +101,30 @@ describe('TeeStock S0-A Route & Content Invariant Tests', () => {
 
     expect(atelierPage).toContain('/custom');
     expect(atelierPage).toContain(
-      'Custom Atelier kini menjadi bagian dari TeeStock Custom',
+      'Layanan kustomisasi atelier kini terpadu bersama',
     );
     expect(atelierPage).toContain('/support/contact');
+    expect(atelierPage).not.toContain('deep-link');
+  });
+
+  it('ensures customer-facing interface does not expose internal engineering jargon or /health in footer', () => {
+    const footer = fs.readFileSync(
+      path.join(teestockAppDir, 'src/components/Footer.tsx'),
+      'utf8',
+    );
+    const homePage = fs.readFileSync(
+      path.join(teestockAppDir, 'src/app/page.tsx'),
+      'utf8',
+    );
+
+    // Footer must not expose /health, MGBOS, Deep Link, or CX-S0-A to customers
+    expect(footer).not.toContain('/health');
+    expect(footer).not.toContain('MGBOS');
+    expect(footer).not.toContain('Deep Link');
+    expect(footer).not.toContain('CX-S0-A');
+
+    // Home must not expose engineering phase codes
+    expect(homePage).not.toContain('CX-S0-A');
   });
 
   it('ensures accessibility invariants are present in layout and styles', () => {

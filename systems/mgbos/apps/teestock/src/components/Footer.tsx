@@ -18,16 +18,8 @@ export function Footer() {
               }}
             >
               Ekosistem produksi dan kustomisasi apparel terpadu dengan standar
-              kualitas terkurasi, tinjauan proses manusia yang transparan, dan
-              orientasi kebutuhan yang jelas.
-            </p>
-            <p
-              style={{
-                fontSize: '0.8125rem',
-                color: 'var(--color-ink-subtle)',
-              }}
-            >
-              Bagian dari platform bisnis MultiGraph Business OS (MGBOS).
+              kurasi material, tinjauan proses transparan, dan kejelasan alur
+              pemesanan.
             </p>
           </div>
 
@@ -38,19 +30,19 @@ export function Footer() {
                 <Link href="/custom">Custom Apparel</Link>
               </li>
               <li>
-                <Link href="/custom-atelier">Custom Atelier (Deep Link)</Link>
+                <Link href="/custom-atelier">Custom Atelier</Link>
               </li>
               <li>
-                <Link href="/business">Solusi Bisnis & B2B</Link>
+                <Link href="/business">Solusi Bisnis &amp; B2B</Link>
               </li>
               <li>
-                <Link href="/support/contact">Bantuan & Kontak</Link>
+                <Link href="/support/contact">Bantuan &amp; Kontak</Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="footer-col-title">Katalog & Sistem</h3>
+            <h3 className="footer-col-title">Katalog &amp; Informasi</h3>
             <ul className="footer-links">
               <li>
                 <span style={{ color: 'var(--color-ink-subtle)' }}>
@@ -62,9 +54,6 @@ export function Footer() {
                   Build Merch (Dalam Pengembangan)
                 </span>
               </li>
-              <li>
-                <Link href="/health">Status Sistem (/health)</Link>
-              </li>
             </ul>
           </div>
         </div>
@@ -73,9 +62,7 @@ export function Footer() {
           <div>
             © {new Date().getFullYear()} TeeStock. Seluruh hak cipta dilindungi.
           </div>
-          <div>
-            Fase CX-S0-A: Pengenalan informasi &amp; konsultasi terpandu.
-          </div>
+          <div>Informasi layanan &amp; konsultasi terpandu.</div>
         </div>
       </div>
     </footer>

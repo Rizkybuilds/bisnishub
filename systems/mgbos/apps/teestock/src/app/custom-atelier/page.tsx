@@ -4,29 +4,27 @@ import { Badge } from '../../components/Badge';
 import { NoticeBox } from '../../components/NoticeBox';
 
 export const metadata: Metadata = {
-  title: 'Custom Atelier (TeeStock Custom)',
+  title: 'Custom Atelier — TeeStock',
   description:
-    'Halaman deep-link Custom Atelier TeeStock. Akses informasi kustomisasi pakaian, tinjauan artwork, dan alur konsultasi.',
+    'Layanan kustomisasi pakaian pesanan khusus TeeStock dengan pilihan bahan terkurasi dan konsultasi manusia langsung.',
 };
 
 export default function CustomAtelierPage() {
   return (
     <div className="container">
-      {/* Deep Link Backward-Compatibility Banner */}
+      {/* Service Integration Notice */}
       <section
         className="section"
         style={{ marginBottom: '32px' }}
         aria-label="Pemberitahuan Navigasi"
       >
-        <NoticeBox
-          variant="info"
-          title="Tautan Terpelihara: Custom Atelier kini menjadi bagian dari TeeStock Custom"
-        >
+        <NoticeBox variant="info" title="Informasi Layanan: Custom Atelier">
           <p>
-            Alamat URL <code>/custom-atelier</code> dipertahankan untuk
-            memastikan tautan lama dan penanda peramban tetap berfungsi. Seluruh
-            informasi kustomisasi pakaian terpadu kini dikelola melalui{' '}
-            <Link href="/custom">Halaman Layanan Custom (/custom)</Link>.
+            Layanan kustomisasi atelier kini terpadu bersama{' '}
+            <Link href="/custom">Layanan Custom Utama (/custom)</Link>. Anda
+            dapat mempelajari pilihan material, teknik dekorasi, dan alur
+            konsultasi melalui halaman ini atau langsung mengunjungi halaman
+            Custom.
           </p>
         </NoticeBox>
       </section>
@@ -69,7 +67,7 @@ export default function CustomAtelierPage() {
             </div>
             <p className="card-body">
               Pilihan katun combed 24s/30s hingga heavyweight 16s/20s dengan
-              konstruksi jahitan rapi dan ketahanan cuci tinggi.
+              konstruksi jahitan rapi dan pilihan bahan katun yang nyaman.
             </p>
           </div>
 
@@ -80,7 +78,7 @@ export default function CustomAtelierPage() {
             </div>
             <p className="card-body">
               Pengecekan resolusi, pemisahan warna, dan kesesuaian posisi
-              sebelum produksi dijalankan tanpa biaya peninjauan awal.
+              sebelum proses produksi di workshop dimulai.
             </p>
           </div>
 

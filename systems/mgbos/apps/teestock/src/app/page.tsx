@@ -32,14 +32,13 @@ export default function Home() {
       <section className="section" aria-label="Pemberitahuan Layanan">
         <NoticeBox
           variant="info"
-          title="Fase CX-S0-A: Konsultasi Terpandu (Assisted Entry)"
+          title="Informasi Layanan: Konsultasi Terpandu"
         >
           <p>
-            Sistem TeeStock saat ini memfasilitasi orientasi layanan dan
-            konsultasi terpandu. Kami memastikan kelayakan bahan baku,
-            spesifikasi aplikasi cetak, dan jadwal sebelum menerbitkan penawaran
-            resmi. Formulir transaksi instan atau checkout mandiri belum
-            diaktifkan pada fase ini.
+            TeeStock saat ini melayani konsultasi terpandu untuk memahami
+            kebutuhan apparel Anda. Kami meninjau kesesuaian bahan, spesifikasi
+            cetak, dan jadwal sebelum mengajukan penawaran resmi. Pemesanan
+            mandiri atau checkout instan belum dibuka untuk publik.
           </p>
         </NoticeBox>
       </section>
@@ -65,7 +64,7 @@ export default function Home() {
             <p className="card-body">
               Kustomisasi pakaian untuk kebutuhan personal, komunitas, dan label
               independen. Kami membantu pengecekan kesiapan file artwork,
-              pilihan bahan katun berkualitas, dan opsi cetak yang tepat.
+              pilihan bahan katun terkurasi, dan opsi cetak yang tepat.
             </p>
             <Link href="/custom" className="card-link">
               Pelajari Layanan Custom &rarr;

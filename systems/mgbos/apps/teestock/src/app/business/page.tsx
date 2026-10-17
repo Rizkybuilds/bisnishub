@@ -6,7 +6,7 @@ import { NoticeBox } from '../../components/NoticeBox';
 export const metadata: Metadata = {
   title: 'Solusi Apparel Bisnis & B2B',
   description:
-    'Pengadaan seragam, merchandise kantor, dan apparel event perusahaan dengan proses pengadaan formal dan standar mutu teruji.',
+    'Pengadaan seragam, merchandise kantor, dan apparel event perusahaan dengan proses pengadaan formal dan standar kurasi material terencana.',
 };
 
 export default function BusinessPage() {
@@ -21,7 +21,7 @@ export default function BusinessPage() {
         <p className="lead-text">
           Pengadaan seragam kerja, merchandise kantor, dan pakaian acara dengan
           standar garmen profesional, kejelasan spesifikasi teknis, dan
-          ketepatan alur administrasi pengadaan.
+          koordinasi alur administrasi pengadaan.
         </p>
 
         <div className="btn-group">
@@ -43,9 +43,10 @@ export default function BusinessPage() {
           <p>
             TeeStock tidak menjanjikan harga flat otomatis atau kuota produksi
             instan tanpa review. Setiap pesanan korporat ditinjau berdasarkan
-            volume bahan, teknik dekorasi, dan jadwal workshop guna menjamin
-            ketepatan tanggal serah terima. Tidak ada portal mandiri atau termin
-            pembayaran tempo tanpa perjanjian kerja sama resmi (PKS).
+            volume bahan, teknik dekorasi, dan jadwal workshop untuk memberikan
+            estimasi jadwal penyelesaian yang realistis. Tidak ada portal
+            mandiri atau termin pembayaran tempo tanpa perjanjian kerja sama
+            resmi (PKS).
           </p>
         </NoticeBox>
       </section>
@@ -69,8 +70,8 @@ export default function BusinessPage() {
             </div>
             <p className="card-body">
               Polo bordir resmi, kemeja kerja lapangan, dan t-shirt kasual
-              divisi dengan pilihan bahan adem, jahitan kuat, serta konsistensi
-              warna antar batch produksi.
+              divisi dengan pilihan bahan katun yang nyaman, jahitan rapi, serta
+              perhatian pada konsistensi warna antar batch produksi.
             </p>
           </div>
 

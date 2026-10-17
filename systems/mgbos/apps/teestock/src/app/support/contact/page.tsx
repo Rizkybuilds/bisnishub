@@ -47,28 +47,19 @@ export default function ContactPage() {
 
         <NoticeBox
           variant="warning"
-          title="Status Aktivasi Saluran Langsung: Belum Dibuka untuk Publik"
+          title="Saluran Kontak Daring Sedang Disiapkan"
         >
           <p style={{ marginBottom: '12px' }}>
-            Saluran kontak daring langsung (seperti nomor WhatsApp layanan
-            pelanggan, telepon kantor, atau email publik) saat ini{' '}
-            <strong>belum diaktifkan</strong> pada repositori ini dan belum
-            memiliki operator penanggung jawab yang diverifikasi secara
-            operasional.
+            Untuk memastikan setiap pertanyaan ditangani secara cermat dan
+            profesional, saluran komunikasi langsung (seperti WhatsApp dan email
+            layanan pelanggan) saat ini sedang dalam proses persiapan
+            operasional dan belum dibuka untuk umum.
           </p>
-          <p style={{ marginBottom: '12px' }}>
-            Sesuai kebijakan integritas TeeStock, kami{' '}
-            <strong>tidak menampilkan</strong> tombol inert, tautan pesan yang
-            tidak diawasi, atau nomor kontak perkiraan. Seluruh komunikasi resmi
-            akan dibuka secara terjadwal setelah penanggung jawab operasional
-            diverifikasi oleh pemilik sistem (Owner).
-          </p>
-          <p
-            style={{ fontSize: '0.875rem', color: 'var(--color-warning-text)' }}
-          >
-            Catatan Tata Kelola: Ini merupakan gerbang aktivasi publik
-            (public-activation gate). Kandidat rilis S0-A ini menyajikan
-            informasi faktual tanpa menyimulasikan saluran yang belum siap.
+          <p style={{ marginBottom: '0' }}>
+            Kami tidak menampilkan tautan pesan atau nomor kontak sebelum tim
+            kami siap melayani konsultasi Anda secara langsung. Saat saluran
+            resmi dibuka, rincian kontak yang dapat dihubungi akan segera
+            diperbarui pada halaman ini.
           </p>
         </NoticeBox>
       </section>

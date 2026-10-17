@@ -44,7 +44,8 @@ export default function CustomPage() {
             Untuk menghindari kesalahan teknis cetak atau salah pilih
             spesifikasi, TeeStock tidak menggunakan formulir pesanan instan
             tanpa verifikasi. Setiap proyek ditinjau oleh staf operasional untuk
-            memastikan akurasi cetak, ketahanan bahan, dan kepastian jadwal.
+            memastikan kesesuaian cetak, ketersediaan bahan, dan perkiraan
+            jadwal yang realistis.
           </p>
         </NoticeBox>
       </section>
@@ -94,7 +95,8 @@ export default function CustomPage() {
             <h3 className="card-title">DTF (Direct-to-Film)</h3>
             <p className="card-body">
               Teknologi cetak transfer resolusi tinggi untuk grafis full-color,
-              gradasi rumit, dan desain foto dengan daya rekat cuci optimal.
+              gradasi rumit, dan desain visual dengan ketajaman detail yang
+              jelas.
             </p>
           </div>
 
@@ -102,7 +104,7 @@ export default function CustomPage() {
             <h3 className="card-title">Sablon Manual Plastisol</h3>
             <p className="card-body">
               Pilihan ideal untuk grafis solid, warna tegas, dan volume produksi
-              menengah hingga besar dengan tekstur sablon klasik yang awet.
+              menengah hingga besar dengan karakter sablon klasik.
             </p>
           </div>
 
@@ -167,8 +169,8 @@ export default function CustomPage() {
                 margin: 0,
               }}
             >
-              Tim kami akan memverifikasi kesiapan teknis file tanpa biaya
-              peninjauan awal.
+              Tim kami akan memverifikasi kesiapan teknis file sebelum proses
+              produksi disepakati.
             </p>
           </div>
 
