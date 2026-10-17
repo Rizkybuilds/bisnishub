@@ -9,7 +9,7 @@ scope: repository
 document_class: registry
 effective_from: 2026-10-05
 
-repository_snapshot: c4ae9668f4b1a9327d8889b7450bec0b0de2a87a
+repository_snapshot: 2800c474563309bda49d84d712f79b68c9dde36a
 
 current_repository_program:
   engineering_method: VIBE_ENGINEERING_ACTIVE
@@ -41,7 +41,7 @@ not_authoritative_for:
   - deployment authorization
   - production readiness
 
-last_reviewed: 2026-10-09
+last_reviewed: 2026-10-15
 review_cadence: monthly-or-after-material-repository-routing-change
 
 depends_on:
@@ -164,10 +164,10 @@ BRANCH
 main
 
 SNAPSHOT
-c4ae9668f4b1a9327d8889b7450bec0b0de2a87a
+2800c474563309bda49d84d712f79b68c9dde36a
 
 REVIEW DATE
-2026-10-09
+2026-10-15
 ```
 
 Snapshot is current-state evidence for this document.
@@ -201,6 +201,13 @@ P2-A OPERATIONAL EXCEPTION FOUNDATION
 =
 SOFTWARE COMPLETE / POST-MERGE VERIFIED
 
+PARALLEL TRACKS INTEGRATED ON MAIN
+=
+PR #52 (AI Engineering Team Operating Protocol)
+PR #58 (Login Credential Hygiene)
+PR #62 / PR #64 (Isolated Browser Authentication QA Gate)
+PR #53 (UXR-01 UI Foundation & Multi-Role Browser Acceptance)
+
 ACTIVE WORK PACKAGE
 =
 NONE
@@ -226,6 +233,8 @@ MGBOS VITE PROTOTYPE
 =
 ARCHIVED
 ```
+
+Live in-flight pull requests (such as PR #68, PR #70, and PR #72) are tracked dynamically on [GitHub Pull Requests](https://github.com/Rizkybuilds/bisnishub/pulls) and must not be treated as part of main or integrated software.
 
 ---
 
@@ -1415,7 +1424,7 @@ At this index snapshot:
 ```text id="5k2nn9"
 main
 =
-c4ae9668f4b1a9327d8889b7450bec0b0de2a87a
+2800c474563309bda49d84d712f79b68c9dde36a
 ```
 
 current hosted workflows include successful:

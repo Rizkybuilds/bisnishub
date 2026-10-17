@@ -2,7 +2,7 @@
 
 > **Status:** MGBOS-001 s.d. MGBOS-014 implemented locally (see verification boundaries in the MGBOS-007/008/009/010/011/012/013/014 reports) (Next.js 16 + React 19 + Strict TypeScript + pnpm Monorepo)  
 > **System of Record:** PostgreSQL 17 / Supabase Local (Project: `mgbos-foundation`, Ports: 55431–55439)  
-> **Quality Gates:** 240 pgTAP database tests defined, 162/162 Vitest tests passing, 100% strict TypeScript typechecked & built  
+> **Quality Gates (Observed main 2800c47, 2026-10-15):** 578 pgTAP tests PASS, 537 passed / 5 skipped Vitest tests, 100% strict TypeScript typechecked & built (Evidence: [CI Run 38682835008](https://github.com/Rizkybuilds/bisnishub/actions/runs/38682835008)); counts are revision-bound evidence, not permanent static claims
 > **Engineering Constitution:** Read [AGENTS.md](AGENTS.md), [ADR-001 (Modular Monolith)](docs/adr/001-modular-monolith.md), and [ADR-007 (Coexistence)](docs/adr/007-workspace-coexistence.md).
 
 ---
