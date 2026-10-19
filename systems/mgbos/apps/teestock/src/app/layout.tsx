@@ -1,15 +1,16 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import './retail.css';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 
 export const metadata: Metadata = {
   title: {
-    default: 'TeeStock — Apparel Ecosystem & Production',
+    default: 'TeeStock — Curated Everyday Apparel',
     template: '%s | TeeStock',
   },
   description:
-    'Ekosistem produksi dan kustomisasi apparel terpadu untuk kebutuhan personal, brand, dan pengadaan organisasi.',
+    'Jelajahi TeeStock Selects, eksplorasi graphic apparel untuk keseharian. Saat ini koleksi masih berupa preview visual dan belum tersedia untuk dibeli.',
 };
 
 export default function RootLayout({
