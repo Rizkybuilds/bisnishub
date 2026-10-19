@@ -999,8 +999,9 @@ body:has(.retail-shop) .site-main {
     letter-spacing: 0.14em;
   }
   .retail-hero h1 {
-    font-size: clamp(53px, 13.5vw, 77px);
+    font-size: clamp(34px, 10.5vw, 68px);
     margin-top: 27px;
+    overflow-wrap: break-word;
   }
   .retail-hero-description {
     font-size: 14px;
@@ -1131,6 +1132,15 @@ body:has(.retail-shop) .site-main {
   }
   .retail-footer-bottom {
     flex-direction: column;
+  }
+}
+@media (max-width: 360px) {
+  .retail-wrap {
+    width: min(100% - 24px, 1376px);
+  }
+  .retail-hero h1 {
+    font-size: clamp(28px, 9.2vw, 34px);
+    letter-spacing: -0.06em;
   }
 }
 @media (prefers-reduced-motion: reduce) {

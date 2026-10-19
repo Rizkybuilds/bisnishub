@@ -79,6 +79,26 @@ export const conceptDesigns: ConceptDesign[] = [
 
 type ShirtTone = 'ink' | 'chalk';
 
+export function HeroGarments() {
+  const heroBackDesign = conceptDesigns[2];
+  const heroFrontDesign = conceptDesigns[0];
+
+  return (
+    <>
+      <div className="retail-hero-tee retail-hero-tee-back">
+        {heroBackDesign ? (
+          <ShirtIllustration design={heroBackDesign} tone="chalk" hero />
+        ) : null}
+      </div>
+      <div className="retail-hero-tee retail-hero-tee-front">
+        {heroFrontDesign ? (
+          <ShirtIllustration design={heroFrontDesign} tone="ink" hero />
+        ) : null}
+      </div>
+    </>
+  );
+}
+
 export function ShirtIllustration({
   design,
   tone = 'ink',

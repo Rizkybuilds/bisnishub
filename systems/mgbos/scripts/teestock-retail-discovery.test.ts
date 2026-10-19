@@ -74,4 +74,22 @@ describe('TeeStock retail-first discovery guardrails', () => {
     expect(header).toContain('nav-desktop');
     expect(header).toContain('retail-mobile-toggle');
   });
+
+  it('renders homepage hero garments and ensures compact mobile heading geometry (UX-81-03, UX-81-04)', () => {
+    const home = read('app/page.tsx');
+    const showcase = read('components/RetailShowcase.tsx');
+    const theme = read('app/retail.css');
+
+    // UX-81-04: Hero garments component boundary
+    expect(home).toContain('<HeroGarments />');
+    expect(showcase).toContain('export function HeroGarments()');
+    expect(showcase).toContain('retail-hero-tee-back');
+    expect(showcase).toContain('retail-hero-tee-front');
+
+    // UX-81-03: Responsive heading geometry without 320px clipping
+    expect(theme).toContain('overflow-wrap: break-word');
+    expect(theme).toContain('clamp(34px, 10.5vw, 68px)');
+    expect(theme).toContain('@media (max-width: 360px)');
+    expect(theme).toContain('clamp(28px, 9.2vw, 34px)');
+  });
 });

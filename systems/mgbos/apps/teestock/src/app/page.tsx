@@ -1,14 +1,7 @@
 import Link from 'next/link';
-import {
-  ConceptGallery,
-  ShirtIllustration,
-  conceptDesigns,
-} from '../components/RetailShowcase';
+import { ConceptGallery, HeroGarments } from '../components/RetailShowcase';
 
 export default function Home() {
-  const heroBackDesign = conceptDesigns[2];
-  const heroFrontDesign = conceptDesigns[0];
-
   return (
     <div className="retail-home">
       <section
@@ -54,16 +47,7 @@ export default function Home() {
           aria-label="Ilustrasi konsep kaos TeeStock, bukan foto barang jual"
         >
           <div className="retail-hero-ring" />
-          <div className="retail-hero-tee retail-hero-tee-back">
-            {heroBackDesign ? (
-              <ShirtIllustration design={heroBackDesign} tone="chalk" hero />
-            ) : null}
-          </div>
-          <div className="retail-hero-tee retail-hero-tee-front">
-            {heroFrontDesign ? (
-              <ShirtIllustration design={heroFrontDesign} tone="ink" hero />
-            ) : null}
-          </div>
+          <HeroGarments />
           <div className="retail-hero-roundel">
             <span>TEESTOCK</span>
             <strong>
