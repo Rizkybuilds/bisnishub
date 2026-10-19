@@ -6,8 +6,13 @@ export function Footer() {
       <div className="retail-wrap">
         <div className="retail-footer-intro">
           <span className="retail-overline">A BETTER EVERYDAY STARTS HERE</span>
-          <strong>TeeStock<span aria-hidden="true">✳</span></strong>
-          <p>Curated apparel for everyday stories. Koleksi pilihan, ide yang personal, dan pengalaman yang dipikirkan dengan baik.</p>
+          <strong>
+            TeeStock<span aria-hidden="true">✳</span>
+          </strong>
+          <p>
+            Curated apparel for everyday stories. Koleksi pilihan, ide yang
+            personal, dan pengalaman yang dipikirkan dengan baik.
+          </p>
         </div>
         <div className="retail-footer-cols">
           <div>
@@ -29,7 +34,9 @@ export function Footer() {
           </div>
         </div>
         <div className="retail-footer-bottom">
-          <span>© {new Date().getFullYear()} TeeStock. All rights reserved.</span>
+          <span>
+            © {new Date().getFullYear()} TeeStock. All rights reserved.
+          </span>
           <span>DESIGNED WITH INTENTION / MADE FOR EVERYDAY</span>
         </div>
       </div>

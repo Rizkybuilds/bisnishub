@@ -5,7 +5,8 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../apps/teestock/src');
-const read = (relativePath: string) => fs.readFileSync(path.join(root, relativePath), 'utf8');
+const read = (relativePath: string) =>
+  fs.readFileSync(path.join(root, relativePath), 'utf8');
 
 describe('TeeStock retail-first discovery guardrails', () => {
   it('has a separate concept gallery, clear navigation and a retail-first home', () => {
@@ -19,9 +20,13 @@ describe('TeeStock retail-first discovery guardrails', () => {
     const shop = read('app/shop/page.tsx');
     const home = read('app/page.tsx');
     const gallery = read('components/RetailShowcase.tsx');
-    expect(shop).toContain('belum katalog produk yang dapat dibeli');
+    expect(shop.replace(/\s+/g, ' ')).toContain(
+      'belum katalog produk yang dapat dibeli',
+    );
     expect(home).toContain('Belum Tersedia');
-    expect(gallery).toContain('Belum merupakan produk terverifikasi');
+    expect(gallery.replace(/\s+/g, ' ')).toContain(
+      'Belum merupakan produk terverifikasi',
+    );
     for (const source of [shop, home, gallery]) {
       expect(source).not.toContain('href="/cart"');
       expect(source).not.toContain('href="/checkout"');
