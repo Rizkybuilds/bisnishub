@@ -28,26 +28,29 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Validate authorization inputs and repository provenance
+        env:
+          INPUT_APPROVED_COMMIT_SHA: ${{ inputs.approved_commit_sha }}
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref }}
         shell: bash
         run: |
           set -euo pipefail
-          COMMIT_INPUT="${{ inputs.approved_commit_sha }}"
-          
+
           # 1. Enforce exact 40-character lowercase hexadecimal SHA format
-          if [[ ! "$COMMIT_INPUT" =~ ^[0-9a-f]{40}$ ]]; then
-            echo "::error::Invalid approved_commit_sha. Expected exact 40 lowercase hex characters, got: '$COMMIT_INPUT'"
+          if [[ ! "$INPUT_APPROVED_COMMIT_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::Invalid approved_commit_sha. Expected exact 40 lowercase hex characters."
             exit 1
           fi
 
           # 2. Enforce repository provenance
-          if [ "${{ github.repository }}" != "Rizkybuilds/bisnishub" ]; then
-            echo "::error::Unauthorized repository provenance: '${{ github.repository }}'"
+          if [ "$GITHUB_REPO" != "Rizkybuilds/bisnishub" ]; then
+            echo "::error::Unauthorized repository provenance: '$GITHUB_REPO'"
             exit 1
           fi
 
           # 3. Enforce ref boundary (main only)
-          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
-            echo "::error::Preflight verification is only authorized on refs/heads/main. Current ref: '${{ github.ref }}'"
+          if [ "$GITHUB_REF_NAME" != "refs/heads/main" ]; then
+            echo "::error::Preflight verification is only authorized on refs/heads/main. Current ref: '$GITHUB_REF_NAME'"
             exit 1
           fi
 
@@ -57,11 +60,12 @@ jobs:
           persist-credentials: false
 
       - name: Assert exact checked-out commit revision
+        env:
+          EXPECTED_SHA: ${{ inputs.approved_commit_sha }}
         shell: bash
         run: |
           set -euo pipefail
           ACTUAL_HEAD=$(git rev-parse HEAD)
-          EXPECTED_SHA="${{ inputs.approved_commit_sha }}"
           if [ "$ACTUAL_HEAD" != "$EXPECTED_SHA" ]; then
             echo "::error::Checked-out HEAD ($ACTUAL_HEAD) does not match authorized commit SHA ($EXPECTED_SHA)"
             exit 1
@@ -81,8 +85,10 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Pre-execution static SQL asset integrity check
+        env:
+          MGBOS_PREFLIGHT_APPROVED_COMMIT_SHA: ${{ inputs.approved_commit_sha }}
         run: |
-          node scripts/r5-catalog-preflight-runner.mjs --verify-only --approved-commit-sha "${{ inputs.approved_commit_sha }}"
+          node scripts/r5-catalog-preflight-runner.mjs --verify-only
 
       - name: Start disposable database without disclosing local credentials
         run: |
@@ -99,8 +105,9 @@ jobs:
           fi
 
       - name: Execute R5 D06 catalog preflight runner
+        env:
+          MGBOS_PREFLIGHT_APPROVED_COMMIT_SHA: ${{ inputs.approved_commit_sha }}
         run: |
-          MGBOS_PREFLIGHT_APPROVED_COMMIT_SHA="${{ inputs.approved_commit_sha }}" \
           node scripts/r5-catalog-preflight-runner.mjs
 
       - name: Upload sanitized catalog evidence artifacts
