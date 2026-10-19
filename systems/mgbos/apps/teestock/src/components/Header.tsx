@@ -1,130 +1,70 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+const links = [
+  { href: '/shop', label: 'The Edit' },
+  { href: '/custom', label: 'Custom' },
+  { href: '/business', label: 'For Business' },
+  { href: '/support/contact', label: 'Bantuan' },
+];
+
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // Close mobile menu on Escape key
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape' && isOpen) {
-        setIsOpen(false);
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [open]);
 
-  // Close mobile menu on route change without cascading effect render
-  const [prevPathname, setPrevPathname] = useState(pathname);
-  if (prevPathname !== pathname) {
-    setPrevPathname(pathname);
-    setIsOpen(false);
+  const [previousPath, setPreviousPath] = useState(pathname);
+  if (previousPath !== pathname) {
+    setPreviousPath(pathname);
+    setOpen(false);
   }
 
-  const navLinks = [
-    { href: '/', label: 'Beranda' },
-    { href: '/custom', label: 'Custom' },
-    { href: '/business', label: 'For Business' },
-    { href: '/support/contact', label: 'Bantuan & Kontak' },
-  ];
-
   return (
-    <header className="site-header">
-      <div className="container">
-        <div className="header-inner">
-          <Link href="/" className="brand-logo" aria-label="TeeStock Beranda">
-            <span>TeeStock</span>
-            <span className="brand-tag">Apparel</span>
+    <header className="site-header retail-site-header">
+      <div className="retail-announcement">TEESTOCK SELECTS <span aria-hidden="true">✳</span> THE NEXT CHAPTER IS TAKING SHAPE</div>
+      <div className="retail-wrap">
+        <div className="header-inner retail-header-inner">
+          <Link href="/" className="brand-logo retail-brand" aria-label="TeeStock Beranda">
+            <span>Tee<span className="retail-brand-tight">Stock</span><span className="retail-brand-star" aria-hidden="true">✳</span></span>
           </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="nav-desktop" aria-label="Navigasi Utama">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`nav-link ${isActive ? 'nav-link-active' : ''}`}
-                  aria-current={isActive ? 'page' : undefined}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+          <nav className="nav-desktop retail-nav" aria-label="Navigasi Utama">
+            {links.map(({ href, label }) => (
+              <Link key={href} href={href} className={'nav-link retail-nav-link' + (pathname === href ? ' nav-link-active' : '')} aria-current={pathname === href ? 'page' : undefined}>{label}</Link>
+            ))}
           </nav>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            type="button"
-            className="mobile-toggle"
-            aria-expanded={isOpen}
-            aria-controls="mobile-navigation"
-            aria-label={isOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
-            onClick={() => setIsOpen((prev) => !prev)}
-          >
-            {isOpen ? (
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            ) : (
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <line x1="4" y1="6" x2="20" y2="6" />
-                <line x1="4" y1="12" x2="20" y2="12" />
-                <line x1="4" y1="18" x2="20" y2="18" />
-              </svg>
-            )}
-          </button>
+          <div className="retail-header-actions">
+            <Link className="retail-header-cta" href="/shop">Explore <span aria-hidden="true">↗</span></Link>
+            <button
+              type="button"
+              className="mobile-toggle retail-mobile-toggle"
+              aria-expanded={open}
+              aria-controls="mobile-navigation"
+              aria-label={open ? 'Tutup navigasi' : 'Buka navigasi'}
+              onClick={() => setOpen(!open)}
+            >
+              <span aria-hidden="true">{open ? '✕' : '☰'}</span>
+            </button>
+          </div>
         </div>
       </div>
-
-      {/* Mobile Navigation Drawer */}
-      {isOpen && (
-        <nav
-          id="mobile-navigation"
-          className="mobile-menu"
-          aria-label="Navigasi Mobile"
-        >
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`mobile-nav-link ${isActive ? 'nav-link-active' : ''}`}
-                aria-current={isActive ? 'page' : undefined}
-                onClick={() => setIsOpen(false)}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+      {open && (
+        <nav id="mobile-navigation" className="mobile-menu retail-mobile-menu" aria-label="Navigasi Mobile">
+          {links.map(({ href, label }) => (
+            <Link key={href} href={href} className={'mobile-nav-link' + (pathname === href ? ' nav-link-active' : '')} aria-current={pathname === href ? 'page' : undefined} onClick={() => setOpen(false)}>
+              {label} <span aria-hidden="true">↗</span>
+            </Link>
+          ))}
         </nav>
       )}
     </header>
