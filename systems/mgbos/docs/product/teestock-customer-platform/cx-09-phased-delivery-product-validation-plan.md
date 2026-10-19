@@ -270,15 +270,19 @@ Avoid “automation theater”: a form that captures details but leaves the foun
 
 ## 5. Four customer-platform release slices
 
-### 5.1 Slice `CX-S0` — Premium entry and governed assisted Custom/Business
+### 5.1 Slice `CX-S0` — Retail-led public presentation & governed assisted Custom/Business entry
 
-**Purpose:** create trustworthy, low-friction digital entry that routes customers to real offers and captures useful Custom/Business demand, while existing assisted-sales remains usable without a finished public website.
+**Purpose:** Create a trustworthy, high-standard digital entry that showcases curated apparel collections, product presentation, discovery, and brand identity front-and-center (`DEC-TS-2026-011`), while providing prominent, visible routing to Custom and Business services and capturing structured B2B/Custom demand into the governed MGBOS operational spine (`DEC-TS-2026-009`).
 
-**Target journeys:** `JRN-01`, `JRN-02`, `JRN-03`, `JRN-05` (assisted proof where approved), `JRN-06` (human support); see CX-02.
+**Operational sequencing boundary:** In accordance with `DEC-TS-2026-009` and the Solo-Founder Launch Roadmap, the existing assisted Custom/Business operational pilot remains independently valid and does not require a finished public retail catalog as a blocker. Retail catalog presentation in S0 is a front-of-house brand and discovery capability, not a prerequisite for backstage operational execution.
+
+**Target journeys:** `JRN-01` (retail-led discovery & routing), `JRN-02` (custom inquiry), `JRN-03` (business inquiry), `JRN-05` (assisted proof where approved), `JRN-06` (human support); see CX-02.
 
 **Candidate experience capabilities:**
 
-- P0 job-based homepage/navigation with plain-language Shop/Customize/Business orientation and truthful availability.
+- Retail-led public presentation: curated apparel collections, product presentation, lookbooks, garment quality education, and brand identity front-and-center.
+- Prominent, visible navigation and direct pathways for Custom, For Business, and Build Merch in compliance with canonical IA (`TS-TEC-002` §11).
+- Nontransactional retail discovery: product card previews, garment specifications, fit guides, and truthful drop/availability indicators; no live cart, checkout, or automated inventory reservations.
 - Real, approved Custom/Business service explanation, minimum feasible quantities, actual contact channels and transparent next-step process.
 - Short, accessible guided Custom and Business inquiry; progressive detail; deadline is request, not guaranteed delivery.
 - Approved artwork-upload path **only if** file security, size/type policy and storage capability are ready; otherwise an explicitly safe deferred/manual asset-submission path.
@@ -287,28 +291,31 @@ Avoid “automation theater”: a form that captures details but leaves the foun
 - Founder sees submitted context and appropriate next action without retyping reliable structured inputs, subject to approved MGBOS write boundary.
 - Premium, mobile-first, keyboard-accessible appearance following TeeStock's existing neutral-core visual identity.
 
-**Explicitly excluded:** active public cart/checkout, instant binding Custom price, account/organization portal, native AI decision authority, all-channel live stock synchronization, fake “Order Now” path.
+**Explicitly excluded:** active public cart/checkout, payment gateway integration, live inventory reservations, instant binding Custom price, account/organization portal, native AI decision authority, all-channel live stock synchronization, fake “Order Now” path. Transactional retail is explicitly gated in `CX-S1`.
 
 **Entry conditions (`CX09-S0-E`):**
 
-1. Verify actual approved TeeStock offer/customer policy, response-owner availability, and practical physical handling capacity.
+1. Verify actual approved TeeStock offer/customer policy, curated apparel assets, response-owner availability, and practical physical handling capacity.
 2. Establish exact existing MGBOS lead/requirement/quote interface/permissions at current source, not from UI mockup.
-3. Adopt or reconcile CX-01..03 and CX-05 requirements specific to S0; settle material conflicts in intake and commercial copy.
+3. Adopt or reconcile CX-01..03 and CX-05 requirements specific to S0; settle material conflicts in intake, brand presentation, and commercial copy.
 4. Verify chosen intake processing/storage/privacy/error-recovery shape in a bounded design and technical discovery.
 5. Head Engineering and Owner authorize the exact separately bounded implementation, if any.
+6. Reaffirm that retail presentation does not create a prerequisite or blocker for the independent Business/Custom operational pilot.
 
 **Exit evidence (`CX09-S0-X`):**
 
-- Representative mobile, keyboard and assisted-mode users can identify the correct service and finish or safely exit the inquiry.
+- Representative mobile, keyboard and assisted-mode users can navigate curated retail collections, understand garment standards, and easily reach the desired service.
+- Representative users can initiate and finish Custom or Business inquiries through prominent, visible routing.
 - Repeated submission or response loss does not create uncontrolled duplicate actionable leads.
 - System correctly preserves approved input and produces a reliable reference/owner/next step; errors are actionable, no false success.
 - Founder can process a sampled genuine/synthetic request end to end through governed MGBOS without transcription into an independent truth store.
-- Copy has no fictional prices, stock, production dates, response guarantees or unbuilt actions.
+- Copy has no fictional prices, live stock claims, production dates, response guarantees, or unbuilt checkout actions.
 - CX-08 applicable A/B/C/D/F gates and P0 security/privacy are evidenced; E applies to enabled external components.
+- Nontransactional prototype presentation is verified distinct from an authorized transactional runtime release.
 
-**Success hypothesis:** fewer avoidable clarification contacts and less founder re-entry per qualified inquiry, while trust and completion remain high. **This is a hypothesis, not an observed result.**
+**Success hypothesis:** Retail-first presentation establishes brand prestige and buyer confidence while structured intake reduces avoidable clarification contacts and founder re-entry per qualified inquiry. **This is a hypothesis, not an observed result.**
 
-**Abort/rollback conditions:** public intake exposes private data, produces duplicate business effects, corrupts quotes, falsely claims a sale, causes persistent missing inquiries, or increases founder handling beyond accepted capacity. Fallback to an approved governed human-assisted contact route; do not send customers to an invisible inbox.
+**Abort/rollback conditions:** Public intake exposes private data, produces duplicate business effects, corrupts quotes, falsely claims a sale or functioning checkout, causes persistent missing inquiries, or increases founder handling beyond accepted capacity. Fallback to an approved governed human-assisted contact route; do not send customers to an invisible inbox.
 
 ### 5.2 Slice `CX-S1` — Eligible retail commerce and trusted order visibility
 
