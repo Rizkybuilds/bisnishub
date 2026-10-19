@@ -1112,6 +1112,9 @@ Q4 2026 Vertical Slice Priority
 
 DEC-TS-2026-010
 Full Jarvis Deferred Until Operational Readiness
+
+DEC-TS-2026-011
+Retail-First Customer Presentation & Governed Operational Priority
 ```
 
 ---
@@ -2043,3 +2046,82 @@ LET EVIDENCE
 CHANGE THE SYSTEM
 DELIBERATELY.
 ```
+
+---
+
+# 171. DEC-TS-2026-011 — Retail-First Customer Presentation & Governed Operational Priority
+
+## DEC-TS-2026-011 — Retail-First Customer Presentation & Governed Operational Priority
+
+Status: ACTIVE  
+Date: 2026-10-19  
+Category: STRATEGIC / BRAND ARCHITECTURE / PRODUCT-COMMERCE  
+Owner: Founder / Owner  
+
+### Decision
+
+- First public customer presentation is retail-first: curated apparel collections, product presentation, discovery, and brand identity are front-and-center.
+- Custom and Business pathways remain clearly visible, discoverable, and directly accessible from navigation and prominent entry points.
+- DEC-TS-2026-009 remains ACTIVE: Operational priority remains Business/Custom Lead → Quote → Order/Project → Production → QC → Fulfillment → Cost/Cash.
+- Prototypes are non-transactional; no operational verification of prices, stock, or checkout without evidence; retail checkout requires separate readiness and governance.
+
+### Context
+
+Reconciles the Owner's preference for a premium apparel brand identity with the operational realities of solo-founder bootstrap execution. While the core operating engine is built and verified through custom and business orders, the public storefront presents a polished, high-standard retail brand experience.
+
+### Problem
+
+A purely custom/business B2B presentation risks underselling the brand's aesthetic capability and garment excellence, while premature retail transaction enablement (inventory, cart, automated payment, returns) risks overwhelming solo-founder operations before fulfillment and cash cycles are proven.
+
+### Options Considered
+
+1. *Custom/Business-Only Presentation*: Focus entire public UI on custom garment printing and B2B ordering. (Rejected: weakens brand prestige and consumer appeal; business clients judge print quality by storefront aesthetic).
+2. *Full Retail Commerce Launch First*: Build and launch retail e-commerce catalog with transactional checkout immediately. (Rejected: violates DEC-TS-2026-009; premature inventory commitment and unverified fulfillment without proven cash flow).
+3. *Retail-First Presentation with Governed Custom/Business Operational Priority*: Lead customer-facing presentation with retail collections, lookbooks, and brand story, while routing transactions through custom/business inquiries and keeping operational focus on the B2B spine until retail operational readiness is verified. (Selected).
+
+### Rationale
+
+High-standard brand identity and visual excellence attract both retail shoppers and high-value business clients. Business clients judge brand quality by the front storefront. However, operational capability validation must prove cash flow and operational processes through custom/business before scaling retail inventory and transactional checkout.
+
+### Evidence
+
+Owner directive and strategic alignment during TeeStock customer platform planning; reconciliation of prototype design drafts with DEC-TS-2026-009 and the Solo-Founder Launch Roadmap v2.6.
+
+### Assumptions
+
+- Retail prototypes can inspire customer confidence without transactional checkout.
+- Business/Custom pipeline generates required early operating cash flow.
+
+### Consequences
+
+- Public web experience leads with retail collections, lookbooks, and merchandising.
+- Custom/Business inquiry and quoting flows are prominent secondary paths.
+- Retail transactional checkout deferred until inventory and fulfillment operations are validated.
+- Operational systems development remains focused on MGBOS Business/Custom spine.
+
+### Risks / Tradeoffs
+
+- Customer expectation of immediate online checkout for retail items must be managed transparently (e.g., waitlist, drop announcements, or direct-assisted ordering).
+- Dual focus requires discipline so that frontend brand polish does not divert engineering resources from the core MGBOS operational spine.
+
+### Affected Documents
+
+- bisnis/teestock/10-product-tech/website-information-architecture.md
+- systems/mgbos/docs/product/teestock-customer-platform/CX-PKG-DECISIONS-R1.md
+
+### Affected Systems
+
+- TeeStock Public Storefront / Customer Platform
+- MGBOS Founder Control Plane
+
+### Review Trigger
+
+Completion of Business/Custom operational validation; verified ready-stock inventory with tested fulfillment.
+
+### Supersedes
+
+None
+
+### Superseded By
+
+None
