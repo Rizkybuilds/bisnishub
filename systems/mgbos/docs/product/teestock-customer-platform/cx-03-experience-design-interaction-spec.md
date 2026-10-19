@@ -184,36 +184,41 @@ As inspected at `2800c474563309bda49d84d712f79b68c9dde36a`: `systems/mgbos/apps/
 
 ### 4.1 Canonical primary intents (`SOURCE_IA`)
 
-- `SHOP`: find eligible published products; not a disguised service quote funnel.
-- `CUSTOMIZE`: customer-controlled request for approved personalization/custom work.
-- `FOR BUSINESS`: formal/bulk/recurring needs; do not assume ordinary consumer checkout terms.
-- `BUILD MERCH`: explain and route supported merch projects; no fake creator portal.
+Per strategic decision `DEC-TS-2026-011`, the public customer presentation is retail-first, leading with curated graphic apparel collections and brand identity, while maintaining prominent, direct access to Custom and Business pathways (`DEC-TS-2026-009` operational priority preserved):
 
-These are intent labels from TeeStock website IA. The eventual URL paths and availability are owned by existing IA and implementation decisions. CX-03 proposes behavior and consistency only.
+- `SHOP`: Curated graphic apparel showcase, collection storytelling, lookbooks, and garment specs front-and-center. Strictly nontransactional in initial `CX-S0` presentation (no live cart or checkout); transactional catalog and direct purchasing are gated in `CX-S1`.
+- `CUSTOMIZE`: Prominent, directly accessible route for personalized/custom apparel inquiries.
+- `FOR BUSINESS`: Prominent, directly accessible route for organizational, uniform, and bulk commercial requests.
+- `BUILD MERCH`: Dedicated conceptual entry for creator and community merch projects; no fake automated portal.
+
+These are intent labels from TeeStock website IA (`TS-TEC-002`). The eventual URL paths and availability are owned by existing IA and implementation decisions. IA recommendations do not constitute authorization for nonexistent routes or unverified transactional utility features. CX-03 proposes behavior and consistency only.
 
 ### 4.2 Header and global navigation interaction rules
 
-| Situation                 | Proposed contract                                                                                                                                   |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Desktop navigation        | Primary intents visible without scrolling or exposing internal sub-brands as top-level clutter; clear utility search/account/cart only where active |
-| Small-screen navigation   | Accessible menu toggle with accessible name, expanded state, logical focus, close by button/Escape where modal, and restored focus                  |
-| Deep-link entry           | User can orient via clear page title, breadcrumb/back navigation where useful, persistent next step; no requirement to visit homepage first         |
-| Search unavailable        | Do not render an apparently functioning search control if no reliable index/action exists; provide category discovery                               |
-| Cart unavailable in P0    | No persistent empty/disabled cart icon suggesting live ecommerce; truthful CTA goes to assisted order if approved                                   |
-| Account unavailable       | Do not force signup or expose dummy profile links; guest inquiry still has safe confirmation/contact                                                |
-| Sticky header             | Must not cover focused fields, headings, dialogs, anchor targets or touch controls                                                                  |
-| Navigation change         | Preserve semantic landmarks, update document title and manage focus appropriately on route transitions                                              |
-| External marketplace link | Clearly communicate leaving TeeStock/site and any meaningful transaction-policy difference                                                          |
+| Situation                 | Proposed contract                                                                                                                                                                                                                                                   |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Desktop navigation        | Retail brand identity and curated apparel exploration lead, while `Custom` and `For Business` remain immediately visible in the primary navigation bar without scrolling; no internal sub-brand clutter; utility search/account/cart shown only if genuinely active |
+| Small-screen navigation   | Mobile-first accessible menu toggle with clear accessible name, expanded state, logical focus order, touch targets $\ge 44 \times 44\text{px}$, close by button/Escape, and restored focus; instant access to Shop collections, Custom, and Business                |
+| Deep-link entry           | User can orient via clear page title, brand header, breadcrumb/back navigation where useful, persistent next step; no requirement to visit homepage first                                                                                                           |
+| Search unavailable in S0  | Do not render an apparently functioning search control if no reliable index/action exists; provide curated collection browsing and category links                                                                                                                   |
+| Cart unavailable in S0    | No persistent empty/disabled cart icon suggesting live ecommerce; truthful CTA routes to collection exploration or assisted inquiry if approved                                                                                                                     |
+| Account unavailable in S0 | Do not force signup or expose dummy profile links; guest inquiry still has safe confirmation/contact without account portal dependency                                                                                                                              |
+| Sticky header             | Must not cover focused fields, headings, dialogs, anchor targets or touch controls; supports reduced-motion preferences                                                                                                                                             |
+| Navigation change         | Preserve semantic landmarks, update document title and manage focus appropriately on route transitions                                                                                                                                                              |
+| External marketplace link | Clearly communicate leaving TeeStock/site and any meaningful transaction-policy difference                                                                                                                                                                          |
 
 ### 4.3 Journey-level content hierarchy
 
-1. **What can I do here?** Plain heading / offer.
-2. **Is this eligible and suitable?** Products, quantities, service terms, honest price and timing qualifiers.
-3. **What do I do next?** One emphasized CTA linked to an active, owned destination.
-4. **What will happen after?** Review, quote, approval or checkout expectation.
-5. **How do I recover/get help?** Contextual support and correction route.
+In accordance with Retail-First customer presentation (`DEC-TS-2026-011`) and governed operational priorities (`DEC-TS-2026-009`):
 
-Do not hide policy/fulfillment qualifiers just to make visual design minimal.
+1. **Brand identity & curated apparel:** Visual showcase of curated graphic collections, garment quality, and aesthetic identity front-and-center.
+2. **Clear service pathways:** Prominently discoverable routes to `Custom` and `For Business` without requiring organizational knowledge.
+3. **Truthful offer & availability status:** Plain heading and transparent distinction between informational discovery (lookbook, garment specs, drops) and active assisted inquiry; no false instant checkout claims.
+4. **What do I do next?** One contextual CTA matching actual capability (explore collection, request custom quote, contact business sales).
+5. **What will happen after?** Explicit customer expectations: assisted quote review, human confirmation, or drop notification.
+6. **How do I recover/get help?** Contextual support, FAQ, and transparent direct contact routes.
+
+Do not hide policy/fulfillment qualifiers or transactional limitations just to make visual design minimal.
 
 ### 4.4 Page complexity budgets (`CX03_PROPOSED`, qualitative)
 
@@ -446,25 +451,25 @@ Patterns below define the **experience contract** for possible surfaces. A stage
 
 ### `CX3-SP-01` — Public home / offer router (`P0`)
 
-**Primary outcome:** Within the first screen and subsequent straightforward scrolling, visitor understands TeeStock and can choose a real customer job.
+**Primary outcome:** Within the first screen and subsequent straightforward scrolling, visitor encounters a premium retail apparel brand showcase front-and-center (`DEC-TS-2026-011`), understands TeeStock's garment standards, and can choose a real customer job without confusion.
 
-- Clear headline grounded in actual offering, without invented "instant print"/same-day shipping claims.
-- Main intent group with `Shop`, `Customize`, `For Business`, `Build Merch` where those experiences have legitimate destination; inactive offerings must be labeled accurately or omitted.
-- Product/campaign storytelling is secondary to customer choice; preserve TeeStock neutral core and quality media.
-- Optional trust evidence must be true, attributable and compliant; no fabricated reviews/production metrics.
-- Footer/support/contact/legal links appropriate to active business readiness.
-- First-screen comprehension survives image failure, ad blockers, missing webfont and reduced motion.
-- Visual success metric: customer can identify next step without having to understand which internal TeeStock department handles it.
+- **Retail-led visual hierarchy:** Curated apparel collections, lookbooks, drop stories, and brand identity front-and-center; conveys design excellence and garment quality immediately.
+- **Prominent service routing:** Clearly visible, persistent pathways to `Customize` and `For Business` (`DEC-TS-2026-009` operational priority preserved); visitor can jump directly to custom or B2B inquiry from hero and global navigation.
+- **Truthful customer expectations:** Headlines and CTAs reflect genuine capability; no invented "instant print", same-day shipping, or live instant checkout promises prior to operational readiness.
+- **Responsive & accessible standards:** Mobile-first layout; touch targets $\ge 44 \times 44\text{px}$; logical keyboard tab order with visible high-contrast focus rings; respects `prefers-reduced-motion`.
+- **Resilient rendering:** First-screen comprehension survives image load failure (meaningful semantic alt text and fallback styling), ad blockers, font loading delays, and disabled script enhancements.
+- **Footer & trust evidence:** Trust elements must be factual, attributable, and verifiable; clear contact, support, and legal information appropriate to active business readiness.
+- **Visual success metric:** Customer perceives a high-standard apparel brand and can navigate to either retail discovery or assisted custom/business inquiry within 5 seconds on mobile.
 
-**Anti-pattern:** oversized autoplay hero and complex animated 3D canvas that delay `Customize`/`For Business` CTA.
+**Anti-pattern:** Oversized autoplay video or heavy 3D canvas that degrades mobile performance, blocks keyboard navigation, or obscures `Customize`/`For Business` pathways.
 
 ### `CX3-SP-02` — Shop landing / collection discovery (`P0 limited / P1`)
 
-- If no approved sellable catalog exists, use truthful content/curated introduction and assisted route, not a fake listing/cart.
-- When live: content hierarchy supports categories, collection purpose, image quality, price/availability qualifiers and accessible search/filter if implemented.
-- Visual empty states differentiate no published products, no matching results and failed data retrieval.
-- Filter controls show active selection; sorting state visible; navigation shareability/URL behavior defined by CX-04.
-- Product images prioritize identification over hover gimmicks; image failure has meaningful fallback.
+- **Nontransactional discovery boundary (P0 / CX-S0):** Prior to verified retail operational readiness, Shop landing provides curated collection storytelling, lookbooks, garment quality education, and design showcase. It is strictly non-transactional: no live cart, automated checkout, payment processing, or unverified inventory claims.
+- **Truthful availability & purchasing states:** Items are displayed with transparent status cues (e.g., lookbook preview, collection showcase, upcoming drop announcement, or assisted inquiry); no false "Buy Now" or "Add to Cart" affordances.
+- **Static preview vs interactive PDP boundary:** Simple static collection and garment content previews may be displayed in S0; however, complete interactive product-detail and variant configuration (`CX1-FR-007`) remains strictly **P1** (earliest delivery candidate `CX-S1`).
+- **Resilience and accessibility:** Visual empty states distinctly differentiate no published collections (`EMPTY_RESULT`) versus failed data retrieval (`UNAVAILABLE_DATA`); layouts survive missing images with clean text fallbacks; all interactive controls meet mobile touch ($\ge 44 \times 44\text{px}$) and keyboard accessibility criteria.
+- **When live (P1 / CX-S1):** Expand to verified sellable catalog with category filtering, sorting, price basis disclosures, and governed inventory checks as specified by CX-04.
 
 ### `CX3-SP-03` — Product listing / product detail (`P1`)
 
@@ -746,16 +751,16 @@ All cases are **PROPOSED / NOT_EXECUTED**. A PASS requires test environment, exa
 
 ### 16.1 P0 foundational comprehension and navigation
 
-| ID           | Given / When / Then                                                                                                                                 | Evidence category                         | Primary trace           |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ----------------------- |
-| `CX3-AC-001` | Given first visitor, when page renders without animation/images, then genuine TeeStock offer and available next customer step remain understandable | Usability + disabled-assets visual review | `SP-01`, `FR-001..004`  |
-| `CX3-AC-002` | Given mobile viewport, when opening/closing global navigation with touch/keyboard, then focus/order and active paths remain usable                  | Browser keyboard/mobile                   | `IC-02`, `FR-005`       |
-| `CX3-AC-003` | Given unavailable Shop/checkout, when viewing CTA/navigation, then no functioning buy/cart is falsely implied                                       | Content state + route test                | `SP-01/02`, `FR-002`    |
-| `CX3-AC-004` | Given deep-linked Custom/Business visitor, when landing, then purpose/next action are discoverable without returning home                           | Usability, desktop/mobile                 | `SP-04/05`, `JRN-02/03` |
-| `CX3-AC-005` | Given compact mobile screen and expanded text, when rendering P0, then no critical content/action/field is clipped or hidden                        | Viewport + zoom + keyboard                | `NFR-001/005`, `DP-09`  |
-| `CX3-AC-006` | Given restricted motion preference, when navigating/form submitting, then information, feedback and progress remain intelligible                    | Reduced-motion test                       | `DP-08/10`              |
-| `CX3-AC-007` | Given keyboard-only navigation, when reaching all P0 actions, then focus visible, logical, not obscured and not trapped                             | Manual keyboard audit                     | `NFR-005`, `IX-10`      |
-| `CX3-AC-008` | Given nonexpert customer, when reading P0 Custom offer, then unknown technical options have plain-language explanation/assisted alternative         | Comprehension study                       | `DP-03`, `FR-010`       |
+| ID           | Given / When / Then                                                                                                                                                                                                                           | Evidence category                         | Primary trace           |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ----------------------- |
+| `CX3-AC-001` | Given first visitor, when page renders without animation/images, then retail brand identity, curated apparel discovery, and prominent pathways to Custom and Business remain understandable and actionable                                    | Usability + disabled-assets visual review | `SP-01`, `FR-001..004`  |
+| `CX3-AC-002` | Given mobile viewport, when opening/closing global navigation with touch/keyboard, then focus/order and active routes (Shop collections, Custom, Business) remain fully usable and accessible                                                 | Browser keyboard/mobile                   | `IC-02`, `FR-005`       |
+| `CX3-AC-003` | Given nontransactional Shop discovery in CX-S0, when viewing collections, product previews, or navigation, then no functioning cart, checkout, or instant buy capability is falsely implied, and browsing remains transparently informational | Content state + route test                | `SP-01/02`, `FR-002`    |
+| `CX3-AC-004` | Given deep-linked Custom/Business visitor, when landing, then purpose/next action are discoverable without returning home                                                                                                                     | Usability, desktop/mobile                 | `SP-04/05`, `JRN-02/03` |
+| `CX3-AC-005` | Given compact mobile screen and expanded text, when rendering P0, then no critical content/action/field is clipped or hidden                                                                                                                  | Viewport + zoom + keyboard                | `NFR-001/005`, `DP-09`  |
+| `CX3-AC-006` | Given restricted motion preference, when navigating/form submitting, then information, feedback and progress remain intelligible                                                                                                              | Reduced-motion test                       | `DP-08/10`              |
+| `CX3-AC-007` | Given keyboard-only navigation, when reaching all P0 actions, then focus visible, logical, not obscured and not trapped                                                                                                                       | Manual keyboard audit                     | `NFR-005`, `IX-10`      |
+| `CX3-AC-008` | Given nonexpert customer, when reading P0 Custom offer, then unknown technical options have plain-language explanation/assisted alternative                                                                                                   | Comprehension study                       | `DP-03`, `FR-010`       |
 
 ### 16.2 P0 form, asset handling and truthful confirmation
 
