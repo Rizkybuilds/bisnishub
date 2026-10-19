@@ -50,6 +50,28 @@ describe('TeeStock retail-first discovery guardrails', () => {
     expect(globals).toContain(':focus-visible');
     expect(globals).toContain('prefers-reduced-motion');
     expect(theme).toContain('prefers-reduced-motion');
-    expect(read('components/Header.tsx')).toContain("event.key === 'Escape'");
+  });
+
+  it('restores focus to mobile navigation toggle on Escape without focus trap (UX-81-01)', () => {
+    const header = read('components/Header.tsx');
+    // Stable reference to the hamburger control
+    expect(header).toContain('useRef<HTMLButtonElement>(null)');
+    expect(header).toContain('ref={toggleRef}');
+    // Escape event closes navigation and restores focus
+    expect(header).toContain("if (event.key === 'Escape')");
+    expect(header).toContain('setOpen(false)');
+    expect(header).toContain('toggleRef.current?.focus()');
+    // Accessible disclosure controls
+    expect(header).toContain('aria-expanded={open}');
+    expect(header).toContain('aria-controls="mobile-navigation"');
+    expect(header).toContain(
+      "aria-label={open ? 'Tutup navigasi' : 'Buka navigasi'}",
+    );
+    // Link navigation dismisses menu without stealing focus on route transition
+    expect(header).toContain('onClick={() => setOpen(false)}');
+    expect(header).toContain('if (previousPath !== pathname)');
+    // Desktop navigation remains distinct
+    expect(header).toContain('nav-desktop');
+    expect(header).toContain('retail-mobile-toggle');
   });
 });
