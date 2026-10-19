@@ -11,7 +11,7 @@ source_revision: 2800c474563309bda49d84d712f79b68c9dde36a
 
 # CX-PKG-DECISIONS-R1 — Consolidated Owner Decision Packet (PROPOSED)
 
-**Do not treat any choice below as approved.** All per-document CX1–CX9 `DEC` registers remain proposed. This file groups questions by consequence to reduce founder review burden. Stage gates override blanket acceptance.
+**Do not treat the proposals below as blanket approvals.** While `CX-DP-01` reflects the Owner's accepted strategic presentation direction registered in `DEC-TS-2026-011`, this entire CX documentation package remains a non-canonical DRAFT (`normative_authority: NONE`). Acceptance of this strategic presentation direction does not imply approval of all proposed decisions (`CX-DP-02..17`), detailed CX requirements, release authorizations, or runtime implementations. All per-document CX1–CX9 `DEC` registers remain proposed, and formal adoption proceeds only under governed stage gates.
 
 ## A. Owner decisions needed before CX-S0 product scope freezes
 
