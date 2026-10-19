@@ -2,67 +2,35 @@ import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="site-footer">
-      <div className="container">
-        <div className="footer-grid">
+    <footer className="site-footer retail-footer">
+      <div className="retail-wrap">
+        <div className="retail-footer-intro">
+          <span className="retail-overline">A BETTER EVERYDAY STARTS HERE</span>
+          <strong>TeeStock<span aria-hidden="true">✳</span></strong>
+          <p>Curated apparel for everyday stories. Koleksi pilihan, ide yang personal, dan pengalaman yang dipikirkan dengan baik.</p>
+        </div>
+        <div className="retail-footer-cols">
           <div>
-            <div className="brand-logo" style={{ marginBottom: '12px' }}>
-              <span>TeeStock</span>
-              <span className="brand-tag">Apparel</span>
-            </div>
-            <p
-              style={{
-                maxWidth: '380px',
-                fontSize: '0.9rem',
-                marginBottom: '16px',
-              }}
-            >
-              Ekosistem produksi dan kustomisasi apparel terpadu dengan standar
-              kurasi material, tinjauan proses transparan, dan kejelasan alur
-              pemesanan.
-            </p>
+            <h3>Explore</h3>
+            <Link href="/shop">The Edit</Link>
+            <Link href="/">Our Story</Link>
           </div>
-
           <div>
-            <h3 className="footer-col-title">Layanan</h3>
-            <ul className="footer-links">
-              <li>
-                <Link href="/custom">Custom Apparel</Link>
-              </li>
-              <li>
-                <Link href="/custom-atelier">Custom Atelier</Link>
-              </li>
-              <li>
-                <Link href="/business">Solusi Bisnis &amp; B2B</Link>
-              </li>
-              <li>
-                <Link href="/support/contact">Bantuan &amp; Kontak</Link>
-              </li>
-            </ul>
+            <h3>Services</h3>
+            <Link href="/custom">Custom Apparel</Link>
+            <Link href="/business">For Business</Link>
+            <Link href="/custom-atelier">Custom Atelier</Link>
           </div>
-
           <div>
-            <h3 className="footer-col-title">Katalog &amp; Informasi</h3>
-            <ul className="footer-links">
-              <li>
-                <span style={{ color: 'var(--color-ink-subtle)' }}>
-                  Shop (Katalog Ritel — Segera)
-                </span>
-              </li>
-              <li>
-                <span style={{ color: 'var(--color-ink-subtle)' }}>
-                  Build Merch (Dalam Pengembangan)
-                </span>
-              </li>
-            </ul>
+            <h3>Information</h3>
+            <Link href="/support/contact">Bantuan &amp; Kontak</Link>
+            <span>Retail collection preview</span>
+            <span>Pemesanan belum dibuka</span>
           </div>
         </div>
-
-        <div className="footer-bottom">
-          <div>
-            © {new Date().getFullYear()} TeeStock. Seluruh hak cipta dilindungi.
-          </div>
-          <div>Informasi layanan &amp; konsultasi terpandu.</div>
+        <div className="retail-footer-bottom">
+          <span>© {new Date().getFullYear()} TeeStock. All rights reserved.</span>
+          <span>DESIGNED WITH INTENTION / MADE FOR EVERYDAY</span>
         </div>
       </div>
     </footer>
