@@ -1,213 +1,105 @@
 import Link from 'next/link';
-import { Badge } from '../components/Badge';
-import { NoticeBox } from '../components/NoticeBox';
+import { ConceptGallery, ShirtIllustration, conceptDesigns } from '../components/RetailShowcase';
 
 export default function Home() {
   return (
-    <div className="container">
-      {/* Hero Section */}
-      <section className="section" aria-labelledby="hero-heading">
-        <span className="eyebrow">TeeStock / Apparel Ecosystem</span>
-        <h1 id="hero-heading">
-          Pondasi Produksi &amp; Kustomisasi Garmen yang Rapi, Andal, dan
-          Terkurasi.
-        </h1>
-        <p className="lead-text">
-          TeeStock menghubungkan kebutuhan apparel berkualitas — dari proyek
-          custom personal hingga seragam dan merchandise korporat — dengan
-          proses tinjauan manusia yang transparan dan tertib.
-        </p>
-
-        <div className="btn-group">
-          <Link href="/custom" className="btn btn-primary">
-            Jelajahi Layanan Custom
-          </Link>
-          <Link href="/business" className="btn btn-secondary">
-            Kebutuhan Organisasi &amp; Bisnis
-          </Link>
+    <div className="retail-home">
+      <section className="retail-hero retail-wrap" aria-labelledby="retail-hero-heading">
+        <div className="retail-hero-content">
+          <span className="retail-overline"><span className="retail-overline-mark" /> A CURATED APPAREL HOUSE / INDONESIA</span>
+          <h1 id="retail-hero-heading">Everyday<br /><em>wear,</em><br />extraordinary<br />feeling.</h1>
+          <p className="retail-hero-description">
+            Kaos grafis dengan sudut pandang yang berbeda. Karya terkurasi,
+            siluet yang dipikirkan, dan cerita kecil yang ingin kamu bawa ke mana-mana.
+          </p>
+          <div className="retail-actions">
+            <Link href="/shop" className="retail-action-primary">Jelajahi koleksi <span aria-hidden="true">↗</span></Link>
+            <Link href="#retail-story" className="retail-action-quiet">Kenali TeeStock <span aria-hidden="true">↓</span></Link>
+          </div>
+          <div className="retail-hero-footnote">
+            <span>01 / 03 — EDITORIAL PREVIEW</span>
+            <span>SCROLL TO EXPLORE <span aria-hidden="true">↓</span></span>
+          </div>
+        </div>
+        <div className="retail-hero-art" aria-label="Ilustrasi konsep kaos TeeStock, bukan foto barang jual">
+          <div className="retail-hero-ring" />
+          <div className="retail-hero-tee retail-hero-tee-back">
+            <ShirtIllustration design={conceptDesigns[2]} tone="chalk" hero />
+          </div>
+          <div className="retail-hero-tee retail-hero-tee-front">
+            <ShirtIllustration design={conceptDesigns[0]} tone="ink" hero />
+          </div>
+          <div className="retail-hero-roundel"><span>TEESTOCK</span><strong>WEAR YOUR<br />OWN STORY.</strong><span>EST. IN PROGRESS</span></div>
+          <span className="retail-hero-art-note">STUDY NO. 001 / ILLUSTRATIVE ONLY</span>
         </div>
       </section>
 
-      {/* Operational Mode Reassurance Notice */}
-      <section className="section" aria-label="Pemberitahuan Layanan">
-        <NoticeBox
-          variant="info"
-          title="Informasi Layanan: Konsultasi Terpandu"
-        >
-          <p>
-            TeeStock saat ini melayani konsultasi terpandu untuk memahami
-            kebutuhan apparel Anda. Kami meninjau kesesuaian bahan, spesifikasi
-            cetak, dan jadwal sebelum mengajukan penawaran resmi. Pemesanan
-            mandiri atau checkout instan belum dibuka untuk publik.
-          </p>
-        </NoticeBox>
-      </section>
-
-      {/* Four Core Customer Jobs */}
-      <section className="section" aria-labelledby="jobs-heading">
-        <div style={{ marginBottom: '32px' }}>
-          <span className="eyebrow">Navigasi Kebutuhan</span>
-          <h2 id="jobs-heading">Empat Fokus Utama Layanan</h2>
-          <p>
-            Struktur layanan kami dirancang berdasarkan kebutuhan nyata Anda,
-            bukan kompleksitas organisasi internal.
-          </p>
-        </div>
-
-        <div className="grid-2">
-          {/* Card 1: Custom */}
-          <div className="card">
-            <div className="card-title">
-              <h3>Custom Apparel</h3>
-              <Badge variant="active">Aktif — Konsultasi</Badge>
-            </div>
-            <p className="card-body">
-              Kustomisasi pakaian untuk kebutuhan personal, komunitas, dan label
-              independen. Kami membantu pengecekan kesiapan file artwork,
-              pilihan bahan katun terkurasi, dan opsi cetak yang tepat.
-            </p>
-            <Link href="/custom" className="card-link">
-              Pelajari Layanan Custom &rarr;
-            </Link>
-          </div>
-
-          {/* Card 2: For Business */}
-          <div className="card">
-            <div className="card-title">
-              <h3>For Business</h3>
-              <Badge variant="active">Aktif — B2B</Badge>
-            </div>
-            <p className="card-body">
-              Pengadaan seragam kerja, merchandise kantor, dan apparel acara
-              korporat. Fleksibilitas kuantiti, kejelasan spesifikasi produksi,
-              dan pemenuhan dokumen administrasi pengadaan.
-            </p>
-            <Link href="/business" className="card-link">
-              Pelajari Solusi Bisnis &rarr;
-            </Link>
-          </div>
-
-          {/* Card 3: Shop */}
-          <div className="card">
-            <div className="card-title">
-              <h3>Shop (Katalog Ritel)</h3>
-              <Badge variant="unavailable">Belum Tersedia</Badge>
-            </div>
-            <p className="card-body">
-              Katalog belanja langsung retail dan koleksi esensial sedang
-              dipersiapkan. Transaksi belanja mandiri belum dibuka untuk publik
-              guna menjaga kepastian suplai garmen.
-            </p>
-            <span
-              style={{
-                fontSize: '0.875rem',
-                color: 'var(--color-ink-subtle)',
-                minHeight: '44px',
-                display: 'inline-flex',
-                alignItems: 'center',
-              }}
-            >
-              Informasional (Bukan Titik Pembelian)
-            </span>
-          </div>
-
-          {/* Card 4: Build Merch */}
-          <div className="card">
-            <div className="card-title">
-              <h3>Build Merch</h3>
-              <Badge variant="unavailable">Pengembangan</Badge>
-            </div>
-            <p className="card-body">
-              Dukungan produksi merchandise terintegrasi bagi kreator konten dan
-              komunitas kreatif. Program kemitraan dan kuota kolaborasi akan
-              dibuka secara bertahap.
-            </p>
-            <span
-              style={{
-                fontSize: '0.875rem',
-                color: 'var(--color-ink-subtle)',
-                minHeight: '44px',
-                display: 'inline-flex',
-                alignItems: 'center',
-              }}
-            >
-              Program Kemitraan Mendatang
-            </span>
-          </div>
+      <section className="retail-ticker" aria-label="Nilai TeeStock">
+        <div className="retail-ticker-inner">
+          <span>MAKE IT YOURS</span><span aria-hidden="true">✳</span>
+          <span>DESIGN WITH INTENTION</span><span aria-hidden="true">✳</span>
+          <span>EVERYDAY, YOUR WAY</span><span aria-hidden="true">✳</span>
+          <span>TEESTOCK SELECTS</span><span aria-hidden="true">✳</span>
         </div>
       </section>
 
-      {/* Process Preview: How It Works */}
-      <section className="section" aria-labelledby="process-heading">
-        <div style={{ marginBottom: '32px' }}>
-          <span className="eyebrow">Alur Kerja Sama</span>
-          <h2 id="process-heading">Bagaimana Pemesanan Terpandu Berjalan</h2>
-          <p>
-            Empat tahapan terstruktur memastikan pesanan Anda diproses sesuai
-            ekspektasi tanpa kejutan biaya atau spesifikasi.
-          </p>
-        </div>
-
-        <div className="steps-container">
-          <div className="step-item">
-            <span className="step-number">01</span>
-            <h3 className="step-title">Konsultasi Kebutuhan</h3>
-            <p className="step-desc">
-              Sampaikan jenis garmen, perkiraan jumlah (pcs), dan target waktu
-              penggunaan yang Anda rencanakan.
-            </p>
-          </div>
-
-          <div className="step-item">
-            <span className="step-number">02</span>
-            <h3 className="step-title">Tinjauan Kelayakan</h3>
-            <p className="step-desc">
-              Tim kami meninjau kesiapan file desain, ketersediaan bahan, serta
-              kecocokan metode cetak secara teknis.
-            </p>
-          </div>
-
-          <div className="step-item">
-            <span className="step-number">03</span>
-            <h3 className="step-title">Penawaran Resmi</h3>
-            <p className="step-desc">
-              Dokumen penawaran harga (quotation) mengikat dan detail
-              spesifikasi disepakati bersama sebelum produksi.
-            </p>
-          </div>
-
-          <div className="step-item">
-            <span className="step-number">04</span>
-            <h3 className="step-title">Produksi &amp; QC</h3>
-            <p className="step-desc">
-              Pesanan diproduksi dengan kontrol kualitas berkala dan pembaruan
-              progres hingga paket siap dikirim.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Support & Contact Direction */}
-      <section className="section" aria-labelledby="contact-heading">
-        <div className="card" style={{ padding: '32px' }}>
-          <span className="eyebrow">Bantuan &amp; Dukungan</span>
-          <h2
-            id="contact-heading"
-            style={{ fontSize: '1.5rem', marginBottom: '12px' }}
-          >
-            Siap Mempersiapkan Kebutuhan Anda?
-          </h2>
-          <p style={{ maxWidth: '680px', marginBottom: '20px' }}>
-            Pelajari panduan persiapan sebelum konsultasi dan ketahui status
-            aktivasi saluran dukungan resmi kami. Kami menjaga transparansi
-            proses agar Anda mendapatkan pelayanan yang akurat.
-          </p>
+      <section className="retail-collection-section retail-wrap" id="collection" aria-labelledby="retail-collection-heading">
+        <div className="retail-section-heading">
           <div>
-            <Link href="/support/contact" className="btn btn-secondary">
-              Buka Informasi Bantuan &amp; Kontak &rarr;
-            </Link>
+            <span className="retail-overline">THE EDIT / PREVIEW 001</span>
+            <h2 id="retail-collection-heading">Made to <em>feel</em> like you.</h2>
+          </div>
+          <p>Eksplorasi gaya visual TeeStock. Pilih warna, intip detail dan temukan arah koleksi yang sedang dikembangkan.</p>
+        </div>
+        <ConceptGallery compact />
+      </section>
+
+      <section className="retail-story-section" id="retail-story" aria-labelledby="retail-story-heading">
+        <div className="retail-wrap retail-story-grid">
+          <div className="retail-story-art">
+            <span className="retail-story-stamp">MORE THAN A BLANK CANVAS</span>
+            <div className="retail-story-shape"><span>TS<span className="retail-story-star">✳</span></span></div>
+            <span className="retail-story-side">CURATED / CONSIDERED / EVERYDAY</span>
+          </div>
+          <div className="retail-story-content">
+            <span className="retail-overline">NOT JUST ANOTHER TEE</span>
+            <h2 id="retail-story-heading">Simple things.<br /><em>Big feelings.</em></h2>
+            <p>TeeStock lahir dari keyakinan bahwa pakaian sehari-hari bisa terasa personal. Tidak harus berlebihan. Tidak harus mengikuti semua tren. Cukup dipilih dengan baik dan dipakai dengan percaya diri.</p>
+            <p>Di sini, kurasi desain dan perhatian pada kualitas garmen berjalan berdampingan. Dari ide visual hingga detail produk, semuanya dibuat lebih mudah untuk dijelajahi.</p>
+            <Link href="/shop" className="retail-text-link">Explore the edit <span aria-hidden="true">↗</span></Link>
           </div>
         </div>
+      </section>
+
+      <section className="retail-paths-section retail-wrap" aria-labelledby="retail-paths-heading">
+        <div className="retail-section-heading retail-paths-heading">
+          <div>
+            <span className="retail-overline">BEYOND THE COLLECTION</span>
+            <h2 id="retail-paths-heading">Your idea, <em>our canvas.</em></h2>
+          </div>
+          <p>Selain koleksi pilihan, kami juga menyiapkan pengalaman untuk karya personal dan kebutuhan apparel organisasi.</p>
+        </div>
+        <div className="retail-paths-grid">
+          <Link href="/custom" className="retail-path-card retail-path-custom">
+            <span>01 / CUSTOM APPAREL</span>
+            <strong>Make it<br /><em>personal.</em></strong>
+            <span className="retail-path-bottom">Eksplorasi layanan custom <span aria-hidden="true">↗</span></span>
+          </Link>
+          <Link href="/business" className="retail-path-card retail-path-business">
+            <span>02 / FOR BUSINESS</span>
+            <strong>Wear it<br /><em>together.</em></strong>
+            <span className="retail-path-bottom">Solusi untuk tim & organisasi <span aria-hidden="true">↗</span></span>
+          </Link>
+        </div>
+      </section>
+
+      <section className="retail-availability retail-wrap" aria-label="Informasi kesiapan katalog">
+        <span className="retail-availability-dot" />
+        <div>
+          <strong>Shop (Katalog Ritel) — Belum Tersedia</strong>
+          <p>Visual yang ditampilkan adalah studi desain konseptual, bukan produk jual, stok nyata, atau penawaran harga. Pemesanan mandiri belum dibuka. Build Merch masih dalam Pengembangan.</p>
+        </div>
+        <Link href="/support/contact">Informasi layanan <span aria-hidden="true">↗</span></Link>
       </section>
     </div>
   );
