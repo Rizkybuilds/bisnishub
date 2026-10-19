@@ -51,6 +51,7 @@ source_dependencies:
   - docs/roadmaps/solo-founder-launch-roadmap.md
   - docs/operating-model/solo-founder-operating-system.md
   - docs/architecture/master-system-blueprint.md
+  - bisnis/teestock/00-foundation/decision-register.md
   - bisnis/teestock/10-product-tech/digital-product-vision.md
   - bisnis/teestock/10-product-tech/website-information-architecture.md
   - bisnis/teestock/10-product-tech/commerce-platform.md
@@ -83,9 +84,9 @@ source_dependencies:
 
 **Product promise:** _Customers should spend their attention on what they want to make or buy—not on navigating our organization, translating printing terminology, chasing an update, or recovering from our systems' mistakes._
 
-**Near-term practical reality:** The first controlled Business/Custom pilot may be human-assisted. A complete catalog, payment checkout, automated custom builder and real-time multi-marketplace sync are not prerequisites for that pilot. The customer-facing journey must nonetheless be intentionally designed, legible, trustworthy and pleasant from its first public release.
+**Near-term practical reality:** Per strategic decision `DEC-TS-2026-011`, the first public customer presentation is retail-first: curated apparel collections, product presentation, discovery, and brand identity are front-and-center. Concurrently, Custom and Business pathways remain clearly visible, discoverable, and directly accessible from navigation and prominent entry points. Operational priority remains governed by active decision `DEC-TS-2026-009` (Business/Custom Lead → Quote → Order/Project → Production → QC → Fulfillment → Cost/Cash). Public retail discovery is non-transactional in initial presentation; no live checkout, payment gateway, or inventory reservation is active without independent operational and financial verification. The customer-facing journey must nonetheless be intentionally designed, legible, trustworthy and pleasant from its first public release.
 
-**Strategic direction:** Define the complete _future_ experience now, while implementing capabilities in evidence-gated slices rather than a simultaneous feature launch. P0 quality standards are not a license for P2 functionality, and P2 vision is not an immediate implementation promise.
+**Strategic direction:** Define the complete _future_ experience now, while implementing capabilities in evidence-gated slices rather than a simultaneous feature launch. Retail brand discovery leads the customer experience front-of-house, while the assisted Custom/Business operational spine generates cash flow and validates operations backstage. P0 quality standards are not a license for P2 functionality, and P2 vision is not an immediate implementation promise.
 
 ### 0.1 Product status vocabulary
 
@@ -102,8 +103,10 @@ source_dependencies:
 
 ### 0.2 Evidence snapshot and source reality
 
-- Branch `main` checked 2026-10-16: `2800c474563309bda49d84d712f79b68c9dde36a`.
-- `systems/mgbos/apps/teestock/src/app/page.tsx` is a placeholder homepage; `/custom-atelier/page.tsx` explicitly states ordering is unavailable. No active cart, checkout, catalog, or account routes were identified in the inspected active `src/app` tree. This is a **source observation**, not a live deployment claim.
+- Branch `main` checked 2026-10-16: `2800c474563309bda49d84d712f79b68c9dde36a` (historical audit baseline).
+- Subsequent implementation baseline: PR #76 (commit `2458718`) merged CX-S0-A public informational entry (`/business`, `/custom`, `/support/contact`, and homepage shell).
+- Strategic decision baseline: PR #78 (commit `3e5fb3d`) registered canonical decision `DEC-TS-2026-011` (retail-first presentation with governed Business/Custom operational priority preserving `DEC-TS-2026-009`).
+- `systems/mgbos/apps/teestock/src/app/page.tsx` was initially observed as a placeholder and later updated in PR #76 with informational Custom/Business entry. In accordance with `DEC-TS-2026-011`, public presentation evolves to retail-led collection discovery without implying live transactional checkout.
 - `systems/mgbos/apps/mgbos/src/app/(app)/` includes operational routes such as customers, leads, requirements, quotes, orders, payments, production, procurement, inventory, shipment and exception work. Their presence does **not** verify a public commerce contract.
 - `systems/mgbos/packages/integrations/src/index.ts`, `packages/ai/src/index.ts`, and `packages/ui/src/index.ts` were observed as reserved exports. Do not infer real external connectors, consumer AI, or final shared design components from package names.
 - Source business product vision, IA, commerce platform, Custom/Business services, customer-service policy and MGBOS integration descriptions contain much of the target direction and must be **reused**, not re-owned.
@@ -119,11 +122,11 @@ source_dependencies:
 
 ### 1.1 Why this product exists
 
-TeeStock's Owner is a solo founder with finite capital, time, energy, attention and technical capacity. He will personally perform physical and exception-heavy operations early: sourcing, physical vendor coordination, packaging, quality inspection, courier handoff, and important approvals. The digital platform must offload repeatable information work, make customer requests structured at source, protect the business from wrong promises and limit follow-up fragmentation. In parallel it must provide a memorable premium front-of-house experience rather than exposing MGBOS's internal operational complexity.
+TeeStock's Owner is a solo founder with finite capital, time, energy, attention and technical capacity. He will personally perform physical and exception-heavy operations early: sourcing, physical vendor coordination, packaging, quality inspection, courier handoff, and important approvals. The digital platform must offload repeatable information work, make customer requests structured at source, protect the business from wrong promises and limit follow-up fragmentation. In parallel it must provide a memorable, premium retail-first front-of-house experience—curated apparel collections, distinctive graphics, and brand prestige—rather than exposing MGBOS's internal operational complexity, while maintaining prominent direct routing to Custom and Business services (`DEC-TS-2026-011`).
 
 **Two simultaneous product outcomes:**
 
-1. **CUSTOMER VALUE:** Customer can achieve an intended purchase, inquiry, custom configuration or progress-check with minimum unnecessary effort and clear, reliable expectations.
+1. **CUSTOMER VALUE:** Customer can discover curated apparel, understand garment standards, or submit a custom/business inquiry with minimum unnecessary effort and clear, reliable expectations.
 2. **FOUNDER CAPACITY:** Each successful customer action creates governed, reusable information and a clear next operational step, instead of additional transcription, detective work and manual messaging for the founder.
 
 A feature that impresses visually but increases failed orders, support contacts or manual touches is not a product success.
@@ -198,24 +201,25 @@ A release is not accepted merely because all routes render. It must demonstrate 
 
 ## 3. Product surfaces, navigation and channel roles
 
-**Authority boundary:** Existing `TS-TEC-002` owns the TeeStock business website IA. CX-01 defines **requirements for user outcomes**, and CX-02/CX-03 later refine navigation/interaction without silently replacing that IA. The `SHOP / CUSTOMIZE / FOR BUSINESS / BUILD MERCH` intent framework is reused.
+**Authority boundary:** Existing `TS-TEC-002` owns the TeeStock business website IA. CX-01 defines **requirements for user outcomes**, and CX-02/CX-03 later refine navigation/interaction without silently replacing that IA. The `SHOP / CUSTOMIZE / FOR BUSINESS / BUILD MERCH` intent framework is reused per `DEC-TS-2026-011`, leading with retail presentation while keeping Custom and Business immediately accessible.
 
-| Surface                            | Customer-facing purpose                                                | Definition stage                                 | Contract owner after this PRD |
-| ---------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------- |
-| Public homepage + offer routing    | Explain TeeStock and choose relevant job                               | `P0_DEFINITION`                                  | CX-02/03                      |
-| Custom entry + structured inquiry  | Ask for personalized products or production                            | `P0_DEFINITION`                                  | CX-05                         |
-| Business entry + qualified request | Request business/uniform/merch quote                                   | `P0_DEFINITION`                                  | CX-05                         |
-| Selected products / catalog        | Browse approved products and transparent offer details                 | P0 content entry where sellable; full catalog P1 | CX-04                         |
-| Product detail / variant           | Review attributes, sizing, photos, availability and service qualifiers | P1                                               | CX-04                         |
-| Cart and direct checkout           | Transact safely for eligible items                                     | P1, not pilot prerequisite                       | CX-04                         |
-| Guest inquiry/order access         | Receive acknowledgement, access permitted own status                   | P0 minimum; expanded P1                          | CX-06                         |
-| Customer account and self-service  | Track, reorder, contact support, manage authorized profile             | P1                                               | CX-06                         |
-| B2B account workspace              | Quotes, approvals, documents and repeats                               | P1/P2 gated by demand/authority                  | CX-05/06                      |
-| Guided custom configurator         | Select standardized options, upload assets, receive estimate/quote     | Structured intake P0; advanced builder P2        | CX-05                         |
-| Support/help and returns request   | Resolve real issues with minimal customer burden                       | Basic P0, expanded P1                            | CX-06                         |
-| Marketplace/social channels        | External discovery/order context, consistent internal record           | Manual P0 if used; integrations P1/P2            | CX-07                         |
-| AI customer assistant              | Inform, qualify, summarize; escalate uncertainty                       | Optional P1; autonomy P2 subject to policy       | CX-06/08 and JARVIS owner     |
-| Creator/partner portals            | Participant tools and separate ecosystems                              | OUT OF SCOPE for CX-01 first package             | Future product tracks         |
+| Surface                             | Customer-facing purpose                                                                             | Definition stage                                  | Contract owner after this PRD |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ----------------------------- |
+| Public homepage + retail router     | Curated apparel showcase, brand identity and collection discovery; prominent Custom/Business routes | `P0_DEFINITION`                                   | CX-02/03                      |
+| Curated collection / shop discovery | Nontransactional apparel discovery, lookbooks, garment specs; no live checkout                      | `P0_DEFINITION` (nontransactional)                | CX-03/04                      |
+| Custom entry + structured inquiry   | Ask for personalized products or production (prominent secondary pathway)                           | `P0_DEFINITION`                                   | CX-05                         |
+| Business entry + qualified request  | Request business/uniform/merch quote (prominent secondary pathway)                                  | `P0_DEFINITION`                                   | CX-05                         |
+| Transactional catalog / products    | Browse verified sellable products with active purchasing eligibility                                | `P1_GATED` (requires operational readiness)       | CX-04                         |
+| Product detail / variant preview    | Review garment attributes, sizing, photos, design story (preview in P0; purchase in P1)             | P0 preview / P1 transactional                     | CX-04                         |
+| Cart and direct checkout            | Transact safely for eligible items                                                                  | P1, not pilot prerequisite; R5 assurance required | CX-04                         |
+| Guest inquiry/order access          | Receive acknowledgement, access permitted own status                                                | P0 minimum; expanded P1                           | CX-06                         |
+| Customer account and self-service   | Track, reorder, contact support, manage authorized profile                                          | P1                                                | CX-06                         |
+| B2B account workspace               | Quotes, approvals, documents and repeats                                                            | P1/P2 gated by demand/authority                   | CX-05/06                      |
+| Guided custom configurator          | Select standardized options, upload assets, receive estimate/quote                                  | Structured intake P0; advanced builder P2         | CX-05                         |
+| Support/help and returns request    | Resolve real issues with minimal customer burden                                                    | Basic P0, expanded P1                             | CX-06                         |
+| Marketplace/social channels         | External discovery/order context, consistent internal record                                        | Manual P0 if used; integrations P1/P2             | CX-07                         |
+| AI customer assistant               | Inform, qualify, summarize; escalate uncertainty                                                    | Optional P1; autonomy P2 subject to policy        | CX-06/08 and JARVIS owner     |
+| Creator/partner portals             | Participant tools and separate ecosystems                                                           | OUT OF SCOPE for CX-01 first package              | Future product tracks         |
 
 **Route labels here are conceptual only.** Final paths/subdomains must honor existing IA, URLs, SEO, redirects and any approved brand decisions. P0 may be accomplished through an intentionally small set of exceptionally designed pages.
 
@@ -232,9 +236,9 @@ A release is not accepted merely because all routes render. It must demonstrate 
 
 Full storyboard, swimlanes, field sets, step timing and recovery tests belong to CX-02/04/05/06. CX-01 freezes the _intent and outcomes_, not individual screens or APIs.
 
-### `JRN-01` — First-time customer → appropriate offer
+### `JRN-01` — First-time customer → appropriate offer (Retail-led discovery + prominent service routing)
 
-**Start:** Visitor reaches website by search, social, marketplace bio or direct URL. **Target:** Within a short and comprehensible journey the visitor chooses `Shop`, `Custom`, `Business` or `Merch` without needing to understand internal structures. **Failure path:** irrelevant/no-result content yields helpful next options, not a dead end. **Business result:** anonymous browsing need not create CRM noise; genuine inquiry becomes structured intent when submitted.
+**Start:** Visitor reaches website by search, social, marketplace bio or direct URL. **Presentation:** Lands on curated apparel collections, product presentation, and brand identity front-and-center (`DEC-TS-2026-011`). **Target:** Within a short, intuitive journey the visitor discovers curated products (`Shop`) or navigates directly to clearly visible, prominent pathways for `Custom`, `For Business`, or `Build Merch` without needing to understand internal organizational structures. **Nontransactional clarity:** Visitor browsing retail items sees curated designs and garment standards with transparent availability context (e.g. preview, drop info, or assisted inquiry); no misleading instant checkout CTA is presented prior to operational readiness. **Failure path:** irrelevant/no-result content yields helpful next options, not a dead end. **Business result:** anonymous browsing establishes brand prestige without creating CRM noise; genuine Custom/Business inquiries become structured intent when submitted into the governed MGBOS operational spine (`DEC-TS-2026-009`).
 
 ### `JRN-02` — Standard custom inquiry → governed assisted quotation (initial P0)
 
@@ -610,15 +614,17 @@ For any adoption or improvement claim, record: `metric_id`, `route/journey`, `cu
 
 These describe **product planning candidates**. The existing repository roadmap/Founder Control program remains authoritative until explicitly revised by the Owner and relevant engineering governance. No release date, deployment permission or implementation authorization is issued here.
 
-### Slice `CX-S0` — High-quality customer entry + assisted sales (proposed earliest public path)
+### Slice `CX-S0` — Retail-led public presentation & governed assisted Custom/Business entry
 
-**Customer value:** Understand offers, route to Custom/Business, submit well-structured inquiry, receive truthful next steps, avoid dead ends. **Founder value:** Enter customer requirements once and identify immediate human action. **Not required:** integrated direct checkout, instant binding quotes, real-time marketplace stock, elaborate custom editor, customer-portal suite.
+**Customer value:** Discover curated apparel collections, garment fundamentals, and brand identity front-and-center per `DEC-TS-2026-011`; access clearly visible Custom and Business pathways; submit well-structured inquiries; receive truthful next steps; avoid dead ends. **Founder value:** Establish premium brand positioning while capturing structured customer requirements into the MGBOS operational spine (`DEC-TS-2026-009`) without manual transcription. **Not required in S0:** integrated direct checkout, instant binding quotes, real-time marketplace stock, elaborate custom editor, customer-portal suite.
 
-**Proposed included:** `FR-001..005`, `FR-009..015` where authorized and viable, `FR-029..030` if secure status is implemented, `FR-038..040`, cross-cutting NFR and P0 acceptance. **Important:** Even `FR-030` secure status is subject to identity readiness and may initially be fulfilled through an approved authenticated/manual communication mechanism rather than a self-serve portal.
+**Nontransactional retail boundary:** Retail presentation in CX-S0 encompasses curated catalog display, lookbooks, collection storytelling, and garment quality education. It is strictly non-transactional: it does not imply live stock availability, cart checkout, payment processing, or automated inventory reservation. Transactional retail is explicitly gated in `CX-S1`.
 
-**Entry dependencies:** final customer offer menu and brand assets, approved contact/quote policies, compatible MGBOS lead/requirement write contract, input/upload review, security/privacy and error handling; no need for universal retail commerce.
+**Proposed included:** `FR-001..005` (incorporating retail discovery and job routing), `FR-009..015` where authorized and viable, `FR-029..030` if secure status is implemented, `FR-038..040`, cross-cutting NFR and P0 acceptance. **Important:** Even `FR-030` secure status is subject to identity readiness and may initially be fulfilled through an approved authenticated/manual communication mechanism rather than a self-serve portal.
 
-**Exit evidence:** accepted P0 tasks on representative devices; negative duplicate/authorization/upload tests; qualitative comprehension test; known founder manual steps; performance and accessibility lab reports; product copy does not claim unavailable functions.
+**Entry dependencies:** curated apparel collection assets and brand copy, final customer offer menu, approved contact/quote policies, compatible MGBOS lead/requirement write contract, input/upload review, security/privacy and error handling; retail presentation does not create a prerequisite for the independent Business/Custom operational pilot.
+
+**Exit evidence:** accepted P0 tasks on representative devices (verifying both retail discovery comprehension and assisted intake completion); negative duplicate/authorization/upload tests; qualitative comprehension test confirming users perceive retail excellence and can easily reach Custom/Business; known founder manual steps; performance and accessibility lab reports; product copy does not claim unavailable functions or functioning checkout.
 
 ### Slice `CX-S1` — Customer-controlled retail and order visibility
 
