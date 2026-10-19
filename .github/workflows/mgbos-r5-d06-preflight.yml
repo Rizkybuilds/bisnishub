@@ -90,6 +90,11 @@ jobs:
         run: |
           node scripts/r5-catalog-preflight-runner.mjs --verify-only
 
+      - name: Record pre-startup epoch timestamp for freshness attestation
+        shell: bash
+        run: |
+          echo "MGBOS_PREFLIGHT_PRE_STARTUP_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+
       - name: Start disposable database without disclosing local credentials
         run: |
           if ! pnpm db:start > /dev/null 2>&1; then
@@ -107,6 +112,7 @@ jobs:
       - name: Execute R5 D06 catalog preflight runner
         env:
           MGBOS_PREFLIGHT_APPROVED_COMMIT_SHA: ${{ inputs.approved_commit_sha }}
+          MGBOS_PREFLIGHT_PRE_STARTUP_EPOCH: ${{ env.MGBOS_PREFLIGHT_PRE_STARTUP_EPOCH }}
         run: |
           node scripts/r5-catalog-preflight-runner.mjs
 

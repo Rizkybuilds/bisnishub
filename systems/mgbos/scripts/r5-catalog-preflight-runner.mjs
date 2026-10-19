@@ -141,7 +141,7 @@ export const CANONICAL_MODULE_SPECS = [
   },
   {
     key: 'q5c',
-    name: 'MODULE Q5C: SEQUENCE PRIVILEGES IN SCHEMA app',
+    name: "MODULE Q5C: SEQUENCE PRIVILEGES IN SCHEMA 'app'",
     expectedHeaders: [
       'sequence_name',
       'target_role',
@@ -466,7 +466,12 @@ export function verifyEnvironmentIdentity(
 }
 
 /**
- * Robust RFC 4180 CSV parser for psql --csv output.
+ * Strict RFC 4180 CSV parser for psql --csv output.
+ * Enforces:
+ * 1. Immediate delimiter or newline following a closing quote (no rogue trailing characters).
+ * 2. No unescaped double-quotes inside unquoted fields.
+ * 3. Complete closure of all opened quoted fields before EOF.
+ *
  * @param {string} csvText
  * @returns {string[][]}
  */
@@ -475,38 +480,82 @@ export function parseCsvRows(csvText) {
   let currentRow = [];
   let currentField = '';
   let insideQuotes = false;
+  let quoteClosed = false;
 
   for (let i = 0; i < csvText.length; i++) {
     const char = csvText[i];
     const nextChar = csvText[i + 1];
 
-    if (char === '"') {
-      if (insideQuotes && nextChar === '"') {
-        currentField += '"';
-        i++; // skip escaped quote
+    if (insideQuotes) {
+      if (char === '"') {
+        if (nextChar === '"') {
+          currentField += '"';
+          i++; // skip escaped quote
+        } else {
+          insideQuotes = false;
+          quoteClosed = true;
+        }
       } else {
-        insideQuotes = !insideQuotes;
+        currentField += char;
       }
-    } else if (char === ',' && !insideQuotes) {
-      currentRow.push(currentField);
-      currentField = '';
-    } else if ((char === '\r' || char === '\n') && !insideQuotes) {
-      if (char === '\r' && nextChar === '\n') i++;
-      currentRow.push(currentField);
-      currentField = '';
-      if (
-        currentRow.length > 0 &&
-        !(currentRow.length === 1 && currentRow[0] === '')
-      ) {
-        rows.push(currentRow);
+    } else if (quoteClosed) {
+      // In RFC 4180, once a quoted field closes, only a delimiter (',') or line break is allowed.
+      if (char === ',') {
+        currentRow.push(currentField);
+        currentField = '';
+        quoteClosed = false;
+      } else if (char === '\r' || char === '\n') {
+        if (char === '\r' && nextChar === '\n') i++;
+        currentRow.push(currentField);
+        currentField = '';
+        quoteClosed = false;
+        if (
+          currentRow.length > 0 &&
+          !(currentRow.length === 1 && currentRow[0] === '')
+        ) {
+          rows.push(currentRow);
+        }
+        currentRow = [];
+      } else {
+        throw new Error(
+          `CSV parser error: unexpected character '${char}' after closing quote at index ${i}. Expected delimiter or newline.`,
+        );
       }
-      currentRow = [];
     } else {
-      currentField += char;
+      // Unquoted field parsing
+      if (char === '"') {
+        if (currentField.length === 0) {
+          insideQuotes = true;
+        } else {
+          throw new Error(
+            `CSV parser error: unescaped quote inside unquoted field at index ${i}.`,
+          );
+        }
+      } else if (char === ',') {
+        currentRow.push(currentField);
+        currentField = '';
+      } else if (char === '\r' || char === '\n') {
+        if (char === '\r' && nextChar === '\n') i++;
+        currentRow.push(currentField);
+        currentField = '';
+        if (
+          currentRow.length > 0 &&
+          !(currentRow.length === 1 && currentRow[0] === '')
+        ) {
+          rows.push(currentRow);
+        }
+        currentRow = [];
+      } else {
+        currentField += char;
+      }
     }
   }
 
-  if (currentField !== '' || currentRow.length > 0) {
+  if (insideQuotes) {
+    throw new Error('CSV parser error: unclosed quote at end of input.');
+  }
+
+  if (currentField !== '' || currentRow.length > 0 || quoteClosed) {
     currentRow.push(currentField);
     if (
       currentRow.length > 0 &&
@@ -517,6 +566,171 @@ export function parseCsvRows(csvText) {
   }
 
   return rows;
+}
+
+/**
+ * Standalone read-only identity and freshness probe.
+ * Verifies that the connected session is indeed postgres@postgres on the container internal port,
+ * and that pg_postmaster_start_time strictly post-dates the pre-startup epoch.
+ *
+ * @param {Record<string, string>} psqlEnv
+ * @param {string | number} preStartupEpoch
+ * @param {{ mockExecutor?: (sql: string, env: Record<string, string>) => string }} [options={}]
+ * @returns {{
+ *   isFreshInstanceConfirmed: boolean,
+ *   currentDatabase: string,
+ *   currentUser: string,
+ *   sessionUser: string,
+ *   serverAddr: string,
+ *   serverPort: number,
+ *   postmasterStartTime: string,
+ *   postmasterEpoch: number
+ * }}
+ */
+export function executeIdentityAndFreshnessProbe(
+  psqlEnv,
+  preStartupEpoch,
+  options = {},
+) {
+  if (
+    !preStartupEpoch ||
+    isNaN(Number(preStartupEpoch)) ||
+    Number(preStartupEpoch) <= 0
+  ) {
+    throw new Error(
+      `Identity probe rejected: missing or invalid preStartupEpoch (${preStartupEpoch}). Pre-startup epoch timestamp must be recorded prior to database startup.`,
+    );
+  }
+
+  const expectedPreEpoch = Number(preStartupEpoch);
+  const probeSql =
+    'SELECT current_database(), current_user, session_user, inet_server_addr()::text, inet_server_port(), pg_postmaster_start_time()::text;';
+
+  let stdout = '';
+  if (typeof options.mockExecutor === 'function') {
+    stdout = options.mockExecutor(probeSql, psqlEnv);
+  } else {
+    const psqlArgs = [
+      '-h',
+      CANONICAL_LOCAL_HOST,
+      '-p',
+      String(CANONICAL_LOCAL_PORT),
+      '-U',
+      CANONICAL_LOCAL_USER,
+      '-d',
+      CANONICAL_LOCAL_DATABASE,
+      '-v',
+      'ON_ERROR_STOP=1',
+      '-X',
+      '--csv',
+      '-c',
+      probeSql,
+    ];
+
+    const result = spawnSync('psql', psqlArgs, {
+      env: psqlEnv,
+      encoding: 'utf8',
+      maxBuffer: 1024 * 1024,
+    });
+
+    if (result.error) {
+      throw new Error(
+        `Identity probe failed: unable to spawn psql process. Error: ${result.error.message}`,
+      );
+    }
+    if (result.status !== 0) {
+      throw new Error(
+        `Identity probe failed: psql exited with code ${result.status}.`,
+      );
+    }
+    stdout = result.stdout;
+  }
+
+  const rows = parseCsvRows(stdout);
+  if (rows.length < 2) {
+    throw new Error(
+      `Identity probe failed: expected header and data row, got ${rows.length} rows.`,
+    );
+  }
+
+  const [headers, dataRow] = rows;
+  const expectedHeaders = [
+    'current_database',
+    'current_user',
+    'session_user',
+    'inet_server_addr',
+    'inet_server_port',
+    'pg_postmaster_start_time',
+  ];
+
+  if (
+    headers.length !== expectedHeaders.length ||
+    !expectedHeaders.every((h, idx) => headers[idx] === h)
+  ) {
+    throw new Error(
+      `Identity probe failed: unexpected headers from identity probe. Got: ${JSON.stringify(headers)}`,
+    );
+  }
+
+  const record = {};
+  headers.forEach((h, i) => {
+    record[h] = dataRow[i];
+  });
+
+  // 1. Assert database identity
+  if (record.current_database !== 'postgres') {
+    throw new Error(
+      `Identity probe assertion failed: current_database must be 'postgres', got '${record.current_database}'.`,
+    );
+  }
+
+  // 2. Assert connected user
+  if (record.current_user !== 'postgres') {
+    throw new Error(
+      `Identity probe assertion failed: current_user must be 'postgres', got '${record.current_user}'.`,
+    );
+  }
+
+  // 3. Assert session user
+  if (record.session_user !== 'postgres') {
+    throw new Error(
+      `Identity probe assertion failed: session_user must be 'postgres', got '${record.session_user}'.`,
+    );
+  }
+
+  // 4. Assert server port matches container internal port (5432 or host-mapped 55432)
+  const portNum = Number(record.inet_server_port);
+  if (portNum !== 5432 && portNum !== CANONICAL_LOCAL_PORT) {
+    throw new Error(
+      `Identity probe assertion failed: server port ${portNum} does not match expected container internal port (5432) or local port (${CANONICAL_LOCAL_PORT}).`,
+    );
+  }
+
+  // 5. Assert postmaster start time post-dates pre-startup epoch
+  const postmasterDate = new Date(record.pg_postmaster_start_time);
+  const postmasterEpoch = Math.floor(postmasterDate.getTime() / 1000);
+  if (isNaN(postmasterEpoch) || postmasterEpoch <= 0) {
+    throw new Error(
+      `Identity probe assertion failed: unable to parse pg_postmaster_start_time ('${record.pg_postmaster_start_time}').`,
+    );
+  }
+
+  if (postmasterEpoch < expectedPreEpoch) {
+    throw new Error(
+      `Identity probe assertion failed: pg_postmaster_start_time (${record.pg_postmaster_start_time}, epoch ${postmasterEpoch}) does not post-date pre-startup epoch (${expectedPreEpoch}). Stale or pre-existing database instance detected.`,
+    );
+  }
+
+  return {
+    isFreshInstanceConfirmed: true,
+    currentDatabase: record.current_database,
+    currentUser: record.current_user,
+    sessionUser: record.session_user,
+    serverAddr: record.inet_server_addr,
+    serverPort: portNum,
+    postmasterStartTime: record.pg_postmaster_start_time,
+    postmasterEpoch,
+  };
 }
 
 /**
@@ -718,6 +932,64 @@ export function escapeMarkdownCell(val) {
 }
 
 /**
+ * Constructs the canonical evidence payload structure with strict freshness attestation.
+ * In --verify-only mode, is_fresh_instance_confirmed is unconditionally "NOT_EVALUATED_OFFLINE_VERIFY_ONLY".
+ * In live execution, it records the verified boolean result from executeIdentityAndFreshnessProbe.
+ *
+ * @param {object} params
+ * @returns {object}
+ */
+export function createEvidencePayload({
+  envIdentity,
+  identityAttestation = null,
+  isVerifyOnly = false,
+  sanitizedModules = {},
+  evaluations = {},
+  disposition = 'STATIC_VERIFIED_ONLY',
+  jobStartTime = new Date(),
+}) {
+  return {
+    provenance: {
+      workflow_run_id: process.env.GITHUB_RUN_ID ?? 'local-manual',
+      repository: envIdentity?.repository ?? 'Rizkybuilds/bisnishub',
+      git_ref: envIdentity?.gitRef ?? 'refs/heads/main',
+      target_commit_sha: envIdentity?.commitSha ?? 'UNKNOWN',
+      execution_timestamp: jobStartTime.toISOString(),
+      candidate: 'CANDIDATE_A_CI_LOCAL',
+    },
+    environment_identity: {
+      host_endpoint: `${CANONICAL_LOCAL_HOST}:${CANONICAL_LOCAL_PORT}`,
+      database_name:
+        identityAttestation?.currentDatabase ?? CANONICAL_LOCAL_DATABASE,
+      current_user:
+        identityAttestation?.currentUser ??
+        (isVerifyOnly ? 'NOT_EVALUATED_OFFLINE_VERIFY_ONLY' : 'NOT_EVALUATED'),
+      session_user:
+        identityAttestation?.sessionUser ??
+        (isVerifyOnly ? 'NOT_EVALUATED_OFFLINE_VERIFY_ONLY' : 'NOT_EVALUATED'),
+      server_port:
+        identityAttestation?.serverPort ??
+        (isVerifyOnly ? 'NOT_EVALUATED_OFFLINE_VERIFY_ONLY' : 'NOT_EVALUATED'),
+      postmaster_start_time:
+        identityAttestation?.postmasterStartTime ??
+        (isVerifyOnly ? 'NOT_EVALUATED_OFFLINE_VERIFY_ONLY' : 'NOT_EVALUATED'),
+      is_fresh_instance_confirmed: isVerifyOnly
+        ? 'NOT_EVALUATED_OFFLINE_VERIFY_ONLY'
+        : (identityAttestation?.isFreshInstanceConfirmed ?? false),
+    },
+    raw_module_results: sanitizedModules,
+    probe_evaluations: evaluations,
+    derived_status: {
+      preflight_disposition: isVerifyOnly
+        ? 'STATIC_VERIFIED_ONLY'
+        : disposition,
+      r5_security_disclaimer:
+        'BASELINE_OBSERVATION_ONLY_DOES_NOT_PROVE_R5_SECURITY_OR_CONCURRENCY',
+    },
+  };
+}
+
+/**
  * Generates structured JSON and Markdown summary evidence files using sanitized allowlists.
  * @param {any} evidencePayload
  * @param {string} outputDir
@@ -747,6 +1019,7 @@ export function writeEvidenceArtifacts(
     `- **Execution Timestamp:** ${evidencePayload.provenance.execution_timestamp}`,
     `- **Verified Commit SHA:** \`${evidencePayload.provenance.target_commit_sha}\``,
     `- **Preflight Disposition:** **${evidencePayload.derived_status.preflight_disposition}**`,
+    `- **Fresh Instance Confirmed:** \`${evidencePayload.environment_identity.is_fresh_instance_confirmed}\``,
     `- **Disclaimer:** ${evidencePayload.derived_status.r5_security_disclaimer}`,
     '',
     '## Q8 Diagnostic Probes Summary',
@@ -770,12 +1043,28 @@ export function writeEvidenceArtifacts(
 export async function main() {
   const jobStartTime = new Date();
   const args = process.argv.slice(2);
-  const verifyOnly = args.includes('--verify-only');
-  const allowLocalDevMock = args.includes('--allow-local-dev-mock');
+  let verifyOnly = false;
   let commitArg = null;
-  const commitIdx = args.indexOf('--approved-commit-sha');
-  if (commitIdx !== -1 && args[commitIdx + 1]) {
-    commitArg = args[commitIdx + 1];
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--verify-only') {
+      verifyOnly = true;
+    } else if (arg === '--approved-commit-sha') {
+      i++;
+      if (i >= args.length || !args[i]) {
+        console.error(
+          'FATAL: --approved-commit-sha requires a 40-hex commit SHA argument.',
+        );
+        process.exit(1);
+      }
+      commitArg = args[i];
+    } else {
+      console.error(
+        `FATAL: Unrecognized argument '${arg}'. Only --verify-only and --approved-commit-sha <sha> are allowed.`,
+      );
+      process.exit(1);
+    }
   }
 
   console.log('--- MGBOS R5 D06 Catalog Preflight Execution Runner ---');
@@ -791,7 +1080,6 @@ export async function main() {
   console.log('2. Verifying environment identity and commit authorization...');
   const envIdentity = verifyEnvironmentIdentity(commitArg, process.env, {
     verifyOnly,
-    allowLocalDevMock,
   });
   console.log(
     `   Provenance confirmed: repo=${envIdentity.repository}, commit=${envIdentity.commitSha}, runner=${envIdentity.runnerEnv}`,
@@ -801,6 +1089,9 @@ export async function main() {
     console.log(
       'Static verification complete (--verify-only mode). No database connection opened.',
     );
+    console.log(
+      '   is_fresh_instance_confirmed: "NOT_EVALUATED_OFFLINE_VERIFY_ONLY"',
+    );
     return;
   }
 
@@ -809,6 +1100,25 @@ export async function main() {
     `3. Connecting to local disposable database (${CANONICAL_LOCAL_HOST}:${CANONICAL_LOCAL_PORT})...`,
   );
 
+  const psqlEnv = {
+    ...process.env,
+    PGPASSWORD: 'postgres',
+    PGOPTIONS: `-c statement_timeout=${STATEMENT_TIMEOUT_MS} -c lock_timeout=${LOCK_TIMEOUT_MS}`,
+  };
+
+  // 3a. Execute Standalone Database Identity & Freshness Probe
+  const preStartupEpoch = process.env.MGBOS_PREFLIGHT_PRE_STARTUP_EPOCH;
+  console.log('   Executing database identity and freshness attestation probe...');
+  const identityAttestation = executeIdentityAndFreshnessProbe(
+    psqlEnv,
+    preStartupEpoch,
+  );
+  console.log(
+    `   Identity confirmed: db=${identityAttestation.currentDatabase}, user=${identityAttestation.currentUser}, port=${identityAttestation.serverPort}, started=${identityAttestation.postmasterStartTime}`,
+  );
+
+  // 3b. Execute Authoritative Q1–Q8 Catalog Preflight Package
+  console.log('   Executing authoritative Q1–Q8 catalog preflight SQL package...');
   const psqlArgs = [
     '-h',
     CANONICAL_LOCAL_HOST,
@@ -825,12 +1135,6 @@ export async function main() {
     '-f',
     SQL_ASSET_PATH,
   ];
-
-  const psqlEnv = {
-    ...process.env,
-    PGPASSWORD: 'postgres',
-    PGOPTIONS: `-c statement_timeout=${STATEMENT_TIMEOUT_MS} -c lock_timeout=${LOCK_TIMEOUT_MS}`,
-  };
 
   const execResult = spawnSync('psql', psqlArgs, {
     env: psqlEnv,
@@ -862,28 +1166,15 @@ export async function main() {
   const sanitizedModules = applyOutputAllowlist(rawModules);
 
   // 5. Structure Final Evidence Payload
-  const evidencePayload = {
-    provenance: {
-      workflow_run_id: process.env.GITHUB_RUN_ID ?? 'local-manual',
-      repository: envIdentity.repository,
-      git_ref: envIdentity.gitRef,
-      target_commit_sha: envIdentity.commitSha,
-      execution_timestamp: jobStartTime.toISOString(),
-      candidate: 'CANDIDATE_A_CI_LOCAL',
-    },
-    environment_identity: {
-      host_endpoint: `${CANONICAL_LOCAL_HOST}:${CANONICAL_LOCAL_PORT}`,
-      database_name: CANONICAL_LOCAL_DATABASE,
-      is_fresh_instance_confirmed: true,
-    },
-    raw_module_results: sanitizedModules,
-    probe_evaluations: evaluations,
-    derived_status: {
-      preflight_disposition: disposition,
-      r5_security_disclaimer:
-        'BASELINE_OBSERVATION_ONLY_DOES_NOT_PROVE_R5_SECURITY_OR_CONCURRENCY',
-    },
-  };
+  const evidencePayload = createEvidencePayload({
+    envIdentity,
+    identityAttestation,
+    isVerifyOnly: false,
+    sanitizedModules,
+    evaluations,
+    disposition,
+    jobStartTime,
+  });
 
   // 6. Output Artifacts
   console.log('5. Writing sanitized evidence artifacts...');
