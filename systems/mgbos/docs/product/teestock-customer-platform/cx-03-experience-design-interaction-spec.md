@@ -459,7 +459,7 @@ Patterns below define the **experience contract** for possible surfaces. A stage
 - **Responsive & accessible standards:** Mobile-first layout; touch targets $\ge 44 \times 44\text{px}$; logical keyboard tab order with visible high-contrast focus rings; respects `prefers-reduced-motion`.
 - **Resilient rendering:** First-screen comprehension survives image load failure (meaningful semantic alt text and fallback styling), ad blockers, font loading delays, and disabled script enhancements.
 - **Footer & trust evidence:** Trust elements must be factual, attributable, and verifiable; clear contact, support, and legal information appropriate to active business readiness.
-- **Visual success metric:** Customer perceives a high-standard apparel brand and can navigate to either retail discovery or assisted custom/business inquiry within 5 seconds on mobile.
+- **Proposed user outcome & testable qualitative metric:** A first-time mobile visitor recognizes TeeStock's curated apparel positioning on first view, while retail discovery and Custom/Business paths are clearly discoverable without unnecessary navigation. Actual task completion and comprehension must be measured in a representative usability study; numeric success thresholds (such as time-to-navigate) require separately documented methodology, baseline measurement, and Owner approval prior to adoption.
 
 **Anti-pattern:** Oversized autoplay video or heavy 3D canvas that degrades mobile performance, blocks keyboard navigation, or obscures `Customize`/`For Business` pathways.
 
