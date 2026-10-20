@@ -10,10 +10,10 @@ tags:
   - teestock/canonical
   - teestock/foundation
 document_id: "TS-FND-004"
-version: "1.0"
+version: "1.2"
 category: "foundation"
 business: "teestock"
-last_updated: "2026-09-28"
+last_updated: "2026-10-20"
 path: "00-foundation/decision-register.md"
 depends_on:
   - "TS-FND-001"
@@ -2121,6 +2121,76 @@ Completion of Business/Custom operational validation; verified ready-stock inven
 ### Supersedes
 
 None
+
+### Superseded By
+
+Extended by DEC-TS-2026-012 (curated-design-first business focus; presentation mandate preserved).
+
+---
+
+# 172. DEC-TS-2026-012 — TeeStock Curated-Design-First Business Positioning and Product Priority
+
+## DEC-TS-2026-012 — TeeStock Curated-Design-First Business Positioning and Product Priority
+
+Status: ACTIVE  
+Date: 2026-10-20  
+Category: STRATEGIC / BRAND ARCHITECTURE / COMMERCE / PORTFOLIO PRIORITY  
+Owner: Founder / Owner  
+
+### Decision
+
+- TeeStock is primarily developed, positioned, and operated as a **curated-design apparel brand and commerce destination**.
+- The primary commercial value proposition is the discerning selection of artwork, creative direction, recognizable collections, garment quality, and a trusted consumer retail experience.
+- TeeStock Commerce (Selects) is the leading customer-facing domain. Essentials supports standard garment quality. Originals and creator collaborations are developed within this identity.
+- Business/Custom services remain legitimate secondary service offerings; they MUST NOT be represented as the primary brand identity, core customer proposition, or default business growth focus.
+- DEC-TS-2026-009 operational priority is reconciled: Business/Custom remains an approved technical/operational spine validation program for MGBOS, but is NOT proxy evidence for curated retail product demand.
+- Live retail transaction checkout remains gated by independent financial, inventory, security, and operational readiness gates.
+
+### Context
+
+Clarifies Owner strategic direction recorded on 2026-10-20. Following the public storefront presentation alignment under DEC-TS-2026-011, the Owner confirmed that curated graphic apparel is the fundamental business and product priority of TeeStock, resolving ambiguity where previous operational planning had prioritized Business/Custom workflows for early MGBOS execution convenience.
+
+### Problem
+
+Allowing technical validation convenience to dictate brand positioning risks entrenching TeeStock as a generic B2B print-on-demand service provider rather than building the curated graphic apparel brand intended by the founder.
+
+### Options Considered
+
+1. *Retain Business/Custom as Primary Business*: Treat TeeStock primarily as an assisted B2B custom apparel business. (Rejected: contrary to founder brand vision and long-term customer economics).
+2. *Delete Business/Custom Capabilities*: Erase existing B2B workflows and focus exclusively on retail drops. (Rejected: wasteful; existing MGBOS quote-to-order spine is technically valuable and provides optional revenue).
+3. *Curated-Design-First Brand & Product Priority with Governed Supporting B2B Validation*: Formally establish curated apparel as the primary business and commercial focus, while retaining existing B2B workflows as secondary services and preserving MGBOS operational spine assurance. (Selected).
+
+### Rationale
+
+A distinctive curated apparel brand commands consumer loyalty and pricing power. Aligning business strategy with the founder's vision ensures customer-platform and product development build toward the intended commercial destination.
+
+### Evidence
+
+Owner direction recorded on 2026-10-20; strategic reconciliation in `docs/strategy/internal-business-os/strategic-anchor.md`, `docs/strategy/internal-business-os/parallel-pilots.md`, and `bisnis/teestock/00-foundation/decision-2026-012-curated-design-first.md`.
+
+### Consequences
+
+- Brand positioning, catalog merchandising, and customer-platform design prioritize curated collections and retail discovery.
+- Customer Platform CX-01 and CX-09 product requirements align with curated retail priority while preserving all 46 functional requirements.
+- MGBOS operational pilot for Business/Custom (D4) remains an operational proof of the backend spine, but cannot be counted as validation of curated apparel demand.
+- Dedicated curated-design demand and unit-economics validation is established.
+
+### Affected Documents
+
+- bisnis/teestock/00-foundation/decision-2026-012-curated-design-first.md
+- docs/strategy/internal-business-os/strategic-anchor.md
+- docs/strategy/internal-business-os/parallel-pilots.md
+- systems/mgbos/docs/product/teestock-customer-platform/CX-PKG-RETAIL-FIRST-RECONCILIATION-R1.md
+- systems/mgbos/docs/product/teestock-customer-platform/CX-PKG-RETAIL-SHOP-EXPERIENCE-R1.md
+- systems/mgbos/docs/product/teestock-customer-platform/CX-PKG-RETAIL-UX-PROTOTYPE-CONTRACT-R1.md
+
+### Review Trigger
+
+Quarterly strategy review, completion of curated-design pilot validation, or material shift in market demand.
+
+### Supersedes
+
+None (reconciles and contextualizes DEC-TS-2026-009 and DEC-TS-2026-011).
 
 ### Superseded By
 
