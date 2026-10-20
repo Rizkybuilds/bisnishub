@@ -28,6 +28,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Validate authorization inputs and repository provenance
+        working-directory: .
         env:
           INPUT_APPROVED_COMMIT_SHA: ${{ inputs.approved_commit_sha }}
           GITHUB_REPO: ${{ github.repository }}
@@ -107,6 +108,7 @@ jobs:
           echo "MGBOS_PREFLIGHT_PRE_STARTUP_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
 
       - name: Start disposable database without disclosing local credentials
+        id: db-start
         run: |
           if ! pnpm db:start > /dev/null 2>&1; then
             echo "::error::Disposable database start failed (sensitive output suppressed)"
@@ -136,7 +138,35 @@ jobs:
 
       - name: Stop disposable local Supabase
         if: always()
+        working-directory: .
+        shell: bash
         run: |
+          set -euo pipefail
+
+          # 1. Distinguish startup outcomes deterministically
+          STARTUP_OUTCOME="${{ steps.db-start.outcome }}"
+          case "$STARTUP_OUTCOME" in
+            skipped)
+              echo "Disposable database teardown skipped: database startup was not attempted."
+              exit 0
+              ;;
+            success|failure|cancelled)
+              echo "Disposable database teardown required: startup outcome was '${STARTUP_OUTCOME}'."
+              ;;
+            *)
+              echo "::error::Disposable database teardown failed: ambiguous or unexpected startup outcome '${STARTUP_OUTCOME}'"
+              exit 1
+              ;;
+          esac
+
+          # 2. Database startup attempted: ensure workspace directory is available
+          if [ ! -d "systems/mgbos" ]; then
+            echo "::error::Disposable database teardown failed: systems/mgbos directory unavailable after startup attempt"
+            exit 1
+          fi
+
+          # 3. Execute local pnpm db:stop and fail closed on error
+          cd systems/mgbos
           if ! pnpm db:stop > /dev/null 2>&1; then
             echo "::error::Disposable Supabase teardown failed (sensitive output suppressed)"
             exit 1
