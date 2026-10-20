@@ -10,10 +10,39 @@ tags:
   - teestock/canonical
   - teestock/commerce
 document_id: "TS-COM-001"
-version: "1.0"
+canonical_id: teestock.commerce.commerce-overview
+schema_version: "1.0"
+document_class: canonical-commerce-strategy
+owner: "Rizky / Founder"
+author: "ChatGPT / AI Co-Founder — Commerce Strategy & Operational Boundaries"
+approver: "Rizky / Founder (curated-design-first business direction)"
+scope: teestock-consumer-commerce-role-primary-lines-governed-activation
+primary_business_positioning: CURATED_DESIGN_APPAREL
+primary_commercial_line: TEESTOCK_SELECTS
+supporting_commerce_line: TEESTOCK_ESSENTIALS
+originals_commerce_relation: SEPARATE_OWNED_IP_DISTRIBUTED_VIA_COMMERCE
+services_visibility: SECONDARY_CONDITIONAL
+four_domain_architecture: RETAINED
+checkout_activation: NOT_AUTHORIZED_BY_THIS_DOCUMENT
+payment_activation: NOT_AUTHORIZED_BY_THIS_DOCUMENT
+production_readiness_claim: NONE
+implementation_authorization: NONE
+reconciles_decisions:
+  - DEC-TS-2026-009
+  - DEC-TS-2026-011
+  - DEC-TS-2026-012
+source_control:
+  repository: Rizkybuilds/bisnishub
+  pull_request: 85
+  inspected_head: fc6dc00444ab92d56e2f82dcf1c80e05fb3b3c9e
+  source_blob_sha: deca5a63247719cfb8ddaddd2e9363693a404ddc
+  source_version: "1.0"
+  inspected_on: "2026-10-20"
+supersedes: "TS-COM-001@1.0"
+version: "2.0"
 category: "commerce"
 business: "teestock"
-last_updated: "2026-09-27"
+last_updated: "2026-10-20"
 path: "03-commerce/commerce-overview.md"
 depends_on:
   - "TS-FND-001"
@@ -29,7 +58,7 @@ depends_on:
 ---
 
 
-# TeeStock Commerce Overview v1.0
+# TeeStock Commerce Overview v2.0
 
 > [!abstract] **Canonical Commerce Strategy Document  **
 > Dokumen ini mendefinisikan bagaimana TeeStock Commerce bekerja sebagai consumer-facing retail engine, bagaimana Selects dan Essentials berhubungan dengan Originals, bagaimana assortment dikelola, bagaimana produk dijual melalui berbagai channel, serta bagaimana Commerce menghasilkan revenue sekaligus market intelligence bagi ecosystem TeeStock.
@@ -41,6 +70,11 @@ depends_on:
 ---
 
 # 1. Purpose
+
+> [!important] **Owner direction / DEC-TS-2026-012 — consumer Commerce is the PRIMARY TeeStock commercial promise.** The first job is to help consumers discover a deliberately small, well-curated selection of design-led apparel, understand verified product truth, and find the next honest action. TeeStock Selects is the hero line; Essentials supports garment fundamentals. Originals remains separately owned-IP governance, and Services remains secondary. A Commerce blueprint does not prove the ability to take paid orders. The old simplified PRODUCT → TRANSACTION pipeline below is a target architecture only.
+
+**Authority boundary:** This document owns Commerce *business strategy and relationship between lines*, not IP clearance, MGBOS aggregates, payment commands, public-route implementation, inventory accuracy, production/QC approvals, refund policy, legal conclusions or activation of real checkout. Read TS-FND-001, TS-FND-004 / DEC-TS-2026-012, TS-BRD-001/002, TS-COM-002 v2.0 and TS-TEC-002 v2.0 together.
+
 
 TeeStock Commerce menjawab:
 
@@ -76,6 +110,9 @@ Commerce bertanggung jawab terhadap:
 ---
 
 # 2. Canonical Definition
+
+**Current ranking:** Selects drives differentiated demand and visual brand selection; Essentials is supporting; Originals creates/owns distinct IP but distributes eligible goods via Commerce; creator collaboration is a rights-governed sourcing relationship, not an automatic new Commerce line. Commerce may initially operate as a valid *non-transactional discovery* experience while retail payment, production, fulfillment and financial gates remain closed.
+
 
 > **TeeStock Commerce adalah consumer retail layer yang mengkurasi, menyajikan, dan menjual apparel serta consumer products melalui customer-facing channels TeeStock.**
 
@@ -133,6 +170,9 @@ Customer
 
 # 4. Commerce Product Sources
 
+**Activation qualifier:** sharing a future storefront, catalog, checkout and operational engine is a desired architecture, not evidence these functions currently exist. Each product source must separately clear artwork and label rights, sample/QC, pricing, stock/supplier, publication and real-transaction gates before sale. Do not equate an Originals or creator concept with an approved sellable SKU.
+
+
 Commerce dapat menjual produk dari beberapa sources:
 
 ```text
@@ -162,6 +202,9 @@ yang sama.
 ---
 
 # 5. Commerce Strategic Roles
+
+**Decision priority:** historical four roles remain valid, but CURRENT market-facing emphasis is (1) collection desirability and product trust, (2) qualified/rights-cleared feasible offers, (3) repeatable customer outcomes and contribution-positive real sales *when authorized*, (4) learning and optional Originals hypotheses. Storefront metrics without real paid orders cannot be called revenue.
+
 
 Commerce memiliki empat fungsi utama.
 
@@ -225,6 +268,9 @@ without elitism
 
 # 7. Commerce Value Proposition
 
+**Release stage qualification:** the historical value proposition below is a target for a fully released transaction service. Before readiness, replace "easy purchase" with truthful product/collection discovery plus plainly labeled interest-only options, where permitted. Never promise reliable fulfillment from mockups, projected supplier lead times or CI status alone.
+
+
 TeeStock Commerce memberikan customer:
 
 ```text
@@ -251,6 +297,9 @@ untuk membeli product yang tepat.
 ---
 
 # 8. Commerce Architecture
+
+**Conceptual diagram only:** the Checkout, Payment, Order and Fulfillment labels below express FUTURE shared capabilities, not a currently deployed retail integration. The domain owner for payment and financial invariants is MGBOS; commerce storytelling cannot alter those invariants.
+
 
 ```text
                         TEESTOCK COMMERCE
@@ -285,6 +334,9 @@ Originals dan Collaborations masuk melalui shared Commerce engine tanpa menjadi 
 
 # 9. TeeStock Selects Role
 
+**Primary commercialization guard:** TeeStock Selects is the **leading customer proposition**—curated licensed/commissioned/creator/owned designs on verified apparel. It is not merely a market-sensor side channel feeding Originals; the quality of the purchased or evaluated Selects product is its own consumer value. Rights must be use-specific and evidenced by TS-LEG-001.
+
+
 Canonical principle:
 
 > **We curate it.**
@@ -308,6 +360,9 @@ Sources dapat berasal dari:
 
 # 10. Selects Strategic Role
 
+**Role precedence:** consumer satisfaction, coherent collections, lawful use and viable economics are launch priorities. Learning for Originals is downstream and cannot authorize copying, transfer third-party copyright, or automatically promote licensed artwork into owned IP.
+
+
 Selects mempunyai dua fungsi.
 
 ## Consumer Function
@@ -330,6 +385,9 @@ Signal yang dihasilkan dapat membantu menemukan:
 ---
 
 # 11. TeeStock Essentials Role
+
+**Supporting merchandising:** Essentials gives product/garment fundamentals only when a real relevant assortment has verified specifications. It should not dilute curated graphic apparel brand recognition or compete for equal homepage hero space by default.
+
 
 Canonical principle:
 
@@ -382,6 +440,9 @@ Ini menciptakan operational leverage.
 
 # 13. Originals in Commerce
 
+**Separate IP ownership:** Originals is a distinct rights and label-incubation lane. A product being displayed via Commerce does not automatically reclassify it as Selects or grant TeeStock any rights over third-party artwork.
+
+
 Originals products dapat muncul di Commerce sebagai:
 
 ```text
@@ -428,6 +489,9 @@ Namun ownership dan revenue attribution harus mengikuti agreement.
 ---
 
 # 15. Product Assortment Strategy
+
+**Founder-capacity rule:** start with coherent curated themes, a small manageable set of approved physical garment/color/size combinations and measured customer understanding; avoid a vast virtual assortment that looks orderable without inventory, capacity and price evidence. No illustrative count in this document is a binding launch quota.
+
 
 Assortment harus dikelola secara intentional.
 
@@ -566,6 +630,9 @@ Jangan menjadikan setiap possible combination sebagai stocked SKU secara otomati
 
 # 24. Product Lifecycle
 
+**Lifecycle distinction:** historical CONCEPT → ACTIVE represents merchandising lifecycle, not a unified technical/order state machine. Separate editorial approval, use-specific rights, physical sample/QC evidence, public publication eligibility and real transaction authorization. A concept listing must not appear in stock or accept payment.
+
+
 Canonical product lifecycle:
 
 ```text
@@ -587,6 +654,9 @@ ARCHIVED
 ---
 
 # 25. Product Activation Criteria
+
+**Product activation fail-safe:** the legacy activation checklist is NECESSARY BUT NOT SUFFICIENT for real selling. Independently verify the artwork license/attribution, samples and production QA, actual supplier capacity, unit economics and royalty terms, truthful pricing/availability, tax/returns/customer support plus governed checkout/order/payment/fulfillment. Owner or approved domain authority must record acceptance; absent evidence = NOT_AUTHORIZED.
+
 
 Sebelum product aktif:
 
@@ -643,6 +713,9 @@ DECISION
 ---
 
 # 29. Merchandising Hierarchy
+
+**Current merchandising ranking:** approved curated Selects collection/design relevance FIRST, clear product facts and garment quality SECOND; Essentials, Originals and other lines only when their actual assortment, rights and offers are approved. The legacy grouping below is a taxonomy, not equal homepage/nav prominence.
+
 
 Possible storefront hierarchy:
 
@@ -766,6 +839,9 @@ Avoid filter overload.
 
 # 37. Product Page Objective
 
+**Trust standard:** PDPs need verifiable garment fit/material, artwork attribution where required, sample-vs-mockup clarity, price and fulfillment statements that match actual operational evidence, and accessible next actions. Product-page readiness does not grant checkout permission.
+
+
 Product page harus menjawab:
 
 ```text
@@ -871,6 +947,9 @@ It may not invent:
 
 # 42. Pricing Strategy
 
+**Pricing ownership:** brand/display price ideas are proposals until the finance/pricing authority approves royalties, blank/product cost, production/QC losses, platform fees, taxes, packaging, delivery, returns and contribution assumptions. Never advertise a sample price as binding or infer profitability from revenue.
+
+
 Commerce pricing should balance:
 
 ```text
@@ -949,6 +1028,9 @@ Bundle economics must remain visible internally.
 ---
 
 # 47. Commerce Inventory Philosophy
+
+**Inventory distinction:** source garment stock, finished goods stock, production capacity and theoretical design × variant combinations are separate truths. Virtual catalog breadth does not create physical availability; do not publish made-to-order or preorder delivery promises without verified supplier operational conditions.
+
 
 Canonical model:
 
@@ -1064,6 +1146,9 @@ Preorder terms must clearly state estimated delivery window.
 ---
 
 # 54. Channel Architecture
+
+**Channel activation requires independent permission:** owned-site preview, marketplace listing and creator-channel commerce are distinct operational/legal states. No channel may start accepting orders from a strategy document or a demo UI. Check IP/channel rights, fulfillment, customer support, fees, returns and platform terms before activation.
+
 
 Commerce can operate across:
 
@@ -1185,6 +1270,9 @@ Owned storefront priority
 
 # 61. Checkout Philosophy
 
+**Conditional checkout:** these checkout requirements apply only *after* separate acceptance of MGBOS order/payment/security, reconciliations, fulfillment, return handling and business readiness. The first public phase may have collections, product details or consent-based non-transactional interest, but no buy/cart/payment route if unauthorized. Mock shopping interactions must be explicitly simulated.
+
+
 Checkout should minimize friction.
 
 Required:
@@ -1234,6 +1322,9 @@ Upsell should be restrained.
 
 # 64. Payment Strategy
 
+**Money and authorization:** a payment-method paragraph does not authorize merchant credentials or live payments. MGBOS and the approved financial command contract govern payment status, idempotency, authorization boundaries, uniqueness and reconciliation. A failed/uncertain payment must not be represented as successful.
+
+
 Commerce should support payment methods appropriate to target customers.
 
 Payment details are implementation decisions.
@@ -1243,6 +1334,9 @@ All successful payments must map to canonical Order.
 ---
 
 # 65. Order Architecture
+
+**Target-only transaction flow:** the legacy order architecture below is a conceptual idealized sequence, NOT proof that checkout/payment creates a governed Order today. Never create an order, reserve inventory or promise shipping by treating a frontend event as authoritative.
+
 
 Commerce transaction:
 
@@ -1302,6 +1396,9 @@ Customer experience should remain coherent.
 ---
 
 # 68. Customer Journey
+
+**Stage-specific customer journey:** for a site before transaction readiness, DISCOVER → COMPARE → PRODUCT INFO → clearly labeled NON-TRANSACTIONAL INTEREST (optional, consent-based) is the honest user journey. BUY → RECEIVE → REPEAT is conditional on real approved commerce operations; transactional customer journeys require distinct end-to-end acceptance evidence.
+
 
 Canonical consumer journey:
 
@@ -1421,6 +1518,9 @@ Segments should support action.
 
 # 75. Commerce Data Loop
 
+**Two different data loops:** prelaunch `collection.view → design.view → product.view → opted-in interest` measures awareness/intent only; authorized `product → cart → payment → order → fulfillment → return/repeat` measures actual sales outcomes. Never convert synthetic metrics or interest lists into conversion revenue, paid-order counts or reconciled contribution margin.
+
+
 ```text
 TRAFFIC
 ↓
@@ -1461,6 +1561,9 @@ Detailed schema belongs in Event Model.
 ---
 
 # 77. Commerce KPIs
+
+**Measurement ladder:** RESEARCH ≠ ATTENTION ≠ INTENT ≠ TRANSACTION ≠ POST-SALE OUTCOME. Business KPIs are only valid when events are real, privacy-compliant, properly deduplicated and attributed to the correct source. No pre-launch views imply tested willingness to pay; no gross merchandise value by itself implies margin.
+
 
 Categories:
 
@@ -1530,6 +1633,9 @@ This is critical for market intelligence.
 
 # 81. Selects → Originals Intelligence Loop
 
+**IP non-transfer rule:** Selects performance can inspire a *separate* Originals research direction but cannot authorize creating near-identical licensed work, promote a creator's design to owned-IP status, or bypass label-governance validation.
+
+
 Canonical loop:
 
 ```text
@@ -1593,6 +1699,9 @@ One major variable should ideally be identifiable.
 ---
 
 # 84. Experiment Governance
+
+**Experiment guard:** prototype fixtures and A/B tests are not actual purchases; interest-capture consent and user privacy must be protected. Do not mislead participants with fake checkout confirmations, stock or shipping estimates.
+
 
 Experiment must record:
 
@@ -1757,6 +1866,9 @@ to calculate actual contribution.
 
 # 95. Commerce and MGBOS
 
+**Shared systems boundary:** Commerce supplies needs and publication logic, while MGBOS owns organizations, identity, financial/order/production/fulfillment domains and their authorization. A new brand-commerce strategy does not permit new tables or schema migrations; request implementation via approved contracts.
+
+
 MGBOS should eventually provide unified view of:
 
 ```text
@@ -1775,6 +1887,9 @@ Commerce frontend is not the final operational source of truth.
 ---
 
 # 96. Commerce and AI
+
+**AI delegation with human control:** AI may propose curated collections, review artwork duplicates for escalation, draft factual product copy, segment behavior and summarize reliable experiment evidence. It may not grant rights, set binding prices, falsify samples, commit supplier capacity, authorize checkout, publish products, refund customers or modify financial invariants absent explicit approved governed delegation.
+
 
 Potential future uses:
 
@@ -1896,6 +2011,9 @@ Scheduled for removal.
 
 # 107. Commerce Expansion Rule
 
+**Growth gate:** prove rights, product quality, demand, unit contribution, supplier throughput and support capacity before expanding styles, channels or SKUs. Scale the smallest repeatable customer promise rather than rapidly increasing feature count or theoretical catalog volume.
+
+
 New product category only added if:
 
 ```text
@@ -1934,6 +2052,9 @@ Actual sequence follows data.
 
 # 109. Commerce Activation Model
 
+**CURRENT FIRST-STAGE OVERRIDE (DEC-TS-2026-012):** the "Early: Storefront / Catalog / Product Page / Cart / Checkout / Basic Tracking" sequence below is a *legacy target capability list*, not current V1 authorization. Stage A is legally approved curated design/collection discovery, accurate product details, easy access to size/quality/support, and optionally clearly non-transactional interest capture. Stage B may enable cart/checkout/tracking only after independent MGBOS, IP, supplier, financial, returns, and customer-support release gates pass. Documenting a page does not activate it.
+
+
 Not every Commerce capability should launch immediately.
 
 Early:
@@ -1960,6 +2081,9 @@ Complex Bundles
 ---
 
 # 110. Current Recommended Commerce Scope
+
+**RECONCILED PRIMARY SCOPE — retail curated-design-first:** TeeStock Selects leads first-screen merchandising, collection discovery, and buyer promise. Essentials supports validated garment fundamentals, and Originals/Collaborations are gated and selectively introduced. The legacy "Selects + Essentials + reliable checkout" block below represents an eventual target; it MUST NOT be used to claim checkout, vendor capacity, live retail inventory or tracking exist. Q4 Business/Custom remains a bounded MGBOS operating-spine verification pilot, not TeeStock's primary brand identity.
+
 
 Current priority:
 
@@ -2006,6 +2130,9 @@ Commerce is the retail engine, not one cultural brand.
 
 # 112. Commerce Success Definition
 
+**Proof-driven success:** first measure recognizable curated taste, understandable collections, rights-safe product facts and genuine interest. After approved live transactions exist, measure purchases, contribution, repeat purchase, return handling and reconciled fulfillment. The historical sequence below is conditional on commercial launch, not a verified present-state result.
+
+
 Commerce is working when:
 
 ```text
@@ -2025,6 +2152,9 @@ with healthy economics.
 ---
 
 # 113. Canonical Commerce Summary
+
+**Current emphasis:** TeeStock Commerce is consumer-facing curated-design apparel distribution, with Selects as primary value proposition; this modifies priority, not the defined relationship between Selects, Essentials, Originals, Collaborations, and the four TeeStock business domains.
+
 
 ```text
 TEEStock COMMERCE
@@ -2046,6 +2176,9 @@ COLLABORATIONS
 ---
 
 # 114. Canonical Operating Model
+
+**Operating-spine boundary:** SOURCE → SELL → FULFILL is a value-chain target; do not map its labels onto live MGBOS events, migration names or status transitions without a separate reviewed engineering work package. The 2026 Q4 Business/Custom operational proof remains scoped in the owning roadmap.
+
 
 ```text
 SOURCE
@@ -2106,3 +2239,142 @@ Dokumen berikut harus mengikuti Commerce Overview:
 11. [[bisnis/teestock/13-metrics-experiments/kpi-framework|kpi-framework.md]]
 
 Commerce implementation boleh berubah, tetapi distinction antara Commerce, Selects, Essentials, Originals, dan Collaborations harus tetap mengikuti dokumen canonical ini.
+---
+
+# 117. Current Commerce Positioning & Assortment Priority — DEC-TS-2026-012
+
+**Normative business scope:** TeeStock Commerce exists to create a desirable, accessible, trusted customer experience for curated-design apparel. The customer recognizes the brand through clear taste, a small coherent choice, verifiable garment standards and truthful next actions. The business is **not** initially framed as a general printing service catalog. This section resolves strategic Commerce emphasis without rewriting product taxonomy, contracts, finance or MGBOS schemas.
+
+| Portfolio unit | Current role | External emphasis | Scope constraint |
+|---|---|---|---|
+| TeeStock master brand | Consumer trust, experience and quality | Prominent | One master brand, not new labels for every niche |
+| TeeStock Selects | **Primary** curated-design apparel proposition | Hero discovery, curated edits, product understanding | Source/use-specific license + sample, fit, quality and eligible offer checks |
+| TeeStock Essentials | Supporting garment and product fundamentals | Contextual, only with validated assortment | Not a coequal alternate identity or guaranteed stocked product |
+| TeeStock Originals | Distinct internally owned-IP creation/label incubation | Conditional and separately approved | Licensed Selects artwork is NOT automatically owned IP |
+| Creator collaborations | Rights-governed content/product sourcing | Contextual attribution and co-branded releases | Contract governs ownership, royalty, territory, modification and channel use |
+| TeeStock Services | Valid secondary business-line routes | Deemphasized in initial retail storefront | Service readiness separately controlled |
+| MultiGraph | Parallel printing solutions business | Separate brand proposition | Shared production/vendor resources never imply legal/brand merger |
+
+**Customer promise order:** discover design/collection → see real product context/rights-safe story → verify fit, materials, quality and availability claims → take *eligible* next action. When real checkout is disabled, that action is navigation or voluntary interest capture, not fake purchase. Collection labels, niche tags and SKU/product families are different concepts and must be explained through their canonical owners.
+
+## 117.1 Small-catalog and solo-founder operating envelope
+
+Start with deliberately few approved design/garment combinations: controlled experimental capacity, one founder's actual ability to inspect rights records, physical samples, suppliers, support tickets and financial assumptions. No fixed number of items is prescribed here; determine experiment sizes in the owned roadmap/operational plan. A high-quality curated catalog is more valuable than a visually impressive but unauditable design dump.
+
+A design can be aesthetically approved but not publicly publishable, publicly informational but not sellable, sellable but not in physical stock, or sold but not fulfilled. These states cannot be conflated.
+
+# 118. Stage-Gated Commerce Readiness & Evidence Contract
+
+The following table is **strategic acceptance logic, not a new MGBOS state machine, table schema or executive authorization**.
+
+| Gate | Minimal evidence | Responsible authority | Outcome of missing evidence |
+|---|---|---|---|
+| C-01 Artwork/source | Actual origin, rights holder, provenance, source/creator identity | TS-LEG-001 / underlying agreement | NO commercial publication |
+| C-02 Rights for intended use | Print/resale, channels, countries, term, quantities, modifications, attribution, revocation | TS-LEG-001 / rights reviewer | NO commercial publication or manufacturing |
+| C-03 Collection/editorial fit | Clear audience hypothesis, curated thesis, quality bar, non-copycat review | TS-COM-002, TS-COM-004 / Founder | Rework or reject candidate |
+| C-04 Garment/physical production | Real blank garment specification, approved sample/QC, supplier lead time, production method | Operations, Vendor, QC | NO physical-quality or shipping claim |
+| C-05 Unit economics | Rights/royalty, blanks, printing, packaging, fees, failures, returns, taxes, delivery, contribution hypothesis | Pricing/finance authority | NO final sale price/margin approval |
+| C-06 Truthful publishing | Rights-safe image/copy, real/illustrative price distinction, policy/contact, availability status | Commerce/CX + Owner | Information only or unpublished |
+| C-07 Retail order/payment authorization | Identity/org isolation, governed order/payment commands, idempotency/reconciliation, capacity, support, refunds | MGBOS operational/financial owner + explicit Owner approval | **NO cart/checkout/payment/order creation** |
+| C-08 Fulfillment/outcome evidence | Committed order, QC, shipping, actual fees/returns/cost reconciliation | Production/QC/fulfillment/finance | No verified fulfilled sale or contribution claim |
+
+## 118.1 Honest release modes
+
+```text
+MODE 0 — INTERNAL DESIGN EXPLORATION
+  Never publish unverified ownership/rights/commercial claims.
+MODE 1 — PUBLIC INFORMATION / CURATED DISCOVERY (IF APPROVED)
+  Collections, rights-cleared imagery, factual product status and policies; no buy button.
+MODE 2 — EXPLICIT NON-TRANSACTIONAL INTEREST (IF APPROVED)
+  Opt-in contact/waitlist with clear privacy and no payment or stock reservation.
+MODE 3 — GATED LIVE COMMERCE (SEPARATE AUTHORIZATION)
+  Verified product, price, inventory/capacity, payments, order, QC, returns and fulfillment.
+```
+
+Publication approval is not payment activation; an attractive storefront is not proof of operational readiness. No customer-facing feature should simulate completed orders without a visible test/sandbox label. Existing Business/Custom operating-spine tests are distinct evidence and cannot substitute for first paid curated-apparel customer demand.
+
+## 118.2 Measurements and falsifiability
+
+| Evidence class | Examples | Valid conclusion | Invalid conclusion |
+|---|---|---|---|
+| RESEARCH | customer interview, price/size comprehension test | hypothesis worth testing | profitable SKU |
+| ATTENTION | real approved content views, design saves | interest in creative concept | ability/willingness to pay |
+| INTENT | voluntary opt-in with proper consent | potential demand priority | completed sale |
+| TRANSACTION | real approved paid order with confirmed finance | paid demand under those conditions | delivered product |
+| POST-SALE | QC/dispatch, returns, support, reconciled fees/cost | quality and unit-economics learning | profitability without full reconciliation |
+
+Do not invent baselines, sample success stories, conversion-rate data, consumer feedback, partner capacity or supplier certification. Tests must disclose sample size, time window, audience/channel, counterfactual limits and meaningful adverse signals.
+
+# 119. Authority, AI Decision Rights & Cross-Source Reconciliation
+
+```yaml
+commerce_overview_curated_first:
+  document_id: TS-COM-001
+  version: "2.0"
+  owner_decision: DEC-TS-2026-012
+  primary_positioning: CURATED_DESIGN_APPAREL
+  primary_line: TEESTOCK_SELECTS
+  secondary_line: TEESTOCK_ESSENTIALS
+  owned_ip: SEPARATE_TEESTOCK_ORIGINALS
+  services_priority: SECONDARY_CONDITIONAL
+  brand_domain_count: FOUR_RETAINED
+  owner_routing: FOUNDER_OR_APPROVED_DELEGATE
+  documentation_not_runtime: true
+  real_retail_checkout: NOT_AUTHORIZED_BY_THIS_DOCUMENT
+  real_payment: NOT_AUTHORIZED_BY_THIS_DOCUMENT
+  production_readiness: NOT_VERIFIED_BY_THIS_DOCUMENT
+  deployment_authorization: NONE
+  schema_migration_authorization: NONE
+  AI_MAY:
+    - DRAFT_COLLECTIONS_AND_CURATION_HYPOTHESES
+    - SUMMARIZE_TRUE_PRODUCT_AND_CUSTOMER_DATA
+    - PROPOSE_SOURCING_WITH_RISK_FLAGS
+    - PREPARE_EDITORIAL_REVIEWS_FOR_HUMAN_APPROVAL
+    - IDENTIFY_FALSE_PRODUCT_AND_AVAILABILITY_CLAIMS
+  AI_MUST_NOT:
+    - GRANT_IP_RIGHTS_OR_LICENSES
+    - RECLASSIFY_LICENSED_ARTWORK_AS_ORIGINALS_IP
+    - MAKE_UNVERIFIED_STOCK_OR_PRICE_CLAIMS
+    - COMMIT_VENDOR_PRODUCTION_OR_SHIPPING
+    - PUBLISH_REAL_SELLABLE_PRODUCT_UNILATERALLY
+    - AUTHORIZE_CHECKOUT_PAYMENT_ORDER_OR_REFUND
+    - ALTER_MGBOS_FINANCIAL_OR_AUTHORIZATION_INVARIANTS
+```
+
+| Topic | Authority/owner | Needed relationship |
+|---|---|---|
+| Business definition/portfolio | TS-FND-001, DEC-TS-2026-012 | Source of strategic primary line/owner decision |
+| Brand identity and merchandising hierarchy | TS-BRD-001, TS-BRD-002 | Customer promise and Selects priority |
+| Selects editorial and rights-aware offer | TS-COM-002 v2.0 + TS-LEG-001 | Source of curatorial/legal restrictions |
+| Essentials and category/product taxonomy | TS-COM-003, TS-COM-005 | Distinguish foundational garments from curated designs |
+| Catalog merchandising | TS-COM-004 | Owns collections, PLP, product source and presentation mechanics |
+| Public website architecture | TS-TEC-002 v2.0 | Curated-first nav, homepage, discovery and conditional cart |
+| Retail UX / PRD | MGBOS TeeStock customer platform CX contract | Owns interaction states and test acceptance |
+| Orders, payments, vendor, QC, financial invariants | MGBOS domain map, contracts and actual runtime evidence | Exclusive transaction/financial controls |
+| Q4 work sequencing | TS-RDM-003 + approved operational pilot plan | Preserve Business/Custom spine pilot; reconcile business wording separately |
+| Governance and document status | documentation-constitution.md | One canonical owner per topic; no silent supersession |
+
+**Unresolved as of exact source PR #85 baseline:** Commerce documents TS-COM-004 and TS-COM-003 remain separate owners and must not be silently modified here. Current-quarter roadmap still names Business/Custom as primary commercial scope and needs explicit reconciliation to DEC-012. TS-COM-001 owns the **consumer Commerce business promise**, not the Q4 engineering acceptance cohort or a new legal license.
+
+# 120. Adoption, Documentation QA and Next Work Packages
+
+### Required independent checks
+
+- [ ] Verify exact PR HEAD and source file blob before modification; fail closed on drift.
+- [ ] Preserve all 116 original numbered sections, headings and substantive body lines; do not delete historical choices.
+- [ ] Confirm metadata parses and document version is v2.0, with only one TS-COM-001 canonical owner.
+- [ ] Check Section 9 Selects primacy, Section 11 Essentials support, Section 13 Originals IP separation and Section 110 old checkout target override.
+- [ ] Confirm no new live checkout/payment, inventory, supplier, legal, schema, deployment, merge or production authorization.
+- [ ] Run governance/document references tests and PR CI on *new exact HEAD*.
+- [ ] Obtain independent review of actual pushed diff and exact Git blobs before accepting this one-file candidate.
+
+The checklist is a *future operator validation plan*, not a statement those checks already passed. Document authoring and source selection alone do not prove physical samples, customers, runtime payment or backend integration exist.
+
+### Follow-up ownership — do not expand this file's scope
+
+1. TS-COM-004 Catalog & Merchandising: tie editorial collections, design discovery and product publication to controlled assortment and merchandising evidence.
+2. TS-RDM-003 Current Quarter: distinguish strategic retail curated-apparel commercial focus from Q4 Business/Custom technical operating-spine acceptance and actual solo-founder execution commitments.
+3. Commerce UX and runtime: conduct customer tree tests/accessibility/checkout acceptance only when an approved work package and appropriate environment exist.
+4. Final PR #85 acceptance: rebase/merge-base and branch protection checks, governance, independent documentation reconciliation, and current exact-HEAD CI.
+
+**Snapshot:** TS-COM-001 v1.0 source Git blob `deca5a63247719cfb8ddaddd2e9363693a404ddc` on PR #85 HEAD `fc6dc00444ab92d56e2f82dcf1c80e05fb3b3c9e`, 2026-10-20. This snapshot fixes the source-of-authoring identity; it is not a promise that later HEAD or CI remains unchanged.
