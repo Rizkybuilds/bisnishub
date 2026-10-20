@@ -56,17 +56,28 @@ jobs:
 
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
-          ref: ${{ inputs.approved_commit_sha }}
+          fetch-depth: 0
           persist-credentials: false
 
-      - name: Assert exact checked-out commit revision
+      - name: Checkout and verify approved commit revision
         env:
-          EXPECTED_SHA: ${{ inputs.approved_commit_sha }}
+          INPUT_APPROVED_COMMIT_SHA: ${{ inputs.approved_commit_sha }}
         shell: bash
         run: |
           set -euo pipefail
+
+          # 1. Require the approved commit to be reachable from authorized main branch history
+          if ! git merge-base --is-ancestor "$INPUT_APPROVED_COMMIT_SHA" origin/main; then
+            echo "::error::Approved commit is not an ancestor of main (COMMIT_NOT_ON_MAIN)."
+            exit 1
+          fi
+
+          # 2. Safe, argument-quoted Git checkout of the exact approved commit
+          git checkout "$INPUT_APPROVED_COMMIT_SHA"
+
+          # 3. Assert exact checked-out commit revision
           ACTUAL_HEAD=$(git rev-parse HEAD)
-          if [ "$ACTUAL_HEAD" != "$EXPECTED_SHA" ]; then
+          if [ "$ACTUAL_HEAD" != "$INPUT_APPROVED_COMMIT_SHA" ]; then
             echo "::error::Checked-out HEAD does not match authorized commit SHA (HEAD_COMMIT_MISMATCH)."
             exit 1
           fi
@@ -122,7 +133,6 @@ jobs:
         with:
           name: mgbos-r5-d06-preflight-evidence
           path: systems/mgbos/.qa-evidence/r5-preflight/
-          retention-days: 30
 
       - name: Stop disposable local Supabase
         if: always()

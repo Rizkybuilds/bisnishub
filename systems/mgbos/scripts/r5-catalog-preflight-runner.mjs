@@ -423,7 +423,9 @@ export function validateSupabaseConfig(configPath, options = {}) {
       }
     }
 
-    const trimmed = (commentIdx !== -1 ? rawLine.slice(0, commentIdx) : rawLine).trim();
+    const trimmed = (
+      commentIdx !== -1 ? rawLine.slice(0, commentIdx) : rawLine
+    ).trim();
     if (!trimmed) continue;
 
     // Check section header: [section] or [section.subsection]
@@ -808,7 +810,9 @@ export function verifyEnvironmentIdentity(
     encoding: 'utf8',
   });
   if (gitRev.status !== 0 || !gitRev.stdout) {
-    throw new Error('Execution rejected: failed to determine git HEAD revision.');
+    throw new Error(
+      'Execution rejected: failed to determine git HEAD revision.',
+    );
   }
   const actualHead = gitRev.stdout.trim();
   if (actualHead !== commitSha) {
@@ -925,7 +929,9 @@ export function parseCsvRows(csvText) {
   }
 
   if (insideQuotes) {
-    throw new Error('CSV parser error: unclosed quote at end of input (UNCLOSED_QUOTE_AT_EOF).');
+    throw new Error(
+      'CSV parser error: unclosed quote at end of input (UNCLOSED_QUOTE_AT_EOF).',
+    );
   }
 
   if (currentField !== '' || currentRow.length > 0 || quoteClosed) {
@@ -1002,22 +1008,24 @@ export function verifyDockerContainerIdentity(preStartupEpoch, options = {}) {
     );
   }
 
-  if (
-    env.DOCKER_TLS_VERIFY ||
-    env.DOCKER_CERT_PATH ||
-    env.DOCKER_TLS
-  ) {
+  if (env.DOCKER_TLS_VERIFY || env.DOCKER_CERT_PATH || env.DOCKER_TLS) {
     throw new Error(
       'Docker verification failed: remote Docker TLS configuration detected (REMOTE_DOCKER_TLS_PROHIBITED).',
     );
   }
 
   const containerName = options.containerName ?? CANONICAL_CONTAINER_NAME;
-  const expectedProjectId = options.expectedProjectId ?? CANONICAL_LOCAL_PROJECT_ID;
+  const expectedProjectId =
+    options.expectedProjectId ?? CANONICAL_LOCAL_PROJECT_ID;
   const canonicalPort = options.canonicalPort ?? CANONICAL_LOCAL_PORT;
 
   let stdout = '';
-  const dockerArgs = ['--context=default', 'inspect', '--type=container', containerName];
+  const dockerArgs = [
+    '--context=default',
+    'inspect',
+    '--type=container',
+    containerName,
+  ];
   if (typeof options.mockDockerExecutor === 'function') {
     stdout = options.mockDockerExecutor(dockerArgs);
   } else {
@@ -1127,7 +1135,11 @@ export function verifyDockerContainerIdentity(preStartupEpoch, options = {}) {
   // Verify no unexpected external port exposures exist on the database container
   const allPorts = container.NetworkSettings?.Ports ?? {};
   for (const [exposedPort, bindings] of Object.entries(allPorts)) {
-    if (exposedPort !== portKey && Array.isArray(bindings) && bindings.length > 0) {
+    if (
+      exposedPort !== portKey &&
+      Array.isArray(bindings) &&
+      bindings.length > 0
+    ) {
       for (const b of bindings) {
         if (b.HostIp && b.HostIp !== '127.0.0.1' && b.HostIp !== '::1') {
           throw new Error(
@@ -1232,7 +1244,10 @@ export function executeIdentityAndFreshnessProbe(
       'Identity probe rejected: PGHOST must match canonical local host (HOSTILE_LIBPQ_ROUTING_VARIABLE).',
     );
   }
-  if (psqlEnv.PGPORT && String(psqlEnv.PGPORT) !== String(CANONICAL_LOCAL_PORT)) {
+  if (
+    psqlEnv.PGPORT &&
+    String(psqlEnv.PGPORT) !== String(CANONICAL_LOCAL_PORT)
+  ) {
     throw new Error(
       'Identity probe rejected: PGPORT must match canonical local port (HOSTILE_LIBPQ_ROUTING_VARIABLE).',
     );
@@ -1492,7 +1507,9 @@ export function evaluateQ8Probes(q8Rows) {
   const seen = new Set();
   for (const id of observedIds) {
     if (seen.has(id)) {
-      throw new Error('Probe validation error: duplicate probe_id detected (DUPLICATE_PROBE_ID).');
+      throw new Error(
+        'Probe validation error: duplicate probe_id detected (DUPLICATE_PROBE_ID).',
+      );
     }
     seen.add(id);
   }
@@ -1500,7 +1517,9 @@ export function evaluateQ8Probes(q8Rows) {
   // Check for unexpected probe IDs
   for (const id of observedIds) {
     if (!expectedIds.includes(id)) {
-      throw new Error('Probe validation error: unexpected probe_id observed (UNEXPECTED_PROBE_ID).');
+      throw new Error(
+        'Probe validation error: unexpected probe_id observed (UNEXPECTED_PROBE_ID).',
+      );
     }
   }
 
@@ -1673,9 +1692,10 @@ export function writeEvidenceArtifacts(
 
   const dockerStatus =
     typeof evidencePayload.environment_identity.docker_verification === 'object'
-      ? (evidencePayload.environment_identity.docker_verification?.is_docker_verified
-          ? 'CONFIRMED_DISPOSABLE_LOOPBACK'
-          : 'FAILED')
+      ? evidencePayload.environment_identity.docker_verification
+          ?.is_docker_verified
+        ? 'CONFIRMED_DISPOSABLE_LOOPBACK'
+        : 'FAILED'
       : String(evidencePayload.environment_identity.docker_verification);
 
   const mdPath = path.join(outputDir, 'catalog-preflight-summary.md');
@@ -1780,7 +1800,9 @@ export async function main() {
   const psqlEnv = buildIsolatedPsqlEnvironment(process.env);
 
   // 4a. Execute Standalone Database Identity & Freshness Probe
-  console.log('   Executing database identity and freshness attestation probe...');
+  console.log(
+    '   Executing database identity and freshness attestation probe...',
+  );
   const identityAttestation = executeIdentityAndFreshnessProbe(
     psqlEnv,
     preStartupEpoch,
@@ -1790,7 +1812,9 @@ export async function main() {
   );
 
   // 4b. Execute Authoritative Q1–Q8 Catalog Preflight Package
-  console.log('   Executing authoritative Q1–Q8 catalog preflight SQL package...');
+  console.log(
+    '   Executing authoritative Q1–Q8 catalog preflight SQL package...',
+  );
   const psqlArgs = [
     '-h',
     CANONICAL_LOCAL_HOST,
