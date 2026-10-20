@@ -1,15 +1,15 @@
 ---
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-07
-status: DRAFT
+status: ACTIVE
 version: 0.1.1
 owner: Rizky
 author: ChatGPT / AI Co-Founder & Product Strategy
-approver: PENDING_OWNER_APPROVAL
+approver: Rizky
 scope: teestock-customer-platform-omnichannel-and-external-integration-experience
 product_program: PROPOSED_TEESTOCK_CUSTOMER_EXPERIENCE_COMMERCE
 product_maturity: PROPOSED_OMNICHANNEL_PRODUCT_CONTRACT
 document_class: product-specification
-normative_authority: NONE_UNTIL_APPROVED_AND_ROUTED
+normative_authority: CANONICAL_PRODUCT_SPECIFICATION
 engineering_readiness: NOT_READY_FOR_ENGINEERING
 implementation_status: PRODUCT_DEFINITION_ONLY
 repository: Rizkybuilds/bisnishub
@@ -59,7 +59,8 @@ primary_sources:
   - docs/roadmaps/solo-founder-launch-roadmap.md
 last_reviewed: 2026-10-16
 review_cadence: per_product_decision_or_material_change
----
+
+effective_from: 2026-10-20---
 
 # CX-07 — TeeStock Omnichannel & External Integration Requirements v0.1.1
 

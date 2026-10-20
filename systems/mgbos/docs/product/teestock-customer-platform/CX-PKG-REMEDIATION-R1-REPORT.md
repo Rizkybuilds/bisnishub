@@ -1,17 +1,19 @@
 ---
+
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-pkg-remediation-r1-report
-status: DRAFT
+status: ACTIVE
 version: 0.1.0
 owner: Rizky
 author: ChatGPT / original author self-check
-approver: PENDING_OWNER_AND_INDEPENDENT_REVIEW
+approver: Rizky
 document_class: research
-normative_authority: NONE
+normative_authority: CANONICAL_COORDINATION_PACKAGE
 scope: local-documentation-remediation-only
 repository_snapshot: 2800c474563309bda49d84d712f79b68c9dde36a
 review_independence: SELF_REVIEW_ONLY
 implementation_authorization: NONE
----
+
+effective_from: 2026-10-20---
 
 # CX Documentation Remediation R1 — Exact Local Candidate Report
 

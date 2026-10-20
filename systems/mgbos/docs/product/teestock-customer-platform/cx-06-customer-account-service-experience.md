@@ -1,15 +1,15 @@
 ---
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-06
-status: DRAFT
+status: ACTIVE
 version: 0.1.1
 owner: Rizky
 author: ChatGPT / AI Co-Founder & Product Strategy
-approver: PENDING_OWNER_APPROVAL
+approver: Rizky
 scope: teestock-customer-platform-account-self-service-and-customer-care
 product_program: PROPOSED_TEESTOCK_CUSTOMER_EXPERIENCE_COMMERCE
 product_maturity: PROPOSED_CUSTOMER_ACCOUNT_AND_SERVICE_CONTRACT
 document_class: product-specification
-normative_authority: NONE_UNTIL_APPROVED_AND_ROUTED
+normative_authority: CANONICAL_PRODUCT_SPECIFICATION
 engineering_readiness: NOT_READY_FOR_ENGINEERING
 implementation_status: PRODUCT_DEFINITION_ONLY
 repository: Rizkybuilds/bisnishub
@@ -62,7 +62,8 @@ primary_sources:
   - docs/governance/documentation-constitution.md
   - docs/governance/canonical-source-map.md
   - docs/roadmaps/solo-founder-launch-roadmap.md
----
+
+effective_from: 2026-10-20---
 
 # CX-06 — TeeStock Customer Account & Service Experience Specification v0.1.1
 

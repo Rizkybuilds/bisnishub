@@ -1,15 +1,15 @@
 ---
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-09
-status: DRAFT
+status: ACTIVE
 version: 0.1.1
 owner: Rizky
 author: ChatGPT / AI Co-Founder & Product Strategy
-approver: PENDING_OWNER_APPROVAL
+approver: Rizky
 scope: teestock-customer-platform-phased-delivery-and-product-validation
 product_program: PROPOSED_TEESTOCK_CUSTOMER_EXPERIENCE_COMMERCE
 product_maturity: PROPOSED_DELIVERY_AND_VALIDATION_PLAN
 document_class: product-roadmap-proposal
-normative_authority: NONE_UNTIL_APPROVED_AND_ROUTED
+normative_authority: CANONICAL_PRODUCT_SPECIFICATION
 engineering_readiness: NOT_READY_FOR_ENGINEERING
 implementation_status: PRODUCT_PLANNING_ONLY
 repository: Rizkybuilds/bisnishub
@@ -53,7 +53,8 @@ depends_on:
   - ../../../../../bisnis/teestock/10-product-tech/digital-product-vision.md
   - ../../../../../bisnis/teestock/10-product-tech/website-information-architecture.md
   - ../../../../../bisnis/teestock/10-product-tech/commerce-platform.md
----
+
+effective_from: 2026-10-20---
 
 # CX-09 — TeeStock Phased Delivery & Product Validation Plan v0.1.1
 

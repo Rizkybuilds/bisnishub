@@ -1,13 +1,13 @@
 ---
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-01
-status: DRAFT
+status: ACTIVE
 version: 0.1.1
 owner: Rizky
 author: ChatGPT / AI Co-Founder & Product Strategy
-approver: PENDING_OWNER_APPROVAL
+approver: Rizky
 scope: teestock-customer-platform-product-requirements
 document_class: product-requirements
-normative_authority: NONE_UNTIL_APPROVED_AND_ROUTED
+normative_authority: CANONICAL_PRODUCT_REQUIREMENTS
 product_program: PROPOSED_TEESTOCK_CUSTOMER_EXPERIENCE_COMMERCE
 product_maturity: PROPOSED_PRODUCT_CONTRACT
 engineering_readiness: NOT_READY_FOR_ENGINEERING
@@ -68,7 +68,8 @@ source_dependencies:
   - systems/mgbos/docs/product/teestock-founder-control-prd.md
   - systems/mgbos/docs/product/teestock-operational-pilot-plan.md
   - systems/jarvis/docs/charter.md
----
+
+effective_from: 2026-10-20---
 
 # CX-01 — TeeStock Customer Platform Master PRD v0.1.1
 

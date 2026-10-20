@@ -1,15 +1,15 @@
 ---
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-08
-status: DRAFT
+status: ACTIVE
 version: 0.1.1
 owner: Rizky
 author: ChatGPT / AI Co-Founder & Product Strategy
-approver: PENDING_OWNER_APPROVAL
+approver: Rizky
 scope: teestock-customer-platform-experience-quality-and-product-acceptance
 product_program: PROPOSED_TEESTOCK_CUSTOMER_EXPERIENCE_COMMERCE
 product_maturity: PROPOSED_EXPERIENCE_QUALITY_CONTRACT
 document_class: product-specification
-normative_authority: NONE_UNTIL_APPROVED_AND_ROUTED
+normative_authority: CANONICAL_PRODUCT_SPECIFICATION
 engineering_readiness: NOT_READY_FOR_ENGINEERING
 implementation_status: PRODUCT_DEFINITION_ONLY
 repository: Rizkybuilds/bisnishub
@@ -49,7 +49,8 @@ implementation_authorization: NONE
 merge_authorization: NONE
 deployment_authorization: NONE
 production_access_authorization: NONE
----
+
+effective_from: 2026-10-20---
 
 # CX-08 — TeeStock Experience Quality & Acceptance Contract v0.1.1
 

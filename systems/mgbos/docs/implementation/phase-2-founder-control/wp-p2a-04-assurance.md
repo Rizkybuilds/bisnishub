@@ -1,10 +1,10 @@
 ---
 canonical_id: mgbos.implementation.phase-2-founder-control.wp-p2a-04-assurance
-status: PROPOSED
+status: active
 version: 0.1
 owner: Rizky
 author: Antigravity (Implementation Engineer)
-approver: Rizky (Owner)
+approver: Rizky
 scope: mgbos-phase-2-founder-control
 document_class: work-package-assurance-report
 effective_from: 2026-10-08

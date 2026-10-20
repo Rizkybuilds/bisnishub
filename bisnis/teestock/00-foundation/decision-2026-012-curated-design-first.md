@@ -3,17 +3,17 @@ canonical_id: teestock.decision.2026-012.curated-design-first
 proposed_decision_id: DEC-TS-2026-012
 document_id: TS-FND-004-ADD-012
 title: "TeeStock Curated-Design-First — Strategic Decision and Canonical Reconciliation"
-version: "0.1.0"
-status: REVIEW
-document_class: decision-reconciliation-candidate
+version: "1.0.0"
+status: ACTIVE
+document_class: decision-reconciliation-active
 owner: Rizky
 author: "ChatGPT / AI Co-Founder — Product Strategy"
-approver: null
+approver: Rizky
 scope: teestock-primary-business-positioning
 business: teestock
-owner_direction_status: APPROVED_IN_CONVERSATION
-document_canonical_adoption: PENDING
-normative_authority: NONE_UNTIL_CANONICAL_INTEGRATION
+owner_direction_status: ADOPTED_BY_OWNER
+document_canonical_adoption: ADOPTED_2026-10-20
+normative_authority: CANONICAL_STRATEGIC_DECISION
 authoritative_for: []
 proposed_canonical_owner: bisnis/teestock/00-foundation/decision-register.md
 source_repository: Rizkybuilds/bisnishub
@@ -53,7 +53,8 @@ depends_on:
 related_local_proposals_not_verified_in_main:
   - docs/strategy/internal-business-os/strategic-anchor.md
   - docs/strategy/internal-business-os/parallel-pilots.md
----
+
+effective_from: 2026-10-20---
 
 # DEC-TS-2026-012 — TeeStock Curated-Design-First Strategic Priority
 

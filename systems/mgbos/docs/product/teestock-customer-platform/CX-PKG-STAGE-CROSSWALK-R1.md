@@ -1,16 +1,18 @@
 ---
+
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-pkg-stage-crosswalk-r1
-status: DRAFT
+status: ACTIVE
 version: 0.1.1
 owner: Rizky
 author: ChatGPT / bounded documentation remediation
-approver: PENDING_OWNER_AND_INDEPENDENT_REVIEW
+approver: Rizky
 document_class: research
-normative_authority: NONE
+normative_authority: CANONICAL_COORDINATION_PACKAGE
 scope: teestock-cx-delivery-priority-reconciliation
 source_revision: 2800c474563309bda49d84d712f79b68c9dde36a
 implementation_authorization: NONE
----
+
+effective_from: 2026-10-20---
 
 # CX-PKG-STAGE-CROSSWALK-R1 — Priority vs Delivery Stage
 
