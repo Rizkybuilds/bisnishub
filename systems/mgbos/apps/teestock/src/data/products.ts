@@ -37,6 +37,20 @@ export interface PreviewProduct {
   careGuidelinesPending: readonly string[];
 }
 
+export const ILLUSTRATIVE_UX_PRICE_IDR = 189000;
+
+export function formatIllustrativePrice(price: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0,
+  }).format(price);
+}
+
+export function formatIllustrativeShortPrice(price: number): string {
+  return `Rp ${Math.round(price / 1000)}rb`;
+}
+
 export const PREVIEW_GARMENT_COLORS: readonly PreviewGarmentColor[] = [
   {
     id: 'forest-ink',
@@ -68,13 +82,20 @@ export const PREVIEW_PRINT_TONES: readonly PreviewPrintTone[] = [
   {
     id: 'standard-screen',
     name: 'Standard Contrast',
-    description: 'Warna cetak kontras tegas mengikuti palet studio asli.',
+    description:
+      'Arah palet kontras studio standar. Opsi konseptual, tidak mengubah rendering simulasi visual.',
   },
   {
     id: 'vintage-wash',
     name: 'Subtle Accent',
-    description: 'Warna cetak beraksen lembut dengan estetika washed vintage.',
+    description:
+      'Arah palet washed vintage yang lembut. Opsi konseptual, tidak mengubah rendering simulasi visual.',
   },
+] as const;
+
+export const PREVIEW_CARE_GUIDELINES_PENDING: readonly string[] = [
+  'Petunjuk pencucian dan perawatan resmi belum diterbitkan.',
+  'Instruksi perawatan akan disusun setelah pengujian ketahanan cuci pada sampel fisik garmen selesai.',
 ] as const;
 
 export const previewProducts: readonly PreviewProduct[] = [
@@ -94,17 +115,12 @@ export const previewProducts: readonly PreviewProduct[] = [
     previewSizes: PREVIEW_SIZES,
     previewColors: PREVIEW_GARMENT_COLORS,
     previewPrintTones: PREVIEW_PRINT_TONES,
-    illustrativePriceIdr: 189000,
+    illustrativePriceIdr: ILLUSTRATIVE_UX_PRICE_IDR,
     previewOnly: true,
     availability: 'NOT_FOR_SALE',
     isCommerciallyApproved: false,
     materialPendingVerification: true,
-    careGuidelinesPending: [
-      'Cuci dengan air dingin dan balik pakaian saat pencucian.',
-      'Hindari penggunaan pemutih berbahan klorin.',
-      'Jangan menyetrika langsung pada area cetakan grafis.',
-      'Jemur di tempat teduh untuk menjaga ketahanan warna kain.',
-    ],
+    careGuidelinesPending: PREVIEW_CARE_GUIDELINES_PENDING,
   },
   {
     id: 'study-002-making-things',
@@ -122,17 +138,12 @@ export const previewProducts: readonly PreviewProduct[] = [
     previewSizes: PREVIEW_SIZES,
     previewColors: PREVIEW_GARMENT_COLORS,
     previewPrintTones: PREVIEW_PRINT_TONES,
-    illustrativePriceIdr: 189000,
+    illustrativePriceIdr: ILLUSTRATIVE_UX_PRICE_IDR,
     previewOnly: true,
     availability: 'NOT_FOR_SALE',
     isCommerciallyApproved: false,
     materialPendingVerification: true,
-    careGuidelinesPending: [
-      'Cuci dengan air dingin dan balik pakaian saat pencucian.',
-      'Hindari penggunaan pemutih berbahan klorin.',
-      'Jangan menyetrika langsung pada area cetakan grafis.',
-      'Jemur di tempat teduh untuk menjaga ketahanan warna kain.',
-    ],
+    careGuidelinesPending: PREVIEW_CARE_GUIDELINES_PENDING,
   },
   {
     id: 'study-003-ordinary-magic',
@@ -150,17 +161,12 @@ export const previewProducts: readonly PreviewProduct[] = [
     previewSizes: PREVIEW_SIZES,
     previewColors: PREVIEW_GARMENT_COLORS,
     previewPrintTones: PREVIEW_PRINT_TONES,
-    illustrativePriceIdr: 189000,
+    illustrativePriceIdr: ILLUSTRATIVE_UX_PRICE_IDR,
     previewOnly: true,
     availability: 'NOT_FOR_SALE',
     isCommerciallyApproved: false,
     materialPendingVerification: true,
-    careGuidelinesPending: [
-      'Cuci dengan air dingin dan balik pakaian saat pencucian.',
-      'Hindari penggunaan pemutih berbahan klorin.',
-      'Jangan menyetrika langsung pada area cetakan grafis.',
-      'Jemur di tempat teduh untuk menjaga ketahanan warna kain.',
-    ],
+    careGuidelinesPending: PREVIEW_CARE_GUIDELINES_PENDING,
   },
   {
     id: 'study-004-stay-curious',
@@ -178,17 +184,12 @@ export const previewProducts: readonly PreviewProduct[] = [
     previewSizes: PREVIEW_SIZES,
     previewColors: PREVIEW_GARMENT_COLORS,
     previewPrintTones: PREVIEW_PRINT_TONES,
-    illustrativePriceIdr: 189000,
+    illustrativePriceIdr: ILLUSTRATIVE_UX_PRICE_IDR,
     previewOnly: true,
     availability: 'NOT_FOR_SALE',
     isCommerciallyApproved: false,
     materialPendingVerification: true,
-    careGuidelinesPending: [
-      'Cuci dengan air dingin dan balik pakaian saat pencucian.',
-      'Hindari penggunaan pemutih berbahan klorin.',
-      'Jangan menyetrika langsung pada area cetakan grafis.',
-      'Jemur di tempat teduh untuk menjaga ketahanan warna kain.',
-    ],
+    careGuidelinesPending: PREVIEW_CARE_GUIDELINES_PENDING,
   },
 ] as const;
 

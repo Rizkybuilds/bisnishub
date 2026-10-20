@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { getPreviewProductBySlug } from '../data/products';
+import {
+  getPreviewProductBySlug,
+  formatIllustrativeShortPrice,
+} from '../data/products';
 
 export type ConceptDesign = {
   id: string;
@@ -379,7 +382,10 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
                     </span>
                     {previewProduct && (
                       <span className="retail-product-price-tag">
-                        Rp 189rb <small>(Preview)</small>
+                        {formatIllustrativeShortPrice(
+                          previewProduct.illustrativePriceIdr,
+                        )}{' '}
+                        <small>(Simulasi UX)</small>
                       </span>
                     )}
                   </div>

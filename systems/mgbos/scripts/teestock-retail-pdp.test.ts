@@ -5,6 +5,9 @@ import { fileURLToPath } from 'node:url';
 import {
   getAllPreviewProducts,
   getPreviewProductBySlug,
+  ILLUSTRATIVE_UX_PRICE_IDR,
+  formatIllustrativePrice,
+  formatIllustrativeShortPrice,
 } from '../apps/teestock/src/data/products';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -38,10 +41,22 @@ describe('TeeStock retail product preview & PDP (NOV15-01)', () => {
       expect(p.isCommerciallyApproved).toBe(false);
       expect(p.materialPendingVerification).toBe(true);
 
+      // Shared single-source price
+      expect(p.illustrativePriceIdr).toBe(ILLUSTRATIVE_UX_PRICE_IDR);
+
+      // Care guidelines must disclaim unverified status
+      expect(p.careGuidelinesPending.length).toBeGreaterThanOrEqual(1);
+      expect(p.careGuidelinesPending[0]).toContain('belum diterbitkan');
+
       // Must provide size and color choices
       expect(p.previewSizes.length).toBeGreaterThanOrEqual(4);
       expect(p.previewColors.length).toBeGreaterThanOrEqual(2);
     }
+  });
+
+  it('provides single-source illustrative price formatters', () => {
+    expect(formatIllustrativePrice(189000)).toMatch(/189/);
+    expect(formatIllustrativeShortPrice(189000)).toBe('Rp 189rb');
   });
 
   it('resolves every product slug correctly and handles unknown slugs via notFound', () => {
@@ -65,7 +80,7 @@ describe('TeeStock retail product preview & PDP (NOV15-01)', () => {
     expect(pdpPage).toContain('ProductDetailViewer');
   });
 
-  it('ensures PDP viewer strictly enforces non-transactional preview status', () => {
+  it('ensures PDP viewer strictly enforces non-transactional preview status and product truth (R2-PDP-01)', () => {
     const viewer = read('components/ProductDetailViewer.tsx');
 
     // Non-commercial status and disclaimers
@@ -74,11 +89,20 @@ describe('TeeStock retail product preview & PDP (NOV15-01)', () => {
     expect(viewer).toContain('disabled');
     expect(viewer).toContain('aria-disabled="true"');
 
-    // Variant selection controls
-    expect(viewer).toContain('role="radiogroup"');
-    expect(viewer).toContain('aria-checked');
-    expect(viewer).toContain('aria-label');
-    expect(viewer).toContain('Panduan ukuran');
+    // Product Truth: Clearly qualified specifications and illustrative UX price labeling
+    expect(viewer).toContain('Simulasi Harga UX • Bukan Harga Rilis');
+    expect(viewer).toContain('UX testing value');
+    expect(viewer).toContain('Spesifikasi Bahan');
+    expect(viewer).toContain('Belum Ditetapkan');
+    expect(viewer).toContain('Rencana Kurasi Studio');
+    expect(viewer).toContain('Belum ada vendor, sampel fisik');
+    expect(viewer).not.toContain('100% Cotton Combed');
+    expect(viewer).not.toContain('Direct-to-Film (DTF) High-Definition');
+
+    // Conceptual print treatment clarification (R2-PDP-04)
+    expect(viewer).toContain(
+      'Eksplorasi Konseptual (Tidak Dirender pada Pratinjau)',
+    );
 
     // Negative protections: strictly no cart or checkout links or WhatsApp direct ordering
     expect(viewer).not.toContain('href="/cart"');
@@ -88,11 +112,30 @@ describe('TeeStock retail product preview & PDP (NOV15-01)', () => {
     expect(viewer).not.toContain('fetch(');
   });
 
-  it('links from catalog showcase to PDP routes with honest preview labels', () => {
+  it('implements accessible native radio pattern with valid fieldset/legend structure (R2-PDP-02)', () => {
+    const viewer = read('components/ProductDetailViewer.tsx');
+
+    // Native radio inputs
+    expect(viewer).toContain('type="radio"');
+    expect(viewer).toContain('className="retail-sr-radio"');
+
+    // Valid fieldset and legend structure without invalid nesting
+    expect(viewer).toContain('<fieldset className="retail-variant-group">');
+    expect(viewer).toContain('<legend className="retail-variant-label">');
+    expect(viewer).not.toMatch(/<div[^>]*>\s*<legend/); // No legend nested inside div
+
+    // Size guide disclosure button
+    expect(viewer).toContain('aria-expanded={isSizeGuideOpen}');
+    expect(viewer).toContain('aria-controls="size-guide-panel"');
+  });
+
+  it('links from catalog showcase to PDP routes with single-source price badges', () => {
     const showcase = read('components/RetailShowcase.tsx');
     expect(showcase).toContain("href={'/shop/' + design.id}");
     expect(showcase).toContain('Detail Studi Produk');
     expect(showcase).toContain('getPreviewProductBySlug(design.id)');
+    expect(showcase).toContain('formatIllustrativeShortPrice');
+    expect(showcase).toContain('(Simulasi UX)');
   });
 
   it('includes accessible responsive styles for PDP in retail.css', () => {
@@ -102,6 +145,8 @@ describe('TeeStock retail product preview & PDP (NOV15-01)', () => {
     expect(css).toContain('.retail-color-btn');
     expect(css).toContain('.retail-size-btn');
     expect(css).toContain('.retail-action-disabled');
+    expect(css).toContain('.retail-sr-radio');
+    expect(css).toContain(':has(.retail-sr-radio:focus-visible)');
     expect(css).toContain('@media (max-width: 960px)');
     expect(css).toContain('@media (max-width: 360px)');
     expect(css).toContain('overflow-wrap: break-word');

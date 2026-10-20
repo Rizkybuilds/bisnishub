@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import type {
-  PreviewProduct,
-  PreviewSize,
-  PreviewGarmentColor,
-  PreviewPrintTone,
+import {
+  formatIllustrativePrice,
+  type PreviewProduct,
+  type PreviewSize,
+  type PreviewGarmentColor,
+  type PreviewPrintTone,
 } from '../data/products';
 import { ShirtIllustration, type ConceptDesign } from './RetailShowcase';
 
@@ -41,11 +42,7 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
     motif: product.motif,
   };
 
-  const formattedPrice = new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    maximumFractionDigits: 0,
-  }).format(product.illustrativePriceIdr);
+  const formattedPrice = formatIllustrativePrice(product.illustrativePriceIdr);
 
   return (
     <article className="retail-pdp" aria-labelledby="pdp-title">
@@ -74,14 +71,15 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
             <div className="retail-pdp-badge-row">
               <span className="retail-badge-preview">STUDI DESAIN</span>
               <span className="retail-badge-tone">
-                {selectedColor.name} • {selectedPrintTone.name}
+                Warna: {selectedColor.name} • {selectedPrintTone.name} (Konsep)
               </span>
             </div>
           </div>
           <p className="retail-pdp-visual-note">
-            Visual warna dan proporsi grafis di atas merupakan simulasi studio.
-            Hasil produksi cetak garmen aktual dapat memiliki sedikit perbedaan
-            karakter tekstur.
+            Visual warna garmen di atas merupakan simulasi studio. Opsi karakter
+            cetak merupakan eksplorasi konseptual studio dan tidak dirender
+            secara visual. Hasil produksi cetak aktual baru dapat diverifikasi
+            saat sampling fisik workshop.
           </p>
         </section>
 
@@ -98,9 +96,14 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
             <div className="retail-pdp-price-row">
               <span className="retail-pdp-price">{formattedPrice}</span>
               <span className="retail-pdp-price-badge">
-                Estimasi Retail Preview
+                Simulasi Harga UX • Bukan Harga Rilis
               </span>
             </div>
+            <p className="retail-pdp-price-disclaimer">
+              Nominal di atas murni nilai simulasi untuk pengujian tata letak
+              antarmuka (UX testing value). Harga jual resmi belum ditetapkan
+              dan menunggu persetujuan komersial.
+            </p>
           </header>
 
           {/* Honest Status Banner */}
@@ -114,7 +117,7 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
             </div>
           </div>
 
-          {/* Color Variant Selector */}
+          {/* Color Variant Selector (Native Radio Group with proper Fieldset/Legend) */}
           <fieldset className="retail-variant-group">
             <legend className="retail-variant-label">
               <span>Warna Apparel (Preview):</span>
@@ -122,43 +125,44 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
                 {selectedColor.name}
               </strong>
             </legend>
-            <div
-              className="retail-color-options"
-              role="radiogroup"
-              aria-label="Pilihan warna garmen"
-            >
+            <div className="retail-color-options">
               {product.previewColors.map((color) => {
                 const isSelected = selectedColor.id === color.id;
                 return (
-                  <button
+                  <label
                     key={color.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={isSelected}
                     className={`retail-color-btn ${isSelected ? 'is-active' : ''}`}
-                    onClick={() => setSelectedColor(color)}
-                    aria-label={`Pilih warna ${color.name} (${color.tone === 'ink' ? 'gelap' : 'terang'})`}
                   >
+                    <input
+                      type="radio"
+                      name={`color-${product.slug}`}
+                      value={color.id}
+                      checked={isSelected}
+                      onChange={() => setSelectedColor(color)}
+                      className="retail-sr-radio"
+                      aria-label={`Pilih warna ${color.name} (${color.tone === 'ink' ? 'gelap' : 'terang'})`}
+                    />
                     <span
                       className="retail-color-swatch"
                       style={{ backgroundColor: color.hex }}
                       aria-hidden="true"
                     />
                     <span className="retail-color-name">{color.name}</span>
-                  </button>
+                  </label>
                 );
               })}
             </div>
             <p className="retail-variant-help">{selectedColor.description}</p>
           </fieldset>
 
-          {/* Size Variant Selector */}
+          {/* Size Variant Selector (Native Radio Group & Direct Legend First Child) */}
           <fieldset className="retail-variant-group">
-            <div className="retail-size-header">
-              <legend className="retail-variant-label">
-                <span>Ukuran:</span>
-                <strong className="retail-variant-value">{selectedSize}</strong>
-              </legend>
+            <legend className="retail-variant-label">
+              <span>Ukuran Apparel (Preview):</span>
+              <strong className="retail-variant-value">{selectedSize}</strong>
+            </legend>
+
+            <div className="retail-size-guide-row">
               <button
                 type="button"
                 className="retail-size-guide-btn"
@@ -166,30 +170,32 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
                 aria-controls="size-guide-panel"
                 onClick={() => setIsSizeGuideOpen((v) => !v)}
               >
-                {isSizeGuideOpen ? 'Tutup panduan ukuran' : 'Panduan ukuran'}
+                {isSizeGuideOpen
+                  ? 'Tutup panduan estimasi ukuran'
+                  : 'Panduan estimasi ukuran'}
                 <span aria-hidden="true"> ↗</span>
               </button>
             </div>
 
-            <div
-              className="retail-size-options"
-              role="radiogroup"
-              aria-label="Pilihan ukuran kaos"
-            >
+            <div className="retail-size-options">
               {product.previewSizes.map((size) => {
                 const isSelected = selectedSize === size;
                 return (
-                  <button
+                  <label
                     key={size}
-                    type="button"
-                    role="radio"
-                    aria-checked={isSelected}
                     className={`retail-size-btn ${isSelected ? 'is-active' : ''}`}
-                    onClick={() => setSelectedSize(size)}
-                    aria-label={`Pilih ukuran ${size}`}
                   >
-                    {size}
-                  </button>
+                    <input
+                      type="radio"
+                      name={`size-${product.slug}`}
+                      value={size}
+                      checked={isSelected}
+                      onChange={() => setSelectedSize(size)}
+                      className="retail-sr-radio"
+                      aria-label={`Pilih ukuran ${size}`}
+                    />
+                    <span>{size}</span>
+                  </label>
                 );
               })}
             </div>
@@ -202,68 +208,67 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
                 tabIndex={-1}
               >
                 <div className="retail-size-guide-head">
-                  <h4>Catatan Estimasi Ukuran TeeStock</h4>
+                  <h4>Catatan Estimasi Ukuran (Konsep Awal)</h4>
                   <span className="retail-tag-pending">
-                    VERIFIKASI PRODUKSI
+                    BELUM TERVERIFIKASI
                   </span>
                 </div>
                 <p>
-                  Pola potongan dirancang dengan fitting reguler-santai (tubular
-                  relaxed fit).
+                  Pilihan ukuran S &ndash; XXL pada tahap pratinjau ini
+                  disediakan untuk pengujian antarmuka dan penataan tata letak
+                  visual.
                 </p>
-                <ul className="retail-guide-list">
-                  <li>
-                    <strong>S &amp; M:</strong> Pas untuk siluet standar harian.
-                  </li>
-                  <li>
-                    <strong>L &amp; XL:</strong> Siluet relaxed dengan ruang
-                    gerak lebih leluasa.
-                  </li>
-                  <li>
-                    <strong>XXL:</strong> Siluet boxy santai dengan drape kain
-                    berbobot.
-                  </li>
-                </ul>
+                <p>
+                  Karakteristik fitting, toleransi jahit, dan dimensi pola
+                  garmen aktual belum diuji secara fisik di workshop.
+                </p>
                 <p className="retail-guide-footnote">
                   Tabel ukuran presisi (lebar dada, panjang badan, dan panjang
-                  lengan dalam cm) akan diterbitkan resmi saat peluncuran batch
-                  produksi pertama.
+                  lengan dalam cm) belum tersedia dan baru akan diterbitkan
+                  resmi saat peluncuran batch produksi yang telah lolos quality
+                  control.
                 </p>
               </div>
             )}
           </fieldset>
 
-          {/* Print Finish Selection */}
+          {/* Print Finish Selection (Conceptual, Non-Rendered) */}
           <fieldset className="retail-variant-group">
             <legend className="retail-variant-label">
-              <span>Treatment Cetak Grafis:</span>
+              <span>Karakteristik Cetak (Eksplorasi Konsep):</span>
               <strong className="retail-variant-value">
                 {selectedPrintTone.name}
               </strong>
             </legend>
-            <div
-              className="retail-print-options"
-              role="radiogroup"
-              aria-label="Pilihan karakter cetak"
-            >
+            <div className="retail-print-options">
               {product.previewPrintTones.map((tone) => {
                 const isSelected = selectedPrintTone.id === tone.id;
                 return (
-                  <button
+                  <label
                     key={tone.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={isSelected}
                     className={`retail-tone-btn ${isSelected ? 'is-active' : ''}`}
-                    onClick={() => setSelectedPrintTone(tone)}
                   >
+                    <input
+                      type="radio"
+                      name={`treatment-${product.slug}`}
+                      value={tone.id}
+                      checked={isSelected}
+                      onChange={() => setSelectedPrintTone(tone)}
+                      className="retail-sr-radio"
+                      aria-label={`Pilih treatment ${tone.name}`}
+                    />
                     <span>{tone.name}</span>
-                  </button>
+                  </label>
                 );
               })}
             </div>
             <p className="retail-variant-help">
-              {selectedPrintTone.description}
+              <strong>
+                Eksplorasi Konseptual (Tidak Dirender pada Pratinjau):
+              </strong>{' '}
+              {selectedPrintTone.description} Pilihan ini merupakan eksplorasi
+              kurasi studio dan tidak mengubah rendering grafis pada visual di
+              atas.
             </p>
           </fieldset>
 
@@ -294,30 +299,37 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
             <p className="retail-pdp-story">{product.story}</p>
 
             <h3 className="retail-detail-heading">
-              Spesifikasi Garmen &amp; Material
+              Status Spesifikasi &amp; Material
             </h3>
             <div className="retail-spec-card">
               <div className="retail-spec-row">
-                <span className="retail-spec-k">Bahan Utama</span>
+                <span className="retail-spec-k">Spesifikasi Bahan</span>
                 <span className="retail-spec-v">
-                  100% Cotton Combed (Sedang dalam uji gramasi sample)
+                  Belum Ditetapkan (Eksplorasi konsep studio — komposisi kain
+                  &amp; gramasi menunggu pengujian fisik sampel workshop)
                 </span>
               </div>
               <div className="retail-spec-row">
                 <span className="retail-spec-k">Teknik Grafis</span>
                 <span className="retail-spec-v">
-                  Direct-to-Film (DTF) High-Definition Screen Tone
+                  Rencana Kurasi Studio (Metode cetak &amp; finishing sablon
+                  belum disetujui komersial)
                 </span>
               </div>
               <div className="retail-spec-row">
-                <span className="retail-spec-k">Status Batch</span>
+                <span className="retail-spec-k">Status Persetujuan</span>
                 <span className="retail-spec-v">
-                  Uji Coba Pra-Produksi / Design Study
+                  Tahap Pratinjau Desain • Belum ada vendor, sampel fisik, atau
+                  harga yang disetujui secara komersial
                 </span>
               </div>
             </div>
 
             <h3 className="retail-detail-heading">Panduan Perawatan</h3>
+            <p className="retail-care-intro">
+              Belum Diterbitkan — Panduan resmi akan disusun setelah uji cuci
+              sampel fisik selesai:
+            </p>
             <ul className="retail-care-list">
               {product.careGuidelinesPending.map((care, idx) => (
                 <li key={idx}>{care}</li>

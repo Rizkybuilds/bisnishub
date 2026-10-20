@@ -1339,6 +1339,13 @@ body:has(.retail-shop) .site-main {
   padding: 3px 8px;
   border-radius: 4px;
 }
+.retail-pdp-price-disclaimer {
+  font-size: 11px;
+  line-height: 1.4;
+  color: #727a73;
+  margin: 6px 0 0;
+  font-style: italic;
+}
 
 /* Status Callout */
 .retail-status-box {
@@ -1387,6 +1394,19 @@ body:has(.retail-shop) .site-main {
   margin: 0;
 }
 
+/* Screen-reader only radio input for accessible radio group pattern */
+.retail-sr-radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Color Options */
 .retail-color-options {
   display: flex;
@@ -1413,6 +1433,10 @@ body:has(.retail-shop) .site-main {
   background: #f2f6f0;
   box-shadow: 0 0 0 1.5px var(--retail-forest);
 }
+.retail-color-btn:has(.retail-sr-radio:focus-visible) {
+  outline: 2px solid var(--retail-forest);
+  outline-offset: 2px;
+}
 .retail-color-swatch {
   width: 16px;
   height: 16px;
@@ -1426,6 +1450,12 @@ body:has(.retail-shop) .site-main {
 }
 
 /* Size Options */
+.retail-size-guide-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -6px;
+  margin-bottom: 2px;
+}
 .retail-size-header {
   display: flex;
   align-items: center;
@@ -1475,6 +1505,10 @@ body:has(.retail-shop) .site-main {
   background: var(--retail-forest);
   color: #ffffff;
   border-color: var(--retail-forest);
+}
+.retail-size-btn:has(.retail-sr-radio:focus-visible) {
+  outline: 2px solid var(--retail-forest);
+  outline-offset: 2px;
 }
 
 /* Size Guide Disclosure Panel */
@@ -1551,6 +1585,10 @@ body:has(.retail-shop) .site-main {
   background: #f2f6f0;
   border-color: var(--retail-forest);
   box-shadow: 0 0 0 1.5px var(--retail-forest);
+}
+.retail-tone-btn:has(.retail-sr-radio:focus-visible) {
+  outline: 2px solid var(--retail-forest);
+  outline-offset: 2px;
 }
 
 /* Action Area */
@@ -1635,6 +1673,13 @@ body:has(.retail-shop) .site-main {
   color: var(--retail-ink);
   font-weight: 600;
   text-align: right;
+}
+.retail-care-intro {
+  font-size: 12px;
+  color: #556056;
+  margin: 6px 0 8px;
+  line-height: 1.4;
+  font-style: italic;
 }
 .retail-care-list {
   padding-left: 20px;
