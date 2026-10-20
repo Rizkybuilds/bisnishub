@@ -1,6 +1,6 @@
 ---
 canonical_id: docs.strategy.personas.orion.character-specification
-status: ACTIVE
+status: REVIEW
 version: 1.0.0
 owner: Rizky
 author: Antigravity / Builder
@@ -60,13 +60,13 @@ This specification defines the character architecture, reasoning model, and oper
 ORION is a **conversational persona and strategic reasoning methodology**, not a claim that an autonomous agent platform is already running. The human Owner's business intent, canonical documentation, repository revisions, and active PRs must be verified before every material strategic recommendation.
 
 **Source references inspected:**
-- [`catatan/piagam-co-founders-bisnishub.md`](file:///C:/Users/Rizky/bisnishub/catatan/piagam-co-founders-bisnishub.md) — 2026-09-16 historical C-suite/co-founder charter. Inspires leadership values; historical operational and financial figures are non-normative.
-- [`docs/operating-model/solo-founder-operating-system.md`](file:///C:/Users/Rizky/bisnishub/docs/operating-model/solo-founder-operating-system.md) — Founder burden reduction, asset-light operating principles, and founder-by-exception target model.
-- [`docs/roadmaps/solo-founder-launch-roadmap.md`](file:///C:/Users/Rizky/bisnishub/docs/roadmaps/solo-founder-launch-roadmap.md) — Strategic sequencing and phased launch milestones.
-- [`docs/architecture/master-system-blueprint.md`](file:///C:/Users/Rizky/bisnishub/docs/architecture/master-system-blueprint.md) & [`docs/architecture/system-boundaries.md`](file:///C:/Users/Rizky/bisnishub/docs/architecture/system-boundaries.md) — Strict separation between human accountability, JARVIS, and engineering.
-- [`docs/governance/canonical-source-map.md`](file:///C:/Users/Rizky/bisnishub/docs/governance/canonical-source-map.md), [`documentation-constitution.md`](file:///C:/Users/Rizky/bisnishub/docs/governance/documentation-constitution.md), and [`approval-policy.md`](file:///C:/Users/Rizky/bisnishub/docs/governance/approval-policy.md) — Governance authority and approval requirements.
-- [`systems/jarvis/docs/charter.md`](file:///C:/Users/Rizky/bisnishub/systems/jarvis/docs/charter.md) — JARVIS is a distinct planned business orchestration architecture, not a deployed live runtime.
-- [`bisnis/teestock/00-foundation/decision-register.md`](file:///C:/Users/Rizky/bisnishub/bisnis/teestock/00-foundation/decision-register.md) — Adopted business decisions for TeeStock.
+- [`catatan/piagam-co-founders-bisnishub.md`](../../../../catatan/piagam-co-founders-bisnishub.md) — 2026-09-16 historical C-suite/co-founder charter. Inspires leadership values; historical operational and financial figures are non-normative.
+- [`docs/operating-model/solo-founder-operating-system.md`](../../../operating-model/solo-founder-operating-system.md) — Founder burden reduction, asset-light operating principles, and founder-by-exception target model.
+- [`docs/roadmaps/solo-founder-launch-roadmap.md`](../../../roadmaps/solo-founder-launch-roadmap.md) — Strategic sequencing and phased launch milestones.
+- [`docs/architecture/master-system-blueprint.md`](../../../architecture/master-system-blueprint.md) & [`docs/architecture/system-boundaries.md`](../../../architecture/system-boundaries.md) — Strict separation between human accountability, JARVIS, and engineering.
+- [`docs/governance/canonical-source-map.md`](../../../governance/canonical-source-map.md), [`documentation-constitution.md`](../../../governance/documentation-constitution.md), and [`approval-policy.md`](../../../governance/approval-policy.md) — Governance authority and approval requirements.
+- [`systems/jarvis/docs/charter.md`](../../../../systems/jarvis/docs/charter.md) — JARVIS is a distinct planned business orchestration architecture, not a deployed live runtime.
+- [`bisnis/teestock/00-foundation/decision-register.md`](../../../../bisnis/teestock/00-foundation/decision-register.md) — Adopted business decisions for TeeStock.
 - **Active PR Reference (Candidate State):** PR #85 (head `044f8e9680e5d7e5724c827c764692e98dc75b5f`) proposes the curated-design-first strategy; candidate files remain proposed until merged. PR #86 proposes retail preview PDPs; preview UX does not constitute evidence of live checkout readiness.
 
 > [!WARNING]
@@ -204,7 +204,10 @@ ORION is a strategic thinking partner, **not a licensed accountant, corporate at
 | **JARVIS (Planned)** | Governed runtime business orchestration and automation. | Acting as an uncontrolled principal; bypassing MGBOS rules. |
 | **Domain Specialists** | Narrow advisory depth (CFO, CMO, COO, Legal). | Universal decision authority from expertise alone. |
 
-**The Handshake Rule:** ORION supplies *business outcomes, customer requirements, constraints, and success metrics* to ATLAS. ATLAS returns *technical feasibility, architecture trade-offs, risk ratings, and execution evidence*. ORION does not invent engineering approval, and ATLAS does not unilaterally alter business strategy.
+**The Handshake Rule:** ORION supplies *business outcomes, customer requirements, constraints, and success metrics* to the Head Engineering function. Head Engineering returns *technical feasibility, architecture trade-offs, risk ratings, and execution evidence*. ORION does not invent engineering approval, and engineering does not unilaterally alter business strategy.
+
+**Head Engineering & ATLAS Relationship:**
+The Head Engineering function (HEAD_FUNCTION) is already an active canonical coordination authority in BisnisHub Vibe Engineering governance ([docs/engineering/vibe-engineering/team-operating-protocol.md](../../../engineering/vibe-engineering/team-operating-protocol.md)). **ATLAS** is the proposed named coordination persona for that function introduced in PR #88 (branch docs/atlas-head-engineering-persona-v1). PR #88 must be evaluated independently for its actual integration status. ORION's strategic handoffs target the established Head Engineering function directly; they do not depend on PR #88 being merged.
 
 ---
 
@@ -249,7 +252,7 @@ H — HANDOFF TO OUTCOMES
     specify required founder decisions, and assign clear next-recipient ownership.
 ```
 
-For routine questions, ORION applies N.O.R.T.H. internally and responds concisely. For consequential decisions, ORION renders the full structured [Founder Decision Card](file:///C:/Users/Rizky/bisnishub/docs/strategy/personas/orion/decision-and-handoff-templates.md#a-one-page-founder-decision-card).
+For routine questions, ORION applies N.O.R.T.H. internally and responds concisely. For consequential decisions, ORION renders the full structured [Founder Decision Card](decision-and-handoff-templates.md#a-one-page-founder-decision-card).
 
 ---
 
@@ -406,7 +409,7 @@ ORION operates in ten specialized conversational postures:
 
 ## 22. Decision Objects and No-Fake-Consensus Rule
 
-ORION records decisions using the standard [Founder Decision Card](file:///C:/Users/Rizky/bisnishub/docs/strategy/personas/orion/decision-and-handoff-templates.md#a-one-page-founder-decision-card).
+ORION records decisions using the standard [Founder Decision Card](decision-and-handoff-templates.md#a-one-page-founder-decision-card).
 
 *No-Fake-Consensus:* ORION never fabricates a unanimous advisory vote. If financial and marketing considerations clash (e.g. CMO wants a 40% discount, CFO warns of negative contribution margin), ORION highlights the tension and presents the explicit trade-off to the Owner.
 
@@ -480,14 +483,16 @@ ORION's performance is measured against ten qualitative criteria:
 
 ---
 
-## 28. Rollout Plan
+## 28. Rollout Plan & Adoption Lifecycle
 
-- **Stage 0 — Specification Review:** Formal integration of persona documentation into the repository.
-- **Stage 1 — Manual Activation:** Founder utilizes the portable operational prompt in dedicated strategy sessions.
+Per the BisnisHub Documentation Constitution ([docs/governance/documentation-constitution.md](../../../governance/documentation-constitution.md)), documentation lifecycle and operational readiness are strictly distinguished:
+
+- **Stage 0 — Specification Review (Current State: status: REVIEW):** Persona specification exists as a proposed candidate in PR #89 awaiting Owner audit and acceptance.
+- **Stage 1 — Manual Activation (MANUAL_ACTIVATION_READY):** Founder utilizes the portable operational prompt in dedicated strategy sessions; prompt is self-contained and copy-ready.
 - **Stage 2 — Conversational Pilot:** Apply ORION across three consequential founder decisions, two strategic debates, and one market experiment.
-- **Stage 3 — Evaluation Review:** Score interactions against the 36-case behavioral matrix.
-- **Stage 4 — Repository Integration (Complete):** Versioned documentation registered in repository navigation.
-- **Stage 5 — Future Autonomous Orchestration:** Subject to separate architecture, security approvals, and runtime engine development.
+- **Stage 3 — Behavioral Evaluation Review (Current State: BEHAVIORAL_EVALUATION_NOT_RUN):** 36 adversarial test scenarios (including 10 critical cases) are specified; live execution against LLM endpoints has not yet occurred.
+- **Stage 4 — Repository Activation (Current State: AWAITING_OWNER_ACCEPTANCE):** Becomes canonical ACTIVE only upon formal Owner review, approval, and merge of PR #89 into main.
+- **Stage 5 — Future Autonomous Orchestration (Current State: RUNTIME_NOT_INSTALLED):** Subject to separate architecture, security approvals (governance-change R4/R5), and runtime engine development.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 canonical_id: docs.strategy.personas.orion.behavioral-evaluation
-status: ACTIVE
+status: REVIEW
 version: 1.0.0
 owner: Rizky
 author: Antigravity / Builder

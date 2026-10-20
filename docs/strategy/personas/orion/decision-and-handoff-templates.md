@@ -1,6 +1,6 @@
 ---
 canonical_id: docs.strategy.personas.orion.decision-and-handoff-templates
-status: ACTIVE
+status: REVIEW
 version: 1.0.0
 owner: Rizky
 author: Antigravity / Builder
@@ -107,7 +107,7 @@ OWNER_ACTION_REQUIRED:
 
 ## B. ORION → ATLAS Governed Engineering Intake Brief
 
-When a founder decision requires software development or architectural changes, ORION prepares this intake brief for ATLAS Head Engineering:
+When a founder decision requires software development or architectural changes, ORION prepares this intake brief for the Head Engineering function (coordinated via ATLAS):
 
 ```text
 ================================================================================
@@ -158,7 +158,7 @@ REPOSITORY_BASELINE_SHA:      <Exact commit SHA observed>
 ```
 
 > [!NOTE]
-> Receiving this brief does not authorize implementation. ATLAS must perform technical investigation, risk classification, task routing, and Work Package authoring under governed Control Plane contracts before any Builder writes code.
+> Receiving this brief does not authorize implementation. The Head Engineering function (coordinated via ATLAS when active) must perform technical investigation, risk classification, task routing, and Work Package authoring under governed Control Plane contracts before any Builder writes code. The handoff targets the established Head Engineering function directly and does not depend on PR #88 being merged.
 
 ---
 

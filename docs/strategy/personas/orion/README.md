@@ -1,6 +1,6 @@
 ---
 canonical_id: docs.strategy.personas.orion.index
-status: ACTIVE
+status: REVIEW
 version: 1.0.0
 owner: Rizky
 author: Antigravity / Builder
@@ -89,7 +89,7 @@ ORION advises and collaborates across fourteen core strategic domains:
 11. **AI & Automation Strategy:** Burden-reduction automation audits, deterministic rules before complex agents, and automation-before-hiring.
 12. **Business Risk Management:** Identifying irreversible commitments, vendor dependencies, and downside scenarios.
 13. **Strategic Decision Preparation:** Drafting structured Founder Decision Cards with options, trade-offs, and stop signals.
-14. **Coordination with ATLAS:** Translating validated business requirements into structured engineering intake briefs.
+14. **Coordination with Head Engineering:** Translating validated business requirements into structured engineering intake briefs.
 
 ---
 
@@ -110,15 +110,15 @@ The ORION persona suite consists of five comprehensive, mutually supporting docu
 
 | Document | Purpose | Authority Scope |
 |---|---|---|
-| [README.md](file:///C:/Users/Rizky/bisnishub/docs/strategy/personas/orion/README.md) | Persona index, purpose, boundaries, and manual adoption runbook. | Directory navigation only. |
-| [character-specification.md](file:///C:/Users/Rizky/bisnishub/docs/strategy/personas/orion/character-specification.md) | Full character bible, intelligence model, N.O.R.T.H. protocol, and domain boundaries. | Behavioral specification. |
-| [operational-prompt.md](file:///C:/Users/Rizky/bisnishub/docs/strategy/personas/orion/operational-prompt.md) | Portable, copy-ready operational prompt wrapper for manual session bootstrap. | Non-authoritative session wrapper. |
-| [behavioral-evaluation.md](file:///C:/Users/Rizky/bisnishub/docs/strategy/personas/orion/behavioral-evaluation.md) | 36-case adversarial test matrix, 10 critical cases, and provenance rubrics. | Behavioral testing specification. |
-| [decision-and-handoff-templates.md](file:///C:/Users/Rizky/bisnishub/docs/strategy/personas/orion/decision-and-handoff-templates.md) | Standard templates: Decision Card, ATLAS intake brief, Uncertainty tracker. | Structured decision aids. |
+| [README.md](README.md) | Persona index, purpose, boundaries, and manual adoption runbook. | Directory navigation only. |
+| [character-specification.md](character-specification.md) | Full character bible, intelligence model, N.O.R.T.H. protocol, and domain boundaries. | Behavioral specification. |
+| [operational-prompt.md](operational-prompt.md) | Portable, copy-ready operational prompt wrapper for manual session bootstrap. | Non-authoritative session wrapper. |
+| [behavioral-evaluation.md](behavioral-evaluation.md) | 36-case adversarial test matrix, 10 critical cases, and provenance rubrics. | Behavioral testing specification. |
+| [decision-and-handoff-templates.md](decision-and-handoff-templates.md) | Standard templates: Decision Card, Head Engineering intake brief, Uncertainty tracker. | Structured decision aids. |
 
 ---
 
-## 5. Documentation Authority Disclaimer
+## 5. Canonical Authority Disclaimer
 
 This documentation set and its associated prompts are **strictly non-normative strategic cognitive aids**.
 
@@ -130,16 +130,16 @@ WINS
 and the persona document must be updated to reconcile the conflict.
 
 Canonical governance anchors:
-- Root repository governance: [`AGENTS.md`](file:///C:/Users/Rizky/bisnishub/AGENTS.md)
-- Authority routing: [`docs/governance/canonical-source-map.md`](file:///C:/Users/Rizky/bisnishub/docs/governance/canonical-source-map.md)
-- Documentation constitution: [`docs/governance/documentation-constitution.md`](file:///C:/Users/Rizky/bisnishub/docs/governance/documentation-constitution.md)
-- Solo-Founder operating model: [`docs/operating-model/solo-founder-operating-system.md`](file:///C:/Users/Rizky/bisnishub/docs/operating-model/solo-founder-operating-system.md)
-- System boundaries: [`docs/architecture/system-boundaries.md`](file:///C:/Users/Rizky/bisnishub/docs/architecture/system-boundaries.md)
-- Historical charter note: [`catatan/piagam-co-founders-bisnishub.md`](file:///C:/Users/Rizky/bisnishub/catatan/piagam-co-founders-bisnishub.md) *(Historical inspiration only; numeric/operational claims are non-normative)*
+- Root repository governance: [`AGENTS.md`](../../../../AGENTS.md)
+- Authority routing: [`docs/governance/canonical-source-map.md`](../../../governance/canonical-source-map.md)
+- Documentation constitution: [`docs/governance/documentation-constitution.md`](../../../governance/documentation-constitution.md)
+- Solo-Founder operating model: [`docs/operating-model/solo-founder-operating-system.md`](../../../operating-model/solo-founder-operating-system.md)
+- System boundaries: [`docs/architecture/system-boundaries.md`](../../../architecture/system-boundaries.md)
+- Historical charter note: [`catatan/piagam-co-founders-bisnishub.md`](../../../../catatan/piagam-co-founders-bisnishub.md) *(Historical inspiration only; numeric/operational claims are non-normative)*
 
 ---
 
-## 6. Relationship to ATLAS and JARVIS
+## 6. Relationship to Head Engineering and JARVIS
 
 BisnisHub strictly delineates strategy, engineering coordination, and automated execution:
 
@@ -154,7 +154,8 @@ BisnisHub strictly delineates strategy, engineering coordination, and automated 
             Strategic Requirements Brief
                        |
                        v
-           ATLAS — HEAD ENGINEERING
+         HEAD ENGINEERING FUNCTION
+      (Existing HEAD_FUNCTION / ATLAS)
              Engineering Coordination
                        |
         Governed Work Packages & Contracts
@@ -169,7 +170,8 @@ BisnisHub strictly delineates strategy, engineering coordination, and automated 
 
 ### Functional Division:
 - **ORION:** Evaluates business opportunity, customer value, market viability, unit margins, and sequencing priority. Produces structured business outcome briefs for engineering.
-- **ATLAS:** Evaluates technical feasibility, architecture dependencies, risk routing, and execution contracts. Binds Builder runtimes (Antigravity/Codex) to governed Work Packages.
+- **Head Engineering Function (`HEAD_FUNCTION`):** Already active under Vibe Engineering governance ([`docs/engineering/vibe-engineering/team-operating-protocol.md`](../../../engineering/vibe-engineering/team-operating-protocol.md)). Evaluates technical feasibility, architecture dependencies, risk routing, and execution contracts. Binds Builder runtimes (Antigravity/Codex) to governed Work Packages.
+  - *ATLAS Dependency Clarification:* ATLAS is the proposed named coordination persona for the Head Engineering function introduced in PR #88. PR #88 is an open candidate and must be audited independently for merge status. ORION's handoff protocol targets the established Head Engineering function directly and does not depend on PR #88 being merged.
 - **JARVIS:** Planned automated business operations runtime. ORION does not issue operational commands directly to JARVIS or bypass MGBOS transaction gates.
 
 ---
@@ -184,10 +186,10 @@ Installing Markdown files in the GitHub repository does not automatically inject
 ### Step-by-Step Activation
 
 1. **Open a Dedicated Session:**  
-   Start a clean conversational session with your preferred high-capability LLM (e.g. ChatGPT, Claude, Gemini).
+   Start a clean conversational session with your preferred high-capability reasoning LLM.
 
 2. **Supply the Operational Prompt:**  
-   Open [`operational-prompt.md`](file:///C:/Users/Rizky/bisnishub/docs/strategy/personas/orion/operational-prompt.md) and copy the complete prompt block into the session.
+   Open [`operational-prompt.md`](operational-prompt.md) and copy the complete prompt block into the session.
 
 3. **Provide Context Snapshot:**  
    Provide current project reality (e.g., active business goals, recent PRs, known constraints). Instruct the model to distinguish verified facts from draft proposals.
@@ -196,7 +198,7 @@ Installing Markdown files in the GitHub repository does not automatically inject
    Pose your strategic question, proposal, or dilemma using the N.O.R.T.H. protocol framework.
 
 5. **Review Output & Record Decisions:**  
-   Evaluate ORION's recommendation. For material decisions, complete the [Founder Decision Card](file:///C:/Users/Rizky/bisnishub/docs/strategy/personas/orion/decision-and-handoff-templates.md#a-one-page-founder-decision-card).
+   Evaluate ORION's recommendation. For material decisions, complete the [Founder Decision Card](decision-and-handoff-templates.md#a-one-page-founder-decision-card).
 
 ### Copy-Ready Owner Bootstrap Snippet
 
@@ -211,20 +213,24 @@ Topik diskusi hari ini: [ISI TOPIK STRATEGI DI SINI]
 
 ---
 
-## 8. Versioning & Adoption Status
+## 8. Versioning & Adoption Lifecycle
+
+Per the BisnisHub Documentation Constitution ([`docs/governance/documentation-constitution.md`](../../../governance/documentation-constitution.md)), documentation lifecycle and operational readiness are distinct:
 
 - **Persona Version:** `1.0.0`
-- **Adoption Status:** `ACTIVE` for manual session adoption.
-- **Implementation Status:** `DOCUMENTATION_INTEGRATED`
-- **Runtime Status:** `RUNTIME_NOT_INSTALLED` *(Manual copy-paste session adoption; no autonomous daemon)*.
+- **Document Status:** `REVIEW` (Candidate specification introduced in PR #89; awaiting Owner review and formal merge).
+- **Manual Adoption Readiness:** `MANUAL_ACTIVATION_READY` (The operational prompt is self-contained and copy-ready for manual session bootstrap).
+- **Behavioral Evaluation Status:** `BEHAVIORAL_EVALUATION_NOT_RUN` (36 test scenarios specified; live model evaluation has not yet been executed against active LLM endpoints).
+- **Runtime Implementation Status:** `RUNTIME_NOT_INSTALLED` (No autonomous agent daemon or background execution has been built or authorized).
+- **Formal Acceptance:** `AWAITING_OWNER_ACCEPTANCE` (Requires human Owner review and merge of PR #89 into `main` before becoming canonical `ACTIVE`).
 - **Review Cadence:** Quarterly, or following major business pivots.
 
 ---
 
-## 9. Change Management
+## 9. Change Management & Risk Routing
 
-- Modifying the character specification, prompt, or templates requires a governed `documentation-change` Work Package.
-- Any change that attempts to grant ORION financial execution, merge authority, tool permissions, or autonomous system access triggers fail-closed governance (`governance-change`, risk `R4`/`R5`) and requires explicit Owner approval.
+- Modifications to non-normative persona profiles, prompts, or templates are routed under task type `documentation-change` (risk floor `R0`), evaluated contextually under [`docs/governance/cross-system-risk-classification.md`](../../../governance/cross-system-risk-classification.md). Markdown alone never guarantees `R0` if normative boundaries are affected.
+- Any change that attempts to grant ORION financial execution, merge authority, tool permissions, or autonomous system access must be re-routed to `governance-change` (risk floor `R1`, with contextual escalation up to `R4`/`R5` where consequence warrants) and requires explicit human Owner approval under [`docs/governance/approval-policy.md`](../../../governance/approval-policy.md).
 
 ---
 
