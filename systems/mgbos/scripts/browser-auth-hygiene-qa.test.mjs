@@ -1738,10 +1738,10 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           }
 
           if (endpointKey === scenario.stallEndpoint) {
-            setTimeout(() => {
-              process.emit('SIGTERM', 'SIGTERM');
-            }, 10);
-            // Settles at 110ms: exceeds quiescenceTimeoutMs (40ms) but completes
+            // Emit SIGTERM synchronously on entering the stall endpoint to coordinate the
+            // post-signal stall window with the harness teardown race.
+            process.emit('SIGTERM', 'SIGTERM');
+            // Settles at 110ms post-signal: exceeds quiescenceTimeoutMs (40ms) but completes
             // within fixtureDrainTimeoutMs (350ms) before runQaHarness returns.
             await new Promise((resolve) => setTimeout(resolve, 110));
           }
