@@ -143,11 +143,21 @@ jobs:
         run: |
           set -euo pipefail
 
-          # 1. Database startup not attempted: record skip reason and exit cleanly
-          if [ "${{ steps.db-start.outcome }}" != "success" ] && [ "${{ steps.db-start.outcome }}" != "failure" ]; then
-            echo "Disposable database teardown skipped: database startup was not attempted."
-            exit 0
-          fi
+          # 1. Distinguish startup outcomes deterministically
+          STARTUP_OUTCOME="${{ steps.db-start.outcome }}"
+          case "$STARTUP_OUTCOME" in
+            skipped)
+              echo "Disposable database teardown skipped: database startup was not attempted."
+              exit 0
+              ;;
+            success|failure|cancelled)
+              echo "Disposable database teardown required: startup outcome was '${STARTUP_OUTCOME}'."
+              ;;
+            *)
+              echo "::error::Disposable database teardown failed: ambiguous or unexpected startup outcome '${STARTUP_OUTCOME}'"
+              exit 1
+              ;;
+          esac
 
           # 2. Database startup attempted: ensure workspace directory is available
           if [ ! -d "systems/mgbos" ]; then
