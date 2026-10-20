@@ -44,13 +44,13 @@ jobs:
 
           # 2. Enforce repository provenance
           if [ "$GITHUB_REPO" != "Rizkybuilds/bisnishub" ]; then
-            echo "::error::Unauthorized repository provenance: '$GITHUB_REPO'"
+            echo "::error::Unauthorized repository provenance (UNAUTHORIZED_REPOSITORY_PROVENANCE). Must be Rizkybuilds/bisnishub."
             exit 1
           fi
 
           # 3. Enforce ref boundary (main only)
           if [ "$GITHUB_REF_NAME" != "refs/heads/main" ]; then
-            echo "::error::Preflight verification is only authorized on refs/heads/main. Current ref: '$GITHUB_REF_NAME'"
+            echo "::error::Preflight verification is only authorized on refs/heads/main (UNAUTHORIZED_GIT_REF)."
             exit 1
           fi
 
@@ -67,7 +67,7 @@ jobs:
           set -euo pipefail
           ACTUAL_HEAD=$(git rev-parse HEAD)
           if [ "$ACTUAL_HEAD" != "$EXPECTED_SHA" ]; then
-            echo "::error::Checked-out HEAD ($ACTUAL_HEAD) does not match authorized commit SHA ($EXPECTED_SHA)"
+            echo "::error::Checked-out HEAD does not match authorized commit SHA (HEAD_COMMIT_MISMATCH)."
             exit 1
           fi
 

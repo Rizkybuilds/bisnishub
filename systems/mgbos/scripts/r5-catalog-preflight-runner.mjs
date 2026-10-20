@@ -22,6 +22,9 @@ export const CANONICAL_LOCAL_HOST = '127.0.0.1';
 export const CANONICAL_LOCAL_PORT = 55432;
 export const CANONICAL_LOCAL_DATABASE = 'postgres';
 export const CANONICAL_LOCAL_USER = 'postgres';
+export const CANONICAL_LOCAL_PROJECT_ID = 'mgbos-foundation';
+export const CANONICAL_CONTAINER_NAME = 'supabase_db_mgbos-foundation';
+export const CANONICAL_CONTAINER_INTERNAL_PORT = 5432;
 export const CANONICAL_LOCAL_SERVICE_ROLE_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
 export const STATEMENT_TIMEOUT_MS = 15000;
@@ -354,6 +357,155 @@ export function verifySqlAssetIntegrity(filePath = SQL_ASSET_PATH) {
 }
 
 /**
+ * Validates the Supabase configuration file (supabase/config.toml).
+ * Rejects missing files, malformed sections, duplicate conflicting settings,
+ * wrong project_id, or incorrect database port.
+ *
+ * @param {string} configPath
+ * @param {{ isVerifyOnly?: boolean }} [options={}]
+ * @returns {{ projectId: string, dbPort: number, configPath: string }}
+ */
+export function validateSupabaseConfig(configPath, options = {}) {
+  const isVerifyOnly = options.isVerifyOnly === true;
+
+  if (!fs.existsSync(configPath)) {
+    if (!isVerifyOnly) {
+      throw new Error(
+        'Execution rejected: required configuration file supabase/config.toml is missing (CONFIG_FILE_NOT_FOUND).',
+      );
+    }
+    return {
+      projectId: 'NOT_EVALUATED_CONFIG_MISSING',
+      dbPort: 0,
+      configPath,
+    };
+  }
+
+  const rawContent = fs.readFileSync(configPath, 'utf8');
+  const lines = rawContent.split(/\r?\n/);
+
+  let currentSection = null;
+  const sectionsObserved = new Set();
+  const rootSettings = new Map();
+  const sectionSettings = new Map();
+
+  for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+    const rawLine = lines[lineIdx];
+    const lineNum = lineIdx + 1;
+
+    // Remove comments while respecting double-quoted strings
+    let inQuote = false;
+    let commentIdx = -1;
+    for (let i = 0; i < rawLine.length; i++) {
+      const ch = rawLine[i];
+      if (ch === '"' && (i === 0 || rawLine[i - 1] !== '\\')) {
+        inQuote = !inQuote;
+      } else if (ch === '#' && !inQuote) {
+        commentIdx = i;
+        break;
+      }
+    }
+
+    const trimmed = (commentIdx !== -1 ? rawLine.slice(0, commentIdx) : rawLine).trim();
+    if (!trimmed) continue;
+
+    // Check section header: [section] or [section.subsection]
+    if (trimmed.startsWith('[')) {
+      const match = trimmed.match(/^\[([a-zA-Z0-9_\.-]+)\]$/);
+      if (!match) {
+        throw new Error(
+          `Config validation failed: malformed section header at line ${lineNum} (MALFORMED_SECTION_HEADER).`,
+        );
+      }
+      const sectionName = match[1];
+      if (sectionsObserved.has(sectionName)) {
+        throw new Error(
+          `Config validation failed: duplicate section [${sectionName}] at line ${lineNum} (DUPLICATE_SECTION).`,
+        );
+      }
+      sectionsObserved.add(sectionName);
+      currentSection = sectionName;
+      sectionSettings.set(currentSection, new Map());
+      continue;
+    }
+
+    // Check key = value
+    const kvMatch = trimmed.match(/^([a-zA-Z0-9_-]+)\s*=\s*(.+)$/);
+    if (!kvMatch) {
+      throw new Error(
+        `Config validation failed: malformed TOML key-value syntax at line ${lineNum} (MALFORMED_TOML_SYNTAX).`,
+      );
+    }
+
+    const key = kvMatch[1].trim();
+    const valStr = kvMatch[2].trim();
+
+    let val = valStr;
+    if (valStr.startsWith('"') && valStr.endsWith('"')) {
+      val = valStr.slice(1, -1);
+    } else if (!isNaN(Number(valStr))) {
+      val = Number(valStr);
+    } else if (valStr === 'true') {
+      val = true;
+    } else if (valStr === 'false') {
+      val = false;
+    }
+
+    if (!currentSection) {
+      if (rootSettings.has(key)) {
+        throw new Error(
+          `Config validation failed: duplicate root setting '${key}' at line ${lineNum} (DUPLICATE_SETTING).`,
+        );
+      }
+      rootSettings.set(key, val);
+    } else {
+      const secMap = sectionSettings.get(currentSection);
+      if (secMap.has(key)) {
+        throw new Error(
+          `Config validation failed: duplicate setting '${key}' in [${currentSection}] at line ${lineNum} (DUPLICATE_SETTING).`,
+        );
+      }
+      secMap.set(key, val);
+    }
+  }
+
+  // 1. Validate root project_id
+  const projectId = rootSettings.get('project_id');
+  if (!projectId || projectId !== CANONICAL_LOCAL_PROJECT_ID) {
+    throw new Error(
+      `Config validation failed: project_id must be '${CANONICAL_LOCAL_PROJECT_ID}' (UNEXPECTED_PROJECT_ID).`,
+    );
+  }
+
+  // 2. Validate [db] section exists
+  if (!sectionsObserved.has('db') || !sectionSettings.has('db')) {
+    throw new Error(
+      'Config validation failed: missing required [db] section (MISSING_DB_SECTION).',
+    );
+  }
+
+  // 3. Validate [db] port setting
+  const dbMap = sectionSettings.get('db');
+  const port = dbMap.get('port');
+  if (port === undefined || port === null) {
+    throw new Error(
+      'Config validation failed: missing port setting under [db] (MISSING_DB_PORT).',
+    );
+  }
+  if (Number(port) !== CANONICAL_LOCAL_PORT) {
+    throw new Error(
+      `Config validation failed: [db].port must be ${CANONICAL_LOCAL_PORT} (PORT_CONFIGURATION_MISMATCH).`,
+    );
+  }
+
+  return {
+    projectId,
+    dbPort: Number(port),
+    configPath,
+  };
+}
+
+/**
  * Validates environment variables, repo provenance, and approved commit input.
  * @param {string} [explicitCommitSha]
  * @param {Record<string, string | undefined>} [env=process.env]
@@ -379,7 +531,7 @@ export function verifyEnvironmentIdentity(
   const rawUrl = env.NEXT_PUBLIC_SUPABASE_URL;
   if (rawUrl && rawUrl !== 'http://127.0.0.1:55431') {
     throw new Error(
-      `Execution rejected: NEXT_PUBLIC_SUPABASE_URL is set to unauthorized origin: ${rawUrl}`,
+      'Execution rejected: NEXT_PUBLIC_SUPABASE_URL is set to unauthorized origin (UNAUTHORIZED_SUPABASE_URL_ORIGIN).',
     );
   }
   const rawKey = env.SUPABASE_SERVICE_ROLE_KEY;
@@ -404,13 +556,13 @@ export function verifyEnvironmentIdentity(
     env.GITHUB_REPOSITORY ?? (isCI ? '' : 'Rizkybuilds/bisnishub');
   if (isCI && repository !== 'Rizkybuilds/bisnishub') {
     throw new Error(
-      `Execution rejected: GITHUB_REPOSITORY (${repository}) is not authorized. Must be Rizkybuilds/bisnishub.`,
+      'Execution rejected: GITHUB_REPOSITORY is not authorized (UNAUTHORIZED_REPOSITORY_PROVENANCE). Must be Rizkybuilds/bisnishub.',
     );
   }
   const gitRef = env.GITHUB_REF ?? (isCI ? '' : 'refs/heads/main');
   if (isCI && gitRef !== 'refs/heads/main') {
     throw new Error(
-      `Execution rejected: GITHUB_REF (${gitRef}) is not authorized. Must be refs/heads/main.`,
+      'Execution rejected: GITHUB_REF is not authorized (UNAUTHORIZED_GIT_REF). Must be refs/heads/main.',
     );
   }
 
@@ -419,12 +571,13 @@ export function verifyEnvironmentIdentity(
     explicitCommitSha ?? env.MGBOS_PREFLIGHT_APPROVED_COMMIT_SHA;
   if (!commitSha || !/^[0-9a-f]{40}$/.test(commitSha)) {
     throw new Error(
-      `Execution rejected: missing or invalid approved commit SHA. Must be exact 40 lowercase hex characters, got: ${commitSha}`,
+      'Execution rejected: missing or invalid approved commit SHA (INVALID_COMMIT_SHA_FORMAT). Must be exact 40 lowercase hex characters.',
     );
   }
 
   // 5. Current Git Revision Check
   const gitRev = spawnSync('git', ['rev-parse', 'HEAD'], {
+    cwd: __dirname,
     encoding: 'utf8',
   });
   if (gitRev.status !== 0 || !gitRev.stdout) {
@@ -433,26 +586,19 @@ export function verifyEnvironmentIdentity(
   const actualHead = gitRev.stdout.trim();
   if (actualHead !== commitSha) {
     throw new Error(
-      `Execution rejected: checked-out git HEAD (${actualHead}) does not match approved commit SHA (${commitSha}).`,
+      'Execution rejected: checked-out git HEAD does not match approved commit SHA (HEAD_COMMIT_MISMATCH).',
     );
   }
 
   // 6. Local Supabase Configuration Verification
   const configPath = path.join(__dirname, '..', 'supabase', 'config.toml');
-  if (fs.existsSync(configPath)) {
-    const configContent = fs.readFileSync(configPath, 'utf8');
-    if (!configContent.includes('port = 55432')) {
-      throw new Error(
-        'Execution rejected: supabase/config.toml does not configure expected database port 55432.',
-      );
-    }
-  }
+  validateSupabaseConfig(configPath, { isVerifyOnly });
 
   // 7. Absence of remote project-ref
   const tempDir = path.join(__dirname, '..', 'supabase', '.temp');
   if (fs.existsSync(path.join(tempDir, 'project-ref'))) {
     throw new Error(
-      'Execution rejected: supabase/.temp/project-ref detected. Remote project linking is strictly prohibited.',
+      'Execution rejected: supabase/.temp/project-ref detected (REMOTE_PROJECT_LINKING_PROHIBITED). Remote project linking is strictly prohibited.',
     );
   }
 
@@ -518,7 +664,7 @@ export function parseCsvRows(csvText) {
         currentRow = [];
       } else {
         throw new Error(
-          `CSV parser error: unexpected character '${char}' after closing quote at index ${i}. Expected delimiter or newline.`,
+          `CSV parser error: unexpected character after closing quote at index ${i} (UNEXPECTED_CHAR_AFTER_QUOTE). Expected delimiter or newline.`,
         );
       }
     } else {
@@ -528,7 +674,7 @@ export function parseCsvRows(csvText) {
           insideQuotes = true;
         } else {
           throw new Error(
-            `CSV parser error: unescaped quote inside unquoted field at index ${i}.`,
+            `CSV parser error: unescaped quote inside unquoted field at index ${i} (UNESCAPED_QUOTE_IN_FIELD).`,
           );
         }
       } else if (char === ',') {
@@ -552,7 +698,7 @@ export function parseCsvRows(csvText) {
   }
 
   if (insideQuotes) {
-    throw new Error('CSV parser error: unclosed quote at end of input.');
+    throw new Error('CSV parser error: unclosed quote at end of input (UNCLOSED_QUOTE_AT_EOF).');
   }
 
   if (currentField !== '' || currentRow.length > 0 || quoteClosed) {
@@ -566,6 +712,193 @@ export function parseCsvRows(csvText) {
   }
 
   return rows;
+}
+
+/**
+ * Standalone Docker container identity, port-binding, and isolation verification.
+ * Inspects the disposable Supabase database container via fixed-argument docker inspect,
+ * asserting expected container name, project label, 127.0.0.1:55432 loopback binding,
+ * absence of persistent external host bind mounts, and fresh container lifecycle.
+ *
+ * @param {string | number} preStartupEpoch
+ * @param {{
+ *   mockDockerExecutor?: (args: string[]) => string,
+ *   containerName?: string,
+ *   expectedProjectId?: string,
+ *   canonicalPort?: number,
+ * }} [options={}]
+ * @returns {{
+ *   isDockerVerified: boolean,
+ *   containerId: string,
+ *   containerName: string,
+ *   projectId: string,
+ *   hostIp: string,
+ *   hostPort: number,
+ *   internalPort: number,
+ *   startedAt: string,
+ *   startedAtEpoch: number
+ * }}
+ */
+export function verifyDockerContainerIdentity(preStartupEpoch, options = {}) {
+  const expectedPreEpoch = Number(preStartupEpoch);
+  if (!preStartupEpoch || isNaN(expectedPreEpoch) || expectedPreEpoch <= 0) {
+    throw new Error(
+      'Docker verification failed: missing or invalid preStartupEpoch (INVALID_PRE_STARTUP_EPOCH). Pre-startup epoch timestamp must be recorded prior to database startup.',
+    );
+  }
+
+  const containerName = options.containerName ?? CANONICAL_CONTAINER_NAME;
+  const expectedProjectId = options.expectedProjectId ?? CANONICAL_LOCAL_PROJECT_ID;
+  const canonicalPort = options.canonicalPort ?? CANONICAL_LOCAL_PORT;
+
+  let stdout = '';
+  if (typeof options.mockDockerExecutor === 'function') {
+    stdout = options.mockDockerExecutor(['inspect', '--type=container', containerName]);
+  } else {
+    // Fixed argument array execution - no shell interpolation
+    const dockerArgs = ['inspect', '--type=container', containerName];
+    const execResult = spawnSync('docker', dockerArgs, {
+      encoding: 'utf8',
+      maxBuffer: 10 * 1024 * 1024,
+    });
+
+    if (execResult.error) {
+      throw new Error(
+        'Docker inspection failed: unable to spawn docker process (DOCKER_SPAWN_ERROR).',
+      );
+    }
+    if (execResult.status !== 0) {
+      throw new Error(
+        `Docker inspection failed: container inspect returned non-zero exit status (DOCKER_INSPECT_FAILURE). ExitCode: ${execResult.status}`,
+      );
+    }
+    stdout = execResult.stdout;
+  }
+
+  // 1. Parse JSON inspection payload
+  let inspectList;
+  try {
+    inspectList = JSON.parse(stdout);
+  } catch {
+    throw new Error(
+      'Docker inspection failed: malformed JSON returned by docker inspect (INVALID_DOCKER_INSPECT_PAYLOAD).',
+    );
+  }
+
+  if (!Array.isArray(inspectList) || inspectList.length !== 1) {
+    throw new Error(
+      'Docker inspection failed: expected inspect list with exactly one container (INVALID_DOCKER_INSPECT_PAYLOAD).',
+    );
+  }
+
+  const container = inspectList[0];
+
+  // 2. Container running state
+  if (!container.State || container.State.Running !== true) {
+    throw new Error(
+      'Docker inspection failed: database container is not running (CONTAINER_NOT_RUNNING).',
+    );
+  }
+
+  // 3. Container identity & project association
+  const rawName = container.Name ?? '';
+  const normalizedName = rawName.startsWith('/') ? rawName.slice(1) : rawName;
+  if (normalizedName !== containerName) {
+    throw new Error(
+      'Docker inspection failed: container name mismatch (CONTAINER_NAME_MISMATCH).',
+    );
+  }
+
+  const projectLabel = container.Config?.Labels?.['com.supabase.cli.project'];
+  if (!projectLabel || projectLabel !== expectedProjectId) {
+    throw new Error(
+      'Docker inspection failed: project label mismatch (PROJECT_ASSOCIATION_MISMATCH).',
+    );
+  }
+
+  // 4. Actual Port Publishing & Loopback Host Binding
+  const portKey = `${CANONICAL_CONTAINER_INTERNAL_PORT}/tcp`;
+  const portBindings =
+    container.NetworkSettings?.Ports?.[portKey] ??
+    container.HostConfig?.PortBindings?.[portKey];
+
+  if (!Array.isArray(portBindings) || portBindings.length !== 1) {
+    throw new Error(
+      'Docker inspection failed: expected exactly one port binding for database (AMBIGUOUS_OR_MISSING_PORT_BINDING).',
+    );
+  }
+
+  const binding = portBindings[0];
+  const hostIp = binding?.HostIp;
+  const hostPort = Number(binding?.HostPort);
+
+  // Must be loopback: 127.0.0.1 or ::1
+  if (hostIp !== '127.0.0.1' && hostIp !== '::1') {
+    throw new Error(
+      'Docker inspection failed: non-loopback host binding detected (NON_LOOPBACK_HOST_BINDING). Database port must bind exclusively to 127.0.0.1.',
+    );
+  }
+
+  // Must match canonical local port: 55432
+  if (hostPort !== canonicalPort) {
+    throw new Error(
+      'Docker inspection failed: host port does not match expected canonical port (UNEXPECTED_HOST_PORT).',
+    );
+  }
+
+  // Verify no unexpected external port exposures exist on the database container
+  const allPorts = container.NetworkSettings?.Ports ?? {};
+  for (const [exposedPort, bindings] of Object.entries(allPorts)) {
+    if (exposedPort !== portKey && Array.isArray(bindings) && bindings.length > 0) {
+      for (const b of bindings) {
+        if (b.HostIp && b.HostIp !== '127.0.0.1' && b.HostIp !== '::1') {
+          throw new Error(
+            'Docker inspection failed: extraneous non-loopback port exposed (NON_LOOPBACK_HOST_BINDING).',
+          );
+        }
+      }
+    }
+  }
+
+  // 5. Reject Unexpected Persistent External Mounts & Pre-existing Container State
+  const mounts = container.Mounts ?? [];
+  for (const m of mounts) {
+    if (m.Destination === '/var/lib/postgresql/data') {
+      if (m.Type === 'bind') {
+        throw new Error(
+          'Docker inspection failed: host bind mount detected on postgres data directory (PERSISTENT_BIND_MOUNT_DETECTED). Disposable contract requires ephemeral storage.',
+        );
+      }
+    }
+  }
+
+  // Container start time must post-date preStartupEpoch
+  const startedAtStr = container.State?.StartedAt;
+  const startedAtDate = new Date(startedAtStr);
+  const startedAtEpoch = Math.floor(startedAtDate.getTime() / 1000);
+  if (isNaN(startedAtEpoch) || startedAtEpoch <= 0) {
+    throw new Error(
+      'Docker inspection failed: unable to parse container start timestamp (INVALID_CONTAINER_START_TIME).',
+    );
+  }
+
+  if (startedAtEpoch < expectedPreEpoch) {
+    throw new Error(
+      'Docker inspection failed: container started prior to workflow execution epoch (PRE_EXISTING_CONTAINER_DETECTED). Stale container violates disposable isolation.',
+    );
+  }
+
+  return {
+    isDockerVerified: true,
+    containerId: container.Id ?? 'UNKNOWN_CONTAINER_ID',
+    containerName: normalizedName,
+    projectId: projectLabel,
+    hostIp,
+    hostPort,
+    internalPort: CANONICAL_CONTAINER_INTERNAL_PORT,
+    startedAt: startedAtStr,
+    startedAtEpoch,
+  };
 }
 
 /**
@@ -598,7 +931,7 @@ export function executeIdentityAndFreshnessProbe(
     Number(preStartupEpoch) <= 0
   ) {
     throw new Error(
-      `Identity probe rejected: missing or invalid preStartupEpoch (${preStartupEpoch}). Pre-startup epoch timestamp must be recorded prior to database startup.`,
+      'Identity probe rejected: missing or invalid preStartupEpoch (INVALID_PRE_STARTUP_EPOCH). Pre-startup epoch timestamp must be recorded prior to database startup.',
     );
   }
 
@@ -635,12 +968,12 @@ export function executeIdentityAndFreshnessProbe(
 
     if (result.error) {
       throw new Error(
-        `Identity probe failed: unable to spawn psql process. Error: ${result.error.message}`,
+        'Identity probe failed: unable to spawn psql process (PSQL_SPAWN_ERROR).',
       );
     }
     if (result.status !== 0) {
       throw new Error(
-        `Identity probe failed: psql exited with code ${result.status}.`,
+        `Identity probe failed: psql exited with code ${result.status} (PSQL_EXIT_NON_ZERO).`,
       );
     }
     stdout = result.stdout;
@@ -649,7 +982,7 @@ export function executeIdentityAndFreshnessProbe(
   const rows = parseCsvRows(stdout);
   if (rows.length < 2) {
     throw new Error(
-      `Identity probe failed: expected header and data row, got ${rows.length} rows.`,
+      'Identity probe failed: unexpected row count returned from identity probe (INVALID_PROBE_ROW_COUNT).',
     );
   }
 
@@ -668,7 +1001,7 @@ export function executeIdentityAndFreshnessProbe(
     !expectedHeaders.every((h, idx) => headers[idx] === h)
   ) {
     throw new Error(
-      `Identity probe failed: unexpected headers from identity probe. Got: ${JSON.stringify(headers)}`,
+      'Identity probe failed: unexpected headers from identity probe (INVALID_PROBE_HEADERS).',
     );
   }
 
@@ -680,21 +1013,21 @@ export function executeIdentityAndFreshnessProbe(
   // 1. Assert database identity
   if (record.current_database !== 'postgres') {
     throw new Error(
-      `Identity probe assertion failed: current_database must be 'postgres', got '${record.current_database}'.`,
+      "Identity probe assertion failed: current_database must be 'postgres' (UNEXPECTED_DATABASE_NAME).",
     );
   }
 
   // 2. Assert connected user
   if (record.current_user !== 'postgres') {
     throw new Error(
-      `Identity probe assertion failed: current_user must be 'postgres', got '${record.current_user}'.`,
+      "Identity probe assertion failed: current_user must be 'postgres' (UNEXPECTED_CURRENT_USER).",
     );
   }
 
   // 3. Assert session user
   if (record.session_user !== 'postgres') {
     throw new Error(
-      `Identity probe assertion failed: session_user must be 'postgres', got '${record.session_user}'.`,
+      "Identity probe assertion failed: session_user must be 'postgres' (UNEXPECTED_SESSION_USER).",
     );
   }
 
@@ -702,7 +1035,7 @@ export function executeIdentityAndFreshnessProbe(
   const portNum = Number(record.inet_server_port);
   if (portNum !== 5432 && portNum !== CANONICAL_LOCAL_PORT) {
     throw new Error(
-      `Identity probe assertion failed: server port ${portNum} does not match expected container internal port (5432) or local port (${CANONICAL_LOCAL_PORT}).`,
+      'Identity probe assertion failed: server port does not match expected container internal port or local port (PORT_MISMATCH).',
     );
   }
 
@@ -711,13 +1044,13 @@ export function executeIdentityAndFreshnessProbe(
   const postmasterEpoch = Math.floor(postmasterDate.getTime() / 1000);
   if (isNaN(postmasterEpoch) || postmasterEpoch <= 0) {
     throw new Error(
-      `Identity probe assertion failed: unable to parse pg_postmaster_start_time ('${record.pg_postmaster_start_time}').`,
+      'Identity probe assertion failed: unable to parse pg_postmaster_start_time (INVALID_POSTMASTER_START_TIME).',
     );
   }
 
   if (postmasterEpoch < expectedPreEpoch) {
     throw new Error(
-      `Identity probe assertion failed: pg_postmaster_start_time (${record.pg_postmaster_start_time}, epoch ${postmasterEpoch}) does not post-date pre-startup epoch (${expectedPreEpoch}). Stale or pre-existing database instance detected.`,
+      'Identity probe assertion failed: postmaster start time does not post-date pre-startup epoch (STALE_INSTANCE_DETECTED). Stale or pre-existing database instance detected.',
     );
   }
 
@@ -773,11 +1106,11 @@ export function groupRowsByModule(rows) {
       if (matchedSpecIdx !== currentModuleIdx + 1) {
         if (modulesObserved.includes(spec.key)) {
           throw new Error(
-            `Parser error: duplicate module header detected for ${spec.key} at row ${rIdx + 1}.`,
+            `Parser error: duplicate module header detected for ${spec.key} at row ${rIdx + 1} (DUPLICATE_MODULE_HEADER).`,
           );
         }
         throw new Error(
-          `Parser error: out-of-order or skipped module header. Expected index ${currentModuleIdx + 1} (${CANONICAL_MODULE_SPECS[currentModuleIdx + 1]?.key}), got index ${matchedSpecIdx} (${spec.key}) at row ${rIdx + 1}.`,
+          `Parser error: out-of-order or skipped module header (OUT_OF_ORDER_MODULE_HEADER). Expected index ${currentModuleIdx + 1} (${CANONICAL_MODULE_SPECS[currentModuleIdx + 1]?.key}), got index ${matchedSpecIdx} (${spec.key}) at row ${rIdx + 1}.`,
         );
       }
 
@@ -792,14 +1125,14 @@ export function groupRowsByModule(rows) {
     // If we have not matched any header yet, and row is not command status, reject
     if (!currentModuleSpec || !currentHeaders) {
       throw new Error(
-        `Parser error: unexpected data row before first canonical module header at row ${rIdx + 1}: ${JSON.stringify(row)}`,
+        `Parser error: unexpected data row before first canonical module header at row ${rIdx + 1} (UNEXPECTED_PRE_HEADER_ROW).`,
       );
     }
 
     // Check row width against the current module's expected headers
     if (row.length !== currentModuleSpec.expectedHeaders.length) {
       throw new Error(
-        `Parser error: row width mismatch in ${currentModuleSpec.key} at row ${rIdx + 1}. Expected ${currentModuleSpec.expectedHeaders.length} columns, got ${row.length} columns: ${JSON.stringify(row)}`,
+        `Parser error: row width mismatch in ${currentModuleSpec.key} at row ${rIdx + 1} (ROW_WIDTH_MISMATCH). Expected ${currentModuleSpec.expectedHeaders.length} columns, got ${row.length} columns.`,
       );
     }
 
@@ -817,7 +1150,7 @@ export function groupRowsByModule(rows) {
       (s) => !modulesObserved.includes(s.key),
     ).map((s) => s.key);
     throw new Error(
-      `Parser error: incomplete catalog execution. Missing ${missing.length} module headers: ${missing.join(', ')}.`,
+      `Parser error: incomplete catalog execution (INCOMPLETE_CATALOG_EXECUTION). Missing ${missing.length} module headers: ${missing.join(', ')}.`,
     );
   }
 
@@ -846,7 +1179,7 @@ export function evaluateQ8Probes(q8Rows) {
   const seen = new Set();
   for (const id of observedIds) {
     if (seen.has(id)) {
-      throw new Error(`Probe validation error: duplicate probe_id detected: '${id}'.`);
+      throw new Error('Probe validation error: duplicate probe_id detected (DUPLICATE_PROBE_ID).');
     }
     seen.add(id);
   }
@@ -854,7 +1187,7 @@ export function evaluateQ8Probes(q8Rows) {
   // Check for unexpected probe IDs
   for (const id of observedIds) {
     if (!expectedIds.includes(id)) {
-      throw new Error(`Probe validation error: unexpected probe_id observed: '${id}'.`);
+      throw new Error('Probe validation error: unexpected probe_id observed (UNEXPECTED_PROBE_ID).');
     }
   }
 
@@ -941,6 +1274,7 @@ export function escapeMarkdownCell(val) {
  */
 export function createEvidencePayload({
   envIdentity,
+  dockerAttestation = null,
   identityAttestation = null,
   isVerifyOnly = false,
   sanitizedModules = {},
@@ -973,6 +1307,18 @@ export function createEvidencePayload({
       postmaster_start_time:
         identityAttestation?.postmasterStartTime ??
         (isVerifyOnly ? 'NOT_EVALUATED_OFFLINE_VERIFY_ONLY' : 'NOT_EVALUATED'),
+      docker_verification: isVerifyOnly
+        ? 'NOT_EVALUATED_OFFLINE_VERIFY_ONLY'
+        : {
+            is_docker_verified: dockerAttestation?.isDockerVerified ?? false,
+            container_name: dockerAttestation?.containerName ?? 'NOT_EVALUATED',
+            project_id: dockerAttestation?.projectId ?? 'NOT_EVALUATED',
+            host_binding: dockerAttestation
+              ? `${dockerAttestation.hostIp}:${dockerAttestation.hostPort}`
+              : 'NOT_EVALUATED',
+            internal_port: dockerAttestation?.internalPort ?? 0,
+            started_at: dockerAttestation?.startedAt ?? 'NOT_EVALUATED',
+          },
       is_fresh_instance_confirmed: isVerifyOnly
         ? 'NOT_EVALUATED_OFFLINE_VERIFY_ONLY'
         : (identityAttestation?.isFreshInstanceConfirmed ?? false),
@@ -1012,6 +1358,13 @@ export function writeEvidenceArtifacts(
     ([mod, rows]) => `- **${mod.toUpperCase()}:** ${rows.length} rows recorded`,
   );
 
+  const dockerStatus =
+    typeof evidencePayload.environment_identity.docker_verification === 'object'
+      ? (evidencePayload.environment_identity.docker_verification?.is_docker_verified
+          ? 'CONFIRMED_DISPOSABLE_LOOPBACK'
+          : 'FAILED')
+      : String(evidencePayload.environment_identity.docker_verification);
+
   const mdPath = path.join(outputDir, 'catalog-preflight-summary.md');
   const mdContent = [
     '# MGBOS R5 D06 Catalog Preflight Summary Report',
@@ -1019,6 +1372,7 @@ export function writeEvidenceArtifacts(
     `- **Execution Timestamp:** ${evidencePayload.provenance.execution_timestamp}`,
     `- **Verified Commit SHA:** \`${evidencePayload.provenance.target_commit_sha}\``,
     `- **Preflight Disposition:** **${evidencePayload.derived_status.preflight_disposition}**`,
+    `- **Docker Container Verified:** \`${dockerStatus}\``,
     `- **Fresh Instance Confirmed:** \`${evidencePayload.environment_identity.is_fresh_instance_confirmed}\``,
     `- **Disclaimer:** ${evidencePayload.derived_status.r5_security_disclaimer}`,
     '',
@@ -1054,14 +1408,14 @@ export async function main() {
       i++;
       if (i >= args.length || !args[i]) {
         console.error(
-          'FATAL: --approved-commit-sha requires a 40-hex commit SHA argument.',
+          'FATAL: --approved-commit-sha requires a 40-hex commit SHA argument (MISSING_COMMIT_SHA_ARGUMENT).',
         );
         process.exit(1);
       }
       commitArg = args[i];
     } else {
       console.error(
-        `FATAL: Unrecognized argument '${arg}'. Only --verify-only and --approved-commit-sha <sha> are allowed.`,
+        'FATAL: Unrecognized argument. Only --verify-only and --approved-commit-sha <sha> are allowed (UNRECOGNIZED_CLI_ARGUMENT).',
       );
       process.exit(1);
     }
@@ -1095,9 +1449,19 @@ export async function main() {
     return;
   }
 
-  // 3. Database Session Execution via psql
+  // 3. Docker Container Identity & Isolation Verification
+  const preStartupEpoch = process.env.MGBOS_PREFLIGHT_PRE_STARTUP_EPOCH;
   console.log(
-    `3. Connecting to local disposable database (${CANONICAL_LOCAL_HOST}:${CANONICAL_LOCAL_PORT})...`,
+    '3. Verifying Docker container identity, loopback binding, and disposable isolation...',
+  );
+  const dockerAttestation = verifyDockerContainerIdentity(preStartupEpoch);
+  console.log(
+    `   Docker container verified: ${dockerAttestation.containerName} (${dockerAttestation.projectId}), bound to ${dockerAttestation.hostIp}:${dockerAttestation.hostPort}`,
+  );
+
+  // 4. Database Session Execution via psql
+  console.log(
+    `4. Connecting to local disposable database (${CANONICAL_LOCAL_HOST}:${CANONICAL_LOCAL_PORT})...`,
   );
 
   const psqlEnv = {
@@ -1106,8 +1470,7 @@ export async function main() {
     PGOPTIONS: `-c statement_timeout=${STATEMENT_TIMEOUT_MS} -c lock_timeout=${LOCK_TIMEOUT_MS}`,
   };
 
-  // 3a. Execute Standalone Database Identity & Freshness Probe
-  const preStartupEpoch = process.env.MGBOS_PREFLIGHT_PRE_STARTUP_EPOCH;
+  // 4a. Execute Standalone Database Identity & Freshness Probe
   console.log('   Executing database identity and freshness attestation probe...');
   const identityAttestation = executeIdentityAndFreshnessProbe(
     psqlEnv,
@@ -1117,7 +1480,7 @@ export async function main() {
     `   Identity confirmed: db=${identityAttestation.currentDatabase}, user=${identityAttestation.currentUser}, port=${identityAttestation.serverPort}, started=${identityAttestation.postmasterStartTime}`,
   );
 
-  // 3b. Execute Authoritative Q1–Q8 Catalog Preflight Package
+  // 4b. Execute Authoritative Q1–Q8 Catalog Preflight Package
   console.log('   Executing authoritative Q1–Q8 catalog preflight SQL package...');
   const psqlArgs = [
     '-h',
@@ -1158,16 +1521,17 @@ export async function main() {
     );
   }
 
-  // 4. Parse Results & Evaluate
-  console.log('4. Parsing and grouping catalog results...');
+  // 5. Parse Results & Evaluate
+  console.log('5. Parsing and grouping catalog results...');
   const parsedRows = parseCsvRows(execResult.stdout);
   const rawModules = groupRowsByModule(parsedRows);
   const { evaluations, disposition } = evaluateQ8Probes(rawModules.q8);
   const sanitizedModules = applyOutputAllowlist(rawModules);
 
-  // 5. Structure Final Evidence Payload
+  // 6. Structure Final Evidence Payload
   const evidencePayload = createEvidencePayload({
     envIdentity,
+    dockerAttestation,
     identityAttestation,
     isVerifyOnly: false,
     sanitizedModules,
@@ -1176,8 +1540,8 @@ export async function main() {
     jobStartTime,
   });
 
-  // 6. Output Artifacts
-  console.log('5. Writing sanitized evidence artifacts...');
+  // 7. Output Artifacts
+  console.log('6. Writing sanitized evidence artifacts...');
   writeEvidenceArtifacts(evidencePayload);
   console.log(`Preflight execution finished. Disposition: ${disposition}`);
 
