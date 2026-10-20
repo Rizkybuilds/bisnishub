@@ -31,7 +31,10 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
     },
   );
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
-  const [addedNotice, setAddedNotice] = useState(false);
+  const [feedbackNotice, setFeedbackNotice] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
 
   const { addItem } = useDemoCart();
 
@@ -49,16 +52,19 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
   const formattedPrice = formatIllustrativePrice(product.illustrativePriceIdr);
 
   const handleAddToDemoCart = () => {
-    const success = addItem(
+    const result = addItem(
       product.slug,
       selectedColor.id,
       selectedSize,
       selectedPrintTone.id,
       1,
     );
-    if (success) {
-      setAddedNotice(true);
-      setTimeout(() => setAddedNotice(false), 6000);
+    if (result.success) {
+      setFeedbackNotice({ type: 'success', message: result.notice });
+      setTimeout(() => setFeedbackNotice(null), 6000);
+    } else {
+      setFeedbackNotice({ type: 'error', message: result.error });
+      setTimeout(() => setFeedbackNotice(null), 6000);
     }
   };
 
@@ -300,16 +306,25 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
             >
               Tambahkan ke Keranjang Simulasi <span aria-hidden="true">🛒</span>
             </button>
-            {addedNotice && (
+            {feedbackNotice && feedbackNotice.type === 'success' && (
               <div
                 className="retail-demo-cart-success"
                 role="status"
                 aria-live="polite"
               >
-                <span>✓ Ditambahkan ke keranjang simulasi demo.</span>
+                <span>✓ {feedbackNotice.message}</span>
                 <Link href="/demo/cart" className="retail-demo-cart-link">
                   Buka Keranjang Simulasi <span aria-hidden="true">↗</span>
                 </Link>
+              </div>
+            )}
+            {feedbackNotice && feedbackNotice.type === 'error' && (
+              <div
+                className="retail-demo-cart-error"
+                role="alert"
+                aria-live="assertive"
+              >
+                <span>⚠️ {feedbackNotice.message}</span>
               </div>
             )}
             <p className="retail-demo-cart-disclaimer">

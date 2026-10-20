@@ -7,11 +7,16 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
-import type { DemoCartState, DemoCartSummary } from './types';
+import type {
+  DemoCartActionResult,
+  DemoCartState,
+  DemoCartSummary,
+} from './types';
 import {
   demoCartReducer,
   INITIAL_DEMO_CART_STATE,
   calculateDemoCartSummary,
+  validateAddDemoCartItem,
 } from './reducer';
 
 interface DemoCartContextValue {
@@ -23,7 +28,7 @@ interface DemoCartContextValue {
     size: string,
     printToneId: string,
     quantity?: number,
-  ) => boolean;
+  ) => DemoCartActionResult;
   updateQuantity: (lineId: string, quantity: number) => void;
   removeItem: (lineId: string) => void;
   clearCart: () => void;
@@ -49,11 +54,13 @@ export function DemoCartProvider({ children }: { children: ReactNode }) {
       state,
       summary,
       addItem: (productSlug, colorId, size, printToneId, quantity = 1) => {
+        const payload = { productSlug, colorId, size, printToneId, quantity };
+        const result = validateAddDemoCartItem(state, payload);
         dispatch({
           type: 'ADD_ITEM',
-          payload: { productSlug, colorId, size, printToneId, quantity },
+          payload,
         });
-        return true;
+        return result;
       },
       updateQuantity: (lineId, quantity) => {
         dispatch({

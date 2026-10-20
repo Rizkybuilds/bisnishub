@@ -23,7 +23,7 @@ export default function DemoCompletePage() {
         </nav>
 
         <div className="retail-complete-card">
-          {state.isSimulationCompleted ? (
+          {state.isSimulationCompleted && state.lines.length > 0 ? (
             <div className="retail-complete-content" role="status">
               <div className="retail-complete-badge" aria-hidden="true">
                 ✓

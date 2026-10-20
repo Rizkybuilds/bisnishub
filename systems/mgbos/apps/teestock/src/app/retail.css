@@ -1853,6 +1853,18 @@ body:has(.retail-shop) .site-main {
   gap: 8px;
   flex-wrap: wrap;
 }
+.retail-demo-cart-error {
+  background: #fdf2f0;
+  border: 1px solid #eccbc5;
+  color: #9c2e22;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
 .retail-demo-cart-link {
   font-weight: 750;
   color: var(--retail-forest);

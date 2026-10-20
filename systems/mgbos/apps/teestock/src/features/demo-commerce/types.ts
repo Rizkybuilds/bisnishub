@@ -21,22 +21,43 @@ export interface DemoCartLine {
   quantity: number; // Integer between 1 and 10
 }
 
+export type DemoCartActionResult =
+  | {
+      success: true;
+      notice: string;
+      line: DemoCartLine;
+      isNew: boolean;
+      newQuantity: number;
+    }
+  | {
+      success: false;
+      error: string;
+      reason:
+        | 'INVALID_PRODUCT'
+        | 'INVALID_VARIANT'
+        | 'INVALID_QUANTITY'
+        | 'MAX_QUANTITY_EXCEEDED';
+    };
+
 export interface DemoCartState {
   lines: readonly DemoCartLine[];
   isSimulationCompleted: boolean;
   lastActionNotice?: string;
+  lastActionResult?: DemoCartActionResult;
+}
+
+export interface AddDemoItemPayload {
+  productSlug: string;
+  colorId: string;
+  size: string;
+  printToneId: string;
+  quantity?: number;
 }
 
 export type DemoCartAction =
   | {
       type: 'ADD_ITEM';
-      payload: {
-        productSlug: string;
-        colorId: string;
-        size: string;
-        printToneId: string;
-        quantity?: number;
-      };
+      payload: AddDemoItemPayload;
     }
   | {
       type: 'UPDATE_QUANTITY';
