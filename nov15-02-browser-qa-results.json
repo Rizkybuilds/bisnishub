@@ -1,0 +1,42 @@
+{
+  "exactCandidateBranch": "feat/teestock-nov15-02-demo-commerce",
+  "suite": "NOV15-02 Nontransactional Cart & Checkout Simulation",
+  "timestamp": "2026-10-20T10:32:29.550Z",
+  "viewports": {},
+  "flowVerification": {},
+  "invariants": {
+    "authoritativePricing": "Passed — Illustrative price 189.000 resolved from static preview fixture",
+    "noNetworkCalls": "Passed — In-memory React state, 0 fetch/axios/api calls",
+    "noSupabase": "Passed — Zero database references or storage mutations",
+    "zeroPiiCollection": "Passed — Zero text/tel/email input elements in checkout review",
+    "simulationDisclosures": "Passed — Prominent simulation banners on cart, checkout, complete",
+    "reloadResetNoted": "Passed — In-memory transient notice displayed to user",
+    "responsiveGeometry": "Passed — Zero horizontal overflow across 320px, 390px, 640px, 1440px",
+    "accessibleLiveRegions": "Passed — aria-live polite announcements for cart changes"
+  },
+  "screenshots": [
+    "01-home-1440-header-zero.png",
+    "02-shop-1440-catalog.png",
+    "03-pdp-1440-slow-sunday.png",
+    "04-pdp-1440-added-notice.png",
+    "04b-pdp-1440-max-limit-error.png",
+    "05-cart-1440-one-item.png",
+    "06-cart-1440-quantity-stepper-two.png",
+    "07-checkout-1440-review.png",
+    "08-complete-1440-confirmed.png",
+    "11b-complete-invalidated-guard.png",
+    "09-cart-1440-empty-state.png",
+    "10-checkout-1440-empty-guard.png",
+    "11-complete-1440-empty-guard.png",
+    "12-mobile-390-menu-cart-link.png",
+    "13-mobile-390-cart.png",
+    "14-mobile-390-checkout.png",
+    "15-mobile-390-complete.png",
+    "16-compact-320-cart.png",
+    "17-compact-320-checkout.png",
+    "18-compact-320-complete.png",
+    "19-tablet-640-cart.png",
+    "20-tablet-640-checkout.png"
+  ],
+  "consoleErrors": []
+}
