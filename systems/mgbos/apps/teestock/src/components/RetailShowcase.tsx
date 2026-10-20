@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import {
+  getPreviewProductBySlug,
+  formatIllustrativeShortPrice,
+} from '../data/products';
 
 export type ConceptDesign = {
   id: string;
@@ -360,6 +364,7 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
         {visible.map((design, index) => {
           const tone = tones[design.id] || 'ink';
           const open = expanded === design.id;
+          const previewProduct = getPreviewProductBySlug(design.id);
           return (
             <article className="retail-product" key={design.id}>
               <div className={'retail-product-art art-' + design.palette}>
@@ -371,7 +376,19 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
               </div>
               <div className="retail-product-info">
                 <div>
-                  <span className="retail-product-series">{design.series}</span>
+                  <div className="retail-product-meta-row">
+                    <span className="retail-product-series">
+                      {design.series}
+                    </span>
+                    {previewProduct && (
+                      <span className="retail-product-price-tag">
+                        {formatIllustrativeShortPrice(
+                          previewProduct.illustrativePriceIdr,
+                        )}{' '}
+                        <small>(Simulasi UX)</small>
+                      </span>
+                    )}
+                  </div>
                   <h3>{design.name}</h3>
                   <p>{design.caption}</p>
                 </div>
@@ -405,16 +422,38 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
                   ))}
                 </div>
               </div>
-              <button
-                type="button"
-                className="retail-detail-toggle"
-                aria-expanded={open}
-                aria-controls={'detail-' + design.id}
-                onClick={() => setExpanded(open ? null : design.id)}
-              >
-                {open ? 'Tutup detail konsep' : 'Lihat detail konsep'}
-                <span aria-hidden="true">{open ? '−' : '↗'}</span>
-              </button>
+              {previewProduct ? (
+                <div className="retail-card-actions">
+                  <Link
+                    href={'/shop/' + design.id}
+                    className="retail-product-pdp-link"
+                    aria-label={'Buka halaman studi ' + design.name}
+                  >
+                    Detail Studi Produk <span aria-hidden="true">↗</span>
+                  </Link>
+                  <button
+                    type="button"
+                    className="retail-detail-toggle"
+                    aria-expanded={open}
+                    aria-controls={'detail-' + design.id}
+                    onClick={() => setExpanded(open ? null : design.id)}
+                  >
+                    {open ? 'Tutup ringkasan' : 'Ringkasan'}
+                    <span aria-hidden="true">{open ? '−' : '↓'}</span>
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="retail-detail-toggle"
+                  aria-expanded={open}
+                  aria-controls={'detail-' + design.id}
+                  onClick={() => setExpanded(open ? null : design.id)}
+                >
+                  {open ? 'Tutup detail konsep' : 'Lihat detail konsep'}
+                  <span aria-hidden="true">{open ? '−' : '↗'}</span>
+                </button>
+              )}
               {open && (
                 <div
                   className="retail-inline-detail"
@@ -429,6 +468,15 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
                     harga, dan ketersediaan akan ditampilkan setelah persetujuan
                     katalog.
                   </p>
+                  {previewProduct && (
+                    <Link
+                      href={'/shop/' + design.id}
+                      className="retail-inline-pdp-link"
+                    >
+                      Buka halaman produk dan uji opsi ukuran{' '}
+                      <span aria-hidden="true">↗</span>
+                    </Link>
+                  )}
                   <Link href="/support/contact">
                     Status informasi layanan <span aria-hidden="true">↗</span>
                   </Link>
