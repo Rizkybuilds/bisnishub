@@ -10,10 +10,40 @@ tags:
   - teestock/canonical
   - teestock/brand
 document_id: "TS-BRD-002"
-version: "1.0"
+canonical_id: teestock.brand.brand-architecture
+schema_version: "1.0"
+document_class: canonical-brand-architecture
+owner: "Rizky / Founder"
+author: "ChatGPT / AI Co-Founder — Brand & Product Architecture"
+approver: "Rizky / Founder (curated-design-first direction)"
+scope: teestock-brand-hierarchy-naming-activation-relationships
+primary_business_positioning: CURATED_DESIGN_APPAREL
+primary_commercial_experience: CURATED_COLLECTION_DISCOVERY
+primary_merchandising_line: TEESTOCK_SELECTS
+supporting_commerce_line: TEESTOCK_ESSENTIALS
+originals_role: SEPARATE_OWNED_IP_AND_LABEL_GOVERNANCE
+services_role: SECONDARY_CONDITIONALLY_ACTIVATED
+four_domain_architecture: RETAINED
+brand_architecture_not_equal_website_navigation: true
+retail_checkout_authorization: NONE
+production_readiness_claim: NONE
+implementation_authorization: NONE
+source_control:
+  repository: Rizkybuilds/bisnishub
+  pull_request: 85
+  inspected_head: ec5b2412debb41ec667f01e9436ae54b7dc8d3f7
+  original_blob_sha: 88e6072e4cbc652eca4d63991c4315f086f6fb00
+  source_version: "1.0"
+  date: "2026-10-20"
+reconciles_decisions:
+  - DEC-TS-2026-009
+  - DEC-TS-2026-011
+  - DEC-TS-2026-012
+supersedes: "TS-BRD-002@1.0"
+version: "2.0"
 category: "brand"
 business: "teestock"
-last_updated: "2026-09-27"
+last_updated: "2026-10-20"
 path: "02-brand/brand-architecture.md"
 depends_on:
   - "TS-FND-001"
@@ -26,7 +56,7 @@ depends_on:
 ---
 
 
-# TeeStock Brand Architecture v1.0
+# TeeStock Brand Architecture v2.0
 
 > [!info] **Canonical Brand Architecture Document  **
 > Dokumen ini mendefinisikan bagaimana seluruh brand, business line, commerce line, program, collection, collaboration, dan independent label di dalam TeeStock harus dinamai, ditampilkan, dihubungkan, dan dikembangkan.
@@ -38,6 +68,10 @@ depends_on:
 ---
 
 # 1. Purpose
+
+> [!important] **Current canonical application — curated-design-first (20 October 2026)**
+> TeeStock is first experienced as a brand for **selected graphic apparel designs and curated collections**. Its current primary commercial line is **TeeStock Selects**; Essentials complements the assortment; Originals separately governs TeeStock-created intellectual property; Services and Programs remain in the valid four-domain architecture but are secondary or gated. Brand taxonomy is **not** a mandate to expose all lines in top navigation, launch them commercially, or claim transaction readiness. This v2.0 reconciles DEC-TS-2026-012 with DEC-TS-2026-009 (operating-spine validation) and DEC-TS-2026-011 (retail-first presentation). No checkout, payment, production, external marketplace, or deployment permission is granted by this document.
+
 
 Dokumen ini menjawab:
 
@@ -58,6 +92,20 @@ Core principle:
 ---
 
 # 2. Canonical Brand Architecture
+
+**Current application priority (a commercial hierarchy, not a new root domain):**
+
+```text
+TEESTOCK MASTER BRAND
+└── PRIMARY: COMMERCE → TEESTOCK SELECTS → CURATED APPAREL COLLECTIONS
+    ├── SUPPORTING: ESSENTIALS (GARMENT / TEXTILE FUNDAMENTALS)
+    ├── SEPARATELY GOVERNED: ORIGINALS (OWNED IP / EXPERIMENTAL LABELS)
+    ├── SECONDARY / CONDITIONAL: SERVICES
+    └── FUTURE / CONDITIONAL: PROGRAMS
+```
+
+The full diagram below continues to define **capability and relationship taxonomy**. It does not rank simultaneous marketing, customer navigation, launch sequencing, or operational activation.
+
 
 TeeStock menggunakan hybrid architecture.
 
@@ -105,6 +153,9 @@ TEESTOCK
 ---
 
 # 3. Architecture Logic
+
+**Non-equivalence rule:** a functional line's canonical name/identity may remain defined while its public availability is `NOT_ACTIVE`, its top-navigation visibility is `HIDDEN`, and transaction readiness is `NOT_VERIFIED`. Every downstream system must treat **brand structure**, **merchandising priority**, **surface placement**, **business activation**, and **technical production readiness** as distinct facts. Selects is a curated offering; the TeeStock master brand remains the consumer-trust identity.
+
 
 TeeStock harus menggunakan master brand sebanyak mungkin sampai terdapat alasan strategis kuat untuk menciptakan brand identity independen.
 
@@ -163,6 +214,9 @@ Setiap layer mempunyai tingkat autonomy berbeda.
 ---
 
 # 5. Layer 1 — Master Brand
+
+**Master-brand promise for the present stage:** TeeStock earns trust through visual taste, thoughtfully selected graphic designs, clear collection storytelling, disclosed apparel/size details, lawful artwork use, credible garment and print quality, and dependable order communication. Do not describe TeeStock's primary reason to exist as custom printing, a generalist merch factory or a B2B uniform vendor. Those may be separate scoped capabilities.
+
 
 ## TeeStock
 
@@ -240,6 +294,9 @@ Tujuannya:
 
 # 8. Commerce Naming
 
+**Present priority:** `TeeStock Selects` is the leading curated-design apparel merchandising line, expressed under **TeeStock**; it is not an independent brand. `TeeStock Essentials` supports quality, fit and fundamentals, not an equally promoted alternative identity. Neither line's name changes ownership of the artwork or grants permission to print it.
+
+
 Canonical names:
 
 ```text
@@ -268,6 +325,9 @@ Tidak perlu identity terpisah dari TeeStock master brand.
 ---
 
 # 9. Services Naming
+
+**Visibility is governed separately from naming.** The six canonical Service names remain valid. Their presence here does **not** authorize an equal-prominence header link, homepage hero, campaign, quote turnaround promise or activated service offering. Services may receive scoped supporting routes only when business and operational gates permit. They must not displace curated collections in TeeStock's first impression.
+
 
 Canonical public names:
 
@@ -387,6 +447,9 @@ consumer intellectual property.
 ---
 
 # 15. TeeStock Originals Brand Role
+
+**Selects ≠ Originals.** Curation and commercialization of third-party, licensed, commissioned or creator artwork under Selects must not imply TeeStock owns all related IP. Originals is the governed TeeStock-created IP/label system with its own rights evidence and brand-promotion gates. A successful curated collection does not automatically become an independent Originals label.
+
 
 Originals harus terlihat sebagai:
 
@@ -1033,6 +1096,9 @@ Avoid inventing new standalone brand names for one-time collaborations.
 
 # 42. TeeStock Selects Architecture
 
+**Current Selects application:** browse a small, credible assortment of curated graphic apparel; enter through collection/design discovery, then evaluate product detail, sizing, availability and the actual purchasing path allowed by readiness gates. Use creator attribution when required. Every publishable artwork needs rights/provenance, approved product compatibility and evidence of truthful merchandising. For curation-level rules use `TS-COM-002`; for intellectual-property controls use `TS-LEG-001`.
+
+
 Selects is curated commerce.
 
 Possible content sources:
@@ -1196,6 +1262,9 @@ Still stays TeeStock-branded until external scale creates reason to separate.
 
 # 51. Master Brand Visibility Matrix
 
+**Interpretation warning:** the `TeeStock visibility` column below measures **which trust identity is visible when an entity is actually presented**. It is NOT a priority ranking for homepage, navigation, marketing or launch. A secondary Service can require high TeeStock identity visibility when it is activated while still having **low public prominence** for the curated-design-first launch. Public placement is governed by Sections 58–62 and owned CX / website information architecture contracts.
+
+
 Recommended:
 
 | Entity | TeeStock visibility | Independent identity |
@@ -1301,6 +1370,18 @@ Commercial/legal records still track TeeStock.
 
 # 58. Architecture by Customer Journey
 
+**First-party consumer journey currently prioritized:**
+
+```text
+TEEStock DISCOVERY → CURATED COLLECTION → SELECTED DESIGN / PRODUCT
+→ CLEAR GARMENT & SIZE INFORMATION → AVAILABILITY / PURCHASE ELIGIBILITY
+→ GOVERNED TRANSACTION OR HONEST NON-TRANSACTIONAL INTEREST CAPTURE
+→ ACCURATE FULFILLMENT / COMMUNICATION (WHEN ACTIVATED)
+```
+
+The Custom, Business and Creator flows below remain legitimate secondary entry patterns **when separately offered**; they are not equivalent launch requirements. Do not infer live checkout from this journey map.
+
+
 Consumer may see:
 
 ```text
@@ -1344,16 +1425,17 @@ Recommended top-level consumer-facing IA:
 ```text
 teestock.id
 │
-├── Shop
-│   ├── Selects
-│   ├── Essentials
-│   └── Originals
+├── Shop                       # dominant consumer path
+│   ├── Curated Collections    # merchandising entry / design discovery
+│   ├── Selects                # curated design line
+│   ├── Essentials             # supporting apparel essentials (if active)
+│   └── Originals              # only approved products / labels if active
 │
-├── Custom
-├── Business
-├── Merch
-└── About
+├── About / Our Approach       # curation, quality, trust
+└── [Conditional Services]     # contextual routes, not default top nav
 ```
+
+**This is an intended information-architecture priority, not a deployed sitemap.** Route names are examples only; the live URL scheme, exact labels and accessible navigation behavior belong to the Website Information Architecture and customer-platform CX contract. Services must be accessible when valid offers exist, but must not be promoted as equal protagonists during the curated-design pilot.
 
 Additional service pages may exist without being top-navigation items.
 
@@ -1404,11 +1486,14 @@ Homepage should answer:
 Possible routing:
 
 ```text
-SHOP APPAREL
-MAKE CUSTOM
-BUILD MERCH
-FOR BUSINESS
+EXPLORE CURATED COLLECTIONS   # primary CTA / visually dominant
+SHOP SELECTED DESIGNS          # primary consumer task
+SEE GARMENT & QUALITY DETAILS  # trust and product clarity
+LEARN ABOUT TEESTOCK           # master-brand story
+[CONTEXTUAL SERVICES]          # conditional secondary route only
 ```
+
+**Avoid presenting five equally weighted CTAs.** Hero, primary categories and featured storytelling must privilege curated design. The labels above are conceptual; copy, accessibility and conversion experiments remain governed by CX / voice-and-copy documents. Services are not required to appear in the primary hero.
 
 ---
 
@@ -2032,14 +2117,17 @@ BRANDED HOUSE
 Recommended visible portfolio:
 
 ```text
-TeeStock
-├── Selects
-├── Essentials
-├── Custom
-├── Business
-├── Merch
-└── Originals
+TeeStock                              # dominant master brand
+├── SELECTS / CURATED COLLECTIONS     # primary current consumer focus
+├── Essentials                        # supportive, conditionally visible
+├── Originals                         # owned IP only when approved
+└── Services                          # secondary, activated per service
+    ├── Custom
+    ├── Business
+    └── Merch / Studio / Supply / Fulfill (only if separately approved)
 ```
+
+This is **brand architecture**, not evidence all entries are live or that a given channel may take payment. Existing Q4 assisted-sales operating-spine validation can remain a separate engineering track without changing TeeStock's primary curated-design business positioning.
 
 Other Services can be activated as customer-facing names only when relevant.
 
@@ -2069,6 +2157,9 @@ Roadmap defines what is currently active.
 ---
 
 # 92. Architecture vs Activation
+
+**Activation state is multi-dimensional.** Maintain separately: `architecture_defined`, `brand_approved`, `product_offer_approved`, `artwork_rights_cleared`, `sample_qc_passed`, `vendor_capacity_verified`, `payment_and_checkout_authorized`, `fulfillment_ready`, and `publicly_visible`. Neither a name nor a product page implies the rest. No AI/agent may promote a candidate to live commercial availability solely from this document.
+
 
 Important distinction:
 
@@ -2196,6 +2287,17 @@ MULTIGRAPH GROUP
 # 96. Brand Architecture Principles
 
 ```text
+CURATED DESIGN DISCOVERY BEFORE SERVICE PROMOTION.
+MASTER BRAND BEFORE LINE BRAND.
+APPROVED ARTWORK RIGHTS BEFORE PUBLICATION.
+CUSTOMER TRUST BEFORE UNSUBSTANTIATED QUALITY CLAIMS.
+BUSINESS-ACTIVATION EVIDENCE BEFORE PUBLIC AVAILABILITY.
+```
+
+These additional rules govern the current curated-design-first priority without replacing the canonical anti-proliferation and shared-infrastructure principles below.
+
+
+```text
 CLARITY BEFORE CREATIVITY.
 
 FUNCTION BEFORE NEW NAME.
@@ -2231,3 +2333,104 @@ Dokumen berikut harus mengikuti Brand Architecture ini:
 12. [[bisnis/teestock/11-data-mgbos/entity-hierarchy|entity-hierarchy.md]]
 
 Setiap proposal brand baru harus terlebih dahulu diklasifikasikan terhadap architecture ini sebelum diberikan nama, identity, domain, atau akun sosial.
+
+---
+
+# 98. Current Curated-Design-First Operating Application (2026-10-20)
+
+> **Normative scope:** current TeeStock brand/portfolio expression, internal to TS-BRD-002. Detailed artwork rights remain owned by TS-LEG-001; detailed Selects curation by TS-COM-002; actual website acceptance by CX contracts; operational and financial controls by MGBOS. This section does not create new independent business entities.
+
+| Level | Consumer-facing role | Default priority | Required gate | Non-decision |
+|---|---|---|---|---|
+| TeeStock master brand | Consumer trust and taste | Always dominant | Truthful claims, consistent identity | No new root brand |
+| Selects | Curated graphic apparel designs | PRIMARY | Rights, quality, unit economics and product readiness | Not proof of ownership of all artwork |
+| Collection/edit | Helps discover designs | HIGH when active | Curation thesis, availability, editorial fit | Not automatically an independent label |
+| Essentials | Garment fundamentals | SUPPORTING | Product quality and availability | Not a rival hero brand |
+| Originals | TeeStock-created consumer IP | SEPARATE / CONDITIONAL | Owned-IP evidence and label governance | Not equivalent to licensed Selects |
+| Services | Custom, Business, Merch, Studio, Supply, Fulfill | SECONDARY / OPTIONAL | Per-offer readiness and capacity | Not core brand promise |
+| Programs | Creators, resellers, partners, affiliates | DEFERRED / CONDITIONAL | Program-specific approval and controls | Not public by taxonomy alone |
+| MultiGraph | Printing services sister business | DISTINCT PARALLEL PILOT | Separate service readiness and business policies | Not a TeeStock sub-brand |
+
+## 98.1 Boundaries across collection, artwork, product and label
+
+- **Artwork** is a rights-governed asset with provenance and permitted uses.
+- **Product / sellable variant** is an offering that may combine garment, artwork, size, color and print method.
+- **Collection** is a merchandising/editorial grouping; it is not necessarily a copyright ownership unit.
+- **Selects** is the retail curation context; source artists may retain ownership.
+- **Originals** is the governance lane for TeeStock-controlled IP and potential distinct identities.
+- **Independent label** requires separate formal promotion gates; a collection title alone does not qualify.
+- **Brand promise** is what is credibly shown to a customer; the supplier or vendor must not be misrepresented.
+
+## 98.2 Primary storefront placement rule
+
+For a curated-design-first TeeStock customer entry, the intended visual and semantic order is:
+
+1. TeeStock as trusted apparel curator / brand identity.
+2. Collection and design discovery, with meaningful visual choice and accessible information.
+3. Product pages that accurately describe material, print, fit, size, price, availability and rights-compatible design attribution.
+4. Clear and honest purchase eligibility; no fake checkout capability.
+5. Secondary service paths only when a real, capacity-bounded offer exists.
+
+A high-quality experience does not require a large catalog or the simultaneous release of every domain. The current product/UX contracts own real interaction details and accessibility expectations.
+
+## 98.3 Collection and design publication gates
+
+- Gate `CUR-01` — lawful artwork origin, ownership or license verified, including permitted commercial print/use scope.
+- Gate `CUR-02` — visual quality, brand fit, distinctiveness, audience hypothesis and relevant creative attribution reviewed.
+- Gate `CUR-03` — product/garment compatibility, approved photography/mockup truth and physical sample criteria defined.
+- Gate `CUR-04` — available size/color/production method and feasible vendor lead time not assumed from a UI fixture.
+- Gate `CUR-05` — proposed pricing and expected contribution economics documented; actual margin not fabricated.
+- Gate `CUR-06` — sales/checkout/order/payment controls applied only upon existing technical and operational authorization.
+- Gate `CUR-07` — post-order support, delivery and failure handling are defined for any actual public sale.
+
+These are coordination checkpoints, not replacements for legal or engineering gates. A future AI must consult the detailed owning policy for every decision.
+
+# 99. Machine-Readable Authority and Conflict Resolution
+
+```yaml
+teestock_brand_architecture_v2:
+  identity:
+    canonical_document_id: TS-BRD-002
+    canonical_id: teestock.brand.brand-architecture
+    architectural_roots: [COMMERCE, SERVICES, PROGRAMS, ORIGINALS]
+    master_brand: TeeStock
+  near_term_priority:
+    strategy: CURATED_DESIGN_APPAREL
+    primary_commerce_line: TeeStock Selects
+    supporting_line: TeeStock Essentials
+    owned_ip_lane: TeeStock Originals
+    secondary_services: [Custom, Business, Merch, Studio, Supply, Fulfill]
+  source_authority:
+    repository_document_constitution: docs/governance/documentation-constitution.md
+    business_definition: TS-FND-001
+    owner_decision_register: TS-FND-004
+    curated_first_decision: DEC-TS-2026-012
+    master_brand_strategy: TS-BRD-001
+    this_brand_architecture: TS-BRD-002
+    selects_curation: TS-COM-002
+    intellectual_property: TS-LEG-001
+  prohibited_inferences:
+    - DEFINED_LINE_IS_LIVE_OFFER
+    - RETAIL_FIRST_MEANS_CHECKOUT_READY
+    - CURATED_ARTWORK_MEANS_TEESTOCK_OWNS_COPYRIGHT
+    - ORIGINALS_IS_SYNONYM_OF_SELECTS
+    - SERVICES_ARE_PRIMARY_BRAND_POSITIONING
+    - COLLECTION_AUTOMATICALLY_BECOMES_LABEL
+    - MULTIGRAPH_IS_TEESTOCK_SUB_BRAND
+```
+
+**Decision boundaries:** DEC-TS-2026-012 sets TeeStock's commercial/brand priority; DEC-TS-2026-011 concerns retail-first presentation; DEC-TS-2026-009 retains historical scope for Q4 assisted-sales operational-spine validation unless explicitly superseded by its owning decision authority. These are not contradictory if **business positioning** is separated from **test sequencing**. When actual delivery plans change, update the owning roadmap and operational pilot contract rather than treating this brand document as release authorization.
+
+# 100. Traceability, Validation, and Revision Controls
+
+- [ ] Confirm source TS-BRD-002 v1.0 Git blob is exactly `88e6072e4cbc652eca4d63991c4315f086f6fb00` before any replace.
+- [ ] Retain all 97 historical numbered headings and the original brand/label relationship policies.
+- [ ] Verify metadata `document_id`, `canonical_id`, `version`, `last_updated` and source control agree.
+- [ ] Confirm DEC-TS-2026-012 is adopted into Decision Register within PR #85.
+- [ ] Confirm TS-FND-001 and TS-BRD-001 v2.0 are present on the exact PR head being edited.
+- [ ] Validate 17 referenced canonical/source files resolve in the same PR branch.
+- [ ] Verify customer-platform CX requirements remain the owner for actual navigation, checkout and accessibility acceptance.
+- [ ] Run applicable reference, repository layout, format and governance checks on final PR HEAD.
+- [ ] Conduct independent review of diff before treating the documentation package as merge-ready.
+
+**Evidence as of file design:** PR #85 was OPEN at `ec5b2412debb41ec667f01e9436ae54b7dc8d3f7`; source `brand-architecture.md` remained v1.0 and brand/definition/decision documents were aligned to the owner direction within the PR. This statement is a recorded source snapshot, not a claim of current CI or runtime acceptance.
