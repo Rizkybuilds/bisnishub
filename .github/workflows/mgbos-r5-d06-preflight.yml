@@ -1,0 +1,143 @@
+name: MGBOS R5 D06 Catalog Preflight
+
+on:
+  workflow_dispatch:
+    inputs:
+      approved_commit_sha:
+        description: 'Exact 40-character Owner-approved commit SHA to verify'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mgbos-r5-d06-preflight-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: systems/mgbos
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  catalog-preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Validate authorization inputs and repository provenance
+        env:
+          INPUT_APPROVED_COMMIT_SHA: ${{ inputs.approved_commit_sha }}
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # 1. Enforce exact 40-character lowercase hexadecimal SHA format
+          if [[ ! "$INPUT_APPROVED_COMMIT_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::Invalid approved_commit_sha. Expected exact 40 lowercase hex characters."
+            exit 1
+          fi
+
+          # 2. Enforce repository provenance
+          if [ "$GITHUB_REPO" != "Rizkybuilds/bisnishub" ]; then
+            echo "::error::Unauthorized repository provenance (UNAUTHORIZED_REPOSITORY_PROVENANCE). Must be Rizkybuilds/bisnishub."
+            exit 1
+          fi
+
+          # 3. Enforce ref boundary (main only)
+          if [ "$GITHUB_REF_NAME" != "refs/heads/main" ]; then
+            echo "::error::Preflight verification is only authorized on refs/heads/main (UNAUTHORIZED_GIT_REF)."
+            exit 1
+          fi
+
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Checkout and verify approved commit revision
+        env:
+          INPUT_APPROVED_COMMIT_SHA: ${{ inputs.approved_commit_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # 1. Require the approved commit to be reachable from authorized main branch history
+          if ! git merge-base --is-ancestor "$INPUT_APPROVED_COMMIT_SHA" origin/main; then
+            echo "::error::Approved commit is not an ancestor of main (COMMIT_NOT_ON_MAIN)."
+            exit 1
+          fi
+
+          # 2. Safe, argument-quoted Git checkout of the exact approved commit
+          git checkout "$INPUT_APPROVED_COMMIT_SHA"
+
+          # 3. Assert exact checked-out commit revision
+          ACTUAL_HEAD=$(git rev-parse HEAD)
+          if [ "$ACTUAL_HEAD" != "$INPUT_APPROVED_COMMIT_SHA" ]; then
+            echo "::error::Checked-out HEAD does not match authorized commit SHA (HEAD_COMMIT_MISMATCH)."
+            exit 1
+          fi
+
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+        with:
+          version: 10.34.5
+
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: systems/mgbos/.node-version
+          cache: pnpm
+          cache-dependency-path: systems/mgbos/pnpm-lock.yaml
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Pre-execution static SQL asset integrity check
+        env:
+          MGBOS_PREFLIGHT_APPROVED_COMMIT_SHA: ${{ inputs.approved_commit_sha }}
+        run: |
+          node scripts/r5-catalog-preflight-runner.mjs --verify-only
+
+      - name: Record pre-startup epoch timestamp for freshness attestation
+        shell: bash
+        run: |
+          echo "MGBOS_PREFLIGHT_PRE_STARTUP_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+
+      - name: Start disposable database without disclosing local credentials
+        run: |
+          if ! pnpm db:start > /dev/null 2>&1; then
+            echo "::error::Disposable database start failed (sensitive output suppressed)"
+            exit 1
+          fi
+
+      - name: Reset disposable database to fresh migration and synthetic seed baseline
+        run: |
+          if ! pnpm db:reset > /dev/null 2>&1; then
+            echo "::error::Disposable database reset failed (sensitive output suppressed)"
+            exit 1
+          fi
+
+      - name: Execute R5 D06 catalog preflight runner
+        env:
+          MGBOS_PREFLIGHT_APPROVED_COMMIT_SHA: ${{ inputs.approved_commit_sha }}
+          MGBOS_PREFLIGHT_PRE_STARTUP_EPOCH: ${{ env.MGBOS_PREFLIGHT_PRE_STARTUP_EPOCH }}
+        run: |
+          node scripts/r5-catalog-preflight-runner.mjs
+
+      - name: Upload sanitized catalog evidence artifacts
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: mgbos-r5-d06-preflight-evidence
+          path: systems/mgbos/.qa-evidence/r5-preflight/
+
+      - name: Stop disposable local Supabase
+        if: always()
+        run: |
+          if ! pnpm db:stop > /dev/null 2>&1; then
+            echo "::error::Disposable Supabase teardown failed (sensitive output suppressed)"
+            exit 1
+          fi
