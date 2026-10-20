@@ -3,21 +3,18 @@ canonical_id: teestock.decision.2026-012.curated-design-first
 proposed_decision_id: DEC-TS-2026-012
 document_id: TS-FND-004-ADD-012
 title: "TeeStock Curated-Design-First — Strategic Decision and Canonical Reconciliation"
-version: "1.0.0"
-status: ACTIVE
-document_class: decision-reconciliation-active
+version: "0.1.0"
+status: REVIEW
+document_class: decision-reconciliation-candidate
 owner: Rizky
 author: "ChatGPT / AI Co-Founder — Product Strategy"
-approver: Rizky
-effective_from: 2026-10-20
+approver: null
 scope: teestock-primary-business-positioning
 business: teestock
-owner_direction_status: ADOPTED_BY_OWNER
-document_canonical_adoption: ADOPTED_2026-10-20
-normative_authority: CANONICAL_STRATEGIC_DECISION
-authoritative_for:
-  - TeeStock curated-design-first primary business positioning and product priority
-  - Strategic relationship to DEC-TS-2026-009 and DEC-TS-2026-011
+owner_direction_status: APPROVED_IN_CONVERSATION
+document_canonical_adoption: PENDING
+normative_authority: NONE_UNTIL_CANONICAL_INTEGRATION
+authoritative_for: []
 proposed_canonical_owner: bisnis/teestock/00-foundation/decision-register.md
 source_repository: Rizkybuilds/bisnishub
 source_branch: main
@@ -60,25 +57,25 @@ related_local_proposals_not_verified_in_main:
 
 # DEC-TS-2026-012 — TeeStock Curated-Design-First Strategic Priority
 
-> **Document reading rule:** This is a self-contained, owner-directed strategic decision integrated alongside the TeeStock Decision Register (`TS-FND-004`). The founder's business direction is explicitly adopted and `status: ACTIVE`. Do not infer that operational pilot gates, production readiness, or live retail checkout have been bypassed.
+> **Document reading rule:** This is a self-contained, owner-directed strategic decision **candidate for integration** into the existing TeeStock Decision Register (`TS-FND-004`). The founder's business direction is explicit; however, this **separate file is not a new competing canonical authority**. `status: REVIEW` governs document adoption. Do not infer that the old Decision Register, Q4 roadmap, operational pilot, production readiness, or retail checkout have already changed.
 
 ## 0. Quick machine interpretation
 
 ```yaml
 interpretation_contract:
-  decision_id: DEC-TS-2026-012
+  proposed_decision_id: DEC-TS-2026-012
   founder_business_direction:
-    status: CONFIRMED_AND_ADOPTED
+    status: CONFIRMED
     tee_stock_primary_positioning: CURATED_DESIGN_APPAREL_BRAND
     lead_business_capability: CURATION_AND_COMMERCE
     leading_offer: SELECTED_DESIGNS_ON_APPAREL
     business_custom_is_primary: false
   adoption_state:
-    this_file: ACTIVE
-    decision_register_updated: true
-    quarter_roadmap_reconciled: QUEUED
-    master_definition_reconciled: QUEUED
-    customer_platform_prd_reconciled: IN_PROGRESS
+    this_file: REVIEW
+    original_decision_register_updated: false
+    quarter_roadmap_reconciled: false
+    master_definition_reconciled: false
+    customer_platform_prd_reconciled: false
     operational_pilot_replaced: false
   protected_truths:
     existing_MGBOS_pilot_gate_still_applies: true
@@ -122,8 +119,8 @@ The purpose of this record is to preserve the new direction and lay out a contro
 **Decision date:** 2026-10-20  
 **Owner:** Founder / Owner  
 **Category:** STRATEGIC / BRAND / COMMERCE / PORTFOLIO PRIORITY  
-**Owner directive:** Confirmed and Adopted  
-**Canonical registration:** Registered in Decision Register (`TS-FND-004`)
+**Owner directive:** Confirmed  
+**Canonical registration:** Pending
 
 ### 3.1 Affirmative decision
 
@@ -363,15 +360,15 @@ A review trigger is **not** an automatic reversal. Preserve both the original de
 - [x] Exact source and affected document paths identified.
 - [x] Strategy decisions separated from suggested future capability contracts.
 - [x] Candidate does not claim independent canonical authority.
-- [x] Formal registration of DEC-012 into `TS-FND-004` — **COMPLETED (2026-10-20)**.
-- [x] Active roadmap and business-definition reconciliation — **QUEUED AND RECORDED**.
-- [x] Independent cross-document semantic acceptance — **ADOPTED BY OWNER**.
+- [ ] Formal registration of DEC-012 into `TS-FND-004` — **NOT COMPLETED**.
+- [ ] Active roadmap and business-definition reconciliation — **NOT COMPLETED**.
+- [ ] Independent cross-document semantic acceptance — **NOT PERFORMED**.
 
 ### Final disposition
 
-`CONTENT: OWNER_ADOPTED`  
-`DOCUMENT_STATUS: ACTIVE`  
-`CANONICAL_REGISTER_RECONCILIATION: REGISTERED`  
+`CONTENT: READY_FOR_OWNER_DIRECTED_REVIEW_INGESTION`  
+`DOCUMENT_STATUS: REVIEW`  
+`CANONICAL_REGISTER_RECONCILIATION: PENDING`  
 `IMPLEMENTATION_AUTHORIZATION: NONE`
 
 ---
