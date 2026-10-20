@@ -30,6 +30,23 @@ export const CANONICAL_LOCAL_SERVICE_ROLE_KEY =
 export const STATEMENT_TIMEOUT_MS = 15000;
 export const LOCK_TIMEOUT_MS = 5000;
 
+/**
+ * Prohibited libpq environment variables that can redirect connection routing,
+ * load external service files or password files, or alter authentication.
+ */
+export const PROHIBITED_LIBPQ_VARS = [
+  'PGHOSTADDR',
+  'PGSERVICE',
+  'PGSERVICEFILE',
+  'PGPASSFILE',
+  'PGSYSCONFDIR',
+  'PGSSLCERT',
+  'PGSSLKEY',
+  'PGSSLROOTCERT',
+  'PGSSLCRL',
+  'PGTARGETSESSIONATTRS',
+];
+
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const SQL_ASSET_PATH = path.join(
   __dirname,
@@ -506,6 +523,158 @@ export function validateSupabaseConfig(configPath, options = {}) {
 }
 
 /**
+ * Validates the environment against hostile or redirecting libpq variables,
+ * and constructs a minimal, isolated subprocess environment for psql execution.
+ * Enforces canonical local endpoint parameters (127.0.0.1:55432, postgres@postgres).
+ *
+ * @param {Record<string, string | undefined>} [env=process.env]
+ * @returns {Record<string, string>}
+ */
+export function buildIsolatedPsqlEnvironment(env = process.env) {
+  // 1. Audit and fail-closed on prohibited libpq variables
+  for (const varName of PROHIBITED_LIBPQ_VARS) {
+    if (env[varName] !== undefined && env[varName] !== '') {
+      throw new Error(
+        `Execution rejected: prohibited libpq routing variable '${varName}' detected (HOSTILE_LIBPQ_ROUTING_VARIABLE).`,
+      );
+    }
+  }
+
+  // 2. Audit canonical parameter overrides if present in ambient environment
+  if (env.PGHOST && env.PGHOST !== CANONICAL_LOCAL_HOST) {
+    throw new Error(
+      `Execution rejected: PGHOST must not point to external host (HOSTILE_LIBPQ_ROUTING_VARIABLE). Expected '${CANONICAL_LOCAL_HOST}'.`,
+    );
+  }
+  if (env.PGPORT && String(env.PGPORT) !== String(CANONICAL_LOCAL_PORT)) {
+    throw new Error(
+      `Execution rejected: PGPORT must match canonical local port (HOSTILE_LIBPQ_ROUTING_VARIABLE). Expected '${CANONICAL_LOCAL_PORT}'.`,
+    );
+  }
+  if (env.PGDATABASE && env.PGDATABASE !== CANONICAL_LOCAL_DATABASE) {
+    throw new Error(
+      `Execution rejected: PGDATABASE must match canonical database (HOSTILE_LIBPQ_ROUTING_VARIABLE). Expected '${CANONICAL_LOCAL_DATABASE}'.`,
+    );
+  }
+  if (env.PGUSER && env.PGUSER !== CANONICAL_LOCAL_USER) {
+    throw new Error(
+      `Execution rejected: PGUSER must match canonical user (HOSTILE_LIBPQ_ROUTING_VARIABLE). Expected '${CANONICAL_LOCAL_USER}'.`,
+    );
+  }
+
+  // Case-insensitive audit for PG* variables to prevent mixed-case or platform bypasses
+  for (const [k, v] of Object.entries(env)) {
+    if (v !== undefined && v !== '' && /^PG/i.test(k)) {
+      const upperKey = k.toUpperCase();
+      if (PROHIBITED_LIBPQ_VARS.includes(upperKey)) {
+        throw new Error(
+          `Execution rejected: prohibited libpq routing variable '${k}' detected (HOSTILE_LIBPQ_ROUTING_VARIABLE).`,
+        );
+      }
+      if (upperKey === 'PGHOST' && v !== CANONICAL_LOCAL_HOST) {
+        throw new Error(
+          `Execution rejected: PGHOST must not point to external host (HOSTILE_LIBPQ_ROUTING_VARIABLE). Expected '${CANONICAL_LOCAL_HOST}'.`,
+        );
+      }
+      if (upperKey === 'PGPORT' && String(v) !== String(CANONICAL_LOCAL_PORT)) {
+        throw new Error(
+          `Execution rejected: PGPORT must match canonical local port (HOSTILE_LIBPQ_ROUTING_VARIABLE). Expected '${CANONICAL_LOCAL_PORT}'.`,
+        );
+      }
+      if (upperKey === 'PGDATABASE' && v !== CANONICAL_LOCAL_DATABASE) {
+        throw new Error(
+          `Execution rejected: PGDATABASE must match canonical database (HOSTILE_LIBPQ_ROUTING_VARIABLE). Expected '${CANONICAL_LOCAL_DATABASE}'.`,
+        );
+      }
+      if (upperKey === 'PGUSER' && v !== CANONICAL_LOCAL_USER) {
+        throw new Error(
+          `Execution rejected: PGUSER must match canonical user (HOSTILE_LIBPQ_ROUTING_VARIABLE). Expected '${CANONICAL_LOCAL_USER}'.`,
+        );
+      }
+    }
+  }
+
+  // 3. Construct minimal environment containing only safe OS runtime variables
+  const SAFE_OS_KEYS = [
+    'PATH',
+    'PATHEXT',
+    'SYSTEMROOT',
+    'WINDIR',
+    'COMSPEC',
+    'HOME',
+    'USERPROFILE',
+    'USER',
+    'SHELL',
+    'TMP',
+    'TEMP',
+    'TMPDIR',
+    'LANG',
+    'LC_ALL',
+  ];
+
+  const isolatedEnv = {};
+  for (const [k, v] of Object.entries(env)) {
+    if (
+      v !== undefined &&
+      SAFE_OS_KEYS.some((safeKey) => safeKey.toLowerCase() === k.toLowerCase())
+    ) {
+      isolatedEnv[k] = v;
+    }
+  }
+
+  // 4. Inject canonical connection parameters
+  isolatedEnv.PGHOST = CANONICAL_LOCAL_HOST;
+  isolatedEnv.PGPORT = String(CANONICAL_LOCAL_PORT);
+  isolatedEnv.PGDATABASE = CANONICAL_LOCAL_DATABASE;
+  isolatedEnv.PGUSER = CANONICAL_LOCAL_USER;
+  isolatedEnv.PGPASSWORD = 'postgres';
+  isolatedEnv.PGCONNECT_TIMEOUT = '5';
+  isolatedEnv.PGSSLMODE = 'disable';
+  isolatedEnv.PGOPTIONS = `-c statement_timeout=${STATEMENT_TIMEOUT_MS} -c lock_timeout=${LOCK_TIMEOUT_MS}`;
+
+  return isolatedEnv;
+}
+
+/**
+ * Constructs an isolated, minimal environment for Docker CLI invocations.
+ * Strips all remote daemon routing variables and enforces DOCKER_CONTEXT=default.
+ *
+ * @param {Record<string, string | undefined>} [env=process.env]
+ * @returns {Record<string, string>}
+ */
+export function buildIsolatedDockerEnvironment(env = process.env) {
+  const SAFE_OS_KEYS = [
+    'PATH',
+    'PATHEXT',
+    'SYSTEMROOT',
+    'WINDIR',
+    'COMSPEC',
+    'HOME',
+    'USERPROFILE',
+    'USER',
+    'SHELL',
+    'TMP',
+    'TEMP',
+    'TMPDIR',
+    'LANG',
+    'LC_ALL',
+  ];
+
+  const isolated = {};
+  for (const [k, v] of Object.entries(env)) {
+    if (
+      v !== undefined &&
+      SAFE_OS_KEYS.some((safeKey) => safeKey.toLowerCase() === k.toLowerCase())
+    ) {
+      isolated[k] = v;
+    }
+  }
+
+  isolated.DOCKER_CONTEXT = 'default';
+  return isolated;
+}
+
+/**
  * Validates environment variables, repo provenance, and approved commit input.
  * @param {string} [explicitCommitSha]
  * @param {Record<string, string | undefined>} [env=process.env]
@@ -522,7 +691,7 @@ export function verifyEnvironmentIdentity(
   const isVerifyOnly = options.verifyOnly === true;
   const allowLocalDevMock = options.allowLocalDevMock === true;
 
-  // 1. Secrets Hygiene: Rejection of cloud credentials
+  // 1. Secrets Hygiene: Rejection of cloud credentials and hostile routing variables
   if (env.SUPABASE_ACCESS_TOKEN) {
     throw new Error(
       'Execution rejected: SUPABASE_ACCESS_TOKEN must not be present in preflight execution.',
@@ -538,6 +707,64 @@ export function verifyEnvironmentIdentity(
   if (rawKey && rawKey !== CANONICAL_LOCAL_SERVICE_ROLE_KEY) {
     throw new Error(
       'Execution rejected: SUPABASE_SERVICE_ROLE_KEY must not be overridden with non-canonical credentials.',
+    );
+  }
+
+  // Audit for hostile libpq routing variables
+  for (const varName of PROHIBITED_LIBPQ_VARS) {
+    if (env[varName] !== undefined && env[varName] !== '') {
+      throw new Error(
+        `Execution rejected: prohibited libpq routing variable '${varName}' detected (HOSTILE_LIBPQ_ROUTING_VARIABLE).`,
+      );
+    }
+  }
+  if (env.PGHOST && env.PGHOST !== CANONICAL_LOCAL_HOST) {
+    throw new Error(
+      'Execution rejected: PGHOST must not point to external host (HOSTILE_LIBPQ_ROUTING_VARIABLE).',
+    );
+  }
+  if (env.PGPORT && String(env.PGPORT) !== String(CANONICAL_LOCAL_PORT)) {
+    throw new Error(
+      'Execution rejected: PGPORT must match canonical local port (HOSTILE_LIBPQ_ROUTING_VARIABLE).',
+    );
+  }
+  if (env.PGDATABASE && env.PGDATABASE !== CANONICAL_LOCAL_DATABASE) {
+    throw new Error(
+      'Execution rejected: PGDATABASE must match canonical database (HOSTILE_LIBPQ_ROUTING_VARIABLE).',
+    );
+  }
+  if (env.PGUSER && env.PGUSER !== CANONICAL_LOCAL_USER) {
+    throw new Error(
+      'Execution rejected: PGUSER must match canonical user (HOSTILE_LIBPQ_ROUTING_VARIABLE).',
+    );
+  }
+
+  // Audit Docker daemon variables
+  if (env.DOCKER_HOST) {
+    const dh = env.DOCKER_HOST.trim();
+    const isLocalSocket =
+      dh === 'unix:///var/run/docker.sock' ||
+      dh === '/var/run/docker.sock' ||
+      dh.startsWith('npipe://');
+    if (!isLocalSocket) {
+      throw new Error(
+        'Execution rejected: remote or non-local DOCKER_HOST detected (REMOTE_DOCKER_HOST_PROHIBITED).',
+      );
+    }
+  }
+  if (env.DOCKER_CONTEXT && env.DOCKER_CONTEXT.trim() !== 'default') {
+    throw new Error(
+      'Execution rejected: non-default DOCKER_CONTEXT detected (REMOTE_DOCKER_CONTEXT_PROHIBITED).',
+    );
+  }
+  if (env.DOCKER_CONFIG) {
+    throw new Error(
+      'Execution rejected: custom DOCKER_CONFIG detected (CUSTOM_DOCKER_CONFIG_PROHIBITED).',
+    );
+  }
+  if (env.DOCKER_TLS_VERIFY || env.DOCKER_CERT_PATH || env.DOCKER_TLS) {
+    throw new Error(
+      'Execution rejected: remote Docker TLS configuration detected (REMOTE_DOCKER_TLS_PROHIBITED).',
     );
   }
 
@@ -747,17 +974,57 @@ export function verifyDockerContainerIdentity(preStartupEpoch, options = {}) {
     );
   }
 
+  const env = options.env ?? process.env;
+
+  // 1. Audit Docker environment variables for remote targeting
+  if (env.DOCKER_HOST) {
+    const dh = env.DOCKER_HOST.trim();
+    const isLocalSocket =
+      dh === 'unix:///var/run/docker.sock' ||
+      dh === '/var/run/docker.sock' ||
+      dh.startsWith('npipe://');
+    if (!isLocalSocket) {
+      throw new Error(
+        'Docker verification failed: remote or non-local DOCKER_HOST detected (REMOTE_DOCKER_HOST_PROHIBITED).',
+      );
+    }
+  }
+
+  if (env.DOCKER_CONTEXT && env.DOCKER_CONTEXT.trim() !== 'default') {
+    throw new Error(
+      'Docker verification failed: non-default DOCKER_CONTEXT detected (REMOTE_DOCKER_CONTEXT_PROHIBITED).',
+    );
+  }
+
+  if (env.DOCKER_CONFIG) {
+    throw new Error(
+      'Docker verification failed: custom DOCKER_CONFIG detected (CUSTOM_DOCKER_CONFIG_PROHIBITED).',
+    );
+  }
+
+  if (
+    env.DOCKER_TLS_VERIFY ||
+    env.DOCKER_CERT_PATH ||
+    env.DOCKER_TLS
+  ) {
+    throw new Error(
+      'Docker verification failed: remote Docker TLS configuration detected (REMOTE_DOCKER_TLS_PROHIBITED).',
+    );
+  }
+
   const containerName = options.containerName ?? CANONICAL_CONTAINER_NAME;
   const expectedProjectId = options.expectedProjectId ?? CANONICAL_LOCAL_PROJECT_ID;
   const canonicalPort = options.canonicalPort ?? CANONICAL_LOCAL_PORT;
 
   let stdout = '';
+  const dockerArgs = ['--context=default', 'inspect', '--type=container', containerName];
   if (typeof options.mockDockerExecutor === 'function') {
-    stdout = options.mockDockerExecutor(['inspect', '--type=container', containerName]);
+    stdout = options.mockDockerExecutor(dockerArgs);
   } else {
-    // Fixed argument array execution - no shell interpolation
-    const dockerArgs = ['inspect', '--type=container', containerName];
+    // Fixed argument array execution with isolated Docker environment - no shell interpolation
+    const isolatedDockerEnv = buildIsolatedDockerEnvironment(env);
     const execResult = spawnSync('docker', dockerArgs, {
+      env: isolatedDockerEnv,
       encoding: 'utf8',
       maxBuffer: 10 * 1024 * 1024,
     });
@@ -792,6 +1059,17 @@ export function verifyDockerContainerIdentity(preStartupEpoch, options = {}) {
   }
 
   const container = inspectList[0];
+
+  // Validate container ID format (64-character lowercase hex string)
+  if (
+    !container.Id ||
+    typeof container.Id !== 'string' ||
+    !/^[0-9a-f]{64}$/.test(container.Id)
+  ) {
+    throw new Error(
+      'Docker inspection failed: missing or invalid container ID (INVALID_CONTAINER_ID).',
+    );
+  }
 
   // 2. Container running state
   if (!container.State || container.State.Running !== true) {
@@ -890,7 +1168,7 @@ export function verifyDockerContainerIdentity(preStartupEpoch, options = {}) {
 
   return {
     isDockerVerified: true,
-    containerId: container.Id ?? 'UNKNOWN_CONTAINER_ID',
+    containerId: container.Id,
     containerName: normalizedName,
     projectId: projectLabel,
     hostIp,
@@ -932,6 +1210,41 @@ export function executeIdentityAndFreshnessProbe(
   ) {
     throw new Error(
       'Identity probe rejected: missing or invalid preStartupEpoch (INVALID_PRE_STARTUP_EPOCH). Pre-startup epoch timestamp must be recorded prior to database startup.',
+    );
+  }
+
+  if (!psqlEnv || typeof psqlEnv !== 'object') {
+    throw new Error(
+      'Identity probe rejected: missing or invalid psqlEnv parameter (INVALID_PSQL_ENV).',
+    );
+  }
+
+  // Audit psqlEnv to ensure connection isolation
+  for (const varName of PROHIBITED_LIBPQ_VARS) {
+    if (psqlEnv[varName] !== undefined && psqlEnv[varName] !== '') {
+      throw new Error(
+        `Identity probe rejected: prohibited libpq routing variable '${varName}' detected in execution environment (HOSTILE_LIBPQ_ROUTING_VARIABLE).`,
+      );
+    }
+  }
+  if (psqlEnv.PGHOST && psqlEnv.PGHOST !== CANONICAL_LOCAL_HOST) {
+    throw new Error(
+      'Identity probe rejected: PGHOST must match canonical local host (HOSTILE_LIBPQ_ROUTING_VARIABLE).',
+    );
+  }
+  if (psqlEnv.PGPORT && String(psqlEnv.PGPORT) !== String(CANONICAL_LOCAL_PORT)) {
+    throw new Error(
+      'Identity probe rejected: PGPORT must match canonical local port (HOSTILE_LIBPQ_ROUTING_VARIABLE).',
+    );
+  }
+  if (psqlEnv.PGDATABASE && psqlEnv.PGDATABASE !== CANONICAL_LOCAL_DATABASE) {
+    throw new Error(
+      'Identity probe rejected: PGDATABASE must match canonical database (HOSTILE_LIBPQ_ROUTING_VARIABLE).',
+    );
+  }
+  if (psqlEnv.PGUSER && psqlEnv.PGUSER !== CANONICAL_LOCAL_USER) {
+    throw new Error(
+      'Identity probe rejected: PGUSER must match canonical user (HOSTILE_LIBPQ_ROUTING_VARIABLE).',
     );
   }
 
@@ -1464,11 +1777,7 @@ export async function main() {
     `4. Connecting to local disposable database (${CANONICAL_LOCAL_HOST}:${CANONICAL_LOCAL_PORT})...`,
   );
 
-  const psqlEnv = {
-    ...process.env,
-    PGPASSWORD: 'postgres',
-    PGOPTIONS: `-c statement_timeout=${STATEMENT_TIMEOUT_MS} -c lock_timeout=${LOCK_TIMEOUT_MS}`,
-  };
+  const psqlEnv = buildIsolatedPsqlEnvironment(process.env);
 
   // 4a. Execute Standalone Database Identity & Freshness Probe
   console.log('   Executing database identity and freshness attestation probe...');
