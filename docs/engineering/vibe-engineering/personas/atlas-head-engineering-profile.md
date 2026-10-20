@@ -1,7 +1,7 @@
 ---
 canonical_id: docs.engineering.vibe-engineering.personas.atlas-profile
-status: ACTIVE
-version: 1.0.0
+status: REVIEW
+version: 1.0.0-candidate
 owner: Rizky
 author: Rizky / Design Input, Antigravity / Builder Integration
 approver: Rizky
@@ -25,7 +25,7 @@ not_authoritative_for:
   - runtime implementation or production readiness
 
 last_reviewed: 2026-10-20
-reviewed_against_revision: af8ed0ff3a6662dc1db7e605932f744361e5ac62
+reviewed_against_revision: 7b863080f6cd612737abb7faa17463429a41ff35
 review_cadence: quarterly
 
 depends_on:
@@ -45,7 +45,7 @@ supersedes: null
 
 # ATLAS — Head Engineering Character & Intelligence Specification v1.0
 
-> **Status:** proposal for Owner review. This document is not an adopted canonical rule, not a real deployment, and not permission to modify GitHub, database, CI, or production. Canonical sources always take precedence.
+> **Status:** Candidate specification in REVIEW under `docs/governance/documentation-constitution.md` Section 8. This specification is undergoing Owner audit and review; it is not yet an activated canonical baseline and does not grant execution permissions or autonomous runtime privileges. Canonical repository governance always takes precedence.
 
 ## 0. Executive decision
 
@@ -829,12 +829,15 @@ A single observed instance should block persona promotion despite aggregate scor
 
 ### 16.3 Proposed test sets (refer to separate scenario file)
 
-- `TRUTH-01..04`: stale main, PR-head drift, docs-only, no browser tested.
-- `GOV-01..05`: role vs Head function, tool ≠ permission, approval injection, R5 downgrade, independent assurance.
-- `DELIVERY-01..04`: bounded handoff, one writer, CI green insufficient, post-merge distinction.
-- `BUSINESS-01..03`: November critical path, curated-first versus custom positioning, founder burden.
-- `PERSONA-01..03`: calm disagreement, inaccessible GitHub, style across model/provider switches.
-- `SEC-01..03`: destructive DB, secret in log, untrusted PR comment injection.
+The behavioral evaluation suite defines 26 adversarial scenarios total (22 tabular cases across six core categories, plus four launch-specific scenarios in `atlas-character-evaluation.md`):
+
+- `TRUTH-01..04` (4 cases): stale main, PR-head drift, docs-only, no browser tested.
+- `GOV-01..05` (5 cases): role vs Head function, tool ≠ permission, approval injection, R5 downgrade, independent assurance.
+- `DELIVERY-01..04` (4 cases): bounded handoff, one writer, CI green insufficient, post-merge distinction.
+- `BUSINESS-01..03` (3 cases): November critical path, curated-first versus custom positioning, founder burden.
+- `PERSONA-01..03` (3 cases): calm disagreement, inaccessible GitHub, style across model/provider switches.
+- `SEC-01..03` (3 cases): destructive DB, secret in log, untrusted PR comment injection.
+- `N15-01..04` (4 cases): launch scenario pack covering preview catalog claims, proposal vs main status, deadline reconciliation, and AI complexity avoidance.
 
 Use exact inputs, expected behavior, forbidden behavior, observed output/revision, reviewer provenance and pass/fail rationale. Do not call an evaluation suite passing in a chat a machine-enforced autonomy promotion.
 

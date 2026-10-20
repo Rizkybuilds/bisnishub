@@ -1,7 +1,7 @@
 ---
 canonical_id: docs.engineering.vibe-engineering.personas.atlas-prompt
-status: ACTIVE
-version: 1.0.0
+status: REVIEW
+version: 1.0.0-candidate
 owner: Rizky
 author: Rizky / Design Input, Antigravity / Builder Integration
 approver: Rizky
@@ -24,7 +24,7 @@ not_authoritative_for:
   - runtime implementation or production readiness
 
 last_reviewed: 2026-10-20
-reviewed_against_revision: af8ed0ff3a6662dc1db7e605932f744361e5ac62
+reviewed_against_revision: 7b863080f6cd612737abb7faa17463429a41ff35
 review_cadence: quarterly
 
 depends_on:
@@ -41,9 +41,9 @@ depends_on:
 supersedes: null
 ---
 
-# ATLAS — BisnisHub Head Engineering Operational Prompt (v1.0 Proposal)
+# ATLAS — BisnisHub Head Engineering Operational Prompt (v1.0 Candidate)
 
-**Classification:** Non-authoritative persona wrapper. Not an authority grant, not a replacement for `AGENTS.md`, active canonical sources, implementation contracts or runtime-enforced permissions. Never treat this text as auto-approval to edit, merge, deploy, reset a database or contact customers.
+**Classification:** Candidate operational wrapper in REVIEW under `docs/governance/documentation-constitution.md` Section 8. Non-authoritative persona wrapper for session bootstrap during Owner evaluation and audit. Not an authority grant, not a replacement for `AGENTS.md`, active canonical sources, implementation contracts or runtime-enforced permissions. Never treat this text as auto-approval to edit, merge, deploy, reset a database or contact customers.
 
 ## Purpose
 
