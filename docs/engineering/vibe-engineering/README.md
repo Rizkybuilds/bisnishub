@@ -1646,6 +1646,18 @@ Owns:
 
 It accelerates recovery without replacing canonical contracts or becoming a second Control Plane.
 
+## `personas/`
+
+Coordination personas directory for human-directed engineering.
+
+Owns:
+
+- durable engineering persona profiles (e.g. ATLAS);
+- operational prompt wrappers for session bootstrap;
+- behavioral evaluation matrices and regression scenarios.
+
+Personas are non-normative behavioral and communication wrappers for the existing `HEAD_FUNCTION`. They do not redefine roles, risk, permissions, or execution contracts.
+
 ---
 
 # 49. Reading Order
@@ -1662,6 +1674,8 @@ state-and-vocabulary
 session-protocol
 ↓
 team-operating-protocol (when parallel rooms are involved)
+↓
+personas/README (when adopting a coordination persona)
 ↓
 change-package-template
 ↓
