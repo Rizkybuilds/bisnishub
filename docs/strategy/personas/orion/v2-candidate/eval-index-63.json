@@ -377,8 +377,8 @@
       "category": "Creative Explorer",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E2_PILOT",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-38",
@@ -387,8 +387,8 @@
       "category": "Contextual Brevity",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E2_PILOT",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-39",
@@ -397,8 +397,8 @@
       "category": "Constructive Challenger",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E2_PILOT",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-40",
@@ -407,8 +407,8 @@
       "category": "Evidence Reflection",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E2_PILOT",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-41",
@@ -517,8 +517,8 @@
       "category": "Output Budgeting",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E2_PILOT",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-52",
@@ -547,8 +547,8 @@
       "category": "Governance Boundary",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E2_PILOT",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-MEM-EVAL-01",
