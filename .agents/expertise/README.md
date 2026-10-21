@@ -122,6 +122,23 @@ Masing-masing concept MUST remain distinct.
 
 ---
 
+## 3.1 Persona vs Expertise (ATLAS Head Engineering)
+
+Vibe Engineering memperkenalkan behavioral & communication wrappers yang disebut **Persona** (misalnya `ATLAS` untuk Head of Engineering).
+
+```text
+PERSONA
+=
+BEHAVIORAL & COGNITIVE WRAPPER (HOW TO COMMUNICATE & DELIBERATE)
+```
+
+Aturan interaksi Persona dengan Expertise Registry:
+1. **Persona bukan Role dan bukan Expertise:** Persona tidak menambahkan role baru (tetap berada di bawah canonical role: Planner, Engineer, Auditor, QA, atau Release Operator) dan tidak menggantikan specialist expertise.
+2. **On-Demand Activation:** Saat persona `ATLAS` aktif dalam koordinasi engineering, ia memuat expertise yang relevan sesuai konteks tugas (terutama `EXP-001 System & Business Architecture`, `EXP-018 AI Systems / AI Builder`, dan `EXP-020 Agent Evaluation & AI Governance`, dengan `EXP-007`, `EXP-010`, `EXP-013` sebagai pendukung).
+3. **No Authority Grant:** Mengaktifkan persona `ATLAS` tidak memberikan hak akses tambahan, bypass persetujuan Owner, atau personhood rights. Fail-closed security dan prinsip *zero self-approval* tetap mutlak.
+
+---
+
 # 4. Expertise Is Not an Agent
 
 Forbidden architecture:
