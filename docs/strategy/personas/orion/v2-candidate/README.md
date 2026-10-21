@@ -60,7 +60,7 @@ ORION v2 enhances the strategic reasoning, creative exploration, conversational 
 
 ### Candidate Documents
 1. [`role-contract-v2.md`](role-contract-v2.md) — **OR2-01:** Twelve-dimensional role contract, character psychology, and anti-pattern boundaries.
-2. [`cognitive-operating-cycle.md`](cognitive-operating-cycle.md) — **OR2-02:** Intent classifier (`BRAINSTORM`, `CONDITIONAL_PLAN`, `DECISION`, `EXECUTION_REQUEST`), O.P.E.N. discovery, N.O.R.T.H. decision pass, evidence reflection, and output budgeting.
+2. [`cognitive-operating-cycle.md`](cognitive-operating-cycle.md) — **OR2-02:** Intent classifier (`BRAINSTORM`, `CONDITIONAL_PLAN`, `DECISION`, `EXECUTION_REQUEST`), auxiliary `LEARN` posture, O.P.E.N. discovery, N.O.R.T.H. decision pass, evidence reflection, and output budgeting.
 3. [`portable-prompt-v2.md`](portable-prompt-v2.md) — **OR2-03:** Concise, layered, portable operational prompt candidate.
 
 ---
@@ -70,24 +70,27 @@ ORION v2 enhances the strategic reasoning, creative exploration, conversational 
 | Attribute | ORION v1.0 (Active Baseline) | ORION v2.0 (Candidate) |
 |---|---|---|
 | **Location** | `docs/strategy/personas/orion/` | `docs/strategy/personas/orion/v2-candidate/` |
-| **Pillars** | 5 Personality Pillars | 5 Original Pillars + 7 Observable Expressive Traits |
-| **Reasoning Loops** | N.O.R.T.H. Decision Protocol | O.P.E.N. (Discovery) $\rightarrow$ N.O.R.T.H. (Decisions) $\rightarrow$ Evidence Reflection (Learning) |
-| **Intent Classification** | Tacit / Conversational | Explicit 4-state enum: `BRAINSTORM`, `CONDITIONAL_PLAN`, `DECISION`, `EXECUTION_REQUEST` |
+| **Pillars** | 5 Personality Pillars (verbatim) | 5 Original Pillars (verbatim preserved) + 7 Observable Expressive Traits |
+| **Reasoning Loops** | N.O.R.T.H. Decision Protocol | O.P.E.N. (Discovery) $\rightarrow$ N.O.R.T.H. (Decisions) $\rightarrow$ Evidence Reflection (In-Session Learning) |
+| **Intent Classification** | Tacit / Conversational | Explicit 4-state enum: `BRAINSTORM`, `CONDITIONAL_PLAN`, `DECISION`, `EXECUTION_REQUEST` (with auxiliary `LEARN`) |
 | **Output Behavior** | Structured templates by default | Adaptive output budgeting: concise conversational default; structured templates for high-stakes decisions |
-| **Evaluation Suite** | 36 scenarios (`NOT_RUN`) | 63 scenarios (36 v1 preserved + 18 reasoning + 9 memory) |
+| **Evaluation Suite** | 36 scenarios (`NOT_RUN`) | 54 prompt behavioral cases for G2 (10 critical 2/2 PASS) + 9 runtime memory cases for G3; 63 total for release |
 | **Memory Strategy** | Ephemeral context | Selective 4-plane typed memory candidate (read-only pilot, no auto-persistence) |
-| **Canonical Status** | `REVIEW` (Merged on `main`) | `PROPOSED` (Awaiting OR2-05 Paired Evaluation and Owner Approval) |
+| **Lifecycle Reality** | Merged reference documentation (`status: REVIEW`; evaluation `NOT_RUN`; runtime `NOT_INSTALLED`) | `PROPOSED` candidate (Awaiting Phase B evaluation and Owner approval) |
+| **Head Engineering Coordination** | Established Head Engineering function (ATLAS PR #88 candidate status verified at execution time) | Interfaces via Business Outcome Briefs; verifies ATLAS PR #88 dynamically from repository reality |
 
 ---
 
 ## 3. Governance & Promotion Controls
 
 1. **Non-Normative Candidate:** These documents represent candidate persona specifications. They do NOT confer principal authority, system permissions, financial execution capabilities, or merge rights.
-2. **Phase Gating:** Progression from candidate to active requires:
-   - **G1 (Phase A):** Completion and review of candidate role contract, cognition cycle, and prompt.
-   - **G2 (Phase B):** 63-case paired evaluation (OR2-04 / OR2-05) with 2/2 passes across all 10 critical cases.
-   - **G3–G6 (Phases C–F):** Governed memory, tool boundary, and supervised founder pilot milestones.
-3. **Emergency Rollback:** If any candidate prompt causes unexpected model drift, sycophancy, or boundary confusion, users must immediately revert to the v1.0 operational prompt:
+2. **Lifecycle Distinction:** Merged documentation does not equal an evaluated, activated runtime. Canonical v1 documentation on `main` is reference material (`status: REVIEW`). ORION v2 remains `PROPOSED / CANDIDATE_UNTESTED`.
+3. **Phase Gating & Evaluation Dependencies:**
+   - **G1 (Phase A):** Bounded candidate specification (role contract, cognition cycle, prompt).
+   - **G2 (Phase B):** 54-case prompt evaluation (OR-EVAL-01..54); all 10 critical cases must achieve 2/2 PASS with zero tolerated failures before prompt acceptance.
+   - **G3–G4 (Phases C–D):** Memory architecture, threat model, and prototype. The 9 runtime memory tests (OR-MEM-EVAL-01..09) are executed only after the G3 memory prototype is available.
+   - **G5–G6 (Phases E–F):** Governed tool/handoff pilots, supervised founder pilot, and final release review requiring the complete applicable 63-case evidence suite.
+4. **Emergency Rollback:** If any candidate prompt causes unexpected model drift, sycophancy, or boundary confusion, users must immediately revert to the v1.0 operational prompt:
    ```text
    Revert to canonical ORION v1.0: docs/strategy/personas/orion/operational-prompt.md
    ```
