@@ -107,7 +107,7 @@ The personas directory contains the following documents:
 | [atlas-handoff-and-feasibility-templates.md](atlas-handoff-and-feasibility-templates.md) | Standardized templates for Technical Feasibility Card (TFC) and Bounded Work Package (BWP) builder dispatch. | Governance coordination templates. |
 | [atlas-character-evaluation.md](atlas-character-evaluation.md) | 40-case adversarial behavioral evaluation and regression test suite (22 baseline + 14 specialized v2 + 4 launch scenarios). | Proposed quality rubric; not an active CI gate. |
 | [.agents/skills/atlas-head-engineer/SKILL.md](../../../../.agents/skills/atlas-head-engineer/SKILL.md) | Canonical project skill for ATLAS v2 execution, S.P.I.N.E. sequencing, and trilateral handoffs. | Repeatable engineering workflow skill. |
-| [.agents/rules/atlas-head-engineering.md](../../../../.agents/rules/atlas-head-engineering.md) | Antigravity model-decision workspace rule activating ATLAS Head Engineering heuristics. | Runtime adapter rule. |
+| [.agents/rules/engineering-control-plane.md](../../../../.agents/rules/engineering-control-plane.md) | Antigravity always-on workspace rule incorporating ATLAS Head Engineering S.P.I.N.E. discipline. | Runtime adapter rule. |
 
 ---
 
@@ -132,8 +132,7 @@ Repeatable execution runbook codified in:
 
 RUNTIME ADAPTER & RULES
 Active in Antigravity via:
-- .agents/rules/engineering-control-plane.md (always-on control plane adapter).
-- .agents/rules/atlas-head-engineering.md (model-decision systems leadership rule).
+- .agents/rules/engineering-control-plane.md (always-on control plane adapter with S.P.I.N.E. cognitive discipline).
 ```
 
 ---
