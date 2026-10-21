@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bisnishub.invalid/protocols/tfc.schema.json",
+  "title": "ATLAS Technical Feasibility Card (TFC) Schema",
+  "description": "Schema for ATLAS Head Engineering technical feasibility evaluation and blast-radius analysis.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "feasibility_id",
+    "reference_brief_id",
+    "target_workspace",
+    "exact_main_sha",
+    "evaluation_date",
+    "architectural_assessment",
+    "blast_radius_mapping",
+    "pragmatic_tradeoff",
+    "negative_controls",
+    "builder_dispatch_plan",
+    "disposition"
+  ],
+  "properties": {
+    "feasibility_id": {
+      "type": "string",
+      "pattern": "^TFC-[0-9]{8}-[0-9]{2,}$"
+    },
+    "reference_brief_id": {
+      "type": "string",
+      "pattern": "^BOB-[A-Z0-9]+-[0-9]{8}-[0-9]{2,}$"
+    },
+    "target_workspace": {
+      "type": "string"
+    },
+    "exact_main_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,40}$"
+    },
+    "evaluation_date": {
+      "type": "string"
+    },
+    "architectural_assessment": {
+      "type": "object",
+      "required": [
+        "approach_summary",
+        "complexity_score",
+        "door_classification",
+        "highest_risk_rating"
+      ],
+      "properties": {
+        "approach_summary": { "type": "string" },
+        "complexity_score": { "type": "string", "enum": ["LOW", "MODERATE", "HIGH", "DANGEROUS"] },
+        "door_classification": { "type": "string", "enum": ["TWO_WAY", "ONE_WAY"] },
+        "highest_risk_rating": { "type": "string", "enum": ["R0", "R1", "R2", "R3", "R4", "R5"] }
+      }
+    },
+    "blast_radius_mapping": {
+      "type": "object",
+      "required": [
+        "direct_files_affected",
+        "shared_modules_impact",
+        "database_invariants",
+        "downstream_risk"
+      ],
+      "properties": {
+        "direct_files_affected": { "type": "array", "items": { "type": "string" } },
+        "shared_modules_impact": { "type": "array", "items": { "type": "string" } },
+        "database_invariants": { "type": "string" },
+        "downstream_risk": { "type": "string" }
+      }
+    },
+    "pragmatic_tradeoff": {
+      "type": "object",
+      "required": [
+        "full_commercial_scope",
+        "recommended_20_percent_scope",
+        "deferred_capabilities"
+      ],
+      "properties": {
+        "full_commercial_scope": { "type": "string" },
+        "recommended_20_percent_scope": { "type": "string" },
+        "deferred_capabilities": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "negative_controls": {
+      "type": "object",
+      "required": [
+        "idempotency_guarantee",
+        "tenant_auth_isolation",
+        "negative_test_scenarios"
+      ],
+      "properties": {
+        "idempotency_guarantee": { "type": "string" },
+        "tenant_auth_isolation": { "type": "string" },
+        "negative_test_scenarios": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "builder_dispatch_plan": {
+      "type": "object",
+      "required": [
+        "work_packages_required",
+        "suggested_builder",
+        "estimated_execution"
+      ],
+      "properties": {
+        "work_packages_required": { "type": "integer", "minimum": 1 },
+        "suggested_builder": { "type": "string", "enum": ["antigravity", "codex", "claude"] },
+        "estimated_execution": { "type": "string" }
+      }
+    },
+    "owner_decision_required": {
+      "type": "string"
+    },
+    "disposition": {
+      "type": "string",
+      "enum": ["FEASIBLE", "SCOPE_REDUCTION_RECOMMENDED", "REJECTED_UNSAFE"]
+    }
+  }
+}

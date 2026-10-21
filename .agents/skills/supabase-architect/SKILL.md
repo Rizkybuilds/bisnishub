@@ -46,3 +46,8 @@ For MGBOS reproducibility checks, inspect the local runbook and wrappers, confir
 MGBOS forbids remote resets and production schema changes. For separately authorized legacy production changes, establish the exact project, create a structural/data snapshot and restore-test it before SQL; then verify preserved rows, policies, functions and critical flows. A successful SQL response is not sufficient evidence. Prefer a forward repair migration over destructive undo of financial history.
 
 Report the migration, target environment, checks actually executed, isolation results, type generation and any blocked checks. Use the QA Skill for a broader regression plan when needed.
+
+## References and advanced patterns
+
+When designing zero-downtime migrations, tuning connection poolers, or configuring security-definer functions, load:
+- [Zero-Downtime Migrations & RLS Hardening](references/zero-downtime-migrations-and-rls.md) for non-transactional concurrent indexing, lock timeouts, Supavisor transaction pooling, and hardened SECURITY INVOKER/DEFINER rules.
