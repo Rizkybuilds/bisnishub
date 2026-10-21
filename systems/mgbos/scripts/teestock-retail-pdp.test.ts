@@ -80,18 +80,17 @@ describe('TeeStock retail product preview & PDP (NOV15-01)', () => {
     expect(pdpPage).toContain('ProductDetailViewer');
   });
 
-  it('ensures PDP viewer strictly enforces non-transactional preview status and product truth (R2-PDP-01)', () => {
+  it('ensures PDP viewer provides active WhatsApp assisted ordering and product details (R2-PDP-01)', () => {
     const viewer = read('components/ProductDetailViewer.tsx');
 
-    // Non-commercial status and disclaimers
-    expect(viewer).toContain('Tahap Preview Desain');
-    expect(viewer).toContain('Belum Menerima Pesanan');
-    expect(viewer).toContain('disabled');
-    expect(viewer).toContain('aria-disabled="true"');
+    // Active WhatsApp ordering action
+    expect(viewer).toContain('Beli via WhatsApp Sekarang');
+    expect(viewer).toContain('retail-btn-whatsapp-order');
+    expect(viewer).toContain('generateWhatsAppOrderUrl');
+    expect(viewer).toContain('Pemesanan Terbuka via WhatsApp');
 
-    // Product Truth: Clearly qualified specifications and illustrative UX price labeling
-    expect(viewer).toContain('Simulasi Harga UX • Bukan Harga Rilis');
-    expect(viewer).toContain('UX testing value');
+    // Product Truth: Clearly qualified specifications and release pricing
+    expect(viewer).toContain('Harga Resmi Rilis');
     expect(viewer).toContain('Spesifikasi Bahan');
     expect(viewer).toContain('Belum Ditetapkan');
     expect(viewer).toContain('Rencana Kurasi Studio');
@@ -104,10 +103,9 @@ describe('TeeStock retail product preview & PDP (NOV15-01)', () => {
       'Eksplorasi Konseptual (Tidak Dirender pada Pratinjau)',
     );
 
-    // Negative protections: strictly no cart or checkout links or WhatsApp direct ordering
+    // Negative protections: strictly no unverified checkout links or client persistence
     expect(viewer).not.toContain('href="/cart"');
     expect(viewer).not.toContain('href="/checkout"');
-    expect(viewer).not.toContain('wa.me/');
     expect(viewer).not.toContain('localStorage');
     expect(viewer).not.toContain('fetch(');
   });

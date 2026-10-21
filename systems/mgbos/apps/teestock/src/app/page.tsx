@@ -189,11 +189,11 @@ export default function Home() {
       >
         <span className="retail-availability-dot" />
         <div>
-          <strong>Shop (Katalog Ritel) — Belum Tersedia</strong>
+          <strong>Shop (Katalog Ritel) — Pemesanan Terbuka via WhatsApp</strong>
           <p>
-            Visual yang ditampilkan adalah studi desain konseptual, bukan produk
-            jual, stok nyata, atau penawaran harga. Pemesanan mandiri belum
-            dibuka. Build Merch masih dalam Pengembangan.
+            Koleksi pilihan TeeStock kini dapat dipesan langsung melalui bantuan
+            tim kami via WhatsApp. Pemesanan mandiri via checkout otomatis web
+            belum dibuka. Build Merch masih dalam Pengembangan.
           </p>
         </div>
         <Link href="/support/contact">

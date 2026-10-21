@@ -26,18 +26,17 @@ export default function ShopPage() {
           </h1>
         </div>
         <p>
-          Enam studi visual untuk menjelajahi arah TeeStock Selects. Filter
-          koleksi dan lihat simulasi warna pada setiap konsep.
-          <br />
-          Ini belum katalog produk yang dapat dibeli.
+          Enam studi visual untuk menjelajahi arah TeeStock Selects. Pilih warna
+          dan ukuran favorit Anda untuk memesan langsung melalui layanan resmi
+          WhatsApp kami.
         </p>
       </section>
       <div className="retail-shop-notice" role="status">
         <span className="retail-availability-dot" aria-hidden="true" />
         <span>
-          <strong>Concept gallery.</strong> Ilustrasi belum mewakili barang
-          fisik, harga, ketersediaan, lisensi artwork siap jual, maupun aktivasi
-          checkout.
+          <strong>Layanan Pemesanan Aktif.</strong> Koleksi apparel dapat
+          dipesan langsung melalui tombol WhatsApp pada setiap halaman detail
+          produk.
         </span>
       </div>
       <ConceptGallery />

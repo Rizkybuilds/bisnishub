@@ -107,6 +107,42 @@ describe('Order Validation Schemas (MGBOS-011)', () => {
       };
       expect(createRetailOrderSchema.safeParse(invalid).success).toBe(false);
     });
+
+    it('accepts valid persistent client requestId for idempotent retry protection', () => {
+      const withRequestId = {
+        customerAccountId: '99999999-0000-4000-8000-000000000001',
+        requestId: '11111111-2222-4000-8000-333333333333',
+        items: [
+          {
+            inventoryItemId: '99999999-0000-4000-8000-000000000002',
+            quantity: 2,
+            unitPrice: '149000',
+          },
+        ],
+      };
+      const parsed = createRetailOrderSchema.safeParse(withRequestId);
+      expect(parsed.success).toBe(true);
+      if (parsed.success) {
+        expect(parsed.data.requestId).toBe(
+          '11111111-2222-4000-8000-333333333333',
+        );
+      }
+    });
+
+    it('rejects non-uuid requestId', () => {
+      const invalid = {
+        customerAccountId: '99999999-0000-4000-8000-000000000001',
+        requestId: 'not-a-valid-uuid',
+        items: [
+          {
+            inventoryItemId: '99999999-0000-4000-8000-000000000002',
+            quantity: 1,
+            unitPrice: '149000',
+          },
+        ],
+      };
+      expect(createRetailOrderSchema.safeParse(invalid).success).toBe(false);
+    });
   });
 
   describe('retailOrderItemInputSchema', () => {

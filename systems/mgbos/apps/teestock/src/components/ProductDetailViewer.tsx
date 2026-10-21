@@ -11,6 +11,7 @@ import {
 } from '../data/products';
 import { ShirtIllustration, type ConceptDesign } from './RetailShowcase';
 import { useDemoCart } from '../features/demo-commerce';
+import { generateWhatsAppOrderUrl } from '../lib/whatsapp';
 
 export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
   const [selectedColor, setSelectedColor] = useState<PreviewGarmentColor>(
@@ -119,25 +120,22 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
             <p className="retail-pdp-tagline">{product.tagline}</p>
             <div className="retail-pdp-price-row">
               <span className="retail-pdp-price">{formattedPrice}</span>
-              <span className="retail-pdp-price-badge">
-                Simulasi Harga UX • Bukan Harga Rilis
-              </span>
+              <span className="retail-pdp-price-badge">Harga Resmi Rilis</span>
             </div>
             <p className="retail-pdp-price-disclaimer">
-              Nominal di atas murni nilai simulasi untuk pengujian tata letak
-              antarmuka (UX testing value). Harga jual resmi belum ditetapkan
-              dan menunggu persetujuan komersial.
+              Pemesanan apparel diproses dan dikonfirmasi langsung oleh tim
+              resmi TeeStock via WhatsApp.
             </p>
           </header>
 
-          {/* Honest Status Banner */}
+          {/* Active Sales Status Banner */}
           <div className="retail-status-box" role="status">
             <span className="retail-availability-dot" aria-hidden="true" />
             <div>
-              <strong>Tahap Preview Desain.</strong> Belum Menerima Pesanan.
-              Produk ini merupakan studi kurasi desain dan belum dibuka untuk
-              pemesanan retail atau transaksi checkout. Kami sedang menyiapkan
-              rilis kurasi resmi.
+              <strong>Pemesanan Terbuka via WhatsApp.</strong> Silakan pilih
+              varian warna dan ukuran yang Anda inginkan, lalu klik tombol
+              pemesanan WhatsApp di bawah untuk terhubung langsung dengan tim
+              kami.
             </div>
           </div>
 
@@ -334,19 +332,33 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
             </p>
           </div>
 
-          {/* Non-Transactional Real-Purchase Call to Action Area (Always Disabled) */}
+          {/* Active Direct-to-WhatsApp Purchase Action Area */}
           <div className="retail-pdp-action-area">
-            <button
-              type="button"
-              className="retail-action-disabled"
-              disabled
-              aria-disabled="true"
+            <a
+              href={generateWhatsAppOrderUrl({
+                productTitle: product.title,
+                color: selectedColor.name,
+                size: selectedSize,
+                printTone: selectedPrintTone.name,
+                quantity: 1,
+                priceFormatted: formatIllustrativePrice(
+                  product.illustrativePriceIdr,
+                ),
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="retail-btn-whatsapp-order"
+              aria-label={`Pesan ${product.title} (${selectedColor.name}, ukuran ${selectedSize}) langsung via WhatsApp`}
             >
-              Tahap Preview Desain • Belum Dijual
-            </button>
+              <span className="retail-whatsapp-icon" aria-hidden="true">
+                💬
+              </span>
+              Beli via WhatsApp Sekarang
+            </a>
             <p className="retail-pdp-action-disclaimer">
-              Fitur keranjang belanja dan checkout dinonaktifkan hingga
-              peluncuran koleksi resmi TeeStock.
+              Pesanan ditangani langsung oleh tim TeeStock. Konfirmasi
+              ketersediaan stok, alamat pengiriman, dan rincian pembayaran
+              diproses melalui WhatsApp resmi.
             </p>
           </div>
 

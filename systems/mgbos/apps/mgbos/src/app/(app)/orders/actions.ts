@@ -33,7 +33,7 @@ export async function createOrderFromQuoteAction(
     }
 
     const d = parsed.data;
-    const requestId = crypto.randomUUID();
+    const requestId = d.requestId || crypto.randomUUID();
 
     const response = await fetch(
       ctx.endpoint + '/rpc/create_order_from_quote',
@@ -100,6 +100,7 @@ export interface CreateRetailOrderResult {
   paymentId?: string;
   paymentNumber?: string;
   isPaid?: boolean;
+  isRetry?: boolean;
 }
 
 export async function createRetailOrderAction(
@@ -131,7 +132,7 @@ export async function createRetailOrderAction(
       return { error: 'Brand aktif tidak ditemukan.' };
     }
 
-    const requestId = crypto.randomUUID();
+    const requestId = d.requestId || crypto.randomUUID();
 
     const response = await fetch(ctx.endpoint + '/rpc/create_retail_order', {
       method: 'POST',
@@ -181,6 +182,8 @@ export async function createRetailOrderAction(
       payment_id?: string;
       payment_number?: string;
       is_paid?: boolean;
+      is_idempotent?: boolean;
+      is_retry?: boolean;
     };
 
     revalidatePath('/orders');
@@ -198,6 +201,7 @@ export async function createRetailOrderAction(
       paymentId: data.payment_id,
       paymentNumber: data.payment_number,
       isPaid: data.is_paid,
+      isRetry: data.is_idempotent ?? data.is_retry ?? false,
     };
   } catch {
     return {

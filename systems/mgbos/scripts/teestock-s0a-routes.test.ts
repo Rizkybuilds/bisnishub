@@ -54,35 +54,35 @@ describe('TeeStock S0-A Route & Content Invariant Tests', () => {
     }
   });
 
-  it('ensures unverified contact routes are NOT present as active external URLs', () => {
+  it('ensures official WhatsApp contact channel is active with governed URL resolution', () => {
     const contactPage = fs.readFileSync(
       path.join(teestockAppDir, 'src/app/support/contact/page.tsx'),
       'utf8',
     );
 
-    // Must NOT link to unverified phone numbers or unmanaged WhatsApp inboxes
-    expect(contactPage).not.toContain('wa.me/');
-    expect(contactPage).not.toContain('api.whatsapp.com');
-    expect(contactPage).not.toContain('tel:');
-    expect(contactPage).not.toContain('mailto:');
+    // Official WhatsApp contact channel active
+    expect(contactPage).toContain('getWhatsAppContactUrl()');
+    expect(contactPage).toContain('Saluran Komunikasi Resmi');
+    expect(contactPage).toContain('Hubungi via WhatsApp Resmi');
+    expect(contactPage).toContain(
+      'Layanan Pelanggan & Pemesanan WhatsApp Aktif',
+    );
 
-    // Must communicate clearly that online contact is not active yet without developer jargon
-    expect(contactPage).toContain('Saluran Kontak Daring Sedang Disiapkan');
-    expect(contactPage).toContain('belum dibuka untuk umum');
+    // Must communicate clearly without developer jargon
     expect(contactPage).not.toContain('repositori ini');
     expect(contactPage).not.toContain('public-activation gate');
     expect(contactPage).not.toContain('tombol inert');
   });
 
-  it('ensures Shop and Build Merch are marked unavailable and do not offer purchase actions', () => {
+  it('ensures Shop indicates WhatsApp ordering and Build Merch remains in development without unverified checkout', () => {
     const homePage = fs.readFileSync(
       path.join(teestockAppDir, 'src/app/page.tsx'),
       'utf8',
     );
 
-    // Shop is marked unavailable and informational
-    expect(homePage).toContain('Belum Tersedia');
+    // Shop availability & ordering status
     expect(homePage).toContain('Shop (Katalog Ritel)');
+    expect(homePage).toContain('Pemesanan Terbuka via WhatsApp');
     expect(homePage).not.toContain('Beli Sekarang');
     expect(homePage).not.toContain('Checkout');
     expect(homePage).not.toContain('/checkout');

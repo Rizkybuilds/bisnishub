@@ -16,21 +16,18 @@ describe('TeeStock retail-first discovery guardrails', () => {
     expect(read('components/RetailShowcase.tsx')).toContain('ConceptGallery');
   });
 
-  it('marks concept art as unavailable and never offers unverified checkout', () => {
+  it('presents active WhatsApp assisted ordering without unverified automated checkout', () => {
     const shop = read('app/shop/page.tsx');
     const home = read('app/page.tsx');
     const gallery = read('components/RetailShowcase.tsx');
-    expect(shop.replace(/\s+/g, ' ')).toContain(
-      'belum katalog produk yang dapat dibeli',
-    );
-    expect(home).toContain('Belum Tersedia');
+    expect(shop.replace(/\s+/g, ' ')).toContain('Layanan Pemesanan Aktif');
+    expect(home).toContain('Pemesanan Terbuka via WhatsApp');
     expect(gallery.replace(/\s+/g, ' ')).toContain(
       'Belum merupakan produk terverifikasi',
     );
     for (const source of [shop, home, gallery]) {
       expect(source).not.toContain('href="/cart"');
       expect(source).not.toContain('href="/checkout"');
-      expect(source).not.toContain('wa.me/');
     }
   });
 

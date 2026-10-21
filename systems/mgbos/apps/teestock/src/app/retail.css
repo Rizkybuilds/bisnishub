@@ -1598,6 +1598,41 @@ body:has(.retail-shop) .site-main {
   flex-direction: column;
   gap: 8px;
 }
+.retail-btn-whatsapp-order {
+  width: 100%;
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #1b4d3e;
+  color: #ffffff;
+  border: 1px solid #143b2f;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(27, 77, 62, 0.18);
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+.retail-btn-whatsapp-order:hover {
+  background: #12382c;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(27, 77, 62, 0.25);
+}
+.retail-btn-whatsapp-order:focus-visible {
+  outline: 3px solid #25d366;
+  outline-offset: 2px;
+}
+.retail-whatsapp-icon {
+  font-size: 18px;
+}
 .retail-action-disabled {
   width: 100%;
   min-height: 48px;

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useDemoCart } from '../../../features/demo-commerce';
 import { formatIllustrativePrice } from '../../../data/products';
+import { generateWhatsAppCartOrderUrl } from '../../../lib/whatsapp';
 
 export default function DemoCartPage() {
   const { state, summary, updateQuantity, removeItem, clearCart } =
@@ -222,6 +223,18 @@ export default function DemoCartPage() {
                 </div>
 
                 <div className="retail-summary-action">
+                  <a
+                    href={generateWhatsAppCartOrderUrl(state.lines)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="retail-btn-whatsapp-order retail-btn-block"
+                    style={{ marginBottom: '12px', textAlign: 'center' }}
+                  >
+                    <span className="retail-whatsapp-icon" aria-hidden="true">
+                      💬
+                    </span>
+                    Pesan via WhatsApp Sekarang
+                  </a>
                   <Link
                     href="/demo/checkout"
                     className="retail-btn-primary retail-btn-block"
