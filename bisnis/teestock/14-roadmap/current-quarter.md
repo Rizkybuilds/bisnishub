@@ -10,10 +10,43 @@ tags:
   - teestock/canonical
   - teestock/roadmap
 document_id: "TS-RDM-003"
-version: "1.0"
+canonical_id: teestock.roadmap.current-quarter
+schema_version: "1.0"
+document_class: canonical-quarterly-execution-roadmap
+owner: "Rizky / Founder"
+author: "ChatGPT / AI Co-Founder — Q4 Strategy & Operations Reconciliation"
+approver: "Rizky / Founder (DEC-TS-2026-012 strategic direction)"
+scope: teestock-q4-2026-dual-lane-commercial-focus-and-operations-validation
+primary_brand_and_commercial_focus: CURATED_DESIGN_APPAREL
+primary_commerce_line: TEESTOCK_SELECTS
+supporting_commerce_line: TEESTOCK_ESSENTIALS
+originals_role: SEPARATELY_GOVERNED_OWNED_IP
+secondary_services: BUSINESS_CUSTOM_MERCH_CONDITIONAL
+mgbos_validation_pilot_cohort: BUSINESS_CUSTOM_UNCHANGED
+mgbos_pilot_execution_readiness: NOT_AUTHORIZED_BY_THIS_DOCUMENT
+q4_dates_are_planning_targets: true
+retail_checkout_authorization: NONE
+payment_activation: NONE
+production_readiness_claim: NONE
+implementation_authorization: NONE
+deployment_authorization: NONE
+merge_authorization: NONE
+reconciles_decisions:
+  - DEC-TS-2026-009
+  - DEC-TS-2026-011
+  - DEC-TS-2026-012
+source_control:
+  repository: Rizkybuilds/bisnishub
+  pull_request: 85
+  inspected_head: fff622f7507e718ef30d3a9d2ee9a643c8db566f
+  source_blob_sha: f6723794b105a257a776fabc28192b77b1a7c903
+  source_version: "1.0"
+  inspected_on: "2026-10-20"
+supersedes: "TS-RDM-003@1.0"
+version: "2.0"
 category: "roadmap"
 business: "teestock"
-last_updated: "2026-09-28"
+last_updated: "2026-10-20"
 path: "14-roadmap/current-quarter.md"
 depends_on:
   - "TS-RDM-001"
@@ -30,7 +63,7 @@ depends_on:
 ---
 
 
-# TeeStock Current Quarter — Q4 2026 Execution Plan v1.0
+# TeeStock Current Quarter — Q4 2026 Execution Plan v2.0
 
 > [!abstract] **Canonical Q4 2026 TeeStock Execution, Validation & MGBOS Vertical-Slice Plan**
 >
@@ -69,6 +102,11 @@ ORDER-TO-FULFILLMENT
 
 # 1. Quarter Purpose
 
+> [!important] **Q4 interpretation after Owner decision DEC-TS-2026-012:** TeeStock's primary business and market proposition is curated-design apparel, especially TeeStock Selects; Essentials supports it. The Business/Custom spine remains an independently bounded MGBOS operational validation lane under DEC-TS-2026-009, not TeeStock's primary brand, sales identity or reason to deprioritize curated design discovery. All old stages below are planning targets, not evidence that Q4 milestones, live payment or customer transactions were completed.
+
+**Authority:** DEC-012 decides commercial identity; DEC-009 retains the authorized Business/Custom *validation cohort*; DEC-011 governs retail-first presentation, while TS-COM-001/002/004 and TS-TEC-002 define their respective commerce, curation, catalog and public UX responsibilities. Product/program pilot plan owns its own readiness criteria; this strategy document does not unblock it, rewrite MGBOS schemas or authorize a checkout.
+
+
 Q4 2026 menjawab:
 
 > **Bisakah TeeStock menjalankan transaksi nyata dari lead sampai cash dan fulfillment melalui proses yang konsisten, terdokumentasi, dapat diukur, dan tidak bergantung sepenuhnya pada ingatan founder?**
@@ -102,6 +140,9 @@ REPEATABLY.
 ---
 
 # 3. Core Quarter Outcome
+
+**Stage / product caveat:** This historical Lead → Quote → Order/Project flow is the target for the *governed operating-spine pilot*, NOT the identity or mandatory purchase journey for TeeStock Selects. Do not require Opportunity/Project root entities if the current MGBOS domain map defers them. Do not infer each historical label is a deployed command or verified production workflow.
+
 
 By 31 December 2026, TeeStock should be capable of executing:
 
@@ -149,6 +190,9 @@ Canonical:
 
 # 5. Q4 Primary Objective
 
+**Two separate objectives, one bounded founder capacity:** (A) Commercial/brand objective: validate curated Selects designs, an honest collection/product experience, legal rights, garment quality assumptions and useful demand evidence. (B) Systems objective: close verified MGBOS operating-spine gaps with the existing Business/Custom pilot when and only when that pilot's authorization and readiness gates permit. The system pilot is *not* a prerequisite for presenting lawful, non-transactional curated collection discovery; conversely a polished storefront is *not* proof of functioning payment or fulfillment.
+
+
 ## Objective Q4-01
 
 > **Build and validate TeeStock's first repeatable Lead-to-Cash and Order-to-Fulfillment operating spine.**
@@ -194,6 +238,9 @@ Founder can review business state from one operating view.
 ---
 
 # 7. Q4 Success Definition
+
+**Evidence must be lane-specific:** counted pilot Business/Custom orders can demonstrate MGBOS process capability if independently evidenced, but do not prove willingness to purchase curated apparel. Curated apparel research/interest proves only the measured customer signal, not paid demand, margin or fulfillment. Do not record a Q4 milestone as PASS merely because its corresponding module exists.
+
 
 The quarter succeeds if TeeStock can demonstrate multiple real transactions through the complete spine and answer:
 
@@ -251,6 +298,9 @@ CAPABILITY VALIDATED.
 
 # 9. Evidence Required
 
+**Separate evidence ledgers:** record (1) actual MGBOS assisted-service pilot facts; (2) curated-design collection/garment/rights/product discovery evidence; (3) explicit readiness and governance gates. Synthetic data, fixtures, screenshots, mock orders and proposed partners are not real customer transactions. Use date, owner, evidence link, environment, approval and blocker for every milestone.
+
+
 Quarter success must include:
 
 ```text
@@ -268,6 +318,9 @@ REAL EXCEPTIONS
 
 # 10. Primary Business Scope
 
+**CURRENT OVERRIDE — commercial priority vs pilot cohort are DISTINCT:** the historical sentence "Q4 primary commercial vertical: BUSINESS + CUSTOM" below applies only to the originally scoped **operating-spine validation cohort** of DEC-TS-2026-009. The current **primary TeeStock commercial/brand/product strategy** is curated-design apparel through TeeStock Selects per DEC-TS-2026-012. Business/Custom are valid secondary revenue/service routes and may be tested through MGBOS without taking over TeeStock's master-brand positioning, public hero, or product backlog. No new real transactions may be inferred from this interpretation.
+
+
 Q4 primary commercial vertical:
 
 ```text
@@ -280,6 +333,9 @@ TEEStock CUSTOM
 
 # 11. Secondary Scope
 
+**Secondary services remain discoverable** when a real, governed offer is available, with honest lead/quote pathways and support. This is not authorization to alter an accepted Business/Custom pilot cohort, and it is not a mandate to promote Custom/Business/Merch equally with curated collections.
+
+
 Allowed only if it uses the same operating spine:
 
 ```text
@@ -289,6 +345,9 @@ TEEStock MERCH
 ---
 
 # 12. Commerce Scope
+
+**CURRENT Q4 COMMERCIAL SCOPE:** Maintain a *parallel, small, separately gated curated-design discovery and product research lane* as the brand's primary market-facing focus. It can validate design-selection criteria, copyright provenance, real garment/print/sample constraints, collection meaning, user understanding and consented non-transactional interest without stock or checkout. The legacy "small Commerce vertical slice" below means **live retail checkout/fulfillment pilot**, which remains optional and separately authorized after financial, legal, production, security and support gates. Retail discovery is not automatically P3 simply because paid retail fulfillment is deferred.
+
 
 Q4 may run a **small Commerce vertical slice**, but it must not displace primary operating-spine work.
 
@@ -315,6 +374,9 @@ Only controlled pilot preparation or one end-to-end creator test after core orde
 ---
 
 # 15. Q4 Priority Model
+
+**Do not use one priority list for different dimensions.** P0/P1/P2/P3 below orders *MGBOS operating-spine engineering*. In parallel, curated Selects identity and legally publishable discovery are the priority consumer-facing product direction. Both lanes must fit one founder's available time and capital; an operating pilot blocked by its own gate cannot silently consume resources reserved for truthful customer discovery.
+
 
 Canonical:
 
@@ -367,6 +429,9 @@ REMINDERS
 
 # 19. P3 Workstreams
 
+**Historical P3 qualification:** this category applies to *transactional expansion, creator programs, owned-IP scaling and growth experiments*, not to the baseline obligation to make TeeStock visually recognizable as curated-design apparel. Small controlled design/collection research and truthful informational discovery may proceed under independent authorization without pretending the full Commerce retail machine is live.
+
+
 ```text
 COMMERCE PILOT
 CONTENT
@@ -379,6 +444,9 @@ only after P0/P1 are healthy.
 ---
 
 # 20. Quarter Architecture
+
+**Scope boundary for diagram:** The flow below models assisted-service MGBOS validation. It is not the TeeStock curated-commerce customer journey or a claim the database already implements every entity or transition. Source of truth and mandatory stage gates remain with current MGBOS contracts, domain map and runtime evidence.
+
 
 ```text
 CUSTOMER / SALES
@@ -628,6 +696,9 @@ accepted quote can create Project / Order
 
 # 37. Workstream 03 — Project / Order
 
+**Entity caution:** Project is a deferred/conditional MGBOS domain in earlier canonical ownership; a service project narrative is not authorization for new Project tables or migrations. Resolve this flow against exact current operating contracts before accepting a test or expanding implementation.
+
+
 Objective:
 
 > Establish one canonical commercial commitment after quote acceptance.
@@ -649,6 +720,9 @@ records commercial purchase commitment.
 ---
 
 # 39. Q4 Practical Model
+
+**Existing operational pilot boundary:** the practical example is a Business/Custom validation cohort only. Do not overwrite its approved population or silently convert the commercial brand strategy into a Business/Custom-led business model.
+
 
 For Business/Custom:
 
@@ -1339,6 +1413,9 @@ Canonical:
 
 # 96. Workstream 12 — MGBOS Control Plane v0.x
 
+**MGBOS workstream status cannot be inferred from this roadmap.** Read the current application and CI/runtime evidence; a target dashboard, workflow or service view is not a production-ready operator control. Respect organization isolation and authenticated scoped actions.
+
+
 Objective:
 
 > Create one founder/operator view of the operating spine.
@@ -1508,6 +1585,9 @@ are clear.
 ---
 
 # 109. Automation Registry
+
+**Automation guard for Q4 reconciliation:** Do not expand n8n/AI to compensate for unapproved retail checkout, missing product rights or unresolved financial authority. AI may draft and triage; deterministic tools and explicit founder approval own irreversible customer, price, rights, money and release decisions.
+
 
 Create simple registry:
 
@@ -1867,6 +1947,9 @@ for material architecture/business changes.
 
 # 140. Q4 Execution Phases
 
+**These phases are planning windows (October–December 2026), not current completion statuses or automatic shipping deadlines.** Phase gates require evidence at actual exact HEADs and real operating environments. Late-November capital availability is a planning assumption, not guaranteed funds. Reforecast transparently if gates, vendors, sampling or founder capacity make the original weeks unrealistic.
+
+
 Quarter split:
 
 ```text
@@ -1947,6 +2030,9 @@ Do not add many new flows yet.
 
 # 145. Phase A Exit Gate
 
+**Exit-gate truth:** passing a synthetic vertical-slice test is a technical signal only. Pilot execution remains blocked until the owning TeeStock operational pilot plan's environment, customer, finance, security, operations and founder approvals are independently met.
+
+
 One test transaction can move:
 
 ```text
@@ -2008,6 +2094,9 @@ EXCEPTIONS
 
 # 149. Phase B End-to-End Test
 
+**Test namespace and authority:** distinguish seeded/demo/sandbox test flows from genuine externally paid transactions. Use disposable/test environments for destructively exercising database, auth or finance logic. Never use a planning checklist to authorize production credentials or customer payment handling.
+
+
 Run controlled test:
 
 ```text
@@ -2042,6 +2131,9 @@ No broken mandatory relationship between entities.
 
 # 151. Phase C — Weeks 7–9
 
+**Conditional real-transaction milestone:** the original weeks 7–9 target is retained historically, but the latest cited operational pilot plan declares `pilot_execution_readiness: BLOCKED`; only exact, newer acceptance evidence from that document's owner can supersede it. If blocked, Phase C work becomes remediation and non-transactional curated research; DO NOT fake milestone closure or invent paid orders.
+
+
 Period:
 
 ```text
@@ -2058,11 +2150,17 @@ Objective:
 
 # 152. Phase C Business Priority
 
+**Current commercial priority = curated-design-first, not Business/Custom.** The short legacy instruction "Sell" applies only if products/services are actually ready and approved. Promote rights-cleared collections and research honestly; prioritize genuine leads and permitted sales while preserving service pilot scope and no false stock, payment or shipping claims.
+
+
 Sell.
 
 ---
 
 # 153. Phase C Real-World Requirement
+
+**Cohort specificity:** qualifying Business/Custom transactions belong to the separately governed operating pilot **only when authorized**; if execution readiness remains BLOCKED, this is a future conditional requirement, not a directive to begin customer testing or ignore financial/security gates. Selects interest/research is a separate cohort and must never be reported as completed paid service work.
+
 
 Use system for every qualifying new Business/Custom transaction.
 
@@ -2113,6 +2211,9 @@ cash collection
 ---
 
 # 158. Phase C Exit Gate
+
+**Gate does not self-pass:** require independently reconciled real transaction evidence, org scoped financial/payment records, QC, fulfillment, exceptions and founder approval. If not available by December 2, mark BLOCKED/NOT_MET and roll forward without backdating.
+
 
 Multiple transactions complete through the system with explainable exceptions.
 
@@ -2608,11 +2709,17 @@ Do not run so many simultaneous experiments that operating-spine learning become
 
 # 201. Q4 Commerce Pilot
 
+**Commerce-pilot distinction:** the deferred pilot means **paid retail transactions**, not whether TeeStock should lead its brand presentation with curated apparel or whether limited, rights-safe product discovery may be researched earlier. Commercial retail deployment requires a separate approved work package; do not use Business/Custom test results as a substitute for Selects product and apparel quality.
+
+
 Only after primary spine works.
 
 ---
 
 # 202. Commerce Pilot Scope
+
+**Count is a historical planning example, not mandated launch inventory.** Any sample design/product number must be selected from verified artwork licensing, garment/production sample capacity, unit economics, support capacity and the founder's real workload. Do not advertise unfinished mockups as available SKUs.
+
 
 Recommended:
 
@@ -2625,6 +2732,9 @@ not full catalog.
 ---
 
 # 203. Commerce Pilot Goal
+
+**Evaluation split:** Before paid retail approval, test `curation → product/garment comprehension → consented interest` honestly. The historical PRODUCT/PRICE/CHECKOUT/PAYMENT/FULFILLMENT scope below applies only to an authorized transactional pilot. Record research, intention, paid purchase, fulfillment and contribution as different evidence classes.
+
 
 Validate:
 
@@ -2697,6 +2807,9 @@ Canonical.
 
 # 211. Q4 Marketing Focus
 
+**Marketing brand precedence:** the TeeStock consumer-facing proposition should explain design taste, collection stories, true garment/fit information and creative identity first. Service lead acquisition is a secondary, separately measured use case, not the master brand's primary page or campaign thesis.
+
+
 Marketing supports:
 
 ```text
@@ -2708,6 +2821,9 @@ REAL DEMAND LEARNING
 ---
 
 # 212. Content Priority
+
+**Content priority under DEC-012:** brand-safe curated Selects designs, visual themes, garment materials/fit, collection stories and attributable creators lead TeeStock's editorial voice. The historical CUSTOM/BUSINESS/MERCH content list below remains valid for *separately targeted* service acquisition and the Q4 operating pilot. No fake case studies, sales outcomes or creator license claims.
+
 
 Content around:
 
@@ -2768,6 +2884,9 @@ No employee hiring purely to compensate for unclear process.
 ---
 
 # 219. Quarter Owner Model
+
+**Founder capacity allocation:** there is one owner accountable across both lanes. Do not create parallel "P0" workstreams without deciding which decisions consume time, money and attention. Prefer a small legal curated collection concept and a strictly bounded MGBOS pilot over a broad commerce platform or unreviewed services expansion.
+
 
 Until organization grows:
 
@@ -2855,6 +2974,9 @@ Not a hard Q4 KPI, but design direction.
 
 # 225. Q4 Backlog Classification
 
+**Classification applies by lane:** MGBOS P0-P3 operational engineering priorities and the brand/product-first TeeStock retail research priorities are separate axes. Every ticket should name the owner, lane, current evidence, budget/effort assumption and explicit gate. A retail discovery requirement is not automatically P3 merely because cart/payment release is deferred.
+
+
 Every task:
 
 ```text
@@ -2906,6 +3028,9 @@ AI predicts vendor failure.
 ---
 
 # 230. Q4 Build Decision
+
+**Decision check:** verify whether the build removes a validated operational constraint or enables an approved customer-discovery outcome. Stop if it only extends an ERP/domain model with speculative abstractions or builds unneeded live checkout before product and financial acceptance.
+
 
 Before coding ask:
 
@@ -3205,6 +3330,9 @@ depending actual stack.
 
 # 258. Marketplace Integration
 
+**Marketplace activation is conditional:** planned marketplaces are not evidence of connected seller accounts, permitted IP/channel rights, synchronized stock, verified financial reconciliation or safe fulfillment. Require a distinct integration/launch work package.
+
+
 Not P0 unless marketplace becomes active transaction channel during Q4.
 
 ---
@@ -3468,6 +3596,9 @@ L1 is sufficient.
 
 # 284. Q1 2027 Gate
 
+**Do not precommit the 2027 pivot:** use Q4 lane-specific evidence—curation appeal, lawful products, real economics, founder handling and operating-spine reliability—to decide whether to deepen Selects, advance checkout, expand services or adjust the operational plan. One lane's PASS is not another lane's readiness.
+
+
 Only after Q4 review choose next quarter.
 
 Possible directions:
@@ -3493,6 +3624,9 @@ Q4 learning determines Q1.
 ---
 
 # 286. Quarter Review Decision Tree
+
+**Decision tree refinement:** In addition to operating-spine maturity, explicitly ask whether TeeStock Selects has credible, legally cleared customer desirability evidence and an attainable product/garment/fulfillment promise. A stable Business/Custom process by itself does not demonstrate TeeStock's curated-design business model.
+
 
 ```text
 OPERATING SPINE UNSTABLE?
@@ -3566,6 +3700,9 @@ TeeStock should know what deserves to be built next because evidence—not imagi
 
 # 291. Current Quarter Master Checklist
 
+**Read the checklist as unproven targets until independently evidenced.** Separate an operating-spine evidence ledger from a curated Selects evidence ledger. The current existence of CI, documentation, PRDs or product mockups does not check off any real-customer, financial, vendor or fulfillment target.
+
+
 ```text
 [ ] Lead registry operating
 [ ] Qualification recorded
@@ -3599,6 +3736,9 @@ TeeStock should know what deserves to be built next because evidence—not imagi
 
 # 292. Quarter Canonical Sequence
 
+**Dates in the historical calendar are directional, not claimed actuals.** 20 October 2026 is still inside Phase A planning, and whether its exit gate was achieved must be measured from actual evidence. Preserve November and December windows as proposed; reforecast transparently when readiness remains gated.
+
+
 ```text
 OCTOBER
 BUILD THE SPINE.
@@ -3613,6 +3753,9 @@ FIX, STANDARDIZE, MEASURE, AUTOMATE SELECTIVELY.
 ---
 
 # 293. Canonical Q4 Summary
+
+**Current strategic emphasis:** Q4 is also the quarter TeeStock proves whether a curated apparel proposition deserves investment—through lawful design sourcing, appealing collections, honest product facts and user research—without requiring a full transactional retail launch. This does not diminish the value of the approved MGBOS operating-spine test.
+
 
 ```text
 Q4 IS NOT
@@ -3695,6 +3838,9 @@ system-controlled business.
 
 # 296. Next Execution Layer
 
+**CURRENT RECONCILIATION:** The old "VERTICAL SLICE #1 / TEEStock BUSINESS / CUSTOM" below is **the MGBOS validation implementation lane**; it is NOT a declaration that Business/Custom is TeeStock's primary commercial identity. A parallel *bounded, non-transactional, rights-safe* TeeStock Selects collection/product-discovery work package can advance subject to explicit capacity and approval; neither lane may bypass its individual activation gates. No developer should implement a new MGBOS root entity from this roadmap alone.
+
+
 After this document, roadmap documentation should pause.
 
 The next canonical work is **execution**:
@@ -3727,3 +3873,76 @@ FULFILLMENT
 ↓
 COST / CASH.
 ```
+
+---
+
+# 297. Q4 Two-Lane Reconciliation — Curated-Design Commercial Focus and Operational Pilot
+
+**Decision precedence for this document:** DEC-TS-2026-012 (2026-10-20) fixes TeeStock's primary commercial identity, product and brand focus as curated-design apparel led by TeeStock Selects. DEC-TS-2026-009 retains its explicitly bounded Business/Custom MGBOS operating-spine validation purpose; DEC-TS-2026-011 retains retail-led public presentation without live checkout readiness. None of these decisions grants inventory, licensing, payment, production, migration, deployment or merge authority.
+
+| Dimension | Lane A — TeeStock Selects (PRIMARY customer proposition) | Lane B — MGBOS Business/Custom (GOVERNED pilot) |
+|---|---|---|
+| Goal | Demonstrate desirable, coherent curated apparel concepts and trustworthy product experience | Demonstrate reliable Lead → Quote → Order → Production → QC → Fulfillment → Cost/Cash process |
+| Audience | Curated apparel shoppers; niche design/garment users | Eligible assisted-service Business/Custom pilot customers |
+| Early admissible evidence | Rights-cleared design candidate, collection hypothesis, sample/fit verification, customer comprehension, consented no-payment interest | Repository contracts, disposable tests and approved later real pilot transactions with actual QC/finance records |
+| Blocked implication | Page views or interest are NOT sales, IP ownership, sellable stock or fulfillment | Software/CI/demo flow is NOT real transactions or production readiness |
+| Public representation | Curated-first brand, honest product/availability information, no fake checkout | Secondary discoverable scoped inquiry/quote path; no equal primary homepage identity |
+| Owner | Founder; commerce/brand/legal/operational domain owners | MGBOS engineering/product/finance/security; founder/governance acceptance |
+| Progress condition | Legal rights and content clearance plus small founder-capacity gate | Owning pilot plan ready, controlled environment, approved cohorts, financial and security gates |
+| Q4 interpretation | Strategic primary product/market direction | Scoped *method of validating operating capabilities*, not brand hierarchy |
+
+**Avoid false dichotomy:** A brand can prioritize Selects and still use approved service operations to learn the operating system. The two lanes cannot share claims of evidence, conflate metrics, or automatically release each other. The four business domains—Commerce, Services, Originals, Programs—remain canonical. No independent-label scale, creator portal or marketplace launch is inferred.
+
+# 298. Q4 Sequencing, Capital and Capacity — Conditional Gates
+
+**Existing dates stay historical planning windows, not guaranteed delivery.** The initial Phase A–E (October–December) plan is retained to preserve the original proposal. As of the inspected repository source, the existing TeeStock operational pilot plan states `pilot_execution_readiness: BLOCKED`, `engineering_readiness: NOT_READY_FOR_ENGINEERING`. Do not use this excerpt as a live current-status endpoint: verify any later revision at execution time.
+
+| Period in original plan | Selects / brand track, *only if separately approved* | Business/Custom operating pilot track, *only if separately approved* | Gate and honest outcome |
+|---|---|---|---|
+| Phase A — 1–21 Oct | Define limited collection hypothesis; gather legal provenance/rights questions; review garment and vendor risks; draft non-transactional UI scope | Map actual operating contracts against legacy Project/Opportunity terms; assess blocked pilot conditions | Documented gap/decision, no implied customer order |
+| Phase B — 22 Oct–11 Nov | Validate rights-safe collection structure, mockup-vs-sample claims, usability plan; avoid stock commitments | Remediate controlled spine gaps, disposable tests, security/finance/authorization evidence | Separately log each lane's test; no automatic readiness |
+| Phase C — 12 Nov–2 Dec | Consent-based design discovery and customer comprehension research when content is approved | Real Business/Custom transaction testing *only if owning pilot unblocked and authorized* | Mark PASS, BLOCKED, NOT_RUN per lane; no invented actual sale |
+| Phase D — 3–16 Dec | Refine curated collection quality, product story and realistic sourcing economics | Learn from accepted test/pilot evidence; standardize workflows and bounded automation | Refine only evidence-backed requirements |
+| Phase E — 17–31 Dec | Decide whether Selects research supports controlled sample/transactional pilot | Report pilot process maturity, exceptions, costs, production/QC/finance evidence | Owner Q1 decision from two separate evidence streams |
+
+**Capital assumption:** late-November 2026 is an anticipated funding window, not proven cash on hand. Do not commit stock, blank garments, licenses, printing, ads, vendors, marketplace subscription, accounts, payment gateway or cloud spend beyond verified resources and approved budget. Each experiment requires a founder capacity cap, stop condition and review date. A blocked pilot triggers replanning, not manufactured evidence.
+
+**Prioritization rule:** favor the smallest legitimate TeeStock experience that proves collection desirability while protecting founder ability to operate the independently governed spine; defer both unnecessary feature breadth and unsafe transactional acceleration. Track missing capability separately from documentation completeness.
+
+# 299. Separate Evidence & Readiness Ledgers
+
+| Evidence ID/class | Required owner/source | What may be concluded | What MUST NOT be concluded |
+|---|---|---|---|
+| BRAND-01 — Collection thesis | TS-COM-002 / TS-COM-004 + founder | Design taste and audience hypothesis documented | Artwork licensed, real purchase demand |
+| BRAND-02 — Rights proof | TS-LEG-001 and signed/source-specific license evidence | Permitted stated design/channel uses | Owned IP or perpetual rights absent contract |
+| BRAND-03 — Product evidence | Garment sample/QC, credible supplier and size/material validation | Specific tested sample/fit facts | Bulk production ready, stocked SKU |
+| BRAND-04 — Discovery/intent | CX usability and consented analytics/interviews | Customer comprehension and interest signal | Revenue, margin, completed sale |
+| OP-01 — Controlled app tests | Exact commit/environment, MGBOS tests and owner | System capability in that test scope | Production readiness, authentic customer transaction |
+| OP-02 — Pilot admission | Current owning product-validation plan; finance/security/org authority | Specific eligible cohort/action permitted | Unrestricted Business/Custom or retail commerce launch |
+| OP-03 — Real order/fulfillment | Auditable MGBOS transactions, vendor/QC/fulfillment events | Closed operational path for those specific transactions | Curated apparel consumer-market demand |
+| FIN-01 — Economics | Approved pricing authority, actual costs/fees/returns where available | Reconciled contribution for those cases | General profitability for TeeStock Selects |
+| OWNER-01 — Gate decision | Decision record, reviewer, date, evidence link, scope | A bounded approved next step | Silent authorization to deploy, merge, use secrets or run AI autonomously |
+
+For every claim store: `owner`, `date`, `evidence_ref`, `cohort`, `environment`, `actual_or_planned`, `gate`, `decision`, `unresolved_risks`. These are **documentation labels only**, not new database tables, events or MGBOS enum values. Q4 real customer evidence must include permission to operate, non-duplicated transaction records, actual financial reconciliation and truthfulness of fulfillment outcome. Do not confuse PR CI success with business-market fit.
+
+**Cross-document authority:** TS-FND-004/DEC-012 = owner business direction; TS-BRD-001/002 = master brand; TS-COM-001/002/004 = commerce, curation, catalog; TS-TEC-002 and CX = public presentation and acceptance; TS-LEG-001 = IP; TS-RDM-001/002 = longer planning; TS-RDM-003 = Q4 practical plan; `docs/roadmaps/solo-founder-launch-roadmap.md` = cross-program launch dependencies; `systems/mgbos/docs/product/teestock-operational-pilot-plan.md` = operating pilot cohort and readiness; current MGBOS runtime/contracts = actual technical/financial/security truth. Real conflicts require explicit owner review; never silently supersede a decision or delete pilot constraints.
+
+# 300. Adoption and Independent Acceptance Gates
+
+The following are **requirements to be tested**, not proof they already passed:
+
+- [ ] Confirm PR #85 latest exact HEAD and `TS-RDM-003` Git blob before generating a candidate; stop on drift.
+- [ ] Preserve original 296 numbered sections and all substantive body lines in original order; preserve the October–December calendar as historical proposed sequencing.
+- [ ] Confirm metadata parses: `document_id: TS-RDM-003`, `canonical_id: teestock.roadmap.current-quarter`, `version: 2.0`, and predecessor noted.
+- [ ] Confirm DEC-009 Business/Custom pilot remains intact but clearly constrained as *technical operating validation* rather than primary TeeStock market strategy.
+- [ ] Confirm DEC-011 retail-first presentation, DEC-012 curated Selects primacy, and the four canonical business domains remain consistent.
+- [ ] Confirm owner/product/engineering pilot readiness is NOT inferred from this Q4 document; the old pilot's recorded BLOCKED status requires exact updated verification at the moment of execution.
+- [ ] Confirm `Opportunity`, `Project`, `Partner`, financial and MGBOS status labels do not become automatically authorized root entities or migrations.
+- [ ] Confirm legal rights, product samples, inventory, checkout, payment, shipping, staffing, capital and real transactions are never fabricated or silently authorized.
+- [ ] Audit cross-source conflicts with Q4 master/capability roadmaps, solo-founder launch roadmap and the TeeStock customer-platform PRDs; separate their owners' follow-up packages.
+- [ ] Run YAML, whitespace, reference/governance tests and hosted GitHub Actions on the exact **new** commit before independent review.
+- [ ] Record review disposition separately for this file versus merge of PR #85; do not merge or deploy without owner permission and integrated acceptance.
+
+**Residual reconciliation:** TS-RDM-001 (Master Roadmap) and TS-RDM-002 (Capability Roadmap) are still v1.0 at source; do not claim every roadmap is harmonized because TS-RDM-003 changes. Runtime/product pilot remain governed by their own independent specifications and evidence. No actual Q4 revenue, transactions, sample quality, vendor capacity, account authorizations or production release was proved by authoring this roadmap.
+
+**Source snapshot:** PR #85 HEAD `fff622f7507e718ef30d3a9d2ee9a643c8db566f`; `TS-RDM-003@1.0` source Git blob `f6723794b105a257a776fabc28192b77b1a7c903`; inspected 2026-10-20. Later source/HEAD must be reverified; do not rewrite provenance to make a changed branch look like the same baseline.

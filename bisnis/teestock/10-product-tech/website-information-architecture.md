@@ -10,10 +10,39 @@ tags:
   - teestock/canonical
   - teestock/product-tech
 document_id: "TS-TEC-002"
-version: "1.0"
+canonical_id: teestock.product-tech.website-information-architecture
+schema_version: "1.0"
+document_class: canonical-website-information-architecture
+owner: "Rizky / Founder"
+author: "ChatGPT / AI Co-Founder — Product IA & UX Architecture"
+approver: "Rizky / Founder (curated-design-first owner direction)"
+scope: teestock-public-website-information-hierarchy-and-routing
+primary_business_positioning: CURATED_DESIGN_APPAREL
+primary_customer_experience: CURATED_COLLECTION_AND_DESIGN_DISCOVERY
+primary_merchandising_line: TEESTOCK_SELECTS
+supporting_merchandising_line: TEESTOCK_ESSENTIALS
+services_visibility: SECONDARY_CONDITIONAL
+originals_visibility: RIGHTS_AND_ACTIVATION_GATED
+checkout_activation: NOT_AUTHORIZED_BY_THIS_DOCUMENT
+payment_activation: NOT_AUTHORIZED_BY_THIS_DOCUMENT
+production_readiness_claim: NONE
+implementation_authorization: NONE
+reconciles_decisions:
+  - DEC-TS-2026-009
+  - DEC-TS-2026-011
+  - DEC-TS-2026-012
+source_control:
+  repository: Rizkybuilds/bisnishub
+  pull_request: 85
+  inspected_head: 9ad1908b0d523a5df596d64e042808ccd4bdb61e
+  original_blob_sha: bb99d0ce520a01a19970eb7bc5c4c8b955e6ac6c
+  source_version: "1.0"
+  source_date: "2026-10-20"
+supersedes: "TS-TEC-002@1.0"
+version: "2.0"
 category: "product-tech"
 business: "teestock"
-last_updated: "2026-09-28"
+last_updated: "2026-10-20"
 path: "10-product-tech/website-information-architecture.md"
 depends_on:
   - "TS-TEC-001"
@@ -34,7 +63,7 @@ depends_on:
 ---
 
 
-# TeeStock Website Information Architecture v1.0
+# TeeStock Website Information Architecture v2.0
 
 > [!abstract] **Canonical TeeStock Public Website, Navigation, Content Hierarchy & User-Routing Framework  **
 > Dokumen ini mendefinisikan sitemap, navigation, homepage architecture, Shop, Custom, Business, Merch, Originals, services, programs, account, support, SEO structure, landing-page templates, content hierarchy, URL principles, search, filters, and progressive website evolution untuk TeeStock.
@@ -46,6 +75,11 @@ depends_on:
 ---
 
 # 1. Purpose
+
+**Current reading contract (2026-10-20 / DEC-TS-2026-012):** TeeStock is a curated-design apparel brand. First customer entry prioritizes discovering visual designs, collections and clear garment/product facts through TeeStock Selects. Essentials is supporting; Originals is separately IP-governed; Custom/Business/Merch and Programs retain scoped routes but must not dominate the primary consumer impression. An available brand line, conceptual route or checkout screen is **not** evidence that a product, payment or production capability is live. Preserve technical Q4 Business/Custom spine-validation as a separate governed track, not the TeeStock brand's primary commercial identity.
+
+**Authority separation:** TS-FND-001 owns business identity; TS-FND-004 / DEC-012 owns the decision; TS-BRD-001/002 own brand positioning and hierarchy; TS-COM-001/002 own Commerce and curation; TS-LEG-001 owns artwork/IP policy; this document owns conceptual public IA. Customer-platform CX/PRD owns interaction details and acceptance; MGBOS and operating contracts own production/payment readiness. No deployment authority is granted.
+
 
 Website Information Architecture menjawab:
 
@@ -117,38 +151,42 @@ Canonical:
 
 # 6. Primary Jobs
 
-TeeStock public website should initially optimize around:
+TeeStock public website must FIRST optimize for curated apparel consumer intent:
 
 ```text
-SHOP
-CUSTOMIZE
-FOR BUSINESS
-BUILD MERCH
+DISCOVER APPROVED GRAPHIC DESIGNS AND CURATED COLLECTIONS
+COMPARE PRODUCT / GARMENT OPTIONS AND SEE PRODUCT TRUTH
+SELECT A DESIGN AND ELIGIBLE PRODUCT VARIANT
+BUY ONLY IF TRANSACTION GATES HAVE BEEN VERIFIED; OTHERWISE EXPRESS NON-TRANSACTIONAL INTEREST
 ```
+
+This is a **priority hierarchy**, not a claim that live checkout or stock is available. Custom, Business and Merch remain valid separately governed secondary jobs. A high-impact, small catalog is preferable to a large but unverified product and service inventory.
 
 ---
 
 # 7. Why Four Primary Jobs
 
-They map closely to distinct customer intents:
+**Historical heading note:** the four former jobs remain an ecosystem inventory, but **no longer four equally primary jobs**. The present customer hierarchy is:
 
 ```text
-SHOP
-I want to buy apparel.
+PRIMARY — SHOP CURATED DESIGNS
+I want to discover graphic apparel I actually like and understand whether I can order it.
 
-CUSTOMIZE
-I want to make apparel.
+SUPPORTING — SEE QUALITY, FIT, COLLECTION STORY AND TRUST
+I need product specifics, sizing, artwork context and honest availability.
 
-FOR BUSINESS
-My organization needs apparel / merchandise.
-
-BUILD MERCH
-I have an audience / brand / community and want merch.
+CONDITIONAL — CUSTOMIZE / FOR BUSINESS / BUILD MERCH
+I need a particular service and should see it only when there is a real scoped offer.
 ```
+
+Do not equate a brand-owned route with its current navigation prominence or authorization to transact.
 
 ---
 
 # 8. Secondary Jobs
+
+**Current services visibility:** `CUSTOM`, `FOR BUSINESS`, and `BUILD MERCH` are secondary or conditional intents, not peers of curated discovery in the launch hero. Help, size information, contact and essential product disclosures remain discoverable whether or not live checkout is enabled.
+
 
 Potential:
 
@@ -176,6 +214,24 @@ L4 — TRANSACTION / ACTION
 ---
 
 # 10. Proposed Public Sitemap
+
+**Canonical current-entry hierarchy (priority model, not deployed URL list):**
+
+```text
+TEESTOCK / HOME
+├── PRIMARY: Discover Curated Designs / Collections
+│   ├── Shop / Selects (approved design assortment)
+│   ├── Collection / Design discovery
+│   ├── Product detail (garment, size, price/eligibility, attribution)
+│   └── Interest capture OR governed cart/checkout (readiness gated)
+├── SUPPORTING: About / Curation / Quality / Size / Help
+├── CONDITIONAL: Essentials (only if a valid public assortment exists)
+├── CONDITIONAL: Originals (only cleared owned-IP products/labels)
+└── SECONDARY: Services / Programs (only if activated, clearly distinct)
+```
+
+The **legacy expanded sitemap below is capability/route inventory for eventual growth**, not a requirement to make every item visible in primary navigation or deploy Cart, Checkout, Account, Originals or Services in V1. It must not be read as overriding the current hierarchy. Final route slugs, redirects and accessibility acceptance belong to their owning specifications; do not invent live URLs.
+
 
 ```text
 TEEStock.id
@@ -257,22 +313,24 @@ TEEStock.id
 
 # 11. Global Navigation
 
-Recommended V1 desktop navigation:
+Recommended **consumer-first conceptual navigation**, subject to active routes and CX accessibility tests:
 
 ```text
-SHOP
-CUSTOM
-FOR BUSINESS
-BUILD MERCH
+SHOP / CURATED COLLECTIONS        PRIMARY
+ABOUT / QUALITY / SIZE HELP       SUPPORTING CONTEXT
+SERVICES                           SECONDARY / ONLY WHEN ACTIVE
 ```
 
-with utility navigation for:
+Conditional utilities:
 
 ```text
-SEARCH
-ACCOUNT
-CART
+SEARCH    ONLY IF FUNCTIONAL AND USEFUL FOR CATALOG SIZE
+ACCOUNT   ONLY IF RELEVANT TO EXISTING ACCOUNT CAPABILITY
+CART      ONLY IF ORDER / CHECKOUT CONTROLS ARE VERIFIED
+SUPPORT   ALWAYS REACHABLE THROUGH SUITABLE NAV/FOOTER/CONTEXT
 ```
+
+Preserve mobile parity and keyboard/screen-reader discoverability. Conceptual labels are not fixed production URLs or finalized marketing copy.
 
 ---
 
@@ -318,6 +376,9 @@ full ecosystem / support / corporate access.
 
 # 14. Mobile Navigation
 
+**Mobile priority:** collection/design discovery and product information must remain easy to reach before Services. Use accessible menus, labels, focus order and tap targets consistent with the owning CX contract and WCAG 2.2 AA design target. An inaccessible hidden service path is not an acceptable way to deemphasize services.
+
+
 Mobile should preserve the same conceptual hierarchy.
 
 Do not create an entirely different information architecture.
@@ -340,25 +401,25 @@ Homepage should perform five jobs:
 
 # 16. Homepage Section Architecture
 
-Recommended conceptual flow:
+Recommended current curated-design-first flow:
 
 ```text
-HERO
+HERO: A CLEAR CURATED-APPAREL PROMISE / PRIMARY COLLECTION CTA
 ↓
-PRIMARY JOB ROUTING
+FEATURED CURATED DESIGNS AND SMALL APPROVED COLLECTIONS
 ↓
-FEATURED PRODUCTS / COLLECTIONS
+PRODUCT/GARMENT FACTS, FIT, SIZE GUIDE AND QUALITY EVIDENCE
 ↓
-CUSTOM / BUSINESS / MERCH PROOF
+CURATION APPROACH, RIGHTS-SAFE CREATOR ATTRIBUTION AND BRAND TRUST
 ↓
-WHY TEEStock
+MORE DESIGNS / RELATED EDITS / HONEST PURCHASE ELIGIBILITY
 ↓
-CREATOR / COMMUNITY
+CONTEXTUAL SERVICES OR PROGRAMS ONLY IF ACTIVATED
 ↓
-CONTENT / EDUCATION
-↓
-FINAL CTA
+FOOTER, HELP, POLICIES AND CLEAR CONTACT ACCESS
 ```
+
+Do not fabricate testimonials, badges, sales, availability, shipping promises or production quality evidence. Keep mobile loading lightweight; avoid forcing full-size marketing imagery before product content.
 
 ---
 
@@ -373,7 +434,9 @@ WHAT CAN I DO?
 
 Possible conceptual direction:
 
-> Apparel untuk beli, bikin, dan bangun merchandise.
+> Pilihan desain apparel yang dikurasi untuk ditemukan, dipilih, dan dipakai.
+
+This is **illustrative positioning only**, not approved marketing copy. It must not imply an item is commercially available before publication/transaction gates pass.
 
 Exact final copy belongs to execution.
 
@@ -383,14 +446,16 @@ Exact final copy belongs to execution.
 
 Prefer limited CTAs.
 
-Potential:
+Current conceptual priority:
 
 ```text
-SHOP NOW
-START CUSTOM
+EXPLORE CURATED COLLECTIONS      PRIMARY
+DISCOVER SELECTED DESIGNS        PRIMARY OR CONTEXTUAL
+SEE PRODUCT & SIZE DETAILS       SUPPORTING / HIGH VALUE
+CUSTOM / BUSINESS / MERCH        SECONDARY, ONLY IF LIVE
 ```
 
-with secondary routing to Business/Merch.
+If checkout is not authorized, do **not** use a CTA that falsely implies an order can be placed. The primary CTA may open a collection, view a verified product, or clearly labeled non-transactional interest form. Final copy and click behavior require UX/CX validation.
 
 ---
 
@@ -409,6 +474,9 @@ Anonymous visitor needs orientation, not internal complexity.
 ---
 
 # 21. Shop Architecture
+
+**Current Shop-first intent:** design and curated-collection discovery is the main reason customers arrive. TeeStock Selects leads, Essentials supports garment fundamentals, and Originals enters only if IP/governance/publication evidence exists. Internal organizational lines should not force a shopper to understand brand taxonomy before browsing.
+
 
 Canonical:
 
@@ -600,6 +668,9 @@ as system matures.
 
 # 35. Product Detail Page
 
+**Readiness guard for the legacy PDP hierarchy below:** `PRIMARY CTA` is conditional. Product information may be published or tested independently of a real purchase button; Cart/Checkout is not available merely because it appears in this future-facing architecture. Product details must truthfully distinguish sample images/mockups and real goods, pricing/availability facts and lead-time uncertainty.
+
+
 Canonical information hierarchy:
 
 ```text
@@ -726,6 +797,9 @@ to normal storefront users.
 
 # 45. Collections Architecture
 
+**Current collection priority:** approved curated collections are the principal navigation and discovery concept, not automatically standalone labels or TeeStock-owned IP. A collection requires rights evidence, product truth and an understandable assortment thesis before public promotion.
+
+
 Canonical:
 
 ```text
@@ -818,6 +892,9 @@ or independent domain only after autonomy is earned.
 ---
 
 # 53. Custom Architecture
+
+**Scope boundary:** this and Sections 53–80 describe possible secondary service routes. They do not become V1 top-level navigation, a live quotation promise, or the dominant TeeStock brand proposition without independent service activation. The previous Business/Custom pilot remains relevant to MGBOS operating-spine testing but does not override curated commerce primacy.
+
 
 Primary URL concept:
 
@@ -1736,6 +1813,9 @@ IP / Copyright
 
 # 129. Activation Awareness
 
+**Multi-dimensional activation guard:** separate `page_defined`, `offer_approved`, `ip_cleared`, `sample_qc_verified`, `inventory_or_vendor_capacity_verified`, `real_checkout_authorized`, `publicly_visible`, `support_ready`. No single route, brand name or product fixture implies the others. If only an informational collection or product page is valid, show explicit honest limitations rather than a fake checkout.
+
+
 Canonical:
 
 > **Defined pages do not all need to be publicly active immediately.**
@@ -1766,6 +1846,9 @@ do not market it aggressively merely because architecture defines it.
 ---
 
 # 132. Navigation Must Reflect Active Business
+
+**Current TeeStock priority:** navigation must reflect *active and approved curated apparel offerings*; future service pages may exist internally without occupying primary screen real estate. Hiding a brand-name Services button is not a substitute for providing reachable support/contact paths or ensuring approved existing service customers can find their required route.
+
 
 Canonical:
 
@@ -1879,6 +1962,9 @@ One page should support one dominant commercial intent.
 ---
 
 # 141. CTA Architecture
+
+**CTA truth rule:** distinguish `DISCOVER` (viewing collection), `REGISTER_INTEREST` (non-transactional), `REQUEST_QUOTE` (scoped assisted service), and `PLACE_ORDER` (permitted only after actual transaction/readiness gates). Do not present all actions as a generic `SHOP NOW` state. Never collect payment via an interest form.
+
 
 Canonical CTA hierarchy:
 
@@ -2484,6 +2570,9 @@ Track what supports decisions.
 
 # 197. Website Funnel — Commerce
 
+**Two different funnels — do not conflate them.** Before real checkout is authorized, measure `landing → collection/design view → product view → interest intent` where consent and analytics are appropriate. The historical `LANDING → PRODUCT VIEW → ADD TO CART → CHECKOUT → PURCHASE` funnel below applies **only to a technically and operationally authorized transactional release**; it is not evidence purchase events are occurring.
+
+
 ```text
 LANDING
 ↓
@@ -2543,6 +2632,9 @@ QUALIFICATION
 ---
 
 # 201. Website KPIs
+
+**Current priority metrics:** design/collection discovery engagement, product-detail comprehension, size-guide use, meaningful interest (not mistaken for sales), rights-approved assortment coverage, credible offer readiness, founder handling load and eventual contribution margin when real transactions exist. Do not invent conversion-rate baselines or forecast as actual GMV. Lead/quote metrics describe secondary service lanes.
+
 
 Potential categories:
 
@@ -2767,22 +2859,23 @@ ECOSYSTEM FRONTEND
 
 # 217. V1 Website Scope
 
-Recommended:
+**Reconciled V1 scope: conceptual capability classes, not simultaneous implementation commitments.**
 
 ```text
-HOME
-SHOP
-SELECTS
-ESSENTIALS
-PRODUCT
-CUSTOM
-BUSINESS
-MERCH
-ABOUT
-SUPPORT
-CART
-CHECKOUT
+PRIORITY V1 / INFORMATIONAL OR PERMITTED
+HOME — CURATED-DESIGN-FIRST HERO AND TRUST
+SHOP — APPROVED COLLECTIONS AND SELECTS DESIGN DISCOVERY
+COLLECTION / PRODUCT DETAIL — QUALITY, SIZE AND TRUE AVAILABILITY
+ABOUT / CURATION / RIGHTS-SAFE DESIGN STORY
+SUPPORT / CONTACT / POLICY INFORMATION
+
+CONDITIONAL — ONLY IF RELEVANT, EVIDENCED AND APPROVED
+ESSENTIALS / ORIGINALS — PUBLISHED PRODUCTS WITH OWNERSHIP GATES
+CUSTOM / BUSINESS / MERCH — REAL SCOPED SECONDARY SERVICE OFFER
+CART / CHECKOUT / ACCOUNT / TRACKING — TECHNICAL AND OPERATIONAL READINESS REQUIRED
 ```
+
+A site can validate curated product interest without ever claiming checkout is live. Existing active Q4 Business/Custom operating-validation scope must be reconciled by the owning roadmap, not silently deleted from engineering. Do not mark a V1 feature implemented from the appearance of its name here.
 
 ---
 
@@ -2906,6 +2999,9 @@ exists.
 ---
 
 # 227. Navigation Gate
+
+**Additional gate for primary navigation:** high frequency and broad relevance are necessary but not sufficient; a route must also serve the curated-design-first customer promise, have valid/approved content, be accessible on mobile/desktop, and not imply unverified transaction availability. Service demand alone does not supersede owner-confirmed TeeStock positioning.
+
 
 Add to primary navigation only when:
 
@@ -3038,6 +3134,9 @@ The site should expose outcomes, not internal technology.
 
 # 235. Website IA Success Definition
 
+**Current-stage success comes FIRST from consumer understanding:** an unfamiliar visitor recognizes TeeStock as a curated-design apparel brand, discovers a relevant collection, understands product/garment facts, and sees an honest next action for that product. Only then assess conditional service discovery and role-aware architecture. The historical ecosystem questions below are long-term coverage checks, **not equal V1 launch acceptance criteria**.
+
+
 The architecture succeeds when TeeStock can answer:
 
 ```text
@@ -3072,6 +3171,9 @@ SEE THEIR JOB RATHER THAN OUR ORG CHART?
 ---
 
 # 236. Canonical Website IA Summary
+
+**Priority for interpreting the summary below:** Homepage and Shop lead curated-design discovery; Selects supplies approved apparel designs; product details carry verifiable facts. Custom/Business/Merch remain secondary governed routes; Originals is separate IP ownership; programs are conditional; support remains accessible. Cart, checkout, account and MGBOS-linked operations are not automatically activated by naming them here.
+
 
 ```text
 HOMEPAGE
@@ -3114,6 +3216,19 @@ powers all surfaces.
 ---
 
 # 237. Canonical Website IA Principles
+
+```text
+CURATED DESIGNS AND COLLECTIONS FIRST.
+CUSTOMER UNDERSTANDING BEFORE ORGANIZATIONAL NAVIGATION.
+RIGHTS-CLEARED ARTWORK BEFORE PUBLIC PROMOTION.
+PRODUCT TRUTH AND SIZE INFORMATION BEFORE VISUAL THEATER.
+NO CHECKOUT OR PAYMENT PROMISE WITHOUT RELEASE GATES.
+SECONDARY SERVICES DO NOT DEFINE THE MASTER BRAND.
+ACCESSIBLE, LIGHTWEIGHT MOBILE DISCOVERY BEFORE FEATURE COUNT.
+```
+
+These augment, and do not remove, the original IA principles below.
+
 
 ```text
 EXPOSE CUSTOMER JOBS. HIDE ORGANIZATIONAL COMPLEXITY.
@@ -3162,3 +3277,101 @@ Dokumen berikut harus follow Website Information Architecture:
 13. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
 
 TeeStock Website Information Architecture boleh berkembang dari simple commerce-and-lead website menjadi role-aware ecosystem frontend, tetapi setiap layer baru harus mempertahankan customer-job clarity, one-identity principles, canonical data, stable URLs, measurable user paths, dan progressively revealed complexity.
+
+---
+
+# 239. Current Product IA Contract — Curated-Design-First
+
+**Document scope:** This TS-TEC-002 specification owns conceptual customer-facing information architecture; it does **not** define production routes, React components, MGBOS entities, checkout authorization, inventory truth, artwork ownership, legal rights or business sequencing. A nested sitemap node means only *conceptually available when permitted*.
+
+| Customer intent | Priority | Example surface | Required truth/activation | Not implied |
+|---|---|---|---|---|
+| Recognize the brand | PRIMARY | Homepage/first-screen | Clear curated-apparel promise | B2B/custom leadership |
+| Explore designs | PRIMARY | Collections, Selects, PLP | Curated artwork rights, publishable product content | Copyright ownership by TeeStock |
+| Evaluate apparel | PRIMARY | Product detail, size/fit, material | Verifiable photos, prices/lead times, capacity if sellable | Active inventory or payment |
+| Express interest | OPTIONAL | Clearly labeled no-payment form | Consent, response capacity, no fake order | Sale or reservation |
+| Purchase | GATED | Cart/checkout | MGBOS auth, payment, financial, order, QC, fulfillment and legal policies | Enabled due to sitemap |
+| Browse Essentials | SUPPORTING | Garment collection | Relevant validated assortment | Equal hero treatment |
+| Browse Originals | CONDITIONAL | Approved owned-IP collection | IP and label governance | Selects art becomes Originals |
+| Obtain custom/business service | SECONDARY | Contextual service page | Actual service scope, service readiness | Main brand identity |
+| Get help | REQUIRED AS RELEVANT | Size guide, support, contact | Reachable truthful contact and policy | Fully automated CS |
+
+**Small-catalog principle:** Featured collections and curated edits should earn their place through quality and accessible discovery. Do not show empty menu categories, fake stock or a decorative filter system when there are too few valid items.
+
+**Initial site state decision table:**
+
+| Gate state | Permitted presentation | Forbidden presentation |
+|---|---|---|
+| Design reviewed, IP not cleared | Private internal preview | Public sellable artwork claim |
+| IP cleared, item and QC unverified | Honest concept/editorial page only if explicitly approved | Buy button, inventory or delivery guarantee |
+| Product publishable, transaction unavailable | Collection/PDP with clear informational or nontransactional interest CTA | Checkout, payment, order confirmation |
+| Product + transaction + supply fully authorized | Governed retail checkout per CX/MGBOS authority | Unsupported fulfillment/return promises |
+| Secondary service approved | Contextual secondary service page/lead path | Forced equality in TeeStock retail hero |
+
+# 240. Authority & Decision Reconciliation
+
+```yaml
+website_information_architecture_v2:
+  document_id: TS-TEC-002
+  canonical_id: teestock.product-tech.website-information-architecture
+  primary_business_focus: CURATED_DESIGN_APPAREL
+  primary_commerce_line: TEESTOCK_SELECTS
+  consumer_journey_priority:
+    - COLLECTION_AND_DESIGN_DISCOVERY
+    - PRODUCT_AND_GARMENT_EVALUATION
+    - HONEST_ELIGIBILITY_AND_NEXT_ACTION
+  support_line: TEESTOCK_ESSENTIALS
+  owned_ip_lane: TEESTOCK_ORIGINALS
+  secondary_services: [CUSTOM, BUSINESS, MERCH, STUDIO, SUPPLY, FULFILL]
+  separate_axes:
+    - BRAND_ARCHITECTURE
+    - PUBLIC_NAVIGATION_PRIORITY
+    - PRODUCT_PUBLISHABILITY
+    - TRANSACTIONAL_READINESS
+    - OPERATIONAL_AND_FINANCIAL_AUTHORIZATION
+  decision_relationships:
+    DEC-TS-2026-009: OPERATING_SPINE_TEST_SEQUENCING_NOT_PRIMARY_BRAND
+    DEC-TS-2026-011: RETAIL_FIRST_PRESENTATION_NO_CHECKOUT_READINESS
+    DEC-TS-2026-012: CURATED_DESIGN_FIRST_PRIMARY_COMMERCIAL_FOCUS
+  prohibited_inferences:
+    - PRODUCT_LISTED_MEANS_STOCK_AVAILABLE
+    - CART_IN_SITEMAP_MEANS_LIVE_CHECKOUT
+    - RETAIL_FIRST_EQUALS_PAYMENT_APPROVED
+    - SELECTS_MEANS_TEESTOCK_OWNS_THIRD_PARTY_IP
+    - SERVICES_LINE_DEFINED_EQUALS_PRIMARY_NAV_ITEM
+    - ALL_FOUR_BUSINESS_DOMAINS_MUST_LAUNCH_TOGETHER
+```
+
+**Source owners (resolve exact metadata/authority in repository):**
+
+- Business definition — `bisnis/teestock/00-foundation/teestock-master-definition.md` (`TS-FND-001`).
+- Owner decisions — `bisnis/teestock/00-foundation/decision-register.md` (`TS-FND-004`).
+- Brand — `bisnis/teestock/02-brand/master-brand-strategy.md` and `brand-architecture.md` (`TS-BRD-001`/`TS-BRD-002`).
+- Commerce curation — `bisnis/teestock/03-commerce/teestock-selects.md` (`TS-COM-002`).
+- Legal/IP — `bisnis/teestock/12-legal-ip/ip-policy.md` (`TS-LEG-001`).
+- Technical/product acceptance — `systems/mgbos/docs/product/teestock-customer-platform/CX-PKG-RETAIL-FIRST-RECONCILIATION-R1.md` and `CX-PKG-RETAIL-SHOP-EXPERIENCE-R1.md`, plus `cx-01-master-prd.md`, `cx-03-experience-design-interaction-spec.md` and `cx-09-phased-delivery-product-validation-plan.md`.
+- Roadmap authority and unresolved Q4 conflict — `bisnis/teestock/14-roadmap/current-quarter.md`, `docs/roadmaps/solo-founder-launch-roadmap.md` and `systems/mgbos/docs/product/teestock-operational-pilot-plan.md`.
+- Documentation precedence — `docs/governance/documentation-constitution.md`.
+
+**Known open reconciliation:** Q4 current-quarter roadmap names Business/Custom as primary commercial vertical. This v2.0 document resolves **public IA priority only**, not the historical engineering operating-spine test order. Do not label that Q4 conflict fully closed until the roadmap owners explicitly amend it. Any earlier 4-way primary navigation statements must be read as *historical inventory* after the targeted v2.0 amendments in Sections 6–18 and 217.
+
+# 241. Acceptance & Evidence Gates
+
+| ID | Acceptance requirement | Evidence required |
+|---|---|---|
+| TS-IA2-001 | 238 original numbered sections 1–238 remain in order, with meaningful governance intact | Exact diff / section inventory |
+| TS-IA2-002 | Home/Shop primary; Custom/Business/Merch no longer equal-first jobs | Review Sections 6–18, 217 |
+| TS-IA2-003 | Design/collection/PDP product truth and accessibility supported | IA tree test + CX acceptance, future evidence |
+| TS-IA2-004 | All checkout/cart/payment language is readiness-conditional | Review Sections 35, 129, 197, 217, 239 |
+| TS-IA2-005 | Artwork and Originals ownership remain separate | Check `TS-LEG-001`, `TS-BRD-002`, `TS-COM-002` |
+| TS-IA2-006 | Mobile menus and alternative help routes accessible | WCAG 2.2 AA acceptance and browser QA, future |
+| TS-IA2-007 | Existing services still navigable when legitimately active | Role-based route/UX testing, future |
+| TS-IA2-008 | Source Git blob and PR HEAD pinned, diff scope only TS-TEC-002 | git blob/hash, `git diff --name-only` |
+| TS-IA2-009 | Governance/document reference checks and repository CI run against final commit | Local command logs and GitHub-hosted CI |
+| TS-IA2-010 | Independent exact-HEAD QA before PR merge | Reviewer record separate from builder |
+
+These criteria are **requirements, not a claim that all tests have been executed**. Syntax/source checks do not prove user comprehension, actual product rights, stock, fulfillment or website release readiness.
+
+**Risks:** over-marketing absent collections; service-route discoverability regression; inaccurate product/size facts; artwork-license infringement; misleading mockups; inadvertent checkout activation; sole-founder response overload; stale Q4 roadmap precedence; excessively complex mobile navigation; future proof-of-availability confusion. Escalate material conflicts to Owner; do not automatically broaden a bounded docs change into code, payments or launch decisions.
+
+**External reference:** W3C, WCAG 2.2 — https://www.w3.org/TR/WCAG22/ (normative accessibility standard). Apply concrete acceptance from the owning TeeStock CX contract; reference text alone is not a test result.

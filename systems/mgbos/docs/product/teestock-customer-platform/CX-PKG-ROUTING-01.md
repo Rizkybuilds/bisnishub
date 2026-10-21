@@ -1,12 +1,15 @@
 ---
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-pkg-routing-01
-status: DRAFT
+status: ACTIVE
 version: 0.1.0
 owner: Rizky
 author: ChatGPT / cross-document self-auditor
 document_class: research
-normative_authority: NONE
+normative_authority: CANONICAL_COORDINATION_PACKAGE
 source_revision: 2800c474563309bda49d84d712f79b68c9dde36a
+
+approver: Rizky
+effective_from: 2026-10-20
 ---
 
 # CX-PKG-ROUTING-01 — Controlled Documentation Publication Proposal

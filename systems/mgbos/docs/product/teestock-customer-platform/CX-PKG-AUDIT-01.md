@@ -1,13 +1,13 @@
 ---
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-pkg-audit-01
-status: DRAFT
+status: ACTIVE
 version: 0.1.0
 owner: Rizky
 author: ChatGPT / cross-document self-auditor
-approver: PENDING_OWNER_AND_INDEPENDENT_REVIEW
+approver: Rizky
 scope: teestock-cx-00-to-09-proposed-product-package
 document_class: research
-normative_authority: NONE
+normative_authority: CANONICAL_COORDINATION_PACKAGE
 audit_date: 2026-10-16
 repository: Rizkybuilds/bisnishub
 repository_revision: 2800c474563309bda49d84d712f79b68c9dde36a
@@ -19,6 +19,8 @@ implementation_authorization: NONE
 merge_authorization: NONE
 deployment_authorization: NONE
 supersedes: null
+
+effective_from: 2026-10-20
 ---
 
 # CX-PKG-AUDIT-01 — TeeStock Customer Platform, Whole-Package Product Consistency Audit

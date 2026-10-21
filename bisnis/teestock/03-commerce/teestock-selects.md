@@ -10,10 +10,38 @@ tags:
   - teestock/canonical
   - teestock/commerce
 document_id: "TS-COM-002"
-version: "1.0"
+canonical_id: teestock.commerce.teestock-selects
+schema_version: "1.0"
+document_class: canonical-curated-design-commerce-strategy
+owner: "Rizky / Founder"
+author: "ChatGPT / AI Co-Founder — Commerce & Curated Product Strategy"
+approver: "Rizky / Founder (curated-design-first direction)"
+scope: teestock-selects-curation-artwork-product-assortment-commercial-boundaries
+primary_business_positioning: CURATED_DESIGN_APPAREL
+primary_commerce_line: TEESTOCK_SELECTS
+primary_customer_experience: CURATED_DESIGN_AND_COLLECTION_DISCOVERY
+supporting_commerce_line: TEESTOCK_ESSENTIALS
+originals_relationship: SEPARATELY_GOVERNED_OWNED_IP
+services_relationship: SECONDARY_CONDITIONAL
+retail_checkout_authorization: NONE
+production_readiness_claim: NONE
+implementation_authorization: NONE
+reconciles_decisions:
+  - DEC-TS-2026-009
+  - DEC-TS-2026-011
+  - DEC-TS-2026-012
+source_control:
+  repository: Rizkybuilds/bisnishub
+  pull_request: 85
+  inspected_head: 044f8e9680e5d7e5724c827c764692e98dc75b5f
+  source_blob_sha: d194b5ef3ac59eccfd8de22eb42537b8649efb9d
+  source_version: "1.0"
+  date: "2026-10-20"
+supersedes: "TS-COM-002@1.0"
+version: "2.0"
 category: "commerce"
 business: "teestock"
-last_updated: "2026-09-28"
+last_updated: "2026-10-20"
 path: "03-commerce/teestock-selects.md"
 depends_on:
   - "TS-FND-001"
@@ -30,7 +58,7 @@ depends_on:
 ---
 
 
-# TeeStock Selects v1.0
+# TeeStock Selects v2.0
 
 > [!abstract] **Canonical TeeStock Selects Strategy  **
 > Dokumen ini mendefinisikan fungsi, positioning, sourcing, curation, assortment, economics, IP classification, lifecycle, merchandising, experimentation, dan peran TeeStock Selects sebagai consumer commerce line sekaligus market-intelligence engine bagi ecosystem TeeStock.
@@ -42,6 +70,12 @@ depends_on:
 ---
 
 # 1. Purpose
+
+> [!important] **Current business priority — DEC-TS-2026-012, 20 October 2026**
+> **TeeStock Selects is the PRIMARY consumer commerce / curated-design apparel proposition.** TeeStock is selected for its taste, small coherent collections, licensed/approved artwork, garment quality and trustworthy product information. Selects is not merely an optional side experiment or an IP research funnel for Originals. Revenue and market intelligence support the central customer promise rather than replace it. Brand taxonomy does not authorize sales or prove an operational system is ready.
+>
+> **Read with:** TS-FND-001 v2.0, TS-FND-004 / DEC-012, TS-BRD-001 v2.0, TS-BRD-002 v2.0. The other Commerce, licensing, merchandising, legal, finance, and MGBOS authorities continue to own their detailed rules.
+
 
 TeeStock Selects menjawab:
 
@@ -77,6 +111,9 @@ Selects bukan:
 
 # 3. Strategic Role
 
+**Current ranking of outcomes:** 1) credible consumer design/collection desirability and trust, 2) a feasible, lawful, quality-controlled apparel offer, 3) repeatable contribution-positive sales **when authorized**, 4) reliable signals to improve curation and optionally inform Originals. The four historical Selects functions below remain true but are not equal launch priorities. No AI may turn this brand priority into a claim that purchasing, manufacturing, or fulfillment is activated.
+
+
 Selects memiliki empat fungsi utama:
 
 ```text
@@ -92,6 +129,9 @@ MARKET INTELLIGENCE
 ---
 
 # 4. Revenue Role
+
+**Commercial-flow interpretation:** the historical illustration below is a TARGET value chain, not proof of completed sales or implemented MGBOS entities. Curated-design interest, a qualified intent signal, a paid order, and a fulfilled sale are distinct evidence classes. Real revenue and margin require reconciled financial/fulfillment records; prototype interaction counters are never commercial evidence.
+
 
 Selects menjual finished consumer product.
 
@@ -186,6 +226,9 @@ Data Selects harus mampu menjawab:
 
 # 8. Selects → Originals Relationship
 
+**Rights and promotion boundary:** real Selects purchase signals may inspire an independent Originals *hypothesis*. They do not transfer copyrights from original creators, authorize copying a successful licensed design, or automatically create an independent label. TS-LEG-001 controls rights; Originals governance controls incubation; the Founder approves business decisions.
+
+
 Canonical relationship:
 
 ```text
@@ -255,6 +298,9 @@ Namun keputusan untuk masuk Originals tetap terpisah dari ownership saja.
 ---
 
 # 11. Selects Brand Positioning
+
+**External positioning rule:** product discovery must feel like entering a selected-design apparel store, not an open print shop, blank tee supplier, B2B merch catalog, or random clip-art marketplace. TeeStock master brand is dominant; Selects describes the curated line, not an unrelated consumer brand. Services can appear only as separately governed secondary routes.
+
 
 Selects harus terasa seperti:
 
@@ -457,6 +503,9 @@ dapat dipertimbangkan masuk Originals.
 
 # 22. Source Approval Rule
 
+**Publication ≠ selling:** provenance and use-specific commercial rights are a blocking dependency for publication. Additional product/QC/price/availability and transaction readiness are required **separately** before selling. An AI-generated mockup or license summary is not legal evidence. Expiration, geographic restrictions, print-run limits, attribution and revocation must remain checked against TS-LEG-001 and the underlying agreement.
+
+
 Tidak ada artwork yang dapat dipublish tanpa:
 
 ```text
@@ -494,6 +543,9 @@ COMMERCIAL LOGIC
 ---
 
 # 24. Curation Framework
+
+**Curation decision record — proposed operating envelope, not MGBOS schema:** record candidate source, rights owner/reference, target niche, why it fits the brand, garment compatibility, quality/sample status, commercial hypothesis, rejection reason if applicable, Owner decision, reviewer/date and next test. `APPROVE` in the creative framework means editorial approval only—not a public-sale or payment gate. Small coherent collections take precedence over maximizing artwork counts.
+
 
 Setiap artwork dapat dievaluasi berdasarkan:
 
@@ -728,6 +780,9 @@ Test Design tidak otomatis mendapat:
 
 # 39. Design Lifecycle
 
+**Lifecycle interpretation:** the lifecycle sequence below is a strategic description, not one atomic MGBOS state machine. Track separately (i) design editorial approval, (ii) use-specific IP clearance, (iii) production/sample verification, (iv) offer, price and availability approval, and (v) authorization to accept real orders. No transition is implied by publication of a prototype or marketing image.
+
+
 ```text
 SOURCED
 ↓
@@ -749,6 +804,9 @@ ARCHIVED
 ---
 
 # 40. Design Activation
+
+**Hard gate before public sale:** design approval does not satisfy rights clearance, commercial pricing, physical sample/QC, actual vendor lead time, stock/allocation, payment integrity or refund/return handling. Verify them through their owning policies and real evidence before a product is offered transactionally. For pre-launch prototypes, clearly label illustrative prices, simulated availability and disabled transaction paths.
+
 
 Sebelum artwork dijual:
 
@@ -778,6 +836,9 @@ Artwork dapat dihentikan jika:
 ---
 
 # 42. Test Philosophy
+
+**Production caution:** on-demand decoration is a proposed inventory strategy, not evidence of a contracted print supplier, verified sample, capacity, delivery SLA or integrated order flow. The solo-founder launch may begin with a small nontransactional catalog and ethical expression-of-interest tests while protected order/payment gates remain closed.
+
 
 Selects harus membuat testing murah.
 
@@ -893,6 +954,9 @@ Color Requirements:
 
 # 49. Production Test
 
+**Sampling rule:** maintain a testable garment/print evidence record before any real quality claim. Evaluate real blank garment specifications, transfer/ink, print registration, wash durability, fit consistency and packaging as applicable. Do not treat a digital mockup as a production sample or infer a fabric composition from a supplier image.
+
+
 Sebelum artwork menjadi Core, lakukan physical test jika diperlukan.
 
 Evaluate:
@@ -983,6 +1047,9 @@ Tidak perlu digunakan sejak awal.
 
 # 54. Inventory Model
 
+**Inventory authority separation:** desired base garment inventory and on-demand printing are planning assumptions. Publish actual lead times, eligible variants and stock states only after vendor and operational validation. Do not display a purchasable SKU merely because it can be represented in a product taxonomy.
+
+
 Preferred:
 
 ```text
@@ -1028,6 +1095,9 @@ TeeStock tidak boleh memperlakukan semuanya sebagai stocked inventory.
 ---
 
 # 57. Virtual Assortment vs Physical Inventory
+
+**Virtual assortment does not mean virtual availability.** A large set of theoretical artwork × size × color combinations must not turn into misleading purchase controls, imaginary stock, fabricated shipping estimates or founder-unmanageable support demand. Initially prefer a deliberately small curated assortment with provable quality and clearly scoped test variants.
+
 
 Selects dapat mempunyai:
 
@@ -1220,6 +1290,9 @@ Campaign
 
 # 68. Key Selects Events
 
+**Event authority note:** example event names here are candidates, not schema declarations. Use the canonical Event Model to define events before implementation; label fixture and simulated results as such. No behavioral analytics is permitted to override rights/license restrictions or Owner approval.
+
+
 Future event examples:
 
 ```text
@@ -1235,6 +1308,9 @@ Exact event design mengikuti Event Model.
 ---
 
 # 69. Design Performance
+
+**Separate evidence tiers:** `ATTENTION` (views/saves), `INTENT` (waitlist or explicit interest), `TRANSACTION` (real authorized order/payment), and `OUTCOME` (QC/shipment/return/reconciled contribution) are not interchangeable. Historical metric descriptions below apply only when each event is real, lawful and reliably collected. Never convert a simulated conversion rate into a financial performance claim.
+
 
 Track:
 
@@ -1454,6 +1530,9 @@ Short wording is not automatically free of rights concerns.
 
 # 84. AI-Assisted Artwork
 
+**AI artwork guard:** generated or AI-assisted creative requires a documented provenance/rights review appropriate to the intended use, as well as human aesthetic and production quality approval. The model prompt, an output file, or a service account alone does not prove exclusive copyright ownership or permission to mimic protected brands.
+
+
 AI may assist concept exploration or production according to relevant legal/ethical policy.
 
 Every final commercial asset still requires:
@@ -1471,6 +1550,9 @@ AI generation method does not automatically establish exclusive ownership.
 ---
 
 # 85. AI for Curation
+
+**Human-in-the-loop rule:** AI may propose niche clusters, duplicate checks, editorial scorecards, ranking hypotheses and demand experiments. AI MUST NOT autonomously grant legal clearance, select a sellable design, sign a rights agreement, authorize manufacturing, set binding retail prices, activate product payments or publish unsupported commercial claims.
+
 
 AI may help:
 
@@ -1532,6 +1614,9 @@ Do not manufacture fake philosophy.
 ---
 
 # 89. Customer Journey
+
+**Target vs current:** the linear buy/receive customer journey below describes the future authorized transaction experience. When checkout is not approved, the real journey MUST terminate in an honest non-transactional action (for example collection exploration or interest capture) without pretending an order was placed, reserving stock or promising dispatch. The customer-platform CX contract owns the actual interaction semantics.
+
 
 ```text
 DISCOVER INTEREST
@@ -1642,6 +1727,9 @@ Track channel impact separately from design quality.
 
 # 96. Marketplace Test
 
+**Marketplace activation guard:** marketplace listings require approved artwork/license scope, channel economics, real fulfillment, tax/payment handling and marketplace terms. A channel strategy or marketplace mockup is not approval to connect credentials, publish listings or accept orders. One small validated channel may be preferable to simultaneous omnichannel expansion.
+
+
 Marketplace can provide fast behavioral data.
 
 But TeeStock should not use marketplace rankings as sole truth because:
@@ -1656,6 +1744,9 @@ affect performance.
 ---
 
 # 97. Success Metrics
+
+**Primary success interpretation:** for curated-design-first, track customer desirability/fit, validated audience insight, verified rights and product quality, accountable unit economics, and meaningful repeat behavior. Distinguish pre-launch demand tests from actual paid conversions. The legacy four metric classes below remain a useful taxonomy, not proof that every metric is available today.
+
 
 Selects should be evaluated across four levels.
 
@@ -1736,6 +1827,9 @@ for each design.
 ---
 
 # 101. Sourcing Pipeline
+
+**Founder-capacity guard:** only source/review as many designs as one founder can track through rights, samples, supplier coordination, publication and support. Prefer one approved collection hypothesis and a few controlled test variants over a sprawling backlog. No numeric launch assortment target in this document is a mandatory quota; record scope and capacity in the owning roadmap.
+
 
 Canonical pipeline:
 
@@ -1886,6 +1980,9 @@ Too many finished SKUs create working-capital risk.
 
 # 109. Initial Launch Model
 
+**Launch-stage sequencing (strategic, not a production authorization):** (A) source and reject unsuitable designs, (B) verify rights and thematic fit, (C) sample selected products and document truthful claims, (D) publish a small discoverable catalog with clear simulation/interest-only labels when needed, (E) activate real sales only after finance, supplier, inventory, customer support and checkout/fulfillment gates all pass. The production/inventory approach below is a conditional target.
+
+
 Recommended early Selects model:
 
 ```text
@@ -1989,6 +2086,9 @@ Both are valuable but different.
 
 # 115. MGBOS Entity Mapping
 
+**Architecture non-inference:** this list is a conceptual commerce-to-operations relationship map, not a mandate to add root MGBOS tables or refactor the governed canonical data model. Integrations must obey Domain Map capability ownership, organization isolation, financial invariants and approved migrations.
+
+
 Minimum future entities:
 
 ```text
@@ -2036,6 +2136,9 @@ Human/defined policy decides strategic creative moves.
 
 # 117. Current State vs Future State
 
+**Recorded status at authoring:** TS-COM-002 is a business strategy document; it provides neither proof of live retail checkout nor a verified vendor/stock baseline. Product UX source packages in PR #85 describe the intended curated-first discovery and gated transactional stages. Report actual readiness from the owning source and current runtime evidence only.
+
+
 ## Early
 
 ```text
@@ -2059,6 +2162,9 @@ Dynamic merchandising
 ---
 
 # 118. Canonical Selects Summary
+
+**Updated canonical emphasis:** `TEESTOCK_SELECTS = CURATED_DESIGN_FIRST_PRIMARY_COMMERCIAL_OFFER`, combining an intentional collection selection and trusted apparel quality. Commerce is not subordinate to Services and is not justified only as an Originals lead-generator. This statement governs the strategic role of Selects, but not launch sequencing, authorization, or IP ownership.
+
 
 ```text
 TEEStock SELECTS
@@ -2121,3 +2227,173 @@ Dokumen berikut harus mengikuti TeeStock Selects Strategy:
 12. [[bisnis/teestock/13-metrics-experiments/experimentation-framework|experimentation-framework.md]]
 
 Tidak ada artwork yang boleh diperlakukan sebagai TeeStock Original hanya karena berhasil dijual melalui Selects. Ownership, creative origin, dan brand classification tetap harus mengikuti canonical architecture TeeStock.
+
+
+---
+
+# 121. Curated-Design-First Commercial Application — 2026-10-20
+
+**Normative scope:** this section establishes what the Owner's `DEC-TS-2026-012` means for TeeStock Selects *as a commerce line*. It neither alters MGBOS domain ownership nor supersedes the existing Q4 Business/Custom operational-spine pilot. Unresolved roadmap conflicts must be reconciled in their owning roadmaps, not silently overridden here.
+
+## 121.1 Customer promise and collection logic
+
+TeeStock wins the first visit when a shopper can understand the brand's taste, find a few designs relevant to their identity, evaluate real garment/print information and identify **whether and how** a product is available. The desired order is:
+
+```text
+TEESTOCK TRUST / CURATION POSITIONING
+  → APPROVED COLLECTION OR EDIT
+  → DESIGN DISCOVERY
+  → PRODUCT + VARIANT FIT / TRUE CLAIMS
+  → TRANSACTION ELIGIBILITY CHECK
+  → REAL AUTHORIZED ORDER OR HONEST NON-TRANSACTIONAL INTEREST
+```
+
+Do not organize the first customer impression around Custom, Business or a generic printing service quotation. A separate service page is permitted only when its own activation rules are satisfied. TeeStock Selects remains a curated product line under the TeeStock master brand; it is not a marketplace where anyone can upload arbitrary art.
+
+## 121.2 Relationship boundaries
+
+| Concept | Correct relationship | Forbidden inference |
+|---|---|---|
+| TeeStock master brand | Consumer trust, visual taste, consistency | A separate independent brand for every collection |
+| TeeStock Selects | Primary selected-design apparel commerce line | A broad upload marketplace or custom print factory |
+| Collection / curated edit | Editorial discovery group with approved artworks | Copyright ownership, new brand, or a sold SKU |
+| Artwork | Rights-bearing creative asset with evidence and allowed uses | Automatic TeeStock ownership from access/payment |
+| Sellable product / variant | Artwork × garment × color/size × approved method | Theoretical combination is physically orderable |
+| TeeStock Essentials | Supporting garment/product fundamentals | Equally promoted master-brand rival |
+| TeeStock Originals | Separately approved TeeStock-owned IP incubation | Licensed Selects artwork freely reusable as Originals |
+| TeeStock Services | Separate secondary offers | Evidence that TeeStock is Business/Custom-first |
+| MultiGraph | Parallel printing-services business | TeeStock child brand or unapproved cross-selling policy |
+
+## 121.3 Founder-time and capital conservation
+
+- Start with small intentional assortment hypotheses, not an inventory-heavy catalog with hundreds of theoretically possible variants.
+- Curate, record reasons, and retire candidates that cannot clear rights, product compatibility, feasible price or supplier quality.
+- Use standardized garment substrates only if validated by physical samples and supplier records.
+- Measure how many designs one founder can actually manage end to end, including rights follow-up, editing, production, service issues and returns.
+- Avoid requiring bespoke quotations for every standard retail product: design the product-selling contract separately, **but do not bypass** the existing financial/order controls to achieve retail convenience.
+- Prioritize an accurate small collection with simple navigation over automation and personalization unsupported by actual demand.
+
+# 122. Curated Design Qualification, Publication and Commerce Evidence
+
+These `TS-CUR-*` identifiers are **documentation checkpoints**, not newly implemented database fields, financial state transitions or a substitute for legal review.
+
+| Gate | Decision | Minimum evidence | Owner of authoritative controls |
+|---|---|---|---|
+| TS-CUR-01 | Source eligibility | creator/source identity, origin, file provenance and risk review | TS-LEG-001 |
+| TS-CUR-02 | Use-specific rights | recorded permitted commercial printing, sale, channels, limits, duration and attribution | TS-LEG-001 / rights agreements |
+| TS-CUR-03 | Curated fit | style/niche thesis, audience hypothesis, editorial rationale, duplicate and brand checks | TS-COM-002 / Owner |
+| TS-CUR-04 | Garment and production evidence | real fit/size, blank spec, compatible process, sample/QC record | Production/quality owners |
+| TS-CUR-05 | Commercial economics | complete expected variable costs, royalties, fees, failure allowance and contribution hypothesis | Pricing/unit-economics owners |
+| TS-CUR-06 | Truthful publication | rights-valid media, copy, price representation, limitations, real availability or explicit simulation | Merchandising / CX / Owner |
+| TS-CUR-07 | Real transaction authorization | governed stock/fulfillment/payment/order/reconciliation and customer remedies | MGBOS financial + operational gates |
+| TS-CUR-08 | Post-sale learning | real orders, returns, QC/failure, contribution and repeat signals (if any) | Commerce analytics/finance/operations |
+
+**Mandatory fail-safe rules:**
+
+1. Failure in rights clearance blocks public commercial use even if the design appears commercially attractive.
+2. Mockups, AI illustrations and proposed prices MUST NOT be asserted as physical product proofs or release prices.
+3. An approved design, published product page, catalog event or conversion experiment does not imply verified checkout/stock/production readiness.
+4. A pre-launch interest signal is not a purchase; an authorized paid order is not a fulfilled order; gross revenue is not contribution margin.
+5. If a right expires, rights-aware publication/production actions must follow TS-LEG-001 and the affected inventory/orders must be reviewed by the owning domain.
+6. Human approval and documented evidence are required before changing a product's public transactional eligibility.
+
+## 122.1 Design review and experiment record — conceptual template
+
+```yaml
+candidate_design_review:
+  record_status: PROPOSED_TEMPLATE_ONLY
+  product_context: TeeStock Selects
+  artwork_source_ref: REQUIRED
+  rights_agreement_ref: REQUIRED_BEFORE_COMMERCIAL_PUBLICATION
+  design_thesis: REQUIRED
+  target_customer_or_niche: REQUIRED
+  collection_editorial_fit: REQUIRED
+  garment_and_print_compatibility: TO_BE_EVIDENCED
+  sample_qc_evidence: NOT_VERIFIED_UNTIL_TESTED
+  real_price_and_margin_evidence: NOT_VERIFIED_UNTIL_APPROVED
+  publication_status: NOT_AUTHORIZED_BY_THIS_TEMPLATE
+  transaction_status: NOT_AUTHORIZED_BY_THIS_TEMPLATE
+  decision_owner: Founder_or_approved_delegate
+  rationale_and_next_test: REQUIRED
+```
+
+This is an AI-readable review example. It MUST NOT be interpreted as an authorized schema change or an existing runtime record.
+
+## 122.2 Measurement ladder
+
+| Evidence class | Example | May support | Must not be claimed as |
+|---|---|---|---|
+| RESEARCH | interview, observed preferences, concept feedback | product hypothesis | customer demand proven |
+| ATTENTION | design views, legitimate saves | discovery interest | willingness to pay |
+| INTENT | explicit interest or waitlist consent | priority for sampling | paid order or gross sales |
+| TRANSACTION | real order/payment in an authorized channel | actual conversion | fulfillment/positive contribution by itself |
+| POST_SALE | QC, shipping, refunds, returns, reconciled costs | actual product/business performance | audited profitability without accounting reconciliation |
+
+Do not invent performance numbers, guaranteed repeat-purchase claims, or customer research results.
+
+# 123. AI Decision Rights, Negative Guards and Cross-Source Reconciliation
+
+```yaml
+teestock_selects_curated_first:
+  document_id: TS-COM-002
+  version: "2.0"
+  status: ACTIVE_WITHIN_SCOPE_WHEN_ADOPTED_IN_PR85
+  primary_business_positioning: CURATED_DESIGN_APPAREL
+  primary_commercial_line: TEESTOCK_SELECTS
+  supporting_line: TEESTOCK_ESSENTIALS
+  originals_relationship: MARKET_SIGNAL_ONLY_UNTIL_SEPARATELY_GOVERNED
+  services_relationship: SECONDARY_CONDITIONALLY_ACTIVATED
+  historical_decisions:
+    dec_009: PRESERVE_OPERATING_SPINE_VALIDATION_SCOPE
+    dec_011: PRESERVE_RETAIL_FIRST_PRESENTATION_SCOPE
+    dec_012: OWNER_PRIMARY_CURATED_DESIGN_BUSINESS_SCOPE
+  architecture_vs_activation: SEPARATE
+  retail_checkout_readiness: NOT_VERIFIED_BY_THIS_DOCUMENT
+  production_readiness: NOT_VERIFIED_BY_THIS_DOCUMENT
+  payment_authorization: NONE
+  deployment_authorization: NONE
+  governed_mgbos_schema_modification: NONE
+  ai_may:
+    - PROPOSE_COLLECTIONS_AND_NICHE_HYPOTHESES
+    - DRAFT_CREATIVE_BRIEFS_FOR_REVIEW
+    - DETECT_DUPLICATE_AND_IP_RISK_FOR_HUMAN_REVIEW
+    - SUMMARIZE_REAL_EXPERIMENT_EVIDENCE
+    - RECOMMEND_PRODUCT_PRIORITY_WITH_EVIDENCE
+  ai_must_not:
+    - GRANT_OR_INFER_ARTWORK_RIGHTS
+    - COMMIT_ROYALTY_OR_LICENSE_TERMS
+    - CLAIM_TEST_FIXTURES_ARE_REAL_SALES
+    - AUTHORIZE_LIVE_CHECKOUT_PAYMENT_OR_PRODUCTION
+    - CHANGE_FINANCIAL_INVARIANTS
+    - PUBLISH_PRODUCT_WITH_UNVERIFIED_QUALITY_OR_AVAILABILITY
+    - AUTO_PROMOTE_SELECTS_COLLECTION_TO_ORIGINALS_LABEL
+```
+
+**When sources conflict, consult the owning authority rather than use publication date or file size:**
+
+| Topic | Owner | Reconciliation needed |
+|---|---|---|
+| TeeStock identity | TS-FND-001, DEC-TS-2026-012 | Already reflected in branch PR #85; verify exact HEAD on execution |
+| Brand taxonomy and presentation | TS-BRD-001, TS-BRD-002 | Must remain curated-first; original four domains still exist |
+| TeeStock Selects curation | TS-COM-002 (this file) | Keep all 120 historical sections and use-specific curation rules |
+| Commerce role / broader economics | TS-COM-001 and finance policies | Commerce Overview may still be v1.0; do not claim reconciled |
+| Product/catalog publication | TS-COM-004, relevant product taxonomy | Preserve product/artwork/variant distinction and evidence |
+| Artwork licensing | TS-LEG-001 and underlying agreements | Never silently weaken clearance or replace legal determination |
+| Website IA | TS-TEC-002 and active customer-platform CX | At PR #85 head 044f8e9 TS-TEC-002 was still v1.0; reconcile separately |
+| Q4 pilot scope | TS-RDM-003 and approved operating pilot | Do not rewrite Business/Custom operational-spine proof by implication |
+| Checkout/order/payment/security | MGBOS owning specs and actual CI/runtime evidence | Separate authority and implementation decisions required |
+
+# 124. Document Adoption and Independent Validation Conditions
+
+For `TS-COM-002@2.0` to be accepted as a replacement of v1.0 in PR #85:
+
+- [ ] Exact source Git blob must be `d194b5ef3ac59eccfd8de22eb42537b8649efb9d` before transformation.
+- [ ] Preserve all historical numbered sections `# 1.` through `# 120.` with original body content and heading labels.
+- [ ] Confirm document ID `TS-COM-002`, version `2.0`, canonical ID and Git source reference are correct, with parsable YAML.
+- [ ] Confirm the new sections `# 121.` through `# 124.` are complete and consecutive.
+- [ ] Confirm rights policy, Selects vs Originals, and qualitative curation rules were not weakened.
+- [ ] Confirm no implementation authorization, actual sales, real price, inventory or operational readiness is asserted without evidence.
+- [ ] Run repository reference/layout/governance checks and applicable CI on the **new exact PR HEAD**.
+- [ ] Obtain independent documentation QA of the exact pushed blob and staged diff before merging PR #85.
+
+**Source snapshot:** authored against PR #85 HEAD `044f8e9680e5d7e5724c827c764692e98dc75b5f`, where TS-FND-001 and TS-BRD-001/002 were v2.0, TS-FND-004 contained DEC-TS-2026-012, and TS-COM-002 was v1.0. This is an authoring baseline, not a claim about future commit/CI status or live operations.

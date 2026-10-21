@@ -10,10 +10,45 @@ tags:
   - teestock/canonical
   - teestock/roadmap
 document_id: "TS-RDM-002"
-version: "1.0"
+canonical_id: teestock.roadmap.capability-roadmap
+schema_version: "1.0"
+document_class: canonical-capability-maturity-roadmap
+owner: "Founder / Owner"
+author: "ChatGPT / Head Engineering — Capability Roadmap Reconciliation"
+approver: "Founder / Owner (DEC-TS-2026-012 strategic direction)"
+scope: teestock-capability-maturity-evidence-and-curated-first-priority
+primary_business_positioning: CURATED_DESIGN_APPAREL
+primary_commerce_line: TEESTOCK_SELECTS
+supporting_commerce_line: TEESTOCK_ESSENTIALS
+originals_relation: SEPARATELY_GOVERNED_OWNED_IP
+services_relation: SECONDARY_CONDITIONAL
+four_business_domains: RETAINED
+mgbos_validation_pilot_cohort: BUSINESS_CUSTOM_UNCHANGED
+mgbos_pilot_execution_authorization: NONE
+maturity_scale: L0_TO_L5_UNCHANGED
+maturity_upgrade_from_documentation: NONE
+checkout_activation: NOT_AUTHORIZED_BY_THIS_DOCUMENT
+payment_activation: NOT_AUTHORIZED_BY_THIS_DOCUMENT
+production_readiness_claim: NONE
+implementation_authorization: NONE
+deployment_authorization: NONE
+merge_authorization: NONE
+reconciles_decisions:
+  - DEC-TS-2026-009
+  - DEC-TS-2026-011
+  - DEC-TS-2026-012
+source_control:
+  repository: Rizkybuilds/bisnishub
+  pull_request: 85
+  inspected_head: 03f1008ffdc2be68f9c1552a999291a68f376e64
+  source_blob_sha: 595085adfb60e53bdd071a7ba905d3f9483bb0c6
+  source_version: "1.0"
+  inspected_on: "2026-10-21"
+supersedes: "TS-RDM-002@1.0"
+version: "2.0"
 category: "roadmap"
 business: "teestock"
-last_updated: "2026-09-28"
+last_updated: "2026-10-21"
 path: "14-roadmap/capability-roadmap.md"
 depends_on:
   - "TS-RDM-001"
@@ -29,7 +64,7 @@ depends_on:
 ---
 
 
-# TeeStock Capability Roadmap v1.0
+# TeeStock Capability Roadmap v2.0
 
 > [!abstract] **Canonical TeeStock Business Capability Maturity, Gap Assessment & Build-Sequence Framework**
 >
@@ -49,6 +84,8 @@ Dokumen ini menerjemahkan TeeStock Master Roadmap menjadi maturity architecture 
 ---
 
 # 1. Purpose
+
+> [!important] **Owner decision precedence (DEC-TS-2026-012).** TeeStock is strategically a curated-design apparel business led by TeeStock Selects. This capability roadmap must not make Services the master-brand priority simply because Business/Custom remains the deliberately bounded DEC-TS-2026-009 MGBOS operating-spine validation cohort. Distinguish (A) product/market prioritization, (B) capability maturity supported by evidence, and (C) authorized technical pilot sequence. DEC-TS-2026-011 retains retail-first public presentation, NOT live checkout authorization.
 
 Capability Roadmap menjawab:
 
@@ -108,6 +145,8 @@ WORK ORDERS inconsistent
 ---
 
 # 5. Documentation ≠ Operational Maturity
+
+**Maturity truth:** new PRDs, better IA, demo cart/checkout, CI PASS, proposed IP sourcing and a researched collection are NOT real business operations. The following capability levels are historical provisional assessments, not automatically refreshed measurements or current live production readiness.
 
 Critical:
 
@@ -171,6 +210,8 @@ REAL OPERATING DATA
 ---
 
 # 8. Capability Maturity Scale
+
+**Scale invariant:** keep the existing L0–L5 scale unchanged. Brand/product priority, functional prototype completion, research progress and operational maturity must be represented separately; none upgrades the maturity level without the required concrete business evidence and independent acceptance.
 
 Canonical:
 
@@ -322,6 +363,8 @@ Canonical TeeStock capability map:
 ---
 
 # 18. Capability Portfolio View
+
+**Provisional scorecard interpretation:** all current/target levels in the historical table are planning classifications captured in the v1.0 document, not freshly audited current capability. Do NOT promote Commerce, Product, Services, MGBOS, Legal/IP or Finance from repo changes alone. The evidence ledger in §303 governs any future reassessment by its owning reviewers.
 
 Initial provisional classification:
 
@@ -537,6 +580,8 @@ ENTERPRISE CRM INTEGRATION
 
 # 31. Capability 03 — Commerce
 
+**Primary Commerce intent:** TeeStock Selects and rights-cleared design/product discovery are the priority consumer proposition under DEC-012. The historical L0–L1 Commerce state remains an unverified, provisional operational rating. Successful non-transactional discovery can count as research evidence, NEVER as real retail-order, payment or fulfillment maturity.
+
 ## Current State
 
 ```text
@@ -550,6 +595,8 @@ Operational commerce must still be proven.
 ---
 
 # 32. Commerce L1 Definition
+
+**Strict transactional maturity boundary:** retain the historic Commerce L1 real-customer Product → Cart/Order → Payment → Fulfillment threshold; rights-cleared design exploration, customer interviews, non-payment interest capture, synthetic demo purchase and CI cannot satisfy this definition. Early discovery is a separately authorized product learning activity, not a downgraded Commerce L1 requirement.
 
 Must reliably execute:
 
@@ -569,6 +616,8 @@ for real customers.
 
 # 33. Commerce L1 Evidence
 
+**Required evidence provenance:** Commerce L1 proof must link to genuine permitted orders, actual payment records and reconciled fulfillment/customer support evidence under relevant finance/operations authority, with correct cohort, environment, consent and organization isolation. A concept/mockup, screenshot or staged fixture is insufficient.
+
 ```text
 REAL PRODUCT
 REAL ORDER
@@ -580,6 +629,8 @@ REAL RETURN / SUPPORT CASE where applicable
 ---
 
 # 34. Commerce L2 Definition
+
+**L2 gate:** standardized catalog, price, availability-to-sell (ATS), order/payment states and return rules require implemented operational evidence, governed definitions and repeatable execution; accepted documentation alone does not prove this higher level.
 
 Standardized:
 
@@ -595,6 +646,8 @@ RETURN RULE
 ---
 
 # 35. Commerce L2 Next Build
+
+**Two distinct next slices:** (A) *near-term TeeStock product focus*: smallest lawful, non-transactional curated Selects collection/PDP discovery, verified artwork/media rights, actual garment/spec and consented user learning where approved; (B) *future transactional Commerce L1/L2 validation*: complete real product → cart/order → payment → fulfillment only after explicit legal, QC, finance, security, inventory/capacity, support and release gates. The historic checkout flow below means slice B only.
 
 ```text
 ONE COMPLETE COMMERCE VERTICAL SLICE
@@ -646,6 +699,8 @@ COMPLEX LOYALTY ENGINE
 
 # 38. Capability 04 — Product & Merchandising
 
+**Product-capability split:** real garment, design provenance, variants, SKU, channel presentation and editorial collections are distinct; no right to publish, offer sale, promise stock or claim QC follows automatically from a conceptual product model. L1 shown here is an old provisional classification; confirm actual evidence before representing it as current.
+
 ## Current State
 
 ```text
@@ -666,6 +721,8 @@ LABEL
 
 # 39. Product L2 Definition
 
+**Sellable-product contract remains conditional:** if the rights/price/availability/order gates have not passed, a rights-cleared informational design/garment page may still be a legitimate *non-transactional* discovery outcome, but it is NOT a sellable SKU, nor evidence that Product L2 has been achieved.
+
 Every sellable item must have:
 
 ```text
@@ -681,6 +738,8 @@ FULFILLMENT MODE
 
 # 40. Product L2 Evidence
 
+**Product maturity evidence:** require reconciled source-of-truth references for licensed artwork, specific commercial usage rights, supplier/sample details, truthful variants and canonical price/cost authority. Planned combinations do not count as stocked SKUs; mockups cannot substitute for QC.
+
 ```text
 no duplicate SKU logic
 product ownership clear
@@ -692,6 +751,8 @@ product lifecycle status used
 ---
 
 # 41. Product Next Build
+
+**Smallest justified build:** defer complex SKU registries and price-book systems unless their actual owner and evidence require them. Begin with a bounded real product-fact/rights-review process for Selects; implementation of root tables or MGBOS schema changes needs separate approved engineering contracts.
 
 ```text
 PRODUCT MASTER
@@ -727,6 +788,8 @@ ADVANCED RECOMMENDATION ENGINE
 ---
 
 # 44. Capability 05 — Services / Project Delivery
+
+**Services relationship:** Custom, Business and Merch are secondary conditional offerings, not TeeStock primary identity. The Business/Custom assisted-service cohort is retained solely as the separately governed MGBOS operational pilot under DEC-009; this text does not unblock that pilot or alter its criteria.
 
 ## Current State
 
@@ -1680,6 +1743,8 @@ before validation.
 
 # 123. Capability 15 — Legal / IP Governance
 
+**IP capability gate:** buying a digital file, receiving an AI-generated image, or paying a creator does not establish perpetual/exclusive copyright. Only specific permission for merchandise, print, sales channel, promotional use, region, duration, modifications and attribution can support an eligible use; TS-LEG-001 and governing agreements control claims.
+
 ## Current State
 
 ```text
@@ -2464,6 +2529,8 @@ Avoid premature hierarchy.
 
 # 191. Capability Dependency Graph
 
+**Two-lane interpretation:** SALES → ORDER → PRODUCTION → FULFILLMENT → FINANCE is the target *operating-spine* dependency chain for real orders. Selects collection/story, design discovery and customer research can proceed in a separately authorized non-transactional lane without pretending that an operational pilot has passed.
+
 Canonical:
 
 ```text
@@ -2536,6 +2603,8 @@ REAL OPERATIONS.
 
 # 195. Priority Dependency Sequence
 
+**Scope of sequence:** the list below describes one bounded MGBOS Business/Custom operating test, not the mandatory order of *all* TeeStock strategic investments. Its legacy `Opportunity`, `Project` and `Partner` terminology does not automatically grant new MGBOS root entities, schemas, APIs, permissions or migrations.
+
 Recommended:
 
 ```text
@@ -2555,6 +2624,8 @@ Recommended:
 
 # 196. First Capability Cluster
 
+**Priority interpretation update:** the historical first cluster is the operational pilot engineering cluster, not TeeStock primary consumer/product priority. Selects curation, artwork rights, garment validation and honest consumer discovery have a parallel high-priority, separately budgeted learning lane. Do not declare either lane operationally complete from architecture diagrams or tests.
+
 Highest near-term value:
 
 ```text
@@ -2569,6 +2640,8 @@ MGBOS
 ---
 
 # 197. Why
+
+**Evidence non-transfer:** successful Business/Custom sales might prove service economics and operating process quality but cannot be counted as paid demand or contribution for Selects. Conversely, collection views or consented interest cannot be counted as real MGBOS order/payment maturity.
 
 This cluster creates:
 
@@ -2585,6 +2658,8 @@ simultaneously.
 
 # 198. Second Capability Cluster
 
+**Commerce split:** this historic second cluster refers to *transactional* Commerce/Inventory/Fulfillment systemization after relevant release gates; it does NOT defer all curated-design discovery, rights-safe collection presentation, customer experience design or market learning. No checkout/payment activation is granted by reinterpreting the cluster.
+
 After operational spine:
 
 ```text
@@ -2598,6 +2673,8 @@ CUSTOMER SERVICE
 ---
 
 # 199. Third Capability Cluster
+
+**Growth boundary:** Marketing for curated Selects can include proportionate, approved research and truthful editorial presentation before service transaction maturity. Scaled creator/program activations and Originals-owned IP still require separate legal, supply, finance and staffing gates.
 
 After transaction foundation:
 
@@ -2625,6 +2702,8 @@ AI
 ---
 
 # 201. Capability Gate System
+
+**Independent authorization gate:** actual capability tests require identified owner, environment, customer consent when relevant, valid IP/financial/security controls and evidence. A decision to prioritize Selects research does not approve an external launch or upgrade any numeric maturity score.
 
 Every capability upgrade uses:
 
@@ -2716,6 +2795,8 @@ SAFE AUTONOMY
 
 # 207. Capability Evidence
 
+**Verification granularity:** each maturity claim must record capability, lane/cohort, actual_or_planned, environment, dates, references, process owner, approving reviewer, genuine outcomes and known exceptions. Discovery evidence proves customer comprehension/interest only; tests prove only their verified harness; real transactions demand separate financial and fulfillment proof.
+
 Canonical:
 
 > **No evidence, no maturity claim.**
@@ -2748,6 +2829,8 @@ But insufficient by itself for operational maturity.
 ---
 
 # 210. Capability Scorecard
+
+**Scorecard separation:** maintain two linked views: (1) strategic backlog for rights-safe Selects curation/product discovery; (2) numerical capability maturity based on observed, accepted outcomes. Pilot evidence for Business/Custom cannot be silently relabeled as retail maturity, and current levels cannot be changed without review.
 
 Future record:
 
@@ -2933,6 +3016,8 @@ not maximum maturity everywhere.
 
 # 229. Capability Investment Priority
 
+**Investments require scope-labeled impact:** evaluate direct value to Selects desirability/legally viable apparel offer and separate value to a bounded MGBOS operational proof. Founder time, available cash, legal rights and validated bottlenecks constrain the decision; an apparent high score is never a release permission.
+
 Use:
 
 ```text
@@ -2965,6 +3050,8 @@ blocks many other capabilities.
 
 # 231. Near-Term TeeStock Capability Priorities
 
+**CURRENT PRIORITY OVERRIDE:** historical P0–P3 below ranks the *MGBOS operating-spine engineering cluster* and later automation. It is NOT a priority order demoting TeeStock Selects to a secondary business. Current customer/product focus is curated-design-first: small lawful Selects collections, sourcing rights, garment evidence, truthful product UX and consented discovery are near-term strategic tasks. Services/Business/Custom remain secondary and a conditional governed pilot. No parallel unlimited P0 budgets.
+
 Canonical recommended order:
 
 ```text
@@ -2991,6 +3078,8 @@ P3 — AI AGENTS
 
 # 232. P0 Meaning
 
+**P0 label scope:** P0 in the historical list means essential to the *operating pilot*, not an assertion of current technical maturity, an owner mandate to implement all modules now, or business precedence over Selects discovery. See §302 for lane-specific work classification.
+
 Must exist for operating backbone.
 
 ---
@@ -3014,6 +3103,8 @@ Leverage on top of mature foundation.
 ---
 
 # 236. Near-Term Build Sequence
+
+**Build-sequence caution:** `Opportunity` and `Project` appear in historical workflow language; these cannot override accepted MGBOS domain ownership/deferred-entity decisions. Treat sequence as a product-validation hypothesis subject to the current domain map and owning work packages. No schema/data mutation allowed.
 
 Recommended:
 
@@ -3401,6 +3492,8 @@ Canonical:
 
 # 273. Next Phase Principle
 
+**Execution-learning clarification:** gather low-risk, legally sound Selects customer/product evidence while pilot readiness is gated, rather than building more speculative ERP abstractions. Actual customer transactions require specific approval, systems truth, supplier/QC and financial controls.
+
 ```text
 LESS:
 inventing future architecture
@@ -3450,6 +3543,8 @@ SYSTEM IMPROVEMENT
 ---
 
 # 276. Recommended Immediate Vertical Slice #1
+
+**Pilot identity preserved:** this first Business/Custom vertical slice is MGBOS operating-spine validation under DEC-009, not the TeeStock primary brand/customer proposition. Readiness comes solely from the current `teestock-operational-pilot-plan.md` and approved security/financial evidence; no pilot unblocking in this capability roadmap.
 
 ```text
 TEEStock BUSINESS / CUSTOM
@@ -3512,6 +3607,8 @@ MGBOS
 
 # 280. Vertical Slice #2
 
+**Commerce distinction:** Selects can have a carefully bounded non-transactional discovery/intent slice as an earlier commercial learning priority; the historical second *technical vertical slice* below refers to a fully authorized live Commerce transaction. They are different evidence classes; no auto-checkout or stock allocation.
+
 ```text
 TEEStock COMMERCE
 ```
@@ -3519,6 +3616,8 @@ TEEStock COMMERCE
 ---
 
 # 281. Flow
+
+**Live transaction boundary:** the Product → SKU → Price → Checkout → Payment → Fulfillment workflow is a future separately approved acceptance contract. Real payment/order authorization cannot be inferred from UI prototypes or from the successful Business/Custom pilot.
 
 ```text
 PRODUCT
@@ -3598,6 +3697,8 @@ DECISION
 
 # 286. Vertical Slice Priority
 
+**Priority split:** the historical Business/Custom → Commerce → Creator → Originals ordering ranks *authorized transactional system validation slices* only. Current TeeStock commercial identity and early, non-transactional product learning lead with Selects. Preserve the old list as provenance, not as a Services-first mandate.
+
 Canonical:
 
 ```text
@@ -3612,6 +3713,8 @@ unless real market demand proves another order better.
 ---
 
 # 287. Capability Maturity Matrix Summary
+
+**Maturity summary is authoritative only when evidenced:** historical L0–L5 descriptions remain unchanged. A prototype, documentation or CI result cannot make a business capability L2, while valid early research can inform product decisions without claiming a transactional L1 result.
 
 ```text
 L0
@@ -3636,6 +3739,8 @@ AI can safely assist or perform bounded portions.
 ---
 
 # 288. Canonical Graduation Rule
+
+**No graduation by proxy:** Business/Custom pilot evidence supports the specific operational capabilities it actually exercises; Selects user-research evidence supports the specific desirability questions it measures. Neither proves another cohort’s paid demand, licensed artwork, inventory, returns or contribution margins.
 
 A capability may graduate only if:
 
@@ -3711,6 +3816,8 @@ within proven boundaries.
 ---
 
 # 293. Capability Roadmap Success Definition
+
+**Success condition extended:** measure Selects curation viability, lawful rights sourcing, garment sampling feasibility and customer learning separately from operator repeatability. This does not change the actual maturity-level definitions or assert current sales.
 
 The roadmap succeeds when TeeStock can answer:
 
@@ -3838,6 +3945,8 @@ FROM THIS POINT FORWARD, EXECUTION LEARNING SHOULD GROW FASTER THAN ARCHITECTURE
 
 # 296. Immediate Recommended State
 
+**Current-state caution:** `STAGE 1 → STAGE 2` is an original directional planning estimate. Obtain a dated, bounded, independently supported operating baseline before claiming a completed transition. The strategic Selects-first decision changes priority, not historical maturity evidence.
+
 TeeStock should currently operate under:
 
 ```text
@@ -3852,6 +3961,8 @@ INTO REPEATABLE REAL OPERATIONS.
 ---
 
 # 297. Immediate Target
+
+**Immediate target interpreted by lane:** repeatable Lead-to-Cash and Order-to-Fulfillment L2 remains an *operating-spine* ambition subject to its own pilot readiness. The initial Selects business lane aims for safe rights-cleared design discovery and meaningful customer learning, not an unauthorized retail order.
 
 The next maturity milestone is:
 
@@ -3878,6 +3989,8 @@ AGENTIC AI
 ---
 
 # 298. Immediate Build Focus
+
+**Implementation authority:** the legacy operational build list below is not permission to add tables, expand MGBOS domains, run migrations, activate payment or deploy. Prioritize approved bounded fixes only after current code, domain map, pilot readiness and owner authorization are verified. Curated-first discovery deliverables belong to their owning CX/Commerce work packages.
 
 Canonical:
 
@@ -3919,6 +4032,8 @@ AUTONOMOUS FINANCE
 
 # 300. Dependency
 
+**Dependency closure:** this roadmap must follow accepted TS-RDM-001 v2.0 and TS-RDM-003 v2.0, DEC-TS-2026-012 and current Commerce/Brand/CX/IP authority. Checklist completion requires exact source evidence; text here neither grants PR #85 merge nor product deployment.
+
 Dokumen berikutnya:
 
 1. [[bisnis/teestock/14-roadmap/current-quarter|current-quarter.md]]
@@ -3939,3 +4054,91 @@ DEFERRED ITEMS
 ```
 
 dan harus berfokus pada **menutup gap Stage 1 → Stage 2**, bukan mencoba membangun seluruh visi TeeStock sekaligus.
+
+---
+
+# 301. Curated-Design-First Capability Priority Contract — DEC-TS-2026-012
+
+**Commercial priority is not a capability score.** TeeStock should first be recognized as a curated-design apparel proposition, led by Selects. Essentials supports garments/basic assortments; Originals means separately governed TeeStock-owned creative IP. The four established business domains—Commerce, Services, Originals, Programs—remain intact. Custom/Business/Merch are valid secondary routes with separate lead/quote and operating authority. The **Business/Custom** validation cohort under DEC-TS-2026-009 is unchanged and cannot be treated as the primary TeeStock brand or the source of Selects market-fit proof.
+
+| Decision axis | Primary interpretation | Evidence that counts | Invalid inference |
+|---|---|---|---|
+| Strategic business/product priority | Selects curated-design apparel | Adopted DEC-TS-2026-012, approved Commerce/brand contracts | Service-pilot sequence = business positioning |
+| Near-term Selects learning | Legal/provenance review, garment facts, small curated collection, customer comprehension | Actual cleared source materials, interviews, consented interest and sample observations | Page views/waitlist = paid orders |
+| Commerce capability grade | Historic L1/L2 gates retained; real transactions and repeatability | Real approved product/order/payment/fulfillment/support and finance evidence | Beautiful site/CI/demo cart = Commerce L1 |
+| MGBOS operating-pilot readiness | Governed Business/Custom cohort only | Owning current pilot plan, explicit permits and test/real transaction evidence | Documentation upgrade = pilot unblocked |
+| Long-range sequencing | Build controls before risky automation/AI | Observed process constraints and reviewed domain changes | New code/database objects mandated by this roadmap |
+
+**Dual founder constraints:** One founder has limited capacity. Allocating high strategic attention to Selects does not grant simultaneous unlimited engineering efforts. Both lanes need explicit stop conditions, expense caps from actual resources, dated owner review and separate outcome records.
+
+# 302. Two-Lane Capability Backlog and Readiness Gates
+
+| Track | Work eligible for a bounded next step | Independent gate / owner | Explicitly out of scope |
+|---|---|---|---|
+| Lane A — Selects concept/rights | Identify theme/audience; verify artwork source, rights/channel limits, attribution and truthful media | Commerce/brand + TS-LEG-001/underlying license; founder review | Treat licensed designs as Originals-owned IP |
+| Lane A — Garment & discovery | Approved facts, sample plan, curated collection/PDP design, consented no-payment customer research | Product/CX/operations QC as applicable; separately authorized exposure | Claim stock, sample QC, delivery promises or launch date from mockups |
+| Lane A — Paid transaction later | Genuine pricing, costs/royalties/taxes, returns/support, stock or supplier capacity and payment/order controls | Financial/order/security, applicable legal and Owner release | Live checkout/payment, marketplace or order capture by this document |
+| Lane B — MGBOS validation | Reconcile current domain map, valid Lead/Quote/Order/Production/QC/Cost/Cash contracts | Owning operational pilot plan, engineering QA and security/finance | New root Opportunity/Project/Partner just because legacy text lists them |
+| Lane B — Real cohort pilot later | Approved Business/Custom eligibility, real permitted orders and independent operational evidence | Pilot execution approval, organization isolation and financial integrity | Assume existing plan's BLOCKED state is automatically cured |
+| Shared | Governed owner capacity/priority review, scoped documentation traceability and truthful outcome reporting | Owner decision register and exact main/PR QA | Rebase, deployment, production access or merge from this strategy |
+
+**Maturity note:** even a successful Stage-A Selects research slice does not satisfy transactional Commerce L1 as defined in §32–33. Conversely, a genuine pilot process can support only the specific process maturity it proves; services cannot substitute for Selects economic desirability.
+
+# 303. Capability Evidence Ledger and No-Proxy Maturity Rule
+
+Every claimed level change must be traceable to *actual* evidence, not assumptions.
+
+| Evidence class | What it may demonstrate | What it cannot establish |
+|---|---|---|
+| SELECTS-DESIGN | Approved curated theme, IP provenance and intended audience | Copyright ownership from file purchase; sellable item |
+| SELECTS-SAMPLE | Physically tested garment/print and accurate specifications | Bulk production or inventory available without supplier verification |
+| SELECTS-INTEREST | Actual usability/comprehension and consented customer intent | Revenue, repeat purchase, operational L1/L2 |
+| COMMERCE-REAL | Authorized paid retail order, fulfillment, support and actual costs | Margin in unrelated services or untested variants |
+| MGBOS-CI | A defined code/test harness passed on exact commit | Real customer transactions, product-market fit, production readiness |
+| PILOT-REAL | Authorized Business/Custom process transactions with QC/financial evidence | Selects paid demand or IP clearance |
+| FINANCE/LEGAL | Verified cost/payment and specific IP permission documents | Any authorization outside issuer's scope |
+
+Required evidence record fields (*documentation template, not a new MGBOS entity*): `capability`, `lane`, `owner`, `cohort`, `environment`, `actual_or_planned`, `as_of`, `evidence_ref`, `level_claim`, `acceptance_gate`, `reviewer`, `decision`, `exceptions`, `next_review`.
+
+**Strict grades:** Preserve the established L0–L5 maturity semantics. `L0–L1`, `L1`, or `L2` stated in v1.0 are historic/provisional, not current independently accepted operating grades. Upgrading them requires exact applicable operational evidence, owner/QA judgment and governance. Public rights-safe discovery can be meaningful business work without any claimed commerce-level graduation.
+
+# 304. Canonical Dependencies, Non-Authorizations and Independent Acceptance
+
+```yaml
+capability_roadmap_curated_first_contract:
+  document_id: TS-RDM-002
+  version: "2.0"
+  owner_decision: DEC-TS-2026-012
+  brand_and_commercial_priority: CURATED_DESIGN_APPAREL
+  primary_commerce_line: TEESTOCK_SELECTS
+  supporting_line: TEESTOCK_ESSENTIALS
+  originals: SEPARATE_OWNED_IP_GOVERNANCE
+  services: SECONDARY_CONDITIONAL
+  four_business_domains: RETAINED
+  mgbos_pilot_cohort: BUSINESS_CUSTOM_UNCHANGED
+  maturity_scale: L0_TO_L5_UNCHANGED
+  maturity_claims_from_documentation: NONE
+  pilot_execution_authorization: NONE
+  live_retail_checkout_authorization: NONE
+  live_payment_authorization: NONE
+  inventory_or_shipping_readiness_claim: NONE
+  implementation_authorization: NONE
+  migrations_authorization: NONE
+  deployment_authorization: NONE
+  pr_merge_authorization: NONE
+```
+
+**Ownership:** DEC-012/TS-FND-004 owns TeeStock positioning. TS-RDM-001 governs long-range stages; TS-RDM-002 governs maturity/evidence and capability dependencies; TS-RDM-003 governs Q4 conditional execution planning. TS-COM-001/002/004 and TS-TEC-002/CX govern Commerce curation/catalog/website behavior. TS-LEG-001 and agreements govern artwork rights. The actual MGBOS domain map/runtime, security/financial contracts and operational pilot plan govern real orders, pilot eligibility, payments and technical truth. No single roadmap supersedes those owners.
+
+**Independent reviewer acceptance requirements (not yet passed merely by appearing here):**
+
+- [ ] Recheck exact PR #85 HEAD and original TS-RDM-002 v1.0 Git blob; STOP if changed.
+- [ ] Confirm original 300 numbered heading titles and every substantive historic body line are retained in original order, with sections 301–304 appended.
+- [ ] Confirm source metadata `TS-RDM-002`, target v2.0, upstream TS-RDM-001/003 and owner DEC-009/011/012 reconciliation.
+- [ ] Confirm §31–35 Commerce L1/L2 real-transaction evidence remains a **required gate**, not reduced to interest-capture or a demonstration.
+- [ ] Confirm §191–199, §231, §276–286 explicitly distinguish Selects market/product priority from MGBOS pilot test ordering.
+- [ ] Verify no program claims actual paid sales, product/garment stock, owner IP, production readiness, pilot unblocking, new runtime state or maturity graduation without evidence.
+- [ ] Validate YAML, diff whitespace, references, all repository governance and exact new-commit GitHub Actions.
+- [ ] Review the full 37-file-or-more PR #85 diff against fresh protected `main`, resolve divergence via separately authorized safe integration and seek explicit owner merge decision. Do not merge automatically.
+
+**Historical capability classifications and services-led ordering are preserved to document previous plans**, but DEC-012 now governs TeeStock's primary commercial/product identity and no regrading, deployment or checkout is authorized here.

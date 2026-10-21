@@ -10,10 +10,43 @@ tags:
   - teestock/canonical
   - teestock/roadmap
 document_id: "TS-RDM-001"
-version: "1.0"
+canonical_id: teestock.roadmap.master-roadmap
+schema_version: "1.0"
+document_class: canonical-master-business-roadmap
+owner: "Founder / Owner"
+author: "ChatGPT / AI Co-Founder — Roadmap Reconciliation"
+approver: "Founder / Owner (DEC-TS-2026-012)"
+scope: teestock-long-range-maturity-and-commercial-priority-reconciliation
+primary_commercial_positioning: CURATED_DESIGN_APPAREL
+primary_commerce_line: TEESTOCK_SELECTS
+supporting_commerce_line: TEESTOCK_ESSENTIALS
+originals_relation: SEPARATE_OWNED_IP
+services_relation: SECONDARY_CONDITIONAL
+four_business_domains: RETAINED
+mgbos_validation_pilot_cohort: BUSINESS_CUSTOM_UNCHANGED
+mgbos_pilot_execution_authorization: NONE
+retail_checkout_authorization: NONE
+payment_authorization: NONE
+production_readiness_claim: NONE
+implementation_authorization: NONE
+deployment_authorization: NONE
+merge_authorization: NONE
+reconciles_decisions:
+  - DEC-TS-2026-009
+  - DEC-TS-2026-011
+  - DEC-TS-2026-012
+source_control:
+  repository: Rizkybuilds/bisnishub
+  pull_request: 85
+  inspected_head: c343bdbc7e622314fe3b8c92682d5c826ee3c068
+  source_blob_sha: 90cbe96162fd1ceac41a1b84147461afd13116d7
+  source_version: "1.0"
+  inspected_on: "2026-10-21"
+supersedes: "TS-RDM-001@1.0"
+version: "2.0"
 category: "roadmap"
 business: "teestock"
-last_updated: "2026-09-28"
+last_updated: "2026-10-21"
 path: "14-roadmap/master-roadmap.md"
 depends_on:
   - "TS-FND-001"
@@ -38,7 +71,7 @@ depends_on:
 ---
 
 
-# TeeStock Master Roadmap v1.0
+# TeeStock Master Roadmap v2.0
 
 > [!abstract] **Canonical TeeStock Business, Capability, Technology, Automation & AI Execution Roadmap**
 >
@@ -51,6 +84,8 @@ Dokumen ini menyatukan seluruh canonical architecture TeeStock menjadi urutan pe
 ---
 
 # 1. Purpose
+
+> [!important] **Owner decision DEC-TS-2026-012 controls current commercial direction.** TeeStock is primarily a curated-design apparel business led by TeeStock Selects. The long-term maturity stages below remain valuable but must not be read as authorization to prioritize Services as the brand identity, publish uncleared artwork, or turn on checkout. The Business/Custom operating-spine work is a distinct bounded MGBOS validation lane, not the sole TeeStock business strategy.
 
 Master Roadmap menjawab:
 
@@ -303,6 +338,8 @@ after completion of roadmap documents.
 
 # 19. Stage 1 — Manual Validation
 
+**Stage-one interpretation:** validate both (A) legitimate customer desirability for curated Selects apparel through legally permitted, truthful discovery and (B) independently governed operating capabilities through the existing Business/Custom MGBOS cohort when that pilot is authorized. Stage labels are targets, not evidence that any real commerce or production is operating.
+
 Objective:
 
 > Prove demand and operating logic using the smallest practical system.
@@ -371,11 +408,15 @@ before delegating them.
 
 # 24. Stage 1 Offer Priority
 
+**Current offer ordering:** TeeStock Selects curated-design apparel is the FIRST consumer-facing proposition. Essentials is supporting. Originals is separate, governed owned-IP creation. Custom, Business and Merch are valid secondary service offers and an unchanged systems-validation cohort. Do not infer all paths should receive equal prominence.
+
 Do not activate every TeeStock line equally.
 
 ---
 
 # 25. Recommended Initial Revenue Engine
+
+**DEC-012 reconciliation:** the historical `TEESTOCK SERVICES + SELECTED COMMERCE` recommendation below was a bootstrap cash-flow hypothesis, **not the governing current primary revenue or brand priority**. Selects is the approved strategic commercial focus. Services may generate bounded supplemental revenue or test MGBOS operations, but do not displace Selects as the differentiated TeeStock proposition. Neither lane has proven revenue without actual transactions.
 
 Priority:
 
@@ -388,6 +429,8 @@ SELECTED COMMERCE
 ---
 
 # 26. Initial Services Focus
+
+**Services gate:** Custom/Business/Merch remain valid only as appropriately authorized, separately measurable offers and technical pilot cohorts. An operating-spine test, quotation funnel or potential B2B sale does not prove apparel design demand. Service marketing must not redefine the TeeStock retail brand.
 
 Strong candidates:
 
@@ -422,6 +465,8 @@ External commercial Fulfill service only after TeeStock can fulfill its own orde
 ---
 
 # 30. Commerce Initial Focus
+
+**Commerce-first brand application:** prioritize a small curated Selects collection with design provenance, specific usage rights, approved artwork/media, garment/size facts, sample QC where claimed, and transparent next action. Essentials supports garment fundamentals. Until authorized, discovery and consent-based interest are NON-TRANSACTIONAL; no implicit stocked SKU, cart, price or payment promise.
 
 Start controlled.
 
@@ -471,6 +516,8 @@ Can wait until product/channel economics are stable enough.
 ---
 
 # 34. Stage 1 Website
+
+**Public website scope:** TeeStock Selects collection and design discovery lead the first customer impression. Services are secondary and easy to find when valid. This section does not activate the public shop, checkout, inventory, customer accounts or payments; TS-TEC-002 and the TeeStock CX product contracts own route and interaction requirements.
 
 Website should primarily support:
 
@@ -2290,6 +2337,8 @@ Enterprise Reuse
 
 # 193. Revenue Roadmap
 
+**Revenue roadmap precedence:** the `SERVICES → COMMERCE → ORIGINALS` progression below describes one *historical operating/cash learning scenario*, not an approved rule forcing a service-led TeeStock business. DEC-012 establishes Selects as current primary commercial product strategy; valid service revenue remains supplementary. Distinguish market positioning from the temporal order of technical validation.
+
 Canonical evolution:
 
 ```text
@@ -2310,6 +2359,8 @@ Not strictly sequential, but priority should follow capability maturity.
 
 # 194. Stage 1 Revenue
 
+**Current stage-one qualification:** prioritize lawful curated-design apparel desirability and viable offer research for Selects. Any Business/Custom pilot revenue must be independently measured and cannot be substituted for Selects sales, margin or real product/fulfillment evidence. Never claim revenue simply from an accepted plan.
+
 Prioritize:
 
 ```text
@@ -2323,6 +2374,8 @@ with controlled Commerce.
 ---
 
 # 195. Why Services First
+
+**Why-services-first is conditional, not universal:** Services can potentially support early cash learning under the existing asset-light model, but this is a hypothesis requiring customer demand, margin, founder bandwidth and safe operational release. It does not supersede DEC-012 or authorize Business/Custom as TeeStock's permanent primary market identity.
 
 Services can generate:
 
@@ -2338,6 +2391,8 @@ without large inventory.
 ---
 
 # 196. Stage 2 Revenue
+
+**Selects timing correction:** Selects merchandising/design discovery is a present strategic priority, not necessarily deferred until a future services milestone. Live retail payment and fulfillment remain individually gated. Historical Stage 2 capacity expansion still requires legal rights, physical/financial readiness and evidence.
 
 Expand:
 
@@ -2391,6 +2446,8 @@ Do not build labels in strategic darkness.
 ---
 
 # 201. Selects as Market Sensor
+
+**Market-sensor limitation:** Selects is independently accountable for customer desirability, legal product differentiation, and its own economics. Signals may inform Originals research only; no right to reproduce licensed artwork, reclassify Selects creator assets as TeeStock-owned IP or claim market fit from mockups.
 
 Canonical:
 
@@ -3165,6 +3222,8 @@ CANONICAL IDS
 
 # 252. Near-Term Priority Stack
 
+**Meaning of SELL at the current stage:** choose the lowest-risk evidence-generating action available: rights-safe Selects discovery/consented demand research without checkout when real transactions are not authorized; real service or retail selling only if the respective legal, finance, supplier, security and operational release gates permit. Do not treat a funnel, mock purchase or scheduled launch as actual demand.
+
 Recommended sequence:
 
 ```text
@@ -3230,6 +3289,8 @@ AI adds value once context and tools exist.
 
 # 261. Recommended First Operational System
 
+**MGBOS boundary:** the existing Lead → Quote → Order sequence is a conditional validated operating-spine *target*, not a requirement for every retail collection-view or product-discovery journey. Do not infer Opportunity/Project/Partner root entities, financial mutations or new schema migrations solely from this roadmap.
+
 TeeStock should first be able to reliably execute:
 
 ```text
@@ -3260,6 +3321,8 @@ Everything else should connect around it.
 
 # 263. First MGBOS Vertical Slice
 
+**Pilot cohort preserved:** BUSINESS/CUSTOM remains the historical MGBOS pilot validation cohort (DEC-009). The owning operational pilot plan and current environment determine execution readiness; this roadmap cannot unblock or change that cohort. It is not the primary TeeStock brand or consumer product proposition.
+
 Recommended:
 
 ```text
@@ -3289,6 +3352,8 @@ and therefore proves architecture.
 ---
 
 # 265. First Commerce Vertical Slice
+
+**Phased Commerce proof:** before live checkout is authorized, a complete bounded Selects discovery slice can verify curation → rights-safe collection/product facts → usability → voluntary no-payment interest. The historical Product → Checkout → Payment → Order → Fulfillment chain below is a separate future **transactional** acceptance slice requiring exact approvals, financial reconciliation, supplier/QC, customer support and returns.
 
 Recommended:
 
@@ -3428,6 +3493,8 @@ becomes primary founder work.
 ---
 
 # 276. Roadmap Completion Is Not Goal
+
+**No cross-lane proxy:** founders may run design demand interviews and legally approved discovery experiences while MGBOS service-pilot gates remain blocked. Neither a polished public website nor successful MGBOS CI is evidence of retail transactions, real manufacturing, garment quality, licensing or unit contribution.
 
 Canonical.
 
@@ -3793,6 +3860,8 @@ Direct operating knowledge is needed before delegation.
 
 # 305. Roadmap Success Definition
 
+**Commercial success lens:** a roadmap also needs to decide what Selects designs and collections are worth sourcing, sampling, publishing or discontinuing based on evidence and rights. Service pipeline and operating maturity alone do not validate the curated-apparel proposition.
+
 Master Roadmap succeeds when TeeStock can answer:
 
 ```text
@@ -3920,6 +3989,8 @@ TEEStock SHOULD GRADUALLY TRANSFORM THE FOUNDER FROM OPERATOR INTO SYSTEM DESIGN
 
 # 308. Master Execution Sequence
 
+**Sequence authority:** the numbered sequence below describes capability dependencies, not a mandate to postpone all Selects market research until full systems completion. Distinguish discovery, permitted physical sale, business-operations pilot and live checkout as separately reviewed actions.
+
 Canonical high-level sequence:
 
 ```text
@@ -3943,6 +4014,8 @@ Canonical high-level sequence:
 
 # 309. Dependency
 
+**Downstream reconciliation required:** TS-RDM-002 v1.0 contains historical services-first capability rankings; TS-RDM-003 v2.0 already separates Selects as primary market focus from Business/Custom as a gated MGBOS cohort. TS-RDM-002 must be updated in its own separate file-only work package. No silent cross-document edit, milestone PASS or merge authorization is granted here.
+
 Dokumen berikut harus follow Master Roadmap:
 
 1. [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]]
@@ -3951,3 +4024,87 @@ Dokumen berikut harus follow Master Roadmap:
 [[bisnis/teestock/14-roadmap/capability-roadmap|capability-roadmap.md]] harus menerjemahkan Stage 0–8 menjadi maturity matrix per capability—Sales, Commerce, Production, Partner, Inventory, Finance, Marketing, Creator, Data, MGBOS, Automation, AI, Security, Infrastructure, dan Organization—agar kita dapat menilai secara objektif **TeeStock sekarang berada di level mana dan apa exact capability gap menuju level berikutnya**.
 
 [[bisnis/teestock/14-roadmap/current-quarter|current-quarter.md]] kemudian menjadi execution layer yang hanya mengambil prioritas dari Master Roadmap + Capability Roadmap, sehingga quarterly planning tidak berubah menjadi daftar ide acak.
+
+---
+
+# 310. Current Master Roadmap Contract — Curated-Design-First
+
+**Owner authority:** DEC-TS-2026-012 is the latest adopted decision on TeeStock's primary business identity and commercial/product focus. TeeStock sells differentiated curated-design apparel under TeeStock Selects. TeeStock Essentials supports product/garment fundamentals. TeeStock Originals is a distinct internally owned-IP/label lane; curated or licensed third-party artwork does not automatically become TeeStock-owned intellectual property. Custom, Business and Merch remain eligible secondary services. Four business domains (Commerce, Services, Originals, Programs) are retained.
+
+| Separate question | Governing interpretation | Explicitly not concluded |
+|---|---|---|
+| What should TeeStock be known for? | Curated-design apparel / Selects | General custom printing as default identity |
+| What is the immediate consumer product direction? | Small, coherent rights-cleared collections, product quality, truthful discovery | Thousands of variants, guaranteed in-stock apparel, live checkout |
+| What is the MGBOS validation cohort? | Bounded Business/Custom assisted-service operating-spine pilot under DEC-009 | Evidence of Selects purchase demand or changed consumer priority |
+| What does the website lead with? | Curated design, collections, garment context and eligible next actions | Equal-priority Services menu or falsely enabled payments |
+| What can early research prove? | Comprehension, relevance and consented interest when measured | Reconciled revenue, actual contribution, production readiness |
+| Which current maturity stages changed? | Strategic priority interpretation and evidence separation | Deletion of Stage 0–8, automatic L1/L2 graduation, schema authorization |
+
+## 310.1 One founder and two evidence lanes
+
+**Lane A — Selects/customer proposition:** source/rights review, curated editorial thesis, garment specification and samples, transparent discovery, customer learning, and ultimately controlled lawful sales *only after* financial/operational permissions. Early discovery is not contingent on a paid Business/Custom pilot if it is non-transactional, lawful and separately approved.
+
+**Lane B — MGBOS operating proof:** existing Business/Custom validation cohort, with independently governed lead/quote/order/production/QC/fulfillment/cost/payment controls. The owning product-validation plan, actual runtime tests, financial authority and Owner decision control readiness. The current roadmap does not approve or start it.
+
+The founder must allocate scarce capital, time, operations and review attention across both lanes. No automatic parallel P0 commitments and no manufactured milestones. Each proposed action requires actual owner, environment, gate, budget assumption, adverse-stop condition and evidence record.
+
+# 311. Roadmap Stage and Commerce Readiness Crosswalk
+
+| Stage/evidence | Curated Selects brand/product lane | Business/Custom MGBOS systems lane | Invalid proxy |
+|---|---|---|---|
+| Candidate research | Defined audience/design thesis, license questions, supplier/sample risks | Product-contract understanding and disposable controlled test readiness | Research = live order |
+| Safe non-transactional public discovery | Rights-cleared imagery/media, honest product state, accessible collection/PDP, optional consented interest | No connection to live order/payment required | Public listing = stock or checkout |
+| Physical offer feasibility | Use-specific license, garment samples/QC, realistic sourcing, pricing cost assumptions, returns/support policy | Independently eligible operational processes and roles | Sample/mockup = manufacturing capacity |
+| Real transactions if separately authorized | Real approved retail order/payment/fulfillment and reconciled economics | Approved cohort, real service orders, QC/finance/fulfillment evidence | Service revenue = Selects demand |
+| Repeatability and scale | Measured repeat customer demand and support burden, supply/finance reliability | Operational repeatability and explicit exceptions | CI pass = market fit |
+| Future automation/AI | Verified facts, governed merchandising suggestions, role checks | Tested workflows, command permissions, audit/evaluation | AI content = legal clearance or approval |
+
+The original Stage 0–8 maturity sequence is **historical architectural intent**. A full consumer retail checkout or marketplace activation is not required for permission to research attractive, lawful curated collections. Equally, non-transactional design interest does not satisfy the documented Commerce L1 threshold for real sales; TS-RDM-002 owns that capability grade. Never claim L2 maturity from complete documentation or a browser demo.
+
+# 312. Capital, Legal, Financial and Release Gates
+
+**Permissible pre-sale work:** design and consumer research, vendor qualification interviews, rights-specific contract review, mockups honestly labeled as illustrative, sample/testing proposals and bounded non-transactional UX prototypes. Actual public artwork publication still requires the right to display and market that asset; actual samples/claimed garment quality require real evidence.
+
+**Real retail selling requires separate proof:** authorized artwork use (channels, resale/printing, geography, duration, quantities, modifications, attribution, revocation), approved offer and physical production/QC, costs/royalties/fees/taxes/returns, payment/order and organization isolation, inventory or verified production capacity, fulfillment and customer support, documented Owner release decision. Marketplaces require their own policies, credentials, stock/channel pricing and authorization. Any missing critical gate means no claimed sellable SKU, live payment or reserved stock.
+
+**Capital discipline:** anticipated funding is not realized cash. No fixed inventory quantities, design license purchases, staffing, ad budgets, release dates, unit margin or supplier guarantees are approved by this document. Budget decisions must use verified available resources and founder execution capacity. At every quarterly or stage review, distinguish forecast from actual cash/transaction/customer outcome and record blockers without backdating.
+
+**AI delegation:** AI may propose collections, catalogue language based on verified facts, risk flags, experiment summaries and bounded automation candidates. It may not grant or transfer IP rights, establish binding prices, promise shipping/stock, authorize payment/refund, publish sellable products or mutate MGBOS financial states without separately governed authority.
+
+# 313. Authority, Traceability and Independent Acceptance
+
+```yaml
+master_roadmap_curated_first_contract:
+  document_id: TS-RDM-001
+  version: "2.0"
+  owner_decision: DEC-TS-2026-012
+  primary_commercial_identity: CURATED_DESIGN_APPAREL
+  primary_line: TEESTOCK_SELECTS
+  supporting_line: TEESTOCK_ESSENTIALS
+  owned_ip_line: TEESTOCK_ORIGINALS_SEPARATE
+  services: SECONDARY_CONDITIONAL
+  original_business_domains: FOUR_RETAINED
+  mgbos_pilot_cohort: BUSINESS_CUSTOM_UNCHANGED
+  pilot_execution_authorization: NONE
+  live_checkout_authorization: NONE
+  live_payment_authorization: NONE
+  production_readiness_claim: NONE
+  schema_migration_authorization: NONE
+  deployment_authorization: NONE
+  pr_merge_authorization: NONE
+  actual_business_maturity_from_this_document: NOT_VERIFIED
+```
+
+**Canonical responsibility:** TS-FND-004/DEC-012 owns founder business direction; TS-BRD-001/002 governs brand identity; TS-COM-001/002/004 governs Commerce/Selects/catalog; TS-TEC-002 + Customer Experience PRDs own website product behavior; TS-LEG-001 governs source-specific IP; TS-RDM-001 owns long-range staging; TS-RDM-002 owns capability definitions and numeric maturity; TS-RDM-003 owns Q4 priority and execution targets; the separate operational pilot plan owns cohort and entry gate; current MGBOS contracts and exact runtime evidence own real financial/technical readiness. Documentation cannot silently grant another domain's authority.
+
+**Required independent checks before adoption:**
+
+- [ ] Reverify exact PR HEAD and original TS-RDM-001 Git blob; stop on changes.
+- [ ] Verify all 309 historical headings (numbers and titles) and substantive body lines remain intact in order; only additions and metadata/title version shifts are allowed.
+- [ ] Verify current decision precedence: DEC-009 bounded Business/Custom pilot, DEC-011 retail-first presentation, DEC-012 Selects-primary business priority.
+- [ ] Check Stage 1 (§25–30), revenue progression (§193–201), operational/Commerce slices (§261–265), and dependency (§309) for clear legacy-vs-current distinction.
+- [ ] Confirm no claim of verified live revenue, available stock, IP rights, actual commercial launch, readiness, new MGBOS root entities, or approved payment/checkout.
+- [ ] Run YAML parse, whitespace checks, repository governance and exact-commit GitHub Actions; independent review must inspect actual resulting diff and source blob.
+- [ ] Reconcile TS-RDM-002 separately; later audit all changed files and latest main baseline before seeking separate Owner merge approval.
+
+Historical Master Roadmap v1.0 is retained for provenance and understanding of prior services-led hypotheses. These annotations set current authority without rewriting decision history. The code or runtime does not change because this file exists.

@@ -10,10 +10,10 @@ tags:
   - teestock/canonical
   - teestock/foundation
 document_id: "TS-FND-004"
-version: "1.0"
+version: "1.1"
 category: "foundation"
 business: "teestock"
-last_updated: "2026-09-28"
+last_updated: "2026-10-20"
 path: "00-foundation/decision-register.md"
 depends_on:
   - "TS-FND-001"
@@ -23,7 +23,7 @@ depends_on:
 ---
 
 
-# TeeStock Decision Register v1.0
+# TeeStock Decision Register v1.1
 
 > [!abstract] **Canonical TeeStock Strategic, Architectural, Operational & Governance Decision Memory**
 >
@@ -1115,6 +1115,9 @@ Full Jarvis Deferred Until Operational Readiness
 
 DEC-TS-2026-011
 Retail-First Customer Presentation & Governed Operational Priority
+
+DEC-TS-2026-012
+Curated-Design-First Primary Business Positioning
 ```
 
 ---
@@ -2125,3 +2128,194 @@ None
 ### Superseded By
 
 None
+
+---
+
+# 172. DEC-TS-2026-012 — Curated-Design-First Primary Business Positioning
+
+Status: ACTIVE  
+Date: 2026-10-20  
+Category: STRATEGIC / BRAND / COMMERCE / PRODUCT PRIORITY  
+Owner: Founder / Owner  
+Authority: Founder-directed business-positioning decision; not a production or engineering authorization  
+Related prior decisions: DEC-TS-2026-001, DEC-TS-2026-003, DEC-TS-2026-004, DEC-TS-2026-009, DEC-TS-2026-011  
+Supersedes: None in full; narrows how prior Business/Custom operational priority may be interpreted as brand strategy  
+Review trigger: material change of Owner direction or validated business evidence
+
+## 172.1 Decision
+
+**TeeStock MUST be positioned, product-managed, and developed primarily as a curated-design apparel brand.** Its leading value proposition is selected graphic designs, thoughtfully assembled collections, quality apparel, coherent creative identity, merchandising and product storytelling, and a trustworthy consumer buying experience.
+
+TeeStock's business identity MUST NOT be reduced to generic custom printing, customer-supplied artwork services, business uniforms or B2B quotation work merely because Business/Custom was a convenient first MGBOS operating-spine validation lane.
+
+TeeStock Commerce — especially **TeeStock Selects** — is the primary near-term commercial focus. The existing four-domain business structure (Commerce, Services, Originals, Programs) remains intact. Services/Custom/Business MAY continue as secondary offerings or as explicitly bounded operating experiments; they are not the default strategic center.
+
+TeeStock Selects means **“We curate it.”** TeeStock Originals means **“We create it.”** Curated, licensed, commissioned or collaborator-sourced designs MUST NOT be represented as internally owned TeeStock IP without evidence of rights and ownership.
+
+## 172.2 Strategic rationale
+
+The Owner clarified on 2026-10-20 that the principal ambition for TeeStock is a recognizable curated-design apparel brand. Earlier documentation had made Business/Custom prominent to prove the operating spine and cash/fulfillment flow; that purpose is different from identifying why customers would choose the TeeStock brand.
+
+A differentiated retail brand needs an intentional system for design selection, rights clearance, collection themes, material/fit consistency, merchandising, demand observation, honest availability and after-sales quality. An operations-first quotation flow alone cannot validate that proposition.
+
+## 172.3 Relationship to existing decisions — preserve historical truth
+
+| Earlier decision | Historical commitment | Effect of DEC-TS-2026-012 | Current reconciliation obligation |
+|---|---|---|---|
+| DEC-TS-2026-001 / 003 | Four business domains: Commerce, Services, Originals, Programs | PRESERVED | No domain deletion or silent restructuring |
+| DEC-TS-2026-002 | Asset-light production and partner coordination | PRESERVED | Validate production partners and QC for curated apparel |
+| DEC-TS-2026-004 | Selects curated versus Originals internally created | REINFORCED | Preserve IP provenance, licensing and attribution distinctions |
+| DEC-TS-2026-005 / 006 / 007 / 008 | MGBOS control, responsible automation, canonical data and modular architecture | PRESERVED | No automatic new MGBOS entity or AI authority |
+| DEC-TS-2026-009 | Business/Custom priority for Q4 operating-spine validation | REVIEW_REQUIRED | Remains historical/active in its originally approved validation scope; MUST NOT be interpreted as current primary brand or product positioning; reconcile Q4 planning explicitly |
+| DEC-TS-2026-010 | Full JARVIS deferred until data/operations ready | PRESERVED | No AI autonomy acceleration |
+| DEC-TS-2026-011 | Retail-first public presentation with Business/Custom operations | EXTENDED | Curated-first now governs actual business/product priority, not only site presentation; transactional gating unchanged |
+
+**Status nuance:** The literal old DEC-TS-2026-009 and DEC-TS-2026-011 records above remain untouched as historical statements. DEC-TS-2026-012 is the later explicit founder decision about **primary brand/product strategy**. There is still an unresolved **planning-sequence conflict** with Q4 roadmap files that privilege Business/Custom commercially. Future AI MUST mark those plans `RECONCILIATION_REQUIRED` rather than silently pretending their text has changed or automatically deleting their authorized operational tests.
+
+## 172.4 Explicitly not decided
+
+This decision DOES NOT:
+
+- abolish Custom/Business/Services offerings;
+- reclassify Selects artwork as Originals-owned intellectual property;
+- approve unrestricted design sourcing, printing, trademark use, collaboration or commercial licensing;
+- authorize a published SKU, price, discount, product claim, inventory promise, pre-order policy, courier SLA or launch date;
+- require full retail cart, payment gateway, public account or warehouse automation before any demand research;
+- claim that MGBOS checkout, payment idempotency, returns, stock reservation or production readiness are verified;
+- invalidate any already completed and independently evidenced MGBOS operating-spine test;
+- cancel the existing TeeStock Business/Custom pilot or change its qualification cohort without an explicit revision to its owning product-validation contract;
+- approve a new Design Library aggregate, duplicated transactional database or independent storefront system of record;
+- instruct MultiGraph to stop supporting TeeStock, or authorize MultiGraph external printing sales;
+- authorize implementation, database migration, provider integration, production deployment or autonomous AI decisions.
+
+## 172.5 Near-term product-planning obligations
+
+The following are **required areas for product discovery and canonical-document reconciliation**, not preapproved technical entities or implementation tickets:
+
+| Candidate business requirement | Canonical owner / target for review | Acceptance evidence needed |
+|---|---|---|
+| Design curation criteria, themes and selection rationale | TeeStock Commerce / Selects | Documented curation rationale; customer comprehension |
+| Artwork rights, provenance, restrictions and attribution | TeeStock IP Policy | Checkable rights documents for every released design |
+| Collection and catalog merchandising | TeeStock Commerce / merchandising | Explainable category, theme, variant and release status |
+| Apparel blanks, quality, size/fit, decoration and supply | TeeStock Commerce + Operations | Physical samples/QC and validated supplier/production route |
+| Product-offer truth: price, tax/shipping handling, availability and fulfilment promises | TeeStock commercial policy + governed MGBOS | Approved terms, calculations, customer-safe errors |
+| Curated-commerce demand validation | TeeStock Metrics / Research | Real customer intent separated from likes/traffic |
+| Governed buying journey, checkout eligibility and support recovery | TeeStock CX PRD + MGBOS | End-to-end evidence before transactional activation |
+| Contribution margin, cancellations, returns and failed production | TeeStock Finance + MGBOS Finance | Actual costs, refunds/adjustments and order-level margin |
+| Owner workload and capacity | Solo-Founder Operating Model | Recorded human handling burden and exception rates |
+
+Do not create one database table for each candidate business need. First reuse existing semantic owners and map any gaps through the canonical MGBOS domain model.
+
+## 172.6 Dual-pilot interpretation
+
+TeeStock and MultiGraph are **parallel business pilots**, not two independent ERPs:
+
+```text
+TeeStock:
+  PRIMARY_VALUE: curated design and apparel brand/commerce
+  INITIAL_PRODUCT_VALIDATION: collections, demand, quality, honest buying path
+  BUSINESS_CUSTOM: secondary and separately scoped
+
+MultiGraph:
+  VALUE_PROPOSITION: printing / production-service solutions
+  ACTUAL_INITIAL_STATUS: supporting arm, per existing MultiGraph business README
+  EXTERNAL_B2B_PILOT: gated; no automatic approval from this decision
+
+MGBOS:
+  AUTHORITY: existing canonical operational state and transaction rules
+  ROLE: shared operational backbone; no business identity substitution
+
+JARVIS:
+  ROLE: governed assistance and recommendations
+  AUTHORITY: no direct bypass of finance, security or production controls
+```
+
+**Business validation is distinct from software validation.** The previously approved assisted-sales Business/Custom pilot has its own contractual cohort and readiness requirements; it MUST NOT be reported as proof of commercial demand for TeeStock's curated apparel. Likewise a successful curated-design campaign MUST NOT be reported as proof of payment/fulfillment engineering readiness.
+
+## 172.7 Reconciliation ledger — affected canonical sources
+
+| ID | Exact repository path | Required controlled action | State at this decision |
+|---|---|---|---|
+| TS-CUR-REC-01 | `bisnis/teestock/00-foundation/teestock-master-definition.md` | Clarify primary current focus within existing four-domain model | PENDING |
+| TS-CUR-REC-02 | `bisnis/teestock/02-brand/master-brand-strategy.md` | Make curated design leading brand expression, preserve long-term ecosystem | PENDING |
+| TS-CUR-REC-03 | `bisnis/teestock/03-commerce/commerce-overview.md` | Align Commerce/Selects priority, merch and collections | PENDING |
+| TS-CUR-REC-04 | `bisnis/teestock/14-roadmap/current-quarter.md` | Resolve Q4 commercial-priority and operating-pilot distinction | PENDING |
+| TS-CUR-REC-05 | `docs/roadmaps/solo-founder-launch-roadmap.md` | Reconcile strategic sequence and founder/capital limits | PENDING |
+| TS-CUR-REC-06 | `systems/mgbos/docs/product/teestock-operational-pilot-plan.md` | Keep existing real Business/Custom pilot scope accurate; separately design curated pilot | PENDING |
+| TS-CUR-REC-07 | `bisnis/teestock/10-product-tech/website-information-architecture.md` | Enforce design-led discovery and honest transaction eligibility | PENDING |
+| TS-CUR-REC-08 | `systems/mgbos/docs/product/teestock-customer-platform/cx-09-phased-delivery-product-validation-plan.md` | Review proposed slices; avoid promoting DRAFT requirements to ACTIVE | PENDING |
+| TS-CUR-REC-09 | `bisnis/teestock/12-legal-ip/ip-policy.md` | Confirm licensed/curated designs have enforceable evidence controls | REVIEW_AS_NEEDED |
+| TS-CUR-REC-10 | `bisnis/teestock/03-commerce/catalog-merchandising-system.md` | Align collection curation and release eligibility | REVIEW_AS_NEEDED |
+
+Every future document change MUST recheck live source HEAD and status, preserve existing history, and record its own review/evidence. This entry alone does not modify any referenced file or resolve its documented contradiction.
+
+## 172.8 Risk and falsifiable assumptions
+
+| Risk | Control / test |
+|---|---|
+| Attractive design but no purchase intent | Run ethical demand tests; distinguish interest, intent and paid orders |
+| Unclear artwork rights or expired license | Rights verification before publication and sale |
+| Small founder overwhelmed by designs, SKUs and variants | Limit experiments to validated supply/fulfillment capacity |
+| Brand diluted by custom-print positioning | Test customer understanding of the homepage and product pages |
+| Retail promise ahead of system/payment readiness | Keep nontransactional presentation clearly nontransactional |
+| Roadmaps contradict this decision | Reconcile via TS-CUR-REC entries before new implementation sequencing |
+| Business/Custom pilot abandoned and operating risks untested | Preserve independent approved pilot until explicit evidence-based change |
+| Gross revenue mistaken for contribution | Cost artwork, blanks, production, fees, logistics, failure and support |
+
+## 172.9 Machine-readable decision and claim-status record
+
+```yaml
+decision_id: DEC-TS-2026-012
+decision_status: ACTIVE
+decided_on: 2026-10-20
+semantic_owner: teestock.business.strategy
+approved_by: founder
+primary_business_positioning: CURATED_DESIGN_APPAREL
+primary_commerce_focus: TEESTOCK_SELECTS
+services_priority: SECONDARY_CONDITIONAL
+selects_vs_originals_boundary: PRESERVED
+past_decision_009:
+  original_text_retained: true
+  original_status_unchanged: true
+  cannot_define_primary_brand: true
+  q4_sequencing_reconciliation: REQUIRED
+past_decision_011:
+  original_text_retained: true
+  product_business_focus_extended_beyond_website: true
+commerce_checkout_readiness: NOT_VERIFIED
+production_readiness: NOT_VERIFIED
+independent_live_pilot_success: NOT_VERIFIED
+external_multigraph_commercial_pilot: NOT_AUTHORIZED_BY_THIS_DECISION
+mgbos_architecture_modified: false
+jarvis_authority_modified: false
+new_engineering_authorization: NONE
+canonical_reconciliation_status: PARTIAL_AFTER_THIS_REGISTER_UPDATE
+```
+
+## 172.10 AI interpretation protocol
+
+1. This decision is authoritative **for TeeStock primary business positioning within this register once the file is adopted**; it does not displace the owners of product taxonomy, intellectual property, financial terms, data, security, or roadmap stage gates.
+2. Preserve all historical decisions and record later reversals/supersessions explicitly. Do not infer that a historical decision never existed.
+3. Interpret DEC-TS-2026-009 as an earlier scoped operating-validation sequence; flag existing priority conflicts for Owner/governed roadmap reconciliation instead of silently erasing it.
+4. Interpret DEC-TS-2026-011 as a retail-first presentation decision that DEC-012 extends to brand/product strategy; neither proves a working cart.
+5. A high-quality website or PRD approval is not production authorization; verify runtime artifacts, integration and source/evidence-specific readiness separately.
+6. If business/pricing/IP/engineering implementation documents conflict, report the owning source and the exact unresolved conflict; do not fabricate precedence based on file length or publication date alone.
+7. All downstream work should distinguish `CURRENT`, `TARGET`, `PROPOSED`, `NOT_VERIFIED`, and actual owner-approved gates.
+
+## 172.11 Outcome and review criteria
+
+This decision is implemented in strategy when TeeStock's master definition, brand, Commerce, product roadmap, and customer-platform plan consistently emphasize curated design **without** misleading claims about a live checkout. It is implemented operationally only after real validated demand, unit economics, rights, production, and fulfillment evidence is collected in the relevant source domains.
+
+Review when actual customer purchasing behavior, legal rights constraints, unit economics, vendor readiness, or founder capacity materially challenges the approach. Such review MUST be recorded; it does not automatically reverse the decision.
+
+### Sources and provenance
+
+- Owner instruction, 2026-10-20: TeeStock focus is curated design branding, not Business/Custom.
+- `bisnis/teestock/00-foundation/teestock-master-definition.md` (four-domain architecture and Selects definition).
+- `bisnis/teestock/00-foundation/decision-register.md` (DEC-TS-2026-001..011 history).
+- `bisnis/teestock/03-commerce/teestock-selects.md` and `bisnis/teestock/12-legal-ip/ip-policy.md` (curation and IP boundaries).
+- `bisnis/teestock/14-roadmap/current-quarter.md` (Business/Custom Q4 sequencing, requiring reconciliation).
+- `systems/mgbos/docs/product/teestock-operational-pilot-plan.md` (bounded assisted-sales operational pilot).
+- `docs/governance/documentation-constitution.md` (canonical authority, lifecycle and historical preservation).
+
+**End of DEC-TS-2026-012.**
