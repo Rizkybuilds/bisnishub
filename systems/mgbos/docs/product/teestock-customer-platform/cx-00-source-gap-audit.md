@@ -1,13 +1,13 @@
 ---
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-00
-status: DRAFT
+status: ACTIVE
 version: 0.1.1
 owner: Rizky
 author: ChatGPT / Co-Founder Strategy & Product Planning
-approver: PENDING_OWNER_REVIEW
+approver: Rizky
 scope: teestock-customer-experience-and-commerce-product-discovery
 document_class: research
-normative_authority: NONE
+normative_authority: CANONICAL_PRODUCT_RESEARCH
 repository: Rizkybuilds/bisnishub
 repository_ref: main
 source_inspection_coverage: selected_relevant_paths_not_full_monorepo
@@ -29,6 +29,8 @@ depends_on:
 supersedes: null
 remediation_package: CX-REM-R1
 remediation_review: AUTHOR_SELF_REVIEW_NOT_INDEPENDENT
+
+effective_from: 2026-10-20
 ---
 
 # CX-00 — TeeStock Customer Experience & Commerce: Existing Source, Requirements & Gap Audit v0.1.1
