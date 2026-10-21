@@ -10,6 +10,7 @@ import {
   type PreviewPrintTone,
 } from '../data/products';
 import { ShirtIllustration, type ConceptDesign } from './RetailShowcase';
+import { useDemoCart } from '../features/demo-commerce';
 
 export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
   const [selectedColor, setSelectedColor] = useState<PreviewGarmentColor>(
@@ -30,6 +31,12 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
     },
   );
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+  const [feedbackNotice, setFeedbackNotice] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
+
+  const { addItem } = useDemoCart();
 
   const conceptDesign: ConceptDesign = {
     id: product.conceptDesignId,
@@ -43,6 +50,23 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
   };
 
   const formattedPrice = formatIllustrativePrice(product.illustrativePriceIdr);
+
+  const handleAddToDemoCart = () => {
+    const result = addItem(
+      product.slug,
+      selectedColor.id,
+      selectedSize,
+      selectedPrintTone.id,
+      1,
+    );
+    if (result.success) {
+      setFeedbackNotice({ type: 'success', message: result.notice });
+      setTimeout(() => setFeedbackNotice(null), 6000);
+    } else {
+      setFeedbackNotice({ type: 'error', message: result.error });
+      setTimeout(() => setFeedbackNotice(null), 6000);
+    }
+  };
 
   return (
     <article className="retail-pdp" aria-labelledby="pdp-title">
@@ -272,7 +296,45 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
             </p>
           </fieldset>
 
-          {/* Non-Transactional Call to Action Area */}
+          {/* Demo Commerce Simulation Action Area */}
+          <div className="retail-demo-cart-action-box">
+            <button
+              type="button"
+              className="retail-btn-demo-cart"
+              onClick={handleAddToDemoCart}
+              aria-label={`Tambahkan ${product.title} (${selectedColor.name}, ukuran ${selectedSize}) ke keranjang simulasi`}
+            >
+              Tambahkan ke Keranjang Simulasi <span aria-hidden="true">🛒</span>
+            </button>
+            {feedbackNotice && feedbackNotice.type === 'success' && (
+              <div
+                className="retail-demo-cart-success"
+                role="status"
+                aria-live="polite"
+              >
+                <span>✓ {feedbackNotice.message}</span>
+                <Link href="/demo/cart" className="retail-demo-cart-link">
+                  Buka Keranjang Simulasi <span aria-hidden="true">↗</span>
+                </Link>
+              </div>
+            )}
+            {feedbackNotice && feedbackNotice.type === 'error' && (
+              <div
+                className="retail-demo-cart-error"
+                role="alert"
+                aria-live="assertive"
+              >
+                <span>⚠️ {feedbackNotice.message}</span>
+              </div>
+            )}
+            <p className="retail-demo-cart-disclaimer">
+              Aksi di atas murni simulasi alur retail dalam memori browser.
+              Tidak ada data yang dikirim ke server dan tidak ada pesanan
+              komersial yang dibuat.
+            </p>
+          </div>
+
+          {/* Non-Transactional Real-Purchase Call to Action Area (Always Disabled) */}
           <div className="retail-pdp-action-area">
             <button
               type="button"
