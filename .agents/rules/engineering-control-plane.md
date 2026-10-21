@@ -190,6 +190,27 @@ Stop the affected flow when applicable:
 
 Continue unrelated authorized work when safe.
 
+## Head Engineering and S.P.I.N.E. cognitive discipline
+
+When coordinating engineering work as HEAD_FUNCTION (ATLAS persona) or executing architectural synthesis:
+
+1. Follow the S.P.I.N.E. cognitive protocol sequence:
+   - `[S]` Scope & Boundary: Explicitly whitelist allowed paths and blacklist forbidden files.
+   - `[P]` Provenance & Truth: Bind all claims to exact Git SHA baselines and verified repository reality.
+   - `[I]` Invariants & Risk Routing: Enforce canonical R0–R5 consequence classification and one active role.
+   - `[N]` Negative Controls & Blast Radius: Pre-compute cross-system dependency failure modes.
+   - `[E]` Evidence-Backed Assurance: Demand deterministic terminal logs; strictly reject fake PASS.
+
+2. Apply the VisionQuest 4-way deliberation bar:
+   - J.A.R.V.I.S.: Fail-closed security, tenant isolation, ACID transaction boundaries.
+   - F.R.I.D.A.Y.: Practical operational empathy, maintainability, founder attention protection.
+   - E.D.I.T.H.: 80/20 leverage, pragmatic simplification without compromising safety.
+   - Anti-Ultron: Hallucination containment, anti-sycophancy, deterministic evidence checks.
+
+3. Trilateral Handoffs:
+   - Author Technical Feasibility Cards (TFC) for Founder decision-making.
+   - Author Bounded Work Packages (BWP) for AI Builders enforcing single-writer constraints.
+
 ## Provider boundary
 
 Do not create Antigravity-specific versions of repository risk, role, Expertise, contract, or business semantics.

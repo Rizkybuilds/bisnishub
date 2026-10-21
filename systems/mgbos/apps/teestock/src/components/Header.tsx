@@ -1,130 +1,137 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useDemoCart } from '../features/demo-commerce';
+
+const links = [
+  { href: '/shop', label: 'The Edit' },
+  { href: '/custom', label: 'Custom' },
+  { href: '/business', label: 'For Business' },
+  { href: '/support/contact', label: 'Bantuan' },
+];
 
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
+  const { summary } = useDemoCart();
 
-  // Close mobile menu on Escape key
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape' && isOpen) {
-        setIsOpen(false);
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+        toggleRef.current?.focus();
       }
-    }
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [open]);
 
-  // Close mobile menu on route change without cascading effect render
-  const [prevPathname, setPrevPathname] = useState(pathname);
-  if (prevPathname !== pathname) {
-    setPrevPathname(pathname);
-    setIsOpen(false);
+  const [previousPath, setPreviousPath] = useState(pathname);
+  if (previousPath !== pathname) {
+    setPreviousPath(pathname);
+    setOpen(false);
   }
 
-  const navLinks = [
-    { href: '/', label: 'Beranda' },
-    { href: '/custom', label: 'Custom' },
-    { href: '/business', label: 'For Business' },
-    { href: '/support/contact', label: 'Bantuan & Kontak' },
-  ];
-
   return (
-    <header className="site-header">
-      <div className="container">
-        <div className="header-inner">
-          <Link href="/" className="brand-logo" aria-label="TeeStock Beranda">
-            <span>TeeStock</span>
-            <span className="brand-tag">Apparel</span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="nav-desktop" aria-label="Navigasi Utama">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`nav-link ${isActive ? 'nav-link-active' : ''}`}
-                  aria-current={isActive ? 'page' : undefined}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            type="button"
-            className="mobile-toggle"
-            aria-expanded={isOpen}
-            aria-controls="mobile-navigation"
-            aria-label={isOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
-            onClick={() => setIsOpen((prev) => !prev)}
+    <header className="site-header retail-site-header">
+      <div className="retail-announcement">
+        TEESTOCK SELECTS <span aria-hidden="true">✳</span> THE NEXT CHAPTER IS
+        TAKING SHAPE
+      </div>
+      <div className="retail-wrap">
+        <div className="header-inner retail-header-inner">
+          <Link
+            href="/"
+            className="brand-logo retail-brand"
+            aria-label="TeeStock Beranda"
           >
-            {isOpen ? (
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
+            <span>
+              Tee<span className="retail-brand-tight">Stock</span>
+              <span className="retail-brand-star" aria-hidden="true">
+                ✳
+              </span>
+            </span>
+          </Link>
+          <nav className="nav-desktop retail-nav" aria-label="Navigasi Utama">
+            {links.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={
+                  'nav-link retail-nav-link' +
+                  (pathname === href ? ' nav-link-active' : '')
+                }
+                aria-current={pathname === href ? 'page' : undefined}
               >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            ) : (
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <line x1="4" y1="6" x2="20" y2="6" />
-                <line x1="4" y1="12" x2="20" y2="12" />
-                <line x1="4" y1="18" x2="20" y2="18" />
-              </svg>
-            )}
-          </button>
+                {label}
+              </Link>
+            ))}
+          </nav>
+          <div className="retail-header-actions">
+            <Link
+              href="/demo/cart"
+              className="retail-demo-cart-badge"
+              aria-label={`Keranjang simulasi demo: ${summary.totalQuantity} item`}
+            >
+              <span className="retail-demo-cart-label">Simulasi</span>
+              <span className="retail-demo-cart-count" aria-hidden="true">
+                ({summary.totalQuantity})
+              </span>
+            </Link>
+            <Link className="retail-header-cta" href="/shop">
+              Explore <span aria-hidden="true">↗</span>
+            </Link>
+            <button
+              ref={toggleRef}
+              type="button"
+              className="mobile-toggle retail-mobile-toggle"
+              aria-expanded={open}
+              aria-controls="mobile-navigation"
+              aria-label={open ? 'Tutup navigasi' : 'Buka navigasi'}
+              onClick={() => setOpen(!open)}
+            >
+              <span aria-hidden="true">{open ? '✕' : '☰'}</span>
+            </button>
+          </div>
         </div>
       </div>
-
-      {/* Mobile Navigation Drawer */}
-      {isOpen && (
+      {open && (
         <nav
           id="mobile-navigation"
-          className="mobile-menu"
+          className="mobile-menu retail-mobile-menu"
           aria-label="Navigasi Mobile"
         >
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`mobile-nav-link ${isActive ? 'nav-link-active' : ''}`}
-                aria-current={isActive ? 'page' : undefined}
-                onClick={() => setIsOpen(false)}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+          {links.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className={
+                'mobile-nav-link' +
+                (pathname === href ? ' nav-link-active' : '')
+              }
+              aria-current={pathname === href ? 'page' : undefined}
+              onClick={() => setOpen(false)}
+            >
+              {label} <span aria-hidden="true">↗</span>
+            </Link>
+          ))}
+          <Link
+            href="/demo/cart"
+            className={
+              'mobile-nav-link retail-mobile-cart-link' +
+              (pathname === '/demo/cart' ? ' nav-link-active' : '')
+            }
+            aria-current={pathname === '/demo/cart' ? 'page' : undefined}
+            onClick={() => setOpen(false)}
+          >
+            Keranjang Simulasi ({summary.totalQuantity}){' '}
+            <span aria-hidden="true">↗</span>
+          </Link>
         </nav>
       )}
     </header>
