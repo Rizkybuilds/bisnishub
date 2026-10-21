@@ -1,5 +1,4 @@
 ---
-
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-pkg-remediation-r1-report
 status: ACTIVE
 version: 0.1.0

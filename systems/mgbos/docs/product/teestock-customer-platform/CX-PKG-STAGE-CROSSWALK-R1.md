@@ -1,5 +1,4 @@
 ---
-
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-pkg-stage-crosswalk-r1
 status: ACTIVE
 version: 0.1.1
