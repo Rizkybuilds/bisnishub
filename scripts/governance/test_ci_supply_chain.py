@@ -38,9 +38,9 @@ class TestCISupplyChain(unittest.TestCase):
         self.assertEqual(
             result,
             {
-                "workflows": 6,
-                "external_action_uses": 29,
-                "checkout_steps": 10,
+                "workflows": 7,
+                "external_action_uses": 33,
+                "checkout_steps": 11,
                 "allowed_action_repositories": 5,
             },
         )
