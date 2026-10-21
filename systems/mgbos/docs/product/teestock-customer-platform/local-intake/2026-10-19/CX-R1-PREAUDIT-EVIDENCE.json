@@ -1,0 +1,79 @@
+{
+  "archive": "/mnt/data/teestock-cx-remediation-r1-candidate.zip",
+  "archive_sha256": "2d535253ebbee16e468732e15d050fb933cbd2a6125220606e97d756338ee74a",
+  "archive_corruption": null,
+  "archive_matches_local": true,
+  "manifest_matches_local": true,
+  "document_count": 10,
+  "version_mismatch": [
+    "cx-01-master-prd.md",
+    "cx-02-customer-journeys-service-blueprint.md",
+    "cx-03-experience-design-interaction-spec.md",
+    "cx-04-commerce-checkout-experience.md",
+    "cx-05-custom-b2b-ordering-experience.md",
+    "cx-06-customer-account-service-experience.md",
+    "cx-07-omnichannel-external-integration-requirements.md",
+    "cx-08-experience-quality-acceptance-contract.md",
+    "cx-09-phased-delivery-product-validation-plan.md"
+  ],
+  "trace_rows": 46,
+  "parent_valid": true,
+  "all_child_ids_declared": true,
+  "all_acceptance_ids_declared": true,
+  "bad_trace_rows": [],
+  "parent_coverage": [],
+  "document_versions": {
+    "cx-00-source-gap-audit.md": {
+      "metadata": "0.1.1",
+      "title": null,
+      "status": "DRAFT"
+    },
+    "cx-01-master-prd.md": {
+      "metadata": "0.1.1",
+      "title": "0.1.0",
+      "status": "DRAFT"
+    },
+    "cx-02-customer-journeys-service-blueprint.md": {
+      "metadata": "0.1.1",
+      "title": "0.1.0",
+      "status": "DRAFT"
+    },
+    "cx-03-experience-design-interaction-spec.md": {
+      "metadata": "0.1.1",
+      "title": "0.1.0",
+      "status": "DRAFT"
+    },
+    "cx-04-commerce-checkout-experience.md": {
+      "metadata": "0.1.1",
+      "title": "0.1.0",
+      "status": "DRAFT"
+    },
+    "cx-05-custom-b2b-ordering-experience.md": {
+      "metadata": "0.1.1",
+      "title": "0.1.0",
+      "status": "DRAFT"
+    },
+    "cx-06-customer-account-service-experience.md": {
+      "metadata": "0.1.1",
+      "title": "0.1.0",
+      "status": "DRAFT"
+    },
+    "cx-07-omnichannel-external-integration-requirements.md": {
+      "metadata": "0.1.1",
+      "title": "0.1.0",
+      "status": "DRAFT"
+    },
+    "cx-08-experience-quality-acceptance-contract.md": {
+      "metadata": "0.1.1",
+      "title": "0.1.0",
+      "status": "DRAFT"
+    },
+    "cx-09-phased-delivery-product-validation-plan.md": {
+      "metadata": "0.1.1",
+      "title": "0.1.0",
+      "status": "DRAFT"
+    }
+  },
+  "review_scope": "STRUCTURAL_ONLY_NOT_SEMANTIC_ACCEPTANCE",
+  "native_declaration_count": 589
+}
