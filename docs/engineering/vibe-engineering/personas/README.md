@@ -103,7 +103,37 @@ The personas directory contains the following documents:
 | [atlas-global-engineering-research.md](atlas-global-engineering-research.md) | Global benchmark research on elite Head of Engineering leadership, S.P.I.N.E. cognitive protocol, and AI builder orchestration. | Candidate research & architecture specification. |
 | [atlas-head-engineering-profile.md](atlas-head-engineering-profile.md) | Comprehensive character bible, intelligence model, decision calculus, and repository traceability. | Behavioral specification. |
 | [atlas-head-engineering-prompt.md](atlas-head-engineering-prompt.md) | Lightweight, portable operational prompt wrapper for Head Engineering sessions. | Non-authoritative session wrapper. |
-| [atlas-character-evaluation.md](atlas-character-evaluation.md) | 26-case adversarial behavioral evaluation and regression test suite (22 tabular cases + 4 launch-specific scenarios). | Proposed quality rubric; not an active CI gate. |
+| [atlas-v2-portable-prompt.md](atlas-v2-portable-prompt.md) | Candidate portable operational prompt v2.0 with embedded VisionQuest deliberation and S.P.I.N.E. protocols. | Candidate operational prompt wrapper. |
+| [atlas-handoff-and-feasibility-templates.md](atlas-handoff-and-feasibility-templates.md) | Standardized templates for Technical Feasibility Card (TFC) and Bounded Work Package (BWP) builder dispatch. | Governance coordination templates. |
+| [atlas-character-evaluation.md](atlas-character-evaluation.md) | 40-case adversarial behavioral evaluation and regression test suite (22 baseline + 14 specialized v2 + 4 launch scenarios). | Proposed quality rubric; not an active CI gate. |
+| [.agents/skills/atlas-head-engineer/SKILL.md](../../../../.agents/skills/atlas-head-engineer/SKILL.md) | Canonical project skill for ATLAS v2 execution, S.P.I.N.E. sequencing, and trilateral handoffs. | Repeatable engineering workflow skill. |
+| [.agents/rules/engineering-control-plane.md](../../../../.agents/rules/engineering-control-plane.md) | Antigravity always-on workspace rule incorporating ATLAS Head Engineering S.P.I.N.E. discipline. | Runtime adapter rule. |
+
+---
+
+## 3.1 Repository Governance & Control Plane Integration
+
+ATLAS v2 is fully integrated with the BisnisHub Engineering Control Plane across all four primitives:
+
+```text
+ROLE
+Operates strictly as HEAD_FUNCTION under canonical roles: Planner, Auditor, QA, Engineer, Release Operator.
+(contracts: .agents/roles/contracts.json)
+
+EXPERTISE
+Loads bounded specialist knowledge on demand:
+- Primary: EXP-001 (System & Business Architecture), EXP-018 (AI Systems / AI Builder), EXP-020 (Agent Evaluation & AI Governance).
+- Secondary: EXP-007 (Security & Trust), EXP-010 (QA & Reliability), EXP-013 (Founder Decision Intelligence).
+(registry: .agents/expertise/registry.yaml)
+
+SKILL
+Repeatable execution runbook codified in:
+- .agents/skills/atlas-head-engineer/SKILL.md (S.P.I.N.E. protocol, VisionQuest 4-way deliberation, TFC/BWP handoffs).
+
+RUNTIME ADAPTER & RULES
+Active in Antigravity via:
+- .agents/rules/engineering-control-plane.md (always-on control plane adapter with S.P.I.N.E. cognitive discipline).
+```
 
 ---
 

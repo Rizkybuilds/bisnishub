@@ -48,3 +48,8 @@ Set timeouts, bounded retries and error mapping. Retry mutations only with verif
 Test invalid identity/signature, unauthorized resources, tampered totals, duplicate and concurrent requests, out-of-order events and provider failures relevant to the change. Confirm application and database effects, not only HTTP success.
 
 Report endpoint/command contracts, changed files, tests executed and remaining integration or deployment steps. Loaded source code is not a deployed function; verify the endpoint and logs after an authorized deployment.
+
+## References and advanced patterns
+
+When implementing high-throughput webhooks, signature verification, or payment integrations, load:
+- [Webhook Idempotency & API Resilience](references/webhook-idempotency-and-resilience.md) for two-phase atomic claims, SHA-256 payload fingerprinting, timing-safe crypto, and RFC 9457 structured errors.
