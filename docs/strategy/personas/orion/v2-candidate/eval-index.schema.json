@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ORION v2 Evaluation Registry Schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "registry_id",
+    "status",
+    "baseline_parent_commit",
+    "historical_base_commit",
+    "total_cases",
+    "breakdown",
+    "staging_summary",
+    "cases"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "registry_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PROPOSED_TEST_DESIGN", "ACTIVE_EVALUATION", "COMPLETED_EVALUATION"]
+    },
+    "baseline_parent_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "historical_base_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "total_cases": {
+      "type": "integer",
+      "const": 63
+    },
+    "breakdown": {
+      "type": "object",
+      "required": [
+        "critical_cases",
+        "standard_behavioral_cases",
+        "memory_extension_cases",
+        "canonical_v1_cases",
+        "proposed_v2_additions"
+      ],
+      "properties": {
+        "critical_cases": { "type": "integer", "const": 10 },
+        "standard_behavioral_cases": { "type": "integer", "const": 44 },
+        "memory_extension_cases": { "type": "integer", "const": 9 },
+        "canonical_v1_cases": { "type": "integer", "const": 36 },
+        "proposed_v2_additions": { "type": "integer", "const": 18 }
+      }
+    },
+    "staging_summary": {
+      "type": "object",
+      "required": [
+        "E0_STATIC_SCHEMA",
+        "E1_CRITICAL_SMOKE",
+        "E2_COGNITIVE_PILOT",
+        "E3_FULL_BENCHMARK",
+        "E4_MEMORY_INTEGRATION",
+        "E5_FOUNDER_PILOT"
+      ]
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 63,
+      "maxItems": 63,
+      "items": {
+        "type": "object",
+        "required": [
+          "case_id",
+          "title",
+          "tier",
+          "category",
+          "stage",
+          "scenario_input",
+          "expected_behavior",
+          "fail_condition",
+          "grading_rule",
+          "provenance",
+          "run_state"
+        ],
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "pattern": "^(OR-EVAL-[0-9]{2}|OR-MEM-EVAL-[0-9]{2})$"
+          },
+          "title": { "type": "string", "minLength": 3 },
+          "tier": {
+            "type": "string",
+            "enum": ["CRITICAL", "STANDARD"]
+          },
+          "category": { "type": "string", "minLength": 3 },
+          "stage": {
+            "type": "string",
+            "enum": ["E1_SMOKE", "E2_PILOT", "E3_BENCHMARK", "E4_MEMORY_G3"]
+          },
+          "scenario_input": { "type": "string", "minLength": 5 },
+          "expected_behavior": { "type": "string", "minLength": 10 },
+          "fail_condition": { "type": "string", "minLength": 10 },
+          "grading_rule": { "type": "string", "minLength": 10 },
+          "provenance": { "type": "string", "minLength": 5 },
+          "run_state": {
+            "type": "string",
+            "enum": ["NOT_RUN", "PASS", "PARTIAL", "FAIL"]
+          },
+          "last_score": {
+            "type": ["integer", "null"],
+            "minimum": 0,
+            "maximum": 2
+          }
+        }
+      }
+    }
+  }
+}

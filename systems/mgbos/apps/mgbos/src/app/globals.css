@@ -297,6 +297,7 @@ summary:focus-visible {
 
 .shell-content {
   flex: 1;
+  min-width: 0;
   padding: 32px 40px;
   background: var(--bg-app);
   max-width: 1280px;
@@ -749,6 +750,10 @@ button:disabled {
   margin-top: 16px;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
+}
+
+.shell-content .table-container {
+  overflow-x: auto;
 }
 
 table {

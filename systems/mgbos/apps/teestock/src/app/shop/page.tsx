@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { ConceptGallery } from '../../components/RetailShowcase';
 
 export const metadata: Metadata = {
-  title: 'The Edit — TeeStock Selects',
+  title: 'The Edit — TeeStock Selects Preview Catalog',
   description:
-    'Jelajahi eksplorasi visual dan arah koleksi TeeStock Selects. Katalog masih dalam tahap pengembangan dan belum menerima pesanan.',
+    'Jelajahi pratinjau kurasi apparel grafis TeeStock Selects. Buka halaman studi produk untuk eksplorasi varian ukuran dan visual garmen.',
 };
 
 export default function ShopPage() {
