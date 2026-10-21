@@ -2600,6 +2600,9 @@ REPOSITORY
 AUTHORITY MODEL
 → docs/governance/
 
+STRATEGY PERSONAS
+→ docs/strategy/personas/
+
 ENGINEERING GOVERNANCE
 → docs/engineering/
 

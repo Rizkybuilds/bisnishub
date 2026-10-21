@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bisnishub.invalid/orion/v2-candidate/memory-record.schema.json",
+  "title": "ORION v2 Typed Memory Record Schema",
+  "description": "Governed candidate schema for ORION v2 selective memory records across the 4-plane memory model.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "memory_id",
+    "plane",
+    "kind",
+    "visibility",
+    "claim_status",
+    "subject",
+    "claim",
+    "source",
+    "consent"
+  ],
+  "properties": {
+    "memory_id": {
+      "type": "string",
+      "pattern": "^OR-MEM-[0-9]{4,}$"
+    },
+    "plane": {
+      "type": "string",
+      "enum": [
+        "PLANE_1_EPHEMERAL",
+        "PLANE_2_HYPOTHESIS",
+        "PLANE_3_CANONICAL_MIRROR",
+        "PLANE_4_PRIVATE_VAULT"
+      ]
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "THESIS",
+        "DECISION_REFERENCE",
+        "EVIDENCE_REFERENCE",
+        "EXPERIMENT",
+        "OPPORTUNITY",
+        "PREFERENCE",
+        "FOUNDER_CONSTRAINT",
+        "REFLECTION"
+      ]
+    },
+    "visibility": {
+      "type": "string",
+      "enum": [
+        "PUBLIC_SAFE",
+        "FOUNDER_CONFIDENTIAL",
+        "RESTRICTED_VAULT"
+      ]
+    },
+    "claim_status": {
+      "type": "string",
+      "enum": [
+        "OBSERVED",
+        "OWNER_DECIDED",
+        "HYPOTHESIS",
+        "INFERRED",
+        "ASSUMED",
+        "PROPOSED",
+        "SUPERSEDED",
+        "DISPUTED",
+        "UNVERIFIED",
+        "QUARANTINED"
+      ]
+    },
+    "subject": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 180
+    },
+    "claim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_basis": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "falsification_criteria": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "repository",
+            "conversation",
+            "external",
+            "experiment",
+            "other"
+          ]
+        },
+        "repository_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "observed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "consent": {
+      "type": "object",
+      "required": [
+        "allowed_destination",
+        "approved_by"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "allowed_use": {
+          "type": "string"
+        },
+        "allowed_destination": {
+          "type": "string",
+          "enum": [
+            "PROPOSAL_ONLY",
+            "PUBLIC_REVIEW_PR",
+            "PRIVATE_STORE"
+          ]
+        },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "approval_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "review_after": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "expires_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "supersedes_memory_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "superseded_by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "evidence_needed": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sanitization_status": {
+      "type": "string",
+      "enum": [
+        "CLEAN",
+        "REDACTED",
+        "QUARANTINED",
+        "DIRTY"
+      ],
+      "default": "CLEAN"
+    }
+  }
+}

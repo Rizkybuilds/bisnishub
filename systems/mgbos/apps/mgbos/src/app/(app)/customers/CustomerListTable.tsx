@@ -33,20 +33,22 @@ export interface CustomerData {
   }>;
 }
 
-export function CustomerListTable({
-  customers,
-  activeBrandCode,
-}: {
-  customers: CustomerData[];
-  activeBrandCode: string;
-}) {
-  const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState<'ALL' | 'COMPANY' | 'PERSON'>(
-    'ALL',
-  );
-  const [brandFilter, setBrandFilter] = useState<'ALL' | 'ACTIVE'>('ALL');
+export type CustomerListTableDataState =
+  | { status: 'SUCCESS'; data: CustomerData[] }
+  | { status: 'UNAVAILABLE'; message: string };
 
-  const filtered = customers.filter((cust) => {
+export interface CustomerFilterOptions {
+  search: string;
+  typeFilter: 'ALL' | 'COMPANY' | 'PERSON';
+  brandFilter: 'ALL' | 'ACTIVE';
+  activeBrandCode: string;
+}
+
+export function filterCustomers(
+  customers: CustomerData[],
+  { search, typeFilter, brandFilter, activeBrandCode }: CustomerFilterOptions,
+): CustomerData[] {
+  return customers.filter((cust) => {
     // Type filter
     if (typeFilter !== 'ALL' && cust.account_type !== typeFilter) {
       return false;
@@ -54,8 +56,8 @@ export function CustomerListTable({
 
     // Brand filter
     if (brandFilter === 'ACTIVE') {
-      const hasBrand = cust.customer_brand_relationships.some(
-        (rel) => rel.brands?.code === activeBrandCode,
+      const hasBrand = cust.customer_brand_relationships?.some(
+        (rel) => rel && rel.brands?.code === activeBrandCode,
       );
       if (!hasBrand) return false;
     }
@@ -63,19 +65,56 @@ export function CustomerListTable({
     // Search filter
     if (!search.trim()) return true;
     const q = search.toLowerCase();
-    const matchName = cust.display_name.toLowerCase().includes(q);
+    const matchName = cust.display_name?.toLowerCase().includes(q) ?? false;
     const matchLegal = cust.legal_name?.toLowerCase().includes(q) ?? false;
     const matchEmail = cust.primary_email?.toLowerCase().includes(q) ?? false;
     const matchPhone = cust.primary_phone?.toLowerCase().includes(q) ?? false;
-    const matchContact = cust.customer_contacts.some(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        (c.position?.toLowerCase().includes(q) ?? false) ||
-        (c.email?.toLowerCase().includes(q) ?? false),
-    );
+    const matchContact =
+      cust.customer_contacts?.some(
+        (c) =>
+          c.name?.toLowerCase().includes(q) ||
+          (c.position?.toLowerCase().includes(q) ?? false) ||
+          (c.email?.toLowerCase().includes(q) ?? false),
+      ) ?? false;
 
     return matchName || matchLegal || matchEmail || matchPhone || matchContact;
   });
+}
+
+export function CustomerListTable({
+  dataState,
+  customers,
+  activeBrandCode,
+}: {
+  dataState?: CustomerListTableDataState;
+  customers?: CustomerData[];
+  activeBrandCode: string;
+}) {
+  const resolvedState: CustomerListTableDataState = dataState ?? {
+    status: 'SUCCESS',
+    data: customers ?? [],
+  };
+  const allCustomers =
+    resolvedState.status === 'SUCCESS' ? resolvedState.data : [];
+
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState<'ALL' | 'COMPANY' | 'PERSON'>(
+    'ALL',
+  );
+  const [brandFilter, setBrandFilter] = useState<'ALL' | 'ACTIVE'>('ALL');
+
+  const filtered = filterCustomers(allCustomers, {
+    search,
+    typeFilter,
+    brandFilter,
+    activeBrandCode,
+  });
+
+  const handleResetFilters = () => {
+    setSearch('');
+    setTypeFilter('ALL');
+    setBrandFilter('ALL');
+  };
 
   return (
     <div>
@@ -98,8 +137,12 @@ export function CustomerListTable({
             placeholder="Cari customer, nama legal, kontak PIC, email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            disabled={resolvedState.status === 'UNAVAILABLE'}
             className="input-field"
-            style={{ width: '100%' }}
+            style={{
+              width: '100%',
+              opacity: resolvedState.status === 'UNAVAILABLE' ? 0.6 : 1,
+            }}
           />
         </div>
 
@@ -116,6 +159,7 @@ export function CustomerListTable({
           >
             <button
               onClick={() => setTypeFilter('ALL')}
+              disabled={resolvedState.status === 'UNAVAILABLE'}
               style={{
                 background: typeFilter === 'ALL' ? '#1e293b' : 'transparent',
                 color: typeFilter === 'ALL' ? '#ffffff' : '#94a3b8',
@@ -123,13 +167,19 @@ export function CustomerListTable({
                 padding: '4px 10px',
                 borderRadius: '4px',
                 fontSize: '0.8rem',
-                cursor: 'pointer',
+                cursor:
+                  resolvedState.status === 'UNAVAILABLE'
+                    ? 'not-allowed'
+                    : 'pointer',
+                opacity: resolvedState.status === 'UNAVAILABLE' ? 0.6 : 1,
               }}
             >
-              Semua ({customers.length})
+              Semua (
+              {resolvedState.status === 'SUCCESS' ? allCustomers.length : '—'})
             </button>
             <button
               onClick={() => setTypeFilter('COMPANY')}
+              disabled={resolvedState.status === 'UNAVAILABLE'}
               style={{
                 background:
                   typeFilter === 'COMPANY' ? '#0c4a6e' : 'transparent',
@@ -138,13 +188,18 @@ export function CustomerListTable({
                 padding: '4px 10px',
                 borderRadius: '4px',
                 fontSize: '0.8rem',
-                cursor: 'pointer',
+                cursor:
+                  resolvedState.status === 'UNAVAILABLE'
+                    ? 'not-allowed'
+                    : 'pointer',
+                opacity: resolvedState.status === 'UNAVAILABLE' ? 0.6 : 1,
               }}
             >
               🏢 Perusahaan
             </button>
             <button
               onClick={() => setTypeFilter('PERSON')}
+              disabled={resolvedState.status === 'UNAVAILABLE'}
               style={{
                 background: typeFilter === 'PERSON' ? '#064e3b' : 'transparent',
                 color: typeFilter === 'PERSON' ? '#34d399' : '#94a3b8',
@@ -152,7 +207,11 @@ export function CustomerListTable({
                 padding: '4px 10px',
                 borderRadius: '4px',
                 fontSize: '0.8rem',
-                cursor: 'pointer',
+                cursor:
+                  resolvedState.status === 'UNAVAILABLE'
+                    ? 'not-allowed'
+                    : 'pointer',
+                opacity: resolvedState.status === 'UNAVAILABLE' ? 0.6 : 1,
               }}
             >
               👤 Retail / Person
@@ -171,6 +230,7 @@ export function CustomerListTable({
           >
             <button
               onClick={() => setBrandFilter('ALL')}
+              disabled={resolvedState.status === 'UNAVAILABLE'}
               style={{
                 background: brandFilter === 'ALL' ? '#1e293b' : 'transparent',
                 color: brandFilter === 'ALL' ? '#ffffff' : '#94a3b8',
@@ -178,13 +238,18 @@ export function CustomerListTable({
                 padding: '4px 10px',
                 borderRadius: '4px',
                 fontSize: '0.8rem',
-                cursor: 'pointer',
+                cursor:
+                  resolvedState.status === 'UNAVAILABLE'
+                    ? 'not-allowed'
+                    : 'pointer',
+                opacity: resolvedState.status === 'UNAVAILABLE' ? 0.6 : 1,
               }}
             >
               Semua Brand
             </button>
             <button
               onClick={() => setBrandFilter('ACTIVE')}
+              disabled={resolvedState.status === 'UNAVAILABLE'}
               style={{
                 background:
                   brandFilter === 'ACTIVE' ? '#0284c7' : 'transparent',
@@ -193,8 +258,12 @@ export function CustomerListTable({
                 padding: '4px 10px',
                 borderRadius: '4px',
                 fontSize: '0.8rem',
-                cursor: 'pointer',
+                cursor:
+                  resolvedState.status === 'UNAVAILABLE'
+                    ? 'not-allowed'
+                    : 'pointer',
                 fontWeight: brandFilter === 'ACTIVE' ? 600 : 400,
+                opacity: resolvedState.status === 'UNAVAILABLE' ? 0.6 : 1,
               }}
             >
               {activeBrandCode} Only
@@ -217,25 +286,141 @@ export function CustomerListTable({
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 ? (
+            {resolvedState.status === 'UNAVAILABLE' ? (
               <tr>
                 <td
                   colSpan={6}
                   style={{
                     textAlign: 'center',
-                    padding: '32px',
+                    padding: '40px 16px',
                     color: '#94a3b8',
                   }}
                 >
-                  Tidak ada customer yang sesuai dengan filter pencarian.
+                  <div
+                    style={{
+                      color: '#f87171',
+                      fontWeight: 600,
+                      fontSize: '0.95rem',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    Data Customer Tidak Dapat Dimuat
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.85rem',
+                      color: '#94a3b8',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    {resolvedState.message}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        window.location.reload();
+                      }
+                    }}
+                    style={{
+                      background: '#0284c7',
+                      border: '1px solid #38bdf8',
+                      color: '#f8fafc',
+                      padding: '6px 14px',
+                      borderRadius: '4px',
+                      fontSize: '0.8rem',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Muat Ulang
+                  </button>
+                </td>
+              </tr>
+            ) : allCustomers.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={6}
+                  style={{
+                    textAlign: 'center',
+                    padding: '40px 16px',
+                    color: '#94a3b8',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#e2e8f0',
+                      fontWeight: 600,
+                      fontSize: '0.95rem',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    Belum ada customer yang terdaftar.
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                    Gunakan tombol pendaftaran customer untuk menambahkan
+                    entitas holding atau kontak retail.
+                  </div>
+                </td>
+              </tr>
+            ) : filtered.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={6}
+                  style={{
+                    textAlign: 'center',
+                    padding: '40px 16px',
+                    color: '#94a3b8',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#e2e8f0',
+                      fontWeight: 600,
+                      fontSize: '0.95rem',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    Tidak ada customer yang sesuai dengan filter pencarian saat
+                    ini.
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      color: '#64748b',
+                      marginBottom: '14px',
+                    }}
+                  >
+                    Coba ubah kata kunci pencarian atau sesuaikan pilihan tipe
+                    akun/brand.
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleResetFilters}
+                    style={{
+                      background: '#1e293b',
+                      border: '1px solid #334155',
+                      color: '#38bdf8',
+                      padding: '6px 14px',
+                      borderRadius: '4px',
+                      fontSize: '0.8rem',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Reset Filter
+                  </button>
                 </td>
               </tr>
             ) : (
               filtered.map((cust) => {
                 const primaryContact =
-                  cust.customer_contacts.find((c) => c.is_primary) ??
-                  cust.customer_contacts[0];
-                const otherContactsCount = cust.customer_contacts.length - 1;
+                  cust.customer_contacts?.find((c) => c && c.is_primary) ??
+                  cust.customer_contacts?.[0];
+                const otherContactsCount =
+                  (cust.customer_contacts?.length ?? 0) > 1
+                    ? cust.customer_contacts.length - 1
+                    : 0;
 
                 return (
                   <tr key={cust.id}>
@@ -357,7 +542,7 @@ export function CustomerListTable({
                           gap: '6px',
                         }}
                       >
-                        {cust.customer_brand_relationships.map((rel) => {
+                        {cust.customer_brand_relationships?.map((rel) => {
                           const isCurrentActive =
                             rel.brands?.code === activeBrandCode;
                           return (
