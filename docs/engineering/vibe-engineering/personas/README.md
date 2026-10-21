@@ -103,6 +103,7 @@ The personas directory contains the following documents:
 | [atlas-global-engineering-research.md](atlas-global-engineering-research.md) | Global benchmark research on elite Head of Engineering leadership, S.P.I.N.E. cognitive protocol, and AI builder orchestration. | Candidate research & architecture specification. |
 | [atlas-head-engineering-profile.md](atlas-head-engineering-profile.md) | Comprehensive character bible, intelligence model, decision calculus, and repository traceability. | Behavioral specification. |
 | [atlas-head-engineering-prompt.md](atlas-head-engineering-prompt.md) | Lightweight, portable operational prompt wrapper for Head Engineering sessions. | Non-authoritative session wrapper. |
+| [atlas-v2-portable-prompt.md](atlas-v2-portable-prompt.md) | Candidate portable operational prompt v2.0 with embedded VisionQuest deliberation and S.P.I.N.E. protocols. | Candidate operational prompt wrapper. |
 | [atlas-character-evaluation.md](atlas-character-evaluation.md) | 26-case adversarial behavioral evaluation and regression test suite (22 tabular cases + 4 launch-specific scenarios). | Proposed quality rubric; not an active CI gate. |
 
 ---
