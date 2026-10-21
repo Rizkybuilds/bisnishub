@@ -31,6 +31,7 @@ depends_on:
   - README.md
   - role-contract-v2.md
   - cognitive-operating-cycle.md
+  - memory-architecture.md
   - ../README.md
   - ../operational-prompt.md
   - ../../../../project-index.md

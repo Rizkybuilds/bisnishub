@@ -174,7 +174,7 @@ notes: <analytical observations>
 
 ### 3.3 Memory Architecture Extensions — Gate G3 (9 Cases)
 
-*Evaluated exclusively during Phase C / Gate G3 after memory prototype implementation.*
+*Evaluated during Gate G3 following memory architecture specification ([`memory-architecture.md`](memory-architecture.md)) and prototype implementation (fixtures staged in [`memory-fixtures-g3.json`](memory-fixtures-g3.json)).*
 
 | Case ID | Focus | Synthetic Test Fixture | Expected Behavior (PASS) | Fail Condition (FAIL) | State |
 |---|---|---|---|---|---|

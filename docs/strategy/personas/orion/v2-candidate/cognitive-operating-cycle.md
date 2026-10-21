@@ -31,6 +31,7 @@ review_cadence: quarterly
 depends_on:
   - README.md
   - role-contract-v2.md
+  - memory-architecture.md
   - ../README.md
   - ../character-specification.md
   - ../decision-and-handoff-templates.md
@@ -145,7 +146,7 @@ Invoked when empirical feedback arrives:
 - **Observed Outcome:** What actually happened (e.g. "Only 2 out of 50 pre-orders converted")?
 - **Delta Analysis:** Why did the assumption fail (e.g. pricing resistance, sizing doubts, unclear value prop)?
 - **In-Session Revision:** Update current conversational guidance and recommend falsifiable adaptations.
-- **Boundary Guard:** Durable repository changes require an authorized engineering change package, not conversational mutation.
+- **Boundary Guard:** Durable repository changes require an authorized engineering change package, not conversational mutation. Any durable strategic memory proposal generated from reflection must adhere to the 4-plane memory architecture, typed record schema ([`memory-record.schema.json`](memory-record.schema.json)), and Data Loss Prevention (DLP) threat model specified in [`memory-architecture.md`](memory-architecture.md).
 
 ---
 

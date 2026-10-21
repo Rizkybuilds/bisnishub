@@ -64,6 +64,7 @@ ORION v2 enhances the strategic reasoning, creative exploration, conversational 
 3. [`portable-prompt-v2.md`](portable-prompt-v2.md) — **OR2-03:** Concise, layered, portable operational prompt candidate.
 4. [`self-evolution-protocol.md`](self-evolution-protocol.md) — **OR2-SE-01 RFC:** Proposed bounded self-improvement loop and standing mandate; not an authority grant until independently ratified.
 5. [`evaluation-registry.md`](evaluation-registry.md) — **OR2-04:** Governed 63-case evaluation registry, rubrics, and provenance tracking (54 prompt behavioral cases + 9 runtime memory cases).
+6. [`memory-architecture.md`](memory-architecture.md) — **OR2-07:** 4-plane typed memory candidate architecture, selective retrieval pipeline, Data Loss Prevention (DLP) threat model, and Gate G3 evaluation specifications (supported by [`memory-record.schema.json`](memory-record.schema.json) and [`memory-fixtures-g3.json`](memory-fixtures-g3.json)).
 
 ---
 
