@@ -66,6 +66,8 @@ ORION v2 enhances the strategic reasoning, creative exploration, conversational 
 5. [`evaluation-registry.md`](evaluation-registry.md) — **OR2-04:** Governed 63-case evaluation registry, rubrics, and provenance tracking (54 prompt behavioral cases + 9 runtime memory cases).
 6. [`memory-architecture.md`](memory-architecture.md) — **OR2-07:** 4-plane typed memory candidate architecture, selective retrieval pipeline, Data Loss Prevention (DLP) threat model, and Gate G3 evaluation specifications (supported by [`memory-record.schema.json`](memory-record.schema.json) and [`memory-fixtures-g3.json`](memory-fixtures-g3.json)).
 7. [`tool-and-handoff-contract.md`](tool-and-handoff-contract.md) — **OR2-09:** Tool integration policies, least-privilege boundaries, Business Outcome Brief (BOB) contract and schema ([`business-outcome-brief.schema.json`](business-outcome-brief.schema.json)), and dynamic Git reality verification adapter ([`git_verify_adapter.py`](git_verify_adapter.py)).
+8. [`rollback-runbook.md`](rollback-runbook.md) — **OR2-11:** Operator & Founder Rollback Runbook for immediate manual reversion to merged v1.0 reference documentation.
+9. [`release-packet.md`](release-packet.md) — **OR2-11:** Candidate Release Packet (`RP-ORION-V2-CANDIDATE-01`) detailing component inventory, Gate G0–G6 verification matrix, and promotion recommendations.
 
 ---
 

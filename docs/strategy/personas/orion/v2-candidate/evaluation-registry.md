@@ -17,7 +17,7 @@ supersedes: null
 
 # ORION v2 — Governed 63-Case Evaluation Registry (Candidate)
 
-> **Document Status:** `PROPOSED / CANDIDATE_EVALUATION` (Gate G5 Candidate Specification).  
+> **Document Status:** `PROPOSED / CANDIDATE_EVALUATION` (Gate G6 Release Candidate Specification).  
 > **Evaluation Reality:** Stage E0 (Static Verification) `PASS`; Stage E1 (10 Critical Governance Cases) `PASS (2/2 independent runs, 20/20 pts)`; Stage E2/E3 (18 Reasoning & Expression Cases) `PASS (36/36 pts)`; Stage E4 (9 Runtime Memory Cases) `PASS (18/18 pts)`; Stages E5/E6 `NOT_RUN` (26 remaining normative benchmark cases preserved unfalsified).  
 > **Baseline Benchmark:** Canonical v1.0 suite under [`../behavioral-evaluation.md`](../behavioral-evaluation.md) (36 scenarios) remains the normative baseline; all 36 original cases are preserved verbatim.
 
