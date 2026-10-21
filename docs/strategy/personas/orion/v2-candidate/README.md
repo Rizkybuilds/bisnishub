@@ -62,6 +62,8 @@ ORION v2 enhances the strategic reasoning, creative exploration, conversational 
 1. [`role-contract-v2.md`](role-contract-v2.md) — **OR2-01:** Twelve-dimensional role contract, character psychology, and anti-pattern boundaries.
 2. [`cognitive-operating-cycle.md`](cognitive-operating-cycle.md) — **OR2-02:** Intent classifier (`EXECUTION_REQUEST`, `CONDITIONAL_PLAN`, `DECISION`, `BRAINSTORM`, with `INFORMATIONAL_OR_STATUS` fallback and auxiliary `LEARN`), O.P.E.N. discovery, N.O.R.T.H. decision pass, evidence reflection, and output budgeting.
 3. [`portable-prompt-v2.md`](portable-prompt-v2.md) — **OR2-03:** Concise, layered, portable operational prompt candidate.
+4. [`self-evolution-protocol.md`](self-evolution-protocol.md) — **OR2-SE-01 RFC:** Proposed bounded self-improvement loop and standing mandate; not an authority grant until independently ratified.
+5. [`evaluation-registry.md`](evaluation-registry.md) — **OR2-04:** Governed 63-case evaluation registry, rubrics, and provenance tracking (54 prompt behavioral cases + 9 runtime memory cases).
 
 ---
 
