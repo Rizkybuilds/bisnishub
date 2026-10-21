@@ -8648,6 +8648,40 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       'forEach callback must not allow clearing phases',
     );
 
+    // Prototype mutation protection
+    const phasesProto = Object.getPrototypeOf(ALLOWED_STARTUP_PHASES);
+    assert.throws(
+      () => {
+        phasesProto.has = () => true;
+      },
+      { name: 'TypeError' },
+      'Direct prototype assignment must throw TypeError on frozen prototype',
+    );
+    assert.throws(
+      () => {
+        Object.defineProperty(phasesProto, 'has', { value: () => true });
+      },
+      { name: 'TypeError' },
+      'Object.defineProperty on prototype must throw TypeError',
+    );
+    assert.equal(
+      Reflect.set(phasesProto, 'has', () => true),
+      false,
+      'Reflect.set on prototype must return false',
+    );
+    assert.throws(
+      () => {
+        ALLOWED_STARTUP_PHASES.constructor.prototype.has = () => true;
+      },
+      { name: 'TypeError' },
+      'Constructor prototype assignment must throw TypeError',
+    );
+    assert.equal(
+      ALLOWED_STARTUP_PHASES.has('INJECTED_PHASE'),
+      false,
+      'facade must reject injected phase',
+    );
+
     // 3b. Read operations work as expected
     assert.equal(ALLOWED_STARTUP_PHASES.has('DISCOVERY'), true);
     assert.equal(ALLOWED_STARTUP_PHASES.has('PROCESS_SPAWN'), true);
@@ -8691,6 +8725,17 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       classifiedInjection.startupPhase,
       undefined,
       'arbitrary startup phase must be filtered out by classifyFailure',
+    );
+    const classifiedInjection2 = classifyFailure(
+      'BROWSER_START',
+      new QaError('BROWSER_START', 'BROWSER_START_FAILED', 'Failure', {
+        startupPhase: 'INJECTED_PHASE',
+      }),
+    );
+    assert.equal(
+      classifiedInjection2.startupPhase,
+      undefined,
+      'injected phase must be filtered out by classifyFailure',
     );
 
     // -------------------------------------------------------------------------
@@ -8872,36 +8917,38 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       assert.equal(existsSync(createdProfile), false, 'profile removed');
     })();
 
-    // 5d. Process exit during CDP connection (cdp.connect)
+    class MockHungWebSocket extends EventTarget {
+      constructor(url) {
+        super();
+        this.url = url;
+        this.listenerCounts = { open: 0, error: 0, close: 0 };
+        this.closedCalls = 0;
+      }
+      addEventListener(type, listener, options) {
+        if (this.listenerCounts[type] !== undefined) {
+          this.listenerCounts[type]++;
+        }
+        super.addEventListener(type, listener, options);
+      }
+      removeEventListener(type, listener, options) {
+        if (this.listenerCounts[type] !== undefined && this.listenerCounts[type] > 0) {
+          this.listenerCounts[type]--;
+        }
+        super.removeEventListener(type, listener, options);
+      }
+      close() {
+        this.closedCalls++;
+        // Crucially: never emits 'close' event!
+      }
+    }
+
+    // 5d. Process exit during CDP connection (cdp.connect) using actual Cdp.connect() and hung WebSocket
     await (async () => {
       let createdProfile = null;
       let mockProc = null;
       let capturedCdp = null;
+      let capturedWs = null;
       let threw = false;
-
-      class MockInFlightCdp extends Cdp {
-        async connect() {
-          if (this.closed) {
-            throw new QaError(
-              'BROWSER_START',
-              'CDP_CONNECTION_CLOSED',
-              `Chromium DevTools connection closed before connect (${this.closeReason ?? 'closed'})`,
-            );
-          }
-          return new Promise((resolve, reject) => {
-            this.connectReject = reject;
-            this.connectTimer = setTimeout(() => {
-              reject(
-                new QaError(
-                  'BROWSER_START',
-                  'CDP_SOCKET_TIMEOUT',
-                  'Chromium DevTools WebSocket connection timed out after 15000ms',
-                ),
-              );
-            }, 15000);
-          });
-        }
-      }
 
       try {
         await startBrowser({
@@ -8923,9 +8970,16 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
             }),
           }),
           cdpFn: (url, opts) => {
-            capturedCdp = new MockInFlightCdp(url, opts);
+            capturedWs = new MockHungWebSocket(url);
+            capturedCdp = new Cdp(url, {
+              ...opts,
+              webSocketFactory: () => capturedWs,
+            });
             setImmediate(() => {
               assert.ok(capturedCdp.connectTimer !== null, 'connectTimer must be active while connect is in flight');
+              assert.equal(capturedWs.listenerCounts.open, 1, 'open listener attached');
+              assert.equal(capturedWs.listenerCounts.error, 1, 'error listener attached');
+              assert.equal(capturedWs.listenerCounts.close, 1, 'close listener attached');
               mockProc.kill('SIGTERM');
             });
             return capturedCdp;
@@ -8945,16 +8999,66 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       assert.equal(mockProc.listenerCount('exit'), 0, 'exit listeners disposed');
       assert.equal(existsSync(createdProfile), false, 'profile removed');
       assert.ok(capturedCdp, 'CDP instance must be captured');
+      assert.ok(capturedWs, 'WebSocket instance must be captured');
       assert.equal(capturedCdp.closed, true, 'CDP instance must be closed');
       assert.ok(
         capturedCdp.closeReason === 'connection_race_lost' || capturedCdp.closeReason === 'startup_failed',
         `closeReason should be connection_race_lost or startup_failed, got: ${capturedCdp.closeReason}`,
       );
-      assert.equal(capturedCdp.connectTimer, null, 'connectTimer must be cleared');
-      assert.equal(capturedCdp.connectReject, null, 'connectReject reference must be cleared');
+      assert.equal(capturedCdp.connectTimer, null, 'connectTimer must be cleared to null');
+      assert.equal(capturedCdp.connectReject, null, 'connectReject reference must be cleared to null');
+      assert.equal(capturedCdp.connectCleanup, null, 'connectCleanup reference must be cleared to null');
+      assert.equal(capturedWs.listenerCounts.open, 0, 'open listener must be synchronously removed');
+      assert.equal(capturedWs.listenerCounts.error, 0, 'error listener must be synchronously removed');
+      assert.equal(capturedWs.listenerCounts.close, 0, 'close listener must be synchronously removed');
+
+      // Subsequent delayed socket events cannot produce false success
+      capturedWs.dispatchEvent(new Event('open'));
+      capturedWs.dispatchEvent(new Event('error'));
+      capturedWs.dispatchEvent(new Event('close'));
+      assert.equal(capturedCdp.closed, true);
     })();
 
-    // 5e. CDP connection lifecycle: closed before connect rejects fail-closed
+    // 5e. Standalone Cdp.connect() handshake lifecycle with hung WebSocket
+    await (async () => {
+      const mockWs = new MockHungWebSocket('ws://127.0.0.1:9222/devtools/browser/xyz');
+      const cdp = new Cdp('ws://127.0.0.1:9222/devtools/browser/xyz', {
+        webSocketFactory: () => mockWs,
+      });
+
+      const connectPromise = cdp.connect();
+      assert.equal(mockWs.listenerCounts.open, 1, 'open listener attached');
+      assert.equal(mockWs.listenerCounts.error, 1, 'error listener attached');
+      assert.equal(mockWs.listenerCounts.close, 1, 'close listener attached');
+      assert.ok(cdp.connectTimer !== null, 'connectTimer active');
+      assert.ok(cdp.connectReject !== null, 'connectReject active');
+
+      cdp.close('standalone_test_close');
+      assert.equal(cdp.closed, true);
+      assert.equal(cdp.closeReason, 'standalone_test_close');
+      assert.equal(cdp.connectTimer, null, 'connectTimer cleared synchronously');
+      assert.equal(cdp.connectReject, null, 'connectReject cleared synchronously');
+      assert.equal(cdp.connectCleanup, null, 'connectCleanup cleared synchronously');
+      assert.equal(mockWs.listenerCounts.open, 0, 'open listener removed synchronously');
+      assert.equal(mockWs.listenerCounts.error, 0, 'error listener removed synchronously');
+      assert.equal(mockWs.listenerCounts.close, 0, 'close listener removed synchronously');
+
+      // Subsequent delayed socket events cannot produce false success
+      mockWs.dispatchEvent(new Event('open'));
+      mockWs.dispatchEvent(new Event('error'));
+      mockWs.dispatchEvent(new Event('close'));
+
+      await assert.rejects(
+        () => connectPromise,
+        (err) =>
+          err instanceof QaError &&
+          err.code === 'CDP_CONNECTION_CLOSED' &&
+          err.message.includes('standalone_test_close'),
+        'in-flight connection must reject with CDP_CONNECTION_CLOSED',
+      );
+    })();
+
+    // 5f. CDP connection lifecycle: closed before connect rejects fail-closed
     await (async () => {
       const standaloneCdp = new Cdp('ws://127.0.0.1:9222/devtools/browser/xyz');
       assert.equal(standaloneCdp.closed, false);

@@ -2651,9 +2651,16 @@ export async function createFixture(
 }
 
 export class Cdp {
-  constructor(url, { app = CANONICAL_APP_ORIGIN } = {}) {
+  constructor(
+    url,
+    {
+      app = CANONICAL_APP_ORIGIN,
+      webSocketFactory = (targetUrl) => new WebSocket(targetUrl),
+    } = {},
+  ) {
     this.url = url;
     this.app = app;
+    this.webSocketFactory = webSocketFactory;
     this.id = 0;
     this.pending = new Map();
     this.requests = [];
@@ -2661,6 +2668,7 @@ export class Cdp {
     this.closeReason = null;
     this.connectTimer = null;
     this.connectReject = null;
+    this.connectCleanup = null;
   }
 
   async connect() {
@@ -2671,26 +2679,22 @@ export class Cdp {
         `Chromium DevTools connection closed before connect (${this.closeReason ?? 'closed'})`,
       );
     }
-    this.ws = new WebSocket(this.url);
+    const createWs =
+      typeof this.webSocketFactory === 'function'
+        ? this.webSocketFactory
+        : (targetUrl) => new WebSocket(targetUrl);
+    this.ws = createWs(this.url);
     await new Promise((resolve, reject) => {
       this.connectReject = reject;
-      this.connectTimer = setTimeout(() => {
-        cleanup();
-        reject(
-          new QaError(
-            'BROWSER_START',
-            'CDP_CONNECT_TIMED_OUT',
-            'Timed out connecting to Chromium DevTools WebSocket',
-          ),
-        );
-      }, 15000);
 
       const cleanup = () => {
+        if (this.connectCleanup === cleanup) {
+          this.connectCleanup = null;
+        }
         if (this.connectTimer) {
           clearTimeout(this.connectTimer);
           this.connectTimer = null;
         }
-        this.connectReject = null;
         try {
           this.ws?.removeEventListener?.('open', onOpen);
           this.ws?.removeEventListener?.('error', onError);
@@ -2700,13 +2704,41 @@ export class Cdp {
         }
       };
 
+      this.connectCleanup = cleanup;
+
+      this.connectTimer = setTimeout(() => {
+        cleanup();
+        const rejectFn = this.connectReject ?? reject;
+        this.connectReject = null;
+        rejectFn(
+          new QaError(
+            'BROWSER_START',
+            'CDP_CONNECT_TIMED_OUT',
+            'Timed out connecting to Chromium DevTools WebSocket',
+          ),
+        );
+      }, 15000);
+
       const onOpen = () => {
         cleanup();
+        this.connectReject = null;
+        if (this.closed) {
+          reject(
+            new QaError(
+              'BROWSER_START',
+              'CDP_CONNECTION_CLOSED',
+              `Chromium DevTools connection closed during handshake (${this.closeReason ?? 'closed'})`,
+            ),
+          );
+          return;
+        }
         resolve();
       };
       const onError = () => {
         cleanup();
-        reject(
+        const rejectFn = this.connectReject ?? reject;
+        this.connectReject = null;
+        rejectFn(
           new QaError(
             'BROWSER_START',
             'CDP_SOCKET_ERROR',
@@ -2716,7 +2748,9 @@ export class Cdp {
       };
       const onClose = () => {
         cleanup();
-        reject(
+        const rejectFn = this.connectReject ?? reject;
+        this.connectReject = null;
+        rejectFn(
           new QaError(
             'BROWSER_START',
             'CDP_CONNECTION_CLOSED',
@@ -2725,9 +2759,9 @@ export class Cdp {
         );
       };
 
-      this.ws.addEventListener('open', onOpen, { once: true });
-      this.ws.addEventListener('error', onError, { once: true });
-      this.ws.addEventListener('close', onClose, { once: true });
+      this.ws?.addEventListener?.('open', onOpen, { once: true });
+      this.ws?.addEventListener?.('error', onError, { once: true });
+      this.ws?.addEventListener?.('close', onClose, { once: true });
     });
 
     if (this.closed) {
@@ -2902,6 +2936,14 @@ export class Cdp {
   close(reason = 'explicit_close') {
     this.closed = true;
     this.closeReason = this.closeReason ?? reason;
+    if (this.connectCleanup) {
+      try {
+        this.connectCleanup();
+      } catch {
+        // Safe disposal
+      }
+      this.connectCleanup = null;
+    }
     if (this.connectTimer) {
       clearTimeout(this.connectTimer);
       this.connectTimer = null;
@@ -3769,6 +3811,10 @@ const CANONICAL_STARTUP_PHASES = Object.freeze([
   'CDP_CONNECT',
 ]);
 
+const INTERNAL_STARTUP_PHASES = Object.freeze(
+  new Set(CANONICAL_STARTUP_PHASES),
+);
+
 class ReadOnlyPhaseSet {
   #set;
 
@@ -3829,11 +3875,12 @@ class ReadOnlyPhaseSet {
   }
 }
 
+Object.freeze(ReadOnlyPhaseSet.prototype);
+Object.freeze(ReadOnlyPhaseSet);
+
 export const ALLOWED_STARTUP_PHASES = Object.freeze(
   new ReadOnlyPhaseSet(CANONICAL_STARTUP_PHASES),
 );
-
-const INTERNAL_STARTUP_PHASES = ALLOWED_STARTUP_PHASES;
 
 function allowlistedString(value, allowedSet, fallback = null) {
   return typeof value === 'string' && allowedSet.has(value) ? value : fallback;
