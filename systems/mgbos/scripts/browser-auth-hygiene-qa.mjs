@@ -229,6 +229,65 @@ export function assertConsistentSupabaseEnv(apiOrigin, env, options = {}) {
   }
 }
 
+const LOOPBACK_WS_URL_PATTERN = /^ws:\/\/127\.0\.0\.1:\d+(?:[\/?#].*)?$/;
+
+export function assertSafeLoopbackWebSocketUrl(
+  urlInput,
+  expectedPort,
+  options = {},
+) {
+  const {
+    stage = 'BROWSER_START',
+    code = 'NONLOCAL_TARGET_BLOCKED',
+    message = 'Refusing a nonlocal or deceptive WebSocket target',
+    details = {},
+  } = typeof options === 'string' ? { stage: options } : options;
+
+  if (
+    typeof urlInput !== 'string' ||
+    urlInput.length === 0 ||
+    urlInput !== urlInput.trim() ||
+    !LOOPBACK_WS_URL_PATTERN.test(urlInput)
+  ) {
+    throw new QaError(stage, code, message, details);
+  }
+
+  let parsed;
+  try {
+    parsed = new URL(urlInput);
+  } catch {
+    throw new QaError(stage, code, message, details);
+  }
+
+  const portNum = Number(parsed.port);
+
+  if (
+    parsed.protocol !== 'ws:' ||
+    parsed.hostname !== '127.0.0.1' ||
+    parsed.username !== '' ||
+    parsed.password !== '' ||
+    !Number.isInteger(portNum) ||
+    portNum < 1 ||
+    portNum > 65535
+  ) {
+    throw new QaError(stage, code, message, details);
+  }
+
+  if (expectedPort !== undefined && expectedPort !== null) {
+    const expectedPortNum = Number(expectedPort);
+    if (portNum !== expectedPortNum) {
+      throw new QaError(
+        stage,
+        code,
+        `WebSocket debugging port ${portNum} does not match expected DevTools port ${expectedPortNum}`,
+        details,
+      );
+    }
+  }
+
+  return urlInput;
+}
+
 export function resolveLoopbackRequestUrl(
   apiOrigin,
   route,
@@ -2858,15 +2917,23 @@ export async function startBrowser({
   fetchFn = fetch,
   chromeExecutableFn = chromeExecutable,
   cdpFn = (url, opts) => new Cdp(url, opts),
+  terminateSubprocessFn = terminateSubprocess,
+  rmSyncFn = rmSync,
   browserStartTimeoutMs = 20000,
   signal,
 } = {}) {
   throwIfSignalAborted(signal, 'BROWSER_START');
   assertLoopbackHttpOrigin(app, 'BROWSER_START');
 
+  const safeBrowserStartTimeoutMs = parseBrowserStartTimeout(
+    browserStartTimeoutMs,
+    20000,
+  );
+
   let profile = null;
   let browser = null;
   let spawnError = null;
+  let onProcessError = null;
 
   try {
     let executable;
@@ -2935,7 +3002,6 @@ export async function startBrowser({
       );
     }
 
-    let onProcessError = null;
     if (browser && typeof browser.on === 'function') {
       onProcessError = (err) => {
         spawnError = err;
@@ -2988,7 +3054,7 @@ export async function startBrowser({
           return false;
         },
         'Local browser debugging endpoint',
-        browserStartTimeoutMs,
+        safeBrowserStartTimeoutMs,
         { signal, stage: 'BROWSER_START' },
       );
     } catch (waitErr) {
@@ -3009,17 +3075,36 @@ export async function startBrowser({
         );
       }
       throw waitErr;
-    } finally {
-      if (
-        browser &&
-        onProcessError &&
-        typeof browser.removeListener === 'function'
-      ) {
-        browser.removeListener('error', onProcessError);
-      }
     }
 
     throwIfSignalAborted(signal, 'BROWSER_START');
+
+    if (spawnError) {
+      throw new QaError(
+        'BROWSER_START',
+        'BROWSER_START_FAILED',
+        'Headless Chromium process error before creating debugging target',
+        {
+          process: 'browser',
+          exitCode: browser?.exitCode ?? null,
+          signal: browser?.signalCode ?? null,
+          startupPhase: 'TARGET_CREATE',
+        },
+      );
+    }
+    if (browser && (browser.exitCode !== null || browser.signalCode !== null)) {
+      throw new QaError(
+        'BROWSER_START',
+        'BROWSER_START_FAILED',
+        'Headless Chromium exited before creating debugging target',
+        {
+          process: 'browser',
+          exitCode: browser.exitCode,
+          signal: browser.signalCode,
+          startupPhase: 'TARGET_CREATE',
+        },
+      );
+    }
 
     let response;
     try {
@@ -3029,6 +3114,32 @@ export async function startBrowser({
       );
     } catch (fetchErr) {
       throwIfSignalAborted(signal, 'BROWSER_START');
+      if (spawnError) {
+        throw new QaError(
+          'BROWSER_START',
+          'BROWSER_START_FAILED',
+          'Headless Chromium process error during target creation',
+          {
+            process: 'browser',
+            exitCode: browser?.exitCode ?? null,
+            signal: browser?.signalCode ?? null,
+            startupPhase: 'TARGET_CREATE',
+          },
+        );
+      }
+      if (browser && (browser.exitCode !== null || browser.signalCode !== null)) {
+        throw new QaError(
+          'BROWSER_START',
+          'BROWSER_START_FAILED',
+          'Headless Chromium exited during target creation',
+          {
+            process: 'browser',
+            exitCode: browser.exitCode,
+            signal: browser.signalCode,
+            startupPhase: 'TARGET_CREATE',
+          },
+        );
+      }
       throw new QaError(
         'BROWSER_START',
         'CDP_SOCKET_ERROR',
@@ -3037,6 +3148,33 @@ export async function startBrowser({
           process: 'browser',
           exitCode: browser?.exitCode ?? null,
           signal: browser?.signalCode ?? null,
+          startupPhase: 'TARGET_CREATE',
+        },
+      );
+    }
+
+    if (spawnError) {
+      throw new QaError(
+        'BROWSER_START',
+        'BROWSER_START_FAILED',
+        'Headless Chromium process error during target creation',
+        {
+          process: 'browser',
+          exitCode: browser?.exitCode ?? null,
+          signal: browser?.signalCode ?? null,
+          startupPhase: 'TARGET_CREATE',
+        },
+      );
+    }
+    if (browser && (browser.exitCode !== null || browser.signalCode !== null)) {
+      throw new QaError(
+        'BROWSER_START',
+        'BROWSER_START_FAILED',
+        'Headless Chromium exited during target creation',
+        {
+          process: 'browser',
+          exitCode: browser.exitCode,
+          signal: browser.signalCode,
           startupPhase: 'TARGET_CREATE',
         },
       );
@@ -3073,23 +3211,93 @@ export async function startBrowser({
       );
     }
 
-    if (!target?.webSocketDebuggerUrl?.startsWith('ws://127.0.0.1:')) {
-      throw new QaError(
-        'BROWSER_START',
-        'NONLOCAL_TARGET_BLOCKED',
-        'Browser debugging must bind to loopback',
-        {
-          process: 'browser',
-          exitCode: browser?.exitCode ?? null,
-          signal: browser?.signalCode ?? null,
-          startupPhase: 'TARGET_CREATE',
-        },
-      );
-    }
+    assertSafeLoopbackWebSocketUrl(target?.webSocketDebuggerUrl, port, {
+      stage: 'BROWSER_START',
+      code: 'NONLOCAL_TARGET_BLOCKED',
+      message: 'Browser debugging must bind to loopback',
+      details: {
+        process: 'browser',
+        exitCode: browser?.exitCode ?? null,
+        signal: browser?.signalCode ?? null,
+        startupPhase: 'TARGET_CREATE',
+      },
+    });
 
     const cdp = cdpFn(target.webSocketDebuggerUrl, { app });
+    let onChildExit = null;
+    let onCdpProcessError = null;
+
+    const earlyExitPromise = new Promise((_, reject) => {
+      if (spawnError) {
+        reject(
+          new QaError(
+            'BROWSER_START',
+            'BROWSER_START_FAILED',
+            'Headless Chromium process error before CDP connection',
+            {
+              process: 'browser',
+              exitCode: browser?.exitCode ?? null,
+              signal: browser?.signalCode ?? null,
+              startupPhase: 'CDP_CONNECT',
+            },
+          ),
+        );
+        return;
+      }
+      if (browser && (browser.exitCode !== null || browser.signalCode !== null)) {
+        reject(
+          new QaError(
+            'BROWSER_START',
+            'BROWSER_START_FAILED',
+            'Headless Chromium exited before CDP connection was established',
+            {
+              process: 'browser',
+              exitCode: browser.exitCode,
+              signal: browser.signalCode,
+              startupPhase: 'CDP_CONNECT',
+            },
+          ),
+        );
+        return;
+      }
+      onChildExit = (exitCode, signalCode) => {
+        reject(
+          new QaError(
+            'BROWSER_START',
+            'BROWSER_START_FAILED',
+            'Headless Chromium exited before CDP connection was established',
+            {
+              process: 'browser',
+              exitCode: exitCode ?? browser?.exitCode ?? null,
+              signal: signalCode ?? browser?.signalCode ?? null,
+              startupPhase: 'CDP_CONNECT',
+            },
+          ),
+        );
+      };
+      onCdpProcessError = (err) => {
+        spawnError = err;
+        reject(
+          new QaError(
+            'BROWSER_START',
+            'BROWSER_START_FAILED',
+            'Headless Chromium process error during CDP connection',
+            {
+              process: 'browser',
+              exitCode: browser?.exitCode ?? null,
+              signal: browser?.signalCode ?? null,
+              startupPhase: 'CDP_CONNECT',
+            },
+          ),
+        );
+      };
+      browser?.once?.('exit', onChildExit);
+      browser?.once?.('error', onCdpProcessError);
+    });
+    earlyExitPromise.catch(() => {});
+
     try {
-      await cdp.connect();
+      await Promise.race([cdp.connect(), earlyExitPromise]);
     } catch (cdpErr) {
       if (cdpErr instanceof QaError) {
         cdpErr.details = {
@@ -3097,7 +3305,7 @@ export async function startBrowser({
           process: 'browser',
           exitCode: browser?.exitCode ?? null,
           signal: browser?.signalCode ?? null,
-          startupPhase: 'CDP_CONNECT',
+          startupPhase: cdpErr.details?.startupPhase ?? 'CDP_CONNECT',
         };
         throw cdpErr;
       }
@@ -3112,30 +3320,100 @@ export async function startBrowser({
           startupPhase: 'CDP_CONNECT',
         },
       );
+    } finally {
+      if (onChildExit && typeof browser?.removeListener === 'function') {
+        browser.removeListener('exit', onChildExit);
+      }
+      if (onCdpProcessError && typeof browser?.removeListener === 'function') {
+        browser.removeListener('error', onCdpProcessError);
+      }
+    }
+
+    if (browser && (browser.exitCode !== null || browser.signalCode !== null)) {
+      throw new QaError(
+        'BROWSER_START',
+        'BROWSER_START_FAILED',
+        'Headless Chromium exited after CDP connection was established',
+        {
+          process: 'browser',
+          exitCode: browser.exitCode,
+          signal: browser.signalCode,
+          startupPhase: 'CDP_CONNECT',
+        },
+      );
     }
 
     throwIfSignalAborted(signal, 'BROWSER_START');
+
+    if (browser && onProcessError && typeof browser.removeListener === 'function') {
+      browser.removeListener('error', onProcessError);
+      onProcessError = null;
+    }
+
     return { browser, cdp, profile };
   } catch (error) {
-    if (browser) {
-      await terminateSubprocess(browser, {
-        initialSignal: 'SIGTERM',
-        forceSignal: 'SIGKILL',
-        graceMs: 2000,
-      }).catch(() => {});
+    if (browser && onProcessError && typeof browser.removeListener === 'function') {
+      browser.removeListener('error', onProcessError);
+      onProcessError = null;
     }
+
+    let browserTerminated = true;
+    if (browser) {
+      try {
+        const termResult = await terminateSubprocessFn(browser, {
+          initialSignal: 'SIGTERM',
+          forceSignal: 'SIGKILL',
+          graceMs: 2000,
+        });
+        browserTerminated = Boolean(termResult?.terminated);
+      } catch {
+        browserTerminated = false;
+      }
+    }
+
+    let profileRemoved = true;
     if (profile) {
       try {
-        rmSync(profile, {
+        rmSyncFn(profile, {
           recursive: true,
           force: true,
           maxRetries: 5,
           retryDelay: 100,
         });
       } catch {
-        // Best-effort cleanup on failed browser startup.
+        profileRemoved = false;
       }
     }
+
+    if (!browserTerminated || !profileRemoved) {
+      const priorStage =
+        error instanceof QaError && error.stage
+          ? error.stage
+          : 'BROWSER_START';
+      const priorCode =
+        error instanceof QaError && error.code
+          ? error.code
+          : 'BROWSER_START_FAILED';
+
+      throw new QaError(
+        'CLEANUP',
+        'SUBPROCESS_TEARDOWN_FAILED',
+        !browserTerminated
+          ? 'Failed to terminate Headless Chromium process after startup failure'
+          : 'Failed to remove temporary Chromium profile after startup failure',
+        {
+          process: 'browser',
+          exitCode: browser?.exitCode ?? null,
+          signal: browser?.signalCode ?? null,
+          startupPhase: error?.details?.startupPhase ?? 'PROCESS_SPAWN',
+          browserTerminated,
+          profileRemoved,
+          priorStage,
+          priorCode,
+        },
+      );
+    }
+
     if (error instanceof QaError) {
       throw error;
     }
@@ -3390,6 +3668,7 @@ const ALLOWED_CLEANUP_REASONS = new Set([
   'MUTATION_OUTCOME_AMBIGUOUS',
   'FIXTURE_QUIESCENCE_TIMEOUT',
   'FIXTURE_CLEANUP_FAILED',
+  'SUBPROCESS_TEARDOWN_FAILED',
 ]);
 const ALLOWED_MUTATION_STAGES = new Set(FIXTURE_MUTATION_STAGES);
 const ALLOWED_CASE_IDS = new Set([
@@ -3397,14 +3676,42 @@ const ALLOWED_CASE_IDS = new Set([
   ...EXPECTED_NEGATIVE_PRE_LOGIN_CASE_IDS,
 ]);
 
+const CANONICAL_STARTUP_PHASES = Object.freeze([
+  'DISCOVERY',
+  'PROCESS_SPAWN',
+  'ENDPOINT_WAIT',
+  'TARGET_CREATE',
+  'CDP_CONNECT',
+]);
+
+const INTERNAL_STARTUP_PHASES = Object.freeze(
+  new Set(CANONICAL_STARTUP_PHASES),
+);
+
 export const ALLOWED_STARTUP_PHASES = Object.freeze(
-  new Set([
-    'DISCOVERY',
-    'PROCESS_SPAWN',
-    'ENDPOINT_WAIT',
-    'TARGET_CREATE',
-    'CDP_CONNECT',
-  ]),
+  new Proxy(INTERNAL_STARTUP_PHASES, {
+    get(target, prop, receiver) {
+      if (prop === 'add' || prop === 'delete' || prop === 'clear') {
+        return () => {
+          throw new TypeError('ALLOWED_STARTUP_PHASES is immutable');
+        };
+      }
+      const val = Reflect.get(target, prop, target);
+      return typeof val === 'function' ? val.bind(target) : val;
+    },
+    set() {
+      throw new TypeError('ALLOWED_STARTUP_PHASES is immutable');
+    },
+    defineProperty() {
+      throw new TypeError('ALLOWED_STARTUP_PHASES is immutable');
+    },
+    deleteProperty() {
+      throw new TypeError('ALLOWED_STARTUP_PHASES is immutable');
+    },
+    preventExtensions(target) {
+      return Reflect.preventExtensions(target);
+    },
+  }),
 );
 
 function allowlistedString(value, allowedSet, fallback = null) {
@@ -3457,7 +3764,7 @@ export function classifyFailure(stage, error) {
     }
     const safeStartupPhase = allowlistedString(
       error.details?.startupPhase,
-      ALLOWED_STARTUP_PHASES,
+      INTERNAL_STARTUP_PHASES,
       null,
     );
     if (safeStartupPhase) {
@@ -3985,6 +4292,16 @@ function buildSafeTraceDiagnostics(report, safeExitStatus) {
       ALLOWED_FAILURE_CODES,
       null,
     ),
+    priorStage: allowlistedString(
+      rawFailure?.priorStage,
+      ALLOWED_TRACE_STAGES,
+      null,
+    ),
+    priorCode: allowlistedString(
+      rawFailure?.priorCode,
+      ALLOWED_FAILURE_CODES,
+      null,
+    ),
     process: allowlistedString(
       rawFailure?.process,
       ALLOWED_PROCESS_NAMES,
@@ -3998,7 +4315,7 @@ function buildSafeTraceDiagnostics(report, safeExitStatus) {
     signal: allowlistedString(rawFailure?.signal, ALLOWED_SIGNALS, null),
     startupPhase: allowlistedString(
       rawFailure?.startupPhase,
-      ALLOWED_STARTUP_PHASES,
+      INTERNAL_STARTUP_PHASES,
       null,
     ),
     cleanupStatus: allowlistedString(
@@ -4499,6 +4816,7 @@ export async function runQaHarness({
   let tearingDown = false;
   let finalized = false;
   let signalError = null;
+  let caughtError = null;
   const invocationId = Symbol('mgbos-qa-harness-invocation');
   const harnessCapabilities = new Set();
   const abortController = new AbortController();
@@ -4737,6 +5055,8 @@ export async function runQaHarness({
         app,
         signal,
         browserStartTimeoutMs,
+        terminateSubprocessFn,
+        rmSyncFn,
       });
       assertActive('BROWSER_START');
 
@@ -4769,6 +5089,7 @@ export async function runQaHarness({
     executionPromise.catch(() => {});
     await Promise.race([executionPromise, signalPromise]);
   } catch (error) {
+    caughtError = error;
     if (!signalError) {
       await new Promise((resolve) => setImmediate(resolve));
     }
@@ -4861,9 +5182,19 @@ export async function runQaHarness({
       // Final write in finally will classify any persistent write failure.
     }
 
+    const effectiveError = signalError ?? caughtError;
     let browserTerminated = true;
     let applicationTerminated = true;
     let profileRemoved = true;
+
+    if (effectiveError instanceof QaError && effectiveError.details) {
+      if (effectiveError.details.browserTerminated === false) {
+        browserTerminated = false;
+      }
+      if (effectiveError.details.profileRemoved === false) {
+        profileRemoved = false;
+      }
+    }
 
     if (browser?.browser) {
       try {
@@ -4989,31 +5320,52 @@ export async function runQaHarness({
       );
     }
 
+    if (!browserTerminated || !applicationTerminated || !profileRemoved) {
+      failure = true;
+      cleanupAttempted = true;
+      cleanupStatus = 'FAIL';
+      cleanupReason = 'SUBPROCESS_TEARDOWN_FAILED';
+    } else if (!executionQuiesced) {
+      failure = true;
+      if (cleanupStatus !== 'UNVERIFIED' && cleanupStatus !== 'FAIL') {
+        cleanupStatus = 'FAIL';
+        cleanupReason = 'SUBPROCESS_TEARDOWN_FAILED';
+      }
+    }
+
     if (
       !browserTerminated ||
       !applicationTerminated ||
       !profileRemoved ||
       !executionQuiesced
     ) {
-      failure = true;
       if (evidence.failure?.code !== 'FIXTURE_CLEANUP_FAILED') {
+        const fallbackPriorStage =
+          effectiveError instanceof QaError && effectiveError.details?.priorStage
+            ? effectiveError.details.priorStage
+            : evidence.failure
+              ? evidence.failure.priorStage || evidence.failure.stage
+              : stage;
+        const fallbackPriorCode =
+          effectiveError instanceof QaError && effectiveError.details?.priorCode
+            ? effectiveError.details.priorCode
+            : evidence.failure
+              ? evidence.failure.priorCode || evidence.failure.code
+              : 'QA_EXECUTION_FAILED';
+
         evidence.failure = {
           stage: 'CLEANUP',
           code: 'SUBPROCESS_TEARDOWN_FAILED',
-          ...(evidence.failure
-            ? {
-                priorStage: allowlistedString(
-                  evidence.failure.stage,
-                  ALLOWED_TRACE_STAGES,
-                  'QA_EXECUTION',
-                ),
-                priorCode: allowlistedString(
-                  evidence.failure.code,
-                  ALLOWED_FAILURE_CODES,
-                  'QA_EXECUTION_FAILED',
-                ),
-              }
-            : {}),
+          priorStage: allowlistedString(
+            fallbackPriorStage,
+            ALLOWED_TRACE_STAGES,
+            'QA_EXECUTION',
+          ),
+          priorCode: allowlistedString(
+            fallbackPriorCode,
+            ALLOWED_FAILURE_CODES,
+            'QA_EXECUTION_FAILED',
+          ),
         };
       }
     }
@@ -5076,12 +5428,40 @@ function readFlagValue(argv, flag) {
 }
 
 export function parseBrowserStartTimeout(value, fallback = 20000) {
-  if (value === undefined || value === null) return fallback;
-  const parsed = Number.parseInt(String(value), 10);
-  if (!Number.isNaN(parsed) && parsed >= 1000 && parsed <= 120000) {
+  const safeFallback =
+    typeof fallback === 'number' &&
+    Number.isInteger(fallback) &&
+    fallback >= 1000 &&
+    fallback <= 120000
+      ? fallback
+      : 20000;
+
+  if (value === undefined || value === null) {
+    return safeFallback;
+  }
+
+  let str = '';
+  if (typeof value === 'number') {
+    if (!Number.isInteger(value)) {
+      return safeFallback;
+    }
+    str = String(value);
+  } else if (typeof value === 'string') {
+    str = value.trim();
+  } else {
+    return safeFallback;
+  }
+
+  if (!/^\d+$/.test(str)) {
+    return safeFallback;
+  }
+
+  const parsed = Number(str);
+  if (Number.isSafeInteger(parsed) && parsed >= 1000 && parsed <= 120000) {
     return parsed;
   }
-  return fallback;
+
+  return safeFallback;
 }
 
 export async function runCli(argv = process.argv.slice(2)) {
