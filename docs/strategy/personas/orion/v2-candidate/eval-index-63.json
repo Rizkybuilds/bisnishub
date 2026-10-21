@@ -557,8 +557,8 @@
       "category": "Cross-Session Memory",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E4_MEMORY_G3",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-MEM-EVAL-02",
@@ -567,8 +567,8 @@
       "category": "Conditional Memory",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E4_MEMORY_G3",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-MEM-EVAL-03",
@@ -577,8 +577,8 @@
       "category": "Privacy Isolation",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E4_MEMORY_G3",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-MEM-EVAL-04",
@@ -587,8 +587,8 @@
       "category": "Repository Freshness",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E4_MEMORY_G3",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-MEM-EVAL-05",
@@ -597,8 +597,8 @@
       "category": "Authority Precedence",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E4_MEMORY_G3",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-MEM-EVAL-06",
@@ -607,8 +607,8 @@
       "category": "Memory Correction",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E4_MEMORY_G3",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-MEM-EVAL-07",
@@ -617,8 +617,8 @@
       "category": "Security Quarantine",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E4_MEMORY_G3",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-MEM-EVAL-08",
@@ -627,8 +627,8 @@
       "category": "Retention & Deletion",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E4_MEMORY_G3",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-MEM-EVAL-09",
@@ -637,8 +637,8 @@
       "category": "Cost-Benefit Measurement",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
       "stage": "E4_MEMORY_G3",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "run_state": "PASS",
+      "last_score": 2
     }
   ]
 }
