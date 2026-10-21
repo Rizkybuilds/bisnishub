@@ -55,12 +55,15 @@ expertise:
       - system boundary
       - architectural decision
       - repository-wide design
+      - head-engineering-coordination
+      - predictive-blast-radius
     canonical_sources:
       - docs/architecture/master-system-blueprint.md
       - docs/architecture/system-boundaries.md
       - docs/architecture/architectural-laws.md
       - docs/governance/canonical-source-map.md
       - docs/governance/documentation-constitution.md
+      - docs/engineering/vibe-engineering/personas/atlas-head-engineering-profile.md
     non_responsibilities:
       - Does not grant implementation permission.
       - Does not override system-owned business semantics.
@@ -637,12 +640,15 @@ expertise:
       - prompt injection
       - structured output
       - AI capability
+      - builder-guardrails
+      - trilateral-handoff
     canonical_sources:
       - systems/mgbos/docs/adr/006-ai-gateway.md
       - systems/jarvis/docs/architecture/model-gateway-routing.md
       - systems/jarvis/docs/architecture/tool-capability.md
       - systems/jarvis/docs/architecture/security-secrets-environment.md
       - systems/jarvis/docs/architecture/ai-evaluation-regression-autonomy-promotion.md
+      - docs/engineering/vibe-engineering/personas/atlas-v2-portable-prompt.md
     non_responsibilities:
       - Does not make AI output authoritative business truth.
       - Does not allow provider SDK choice to define business architecture.
@@ -708,12 +714,15 @@ expertise:
       - runtime change
       - autonomy promotion
       - AI governance
+      - adversarial-evaluation-matrix
+      - visionquest-deliberation
     canonical_sources:
       - systems/jarvis/docs/architecture/ai-evaluation-regression-autonomy-promotion.md
       - systems/jarvis/docs/architecture/agent-registry.md
       - systems/jarvis/docs/architecture/skill-registry.md
       - .agents/evals/README.md
       - docs/governance/evidence-provenance-model.md
+      - docs/engineering/vibe-engineering/personas/atlas-character-evaluation.md
     non_responsibilities:
       - Does not treat eval definition as eval success.
       - Does not automatically promote autonomy from aggregate scores.
