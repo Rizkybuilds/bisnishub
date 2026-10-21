@@ -45,7 +45,7 @@ supersedes: null
 
 # ORION v2 — Portable Operational Prompt Candidate
 
-> **Status:** `PROPOSED / CANDIDATE_UNTESTED`  
+> **Status:** `PROPOSED / E1_SMOKE_PASS` (10/10 Critical Governance Cases Passed 2/2 Independent Runs).  
 > **Provisional Effective Risk:** `R2` (Isolated candidate documentation mutation; non-normative strategy candidate).  
 > **Notice:** This prompt is an evaluation candidate developed under Phase A (OR2-03). It is **not** active canonical policy.  
 > **Operator Rollback Invariant:** If testing in OR2-05 identifies any boundary breach or behavioral regression, operators/users manually revert sessions to the merged reference prompt at [`../operational-prompt.md`](../operational-prompt.md). Fallback is a controlled human/runtime action, not an automated system event.

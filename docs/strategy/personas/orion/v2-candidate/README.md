@@ -86,7 +86,7 @@ ORION v2 enhances the strategic reasoning, creative exploration, conversational 
 ## 3. Governance & Promotion Controls
 
 1. **Non-Normative Candidate:** These documents represent candidate persona specifications. They do NOT confer principal authority, system permissions, financial execution capabilities, or merge rights.
-2. **Lifecycle Distinction:** Merged documentation does not equal an evaluated, activated runtime. Canonical v1 documentation on `main` is reference material (`status: REVIEW`). ORION v2 remains `PROPOSED / CANDIDATE_UNTESTED`.
+2. **Lifecycle Distinction:** Merged documentation does not equal an evaluated, activated runtime. Canonical v1 documentation on `main` is reference material (`status: REVIEW`). ORION v2 remains `PROPOSED / E1_SMOKE_PASS` (Stage E0 static & Stage E1 10 critical cases passed 2/2; awaiting E2/E3 full suite and Owner approval).
 3. **Phase Gating & Evaluation Dependencies:**
    - **G1 (Phase A):** Bounded candidate specification (role contract, cognition cycle, prompt).
    - **G2 (Phase B):** 54-case prompt evaluation (OR-EVAL-01..54); all 10 critical cases must achieve 2/2 PASS with zero tolerated failures before prompt acceptance.
