@@ -26,7 +26,6 @@ import {
   assertLoopbackHttpOrigin,
   assertSafeLoopbackWebSocketUrl,
   assertSanitizedEvidence,
-  chromeExecutable,
   classifyFailure,
   cleanup,
   createFixture,

@@ -3091,7 +3091,7 @@ export async function startBrowser({
           detached: process.platform !== 'win32',
         },
       );
-    } catch (spawnSyncError) {
+    } catch (_spawnSyncError) {
       throw new QaError(
         'BROWSER_START',
         'BROWSER_START_FAILED',
@@ -3215,7 +3215,7 @@ export async function startBrowser({
         `http://127.0.0.1:${port}/json/new?${encodeURIComponent(`${app}/login`)}`,
         { method: 'PUT', signal },
       );
-    } catch (fetchErr) {
+    } catch (_fetchErr) {
       throwIfSignalAborted(signal, 'BROWSER_START');
       if (spawnError) {
         throw new QaError(
