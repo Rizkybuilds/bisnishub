@@ -32,7 +32,6 @@ jobs:
         env:
           INPUT_APPROVED_COMMIT_SHA: ${{ inputs.approved_commit_sha }}
           GITHUB_REPO: ${{ github.repository }}
-          GITHUB_REF_NAME: ${{ github.ref }}
         shell: bash
         run: |
           set -euo pipefail
@@ -50,7 +49,7 @@ jobs:
           fi
 
           # 3. Enforce ref boundary (main only)
-          if [ "$GITHUB_REF_NAME" != "refs/heads/main" ]; then
+          if [ "${GITHUB_REF:-}" != "refs/heads/main" ]; then
             echo "::error::Preflight verification is only authorized on refs/heads/main (UNAUTHORIZED_GIT_REF)."
             exit 1
           fi
