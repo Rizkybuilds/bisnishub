@@ -71,7 +71,8 @@ source_dependencies:
   - systems/mgbos/docs/product/teestock-operational-pilot-plan.md
   - systems/jarvis/docs/charter.md
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-02 — TeeStock Customer Journeys & Service Blueprint v0.1.1
 

@@ -54,7 +54,8 @@ depends_on:
   - ../../../../../bisnis/teestock/10-product-tech/website-information-architecture.md
   - ../../../../../bisnis/teestock/10-product-tech/commerce-platform.md
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-09 — TeeStock Phased Delivery & Product Validation Plan v0.1.1
 

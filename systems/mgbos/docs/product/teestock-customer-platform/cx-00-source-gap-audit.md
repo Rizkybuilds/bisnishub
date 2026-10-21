@@ -30,7 +30,8 @@ supersedes: null
 remediation_package: CX-REM-R1
 remediation_review: AUTHOR_SELF_REVIEW_NOT_INDEPENDENT
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-00 — TeeStock Customer Experience & Commerce: Existing Source, Requirements & Gap Audit v0.1.1
 

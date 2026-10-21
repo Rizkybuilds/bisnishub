@@ -10,7 +10,8 @@ document_class: navigation-index
 normative_authority: CANONICAL_INDEX
 repository_revision: 2800c474563309bda49d84d712f79b68c9dde36a
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # TeeStock Customer Platform Documentation Package (CX-00..09) v0.1.1
 

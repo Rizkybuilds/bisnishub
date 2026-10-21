@@ -3,7 +3,7 @@ title: Panduan Konfigurasi Branch Protection
 date: 2026-09-27
 bisnis: umum
 kategori: operasional
-status: active
+status: draft
 tags:
   - github
   - devops

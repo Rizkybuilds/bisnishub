@@ -60,7 +60,8 @@ primary_sources:
 last_reviewed: 2026-10-16
 review_cadence: per_product_decision_or_material_change
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-07 — TeeStock Omnichannel & External Integration Requirements v0.1.1
 

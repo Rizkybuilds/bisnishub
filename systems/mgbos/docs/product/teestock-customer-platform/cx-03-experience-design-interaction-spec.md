@@ -1,5 +1,4 @@
 ---
-
 canonical_id: proposed.mgbos.product.teestock-customer-platform.cx-03
 status: ACTIVE
 version: 0.1.1
@@ -24,50 +23,49 @@ supersedes: null
 remediation_package: CX-REM-R1
 remediation_review: AUTHOR_SELF_REVIEW_NOT_INDEPENDENT
 companion_drafts:
-
-- cx-00-source-gap-audit.md
-- cx-01-master-prd.md
-- cx-02-customer-journeys-service-blueprint.md
-  proposed_authoritative_for_after_approval:
-- customer_platform_experience_principles
-- interaction_behavior_and_customer_facing_ui_states
-- experience_level_component_semantics
-- responsive_and_accessible_customer_interaction
-- front_end_design_quality_requirements_and_proposed_acceptance
-- proposed_customer_experience_design_deliverables
-  not_authoritative_for:
-- teestock_brand_identity_visual_assets_fonts_logos_or_commercial_copy_policy
-- business_pricing_stock_fulfillment_or_production_policies
-- mgbos_entities_state_machines_events_commands_or_permissions
-- exact_css_tokens_component_implementation_or_frontend_architecture
-- customer_identity_session_or_organization_security_rules
-- external_service_capabilities_or_marketplace_policy
-- jarvis_agent_authority_or_model_runtime
-- legal_accessibility_certification_or_provider_compliance
-- implementation_authorization_deployment_or_launch_readiness
-- multigraph_customer_product_definition
-  source_dependencies:
-- docs/governance/documentation-constitution.md
-- docs/governance/canonical-source-map.md
-- docs/roadmaps/solo-founder-launch-roadmap.md
-- docs/operating-model/solo-founder-operating-system.md
-- bisnis/teestock/02-brand/brand-identity-system.md
-- bisnis/teestock/02-brand/voice-and-copy-system.md
-- bisnis/teestock/10-product-tech/digital-product-vision.md
-- bisnis/teestock/10-product-tech/website-information-architecture.md
-- bisnis/teestock/10-product-tech/commerce-platform.md
-- bisnis/teestock/04-services/custom.md
-- bisnis/teestock/04-services/business.md
-- bisnis/teestock/07-operations/customer-service.md
-- bisnis/teestock/07-operations/order-fulfillment.md
-- bisnis/teestock/07-operations/returns-and-warranty.md
-- systems/mgbos/docs/architecture/domain-map-capability-ownership.md
-- systems/mgbos/docs/architecture/business-state-machines.md
-- systems/mgbos/docs/architecture/permission-authorization-model.md
-- systems/mgbos/docs/product/teestock-founder-control-prd.md
-- systems/mgbos/docs/product/teestock-operational-pilot-plan.md
-
-effective_from: 2026-10-20---
+  - cx-00-source-gap-audit.md
+  - cx-01-master-prd.md
+  - cx-02-customer-journeys-service-blueprint.md
+proposed_authoritative_for_after_approval:
+  - customer_platform_experience_principles
+  - interaction_behavior_and_customer_facing_ui_states
+  - experience_level_component_semantics
+  - responsive_and_accessible_customer_interaction
+  - front_end_design_quality_requirements_and_proposed_acceptance
+  - proposed_customer_experience_design_deliverables
+not_authoritative_for:
+  - teestock_brand_identity_visual_assets_fonts_logos_or_commercial_copy_policy
+  - business_pricing_stock_fulfillment_or_production_policies
+  - mgbos_entities_state_machines_events_commands_or_permissions
+  - exact_css_tokens_component_implementation_or_frontend_architecture
+  - customer_identity_session_or_organization_security_rules
+  - external_service_capabilities_or_marketplace_policy
+  - jarvis_agent_authority_or_model_runtime
+  - legal_accessibility_certification_or_provider_compliance
+  - implementation_authorization_deployment_or_launch_readiness
+  - multigraph_customer_product_definition
+source_dependencies:
+  - docs/governance/documentation-constitution.md
+  - docs/governance/canonical-source-map.md
+  - docs/roadmaps/solo-founder-launch-roadmap.md
+  - docs/operating-model/solo-founder-operating-system.md
+  - bisnis/teestock/02-brand/brand-identity-system.md
+  - bisnis/teestock/02-brand/voice-and-copy-system.md
+  - bisnis/teestock/10-product-tech/digital-product-vision.md
+  - bisnis/teestock/10-product-tech/website-information-architecture.md
+  - bisnis/teestock/10-product-tech/commerce-platform.md
+  - bisnis/teestock/04-services/custom.md
+  - bisnis/teestock/04-services/business.md
+  - bisnis/teestock/07-operations/customer-service.md
+  - bisnis/teestock/07-operations/order-fulfillment.md
+  - bisnis/teestock/07-operations/returns-and-warranty.md
+  - systems/mgbos/docs/architecture/domain-map-capability-ownership.md
+  - systems/mgbos/docs/architecture/business-state-machines.md
+  - systems/mgbos/docs/architecture/permission-authorization-model.md
+  - systems/mgbos/docs/product/teestock-founder-control-prd.md
+  - systems/mgbos/docs/product/teestock-operational-pilot-plan.md
+effective_from: 2026-10-20
+---
 
 # CX-03 — TeeStock Experience Design & Interaction Specification v0.1.1
 

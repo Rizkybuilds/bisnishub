@@ -10,7 +10,8 @@ normative_authority: CANONICAL_COORDINATION_PACKAGE
 source_revision: 2800c474563309bda49d84d712f79b68c9dde36a
 
 approver: Rizky
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-PKG-DECISIONS-R1 — Consolidated Owner Decision Packet (PROPOSED)
 

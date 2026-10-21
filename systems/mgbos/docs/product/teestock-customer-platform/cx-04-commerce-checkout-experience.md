@@ -68,7 +68,8 @@ source_dependencies:
   - systems/mgbos/docs/architecture/business-state-machines.md
   - systems/mgbos/docs/architecture/permission-authorization-model.md
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-04 — TeeStock Commerce & Checkout Experience Specification v0.1.1
 

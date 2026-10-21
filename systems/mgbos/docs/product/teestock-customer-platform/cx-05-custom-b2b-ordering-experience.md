@@ -72,7 +72,8 @@ source_dependencies:
   - systems/mgbos/docs/product/teestock-operational-pilot-plan.md
   - systems/mgbos/docs/product/teestock-design-library-spec.md
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-05 — TeeStock Custom & B2B Ordering Experience Specification v0.1.1
 

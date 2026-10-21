@@ -63,7 +63,8 @@ primary_sources:
   - docs/governance/canonical-source-map.md
   - docs/roadmaps/solo-founder-launch-roadmap.md
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-06 — TeeStock Customer Account & Service Experience Specification v0.1.1
 

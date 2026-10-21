@@ -69,7 +69,8 @@ source_dependencies:
   - systems/mgbos/docs/product/teestock-operational-pilot-plan.md
   - systems/jarvis/docs/charter.md
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-01 — TeeStock Customer Platform Master PRD v0.1.1
 

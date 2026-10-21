@@ -1,6 +1,6 @@
 ---
 canonical_id: mgbos.engineering.founder-control-engineering-discovery
-status: active
+status: DRAFT
 version: 1.0
 owner: Rizky
 author: OpenAI / ChatGPT
@@ -57,8 +57,7 @@ depends_on:
   - ../product/teestock-operational-pilot-plan.md
   - founder-control-architecture-reconciliation-audit.md
   - operational-readiness.md
-
-effective_from: 2026-10-20---
+---
 
 # MGBOS Founder Control Engineering Discovery — W3 v1.0
 

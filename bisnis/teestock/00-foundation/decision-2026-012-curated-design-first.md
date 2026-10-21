@@ -54,7 +54,8 @@ related_local_proposals_not_verified_in_main:
   - docs/strategy/internal-business-os/strategic-anchor.md
   - docs/strategy/internal-business-os/parallel-pilots.md
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # DEC-TS-2026-012 — TeeStock Curated-Design-First Strategic Priority
 

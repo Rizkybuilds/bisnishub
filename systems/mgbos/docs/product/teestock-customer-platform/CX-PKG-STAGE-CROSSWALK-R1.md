@@ -12,7 +12,8 @@ scope: teestock-cx-delivery-priority-reconciliation
 source_revision: 2800c474563309bda49d84d712f79b68c9dde36a
 implementation_authorization: NONE
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-PKG-STAGE-CROSSWALK-R1 — Priority vs Delivery Stage
 

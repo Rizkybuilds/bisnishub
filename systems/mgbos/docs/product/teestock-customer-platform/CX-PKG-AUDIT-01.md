@@ -21,7 +21,8 @@ merge_authorization: NONE
 deployment_authorization: NONE
 supersedes: null
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-PKG-AUDIT-01 — TeeStock Customer Platform, Whole-Package Product Consistency Audit
 

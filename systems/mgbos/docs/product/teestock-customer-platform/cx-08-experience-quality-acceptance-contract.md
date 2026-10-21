@@ -50,7 +50,8 @@ merge_authorization: NONE
 deployment_authorization: NONE
 production_access_authorization: NONE
 
-effective_from: 2026-10-20---
+effective_from: 2026-10-20
+---
 
 # CX-08 — TeeStock Experience Quality & Acceptance Contract v0.1.1
 
