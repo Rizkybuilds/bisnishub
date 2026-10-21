@@ -205,15 +205,15 @@ Failure in any material prerequisite disables the affected purchase path, withou
 
 ### `CX4-JRN-01` — From entry to correct retail category (`P0/P1`)
 
-**Entry:** homepage, SEO/deep link, social referral or explicit Shop action. **Customer goal:** identify a relevant available item/service in plain language.
+**Entry:** homepage, SEO/deep link, social referral or explicit Shop action. **Customer goal:** discover curated apparel collections or identify relevant custom/business services in plain language (`DEC-TS-2026-011`, `DEC-TS-2026-009`).
 
-1. Frontstage: show verified category and primary navigation; avoid displaying internal business lines as the customer's classification burden.
-2. Frontstage: allow browsing of approved Selects, Essentials, Originals or collaborations only where the corresponding catalog is truly published.
-3. Frontstage: show actual image/description and availability qualifier rather than generic "all products ready stock".
-4. Backstage: catalog/read model provides public projection, not internal production/cost/partner details.
-5. Exit: P0 can explain an item and route to assisted order; P1 can continue to verified variant/PDP. Unavailable channel remains clear, not a dead end.
+1. Frontstage (P0 / CX-S0): Retail-led presentation spotlights curated apparel collections, lookbooks, garment quality specs, and brand identity front-and-center; clear, persistent pathways to `Customize` and `For Business` are immediately discoverable.
+2. Frontstage (P0 / CX-S0): Informational collection discovery, lookbooks, and garment previews do not claim sellable inventory, ready stock, or operational checkout; complete interactive PDP, active SKU selection, cart, checkout, and payment remain strictly P1 (`CX-S1`) gated capabilities.
+3. Frontstage: Allow browsing of approved Selects, Essentials, Originals or collaborations only where the corresponding catalog or lookbook is published; show truthful descriptions and availability qualifiers rather than generic "all products ready stock".
+4. Backstage: Catalog and content read model provides public projection, not internal production, cost, or partner details.
+5. Exit: P0 explains collection/item concepts and routes to assisted contact or structured intake only through verified, approved, and reachable channels; where no approved channel exists, the interface truthfully communicates unavailability or an informational alternative, without promising non-existent web submission, WhatsApp response, or order processing. P1 continues to verified variant/PDP selection and gated direct checkout.
 
-**Failures:** empty catalog vs API failure must differ; missing media should not hide material facts; draft item never appears in public results.
+**Failures:** Empty catalog/collection vs API failure must differ; missing media gracefully renders accessible text fallbacks without hiding material facts; draft or unverified items never appear in public discovery.
 
 ### `CX4-JRN-02` — Search/filter → eligible product (`P1`)
 
@@ -686,12 +686,12 @@ These rules **derive or constrain customer UI** and are not replacements for Tee
 
 ### 19.1 P0 discovery and honest assisted commerce
 
-| ID           | Given / When / Then                                                                                                                                     | Evidence class           | FR trace  |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | --------- |
-| `CX4-AC-001` | Given current P0 site without retail checkout, when customer visits Shop-related path, then they are not falsely offered a functioning instant purchase | UX + route/source audit  | `001/002` |
-| `CX4-AC-002` | Given real Custom/B2B need, when selecting public path, then customer reaches approved assisted intake instead of fake cart                             | Customer journey/browser | `001/002` |
-| `CX4-AC-003` | Given unknown product lead time, when display renders, then time is labeled unconfirmed rather than a guaranteed dispatch date                          | Copy/content policy      | `002`     |
-| `CX4-AC-004` | Given public mobile/keyboard user, when browsing available P0 information, then key facts and contact are usable without video/AI                       | Mobile accessibility     | `001/002` |
+| ID           | Given / When / Then                                                                                                                                                                                                                                                                                                                                                                                                                               | Evidence class           | FR trace  |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | --------- |
+| `CX4-AC-001` | Given current P0 / CX-S0 site, when customer visits Shop-related or collection discovery path, then they encounter curated apparel storytelling, lookbooks, and informational previews without claiming sellable inventory, and are not falsely offered an operational cart, checkout, or instant purchase affordance                                                                                                                             | UX + route/source audit  | `001/002` |
+| `CX4-AC-002` | Given real Custom/Business need, when selecting public path (`Customize` or `For Business`), then customer reaches an assisted contact or intake route only where that channel has been verified, approved, and confirmed reachable; if no verified channel exists, interface communicates truthful unavailability or an informational alternative rather than promising non-existent web form submission, WhatsApp response, or order processing | Customer journey/browser | `001/002` |
+| `CX4-AC-003` | Given unknown product lead time, pricing basis, or stock status, when display renders, then terms are labeled unconfirmed or inquiry-needed rather than promising guaranteed dispatch dates, instant checkout, or active inventory                                                                                                                                                                                                                | Copy/content policy      | `002`     |
+| `CX4-AC-004` | Given public mobile/keyboard user, when browsing available P0 information, then key brand facts, collection previews, and accessible contact pathways are usable without video, canvas, or AI dependencies; when media or scripts fail, layout degrades gracefully to accessible text                                                                                                                                                             | Mobile accessibility     | `001/002` |
 
 ### 19.2 P1 discovery, variants and availability
 
