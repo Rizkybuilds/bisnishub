@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
+import { EventEmitter } from 'node:events';
 import {
   existsSync,
   mkdirSync,
@@ -15,6 +16,7 @@ import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { inspect } from 'node:util';
 import {
+  ALLOWED_STARTUP_PHASES,
   CANONICAL_API_ORIGIN,
   CANONICAL_APP_ORIGIN,
   EXPECTED_POSITIVE_CASE_IDS,
@@ -22,12 +24,15 @@ import {
   assertConsistentSupabaseEnv,
   assertLoopbackHttpOrigin,
   assertSanitizedEvidence,
+  chromeExecutable,
+  classifyFailure,
   cleanup,
   createFixture,
   createFixtureState,
   db,
   isValidConfirmedMembershipResponse,
   localStatus,
+  parseBrowserStartTimeout,
   resolveLoopbackRequestUrl,
   runBrowser,
   runFixtureInvocation,
@@ -7664,6 +7669,715 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         },
       ),
       true,
+    );
+  });
+
+  it('QA64-BRW-01: enforces robust browser startup lifecycle, failure mode classification, timeout handling, and leak-free profile cleanup', async () => {
+    class MockBrowserProcess extends EventEmitter {
+      constructor({ exitCode = null, signalCode = null } = {}) {
+        super();
+        this.pid = 999999;
+        this.exitCode = exitCode;
+        this.signalCode = signalCode;
+      }
+      kill(sig) {
+        if (this.exitCode === null && this.signalCode === null) {
+          this.signalCode = sig || 'SIGTERM';
+          this.exitCode = 0;
+          this.emit('exit', this.exitCode, this.signalCode);
+          this.emit('close', this.exitCode, this.signalCode);
+        }
+      }
+    }
+
+    // 1. Binary discovery failure (Chromium executable missing)
+    await (async () => {
+      let threw = false;
+      try {
+        await startBrowser({
+          chromeExecutableFn: () => {
+            throw new QaError(
+              'BROWSER_START',
+              'BROWSER_START_FAILED',
+              'Chromium is unavailable in isolated QA runner',
+              { startupPhase: 'DISCOVERY' },
+            );
+          },
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'BROWSER_START_FAILED');
+        assert.equal(err.details?.startupPhase, 'DISCOVERY');
+        assert.equal(err.details?.exitCode, null);
+        assert.equal(err.details?.signal, null);
+      }
+      assert.equal(threw, true, 'discovery failure must throw');
+    })();
+
+    // 2a. Synchronous spawn failure (spawnFn throws immediately)
+    await (async () => {
+      let createdProfile = null;
+      let threw = false;
+      try {
+        await startBrowser({
+          chromeExecutableFn: () => 'mock-chromium',
+          spawnFn: (_bin, args) => {
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
+            if (userDirArg) {
+              createdProfile = userDirArg.slice('--user-data-dir='.length);
+            }
+            throw new Error('EACCES: permission denied');
+          },
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'BROWSER_START_FAILED');
+        assert.equal(err.details?.startupPhase, 'PROCESS_SPAWN');
+        assert.equal(err.details?.exitCode, null);
+        assert.equal(err.details?.signal, null);
+      }
+      assert.equal(threw, true, 'spawn sync failure must throw');
+      assert.ok(createdProfile, 'profile should have been determined');
+      assert.equal(
+        existsSync(createdProfile),
+        false,
+        'profile must be cleaned up on spawn sync failure',
+      );
+    })();
+
+    // 2b. Asynchronous spawn error event (child process emits 'error')
+    await (async () => {
+      let createdProfile = null;
+      let mockProc = null;
+      let threw = false;
+      try {
+        await startBrowser({
+          chromeExecutableFn: () => 'mock-chromium',
+          spawnFn: (_bin, args) => {
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
+            if (userDirArg) {
+              createdProfile = userDirArg.slice('--user-data-dir='.length);
+            }
+            mockProc = new MockBrowserProcess();
+            setImmediate(() => {
+              mockProc.emit('error', new Error('spawn ENOENT'));
+            });
+            return mockProc;
+          },
+          browserStartTimeoutMs: 500,
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'BROWSER_START_FAILED');
+        assert.equal(err.details?.startupPhase, 'PROCESS_SPAWN');
+      }
+      assert.equal(threw, true, 'spawn error event must throw');
+      assert.ok(createdProfile);
+      assert.equal(
+        existsSync(createdProfile),
+        false,
+        'profile must be cleaned up on spawn error event',
+      );
+    })();
+
+    // 3a. Early browser exit before endpoint ready (exitCode: 1)
+    await (async () => {
+      let createdProfile = null;
+      let threw = false;
+      try {
+        await startBrowser({
+          chromeExecutableFn: () => 'mock-chromium',
+          spawnFn: (_bin, args) => {
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
+            if (userDirArg) {
+              createdProfile = userDirArg.slice('--user-data-dir='.length);
+            }
+            return new MockBrowserProcess({ exitCode: 1, signalCode: null });
+          },
+          browserStartTimeoutMs: 500,
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'BROWSER_START_FAILED');
+        assert.equal(err.details?.startupPhase, 'ENDPOINT_WAIT');
+        assert.equal(err.details?.exitCode, 1);
+        assert.equal(err.details?.signal, null);
+      }
+      assert.equal(threw, true, 'early exit must throw');
+      assert.ok(createdProfile);
+      assert.equal(
+        existsSync(createdProfile),
+        false,
+        'profile must be cleaned up on early exit',
+      );
+    })();
+
+    // 3b. Early browser termination by signal (SIGKILL)
+    await (async () => {
+      let createdProfile = null;
+      let threw = false;
+      try {
+        await startBrowser({
+          chromeExecutableFn: () => 'mock-chromium',
+          spawnFn: (_bin, args) => {
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
+            if (userDirArg) {
+              createdProfile = userDirArg.slice('--user-data-dir='.length);
+            }
+            return new MockBrowserProcess({
+              exitCode: null,
+              signalCode: 'SIGKILL',
+            });
+          },
+          browserStartTimeoutMs: 500,
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'BROWSER_START_FAILED');
+        assert.equal(err.details?.startupPhase, 'ENDPOINT_WAIT');
+        assert.equal(err.details?.exitCode, null);
+        assert.equal(err.details?.signal, 'SIGKILL');
+      }
+      assert.equal(threw, true, 'early signal termination must throw');
+      assert.ok(createdProfile);
+      assert.equal(
+        existsSync(createdProfile),
+        false,
+        'profile must be cleaned up on early signal exit',
+      );
+    })();
+
+    // 4. DevToolsActivePort never created / timeout (BROWSER_START_TIMED_OUT with exitCode/signal null)
+    await (async () => {
+      let createdProfile = null;
+      let mockProc = null;
+      let threw = false;
+      try {
+        await startBrowser({
+          chromeExecutableFn: () => 'mock-chromium',
+          spawnFn: (_bin, args) => {
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
+            if (userDirArg) {
+              createdProfile = userDirArg.slice('--user-data-dir='.length);
+            }
+            mockProc = new MockBrowserProcess();
+            return mockProc;
+          },
+          browserStartTimeoutMs: 50,
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'BROWSER_START_TIMED_OUT');
+        assert.equal(err.details?.startupPhase, 'ENDPOINT_WAIT');
+        assert.equal(err.details?.exitCode, null);
+        assert.equal(err.details?.signal, null);
+      }
+      assert.equal(threw, true, 'endpoint wait timeout must throw');
+      assert.ok(createdProfile);
+      assert.equal(
+        existsSync(createdProfile),
+        false,
+        'profile must be cleaned up on timeout',
+      );
+      assert.notEqual(
+        mockProc.exitCode,
+        null,
+        'process must be terminated on timeout',
+      );
+      assert.equal(
+        mockProc.listenerCount('error'),
+        0,
+        'startup error listener must be disposed on timeout',
+      );
+    })();
+
+    // 5. Invalid port parsing in DevToolsActivePort (NaN, negative, out of range 1..65535)
+    for (const badPortContent of [
+      'not-a-number\n/devtools/browser/abc',
+      '-5\n/devtools/browser/abc',
+      '0\n/devtools/browser/abc',
+      '70000\n/devtools/browser/abc',
+    ]) {
+      let createdProfile = null;
+      let threw = false;
+      try {
+        await startBrowser({
+          chromeExecutableFn: () => 'mock-chromium',
+          spawnFn: (_bin, args) => {
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
+            if (userDirArg) {
+              createdProfile = userDirArg.slice('--user-data-dir='.length);
+              writeFileSync(
+                path.join(createdProfile, 'DevToolsActivePort'),
+                badPortContent,
+              );
+            }
+            return new MockBrowserProcess();
+          },
+          browserStartTimeoutMs: 50,
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'BROWSER_START_TIMED_OUT');
+        assert.equal(err.details?.startupPhase, 'ENDPOINT_WAIT');
+      }
+      assert.equal(
+        threw,
+        true,
+        `bad port "${badPortContent}" must be rejected`,
+      );
+      assert.ok(createdProfile);
+      assert.equal(existsSync(createdProfile), false);
+    }
+
+    // 6. Valid port with trailing whitespace or carriage returns
+    await (async () => {
+      let createdProfile = null;
+      const res = await startBrowser({
+        chromeExecutableFn: () => 'mock-chromium',
+        spawnFn: (_bin, args) => {
+          const userDirArg = args.find((a) =>
+            a.startsWith('--user-data-dir='),
+          );
+          if (userDirArg) {
+            createdProfile = userDirArg.slice('--user-data-dir='.length);
+            writeFileSync(
+              path.join(createdProfile, 'DevToolsActivePort'),
+              '9222\r\n/devtools/browser/abc\r\n',
+            );
+          }
+          return new MockBrowserProcess();
+        },
+        fetchFn: async (url, opts) => {
+          assert.equal(url.startsWith('http://127.0.0.1:9222/json/new?'), true);
+          assert.equal(opts?.method, 'PUT');
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({
+              webSocketDebuggerUrl:
+                'ws://127.0.0.1:9222/devtools/page/abc',
+            }),
+          };
+        },
+        cdpFn: (url) => ({
+          url,
+          connect: async () => {},
+        }),
+        browserStartTimeoutMs: 500,
+      });
+
+      assert.ok(res.browser);
+      assert.ok(res.cdp);
+      assert.equal(existsSync(res.profile), true);
+      // Clean up successfully created resources
+      rmSync(res.profile, { recursive: true, force: true });
+    })();
+
+    // 7a. Local fetch to /json/version returns 500 or network failure
+    await (async () => {
+      let createdProfile = null;
+      let threw = false;
+      try {
+        await startBrowser({
+          chromeExecutableFn: () => 'mock-chromium',
+          spawnFn: (_bin, args) => {
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
+            if (userDirArg) {
+              createdProfile = userDirArg.slice('--user-data-dir='.length);
+              writeFileSync(
+                path.join(createdProfile, 'DevToolsActivePort'),
+                '9222\n',
+              );
+            }
+            return new MockBrowserProcess();
+          },
+          fetchFn: async () => {
+            throw new Error('Connection refused by loopback DevTools');
+          },
+          browserStartTimeoutMs: 500,
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'CDP_SOCKET_ERROR');
+        assert.equal(err.details?.startupPhase, 'TARGET_CREATE');
+      }
+      assert.equal(threw, true);
+      assert.ok(createdProfile);
+      assert.equal(
+        existsSync(createdProfile),
+        false,
+        'profile cleaned up on /json/version failure',
+      );
+    })();
+
+    // 7b. Nonlocal webSocketDebuggerUrl is blocked
+    await (async () => {
+      let createdProfile = null;
+      let threw = false;
+      try {
+        await startBrowser({
+          chromeExecutableFn: () => 'mock-chromium',
+          spawnFn: (_bin, args) => {
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
+            if (userDirArg) {
+              createdProfile = userDirArg.slice('--user-data-dir='.length);
+              writeFileSync(
+                path.join(createdProfile, 'DevToolsActivePort'),
+                '9222\n',
+              );
+            }
+            return new MockBrowserProcess();
+          },
+          fetchFn: async () => {
+            return {
+              ok: true,
+              status: 200,
+              json: async () => ({
+                webSocketDebuggerUrl:
+                  'ws://remote.attacker.com:9222/devtools/page',
+              }),
+            };
+          },
+          browserStartTimeoutMs: 500,
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'NONLOCAL_TARGET_BLOCKED');
+        assert.equal(err.details?.startupPhase, 'TARGET_CREATE');
+      }
+      assert.equal(threw, true);
+      assert.ok(createdProfile);
+      assert.equal(
+        existsSync(createdProfile),
+        false,
+        'profile cleaned up on nonlocal target blocked',
+      );
+    })();
+
+    // 7c. CDP WebSocket connection error
+    await (async () => {
+      let createdProfile = null;
+      let threw = false;
+      try {
+        await startBrowser({
+          chromeExecutableFn: () => 'mock-chromium',
+          spawnFn: (_bin, args) => {
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
+            if (userDirArg) {
+              createdProfile = userDirArg.slice('--user-data-dir='.length);
+              writeFileSync(
+                path.join(createdProfile, 'DevToolsActivePort'),
+                '9222\n',
+              );
+            }
+            return new MockBrowserProcess();
+          },
+          fetchFn: async () => ({
+            ok: true,
+            status: 200,
+            json: async () => ({
+              webSocketDebuggerUrl:
+                'ws://127.0.0.1:9222/devtools/browser/abc',
+            }),
+          }),
+          cdpFn: () => ({
+            connect: async () => {
+              throw new Error('Connection refused by mock WS');
+            },
+          }),
+          browserStartTimeoutMs: 500,
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'CDP_SOCKET_ERROR');
+        assert.equal(err.details?.startupPhase, 'CDP_CONNECT');
+      }
+      assert.equal(threw, true);
+      assert.ok(createdProfile);
+      assert.equal(
+        existsSync(createdProfile),
+        false,
+        'profile cleaned up on CDP connection failure',
+      );
+    })();
+
+    // 8a. AbortSignal pre-aborted before startBrowser
+    await (async () => {
+      const controller = new AbortController();
+      controller.abort();
+      let threw = false;
+      try {
+        await startBrowser({
+          signal: controller.signal,
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'PROCESS_SIGNAL_TERMINATED');
+      }
+      assert.equal(threw, true, 'pre-aborted signal must throw');
+    })();
+
+    // 8b. AbortSignal triggered during DevTools endpoint wait
+    await (async () => {
+      const controller = new AbortController();
+      let createdProfile = null;
+      let threw = false;
+      setTimeout(() => controller.abort(), 20);
+      try {
+        await startBrowser({
+          chromeExecutableFn: () => 'mock-chromium',
+          spawnFn: (_bin, args) => {
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
+            if (userDirArg) {
+              createdProfile = userDirArg.slice('--user-data-dir='.length);
+            }
+            return new MockBrowserProcess();
+          },
+          browserStartTimeoutMs: 5000,
+          signal: controller.signal,
+        });
+      } catch (err) {
+        threw = true;
+        assert.equal(err instanceof QaError, true);
+        assert.equal(err.stage, 'BROWSER_START');
+        assert.equal(err.code, 'PROCESS_SIGNAL_TERMINATED');
+      }
+      assert.equal(threw, true, 'signal abort during wait must throw');
+      assert.ok(createdProfile);
+      assert.equal(
+        existsSync(createdProfile),
+        false,
+        'profile must be cleaned up on signal abort',
+      );
+    })();
+
+    // 9. Happy path: full successful startup with verified returned handle and profile cleanup
+    await (async () => {
+      let createdProfile = null;
+      let mockProc = null;
+      const handle = await startBrowser({
+        chromeExecutableFn: () => 'mock-chromium',
+        spawnFn: (_bin, args) => {
+          assert.ok(
+            args.includes('--disable-dev-shm-usage'),
+            'must include --disable-dev-shm-usage',
+          );
+          assert.ok(
+            args.includes('--remote-debugging-port=0'),
+            'must request ephemeral port 0',
+          );
+          const userDirArg = args.find((a) =>
+            a.startsWith('--user-data-dir='),
+          );
+          assert.ok(userDirArg, 'must have user data dir argument');
+          createdProfile = userDirArg.slice('--user-data-dir='.length);
+          writeFileSync(
+            path.join(createdProfile, 'DevToolsActivePort'),
+            '9444\n/devtools/browser/token-xyz\n',
+          );
+          mockProc = new MockBrowserProcess();
+          return mockProc;
+        },
+        fetchFn: async (url, opts) => {
+          assert.equal(url.startsWith('http://127.0.0.1:9444/json/new?'), true);
+          assert.equal(opts?.method, 'PUT');
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({
+              webSocketDebuggerUrl:
+                'ws://127.0.0.1:9444/devtools/page/token-xyz',
+            }),
+          };
+        },
+        cdpFn: (url, opts) => ({
+          url,
+          opts,
+          connected: false,
+          async connect() {
+            this.connected = true;
+          },
+        }),
+      });
+
+      assert.equal(handle.browser, mockProc);
+      assert.equal(handle.cdp.connected, true);
+      assert.equal(handle.profile, createdProfile);
+      assert.equal(
+        mockProc.listenerCount('error'),
+        0,
+        'startup error listener must be disposed on success',
+      );
+      assert.equal(
+        existsSync(handle.profile),
+        true,
+        'profile exists during active session',
+      );
+
+      // Manual teardown simulating end of run
+      await terminateSubprocess(handle.browser);
+      rmSync(handle.profile, { recursive: true, force: true });
+      assert.equal(
+        existsSync(handle.profile),
+        false,
+        'profile removed after teardown',
+      );
+    })();
+
+    // 10. Sensitive environment values / internal paths redaction & trace safety
+    await withTempDir(async (artifactDir) => {
+      const sensitiveLeakError = new QaError(
+        'BROWSER_START',
+        'BROWSER_START_FAILED',
+        'Failed with secret eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 and /home/runner/work/secret_dir',
+        {
+          process: 'browser',
+          exitCode: null,
+          signal: null,
+          startupPhase: 'DISCOVERY',
+          untrustedSecretField: 'TOP_SECRET_PASSWORD',
+        },
+      );
+
+      const classified = classifyFailure(
+        'BROWSER_START',
+        sensitiveLeakError,
+      );
+      assert.equal(classified.stage, 'BROWSER_START');
+      assert.equal(classified.code, 'BROWSER_START_FAILED');
+      assert.equal(classified.startupPhase, 'DISCOVERY');
+      assert.equal(classified.process, 'browser');
+      assert.equal(
+        classified.untrustedSecretField,
+        undefined,
+        'untrusted details field must not be retained',
+      );
+      assert.equal(
+        classified.message,
+        undefined,
+        'raw message containing tokens must not be persisted',
+      );
+
+      // Run harness with browser start failure and verify trace.json contents
+      const harnessRun = await runQaHarness({
+        ...defaultStubDependencies({
+          startBrowserFn: async () => {
+            throw sensitiveLeakError;
+          },
+        }),
+        artifactDir,
+        negativeControl: false,
+      });
+
+      assert.equal(harnessRun.failure, true);
+      const trace = JSON.parse(
+        readFileSync(harnessRun.tracePath, 'utf8'),
+      );
+      assert.equal(trace.failure.stage, 'BROWSER_START');
+      assert.equal(trace.failure.code, 'BROWSER_START_FAILED');
+      assert.equal(trace.failure.startupPhase, 'DISCOVERY');
+      assert.equal(trace.failure.exitCode, null);
+      assert.equal(trace.failure.signal, undefined);
+
+      const rawTraceContent = readFileSync(harnessRun.tracePath, 'utf8');
+      assert.equal(
+        rawTraceContent.includes('TOP_SECRET_PASSWORD'),
+        false,
+        'secret must never appear in trace.json',
+      );
+      assert.equal(
+        rawTraceContent.includes(
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
+        ),
+        false,
+        'JWT must never appear in trace.json',
+      );
+      assert.equal(
+        rawTraceContent.includes('secret_dir'),
+        false,
+        'internal path must not appear in trace.json',
+      );
+    });
+
+    // 11. Strict CLI --browser-start-timeout-ms bounds enforcement
+    assert.equal(parseBrowserStartTimeout(undefined), 20000);
+    assert.equal(parseBrowserStartTimeout(null), 20000);
+    assert.equal(parseBrowserStartTimeout('30000'), 30000);
+    assert.equal(parseBrowserStartTimeout('1000'), 1000);
+    assert.equal(parseBrowserStartTimeout('120000'), 120000);
+    // Values outside strict bounds [1000, 120000] fail-safe to canonical default (20000)
+    assert.equal(
+      parseBrowserStartTimeout('0'),
+      20000,
+      '0 cannot disable startup deadline',
+    );
+    assert.equal(
+      parseBrowserStartTimeout('-500'),
+      20000,
+      'negative timeout rejected',
+    );
+    assert.equal(
+      parseBrowserStartTimeout('500'),
+      20000,
+      'sub-second timeout rejected',
+    );
+    assert.equal(
+      parseBrowserStartTimeout('120001'),
+      20000,
+      'excessive timeout rejected',
+    );
+    assert.equal(
+      parseBrowserStartTimeout('999999999'),
+      20000,
+      'infinite deadline rejected',
+    );
+    assert.equal(
+      parseBrowserStartTimeout('invalid'),
+      20000,
+      'non-numeric value rejected',
     );
   });
 });
