@@ -37,7 +37,7 @@ Selamat datang di direktori kontrol AI terpadu BisnisHub (**BH-MAOS**). Direktor
 ```text
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ 1. COGNITIVE EXECUTIVE TIER (.agents/executives/)                        │
-│    • ORION v2: Chief Strategy Officer (Commercial Brain, Drops, Margins) │
+│    • ORION v2: AI Co-Founder & Strategy (Commercial Brain, Drops, Margins) │
 │    • ATLAS v2: Head of Engineering (Systems Spine, Blast Radius, CI/CD)  │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ 2. PROTOCOL & MEMORY FABRIC (.agents/protocols/ & .agents/memory/)       │

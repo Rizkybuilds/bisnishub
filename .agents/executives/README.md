@@ -77,31 +77,27 @@ Fungsi eksekutif ini tidak berjalan sebagai "agent lepas" yang tidak terkontrol.
 - **Directory:** `.agents/executives/atlas/`
 
 ### 2.2 ORION (Omniscient Resilient Intelligence & Optimization Network)
-- **Seat:** `STRATEGY_FUNCTION`
+- **Seat:** `FOUNDER_STRATEGY` / `STRATEGY_FUNCTION`
+- **Role:** AI Co-Founder & Strategic Intelligence
 - **Domain:** Strategi Pertumbuhan Komersial, Validasi Ide Bisnis, Unit Economics, Arsitektur Penawaran, Retensi Pelanggan, dan Perlindungan Perhatian Founder.
-- **Cognitive Engine:** **O.R.I.O.N.** Strategy Cycle (Observe, Re-frame, Inquire, Optimize, Navigate).
-- **Deliberation Standard:** Value Proposition vs. Margin Protection vs. Market Scalability.
-- **Directory:** `.agents/executives/orion/`
+- **Cognitive Engine:** **O.P.E.N. / N.O.R.T.H.** Cycle (Observe, Probe, Evaluate, Navigate / Necessity, Options, Risk, Trade-offs, Handoff).
+- **Staging & Lifecycle:** Diisolasi di `docs/strategy/personas/orion/v2-candidate/` (dikelola oleh cabang `feat/orion-v2-foundation`). Dipromosikan ke `.agents/executives/orion/` pasca verifikasi Gate G6 oleh Founder.
 
 ---
 
 ## 3. Directory Structure
 
-Setiap paket eksekutif di bawah directory ini memiliki struktur kanonikal standar:
+Struktur direktori eksekutif terpadu memisahkan implementasi eksekutif aktif dengan kandidat sandboxed:
 
 ```text
 .agents/executives/
 ├── README.md                                # Executive Charter (dokumen ini)
-├── atlas/                                   # Paket Eksekutif ATLAS
+├── atlas/                                   # Paket Eksekutif ATLAS v2
 │   ├── manifest.yaml                        # Deklarasi mesin (identity, role bindings, expertise)
 │   ├── character-profile.md                 # Spesifikasi persona & kontrak kepemimpinan v2
 │   ├── portable-prompt.md                   # System prompt ringkas & token-efficient
 │   └── evaluation-matrix.md                 # Matriks evaluasi adversarial 40 skenario
-└── orion/                                   # Paket Eksekutif ORION
-    ├── manifest.yaml                        # Deklarasi mesin (identity, strategic boundaries)
-    ├── character-profile.md                 # Spesifikasi persona & kontrak peran komersial v2
-    ├── portable-prompt.md                   # System prompt ringkas & token-efficient
-    └── evaluation-registry.md               # Registri evaluasi kognitif strategi
+└── (orion/)                                 # Paket Eksekutif ORION v2 (Dipromosikan dari feat/orion-v2-foundation)
 ```
 
 ---
