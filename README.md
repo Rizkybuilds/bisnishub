@@ -10,12 +10,13 @@ Mulai dari [indeks proyek](docs/project-index.md), [aturan direktori](docs/engin
 | Bagian | Lokasi | Status |
 | --- | --- | --- |
 | MGBOS | [systems/mgbos](systems/mgbos/README.md) | Implementasi Next.js; validasi kesiapan per revisi |
+| TeeStock Storefront | `systems/mgbos/apps/teestock` | Aplikasi publik Next.js (port 3102) di bawah workspace MGBOS |
 | JARVIS | [systems/jarvis/docs](systems/jarvis/docs/charter.md) | Dokumentasi arsitektur; belum ada runtime yang diverifikasi |
 | KasKita | `systems/kaskita/` | Sistem independen di luar holding |
 | Asisten Python | [tools/assistant](tools/assistant/README.md) | CLI existing, terpisah dari JARVIS |
 | Pengetahuan bisnis | `bisnis/` | Brand, SOP, riset, keuangan dan perencanaan |
 | Catatan sesi | `catatan/` | Histori, termasuk dokumentasi 27 September |
-| Implementasi retired | [archive](archive/teestock-v1/README.md) | Referensi; bukan dependency atau deployment aktif |
+| Implementasi retired (TeeStock v1) | [archive](archive/teestock-v1/README.md) | Referensi historis; bukan dependency atau deployment aktif |
 
 ## Menjalankan dan memeriksa
 
@@ -30,6 +31,10 @@ npm run check:repository
 Alias MGBOS memakai pnpm 10.34.5 di `systems/mgbos/`. Node mengikuti pin workspace.
 `npm run dev` dan `npm run build` juga menargetkan MGBOS. Pemeriksaan aplikasi
 tidak menggantikan HTTP smoke, database gates atau kesiapan operasional.
+Perintah root `npm run check:repository` hanya menjalankan validasi tata letak direktori
+repositori (`scripts/governance/check_repository_layout.py`); validasi dependensi dokumen,
+checkpoint kontinuitas, dan supply-chain CI dijalankan terpisah melalui skrip terkait
+dan workflow CI repositori.
 
 Python: `python tools/assistant/main.py`; dependency dimiliki tool tersebut.
 KasKita tetap menggunakan npm/lockfile sendiri. Tidak ada root pnpm workspace
