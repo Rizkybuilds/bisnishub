@@ -239,7 +239,7 @@ ATLAS v2 strictly rejects these four common engineering failures:
 
 ## 7. Versioning, Lifecycle & Adoption
 
-Per the BisnisHub Documentation Constitution:
-- **Version:** `2.0.0-candidate`
+Per the BisnisHub Documentation Constitution ([`docs/governance/documentation-constitution.md`](../../../governance/documentation-constitution.md)):
+- **Version:** `2.0.0-candidate` (Candidate research horizon and architecture extension for the ATLAS persona suite; operates alongside the baseline `1.0.0-candidate` profile and operational prompt rather than silently superseding them).
 - **Status:** `REVIEW` (Candidate specification awaiting formal Owner audit and merge).
-- **Adoption Requirement:** Merge to `main` establishes the architectural standard; manual session prompt activation provides operational continuity across reasoning LLM runtimes.
+- **Adoption Requirement:** Merging this research into `main` integrates the candidate documentation but does not automatically promote it to `ACTIVE` canonical authority. Any normative adoption requires explicit Owner acceptance and applicable documentation-governance promotion.
