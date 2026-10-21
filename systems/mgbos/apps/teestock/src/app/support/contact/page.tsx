@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { NoticeBox } from '../../../components/NoticeBox';
+import { getWhatsAppContactUrl } from '../../../lib/whatsapp';
 
 export const metadata: Metadata = {
   title: 'Bantuan & Kontak',
@@ -36,31 +37,43 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Honest Contact Activation Status (S0-A Public Activation Gate) */}
+      {/* Active Official Contact Channels */}
       <section className="section" aria-labelledby="status-heading">
         <h2
           id="status-heading"
           style={{ fontSize: '1.4rem', marginBottom: '16px' }}
         >
-          Status Operasional Saluran Kontak
+          Saluran Komunikasi Resmi
         </h2>
 
         <NoticeBox
-          variant="warning"
-          title="Saluran Kontak Daring Sedang Disiapkan"
+          variant="info"
+          title="Layanan Pelanggan & Pemesanan WhatsApp Aktif"
         >
           <p style={{ marginBottom: '12px' }}>
-            Untuk memastikan setiap pertanyaan ditangani secara cermat dan
-            profesional, saluran komunikasi langsung (seperti WhatsApp dan email
-            layanan pelanggan) saat ini sedang dalam proses persiapan
-            operasional dan belum dibuka untuk umum.
+            Tim TeeStock siap melayani konsultasi pesanan, pemesanan apparel
+            retail, kustom korporat, dan inquiry produksi langsung melalui
+            WhatsApp resmi kami.
           </p>
-          <p style={{ marginBottom: '0' }}>
-            Kami tidak menampilkan tautan pesan atau nomor kontak sebelum tim
-            kami siap melayani konsultasi Anda secara langsung. Saat saluran
-            resmi dibuka, rincian kontak yang dapat dihubungi akan segera
-            diperbarui pada halaman ini.
+          <p style={{ marginBottom: '16px' }}>
+            Jam operasional layanan konsultasi dan konfirmasi pesanan:{' '}
+            <strong>Senin – Sabtu, 09.00 – 17.00 WIB</strong>.
           </p>
+          <div>
+            <a
+              href={getWhatsAppContactUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span aria-hidden="true">💬</span> Hubungi via WhatsApp Resmi
+            </a>
+          </div>
         </NoticeBox>
       </section>
 

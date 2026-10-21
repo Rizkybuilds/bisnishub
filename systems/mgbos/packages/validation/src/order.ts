@@ -38,6 +38,7 @@ export type ShippingAddressSnapshot = z.infer<
 
 export const createOrderFromQuoteSchema = z.object({
   quoteVersionId: z.string().uuid('ID versi quote tidak valid'),
+  requestId: z.string().uuid('ID permintaan tidak valid').optional(),
   shippingAddress: shippingAddressSnapshotSchema,
   billingAddress: shippingAddressSnapshotSchema.optional().nullable(),
   paymentTermsOverride: z.record(z.string(), z.unknown()).optional().nullable(),
@@ -66,6 +67,7 @@ export type RetailOrderItemInput = z.infer<typeof retailOrderItemInputSchema>;
 
 export const createRetailOrderSchema = z.object({
   brandId: z.string().uuid().optional(),
+  requestId: z.string().uuid('ID permintaan tidak valid').optional(),
   customerAccountId: z.string().uuid('ID akun customer tidak valid'),
   items: z
     .array(retailOrderItemInputSchema)
