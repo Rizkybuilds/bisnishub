@@ -19,6 +19,7 @@ import {
   ALLOWED_STARTUP_PHASES,
   CANONICAL_API_ORIGIN,
   CANONICAL_APP_ORIGIN,
+  Cdp,
   EXPECTED_POSITIVE_CASE_IDS,
   QaError,
   assertConsistentSupabaseEnv,
@@ -8428,27 +8429,43 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
 
     // 1b. startBrowser: failure during startup + profile removal failure => SUBPROCESS_TEARDOWN_FAILED
     await (async () => {
-      let threw = false;
+      let createdProfile1b = null;
       try {
-        await startBrowser({
-          chromeExecutableFn: () => 'mock-chromium',
-          spawnFn: () => new MockBrowserProcess(),
-          rmSyncFn: () => {
-            throw new Error('EBUSY: resource locked');
-          },
-          browserStartTimeoutMs: 1000,
-        });
-      } catch (err) {
-        threw = true;
-        assert.equal(err instanceof QaError, true);
-        assert.equal(err.stage, 'CLEANUP');
-        assert.equal(err.code, 'SUBPROCESS_TEARDOWN_FAILED');
-        assert.equal(err.details?.browserTerminated, true);
-        assert.equal(err.details?.profileRemoved, false);
-        assert.equal(err.details?.priorStage, 'BROWSER_START');
-        assert.equal(err.details?.priorCode, 'BROWSER_START_TIMED_OUT');
+        let threw = false;
+        try {
+          await startBrowser({
+            chromeExecutableFn: () => 'mock-chromium',
+            spawnFn: (_bin, args) => {
+              const userDirArg = args?.find?.((a) => a.startsWith('--user-data-dir='));
+              if (userDirArg) {
+                createdProfile1b = userDirArg.slice('--user-data-dir='.length);
+              }
+              return new MockBrowserProcess();
+            },
+            rmSyncFn: () => {
+              throw new Error('EBUSY: resource locked');
+            },
+            browserStartTimeoutMs: 1000,
+          });
+        } catch (err) {
+          threw = true;
+          assert.equal(err instanceof QaError, true);
+          assert.equal(err.stage, 'CLEANUP');
+          assert.equal(err.code, 'SUBPROCESS_TEARDOWN_FAILED');
+          assert.equal(err.details?.browserTerminated, true);
+          assert.equal(err.details?.profileRemoved, false);
+          assert.equal(err.details?.priorStage, 'BROWSER_START');
+          assert.equal(err.details?.priorCode, 'BROWSER_START_TIMED_OUT');
+        }
+        assert.equal(threw, true, 'profile removal failure after startup error must throw SUBPROCESS_TEARDOWN_FAILED');
+        assert.ok(createdProfile1b, 'createdProfile1b should have been captured');
+        assert.equal(existsSync(createdProfile1b), true, 'profile must still exist when rmSync fails');
+      } finally {
+        if (createdProfile1b && existsSync(createdProfile1b)) {
+          rmSync(createdProfile1b, { recursive: true, force: true, maxRetries: 3 });
+        }
+        assert.equal(createdProfile1b ? existsSync(createdProfile1b) : false, false, 'profile residue must be cleaned up in finally block');
       }
-      assert.equal(threw, true, 'profile removal failure after startup error must throw SUBPROCESS_TEARDOWN_FAILED');
     })();
 
     // 1c. runQaHarness: startBrowser teardown failure surfaces as FAIL in cleanup status and SUBPROCESS_TEARDOWN_FAILED
@@ -8603,6 +8620,33 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       { name: 'TypeError' },
       'Property assignment on ALLOWED_STARTUP_PHASES must throw TypeError',
     );
+    assert.throws(
+      () => {
+        ALLOWED_STARTUP_PHASES.forEach((_, __, internalSet) => {
+          internalSet.add('INJECTED_PHASE');
+        });
+      },
+      { name: 'TypeError' },
+      'forEach callback must not allow mutating underlying phase set',
+    );
+    assert.throws(
+      () => {
+        ALLOWED_STARTUP_PHASES.forEach((_, __, internalSet) => {
+          internalSet.delete('DISCOVERY');
+        });
+      },
+      { name: 'TypeError' },
+      'forEach callback must not allow deleting phases',
+    );
+    assert.throws(
+      () => {
+        ALLOWED_STARTUP_PHASES.forEach((_, __, internalSet) => {
+          internalSet.clear();
+        });
+      },
+      { name: 'TypeError' },
+      'forEach callback must not allow clearing phases',
+    );
 
     // 3b. Read operations work as expected
     assert.equal(ALLOWED_STARTUP_PHASES.has('DISCOVERY'), true);
@@ -8611,7 +8655,30 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     assert.equal(ALLOWED_STARTUP_PHASES.has('TARGET_CREATE'), true);
     assert.equal(ALLOWED_STARTUP_PHASES.has('CDP_CONNECT'), true);
     assert.equal(ALLOWED_STARTUP_PHASES.has('UNKNOWN_PHASE'), false);
+    assert.equal(ALLOWED_STARTUP_PHASES.has('INJECTED_PHASE'), false);
     assert.equal(ALLOWED_STARTUP_PHASES.size, 5);
+    assert.deepEqual(
+      [...ALLOWED_STARTUP_PHASES],
+      ['DISCOVERY', 'PROCESS_SPAWN', 'ENDPOINT_WAIT', 'TARGET_CREATE', 'CDP_CONNECT'],
+    );
+    assert.deepEqual(
+      [...ALLOWED_STARTUP_PHASES.keys()],
+      ['DISCOVERY', 'PROCESS_SPAWN', 'ENDPOINT_WAIT', 'TARGET_CREATE', 'CDP_CONNECT'],
+    );
+    assert.deepEqual(
+      [...ALLOWED_STARTUP_PHASES.values()],
+      ['DISCOVERY', 'PROCESS_SPAWN', 'ENDPOINT_WAIT', 'TARGET_CREATE', 'CDP_CONNECT'],
+    );
+    assert.deepEqual(
+      [...ALLOWED_STARTUP_PHASES.entries()],
+      [
+        ['DISCOVERY', 'DISCOVERY'],
+        ['PROCESS_SPAWN', 'PROCESS_SPAWN'],
+        ['ENDPOINT_WAIT', 'ENDPOINT_WAIT'],
+        ['TARGET_CREATE', 'TARGET_CREATE'],
+        ['CDP_CONNECT', 'CDP_CONNECT'],
+      ],
+    );
 
     // 3c. classifyFailure rejects non-allowlisted startup phase
     const classifiedInjection = classifyFailure(
@@ -8809,7 +8876,33 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     await (async () => {
       let createdProfile = null;
       let mockProc = null;
+      let capturedCdp = null;
       let threw = false;
+
+      class MockInFlightCdp extends Cdp {
+        async connect() {
+          if (this.closed) {
+            throw new QaError(
+              'BROWSER_START',
+              'CDP_CONNECTION_CLOSED',
+              `Chromium DevTools connection closed before connect (${this.closeReason ?? 'closed'})`,
+            );
+          }
+          return new Promise((resolve, reject) => {
+            this.connectReject = reject;
+            this.connectTimer = setTimeout(() => {
+              reject(
+                new QaError(
+                  'BROWSER_START',
+                  'CDP_SOCKET_TIMEOUT',
+                  'Chromium DevTools WebSocket connection timed out after 15000ms',
+                ),
+              );
+            }, 15000);
+          });
+        }
+      }
+
       try {
         await startBrowser({
           chromeExecutableFn: () => 'mock-chromium',
@@ -8829,14 +8922,14 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
               webSocketDebuggerUrl: 'ws://127.0.0.1:9222/devtools/browser/abc',
             }),
           }),
-          cdpFn: () => ({
-            connect: async () => {
-              setImmediate(() => {
-                mockProc.kill('SIGTERM');
-              });
-              await new Promise((resolve) => setTimeout(resolve, 500));
-            },
-          }),
+          cdpFn: (url, opts) => {
+            capturedCdp = new MockInFlightCdp(url, opts);
+            setImmediate(() => {
+              assert.ok(capturedCdp.connectTimer !== null, 'connectTimer must be active while connect is in flight');
+              mockProc.kill('SIGTERM');
+            });
+            return capturedCdp;
+          },
           browserStartTimeoutMs: 1000,
         });
       } catch (err) {
@@ -8851,6 +8944,33 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       assert.equal(threw, true, 'process exit during CDP_CONNECT must throw BROWSER_START_FAILED');
       assert.equal(mockProc.listenerCount('exit'), 0, 'exit listeners disposed');
       assert.equal(existsSync(createdProfile), false, 'profile removed');
+      assert.ok(capturedCdp, 'CDP instance must be captured');
+      assert.equal(capturedCdp.closed, true, 'CDP instance must be closed');
+      assert.ok(
+        capturedCdp.closeReason === 'connection_race_lost' || capturedCdp.closeReason === 'startup_failed',
+        `closeReason should be connection_race_lost or startup_failed, got: ${capturedCdp.closeReason}`,
+      );
+      assert.equal(capturedCdp.connectTimer, null, 'connectTimer must be cleared');
+      assert.equal(capturedCdp.connectReject, null, 'connectReject reference must be cleared');
+    })();
+
+    // 5e. CDP connection lifecycle: closed before connect rejects fail-closed
+    await (async () => {
+      const standaloneCdp = new Cdp('ws://127.0.0.1:9222/devtools/browser/xyz');
+      assert.equal(standaloneCdp.closed, false);
+      assert.equal(standaloneCdp.connectTimer, null);
+      standaloneCdp.close('early_shutdown_test');
+      assert.equal(standaloneCdp.closed, true);
+      assert.equal(standaloneCdp.closeReason, 'early_shutdown_test');
+      assert.equal(standaloneCdp.connectTimer, null);
+      await assert.rejects(
+        () => standaloneCdp.connect(),
+        (err) =>
+          err instanceof QaError &&
+          err.code === 'CDP_CONNECTION_CLOSED' &&
+          err.message.includes('early_shutdown_test'),
+        'connecting on already-closed CDP instance must reject immediately',
+      );
     })();
   });
 });

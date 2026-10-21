@@ -2650,7 +2650,7 @@ export async function createFixture(
   return creationExecutionPromise;
 }
 
-class Cdp {
+export class Cdp {
   constructor(url, { app = CANONICAL_APP_ORIGIN } = {}) {
     this.url = url;
     this.app = app;
@@ -2659,12 +2659,23 @@ class Cdp {
     this.requests = [];
     this.closed = false;
     this.closeReason = null;
+    this.connectTimer = null;
+    this.connectReject = null;
   }
 
   async connect() {
+    if (this.closed) {
+      throw new QaError(
+        'BROWSER_START',
+        'CDP_CONNECTION_CLOSED',
+        `Chromium DevTools connection closed before connect (${this.closeReason ?? 'closed'})`,
+      );
+    }
     this.ws = new WebSocket(this.url);
     await new Promise((resolve, reject) => {
-      const timer = setTimeout(() => {
+      this.connectReject = reject;
+      this.connectTimer = setTimeout(() => {
+        cleanup();
         reject(
           new QaError(
             'BROWSER_START',
@@ -2673,29 +2684,59 @@ class Cdp {
           ),
         );
       }, 15000);
-      this.ws.addEventListener(
-        'open',
-        () => {
-          clearTimeout(timer);
-          resolve();
-        },
-        { once: true },
-      );
-      this.ws.addEventListener(
-        'error',
-        () => {
-          clearTimeout(timer);
-          reject(
-            new QaError(
-              'BROWSER_START',
-              'CDP_SOCKET_ERROR',
-              'Chromium DevTools WebSocket connection error',
-            ),
-          );
-        },
-        { once: true },
-      );
+
+      const cleanup = () => {
+        if (this.connectTimer) {
+          clearTimeout(this.connectTimer);
+          this.connectTimer = null;
+        }
+        this.connectReject = null;
+        try {
+          this.ws?.removeEventListener?.('open', onOpen);
+          this.ws?.removeEventListener?.('error', onError);
+          this.ws?.removeEventListener?.('close', onClose);
+        } catch {
+          // Ignore listener removal error.
+        }
+      };
+
+      const onOpen = () => {
+        cleanup();
+        resolve();
+      };
+      const onError = () => {
+        cleanup();
+        reject(
+          new QaError(
+            'BROWSER_START',
+            'CDP_SOCKET_ERROR',
+            'Chromium DevTools WebSocket connection error',
+          ),
+        );
+      };
+      const onClose = () => {
+        cleanup();
+        reject(
+          new QaError(
+            'BROWSER_START',
+            'CDP_CONNECTION_CLOSED',
+            'Chromium DevTools WebSocket closed during connection handshake',
+          ),
+        );
+      };
+
+      this.ws.addEventListener('open', onOpen, { once: true });
+      this.ws.addEventListener('error', onError, { once: true });
+      this.ws.addEventListener('close', onClose, { once: true });
     });
+
+    if (this.closed) {
+      throw new QaError(
+        'BROWSER_START',
+        'CDP_CONNECTION_CLOSED',
+        `Chromium DevTools connection closed during handshake (${this.closeReason ?? 'closed'})`,
+      );
+    }
 
     this.ws.addEventListener('message', (event) => {
       let packet;
@@ -2858,9 +2899,28 @@ class Cdp {
     writeFileSync(file, Buffer.from(data, 'base64'));
   }
 
-  close() {
+  close(reason = 'explicit_close') {
     this.closed = true;
-    this.closeReason = this.closeReason ?? 'explicit_close';
+    this.closeReason = this.closeReason ?? reason;
+    if (this.connectTimer) {
+      clearTimeout(this.connectTimer);
+      this.connectTimer = null;
+    }
+    if (this.connectReject) {
+      const reject = this.connectReject;
+      this.connectReject = null;
+      try {
+        reject(
+          new QaError(
+            'BROWSER_START',
+            'CDP_CONNECTION_CLOSED',
+            `Chromium DevTools connection closed (${this.closeReason})`,
+          ),
+        );
+      } catch {
+        // Safe handling
+      }
+    }
     for (const [, entry] of this.pending) {
       clearTimeout(entry.timer);
       entry.reject(
@@ -2934,6 +2994,7 @@ export async function startBrowser({
   let browser = null;
   let spawnError = null;
   let onProcessError = null;
+  let cdp = null;
 
   try {
     let executable;
@@ -3223,9 +3284,10 @@ export async function startBrowser({
       },
     });
 
-    const cdp = cdpFn(target.webSocketDebuggerUrl, { app });
+    cdp = cdpFn(target.webSocketDebuggerUrl, { app });
     let onChildExit = null;
     let onCdpProcessError = null;
+    let connectionSettled = false;
 
     const earlyExitPromise = new Promise((_, reject) => {
       if (spawnError) {
@@ -3296,9 +3358,19 @@ export async function startBrowser({
     });
     earlyExitPromise.catch(() => {});
 
+    const connectPromise = Promise.resolve().then(() => cdp.connect());
+    // Attach error sink to losing promise to prevent unhandled rejection if race is lost
+    connectPromise.catch(() => {});
+
     try {
-      await Promise.race([cdp.connect(), earlyExitPromise]);
+      await Promise.race([connectPromise, earlyExitPromise]);
+      connectionSettled = true;
     } catch (cdpErr) {
+      try {
+        cdp?.close?.('startup_failed');
+      } catch {
+        // Safe disposal
+      }
       if (cdpErr instanceof QaError) {
         cdpErr.details = {
           ...cdpErr.details,
@@ -3321,6 +3393,13 @@ export async function startBrowser({
         },
       );
     } finally {
+      if (!connectionSettled) {
+        try {
+          cdp?.close?.('connection_race_lost');
+        } catch {
+          // Safe disposal
+        }
+      }
       if (onChildExit && typeof browser?.removeListener === 'function') {
         browser.removeListener('exit', onChildExit);
       }
@@ -3355,6 +3434,12 @@ export async function startBrowser({
     if (browser && onProcessError && typeof browser.removeListener === 'function') {
       browser.removeListener('error', onProcessError);
       onProcessError = null;
+    }
+
+    try {
+      cdp?.close?.('startup_failed');
+    } catch {
+      // Safe disposal
     }
 
     let browserTerminated = true;
@@ -3684,35 +3769,71 @@ const CANONICAL_STARTUP_PHASES = Object.freeze([
   'CDP_CONNECT',
 ]);
 
-const INTERNAL_STARTUP_PHASES = Object.freeze(
-  new Set(CANONICAL_STARTUP_PHASES),
-);
+class ReadOnlyPhaseSet {
+  #set;
+
+  constructor(phases) {
+    this.#set = new Set(phases);
+    Object.freeze(this);
+  }
+
+  get [Symbol.toStringTag]() {
+    return 'Set';
+  }
+
+  has(value) {
+    return this.#set.has(value);
+  }
+
+  get size() {
+    return this.#set.size;
+  }
+
+  *values() {
+    yield* CANONICAL_STARTUP_PHASES;
+  }
+
+  keys() {
+    return this.values();
+  }
+
+  *entries() {
+    for (const val of CANONICAL_STARTUP_PHASES) {
+      yield [val, val];
+    }
+  }
+
+  [Symbol.iterator]() {
+    return this.values();
+  }
+
+  forEach(callback, thisArg) {
+    if (typeof callback !== 'function') {
+      throw new TypeError('callback must be a function');
+    }
+    for (const val of CANONICAL_STARTUP_PHASES) {
+      callback.call(thisArg, val, val, this);
+    }
+  }
+
+  add() {
+    throw new TypeError('ALLOWED_STARTUP_PHASES is immutable');
+  }
+
+  delete() {
+    throw new TypeError('ALLOWED_STARTUP_PHASES is immutable');
+  }
+
+  clear() {
+    throw new TypeError('ALLOWED_STARTUP_PHASES is immutable');
+  }
+}
 
 export const ALLOWED_STARTUP_PHASES = Object.freeze(
-  new Proxy(INTERNAL_STARTUP_PHASES, {
-    get(target, prop, receiver) {
-      if (prop === 'add' || prop === 'delete' || prop === 'clear') {
-        return () => {
-          throw new TypeError('ALLOWED_STARTUP_PHASES is immutable');
-        };
-      }
-      const val = Reflect.get(target, prop, target);
-      return typeof val === 'function' ? val.bind(target) : val;
-    },
-    set() {
-      throw new TypeError('ALLOWED_STARTUP_PHASES is immutable');
-    },
-    defineProperty() {
-      throw new TypeError('ALLOWED_STARTUP_PHASES is immutable');
-    },
-    deleteProperty() {
-      throw new TypeError('ALLOWED_STARTUP_PHASES is immutable');
-    },
-    preventExtensions(target) {
-      return Reflect.preventExtensions(target);
-    },
-  }),
+  new ReadOnlyPhaseSet(CANONICAL_STARTUP_PHASES),
 );
+
+const INTERNAL_STARTUP_PHASES = ALLOWED_STARTUP_PHASES;
 
 function allowlistedString(value, allowedSet, fallback = null) {
   return typeof value === 'string' && allowedSet.has(value) ? value : fallback;
