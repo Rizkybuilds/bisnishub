@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useDemoCart } from '../features/demo-commerce';
 
 const links = [
   { href: '/shop', label: 'The Edit' },
@@ -15,6 +16,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
+  const { summary } = useDemoCart();
 
   useEffect(() => {
     if (!open) return;
@@ -71,6 +73,16 @@ export function Header() {
             ))}
           </nav>
           <div className="retail-header-actions">
+            <Link
+              href="/demo/cart"
+              className="retail-demo-cart-badge"
+              aria-label={`Keranjang simulasi demo: ${summary.totalQuantity} item`}
+            >
+              <span className="retail-demo-cart-label">Simulasi</span>
+              <span className="retail-demo-cart-count" aria-hidden="true">
+                ({summary.totalQuantity})
+              </span>
+            </Link>
             <Link className="retail-header-cta" href="/shop">
               Explore <span aria-hidden="true">↗</span>
             </Link>
@@ -108,6 +120,18 @@ export function Header() {
               {label} <span aria-hidden="true">↗</span>
             </Link>
           ))}
+          <Link
+            href="/demo/cart"
+            className={
+              'mobile-nav-link retail-mobile-cart-link' +
+              (pathname === '/demo/cart' ? ' nav-link-active' : '')
+            }
+            aria-current={pathname === '/demo/cart' ? 'page' : undefined}
+            onClick={() => setOpen(false)}
+          >
+            Keranjang Simulasi ({summary.totalQuantity}){' '}
+            <span aria-hidden="true">↗</span>
+          </Link>
         </nav>
       )}
     </header>

@@ -3,6 +3,7 @@ import './globals.css';
 import './retail.css';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
+import { DemoCartProvider } from '../features/demo-commerce';
 
 export const metadata: Metadata = {
   title: {
@@ -22,11 +23,13 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Menuju ke konten utama
         </a>
-        <Header />
-        <main id="main-content" className="site-main" tabIndex={-1}>
-          {children}
-        </main>
-        <Footer />
+        <DemoCartProvider>
+          <Header />
+          <main id="main-content" className="site-main" tabIndex={-1}>
+            {children}
+          </main>
+          <Footer />
+        </DemoCartProvider>
       </body>
     </html>
   );
