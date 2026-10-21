@@ -65,6 +65,7 @@ ORION v2 enhances the strategic reasoning, creative exploration, conversational 
 4. [`self-evolution-protocol.md`](self-evolution-protocol.md) — **OR2-SE-01 RFC:** Proposed bounded self-improvement loop and standing mandate; not an authority grant until independently ratified.
 5. [`evaluation-registry.md`](evaluation-registry.md) — **OR2-04:** Governed 63-case evaluation registry, rubrics, and provenance tracking (54 prompt behavioral cases + 9 runtime memory cases).
 6. [`memory-architecture.md`](memory-architecture.md) — **OR2-07:** 4-plane typed memory candidate architecture, selective retrieval pipeline, Data Loss Prevention (DLP) threat model, and Gate G3 evaluation specifications (supported by [`memory-record.schema.json`](memory-record.schema.json) and [`memory-fixtures-g3.json`](memory-fixtures-g3.json)).
+7. [`tool-and-handoff-contract.md`](tool-and-handoff-contract.md) — **OR2-09:** Tool integration policies, least-privilege boundaries, Business Outcome Brief (BOB) contract and schema ([`business-outcome-brief.schema.json`](business-outcome-brief.schema.json)), and dynamic Git reality verification adapter ([`git_verify_adapter.py`](git_verify_adapter.py)).
 
 ---
 

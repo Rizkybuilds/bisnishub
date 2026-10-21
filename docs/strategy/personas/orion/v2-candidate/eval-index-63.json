@@ -416,9 +416,9 @@
       "tier": "REASONING_ADDITION",
       "category": "Epistemic Honesty",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-42",
@@ -426,9 +426,9 @@
       "tier": "REASONING_ADDITION",
       "category": "Grounded Realist",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-43",
@@ -436,9 +436,9 @@
       "tier": "REASONING_ADDITION",
       "category": "Conditional Intent",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-44",
@@ -446,9 +446,9 @@
       "tier": "REASONING_ADDITION",
       "category": "Commercial Empathy",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-45",
@@ -456,9 +456,9 @@
       "tier": "REASONING_ADDITION",
       "category": "Financial Realism",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-46",
@@ -466,9 +466,9 @@
       "tier": "REASONING_ADDITION",
       "category": "Legal & IP Defense",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-47",
@@ -476,9 +476,9 @@
       "tier": "REASONING_ADDITION",
       "category": "Sequencing Discipline",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-48",
@@ -486,9 +486,9 @@
       "tier": "REASONING_ADDITION",
       "category": "System Boundary",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-49",
@@ -496,9 +496,9 @@
       "tier": "REASONING_ADDITION",
       "category": "Cognitive Partner",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-50",
@@ -506,9 +506,9 @@
       "tier": "REASONING_ADDITION",
       "category": "Privacy & DLP",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-51",
@@ -526,9 +526,9 @@
       "tier": "REASONING_ADDITION",
       "category": "Commercial Navigator",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-53",
@@ -536,9 +536,9 @@
       "tier": "REASONING_ADDITION",
       "category": "Expressive Tone",
       "source_normative_suite": "docs/strategy/personas/orion/v2-candidate/evaluation-registry.md",
-      "stage": "E3_FULL",
-      "run_state": "NOT_RUN",
-      "last_score": null
+      "stage": "E3_EXPRESSION_PILOT",
+      "run_state": "PASS",
+      "last_score": 2
     },
     {
       "case_id": "OR-EVAL-54",

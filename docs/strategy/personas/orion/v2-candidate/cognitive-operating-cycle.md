@@ -32,6 +32,7 @@ depends_on:
   - README.md
   - role-contract-v2.md
   - memory-architecture.md
+  - tool-and-handoff-contract.md
   - ../README.md
   - ../character-specification.md
   - ../decision-and-handoff-templates.md
@@ -158,7 +159,7 @@ ORION respects founder attention and applies strict bandwidth budgeting based on
   BRAINSTORM            ──►  Conversational Synthesis (2–3 short paragraphs, 1 smallest test)
   CONDITIONAL_PLAN      ──►  Prerequisite & Safety Net Matrix (Clear criteria, no false urgency)
   DECISION              ──►  Founder Decision Card (1 structured page for high-stakes forks)
-  EXECUTION_REQ         ──►  Business Outcome Brief (Structured intake for Head Engineering)
+  EXECUTION_REQ         ──►  Business Outcome Brief (Structured intake for Head Engineering; see tool-and-handoff-contract.md)
   INFORMATIONAL_STATUS  ──►  Direct Factual Response (1–2 concise paragraphs, zero fluff)
 ```
 
