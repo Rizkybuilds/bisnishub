@@ -7964,9 +7964,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       const res = await startBrowser({
         chromeExecutableFn: () => 'mock-chromium',
         spawnFn: (_bin, args) => {
-          const userDirArg = args.find((a) =>
-            a.startsWith('--user-data-dir='),
-          );
+          const userDirArg = args.find((a) => a.startsWith('--user-data-dir='));
           if (userDirArg) {
             createdProfile = userDirArg.slice('--user-data-dir='.length);
             writeFileSync(
@@ -7983,8 +7981,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
             ok: true,
             status: 200,
             json: async () => ({
-              webSocketDebuggerUrl:
-                'ws://127.0.0.1:9222/devtools/page/abc',
+              webSocketDebuggerUrl: 'ws://127.0.0.1:9222/devtools/page/abc',
             }),
           };
         },
@@ -8115,8 +8112,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
             ok: true,
             status: 200,
             json: async () => ({
-              webSocketDebuggerUrl:
-                'ws://127.0.0.1:9222/devtools/browser/abc',
+              webSocketDebuggerUrl: 'ws://127.0.0.1:9222/devtools/browser/abc',
             }),
           }),
           cdpFn: () => ({
@@ -8211,9 +8207,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
             args.includes('--remote-debugging-port=0'),
             'must request ephemeral port 0',
           );
-          const userDirArg = args.find((a) =>
-            a.startsWith('--user-data-dir='),
-          );
+          const userDirArg = args.find((a) => a.startsWith('--user-data-dir='));
           assert.ok(userDirArg, 'must have user data dir argument');
           createdProfile = userDirArg.slice('--user-data-dir='.length);
           writeFileSync(
@@ -8284,10 +8278,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         },
       );
 
-      const classified = classifyFailure(
-        'BROWSER_START',
-        sensitiveLeakError,
-      );
+      const classified = classifyFailure('BROWSER_START', sensitiveLeakError);
       assert.equal(classified.stage, 'BROWSER_START');
       assert.equal(classified.code, 'BROWSER_START_FAILED');
       assert.equal(classified.startupPhase, 'DISCOVERY');
@@ -8315,9 +8306,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       });
 
       assert.equal(harnessRun.failure, true);
-      const trace = JSON.parse(
-        readFileSync(harnessRun.tracePath, 'utf8'),
-      );
+      const trace = JSON.parse(readFileSync(harnessRun.tracePath, 'utf8'));
       assert.equal(trace.failure.stage, 'BROWSER_START');
       assert.equal(trace.failure.code, 'BROWSER_START_FAILED');
       assert.equal(trace.failure.startupPhase, 'DISCOVERY');
@@ -8331,9 +8320,7 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         'secret must never appear in trace.json',
       );
       assert.equal(
-        rawTraceContent.includes(
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
-        ),
+        rawTraceContent.includes('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'),
         false,
         'JWT must never appear in trace.json',
       );
@@ -8411,7 +8398,10 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         await startBrowser({
           chromeExecutableFn: () => 'mock-chromium',
           spawnFn: () => new MockBrowserProcess(),
-          terminateSubprocessFn: async () => ({ terminated: false, forced: true }),
+          terminateSubprocessFn: async () => ({
+            terminated: false,
+            forced: true,
+          }),
           browserStartTimeoutMs: 1000,
         });
       } catch (err) {
@@ -8424,7 +8414,11 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         assert.equal(err.details?.priorStage, 'BROWSER_START');
         assert.equal(err.details?.priorCode, 'BROWSER_START_TIMED_OUT');
       }
-      assert.equal(threw, true, 'termination failure after startup error must throw SUBPROCESS_TEARDOWN_FAILED');
+      assert.equal(
+        threw,
+        true,
+        'termination failure after startup error must throw SUBPROCESS_TEARDOWN_FAILED',
+      );
     })();
 
     // 1b. startBrowser: failure during startup + profile removal failure => SUBPROCESS_TEARDOWN_FAILED
@@ -8436,7 +8430,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           await startBrowser({
             chromeExecutableFn: () => 'mock-chromium',
             spawnFn: (_bin, args) => {
-              const userDirArg = args?.find?.((a) => a.startsWith('--user-data-dir='));
+              const userDirArg = args?.find?.((a) =>
+                a.startsWith('--user-data-dir='),
+              );
               if (userDirArg) {
                 createdProfile1b = userDirArg.slice('--user-data-dir='.length);
               }
@@ -8457,14 +8453,33 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           assert.equal(err.details?.priorStage, 'BROWSER_START');
           assert.equal(err.details?.priorCode, 'BROWSER_START_TIMED_OUT');
         }
-        assert.equal(threw, true, 'profile removal failure after startup error must throw SUBPROCESS_TEARDOWN_FAILED');
-        assert.ok(createdProfile1b, 'createdProfile1b should have been captured');
-        assert.equal(existsSync(createdProfile1b), true, 'profile must still exist when rmSync fails');
+        assert.equal(
+          threw,
+          true,
+          'profile removal failure after startup error must throw SUBPROCESS_TEARDOWN_FAILED',
+        );
+        assert.ok(
+          createdProfile1b,
+          'createdProfile1b should have been captured',
+        );
+        assert.equal(
+          existsSync(createdProfile1b),
+          true,
+          'profile must still exist when rmSync fails',
+        );
       } finally {
         if (createdProfile1b && existsSync(createdProfile1b)) {
-          rmSync(createdProfile1b, { recursive: true, force: true, maxRetries: 3 });
+          rmSync(createdProfile1b, {
+            recursive: true,
+            force: true,
+            maxRetries: 3,
+          });
         }
-        assert.equal(createdProfile1b ? existsSync(createdProfile1b) : false, false, 'profile residue must be cleaned up in finally block');
+        assert.equal(
+          createdProfile1b ? existsSync(createdProfile1b) : false,
+          false,
+          'profile residue must be cleaned up in finally block',
+        );
       }
     })();
 
@@ -8497,13 +8512,22 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       assert.equal(harnessRun.failure, true);
       assert.equal(harnessRun.evidence.overall, 'FAIL');
       assert.equal(harnessRun.evidence.cleanup.status, 'FAIL');
-      assert.equal(harnessRun.evidence.cleanup.reason, 'SUBPROCESS_TEARDOWN_FAILED');
+      assert.equal(
+        harnessRun.evidence.cleanup.reason,
+        'SUBPROCESS_TEARDOWN_FAILED',
+      );
       assert.equal(harnessRun.evidence.cleanup.browserTerminated, false);
       assert.equal(harnessRun.evidence.cleanup.profileRemoved, true);
       assert.equal(harnessRun.evidence.failure.stage, 'CLEANUP');
-      assert.equal(harnessRun.evidence.failure.code, 'SUBPROCESS_TEARDOWN_FAILED');
+      assert.equal(
+        harnessRun.evidence.failure.code,
+        'SUBPROCESS_TEARDOWN_FAILED',
+      );
       assert.equal(harnessRun.evidence.failure.priorStage, 'BROWSER_START');
-      assert.equal(harnessRun.evidence.failure.priorCode, 'BROWSER_START_TIMED_OUT');
+      assert.equal(
+        harnessRun.evidence.failure.priorCode,
+        'BROWSER_START_TIMED_OUT',
+      );
 
       const verification = verifyTraceFile(harnessRun.tracePath, {
         expectedMode: 'normal',
@@ -8518,7 +8542,10 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     // -------------------------------------------------------------------------
     // 2a. Valid loopback URL passes
     assert.equal(
-      assertSafeLoopbackWebSocketUrl('ws://127.0.0.1:9222/devtools/page/abc', 9222),
+      assertSafeLoopbackWebSocketUrl(
+        'ws://127.0.0.1:9222/devtools/page/abc',
+        9222,
+      ),
       'ws://127.0.0.1:9222/devtools/page/abc',
     );
 
@@ -8532,7 +8559,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     ]) {
       assert.throws(
         () => assertSafeLoopbackWebSocketUrl(badScheme, 9222),
-        (err) => err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
         `scheme "${badScheme}" must be rejected`,
       );
     }
@@ -8550,7 +8578,8 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     ]) {
       assert.throws(
         () => assertSafeLoopbackWebSocketUrl(badHost, 9222),
-        (err) => err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
         `host "${badHost}" must be rejected`,
       );
     }
@@ -8563,14 +8592,19 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     ]) {
       assert.throws(
         () => assertSafeLoopbackWebSocketUrl(deceptiveUrl, 9222),
-        (err) => err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
         `deceptive credential URL "${deceptiveUrl}" must be rejected`,
       );
     }
 
     // 2e. Port mismatch and invalid port ranges
     assert.throws(
-      () => assertSafeLoopbackWebSocketUrl('ws://127.0.0.1:9223/devtools/page', 9222),
+      () =>
+        assertSafeLoopbackWebSocketUrl(
+          'ws://127.0.0.1:9223/devtools/page',
+          9222,
+        ),
       (err) => err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
       'port mismatch (9223 vs 9222) must be rejected',
     );
@@ -8581,16 +8615,26 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     ]) {
       assert.throws(
         () => assertSafeLoopbackWebSocketUrl(badPort, null),
-        (err) => err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
         `bad port URL "${badPort}" must be rejected`,
       );
     }
 
     // 2f. Malformed inputs
-    for (const malformed of ['', '   ', 'not-a-url', null, undefined, 12345, {}]) {
+    for (const malformed of [
+      '',
+      '   ',
+      'not-a-url',
+      null,
+      undefined,
+      12345,
+      {},
+    ]) {
       assert.throws(
         () => assertSafeLoopbackWebSocketUrl(malformed, 9222),
-        (err) => err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
+        (err) =>
+          err instanceof QaError && err.code === 'NONLOCAL_TARGET_BLOCKED',
       );
     }
 
@@ -8693,15 +8737,33 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     assert.equal(ALLOWED_STARTUP_PHASES.size, 5);
     assert.deepEqual(
       [...ALLOWED_STARTUP_PHASES],
-      ['DISCOVERY', 'PROCESS_SPAWN', 'ENDPOINT_WAIT', 'TARGET_CREATE', 'CDP_CONNECT'],
+      [
+        'DISCOVERY',
+        'PROCESS_SPAWN',
+        'ENDPOINT_WAIT',
+        'TARGET_CREATE',
+        'CDP_CONNECT',
+      ],
     );
     assert.deepEqual(
       [...ALLOWED_STARTUP_PHASES.keys()],
-      ['DISCOVERY', 'PROCESS_SPAWN', 'ENDPOINT_WAIT', 'TARGET_CREATE', 'CDP_CONNECT'],
+      [
+        'DISCOVERY',
+        'PROCESS_SPAWN',
+        'ENDPOINT_WAIT',
+        'TARGET_CREATE',
+        'CDP_CONNECT',
+      ],
     );
     assert.deepEqual(
       [...ALLOWED_STARTUP_PHASES.values()],
-      ['DISCOVERY', 'PROCESS_SPAWN', 'ENDPOINT_WAIT', 'TARGET_CREATE', 'CDP_CONNECT'],
+      [
+        'DISCOVERY',
+        'PROCESS_SPAWN',
+        'ENDPOINT_WAIT',
+        'TARGET_CREATE',
+        'CDP_CONNECT',
+      ],
     );
     assert.deepEqual(
       [...ALLOWED_STARTUP_PHASES.entries()],
@@ -8742,21 +8804,69 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
     // MODERATE-04: Strict Timeout Input Validation
     // -------------------------------------------------------------------------
     // 4a. parseBrowserStartTimeout rejects malformed prefixes/suffixes
-    assert.equal(parseBrowserStartTimeout('25000abc'), 20000, 'suffix rejected');
-    assert.equal(parseBrowserStartTimeout('abc25000'), 20000, 'prefix rejected');
-    assert.equal(parseBrowserStartTimeout('+25000'), 20000, 'plus prefix rejected');
-    assert.equal(parseBrowserStartTimeout('-25000'), 20000, 'minus prefix rejected');
-    assert.equal(parseBrowserStartTimeout('25000.5'), 20000, 'decimal string rejected');
-    assert.equal(parseBrowserStartTimeout(25000.5), 20000, 'float number rejected');
+    assert.equal(
+      parseBrowserStartTimeout('25000abc'),
+      20000,
+      'suffix rejected',
+    );
+    assert.equal(
+      parseBrowserStartTimeout('abc25000'),
+      20000,
+      'prefix rejected',
+    );
+    assert.equal(
+      parseBrowserStartTimeout('+25000'),
+      20000,
+      'plus prefix rejected',
+    );
+    assert.equal(
+      parseBrowserStartTimeout('-25000'),
+      20000,
+      'minus prefix rejected',
+    );
+    assert.equal(
+      parseBrowserStartTimeout('25000.5'),
+      20000,
+      'decimal string rejected',
+    );
+    assert.equal(
+      parseBrowserStartTimeout(25000.5),
+      20000,
+      'float number rejected',
+    );
     assert.equal(parseBrowserStartTimeout(''), 20000, 'empty string rejected');
-    assert.equal(parseBrowserStartTimeout('   '), 20000, 'whitespace string rejected');
+    assert.equal(
+      parseBrowserStartTimeout('   '),
+      20000,
+      'whitespace string rejected',
+    );
     assert.equal(parseBrowserStartTimeout('0'), 20000, '0 rejected');
     assert.equal(parseBrowserStartTimeout('999'), 20000, 'below 1000 rejected');
-    assert.equal(parseBrowserStartTimeout('120001'), 20000, 'above 120000 rejected');
-    assert.equal(parseBrowserStartTimeout('1000'), 1000, 'minimum valid bound accepted');
-    assert.equal(parseBrowserStartTimeout('120000'), 120000, 'maximum valid bound accepted');
-    assert.equal(parseBrowserStartTimeout(25000), 25000, 'valid number accepted');
-    assert.equal(parseBrowserStartTimeout(' 25000 '), 25000, 'trimmed string accepted');
+    assert.equal(
+      parseBrowserStartTimeout('120001'),
+      20000,
+      'above 120000 rejected',
+    );
+    assert.equal(
+      parseBrowserStartTimeout('1000'),
+      1000,
+      'minimum valid bound accepted',
+    );
+    assert.equal(
+      parseBrowserStartTimeout('120000'),
+      120000,
+      'maximum valid bound accepted',
+    );
+    assert.equal(
+      parseBrowserStartTimeout(25000),
+      25000,
+      'valid number accepted',
+    );
+    assert.equal(
+      parseBrowserStartTimeout(' 25000 '),
+      25000,
+      'trimmed string accepted',
+    );
 
     // 4b. Direct startBrowser options handling uses strict timeout validation
     await (async () => {
@@ -8768,7 +8878,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         await startBrowser({
           chromeExecutableFn: () => 'mock-chromium',
           spawnFn: (_bin, args) => {
-            const userDirArg = args.find((a) => a.startsWith('--user-data-dir='));
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
             if (userDirArg) {
               createdProfile = userDirArg.slice('--user-data-dir='.length);
             }
@@ -8783,7 +8895,10 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       }
       const elapsed = Date.now() - start;
       assert.equal(threw, true);
-      assert.ok(elapsed >= 900 && elapsed < 5000, `elapsed ${elapsed}ms should be ~1000ms`);
+      assert.ok(
+        elapsed >= 900 && elapsed < 5000,
+        `elapsed ${elapsed}ms should be ~1000ms`,
+      );
       assert.equal(existsSync(createdProfile), false);
     })();
 
@@ -8799,10 +8914,15 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         await startBrowser({
           chromeExecutableFn: () => 'mock-chromium',
           spawnFn: (_bin, args) => {
-            const userDirArg = args.find((a) => a.startsWith('--user-data-dir='));
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
             if (userDirArg) {
               createdProfile = userDirArg.slice('--user-data-dir='.length);
-              writeFileSync(path.join(createdProfile, 'DevToolsActivePort'), '9222\n');
+              writeFileSync(
+                path.join(createdProfile, 'DevToolsActivePort'),
+                '9222\n',
+              );
             }
             mockProc = new MockBrowserProcess();
             return mockProc;
@@ -8810,7 +8930,10 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           fetchFn: async () => {
             // Emit late child process error while fetch is pending
             setImmediate(() => {
-              mockProc.emit('error', new Error('Child crashed during target creation'));
+              mockProc.emit(
+                'error',
+                new Error('Child crashed during target creation'),
+              );
             });
             await new Promise((resolve) => setTimeout(resolve, 50));
             throw new Error('fetch failed due to process crash');
@@ -8824,8 +8947,16 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         assert.equal(err.code, 'BROWSER_START_FAILED');
         assert.equal(err.details?.startupPhase, 'TARGET_CREATE');
       }
-      assert.equal(threw, true, 'late error during TARGET_CREATE must throw BROWSER_START_FAILED');
-      assert.equal(mockProc.listenerCount('error'), 0, 'error listeners disposed');
+      assert.equal(
+        threw,
+        true,
+        'late error during TARGET_CREATE must throw BROWSER_START_FAILED',
+      );
+      assert.equal(
+        mockProc.listenerCount('error'),
+        0,
+        'error listeners disposed',
+      );
       assert.equal(existsSync(createdProfile), false, 'profile removed');
     })();
 
@@ -8838,10 +8969,15 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         await startBrowser({
           chromeExecutableFn: () => 'mock-chromium',
           spawnFn: (_bin, args) => {
-            const userDirArg = args.find((a) => a.startsWith('--user-data-dir='));
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
             if (userDirArg) {
               createdProfile = userDirArg.slice('--user-data-dir='.length);
-              writeFileSync(path.join(createdProfile, 'DevToolsActivePort'), '9222\n');
+              writeFileSync(
+                path.join(createdProfile, 'DevToolsActivePort'),
+                '9222\n',
+              );
             }
             mockProc = new MockBrowserProcess();
             return mockProc;
@@ -8867,7 +9003,11 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         assert.equal(err.details?.startupPhase, 'TARGET_CREATE');
         assert.equal(err.details?.exitCode, 1);
       }
-      assert.equal(threw, true, 'process exit during TARGET_CREATE must throw BROWSER_START_FAILED');
+      assert.equal(
+        threw,
+        true,
+        'process exit during TARGET_CREATE must throw BROWSER_START_FAILED',
+      );
       assert.equal(existsSync(createdProfile), false, 'profile removed');
     })();
 
@@ -8880,10 +9020,15 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         await startBrowser({
           chromeExecutableFn: () => 'mock-chromium',
           spawnFn: (_bin, args) => {
-            const userDirArg = args.find((a) => a.startsWith('--user-data-dir='));
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
             if (userDirArg) {
               createdProfile = userDirArg.slice('--user-data-dir='.length);
-              writeFileSync(path.join(createdProfile, 'DevToolsActivePort'), '9222\n');
+              writeFileSync(
+                path.join(createdProfile, 'DevToolsActivePort'),
+                '9222\n',
+              );
             }
             mockProc = new MockBrowserProcess();
             return mockProc;
@@ -8898,7 +9043,10 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
           cdpFn: () => ({
             connect: async () => {
               setImmediate(() => {
-                mockProc.emit('error', new Error('Child process pipe broken during CDP handshake'));
+                mockProc.emit(
+                  'error',
+                  new Error('Child process pipe broken during CDP handshake'),
+                );
               });
               await new Promise((resolve) => setTimeout(resolve, 500));
             },
@@ -8912,8 +9060,16 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         assert.equal(err.code, 'BROWSER_START_FAILED');
         assert.equal(err.details?.startupPhase, 'CDP_CONNECT');
       }
-      assert.equal(threw, true, 'late error during CDP_CONNECT must throw BROWSER_START_FAILED');
-      assert.equal(mockProc.listenerCount('error'), 0, 'error listeners disposed');
+      assert.equal(
+        threw,
+        true,
+        'late error during CDP_CONNECT must throw BROWSER_START_FAILED',
+      );
+      assert.equal(
+        mockProc.listenerCount('error'),
+        0,
+        'error listeners disposed',
+      );
       assert.equal(existsSync(createdProfile), false, 'profile removed');
     })();
 
@@ -8931,7 +9087,10 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         super.addEventListener(type, listener, options);
       }
       removeEventListener(type, listener, options) {
-        if (this.listenerCounts[type] !== undefined && this.listenerCounts[type] > 0) {
+        if (
+          this.listenerCounts[type] !== undefined &&
+          this.listenerCounts[type] > 0
+        ) {
           this.listenerCounts[type]--;
         }
         super.removeEventListener(type, listener, options);
@@ -8954,10 +9113,15 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         await startBrowser({
           chromeExecutableFn: () => 'mock-chromium',
           spawnFn: (_bin, args) => {
-            const userDirArg = args.find((a) => a.startsWith('--user-data-dir='));
+            const userDirArg = args.find((a) =>
+              a.startsWith('--user-data-dir='),
+            );
             if (userDirArg) {
               createdProfile = userDirArg.slice('--user-data-dir='.length);
-              writeFileSync(path.join(createdProfile, 'DevToolsActivePort'), '9222\n');
+              writeFileSync(
+                path.join(createdProfile, 'DevToolsActivePort'),
+                '9222\n',
+              );
             }
             mockProc = new MockBrowserProcess();
             return mockProc;
@@ -8976,10 +9140,25 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
               webSocketFactory: () => capturedWs,
             });
             setImmediate(() => {
-              assert.ok(capturedCdp.connectTimer !== null, 'connectTimer must be active while connect is in flight');
-              assert.equal(capturedWs.listenerCounts.open, 1, 'open listener attached');
-              assert.equal(capturedWs.listenerCounts.error, 1, 'error listener attached');
-              assert.equal(capturedWs.listenerCounts.close, 1, 'close listener attached');
+              assert.ok(
+                capturedCdp.connectTimer !== null,
+                'connectTimer must be active while connect is in flight',
+              );
+              assert.equal(
+                capturedWs.listenerCounts.open,
+                1,
+                'open listener attached',
+              );
+              assert.equal(
+                capturedWs.listenerCounts.error,
+                1,
+                'error listener attached',
+              );
+              assert.equal(
+                capturedWs.listenerCounts.close,
+                1,
+                'close listener attached',
+              );
               mockProc.kill('SIGTERM');
             });
             return capturedCdp;
@@ -8995,22 +9174,55 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
         assert.equal(err.details?.exitCode, 0);
         assert.equal(err.details?.signal, 'SIGTERM');
       }
-      assert.equal(threw, true, 'process exit during CDP_CONNECT must throw BROWSER_START_FAILED');
-      assert.equal(mockProc.listenerCount('exit'), 0, 'exit listeners disposed');
+      assert.equal(
+        threw,
+        true,
+        'process exit during CDP_CONNECT must throw BROWSER_START_FAILED',
+      );
+      assert.equal(
+        mockProc.listenerCount('exit'),
+        0,
+        'exit listeners disposed',
+      );
       assert.equal(existsSync(createdProfile), false, 'profile removed');
       assert.ok(capturedCdp, 'CDP instance must be captured');
       assert.ok(capturedWs, 'WebSocket instance must be captured');
       assert.equal(capturedCdp.closed, true, 'CDP instance must be closed');
       assert.ok(
-        capturedCdp.closeReason === 'connection_race_lost' || capturedCdp.closeReason === 'startup_failed',
+        capturedCdp.closeReason === 'connection_race_lost' ||
+          capturedCdp.closeReason === 'startup_failed',
         `closeReason should be connection_race_lost or startup_failed, got: ${capturedCdp.closeReason}`,
       );
-      assert.equal(capturedCdp.connectTimer, null, 'connectTimer must be cleared to null');
-      assert.equal(capturedCdp.connectReject, null, 'connectReject reference must be cleared to null');
-      assert.equal(capturedCdp.connectCleanup, null, 'connectCleanup reference must be cleared to null');
-      assert.equal(capturedWs.listenerCounts.open, 0, 'open listener must be synchronously removed');
-      assert.equal(capturedWs.listenerCounts.error, 0, 'error listener must be synchronously removed');
-      assert.equal(capturedWs.listenerCounts.close, 0, 'close listener must be synchronously removed');
+      assert.equal(
+        capturedCdp.connectTimer,
+        null,
+        'connectTimer must be cleared to null',
+      );
+      assert.equal(
+        capturedCdp.connectReject,
+        null,
+        'connectReject reference must be cleared to null',
+      );
+      assert.equal(
+        capturedCdp.connectCleanup,
+        null,
+        'connectCleanup reference must be cleared to null',
+      );
+      assert.equal(
+        capturedWs.listenerCounts.open,
+        0,
+        'open listener must be synchronously removed',
+      );
+      assert.equal(
+        capturedWs.listenerCounts.error,
+        0,
+        'error listener must be synchronously removed',
+      );
+      assert.equal(
+        capturedWs.listenerCounts.close,
+        0,
+        'close listener must be synchronously removed',
+      );
 
       // Subsequent delayed socket events cannot produce false success
       capturedWs.dispatchEvent(new Event('open'));
@@ -9021,7 +9233,9 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
 
     // 5e. Standalone Cdp.connect() handshake lifecycle with hung WebSocket
     await (async () => {
-      const mockWs = new MockHungWebSocket('ws://127.0.0.1:9222/devtools/browser/xyz');
+      const mockWs = new MockHungWebSocket(
+        'ws://127.0.0.1:9222/devtools/browser/xyz',
+      );
       const cdp = new Cdp('ws://127.0.0.1:9222/devtools/browser/xyz', {
         webSocketFactory: () => mockWs,
       });
@@ -9036,12 +9250,36 @@ describe('MGBOS browser-auth QA reliability and negative-control gate', () => {
       cdp.close('standalone_test_close');
       assert.equal(cdp.closed, true);
       assert.equal(cdp.closeReason, 'standalone_test_close');
-      assert.equal(cdp.connectTimer, null, 'connectTimer cleared synchronously');
-      assert.equal(cdp.connectReject, null, 'connectReject cleared synchronously');
-      assert.equal(cdp.connectCleanup, null, 'connectCleanup cleared synchronously');
-      assert.equal(mockWs.listenerCounts.open, 0, 'open listener removed synchronously');
-      assert.equal(mockWs.listenerCounts.error, 0, 'error listener removed synchronously');
-      assert.equal(mockWs.listenerCounts.close, 0, 'close listener removed synchronously');
+      assert.equal(
+        cdp.connectTimer,
+        null,
+        'connectTimer cleared synchronously',
+      );
+      assert.equal(
+        cdp.connectReject,
+        null,
+        'connectReject cleared synchronously',
+      );
+      assert.equal(
+        cdp.connectCleanup,
+        null,
+        'connectCleanup cleared synchronously',
+      );
+      assert.equal(
+        mockWs.listenerCounts.open,
+        0,
+        'open listener removed synchronously',
+      );
+      assert.equal(
+        mockWs.listenerCounts.error,
+        0,
+        'error listener removed synchronously',
+      );
+      assert.equal(
+        mockWs.listenerCounts.close,
+        0,
+        'close listener removed synchronously',
+      );
 
       // Subsequent delayed socket events cannot produce false success
       mockWs.dispatchEvent(new Event('open'));

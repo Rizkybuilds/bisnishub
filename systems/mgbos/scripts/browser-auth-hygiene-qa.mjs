@@ -3230,7 +3230,10 @@ export async function startBrowser({
           },
         );
       }
-      if (browser && (browser.exitCode !== null || browser.signalCode !== null)) {
+      if (
+        browser &&
+        (browser.exitCode !== null || browser.signalCode !== null)
+      ) {
         throw new QaError(
           'BROWSER_START',
           'BROWSER_START_FAILED',
@@ -3348,7 +3351,10 @@ export async function startBrowser({
         );
         return;
       }
-      if (browser && (browser.exitCode !== null || browser.signalCode !== null)) {
+      if (
+        browser &&
+        (browser.exitCode !== null || browser.signalCode !== null)
+      ) {
         reject(
           new QaError(
             'BROWSER_START',
@@ -3466,14 +3472,22 @@ export async function startBrowser({
 
     throwIfSignalAborted(signal, 'BROWSER_START');
 
-    if (browser && onProcessError && typeof browser.removeListener === 'function') {
+    if (
+      browser &&
+      onProcessError &&
+      typeof browser.removeListener === 'function'
+    ) {
       browser.removeListener('error', onProcessError);
       onProcessError = null;
     }
 
     return { browser, cdp, profile };
   } catch (error) {
-    if (browser && onProcessError && typeof browser.removeListener === 'function') {
+    if (
+      browser &&
+      onProcessError &&
+      typeof browser.removeListener === 'function'
+    ) {
       browser.removeListener('error', onProcessError);
       onProcessError = null;
     }
@@ -3514,9 +3528,7 @@ export async function startBrowser({
 
     if (!browserTerminated || !profileRemoved) {
       const priorStage =
-        error instanceof QaError && error.stage
-          ? error.stage
-          : 'BROWSER_START';
+        error instanceof QaError && error.stage ? error.stage : 'BROWSER_START';
       const priorCode =
         error instanceof QaError && error.code
           ? error.code
@@ -5509,7 +5521,8 @@ export async function runQaHarness({
     ) {
       if (evidence.failure?.code !== 'FIXTURE_CLEANUP_FAILED') {
         const fallbackPriorStage =
-          effectiveError instanceof QaError && effectiveError.details?.priorStage
+          effectiveError instanceof QaError &&
+          effectiveError.details?.priorStage
             ? effectiveError.details.priorStage
             : evidence.failure
               ? evidence.failure.priorStage || evidence.failure.stage
