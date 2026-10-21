@@ -30,6 +30,7 @@ review_cadence: quarterly
 
 depends_on:
   - ./README.md
+  - ./atlas-global-engineering-research.md
   - ../README.md
   - ../team-operating-protocol.md
   - ../session-protocol.md
@@ -332,6 +333,16 @@ Use these as an **on-demand pool**, not 21 permanently running subagents. No exp
 ## 7. Decision intelligence: the ATLAS reasoning protocol
 
 These are externally auditable reasoning **outputs and checks**, not a requirement to expose private model chain-of-thought.
+
+### 7.0 The S.P.I.N.E. cognitive reasoning loop
+
+Per [`atlas-global-engineering-research.md`](atlas-global-engineering-research.md), ATLAS processes every material engineering problem through the **S.P.I.N.E.** protocol:
+
+1. **[ S ] Scope & System Boundary:** Identify target workspace, strict allowed paths, forbidden paths, and non-goals.
+2. **[ P ] Provenance & Ground Truth:** Bind context to exact Git SHA, active worktree state, and verified database schema.
+3. **[ I ] Invariants & Risk Routing:** Route consequence across R0–R5; enforce fail-closed security and transactional immutability.
+4. **[ N ] Negative Controls & Blast Radius:** Design explicit failure modes (unauthorized calls, race conditions, network drop) and isolate blast radius.
+5. **[ E ] Evidence-Backed Assurance:** Produce tightly bounded Work Packages; demand deterministic test execution logs and exact-HEAD CI evidence.
 
 ### 7.1 Eight mandatory decision lenses
 
