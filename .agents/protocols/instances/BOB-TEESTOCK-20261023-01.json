@@ -1,0 +1,80 @@
+{
+  "brief_id": "BOB-TEESTOCK-20261023-01",
+  "target_system": "mgbos",
+  "target_business": "TeeStock",
+  "date": "2026-10-23",
+  "repository_baseline_sha": "bb97256ca1aac2c6af6c5adaa23f6e68eb9601d9",
+  "business_objective": {
+    "customer_problem": "Pelanggan dan mitra memerlukan katalog apparel on-demand yang transparan, mudah diorder via WhatsApp/web, dan mendukung promo/diskon fleksibel tanpa friksi.",
+    "commercial_necessity": "Founder memerlukan kontrol penuh atas penetapan harga jual, promo bundling, penghitungan HPP otomatis per unit, dan transparansi laba bersih riil untuk mencapai target transisi finansial Rp 2.500.000/bulan."
+  },
+  "desired_outcome": {
+    "measurable_metrics": [
+      "Zero hardcoded prices in client/server code; pricing fully governed by database/admin rules",
+      "Dynamic HPP calculation on every order (blank garment + DTF print area + packaging + overhead)",
+      "Real-time net profit realization per order and monthly cumulative dashboard for founder",
+      "Automated inventory reservation preventing overselling on blank shirts and raw materials",
+      "Flexible promo engine supporting vouchers, bundling discounts, and wholesale tiering"
+    ],
+    "expected_founder_impact": "Founder memiliki visibilitas finansial penuh terhadap keuntungan bersih harian dan fleksibilitas penuh mengatur strategi harga/promo tanpa ketergantungan edit kode."
+  },
+  "owner_direction": {
+    "decision_reference": "Owner explicit directive: flexible pricing, full ERP features (inventory, HPP, net profit, promo engine), trilateral handoff from ORION to ATLAS",
+    "confirmation_status": "OWNER_ACCEPTED"
+  },
+  "customer_experience": {
+    "primary_user_journey": "Pelanggan membuka katalog /shop atau PDP /shop/[slug] yang menampilkan harga aktif dan promo, memilih warna/ukuran, dan menyelesaikan order via WhatsApp Assisted Intake dengan rincian promo otomatis.",
+    "visible_acceptance_criteria": [
+      "Harga tampil dinamis sesuai aturan promo aktif tanpa hardcoded price di frontend",
+      "Kode voucher atau diskon bundling otomatis memotong subtotal belanja",
+      "Format pesan WhatsApp terisi lengkap dengan rincian harga, diskon, dan total akhir"
+    ],
+    "operational_acceptance_criteria": [
+      "Setiap order mengunci snapshot HPP dan mengalkulasi laba bersih riil",
+      "Stok bahan blank otomatis teralokasi (reserved) saat order masuk",
+      "Founder dapat melihat rekap laba bersih harian di dashboard admin MGBOS"
+    ]
+  },
+  "scope_boundaries": {
+    "in_scope": [
+      "Dynamic pricing table and promo engine schema in MGBOS Supabase",
+      "Dynamic HPP (COGS) calculation based on Bill of Materials (BOM)",
+      "Inventory stock reservation and tracking for blanks and raw materials",
+      "Net profit snapshot calculation per order",
+      "Frontend integration in apps/teestock to pull dynamic prices and format WhatsApp orders with active promos"
+    ],
+    "out_of_scope": [
+      "Direct external credit card payment gateway onboarding (focus remains on QRIS and WhatsApp assisted intake)",
+      "Automated physical cutting and sewing garment manufacturing",
+      "Complex multi-warehouse third-party logistics integration"
+    ],
+    "non_goals": [
+      "Forcing fixed or hardcoded retail prices in the repository",
+      "Building speculative crypto/web3 payment rails",
+      "Re-architecting core MGBOS organization foundation"
+    ]
+  },
+  "invariants": {
+    "financial_constraints": [
+      "Net profit must be strictly calculated with immutable snapshots per order",
+      "Zero negative margin orders without explicit founder promotional override"
+    ],
+    "security_boundaries": [
+      "RLS must protect internal HPP breakdown and profit margins from unauthorized public disclosure",
+      "Public client only reads active retail prices and public promos, never raw supplier costs"
+    ],
+    "operational_constraints": [
+      "Inventory allocations must be atomic to prevent race conditions during concurrent orders",
+      "Single-writer constraint applies to Builder implementation"
+    ]
+  },
+  "known_unknowns": [
+    "Daftar pasti kode voucher awal yang diinginkan Founder saat peluncuran",
+    "Pilihan nominal fee payment gateway (jika ada add-on QRIS dinamis di masa depan)"
+  ],
+  "priority_rationale": "Memberikan infrastruktur ERP dan fleksibilitas harga penuh kepada Founder agar dapat langsung jualan dengan berbagai strategi harga dan memantau laba bersih harian secara akurat.",
+  "authority_disclaimer": {
+    "implementation_authority": "NONE_FROM_THIS_BRIEF",
+    "merge_deploy_production_authority": "NONE_FROM_THIS_BRIEF"
+  }
+}
