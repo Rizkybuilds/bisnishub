@@ -138,6 +138,169 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 3 Core Ecosystem Portals: Shop, Creator, Reseller */}
+      <section
+        className="retail-wrap"
+        style={{ paddingBlock: '48px 24px' }}
+        aria-labelledby="portals-heading"
+      >
+        <div className="retail-section-heading">
+          <div>
+            <span className="retail-overline">TIGA PINTU EKOSISTEM TEESTOCK</span>
+            <h2 id="portals-heading">
+              Satu Ekosistem. <em>Tiga Peran.</em>
+            </h2>
+          </div>
+          <p>
+            Pilih jalur yang sesuai dengan kebutuhanmu: katalog kaos grafis retail terkurasi, kolaborasi
+            merch desainer tanpa modal (Cotton Bureau Model), atau dropship white-label untuk toko apparel-mu.
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: 20,
+            marginTop: 24,
+          }}
+        >
+          {/* Door 1: Retail Shop */}
+          <Link
+            href="/shop"
+            className="retail-path-card"
+            style={{
+              background: '#20382b',
+              textDecoration: 'none',
+              borderRadius: 8,
+              minHeight: 340,
+            }}
+          >
+            <span>01 / RETAIL SHOP</span>
+            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0' }}>
+              The Curated
+              <br />
+              <em>Edit.</em>
+            </strong>
+            <p style={{ fontSize: 13, color: '#d9e2db', margin: 0, lineHeight: 1.5 }}>
+              Katalog rilisan kaos grafis terkurasi. 100% Cotton Combed 24s lembut, sablon DTF
+              tahan cuci, kalkulator ukuran presisi, dan promo voucher aktif.
+            </p>
+            <span className="retail-path-bottom" style={{ marginTop: 'auto' }}>
+              Jelajahi The Edit <span aria-hidden="true">↗</span>
+            </span>
+          </Link>
+
+          {/* Door 2: Creator Merch Hub */}
+          <Link
+            href="/creator"
+            className="retail-path-card"
+            style={{
+              background: '#bd624d',
+              textDecoration: 'none',
+              borderRadius: 8,
+              minHeight: 340,
+            }}
+          >
+            <span>02 / CREATOR MERCH (COTTON BUREAU MODEL)</span>
+            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0' }}>
+              Karya Seni,
+              <br />
+              <em>Bebas Modal.</em>
+            </strong>
+            <p style={{ fontSize: 13, color: '#f7ded8', margin: 0, lineHeight: 1.5 }}>
+              Khusus desainer &amp; ilustrator independen. Nol modal di depan, kurasi pre-press 7+
+              tahun, dan flat royalti bersih Rp 24.000/pcs per penjualan.
+            </p>
+            <span className="retail-path-bottom" style={{ marginTop: 'auto' }}>
+              Masuk Creator Hub <span aria-hidden="true">↗</span>
+            </span>
+          </Link>
+
+          {/* Door 3: Reseller & Dropship */}
+          <Link
+            href="/reseller"
+            className="retail-path-card"
+            style={{
+              background: '#355241',
+              textDecoration: 'none',
+              borderRadius: 8,
+              minHeight: 340,
+            }}
+          >
+            <span>03 / WHITE-LABEL DROPSHIP</span>
+            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0' }}>
+              Brand Anda,
+              <br />
+              <em>Modal Rp 75k.</em>
+            </strong>
+            <p style={{ fontSize: 13, color: '#d9e8df', margin: 0, lineHeight: 1.5 }}>
+              Dropship kaos distro untuk seller TikTok &amp; Shopee. Modal grosir Rp 75.000/pcs,
+              kemasan polos tanpa logo TeeStock, dan bebas atur harga tokomu.
+            </p>
+            <span className="retail-path-bottom" style={{ marginTop: 'auto' }}>
+              Buka Reseller Portal <span aria-hidden="true">↗</span>
+            </span>
+          </Link>
+        </div>
+      </section>
+
+      {/* Craftsmanship & Standards Section */}
+      <section
+        className="retail-wrap"
+        style={{
+          marginBlock: '32px 48px',
+          background: '#f9f7f2',
+          border: '1px solid #e0dad0',
+          borderRadius: 8,
+          padding: 28,
+        }}
+        aria-label="Standar Pengerjaan TeeStock"
+      >
+        <span className="retail-overline">STANDAR KUALITAS &amp; CRAFTSMANSHIP</span>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: 20,
+            marginTop: 16,
+          }}
+        >
+          <div>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4 }}>
+              🧵 100% Cotton Combed 24s
+            </strong>
+            <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+              Gramasi seimbang 185 gsm. Tidak menerawang, adem di kulit tropis, dan lembut dicuci berulang kali.
+            </p>
+          </div>
+          <div>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4 }}>
+              🔥 DTF Double Press 155°C
+            </strong>
+            <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+              Proses curing oven dan pengepresan ganda pada suhu stabil 155°C untuk memastikan daya rekat pigmen maksimal.
+            </p>
+          </div>
+          <div>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4 }}>
+              🎯 7+ Tahun Pre-Press Craft
+            </strong>
+            <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+              Dikelola oleh praktisi cetak berpengalaman, mengkalibrasi gamut warna CMYK agar karya visual tidak pudar.
+            </p>
+          </div>
+          <div>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4 }}>
+              ✨ 100% Garansi Ganti Baru
+            </strong>
+            <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+              Komitmen tanpa kompromi: ada cacat sablon atau cacat kain dari workshop, langsung kami kirim ganti baru.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section
         className="retail-paths-section retail-wrap"
         aria-labelledby="retail-paths-heading"

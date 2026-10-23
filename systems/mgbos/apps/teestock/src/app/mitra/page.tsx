@@ -147,6 +147,16 @@ export default function MitraPage() {
             pembayaran di depan.
           </p>
 
+          <div style={{ margin: '16px 0' }}>
+            <Link
+              href="/creator"
+              className="retail-text-link"
+              style={{ fontWeight: 700 }}
+            >
+              Buka Portal Khusus Creator Hub &amp; Formulir Pengajuan Karya <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+
           <div
             style={{
               display: 'grid',
@@ -258,6 +268,16 @@ export default function MitraPage() {
             dengan kebebasan menentukan harga jual ke customermu (rekomendasi:
             Rp 99.000 – Rp 129.000). Paket dikirim dengan label pengirim tokomu.
           </p>
+
+          <div style={{ margin: '16px 0' }}>
+            <Link
+              href="/reseller"
+              className="retail-text-link"
+              style={{ fontWeight: 700 }}
+            >
+              Buka Portal Khusus Reseller &amp; Formulir Onboarding White-Label <span aria-hidden="true">→</span>
+            </Link>
+          </div>
 
           <div
             style={{

@@ -29,6 +29,8 @@ describe('TeeStock S0-A Route & Content Invariant Tests', () => {
       'src/app/custom/page.tsx',
       'src/app/custom-atelier/page.tsx',
       'src/app/business/page.tsx',
+      'src/app/creator/page.tsx',
+      'src/app/reseller/page.tsx',
       'src/app/support/contact/page.tsx',
       'src/app/health/route.ts',
     ];

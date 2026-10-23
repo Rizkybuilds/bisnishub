@@ -11,8 +11,14 @@ const read = (relativePath: string) =>
 describe('TeeStock retail-first discovery guardrails', () => {
   it('has a separate concept gallery, clear navigation and a retail-first home', () => {
     expect(fs.existsSync(path.join(root, 'app/shop/page.tsx'))).toBe(true);
+    expect(fs.existsSync(path.join(root, 'app/creator/page.tsx'))).toBe(true);
+    expect(fs.existsSync(path.join(root, 'app/reseller/page.tsx'))).toBe(true);
     expect(read('app/page.tsx')).toContain('Jelajahi koleksi');
+    expect(read('app/page.tsx')).toContain('href="/creator"');
+    expect(read('app/page.tsx')).toContain('href="/reseller"');
     expect(read('components/Header.tsx')).toContain("href: '/shop'");
+    expect(read('components/Header.tsx')).toContain("href: '/creator'");
+    expect(read('components/Header.tsx')).toContain("href: '/reseller'");
     expect(read('components/RetailShowcase.tsx')).toContain('ConceptGallery');
   });
 
