@@ -294,20 +294,29 @@ alter table app.product_bom enable row level security;
 alter table app.order_margin_snapshots enable row level security;
 
 -- 7.1 Pricing Rules: Public read active prices, Admin manage
+create policy pricing_rules_service_role on app.pricing_rules
+  for all to service_role using (true) with check (true);
+
 create policy pricing_rules_public_select on app.pricing_rules
   for select using (is_active = true);
 
 create policy pricing_rules_admin_all on app.pricing_rules
   for all using (
     exists (
-      select 1 from app.organization_memberships m
-      where m.organization_id = pricing_rules.organization_id
-        and m.user_id = auth.uid()
-        and m.role in ('OWNER', 'ADMIN', 'MANAGER')
+      select 1 from app.organization_members om
+      join app.roles r on r.id = om.role_id
+      join app.users u on u.id = om.user_id
+      where om.organization_id = pricing_rules.organization_id
+        and u.auth_user_id = auth.uid()
+        and om.status = 'ACTIVE'
+        and r.code in ('OWNER', 'ADMIN', 'MANAGER')
     )
   );
 
 -- 7.2 Promotions: Public read active valid promos, Admin manage
+create policy promotions_service_role on app.promotions
+  for all to service_role using (true) with check (true);
+
 create policy promotions_public_select on app.promotions
   for select using (
     is_active = true 
@@ -318,32 +327,47 @@ create policy promotions_public_select on app.promotions
 create policy promotions_admin_all on app.promotions
   for all using (
     exists (
-      select 1 from app.organization_memberships m
-      where m.organization_id = promotions.organization_id
-        and m.user_id = auth.uid()
-        and m.role in ('OWNER', 'ADMIN', 'MANAGER')
+      select 1 from app.organization_members om
+      join app.roles r on r.id = om.role_id
+      join app.users u on u.id = om.user_id
+      where om.organization_id = promotions.organization_id
+        and u.auth_user_id = auth.uid()
+        and om.status = 'ACTIVE'
+        and r.code in ('OWNER', 'ADMIN', 'MANAGER')
     )
   );
 
 -- 7.3 Product BOM: Strictly internal, NO public read access
+create policy product_bom_service_role on app.product_bom
+  for all to service_role using (true) with check (true);
+
 create policy product_bom_admin_all on app.product_bom
   for all using (
     exists (
-      select 1 from app.organization_memberships m
-      where m.organization_id = product_bom.organization_id
-        and m.user_id = auth.uid()
-        and m.role in ('OWNER', 'ADMIN', 'MANAGER')
+      select 1 from app.organization_members om
+      join app.roles r on r.id = om.role_id
+      join app.users u on u.id = om.user_id
+      where om.organization_id = product_bom.organization_id
+        and u.auth_user_id = auth.uid()
+        and om.status = 'ACTIVE'
+        and r.code in ('OWNER', 'ADMIN', 'MANAGER')
     )
   );
 
 -- 7.4 Order Margin Snapshots: Strictly internal financial audit, NO public read access
+create policy order_margin_service_role on app.order_margin_snapshots
+  for all to service_role using (true) with check (true);
+
 create policy order_margin_admin_all on app.order_margin_snapshots
   for all using (
     exists (
-      select 1 from app.organization_memberships m
-      where m.organization_id = order_margin_snapshots.organization_id
-        and m.user_id = auth.uid()
-        and m.role in ('OWNER', 'ADMIN', 'MANAGER')
+      select 1 from app.organization_members om
+      join app.roles r on r.id = om.role_id
+      join app.users u on u.id = om.user_id
+      where om.organization_id = order_margin_snapshots.organization_id
+        and u.auth_user_id = auth.uid()
+        and om.status = 'ACTIVE'
+        and r.code in ('OWNER', 'ADMIN', 'MANAGER')
     )
   );
 
