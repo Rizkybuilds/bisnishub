@@ -1,0 +1,52 @@
+{
+  "feasibility_id": "TFC-20261023-01",
+  "reference_brief_id": "BOB-TEESTOCK-20261023-01",
+  "target_workspace": "systems/mgbos",
+  "exact_main_sha": "663497d147b80548870851e344f8f1e898357f8b",
+  "evaluation_date": "2026-10-23",
+  "architectural_assessment": {
+    "approach_summary": "Penerapan arsitektur ERP MGBOS modular: (1) Migrasi Supabase aditif untuk pricing rules, promo engine, BOM, dan margin snapshot; (2) RPC function calculate_order_hpp dan get_effective_pricing; (3) Integrasi dynamic pricing & WhatsApp assisted intake di storefront apps/teestock.",
+    "complexity_score": "MODERATE",
+    "door_classification": "TWO_WAY",
+    "highest_risk_rating": "R3"
+  },
+  "blast_radius_mapping": {
+    "direct_files_affected": [
+      "systems/mgbos/supabase/migrations/20261023100000_teestock_flexible_erp_commerce.sql",
+      "systems/mgbos/apps/teestock/src/data/products.ts",
+      "systems/mgbos/apps/teestock/src/components/ProductDetailViewer.tsx",
+      "systems/mgbos/apps/teestock/src/app/shop/page.tsx",
+      "systems/mgbos/apps/teestock/src/app/page.tsx"
+    ],
+    "shared_modules_impact": [
+      "systems/mgbos/supabase/migrations",
+      "systems/mgbos/apps/teestock"
+    ],
+    "database_invariants": "Migrasi bersifat strictly additive. Tidak merusak skema app.orders eksisting (order_type CUSTOM_B2B dan RETAIL_DIRECT tetap valid, ditambahkan opsi CREATOR_COLLAB dan RESELLER_DROPSHIP). RLS membatasi pembacaan HPP rahasia hanya untuk service_role / authenticated admin.",
+    "downstream_risk": "Rendah. Tidak ada breaking change terhadap modul custom atelier atau B2B invoicing eksisting."
+  },
+  "pragmatic_tradeoff": {
+    "full_commercial_scope": "Sistem ERP lengkap dengan multi-warehouse inventory, automated supplier PO trigger, multi-tiered volume discounts, and fully automated Midtrans/Xendit payment reconciliation.",
+    "recommended_20_percent_scope": "Vertical slice 80/20: Database schema pricing rules + BOM HPP calculation + margin snapshot + WhatsApp assisted checkout with dynamic price & promo code support.",
+    "deferred_capabilities": [
+      "Automated procurement purchase order generation to fabric suppliers",
+      "Dynamic real-time courier shipping API integration (Biteship/RajaOngkir)"
+    ]
+  },
+  "negative_controls": {
+    "idempotency_guarantee": "Kalkulasi HPP dan snapshot margin dieksekusi sekali per order_id dengan unique constraint untuk mencegah duplikasi pencatatan profit.",
+    "tenant_auth_isolation": "Setiap record pricing_rules, BOM, dan promotions terikat secara ketat pada organization_id dengan RLS terisolasi.",
+    "negative_test_scenarios": [
+      "Mencegah customer publik membaca tabel HPP dan data biaya modal melalui API publik",
+      "Mencegah penerapan kode promo yang sudah kedaluwarsa atau melebihi batas kuota pemakaian",
+      "Mencegah reservasi stok negatif ketika inventory_items available = 0"
+    ]
+  },
+  "builder_dispatch_plan": {
+    "work_packages_required": 2,
+    "suggested_builder": "antigravity",
+    "estimated_execution": "WP-01: Database migrations and RPC functions (15 mins); WP-02: Storefront dynamic pricing and WhatsApp intake integration (20 mins)."
+  },
+  "owner_decision_required": "Konfirmasi eksekusi 80/20 vertical slice melalui Work Package WP-01 (Database Migration) dan WP-02 (Storefront Integration).",
+  "disposition": "FEASIBLE"
+}

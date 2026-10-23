@@ -7,6 +7,7 @@ import { useDemoCart } from '../features/demo-commerce';
 
 const links = [
   { href: '/shop', label: 'The Edit' },
+  { href: '/mitra', label: 'Mitra' },
   { href: '/custom', label: 'Custom' },
   { href: '/business', label: 'For Business' },
   { href: '/support/contact', label: 'Bantuan' },

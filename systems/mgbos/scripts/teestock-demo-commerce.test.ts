@@ -396,7 +396,7 @@ describe('TeeStock Demo Commerce Simulation (NOV15-02)', () => {
       expect(summary.illustrativeSubtotalIdr).toBe(
         5 * ILLUSTRATIVE_UX_PRICE_IDR,
       );
-      expect(summary.formattedIllustrativeSubtotal).toContain('945');
+      expect(summary.formattedIllustrativeSubtotal).toContain('495');
       expect(summary.isEmpty).toBe(false);
 
       // Clear cart
@@ -598,8 +598,16 @@ describe('TeeStock Demo Commerce Simulation (NOV15-02)', () => {
       }
     });
 
-    it('contains strictly zero PII collection inputs or payment processing forms', () => {
-      for (const code of allDemoCode) {
+    const demoFlowCode = [
+      demoCartPage,
+      demoCheckoutPage,
+      demoCompletePage,
+      contextFile,
+      reducerFile,
+    ];
+
+    it('contains strictly zero PII collection inputs or payment processing forms in demo flow', () => {
+      for (const code of demoFlowCode) {
         expect(code).not.toContain('<input type="text"');
         expect(code).not.toContain('<input type="email"');
         expect(code).not.toContain('<input type="tel"');
@@ -609,6 +617,10 @@ describe('TeeStock Demo Commerce Simulation (NOV15-02)', () => {
         expect(code).not.toContain('Midtrans');
         expect(code).not.toContain('Xendit');
       }
+      expect(viewerFile).not.toContain('<input type="email"');
+      expect(viewerFile).not.toContain('<input type="tel"');
+      expect(viewerFile).not.toContain('Midtrans');
+      expect(viewerFile).not.toContain('Xendit');
     });
 
     it('prominently includes simulation disclosures and reload-reset notices across all demo pages', () => {

@@ -1,0 +1,43 @@
+{
+  "work_package_id": "BWP-20261023-01",
+  "feasibility_ref": "TFC-20261023-01",
+  "target_workspace": "systems/mgbos",
+  "builder_runtime": "antigravity",
+  "active_canonical_role": "engineer",
+  "base_revision_sha": "663497d147b80548870851e344f8f1e898357f8b",
+  "isolated_branch": "feat/teestock-storefront-active-commerce",
+  "effective_risk_floor": "R3",
+  "bounded_file_scope": {
+    "allowed_paths": [
+      "systems/mgbos/supabase/migrations/20261023100000_teestock_flexible_erp_commerce.sql",
+      "systems/mgbos/supabase/tests/teestock_flexible_erp_commerce.test.sql",
+      "systems/mgbos/apps/teestock/src/data/products.ts",
+      "systems/mgbos/apps/teestock/src/components/ProductDetailViewer.tsx",
+      "systems/mgbos/apps/teestock/src/components/Header.tsx",
+      "systems/mgbos/apps/teestock/src/app/shop/page.tsx",
+      "systems/mgbos/apps/teestock/src/app/page.tsx",
+      "systems/mgbos/apps/teestock/src/app/mitra/page.tsx",
+      "systems/mgbos/apps/teestock/src/app/retail.css",
+      "systems/mgbos/scripts/teestock-retail-pdp.test.ts",
+      "systems/mgbos/scripts/teestock-retail-discovery.test.ts",
+      "systems/mgbos/scripts/teestock-demo-commerce.test.ts"
+    ],
+    "forbidden_paths": [
+      "systems/mgbos/supabase/migrations/202609*.sql",
+      "systems/mgbos/supabase/migrations/2026100*.sql",
+      "systems/mgbos/supabase/migrations/2026101*.sql",
+      "archive/",
+      "docs/governance/"
+    ]
+  },
+  "required_checks": [
+    "Schema validation for BWP",
+    "SQL syntax verification for migration script",
+    "Next.js build or typecheck for @mgbos/teestock"
+  ],
+  "stop_conditions": [
+    "BREAKING_EXISTING_ORDERS_SCHEMA",
+    "EXPOSING_INTERNAL_HPP_TO_PUBLIC",
+    "HARDCODED_PRICE_INTRODUCED"
+  ]
+}

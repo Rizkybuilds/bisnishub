@@ -2475,3 +2475,278 @@ body:has(.retail-shop) .site-main {
     padding: 24px 14px;
   }
 }
+
+/* ==========================================================================
+   Active Commerce & Dynamic Pricing Extensions (TeeStock Flexible ERP)
+   ========================================================================== */
+.retail-pdp-compare-price {
+  font-size: 15px;
+  text-decoration: line-through;
+  color: #889088;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.retail-badge-available {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1e592f;
+  background: #eaf5ec;
+  border: 1px solid #c2e2c8;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.retail-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 8px;
+}
+
+.retail-qty-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--retail-ink);
+}
+
+.retail-qty-controls {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #d9d4c7;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.retail-qty-btn {
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--retail-ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.retail-qty-btn:hover:not(:disabled) {
+  background: #f0ece3;
+}
+
+.retail-qty-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.retail-qty-val {
+  min-width: 36px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--retail-ink);
+}
+
+.retail-promo-card {
+  background: #fbf9f4;
+  border: 1px dashed #d0c8b6;
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin: 14px 0;
+}
+
+.retail-promo-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--retail-ink);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.retail-promo-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.retail-promo-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1cbbe;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #ffffff;
+  color: var(--retail-ink);
+}
+
+.retail-promo-btn {
+  padding: 8px 14px;
+  background: var(--retail-forest);
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.retail-promo-btn:hover {
+  opacity: 0.9;
+}
+
+.retail-promo-feedback {
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.retail-promo-feedback.is-success {
+  color: #1e592f;
+  font-weight: 600;
+}
+
+.retail-promo-feedback.is-error {
+  color: #c0392b;
+}
+
+.retail-whatsapp-cta {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #25d366;
+  color: #0b3d1b !important;
+  font-weight: 800;
+  font-size: 14px;
+  border-radius: 6px;
+  text-decoration: none !important;
+  box-shadow: 0 3px 8px rgba(37, 211, 102, 0.28);
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.retail-whatsapp-cta:hover {
+  background: #20ba59;
+  color: #05260f !important;
+  transform: translateY(-1px);
+}
+
+.retail-calc-card {
+  background: #ffffff;
+  border: 1px solid #dcd7ca;
+  border-radius: 6px;
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.retail-calc-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--retail-ink);
+  margin-bottom: 8px;
+}
+
+.retail-calc-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.retail-calc-field label {
+  display: block;
+  font-size: 11px;
+  color: #636b64;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.retail-calc-field input {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #d1cbbe;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #faf8f5;
+  color: var(--retail-ink);
+}
+
+.retail-calc-result {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #edf7ee;
+  border-left: 3px solid #2ea44f;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #1a4d26;
+  font-weight: 600;
+}
+
+.retail-size-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+.retail-size-table th,
+.retail-size-table td {
+  border: 1px solid #e0dbce;
+  padding: 6px 10px;
+  text-align: center;
+}
+
+.retail-size-table th {
+  background: #f6f3eb;
+  font-weight: 700;
+  color: var(--retail-ink);
+}
+
+.retail-banner-promo {
+  background: #f4efe4;
+  border: 1px solid #ded6c5;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.retail-banner-promo-badge {
+  background: var(--retail-forest);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.retail-banner-promo-text {
+  font-size: 13px;
+  color: #2b332c;
+  flex: 1;
+}
+
+.retail-banner-promo-code {
+  font-family: monospace;
+  font-weight: 700;
+  background: #ffffff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px dashed #99a29a;
+}
+

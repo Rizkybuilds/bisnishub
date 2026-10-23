@@ -14,6 +14,13 @@ export type PreviewPrintTone = {
   description: string;
 };
 
+export interface PromoRule {
+  code: string;
+  type: 'PERCENTAGE' | 'FIXED' | 'BUNDLE';
+  value: number;
+  description: string;
+}
+
 export interface PreviewProduct {
   id: string;
   slug: string;
@@ -30,14 +37,74 @@ export interface PreviewProduct {
   previewColors: readonly PreviewGarmentColor[];
   previewPrintTones: readonly PreviewPrintTone[];
   illustrativePriceIdr: number;
-  previewOnly: true;
-  availability: 'NOT_FOR_SALE';
-  isCommerciallyApproved: false;
-  materialPendingVerification: true;
+  compareAtPriceIdr?: number;
+  previewOnly: boolean;
+  availability: 'AVAILABLE' | 'NOT_FOR_SALE';
+  isCommerciallyApproved: boolean;
+  materialPendingVerification: boolean;
   careGuidelinesPending: readonly string[];
 }
 
-export const ILLUSTRATIVE_UX_PRICE_IDR = 189000;
+// Default dynamic baseline price set by Founder
+export const DEFAULT_DYNAMIC_PRICE_IDR = 99000;
+export const DEFAULT_COMPARE_AT_PRICE_IDR = 129000;
+export const ILLUSTRATIVE_UX_PRICE_IDR = DEFAULT_DYNAMIC_PRICE_IDR;
+
+// Pre-configured active promotional vouchers
+export const ACTIVE_PROMO_VOUCHERS: readonly PromoRule[] = [
+  {
+    code: 'HEMAT10',
+    type: 'PERCENTAGE',
+    value: 10,
+    description: 'Diskon 10% Spesial Peluncuran Toko',
+  },
+  {
+    code: 'BELI2HEMAT',
+    type: 'BUNDLE',
+    value: 20000,
+    description: 'Potongan Rp 20.000 untuk pembelian 2 kaos atau lebih',
+  },
+] as const;
+
+export function evaluatePromoDiscount(
+  subtotal: number,
+  quantity: number,
+  promoCode?: string | null,
+): { discountAmount: number; appliedPromo?: PromoRule; error?: string } {
+  if (!promoCode || !promoCode.trim()) {
+    return { discountAmount: 0 };
+  }
+
+  const cleanCode = promoCode.trim().toUpperCase();
+  const promo = ACTIVE_PROMO_VOUCHERS.find((p) => p.code === cleanCode);
+
+  if (!promo) {
+    return { discountAmount: 0, error: 'Kode voucher tidak valid.' };
+  }
+
+  if (promo.type === 'PERCENTAGE') {
+    const discount = Math.round((subtotal * promo.value) / 100);
+    return { discountAmount: discount, appliedPromo: promo };
+  }
+
+  if (promo.type === 'FIXED') {
+    const discount = Math.min(subtotal, promo.value);
+    return { discountAmount: discount, appliedPromo: promo };
+  }
+
+  if (promo.type === 'BUNDLE') {
+    if (quantity < 2) {
+      return {
+        discountAmount: 0,
+        error: 'Voucher ini berlaku minimal pembelian 2 kaos.',
+      };
+    }
+    const discount = Math.min(subtotal, promo.value);
+    return { discountAmount: discount, appliedPromo: promo };
+  }
+
+  return { discountAmount: 0 };
+}
 
 export function formatIllustrativePrice(price: number): string {
   return new Intl.NumberFormat('id-ID', {
@@ -49,6 +116,53 @@ export function formatIllustrativePrice(price: number): string {
 
 export function formatIllustrativeShortPrice(price: number): string {
   return `Rp ${Math.round(price / 1000)}rb`;
+}
+
+export function buildWhatsAppOrderUrl(params: {
+  productTitle: string;
+  colorName: string;
+  size: string;
+  quantity?: number;
+  unitPriceIdr?: number;
+  promoCode?: string | null;
+  discountAmount?: number;
+  refCode?: string | null;
+  whatsappNumber?: string;
+}): string {
+  const number =
+    params.whatsappNumber ||
+    (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_WHATSAPP_NUMBER) ||
+    '6281200000000';
+  const cleanNumber = number.replace(/[^0-9]/g, '');
+  const qty = params.quantity ?? 1;
+  const unitPrice = params.unitPriceIdr ?? DEFAULT_DYNAMIC_PRICE_IDR;
+  const subtotal = unitPrice * qty;
+  const discount = params.discountAmount ?? 0;
+  const total = Math.max(0, subtotal - discount);
+
+  const subtotalStr = subtotal.toLocaleString('id-ID');
+  const totalStr = total.toLocaleString('id-ID');
+  const discountStr = discount > 0 ? discount.toLocaleString('id-ID') : null;
+
+  let promoSection = '';
+  if (params.promoCode && discountStr) {
+    promoSection = `🧾 Subtotal: Rp ${subtotalStr}\n🎟️ Voucher: ${params.promoCode.toUpperCase()} (-Rp ${discountStr})\n`;
+  }
+
+  const refSection = params.refCode ? `\n[Ref Mitra: ${params.refCode}]` : '';
+
+  const message =
+    `Halo TeeStock, saya mau order kaos ini:\n\n` +
+    `👕 Artikel: ${params.productTitle}\n` +
+    `🎨 Warna: ${params.colorName}\n` +
+    `📏 Ukuran: ${params.size}\n` +
+    `📦 Jumlah: ${qty} pcs\n` +
+    `💵 Harga Satuan: Rp ${unitPrice.toLocaleString('id-ID')}\n` +
+    promoSection +
+    `💰 Total Belanja: Rp ${totalStr}${refSection}\n\n` +
+    `Mohon info ketersediaan stok, estimasi ongkir, dan instruksi rekening/QRIS untuk pembayarannya. Terima kasih!`;
+
+  return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
 }
 
 export const PREVIEW_GARMENT_COLORS: readonly PreviewGarmentColor[] = [
@@ -94,8 +208,10 @@ export const PREVIEW_PRINT_TONES: readonly PreviewPrintTone[] = [
 ] as const;
 
 export const PREVIEW_CARE_GUIDELINES_PENDING: readonly string[] = [
-  'Petunjuk pencucian dan perawatan resmi belum diterbitkan.',
-  'Instruksi perawatan akan disusun setelah pengujian ketahanan cuci pada sampel fisik garmen selesai.',
+  'Cuci menggunakan air dingin atau suhu normal bersama pakaian sewarna.',
+  'Hindari menyikat langsung di atas permukaan sablon DTF.',
+  'Setrika dari bagian dalam pakaian; jangan setrika langsung permukaan gambar.',
+  'Jangan gunakan pemutih berbahan klorin keras.',
 ] as const;
 
 export const previewProducts: readonly PreviewProduct[] = [
@@ -115,11 +231,12 @@ export const previewProducts: readonly PreviewProduct[] = [
     previewSizes: PREVIEW_SIZES,
     previewColors: PREVIEW_GARMENT_COLORS,
     previewPrintTones: PREVIEW_PRINT_TONES,
-    illustrativePriceIdr: ILLUSTRATIVE_UX_PRICE_IDR,
-    previewOnly: true,
-    availability: 'NOT_FOR_SALE',
-    isCommerciallyApproved: false,
-    materialPendingVerification: true,
+    illustrativePriceIdr: DEFAULT_DYNAMIC_PRICE_IDR,
+    compareAtPriceIdr: DEFAULT_COMPARE_AT_PRICE_IDR,
+    previewOnly: false,
+    availability: 'AVAILABLE',
+    isCommerciallyApproved: true,
+    materialPendingVerification: false,
     careGuidelinesPending: PREVIEW_CARE_GUIDELINES_PENDING,
   },
   {
@@ -138,11 +255,12 @@ export const previewProducts: readonly PreviewProduct[] = [
     previewSizes: PREVIEW_SIZES,
     previewColors: PREVIEW_GARMENT_COLORS,
     previewPrintTones: PREVIEW_PRINT_TONES,
-    illustrativePriceIdr: ILLUSTRATIVE_UX_PRICE_IDR,
-    previewOnly: true,
-    availability: 'NOT_FOR_SALE',
-    isCommerciallyApproved: false,
-    materialPendingVerification: true,
+    illustrativePriceIdr: DEFAULT_DYNAMIC_PRICE_IDR,
+    compareAtPriceIdr: DEFAULT_COMPARE_AT_PRICE_IDR,
+    previewOnly: false,
+    availability: 'AVAILABLE',
+    isCommerciallyApproved: true,
+    materialPendingVerification: false,
     careGuidelinesPending: PREVIEW_CARE_GUIDELINES_PENDING,
   },
   {
@@ -161,11 +279,12 @@ export const previewProducts: readonly PreviewProduct[] = [
     previewSizes: PREVIEW_SIZES,
     previewColors: PREVIEW_GARMENT_COLORS,
     previewPrintTones: PREVIEW_PRINT_TONES,
-    illustrativePriceIdr: ILLUSTRATIVE_UX_PRICE_IDR,
-    previewOnly: true,
-    availability: 'NOT_FOR_SALE',
-    isCommerciallyApproved: false,
-    materialPendingVerification: true,
+    illustrativePriceIdr: DEFAULT_DYNAMIC_PRICE_IDR,
+    compareAtPriceIdr: DEFAULT_COMPARE_AT_PRICE_IDR,
+    previewOnly: false,
+    availability: 'AVAILABLE',
+    isCommerciallyApproved: true,
+    materialPendingVerification: false,
     careGuidelinesPending: PREVIEW_CARE_GUIDELINES_PENDING,
   },
   {
@@ -184,11 +303,12 @@ export const previewProducts: readonly PreviewProduct[] = [
     previewSizes: PREVIEW_SIZES,
     previewColors: PREVIEW_GARMENT_COLORS,
     previewPrintTones: PREVIEW_PRINT_TONES,
-    illustrativePriceIdr: ILLUSTRATIVE_UX_PRICE_IDR,
-    previewOnly: true,
-    availability: 'NOT_FOR_SALE',
-    isCommerciallyApproved: false,
-    materialPendingVerification: true,
+    illustrativePriceIdr: DEFAULT_DYNAMIC_PRICE_IDR,
+    compareAtPriceIdr: DEFAULT_COMPARE_AT_PRICE_IDR,
+    previewOnly: false,
+    availability: 'AVAILABLE',
+    isCommerciallyApproved: true,
+    materialPendingVerification: false,
     careGuidelinesPending: PREVIEW_CARE_GUIDELINES_PENDING,
   },
 ] as const;

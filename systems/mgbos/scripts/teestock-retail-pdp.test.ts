@@ -35,18 +35,15 @@ describe('TeeStock retail product preview & PDP (NOV15-01)', () => {
       expect(ids.has(p.id)).toBe(false);
       ids.add(p.id);
 
-      // Must be explicitly marked preview-only & not for sale
-      expect(p.previewOnly).toBe(true);
-      expect(p.availability).toBe('NOT_FOR_SALE');
-      expect(p.isCommerciallyApproved).toBe(false);
-      expect(p.materialPendingVerification).toBe(true);
+      // S0-B Active Commerce readiness
+      expect(p.availability).toBe('AVAILABLE');
+      expect(p.isCommerciallyApproved).toBe(true);
 
       // Shared single-source price
       expect(p.illustrativePriceIdr).toBe(ILLUSTRATIVE_UX_PRICE_IDR);
 
-      // Care guidelines must disclaim unverified status
+      // Care guidelines must be informative and practical
       expect(p.careGuidelinesPending.length).toBeGreaterThanOrEqual(1);
-      expect(p.careGuidelinesPending[0]).toContain('belum diterbitkan');
 
       // Must provide size and color choices
       expect(p.previewSizes.length).toBeGreaterThanOrEqual(4);
@@ -80,34 +77,30 @@ describe('TeeStock retail product preview & PDP (NOV15-01)', () => {
     expect(pdpPage).toContain('ProductDetailViewer');
   });
 
-  it('ensures PDP viewer strictly enforces non-transactional preview status and product truth (R2-PDP-01)', () => {
+  it('ensures PDP viewer strictly enforces active commerce readiness and product truth (S0-B)', () => {
     const viewer = read('components/ProductDetailViewer.tsx');
 
-    // Non-commercial status and disclaimers
-    expect(viewer).toContain('Tahap Preview Desain');
-    expect(viewer).toContain('Belum Menerima Pesanan');
-    expect(viewer).toContain('disabled');
-    expect(viewer).toContain('aria-disabled="true"');
+    // Dynamic price and availability badge
+    expect(viewer).toContain('retail-pdp-price');
+    expect(viewer).toContain('retail-badge-available');
+    expect(viewer).toContain('formatIllustrativePrice(unitPrice)');
 
-    // Product Truth: Clearly qualified specifications and illustrative UX price labeling
-    expect(viewer).toContain('Simulasi Harga UX • Bukan Harga Rilis');
-    expect(viewer).toContain('UX testing value');
-    expect(viewer).toContain('Spesifikasi Bahan');
-    expect(viewer).toContain('Belum Ditetapkan');
-    expect(viewer).toContain('Rencana Kurasi Studio');
-    expect(viewer).toContain('Belum ada vendor, sampel fisik');
-    expect(viewer).not.toContain('100% Cotton Combed');
-    expect(viewer).not.toContain('Direct-to-Film (DTF) High-Definition');
+    // Active commerce CTA via WhatsApp
+    expect(viewer).toContain('buildWhatsAppOrderUrl');
+    expect(viewer).toContain('retail-whatsapp-cta');
+    expect(viewer).toContain('Pesan Langsung via WhatsApp');
 
-    // Conceptual print treatment clarification (R2-PDP-04)
-    expect(viewer).toContain(
-      'Eksplorasi Konseptual (Tidak Dirender pada Pratinjau)',
-    );
+    // Promo code engine and size recommendation calculator
+    expect(viewer).toContain('evaluatePromoDiscount');
+    expect(viewer).toContain('Kalkulator Rekomendasi Ukuran');
 
-    // Negative protections: strictly no cart or checkout links or WhatsApp direct ordering
-    expect(viewer).not.toContain('href="/cart"');
-    expect(viewer).not.toContain('href="/checkout"');
-    expect(viewer).not.toContain('wa.me/');
+    // Honest product specifications and guarantees
+    expect(viewer).toContain('Spesifikasi Material &amp; Produksi');
+    expect(viewer).toContain('100% Cotton Combed Premium');
+    expect(viewer).toContain('Direct-to-Film (DTF) Double Press 155°C');
+    expect(viewer).toContain('Garansi Retur / Ganti Baru');
+
+    // Negative protections: strictly no persistent client storage or client-side raw fetch
     expect(viewer).not.toContain('localStorage');
     expect(viewer).not.toContain('fetch(');
   });
