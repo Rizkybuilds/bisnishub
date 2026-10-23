@@ -121,10 +121,10 @@ export function ShirtIllustration({
   const stitchStroke = isInk ? '#32343e' : '#c5bea0';
   const collarInner = isInk ? '#101114' : '#dfd9cb';
 
-  // High-contrast streetwear graphic inks
-  const printPrimary = isInk ? '#fafafa' : '#121217';
-  const printAccent = isInk ? '#c8f902' : '#ff4d00';
-  const printMuted = isInk ? '#71717a' : '#52525b';
+  // Refined Notion-palette graphic inks
+  const printPrimary = isInk ? '#ffffff' : '#191919';
+  const printAccent = isInk ? '#2383e2' : '#2563eb';
+  const printMuted = isInk ? '#9ca3af' : '#6b7280';
   const gradientId = 'garment-' + design.id + '-' + tone + (hero ? '-hero' : '');
 
   return (

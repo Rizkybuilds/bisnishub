@@ -20,14 +20,14 @@ export default function ShopPage() {
       <section className="retail-shop-hero" aria-labelledby="shop-heading">
         <div>
           <span className="retail-overline">
-            TEESTOCK ARCHIVE // THE RETAIL EDIT // DROP 001
+            KATALOG RITEL // THE EDIT
           </span>
           <h1 id="shop-heading">
-            Heavyweight <em>silhouettes.</em>
+            Pilihan kaos <em>esensial.</em>
           </h1>
         </div>
         <p>
-          Katalog kaos streetwear terkurasi. 100% Cotton Combed 24s gramasi 185 GSM dengan sablon DTF dual-press 155°C berdaya rekat elastis. Pilih artikel favoritmu dan pesan langsung via WhatsApp resmi.
+          Koleksi kaos grafis harian berbahan 100% Cotton Combed 24s premium dengan sablon DTF tahan cuci. Temukan artikel favoritmu dan pesan langsung via WhatsApp dengan konfirmasi cepat.
         </p>
       </section>
 

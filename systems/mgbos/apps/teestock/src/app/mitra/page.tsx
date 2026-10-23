@@ -56,7 +56,7 @@ export default function MitraPage() {
           display: 'flex',
           gap: 12,
           margin: '24px 0 32px',
-          borderBottom: '1px solid #27272a',
+          borderBottom: '1px solid #e5e7eb',
           paddingBottom: 12,
         }}
         role="tablist"
@@ -67,9 +67,9 @@ export default function MitraPage() {
           aria-selected={activeTab === 'kreator'}
           onClick={() => setActiveTab('kreator')}
           style={{
-            background: activeTab === 'kreator' ? 'var(--ts-accent-lime, #c8f902)' : '#18181f',
-            color: activeTab === 'kreator' ? '#000000' : '#a1a1aa',
-            border: activeTab === 'kreator' ? 'none' : '1px solid #27272a',
+            background: activeTab === 'kreator' ? 'var(--ts-accent-lime, #c8f902)' : '#f9fafb',
+            color: activeTab === 'kreator' ? '#000000' : '#4b5563',
+            border: activeTab === 'kreator' ? 'none' : '1px solid #e5e7eb',
             padding: '10px 20px',
             borderRadius: 6,
             fontWeight: 800,
@@ -84,9 +84,9 @@ export default function MitraPage() {
           aria-selected={activeTab === 'dropship'}
           onClick={() => setActiveTab('dropship')}
           style={{
-            background: activeTab === 'dropship' ? 'var(--ts-accent-lime, #c8f902)' : '#18181f',
-            color: activeTab === 'dropship' ? '#000000' : '#a1a1aa',
-            border: activeTab === 'dropship' ? 'none' : '1px solid #27272a',
+            background: activeTab === 'dropship' ? 'var(--ts-accent-lime, #c8f902)' : '#f9fafb',
+            color: activeTab === 'dropship' ? '#000000' : '#4b5563',
+            border: activeTab === 'dropship' ? 'none' : '1px solid #e5e7eb',
             padding: '10px 20px',
             borderRadius: 6,
             fontWeight: 800,
@@ -102,8 +102,8 @@ export default function MitraPage() {
         <section
           aria-label="Detail Program Kreator"
           style={{
-            background: '#121217',
-            border: '1px solid #27272a',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             borderRadius: 8,
             padding: 24,
             marginBottom: 32,
@@ -122,12 +122,12 @@ export default function MitraPage() {
               <span className="retail-badge-available" style={{ background: '#1c1f10', color: '#c8f902', border: '1px solid #c8f902' }}>
                 NOL MODAL AWAL
               </span>
-              <h2 style={{ fontSize: 22, marginTop: 8, color: '#fafafa' }}>
+              <h2 style={{ fontSize: 22, marginTop: 8, color: '#191919' }}>
                 Kreator &amp; Desainer Independen
               </h2>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+              <span style={{ fontSize: 13, color: '#4b5563' }}>
                 Bagi Hasil Royalti:
               </span>
               <div
@@ -138,12 +138,12 @@ export default function MitraPage() {
                 }}
               >
                 Rp 24.000{' '}
-                <span style={{ fontSize: 14, fontWeight: 500, color: '#a1a1aa' }}>/ pcs</span>
+                <span style={{ fontSize: 14, fontWeight: 500, color: '#4b5563' }}>/ pcs</span>
               </div>
             </div>
           </div>
 
-          <p style={{ margin: '16px 0', color: '#a1a1aa', lineHeight: 1.6 }}>
+          <p style={{ margin: '16px 0', color: '#4b5563', lineHeight: 1.6 }}>
             Kirimkan karya grafis terbaikmu. Tim pre-press kami yang
             berpengalaman lebih dari 7 tahun akan memastikan warna CMYK dan
             detail vektor tampil sempurna pada sablon DTF. Setiap kaos yang
@@ -171,48 +171,48 @@ export default function MitraPage() {
           >
             <div
               style={{
-                background: '#18181f',
+                background: '#f9fafb',
                 padding: 16,
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
               }}
             >
-              <strong style={{ display: 'block', marginBottom: 6, color: '#fafafa' }}>
+              <strong style={{ display: 'block', marginBottom: 6, color: '#191919' }}>
                 1. Bebas Risiko Finansial
               </strong>
-              <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+              <span style={{ fontSize: 13, color: '#4b5563' }}>
                 Tidak perlu modal beli kain gelondongan atau nyetok kaos jadi.
                 Sistem POD mencetak hanya saat pesanan masuk.
               </span>
             </div>
             <div
               style={{
-                background: '#18181f',
+                background: '#f9fafb',
                 padding: 16,
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
               }}
             >
-              <strong style={{ display: 'block', marginBottom: 6, color: '#fafafa' }}>
+              <strong style={{ display: 'block', marginBottom: 6, color: '#191919' }}>
                 2. Kualitas Terjamin 100%
               </strong>
-              <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+              <span style={{ fontSize: 13, color: '#4b5563' }}>
                 Cotton Combed 24s premium lembut dan sablon tahan cuci. Kami
                 tanggung jawab penuh jika ada komplain cacat cetak.
               </span>
             </div>
             <div
               style={{
-                background: '#18181f',
+                background: '#f9fafb',
                 padding: 16,
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
               }}
             >
-              <strong style={{ display: 'block', marginBottom: 6, color: '#fafafa' }}>
+              <strong style={{ display: 'block', marginBottom: 6, color: '#191919' }}>
                 3. Transparansi Real-Time
               </strong>
-              <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+              <span style={{ fontSize: 13, color: '#4b5563' }}>
                 Atribusi penjualan via kode link/kupon unik kreator tercatat
                 otomatis di backend ERP kami.
               </span>
@@ -225,8 +225,8 @@ export default function MitraPage() {
         <section
           aria-label="Detail Program Dropshipper"
           style={{
-            background: '#121217',
-            border: '1px solid #27272a',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             borderRadius: 8,
             padding: 24,
             marginBottom: 32,
@@ -245,12 +245,12 @@ export default function MitraPage() {
               <span className="retail-badge-available" style={{ background: '#082f49', color: '#38bdf8', border: '1px solid #38bdf8' }}>
                 WHITE-LABEL RESELLER
               </span>
-              <h2 style={{ fontSize: 22, marginTop: 8, color: '#fafafa' }}>
+              <h2 style={{ fontSize: 22, marginTop: 8, color: '#191919' }}>
                 Jual Apparel dengan Nama Tokomu Sendiri
               </h2>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+              <span style={{ fontSize: 13, color: '#4b5563' }}>
                 Harga Modal Kemitraan:
               </span>
               <div
@@ -261,12 +261,12 @@ export default function MitraPage() {
                 }}
               >
                 Rp 75.000{' '}
-                <span style={{ fontSize: 14, fontWeight: 500, color: '#a1a1aa' }}>/ pcs</span>
+                <span style={{ fontSize: 14, fontWeight: 500, color: '#4b5563' }}>/ pcs</span>
               </div>
             </div>
           </div>
 
-          <p style={{ margin: '16px 0', color: '#a1a1aa', lineHeight: 1.6 }}>
+          <p style={{ margin: '16px 0', color: '#4b5563', lineHeight: 1.6 }}>
             Ingin jualan kaos streetwear di TikTok Shop, Shopee, atau Instagram
             tanpa punya mesin cetak? Dapatkan harga modal grosir Rp 75.000/pcs
             dengan kebebasan menentukan harga jual ke customermu (rekomendasi:
@@ -293,48 +293,48 @@ export default function MitraPage() {
           >
             <div
               style={{
-                background: '#18181f',
+                background: '#f9fafb',
                 padding: 16,
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
               }}
             >
-              <strong style={{ display: 'block', marginBottom: 6, color: '#fafafa' }}>
+              <strong style={{ display: 'block', marginBottom: 6, color: '#191919' }}>
                 1. Pengiriman White-Label
               </strong>
-              <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+              <span style={{ fontSize: 13, color: '#4b5563' }}>
                 Nama tokomu tertulis di resi ekspedisi (J&amp;T, SiCepat, JNE).
                 Tidak ada stiker atau logo TeeStock di kemasan luar.
               </span>
             </div>
             <div
               style={{
-                background: '#18181f',
+                background: '#f9fafb',
                 padding: 16,
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
               }}
             >
-              <strong style={{ display: 'block', marginBottom: 6, color: '#fafafa' }}>
+              <strong style={{ display: 'block', marginBottom: 6, color: '#191919' }}>
                 2. Bisa Dropship Satuan (1 Pcs)
               </strong>
-              <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+              <span style={{ fontSize: 13, color: '#4b5563' }}>
                 Tidak ada batas minimum pesanan. Pesan 1 lembar tetap kami layani
                 dan proses secara cepat.
               </span>
             </div>
             <div
               style={{
-                background: '#18181f',
+                background: '#f9fafb',
                 padding: 16,
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
               }}
             >
-              <strong style={{ display: 'block', marginBottom: 6, color: '#fafafa' }}>
+              <strong style={{ display: 'block', marginBottom: 6, color: '#191919' }}>
                 3. Fleksibilitas Margin Penuh
               </strong>
-              <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+              <span style={{ fontSize: 13, color: '#4b5563' }}>
                 Kamu bebas menentukan harga jual sendiri sesuai target pasar dan
                 daya beli audiens tokomu.
               </span>
@@ -346,8 +346,8 @@ export default function MitraPage() {
       {/* Interactive Cuan Simulator */}
       <section
         style={{
-          background: '#121217',
-          border: '1px solid #27272a',
+          background: '#ffffff',
+          border: '1px solid #e5e7eb',
           borderRadius: 8,
           padding: 24,
           marginBottom: 36,
@@ -357,7 +357,7 @@ export default function MitraPage() {
         <span className="retail-overline" style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
           [SIMULASI KEUNTUNGAN BULANAN]
         </span>
-        <h2 id="simulasi-heading" style={{ fontSize: 20, margin: '8px 0 16px', color: '#fafafa' }}>
+        <h2 id="simulasi-heading" style={{ fontSize: 20, margin: '8px 0 16px', color: '#191919' }}>
           Hitung Potensi Penghasilan Kemitraanmu
         </h2>
 
@@ -369,7 +369,7 @@ export default function MitraPage() {
               fontSize: 14,
               fontWeight: 700,
               marginBottom: 8,
-              color: '#fafafa',
+              color: '#191919',
             }}
           >
             Target Penjualan Harian: <strong>{dailySales} pcs / hari</strong> (
@@ -391,16 +391,16 @@ export default function MitraPage() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            background: '#18181f',
+            background: '#f9fafb',
             padding: '16px 20px',
             borderRadius: 6,
-            border: '1px solid #27272a',
+            border: '1px solid #e5e7eb',
             flexWrap: 'wrap',
             gap: 12,
           }}
         >
           <div>
-            <span style={{ fontSize: 12, color: '#a1a1aa', display: 'block' }}>
+            <span style={{ fontSize: 12, color: '#4b5563', display: 'block' }}>
               Estimasi Keuntungan Bersih (Margin Rp 24.000/pcs):
             </span>
             <div
@@ -411,7 +411,7 @@ export default function MitraPage() {
               }}
             >
               Rp {monthlyProfit.toLocaleString('id-ID')}
-              <span style={{ fontSize: 14, fontWeight: 500, color: '#a1a1aa' }}>
+              <span style={{ fontSize: 14, fontWeight: 500, color: '#4b5563' }}>
                 {' '}
                 / bulan
               </span>
@@ -443,10 +443,10 @@ export default function MitraPage() {
           margin: '0 auto',
         }}
       >
-        <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8, color: '#fafafa' }}>
+        <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8, color: '#191919' }}>
           Siap Bergabung Bersama TeeStock?
         </h3>
-        <p style={{ fontSize: 14, color: '#a1a1aa', marginBottom: 20 }}>
+        <p style={{ fontSize: 14, color: '#4b5563', marginBottom: 20 }}>
           Hubungi admin kemitraan kami via WhatsApp untuk mendapatkan formulir
           pendaftaran, template artwork mockup, dan katalog harga reseller.
         </p>

@@ -89,8 +89,8 @@ export default function CreatorPage() {
       >
         <div
           style={{
-            background: '#121217',
-            border: '1px solid #27272a',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             borderRadius: 6,
             padding: 24,
           }}
@@ -98,10 +98,10 @@ export default function CreatorPage() {
           <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
             01 // COPYRIGHT PROTECTED
           </span>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#191919' }}>
             Hak Cipta 100% Milikmu
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 13, color: '#4b5563', margin: 0, lineHeight: 1.6 }}>
             Karya tetap sepenuhnya menjadi hak milik intelektual kamu. TeeStock hanya memegang hak
             lisensi non-eksklusif untuk mencetak pesanan apparel secara on-demand.
           </p>
@@ -109,8 +109,8 @@ export default function CreatorPage() {
 
         <div
           style={{
-            background: '#121217',
-            border: '1px solid #27272a',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             borderRadius: 6,
             padding: 24,
           }}
@@ -118,10 +118,10 @@ export default function CreatorPage() {
           <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
             02 // FLAT NET ROYALTY
           </span>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#191919' }}>
             Royalti Bersih Rp 24.000 / Pcs
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 13, color: '#4b5563', margin: 0, lineHeight: 1.6 }}>
             Bukan komisi persentase kecil yang membingungkan. Setiap satu potong kaos karyamu yang
             terjual, kamu mendapatkan flat royalti bersih Rp 24.000 tanpa potongan biaya cetak lagi.
           </p>
@@ -129,8 +129,8 @@ export default function CreatorPage() {
 
         <div
           style={{
-            background: '#121217',
-            border: '1px solid #27272a',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             borderRadius: 6,
             padding: 24,
           }}
@@ -138,10 +138,10 @@ export default function CreatorPage() {
           <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
             03 // TECHNICAL PRE-PRESS
           </span>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#191919' }}>
             7+ Tahun Pre-Press Craft
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 13, color: '#4b5563', margin: 0, lineHeight: 1.6 }}>
             Kami bukan sekadar print shop biasa. Tim teknis menguji gamut CMYK, kehalusan
             gradasi raster, dan parameter DTF double-press 155°C agar hasil cetak mendekati layar.
           </p>
@@ -149,8 +149,8 @@ export default function CreatorPage() {
 
         <div
           style={{
-            background: '#121217',
-            border: '1px solid #27272a',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
             borderRadius: 6,
             padding: 24,
           }}
@@ -158,10 +158,10 @@ export default function CreatorPage() {
           <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
             04 // ZERO INVENTORY
           </span>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#191919' }}>
             Zero Inventory Risk
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 13, color: '#4b5563', margin: 0, lineHeight: 1.6 }}>
             Tidak ada modal beli 50 kaos di depan yang belum tentu habis. Kami mencetak satuan saat
             ada pesanan masuk (POD), mengemas dengan rapi, dan menanggung garansi cacat produksi.
           </p>
@@ -171,8 +171,8 @@ export default function CreatorPage() {
       {/* 4-Step Cotton Bureau Workflow */}
       <section
         style={{
-          background: '#121217',
-          border: '1px solid #27272a',
+          background: '#ffffff',
+          border: '1px solid #e5e7eb',
           borderRadius: 8,
           padding: 28,
           marginBottom: 36,
@@ -182,7 +182,7 @@ export default function CreatorPage() {
         <span className="retail-overline" style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
           [ALUR KERJA SAMA / COTTON BUREAU PIPELINE]
         </span>
-        <h2 id="workflow-heading" style={{ fontSize: 22, margin: '8px 0 20px', color: '#fafafa' }}>
+        <h2 id="workflow-heading" style={{ fontSize: 22, margin: '8px 0 20px', color: '#191919' }}>
           Dari File Kanvas ke Lemari Kolektor dalam 4 Langkah
         </h2>
 
@@ -197,8 +197,8 @@ export default function CreatorPage() {
             <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
               [FASE 01]
             </span>
-            <h3 style={{ fontSize: 16, margin: '4px 0 8px', color: '#fafafa' }}>1. Kirim File Karya</h3>
-            <p style={{ fontSize: 13, color: '#a1a1aa', lineHeight: 1.5, margin: 0 }}>
+            <h3 style={{ fontSize: 16, margin: '4px 0 8px', color: '#191919' }}>1. Kirim File Karya</h3>
+            <p style={{ fontSize: 13, color: '#4b5563', lineHeight: 1.5, margin: 0 }}>
               Kirimkan desainmu dalam resolusi 300 DPI (format PNG transparan / AI / PSD) melalui
               formulir pengajuan di bawah ini.
             </p>
@@ -208,8 +208,8 @@ export default function CreatorPage() {
             <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
               [FASE 02]
             </span>
-            <h3 style={{ fontSize: 16, margin: '4px 0 8px', color: '#fafafa' }}>2. Kurasi &amp; Proofing</h3>
-            <p style={{ fontSize: 13, color: '#a1a1aa', lineHeight: 1.5, margin: 0 }}>
+            <h3 style={{ fontSize: 16, margin: '4px 0 8px', color: '#191919' }}>2. Kurasi &amp; Proofing</h3>
+            <p style={{ fontSize: 13, color: '#4b5563', lineHeight: 1.5, margin: 0 }}>
               Tim pre-press kami memeriksa ketepatan warna, kepadatan tinta putih, dan keserasian
               dengan warna kain garmen dalam waktu 1x24 jam kerja.
             </p>
@@ -219,8 +219,8 @@ export default function CreatorPage() {
             <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
               [FASE 03]
             </span>
-            <h3 style={{ fontSize: 16, margin: '4px 0 8px', color: '#fafafa' }}>3. Peluncuran Capsule</h3>
-            <p style={{ fontSize: 13, color: '#a1a1aa', lineHeight: 1.5, margin: 0 }}>
+            <h3 style={{ fontSize: 16, margin: '4px 0 8px', color: '#191919' }}>3. Peluncuran Capsule</h3>
+            <p style={{ fontSize: 13, color: '#4b5563', lineHeight: 1.5, margin: 0 }}>
               Desainmu tayang di katalog ritel TeeStock (The Edit) dengan halaman produk khusus dan
               mockup beresolusi tinggi untuk dipromosikan ke komunitasmu.
             </p>
@@ -230,8 +230,8 @@ export default function CreatorPage() {
             <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
               [FASE 04]
             </span>
-            <h3 style={{ fontSize: 16, margin: '4px 0 8px', color: '#fafafa' }}>4. Royalti Masuk Rekening</h3>
-            <p style={{ fontSize: 13, color: '#a1a1aa', lineHeight: 1.5, margin: 0 }}>
+            <h3 style={{ fontSize: 16, margin: '4px 0 8px', color: '#191919' }}>4. Royalti Masuk Rekening</h3>
+            <p style={{ fontSize: 13, color: '#4b5563', lineHeight: 1.5, margin: 0 }}>
               Setiap kali ada order, sistem ERP kami mencatat otomatis. Royalti bersih Rp 24.000/pcs
               direkap dan ditransfer langsung tanpa potongan tersembunyi.
             </p>
@@ -243,8 +243,8 @@ export default function CreatorPage() {
       <section
         id="royalti-simulasi"
         style={{
-          background: '#121217',
-          border: '1px solid #27272a',
+          background: '#ffffff',
+          border: '1px solid #e5e7eb',
           borderRadius: 8,
           padding: 28,
           marginBottom: 36,
@@ -254,10 +254,10 @@ export default function CreatorPage() {
         <span className="retail-overline" style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
           [SIMULASI ESTIMASI ROYALTI]
         </span>
-        <h2 id="simulasi-creator-heading" style={{ fontSize: 22, margin: '8px 0 16px', color: '#fafafa' }}>
+        <h2 id="simulasi-creator-heading" style={{ fontSize: 22, margin: '8px 0 16px', color: '#191919' }}>
           Berapa Potensi Royalti dari Komunitasmu?
         </h2>
-        <p style={{ fontSize: 14, color: '#a1a1aa', marginBottom: 20 }}>
+        <p style={{ fontSize: 14, color: '#4b5563', marginBottom: 20 }}>
           Geser slider di bawah ini untuk melihat estimasi royalti bersih bulanan dengan asumsi
           royalti flat <strong>Rp 24.000</strong> per potong kaos yang terjual.
         </p>
@@ -270,7 +270,7 @@ export default function CreatorPage() {
               fontSize: 14,
               fontWeight: 700,
               marginBottom: 8,
-              color: '#fafafa',
+              color: '#191919',
             }}
           >
             Estimasi Terjual: <strong>{dailySales} pcs / hari</strong> ({monthlyPcs} pcs / bulan)
@@ -291,16 +291,16 @@ export default function CreatorPage() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            background: '#18181f',
+            background: '#f9fafb',
             padding: '20px 24px',
             borderRadius: 6,
-            border: '1px solid #27272a',
+            border: '1px solid #e5e7eb',
             flexWrap: 'wrap',
             gap: 16,
           }}
         >
           <div>
-            <span style={{ fontSize: 12, color: '#a1a1aa', display: 'block' }}>
+            <span style={{ fontSize: 12, color: '#4b5563', display: 'block' }}>
               Estimasi Royalti Bersih Kreator (Rp 24.000 x {monthlyPcs} pcs):
             </span>
             <div
@@ -312,7 +312,7 @@ export default function CreatorPage() {
               }}
             >
               Rp {monthlyRoyalty.toLocaleString('id-ID')}
-              <span style={{ fontSize: 15, fontWeight: 500, color: '#a1a1aa' }}> / bulan</span>
+              <span style={{ fontSize: 15, fontWeight: 500, color: '#4b5563' }}> / bulan</span>
             </div>
           </div>
           {monthlyRoyalty >= 2500000 && (
@@ -336,8 +336,8 @@ export default function CreatorPage() {
       {/* Pre-Press Technical Specifications */}
       <section
         style={{
-          background: '#121217',
-          border: '1px solid #27272a',
+          background: '#ffffff',
+          border: '1px solid #e5e7eb',
           borderRadius: 8,
           padding: 28,
           marginBottom: 36,
@@ -347,7 +347,7 @@ export default function CreatorPage() {
         <span className="retail-overline" style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
           [STANDAR PRE-PRESS &amp; KUALITAS PRODUKSI]
         </span>
-        <h2 id="tech-specs-heading" style={{ fontSize: 22, margin: '8px 0 16px', color: '#fafafa' }}>
+        <h2 id="tech-specs-heading" style={{ fontSize: 22, margin: '8px 0 16px', color: '#191919' }}>
           Panduan Teknis File Desain Siap Cetak
         </h2>
         <div
@@ -357,53 +357,53 @@ export default function CreatorPage() {
             gap: 16,
           }}
         >
-          <div style={{ background: '#18181f', padding: 16, borderRadius: 6, border: '1px solid #27272a' }}>
+          <div style={{ background: '#f9fafb', padding: 16, borderRadius: 6, border: '1px solid #e5e7eb' }}>
             <span style={{ fontSize: 10, color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace', display: 'block', marginBottom: 4 }}>
               [RESOLUTION]
             </span>
-            <strong style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#fafafa' }}>
+            <strong style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#191919' }}>
               Ukuran Kanvas &amp; Resolusi
             </strong>
-            <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+            <span style={{ fontSize: 13, color: '#4b5563' }}>
               Area cetak maksimal A3 (28 cm x 40 cm). Resolusi wajib <strong>300 DPI</strong> dengan
               background transparan.
             </span>
           </div>
 
-          <div style={{ background: '#18181f', padding: 16, borderRadius: 6, border: '1px solid #27272a' }}>
+          <div style={{ background: '#f9fafb', padding: 16, borderRadius: 6, border: '1px solid #e5e7eb' }}>
             <span style={{ fontSize: 10, color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace', display: 'block', marginBottom: 4 }}>
               [FILE_FORMATS]
             </span>
-            <strong style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#fafafa' }}>
+            <strong style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#191919' }}>
               Format File
             </strong>
-            <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+            <span style={{ fontSize: 13, color: '#4b5563' }}>
               Format yang didukung: <strong>PNG 300 DPI Transparan</strong>, Adobe Illustrator (.AI),
               atau Photoshop (.PSD) dengan layer terpisah.
             </span>
           </div>
 
-          <div style={{ background: '#18181f', padding: 16, borderRadius: 6, border: '1px solid #27272a' }}>
+          <div style={{ background: '#f9fafb', padding: 16, borderRadius: 6, border: '1px solid #e5e7eb' }}>
             <span style={{ fontSize: 10, color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace', display: 'block', marginBottom: 4 }}>
               [BLANK_SPEC]
             </span>
-            <strong style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#fafafa' }}>
+            <strong style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#191919' }}>
               Spesifikasi Garmen
             </strong>
-            <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+            <span style={{ fontSize: 13, color: '#4b5563' }}>
               100% Ring Spun Cotton Combed 24s gramasi 180-190 gsm. Lembut, adem, jahitan rantai
               standar clothing line premium.
             </span>
           </div>
 
-          <div style={{ background: '#18181f', padding: 16, borderRadius: 6, border: '1px solid #27272a' }}>
+          <div style={{ background: '#f9fafb', padding: 16, borderRadius: 6, border: '1px solid #e5e7eb' }}>
             <span style={{ fontSize: 10, color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace', display: 'block', marginBottom: 4 }}>
               [DTF_CURING]
             </span>
-            <strong style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#fafafa' }}>
+            <strong style={{ display: 'block', fontSize: 14, marginBottom: 4, color: '#191919' }}>
               Sablon DTF Double Press 155°C
             </strong>
-            <span style={{ fontSize: 13, color: '#a1a1aa' }}>
+            <span style={{ fontSize: 13, color: '#4b5563' }}>
               Tinta pigmen elastis berdaya rekat tinggi. Melalui tahap curing oven &amp; press kedua
               pada suhu 155°C untuk ketahanan cuci maksimal.
             </span>
@@ -415,7 +415,7 @@ export default function CreatorPage() {
       <section
         id="submit-form"
         style={{
-          background: '#121217',
+          background: '#ffffff',
           border: '1px solid var(--ts-accent-lime, #c8f902)',
           borderRadius: 8,
           padding: 32,
@@ -427,10 +427,10 @@ export default function CreatorPage() {
           <span className="retail-badge-available" style={{ background: '#1c1f10', color: '#c8f902', border: '1px solid #c8f902' }}>
             INTAKE KREATOR AKTIF
           </span>
-          <h2 id="form-heading" style={{ fontSize: 24, margin: '12px 0 8px', color: '#fafafa' }}>
+          <h2 id="form-heading" style={{ fontSize: 24, margin: '12px 0 8px', color: '#191919' }}>
             Formulir Pengajuan Karya Desain
           </h2>
-          <p style={{ fontSize: 14, color: '#a1a1aa' }}>
+          <p style={{ fontSize: 14, color: '#4b5563' }}>
             Isi formulir di bawah ini untuk menghubungkan karyamu langsung ke tim kurasi &amp;
             pre-press kami via WhatsApp.
           </p>
@@ -446,7 +446,7 @@ export default function CreatorPage() {
           <div>
             <label
               htmlFor="creator-name"
-              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#fafafa' }}
+              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#191919' }}
             >
               Nama Kreator / Alias Seni <span style={{ color: 'var(--ts-accent-lime, #c8f902)' }}>*</span>
             </label>
@@ -461,10 +461,10 @@ export default function CreatorPage() {
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
                 fontSize: 14,
-                background: '#18181f',
-                color: '#fafafa',
+                background: '#f9fafb',
+                color: '#191919',
               }}
             />
           </div>
@@ -472,7 +472,7 @@ export default function CreatorPage() {
           <div>
             <label
               htmlFor="social-handle"
-              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#fafafa' }}
+              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#191919' }}
             >
               Tautan Portofolio / Instagram / ArtStation <span style={{ color: 'var(--ts-accent-lime, #c8f902)' }}>*</span>
             </label>
@@ -487,10 +487,10 @@ export default function CreatorPage() {
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
                 fontSize: 14,
-                background: '#18181f',
-                color: '#fafafa',
+                background: '#f9fafb',
+                color: '#191919',
               }}
             />
           </div>
@@ -498,7 +498,7 @@ export default function CreatorPage() {
           <div>
             <label
               htmlFor="artwork-title"
-              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#fafafa' }}
+              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#191919' }}
             >
               Judul Karya Desain <span style={{ color: 'var(--ts-accent-lime, #c8f902)' }}>*</span>
             </label>
@@ -513,10 +513,10 @@ export default function CreatorPage() {
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
                 fontSize: 14,
-                background: '#18181f',
-                color: '#fafafa',
+                background: '#f9fafb',
+                color: '#191919',
               }}
             />
           </div>
@@ -524,7 +524,7 @@ export default function CreatorPage() {
           <div>
             <label
               htmlFor="base-color"
-              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#fafafa' }}
+              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#191919' }}
             >
               Rekomendasi Warna Kaos Dasar
             </label>
@@ -536,10 +536,10 @@ export default function CreatorPage() {
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
                 fontSize: 14,
-                background: '#18181f',
-                color: '#fafafa',
+                background: '#f9fafb',
+                color: '#191919',
               }}
             >
               <option value="Hitam (Black Vintage)">Hitam (Black Vintage)</option>
@@ -553,7 +553,7 @@ export default function CreatorPage() {
           <div>
             <label
               htmlFor="file-link"
-              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#fafafa' }}
+              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#191919' }}
             >
               Tautan File Mentah / Preview (Google Drive / WeTransfer / Dropbox){' '}
               <span style={{ color: 'var(--ts-accent-lime, #c8f902)' }}>*</span>
@@ -569,10 +569,10 @@ export default function CreatorPage() {
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
                 fontSize: 14,
-                background: '#18181f',
-                color: '#fafafa',
+                background: '#f9fafb',
+                color: '#191919',
               }}
             />
           </div>
@@ -580,7 +580,7 @@ export default function CreatorPage() {
           <div>
             <label
               htmlFor="artwork-story"
-              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#fafafa' }}
+              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#191919' }}
             >
               Cerita / Filosofi Singkat di Balik Karya
             </label>
@@ -594,11 +594,11 @@ export default function CreatorPage() {
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 6,
-                border: '1px solid #27272a',
+                border: '1px solid #e5e7eb',
                 fontSize: 14,
                 fontFamily: 'inherit',
-                background: '#18181f',
-                color: '#fafafa',
+                background: '#f9fafb',
+                color: '#191919',
               }}
             />
           </div>
@@ -641,8 +641,8 @@ export default function CreatorPage() {
       {/* Creator FAQ */}
       <section
         style={{
-          background: '#121217',
-          border: '1px solid #27272a',
+          background: '#ffffff',
+          border: '1px solid #e5e7eb',
           borderRadius: 8,
           padding: 28,
         }}
@@ -651,37 +651,37 @@ export default function CreatorPage() {
         <span className="retail-overline" style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
           [PERTANYAAN UMUM KREATOR]
         </span>
-        <h2 id="faq-heading" style={{ fontSize: 20, margin: '8px 0 20px', color: '#fafafa' }}>
+        <h2 id="faq-heading" style={{ fontSize: 20, margin: '8px 0 20px', color: '#191919' }}>
           Hal yang Sering Ditanyakan
         </h2>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ background: '#18181f', padding: 16, borderRadius: 6, border: '1px solid #27272a' }}>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4, color: '#fafafa' }}>
+          <div style={{ background: '#f9fafb', padding: 16, borderRadius: 6, border: '1px solid #e5e7eb' }}>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4, color: '#191919' }}>
               Q: Apakah saya harus membayar biaya pendaftaran atau kurasi?
             </strong>
-            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#4b5563', margin: 0, lineHeight: 1.5 }}>
               Sama sekali tidak. Pendaftaran dan kurasi pre-press 100% gratis tanpa biaya apa pun.
               Kami berkolaborasi dengan sistem bagi hasil royalti saat karya terjual.
             </p>
           </div>
 
-          <div style={{ background: '#18181f', padding: 16, borderRadius: 6, border: '1px solid #27272a' }}>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4, color: '#fafafa' }}>
+          <div style={{ background: '#f9fafb', padding: 16, borderRadius: 6, border: '1px solid #e5e7eb' }}>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4, color: '#191919' }}>
               Q: Kapan dan bagaimana royalti Rp 24.000/pcs dibayarkan?
             </strong>
-            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#4b5563', margin: 0, lineHeight: 1.5 }}>
               Rekap penjualan ditarik otomatis dari backend ERP setiap akhir bulan. Pembayaran ditransfer
               langsung ke rekening bank atau dompet digital (GoPay/OVO) terdaftar maksimal tanggal 5
               bulan berikutnya.
             </p>
           </div>
 
-          <div style={{ background: '#18181f', padding: 16, borderRadius: 6, border: '1px solid #27272a' }}>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4, color: '#fafafa' }}>
+          <div style={{ background: '#f9fafb', padding: 16, borderRadius: 6, border: '1px solid #e5e7eb' }}>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4, color: '#191919' }}>
               Q: Bagaimana jika ada pembeli yang mengeluhkan kualitas cetak atau ukuran salah?
             </strong>
-            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#4b5563', margin: 0, lineHeight: 1.5 }}>
               TeeStock menanggung garansi 100% penggantian baru untuk cacat produksi, kesalahan sablon,
               atau cacat kain. Royalti kreator tidak dipotong untuk retur yang disebabkan oleh kendala
               produksi.
