@@ -76,7 +76,7 @@ export default function MitraPage() {
             cursor: 'pointer',
           }}
         >
-          🎨 Jalur Kreator (Collab Merch)
+          [01] Jalur Kreator (Collab Merch)
         </button>
         <button
           type="button"
@@ -93,7 +93,7 @@ export default function MitraPage() {
             cursor: 'pointer',
           }}
         >
-          📦 Jalur Reseller &amp; Dropshipper
+          [02] Jalur Reseller &amp; Dropshipper
         </button>
       </div>
 
@@ -429,7 +429,7 @@ export default function MitraPage() {
                 fontWeight: 700,
               }}
             >
-              🎯 Melampaui target transisi ekonomi mandiri (Rp 2.500.000/bln)!
+              [MILESTONE] Melampaui target transisi ekonomi mandiri (Rp 2.500.000/bln)!
             </div>
           )}
         </div>
@@ -457,7 +457,7 @@ export default function MitraPage() {
           className="retail-whatsapp-cta"
           style={{ maxWidth: 380, margin: '0 auto', background: 'var(--ts-accent-lime, #c8f902)', color: '#000000' }}
         >
-          <span>💬 Daftar Kemitraan via WhatsApp</span>
+          <span>Daftar Kemitraan via WhatsApp <span aria-hidden="true">↗</span></span>
         </a>
       </section>
     </div>

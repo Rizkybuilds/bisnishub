@@ -4,78 +4,71 @@ import { ConceptGallery, HeroGarments } from '../components/RetailShowcase';
 export default function Home() {
   return (
     <div className="retail-home">
+      {/* Raw Streetwear Editorial Hero Section */}
       <section
         className="retail-hero retail-wrap"
         aria-labelledby="retail-hero-heading"
       >
         <div className="retail-hero-content">
           <span className="retail-overline">
-            <span className="retail-overline-mark" /> A CURATED APPAREL HOUSE /
-            INDONESIA
+            <span className="retail-overline-mark" /> ARCHIVE 2026 // BANDUNG APPAREL LAB
           </span>
           <h1 id="retail-hero-heading">
-            Everyday
+            Heavyweight
             <br />
-            <em>wear,</em>
+            <em>streetwear,</em>
             <br />
-            extraordinary
-            <br />
-            feeling.
+            raw editorial.
           </h1>
           <p className="retail-hero-description">
-            Kaos grafis dengan sudut pandang yang berbeda. Karya terkurasi,
-            siluet yang dipikirkan, dan cerita kecil yang ingin kamu bawa ke
-            mana-mana.
+            Standar garmen distro independen. Cotton Combed 24s gramasi 185 GSM dengan sablon DTF dual-press 155°C. Katalog ritel terkurasi, inkubator karya kreator independen, dan dropship white-label tanpa modal.
           </p>
           <div className="retail-actions">
             <Link href="/shop" className="retail-action-primary">
               Jelajahi koleksi <span aria-hidden="true">↗</span>
             </Link>
-            <Link href="#retail-story" className="retail-action-quiet">
-              Kenali TeeStock <span aria-hidden="true">↓</span>
+            <Link href="#editorial-dossiers" className="retail-action-quiet">
+              Tiga Pintu Ekosistem <span aria-hidden="true">↓</span>
             </Link>
           </div>
           <div className="retail-hero-footnote">
-            <span>01 / 03 — EDITORIAL PREVIEW</span>
+            <span>DROP 001 // THE RETAIL EDIT</span>
             <span>
-              SCROLL TO EXPLORE <span aria-hidden="true">↓</span>
+              BANDUNG, WEST JAVA <span aria-hidden="true">●</span> ID
             </span>
           </div>
         </div>
         <div
           className="retail-hero-art"
-          aria-label="Ilustrasi konsep kaos TeeStock, bukan foto barang jual"
+          aria-label="Koleksi konsep kaos TeeStock Drop 001"
         >
-          <div className="retail-hero-ring" />
-          <HeroGarments />
-          <div className="retail-hero-roundel">
-            <span>TEESTOCK</span>
-            <strong>
-              WEAR YOUR
-              <br />
-              OWN STORY.
-            </strong>
-            <span>EST. IN PROGRESS</span>
+          <div className="retail-hero-frame-marks">
+            <span className="frame-mark-tl">[LOOKBOOK // NO. 001]</span>
+            <span className="frame-mark-tr">[DTF 155°C]</span>
+            <span className="frame-mark-bl">[COMBED 24S / 185 GSM]</span>
+            <span className="frame-mark-br">[STATUS: IN CATALOG]</span>
           </div>
-          <span className="retail-hero-art-note">
-            STUDY NO. 001 / ILLUSTRATIVE ONLY
-          </span>
+          <HeroGarments />
         </div>
       </section>
 
-      <section className="retail-ticker" aria-label="Nilai TeeStock">
+      {/* Raw Industrial Ticker */}
+      <section className="retail-ticker" aria-label="Spesifikasi TeeStock">
         <div className="retail-ticker-inner">
-          <span>MAKE IT YOURS</span>
+          <span>100% COTTON COMBED 24S</span>
           <span aria-hidden="true">✳</span>
-          <span>DESIGN WITH INTENTION</span>
+          <span>155°C DUAL-HEAT DTF SABLON</span>
           <span aria-hidden="true">✳</span>
-          <span>EVERYDAY, YOUR WAY</span>
+          <span>COTTON BUREAU CREATOR MODEL</span>
           <span aria-hidden="true">✳</span>
-          <span>TEESTOCK SELECTS</span>
+          <span>WHITE-LABEL DROPSHIP ENGINE</span>
+          <span aria-hidden="true">✳</span>
+          <span>BANDUNG APPAREL LAB</span>
           <span aria-hidden="true">✳</span>
         </div>
       </section>
 
+      {/* Catalog Drop Preview */}
       <section
         className="retail-collection-section retail-wrap"
         id="collection"
@@ -83,252 +76,172 @@ export default function Home() {
       >
         <div className="retail-section-heading">
           <div>
-            <span className="retail-overline">THE EDIT / PREVIEW 001</span>
+            <span className="retail-overline">THE EDIT // DROP 001 ARCHIVE</span>
             <h2 id="retail-collection-heading">
-              Made to <em>feel</em> like you.
+              Curated <em>silhouettes.</em>
             </h2>
           </div>
           <p>
-            Eksplorasi gaya visual TeeStock. Pilih warna, intip detail dan
-            temukan arah koleksi yang sedang dikembangkan.
+            Eksplorasi rilisan kaos grafis berkarakter tajam. Pilih warna kain, periksa detail presisi sablon, dan temukan artikel favoritmu.
           </p>
         </div>
         <ConceptGallery compact />
       </section>
 
+      {/* 3 Core Ecosystem Portals: Shop, Creator, Reseller (Raw Lookbook Dossiers) */}
       <section
-        className="retail-story-section"
-        id="retail-story"
-        aria-labelledby="retail-story-heading"
-      >
-        <div className="retail-wrap retail-story-grid">
-          <div className="retail-story-art">
-            <span className="retail-story-stamp">MORE THAN A BLANK CANVAS</span>
-            <div className="retail-story-shape">
-              <span>
-                TS<span className="retail-story-star">✳</span>
-              </span>
-            </div>
-            <span className="retail-story-side">
-              CURATED / CONSIDERED / EVERYDAY
-            </span>
-          </div>
-          <div className="retail-story-content">
-            <span className="retail-overline">NOT JUST ANOTHER TEE</span>
-            <h2 id="retail-story-heading">
-              Simple things.
-              <br />
-              <em>Big feelings.</em>
-            </h2>
-            <p>
-              TeeStock lahir dari keyakinan bahwa pakaian sehari-hari bisa
-              terasa personal. Tidak harus berlebihan. Tidak harus mengikuti
-              semua tren. Cukup dipilih dengan baik dan dipakai dengan percaya
-              diri.
-            </p>
-            <p>
-              Di sini, kurasi desain dan perhatian pada kualitas garmen berjalan
-              berdampingan. Dari ide visual hingga detail produk, semuanya
-              dibuat lebih mudah untuk dijelajahi.
-            </p>
-            <Link href="/shop" className="retail-text-link">
-              Explore the edit <span aria-hidden="true">↗</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 3 Core Ecosystem Portals: Shop, Creator, Reseller (Bento-Grid Architecture) */}
-      <section
+        id="editorial-dossiers"
         className="retail-wrap"
-        style={{ paddingBlock: '48px 24px' }}
+        style={{ paddingBlock: '64px 32px' }}
         aria-labelledby="portals-heading"
       >
         <div className="retail-section-heading">
           <div>
-            <span className="retail-overline" style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
+            <span className="retail-overline">
               [TIGA PINTU EKOSISTEM TEESTOCK]
             </span>
-            <h2 id="portals-heading" style={{ color: '#fafafa' }}>
-              Satu Ekosistem. <em style={{ color: 'var(--ts-accent-lime, #c8f902)' }}>Tiga Peran.</em>
+            <h2 id="portals-heading">
+              Satu Ekosistem. <em>Tiga Peran.</em>
             </h2>
           </div>
-          <p style={{ color: '#a1a1aa' }}>
+          <p>
             Pilih jalur yang sesuai dengan kebutuhanmu: katalog kaos grafis retail terkurasi, kolaborasi
             merch desainer tanpa modal (Cotton Bureau Model), atau dropship white-label untuk toko apparel-mu.
           </p>
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: 20,
-            marginTop: 24,
-          }}
-        >
+        <div className="retail-dossiers-grid">
           {/* Door 1: Retail Shop */}
-          <Link
-            href="/shop"
-            className="retail-path-card"
-            style={{
-              background: '#121217',
-              border: '1px solid #27272a',
-              textDecoration: 'none',
-              borderRadius: 8,
-              minHeight: 340,
-              boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-            }}
-          >
-            <span style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
-              01 / RETAIL SHOP
-            </span>
-            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0', color: '#fafafa' }}>
-              The Curated
+          <Link href="/shop" className="retail-dossier-card">
+            <div className="retail-dossier-header">
+              <span className="retail-dossier-num">01</span>
+              <span className="retail-dossier-tag">THE RETAIL EDIT</span>
+            </div>
+            <strong className="retail-dossier-title">
+              Katalog Ritel
               <br />
-              <em style={{ color: 'var(--ts-accent-lime, #c8f902)' }}>Edit.</em>
+              <em>Heavyweight.</em>
             </strong>
-            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
-              Katalog rilisan kaos grafis terkurasi. 100% Cotton Combed 24s lembut, sablon DTF
-              tahan cuci, kalkulator ukuran presisi, dan promo voucher aktif.
+            <p className="retail-dossier-desc">
+              Koleksi kaos grafis terkurasi. 100% Cotton Combed 24s 185 GSM, sablon DTF elastis tahan uji 60+ cuci, kalkulator ukuran presisi, dan voucher promo rilis aktif.
             </p>
-            <span className="retail-path-bottom" style={{ marginTop: 'auto', borderTopColor: '#27272a', color: '#fafafa' }}>
-              Jelajahi The Edit <span aria-hidden="true" style={{ color: 'var(--ts-accent-lime, #c8f902)' }}>↗</span>
+            <div className="retail-dossier-spec">
+              <span>HARGA RITEL: RP 99.000</span>
+              <span>STATUS: PREVIEW ACTIVE</span>
+            </div>
+            <span className="retail-dossier-action">
+              Jelajahi The Edit <span aria-hidden="true">↗</span>
             </span>
           </Link>
 
           {/* Door 2: Creator Merch Hub */}
-          <Link
-            href="/creator"
-            className="retail-path-card"
-            style={{
-              background: '#121217',
-              border: '1px solid #27272a',
-              textDecoration: 'none',
-              borderRadius: 8,
-              minHeight: 340,
-              boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-            }}
-          >
-            <span style={{ color: '#ff5500', fontFamily: 'monospace' }}>
-              02 / CREATOR MERCH (COTTON BUREAU MODEL)
-            </span>
-            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0', color: '#fafafa' }}>
-              Karya Seni,
+          <Link href="/creator" className="retail-dossier-card">
+            <div className="retail-dossier-header">
+              <span className="retail-dossier-num">02</span>
+              <span className="retail-dossier-tag" style={{ color: '#ff5500', borderColor: 'rgba(255,85,0,0.3)' }}>
+                CREATOR PLATFORM
+              </span>
+            </div>
+            <strong className="retail-dossier-title">
+              Karya Kreator,
               <br />
-              <em style={{ color: '#ff5500' }}>Bebas Modal.</em>
+              <em style={{ color: '#ff5500' }}>Nol Modal.</em>
             </strong>
-            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
-              Khusus desainer &amp; ilustrator independen. Nol modal di depan, kurasi pre-press 7+
-              tahun, dan flat royalti bersih Rp 24.000/pcs per penjualan.
+            <p className="retail-dossier-desc">
+              Model Cotton Bureau untuk ilustrator &amp; desainer independen. Upload desainmu, kurasi pre-press 7+ tahun, kami cetak &amp; kirim satuan. Royalti bersih flat Rp 24.000/pcs.
             </p>
-            <span className="retail-path-bottom" style={{ marginTop: 'auto', borderTopColor: '#27272a', color: '#fafafa' }}>
-              Masuk Creator Hub <span aria-hidden="true" style={{ color: '#ff5500' }}>↗</span>
+            <div className="retail-dossier-spec">
+              <span>ROYALTI: RP 24.000 / PCS</span>
+              <span>RISIKO MODAL: RP 0</span>
+            </div>
+            <span className="retail-dossier-action" style={{ color: '#ff5500' }}>
+              Masuk Creator Hub <span aria-hidden="true">↗</span>
             </span>
           </Link>
 
           {/* Door 3: Reseller & Dropship */}
-          <Link
-            href="/reseller"
-            className="retail-path-card"
-            style={{
-              background: '#121217',
-              border: '1px solid #27272a',
-              textDecoration: 'none',
-              borderRadius: 8,
-              minHeight: 340,
-              boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-            }}
-          >
-            <span style={{ color: '#38bdf8', fontFamily: 'monospace' }}>
-              03 / WHITE-LABEL DROPSHIP
-            </span>
-            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0', color: '#fafafa' }}>
-              Brand Anda,
+          <Link href="/reseller" className="retail-dossier-card">
+            <div className="retail-dossier-header">
+              <span className="retail-dossier-num">03</span>
+              <span className="retail-dossier-tag" style={{ color: '#38bdf8', borderColor: 'rgba(56,189,248,0.3)' }}>
+                WHITE-LABEL DROPSHIP
+              </span>
+            </div>
+            <strong className="retail-dossier-title">
+              Brand Milikmu,
               <br />
-              <em style={{ color: '#38bdf8' }}>Modal Rp 75k.</em>
+              <em style={{ color: '#38bdf8' }}>Mesin Kami.</em>
             </strong>
-            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
-              Dropship kaos distro untuk seller TikTok &amp; Shopee. Modal grosir Rp 75.000/pcs,
-              kemasan polos tanpa logo TeeStock, dan bebas atur harga tokomu.
+            <p className="retail-dossier-desc">
+              Infrastruktur suplai dropship untuk seller TikTok Shop &amp; Shopee. Modal grosir Rp 75.000/pcs, kemasan polymailer polos tanpa atribut TeeStock, bebas tentukan tokomu.
             </p>
-            <span className="retail-path-bottom" style={{ marginTop: 'auto', borderTopColor: '#27272a', color: '#fafafa' }}>
-              Buka Reseller Portal <span aria-hidden="true" style={{ color: '#38bdf8' }}>↗</span>
+            <div className="retail-dossier-spec">
+              <span>MODAL GROSIR: RP 75.000</span>
+              <span>KEMASAN: WHITE-LABEL POLOS</span>
+            </div>
+            <span className="retail-dossier-action" style={{ color: '#38bdf8' }}>
+              Buka Reseller Portal <span aria-hidden="true">↗</span>
             </span>
           </Link>
         </div>
       </section>
 
-      {/* Craftsmanship & Standards Section (Bento Grid) */}
+      {/* Garment Anatomy & Lab Tech-Pack Section (No Cheesy Emojis) */}
       <section
-        className="retail-wrap"
-        style={{
-          marginBlock: '32px 48px',
-          background: '#121217',
-          border: '1px solid #27272a',
-          borderRadius: 8,
-          padding: 28,
-        }}
-        aria-label="Standar Pengerjaan TeeStock"
+        className="retail-techpack-section retail-wrap"
+        aria-label="Standar Pengerjaan &amp; Garment Tech-Pack"
       >
-        <span className="retail-overline" style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
-          [STANDAR KUALITAS &amp; CRAFTSMANSHIP]
-        </span>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: 20,
-            marginTop: 16,
-          }}
-        >
-          <div style={{ background: '#18181f', padding: 18, borderRadius: 6, border: '1px solid #27272a' }}>
-            <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--ts-accent-lime, #c8f902)', display: 'block', marginBottom: 4 }}>
-              [FABRIC: COMBED 24S]
+        <div className="retail-section-heading">
+          <div>
+            <span className="retail-overline">
+              [TECHNICAL APPAREL SPECIFICATIONS]
             </span>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 6, color: '#fafafa' }}>
-              🧵 100% Cotton Combed 24s
-            </strong>
-            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
-              Gramasi seimbang 185 gsm. Tidak menerawang, adem di kulit tropis, dan lembut dicuci berulang kali.
+            <h2>
+              Garment Anatomy <em>&amp; Lab Standards.</em>
+            </h2>
+          </div>
+          <p>
+            Standar pengerjaan workshop cetak dan jahit garmen distro Bandung dengan spesifikasi teknis transparan.
+          </p>
+        </div>
+
+        <div className="retail-techpack-grid">
+          <div className="retail-techpack-card">
+            <div className="retail-techpack-code">SPEC // 01</div>
+            <span className="retail-techpack-label">FABRIC KNIT</span>
+            <strong className="retail-techpack-title">100% Cotton Combed 24s</strong>
+            <p className="retail-techpack-desc">
+              Single Jersey gramasi 185-190 GSM. Serat katun panjang disisir halus, sejuk di iklim tropis, daya serap tinggi, dan tidak menerawang.
             </p>
           </div>
-          <div style={{ background: '#18181f', padding: 18, borderRadius: 6, border: '1px solid #27272a' }}>
-            <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--ts-accent-lime, #c8f902)', display: 'block', marginBottom: 4 }}>
-              [PRESS: 155°C DUAL]
-            </span>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 6, color: '#fafafa' }}>
-              🔥 DTF Double Press 155°C
-            </strong>
-            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
-              Proses curing oven dan pengepresan ganda pada suhu stabil 155°C untuk memastikan daya rekat pigmen maksimal.
+          <div className="retail-techpack-card">
+            <div className="retail-techpack-code">SPEC // 02</div>
+            <span className="retail-techpack-label">COLLAR ARCHITECTURE</span>
+            <strong className="retail-techpack-title">2.5cm Spandex Heavy Rib</strong>
+            <p className="retail-techpack-desc">
+              Rib kerah leher elastis dengan jahitan rantai ganda (twin-needle chainstitch). Tahan melar dan anti-keriting (anti bacon collar) pasca cuci berulang.
             </p>
           </div>
-          <div style={{ background: '#18181f', padding: 18, borderRadius: 6, border: '1px solid #27272a' }}>
-            <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--ts-accent-lime, #c8f902)', display: 'block', marginBottom: 4 }}>
-              [CALIBRATION: 7YR EXPERT]
-            </span>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 6, color: '#fafafa' }}>
-              🎯 7+ Tahun Pre-Press Craft
-            </strong>
-            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
-              Dikelola oleh praktisi cetak berpengalaman, mengkalibrasi gamut warna CMYK agar karya visual tidak pudar.
+          <div className="retail-techpack-card">
+            <div className="retail-techpack-code">SPEC // 03</div>
+            <span className="retail-techpack-label">PRINT MATRIX</span>
+            <strong className="retail-techpack-title">Dual-Press DTF 155°C</strong>
+            <p className="retail-techpack-desc">
+              Film poliuretan premium dengan double-heat press (15s press + cold peel + 8s curing). Tahan uji cuci mesin 60+ cycle tanpa retak atau luntur.
             </p>
           </div>
-          <div style={{ background: '#18181f', padding: 18, borderRadius: 6, border: '1px solid #27272a' }}>
-            <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--ts-accent-lime, #c8f902)', display: 'block', marginBottom: 4 }}>
-              [WARRANTY: 100% REPLACEMENT]
-            </span>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 6, color: '#fafafa' }}>
-              ✨ 100% Garansi Ganti Baru
-            </strong>
-            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
-              Komitmen tanpa kompromi: ada cacat sablon atau cacat kain dari workshop, langsung kami kirim ganti baru.
+          <div className="retail-techpack-card">
+            <div className="retail-techpack-code">SPEC // 04</div>
+            <span className="retail-techpack-label">FACTORY WARRANTY</span>
+            <strong className="retail-techpack-title">100% Replacement Guarantee</strong>
+            <p className="retail-techpack-desc">
+              Komitmen kualitas workshop: jika ditemukan cacat cetak atau cacat kain dari workshop produksi kami, pesanan langsung diganti baru.
             </p>
           </div>
         </div>
       </section>
 
+      {/* Deep Link Paths */}
       <section
         className="retail-paths-section retail-wrap"
         aria-labelledby="retail-paths-heading"
@@ -368,12 +281,13 @@ export default function Home() {
               <em>together.</em>
             </strong>
             <span className="retail-path-bottom">
-              Solusi untuk tim & organisasi <span aria-hidden="true">↗</span>
+              Solusi untuk tim &amp; organisasi <span aria-hidden="true">↗</span>
             </span>
           </Link>
         </div>
       </section>
 
+      {/* Catalog Availability Notice */}
       <section
         className="retail-availability retail-wrap"
         aria-label="Informasi kesiapan katalog"

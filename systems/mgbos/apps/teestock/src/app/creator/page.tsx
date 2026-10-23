@@ -91,15 +91,17 @@ export default function CreatorPage() {
           style={{
             background: '#121217',
             border: '1px solid #27272a',
-            borderRadius: 8,
-            padding: 20,
+            borderRadius: 6,
+            padding: 24,
           }}
         >
-          <div style={{ fontSize: 28, marginBottom: 8 }}>🎨</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
+          <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
+            01 // COPYRIGHT PROTECTED
+          </span>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
             Hak Cipta 100% Milikmu
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
             Karya tetap sepenuhnya menjadi hak milik intelektual kamu. TeeStock hanya memegang hak
             lisensi non-eksklusif untuk mencetak pesanan apparel secara on-demand.
           </p>
@@ -109,15 +111,17 @@ export default function CreatorPage() {
           style={{
             background: '#121217',
             border: '1px solid #27272a',
-            borderRadius: 8,
-            padding: 20,
+            borderRadius: 6,
+            padding: 24,
           }}
         >
-          <div style={{ fontSize: 28, marginBottom: 8 }}>💎</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
+          <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
+            02 // FLAT NET ROYALTY
+          </span>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
             Royalti Bersih Rp 24.000 / Pcs
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
             Bukan komisi persentase kecil yang membingungkan. Setiap satu potong kaos karyamu yang
             terjual, kamu mendapatkan flat royalti bersih Rp 24.000 tanpa potongan biaya cetak lagi.
           </p>
@@ -127,16 +131,18 @@ export default function CreatorPage() {
           style={{
             background: '#121217',
             border: '1px solid #27272a',
-            borderRadius: 8,
-            padding: 20,
+            borderRadius: 6,
+            padding: 24,
           }}
         >
-          <div style={{ fontSize: 28, marginBottom: 8 }}>🖨️</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
+          <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
+            03 // TECHNICAL PRE-PRESS
+          </span>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
             7+ Tahun Pre-Press Craft
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
-            Kami bukan sekadar print shop biasa. Tim teknis MGBOS menguji gamut CMYK, kehalusan
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
+            Kami bukan sekadar print shop biasa. Tim teknis menguji gamut CMYK, kehalusan
             gradasi raster, dan parameter DTF double-press 155°C agar hasil cetak mendekati layar.
           </p>
         </div>
@@ -145,15 +151,17 @@ export default function CreatorPage() {
           style={{
             background: '#121217',
             border: '1px solid #27272a',
-            borderRadius: 8,
-            padding: 20,
+            borderRadius: 6,
+            padding: 24,
           }}
         >
-          <div style={{ fontSize: 28, marginBottom: 8 }}>📦</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
+          <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
+            04 // ZERO INVENTORY
+          </span>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
             Zero Inventory Risk
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
             Tidak ada modal beli 50 kaos di depan yang belum tentu habis. Kami mencetak satuan saat
             ada pesanan masuk (POD), mengemas dengan rapi, dan menanggung garansi cacat produksi.
           </p>
@@ -319,7 +327,7 @@ export default function CreatorPage() {
                 fontWeight: 700,
               }}
             >
-              🎯 Royalti ini telah mencapai target transisi kemandirian (Rp 2.500.000/bln)!
+              [MILESTONE] Royalti ini telah mencapai target transisi kemandirian (Rp 2.500.000/bln)!
             </div>
           )}
         </div>
@@ -613,7 +621,7 @@ export default function CreatorPage() {
                 fontWeight: 800,
               }}
             >
-              <span>🚀 Ajukan Desain via WhatsApp Pre-Press</span>
+              <span>Ajukan Desain via WhatsApp Pre-Press <span aria-hidden="true">↗</span></span>
             </button>
             <span
               style={{

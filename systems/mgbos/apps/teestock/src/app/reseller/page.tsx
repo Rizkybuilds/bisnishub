@@ -91,17 +91,19 @@ export default function ResellerPage() {
           style={{
             background: '#121217',
             border: '1px solid #27272a',
-            borderRadius: 8,
-            padding: 20,
+            borderRadius: 6,
+            padding: 24,
           }}
         >
-          <div style={{ fontSize: 28, marginBottom: 8 }}>🏷️</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
+          <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
+            01 // 100% WHITE-LABEL
+          </span>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
             100% Pengiriman White-Label
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
             Nama toko dan nomor kontak tokomu yang tercetak di resi ekspedisi (J&amp;T, SiCepat,
-            JNE, SPX). Tidak ada stiker, logo, atau embel-embel TeeStock di paket luar.
+            JNE, SPX). Tidak ada stiker, logo, atau atribut TeeStock di paket luar.
           </p>
         </div>
 
@@ -109,15 +111,17 @@ export default function ResellerPage() {
           style={{
             background: '#121217',
             border: '1px solid #27272a',
-            borderRadius: 8,
-            padding: 20,
+            borderRadius: 6,
+            padding: 24,
           }}
         >
-          <div style={{ fontSize: 28, marginBottom: 8 }}>⚡</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
+          <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
+            02 // ZERO MOQ DROPSHIP
+          </span>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
             Bisa Dropship Satuan (1 Pcs)
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
             Tidak ada batas Minimum Order Quantity (MOQ). Satu pesanan masuk di tokomu tetap kami
             cetak dan kirim dengan dedikasi serta kualitas yang sama.
           </p>
@@ -127,15 +131,17 @@ export default function ResellerPage() {
           style={{
             background: '#121217',
             border: '1px solid #27272a',
-            borderRadius: 8,
-            padding: 20,
+            borderRadius: 6,
+            padding: 24,
           }}
         >
-          <div style={{ fontSize: 28, marginBottom: 8 }}>💰</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
+          <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
+            03 // FULL MARGIN CONTROL
+          </span>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
             Bebas Atur Harga &amp; Promo
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
             Harga modal tetap Rp 75.000/pcs. Kamu bebas menjual di harga Rp 99.000 (untung Rp
             24.000) hingga Rp 129.000 (untung Rp 54.000). Margin keuntungan 100% milikmu.
           </p>
@@ -145,15 +151,17 @@ export default function ResellerPage() {
           style={{
             background: '#121217',
             border: '1px solid #27272a',
-            borderRadius: 8,
-            padding: 20,
+            borderRadius: 6,
+            padding: 24,
           }}
         >
-          <div style={{ fontSize: 28, marginBottom: 8 }}>🛡️</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
+          <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
+            04 // REPUTATION GUARANTEE
+          </span>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#fafafa' }}>
             Garansi Retur Cacat Produksi
           </strong>
-          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.6 }}>
             Jika pembeli tokomu menerima kaos bolong atau sablon terkelupas, kami ganti baru tanpa
             biaya tambahan. Reputasi toko dan rating bintang 5 tokomu tetap terlindungi.
           </p>
@@ -359,7 +367,7 @@ export default function ResellerPage() {
                 fontWeight: 700,
               }}
             >
-              🎯 Laba tokomu telah melampaui milestone transisi (Rp 2.500.000/bln)!
+              [MILESTONE] Laba tokomu telah melampaui milestone target transisi (Rp 2.500.000/bln)!
             </div>
           )}
         </div>
@@ -523,7 +531,7 @@ export default function ResellerPage() {
                 fontWeight: 800,
               }}
             >
-              <span>📦 Hubungkan Toko via WhatsApp Reseller</span>
+              <span>Hubungkan Toko via WhatsApp Reseller <span aria-hidden="true">↗</span></span>
             </button>
             <span
               style={{

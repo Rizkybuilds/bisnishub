@@ -544,7 +544,7 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
               rel="noopener noreferrer"
               className="retail-whatsapp-cta"
             >
-              <span>💬 Pesan Langsung via WhatsApp</span>
+              <span>Pesan Langsung via WhatsApp <span aria-hidden="true">↗</span></span>
               <span>&bull;</span>
               <span>{formatIllustrativePrice(finalTotal)}</span>
             </a>
@@ -562,7 +562,7 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
               onClick={handleAddToDemoCart}
               aria-label={`Simulasi: Tambahkan ${product.title} ke keranjang demo`}
             >
-              Tambahkan ke Keranjang Demo <span aria-hidden="true">🛒</span>
+              Tambahkan ke Keranjang Demo <span aria-hidden="true">↗</span>
             </button>
             {feedbackNotice && feedbackNotice.type === 'success' && (
               <div
@@ -582,7 +582,7 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
                 role="alert"
                 aria-live="assertive"
               >
-                <span>⚠️ {feedbackNotice.message}</span>
+                <span>[INFO] {feedbackNotice.message}</span>
               </div>
             )}
           </div>
