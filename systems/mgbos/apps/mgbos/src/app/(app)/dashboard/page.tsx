@@ -16,6 +16,7 @@ import {
   filterNavGroupsForSession,
   type NavItemDef,
 } from '@/components/app-shell';
+import { ExecutiveDashboardWidgets } from '@/components/dashboard/ExecutiveDashboardWidgets';
 
 export const metadata = {
   title: 'Command Center — MultiGraph Business OS',
@@ -93,49 +94,6 @@ export default async function DashboardPage() {
         title={`Selamat Datang, ${session.user.name}!`}
         description="Pusat kendali eksekutif, margin laba bersih riil, antrean sablon DTF, dan inventori bahan baku."
       />
-
-      {/* Quick Order Intake Banner (WhatsApp-to-ERP Direct POS) */}
-      <section className="quick-intake-banner" aria-label="Quick Action Intake">
-        <div>
-          <div
-            style={{
-              fontSize: '0.75rem',
-              color: '#a7f3d0',
-              fontWeight: 700,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
-          >
-            Alur Cepat Intake Pesanan
-          </div>
-          <h2
-            style={{
-              fontSize: '1.25rem',
-              fontWeight: 800,
-              color: '#ffffff',
-              margin: '4px 0',
-            }}
-          >
-            Ada Pesanan Baru Masuk dari WhatsApp?
-          </h2>
-          <p
-            style={{
-              fontSize: '0.85rem',
-              color: '#d1fae5',
-              margin: 0,
-              maxWidth: 600,
-            }}
-          >
-            Catat rincian artikel, ukuran kaos, dan jenis pemesanan (Ritel /
-            Kreator Collab / Dropship White-label) untuk otomatis memotong stok
-            dan mengunci HPP unit.
-          </p>
-        </div>
-        <Link href="/orders" className="btn-intake">
-          <span>+ Catat Order WhatsApp Masuk</span>
-          <span aria-hidden="true">&rarr;</span>
-        </Link>
-      </section>
 
       {/* Founder Transition Milestone Widget */}
       <section
@@ -294,7 +252,10 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Workshop & Production Floor Status */}
+      {/* Next-Level Executive Command Center: POS Margin Simulator & Live DTF Kanban */}
+      <ExecutiveDashboardWidgets />
+
+      {/* Warehouse Blank Inventory Stock Matrix */}
       <Card style={{ marginBottom: '24px' }}>
         <CardHeader>
           <div
@@ -305,65 +266,15 @@ export default async function DashboardPage() {
             }}
           >
             <div>
-              <CardTitle>Status Workshop &amp; Antrean Sablon DTF</CardTitle>
+              <CardTitle>Ketersediaan Stok Bahan Baku Kaos Blank (Cotton Combed 24s)</CardTitle>
               <CardDescription>
-                Monitoring lantai produksi garmen dan ketersediaan stok bahan baku
-                kaos blank.
+                Monitoring ketersediaan fisik bahan baku di rak workshop sebelum proses potong dan sablon.
               </CardDescription>
             </div>
-            <Badge variant="accent">POD Workshop Live</Badge>
+            <Badge variant="accent">Warehouse Live</Badge>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="workshop-pipeline-grid" style={{ marginBottom: 20 }}>
-            <div className="workshop-stage-card">
-              <span className="workshop-stage-title">Menunggu Print DTF</span>
-              <span className="workshop-stage-count" style={{ color: '#38bdf8' }}>
-                6 <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>pcs</span>
-              </span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Artwork siap di-rip ke printer
-              </span>
-            </div>
-            <div className="workshop-stage-card">
-              <span className="workshop-stage-title">Siap Press 155°C</span>
-              <span className="workshop-stage-count" style={{ color: '#fbbf24' }}>
-                3 <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>pcs</span>
-              </span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Film DTF sudah dipotong rapi
-              </span>
-            </div>
-            <div className="workshop-stage-card">
-              <span className="workshop-stage-title">QC &amp; Finishing</span>
-              <span className="workshop-stage-count" style={{ color: '#c084fc' }}>
-                8 <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>pcs</span>
-              </span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Inspeksi jahitan &amp; lipat garmen
-              </span>
-            </div>
-            <div className="workshop-stage-card">
-              <span className="workshop-stage-title">Siap Kirim (Packing)</span>
-              <span className="workshop-stage-count" style={{ color: '#4ade80' }}>
-                12 <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>pcs</span>
-              </span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Polymailer doff &amp; resi ekspedisi
-              </span>
-            </div>
-          </div>
-
-          <h4
-            style={{
-              fontSize: '0.9rem',
-              fontWeight: 700,
-              color: 'var(--text-primary)',
-              margin: '16px 0 8px',
-            }}
-          >
-            Ketersediaan Stok Bahan Baku Kaos Blank (Cotton Combed 24s)
-          </h4>
           <table className="stock-matrix-table">
             <thead>
               <tr>
