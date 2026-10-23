@@ -138,7 +138,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3 Core Ecosystem Portals: Shop, Creator, Reseller */}
+      {/* 3 Core Ecosystem Portals: Shop, Creator, Reseller (Bento-Grid Architecture) */}
       <section
         className="retail-wrap"
         style={{ paddingBlock: '48px 24px' }}
@@ -146,12 +146,14 @@ export default function Home() {
       >
         <div className="retail-section-heading">
           <div>
-            <span className="retail-overline">TIGA PINTU EKOSISTEM TEESTOCK</span>
-            <h2 id="portals-heading">
-              Satu Ekosistem. <em>Tiga Peran.</em>
+            <span className="retail-overline" style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
+              [TIGA PINTU EKOSISTEM TEESTOCK]
+            </span>
+            <h2 id="portals-heading" style={{ color: '#fafafa' }}>
+              Satu Ekosistem. <em style={{ color: 'var(--ts-accent-lime, #c8f902)' }}>Tiga Peran.</em>
             </h2>
           </div>
-          <p>
+          <p style={{ color: '#a1a1aa' }}>
             Pilih jalur yang sesuai dengan kebutuhanmu: katalog kaos grafis retail terkurasi, kolaborasi
             merch desainer tanpa modal (Cotton Bureau Model), atau dropship white-label untuk toko apparel-mu.
           </p>
@@ -170,24 +172,28 @@ export default function Home() {
             href="/shop"
             className="retail-path-card"
             style={{
-              background: '#20382b',
+              background: '#121217',
+              border: '1px solid #27272a',
               textDecoration: 'none',
               borderRadius: 8,
               minHeight: 340,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
             }}
           >
-            <span>01 / RETAIL SHOP</span>
-            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0' }}>
+            <span style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
+              01 / RETAIL SHOP
+            </span>
+            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0', color: '#fafafa' }}>
               The Curated
               <br />
-              <em>Edit.</em>
+              <em style={{ color: 'var(--ts-accent-lime, #c8f902)' }}>Edit.</em>
             </strong>
-            <p style={{ fontSize: 13, color: '#d9e2db', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
               Katalog rilisan kaos grafis terkurasi. 100% Cotton Combed 24s lembut, sablon DTF
               tahan cuci, kalkulator ukuran presisi, dan promo voucher aktif.
             </p>
-            <span className="retail-path-bottom" style={{ marginTop: 'auto' }}>
-              Jelajahi The Edit <span aria-hidden="true">↗</span>
+            <span className="retail-path-bottom" style={{ marginTop: 'auto', borderTopColor: '#27272a', color: '#fafafa' }}>
+              Jelajahi The Edit <span aria-hidden="true" style={{ color: 'var(--ts-accent-lime, #c8f902)' }}>↗</span>
             </span>
           </Link>
 
@@ -196,24 +202,28 @@ export default function Home() {
             href="/creator"
             className="retail-path-card"
             style={{
-              background: '#bd624d',
+              background: '#121217',
+              border: '1px solid #27272a',
               textDecoration: 'none',
               borderRadius: 8,
               minHeight: 340,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
             }}
           >
-            <span>02 / CREATOR MERCH (COTTON BUREAU MODEL)</span>
-            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0' }}>
+            <span style={{ color: '#ff5500', fontFamily: 'monospace' }}>
+              02 / CREATOR MERCH (COTTON BUREAU MODEL)
+            </span>
+            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0', color: '#fafafa' }}>
               Karya Seni,
               <br />
-              <em>Bebas Modal.</em>
+              <em style={{ color: '#ff5500' }}>Bebas Modal.</em>
             </strong>
-            <p style={{ fontSize: 13, color: '#f7ded8', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
               Khusus desainer &amp; ilustrator independen. Nol modal di depan, kurasi pre-press 7+
               tahun, dan flat royalti bersih Rp 24.000/pcs per penjualan.
             </p>
-            <span className="retail-path-bottom" style={{ marginTop: 'auto' }}>
-              Masuk Creator Hub <span aria-hidden="true">↗</span>
+            <span className="retail-path-bottom" style={{ marginTop: 'auto', borderTopColor: '#27272a', color: '#fafafa' }}>
+              Masuk Creator Hub <span aria-hidden="true" style={{ color: '#ff5500' }}>↗</span>
             </span>
           </Link>
 
@@ -222,42 +232,48 @@ export default function Home() {
             href="/reseller"
             className="retail-path-card"
             style={{
-              background: '#355241',
+              background: '#121217',
+              border: '1px solid #27272a',
               textDecoration: 'none',
               borderRadius: 8,
               minHeight: 340,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
             }}
           >
-            <span>03 / WHITE-LABEL DROPSHIP</span>
-            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0' }}>
+            <span style={{ color: '#38bdf8', fontFamily: 'monospace' }}>
+              03 / WHITE-LABEL DROPSHIP
+            </span>
+            <strong style={{ fontSize: 'clamp(28px, 4vw, 42px)', margin: '20px 0', color: '#fafafa' }}>
               Brand Anda,
               <br />
-              <em>Modal Rp 75k.</em>
+              <em style={{ color: '#38bdf8' }}>Modal Rp 75k.</em>
             </strong>
-            <p style={{ fontSize: 13, color: '#d9e8df', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
               Dropship kaos distro untuk seller TikTok &amp; Shopee. Modal grosir Rp 75.000/pcs,
               kemasan polos tanpa logo TeeStock, dan bebas atur harga tokomu.
             </p>
-            <span className="retail-path-bottom" style={{ marginTop: 'auto' }}>
-              Buka Reseller Portal <span aria-hidden="true">↗</span>
+            <span className="retail-path-bottom" style={{ marginTop: 'auto', borderTopColor: '#27272a', color: '#fafafa' }}>
+              Buka Reseller Portal <span aria-hidden="true" style={{ color: '#38bdf8' }}>↗</span>
             </span>
           </Link>
         </div>
       </section>
 
-      {/* Craftsmanship & Standards Section */}
+      {/* Craftsmanship & Standards Section (Bento Grid) */}
       <section
         className="retail-wrap"
         style={{
           marginBlock: '32px 48px',
-          background: '#f9f7f2',
-          border: '1px solid #e0dad0',
+          background: '#121217',
+          border: '1px solid #27272a',
           borderRadius: 8,
           padding: 28,
         }}
         aria-label="Standar Pengerjaan TeeStock"
       >
-        <span className="retail-overline">STANDAR KUALITAS &amp; CRAFTSMANSHIP</span>
+        <span className="retail-overline" style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
+          [STANDAR KUALITAS &amp; CRAFTSMANSHIP]
+        </span>
         <div
           style={{
             display: 'grid',
@@ -266,35 +282,47 @@ export default function Home() {
             marginTop: 16,
           }}
         >
-          <div>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4 }}>
+          <div style={{ background: '#18181f', padding: 18, borderRadius: 6, border: '1px solid #27272a' }}>
+            <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--ts-accent-lime, #c8f902)', display: 'block', marginBottom: 4 }}>
+              [FABRIC: COMBED 24S]
+            </span>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 6, color: '#fafafa' }}>
               🧵 100% Cotton Combed 24s
             </strong>
-            <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
               Gramasi seimbang 185 gsm. Tidak menerawang, adem di kulit tropis, dan lembut dicuci berulang kali.
             </p>
           </div>
-          <div>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4 }}>
+          <div style={{ background: '#18181f', padding: 18, borderRadius: 6, border: '1px solid #27272a' }}>
+            <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--ts-accent-lime, #c8f902)', display: 'block', marginBottom: 4 }}>
+              [PRESS: 155°C DUAL]
+            </span>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 6, color: '#fafafa' }}>
               🔥 DTF Double Press 155°C
             </strong>
-            <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
               Proses curing oven dan pengepresan ganda pada suhu stabil 155°C untuk memastikan daya rekat pigmen maksimal.
             </p>
           </div>
-          <div>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4 }}>
+          <div style={{ background: '#18181f', padding: 18, borderRadius: 6, border: '1px solid #27272a' }}>
+            <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--ts-accent-lime, #c8f902)', display: 'block', marginBottom: 4 }}>
+              [CALIBRATION: 7YR EXPERT]
+            </span>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 6, color: '#fafafa' }}>
               🎯 7+ Tahun Pre-Press Craft
             </strong>
-            <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
               Dikelola oleh praktisi cetak berpengalaman, mengkalibrasi gamut warna CMYK agar karya visual tidak pudar.
             </p>
           </div>
-          <div>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4 }}>
+          <div style={{ background: '#18181f', padding: 18, borderRadius: 6, border: '1px solid #27272a' }}>
+            <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--ts-accent-lime, #c8f902)', display: 'block', marginBottom: 4 }}>
+              [WARRANTY: 100% REPLACEMENT]
+            </span>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 6, color: '#fafafa' }}>
               ✨ 100% Garansi Ganti Baru
             </strong>
-            <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
               Komitmen tanpa kompromi: ada cacat sablon atau cacat kain dari workshop, langsung kami kirim ganti baru.
             </p>
           </div>

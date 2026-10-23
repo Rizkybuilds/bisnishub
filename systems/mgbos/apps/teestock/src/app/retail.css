@@ -1,12 +1,27 @@
-/* TeeStock Retail Editorial — scoped to the public presentation, not the commerce backend.
+/* TeeStock Retail Editorial — Modern Hybrid Neo-Brutalist & Bento-Tech Design System.
    Concept imagery is original in-repository SVG, not stock product photography. */
 :root {
-  --retail-ink: #1e2922;
-  --retail-forest: #20382b;
-  --retail-cream: #f7f4ec;
-  --retail-warm: #eee9dd;
-  --retail-accent: #bd624d;
-  --retail-muted: #686c62;
+  /* Contemporary Hybrid Neo-Brutalist & Bento-Tech Theme */
+  --retail-ink: #fafafa;
+  --retail-forest: #121217;
+  --retail-cream: #09090b;
+  --retail-warm: #18181f;
+  --retail-accent: #c8f902;
+  --retail-muted: #a1a1aa;
+
+  /* Modern Design System Tokens */
+  --ts-bg-canvas: #09090b;
+  --ts-bg-surface: #121217;
+  --ts-bg-surface-elevated: #1a1a24;
+  --ts-border: #27272a;
+  --ts-border-highlight: #3f3f46;
+  --ts-text-primary: #fafafa;
+  --ts-text-secondary: #a1a1aa;
+  --ts-text-tertiary: #71717a;
+  --ts-accent-lime: #c8f902;
+  --ts-accent-lime-hover: #b5e000;
+  --ts-accent-cyan: #38bdf8;
+  --ts-accent-terracotta: #bd624d;
 }
 .retail-wrap {
   width: min(100% - 64px, 1376px);
@@ -40,8 +55,8 @@ body:has(.retail-shop) .site-main {
   letter-spacing: -0.06em;
 }
 .retail-site-header {
-  background: #f7f4ec;
-  border-color: #e9e5db;
+  background: #09090b;
+  border-color: #27272a;
 }
 .retail-announcement {
   min-height: 28px;
@@ -49,8 +64,9 @@ body:has(.retail-shop) .site-main {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: #20382b;
-  color: #e9eee5;
+  background: #121217;
+  border-bottom: 1px solid #27272a;
+  color: #c8f902;
   text-align: center;
   padding: 5px 15px;
   font-size: 9px;
@@ -59,7 +75,7 @@ body:has(.retail-shop) .site-main {
   letter-spacing: 0.24em;
 }
 .retail-announcement span {
-  color: #d9b884;
+  color: #38bdf8;
   font-size: 12px;
 }
 .retail-header-inner {
@@ -70,14 +86,14 @@ body:has(.retail-shop) .site-main {
   font-size: 28px;
   letter-spacing: -0.085em;
   font-weight: 900;
-  color: #1e2922;
+  color: #fafafa;
   line-height: 1;
 }
 .retail-brand-tight {
   letter-spacing: -0.095em;
 }
 .retail-brand-star {
-  color: #bd624d;
+  color: #c8f902;
   font-size: 14px;
   vertical-align: top;
   display: inline-block;
@@ -88,7 +104,7 @@ body:has(.retail-shop) .site-main {
   gap: clamp(18px, 3vw, 44px);
 }
 .retail-nav-link {
-  color: #454e44;
+  color: #a1a1aa;
   font-size: 13px;
   font-weight: 650;
   letter-spacing: 0.02em;
@@ -108,29 +124,31 @@ body:has(.retail-shop) .site-main {
   justify-content: center;
   gap: 23px;
   min-height: 40px;
-  border-radius: 0;
+  border-radius: 4px;
   padding: 10px 16px;
-  background: #20382b;
-  color: #fff;
+  background: #c8f902;
+  color: #000000;
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 800;
   letter-spacing: 0.04em;
 }
 .retail-header-cta:hover {
-  color: #fff;
-  background: #344a39;
+  color: #000000;
+  background: #b5e000;
   text-decoration: none;
 }
 .retail-mobile-toggle {
-  border-color: #bdc4b8;
-  background: #f7f4ec;
-  border-radius: 0;
+  border-color: #27272a;
+  background: #121217;
+  color: #fafafa;
+  border-radius: 4px;
   font-size: 21px;
 }
 .retail-mobile-menu {
   padding-inline: 32px;
-  background: var(--retail-cream);
-  box-shadow: 0 22px 35px rgba(20, 30, 20, 0.08);
+  background: #121217;
+  border-bottom: 1px solid #27272a;
+  box-shadow: 0 22px 35px rgba(0, 0, 0, 0.4);
 }
 .retail-mobile-menu .mobile-nav-link {
   display: flex;
@@ -188,7 +206,7 @@ body:has(.retail-shop) .site-main {
   max-width: 455px;
   font-size: 16px;
   line-height: 1.88;
-  color: #62695e;
+  color: #a1a1aa;
   margin: 0;
 }
 .retail-actions {
@@ -199,8 +217,8 @@ body:has(.retail-shop) .site-main {
   margin-top: 36px;
 }
 .retail-action-primary {
-  background: #20382b;
-  color: white;
+  background: var(--ts-accent-lime, #c8f902);
+  color: #000000;
   min-height: 53px;
   display: inline-flex;
   align-items: center;
@@ -208,11 +226,13 @@ body:has(.retail-shop) .site-main {
   gap: 35px;
   padding: 14px 22px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
 }
 .retail-action-primary:hover {
-  background: #37503d;
-  color: white;
+  background: var(--ts-accent-lime-hover, #b5e000);
+  color: #000000;
   text-decoration: none;
 }
 .retail-action-quiet {
@@ -222,10 +242,12 @@ body:has(.retail-shop) .site-main {
   min-height: 48px;
   font-size: 13px;
   font-weight: 700;
-  color: #2e4636;
+  color: #fafafa;
+  border-bottom: 1px solid #3f3f46;
 }
 .retail-action-quiet:hover {
-  color: var(--retail-accent);
+  color: var(--ts-accent-lime, #c8f902);
+  border-bottom-color: var(--ts-accent-lime, #c8f902);
   text-decoration: none;
 }
 .retail-hero-footnote {
@@ -246,10 +268,12 @@ body:has(.retail-shop) .site-main {
   overflow: hidden;
   background: radial-gradient(
     circle at 65% 24%,
-    #f5e4d6 0,
-    #e8d5c3 38%,
-    #d6bdb0 100%
+    #18191e 0,
+    #121316 42%,
+    #09090b 100%
   );
+  border: 1px solid #27272a;
+  border-radius: 8px;
   isolation: isolate;
 }
 .retail-hero-art::before {
@@ -261,7 +285,8 @@ body:has(.retail-shop) .site-main {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.25em;
-  color: #6e574c;
+  color: var(--ts-accent-lime, #c8f902);
+  font-family: monospace;
 }
 .retail-hero-ring {
   position: absolute;
@@ -269,14 +294,14 @@ body:has(.retail-shop) .site-main {
   left: 10%;
   width: 88%;
   aspect-ratio: 1;
-  border: 1px solid rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50%;
 }
 .retail-hero-ring::after {
   content: '';
   position: absolute;
   inset: 11%;
-  border: 1px solid rgba(255, 255, 255, 0.27);
+  border: 1px solid rgba(200, 249, 2, 0.15);
   border-radius: 50%;
 }
 .retail-hero-tee {
@@ -287,7 +312,7 @@ body:has(.retail-shop) .site-main {
 .retail-hero-tee svg {
   display: block;
   width: 100%;
-  filter: drop-shadow(20px 30px 26px rgba(40, 33, 27, 0.17));
+  filter: drop-shadow(20px 30px 26px rgba(0, 0, 0, 0.6));
 }
 .retail-hero-tee-back {
   top: 13%;
@@ -306,9 +331,9 @@ body:has(.retail-shop) .site-main {
   right: 28px;
   width: 137px;
   height: 137px;
-  border: 1px solid rgba(67, 70, 56, 0.5);
-  background: #f8f1dc;
-  color: #4b5043;
+  border: 1px solid #3f3f46;
+  background: #121217;
+  color: #fafafa;
   z-index: 4;
   border-radius: 100%;
   display: flex;
@@ -317,16 +342,19 @@ body:has(.retail-shop) .site-main {
   text-align: center;
   gap: 12px;
   transform: rotate(10deg);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 .retail-hero-roundel span {
   font-size: 8px;
   letter-spacing: 0.17em;
   font-weight: 800;
+  color: #a1a1aa;
 }
 .retail-hero-roundel strong {
   line-height: 1.15;
   font-size: 15px;
   letter-spacing: -0.03em;
+  color: var(--ts-accent-lime, #c8f902);
 }
 .retail-hero-art-note {
   position: absolute;
@@ -341,8 +369,10 @@ body:has(.retail-shop) .site-main {
 /* Brand ribbon */
 .retail-ticker {
   overflow: hidden;
-  background: var(--retail-forest);
-  color: #e4e8dc;
+  background: #121217;
+  border-top: 1px solid #27272a;
+  border-bottom: 1px solid #27272a;
+  color: #fafafa;
 }
 .retail-ticker-inner {
   display: flex;
@@ -359,9 +389,10 @@ body:has(.retail-shop) .site-main {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.21em;
+  font-family: monospace;
 }
 .retail-ticker-inner span:nth-child(even) {
-  color: #dfb4a3;
+  color: var(--ts-accent-lime, #c8f902);
   font-size: 20px;
 }
 
@@ -569,7 +600,9 @@ body:has(.retail-shop) .site-main {
 
 /* Brand story */
 .retail-story-section {
-  background: #e8e4d8;
+  background: #121217;
+  border-top: 1px solid #27272a;
+  border-bottom: 1px solid #27272a;
   padding-block: 88px;
 }
 .retail-story-grid {
@@ -580,7 +613,9 @@ body:has(.retail-shop) .site-main {
 }
 .retail-story-art {
   aspect-ratio: 1.02;
-  background: #d8dcbb;
+  background: #18181f;
+  border: 1px solid #27272a;
+  border-radius: 8px;
   position: relative;
   display: flex;
   justify-content: center;
@@ -594,6 +629,8 @@ body:has(.retail-shop) .site-main {
   font-weight: 800;
   letter-spacing: 0.22em;
   font-size: 10px;
+  color: var(--ts-accent-lime, #c8f902);
+  font-family: monospace;
 }
 .retail-story-side {
   position: absolute;
@@ -602,6 +639,8 @@ body:has(.retail-shop) .site-main {
   font-weight: 800;
   letter-spacing: 0.17em;
   font-size: 9px;
+  color: #71717a;
+  font-family: monospace;
 }
 .retail-story-shape {
   width: 73%;
@@ -610,11 +649,11 @@ body:has(.retail-shop) .site-main {
   justify-content: center;
   align-items: center;
   border-radius: 45% 55% 66% 34% / 48% 40% 60% 52%;
-  background: #2a4436;
+  background: #27272a;
   transform: rotate(-14deg);
 }
 .retail-story-shape > span {
-  color: #e9edcf;
+  color: #fafafa;
   font-family: Arial, sans-serif;
   font-size: clamp(100px, 15vw, 210px);
   letter-spacing: -0.15em;
@@ -622,7 +661,7 @@ body:has(.retail-shop) .site-main {
   transform: rotate(14deg);
 }
 .retail-story-star {
-  color: #d1ab76;
+  color: var(--ts-accent-lime, #c8f902);
   font-size: 0.32em;
   margin-left: 12px;
   vertical-align: top;
@@ -636,15 +675,16 @@ body:has(.retail-shop) .site-main {
   line-height: 1.05;
   font-weight: 820;
   margin: 25px 0 30px;
+  color: #fafafa;
 }
 .retail-story-content h2 em {
-  color: #a45c4d;
+  color: var(--ts-accent-lime, #c8f902);
 }
 .retail-story-content p {
   max-width: 515px;
   font-size: 14px;
   line-height: 1.9;
-  color: #5f685e;
+  color: #a1a1aa;
   margin-bottom: 20px;
 }
 .retail-story-content .retail-text-link {
@@ -709,35 +749,37 @@ body:has(.retail-shop) .site-main {
   display: flex;
   align-items: flex-start;
   gap: 15px;
-  background: #eaece1;
+  background: #121217;
   padding: 20px 24px;
   margin-bottom: 80px;
-  border: 1px solid #d4d9ca;
+  border: 1px solid #27272a;
+  border-radius: 6px;
 }
 .retail-availability-dot {
   flex: 0 0 9px;
   width: 9px;
   height: 9px;
   margin-top: 7px;
-  background: #ae855c;
+  background: var(--ts-accent-lime, #c8f902);
   border-radius: 100%;
 }
 .retail-availability strong {
   font-size: 13px;
-  color: #334438;
+  color: #fafafa;
 }
 .retail-availability p {
   font-size: 12px;
   line-height: 1.65;
   margin: 4px 0 0;
   max-width: 850px;
+  color: #a1a1aa;
 }
 .retail-availability a {
   margin-left: auto;
   white-space: nowrap;
   font-weight: 750;
   font-size: 12px;
-  color: #314a38;
+  color: var(--ts-accent-lime, #c8f902);
 }
 
 /* Shop / Concept browsing */
@@ -823,7 +865,9 @@ body:has(.retail-shop) .site-main {
   margin-top: 85px;
   padding: 90px 30px;
   text-align: center;
-  background: #e4e8d9;
+  background: #121217;
+  border: 1px solid #27272a;
+  border-radius: 8px;
 }
 .retail-shop-end h2 {
   font-size: clamp(42px, 5vw, 76px);
@@ -831,13 +875,14 @@ body:has(.retail-shop) .site-main {
   line-height: 1.05;
 }
 .retail-shop-end h2 em {
-  color: #bd624d;
+  color: var(--ts-accent-lime, #c8f902);
 }
 .retail-shop-end p {
   max-width: 590px;
   margin: 0 auto;
   font-size: 14px;
   line-height: 1.8;
+  color: #a1a1aa;
 }
 .retail-shop-end .retail-actions {
   justify-content: center;
@@ -845,17 +890,17 @@ body:has(.retail-shop) .site-main {
 
 /* Footer */
 .retail-footer {
-  background: #1e3025;
-  color: #f1efdf;
-  border: 0;
+  background: #09090b;
+  color: #a1a1aa;
+  border-top: 1px solid #27272a;
   padding: 75px 0 30px;
 }
 .retail-footer .retail-overline {
-  color: #c0cbb9;
+  color: var(--ts-accent-lime, #c8f902);
 }
 .retail-footer-intro {
   padding-bottom: 56px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid #27272a;
 }
 .retail-footer-intro > strong {
   display: block;
@@ -864,10 +909,10 @@ body:has(.retail-shop) .site-main {
   line-height: 1;
   letter-spacing: -0.1em;
   font-weight: 900;
-  color: #e8ebdb;
+  color: #fafafa;
 }
 .retail-footer-intro > strong span {
-  color: #ce9e75;
+  color: var(--ts-accent-lime, #c8f902);
   font-size: 0.32em;
   vertical-align: top;
   margin-left: 12px;
@@ -877,7 +922,7 @@ body:has(.retail-shop) .site-main {
   max-width: 490px;
   margin: 0;
   line-height: 1.8;
-  color: #bac5b6;
+  color: #a1a1aa;
   font-size: 13px;
 }
 .retail-footer-cols {
@@ -892,29 +937,31 @@ body:has(.retail-shop) .site-main {
   gap: 13px;
 }
 .retail-footer-cols h3 {
-  color: #f3f2e6;
+  color: #fafafa;
   font-size: 11px;
   letter-spacing: 0.19em;
   text-transform: uppercase;
   margin-bottom: 6px;
+  font-family: monospace;
 }
 .retail-footer-cols a,
 .retail-footer-cols span {
-  color: #bdc7b9;
+  color: #a1a1aa;
   font-size: 13px;
 }
 .retail-footer-cols a:hover {
-  color: #fff;
+  color: var(--ts-accent-lime, #c8f902);
 }
 .retail-footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-top: 1px solid #27272a;
   padding-top: 27px;
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  color: #aab8a7;
+  color: #71717a;
   font-size: 10px;
   letter-spacing: 0.09em;
+  font-family: monospace;
 }
 
 /* Responsive and device behavior */
@@ -2579,29 +2626,29 @@ body:has(.retail-shop) .site-main {
 .retail-promo-input {
   flex: 1;
   padding: 8px 12px;
-  border: 1px solid #d1cbbe;
+  border: 1px solid #27272a;
   border-radius: 4px;
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  background: #ffffff;
-  color: var(--retail-ink);
+  background: #18181f;
+  color: #fafafa;
 }
 
 .retail-promo-btn {
   padding: 8px 14px;
-  background: var(--retail-forest);
-  color: #ffffff;
+  background: var(--ts-accent-lime, #c8f902);
+  color: #000000;
   border: none;
   border-radius: 4px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   transition: opacity 0.15s ease;
 }
 
 .retail-promo-btn:hover {
-  opacity: 0.9;
+  background: var(--ts-accent-lime-hover, #b5e000);
 }
 
 .retail-promo-feedback {
@@ -2610,12 +2657,12 @@ body:has(.retail-shop) .site-main {
 }
 
 .retail-promo-feedback.is-success {
-  color: #1e592f;
+  color: var(--ts-accent-lime, #c8f902);
   font-weight: 600;
 }
 
 .retail-promo-feedback.is-error {
-  color: #c0392b;
+  color: #ef4444;
 }
 
 .retail-whatsapp-cta {
@@ -2625,25 +2672,25 @@ body:has(.retail-shop) .site-main {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: #25d366;
-  color: #0b3d1b !important;
+  background: var(--ts-accent-lime, #c8f902);
+  color: #000000 !important;
   font-weight: 800;
   font-size: 14px;
   border-radius: 6px;
   text-decoration: none !important;
-  box-shadow: 0 3px 8px rgba(37, 211, 102, 0.28);
+  box-shadow: 0 4px 14px rgba(200, 249, 2, 0.25);
   transition: background 0.15s ease, transform 0.1s ease;
 }
 
 .retail-whatsapp-cta:hover {
-  background: #20ba59;
-  color: #05260f !important;
+  background: var(--ts-accent-lime-hover, #b5e000);
+  color: #000000 !important;
   transform: translateY(-1px);
 }
 
 .retail-calc-card {
-  background: #ffffff;
-  border: 1px solid #dcd7ca;
+  background: #121217;
+  border: 1px solid #27272a;
   border-radius: 6px;
   padding: 14px;
   margin-top: 10px;
@@ -2674,22 +2721,22 @@ body:has(.retail-shop) .site-main {
 .retail-calc-field input {
   width: 100%;
   padding: 7px 10px;
-  border: 1px solid #d1cbbe;
+  border: 1px solid #27272a;
   border-radius: 4px;
   font-size: 13px;
-  background: #faf8f5;
-  color: var(--retail-ink);
+  background: #18181f;
+  color: #fafafa;
 }
 
 .retail-calc-result {
   margin-top: 10px;
   padding: 8px 12px;
-  background: #edf7ee;
-  border-left: 3px solid #2ea44f;
+  background: #1c2718;
+  border-left: 3px solid #c8f902;
   border-radius: 4px;
   font-size: 12px;
-  color: #1a4d26;
-  font-weight: 600;
+  color: #c8f902;
+  font-weight: 700;
 }
 
 .retail-size-table {
@@ -2701,20 +2748,20 @@ body:has(.retail-shop) .site-main {
 
 .retail-size-table th,
 .retail-size-table td {
-  border: 1px solid #e0dbce;
+  border: 1px solid #27272a;
   padding: 6px 10px;
   text-align: center;
 }
 
 .retail-size-table th {
-  background: #f6f3eb;
+  background: #18181f;
   font-weight: 700;
-  color: var(--retail-ink);
+  color: #fafafa;
 }
 
 .retail-banner-promo {
-  background: #f4efe4;
-  border: 1px solid #ded6c5;
+  background: #121217;
+  border: 1px solid #27272a;
   border-radius: 6px;
   padding: 12px 16px;
   margin-bottom: 24px;
@@ -2725,8 +2772,8 @@ body:has(.retail-shop) .site-main {
 }
 
 .retail-banner-promo-badge {
-  background: var(--retail-forest);
-  color: #ffffff;
+  background: var(--ts-accent-lime, #c8f902);
+  color: #000000;
   font-size: 11px;
   font-weight: 800;
   padding: 3px 8px;
@@ -2737,16 +2784,17 @@ body:has(.retail-shop) .site-main {
 
 .retail-banner-promo-text {
   font-size: 13px;
-  color: #2b332c;
+  color: #fafafa;
   flex: 1;
 }
 
 .retail-banner-promo-code {
   font-family: monospace;
   font-weight: 700;
-  background: #ffffff;
+  background: #1c1f10;
+  color: #c8f902;
   padding: 2px 6px;
   border-radius: 4px;
-  border: 1px dashed #99a29a;
+  border: 1px dashed #c8f902;
 }
 

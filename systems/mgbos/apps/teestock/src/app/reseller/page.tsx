@@ -89,17 +89,17 @@ export default function ResellerPage() {
       >
         <div
           style={{
-            background: '#ffffff',
-            border: '1px solid #dcd7ca',
+            background: '#121217',
+            border: '1px solid #27272a',
             borderRadius: 8,
             padding: 20,
           }}
         >
           <div style={{ fontSize: 28, marginBottom: 8 }}>🏷️</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6 }}>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
             100% Pengiriman White-Label
           </strong>
-          <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
             Nama toko dan nomor kontak tokomu yang tercetak di resi ekspedisi (J&amp;T, SiCepat,
             JNE, SPX). Tidak ada stiker, logo, atau embel-embel TeeStock di paket luar.
           </p>
@@ -107,17 +107,17 @@ export default function ResellerPage() {
 
         <div
           style={{
-            background: '#ffffff',
-            border: '1px solid #dcd7ca',
+            background: '#121217',
+            border: '1px solid #27272a',
             borderRadius: 8,
             padding: 20,
           }}
         >
           <div style={{ fontSize: 28, marginBottom: 8 }}>⚡</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6 }}>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
             Bisa Dropship Satuan (1 Pcs)
           </strong>
-          <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
             Tidak ada batas Minimum Order Quantity (MOQ). Satu pesanan masuk di tokomu tetap kami
             cetak dan kirim dengan dedikasi serta kualitas yang sama.
           </p>
@@ -125,17 +125,17 @@ export default function ResellerPage() {
 
         <div
           style={{
-            background: '#ffffff',
-            border: '1px solid #dcd7ca',
+            background: '#121217',
+            border: '1px solid #27272a',
             borderRadius: 8,
             padding: 20,
           }}
         >
           <div style={{ fontSize: 28, marginBottom: 8 }}>💰</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6 }}>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
             Bebas Atur Harga &amp; Promo
           </strong>
-          <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
             Harga modal tetap Rp 75.000/pcs. Kamu bebas menjual di harga Rp 99.000 (untung Rp
             24.000) hingga Rp 129.000 (untung Rp 54.000). Margin keuntungan 100% milikmu.
           </p>
@@ -143,17 +143,17 @@ export default function ResellerPage() {
 
         <div
           style={{
-            background: '#ffffff',
-            border: '1px solid #dcd7ca',
+            background: '#121217',
+            border: '1px solid #27272a',
             borderRadius: 8,
             padding: 20,
           }}
         >
           <div style={{ fontSize: 28, marginBottom: 8 }}>🛡️</div>
-          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6 }}>
+          <strong style={{ display: 'block', fontSize: 16, marginBottom: 6, color: '#fafafa' }}>
             Garansi Retur Cacat Produksi
           </strong>
-          <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
             Jika pembeli tokomu menerima kaos bolong atau sablon terkelupas, kami ganti baru tanpa
             biaya tambahan. Reputasi toko dan rating bintang 5 tokomu tetap terlindungi.
           </p>
@@ -163,8 +163,8 @@ export default function ResellerPage() {
       {/* Transparent Unit Economics Breakdown */}
       <section
         style={{
-          background: '#ffffff',
-          border: '1px solid #dcd7ca',
+          background: '#121217',
+          border: '1px solid #27272a',
           borderRadius: 8,
           padding: 28,
           marginBottom: 36,
@@ -182,18 +182,20 @@ export default function ResellerPage() {
           }}
         >
           <div>
-            <span className="retail-overline">STRUKTUR MODAL &amp; UNIT ECONOMICS</span>
-            <h2 id="cost-breakdown-heading" style={{ fontSize: 22, margin: '6px 0 0' }}>
+            <span className="retail-overline" style={{ color: '#38bdf8', fontFamily: 'monospace' }}>
+              [STRUKTUR MODAL &amp; UNIT ECONOMICS]
+            </span>
+            <h2 id="cost-breakdown-heading" style={{ fontSize: 22, margin: '6px 0 0', color: '#fafafa' }}>
               Transparansi Biaya Produksi per Pcs
             </h2>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <span style={{ fontSize: 13, color: '#636b64' }}>Harga Modal Grosir Reseller:</span>
+            <span style={{ fontSize: 13, color: '#a1a1aa' }}>Harga Modal Grosir Reseller:</span>
             <div
               style={{
                 fontSize: 28,
                 fontWeight: 800,
-                color: 'var(--retail-forest)',
+                color: 'var(--ts-accent-lime, #c8f902)',
               }}
             >
               Rp 75.000 <span style={{ fontSize: 14, fontWeight: 500 }}>/ pcs</span>
@@ -208,34 +210,34 @@ export default function ResellerPage() {
             gap: 14,
           }}
         >
-          <div style={{ background: '#f9f7f2', padding: 14, borderRadius: 6 }}>
-            <span style={{ fontSize: 12, color: '#666', display: 'block' }}>Kain Kaos</span>
-            <strong style={{ fontSize: 14 }}>Cotton Combed 24s</strong>
-            <span style={{ fontSize: 12, color: '#888', display: 'block', marginTop: 2 }}>
+          <div style={{ background: '#18181f', padding: 14, borderRadius: 6, border: '1px solid #27272a' }}>
+            <span style={{ fontSize: 12, color: '#a1a1aa', display: 'block' }}>Kain Kaos</span>
+            <strong style={{ fontSize: 14, color: '#fafafa' }}>Cotton Combed 24s</strong>
+            <span style={{ fontSize: 12, color: '#71717a', display: 'block', marginTop: 2 }}>
               Gramasi 185 gsm, reaktif lembut
             </span>
           </div>
 
-          <div style={{ background: '#f9f7f2', padding: 14, borderRadius: 6 }}>
-            <span style={{ fontSize: 12, color: '#666', display: 'block' }}>Sablon DTF Premium</span>
-            <strong style={{ fontSize: 14 }}>Double Press 155°C</strong>
-            <span style={{ fontSize: 12, color: '#888', display: 'block', marginTop: 2 }}>
+          <div style={{ background: '#18181f', padding: 14, borderRadius: 6, border: '1px solid #27272a' }}>
+            <span style={{ fontSize: 12, color: '#a1a1aa', display: 'block' }}>Sablon DTF Premium</span>
+            <strong style={{ fontSize: 14, color: '#fafafa' }}>Double Press 155°C</strong>
+            <span style={{ fontSize: 12, color: '#71717a', display: 'block', marginTop: 2 }}>
               Tinta elastis tahan kucek &amp; mesin
             </span>
           </div>
 
-          <div style={{ background: '#f9f7f2', padding: 14, borderRadius: 6 }}>
-            <span style={{ fontSize: 12, color: '#666', display: 'block' }}>Area Sablon</span>
-            <strong style={{ fontSize: 14 }}>Hingga Ukuran A3</strong>
-            <span style={{ fontSize: 12, color: '#888', display: 'block', marginTop: 2 }}>
+          <div style={{ background: '#18181f', padding: 14, borderRadius: 6, border: '1px solid #27272a' }}>
+            <span style={{ fontSize: 12, color: '#a1a1aa', display: 'block' }}>Area Sablon</span>
+            <strong style={{ fontSize: 14, color: '#fafafa' }}>Hingga Ukuran A3</strong>
+            <span style={{ fontSize: 12, color: '#71717a', display: 'block', marginTop: 2 }}>
               28 x 40 cm detail tajam 300 DPI
             </span>
           </div>
 
-          <div style={{ background: '#f9f7f2', padding: 14, borderRadius: 6 }}>
-            <span style={{ fontSize: 12, color: '#666', display: 'block' }}>Pengemasan &amp; QC</span>
-            <strong style={{ fontSize: 14 }}>Polymailer Polos</strong>
-            <span style={{ fontSize: 12, color: '#888', display: 'block', marginTop: 2 }}>
+          <div style={{ background: '#18181f', padding: 14, borderRadius: 6, border: '1px solid #27272a' }}>
+            <span style={{ fontSize: 12, color: '#a1a1aa', display: 'block' }}>Pengemasan &amp; QC</span>
+            <strong style={{ fontSize: 14, color: '#fafafa' }}>Polymailer Polos</strong>
+            <span style={{ fontSize: 12, color: '#71717a', display: 'block', marginTop: 2 }}>
               Termasuk plastik OPP bening &amp; label
             </span>
           </div>
@@ -246,19 +248,21 @@ export default function ResellerPage() {
       <section
         id="simulasi-cuan"
         style={{
-          background: '#f5f1e8',
-          border: '1px solid #d9d4c7',
+          background: '#121217',
+          border: '1px solid #27272a',
           borderRadius: 8,
           padding: 28,
           marginBottom: 36,
         }}
         aria-labelledby="simulasi-reseller-heading"
       >
-        <span className="retail-overline">KALKULATOR CUAN DROPSHIP</span>
-        <h2 id="simulasi-reseller-heading" style={{ fontSize: 22, margin: '8px 0 16px' }}>
+        <span className="retail-overline" style={{ color: '#38bdf8', fontFamily: 'monospace' }}>
+          [KALKULATOR CUAN DROPSHIP]
+        </span>
+        <h2 id="simulasi-reseller-heading" style={{ fontSize: 22, margin: '8px 0 16px', color: '#fafafa' }}>
           Simulasi Margin &amp; Keuntungan Tokomu
         </h2>
-        <p style={{ fontSize: 14, color: '#555', marginBottom: 20 }}>
+        <p style={{ fontSize: 14, color: '#a1a1aa', marginBottom: 20 }}>
           Atur harga jual retail tokomu dan target penjualan harian untuk menghitung laba bersih yang
           bisa kamu kantongi setiap bulannya.
         </p>
@@ -267,7 +271,7 @@ export default function ResellerPage() {
           <div>
             <label
               htmlFor="reseller-sales-slider"
-              style={{ display: 'block', fontSize: 14, fontWeight: 700, marginBottom: 8 }}
+              style={{ display: 'block', fontSize: 14, fontWeight: 700, marginBottom: 8, color: '#fafafa' }}
             >
               Target Terjual: <strong>{dailySales} pcs / hari</strong> ({monthlyPcs} pcs / bulan)
             </label>
@@ -278,14 +282,14 @@ export default function ResellerPage() {
               max={50}
               value={dailySales}
               onChange={(e) => setDailySales(parseInt(e.target.value, 10))}
-              style={{ width: '100%', accentColor: 'var(--retail-forest)' }}
+              style={{ width: '100%', accentColor: '#38bdf8' }}
             />
           </div>
 
           <div>
             <label
               htmlFor="reseller-price-select"
-              style={{ display: 'block', fontSize: 14, fontWeight: 700, marginBottom: 8 }}
+              style={{ display: 'block', fontSize: 14, fontWeight: 700, marginBottom: 8, color: '#fafafa' }}
             >
               Harga Jual ke Pembelimu: <strong>Rp {sellPrice.toLocaleString('id-ID')}</strong>
             </label>
@@ -298,9 +302,9 @@ export default function ResellerPage() {
                   style={{
                     padding: '8px 14px',
                     borderRadius: 6,
-                    border: '1px solid #dcd7ca',
-                    background: sellPrice === price ? 'var(--retail-forest)' : '#ffffff',
-                    color: sellPrice === price ? '#ffffff' : 'var(--retail-ink)',
+                    border: '1px solid #27272a',
+                    background: sellPrice === price ? '#38bdf8' : '#18181f',
+                    color: sellPrice === price ? '#000000' : '#fafafa',
                     fontWeight: 700,
                     fontSize: 13,
                     cursor: 'pointer',
@@ -318,40 +322,40 @@ export default function ResellerPage() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            background: '#ffffff',
+            background: '#18181f',
             padding: '20px 24px',
             borderRadius: 6,
-            border: '1px solid #e0dad0',
+            border: '1px solid #27272a',
             flexWrap: 'wrap',
             gap: 16,
           }}
         >
           <div>
-            <span style={{ fontSize: 12, color: '#636b64', display: 'block' }}>
+            <span style={{ fontSize: 12, color: '#a1a1aa', display: 'block' }}>
               Margin per Kaos (Rp {sellPrice.toLocaleString('id-ID')} - Rp {baseCost.toLocaleString('id-ID')}):{' '}
-              <strong style={{ color: 'var(--retail-accent)' }}>Rp {marginPerPcs.toLocaleString('id-ID')} / pcs</strong>
+              <strong style={{ color: '#38bdf8' }}>Rp {marginPerPcs.toLocaleString('id-ID')} / pcs</strong>
             </span>
             <div
               style={{
                 fontSize: 32,
                 fontWeight: 800,
-                color: 'var(--retail-forest)',
+                color: 'var(--ts-accent-lime, #c8f902)',
                 marginTop: 4,
               }}
             >
               Rp {monthlyProfit.toLocaleString('id-ID')}
-              <span style={{ fontSize: 15, fontWeight: 500, color: '#636b64' }}> / bulan laba bersih</span>
+              <span style={{ fontSize: 15, fontWeight: 500, color: '#a1a1aa' }}> / bulan laba bersih</span>
             </div>
           </div>
           {monthlyProfit >= 2500000 && (
             <div
               style={{
-                background: '#eaf5ec',
-                border: '1px solid #c2e2c8',
+                background: '#1c2718',
+                border: '1px solid #c8f902',
                 padding: '10px 16px',
                 borderRadius: 6,
                 fontSize: 13,
-                color: '#1e592f',
+                color: '#c8f902',
                 fontWeight: 700,
               }}
             >
@@ -365,8 +369,8 @@ export default function ResellerPage() {
       <section
         id="onboarding-form"
         style={{
-          background: '#ffffff',
-          border: '2px solid var(--retail-forest)',
+          background: '#121217',
+          border: '1px solid #38bdf8',
           borderRadius: 8,
           padding: 32,
           marginBottom: 36,
@@ -374,11 +378,13 @@ export default function ResellerPage() {
         aria-labelledby="onboarding-heading"
       >
         <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 28px' }}>
-          <span className="retail-badge-available">ONBOARDING RESELLER</span>
-          <h2 id="onboarding-heading" style={{ fontSize: 24, margin: '12px 0 8px' }}>
+          <span className="retail-badge-available" style={{ background: '#082f49', color: '#38bdf8', border: '1px solid #38bdf8' }}>
+            ONBOARDING RESELLER
+          </span>
+          <h2 id="onboarding-heading" style={{ fontSize: 24, margin: '12px 0 8px', color: '#fafafa' }}>
             Formulir Pendaftaran Reseller &amp; Dropship
           </h2>
-          <p style={{ fontSize: 14, color: '#555' }}>
+          <p style={{ fontSize: 14, color: '#a1a1aa' }}>
             Daftarkan tokomu untuk mendapatkan akses katalog foto mockup polos dan SOP input resi
             otomatis marketplace.
           </p>
@@ -394,9 +400,9 @@ export default function ResellerPage() {
           <div>
             <label
               htmlFor="store-name"
-              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6 }}
+              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#fafafa' }}
             >
-              Nama Toko / Brand Tokomu <span style={{ color: 'var(--retail-accent)' }}>*</span>
+              Nama Toko / Brand Tokomu <span style={{ color: '#38bdf8' }}>*</span>
             </label>
             <input
               id="store-name"
@@ -409,8 +415,10 @@ export default function ResellerPage() {
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 6,
-                border: '1px solid #ccc',
+                border: '1px solid #27272a',
                 fontSize: 14,
+                background: '#18181f',
+                color: '#fafafa',
               }}
             />
           </div>
@@ -418,9 +426,9 @@ export default function ResellerPage() {
           <div>
             <label
               htmlFor="owner-name"
-              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6 }}
+              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#fafafa' }}
             >
-              Nama Pemilik / Contact Person <span style={{ color: 'var(--retail-accent)' }}>*</span>
+              Nama Pemilik / Contact Person <span style={{ color: '#38bdf8' }}>*</span>
             </label>
             <input
               id="owner-name"
@@ -433,8 +441,10 @@ export default function ResellerPage() {
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 6,
-                border: '1px solid #ccc',
+                border: '1px solid #27272a',
                 fontSize: 14,
+                background: '#18181f',
+                color: '#fafafa',
               }}
             />
           </div>
@@ -442,7 +452,7 @@ export default function ResellerPage() {
           <div>
             <label
               htmlFor="channel-select"
-              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6 }}
+              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#fafafa' }}
             >
               Saluran Penjualan Utama
             </label>
@@ -454,9 +464,10 @@ export default function ResellerPage() {
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 6,
-                border: '1px solid #ccc',
+                border: '1px solid #27272a',
                 fontSize: 14,
-                background: '#fff',
+                background: '#18181f',
+                color: '#fafafa',
               }}
             >
               <option value="TikTok Shop & Shopee">TikTok Shop &amp; Shopee</option>
@@ -471,9 +482,9 @@ export default function ResellerPage() {
           <div>
             <label
               htmlFor="city-input"
-              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6 }}
+              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#fafafa' }}
             >
-              Kota / Domisili Toko <span style={{ color: 'var(--retail-accent)' }}>*</span>
+              Kota / Domisili Toko <span style={{ color: '#38bdf8' }}>*</span>
             </label>
             <input
               id="city-input"
@@ -486,8 +497,10 @@ export default function ResellerPage() {
                 width: '100%',
                 padding: '10px 14px',
                 borderRadius: 6,
-                border: '1px solid #ccc',
+                border: '1px solid #27272a',
                 fontSize: 14,
+                background: '#18181f',
+                color: '#fafafa',
               }}
             />
           </div>
@@ -505,6 +518,9 @@ export default function ResellerPage() {
                 justifyContent: 'center',
                 gap: 10,
                 fontSize: 15,
+                background: 'var(--ts-accent-lime, #c8f902)',
+                color: '#000000',
+                fontWeight: 800,
               }}
             >
               <span>📦 Hubungkan Toko via WhatsApp Reseller</span>
@@ -513,7 +529,7 @@ export default function ResellerPage() {
               style={{
                 display: 'block',
                 fontSize: 12,
-                color: '#777',
+                color: '#71717a',
                 textAlign: 'center',
                 marginTop: 8,
               }}
@@ -527,46 +543,48 @@ export default function ResellerPage() {
       {/* Reseller FAQ */}
       <section
         style={{
-          background: '#f9f7f2',
-          border: '1px solid #e0dad0',
+          background: '#121217',
+          border: '1px solid #27272a',
           borderRadius: 8,
           padding: 28,
         }}
         aria-labelledby="reseller-faq-heading"
       >
-        <span className="retail-overline">PERTANYAAN UMUM RESELLER</span>
-        <h2 id="reseller-faq-heading" style={{ fontSize: 20, margin: '8px 0 20px' }}>
+        <span className="retail-overline" style={{ color: '#38bdf8', fontFamily: 'monospace' }}>
+          [PERTANYAAN UMUM RESELLER]
+        </span>
+        <h2 id="reseller-faq-heading" style={{ fontSize: 20, margin: '8px 0 20px', color: '#fafafa' }}>
           Hal yang Perlu Diketahui Seputar Dropship
         </h2>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4 }}>
+          <div style={{ background: '#18181f', padding: 16, borderRadius: 6, border: '1px solid #27272a' }}>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4, color: '#fafafa' }}>
               Q: Apakah bisa menggunakan sistem resi otomatis (cashless) dari Shopee atau TikTok Shop?
             </strong>
-            <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
               Bisa. Cukup kirimkan file label resi pengiriman (PDF resi otomatis) yang didownload dari
               seller center ke admin fulfillment kami. Tim kami akan mencetak resi tersebut dan
               menempelkannya langsung di paket pesananmu.
             </p>
           </div>
 
-          <div>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4 }}>
+          <div style={{ background: '#18181f', padding: 16, borderRadius: 6, border: '1px solid #27272a' }}>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4, color: '#fafafa' }}>
               Q: Berapa lama waktu pengerjaan dari order masuk sampai diserahkan ke kurir?
             </strong>
-            <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
               Pesanan reguler diproses dalam 1x24 jam hingga 2x24 jam kerja (tergantung antrean DTF
               dan waktu masuk order). Pesanan sebelum jam 12.00 siang diprioritaskan cetak pada hari
               yang sama.
             </p>
           </div>
 
-          <div>
-            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4 }}>
+          <div style={{ background: '#18181f', padding: 16, borderRadius: 6, border: '1px solid #27272a' }}>
+            <strong style={{ display: 'block', fontSize: 15, marginBottom: 4, color: '#fafafa' }}>
               Q: Apakah saya diberikan bahan promosi atau foto produk?
             </strong>
-            <p style={{ fontSize: 13, color: '#555', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, color: '#a1a1aa', margin: 0, lineHeight: 1.5 }}>
               Ya. Setiap reseller terverifikasi mendapatkan link Google Drive berisi foto flatlay,
               on-model mockup tanpa watermark, serta template video konten 9:16 siap posting di
               TikTok dan Instagram Reels.
