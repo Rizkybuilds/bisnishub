@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ConceptGallery, HeroGarments } from '../components/RetailShowcase';
+import { NotionInteractiveHub } from '../components/NotionInteractiveHub';
 
 export default function Home() {
   return (
@@ -78,6 +79,9 @@ export default function Home() {
         </div>
         <ConceptGallery compact />
       </section>
+
+      {/* Modern Notion Interactive Experience: Persona Switcher, Size Recommender, FAQ */}
+      <NotionInteractiveHub />
 
       {/* 3 Core Ecosystem Portals: Shop, Creator, Reseller (Notion Card Style) */}
       <section

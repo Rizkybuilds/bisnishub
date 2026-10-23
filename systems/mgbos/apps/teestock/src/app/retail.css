@@ -2904,29 +2904,557 @@ body:has(.retail-shop) .site-main {
 }
 
 .retail-banner-promo-badge {
-  background: var(--ts-accent-lime, #c8f902);
-  color: #000000;
+  background: #191919;
+  color: #ffffff;
   font-size: 11px;
-  font-weight: 800;
-  padding: 3px 8px;
+  font-weight: 700;
+  padding: 4px 10px;
   border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .retail-banner-promo-text {
-  font-size: 13px;
-  color: #fafafa;
+  font-size: 13.5px;
+  color: #374151;
   flex: 1;
 }
 
 .retail-banner-promo-code {
   font-family: monospace;
   font-weight: 700;
-  background: #1c1f10;
-  color: #c8f902;
+  background: #f3f4f6;
+  color: #191919;
   padding: 2px 6px;
   border-radius: 4px;
-  border: 1px dashed #c8f902;
+  border: 1px dashed #9ca3af;
 }
+
+/* ==========================================================================
+   NOTION-INSPIRED INTERACTIVE COMPONENTS
+   ========================================================================== */
+
+.notion-interactive-wrap {
+  margin-block: 24px 48px;
+}
+
+/* Segmented Bar (Persona Switcher) */
+.notion-persona-section {
+  margin-bottom: 56px;
+}
+
+.notion-segmented-bar {
+  display: flex;
+  gap: 8px;
+  background: #f3f4f6;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.notion-tab-pill {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.notion-tab-pill span:first-child {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.notion-tab-pill strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4b5563;
+}
+
+.notion-tab-sub {
+  font-size: 11.5px;
+  color: #9ca3af;
+}
+
+.notion-tab-pill.active {
+  background: #ffffff;
+  color: #191919;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.notion-tab-pill.active strong {
+  color: #191919;
+}
+
+.notion-tab-content {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.notion-tab-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 36px;
+  align-items: center;
+}
+
+@media (max-width: 860px) {
+  .notion-tab-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.notion-tab-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.notion-card-tag {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  margin-bottom: 12px;
+}
+
+.notion-tab-card h3 {
+  font-size: clamp(22px, 2.5vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: #191919;
+  margin: 0 0 12px;
+}
+
+.notion-tab-card p {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0 0 18px;
+}
+
+/* Notion Callout Box */
+.notion-callout-box {
+  display: flex;
+  gap: 14px;
+  background: #f7f6f3;
+  border: 1px solid #e9e9e7;
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-block: 16px;
+}
+
+.notion-callout-icon {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.notion-callout-body strong {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #191919;
+  margin-bottom: 4px;
+}
+
+.notion-callout-body p {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #4b5563;
+  margin: 0;
+}
+
+.notion-code {
+  font-family: monospace;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  color: #191919;
+}
+
+.notion-property-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-block: 16px 8px;
+}
+
+.notion-property-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.notion-property-key {
+  min-width: 90px;
+  color: #6b7280;
+  font-weight: 550;
+}
+
+.notion-property-val {
+  color: #374151;
+}
+
+/* Live Preview Tee Box */
+.notion-tee-preview-box {
+  background: #f7f6f3;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.notion-tee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.notion-swatch-pills {
+  display: flex;
+  gap: 6px;
+}
+
+.notion-swatch-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.notion-swatch-btn.active {
+  background: #191919;
+  color: #ffffff;
+  border-color: #191919;
+}
+
+.notion-tee-art-stage {
+  aspect-ratio: 4/4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Calculator Card in Notion Tabs */
+.notion-calc-card {
+  background: #fafaf9;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.notion-calc-badge {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #2563eb;
+  margin-bottom: 8px;
+}
+
+.notion-calc-card h4 {
+  font-size: 17px;
+  font-weight: 750;
+  color: #191919;
+  margin: 0 0 16px;
+}
+
+.notion-slider-row {
+  margin-bottom: 20px;
+}
+
+.notion-range-slider {
+  width: 100%;
+  accent-color: #191919;
+  cursor: pointer;
+}
+
+.notion-result-box {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px 20px;
+  text-align: center;
+}
+
+.notion-result-number {
+  font-size: 28px;
+  font-weight: 850;
+  color: #191919;
+  letter-spacing: -0.03em;
+}
+
+.notion-result-number small {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-left: 4px;
+}
+
+.notion-price-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.notion-price-btn.active {
+  background: #191919;
+  color: #ffffff;
+  border-color: #191919;
+}
+
+/* Size Recommender Section */
+.notion-size-section {
+  margin-bottom: 56px;
+  background: #f7f6f3;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 36px 32px;
+}
+
+.notion-size-widget {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 32px;
+  margin-top: 24px;
+  align-items: center;
+}
+
+@media (max-width: 860px) {
+  .notion-size-widget {
+    grid-template-columns: 1fr;
+  }
+}
+
+.notion-size-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.notion-input-field label {
+  display: block;
+  font-size: 13.5px;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.notion-range-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.notion-fit-btn {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.notion-fit-btn.active {
+  background: #191919;
+  color: #ffffff;
+  border-color: #191919;
+}
+
+.notion-size-result-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.notion-size-pill {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 32px;
+  font-weight: 900;
+  color: #191919;
+  letter-spacing: -0.03em;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 6px 24px;
+}
+
+.notion-size-metrics-box {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  margin-bottom: 16px;
+}
+
+.notion-size-metric-col span {
+  display: block;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.notion-size-metric-col strong {
+  font-size: 15px;
+  color: #191919;
+}
+
+.notion-size-table-toggle {
+  background: transparent;
+  border: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #2383e2;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.notion-size-table-wrap {
+  margin-top: 24px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.notion-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.notion-table th {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-weight: 600;
+  background: #fafaf9;
+}
+
+.notion-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #374151;
+}
+
+.notion-table tr.highlight-row {
+  background: #eff6ff;
+  font-weight: 600;
+  color: #1e40af;
+}
+
+/* FAQ Accordion Section */
+.notion-faq-section {
+  margin-bottom: 56px;
+}
+
+.notion-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.notion-accordion-item {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.notion-accordion-item:hover {
+  border-color: #cbd5e1;
+}
+
+.notion-accordion-item.open {
+  border-color: #94a3b8;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.notion-accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.notion-accordion-q {
+  font-size: 15px;
+  font-weight: 700;
+  color: #191919;
+}
+
+.notion-accordion-icon {
+  font-size: 18px;
+  font-weight: 600;
+  color: #6b7280;
+  line-height: 1;
+}
+
+.notion-accordion-body {
+  padding: 0 20px 18px;
+}
+
+.notion-accordion-body p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+}
+
 
