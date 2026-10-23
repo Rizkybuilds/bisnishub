@@ -1,0 +1,32 @@
+{
+  "work_package_id": "BWP-20261023-02",
+  "feasibility_ref": "TFC-20261023-01",
+  "target_workspace": "systems/mgbos",
+  "builder_runtime": "antigravity",
+  "active_canonical_role": "engineer",
+  "base_revision_sha": "654112e22c9769da8a5b281f6bbbe8ec0d257dc6",
+  "isolated_branch": "feat/teestock-storefront-active-commerce",
+  "effective_risk_floor": "R2",
+  "bounded_file_scope": {
+    "allowed_paths": [
+      "systems/mgbos/apps/mgbos/src/app/(app)/dashboard/page.tsx",
+      "systems/mgbos/apps/mgbos/src/app/globals.css"
+    ],
+    "forbidden_paths": [
+      "systems/mgbos/supabase/migrations/202609*.sql",
+      "systems/mgbos/supabase/migrations/2026100*.sql",
+      "systems/mgbos/apps/mgbos/src/lib/session.server.ts",
+      "archive/"
+    ]
+  },
+  "required_checks": [
+    "Schema validation for BWP-20261023-02",
+    "Typecheck across systems/mgbos packages and apps",
+    "Multi-role navigation shortcuts preservation"
+  ],
+  "stop_conditions": [
+    "BREAKING_SESSION_AUTHENTICATION",
+    "REMOVING_SIDEBAR_LINKS_CHECKED_BY_QA",
+    "EXPOSING_SERVER_SECRETS_ON_CLIENT"
+  ]
+}
