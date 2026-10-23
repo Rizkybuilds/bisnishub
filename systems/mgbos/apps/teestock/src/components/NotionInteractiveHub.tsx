@@ -8,10 +8,12 @@ export function NotionInteractiveHub() {
   const [activePersona, setActivePersona] = useState<'retail' | 'creator' | 'reseller'>('retail');
   const [selectedTeeTone, setSelectedTeeTone] = useState<'ink' | 'chalk'>('ink');
 
-  // Creator Royalty Calculator State
+  // Dynamic Creator Markup State (Base Price + Creator Margin = Retail Price)
   const [creatorPcs, setCreatorPcs] = useState<number>(50);
-  const royaltyPerPcs = 24000;
-  const totalRoyalty = creatorPcs * royaltyPerPcs;
+  const [creatorMarkup, setCreatorMarkup] = useState<number>(30000);
+  const teestockBasePrice = 79000;
+  const creatorRetailPrice = teestockBasePrice + creatorMarkup;
+  const totalRoyalty = creatorPcs * creatorMarkup;
 
   // Reseller Cuan Calculator State
   const [resellerPcsPerDay, setResellerPcsPerDay] = useState<number>(3);
@@ -240,9 +242,9 @@ export function NotionInteractiveHub() {
                 <div className="notion-callout-box" style={{ background: '#eff6ff', borderColor: '#dbeafe' }}>
                   <span className="notion-callout-icon">🎨</span>
                   <div className="notion-callout-body">
-                    <strong>Komitmen Kreator:</strong>
+                    <strong>Bebas Tentukan Margin Cuan:</strong>
                     <p>
-                      Hak cipta 100% tetap milikmu. Flat royalti <strong>Rp 24.000 per pcs</strong> langsung ditransfer ke rekeningmu setiap penjualan, tanpa potongan tersembunyi.
+                      Hak cipta 100% milikmu. TeeStock menetapkan Base Price Rp 79.000 (all-in HPP Combed 24s, sablon DTF, operasional &amp; buffer promo). Kamu bebas menentukan margin royalti per pcs di atasnya.
                     </p>
                   </div>
                 </div>
@@ -251,7 +253,7 @@ export function NotionInteractiveHub() {
                   <Link href="/creator" className="retail-action-primary">
                     Buka Portal Kreator & Form Karya <span aria-hidden="true">↗</span>
                   </Link>
-                  <Link href="/creator#simulasi-royalti" className="retail-action-quiet">
+                  <Link href="/creator#simulasi-cuan" className="retail-action-quiet">
                     Pelajari Syarat File 300 DPI <span aria-hidden="true">→</span>
                   </Link>
                 </div>
@@ -259,8 +261,30 @@ export function NotionInteractiveHub() {
 
               {/* Live Royalty Simulator */}
               <div className="notion-calc-card">
-                <span className="notion-calc-badge">SIMULATOR ROYALTI KREATOR</span>
+                <span className="notion-calc-badge">SIMULATOR ROYALTI DINAMIS</span>
                 <h4>Estimasi Penghasilan Bulanan</h4>
+
+                <div style={{ marginBottom: 14 }}>
+                  <label style={{ display: 'block', fontSize: 13, color: '#4b5563', marginBottom: 6 }}>
+                    Pilih target margin cuan per kaos:
+                  </label>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    {[20000, 30000, 50000].map((markup) => (
+                      <button
+                        key={markup}
+                        type="button"
+                        onClick={() => setCreatorMarkup(markup)}
+                        className={'notion-price-btn' + (creatorMarkup === markup ? ' active' : '')}
+                      >
+                        +Rp {(markup / 1000).toFixed(0)}k
+                      </button>
+                    ))}
+                  </div>
+                  <span style={{ fontSize: 11, color: '#2563eb', marginTop: 4, display: 'block' }}>
+                    Harga Jual Toko: Rp {creatorRetailPrice.toLocaleString('id-ID')} (Base Rp 79k + Cuan Rp {(creatorMarkup/1000).toFixed(0)}k)
+                  </span>
+                </div>
+
                 <div className="notion-slider-row">
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                     <span style={{ fontSize: 13, color: '#4b5563' }}>Estimasi penjualan per bulan:</span>
@@ -292,7 +316,7 @@ export function NotionInteractiveHub() {
                     <small>/bulan</small>
                   </div>
                   <span style={{ fontSize: 11.5, color: '#059669', fontWeight: 600, display: 'block', marginTop: 6 }}>
-                    ✓ Rp 24.000 × {creatorPcs} pcs terjual
+                    ✓ Rp {creatorMarkup.toLocaleString('id-ID')} × {creatorPcs} pcs terjual
                   </span>
                 </div>
               </div>

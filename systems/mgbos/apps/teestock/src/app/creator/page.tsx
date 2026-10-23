@@ -12,9 +12,11 @@ export default function CreatorPage() {
   const [fileLink, setFileLink] = useState('');
   const [artworkStory, setArtworkStory] = useState('');
 
+  const [creatorMargin, setCreatorMargin] = useState<number>(30000);
+  const basePrice = 79000;
+  const retailPrice = basePrice + creatorMargin;
   const monthlyPcs = dailySales * 30;
-  const royaltyPerPcs = 24000;
-  const monthlyRoyalty = monthlyPcs * royaltyPerPcs;
+  const monthlyRoyalty = monthlyPcs * creatorMargin;
 
   const waNumber =
     (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_WHATSAPP_NUMBER) ||
@@ -22,14 +24,17 @@ export default function CreatorPage() {
   const cleanNumber = waNumber.replace(/[^0-9]/g, '');
 
   const waSubmissionMessage =
-    `Halo Tim Pre-Press TeeStock, saya ingin mengajukan desain untuk program Creator Merch (Cotton Bureau Model):\n\n` +
+    `Halo Tim Pre-Press TeeStock, saya ingin mengajukan desain untuk program Creator Merch (Dynamic Markup Model):\n\n` +
     `• Nama Kreator: ${creatorName.trim() || '-'}\n` +
     `• Media Sosial/Portofolio: ${socialHandle.trim() || '-'}\n` +
     `• Judul Karya: ${artworkTitle.trim() || '-'}\n` +
     `• Rekomendasi Kaos: ${baseColor}\n` +
+    `• Base Price TeeStock: Rp ${basePrice.toLocaleString('id-ID')} (All-in HPP + Platform + Bumper)\n` +
+    `• Margin Cuan Kreator: Rp ${creatorMargin.toLocaleString('id-ID')} / pcs\n` +
+    `• Target Harga Jual Publik: Rp ${retailPrice.toLocaleString('id-ID')} / pcs\n` +
     `• Tautan File Karya (300 DPI): ${fileLink.trim() || '-'}\n` +
     `• Cerita / Konsep: ${artworkStory.trim() || '-'}\n\n` +
-    `Estimasi target audiens/penjualan: ${dailySales} pcs/hari (~Rp ${monthlyRoyalty.toLocaleString('id-ID')}/bulan royalti).\n` +
+    `Estimasi target audiens: ${dailySales} pcs/hari (~Rp ${monthlyRoyalty.toLocaleString('id-ID')}/bulan royalti bersih kreator).\n` +
     `Mohon dibantu review kurasi dan digital mockup-nya. Terima kasih!`;
 
   const waSubmissionUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(waSubmissionMessage)}`;
@@ -116,14 +121,13 @@ export default function CreatorPage() {
           }}
         >
           <span style={{ display: 'block', fontFamily: 'monospace', fontSize: 11, color: 'var(--ts-accent-lime, #c8f902)', marginBottom: 8, letterSpacing: '0.12em' }}>
-            02 // FLAT NET ROYALTY
+            02 // FREEDOM PRICING
           </span>
           <strong style={{ display: 'block', fontSize: 16, marginBottom: 8, color: '#191919' }}>
-            Royalti Bersih Rp 24.000 / Pcs
+            Bebas Tentukan Margin Cuan Sendiri
           </strong>
           <p style={{ fontSize: 13, color: '#4b5563', margin: 0, lineHeight: 1.6 }}>
-            Bukan komisi persentase kecil yang membingungkan. Setiap satu potong kaos karyamu yang
-            terjual, kamu mendapatkan flat royalti bersih Rp 24.000 tanpa potongan biaya cetak lagi.
+            Kami menetapkan Base Price Rp 79.000 (sudah all-in HPP kain, sablon DTF, operasional, &amp; buffer promo). Kamu bebas menentukan berapa margin keuntungan bersih per pcs yang ingin kamu kantongi di atas harga dasar.
           </p>
         </div>
 
@@ -252,38 +256,104 @@ export default function CreatorPage() {
         aria-labelledby="simulasi-creator-heading"
       >
         <span className="retail-overline" style={{ color: 'var(--ts-accent-lime, #c8f902)', fontFamily: 'monospace' }}>
-          [SIMULASI ESTIMASI ROYALTI]
+          [SIMULASI HARGA DINAMIS &amp; ESTIMASI CUAN]
         </span>
         <h2 id="simulasi-creator-heading" style={{ fontSize: 22, margin: '8px 0 16px', color: '#191919' }}>
-          Berapa Potensi Royalti dari Komunitasmu?
+          Tentukan Cuan per Kaos &amp; Hitung Potensi Royaltimu
         </h2>
         <p style={{ fontSize: 14, color: '#4b5563', marginBottom: 20 }}>
-          Geser slider di bawah ini untuk melihat estimasi royalti bersih bulanan dengan asumsi
-          royalti flat <strong>Rp 24.000</strong> per potong kaos yang terjual.
+          Base Price TeeStock adalah <strong>Rp 79.000</strong> (sudah all-in bahan baku Combed 24s, sablon DTF, press, operasional, &amp; buffer promo). Kamu bebas menentukan berapa margin keuntungan bersih yang ingin kamu dapatkan di atasnya.
         </p>
 
-        <div style={{ marginBottom: 20 }}>
-          <label
-            htmlFor="creator-sales-slider"
-            style={{
-              display: 'block',
-              fontSize: 14,
-              fontWeight: 700,
-              marginBottom: 8,
-              color: '#191919',
-            }}
-          >
-            Estimasi Terjual: <strong>{dailySales} pcs / hari</strong> ({monthlyPcs} pcs / bulan)
-          </label>
-          <input
-            id="creator-sales-slider"
-            type="range"
-            min={1}
-            max={50}
-            value={dailySales}
-            onChange={(e) => setDailySales(parseInt(e.target.value, 10))}
-            style={{ width: '100%', accentColor: 'var(--ts-accent-lime, #c8f902)' }}
-          />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 20 }}>
+          <div>
+            <label
+              htmlFor="creator-margin-slider"
+              style={{
+                display: 'block',
+                fontSize: 14,
+                fontWeight: 700,
+                marginBottom: 8,
+                color: '#191919',
+              }}
+            >
+              Cuan / Margin yang Kamu Mau: <strong style={{ color: '#15803d' }}>Rp {creatorMargin.toLocaleString('id-ID')} / pcs</strong>
+            </label>
+            <input
+              id="creator-margin-slider"
+              type="range"
+              min={15000}
+              max={80000}
+              step={5000}
+              value={creatorMargin}
+              onChange={(e) => setCreatorMargin(parseInt(e.target.value, 10))}
+              style={{ width: '100%', accentColor: '#16a34a' }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#6b7280', marginTop: 4 }}>
+              <span>Rp 15k (Volume)</span>
+              <span>Rp 30k (Standar)</span>
+              <span>Rp 50k (Indie)</span>
+              <span>Rp 80k (Hype)</span>
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="creator-sales-slider"
+              style={{
+                display: 'block',
+                fontSize: 14,
+                fontWeight: 700,
+                marginBottom: 8,
+                color: '#191919',
+              }}
+            >
+              Estimasi Volume Terjual: <strong>{dailySales} pcs / hari</strong> ({monthlyPcs} pcs / bulan)
+            </label>
+            <input
+              id="creator-sales-slider"
+              type="range"
+              min={1}
+              max={50}
+              value={dailySales}
+              onChange={(e) => setDailySales(parseInt(e.target.value, 10))}
+              style={{ width: '100%', accentColor: 'var(--ts-accent-lime, #c8f902)' }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#6b7280', marginTop: 4 }}>
+              <span>1 pcs (Niche)</span>
+              <span>10 pcs</span>
+              <span>25 pcs</span>
+              <span>50 pcs</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Live Dynamic Pricing Matrix */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: 14,
+            marginBottom: 20,
+          }}
+        >
+          <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', padding: '14px 18px', borderRadius: 6 }}>
+            <span style={{ fontSize: 11, color: '#6b7280', display: 'block' }}>Base Price TeeStock (All-in):</span>
+            <strong style={{ fontSize: 18, color: '#191919', marginTop: 2, display: 'block' }}>Rp 79.000</strong>
+            <span style={{ fontSize: 10.5, color: '#9ca3af' }}>Kain + DTF + Press + Promo Buffer</span>
+          </div>
+
+          <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '14px 18px', borderRadius: 6 }}>
+            <span style={{ fontSize: 11, color: '#166534', display: 'block' }}>Margin Bersih Kreator (+):</span>
+            <strong style={{ fontSize: 18, color: '#15803d', marginTop: 2, display: 'block' }}>Rp {creatorMargin.toLocaleString('id-ID')}</strong>
+            <span style={{ fontSize: 10.5, color: '#166534' }}>Cuan bersih per helai</span>
+          </div>
+
+          <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', padding: '14px 18px', borderRadius: 6 }}>
+            <span style={{ fontSize: 11, color: '#1e40af', display: 'block' }}>Harga Tayang di Toko (=):</span>
+            <strong style={{ fontSize: 18, color: '#2563eb', marginTop: 2, display: 'block' }}>Rp {retailPrice.toLocaleString('id-ID')}</strong>
+            <span style={{ fontSize: 10.5, color: '#1e40af' }}>Harga beli customer di katalog</span>
+          </div>
         </div>
 
         <div
@@ -301,33 +371,36 @@ export default function CreatorPage() {
         >
           <div>
             <span style={{ fontSize: 12, color: '#4b5563', display: 'block' }}>
-              Estimasi Royalti Bersih Kreator (Rp 24.000 x {monthlyPcs} pcs):
+              Estimasi Total Royalti Masuk ke Rekeningmu per Bulan:
             </span>
             <div
               style={{
                 fontSize: 32,
                 fontWeight: 800,
-                color: 'var(--ts-accent-lime, #c8f902)',
+                color: '#15803d',
                 marginTop: 4,
               }}
             >
               Rp {monthlyRoyalty.toLocaleString('id-ID')}
               <span style={{ fontSize: 15, fontWeight: 500, color: '#4b5563' }}> / bulan</span>
             </div>
+            <span style={{ fontSize: 11.5, color: '#6b7280', marginTop: 4, display: 'block' }}>
+              ({monthlyPcs} pcs kaos terjual × Rp {creatorMargin.toLocaleString('id-ID')} cuan per potong)
+            </span>
           </div>
           {monthlyRoyalty >= 2500000 && (
             <div
               style={{
-                background: '#1c2718',
-                border: '1px solid #c8f902',
+                background: '#f0fdf4',
+                border: '1px solid #86efac',
                 padding: '10px 16px',
                 borderRadius: 6,
                 fontSize: 13,
-                color: '#c8f902',
+                color: '#166534',
                 fontWeight: 700,
               }}
             >
-              [MILESTONE] Royalti ini telah mencapai target transisi kemandirian (Rp 2.500.000/bln)!
+              🎉 Royalti ini telah melampaui target transisi kemandirian (Rp 2.500.000/bln)!
             </div>
           )}
         </div>
@@ -575,6 +648,44 @@ export default function CreatorPage() {
                 color: '#191919',
               }}
             />
+          </div>
+
+          <div>
+            <label
+              htmlFor="form-creator-margin"
+              style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 6, color: '#191919' }}
+            >
+              Keuntungan Royalti yang Kamu Inginkan per Kaos (Rp) <span style={{ color: 'var(--ts-accent-lime, #c8f902)' }}>*</span>
+            </label>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              <input
+                id="form-creator-margin"
+                type="number"
+                min={15000}
+                max={150000}
+                step={5000}
+                required
+                value={creatorMargin}
+                onChange={(e) => setCreatorMargin(Number(e.target.value) || 0)}
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: 6,
+                  border: '1px solid #e5e7eb',
+                  fontSize: 14,
+                  background: '#f9fafb',
+                  color: '#191919',
+                  fontFamily: 'monospace',
+                  fontWeight: 700,
+                }}
+              />
+              <div style={{ whiteSpace: 'nowrap', fontSize: 13, color: '#2563eb', fontWeight: 600 }}>
+                Harga Tayang: <strong>Rp {retailPrice.toLocaleString('id-ID')}</strong>
+              </div>
+            </div>
+            <span style={{ fontSize: 11, color: '#6b7280', marginTop: 4, display: 'block' }}>
+              * Base Price TeeStock: Rp 79.000 + Margin Kamu: Rp {creatorMargin.toLocaleString('id-ID')} = Retail Price: Rp {retailPrice.toLocaleString('id-ID')}
+            </span>
           </div>
 
           <div>
