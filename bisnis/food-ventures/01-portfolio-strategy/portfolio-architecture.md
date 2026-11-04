@@ -93,7 +93,7 @@ flowchart LR
 Sinergi yang diciptakan oleh model ini mencakup:
 
 - **Pengadaan Bersama (*Consolidated Sourcing*):** Bahan baku netral (minyak goreng berkualitas, tepung dasar, gula, es batu, kemasan luar) dapat dibeli dalam jumlah lebih besar dengan harga grosir lebih murah.
-- **Pemanfaatan Tenaga Kerja Efisien:** Operator dapur dapat mempersiapkan bahan setengah jadi (*prep work*) pada pagi hari, melayani pesanan Little Treat pada siang-sore hari, dan beralih ke pesanan malam jika kapasitas memungkinkan.
+- **Pemanfaatan Tenaga Kerja Efisien:** Operator dapur dapat mempersiapkan bahan setengah jadi (*prep work*) sebelum jam buka, kemudian melayani pesanan LITTLE TREAT sesuai jadwal operasional terencana yang telah disahkan (Senin–Jumat: 17:00–24:00, Sabtu–Minggu: 14:00–24:00). Brand masa depan (AFTER HOURS dan BITE ME) tidak memiliki jam operasional yang disahkan dan baru dievaluasi pada fase lanjutan jika kapasitas dapur memungkinkan.
 - **Logistik Pengiriman Terpadu:** Kurir yang menjemput pesanan datang ke satu titik fisik yang jelas dengan standar penyerahan paket yang seragam.
 
 ---

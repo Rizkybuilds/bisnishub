@@ -76,7 +76,10 @@ LITTLE TREAT bukan sekadar gerai gorengan atau dimsum biasa. Brand ini hadir seb
 - **Market Scope:** *Broad consumer market* (pasar konsumen luas, tidak dibatasi secara sempit pada satu kelompok usia atau demografi tertentu).
 - **Segmentation Approach:** *Need-based & occasion-based* (segmentasi berbasis alasan dan momen kebutuhan membeli).
 
-| Momen Kebutuhan | Motivasi Konsumen | Peran Solusi LITTLE TREAT |
+> [!NOTE]
+> Enam momen kebutuhan konsumen di bawah ini berstatus **hipotesis segmentasi awal yang wajib divalidasi** (*initial segmentation hypotheses requiring validation*), bukan segmen pasar yang sudah terbukti atau permintaan yang sudah terkonfirmasi (*not proven market segments or confirmed demand*):
+
+| Momen Kebutuhan (Hipotesis) | Motivasi Konsumen (Asumsi Awal) | Hipotesis Peran Solusi LITTLE TREAT |
 | :--- | :--- | :--- |
 | **Everyday Snacking** | Ingin ngemil santai di sela aktivitas harian | Porsi camilan personal yang praktis dan terjangkau |
 | **Little Reward** | Menghadiahi diri setelah menyelesaikan pekerjaan/studi | Signature treat dengan sentuhan rasa yang memanjakan |
@@ -107,21 +110,21 @@ Seluruh varian produk berikut berstatus hipotesis yang masih menunggu:
 2. Customer demand validation (bukti minat dan penerimaan nyata konsumen).
 3. Recipe and quality testing (standarisasi formula dan konsistensi hasil goreng/kukus).
 4. Delivery suitability (ketahanan kerenyahan dan mutu produk selama 30–45 menit pengiriman kurir).
-5. HPP and margin validation (kalkulasi biaya bahan baku, kemasan, komisi platform, dan target margin kotor sehat).
+5. Product economics validation (validasi biaya bahan baku dan kemasan, komisi platform dan biaya terkait, subsidi promosi yang ditanggung merchant, serta margin kontribusi yang sehat).
 ```
 
 | Kategori (Approved) | Kandidat Produk / Hipotesis Eksplorasi (Status: HYPOTHESIS) | Target Pengujian Mutu |
 | :--- | :--- | :--- |
 | **Pisangan** | • Pisangan cokelat lumer<br>• Pisangan cokelat-keju klasik<br>• Pisangan aren caramel butter dipping | Ketahanan kerenyahan adonan tepung (*anti-soggy batter*) di dalam boks berventilasi; rasa manis seimbang (tidak bikin eneg). |
 | **Dimsum** | • Dimsum siomay ayam-udang kukus<br>• Pangsit goreng renyah dengan saus cocolan pedas gurih | Kestabilan kelembutan tekstur daging saat dingin; kerenyahan kulit pangsit; ketahanan saus anti-tumpah. |
-| **Drinks** | • Es kopi susu aren<br>• Minuman teh rasa buah (artisan iced tea)<br>• Es cokelat klasik | Kemudahan pengemasan cup seal anti-bocor; konsistensi rasa saat es mencair di perjalanan; margin kotor > 70%. |
-| **Savory Tambahan** | • Cireng renyah bumbu rujak<br>• Tahu walik gurih | *Kandidat pelengkap sekunder* yang masih dievaluasi beban operasional penggorengannya di dapur. |
+| **Drinks** | • Es kopi susu aren<br>• Minuman teh rasa buah (artisan iced tea)<br>• Es cokelat klasik | Kemudahan pengemasan cup seal anti-bocor; konsistensi rasa saat es mencair di perjalanan; validasi margin kontribusi setelah biaya bahan, kemasan, dan komisi platform. |
+| **Kandidat Eksplorasi (Bukan Kategori Disahkan)** | • Cireng renyah bumbu rujak<br>• Tahu walik gurih | *Kandidat eksplorasi awal murni*. Eksplorasi item ini **tidak menciptakan kategori disahkan keempat** dan **bukan merupakan komitmen peluncuran**; hanya dievaluasi beban operasional penggorengannya di dapur. |
 
 ---
 
 ## 3. Implikasi Komersial & Operasional Awal
 
-- **Struktur Harga:** Wajib memiliki produk *entry-level* yang mudah dibeli (accessible) untuk membangun frekuensi dan repeat order, dipadukan dengan pilihan signature/combo dengan margin lebih tebal.
+- **Struktur Harga & Validasi Ekonomi Produk:** Wajib memiliki produk *entry-level* yang mudah dibeli (*accessible*) untuk membangun frekuensi dan repeat order, dipadukan dengan pilihan signature/combo. Kelayakan ekonomi produk wajib divalidasi melalui kalkulasi biaya bahan baku (*ingredient costs*), biaya kemasan (*packaging costs*), komisi platform dan biaya terkait (*platform commissions and applicable fees*), subsidi promosi yang ditanggung merchant (*merchant-funded promotions*), serta margin kontribusi (*contribution margin*) yang sehat.
 - **Menu Ramping (*Lean SKU*):** Fokus pada sedikit produk yang konsisten dan unggul daripada banyak variasi yang membebani persiapan dapur.
 - **Karakter Visual:** Modern, hangat, bersahabat, namun tidak mengesankan eksklusif atau mahal.
 - **Ketahanan Delivery:** Seluruh formulasi produk dan wadah kemasan dirancang untuk mempertahankan tekstur dan suhu makanan selama perjalanan pengiriman.
