@@ -60,11 +60,14 @@ Dengan mengoperasikan satu dapur produksi yang efisien, utilitas tetap (listrik,
 
 Portofolio dirancang agar brand tidak saling mengkanibalisasi, melainkan mengisi waktu permintaan yang berbeda:
 
-| Brand | Status | Target Occasion | Waktu Utama (*Daypart*) | Karakter Menu |
+| Brand | Status | Target Occasion | Waktu Operasional Rencana | Karakter Menu |
 | :--- | :--- | :--- | :--- | :--- |
-| **LITTLE TREAT** | **Initial (Phase 1)** | Afternoon break, teman kerja/nongkrong, camilan keluarga | 11:00 – 19:00 | Hangat, manis, gurih renyah, minuman pendamping |
-| **AFTER HOURS** | **Konsep (Phase 2+)** | Late craving, lembur malam, lapar larut | 19:00 – 01:00 | Urban comfort, gurih pekat, porsi mengenyangkan |
-| **BITE ME** | **Konsep (Phase 2+)** | Impulse snacking, tren media sosial, kumpul teman | Fleksibel / Akhir Pekan | Berani (*bold*), saus variatif, visual kontras |
+| **LITTLE TREAT** | **Initial (Phase 1)** | Camilan sore hingga malam, teman kerja/santai, kudapan keluarga | **Senin–Jumat:** 17:00 – 24:00<br>**Sabtu–Minggu:** 14:00 – 24:00 | Hangat, manis, gurih renyah, minuman pendamping |
+| **AFTER HOURS** | **Konsep (Phase 2+)** | Late craving, lembur malam, lapar larut | *PROPOSED / Belum Dikonfirmasi* (Jadwal malam hari belum disahkan) | Urban comfort, gurih pekat, porsi mengenyangkan |
+| **BITE ME** | **Konsep (Phase 2+)** | Impulse snacking, tren media sosial, kumpul teman | *PROPOSED / Belum Dikonfirmasi* (Jadwal belum disahkan) | Berani (*bold*), saus variatif, visual kontras |
+
+> [!NOTE]
+> Jadwal operasional terencana yang disahkan Owner saat ini hanya berlaku untuk **LITTLE TREAT**. Jam operasional untuk brand masa depan (**AFTER HOURS** dan **BITE ME**) berstatus usulan murni (*PROPOSED / UNCONFIRMED*) dan belum disahkan sebagai keputusan final.
 
 ---
 
