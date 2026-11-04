@@ -1,18 +1,22 @@
 # HUMAN CONDITION — EDITORIAL ARCHITECTURE
+
+> [!NOTE]
+> **EDITORIAL IDENTITY & PROGRAMMING STANDARD**
+> Dokumen ini adalah standar otoritas untuk identitas editorial, 4 pilar intelektual, program konten inti, kebijakan kanal, dan sinergi media-apparel Human Condition. Lima gerbang evaluasi mutu pada Seksi 5 berfungsi sebagai parameter evaluasi mutu konten di dalam siklus hidup kanonikal G0–G8 [HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md](HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md), bukan sebagai siklus hidup proyek yang terpisah.
 ## Strategic Standard: Intellectual Pillars, Core Programs, Research Policy & Apparel Synergy
 
-**Document ID:** `TSO-HC-EDA-001`  
-**Version:** 1.0 — Stage 02 Baseline (Locked)  
-**Status:** Approved Editorial Standard  
-**System:** Human Condition Brand Incubator & TeeStock Original  
-**Parent Foundation:** [`HUMAN_CONDITION_BRAND_PHILOSOPHY_V1.md`](HUMAN_CONDITION_BRAND_PHILOSOPHY_V1.md)  
-**Effective Date:** 2026-11-04  
+**Document ID:** `TSO-HC-EDA-001`
+**Version:** 1.0 — Stage 02 Baseline (Locked)
+**Status:** Approved Editorial Standard
+**System:** Human Condition Brand Incubator & TeeStock Original
+**Parent Foundation:** [`HUMAN_CONDITION_BRAND_PHILOSOPHY_V1.md`](HUMAN_CONDITION_BRAND_PHILOSOPHY_V1.md)
+**Effective Date:** 2026-11-04
 
 ---
 
 ## 1. EDITORIAL CONCEPT & PROMISE
 
-Human Condition Editorial adalah pilar intelektual dan *storytelling* dari brand Human Condition. 
+Human Condition Editorial adalah pilar intelektual dan *storytelling* dari brand Human Condition.
 
 * **Tagline:** *An observation of the human species.*
 * **Core Philosophy:** *We are the observers, the subjects, and sometimes the problem.*

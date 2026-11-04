@@ -1,12 +1,16 @@
 # TDL-06 — BRAND PORTFOLIO & INCUBATION ARCHITECTURE
+
+> [!NOTE]
+> **CANONICAL GLOBAL STANDARD — TDL-06**
+> Otoritas: Standar kanonikal Brand Portfolio and Incubation Architecture studio.
 ## Strategic System: From Creative Identity to Independent Apparel Brands
 
-**Document ID:** `TDL-06`  
-**Version:** 1.0 — Strategic Policy Baseline  
-**Status:** Approved Architectural Standard  
-**System:** TeeStock Design Lab (TDL) & MultiGraph Commerce Group  
-**Framework:** CRAFT (*Creative Reproducibility & Artwork Fidelity Technology*)  
-**Effective Date:** 2026-11-03  
+**Document ID:** `TDL-06`
+**Version:** 1.0 — Strategic Policy Baseline
+**Status:** Approved Architectural Standard
+**System:** TeeStock Design Lab (TDL) & MultiGraph Commerce Group
+**Framework:** CRAFT (*Creative Reproducibility & Artwork Fidelity Technology*)
+**Effective Date:** 2026-11-03
 
 ---
 
@@ -148,15 +152,15 @@ flowchart LR
 ```
 
 ### Tahapan Eksekusi:
-1. **Fase 1 — TeeStock Original Foundation (Tahap Aktif Saat Ini):**  
+1. **Fase 1 — TeeStock Original Foundation (Tahap Aktif Saat Ini):**
    Membangun 6 koleksi sebagai identitas kreatif terstruktur. Menjadikan `HC-001 — THE DANGEROUS SPECIES` sebagai benchmark perdana kontrol kualitas dan estetika.
-2. **Fase 2 — Market Validation:**  
+2. **Fase 2 — Market Validation:**
    Meluncurkan desain-desain terbaik ke etalase online TeeStock. Menguji respons pasar, harga riil, dan tingkat konversi tanpa beban overhead merek mandiri.
-3. **Fase 3 — Brand Incubation:**  
+3. **Fase 3 — Brand Incubation:**
    Koleksi yang menunjukkan tarikan pasar konsisten mendapatkan sub-identitas visual, akun media sosial terpisah, arahan editorial khusus, dan kemasan tematik.
-4. **Fase 4 — Independent Brand Launch:**  
+4. **Fase 4 — Independent Brand Launch:**
    Label yang lolos 5 Gerbang Kelulusan didaftarkan perlindungan merek dagang resminya dan dirilis penuh dengan endorsement kecil: *“by TeeStock”*.
-5. **Fase 5 — Multi-Brand Portfolio Expansion:**  
+5. **Fase 5 — Multi-Brand Portfolio Expansion:**
    TeeStock beroperasi sebagai *holding platform* yang mengelola multi-brand apparel independen dengan audiens, harga, dan narasi yang saling melengkapi.
 
 ---

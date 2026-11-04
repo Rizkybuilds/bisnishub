@@ -1,10 +1,14 @@
 # TDL-04 — TEEStock ARTWORK & DTF PRODUCTION SPECIFICATION
 
-**Version:** 1.0  
-**Status:** Foundation Draft  
-**Parent Documents:** TDL-01, TDL-02, TDL-03  
-**Production Method:** Direct-to-Film (DTF)  
-**Framework:** CRAFT  
+> [!NOTE]
+> **CANONICAL GLOBAL STANDARD — TDL-04**
+> Otoritas: Standar kanonikal Artwork & DTF Specification studio.
+
+**Version:** 1.0
+**Status:** Foundation Draft
+**Parent Documents:** TDL-01, TDL-02, TDL-03
+**Production Method:** Direct-to-Film (DTF)
+**Framework:** CRAFT
 
 ---
 
@@ -29,13 +33,13 @@ Dokumen ini mengatur:
 
 TDL menggunakan tiga lapisan spesifikasi.
 
-**Level A — TeeStock Internal Baseline**  
+**Level A — TeeStock Internal Baseline**
 Standar internal minimum yang harus dipenuhi artwork.
 
-**Level B — Vendor Technical Specification**  
+**Level B — Vendor Technical Specification**
 Ketentuan khusus dari vendor DTF, termasuk RIP software, printer, tinta, adhesive powder, film, dan material.
 
-**Level C — Production Sample Validation**  
+**Level C — Production Sample Validation**
 Bukti bahwa file dan konfigurasi produksi benar-benar menghasilkan kualitas yang dapat diterima.
 
 Jika ketiganya berbeda, spesifikasi vendor harus diperiksa dan disepakati terlebih dahulu. Hasil sample menjadi bukti validasi proses.
@@ -479,7 +483,7 @@ Format:
 
 Contoh:
 
-`TS_HC_001_PRINT_28CM_V1.0_APPROVED.png`  
+`TS_HC_001_PRINT_28CM_V1.0_APPROVED.png`
 `TS_HC_001_SOURCE_V1.0_APPROVED.svg`
 
 Jangan memasukkan informasi yang belum diverifikasi ke dalam nama file.

@@ -1,11 +1,15 @@
 # HUMAN CONDITION — EDITORIAL DECISION & GOVERNANCE SYSTEM V1
 
-**System:** Editorial Intelligence System  
-**Governance scope:** Cross-system  
-**Status:** Canonical Working Standard — Locked  
-**Applies to:** All Human Condition editorial, research, publication, visual, and related apparel projects.  
-**Core philosophy:** We are the observers, the subjects, and sometimes the problem.  
-**Effective Date:** 2026-11-04  
+> [!NOTE]
+> **SUPPORTING GOVERNANCE STANDARD — ROLES & ACCOUNTABILITY**
+> Dokumen ini adalah standar tata kelola pendukung yang mengatur 6 peran kognitif, hak pengambilan keputusan, klasifikasi risiko editorial (R0–R5), transparansi AI, dan kebijakan 3 tingkat koreksi (Minor Update, Clarification/Errata, Formal Retraction). Dokumen ini beroperasi di dalam dan mendukung siklus hidup kanonikal G0–G8 pada [HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md](HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md), bukan menetapkan siklus hidup proyek yang bersaing.
+
+**System:** Editorial Intelligence System
+**Governance scope:** Cross-system
+**Status:** Canonical Working Standard — Locked
+**Applies to:** All Human Condition editorial, research, publication, visual, and related apparel projects.
+**Core philosophy:** We are the observers, the subjects, and sometimes the problem.
+**Effective Date:** 2026-11-04
 
 ---
 
@@ -26,7 +30,7 @@ Its purpose is to ensure that:
 Governance is not intended to slow down creative work. It exists to protect the quality and integrity of the work.
 
 > [!IMPORTANT]
-> **Guiding Principle:**  
+> **Guiding Principle:**
 > *Creative freedom requires clear boundaries, and editorial credibility requires accountable decisions.*
 
 ---
@@ -286,7 +290,7 @@ Use three risk tiers to determine procedural rigor:
 - **Requirements:** Enhanced evidence review, Independent human review where appropriate, Privacy and rights assessment, Specialist review when necessary, Explicit publication approval by Owner.
 
 > [!CAUTION]
-> If a project requires legal or professional expertise, obtain that expertise rather than treating an AI assessment as sufficient.  
+> If a project requires legal or professional expertise, obtain that expertise rather than treating an AI assessment as sufficient.
 > **Risk Principle:** High-risk content may still be publishable, but its evidence, editorial justification, and review requirements must be stronger.
 
 ---
@@ -376,7 +380,7 @@ Human Condition must maintain a transparent public correction policy. The respon
 - **Action:** Temporarily remove or restrict publication where necessary $\rightarrow$ Full investigation $\rightarrow$ Transparent explanation $\rightarrow$ Preserve internal audit record.
 
 > [!IMPORTANT]
-> **Correction Principle:**  
+> **Correction Principle:**
 > The brand should protect the accuracy of its work rather than protect its reputation through silence.
 
 ---
@@ -521,6 +525,6 @@ The brand should never confuse authority with certainty.
 
 ---
 
-**Document status:** EDITORIAL DECISION & GOVERNANCE SYSTEM V1  
-**Governance scope:** Cross-system  
+**Document status:** EDITORIAL DECISION & GOVERNANCE SYSTEM V1
+**Governance scope:** Cross-system
 **Next stage:** Editorial Intelligence System Integration & Operational Validation.

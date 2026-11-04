@@ -1,12 +1,17 @@
 # TDL-07 — DIGITAL IDENTITY & SOCIAL HANDLE ARCHITECTURE
+
+> [!NOTE]
+> **MIRROR — DO NOT EDIT**
+> Dokumen ini merupakan cermin SOP operasional.
+> Otoritas kanonikal standar berada di: [`00_GLOBAL_STANDARDS/TDL-07_Digital-Identity-and-Social-Handle-Architecture.md`](../../00_GLOBAL_STANDARDS/TDL-07_Digital-Identity-and-Social-Handle-Architecture.md).
 ## Standalone Digital Namespace & Social Handle Governance for Incubated Brands
 
-**Document ID:** `TDL-07`  
-**Version:** 1.0 — Strategic Policy Baseline  
-**Status:** Approved Standard  
-**System:** TeeStock Design Lab (TDL) & MultiGraph Commerce Group  
-**Parent Document:** [TDL-06 — Brand Portfolio & Incubation Architecture](../00_GLOBAL_STANDARDS/TDL-06_Brand-Portfolio-and-Incubation-Architecture.md)  
-**Effective Date:** 2026-11-03  
+**Document ID:** `TDL-07`
+**Version:** 1.0 — Strategic Policy Baseline
+**Status:** Approved Standard
+**System:** TeeStock Design Lab (TDL) & MultiGraph Commerce Group
+**Parent Document:** [TDL-06 — Brand Portfolio & Incubation Architecture](../00_GLOBAL_STANDARDS/TDL-06_Brand-Portfolio-and-Incubation-Architecture.md)
+**Effective Date:** 2026-11-03
 
 ---
 

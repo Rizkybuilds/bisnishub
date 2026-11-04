@@ -1,13 +1,17 @@
 # HUMAN CONDITION — EDITORIAL INTELLIGENCE SYSTEM V2
+
+> [!IMPORTANT]
+> **CANONICAL EDITORIAL OPERATING LIFECYCLE AUTHORITY**
+> Dokumen ini adalah satu-satunya otoritas kanonikal untuk siklus hidup operasional editorial Human Condition, mencakup gerbang progresi G0 hingga G8, 7 lapisan operasional, model dual-scoring, dan evaluasi 4 dimensi. Seluruh standar pendukung dan piagam koleksi beroperasi di bawah payung siklus hidup dokumen ini.
 ## Integrated Operating Model & Operational Validation
 
-**Brand:** HUMAN CONDITION  
-**Parent:** TeeStock Original  
-**Tagline:** An observation of the human species.  
-**Core philosophy:** We are the observers, the subjects, and sometimes the problem.  
-**System status:** Integrated Master Operating Standard  
-**Document ID:** `TSO-HC-EIS-002`  
-**Effective Date:** 2026-11-04  
+**Brand:** HUMAN CONDITION
+**Parent:** TeeStock Original
+**Tagline:** An observation of the human species.
+**Core philosophy:** We are the observers, the subjects, and sometimes the problem.
+**System status:** Integrated Master Operating Standard
+**Document ID:** `TSO-HC-EIS-002`
+**Effective Date:** 2026-11-04
 **Purpose:** Establish a practical, evidence-conscious, strategically differentiated editorial operating system that unites editorial rigor with apparel brand equity.
 
 ---
@@ -28,7 +32,7 @@ It integrates seven operational layers:
 Governance, quality assurance, rights management, and accountability operate across all seven layers.
 
 > [!IMPORTANT]
-> **Core Operating Principle:**  
+> **Core Operating Principle:**
 > The system must improve editorial decisions without creating unnecessary operational complexity.
 
 ---
@@ -128,7 +132,7 @@ This layer connects Strategic Intelligence with the Master Idea Bank.
 ### Idea Lifecycle:
 $$\text{DISCOVERED} \rightarrow \text{REGISTERED} \rightarrow \text{PRELIMINARY REVIEW} \rightarrow \text{STRATEGICALLY EVALUATED} \rightarrow \text{PRIORITIZED} \rightarrow \text{RESEARCH CANDIDATE} \rightarrow \text{ACTIVE PROJECT}$$
 
-*Alternative Outcomes:* `HOLD`, `REFRAME`, `REJECT`, `ARCHIVE`.  
+*Alternative Outcomes:* `HOLD`, `REFRAME`, `REJECT`, `ARCHIVE`.
 An idea may remain in the backlog indefinitely without becoming an active project.
 
 ## Two-Score Decision Model
@@ -199,7 +203,7 @@ Editorial development begins only after the argument is sufficiently defensible.
   - Visual storytelling requirements documented.
 
 > [!IMPORTANT]
-> **Editorial Approval Test:**  
+> **Editorial Approval Test:**
 > The work must be accurate, coherent, interesting, understandable, distinctive, and consistent with Human Condition philosophy. A strong script must not conceal uncertainty merely to create a dramatic narrative.
 
 ---
@@ -244,7 +248,7 @@ Performance is evaluated across four distinct dimensions:
 * *Indicators:* Attributed visits to product pages, add-to-cart conversions, merchandise purchases, contribution margin.
 
 > [!CAUTION]
-> **Performance Invariant:**  
+> **Performance Invariant:**
 > Views and follower metrics must never become the sole definition of editorial success. Low reach does not mean low intellectual value; high reach does not mean high brand value.
 
 ---
@@ -374,10 +378,10 @@ It should be curious enough to discover new ideas, critical enough to question i
 The system exists to protect these qualities, not replace human curiosity.
 
 > [!TIP]
-> **The Epistemic Code:**  
+> **The Epistemic Code:**
 > *Explore widely. Investigate deeply. Think critically. Create thoughtfully. Publish responsibly. Learn continuously.*
 
 ---
 
-**Document status:** EDITORIAL INTELLIGENCE SYSTEM V2 — INTEGRATED MASTER STANDARD  
+**Document status:** EDITORIAL INTELLIGENCE SYSTEM V2 — INTEGRATED MASTER STANDARD
 **Next operational step:** Operational Validation — Three-Topic Comparative Test (Stage 01 & Stage 02).

@@ -1,8 +1,13 @@
 # TDL-02 — TEEStock CREATIVE DIRECTION SYSTEM
 
-**Version:** 1.0  
-**Status:** Foundation Draft  
-**Parent Standard:** TDL-01 Design Lab Charter  
+> [!NOTE]
+> **MIRROR — DO NOT EDIT**
+> Dokumen ini merupakan cermin SOP operasional.
+> Otoritas kanonikal standar berada di: [`00_GLOBAL_STANDARDS/TDL-02_Creative-Direction-System.md`](../../00_GLOBAL_STANDARDS/TDL-02_Creative-Direction-System.md).
+
+**Version:** 1.0
+**Status:** Foundation Draft
+**Parent Standard:** TDL-01 Design Lab Charter
 **Framework:** CRAFT — Creative Reproducibility & Artwork Fidelity Technology
 
 ---

@@ -34,3 +34,35 @@ REFERENCE_ROLE,TYPOGRAPHY,Font character and lettering pairing
 REFERENCE_ROLE,ILLUSTRATION,Subject proportion and shading technique
 REFERENCE_ROLE,COLOR,Restricted palette inspiration
 REFERENCE_ROLE,PRODUCTION,Physical garment print character
+COLLECTION_TYPE,ORIGINAL_FLAGSHIP,TeeStock Original Flagship in-house brand collection (Tier 1)
+COLLECTION_TYPE,ORIGINAL_THEMATIC,TeeStock Original Thematic social critique collection (Tier 2)
+COLLECTION_TYPE,ORIGINAL_CORE,TeeStock Original Everyday relatable core collection (Tier 2)
+COLLECTION_TYPE,ORIGINAL_HERITAGE,TeeStock Original Archival and heritage graphic collection (Tier 3)
+COLLECTION_TYPE,ORIGINAL_REGIONAL,TeeStock Original Local and regional frequency collection (Tier 3)
+COLLECTION_TYPE,Original Flagship,TeeStock Original Flagship in-house brand collection (Tier 1)
+COLLECTION_TYPE,Original Thematic,TeeStock Original Thematic social critique collection (Tier 2)
+COLLECTION_TYPE,Original Core,TeeStock Original Everyday relatable core collection (Tier 2)
+COLLECTION_TYPE,Original Heritage,TeeStock Original Archival and heritage graphic collection (Tier 3)
+COLLECTION_TYPE,Original Regional,TeeStock Original Local and regional frequency collection (Tier 3)
+COLLECTION_STATUS,LOCKED_BENCHMARK,Canonical flagship collection locked as operational benchmark
+COLLECTION_STATUS,LOCKED_BASELINE,Incubation collection locked as initial brand architecture baseline
+DESIGN_STATUS,PILOT_RESEARCH_SYNC,Artwork design synchronized with active editorial research pilot
+DESIGN_STATUS,CONCEPT,Concept backlog or preliminary design thesis prior to formal brief
+DESIGN_STATUS,ARTWORK_IN_DEVELOPMENT,Artwork being assembled and engineered in studio workstation
+RIGHTS_STATUS,IN_REVIEW,Commercial and IP clearance audit actively in review
+PRODUCTION_STATUS,NOT_TESTED,Physical transfer or durability testing not yet initiated
+PRODUCTION_STATUS,TESTING,Physical sample or wash test in progress
+PRODUCTION_STATUS,PASSED,Production sample and durability validation cleared
+PRODUCTION_STATUS,FAILED,Sample failed quality or wash test
+PRODUCTION_STATUS,CONDITIONAL,Conditional pass with adjustments required
+APPROVAL_STAGE,CONCEPT,Concept and ideation review
+APPROVAL_STAGE,CREATIVE_DIRECTION,Creative direction alignment review
+APPROVAL_STAGE,CREATIVE_APPROVAL,Creative brief and artwork approval
+APPROVAL_STAGE,ARTWORK_QA,Technical DTF specification preflight QA
+APPROVAL_STAGE,PRODUCTION_VALIDATION,Physical print and wash test validation
+APPROVAL_STAGE,FINAL_APPROVAL,Final sign-off for commercial readiness
+APPROVAL_STAGE,RIGHTS_CLEARANCE,Legal and IP rights clearance sign-off
+APPROVAL_DECISION,APPROVED,Stage approved
+APPROVAL_DECISION,REVISION_REQUIRED,Changes required before re-evaluation
+APPROVAL_DECISION,REJECTED,Stage rejected
+APPROVAL_DECISION,PENDING,Stage awaiting decision

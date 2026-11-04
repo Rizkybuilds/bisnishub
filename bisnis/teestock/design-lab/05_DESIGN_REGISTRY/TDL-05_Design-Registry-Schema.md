@@ -1,9 +1,15 @@
 # TDL-05 — TEEStock DESIGN REGISTRY SCHEMA
 
-**Version:** 1.0  
-**Status:** Foundation Draft  
-**Parent Documents:** TDL-01, TDL-02, TDL-03, TDL-04  
-**Framework:** CRAFT — Creative Reproducibility & Artwork Fidelity Technology  
+> [!WARNING]
+> **LEGACY — DO NOT USE AS AUTHORITY**
+> Dokumen ini merupakan skema historis (fase 8-modul studio awal).
+> Otoritas kanonikal skema saat ini berada di: [`00_GLOBAL_STANDARDS/TDL-05_Design-Registry-Schema.md`](../00_GLOBAL_STANDARDS/TDL-05_Design-Registry-Schema.md).
+> Registri operasional aktif berada di: [`05_REGISTRY/`](../05_REGISTRY/).
+
+**Version:** 1.0
+**Status:** Foundation Draft
+**Parent Documents:** TDL-01, TDL-02, TDL-03, TDL-04
+**Framework:** CRAFT — Creative Reproducibility & Artwork Fidelity Technology
 
 ---
 

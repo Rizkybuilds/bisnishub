@@ -1,12 +1,17 @@
 # TDL-08 — EDITORIAL UNIVERSE & CONTENT ENGINE ARCHITECTURE
+
+> [!WARNING]
+> **LEGACY — DO NOT USE AS AUTHORITY**
+> Dokumen ini merupakan salinan historis sebelum integrasi EIS V2 dan rujukan pilot riset Human Condition terkini.
+> Otoritas kanonikal dokumen TDL-08 berada di: [`06_GOVERNANCE/SOP/TDL-08_Editorial-Universe-and-Content-Engine-Architecture.md`](../../../../06_GOVERNANCE/SOP/TDL-08_Editorial-Universe-and-Content-Engine-Architecture.md).
 ## Strategic System: Apparel Meets Editorial Media in TeeStock Original
 
-**Document ID:** `TDL-08`  
-**Version:** 1.0 — Strategic Standard Baseline  
-**Status:** Approved Architectural Standard  
-**System:** TeeStock Design Lab (TDL) & MultiGraph Media Commerce  
-**Framework:** CRAFT (*Creative Reproducibility & Artwork Fidelity Technology*)  
-**Effective Date:** 2026-11-04  
+**Document ID:** `TDL-08`
+**Version:** 1.0 — Strategic Standard Baseline
+**Status:** Approved Architectural Standard
+**System:** TeeStock Design Lab (TDL) & MultiGraph Media Commerce
+**Framework:** CRAFT (*Creative Reproducibility & Artwork Fidelity Technology*)
+**Effective Date:** 2026-11-04
 **Parent Governance:** [`TDL-06 Brand Portfolio & Incubation Architecture`](TDL-06_Brand-Portfolio-and-Incubation-Architecture.md)
 
 ---
@@ -28,7 +33,7 @@ TeeStock Original memposisikan portofolio 6 merek terinkubasi bukan hanya sebaga
 ```
 
 > [!IMPORTANT]
-> **Prinsip Utama:** *"Setiap merek wajib memiliki sesuatu untuk dibicarakan, bukan hanya sesuatu untuk dijual."*  
+> **Prinsip Utama:** *"Setiap merek wajib memiliki sesuatu untuk dibicarakan, bukan hanya sesuatu untuk dijual."*
 > Konsumen membeli produk bukan karena dipaksa promosi, melainkan karena produk tersebut merupakan representasi fisik dari pemikiran yang mereka sepakati.
 
 ---

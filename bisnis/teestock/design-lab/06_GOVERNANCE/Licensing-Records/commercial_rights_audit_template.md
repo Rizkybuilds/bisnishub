@@ -1,4 +1,8 @@
 # TEEStock Commercial Rights Audit Log
+
+> [!NOTE]
+> **MIRROR — DO NOT EDIT**
+> Salinan template audit. Otoritas kanonikal template berada di: [`03_TEMPLATES/commercial_rights_audit_template.md`](../../03_TEMPLATES/commercial_rights_audit_template.md).
 **Tujuan Dokumen:** Memastikan setiap aset visual dan font yang digunakan dalam produk komersial TeeStock memiliki bukti kepemilikan hak komersial yang sah untuk perlindungan hukum jangka panjang.
 
 ---

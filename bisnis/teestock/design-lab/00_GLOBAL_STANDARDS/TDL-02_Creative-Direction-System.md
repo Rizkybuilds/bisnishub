@@ -1,8 +1,12 @@
 # TDL-02 — TEEStock CREATIVE DIRECTION SYSTEM
 
-**Version:** 1.0  
-**Status:** Foundation Draft  
-**Parent Standard:** TDL-01 Design Lab Charter  
+> [!NOTE]
+> **CANONICAL GLOBAL STANDARD — TDL-02**
+> Otoritas: Standar kanonikal Creative Direction System studio.
+
+**Version:** 1.0
+**Status:** Foundation Draft
+**Parent Standard:** TDL-01 Design Lab Charter
 **Framework:** CRAFT — Creative Reproducibility & Artwork Fidelity Technology
 
 ---

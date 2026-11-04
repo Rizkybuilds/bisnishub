@@ -1,12 +1,16 @@
 # HUMAN CONDITION — RESEARCH & EVIDENCE PROTOCOL (V1)
+
+> [!NOTE]
+> **CANONICAL LAYER 03 RESEARCH & EVIDENCE PROTOCOL**
+> Dokumen ini adalah standar kanonikal Layer 03 (Research & Evidence Intelligence) pada Human Condition Editorial Intelligence System V2, mengatur hirarki sumber Tier 1–4, verifikasi adversarial, dan Claim-Level Evidence Ledger.
 ## Layer 03 Operating Standard: Epistemic Rigor, Source Appraisal, Claim-Level Evidence Ledger & Fact-Checking
 
-**Document ID:** `TSO-HC-REP-001`  
-**Version:** 1.0 — Stage 03 Master Standard  
-**Status:** Approved Working Standard  
-**System:** Human Condition Editorial Intelligence System (Layer 03)  
-**Parent Architecture:** [`HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md`](../00_COLLECTION_CHARTER/HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md)  
-**Effective Date:** 2026-11-04  
+**Document ID:** `TSO-HC-REP-001`
+**Version:** 1.0 — Stage 03 Master Standard
+**Status:** Approved Working Standard
+**System:** Human Condition Editorial Intelligence System (Layer 03)
+**Parent Architecture:** [`HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md`](../00_COLLECTION_CHARTER/HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md)
+**Effective Date:** 2026-11-04
 
 ---
 
@@ -15,8 +19,8 @@
 Research & Evidence Protocol menetapkan standar bagaimana Human Condition menemukan, mengevaluasi, mencatat, menginterpretasikan, dan memverifikasi informasi.
 
 > [!IMPORTANT]
-> **Guiding Principle:**  
-> *"Evidence must determine the strength of a claim, not the strength of our desire to believe it."*  
+> **Guiding Principle:**
+> *"Evidence must determine the strength of a claim, not the strength of our desire to believe it."*
 > *(Bukti ilmiah yang menentukan bobot klaim, bukan hasrat emosional kita untuk mempercayainya).*
 
 Tujuannya adalah mencegah: klaim tanpa bukti, generalisasi berlebihan, pelintiran statistik, sesat pikir kausalitas (*causal fallacy*), dan atribusi kutipan palsu.
@@ -83,7 +87,7 @@ Review Status: VERIFIED WITH QUALIFICATIONS.
 
 1. **Anti-Labeling Kepribadian:** Dilarang mencap orang narsis, sosiopat, atau bodoh hanya dari pengamatan perilaku biasa.
 2. **Anti-Pernyataan Universal:** Menghindari kata *"Semua manusia selalu..."*. Gunakan batasan: *"Dalam konteks tertentu, banyak orang cenderung..."*.
-3. **Pemisahan Konstruk:** 
+3. **Pemisahan Konstruk:**
    - *Confidence* $\neq$ *Competence*.
    - *Calibration* $\neq$ *Metacognitive Sensitivity*.
    - *Conformity* $\neq$ *Obedience*.
@@ -96,7 +100,7 @@ Review Status: VERIFIED WITH QUALIFICATIONS.
 
 * **Penggunaan yang Diizinkan:** Pemetaan literatur, formulasi kata kunci pencarian, ekstraksi draf poin argumen, dan uji sanggahan logika.
 * **Verifikasi Wajib Manusia:** Peneliti manusia wajib membuka paper asli, mencocokkan kutipan, dan memeriksa metodologi.
-* **Larangan Mutlak:** 
+* **Larangan Mutlak:**
   - Mengutip jurnal atau DOI yang dihalusinasi oleh AI.
   - Menjadikan ringkasan AI sebagai bukti tunggal tanpa membuka dokumen sumber aslinya.
 

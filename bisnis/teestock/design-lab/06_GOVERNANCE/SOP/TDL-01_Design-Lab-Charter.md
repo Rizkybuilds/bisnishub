@@ -1,8 +1,13 @@
 # TDL-01 — TEEStock DESIGN LAB CHARTER
 
-**Version:** 1.0  
-**Status:** Foundation Draft  
-**System:** TeeStock Design Lab (TDL)  
+> [!NOTE]
+> **MIRROR — DO NOT EDIT**
+> Dokumen ini merupakan cermin SOP operasional.
+> Otoritas kanonikal standar berada di: [`00_GLOBAL_STANDARDS/TDL-01_Design-Lab-Charter.md`](../../00_GLOBAL_STANDARDS/TDL-01_Design-Lab-Charter.md).
+
+**Version:** 1.0
+**Status:** Foundation Draft
+**System:** TeeStock Design Lab (TDL)
 **Creative Standard:** CRAFT — Creative Reproducibility & Artwork Fidelity Technology
 
 ## 1. Mission
@@ -92,7 +97,7 @@ Spesifikasi final DTF harus dikonfirmasi dengan vendor produksi sebelum artwork 
 
 ## 8. Initial Pilot
 
-**Collection:** HUMAN CONDITION  
+**Collection:** HUMAN CONDITION
 **Target:** 5 desain yang berbeda tetapi memiliki identitas visual satu collection.
 
 Pilot dinyatakan berhasil jika:

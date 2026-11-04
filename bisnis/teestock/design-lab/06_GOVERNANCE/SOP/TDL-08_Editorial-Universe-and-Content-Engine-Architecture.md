@@ -1,12 +1,16 @@
 # TDL-08 — EDITORIAL UNIVERSE & CONTENT ENGINE ARCHITECTURE
+
+> [!NOTE]
+> **CANONICAL OPERATIONAL STANDARD — TDL-08**
+> Otoritas: Standar kanonikal TeeStock Original Editorial Universe and Content Engine Architecture (terintegrasi dengan EIS V2 dan Pilot Riset HC-ED-001).
 ## Strategic System: Apparel Meets Editorial Media in TeeStock Original
 
-**Document ID:** `TDL-08`  
-**Version:** 1.0 — Strategic Standard Baseline  
-**Status:** Approved Architectural Standard  
-**System:** TeeStock Design Lab (TDL) & MultiGraph Media Commerce  
-**Framework:** CRAFT (*Creative Reproducibility & Artwork Fidelity Technology*)  
-**Effective Date:** 2026-11-04  
+**Document ID:** `TDL-08`
+**Version:** 1.0 — Strategic Standard Baseline
+**Status:** Approved Architectural Standard
+**System:** TeeStock Design Lab (TDL) & MultiGraph Media Commerce
+**Framework:** CRAFT (*Creative Reproducibility & Artwork Fidelity Technology*)
+**Effective Date:** 2026-11-04
 **Parent Governance:** [`TDL-06 Brand Portfolio & Incubation Architecture`](TDL-06_Brand-Portfolio-and-Incubation-Architecture.md)
 
 ---
@@ -28,7 +32,7 @@ TeeStock Original memposisikan portofolio 6 merek terinkubasi bukan hanya sebaga
 ```
 
 > [!IMPORTANT]
-> **Prinsip Utama:** *"Setiap merek wajib memiliki sesuatu untuk dibicarakan, bukan hanya sesuatu untuk dijual."*  
+> **Prinsip Utama:** *"Setiap merek wajib memiliki sesuatu untuk dibicarakan, bukan hanya sesuatu untuk dijual."*
 > Konsumen membeli produk bukan karena dipaksa promosi, melainkan karena produk tersebut merupakan representasi fisik dari pemikiran yang mereka sepakati.
 
 ---
@@ -165,7 +169,7 @@ Mengacu pada standar master [`HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.m
 1. **Competitive Saturation:** Penilaian kualitatif kejenuhan pasar (Saturated Generic / Saturated New Angle / Moderate Gaps / Emerging Unexplored).
 2. **Audience Evidence Taxonomy:** Memisahkan klaim minat audiens (`HYPOTHESIS` vs `INDIRECT_SIGNAL` vs `OBSERVED_SIGNAL` vs `VALIDATED_INSIGHT`).
 3. **Evidence Confidence Scale:** Skala kesiapan bukti ilmiah (`E0` s/d `E4`).
-4. **Mandatory Differentiation Statement:** Setiap proyek wajib menjawab formula:  
+4. **Mandatory Differentiation Statement:** Setiap proyek wajib menjawab formula:
    *"Publikasi umum mendekati topik ini lewat [X]. Kami menginvestigasi lewat [Y] karena [Z]."*
 
 ---

@@ -1,7 +1,12 @@
 # TEEStock CRAFT Methodology
+
+> [!NOTE]
+> **MIRROR — DO NOT EDIT**
+> Dokumen ini merupakan cermin lokal dalam sistem brand.
+> Otoritas kanonikal metodologi CRAFT berada di: [`00_GLOBAL_STANDARDS/TEEStock-CRAFT-Methodology.md`](../00_GLOBAL_STANDARDS/TEEStock-CRAFT-Methodology.md).
 ## Creative Reproducibility & Artwork Fidelity Technology
-**Standar Mutu:** TEEStock CRAFT Framework V1  
-**Klasifikasi:** Core Studio Operating Methodology  
+**Standar Mutu:** TEEStock CRAFT Framework V1
+**Klasifikasi:** Core Studio Operating Methodology
 **Tujuan:** Menghilangkan ketergantungan pada "keberuntungan prompt" (prompt lottery) dan menciptakan proses kreatif AI yang konsisten, berulang (*reproducible*), dan memenuhi standar streetwear profesional.
 
 ---

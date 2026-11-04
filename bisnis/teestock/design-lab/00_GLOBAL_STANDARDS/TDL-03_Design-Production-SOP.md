@@ -1,8 +1,12 @@
 # TDL-03 — TEEStock DESIGN PRODUCTION SOP
 
-**Version:** 1.0  
-**Status:** Foundation Draft  
-**Parent Documents:** TDL-01, TDL-02  
+> [!NOTE]
+> **CANONICAL GLOBAL STANDARD — TDL-03**
+> Otoritas: Standar kanonikal Design Production SOP studio.
+
+**Version:** 1.0
+**Status:** Foundation Draft
+**Parent Documents:** TDL-01, TDL-02
 **Framework:** CRAFT — Creative Reproducibility & Artwork Fidelity Technology
 
 ---
@@ -569,8 +573,8 @@ Proses:
 
 # 20. FINAL OPERATING RULE
 
-**No brief, no generation.**  
-**No creative approval, no artwork engineering.**  
-**No artwork QA, no production validation.**  
-**No production validation, no production-ready status.**  
+**No brief, no generation.**
+**No creative approval, no artwork engineering.**
+**No artwork QA, no production validation.**
+**No production validation, no production-ready status.**
 **No final approval, no official design registration.**

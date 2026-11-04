@@ -1,12 +1,16 @@
 # HUMAN CONDITION — CRITICAL ANALYSIS & CONTRADICTION PROTOCOL (V1)
+
+> [!NOTE]
+> **CANONICAL LAYER 04 CRITICAL ANALYSIS & CONTRADICTION PROTOCOL**
+> Dokumen ini adalah standar kanonikal Layer 04 (Critical Analysis & Argumentation) pada Human Condition Editorial Intelligence System V2, mengatur uji falsifikasi 6 langkah (*The Contradiction Test*), hipotesis alternatif, dan batasan epistemik kesimpulan.
 ## Layer 04 Operating Standard: Argument Mapping, Falsifiability, The Contradiction Test & Red-Team Review
 
-**Document ID:** `TSO-HC-CAP-001`  
-**Version:** 1.0 — Stage 03 Master Standard  
-**Status:** Approved Working Standard  
-**System:** Human Condition Editorial Intelligence System (Layer 04)  
-**Parent Architecture:** [`HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md`](../00_COLLECTION_CHARTER/HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md)  
-**Effective Date:** 2026-11-04  
+**Document ID:** `TSO-HC-CAP-001`
+**Version:** 1.0 — Stage 03 Master Standard
+**Status:** Approved Working Standard
+**System:** Human Condition Editorial Intelligence System (Layer 04)
+**Parent Architecture:** [`HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md`](../00_COLLECTION_CHARTER/HUMAN_CONDITION_EDITORIAL_INTELLIGENCE_SYSTEM_V2.md)
+**Effective Date:** 2026-11-04
 
 ---
 
@@ -15,8 +19,8 @@
 Critical Analysis & Contradiction Protocol menetapkan bagaimana Human Condition mengevaluasi argumen, menguji penafsiran bukti, membedah penjelasan tandingan, dan memastikan kesimpulan yang diambil dapat dipertanggungjawabkan.
 
 > [!IMPORTANT]
-> **Governing Invariant:**  
-> *"Do not ask only whether the evidence supports our argument. Ask whether our argument survives the strongest reasonable challenge."*  
+> **Governing Invariant:**
+> *"Do not ask only whether the evidence supports our argument. Ask whether our argument survives the strongest reasonable challenge."*
 > *(Jangan hanya bertanya apakah bukti mendukung argumen kita. Tanyakan apakah argumen kita sanggup bertahan dari bantahan paling kuat yang mungkin diajukan).*
 
 ---

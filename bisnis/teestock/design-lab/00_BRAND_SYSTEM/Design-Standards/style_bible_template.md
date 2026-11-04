@@ -1,9 +1,13 @@
 # Visual Style Bible Template
 
-**Collection:** [Nama Collection]  
-**Collection ID:** [TS-COL-XXX]  
-**Version:** 1.0  
-**Status:** DRAFT  
+> [!NOTE]
+> **MIRROR — DO NOT EDIT**
+> Salinan template acuan. Otoritas kanonikal template berada di: [`03_TEMPLATES/style_bible_template.md`](../../03_TEMPLATES/style_bible_template.md).
+
+**Collection:** [Nama Collection]
+**Collection ID:** [TS-COL-XXX]
+**Version:** 1.0
+**Status:** DRAFT
 
 ---
 

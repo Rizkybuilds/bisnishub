@@ -1,8 +1,14 @@
 # TEEStock Design Lab — TDL-05
+
+> [!WARNING]
+> **LEGACY — DO NOT USE AS AUTHORITY**
+> Dokumen ini merupakan skema historis (fase lean-first awal).
+> Otoritas kanonikal skema saat ini berada di: [`00_GLOBAL_STANDARDS/TDL-05_Design-Registry-Schema.md`](../../00_GLOBAL_STANDARDS/TDL-05_Design-Registry-Schema.md).
+> Registri operasional aktif berada di: [`05_REGISTRY/`](../../05_REGISTRY/).
 ## Design Registry Schema: Standar Database & Manajemen Siklus Hidup Desain
-**Dokumen ID:** TDL-05  
-**Versi:** 1.0 (Lean-First Phase)  
-**Status:** Active  
+**Dokumen ID:** TDL-05
+**Versi:** 1.0 (Lean-First Phase)
+**Status:** Active
 **Konteks:** Spesifikasi Data Registry (Google Sheets / CSV)
 
 ---

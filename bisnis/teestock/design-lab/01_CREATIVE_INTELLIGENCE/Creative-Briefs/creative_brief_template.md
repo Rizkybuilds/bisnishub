@@ -1,9 +1,13 @@
 # Creative Brief Template
 
-**Design ID:** [TS-XX-XXXXX]  
-**Collection:** [Collection Name]  
-**Visual Direction:** [Arah visual dari Style Bible]  
-**Date:** [YYYY-MM-DD]  
+> [!NOTE]
+> **MIRROR — DO NOT EDIT**
+> Salinan template acuan. Otoritas kanonikal template berada di: [`03_TEMPLATES/creative_brief_template.md`](../../03_TEMPLATES/creative_brief_template.md).
+
+**Design ID:** [TS-XX-XXXXX]
+**Collection:** [Collection Name]
+**Visual Direction:** [Arah visual dari Style Bible]
+**Date:** [YYYY-MM-DD]
 **Status:** DRAFT
 
 ---
