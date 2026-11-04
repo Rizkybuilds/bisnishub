@@ -1,0 +1,36 @@
+category,code,description
+COLLECTION_TYPE,ORIGINAL,TeeStock Original in-house thematic collection
+COLLECTION_TYPE,CURATED,Curated independent designer collaboration
+COLLECTION_STATUS,DRAFT,Initial ideation phase
+COLLECTION_STATUS,DEVELOPMENT,Under active artwork development
+COLLECTION_STATUS,APPROVED,Collection approved for production
+COLLECTION_STATUS,ACTIVE,Currently live and selling in catalog
+COLLECTION_STATUS,PAUSED,Temporarily suspended from catalog
+COLLECTION_STATUS,ARCHIVED,Permanently retired into archive
+DESIGN_STATUS,DRAFT,Initial concept backlog
+DESIGN_STATUS,EXPLORATION,"Brief approved, exploring AI visuals"
+DESIGN_STATUS,IN_DEVELOPMENT,Artwork being assembled in workstation
+DESIGN_STATUS,CREATIVE_REVIEW,Awaiting art direction review
+DESIGN_STATUS,CREATIVE_APPROVED,Passed creative review
+DESIGN_STATUS,ARTWORK_QA,Technical preflight and resolution audit
+DESIGN_STATUS,PRODUCTION_VALIDATION,DTF transfer sample test in progress
+DESIGN_STATUS,APPROVED,Official approved commercial asset
+DESIGN_STATUS,REJECTED,Rejected by QA or art direction
+DESIGN_STATUS,ARCHIVED,Archived past design
+COMMERCIAL_STATUS,NOT_REVIEWED,Commercial readiness not yet checked
+COMMERCIAL_STATUS,NOT_READY,"In production/review, not ready for sale"
+COMMERCIAL_STATUS,READY_FOR_LISTING,Cleared for ecommerce and catalog
+COMMERCIAL_STATUS,ACTIVE,Actively listed and available for order
+COMMERCIAL_STATUS,SUSPENDED,Temporarily halted from sale
+COMMERCIAL_STATUS,RETIRED,Permanently discontinued
+RIGHTS_STATUS,UNKNOWN,Rights unverified - DO NOT SELL
+RIGHTS_STATUS,PENDING,Audit in progress
+RIGHTS_STATUS,VERIFIED,Commercial license explicitly cleared
+RIGHTS_STATUS,RESTRICTED,Non-commercial only (e.g. Recraft Free)
+RIGHTS_STATUS,PROHIBITED,Violates copyright or trademark
+REFERENCE_ROLE,STYLE,Overall visual aesthetic and linework quality
+REFERENCE_ROLE,COMPOSITION,Grid layout and visual weight balance
+REFERENCE_ROLE,TYPOGRAPHY,Font character and lettering pairing
+REFERENCE_ROLE,ILLUSTRATION,Subject proportion and shading technique
+REFERENCE_ROLE,COLOR,Restricted palette inspiration
+REFERENCE_ROLE,PRODUCTION,Physical garment print character

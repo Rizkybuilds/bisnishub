@@ -1,0 +1,2 @@
+generation_id,design_id,creative_brief_id,generation_date,tool_name,tool_version,model_name,prompt_version,prompt_asset_id,reference_ids,generation_objective,iteration_number,parent_asset_id,output_asset_id,evaluation_result,selected_for_development,notes
+GEN-001-001-01,TSD-001-001,CB-001-001,2026-11-03,Ideogram,v2,Default,P1.0,,REF-001-001,ILLUSTRATION,1,,TSA-001-001-005,SELECTED,Yes,High-contrast copperplate skull with gears. Clear background.

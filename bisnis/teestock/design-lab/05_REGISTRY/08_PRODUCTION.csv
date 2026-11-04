@@ -1,0 +1,2 @@
+production_id,design_id,asset_id,vendor_id,vendor_profile_version,garment_sku,garment_color,garment_size,print_width_cm,print_height_cm,print_placement,transfer_batch,press_machine,press_temperature,press_duration,pressure_setting,peel_method,final_press_instruction,sample_date,sample_result,durability_test_status,defect_notes,sample_evidence_asset_id,production_validation_status
+PROD-001-001-01,TSD-001-001,TSA-001-001-002,VND-001,V1.0,TS-TSH-BLK-24S,Black,L,28.5,40.0,Back Hero Print,,,,,,Cold Peel,5s finishing press with teflon,,NOT_TESTED,NOT_TESTED,,,NOT_TESTED

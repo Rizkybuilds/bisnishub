@@ -1,0 +1,2 @@
+approval_id,design_id,version,approval_stage,reviewer,decision,score,review_date,issue_summary,revision_required,related_evidence_asset_id,notes
+APP-001-001-01,TSD-001-001,V1.0,CREATIVE_APPROVAL,Creative Director,APPROVED,89.4,2026-11-03,None,No,,Visual hierarchy and narrative alignment verified.

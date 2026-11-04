@@ -25,6 +25,7 @@ path: "README.md"
 > - **Holding & Ekosistem:** MultiGraph Printing & Apparel Holding
 > - **Executive Founder:** Rizky (Executive Sole Founder & C-Suite Cabinet)
 > - **Fokus Operasional:** The Autonomous Everyday Curated Graphic Apparel House
+> - **TeeStock Design Lab & Originals Hub:** [design-lab/README.md](design-lab/README.md)
 
 Repository path:
 
