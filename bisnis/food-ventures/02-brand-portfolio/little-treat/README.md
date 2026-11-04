@@ -4,7 +4,7 @@ document_id: LT-ROOT-001
 title: "Little Treat Brand Profile & Master Index"
 date: "2026-11-04"
 status: PROPOSED
-version: "0.2"
+version: "0.3"
 owner: Rizky
 scope: food-ventures.little-treat
 business: food-ventures
@@ -152,6 +152,15 @@ little-treat/
 │   └── photography-and-art-direction.md                     (LT-BRD-006: Delicious Little Moments & 6-Shot Matrix)
 ├── 03-product-menu/
 │   └── menu-architecture-and-portfolio.md                    (LT-PRD-001: Hybrid Naming & 7-SKU Launch Assortment)
+├── 04-brand-applications/
+│   ├── README.md                                             (LT-APP-000: Master Applications Index & Architecture)
+│   ├── application-architecture.md                           (LT-APP-001: Touchpoint Taxonomy & Invariant Enforcement)
+│   ├── packaging-applications.md                             (LT-APP-002: Physical Packaging & Delivery Physics Standards)
+│   ├── menu-and-product-presentation.md                      (LT-APP-003: Physical & Digital Menu Board Architecture)
+│   ├── marketplace-storefront.md                             (LT-APP-004: Delivery App Storefront & Conversion Optimization)
+│   ├── social-media-system.md                                (LT-APP-005: Social Media Touchpoints & Modular Templates)
+│   ├── customer-communication.md                             (LT-APP-006: Direct Customer Messaging & Micro-Copy Standards)
+│   └── mvp-rollout-roadmap.md                                (LT-APP-007: Phased Touchpoint Rollout & Low-Capital Roadmap)
 ├── 05-marketing/
 │   └── digital-brand-identity.md                             (LT-MKT-001: Marketplace, Social & WhatsApp Architecture)
 └── 07-customer-experience/
@@ -170,6 +179,14 @@ little-treat/
 | **`LT-BRD-005`** | [Graphic Language](02-brand-identity/graphic-language.md) | `PROPOSED` | Karakter Playful Organic, 6 elemen grafis khas, dan kerangka 3 tingkat intensitas. |
 | **`LT-BRD-006`** | [Photography & Art Direction](02-brand-identity/photography-and-art-direction.md) | `PROPOSED` | Standar Delicious Little Moments, matriks 6-shot, dan setup studio smartphone murah. |
 | **`LT-PRD-001`** | [Menu Architecture & Portfolio](03-product-menu/menu-architecture-and-portfolio.md) | `PROPOSED` | Format penamaan hibrida dan kurasi 7-SKU peluncuran perdana (Pisangan, Dimsum, Drinks). |
+| **`LT-APP-000`** | [Brand Applications Master Index](04-brand-applications/README.md) | `PROPOSED` | Master indeks, charter aplikasi brand, navigasi, dan matriks keselarasan Reserved Decisions. |
+| **`LT-APP-001`** | [Application Architecture & Touchpoint Taxonomy](04-brand-applications/application-architecture.md) | `PROPOSED` | Taksonomi touchpoint, hierarki prioritas peluncuran, dan 4 aturan invariansi visual. |
+| **`LT-APP-002`** | [Packaging Applications & Physical Specs](04-brand-applications/packaging-applications.md) | `PROPOSED` | Spesifikasi boks kraft berventilasi uap, cup sambal terpisah, cup 16 oz, dan stiker ekonomis. |
+| **`LT-APP-003`** | [Menu & Product Presentation](04-brand-applications/menu-and-product-presentation.md) | `PROPOSED` | Layout 3 blok menu cetak/digital, penamaan hibrida, visualisasi harga, dan bundling. |
+| **`LT-APP-004`** | [Marketplace Storefront Design](04-brand-applications/marketplace-storefront.md) | `PROPOSED` | Optimasi profil delivery agregator (GoFood/GrabFood/ShopeeFood), banner 16:9, dan urutan menu. |
+| **`LT-APP-005`** | [Social Media Touchpoints & Design System](04-brand-applications/social-media-system.md) | `PROPOSED` | Panduan format IG/TikTok, 5 pilar konten harian, dan 6 template visual modular. |
+| **`LT-APP-006`** | [Customer Communication & Messaging](04-brand-applications/customer-communication.md) | `PROPOSED` | Profil WhatsApp Business, Tone of Voice ramah, 4 quick reply, dan penanganan komplain. |
+| **`LT-APP-007`** | [MVP Rollout Roadmap & Asset-Light Strategy](04-brand-applications/mvp-rollout-roadmap.md) | `PROPOSED` | Matriks prioritas 3 tier, alokasi capex < Rp 890.000, dan timeline 4 fase peluncuran. |
 | **`LT-MKT-001`** | [Digital Brand Identity](05-marketing/digital-brand-identity.md) | `PROPOSED` | Arsitektur etalase delivery, sistem 5 pilar konten media sosial, dan template chat WhatsApp. |
 | **`LT-CX-001`** | [Packaging System & Unboxing](07-customer-experience/packaging-system-and-unboxing.md) | `PROPOSED` | Rekayasa ventilasi uap minyak, wadah saus terpisah, dan strategi kemasan Asset-Light. |
 
