@@ -3,7 +3,7 @@ canonical_id: food-ventures.brand.little-treat.profile
 document_id: LT-ROOT-001
 title: "Little Treat Brand Profile & Master Index"
 date: "2026-11-04"
-status: DRAFT
+status: PROPOSED
 version: "0.2"
 owner: Rizky
 scope: food-ventures.little-treat
@@ -39,7 +39,7 @@ tags:
 
 ---
 
-## 1. Approved Brand Positioning (Formula Hybrid)
+## 1. Proposed Brand Positioning (Formula Hybrid)
 
 Arah strategis LITTLE TREAT memadukan dua karakter inti dengan pembagian peran yang tegas:
 
@@ -90,12 +90,12 @@ LITTLE TREAT bukan sekadar gerai gorengan atau dimsum biasa. Brand ini hadir seb
 
 ---
 
-## 2. Arsitektur Kategori Disahkan vs Hipotesis Produk
+## 2. Arsitektur Kategori Peluncuran vs Hipotesis Produk
 
-Untuk menjaga integritas tata kelola, dokumen ini membedakan secara tegas antara **Keputusan Kategori yang Disahkan** dan **Kandidat / Hipotesis Produk**.
+Untuk menjaga integritas tata kelola, dokumen ini membedakan secara tegas antara **Usulan Arsitektur Kategori Awal** dan **Kandidat / Hipotesis Produk**.
 
-### A. Kategori yang Disahkan (*Approved Category Architecture*)
-Tiga pilar kategori yang telah disetujui untuk dikembangkan adalah:
+### A. Arsitektur Kategori Peluncuran Awal (*Proposed Launch Category Architecture*)
+Tiga pilar kategori yang diusulkan untuk dikembangkan pada fase peluncuran awal adalah:
 1. **Pisangan** (Kategori olahan pisang sebagai pilar kudapan manis / *potential hero category*)
 2. **Dimsum** (Kategori kudapan gurih / *savory category anchor*)
 3. **Drinks (Coffee & Non-Coffee)** (Kategori minuman penyeimbang / *transaction value booster*)
@@ -113,7 +113,7 @@ Seluruh varian produk berikut berstatus hipotesis yang masih menunggu:
 5. Product economics validation (validasi biaya bahan baku dan kemasan, komisi platform dan biaya terkait, subsidi promosi yang ditanggung merchant, serta margin kontribusi yang sehat).
 ```
 
-| Kategori (Approved) | Kandidat Produk / Hipotesis Eksplorasi (Status: HYPOTHESIS) | Target Pengujian Mutu |
+| Kategori (Proposed) | Kandidat Produk / Hipotesis Eksplorasi (Status: HYPOTHESIS) | Target Pengujian Mutu |
 | :--- | :--- | :--- |
 | **Pisangan** | • Pisangan cokelat lumer<br>• Pisangan cokelat-keju klasik<br>• Pisangan aren caramel butter dipping | Ketahanan kerenyahan adonan tepung (*anti-soggy batter*) di dalam boks berventilasi; rasa manis seimbang (tidak bikin eneg). |
 | **Dimsum** | • Dimsum siomay ayam-udang kukus<br>• Pangsit goreng renyah dengan saus cocolan pedas gurih | Kestabilan kelembutan tekstur daging saat dingin; kerenyahan kulit pangsit; ketahanan saus anti-tumpah. |
@@ -131,31 +131,52 @@ Seluruh varian produk berikut berstatus hipotesis yang masih menunggu:
 
 ---
 
-## 4. Rencana Dokumentasi Mandiri (Package 03 Roadmap)
+## 4. Indeks Dokumentasi Kanonikal LITTLE TREAT
 
-Pada tahap implementasi berikutnya (**Package 03 — LITTLE TREAT Foundation**), subdirektori brand ini akan dilengkapi dengan dokumen-dokumen berikut:
+Subdirektori brand ini telah dilengkapi dengan dokumen-dokumen kanonikal hasil formulasi sesi strategi dan sistem identitas:
 
 ```text
 little-treat/
-├── README.md                 (LT-ROOT-001: Master Blueprint & Profile)
-├── 00-foundation/            (LT-FND-001: Master Definition)
-├── 01-strategy/              (LT-STR-001: Brand Strategy & Positioning)
-├── 02-brand-identity/        (LT-BRD-001: Visual Identity & Packaging)
-├── 03-product-menu/          (LT-PRD-001: Menu Architecture & Recipes)
-├── 04-pricing-economics/     (LT-FIN-001: Unit Economics & Pricing)
-├── 05-marketing/             (LT-MKT-001: Go-to-Market & Content)
-├── 06-sales-channels/        (LT-CHN-001: Delivery Channel Strategy)
-├── 07-customer-experience/   (LT-CX-001: CX & Unboxing Standards)
-└── 08-metrics-experiments/   (LT-MET-001: Brand KPIs & Tasting Evals)
+├── README.md                                                 (LT-ROOT-001: Master Blueprint & Profile)
+├── 00-foundation/
+│   └── little-treat-master-definition.md                     (LT-FND-001: Master Brand Definition & Charter)
+├── 01-strategy/
+│   ├── brand-strategy-and-positioning.md                     (LT-STR-001: Strategy, Positioning & Tagline Architecture)
+│   └── market-and-competitor-intelligence.md                 (LT-STR-002: Ragajaya / Tugu Macan Competitor Audit)
+├── 02-brand-identity/
+│   ├── brand-identity-system.md                              (LT-BRD-001: 3-Layer Identity & Design Constitution)
+│   ├── logo-system.md                                        (LT-BRD-002: Primary Wordmark, Symbol & Lockups)
+│   ├── color-system.md                                       (LT-BRD-003: Core Palette, 60-30-10 & Category Accents)
+│   ├── typography-system.md                                  (LT-BRD-004: Dual-Engine Fredoka + DM Sans)
+│   ├── graphic-language.md                                   (LT-BRD-005: Playful Organic & 3 Intensity Levels)
+│   └── photography-and-art-direction.md                     (LT-BRD-006: Delicious Little Moments & 6-Shot Matrix)
+├── 03-product-menu/
+│   └── menu-architecture-and-portfolio.md                    (LT-PRD-001: Hybrid Naming & 7-SKU Launch Assortment)
+├── 05-marketing/
+│   └── digital-brand-identity.md                             (LT-MKT-001: Marketplace, Social & WhatsApp Architecture)
+└── 07-customer-experience/
+    └── packaging-system-and-unboxing.md                      (LT-CX-001: Physical Engineering & Unboxing Standards)
 ```
 
-> [!NOTE]
-> Sesuai aturan tata kelola repositori (*no empty folders for symmetry*), subfolder di atas **belum dibuat** pada Package 01 dan akan dibuat secara bertahap saat dokumen masing-masing siap ditulis pada Package 03.
+| ID Dokumen | Judul Dokumen | Status | Fungsi Utama |
+| :--- | :--- | :---: | :--- |
+| **`LT-FND-001`** | [Master Brand Definition & Charter](00-foundation/little-treat-master-definition.md) | `PROPOSED` | Piagam mandat brand, misi, dan batas perlindungan brand (*invariants*). |
+| **`LT-STR-001`** | [Brand Strategy & Positioning](01-strategy/brand-strategy-and-positioning.md) | `PROPOSED` | Formula hybrid positioning, tagline *"Make Every Day a Little Treat."*, dan 5 diferensiator. |
+| **`LT-STR-002`** | [Market & Competitor Intelligence](01-strategy/market-and-competitor-intelligence.md) | `PROPOSED` | Hasil audit merchant lokal Ragajaya/Tugu Macan dan celah pasar kompetitor. |
+| **`LT-BRD-001`** | [Brand Identity System](02-brand-identity/brand-identity-system.md) | `PROPOSED` | Sistem identitas 3 lapis dan 6 prinsip desain *"Small moments. Big smiles."*. |
+| **`LT-BRD-002`** | [Logo System Guidelines](02-brand-identity/logo-system.md) | `PROPOSED` | Wordmark kustom, simbol awan/squircle `lt.`, 3 lockup resmi, dan decoupling rule. |
+| **`LT-BRD-003`** | [Color System & Accents](02-brand-identity/color-system.md) | `PROPOSED` | Warm Cocoa & Cream, aturan proporsi 60-30-10, dan aksen pembeda kategori. |
+| **`LT-BRD-004`** | [Typography System](02-brand-identity/typography-system.md) | `PROPOSED` | Pasangan Fredoka + DM Sans, skala hierarki teks, dan 5 aturan anti-childish. |
+| **`LT-BRD-005`** | [Graphic Language](02-brand-identity/graphic-language.md) | `PROPOSED` | Karakter Playful Organic, 6 elemen grafis khas, dan kerangka 3 tingkat intensitas. |
+| **`LT-BRD-006`** | [Photography & Art Direction](02-brand-identity/photography-and-art-direction.md) | `PROPOSED` | Standar Delicious Little Moments, matriks 6-shot, dan setup studio smartphone murah. |
+| **`LT-PRD-001`** | [Menu Architecture & Portfolio](03-product-menu/menu-architecture-and-portfolio.md) | `PROPOSED` | Format penamaan hibrida dan kurasi 7-SKU peluncuran perdana (Pisangan, Dimsum, Drinks). |
+| **`LT-MKT-001`** | [Digital Brand Identity](05-marketing/digital-brand-identity.md) | `PROPOSED` | Arsitektur etalase delivery, sistem 5 pilar konten media sosial, dan template chat WhatsApp. |
+| **`LT-CX-001`** | [Packaging System & Unboxing](07-customer-experience/packaging-system-and-unboxing.md) | `PROPOSED` | Rekayasa ventilasi uap minyak, wadah saus terpisah, dan strategi kemasan Asset-Light. |
 
 ---
 
 ## 5. Status Perencanaan & Batasan
 
-- **Status Dokumen Saat Ini:** `DRAFT`.
+- **Status Dokumen Saat Ini:** `PROPOSED`.
 - Formulasi resep, takaran gramatur eksak, dan HPP masih dalam tahap riset dapur awal dan pengujian hipotesis.
 - Belum ada klaim izin edar resmi, kemitraan kurir aktif, atau akun merchant live di platform agregator.
