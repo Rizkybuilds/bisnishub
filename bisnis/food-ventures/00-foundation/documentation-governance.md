@@ -55,8 +55,11 @@ Setiap dokumen di domain Food Ventures menggunakan struktur identifikasi ganda:
 
 1. **`canonical_id` (Repositori Global):**
    Identifier berbasis dot-notation yang stabil dan unik di seluruh repositori BisnisHub.  
-   Format: `food-ventures.<domain>.<subdomain>.<name>`  
-   Contoh: `food-ventures.brand.little-treat.profile`
+   Konvensi segmentasi:
+   - **Tingkat Portofolio / Root (3 segmen):** `food-ventures.<domain>.<name>`  
+     Contoh: `food-ventures.root.index`, `food-ventures.foundation.definition`, `food-ventures.portfolio.architecture`, `food-ventures.brands.index`, `food-ventures.operations.index`
+   - **Tingkat Brand / Subdomain Khusus (4 segmen):** `food-ventures.<domain>.<brand-or-subdomain>.<name>`  
+     Contoh: `food-ventures.brand.little-treat.profile`, `food-ventures.brand.after-hours.profile`, `food-ventures.brand.bite-me.profile`
 
 2. **`document_id` (Domain Bisnis Lokal):**
    Identifier terstruktur untuk kebutuhan registri bisnis internal.  

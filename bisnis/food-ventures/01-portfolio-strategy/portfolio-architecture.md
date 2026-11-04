@@ -62,12 +62,12 @@ Portofolio dirancang agar brand tidak saling mengkanibalisasi, melainkan mengisi
 
 | Brand | Status | Target Occasion | Waktu Operasional Rencana | Karakter Menu |
 | :--- | :--- | :--- | :--- | :--- |
-| **LITTLE TREAT** | **Initial (Phase 1)** | Camilan sore hingga malam, teman kerja/santai, kudapan keluarga | **Senin–Jumat:** 17:00 – 24:00<br>**Sabtu–Minggu:** 14:00 – 24:00 | Hangat, manis, gurih renyah, minuman pendamping |
+| **LITTLE TREAT** | **Initial (Phase 1)** | Camilan sore hingga malam, teman kerja/santai, kudapan keluarga | *PROPOSED / UNCONFIRMED*<br>**Senin–Jumat:** 17:00 – 24:00<br>**Sabtu–Minggu:** 14:00 – 24:00 | Hangat, manis, gurih renyah, minuman pendamping |
 | **AFTER HOURS** | **Konsep (Phase 2+)** | Late craving, lembur malam, lapar larut | *PROPOSED / Belum Dikonfirmasi* (Jadwal malam hari belum disahkan) | Urban comfort, gurih pekat, porsi mengenyangkan |
 | **BITE ME** | **Konsep (Phase 2+)** | Impulse snacking, tren media sosial, kumpul teman | *PROPOSED / Belum Dikonfirmasi* (Jadwal belum disahkan) | Berani (*bold*), saus variatif, visual kontras |
 
 > [!NOTE]
-> Jadwal operasional terencana yang disahkan Owner saat ini hanya berlaku untuk **LITTLE TREAT**. Jam operasional untuk brand masa depan (**AFTER HOURS** dan **BITE ME**) berstatus usulan murni (*PROPOSED / UNCONFIRMED*) dan belum disahkan sebagai keputusan final.
+> Seluruh jam operasional dalam tabel di atas berstatus usulan perencanaan (*PROPOSED / UNCONFIRMED*) dan belum disahkan sebagai keputusan final oleh Owner. Jam operasional untuk **LITTLE TREAT** merupakan usulan jam operasional awal untuk fase 1, sedangkan brand masa depan (**AFTER HOURS** dan **BITE ME**) berstatus konsep eksplorasi yang jadwalnya belum ditentukan.
 
 ---
 
@@ -93,7 +93,7 @@ flowchart LR
 Sinergi yang diciptakan oleh model ini mencakup:
 
 - **Pengadaan Bersama (*Consolidated Sourcing*):** Bahan baku netral (minyak goreng berkualitas, tepung dasar, gula, es batu, kemasan luar) dapat dibeli dalam jumlah lebih besar dengan harga grosir lebih murah.
-- **Pemanfaatan Tenaga Kerja Efisien:** Operator dapur dapat mempersiapkan bahan setengah jadi (*prep work*) sebelum jam buka, kemudian melayani pesanan LITTLE TREAT sesuai jadwal operasional terencana yang telah disahkan (Senin–Jumat: 17:00–24:00, Sabtu–Minggu: 14:00–24:00). Brand masa depan (AFTER HOURS dan BITE ME) tidak memiliki jam operasional yang disahkan dan baru dievaluasi pada fase lanjutan jika kapasitas dapur memungkinkan.
+- **Pemanfaatan Tenaga Kerja Efisien:** Operator dapur dapat mempersiapkan bahan setengah jadi (*prep work*) sebelum jam buka, kemudian melayani pesanan LITTLE TREAT sesuai usulan jadwal operasional awal (*PROPOSED / UNCONFIRMED*: Senin–Jumat 17:00–24:00, Sabtu–Minggu 14:00–24:00). Brand masa depan (AFTER HOURS dan BITE ME) berstatus konsep eksplorasi dan baru dievaluasi pada fase lanjutan jika kapasitas dapur memungkinkan.
 - **Logistik Pengiriman Terpadu:** Kurir yang menjemput pesanan datang ke satu titik fisik yang jelas dengan standar penyerahan paket yang seragam.
 
 ---
