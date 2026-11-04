@@ -21,7 +21,7 @@ authoritative_for:
   - transitional documentation tracking
   - canonicalization backlog
 
-last_reviewed: 2026-10-05
+last_reviewed: 2026-11-04
 review_cadence: monthly
 
 depends_on:
@@ -33,7 +33,7 @@ depends_on:
 supersedes:
   - docs.governance.canonical-source-map@1.3
 
-repository_snapshot: c6d8043a5bc2944064f6514b7ccdef0fd8f007d4
+repository_snapshot: 92ad2a92cac0e5ee392b762c685214ab5259ab0e
 ---
 
 # DOC-002 — BisnisHub Canonical Source Map v1.4
@@ -1981,6 +1981,63 @@ Research is not automatically canonical operating policy.
 
 ---
 
+# 89A. Food Ventures Business Knowledge
+
+Canonical Food Ventures business knowledge lives under:
+
+```text
+bisnis/food-ventures/
+```
+
+Food Ventures owns portfolio-level food business knowledge:
+
+```text
+portfolio definition and strategy
+multi-brand architecture
+shared food operations policy
+consolidated portfolio finance policy
+cross-brand marketing strategy
+business compliance requirements
+portfolio KPIs and experiments
+portfolio roadmap
+```
+
+### Brand Ownership Boundary
+
+Each individual brand under:
+
+```text
+bisnis/food-ventures/02-brand-portfolio/<brand>/
+```
+
+owns its brand-specific semantics:
+
+```text
+brand positioning and customer strategy
+brand identity and voice
+product specifications and recipes
+menu architecture
+pricing and unit economics
+brand-specific marketing and channels
+brand-specific customer experience
+```
+
+### Shared Operations Boundary
+
+Shared operational standards have one canonical owner under the portfolio's shared operations domain:
+
+```text
+bisnis/food-ventures/03-shared-operations/
+```
+
+Individual brands must reference shared operations rather than creating competing operational standards.
+
+### System Semantics Boundary
+
+Food Ventures documentation is business knowledge. It does not define MGBOS transactional/database entities, commands, state machines, runtime application behavior, or system permissions.
+
+---
+
 # 90. `catatan/` Authority
 
 Default classification:
@@ -2556,6 +2613,9 @@ JARVIS semantics
 
 TeeStock business knowledge
 → bisnis/teestock/
+
+Food Ventures business knowledge
+→ bisnis/food-ventures/
 
 historical discussion / notes
 → catatan/

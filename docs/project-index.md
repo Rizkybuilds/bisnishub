@@ -9,7 +9,7 @@ scope: repository
 document_class: registry
 effective_from: 2026-10-05
 
-repository_snapshot: 2800c474563309bda49d84d712f79b68c9dde36a
+repository_snapshot: 92ad2a92cac0e5ee392b762c685214ab5259ab0e
 
 current_repository_program:
   engineering_method: VIBE_ENGINEERING_ACTIVE
@@ -41,7 +41,7 @@ not_authoritative_for:
   - deployment authorization
   - production readiness
 
-last_reviewed: 2026-10-15
+last_reviewed: 2026-11-04
 review_cadence: monthly-or-after-material-repository-routing-change
 
 depends_on:
@@ -267,6 +267,8 @@ bisnis/multigraph/
 bisnis/teestock/
 
 bisnis/rizkybuild/
+
+bisnis/food-ventures/
 ```
 
 Business sources own business semantics within their declared scope.
@@ -2627,6 +2629,9 @@ MGBOS READINESS
 
 TEEStock BUSINESS
 → bisnis/teestock/
+
+FOOD VENTURES BUSINESS
+→ bisnis/food-ventures/
 
 JARVIS
 → systems/jarvis/docs/
