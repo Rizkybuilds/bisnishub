@@ -38,6 +38,7 @@ export interface PreviewProduct {
 }
 
 export const ILLUSTRATIVE_UX_PRICE_IDR = 189000;
+export const ILLUSTRATIVE_PRICE_LABEL = 'Simulasi Harga UX — Bukan Harga Rilis';
 
 export function formatIllustrativePrice(price: number): string {
   return new Intl.NumberFormat('id-ID', {

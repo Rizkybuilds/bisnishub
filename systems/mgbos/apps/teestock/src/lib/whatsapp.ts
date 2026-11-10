@@ -1,23 +1,40 @@
 /**
- * TeeStock WhatsApp Direct Commerce & Assisted Sales Helper
+ * TeeStock WhatsApp Assisted Inquiry & Contact Helper
  *
- * Provides single-source generation of formatted WhatsApp order messages,
- * ensuring seamless direct purchasing without requiring third-party payment gateways.
+ * Provides fail-closed generation of formatted WhatsApp messages for studio inquiries.
+ * Does NOT generate commercial payment requests for preview/non-sellable items.
  */
 
-export const DEFAULT_WHATSAPP_NUMBER = '6281234567890';
+const KNOWN_PLACEHOLDER_NUMBERS = new Set([
+  '6281234567890',
+  '1234567890',
+  '081234567890',
+]);
 
-export function getWhatsAppNumber(): string {
+/**
+ * Returns the sanitized WhatsApp phone number from environment if valid.
+ * Fails closed by returning null if unset, empty, not 10-15 digits, or matches known placeholders.
+ */
+export function getWhatsAppNumber(): string | null {
   const envNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-  if (!envNumber) {
-    return DEFAULT_WHATSAPP_NUMBER;
+  if (!envNumber || typeof envNumber !== 'string') {
+    return null;
   }
-  // Sanitize: strip non-digits (e.g., +62 812-3456 -> 628123456)
   const cleaned = envNumber.replace(/\D/g, '');
-  return cleaned || DEFAULT_WHATSAPP_NUMBER;
+  if (cleaned.length < 10 || cleaned.length > 15) {
+    return null;
+  }
+  if (KNOWN_PLACEHOLDER_NUMBERS.has(cleaned)) {
+    return null;
+  }
+  return cleaned;
 }
 
-export interface WhatsAppOrderDetails {
+export function isWhatsAppConfigured(): boolean {
+  return getWhatsAppNumber() !== null;
+}
+
+export interface WhatsAppInquiryDetails {
   productTitle: string;
   color: string;
   size: string;
@@ -26,14 +43,23 @@ export interface WhatsAppOrderDetails {
   priceFormatted?: string;
 }
 
+/**
+ * Generates an assisted inquiry URL for a preview product.
+ * Returns null if WhatsApp is unconfigured/invalid.
+ * Strictly avoids requesting bank accounts or claiming a confirmed sale.
+ */
 export function generateWhatsAppOrderUrl(
-  details: WhatsAppOrderDetails,
-): string {
+  details: WhatsAppInquiryDetails,
+): string | null {
   const phone = getWhatsAppNumber();
+  if (!phone) {
+    return null;
+  }
+
   const qty = details.quantity && details.quantity > 0 ? details.quantity : 1;
 
   const lines = [
-    `Halo TeeStock! Saya ingin memesan:`,
+    `Halo TeeStock! Saya ingin menanyakan informasi & ketersediaan konsep apparel:`,
     ``,
     `* ${details.productTitle}`,
     `  • Warna: ${details.color}`,
@@ -44,15 +70,15 @@ export function generateWhatsAppOrderUrl(
     lines.push(`  • Varian: ${details.printTone}`);
   }
 
-  lines.push(`  • Jumlah: ${qty} pcs`);
+  lines.push(`  • Estimasi Kuantiti: ${qty} pcs`);
 
   if (details.priceFormatted) {
-    lines.push(`  • Harga: ${details.priceFormatted}`);
+    lines.push(`  • Estimasi UX: ${details.priceFormatted}`);
   }
 
   lines.push(
     ``,
-    `Mohon info ketersediaan stok, total ongkos kirim, dan nomor rekening pembayarannya ya. Terima kasih!`,
+    `Catatan: Saya memahami produk ini berstatus studi desain/pratinjau. Mohon info apakah konsep ini nantinya akan dirilis secara resmi. Terima kasih!`,
   );
 
   const message = lines.join('\n');
@@ -68,17 +94,26 @@ export interface CartLineSummary {
   unitPriceIdr?: number;
 }
 
+/**
+ * Generates an inquiry URL for items selected in the demo cart.
+ * Returns null if WhatsApp is unconfigured/invalid.
+ */
 export function generateWhatsAppCartOrderUrl(
   items: readonly CartLineSummary[],
-): string {
+): string | null {
   const phone = getWhatsAppNumber();
+  if (!phone) {
+    return null;
+  }
 
   if (!items || items.length === 0) {
-    return `https://wa.me/${phone}?text=${encodeURIComponent('Halo TeeStock! Saya ingin menanyakan koleksi apparel yang tersedia.')}`;
+    return `https://wa.me/${phone}?text=${encodeURIComponent(
+      'Halo TeeStock! Saya ingin menanyakan informasi seputar koleksi studi desain apparel.',
+    )}`;
   }
 
   const lines = [
-    `Halo TeeStock! Saya ingin memesan koleksi berikut dari website:`,
+    `Halo TeeStock! Saya ingin menanyakan informasi dan konsultasi mengenai konsep desain berikut:`,
     ``,
   ];
 
@@ -95,15 +130,22 @@ export function generateWhatsAppCartOrderUrl(
 
   lines.push(
     ``,
-    `Mohon info ketersediaan stok, total ongkos kirim, dan nomor rekening pembayarannya ya. Terima kasih!`,
+    `Catatan: Saya memahami ini merupakan konsultasi konsep studio dari keranjang simulasi dan bukan pesanan komersial langsung. Mohon info ketersediaan atau rencana rilisnya ya. Terima kasih!`,
   );
 
   const message = lines.join('\n');
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
-export function getWhatsAppContactUrl(): string {
+/**
+ * Generates general support/contact WhatsApp URL.
+ * Returns null if WhatsApp is unconfigured/invalid.
+ */
+export function getWhatsAppContactUrl(): string | null {
   const phone = getWhatsAppNumber();
-  const message = `Halo TeeStock! Saya ingin konsultasi seputar apparel, pemesanan kaos, atau solusi merchandise kustom.`;
+  if (!phone) {
+    return null;
+  }
+  const message = `Halo TeeStock! Saya ingin konsultasi seputar apparel atau informasi layanan.`;
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }

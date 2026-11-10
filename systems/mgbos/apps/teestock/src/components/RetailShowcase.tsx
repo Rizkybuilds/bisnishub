@@ -443,16 +443,21 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
                   </button>
                 </div>
               ) : (
-                <button
-                  type="button"
-                  className="retail-detail-toggle"
-                  aria-expanded={open}
-                  aria-controls={'detail-' + design.id}
-                  onClick={() => setExpanded(open ? null : design.id)}
-                >
-                  {open ? 'Tutup detail konsep' : 'Lihat detail konsep'}
-                  <span aria-hidden="true">{open ? '−' : '↗'}</span>
-                </button>
+                <div className="retail-card-actions">
+                  <span className="retail-concept-editorial-badge">
+                    Studi Editorial
+                  </span>
+                  <button
+                    type="button"
+                    className="retail-detail-toggle"
+                    aria-expanded={open}
+                    aria-controls={'detail-' + design.id}
+                    onClick={() => setExpanded(open ? null : design.id)}
+                  >
+                    {open ? 'Tutup konsep' : 'Lihat konsep'}
+                    <span aria-hidden="true">{open ? '−' : '↗'}</span>
+                  </button>
+                </div>
               )}
               {open && (
                 <div
@@ -468,7 +473,7 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
                     harga, dan ketersediaan akan ditampilkan setelah persetujuan
                     katalog.
                   </p>
-                  {previewProduct && (
+                  {previewProduct ? (
                     <Link
                       href={'/shop/' + design.id}
                       className="retail-inline-pdp-link"
@@ -476,6 +481,13 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
                       Buka halaman produk dan uji opsi ukuran{' '}
                       <span aria-hidden="true">↗</span>
                     </Link>
+                  ) : (
+                    <p className="retail-inline-editorial-note">
+                      <em>
+                        Studi visual ini merupakan konsep editorial dan belum
+                        memiliki halaman pratinjau produk tersendiri.
+                      </em>
+                    </p>
                   )}
                   <Link href="/support/contact">
                     Status informasi layanan <span aria-hidden="true">↗</span>

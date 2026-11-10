@@ -223,18 +223,45 @@ export default function DemoCartPage() {
                 </div>
 
                 <div className="retail-summary-action">
-                  <a
-                    href={generateWhatsAppCartOrderUrl(state.lines)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="retail-btn-whatsapp-order retail-btn-block"
-                    style={{ marginBottom: '12px', textAlign: 'center' }}
-                  >
-                    <span className="retail-whatsapp-icon" aria-hidden="true">
-                      💬
-                    </span>
-                    Pesan via WhatsApp Sekarang
-                  </a>
+                  {(() => {
+                    const waCartUrl = generateWhatsAppCartOrderUrl(state.lines);
+                    if (waCartUrl) {
+                      return (
+                        <a
+                          href={waCartUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="retail-btn-whatsapp-order retail-btn-block"
+                          style={{ marginBottom: '12px', textAlign: 'center' }}
+                        >
+                          <span
+                            className="retail-whatsapp-icon"
+                            aria-hidden="true"
+                          >
+                            💬
+                          </span>
+                          Tanya Ketersediaan via WhatsApp
+                        </a>
+                      );
+                    }
+                    return (
+                      <button
+                        type="button"
+                        disabled
+                        className="retail-btn-whatsapp-order retail-action-disabled retail-btn-block"
+                        style={{ marginBottom: '12px', textAlign: 'center' }}
+                        aria-disabled="true"
+                      >
+                        <span
+                          className="retail-whatsapp-icon"
+                          aria-hidden="true"
+                        >
+                          💬
+                        </span>
+                        Saluran WhatsApp Belum Dikonfigurasi
+                      </button>
+                    );
+                  })()}
                   <Link
                     href="/demo/checkout"
                     className="retail-btn-primary retail-btn-block"

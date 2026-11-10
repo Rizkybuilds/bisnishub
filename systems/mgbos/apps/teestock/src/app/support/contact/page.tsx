@@ -10,6 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
+  const whatsappUrl = getWhatsAppContactUrl();
+
   return (
     <div className="container">
       {/* Header section */}
@@ -46,35 +48,66 @@ export default function ContactPage() {
           Saluran Komunikasi Resmi
         </h2>
 
-        <NoticeBox
-          variant="info"
-          title="Layanan Pelanggan & Pemesanan WhatsApp Aktif"
-        >
-          <p style={{ marginBottom: '12px' }}>
-            Tim TeeStock siap melayani konsultasi pesanan, pemesanan apparel
-            retail, kustom korporat, dan inquiry produksi langsung melalui
-            WhatsApp resmi kami.
-          </p>
-          <p style={{ marginBottom: '16px' }}>
-            Jam operasional layanan konsultasi dan konfirmasi pesanan:{' '}
-            <strong>Senin – Sabtu, 09.00 – 17.00 WIB</strong>.
-          </p>
-          <div>
-            <a
-              href={getWhatsAppContactUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-primary"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <span aria-hidden="true">💬</span> Hubungi via WhatsApp Resmi
-            </a>
-          </div>
-        </NoticeBox>
+        {whatsappUrl ? (
+          <NoticeBox
+            variant="info"
+            title="Layanan Pelanggan & Konsultasi WhatsApp"
+          >
+            <p style={{ marginBottom: '12px' }}>
+              Tim TeeStock siap melayani konsultasi apparel, kustom korporat,
+              dan inquiry produksi melalui WhatsApp resmi kami.
+            </p>
+            <p style={{ marginBottom: '16px' }}>
+              Jam operasional layanan konsultasi:{' '}
+              <strong>Senin – Sabtu, 09.00 – 17.00 WIB</strong>.
+            </p>
+            <div>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <span aria-hidden="true">💬</span> Hubungi via WhatsApp Resmi
+              </a>
+            </div>
+          </NoticeBox>
+        ) : (
+          <NoticeBox
+            variant="warning"
+            title="Saluran WhatsApp Resmi Belum Dikonfigurasi"
+          >
+            <p style={{ marginBottom: '12px' }}>
+              Saluran WhatsApp resmi TeeStock sedang dipersiapkan dan belum
+              dikonfigurasi untuk publik.
+            </p>
+            <p style={{ marginBottom: '16px' }}>
+              Untuk informasi layanan, silakan pantau pembaruan status pada
+              situs ini atau gunakan panduan persiapan konsultasi di bawah.
+            </p>
+            <div>
+              <button
+                type="button"
+                disabled
+                className="btn btn-secondary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  opacity: 0.6,
+                  cursor: 'not-allowed',
+                }}
+              >
+                <span aria-hidden="true">💬</span> Saluran Belum Dibuka
+              </button>
+            </div>
+          </NoticeBox>
+        )}
       </section>
 
       {/* Pre-Consultation Preparation Checklist */}

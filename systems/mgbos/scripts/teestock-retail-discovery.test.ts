@@ -16,15 +16,20 @@ describe('TeeStock retail-first discovery guardrails', () => {
     expect(read('components/RetailShowcase.tsx')).toContain('ConceptGallery');
   });
 
-  it('presents active WhatsApp assisted ordering without unverified automated checkout', () => {
+  it('presents truthful preview status across shop, home, and gallery without premature ordering claims', () => {
     const shop = read('app/shop/page.tsx');
     const home = read('app/page.tsx');
     const gallery = read('components/RetailShowcase.tsx');
-    expect(shop.replace(/\s+/g, ' ')).toContain('Layanan Pemesanan Aktif');
-    expect(home).toContain('Pemesanan Terbuka via WhatsApp');
+    expect(shop.replace(/\s+/g, ' ')).toContain(
+      'Tahap Pratinjau Desain Studio',
+    );
+    expect(shop.replace(/\s+/g, ' ')).not.toContain('Layanan Pemesanan Aktif');
+    expect(home).toContain('Pratinjau Kurasi Desain');
+    expect(home).not.toContain('Pemesanan Terbuka via WhatsApp');
     expect(gallery.replace(/\s+/g, ' ')).toContain(
       'Belum merupakan produk terverifikasi',
     );
+    expect(gallery).toContain('Studi Editorial');
     for (const source of [shop, home, gallery]) {
       expect(source).not.toContain('href="/cart"');
       expect(source).not.toContain('href="/checkout"');
