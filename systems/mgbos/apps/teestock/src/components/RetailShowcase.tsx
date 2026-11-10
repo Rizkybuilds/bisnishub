@@ -380,12 +380,16 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
                     <span className="retail-product-series">
                       {design.series}
                     </span>
-                    {previewProduct && (
+                    {previewProduct ? (
                       <span className="retail-product-price-tag">
                         {formatIllustrativeShortPrice(
                           previewProduct.illustrativePriceIdr,
                         )}{' '}
                         <small>(Simulasi UX)</small>
+                      </span>
+                    ) : (
+                      <span className="retail-product-price-tag retail-product-editorial-tag">
+                        <small>Eksplorasi Visual</small>
                       </span>
                     )}
                   </div>
@@ -407,9 +411,10 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
                         (tone === color ? ' selected' : '')
                       }
                       aria-label={
-                        color === 'ink'
-                          ? 'Lihat warna hijau gelap'
-                          : 'Lihat warna krem'
+                        'Lihat warna garmen ' +
+                        (color === 'ink' ? 'gelap' : 'terang') +
+                        ' untuk ' +
+                        design.name
                       }
                       aria-pressed={tone === color}
                       onClick={() =>
@@ -436,6 +441,11 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
                     className="retail-detail-toggle"
                     aria-expanded={open}
                     aria-controls={'detail-' + design.id}
+                    aria-label={
+                      (open
+                        ? 'Tutup ringkasan konsep '
+                        : 'Buka ringkasan konsep ') + design.name
+                    }
                     onClick={() => setExpanded(open ? null : design.id)}
                   >
                     {open ? 'Tutup ringkasan' : 'Ringkasan'}
@@ -452,6 +462,11 @@ export function ConceptGallery({ compact = false }: { compact?: boolean }) {
                     className="retail-detail-toggle"
                     aria-expanded={open}
                     aria-controls={'detail-' + design.id}
+                    aria-label={
+                      (open
+                        ? 'Tutup konsep editorial '
+                        : 'Lihat konsep editorial ') + design.name
+                    }
                     onClick={() => setExpanded(open ? null : design.id)}
                   >
                     {open ? 'Tutup konsep' : 'Lihat konsep'}

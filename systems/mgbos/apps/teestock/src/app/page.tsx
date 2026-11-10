@@ -23,9 +23,9 @@ export default function Home() {
             feeling.
           </h1>
           <p className="retail-hero-description">
-            Kaos grafis dengan sudut pandang yang berbeda. Karya terkurasi,
-            siluet yang dipikirkan, dan cerita kecil yang ingin kamu bawa ke
-            mana-mana.
+            Kaos grafis dengan sudut pandang yang berbeda. Kurasi desain studio,
+            siluet yang dipikirkan, dan cerita visual yang nyaman dipakai setiap
+            hari.
           </p>
           <div className="retail-actions">
             <Link href="/shop" className="retail-action-primary">
