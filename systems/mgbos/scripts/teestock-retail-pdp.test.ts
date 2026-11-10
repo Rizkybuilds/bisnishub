@@ -125,10 +125,10 @@ describe('TeeStock retail product preview & PDP (NOV15-01)', () => {
     expect(viewer).not.toContain('fetch(');
   });
 
-  it('enforces fail-closed WhatsApp contact resolution without fake or placeholder phone numbers (TS-WEB-G02)', () => {
+  it('enforces fail-closed WhatsApp contact resolution and deterministic Indonesian number contract (TS-WEB-G02, F01)', () => {
     const originalEnv = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
     try {
-      // 1. Unset env fails closed to null (no fallback to 6281234567890)
+      // 1. Unset, empty, or whitespace env fails closed to null
       delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
       expect(getWhatsAppNumber()).toBeNull();
       expect(isWhatsAppConfigured()).toBe(false);
@@ -140,38 +140,111 @@ describe('TeeStock retail product preview & PDP (NOV15-01)', () => {
         }),
       ).toBeNull();
 
-      // 2. Known example number fails closed to null
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '';
+      expect(getWhatsAppNumber()).toBeNull();
+
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '   ';
+      expect(getWhatsAppNumber()).toBeNull();
+
+      // 2. Known placeholder numbers fail closed (both international and national formats)
       process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '6281234567890';
       expect(getWhatsAppNumber()).toBeNull();
       expect(isWhatsAppConfigured()).toBe(false);
 
-      // 3. Invalid format (<10 digits) fails closed
-      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '12345';
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '081234567890';
+      expect(getWhatsAppNumber()).toBeNull();
+      expect(isWhatsAppConfigured()).toBe(false);
+
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '1234567890';
       expect(getWhatsAppNumber()).toBeNull();
 
-      // 4. Valid configured number produces inquiry URL without payment requests
+      // 3. Malformed or invalid inputs fail closed
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '12345'; // too short
+      expect(getWhatsAppNumber()).toBeNull();
+
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '0211234567'; // invalid local prefix (landline, non-mobile)
+      expect(getWhatsAppNumber()).toBeNull();
+
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '0812'; // invalid national prefix (too short)
+      expect(getWhatsAppNumber()).toBeNull();
+
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '+1 555-1234567'; // non-Indonesian prefix
+      expect(getWhatsAppNumber()).toBeNull();
+
+      // 4. Valid international format
       process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '6289988776655';
       expect(getWhatsAppNumber()).toBe('6289988776655');
       expect(isWhatsAppConfigured()).toBe(true);
 
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '+62 899-8877-6655';
+      expect(getWhatsAppNumber()).toBe('6289988776655');
+
+      // 5. Valid national format safely normalized to international contract (08... -> 628...)
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '089988776655';
+      expect(getWhatsAppNumber()).toBe('6289988776655');
+
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '0899-8877-6655';
+      expect(getWhatsAppNumber()).toBe('6289988776655');
+    } finally {
+      if (originalEnv !== undefined) {
+        process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = originalEnv;
+      } else {
+        delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+      }
+    }
+  });
+
+  it('enforces that preview WhatsApp inquiry never includes simulated/illustrative price (F02)', () => {
+    const originalEnv = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+    try {
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '6289988776655';
+
       const url = generateWhatsAppOrderUrl({
-        productTitle: 'Slow Sunday Tee',
+        productTitle: 'Slow Sunday Heavyweight Tee',
         color: 'Forest Ink',
         size: 'L',
-        priceFormatted: 'Rp 189.000',
+        printTone: 'Standard Contrast',
+        quantity: 1,
       });
+
       expect(url).toBeDefined();
       expect(url).toContain('https://wa.me/6289988776655?text=');
-      // Crucial: Must be inquiry, must NOT ask for bank account or payment transfer
-      expect(decodeURIComponent(url!)).toContain(
-        'Saya ingin menanyakan informasi & ketersediaan',
+
+      const decoded = decodeURIComponent(url!);
+
+      // Negative Price Assertions: Strictly no simulated/illustrative price transmitted
+      expect(decoded).not.toMatch(/189/);
+      expect(decoded).not.toMatch(/189000/);
+      expect(decoded).not.toMatch(/189\.000/);
+      expect(decoded).not.toMatch(/Rp/i);
+      expect(decoded).not.toMatch(/Estimasi UX/i);
+      expect(decoded).not.toMatch(/Harga/i);
+
+      // Negative Order Assertions: Strictly no payment, bank account, or committed order
+      expect(decoded).not.toContain('nomor rekening pembayarannya');
+      expect(decoded).not.toContain('Beli via WhatsApp Sekarang');
+      expect(decoded).not.toContain('transfer');
+      expect(decoded).not.toContain('rekening');
+
+      // Positive Content Assertions: Legitimate inquiry attributes preserved
+      expect(decoded).toContain('Slow Sunday Heavyweight Tee');
+      expect(decoded).toContain('Warna: Forest Ink');
+      expect(decoded).toContain('Ukuran: L');
+      expect(decoded).toContain('Varian: Standard Contrast');
+      expect(decoded).toContain('Estimasi Kuantiti: 1 pcs');
+      expect(decoded).toContain(
+        'Saya memahami produk ini berstatus studi desain/pratinjau',
       );
-      expect(decodeURIComponent(url!)).not.toContain(
-        'nomor rekening pembayarannya',
+      expect(decoded).toContain(
+        'Mohon info apakah konsep ini nantinya akan dirilis secara resmi',
       );
-      expect(decodeURIComponent(url!)).not.toContain(
-        'Beli via WhatsApp Sekarang',
-      );
+
+      // Verify that ProductDetailViewer does not pass price to generateWhatsAppOrderUrl
+      const viewer = read('components/ProductDetailViewer.tsx');
+      expect(viewer).not.toContain('priceFormatted');
+      // Visual storefront price is preserved for on-page presentation
+      expect(viewer).toContain('formatIllustrativePrice');
+      expect(viewer).toContain('presentationPolicy.priceBadgeLabel');
     } finally {
       if (originalEnv !== undefined) {
         process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = originalEnv;

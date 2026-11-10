@@ -66,7 +66,6 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
     size: selectedSize,
     printTone: selectedPrintTone.name,
     quantity: 1,
-    priceFormatted: formattedPrice,
   });
 
   const handleAddToDemoCart = () => {

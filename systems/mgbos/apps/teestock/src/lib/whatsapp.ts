@@ -2,32 +2,64 @@
  * TeeStock WhatsApp Assisted Inquiry & Contact Helper
  *
  * Provides fail-closed generation of formatted WhatsApp messages for studio inquiries.
- * Does NOT generate commercial payment requests for preview/non-sellable items.
+ * Does NOT generate commercial payment requests or transmit simulated pricing for preview items.
  */
 
 const KNOWN_PLACEHOLDER_NUMBERS = new Set([
   '6281234567890',
-  '1234567890',
   '081234567890',
+  '1234567890',
 ]);
 
 /**
- * Returns the sanitized WhatsApp phone number from environment if valid.
- * Fails closed by returning null if unset, empty, not 10-15 digits, or matches known placeholders.
+ * Validates and normalizes an Indonesian WhatsApp contact number according to a
+ * deterministic international contract (wa.me/<country-code><mobile-digits>):
+ *
+ * 1. Strips all non-digit characters.
+ * 2. Safely normalizes national Indonesian mobile numbers starting with '08' to '628'.
+ * 3. Requires the normalized number to start with '628' (Indonesian mobile prefix).
+ * 4. Rejects local fixed-lines (e.g. 021), non-mobile prefixes, or other countries.
+ * 5. Requires total normalized length between 11 and 15 digits (standard E.164 Indonesian mobile).
+ * 6. Fails closed (returns null) for missing, invalid, malformed, or known placeholder numbers.
  */
 export function getWhatsAppNumber(): string | null {
   const envNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
   if (!envNumber || typeof envNumber !== 'string') {
     return null;
   }
+
   const cleaned = envNumber.replace(/\D/g, '');
-  if (cleaned.length < 10 || cleaned.length > 15) {
+  if (!cleaned) {
     return null;
   }
+
+  // Reject raw placeholder before normalization
   if (KNOWN_PLACEHOLDER_NUMBERS.has(cleaned)) {
     return null;
   }
-  return cleaned;
+
+  // Deterministic normalization of national Indonesian mobile (08... -> 628...)
+  let normalized = cleaned;
+  if (cleaned.startsWith('08')) {
+    normalized = '62' + cleaned.slice(1);
+  }
+
+  // Enforce international Indonesian mobile prefix '628'
+  if (!normalized.startsWith('628')) {
+    return null;
+  }
+
+  // Indonesian mobile numbers in international 628 format are between 11 and 15 digits
+  if (normalized.length < 11 || normalized.length > 15) {
+    return null;
+  }
+
+  // Reject normalized placeholder (e.g. 081234567890 -> 6281234567890)
+  if (KNOWN_PLACEHOLDER_NUMBERS.has(normalized)) {
+    return null;
+  }
+
+  return normalized;
 }
 
 export function isWhatsAppConfigured(): boolean {
@@ -40,13 +72,12 @@ export interface WhatsAppInquiryDetails {
   size: string;
   printTone?: string;
   quantity?: number;
-  priceFormatted?: string;
 }
 
 /**
  * Generates an assisted inquiry URL for a preview product.
  * Returns null if WhatsApp is unconfigured/invalid.
- * Strictly avoids requesting bank accounts or claiming a confirmed sale.
+ * Strictly avoids transmitting simulated pricing or requesting payment details.
  */
 export function generateWhatsAppOrderUrl(
   details: WhatsAppInquiryDetails,
@@ -72,10 +103,6 @@ export function generateWhatsAppOrderUrl(
 
   lines.push(`  • Estimasi Kuantiti: ${qty} pcs`);
 
-  if (details.priceFormatted) {
-    lines.push(`  • Estimasi UX: ${details.priceFormatted}`);
-  }
-
   lines.push(
     ``,
     `Catatan: Saya memahami produk ini berstatus studi desain/pratinjau. Mohon info apakah konsep ini nantinya akan dirilis secara resmi. Terima kasih!`,
@@ -91,7 +118,6 @@ export interface CartLineSummary {
   size: string;
   printToneName?: string;
   quantity: number;
-  unitPriceIdr?: number;
 }
 
 /**
