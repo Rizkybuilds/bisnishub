@@ -64,7 +64,8 @@ export function Header() {
                 href={href}
                 className={
                   'nav-link retail-nav-link' +
-                  (pathname === href ? ' nav-link-active' : '')
+                  (pathname === href ? ' nav-link-active' : '') +
+                  (href === '/shop' ? ' retail-nav-link-primary' : '')
                 }
                 aria-current={pathname === href ? 'page' : undefined}
               >
@@ -112,7 +113,8 @@ export function Header() {
               href={href}
               className={
                 'mobile-nav-link' +
-                (pathname === href ? ' nav-link-active' : '')
+                (pathname === href ? ' nav-link-active' : '') +
+                (href === '/shop' ? ' mobile-nav-link-primary' : '')
               }
               aria-current={pathname === href ? 'page' : undefined}
               onClick={() => setOpen(false)}
