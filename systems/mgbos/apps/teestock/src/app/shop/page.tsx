@@ -26,17 +26,17 @@ export default function ShopPage() {
           </h1>
         </div>
         <p>
-          Enam studi visual untuk menjelajahi arah TeeStock Selects. Pilih warna
-          dan ukuran favorit Anda untuk memesan langsung melalui layanan resmi
-          WhatsApp kami.
+          Enam studi visual untuk menjelajahi arah TeeStock Selects. Jelajahi
+          konsep kurasi desain garmen dan uji pratinjau variasi ukuran serta
+          warna secara interaktif.
         </p>
       </section>
       <div className="retail-shop-notice" role="status">
         <span className="retail-availability-dot" aria-hidden="true" />
         <span>
-          <strong>Layanan Pemesanan Aktif.</strong> Koleksi apparel dapat
-          dipesan langsung melalui tombol WhatsApp pada setiap halaman detail
-          produk.
+          <strong>Tahap Pratinjau Desain Studio.</strong> Seluruh item merupakan
+          eksplorasi konsep retail. Transaksi komersial langsung belum dibuka
+          untuk publik.
         </span>
       </div>
       <ConceptGallery />

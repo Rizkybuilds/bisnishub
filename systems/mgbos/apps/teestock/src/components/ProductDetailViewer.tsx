@@ -11,7 +11,11 @@ import {
 } from '../data/products';
 import { ShirtIllustration, type ConceptDesign } from './RetailShowcase';
 import { useDemoCart } from '../features/demo-commerce';
-import { generateWhatsAppOrderUrl } from '../lib/whatsapp';
+import {
+  generateWhatsAppOrderUrl,
+  isWhatsAppConfigured,
+} from '../lib/whatsapp';
+import { getProductPresentationPolicy } from '../lib/product-policy';
 
 export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
   const [selectedColor, setSelectedColor] = useState<PreviewGarmentColor>(
@@ -51,6 +55,18 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
   };
 
   const formattedPrice = formatIllustrativePrice(product.illustrativePriceIdr);
+  const whatsappConfigured = isWhatsAppConfigured();
+  const presentationPolicy = getProductPresentationPolicy(
+    product,
+    whatsappConfigured,
+  );
+  const whatsappUrl = generateWhatsAppOrderUrl({
+    productTitle: product.title,
+    color: selectedColor.name,
+    size: selectedSize,
+    printTone: selectedPrintTone.name,
+    quantity: 1,
+  });
 
   const handleAddToDemoCart = () => {
     const result = addItem(
@@ -120,22 +136,24 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
             <p className="retail-pdp-tagline">{product.tagline}</p>
             <div className="retail-pdp-price-row">
               <span className="retail-pdp-price">{formattedPrice}</span>
-              <span className="retail-pdp-price-badge">Harga Resmi Rilis</span>
+              <span className="retail-pdp-price-badge">
+                {presentationPolicy.priceBadgeLabel}
+              </span>
             </div>
             <p className="retail-pdp-price-disclaimer">
-              Pemesanan apparel diproses dan dikonfirmasi langsung oleh tim
-              resmi TeeStock via WhatsApp.
+              Harga di atas merupakan estimasi untuk pengujian antarmuka. Produk
+              masih berupa studi kurasi desain dan belum dirilis secara
+              komersial.
             </p>
           </header>
 
-          {/* Active Sales Status Banner */}
+          {/* Studio Design Preview Status Banner */}
           <div className="retail-status-box" role="status">
             <span className="retail-availability-dot" aria-hidden="true" />
             <div>
-              <strong>Pemesanan Terbuka via WhatsApp.</strong> Silakan pilih
-              varian warna dan ukuran yang Anda inginkan, lalu klik tombol
-              pemesanan WhatsApp di bawah untuk terhubung langsung dengan tim
-              kami.
+              <strong>{presentationPolicy.statusHeading}.</strong>{' '}
+              {presentationPolicy.statusDescription} Pilihan warna dan ukuran di
+              bawah dapat digunakan untuk menguji simulasi antarmuka.
             </div>
           </div>
 
@@ -332,33 +350,38 @@ export function ProductDetailViewer({ product }: { product: PreviewProduct }) {
             </p>
           </div>
 
-          {/* Active Direct-to-WhatsApp Purchase Action Area */}
+          {/* WhatsApp Inquiry / Action Area */}
           <div className="retail-pdp-action-area">
-            <a
-              href={generateWhatsAppOrderUrl({
-                productTitle: product.title,
-                color: selectedColor.name,
-                size: selectedSize,
-                printTone: selectedPrintTone.name,
-                quantity: 1,
-                priceFormatted: formatIllustrativePrice(
-                  product.illustrativePriceIdr,
-                ),
-              })}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="retail-btn-whatsapp-order"
-              aria-label={`Pesan ${product.title} (${selectedColor.name}, ukuran ${selectedSize}) langsung via WhatsApp`}
-            >
-              <span className="retail-whatsapp-icon" aria-hidden="true">
-                💬
-              </span>
-              Beli via WhatsApp Sekarang
-            </a>
+            {whatsappUrl ? (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="retail-btn-whatsapp-order"
+                aria-label={`Tanya ketersediaan ${product.title} (${selectedColor.name}, ukuran ${selectedSize}) via WhatsApp`}
+              >
+                <span className="retail-whatsapp-icon" aria-hidden="true">
+                  💬
+                </span>
+                {presentationPolicy.actionButtonLabel}
+              </a>
+            ) : (
+              <button
+                type="button"
+                disabled
+                className="retail-btn-whatsapp-order retail-action-disabled"
+                aria-disabled="true"
+              >
+                <span className="retail-whatsapp-icon" aria-hidden="true">
+                  💬
+                </span>
+                Pemesanan Belum Dibuka
+              </button>
+            )}
             <p className="retail-pdp-action-disclaimer">
-              Pesanan ditangani langsung oleh tim TeeStock. Konfirmasi
-              ketersediaan stok, alamat pengiriman, dan rincian pembayaran
-              diproses melalui WhatsApp resmi.
+              {whatsappUrl
+                ? presentationPolicy.actionDisclaimer
+                : 'Produk berstatus studi kurasi desain studio. Saluran kontak langsung belum dikonfigurasi untuk publik.'}
             </p>
           </div>
 

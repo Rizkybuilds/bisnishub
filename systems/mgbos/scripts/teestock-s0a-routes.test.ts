@@ -54,17 +54,19 @@ describe('TeeStock S0-A Route & Content Invariant Tests', () => {
     }
   });
 
-  it('ensures official WhatsApp contact channel is active with governed URL resolution', () => {
+  it('ensures official WhatsApp contact channel has fail-closed resolution and truthful labels', () => {
     const contactPage = fs.readFileSync(
       path.join(teestockAppDir, 'src/app/support/contact/page.tsx'),
       'utf8',
     );
 
-    // Official WhatsApp contact channel active
+    // Official WhatsApp contact channel with fail-closed structure
     expect(contactPage).toContain('getWhatsAppContactUrl()');
     expect(contactPage).toContain('Saluran Komunikasi Resmi');
     expect(contactPage).toContain('Hubungi via WhatsApp Resmi');
-    expect(contactPage).toContain(
+    expect(contactPage).toContain('Layanan Pelanggan & Konsultasi WhatsApp');
+    expect(contactPage).toContain('Saluran WhatsApp Resmi Belum Dikonfigurasi');
+    expect(contactPage).not.toContain(
       'Layanan Pelanggan & Pemesanan WhatsApp Aktif',
     );
 
@@ -74,7 +76,7 @@ describe('TeeStock S0-A Route & Content Invariant Tests', () => {
     expect(contactPage).not.toContain('tombol inert');
   });
 
-  it('ensures Shop indicates WhatsApp ordering and Build Merch remains in development without unverified checkout', () => {
+  it('ensures Shop indicates design preview status and Build Merch remains in development without unverified checkout', () => {
     const homePage = fs.readFileSync(
       path.join(teestockAppDir, 'src/app/page.tsx'),
       'utf8',
@@ -82,7 +84,8 @@ describe('TeeStock S0-A Route & Content Invariant Tests', () => {
 
     // Shop availability & ordering status
     expect(homePage).toContain('Shop (Katalog Ritel)');
-    expect(homePage).toContain('Pemesanan Terbuka via WhatsApp');
+    expect(homePage).toContain('Pratinjau Kurasi Desain');
+    expect(homePage).not.toContain('Pemesanan Terbuka via WhatsApp');
     expect(homePage).not.toContain('Beli Sekarang');
     expect(homePage).not.toContain('Checkout');
     expect(homePage).not.toContain('/checkout');
