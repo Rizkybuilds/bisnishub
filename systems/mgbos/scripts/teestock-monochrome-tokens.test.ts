@@ -8,6 +8,35 @@ const root = path.resolve(here, '../apps/teestock/src');
 const read = (relativePath: string) =>
   fs.readFileSync(path.join(root, relativePath), 'utf8');
 
+/* WCAG 2.2 AA Relative Luminance & Contrast Ratio calculation */
+function sRGBtoLin(c: number): number {
+  const s = c / 255;
+  return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+}
+
+function relLuminance(r: number, g: number, b: number): number {
+  return 0.2126 * sRGBtoLin(r) + 0.7152 * sRGBtoLin(g) + 0.0722 * sRGBtoLin(b);
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const c = hex.replace('#', '');
+  return [
+    parseInt(c.substring(0, 2), 16),
+    parseInt(c.substring(2, 4), 16),
+    parseInt(c.substring(4, 6), 16),
+  ];
+}
+
+function calculateContrastRatio(hex1: string, hex2: string): number {
+  const [r1, g1, b1] = hexToRgb(hex1);
+  const [r2, g2, b2] = hexToRgb(hex2);
+  const l1 = relLuminance(r1, g1, b1);
+  const l2 = relLuminance(r2, g2, b2);
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 describe('TeeStock Premium Monochrome Design System & Site Shell (TS-WEB-NOV26-02)', () => {
   it('defines coherent monochrome tokens in globals.css without color ambiguity', () => {
     const globals = read('app/globals.css');
@@ -17,10 +46,11 @@ describe('TeeStock Premium Monochrome Design System & Site Shell (TS-WEB-NOV26-0
     expect(globals).toContain('--color-surface: #f7f7f7;');
     expect(globals).toContain('--color-surface-elevated: #ffffff;');
 
-    // Neutral Ink Hierarchy
+    // Neutral Ink Hierarchy (Remediated F02)
     expect(globals).toContain('--color-ink: #111111;');
     expect(globals).toContain('--color-ink-secondary: #404040;');
-    expect(globals).toContain('--color-ink-muted: #646464;');
+    expect(globals).toContain('--color-ink-muted: #525252;');
+    expect(globals).toContain('--color-ink-subtle: #595959;');
 
     // Restrained Inverse Surfaces & Text
     expect(globals).toContain('--color-inverse-bg: #111111;');
@@ -82,16 +112,114 @@ describe('TeeStock Premium Monochrome Design System & Site Shell (TS-WEB-NOV26-0
     expect(retail).toContain('.retail-nav-link.nav-link-active::after');
   });
 
-  it('guarantees accessible keyboard focus visibility on both canvas and inverse surfaces', () => {
+  it('remediates F01: guarantees accessible keyboard focus visibility against actual adjacent surfaces', () => {
     const globals = read('app/globals.css');
+    const retail = read('app/retail.css');
 
-    // Canvas focus
+    // Default light canvas controls use --color-focus (#111111)
     expect(globals).toContain('outline: 2px solid var(--color-focus)');
 
-    // Inverse surface focus (footer, dark buttons, announcement)
-    expect(globals).toContain('outline: 2px solid var(--color-focus-inverse)');
-    expect(globals).toContain('.site-footer a:focus-visible');
+    // Dark buttons placed on light canvas (.retail-header-cta, .retail-action-primary, .btn-primary, .retail-btn-demo-cart)
+    // MUST use --color-focus (#111111) with offset and canvas separation shadow, NOT invisible white outline
     expect(globals).toContain('.retail-header-cta:focus-visible');
+    expect(globals).toContain('.retail-action-primary:focus-visible');
+    expect(globals).toContain('.retail-btn-demo-cart:focus-visible');
+    expect(globals).toContain('box-shadow: 0 0 0 1px var(--color-canvas)');
+
+    // Skip link must have high contrast outline against white page canvas
+    expect(globals).toContain('.skip-link:focus');
+    expect(globals).toContain('outline: 2px solid var(--color-focus)');
+
+    // Truly inverse surfaces (footer, announcement bar) use --color-focus-inverse (#ffffff)
+    expect(globals).toContain('.site-footer a:focus-visible');
+    expect(globals).toContain('.retail-footer a:focus-visible');
+    expect(globals).toContain('.retail-announcement a:focus-visible');
+
+    // Contrast of focus indicators against their actual adjacent background must meet WCAG 3:1 minimum
+    const darkFocusOnCanvasRatio = calculateContrastRatio('#111111', '#ffffff');
+    expect(darkFocusOnCanvasRatio).toBeGreaterThanOrEqual(3.0);
+    expect(darkFocusOnCanvasRatio).toBeCloseTo(18.88, 1);
+
+    const whiteFocusOnInverseRatio = calculateContrastRatio(
+      '#ffffff',
+      '#111111',
+    );
+    expect(whiteFocusOnInverseRatio).toBeGreaterThanOrEqual(3.0);
+    expect(whiteFocusOnInverseRatio).toBeCloseTo(18.88, 1);
+
+    // Demo cart button focus in retail.css must use monochrome focus
+    expect(retail).toContain('outline: 2px solid var(--color-focus, #111111)');
+  });
+
+  it('remediates F02: verifies numeric text contrast >= 4.5:1 across all rendered contexts', () => {
+    const globals = read('app/globals.css');
+    const retail = read('app/retail.css');
+
+    // 1. Subtle text (#595959) over quiet surface (#f7f7f7) — previously failing #8a8a8a was 3.22:1
+    const subtleOnSurfaceRatio = calculateContrastRatio('#595959', '#f7f7f7');
+    expect(subtleOnSurfaceRatio).toBeGreaterThanOrEqual(4.5);
+    expect(subtleOnSurfaceRatio).toBeCloseTo(6.54, 1);
+
+    // 2. Inverse muted text (#a3a3a3) over inverse bg (#111111) — previously failing #737373 was 3.98:1
+    const inverseMutedOnDarkRatio = calculateContrastRatio(
+      '#a3a3a3',
+      '#111111',
+    );
+    expect(inverseMutedOnDarkRatio).toBeGreaterThanOrEqual(4.5);
+    expect(inverseMutedOnDarkRatio).toBeCloseTo(7.49, 1);
+
+    // 3. Muted text (#525252) over canvas (#ffffff) and surface (#f7f7f7)
+    const mutedOnCanvasRatio = calculateContrastRatio('#525252', '#ffffff');
+    expect(mutedOnCanvasRatio).toBeGreaterThanOrEqual(4.5);
+    expect(mutedOnCanvasRatio).toBeCloseTo(7.81, 1);
+
+    const mutedOnSurfaceRatio = calculateContrastRatio('#525252', '#f7f7f7');
+    expect(mutedOnSurfaceRatio).toBeGreaterThanOrEqual(4.5);
+    expect(mutedOnSurfaceRatio).toBeCloseTo(7.29, 1);
+
+    // 4. Secondary ink (#404040) over canvas (#ffffff)
+    const secondaryOnCanvasRatio = calculateContrastRatio('#404040', '#ffffff');
+    expect(secondaryOnCanvasRatio).toBeGreaterThanOrEqual(4.5);
+    expect(secondaryOnCanvasRatio).toBeCloseTo(10.37, 1);
+
+    // 5. Unavailable badge in globals.css uses --color-surface and --color-ink-subtle
+    expect(globals).toContain('.badge-unavailable {');
+    expect(globals).toContain('background-color: var(--color-surface);');
+    expect(globals).toContain('color: var(--color-ink-subtle);');
+
+    // 6. Footer bottom in retail.css uses --color-inverse-text-muted (#a3a3a3)
+    expect(retail).toContain('.retail-footer-bottom {');
+    expect(retail).toContain(
+      'color: var(--color-inverse-text-muted, #a3a3a3);',
+    );
+    expect(retail).not.toContain('color: #737373;');
+  });
+
+  it('remediates F03: eliminates legacy chrome colors on shared interactive controls', () => {
+    const retail = read('app/retail.css');
+
+    // .retail-detail-toggle must be monochromatic
+    expect(retail).toContain('.retail-detail-toggle {');
+    expect(retail).toContain('color: var(--color-ink, #111111);');
+    expect(retail).toContain(
+      'border-top: 1px solid var(--color-border, #e5e5e5);',
+    );
+    expect(retail).not.toContain('color: #40533f;');
+    expect(retail).not.toContain('color: #b9614e;');
+
+    // .retail-btn-demo-cart:hover must use monochrome dark hover #262626, not forest green #172a20
+    expect(retail).toContain('background: var(--color-signal-hover, #262626);');
+    expect(retail).not.toContain('background: #172a20;');
+
+    // .retail-btn-clear in demo cart must be monochromatic, not terracotta #9c4d3c
+    expect(retail).toContain('.retail-btn-clear {');
+    expect(retail).toContain('color: var(--color-ink-muted, #525252);');
+    expect(retail).not.toContain('color: #9c4d3c;');
+    expect(retail).not.toContain('color: #7a3224;');
+
+    // .retail-swatch.selected must use monochrome focus
+    expect(retail).toContain('outline: 2px solid var(--color-focus, #111111);');
+    expect(retail).not.toContain('outline: 2px solid #4a654d;');
   });
 
   it('prevents sticky header from obscuring anchor navigation targets', () => {

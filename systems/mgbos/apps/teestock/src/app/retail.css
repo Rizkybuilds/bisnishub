@@ -563,8 +563,8 @@ body:has(.retail-shop) .site-main {
   background: #f4f0e5;
 }
 .retail-swatch.selected {
-  outline: 2px solid #4a654d;
-  outline-offset: 3px;
+  outline: 2px solid var(--color-focus, #111111);
+  outline-offset: 2px;
 }
 .retail-detail-toggle {
   padding: 11px 0 13px;
@@ -572,16 +572,21 @@ body:has(.retail-shop) .site-main {
   display: flex;
   justify-content: space-between;
   text-align: left;
-  color: #40533f;
+  color: var(--color-ink, #111111);
   border: 0;
-  border-top: 1px solid #d6d9cc;
+  border-top: 1px solid var(--color-border, #e5e5e5);
   background: transparent;
   font-size: 12px;
   font-weight: 800;
   cursor: pointer;
 }
 .retail-detail-toggle:hover {
-  color: #b9614e;
+  color: var(--color-ink-secondary, #404040);
+  text-decoration: underline;
+}
+.retail-detail-toggle:focus-visible {
+  outline: 2px solid var(--color-focus, #111111);
+  outline-offset: 2px;
 }
 .retail-detail-toggle span {
   font-size: 17px;
@@ -931,7 +936,7 @@ body:has(.retail-shop) .site-main {
   color: var(--color-inverse-text, #ffffff);
 }
 .retail-footer-intro > strong span {
-  color: #737373;
+  color: var(--color-inverse-text-muted, #a3a3a3);
   font-size: 0.32em;
   vertical-align: top;
   margin-left: 12px;
@@ -978,7 +983,7 @@ body:has(.retail-shop) .site-main {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  color: #737373;
+  color: var(--color-inverse-text-muted, #a3a3a3);
   font-size: 10px;
   letter-spacing: 0.09em;
 }
@@ -1276,14 +1281,14 @@ body:has(.retail-shop) .site-main {
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--retail-muted, #7a827b);
+  color: var(--retail-muted, #525252);
   padding: 6px 10px;
   background: rgba(0, 0, 0, 0.04);
   border-radius: 4px;
 }
 .retail-inline-editorial-note {
   font-size: 12px;
-  color: var(--retail-muted, #7a827b);
+  color: var(--retail-muted, #525252);
   margin: 6px 0;
 }
 
@@ -1377,7 +1382,7 @@ body:has(.retail-shop) .site-main {
   margin-top: 14px;
   font-size: 11px;
   line-height: 1.5;
-  color: #727a73;
+  color: var(--color-ink-muted, #525252);
 }
 
 /* PDP Right Column: Content & Variant Engine */
@@ -1428,7 +1433,7 @@ body:has(.retail-shop) .site-main {
 .retail-pdp-price-disclaimer {
   font-size: 11px;
   line-height: 1.4;
-  color: #727a73;
+  color: var(--color-ink-muted, #525252);
   margin: 6px 0 0;
   font-style: italic;
 }
@@ -1639,7 +1644,7 @@ body:has(.retail-shop) .site-main {
 }
 .retail-guide-footnote {
   font-size: 11px;
-  color: #727a73;
+  color: var(--color-ink-muted, #525252);
   margin: 8px 0 0;
   font-style: italic;
 }
@@ -1726,7 +1731,7 @@ body:has(.retail-shop) .site-main {
   align-items: center;
   justify-content: center;
   background: var(--color-surface, #f7f7f7);
-  color: var(--color-ink-muted, #646464);
+  color: var(--color-ink-muted, #525252);
   border: 1px dashed var(--color-border, #e5e5e5);
   border-radius: 6px;
   font-size: 13px;
@@ -1738,7 +1743,7 @@ body:has(.retail-shop) .site-main {
 .retail-pdp-action-disclaimer {
   font-size: 11px;
   text-align: center;
-  color: #7a827b;
+  color: var(--color-ink-muted, #525252);
   margin: 0;
 }
 
@@ -1956,12 +1961,13 @@ body:has(.retail-shop) .site-main {
     border-color 0.2s ease;
 }
 .retail-btn-demo-cart:hover {
-  background: #172a20;
-  border-color: #172a20;
+  background: var(--color-signal-hover, #262626);
+  border-color: var(--color-signal-hover, #262626);
 }
 .retail-btn-demo-cart:focus-visible {
-  outline: 2px solid var(--retail-accent);
-  outline-offset: 2px;
+  outline: 2px solid var(--color-focus, #111111);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px var(--color-canvas, #ffffff);
 }
 .retail-demo-cart-success {
   background: var(--color-success-bg, #f0fdf4);
@@ -1998,7 +2004,7 @@ body:has(.retail-shop) .site-main {
 }
 .retail-demo-cart-disclaimer {
   font-size: 11px;
-  color: #7a827b;
+  color: var(--color-ink-muted, #525252);
   margin: 2px 0 0;
   line-height: 1.45;
 }
@@ -2122,7 +2128,7 @@ body:has(.retail-shop) .site-main {
 .retail-btn-clear {
   background: none;
   border: none;
-  color: #9c4d3c;
+  color: var(--color-ink-muted, #525252);
   font-size: 12px;
   font-weight: 650;
   cursor: pointer;
@@ -2130,7 +2136,11 @@ body:has(.retail-shop) .site-main {
   padding: 4px;
 }
 .retail-btn-clear:hover {
-  color: #7a3224;
+  color: var(--color-ink, #111111);
+}
+.retail-btn-clear:focus-visible {
+  outline: 2px solid var(--color-focus, #111111);
+  outline-offset: 2px;
 }
 .retail-demo-line-list {
   list-style: none;
@@ -2352,7 +2362,7 @@ body:has(.retail-shop) .site-main {
   transition: background 0.2s ease;
 }
 .retail-btn-primary:hover {
-  background: #172a20;
+  background: var(--color-signal-hover, #262626);
   color: #fff;
   text-decoration: none;
 }

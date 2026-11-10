@@ -9,8 +9,8 @@
   /* Typography / Ink: Very Dark Neutral Ink & Intentional Hierarchy */
   --color-ink: #111111;
   --color-ink-secondary: #404040;
-  --color-ink-muted: #646464;
-  --color-ink-subtle: #8a8a8a;
+  --color-ink-muted: #525252;
+  --color-ink-subtle: #595959;
 
   /* Inverse Surfaces & Ink: Restrained Inverse Chrome */
   --color-inverse-bg: #111111;
@@ -123,8 +123,9 @@ body {
 
 .skip-link:focus {
   top: 16px;
-  outline: 3px solid var(--color-focus-inverse);
-  outline-offset: 2px;
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px var(--color-canvas);
 }
 
 /* Prevent sticky header from obscuring focused anchor targets */
@@ -148,13 +149,23 @@ textarea:focus-visible {
   outline-offset: 3px;
 }
 
-/* Inverse surface focus styles */
-.site-footer a:focus-visible,
-.site-footer button:focus-visible,
-.retail-announcement a:focus-visible,
+/* Dark buttons on light canvas: ensure focus ring is separated from button by offset and has strong contrast against light background */
 .retail-header-cta:focus-visible,
 .retail-action-primary:focus-visible,
-.btn-primary:focus-visible {
+.retail-btn-demo-cart:focus-visible,
+.btn-primary:focus-visible,
+.retail-btn-primary:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px var(--color-canvas);
+}
+
+/* Inverse surface focus styles: for elements placed inside dark inverse surfaces (footer, announcement bar) */
+.site-footer a:focus-visible,
+.site-footer button:focus-visible,
+.retail-footer a:focus-visible,
+.retail-footer button:focus-visible,
+.retail-announcement a:focus-visible {
   outline: 2px solid var(--color-focus-inverse);
   outline-offset: 3px;
 }
