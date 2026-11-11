@@ -28,8 +28,8 @@ export default function ShopPage() {
           </h1>
         </div>
         <p>
-          Produk TeeStock terkurasi dan enam studi desain studio. Produk yang sudah
-          disiapkan bisa dilihat di bawah; checkout online menyusul.
+          Produk TeeStock terkurasi dan enam studi desain studio. Produk yang
+          sudah disiapkan bisa dilihat di bawah; checkout online menyusul.
         </p>
       </section>
       <PublishedCatalog />
@@ -37,8 +37,8 @@ export default function ShopPage() {
         <span className="retail-availability-dot" aria-hidden="true" />
         <span>
           <strong>Studi Desain Studio.</strong> Enam konsep berikut adalah
-          eksplorasi visual, bukan produk yang tersedia untuk dibeli.
-          Checkout komersial belum dibuka.
+          eksplorasi visual, bukan produk yang tersedia untuk dibeli. Checkout
+          komersial belum dibuka.
         </span>
       </div>
       <ConceptGallery />
