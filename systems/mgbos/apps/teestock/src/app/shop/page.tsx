@@ -36,7 +36,7 @@ export default function ShopPage() {
       <div className="retail-shop-notice" role="status">
         <span className="retail-availability-dot" aria-hidden="true" />
         <span>
-          <strong>Studi Desain Studio.</strong> Enam konsep berikut adalah
+          <strong>Tahap Pratinjau Desain Studio.</strong> Enam konsep berikut adalah
           eksplorasi visual, bukan produk yang tersedia untuk dibeli. Checkout
           komersial belum dibuka.
         </span>
