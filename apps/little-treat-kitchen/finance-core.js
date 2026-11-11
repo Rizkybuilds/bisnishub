@@ -4,7 +4,7 @@
  if(typeof module==="object"&&module.exports)module.exports=core;
 })(typeof window!=="undefined"?window:globalThis,function(){
  "use strict";
- const VERSION=1,MAX_ROWS=15000;
+ const VERSION=2,MAX_ROWS=15000;
  const KINDS=["ingredient","packaging","equipment","operating"];
  const CHANNELS=["GoFood","GrabFood","ShopeeFood","Langsung","Lainnya"];
  const PRIORITIES=["Normal","Penting","Mendesak"];
@@ -16,7 +16,7 @@
  const today=()=>new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Jakarta",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
  const currentMonth=()=>today().slice(0,7);
  const uuid=()=>typeof crypto!=="undefined"&&crypto.randomUUID?crypto.randomUUID():"lt-"+Date.now()+"-"+Math.random().toString(36).slice(2,10);
- const fresh=()=>({version:VERSION,sales:[],purchases:[],plans:[]});
+ const fresh=()=>({version:VERSION,sales:[],purchases:[],plans:[],stockItems:[],stockMoves:[],capitalEvents:[]});
  function positive(n,max=1e10){const v=Number(n);if(!Number.isFinite(v)||v<=0||v>max)throw Error("Jumlah harus lebih besar dari 0 dan dalam batas yang wajar.");return v}
  function amount(n,max=1e10){const v=Number(n);if(!Number.isFinite(v)||v<0||v>max)throw Error("Nominal harus angka Rupiah ≥ 0 dan dalam batas yang wajar.");return Math.round(v)}
  function checkDate(d){if(!validDate(d))throw Error("Tanggal tidak valid.");return d}
@@ -83,12 +83,17 @@
   const missingHpp=ss.filter(s=>s.cogs===0).length;
   const operational=pp.filter(p=>p.kind==="operating").reduce((a,p)=>a+p.total,0);
   const depreciationMonth=data.purchases.filter(x=>!x.voidedAt&&x.kind==="equipment").reduce((a,x)=>a+depreciation(x,month),0);
-  const cashIn=data.sales.filter(x=>!x.voidedAt&&x.payoutDate&&monthOf(x.payoutDate)===month).reduce((a,s)=>a+netPayout(s),0);
-  const cashOut=pp.reduce((a,p)=>a+p.total,0);
+  const payoutsReceived=data.sales.filter(x=>!x.voidedAt&&x.payoutDate&&monthOf(x.payoutDate)===month).reduce((a,s)=>a+netPayout(s),0);
+  const capitals=(data.capitalEvents||[]).filter(x=>!x.voidedAt&&monthOf(x.date)===month);
+  const capitalIn=capitals.filter(x=>x.type==="capital_in").reduce((a,x)=>a+x.amount,0);
+  const ownerDraw=capitals.filter(x=>x.type==="owner_draw").reduce((a,x)=>a+x.amount,0);
+  const cashIn=payoutsReceived+capitalIn;
+  const purchasePayments=pp.reduce((a,p)=>a+p.total,0);
+  const cashOut=purchasePayments+ownerDraw;
   const pending=data.sales.filter(x=>!x.voidedAt&&!x.payoutDate).reduce((a,s)=>a+netPayout(s),0);
   const assets=data.purchases.filter(x=>x.kind==="equipment"&&!x.voidedAt&&x.date<=month+"-31");
   const assetBook=assets.reduce((a,x)=>a+bookValue(x,month),0);
-  return {month,orderCount:ss.reduce((a,s)=>a+s.orders,0),saleCount:ss.length,gross,discount,refund,revenue,fees,cogs,missingHpp,contribution:revenue-fees-cogs,operational,depreciation:depreciationMonth,profit:revenue-fees-cogs-operational-depreciationMonth,cashIn,cashOut,cashFlow:cashIn-cashOut,pending,assetBook, purchases:pp.length,assets:assets.length};
+  return {month,orderCount:ss.reduce((a,s)=>a+s.orders,0),saleCount:ss.length,gross,discount,refund,revenue,fees,cogs,missingHpp,contribution:revenue-fees-cogs,operational,depreciation:depreciationMonth,profit:revenue-fees-cogs-operational-depreciationMonth,cashIn,cashOut,cashFlow:cashIn-cashOut,payoutsReceived,purchasePayments,capitalIn,ownerDraw,pending,assetBook, purchases:pp.length,assets:assets.length};
  }
  function pastMonths(month,n){
   const [y,m]=month.split("-").map(Number);return Array.from({length:n},(_,i)=>{const dt=new Date(Date.UTC(y,m-1-i,1));return dt.toISOString().slice(0,7)});
@@ -103,7 +108,9 @@
  function validateImport(text){
   if(typeof text!=="string"||text.length>3e6)throw Error("Backup terlalu besar.");
   let data;try{data=JSON.parse(text)}catch(e){throw Error("File bukan JSON valid.");}
-  if(!data||data.version!==VERSION||!Array.isArray(data.sales)||!Array.isArray(data.purchases)||!Array.isArray(data.plans))throw Error("Versi atau struktur backup tidak cocok.");
+  if(!data||![1,VERSION].includes(data.version)||!Array.isArray(data.sales)||!Array.isArray(data.purchases)||!Array.isArray(data.plans))throw Error("Versi atau struktur backup tidak cocok.");
+  if(data.version===1)Object.assign(data,{stockItems:[],stockMoves:[],capitalEvents:[]});
+  if(!Array.isArray(data.stockItems)||!Array.isArray(data.stockMoves)||!Array.isArray(data.capitalEvents))throw Error("Struktur persediaan/modal tidak valid.");
   if(data.sales.length+data.purchases.length+data.plans.length>MAX_ROWS)throw Error("Terlalu banyak transaksi.");
   const ids=new Set();
   for(const [type,records] of [["sales",data.sales],["purchases",data.purchases],["plans",data.plans]]){
@@ -126,7 +133,13 @@
       }
     }
   }
-  return {version:VERSION,sales:data.sales,purchases:data.purchases,plans:data.plans};
+  const result={version:VERSION,sales:data.sales,purchases:data.purchases,plans:data.plans,
+    stockItems:data.stockItems,stockMoves:data.stockMoves,capitalEvents:data.capitalEvents};
+  if(result.stockItems.length+result.stockMoves.length+result.capitalEvents.length>20000)throw Error("Jumlah catatan stok berlebihan.");
+  const stock=(typeof window!=="undefined"?window.LT_STOCK_CORE:
+    (typeof globalThis!=="undefined"?globalThis.LT_STOCK_CORE:null));
+  if(stock?.validate)stock.validate(result);
+  return result;
  }
  function toCsv(records,fields){
   const enc=v=>'"'+String(v??"").replace(/"/g,'""').replace(/^[=+\-@]/,"'$&")+'"';
