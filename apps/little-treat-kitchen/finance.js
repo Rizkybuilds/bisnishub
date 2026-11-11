@@ -83,7 +83,7 @@ function renderDashboard(){
  const m=core.monthly(state.data,state.month),series=core.pastMonths(state.month,6).reverse().map(month=>core.monthly(state.data,month));
  const max=Math.max(1,...series.map(x=>x.revenue)); const recent=state.data.sales.filter(x=>!x.voidedAt&&x.date.startsWith(state.month));
  const byChannel=Object.entries(recent.reduce((acc,s)=>(acc[s.channel]=(acc[s.channel]||0)+core.netRevenue(s),acc),{})).sort((a,b)=>b[1]-a[1]);
- return '<div class="fin-metrics">'+groupCards([
+ return (m.missingHpp?'<div class="fin-alert fin-alert-error"><b>Perhatian: '+m.missingHpp+' transaksi tanpa HPP.</b> Angka laba bisa terlalu tinggi. Isi HPP produk terjual untuk semua pesanan sebelum digunakan mengambil keputusan bisnis.</div>':"")+'<div class="fin-metrics">'+groupCards([
   ["Omzet kotor",fmt(m.gross),m.orderCount+" order"],
   ["Pendapatan bersih",fmt(m.revenue),"setelah diskon merchant & refund"],
   ["Estimasi laba operasional",fmt(m.profit),"setelah HPP, biaya, penyusutan"],
