@@ -9,7 +9,10 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { StorefrontProduct, StorefrontVariant } from '../lib/storefront-product';
+import type {
+  StorefrontProduct,
+  StorefrontVariant,
+} from '../lib/storefront-product';
 import {
   addToCart,
   cartLineKey,
@@ -27,7 +30,10 @@ interface LiveCartContextValue {
   count: number;
   subtotal: number;
   loaded: boolean;
-  add: (product: StorefrontProduct, variant: StorefrontVariant) => string | null;
+  add: (
+    product: StorefrontProduct,
+    variant: StorefrontVariant,
+  ) => string | null;
   setQuantity: (key: string, quantity: number) => void;
   remove: (key: string) => void;
   clear: () => void;
@@ -41,7 +47,9 @@ export function LiveCartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      setLines(normalizeCart(JSON.parse(window.localStorage.getItem(KEY) || '[]')));
+      setLines(
+        normalizeCart(JSON.parse(window.localStorage.getItem(KEY) || '[]')),
+      );
     } catch {
       setLines([]);
     } finally {
@@ -78,7 +86,8 @@ export function LiveCartProvider({ children }: { children: ReactNode }) {
 
   const setQuantity = useCallback((key: string, quantity: number) => {
     setLines((current) => {
-      if (!Number.isInteger(quantity) || quantity < 1 || quantity > 10) return current;
+      if (!Number.isInteger(quantity) || quantity < 1 || quantity > 10)
+        return current;
       const next = current.map((item) =>
         cartLineKey(item) === key ? { ...item, quantity } : item,
       );
