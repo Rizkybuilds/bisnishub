@@ -45,8 +45,25 @@ describe('TeeStock catalog product contract', () => {
         org + '/' + brand + '/33333333-3333-4333-8333-333333333333.png',
       artworkPath:
         org + '/' + brand + '/44444444-4444-4444-8444-444444444444.pdf',
+      details: {
+        material: '100% cotton combed after verified sampling',
+        fit: 'Regular fit',
+        care: 'Wash gently and follow the approved care label.',
+        productionDays: 3,
+        sizeChart: [{ size: 'L', widthCm: 54, lengthCm: 73 }],
+      },
     };
     expect(catalogProductSchema.safeParse(ready).success).toBe(true);
+    expect(
+      catalogProductSchema.safeParse({
+        ...ready, details: { ...ready.details, sizeChart: [] },
+      }).success,
+    ).toBe(false);
+    expect(
+      catalogProductSchema.safeParse({
+        ...ready, details: { ...ready.details, productionDays: 0 },
+      }).success,
+    ).toBe(false);
     expect(
       catalogProductSchema.safeParse({
         ...ready,
