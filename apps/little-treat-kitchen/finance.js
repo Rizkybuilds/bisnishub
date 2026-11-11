@@ -1,10 +1,10 @@
 /* Owner-side finance workspace. Device-local until Supabase Auth/RLS is provisioned. */
 (function(){
 "use strict";
-const core=window.LT_FIN_CORE;
+const core=window.LT_FIN_CORE,stock=window.LT_STOCK_CORE,stockUI=window.LT_STOCK_UI;
 const KEY="little-treat-finance-local-v1";
 const tags={ingredient:"Bahan baku",packaging:"Kemasan",equipment:"Alat / aset",operating:"Biaya operasional"};
-const views={belanja:[["plans","Daftar kebutuhan"],["purchases","Catat pembelian"],["purchaselog","Riwayat belanja"]],keuangan:[["dashboard","Ringkasan"],["sales","Catat penjualan"],["assets","Aset & penyusutan"],["ledger","Riwayat"],["backup","Backup data"]]};
+const views={belanja:[["plans","Daftar kebutuhan"],["purchases","Catat pembelian"],["stock","Stok bahan"],["purchaselog","Riwayat belanja"]],keuangan:[["dashboard","Ringkasan"],["sales","Catat penjualan"],["assets","Aset & penyusutan"],["capital","Modal & prive"],["ledger","Riwayat"],["backup","Backup data"]]};
 const state={view:"belanja",sub:{belanja:"plans",keuangan:"dashboard"},month:core.currentMonth(),data:core.fresh(),invalidStorage:false,realize:null};
 const qs=(s)=>document.querySelector(s);
 const fmt=n=>"Rp "+Math.round(Number(n)||0).toLocaleString("id-ID");
@@ -87,7 +87,7 @@ function renderDashboard(){
   ["Omzet kotor",fmt(m.gross),m.orderCount+" order"],
   ["Pendapatan bersih",fmt(m.revenue),"setelah diskon merchant & refund"],
   ["Estimasi laba operasional",fmt(m.profit),"setelah HPP, biaya, penyusutan"],
-  ["Arus kas periode",fmt(m.cashFlow),"kas masuk − pembayaran keluar"]
+  ["Arus kas periode",fmt(m.cashFlow),"payout + modal − belanja − prive"]
  ])+'</div>'+
  '<div class="fin-two-columns"><div class="fin-panel"><div class="fin-panel-title"><h2>Tren pendapatan bersih</h2><p>Enam bulan terakhir. Bukan uang kas yang sudah cair.</p></div><div class="fin-chart">'+series.map(x=>'<div class="fin-bar-row"><span>'+esc(x.month.slice(5)+"/"+x.month.slice(2,4))+'</span><div><i style="width:'+Math.max(0,100*x.revenue/max).toFixed(2)+'%"></i></div><strong>'+fmt(x.revenue)+'</strong></div>').join("")+'</div></div>'+
  '<div class="fin-panel"><div class="fin-panel-title"><h2>Omzet per channel</h2><p>Penjualan dari pesanan bulan ini.</p></div>'+
@@ -100,10 +100,12 @@ function renderDashboard(){
   ["Biaya operasional bulan ini",-m.operational],
   ["Penyusutan alat bulan ini",-m.depreciation],
   ["Estimasi laba operasional",m.profit],
-  ["Payout penjualan yang benar-benar diterima",m.cashIn],
-  ["Semua pembayaran belanja & alat",-m.cashOut],
-  ["Arus kas periode",m.cashFlow],
- ].map(([title,n],i)=>'<div class="fin-reconcile-row '+([5,8].includes(i)?"strong":"")+'"><span>'+title+'</span><strong>'+fmt(n)+'</strong></div>').join("")+'</div>'+
+  ["Payout penjualan diterima",m.payoutsReceived],
+  ["Setoran modal pemilik",m.capitalIn],
+  ["Pengambilan pribadi / prive",-m.ownerDraw],
+  ["Semua pembayaran belanja & alat",-m.purchasePayments],
+  ["Arus kas periode (termasuk setoran/prive)",m.cashFlow],
+ ].map(([title,n],i)=>'<div class="fin-reconcile-row '+(["Estimasi laba operasional","Arus kas periode"].includes(title)?"strong":"")+'"><span>'+title+'</span><strong>'+fmt(n)+'</strong></div>').join("")+'</div>'+
  '<p class="fin-hint">Payout belum diterima dari semua penjualan: '+fmt(m.pending)+'. Tanpa data HPP yang benar, biaya tenaga kerja, pajak, dan saldo awal kas, laporan ini belum menjadi laporan keuangan lengkap.</p></div>';
 }
 function renderSales(){
@@ -159,8 +161,8 @@ function render(container,view){
  state.view=view;
  if(state.invalidStorage){container.innerHTML=shell("Data keuangan perlu dipulihkan","Data tersimpan tidak dapat dibaca. Tidak ada perubahan otomatis.",domError("Penyimpanan lokal rusak/tidak cocok. Jangan menginput transaksi baru di browser ini sampai dilakukan pemulihan."));return}
  const sub=state.sub[view];let body;
- if(view==="belanja"){body=sub==="plans"?renderPlans():sub==="purchases"?renderPurchases():renderPurchaseLog();container.innerHTML=shell("Belanja & kebutuhan.","Rencanakan bahan, kemasan, alat dan biaya operasional. Pisahkan anggaran dari pembelian aktual.",body)}
- else{body=sub==="dashboard"?renderDashboard():sub==="sales"?renderSales():sub==="assets"?renderAssets():sub==="ledger"?renderLedger():renderBackup();container.innerHTML=shell("Keuangan Little Treat.","Pantau penjualan, payout marketplace, kas keluar, aset dan estimasi laba.",body)}
+ if(view==="belanja"){body=sub==="plans"?renderPlans():sub==="purchases"?renderPurchases():sub==="stock"?stockUI.renderStock(state.data,state.month,core.today()):renderPurchaseLog();container.innerHTML=shell("Belanja & kebutuhan.","Rencanakan bahan, kemasan, alat dan biaya operasional. Pisahkan anggaran dari pembelian aktual.",body)}
+ else{body=sub==="dashboard"?renderDashboard():sub==="sales"?renderSales():sub==="assets"?renderAssets():sub==="capital"?stockUI.renderCapital(state.data,state.month,core.today()):sub==="ledger"?renderLedger():renderBackup();container.innerHTML=shell("Keuangan Little Treat.","Pantau penjualan, payout marketplace, kas keluar, aset dan estimasi laba.",body)}
 }
 function rerender(){const root=qs("#main");if(root&&["belanja","keuangan"].includes(state.view))render(root,state.view)}
 function inputs(form){return Object.fromEntries(new FormData(form).entries())}
@@ -169,6 +171,7 @@ function record(form,type){
  const i=inputs(form);if(type==="plan")state.data.plans.unshift(core.addPlan(i));
  if(type==="purchase"){
   const row=core.addPurchase(i);state.data.purchases.unshift(row);
+  if(row.kind==="ingredient"||row.kind==="packaging")stock.receivePurchase(state.data,row);
   if(i.planId){const plan=state.data.plans.find(x=>x.id===i.planId);if(plan){plan.done=true;plan.linkedPurchaseId=row.id;}}
   state.realize=null;
  }
@@ -184,6 +187,7 @@ function handleAction(btn){
   const reason=prompt("Alasan pembatalan transaksi (wajib):");if(reason===null)return;
   if(!reason.trim()){toast("Alasan pembatalan wajib diisi.");return}
   if(!confirm("Batalkan transaksi ini? Riwayat asli tetap disimpan."))return;
+  if(action==="void-purchase")stock.voidReceipt(state.data,id,reason);
   core.voidRecord(state.data,action==="void-sale"?"sales":"purchases",id,reason);
   // If a purchase for a shopping plan is cancelled, restore the plan.
   if(action==="void-purchase"){state.data.plans.forEach(x=>{if(x.linkedPurchaseId===id){x.done=false;x.linkedPurchaseId=null}})}
@@ -231,5 +235,6 @@ document.addEventListener("submit",e=>{
 });
 window.addEventListener("storage",e=>{if(e.key===KEY){load();rerender();toast("Data berubah dari tab lain. Periksa transaksi terbaru.")}});
 load();
+stockUI.bind(()=>state.data,save,rerender,toast);
 window.LT_FINANCE={render};
 })();
