@@ -3,18 +3,19 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<meta name="theme-color" content="#f7f5f1"/>
+<meta name="theme-color" content="#f9f6f1"/>
 <meta name="description" content="Little Treat Kitchen OS v3 — pesanan, resep, stok, HPP dan daily closing terpusat."/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://*.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"/>
-<title>Little Treat — Operations v3</title>
+<title>Little Treat | Kitchen OS</title>
 <link rel="icon" type="image/svg+xml" href="./icon.svg"/>
 <link rel="stylesheet" href="./ops.css"/>
+<link rel="stylesheet" href="./ops-visual.css"/>
 <script src="./ops-config.js" defer></script>
 <script src="./recipes.js" defer></script>
 <script src="./ops.js" defer></script>
 </head>
 <body>
-<div class="app" id="ops-root" aria-live="polite">
+<div class="app" id="ops-root">
   <div class="boot"><div class="logo">lt<span>.</span></div><p>Memuat Kitchen OS…</p></div>
 </div>
 <dialog id="ops-modal" aria-label="Detail resep"><div id="ops-modal-body"></div><button type="button" data-action="close-modal" class="close">Tutup</button></dialog>

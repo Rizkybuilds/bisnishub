@@ -15,17 +15,33 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const dateToday=()=>new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Jakarta",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
 const PRODUCT_CATEGORIES={coffee:"Kopi",banana:"Pisang",dimsum:"Dimsum",other:"Lainnya"};
 const CHANNELS=["GoFood","GrabFood","ShopeeFood","Langsung","Lainnya"];
+const ICON_PATHS={
+ orders:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3.7h6M9 9h6M9 13h6M9 17h4"/>',
+ recipes:'<path d="M3 5.5A2.5 2.5 0 0 1 5.5 3H12v18H5.5A2.5 2.5 0 0 0 3 23z"/><path d="M21 5.5A2.5 2.5 0 0 0 18.5 3H12v18h6.5a2.5 2.5 0 0 1 2.5 2z"/>',
+ stock:'<path d="m12 2 9 5-9 5-9-5zM3 7v10l9 5 9-5V7M12 12v10"/>',
+ costing:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 8h10M8 12h2m4 0h2m-8 4h2m4 0h2"/>',
+ finance:'<path d="M3 7V5a2 2 0 0 1 2-2h13v4"/><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M16 14h5M16 14h-1"/>',
+ closing:'<path d="M3 3v18h18M7 16l4-5 3 2 5-7"/>',
+ more:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+ refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+ logout:'<path d="M10 17l5-5-5-5M15 12H3M12 3h5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-5"/>',
+ shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+ arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>'
+};
+const icon=name=>'<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+(ICON_PATHS[name]||ICON_PATHS.more)+'</svg>';
 const TABS=[
- {id:"orders",label:"Pesanan",icon:"🧾",staff:true},
- {id:"recipes",label:"Resep",icon:"📖",staff:true},
- {id:"stock",label:"Stok",icon:"📦",staff:true},
- {id:"costing",label:"HPP & Menu",icon:"🧮",staff:false},
- {id:"finance",label:"Belanja",icon:"🛒",staff:false},
- {id:"closing",label:"Daily Closing",icon:"📊",staff:false}
+ {id:"orders",label:"Pesanan",icon:"orders",staff:true},
+ {id:"recipes",label:"Resep",icon:"recipes",staff:true},
+ {id:"stock",label:"Stok",icon:"stock",staff:true},
+ {id:"costing",label:"HPP & Menu",icon:"costing",staff:false},
+ {id:"finance",label:"Belanja",icon:"finance",staff:false},
+ {id:"closing",label:"Daily Closing",icon:"closing",staff:false}
 ];
+
 const s={session:null,user:null,role:null,tab:"orders",busy:false,err:"",
  data:{products:[],materials:[],bom:[],orders:[],items:[],financials:[],costs:[],purchases:[],closings:[]},
- cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all"};
+ cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all",orderFilter:"active",activeRecipeId:null};
 let notifyTimer;
 function notify(msg){toastEl.textContent=msg;toastEl.classList.add("active");clearTimeout(notifyTimer);notifyTimer=setTimeout(()=>toastEl.classList.remove("active"),3000)}
 function setError(msg){s.err=String(msg||"");render()}
@@ -120,27 +136,54 @@ function showSetup(){
  '<p>Katalog resep lama tetap tersedia di aplikasi Kitchen OS v2 selama migrasi.</p></div></div>';
 }
 function showLogin(){
- root.innerHTML='<div class="auth-screen"><div class="auth-card"><div class="logo">lt<span>.</span></div><h1>Masuk ke Kitchen OS</h1>'+
- '<p>Gunakan akun yang didaftarkan pemilik. Tidak ada registrasi mandiri bagi karyawan.</p>'+
- (s.err?'<div class="notice error">'+esc(s.err)+'</div>':"")+
- '<form id="ops-login"><label class="field"><span>Email</span><input type="email" name="email" required autocomplete="username" placeholder="email@contoh.com"/></label>'+
- '<label class="field"><span>Password</span><input type="password" name="password" required autocomplete="current-password"/></label>'+
- '<button class="btn full" type="submit" '+(s.busy?"disabled":"")+'>'+(s.busy?"Memproses…":"Masuk")+'</button></form>'+
- '<p class="muted" style="margin-top:20px">Akun belum disiapkan? <a href="./legacy.html">Buka panduan resep v2 sementara</a>. Data keuangan versi lama hanya tersimpan pada browser tempat sebelumnya digunakan.</p></div></div>';
+ root.innerHTML='<div class="auth-screen"><div class="auth-card">'+
+ '<div class="logo">lt<span>.</span></div>'+
+ '<div class="auth-decoration" style="margin-top:25px"><i aria-hidden="true"></i> Little Treat · Kitchen OS</div>'+
+ '<h1>Selamat datang kembali.</h1>'+
+ '<p>Masuk untuk mengelola pesanan, resep dan stok dapur dalam satu tempat. Gunakan akun yang sudah didaftarkan pemilik.</p>'+
+ (s.err?'<div class="notice error" role="alert">'+esc(s.err)+'</div>':"")+
+ '<form id="ops-login">'+
+ field("Email",'<input type="email" name="email" required autocomplete="username" inputmode="email" placeholder="email@contoh.com" />')+
+ field("Kata sandi",'<input type="password" name="password" required autocomplete="current-password" placeholder="Masukkan kata sandi" />')+
+ '<button class="btn full" type="submit" '+(s.busy?"disabled aria-busy=\"true\"":"")+'>'+(s.busy?"Memverifikasi akun…":"Masuk ke Kitchen OS "+icon("arrow"))+'</button></form>'+
+ '<div class="auth-footnote">'+icon("shield")+' Akun dan data operasional disimpan di Supabase khusus Little Treat.</div>'+
+ '<p class="muted" style="margin-top:18px">Butuh resep sebelum login? <a href="./legacy.html">Buka panduan resep lama</a>. Data keuangan lama hanya tersimpan di browser asal.</p>'+
+ '</div></div>';
 }
+
 function nav(){
  const visible=TABS.filter(x=>s.role==="owner"||x.staff);
- const menu=visible.map(x=>'<button type="button" data-tab="'+x.id+'" class="'+(x.id===s.tab?"active":"")+'">'+x.icon+' '+x.label+'</button>').join("");
- return '<aside class="sidebar"><div class="head"><div class="logo">lt<span>.</span></div><div><div class="brand-name">little treat.</div><div class="brand-sub">KITCHEN OS / V3</div></div></div><nav class="nav">'+menu+'</nav>'+
- '<div class="sidebar-bottom">Tersinkron melalui Supabase<br/><strong>'+esc(s.role.toUpperCase())+'</strong> · '+esc(s.user?.email||"")+'</div></aside>'+
- '<nav class="bottom">'+visible.slice(0,5).map(x=>'<button type="button" data-tab="'+x.id+'" class="'+(x.id===s.tab?"active":"")+'">'+x.icon+'<div>'+x.label+'</div></button>').join("")+'</nav>';
+ const primary=s.role==="owner"?["orders","recipes","stock","costing"]:["orders","recipes","stock"];
+ const extra=visible.filter(x=>!primary.includes(x.id));
+ const sideMenu=visible.map(x=>'<button type="button" data-tab="'+x.id+'" class="'+(x.id===s.tab?"active":"")+'" '+(x.id===s.tab?'aria-current="page"':"")+'>'+icon(x.icon)+'<span class="nav-label">'+esc(x.label)+'</span></button>').join("");
+ const bottomMenu=visible.filter(x=>primary.includes(x.id)).map(x=>'<button type="button" data-tab="'+x.id+'" class="'+(x.id===s.tab?"active":"")+'" '+(x.id===s.tab?'aria-current="page"':"")+'>'+icon(x.icon)+'<span>'+esc(x.label)+'</span></button>').join("");
+ const extraMenu=extra.length?'<details class="more-nav '+(extra.some(x=>x.id===s.tab)?"active":"")+'"><summary>'+icon("more")+'<span>Lainnya</span></summary>'+
+ '<div class="more-sheet">'+extra.map(x=>'<button type="button" data-tab="'+x.id+'" class="'+(x.id===s.tab?"active":"")+'">'+icon(x.icon)+' '+esc(x.label)+'</button>').join("")+'</div></details>':"";
+ return '<aside class="sidebar" aria-label="Navigasi utama">'+
+ '<div class="head"><div class="logo">lt<span>.</span></div><div><div class="brand-name">little treat.</div><div class="brand-sub">KITCHEN OPERATIONS</div></div></div>'+
+ '<div class="side-label">WORKSPACE</div><nav class="nav" aria-label="Menu Kitchen OS">'+sideMenu+'</nav>'+
+ '<div class="sidebar-bottom"><span class="sync-note">Data terpusat · Supabase</span>'+
+ '<strong>'+esc(s.role.toUpperCase())+'</strong><span class="profile-email">'+esc(s.user?.email||"")+'</span></div></aside>'+
+ '<nav class="bottom '+(s.role==="owner"?"owner":"staff")+'" aria-label="Navigasi cepat">'+bottomMenu+extraMenu+'</nav>';
 }
 function wrap(title,desc,body){
- root.innerHTML='<div class="shell">'+nav()+'<div class="main-wrap"><header class="top"><div class="title">Little Treat / '+esc(title)+'</div>'+
- '<div class="right"><b>'+esc(s.role==="owner"?"Pemilik":"Operator")+'</b><small>'+esc(s.user?.email||"")+'</small><button data-action="reload" class="btn secondary">↻</button><button data-action="logout" class="btn secondary">Keluar</button></div></header>'+
- '<main class="main" id="ops-main"><div class="eyebrow">LITTLE TREAT / OPERATIONS</div><h1>'+esc(title)+'</h1><p class="lead">'+esc(desc)+'</p>'+
- (s.err?'<div class="notice error"><b>Gagal:</b> '+esc(s.err)+'</div>':"")+body+'</main></div></div>';
+ const dateLabel=new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"long",year:"numeric",timeZone:"Asia/Jakarta"}).format(new Date());
+ const role=s.role==="owner"?"Pemilik":"Operator";
+ const initial=String(s.user?.email||"O").slice(0,1).toUpperCase();
+ root.innerHTML='<div class="shell"><a class="skip-link" href="#ops-main">Lewati navigasi, ke konten utama</a>'+nav()+'<div class="main-wrap">'+
+ '<header class="top">'+
+ '<div class="mobile-brand"><span class="logo">lt<span>.</span></span><span>little treat.</span></div>'+
+ '<div class="title">Kitchen OS <span aria-hidden="true"> / </span> <b>'+esc(title)+'</b></div>'+
+ '<div class="right"><div class="user-chip"><span class="avatar" aria-hidden="true">'+esc(initial)+'</span><div><b>'+esc(role)+'</b><small>'+esc(s.user?.email||"")+'</small></div></div>'+
+ '<button type="button" data-action="reload" class="btn secondary icon-btn" title="Muat data terbaru" aria-label="Muat data terbaru" '+(s.busy?"disabled":"")+'>'+icon("refresh")+'</button>'+
+ '<button type="button" data-action="logout" class="btn secondary icon-btn" title="Keluar akun" aria-label="Keluar akun">'+icon("logout")+'</button></div></header>'+
+ '<main class="main" id="ops-main" '+(s.busy?'aria-busy="true"':'')+'>'+
+ '<div class="page-intro"><div><div class="eyebrow">LITTLE TREAT / KITCHEN OPERATIONS</div>'+
+ '<h1>'+esc(title)+'</h1><p class="lead">'+esc(desc)+'</p></div>'+
+ '<div class="page-aside"><strong>'+esc(dateLabel)+'</strong><span>Operasional Little Treat</span></div></div>'+
+ (s.err?'<div class="notice error" role="alert"><b>Belum berhasil:</b> '+esc(s.err)+'</div>':"")+body+'</main></div></div>';
 }
+
 function stat(label,value,sub=""){return '<div class="metric"><small>'+esc(label)+'</small><strong>'+value+'</strong><span>'+esc(sub)+'</span></div>'}
 function field(label,control,help=""){return '<label class="field"><span>'+label+'</span>'+control+(help?'<small>'+help+'</small>':"")+'</label>'}
 function inp(name,placeholder="",type="text",extra=""){return '<input type="'+type+'" name="'+name+'" placeholder="'+esc(placeholder)+'" '+extra+'/>'}
@@ -162,55 +205,151 @@ function orderDetails(order){
  const lines=s.data.items.filter(x=>x.order_id===order.id);
  return lines.map(x=>esc(productName(x.product_id))+" × "+x.qty).join(" · ")||"Tidak ada item";
 }
+function filteredOrders(){
+ const matches=o=>s.orderFilter==="all" ||
+   (s.orderFilter==="active"&&["new","preparing","ready"].includes(o.status)) ||
+   (s.orderFilter==="ready"&&o.status==="ready") ||
+   (s.orderFilter==="completed"&&o.status==="handed_off");
+ const priority={ready:0,preparing:1,new:2,handed_off:3,cancelled:4};
+ return s.data.orders.filter(matches).slice().sort((a,b)=>{
+   if(s.orderFilter==="active")return priority[a.status]-priority[b.status]||new Date(a.created_at)-new Date(b.created_at);
+   return new Date(b.created_at)-new Date(a.created_at);
+ }).slice(0,80);
+}
+function ordersList(){
+ const orders=filteredOrders();
+ if(!orders.length)return '<div class="empty">'+
+  '<h3>'+({active:"Antrean masih kosong",ready:"Belum ada pesanan siap",completed:"Belum ada pesanan selesai",all:"Belum ada pesanan"})[s.orderFilter]+'</h3>'+
+  '<p>Pesanan akan muncul di sini setelah disimpan atau setelah statusnya berubah. Perbarui data kalau ada pesanan dari perangkat lain.</p></div>';
+ return orders.map(o=>{
+  const buttons=o.status==="new"?'<button data-transition="start" data-id="'+o.id+'" class="btn status-action">'+icon("arrow")+' Mulai buat</button><button data-transition="cancel" data-id="'+o.id+'" class="btn warn">Batalkan</button>':
+   o.status==="preparing"?'<button data-transition="ready" data-id="'+o.id+'" class="btn status-action">QC selesai · Siap '+icon("arrow")+'</button><button data-transition="cancel" data-id="'+o.id+'" class="btn warn">Batalkan</button>':
+   o.status==="ready"?'<button data-transition="handoff" data-id="'+o.id+'" class="btn status-action">Serahkan ke driver '+icon("arrow")+'</button>':"";
+  const time=new Date(o.created_at).toLocaleString("id-ID",{timeZone:"Asia/Jakarta",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+  return '<article class="item order-card status-'+esc(o.status)+'">'+
+   '<div class="row"><div class="order-identity"><strong>'+esc(o.order_ref)+'</strong><small>'+esc(o.channel)+' · '+esc(time)+' WIB</small></div>'+statusBadge(o.status)+'</div>'+
+   '<div class="order-products">'+esc(orderDetails(o))+'</div>'+
+   (o.note?'<div class="order-note">Catatan pelanggan: '+esc(o.note)+'</div>':"")+
+   (buttons?'<div class="actions">'+buttons+'</div>':"")+'</article>';
+ }).join("");
+}
 function ordersView(){
  const counts=Object.fromEntries(["new","preparing","ready","handed_off"].map(k=>[k,s.data.orders.filter(o=>o.status===k).length]));
+ const activeCount=counts.new+counts.preparing+counts.ready;
  const available=s.data.products.filter(p=>p.active&&Number(p.price)>0);
+ const needsCatalog=s.role==="owner"&&s.data.products.length===0;
+ const onboard=needsCatalog?
+ '<div class="notice" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px">'+
+ '<span><b>Mulai dari katalog.</b> Impor 30 menu, isi harga serta komposisi HPP, lalu aktifkan menu yang sudah siap dijual.</span>'+
+ '<button type="button" class="btn secondary" data-tab="costing">Siapkan menu '+icon("arrow")+'</button></div>':"";
  const form=available.length?'<div class="form-grid">'+
- field("Channel",selectInput("channel",channelOpts,'id="o-channel"'))+
- field("Kode pesanan",inp("order_ref","Misal GF-1024","text",'required maxlength="80"'))+
- field("Menu",selectInput("product",available.map(p=>[p.id,p.name+" — "+fmt(p.price)])))+
- field("Jumlah",inp("qty","1","number",'value="1" min="1" max="100" step="1" required'))+
- field("Catatan",'<textarea name="note" rows="2" maxlength="500" placeholder="Catatan pelanggan..."></textarea>')+
- '<div class="actions"><button class="btn" type="button" data-action="add-cart">+ Tambah menu</button></div></div>':
- '<div class="notice">Belum ada menu aktif dengan harga. Pemilik perlu mengaktifkan katalog, harga, bahan, dan resep HPP di tab HPP & Menu.</div>';
- const cartRows=s.cart.map((r,i)=>'<div class="row item"><div><strong>'+esc(productName(r.product_id))+'</strong><br/><small>'+r.qty+' pcs</small></div><button type="button" class="btn warn" data-remove-cart="'+i+'">Hapus</button></div>').join("");
- const orderForm=panel("Pesanan baru","Input manual dari aplikasi delivery atau pesanan langsung. Tidak menarik/membuat transaksi pembayaran otomatis.",
- '<form id="ops-new-order">'+form+'</form>'+
- '<div class="stack" style="margin-top:10px">'+cartRows+'</div>'+
- '<div class="actions"><button class="btn" type="button" data-action="submit-order" '+(!s.cart.length||s.busy?"disabled":"")+'>Simpan pesanan ('+s.cart.length+' menu)</button></div>');
- const orders=s.data.orders.slice(0,80).map(o=>{
-  const buttons=o.status==="new"?'<button data-transition="start" data-id="'+o.id+'" class="btn">Mulai</button><button data-transition="cancel" data-id="'+o.id+'" class="btn warn">Batalkan</button>':
-   o.status==="preparing"?'<button data-transition="ready" data-id="'+o.id+'" class="btn">QC selesai → Siap</button><button data-transition="cancel" data-id="'+o.id+'" class="btn warn">Batalkan</button>':
-   o.status==="ready"?'<button data-transition="handoff" data-id="'+o.id+'" class="btn">Sudah diserahkan</button>':"";
-  return '<div class="item"><div class="row"><div><strong>'+esc(o.order_ref)+'</strong> · <small>'+esc(o.channel)+' · '+new Date(o.created_at).toLocaleString("id-ID")+'</small></div>'+statusBadge(o.status)+'</div>'+
-   '<p class="muted">'+orderDetails(o)+'</p>'+(o.note?'<p class="muted">Catatan: '+esc(o.note)+'</p>':"")+
-   '<div class="actions">'+buttons+'</div></div>';
- }).join("");
- return '<div class="metrics">'+stat("Pesanan baru",counts.new)+stat("Sedang dibuat",counts.preparing)+stat("Siap driver",counts.ready)+stat("Selesai (terlihat)",counts.handed_off)+'</div>'+
- '<div class="two-col">'+orderForm+panel("Antrean & riwayat","Status pesanan diubah manual setelah pekerjaan benar-benar selesai.",
- '<div class="stack">'+(orders||'<div class="empty">Belum ada pesanan.</div>')+'</div>')+'</div>';
+ field("Channel penjualan",selectInput("channel",channelOpts,'id="o-channel"'))+
+ field("Kode pesanan",inp("order_ref","Contoh GF-1024","text",'required maxlength="80"'))+
+ field("Pilih menu",selectInput("product",available.map(p=>[p.id,p.name+" · "+fmt(p.price)])))+
+ field("Jumlah porsi",inp("qty","1","number",'value="1" min="1" max="100" step="1" required'))+
+ '<div class="full-row">'+field("Catatan khusus",'<textarea name="note" rows="2" maxlength="500" placeholder="Tanpa saus / catatan driver atau pelanggan"></textarea>')+'</div>'+
+ '<div class="full-row actions" style="margin-top:3px"><button class="btn secondary" type="button" data-action="add-cart">+ Tambahkan ke pesanan</button></div></div>':
+ '<div class="empty"><h3>Belum ada menu yang dapat dijual</h3><p>'+(s.role==="owner"?"Masuk ke HPP & Menu untuk mengatur harga, komposisi bahan, dan mengaktifkan menu.":"Minta pemilik menyiapkan katalog dan harga sebelum menerima pesanan.")+'</p>'+
+ (s.role==="owner"?'<button type="button" class="btn secondary" data-tab="costing">Buka HPP & Menu '+icon("arrow")+'</button>':"")+'</div>';
+ const cartRows=s.cart.map((r,i)=>'<div class="row item"><div><strong>'+esc(productName(r.product_id))+'</strong><br/><small>'+r.qty+' porsi</small></div>'+
+ '<button type="button" class="btn warn" data-remove-cart="'+i+'" aria-label="Hapus '+esc(productName(r.product_id))+' dari pesanan">Hapus</button></div>').join("");
+ const cartTotal=s.cart.reduce((a,r)=>{
+   const p=s.data.products.find(x=>x.id===r.product_id);return a+(p?Number(p.price)*r.qty:0);
+ },0);
+ const cartHead=s.cart.length?'<div class="row" style="margin-top:20px"><strong style="font-size:13px">Ringkasan pesanan</strong><span class="badge">'+s.cart.reduce((n,r)=>n+r.qty,0)+' porsi</span></div>':"";
+ const cartFoot=s.cart.length?'<div class="row" style="margin:12px 0 0;border-top:1px solid #eee5dc;padding-top:14px"><span class="muted">Estimasi dari harga katalog</span><strong>'+fmt(cartTotal)+'</strong></div>':"";
+ const formPanel=panel("Pesanan baru","Masukkan pesanan dari aplikasi delivery atau penjualan langsung. Pastikan kode pesanan tidak tertukar.",
+ '<form id="ops-new-order">'+form+'</form>'+cartHead+
+ '<div class="stack" style="margin-top:12px">'+cartRows+'</div>'+cartFoot+
+ '<div class="actions"><button class="btn full" type="button" data-action="submit-order" '+(!s.cart.length||s.busy?"disabled":"")+'>Simpan pesanan ('+s.cart.length+' jenis menu) '+icon("arrow")+'</button></div>');
+ const filters=[
+  ["active","Aktif ("+activeCount+")"],["ready","Siap ("+counts.ready+")"],
+  ["completed","Selesai"],["all","Semua"]
+ ];
+ const queue=panel("Antrean dapur","Dahulukan pesanan siap antar, kemudian yang sedang dibuat dan yang baru masuk.",
+ '<div class="queue-controls" role="group" aria-label="Filter status pesanan">'+filters.map(([id,label])=>
+ '<button type="button" class="queue-filter '+(s.orderFilter===id?"active":"")+'" data-order-filter="'+id+'" aria-pressed="'+(s.orderFilter===id)+'">'+esc(label)+'</button>').join("")+'</div>'+
+ '<div class="queue-list" id="ops-order-results" aria-live="polite">'+ordersList()+'</div>');
+ return onboard+'<div class="metrics">'+stat("Pesanan baru",counts.new,"Menunggu dibuat")+stat("Sedang dibuat",counts.preparing,"Dalam proses dapur")+
+ stat("Siap diserahkan",counts.ready,"Menunggu driver")+stat("Selesai (terlihat)",counts.handed_off,"Dari riwayat yang dimuat")+'</div>'+
+ '<div class="two-col">'+formPanel+queue+'</div>';
+}
+function filteredRecipes(){
+ return DATA.all.filter(x=>["coffee","banana","dimsum"].includes(x.category)&&
+  (s.recipeCategory==="all"||x.category===s.recipeCategory)&&
+  (!s.recipeSearch||[x.name,x.id,x.group,...(x.ingredients||[]).map(i=>i.name)]
+    .join(" ").toLocaleLowerCase("id-ID").includes(s.recipeSearch.toLocaleLowerCase("id-ID"))));
+}
+function recipeCards(){
+ const items=filteredRecipes();
+ if(!items.length)return '<div class="empty recipe-list-empty"><h3>Resep tidak ditemukan</h3><p>Coba nama menu lain, jenis bahan, atau ubah kategori.</p></div>';
+ const categoryVisual={coffee:"☕",banana:"🍌",dimsum:"🥟"};
+ return items.map(x=>'<button type="button" class="recipe-card" data-recipe="'+esc(x.id)+'" aria-label="Buka resep '+esc(x.name)+'">'+
+  '<span class="recipe-visual '+esc(x.category)+'" aria-hidden="true">'+categoryVisual[x.category]+'</span>'+
+  '<span class="recipe-id">'+esc(x.id)+' · '+esc(PRODUCT_CATEGORIES[x.category])+'</span>'+
+  '<h3>'+esc(x.name)+'</h3>'+
+  '<span class="recipe-meta"><span>'+esc(x.group||"Resep per porsi")+'</span><span class="recipe-arrow" aria-hidden="true">↗</span></span></button>').join("");
+}
+function updateRecipeResults(){
+ const grid=document.getElementById("ops-recipe-results");
+ const count=document.getElementById("ops-recipe-count");
+ if(grid)grid.innerHTML=recipeCards();
+ if(count)count.textContent=filteredRecipes().length+" resep ditemukan";
 }
 function recipesView(){
- const items=DATA.all.filter(x=>["coffee","banana","dimsum"].includes(x.category)&&
- (s.recipeCategory==="all"||x.category===s.recipeCategory)&&
- (!s.recipeSearch||[x.name,x.id,x.group,...(x.ingredients||[]).map(a=>a.name)].join(" ").toLowerCase().includes(s.recipeSearch.toLowerCase())));
- return panel("Katalog resep dapur","30 menu dan takaran dasar dari Kitchen OS sebelumnya. Waktu masak dimsum mengikuti supplier dan pemeriksaan suhu inti.",
- '<div class="inline-fields">'+field("Cari menu/bahan",inp("recipeSearch","Ketik kopi, pisang, dimsum…","search",'id="ops-recipe-search" value="'+esc(s.recipeSearch)+'"'))+
- field("Kategori",selectInput("recipeCategory",[["all","Semua"],["coffee","Kopi"],["banana","Pisang"],["dimsum","Dimsum"]],'id="ops-recipe-category"'))+'</div>'+
- '<div class="grid">'+items.map(x=>'<button class="item" type="button" data-recipe="'+esc(x.id)+'" style="text-align:left;cursor:pointer"><span class="badge">'+esc(PRODUCT_CATEGORIES[x.category])+'</span><h3>'+esc(x.name)+'</h3><small>'+esc(x.group)+' · Lihat bahan dan langkah ↗</small></button>').join("")+'</div>');
+ return panel("Cari menu dan bahan","Semua resep utama Little Treat tersedia tanpa harus membuka PDF satu per satu. Klik kartu untuk melihat takaran dan langkah.",
+ '<div class="recipe-controls">'+
+ field("Cari berdasarkan menu atau bahan",
+  '<div style="position:relative"><span class="recipe-search-icon" aria-hidden="true">'+icon("search")+'</span>'+
+  inp("recipeSearch","Misalnya: pisang, creamer, dimsum…","search",'id="ops-recipe-search" autocomplete="off" spellcheck="false" value="'+esc(s.recipeSearch)+'" aria-label="Cari resep dan bahan"')+'</div>')+
+ field("Kategori",selectInput("recipeCategory",[["all","Semua menu"],["coffee","Kopi"],["banana","Pisang"],["dimsum","Dimsum"]],'id="ops-recipe-category"'))+'</div>'+
+ '<div class="recipe-results-header"><strong>Katalog menu</strong><small id="ops-recipe-count" aria-live="polite">'+filteredRecipes().length+' resep ditemukan</small></div>'+
+ '<div class="recipe-grid" id="ops-recipe-results">'+recipeCards()+'</div>')+
+ '<div class="notice">Waktu kukus dimsum frozen perlu mengikuti petunjuk supplier dan hasil kalibrasi alat. Resep yang tampil adalah baseline operasional, bukan pengganti pemeriksaan kematangan.</div>';
+}
+function coffeeSteps(r){
+ const names=r.ingredients.map(i=>i.name);
+ const extra=names.filter(n=>!["Kopi instan murni","Air hangat","Susu UHT plain","Es batu"].includes(n));
+ const steps=[
+  "Periksa tiket: nama minuman, ukuran cup dan instruksi pelanggan. Siapkan timbangan, cup, bahan dan es yang bersih.",
+  "Timbang kopi instan dan air hangat sesuai ukuran yang dipilih. Larutkan kopi sampai homogen."
+ ];
+ if(r.kind==="cocoa")steps.push("Campurkan kakao ke sebagian cairan hangat hingga tidak ada gumpalan.");
+ if(extra.length)steps.push("Tambahkan dan ukur bahan pelengkap sesuai tabel: "+extra.join(", ")+". Aduk sampai merata.");
+ if(r.kind==="jelly")steps.push("Masukkan jelly kopi dingin ke cup sebelum menambahkan es.");
+ steps.push("Tuang susu UHT sesuai takaran, aduk hingga merata.");
+ steps.push("Timbang es sesuai resep; tuang campuran minuman ke cup dan tutup/segel rapat.");
+ if(r.kind==="biscuit")steps.push("Kemas biskuit secara terpisah agar tetap renyah saat dikirim.");
+ steps.push("QC: cek ukuran, jumlah cup, instruksi pelanggan, kebocoran, kebersihan tutup dan label.");
+ return steps;
 }
 function showRecipe(id){
  const r=DATA.all.find(x=>x.id===id);if(!r)return;
+ s.activeRecipeId=id;
+ const coffee=r.category==="coffee";
+ const categoryVisual={coffee:"☕",banana:"🍌",dimsum:"🥟",prep:"🥣",sop:"📋"};
  let ingredients="";
- if(r.category==="coffee"){
+ if(coffee){
   const index=["12","14","16","22"].indexOf(s.recipeSize);
   ingredients=r.ingredients.map(i=>'<tr><td>'+esc(i.name)+'</td><td>'+num(i.values[index])+' '+esc(i.unit)+'</td></tr>').join("");
  }else ingredients=(r.ingredients||[]).map(i=>'<tr><td>'+esc(i.name)+'</td><td>'+num(i.value)+' '+esc(i.unit)+'</td></tr>').join("");
- const steps=r.steps||["Timbang kopi dan larutkan dalam air hangat.","Tambahkan sirup, SKM atau creamer sesuai takaran resep.","Masukkan susu UHT dingin, aduk homogen.","Masukkan es sesuai berat, tutup dan segel.","Periksa ukuran cup, rasa, kebocoran dan label sebelum dikirim."];
- modalBody.innerHTML='<h2>'+esc(r.name)+'</h2><p class="muted">'+esc(r.note||r.group||"Resep dapur")+'</p>'+
- (r.category==="coffee"?'<div class="actions"><label class="field">Ukuran cup<select id="ops-cup">'+["12","14","16","22"].map(v=>'<option '+(v===s.recipeSize?"selected":"")+' value="'+v+'">'+v+' oz</option>').join("")+'</select></label></div>':"")+
- '<h3>Bahan per porsi</h3><table class="recipe-ings">'+ingredients+'</table><h3>Langkah</h3><ol class="recipe-steps">'+steps.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol>'+
- (r.warning?'<div class="notice">'+esc(r.warning)+'</div>':"");
+ const steps=r.steps||(coffee?coffeeSteps(r):[]);
+ modalBody.dataset.recipeId=id;
+ modalBody.innerHTML=
+ '<div class="recipe-header"><span class="recipe-visual" aria-hidden="true">'+(categoryVisual[r.category]||"🍴")+'</span>'+
+ '<div><span class="recipe-id">'+esc(r.id)+' · '+esc(PRODUCT_CATEGORIES[r.category]||r.group)+'</span>'+
+ '<h2>'+esc(r.name)+'</h2></div></div>'+
+ '<p class="muted">'+esc(r.note||r.group||"Panduan per porsi")+'</p>'+
+ (coffee?'<div class="actions">'+field("Ukuran cup",'<select id="ops-cup" aria-label="Pilih ukuran cup">'+["12","14","16","22"].map(v=>
+ '<option '+(v===s.recipeSize?"selected":"")+' value="'+v+'">'+v+' oz</option>').join("")+'</select>')+'</div>':"")+
+ '<h3>Bahan & takaran per porsi</h3><table class="recipe-ings"><tbody>'+ingredients+'</tbody></table>'+
+ '<div class="row" style="align-items:center;margin-top:18px"><h3 style="margin:0">Langkah pembuatan</h3>'+
+ '<span class="recipe-progress" id="recipe-progress" aria-live="polite">0 / '+steps.length+' selesai</span></div>'+
+ '<ol class="recipe-steps" style="margin-top:16px">'+steps.map((step,i)=>
+ '<li><span class="recipe-step-number">'+(i+1)+'</span>'+
+ '<label class="recipe-step-label" for="recipe-step-'+i+'"><input class="recipe-step-check" id="recipe-step-'+i+'" type="checkbox" data-recipe-step="'+i+'"/>'+
+ '<span class="recipe-step-content">'+esc(step)+'</span></label></li>').join("")+'</ol>'+
+ (r.warning?'<div class="notice recipe-warning"><strong>Catatan keamanan & kualitas</strong><div>'+esc(r.warning)+'</div></div>':"");
  if(!modal.open)modal.showModal();
 }
 function stockView(){
@@ -401,11 +540,29 @@ document.addEventListener("submit",async e=>{
 document.addEventListener("click",async e=>{
  const tab=e.target.closest("[data-tab]");
  if(tab){if(s.role!=="owner"&&!TABS.find(x=>x.id===tab.dataset.tab)?.staff)return;s.tab=tab.dataset.tab;s.err="";s.editFinance=null;render();return}
+ const filter=e.target.closest("[data-order-filter]");
+ if(filter){
+  s.orderFilter=filter.dataset.orderFilter;
+  document.querySelectorAll(".queue-filter").forEach(b=>{
+    const selected=b.dataset.orderFilter===s.orderFilter;
+    b.classList.toggle("active",selected);
+    b.setAttribute("aria-pressed",String(selected));
+  });
+  const list=document.getElementById("ops-order-results");if(list)list.innerHTML=ordersList();
+  return;
+ }
  const b=e.target.closest("[data-action]");
  if(b){
   const action=b.dataset.action;
   if(action==="logout"){s.session=null;s.user=null;s.role=null;s.cart=[];saveSession();s.err="";render();return}
-  if(action==="reload"){await transact(()=>Promise.resolve());return}
+  if(action==="reload"){
+   if(s.busy)return;
+   s.busy=true;s.err="";render();
+   try{await reload();notify("Data terbaru berhasil dimuat")}
+   catch(err){s.err=err.message||"Gagal memperbarui data"}
+   finally{s.busy=false;render()}
+   return;
+  }
   if(action==="close-modal"){modal.close();return}
   if(action==="import-catalog"){
    if(s.role!=="owner")return;
@@ -442,7 +599,14 @@ document.addEventListener("click",async e=>{
  const remove=e.target.closest("[data-remove-cart]");
  if(remove){s.cart.splice(Number(remove.dataset.removeCart),1);render();return}
  const transition=e.target.closest("[data-transition]");
- if(transition){if(!confirm("Konfirmasi tahap pesanan? "+transition.dataset.transition)){return}
+ if(transition){
+  const copy={
+   start:"Mulai menyiapkan pesanan ini?",
+   ready:"QC sudah selesai? Status akan berubah menjadi Siap, stok bahan dikurangi dan HPP dihitung oleh database.",
+   handoff:"Konfirmasi pesanan sudah diserahkan kepada driver/pelanggan?",
+   cancel:"Batalkan pesanan ini? Pastikan pesanan memang belum diserahkan."
+  };
+  if(!confirm(copy[transition.dataset.transition]||"Lanjutkan tahap pesanan ini?"))return;
   await transact(()=>rpc("lt_transition_order",{p_order_id:transition.dataset.id,p_action:transition.dataset.transition}));return}
  const recipe=e.target.closest("[data-recipe]");
  if(recipe){s.recipeSize="14";showRecipe(recipe.dataset.recipe);return}
@@ -455,12 +619,28 @@ document.addEventListener("click",async e=>{
   await transact(()=>rpc("lt_receive_purchase",{p_purchase_id:receive.dataset.receive,p_received_on:dateToday()}));return}
 });
 document.addEventListener("input",e=>{
- if(e.target.id==="ops-recipe-search"){s.recipeSearch=e.target.value;const next=recipesView();const main=document.querySelector("#ops-main");
-   if(main){const current=main.querySelector(".panel");if(current)current.outerHTML=next}}
+ if(e.target.id==="ops-recipe-search"){
+  s.recipeSearch=e.target.value;
+  updateRecipeResults();
+ }
 });
 document.addEventListener("change",e=>{
- if(e.target.id==="ops-cup"){s.recipeSize=e.target.value;const id=modalBody.querySelector("h2")?.textContent;const recipe=DATA.all.find(x=>x.name===id);if(recipe)showRecipe(recipe.id)}
- if(e.target.id==="ops-recipe-category"){s.recipeCategory=e.target.value;render()}
+ if(e.target.id==="ops-cup"){
+  s.recipeSize=e.target.value;
+  if(s.activeRecipeId)showRecipe(s.activeRecipeId);
+ }
+ if(e.target.id==="ops-recipe-category"){
+  s.recipeCategory=e.target.value;
+  updateRecipeResults();
+ }
+ if(e.target.matches("[data-recipe-step]")){
+  const checked=modalBody.querySelectorAll("[data-recipe-step]:checked").length;
+  const total=modalBody.querySelectorAll("[data-recipe-step]").length;
+  e.target.closest("li")?.classList.toggle("completed",e.target.checked);
+  const p=modalBody.querySelector("#recipe-progress");
+  if(p)p.textContent=checked+" / "+total+" selesai";
+  if(checked===total&&total>0)notify("Checklist selesai. Periksa kualitas sebelum menyerahkan pesanan.");
+ }
 });
 modal.addEventListener("click",e=>{if(e.target===modal)modal.close()});
 init();
