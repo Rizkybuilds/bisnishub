@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ConceptGallery } from '../../components/RetailShowcase';
+import { PublishedCatalog } from '../../components/PublishedCatalog';
+import '../catalog.css';
 
 export const metadata: Metadata = {
-  title: 'The Edit — TeeStock Selects Preview Catalog',
+  title: 'The Edit — TeeStock Products & Studio Studies',
   description:
-    'Jelajahi pratinjau kurasi apparel grafis TeeStock Selects. Buka halaman studi produk untuk eksplorasi varian ukuran dan visual garmen.',
+    'Jelajahi produk TeeStock terkurasi dan eksplorasi desain studio. Checkout online belum tersedia.',
 };
 
 export default function ShopPage() {
@@ -26,17 +28,17 @@ export default function ShopPage() {
           </h1>
         </div>
         <p>
-          Enam studi visual untuk menjelajahi arah TeeStock Selects. Jelajahi
-          konsep kurasi desain garmen dan uji pratinjau variasi ukuran serta
-          warna secara interaktif.
+          Produk TeeStock terkurasi dan enam studi desain studio. Produk yang sudah
+          disiapkan bisa dilihat di bawah; checkout online menyusul.
         </p>
       </section>
+      <PublishedCatalog />
       <div className="retail-shop-notice" role="status">
         <span className="retail-availability-dot" aria-hidden="true" />
         <span>
-          <strong>Tahap Pratinjau Desain Studio.</strong> Seluruh item merupakan
-          eksplorasi konsep retail. Transaksi komersial langsung belum dibuka
-          untuk publik.
+          <strong>Studi Desain Studio.</strong> Enam konsep berikut adalah
+          eksplorasi visual, bukan produk yang tersedia untuk dibeli.
+          Checkout komersial belum dibuka.
         </span>
       </div>
       <ConceptGallery />
