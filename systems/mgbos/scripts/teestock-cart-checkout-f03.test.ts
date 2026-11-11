@@ -111,9 +111,9 @@ describe('TeeStock F03 database migration structure', () => {
     expect(
       count('create function app.teestock_guest_order_payment_guard()'),
     ).toBe(1);
-    expect(
-      count('create function app.teestock_guest_production_guard()'),
-    ).toBe(1);
+    expect(count('create function app.teestock_guest_production_guard()')).toBe(
+      1,
+    );
     expect(migration.match(/^commit;$/gm)).toHaveLength(1);
     expect(migration.trimEnd().endsWith('commit;')).toBe(true);
   });
