@@ -39,7 +39,7 @@ describe('TeeStock F03 real cart', () => {
     const twice = addToCart(once.lines, line);
     expect(twice.error).toBeUndefined();
     expect(twice.lines).toHaveLength(1);
-    expect(twice.lines[0].quantity).toBe(2);
+    expect(twice.lines[0]?.quantity).toBe(2);
     expect(cartTotal(twice.lines)).toBe(338000);
   });
 
