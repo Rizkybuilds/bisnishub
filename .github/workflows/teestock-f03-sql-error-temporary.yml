@@ -1,0 +1,70 @@
+name: TeeStock F03 SQL Failure Diagnostic Temporary
+on:
+  push:
+    branches: [feat/teestock-cart-guest-checkout-f03]
+permissions:
+  contents: read
+jobs:
+  identify-migration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: systems/mgbos
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: systems/mgbos/.node-version
+      - run: pnpm install --frozen-lockfile
+      - name: Classify local startup failure without displaying credentials
+        shell: bash
+        run: |
+          set +e
+          pnpm db:start > /tmp/f03-startup.log 2>&1
+          status=$?
+          if [ "$status" -eq 0 ]; then
+            echo "LOCAL_STARTUP=OK"
+            exit 0
+          fi
+          node <<'NODE'
+          const fs = require('node:fs');
+          const s = fs.readFileSync('/tmp/f03-startup.log','utf8');
+          const checks = {
+            applyingMigration: /applying migration/i,
+            f03Filename: /20261111070000_teestock_guest_checkout_f03/i,
+            postgresSyntaxError: /syntax error at or near/i,
+            missingRelation: /relation .* does not exist/i,
+            missingColumn: /column .* does not exist/i,
+            undefinedFunction: /function .* does not exist/i,
+            permissionDenied: /permission denied/i,
+            duplicateObject: /already exists|duplicate/i,
+            invalidCheck: /check constraint/i,
+            unsupportedSyntax: /SQLSTATE|P0001|42601|42703|42P01|42883/i,
+            registryFailure: /failed to pull|failed to resolve source|failed to fetch anonymous token/i,
+            networkFailure: /connection reset by peer|connection refused|TLS handshake timeout/i,
+          };
+          console.log('STARTUP_FAILED=true');
+          for (const [key,re] of Object.entries(checks)) {
+            console.log('CLASS_'+key+'='+re.test(s));
+          }
+          const allowed = /(?:ERROR|Error|error|failed).*(?:migration|statement|syntax|relation|column|function|constraint|trigger|schema|SQLSTATE|transaction|extension)/i;
+          const lines = s.split(/\r?\n/).filter(line => allowed.test(line)).slice(-18);
+          for(let i=0;i<lines.length;i++) {
+            let line=lines[i]
+              .replace(/(?:postgresql|postgres|https?):\/\/\S+/gi,'[redacted-url]')
+              .replace(/(?:sb_secret|sb_publishable|eyJ)[A-Za-z0-9._-]{10,}/g,'[redacted-key]')
+              .replace(/[A-Za-z0-9+/_=-]{72,}/g,'[redacted-token]')
+              .replace(/\b[0-9a-f]{8}-[0-9a-f-]{27,}\b/gi,'[redacted-uuid]');
+            console.log('SAFE_DB_ERROR_'+i+'='+line.slice(0,220));
+          }
+          NODE
+          exit 1
+      - name: Stop database
+        if: always()
+        run: pnpm db:stop > /dev/null 2>&1 || true
