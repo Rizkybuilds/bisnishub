@@ -1,6 +1,6 @@
 # LITTLE TREAT KITCHEN OS — OPERATIONAL MVP V3
 
-**State (2026-11-11):** Dedicated Supabase project **ACTIVE_HEALTHY** and v3 schema applied; real owner/staff Auth accounts are **NOT yet provisioned**. Database role tests used synthetic users in ROLLBACK-only transactions. No changes to existing MGBOS databases.
+**State (2026-11-11):** Dedicated Supabase project **ACTIVE_HEALTHY** and v3 schema applied; real owner Auth account is **provisioned and enabled**; staff accounts are not yet provisioned. Database role tests used synthetic users in ROLLBACK-only transactions. No changes to existing MGBOS databases.
 
 ## Owner-approved scope, 11 November 2026
 
@@ -27,7 +27,7 @@
 1. **COMPLETED:** user selected the existing MGBOS organization; creation cost quoted **US$0/month** at provisioning.
 2. Create NEW project in \`ap-southeast-1\` (Singapore) and verify active database. Never reactivate or run migrations on the existing MGBOS projects.
 3. Review and apply \`ops/sql/bootstrap.sql\` to this new project only. Run SQL readback to confirm 12 RLS-enabled tables, grants, and RPC functions, then Supabase security/performance advisors.
-4. **NEXT — owner action required:** create OWNER account under [Supabase Dashboard → Authentication → Users](https://supabase.com/dashboard/project/ujmojkgipvckwdegcoph/auth/users) using an owner-chosen private email/password, or send an invitation through Auth dashboard. Copy only the new Auth User UUID, not the password.
+4. **COMPLETED:** owner created Auth account via Supabase Dashboard; verified exactly one new email-confirmed Auth user with password configured. No password was shared in ChatGPT.
 5. Add account to \`public.lt_members\` through a privileged SQL editor:
    \`\`\`sql
    insert into public.lt_members(user_id,role,active)
@@ -100,3 +100,11 @@ Server RLS and explicitly checked RPCs enforce this matrix; hiding UI tabs alone
 - Restrictive grants: authenticated cannot directly write COGS, stock quantity, order or stock movement tables. Default Supabase grants were detected and explicitly revoked through `little_treat_v3_lockdown_grants`.
 - Functional simulation: owner can record paid-but-unreceived purchase, receive exactly once, create order, atomically deduct stock and calculate HPP, record waste, reconcile and close day. Repeated receipt and READY attempt rejected. Financial payout before handoff rejected by trigger.
 - **Not yet verified:** live browser sign-in with actual Supabase Auth users, staff vs owner on separate phones, production domain settings, all 30 menu BOM inputs, and real supplier/payout reconciliation. No claim of live launch readiness.
+
+## Account onboarding checkpoint (11 November 2026)
+
+- One real, email-confirmed Supabase Auth user with password set; one active `owner` membership; zero staff accounts.
+- Real owner role was exercised under `SET LOCAL ROLE authenticated` with `auth.uid()` impersonation in a transaction that was rolled back. Assertions passed: owner membership visible, ingredient/product/BOM creation allowed, purchasing and receiving allowed, order flow and HPP calculated, payout fees update after handoff allowed.
+- There are currently zero real products, orders and purchases in Little Treat's project. All synthetic workflow tests were rolled back.
+- **Not yet verified:** actual login via browser with the owner's private password; staff invite and live two-device access checks; Vercel last-updated landing page deployment (free-tier daily deployment limit reached). The existing READY v3 preview at `/ops.html` does reference the correct dedicated Supabase instance and works as a sign-in test target.
+- **Next owner action:** sign in on existing READY v3 preview, report whether the `Pesanan` dashboard opens. Never send the account password to ChatGPT.
