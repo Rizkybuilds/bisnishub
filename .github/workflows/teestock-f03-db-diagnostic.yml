@@ -32,6 +32,7 @@ jobs:
       - name: Attempt standard local stack then reduced stack
         shell: bash
         run: |
+          set +e
           set -uo pipefail
           # Never leak raw Supabase CLI stdout/stderr: output includes local keys.
           pnpm db:start >/tmp/ts-f03-start.log 2>&1
