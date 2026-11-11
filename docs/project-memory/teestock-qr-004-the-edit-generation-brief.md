@@ -100,3 +100,11 @@ Use existing TeeStock rubric: originality/differentiation 25; commercial appeal 
 1. Render **back graphic first** as an art-direction test. Review real pixels, not prompt quality.
 2. Only if back passes, render matching independent front motif, then show both as *accurate* size-based garment mockups.
 3. Founder selects/revises actual art. After selection, run real print-file preflight, rights review, sample and user preference evaluation. **Do not modify `02_DESIGNS.csv` status to approved/readiness on prompt completion alone.**
+
+## Initial visual-generation trial (2026-11-11) — REJECTED
+
+Two initial AI-rendered isolated-back artwork images were produced during the next session. Both are **rejected** as DTF candidates: large ordinary typography dominates, central corridor does not carry the concept, edges include noisy uncontrolled color/texture and the transparency is mostly partial, not clean ink/void. They were ~1170×1344–1345 px and had approximately 64–66% partially transparent pixels. Do not treat them as commercially usable or source-ready artwork.
+
+A separate **deterministically constructed vector-outline study** was then produced with exact readable typography, real alpha negative-space, matching ivory/red palette and 270×310 mm composition; corresponding transparent RGBA export has **3190×3662 pixels at ~300 PPI** with **73.89% zero alpha, 25.10% fully opaque and ~1.01% antialias pixels**. It was provided as PNG/SVG/preview/ZIP files inside the conversation, **not committed to GitHub**. Its technical cleanliness is improved, but visual critique remains: **it may still read as a relatively generic split-column typography poster, not a compelling differentiated fashion statement**. Accordingly this vector study is **CREATIVE EXPERIMENT / NOT APPROVED**, and vendor-proof, line/gap, ink/underbase, hand-feel and washing remain untested.
+
+**Next creative requirement:** Do not simply regenerate the same huge NOW/REACT/MORE/LATEST split-column layout. Reconsider the active negative-space metaphor, image silhouette and originality. Seek a more striking apparel-specific visual hook before selecting a final graphic. If founder asks for a new direction, compare B against C (The Threshold) rather than accumulating near-duplicate prompt iterations.
