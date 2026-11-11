@@ -55,7 +55,8 @@ create table if not exists public.lt_orders (
   created_at timestamptz not null default now(),
   ready_at timestamptz,
   handed_off_at timestamptz,
-  cancelled_at timestamptz
+  cancelled_at timestamptz,
+  constraint unique_marketplace_ref unique(channel,order_ref)
 );
 create index if not exists lt_orders_status_idx on public.lt_orders(status,created_at desc);
 create index if not exists lt_orders_handoff_idx on public.lt_orders(handed_off_at) where handed_off_at is not null;
@@ -113,6 +114,15 @@ create table if not exists public.lt_purchases (
   ),
   constraint receipt_not_early check (received_on is null or received_on>=purchased_on)
 );
+create table if not exists public.lt_waste_events (
+  id uuid primary key default gen_random_uuid(),
+  material_id uuid not null references public.lt_materials(id),
+  qty numeric(14,3) not null check (qty>0),
+  cost numeric(14,2) not null check (cost>=0),
+  note text not null default '' check (char_length(note)<=300),
+  created_by uuid not null references auth.users(id),
+  created_at timestamptz not null default now()
+);
 create table if not exists public.lt_daily_closings (
   day date primary key,
   orders_completed integer not null,
@@ -121,6 +131,7 @@ create table if not exists public.lt_daily_closings (
   platform_fees numeric(14,2) not null,
   other_fees numeric(14,2) not null,
   cogs numeric(14,2) not null,
+  waste_cost numeric(14,2) not null,
   operating_expenses numeric(14,2) not null,
   purchases_paid numeric(14,2) not null,
   payouts_received numeric(14,2) not null,
@@ -141,7 +152,7 @@ grant update(discount,platform_fee,other_fee,fees_confirmed,payout_received_at,u
 grant select,insert,update,delete on public.lt_products,public.lt_bom to authenticated;
 grant insert on public.lt_materials to authenticated;
 grant update(name,unit,min_stock,active) on public.lt_materials to authenticated;
-grant select on public.lt_daily_closings to authenticated;
+grant select on public.lt_daily_closings, public.lt_waste_events to authenticated;
 -- No direct UPDATE/INSERT of orders/items/stock moves/closings to authenticated: only validated RPC.
 alter table public.lt_members enable row level security;
 alter table public.lt_products enable row level security;
@@ -154,6 +165,7 @@ alter table public.lt_order_financials enable row level security;
 alter table public.lt_stock_moves enable row level security;
 alter table public.lt_purchases enable row level security;
 alter table public.lt_daily_closings enable row level security;
+alter table public.lt_waste_events enable row level security;
 
 create policy lt_self_member on public.lt_members for select to authenticated
 using (user_id=(select auth.uid()));
@@ -179,6 +191,8 @@ with check (exists(select 1 from public.lt_members m where m.user_id=(select aut
 create policy lt_purchase_owner on public.lt_purchases for all to authenticated
 using (exists(select 1 from public.lt_members m where m.user_id=(select auth.uid()) and m.role='owner' and m.active))
 with check (exists(select 1 from public.lt_members m where m.user_id=(select auth.uid()) and m.role='owner' and m.active));
+create policy lt_waste_owner on public.lt_waste_events for select to authenticated
+using (exists(select 1 from public.lt_members m where m.user_id=(select auth.uid()) and m.role='owner' and m.active));
 create policy lt_close_owner on public.lt_daily_closings for select to authenticated
 using (exists(select 1 from public.lt_members m where m.user_id=(select auth.uid()) and m.role='owner' and m.active));
 create policy lt_product_owner_write on public.lt_products for all to authenticated
@@ -360,10 +374,32 @@ begin
  return true;
 end $$;
 
+create or replace function public.lt_record_waste(
+ p_material_id uuid,p_qty numeric,p_note text default ''
+) returns uuid language plpgsql security definer set search_path='' as $
+declare
+ v_uid uuid:=auth.uid();v_role text;v_available numeric;v_unit_cost numeric;v_event uuid;
+begin
+ select role into v_role from public.lt_members where user_id=v_uid and active;
+ if v_role not in ('owner','staff') or v_role is null then raise exception 'Akses ditolak'; end if;
+ if p_qty is null or p_qty<=0 or p_qty>1000000 or char_length(coalesce(p_note,''))>300
+   then raise exception 'Jumlah/note waste tidak valid'; end if;
+ select qty_on_hand into v_available from public.lt_materials where id=p_material_id for update;
+ if not found or v_available<p_qty then raise exception 'Stok tidak mencukupi'; end if;
+ select avg_cost_per_unit into v_unit_cost from public.lt_material_costs where material_id=p_material_id;
+ if not found then raise exception 'Harga bahan belum ada'; end if;
+ update public.lt_materials set qty_on_hand=qty_on_hand-p_qty where id=p_material_id;
+ insert into public.lt_stock_moves(material_id,qty_delta,reason,created_by)
+   values (p_material_id,-p_qty,'waste',v_uid);
+ insert into public.lt_waste_events(material_id,qty,cost,note,created_by)
+   values (p_material_id,p_qty,round(p_qty*v_unit_cost,2),coalesce(p_note,''),v_uid) returning id into v_event;
+ return v_event;
+end $;
+
 create or replace function public.lt_close_day(p_day date,p_note text default '')
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare
- v_uid uuid:=auth.uid();v_owner boolean;v_agg record;v_exp numeric;v_paid numeric;v_payout numeric;v_missing integer;v_open integer;
+ v_uid uuid:=auth.uid();v_owner boolean;v_agg record;v_exp numeric;v_paid numeric;v_payout numeric;v_waste numeric;v_missing integer;v_open integer;
 begin
  select exists(select 1 from public.lt_members where user_id=v_uid and role='owner' and active) into v_owner;
  if not v_owner then raise exception 'Hanya owner'; end if;
@@ -379,18 +415,20 @@ begin
  where o.status='handed_off' and (o.handed_off_at at time zone 'Asia/Jakarta')::date=p_day and not f.fees_confirmed;
  select count(*) into v_open from public.lt_orders o
  where o.status in ('new','preparing','ready') and (o.created_at at time zone 'Asia/Jakarta')::date<=p_day;
+ select coalesce(sum(cost),0) into v_waste from public.lt_waste_events
+   where (created_at at time zone 'Asia/Jakarta')::date=p_day;
  select coalesce(sum(amount),0) into v_exp from public.lt_purchases
    where kind='operating' and purchased_on=p_day;
  select coalesce(sum(amount),0) into v_paid from public.lt_purchases where purchased_on=p_day;
  select coalesce(sum(gross-discount-platform_fee-other_fee),0) into v_payout
  from public.lt_order_financials where payout_received_at=p_day;
  insert into public.lt_daily_closings(day,orders_completed,gross,discounts,platform_fees,other_fees,cogs,
-  operating_expenses,purchases_paid,payouts_received,missing_financials,still_open_orders,note,closed_by)
+  waste_cost,operating_expenses,purchases_paid,payouts_received,missing_financials,still_open_orders,note,closed_by)
  values(p_day,v_agg.cnt,v_agg.gross,v_agg.discounts,v_agg.fees,v_agg.other,v_agg.cogs,
-  v_exp,v_paid,v_payout,v_missing,v_open,left(coalesce(p_note,''),500),v_uid)
+  v_waste,v_exp,v_paid,v_payout,v_missing,v_open,left(coalesce(p_note,''),500),v_uid)
  on conflict(day) do update set orders_completed=excluded.orders_completed,gross=excluded.gross,
   discounts=excluded.discounts,platform_fees=excluded.platform_fees,other_fees=excluded.other_fees,
-  cogs=excluded.cogs,operating_expenses=excluded.operating_expenses,purchases_paid=excluded.purchases_paid,
+  cogs=excluded.cogs,waste_cost=excluded.waste_cost,operating_expenses=excluded.operating_expenses,purchases_paid=excluded.purchases_paid,
   payouts_received=excluded.payouts_received,missing_financials=excluded.missing_financials,
   still_open_orders=excluded.still_open_orders,note=excluded.note,closed_by=excluded.closed_by,closed_at=now();
  return pg_catalog.jsonb_build_object('day',p_day,'completed',v_agg.cnt,'missing_financials',v_missing,'still_open_orders',v_open);
@@ -401,8 +439,10 @@ revoke all on function public.lt_transition_order(uuid,text) from public,anon;
 revoke all on function public.lt_record_purchase(text,text,numeric,date,uuid,numeric,date,integer,numeric,date) from public,anon;
 revoke all on function public.lt_receive_purchase(uuid,date) from public,anon;
 revoke all on function public.lt_close_day(date,text) from public,anon;
+revoke all on function public.lt_record_waste(uuid,numeric,text) from public,anon;
 grant execute on function public.lt_create_order(text,text,text,jsonb),
  public.lt_transition_order(uuid,text),
  public.lt_record_purchase(text,text,numeric,date,uuid,numeric,date,integer,numeric,date),
  public.lt_receive_purchase(uuid,date),
- public.lt_close_day(date,text) to authenticated;
+ public.lt_close_day(date,text),
+ public.lt_record_waste(uuid,numeric,text) to authenticated;
