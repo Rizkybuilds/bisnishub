@@ -97,6 +97,7 @@ function renderDashboard(){
   ["Pendapatan setelah diskon & refund",m.revenue],
   ["Potongan platform & biaya pembayaran",-m.fees],
   ["HPP produk terjual (diisi saat penjualan)",-m.cogs],
+  ["Barang rusak/terbuang (berdasarkan stok)",-m.wasteCost],
   ["Biaya operasional bulan ini",-m.operational],
   ["Penyusutan alat bulan ini",-m.depreciation],
   ["Estimasi laba operasional",m.profit],
