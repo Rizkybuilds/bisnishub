@@ -214,13 +214,19 @@ function showRecipe(id){
 }
 function stockView(){
  const rows=s.data.materials.map(m=>'<tr><td><strong>'+esc(m.name)+'</strong><small>'+esc(m.unit)+'</small></td><td>'+num(m.qty_on_hand)+' '+esc(m.unit)+'</td><td>'+num(m.min_stock)+'</td><td>'+(Number(m.qty_on_hand)<=Number(m.min_stock)?'<span class="badge orange">Perlu dibeli</span>':'<span class="badge green">Cukup</span>')+'</td></tr>');
+ const wasteForm=s.data.materials.length?panel("Catat bahan rusak / terbuang","Bisa dicatat karyawan. Stok langsung berkurang dan biayanya masuk laporan pemilik, dengan identitas operator.",
+'<form id="ops-waste" class="form-grid">'+
+ field("Bahan",selectInput("material_id",s.data.materials.map(m=>[m.id,m.name+" ("+m.unit+", stok "+num(m.qty_on_hand)+")"])))+
+ field("Jumlah terbuang",inp("qty","1","number",'min="0.001" step="0.001" required'))+
+ field("Alasan",inp("note","Contoh: pisang terlalu matang","text",'maxlength="300" required'))+
+ '<div class="full-row actions"><button type="submit" class="btn warn">Catat waste</button></div></form>'):"";
  const add=s.role==="owner"?panel("Daftarkan bahan/kemasan","Satuan gram (g), mililiter (ml), atau satuan buah/kemasan (pcs). Pilih satuan secara konsisten.",
  '<form id="ops-new-material" class="form-grid">'+field("Nama bahan",inp("name","Pisang kepok","text",'required maxlength="140"'))+
  field("Satuan",selectInput("unit",[["g","g"],["ml","ml"],["pcs","pcs"]]))+
  field("Stok minimum",inp("min_stock","0","number",'value="0" min="0" step="0.001"'))+
  '<div class="full-row actions"><button class="btn" type="submit">Tambah bahan</button></div></form>'):"";
  return '<div class="metrics">'+stat("Jenis bahan",s.data.materials.length)+stat("Perlu dibeli",s.data.materials.filter(m=>Number(m.qty_on_hand)<=Number(m.min_stock)).length)+'</div>'+
- panel("Persediaan real-time","Stok berkurang setelah pesanan dinyatakan siap; stok bertambah saat owner menerima pembelian.",rowsTable(["Nama bahan","Sisa tersedia","Stok minimum","Status"],rows))+add;
+ panel("Persediaan real-time","Stok berkurang setelah pesanan dinyatakan siap; stok bertambah saat owner menerima pembelian.",rowsTable(["Nama bahan","Sisa tersedia","Stok minimum","Status"],rows))+wasteForm+add;
 }
 function costingView(){
  const prod=s.data.products,materials=s.data.materials,bom=s.data.bom,costs=s.data.costs;
@@ -291,7 +297,7 @@ function closingView(){
   '<button class="linklike" type="button" data-finance="'+o.id+'">Rekonsiliasi</button></td></tr>';
  });
  const closes=s.data.closings.slice(0,30).map(c=>{
-  const contribution=Number(c.gross)-Number(c.discounts)-Number(c.platform_fees)-Number(c.other_fees)-Number(c.cogs)-Number(c.operating_expenses);
+  const contribution=Number(c.gross)-Number(c.discounts)-Number(c.platform_fees)-Number(c.other_fees)-Number(c.cogs)-Number(c.waste_cost||0)-Number(c.operating_expenses);
   return '<tr><td>'+esc(c.day)+'</td><td>'+c.orders_completed+'</td><td>'+fmt(c.gross)+'</td><td>'+fmt(contribution)+'</td>'+
   '<td>'+(c.missing_financials>0?'<span class="badge orange">'+c.missing_financials+' belum cocok</span>':'<span class="badge green">Cocok</span>')+'</td></tr>';
  });
@@ -341,6 +347,13 @@ document.addEventListener("submit",async e=>{
  e.preventDefault();
  const form=Object.fromEntries(new FormData(e.target).entries());
  if(id==="ops-login"){await transact(async()=>{await authLogin(form.email,form.password);await reload()});return}
+ if(id==="ops-waste"){
+  await transact(async()=>{
+   if(!form.note.trim())throw Error("Alasan waste wajib diisi");
+   if(!confirm("Kurangi stok sebagai waste? Transaksi ini tidak bisa dibatalkan dari UI."))return;
+   await rpc("lt_record_waste",{p_material_id:form.material_id,p_qty:Number(form.qty),p_note:form.note});
+  });return;
+ }
  if(s.role!=="owner"&&["ops-new-material","ops-edit-product","ops-bom","ops-purchase","ops-financial","ops-close"].includes(id)){setError("Akses owner diperlukan.");return}
  if(id==="ops-new-material"){
   await transact(()=>req("lt_materials",{method:"POST",body:{name:form.name,unit:form.unit,min_stock:Number(form.min_stock)},prefer:"return=minimal"}));
