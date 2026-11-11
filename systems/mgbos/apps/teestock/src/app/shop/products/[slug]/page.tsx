@@ -6,6 +6,7 @@ import { listPublishedProducts } from '../../../../lib/published-catalog.server'
 import { PublishedProductOptions } from '../../../../components/PublishedProductOptions';
 import { checkoutEnabled } from '../../../../lib/checkout.server';
 import '../../../catalog.css';
+import '../../../cart.css';
 
 type Params = { params: Promise<{ slug: string }> };
 
