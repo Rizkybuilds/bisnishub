@@ -10,7 +10,7 @@
  const PRIORITIES=["Normal","Penting","Mendesak"];
  const cap=(n,max)=>Math.max(0,Math.min(max,Number(n)||0));
  const rup=n=>Math.round(cap(n,1e12));
- const sane=s,max=150=>String(s??"").trim().slice(0,max);
+ const sane=(s,max=150)=>String(s??"").trim().slice(0,max);
  const validDate=d=>typeof d==="string" && /^\d{4}-\d{2}-\d{2}$/.test(d)&& !Number.isNaN(Date.parse(d+"T12:00:00Z")) && new Date(d+"T12:00:00Z").toISOString().slice(0,10)===d;
  const monthOf=d=>d.slice(0,7);
  const today=()=>new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Jakarta",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
