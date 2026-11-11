@@ -1,21 +1,8 @@
 import 'server-only';
 import { publicEnvironment } from './env.client';
 import { serverEnvironment } from './env.server';
-
-export interface StorefrontVariant {
-  sku: string;
-  size: string;
-  color: string;
-  priceIdr: number;
-}
-export interface StorefrontProduct {
-  slug: string;
-  title: string;
-  collectionName: string;
-  description: string;
-  mockupUrl: string;
-  variants: StorefrontVariant[];
-}
+import { isCompleteProductDetails, SIZE_ORDER } from './storefront-product';
+import type { StorefrontProduct } from './storefront-product';
 
 type RawProduct = {
   slug: string;
@@ -23,6 +10,7 @@ type RawProduct = {
   collection_name: string;
   description: string;
   mockup_path: string;
+  details: unknown;
   variants: Array<{
     sku: string;
     size: string;
@@ -91,7 +79,9 @@ export async function listPublishedProducts(
       organization_id: 'eq.' + orgs[0].id,
       brand_id: 'eq.' + brands[0].id,
       status: 'eq.PUBLISHED',
-      select: 'slug,title,collection_name,description,mockup_path,variants',
+      rights_status: 'eq.APPROVED',
+      sample_status: 'eq.PASSED',
+      select: 'slug,title,collection_name,description,mockup_path,variants,details',
       order: 'updated_at.desc',
       limit: slug ? '1' : '60',
     });
@@ -116,7 +106,14 @@ export async function listPublishedProducts(
       const variants = row.variants
         .filter(
           (variant) =>
-            Number.isSafeInteger(variant.priceIdr) && variant.priceIdr > 0,
+            typeof variant.sku === 'string' &&
+            /^[A-Z0-9-]{3,40}$/.test(variant.sku) &&
+            SIZE_ORDER.includes(variant.size as (typeof SIZE_ORDER)[number]) &&
+            typeof variant.color === 'string' &&
+            variant.color.trim().length > 1 &&
+            Number.isSafeInteger(variant.priceIdr) &&
+            variant.priceIdr > 0 &&
+            variant.priceIdr <= 9999999999,
         )
         .map(({ sku, size, color, priceIdr }) => ({
           sku,
@@ -124,7 +121,7 @@ export async function listPublishedProducts(
           color,
           priceIdr,
         }));
-      if (!variants.length) return [];
+      if (!variants.length || !isCompleteProductDetails(row.details, variants)) return [];
       return [
         {
           slug: row.slug,
@@ -136,6 +133,7 @@ export async function listPublishedProducts(
             '/storage/v1/object/public/teestock-mockups/' +
             row.mockup_path,
           variants,
+          details: row.details,
         },
       ];
     });
