@@ -85,7 +85,7 @@ begin
       or coalesce(item->>'quantity','') !~ '^[1-9][0-9]?$'
       or (item->>'quantity')::integer > 10
       or jsonb_typeof(item->'expectedPriceIdr') is distinct from 'number'
-      or coalesce(item->>'expectedPriceIdr','') !~ '^[1-9][0-9]{0,9}
+      or coalesce(item->>'expectedPriceIdr','') !~ '^[1-9][0-9]{0,9}$'
   ) then raise exception 'Invalid checkout cart line'; end if;
   if (select count(distinct item->>'sku') from jsonb_array_elements(p_items) item)
     <> jsonb_array_length(p_items) then
