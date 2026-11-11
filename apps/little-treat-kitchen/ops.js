@@ -125,7 +125,8 @@ function showLogin(){
  (s.err?'<div class="notice error">'+esc(s.err)+'</div>':"")+
  '<form id="ops-login"><label class="field"><span>Email</span><input type="email" name="email" required autocomplete="username" placeholder="email@contoh.com"/></label>'+
  '<label class="field"><span>Password</span><input type="password" name="password" required autocomplete="current-password"/></label>'+
- '<button class="btn full" type="submit" '+(s.busy?"disabled":"")+'>'+(s.busy?"Memproses…":"Masuk")+'</button></form></div></div>';
+ '<button class="btn full" type="submit" '+(s.busy?"disabled":"")+'>'+(s.busy?"Memproses…":"Masuk")+'</button></form>'+
+ '<p class="muted" style="margin-top:20px">Akun belum disiapkan? <a href="./legacy.html">Buka panduan resep v2 sementara</a>. Data keuangan versi lama hanya tersimpan pada browser tempat sebelumnya digunakan.</p></div></div>';
 }
 function nav(){
  const visible=TABS.filter(x=>s.role==="owner"||x.staff);
