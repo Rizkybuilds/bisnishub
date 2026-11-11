@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { addToCart, cartTotal, normalizeCart } from '../apps/teestock/src/lib/live-cart';
+import {
+  addToCart,
+  cartTotal,
+  normalizeCart,
+} from '../apps/teestock/src/lib/live-cart';
 import { validateGuestCheckout } from '../apps/teestock/src/lib/guest-checkout';
 
 const line = {
@@ -18,7 +22,14 @@ const request = {
   email: '',
   honeypot: '',
   agreedToPickup: true,
-  items: [{ slug: line.slug, sku: line.sku, quantity: 1, expectedPriceIdr: line.priceIdr }],
+  items: [
+    {
+      slug: line.slug,
+      sku: line.sku,
+      quantity: 1,
+      expectedPriceIdr: line.priceIdr,
+    },
+  ],
 };
 
 describe('TeeStock F03 real cart', () => {
@@ -38,8 +49,9 @@ describe('TeeStock F03 real cart', () => {
   });
 
   it('sanitizes malformed local browser state', () => {
-    expect(normalizeCart([{ ...line }, { ...line }, { ...line, priceIdr: -1 }]))
-      .toHaveLength(1);
+    expect(
+      normalizeCart([{ ...line }, { ...line }, { ...line, priceIdr: -1 }]),
+    ).toHaveLength(1);
     expect(normalizeCart({ polluted: true })).toEqual([]);
   });
 });
@@ -52,24 +64,36 @@ describe('TeeStock F03 guest checkout contract', () => {
   });
 
   it('rejects duplicate SKUs, fake customer amounts, and quantity abuse', () => {
-    expect(validateGuestCheckout({
-      ...request,
-      items: [request.items[0], request.items[0]],
-    }).ok).toBe(false);
-    expect(validateGuestCheckout({
-      ...request,
-      items: [{ ...request.items[0], expectedPriceIdr: -1 }],
-    }).ok).toBe(false);
-    expect(validateGuestCheckout({
-      ...request,
-      items: [{ ...request.items[0], quantity: 40 }],
-    }).ok).toBe(false);
+    expect(
+      validateGuestCheckout({
+        ...request,
+        items: [request.items[0], request.items[0]],
+      }).ok,
+    ).toBe(false);
+    expect(
+      validateGuestCheckout({
+        ...request,
+        items: [{ ...request.items[0], expectedPriceIdr: -1 }],
+      }).ok,
+    ).toBe(false);
+    expect(
+      validateGuestCheckout({
+        ...request,
+        items: [{ ...request.items[0], quantity: 40 }],
+      }).ok,
+    ).toBe(false);
   });
 
   it('rejects missing pickup agreement, bot honeypot and invalid identity', () => {
-    expect(validateGuestCheckout({ ...request, agreedToPickup: false }).ok).toBe(false);
-    expect(validateGuestCheckout({ ...request, honeypot: 'spam-link' }).ok).toBe(false);
+    expect(
+      validateGuestCheckout({ ...request, agreedToPickup: false }).ok,
+    ).toBe(false);
+    expect(
+      validateGuestCheckout({ ...request, honeypot: 'spam-link' }).ok,
+    ).toBe(false);
     expect(validateGuestCheckout({ ...request, phone: 'abcd' }).ok).toBe(false);
-    expect(validateGuestCheckout({ ...request, requestId: 'not-a-uuid' }).ok).toBe(false);
+    expect(
+      validateGuestCheckout({ ...request, requestId: 'not-a-uuid' }).ok,
+    ).toBe(false);
   });
 });
