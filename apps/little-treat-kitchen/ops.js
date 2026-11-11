@@ -555,7 +555,14 @@ document.addEventListener("click",async e=>{
  if(b){
   const action=b.dataset.action;
   if(action==="logout"){s.session=null;s.user=null;s.role=null;s.cart=[];saveSession();s.err="";render();return}
-  if(action==="reload"){await transact(()=>Promise.resolve());return}
+  if(action==="reload"){
+   if(s.busy)return;
+   s.busy=true;s.err="";render();
+   try{await reload();notify("Data terbaru berhasil dimuat")}
+   catch(err){s.err=err.message||"Gagal memperbarui data"}
+   finally{s.busy=false;render()}
+   return;
+  }
   if(action==="close-modal"){modal.close();return}
   if(action==="import-catalog"){
    if(s.role!=="owner")return;
@@ -592,7 +599,14 @@ document.addEventListener("click",async e=>{
  const remove=e.target.closest("[data-remove-cart]");
  if(remove){s.cart.splice(Number(remove.dataset.removeCart),1);render();return}
  const transition=e.target.closest("[data-transition]");
- if(transition){if(!confirm("Konfirmasi tahap pesanan? "+transition.dataset.transition)){return}
+ if(transition){
+  const copy={
+   start:"Mulai menyiapkan pesanan ini?",
+   ready:"QC sudah selesai? Status akan berubah menjadi Siap, stok bahan dikurangi dan HPP dihitung oleh database.",
+   handoff:"Konfirmasi pesanan sudah diserahkan kepada driver/pelanggan?",
+   cancel:"Batalkan pesanan ini? Pastikan pesanan memang belum diserahkan."
+  };
+  if(!confirm(copy[transition.dataset.transition]||"Lanjutkan tahap pesanan ini?"))return;
   await transact(()=>rpc("lt_transition_order",{p_order_id:transition.dataset.id,p_action:transition.dataset.transition}));return}
  const recipe=e.target.closest("[data-recipe]");
  if(recipe){s.recipeSize="14";showRecipe(recipe.dataset.recipe);return}
