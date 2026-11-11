@@ -5,11 +5,15 @@ export const catalogProductDetailsSchema = z.object({
   fit: z.string().trim().max(80),
   care: z.string().trim().max(600),
   productionDays: z.number().int().min(0).max(45),
-  sizeChart: z.array(z.object({
-    size: z.enum(['S', 'M', 'L', 'XL', 'XXL']),
-    widthCm: z.number().min(20).max(150),
-    lengthCm: z.number().min(20).max(150),
-  })).max(5),
+  sizeChart: z
+    .array(
+      z.object({
+        size: z.enum(['S', 'M', 'L', 'XL', 'XXL']),
+        widthCm: z.number().min(20).max(150),
+        lengthCm: z.number().min(20).max(150),
+      }),
+    )
+    .max(5),
 });
 
 export const emptyCatalogProductDetails: CatalogProductDetails = {
@@ -88,7 +92,9 @@ export const catalogProductSchema = z
       });
     }
     const chartSizes = product.details.sizeChart.map((row) => row.size);
-    const requiredSizes = [...new Set(product.variants.map((variant) => variant.size))];
+    const requiredSizes = [
+      ...new Set(product.variants.map((variant) => variant.size)),
+    ];
     if (new Set(chartSizes).size !== chartSizes.length) {
       ctx.addIssue({
         code: 'custom',
@@ -106,7 +112,8 @@ export const catalogProductSchema = z
       ) {
         ctx.addIssue({
           code: 'custom',
-          message: 'Sebelum publish, lengkapi bahan, fit, perawatan, waktu produksi, dan pengukuran setiap ukuran.',
+          message:
+            'Sebelum publish, lengkapi bahan, fit, perawatan, waktu produksi, dan pengukuran setiap ukuran.',
           path: ['details'],
         });
       }
