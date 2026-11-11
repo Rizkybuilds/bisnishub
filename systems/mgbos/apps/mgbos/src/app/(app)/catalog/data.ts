@@ -2,7 +2,10 @@ import 'server-only';
 import { requireAuth } from '@/lib/session.server';
 import { publicEnvironment } from '@/lib/env.client';
 import { serverEnvironment } from '@/lib/env.server';
-import type { CatalogProductDetails, CatalogVariantInput } from '@mgbos/validation';
+import type {
+  CatalogProductDetails,
+  CatalogVariantInput,
+} from '@mgbos/validation';
 
 export interface CatalogProductRow {
   id: string;
