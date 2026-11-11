@@ -22,7 +22,10 @@ export interface CatalogProductRow {
 
 export async function catalogContext() {
   const session = await requireAuth();
-  if (session.activeBrand.code !== 'TS' || !['OWNER', 'ADMIN'].includes(session.role.code)) {
+  if (
+    session.activeBrand.code !== 'TS' ||
+    !['OWNER', 'ADMIN'].includes(session.role.code)
+  ) {
     throw new Error('Hanya Owner/Admin TeeStock yang boleh mengelola katalog.');
   }
   const base = publicEnvironment.NEXT_PUBLIC_SUPABASE_URL;
@@ -45,13 +48,18 @@ export async function catalogContext() {
     limit: '1',
   });
   const response = await fetch(endpoint + '/brands?' + query, {
-    headers, cache: 'no-store',
+    headers,
+    cache: 'no-store',
   });
   if (!response.ok) throw new Error('Brand TeeStock belum bisa diverifikasi.');
   const rows = (await response.json()) as { id: string }[];
   if (!rows[0]) throw new Error('Brand TeeStock aktif tidak ditemukan.');
   return {
-    session, base: base.replace(/\/+$/, ''), endpoint, headers, brandId: rows[0].id,
+    session,
+    base: base.replace(/\/+$/, ''),
+    endpoint,
+    headers,
+    brandId: rows[0].id,
   };
 }
 
@@ -63,18 +71,38 @@ export async function listCatalogProducts(): Promise<{
   const query = new URLSearchParams({
     organization_id: 'eq.' + ctx.session.organization.id,
     brand_id: 'eq.' + ctx.brandId,
-    select: 'id,slug,title,collection_name,description,mockup_path,artwork_path,rights_status,sample_status,status,variants,version,updated_at',
+    select:
+      'id,slug,title,collection_name,description,mockup_path,artwork_path,rights_status,sample_status,status,variants,version,updated_at',
     order: 'updated_at.desc',
     limit: '100',
   });
-  const response = await fetch(ctx.endpoint + '/teestock_catalog_products?' + query, {
-    headers: ctx.headers, cache: 'no-store',
-  });
-  if (!response.ok) throw new Error('Katalog belum dapat dimuat. Periksa migrasi database.');
-  return { products: await response.json() as CatalogProductRow[], base: ctx.base };
+  const response = await fetch(
+    ctx.endpoint + '/teestock_catalog_products?' + query,
+    {
+      headers: ctx.headers,
+      cache: 'no-store',
+    },
+  );
+  if (!response.ok)
+    throw new Error('Katalog belum dapat dimuat. Periksa migrasi database.');
+  return {
+    products: (await response.json()) as CatalogProductRow[],
+    base: ctx.base,
+  };
 }
 
-export function publicMockupUrl(base: string, path: string | null): string | null {
-  if (!path || !/^[0-9a-f-]{36}\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.(png|jpg|webp)$/.test(path)) return null;
-  return base.replace(/\/+$/, '') + '/storage/v1/object/public/teestock-mockups/' + path;
+export function publicMockupUrl(
+  base: string,
+  path: string | null,
+): string | null {
+  if (
+    !path ||
+    !/^[0-9a-f-]{36}\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.(png|jpg|webp)$/.test(path)
+  )
+    return null;
+  return (
+    base.replace(/\/+$/, '') +
+    '/storage/v1/object/public/teestock-mockups/' +
+    path
+  );
 }
