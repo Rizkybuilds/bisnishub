@@ -2,7 +2,7 @@ import 'server-only';
 import { publicEnvironment } from './env.client';
 import { serverEnvironment } from './env.server';
 import { isCompleteProductDetails, SIZE_ORDER } from './storefront-product';
-import type { StorefrontProduct } from './storefront-product';
+import type { StorefrontProduct, StorefrontSize } from './storefront-product';
 
 type RawProduct = {
   slug: string;
@@ -117,7 +117,7 @@ export async function listPublishedProducts(
         )
         .map(({ sku, size, color, priceIdr }) => ({
           sku,
-          size,
+          size: size as StorefrontSize,
           color,
           priceIdr,
         }));
