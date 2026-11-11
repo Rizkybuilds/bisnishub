@@ -1,9 +1,0 @@
-node_modules
-.next
-pnpm-lock.yaml
-next-env.d.ts
-*.tsbuildinfo
-supabase/.temp
-supabase/.branches
-packages/database/generated
-docs/product/teestock-customer-platform/local-intake

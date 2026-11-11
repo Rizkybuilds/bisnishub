@@ -1,9 +1,0 @@
-packages:
-  - apps/*
-  - packages/*
-onlyBuiltDependencies:
-  - supabase
-  - esbuild
-  - sharp
-ignoredBuiltDependencies:
-  - unrs-resolver

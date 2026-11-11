@@ -1,5 +1,0 @@
-{
-  "buildCommand": "node scripts/retired-storefront.mjs",
-  "installCommand": "node scripts/retired-storefront.mjs",
-  "framework": null
-}
