@@ -116,22 +116,37 @@ export function PublishedProductOptions({
       </div>
 
       <div className="ts-pdp-cart-actions">
-        <button type="button" className="ts-cart-primary" disabled={!selected}
+        <button
+          type="button"
+          className="ts-cart-primary"
+          disabled={!selected}
           onClick={() => {
             if (!selected) return;
             const error = add(product, selected);
             setCartNotice(error ?? 'Produk ditambahkan ke keranjang.');
-          }}>
+          }}
+        >
           Tambah ke keranjang <span aria-hidden="true">↗</span>
         </button>
-        <Link href="/cart" className="ts-pdp-cart-link">Lihat keranjang</Link>
-        {cartNotice && <p className="ts-pdp-cart-notice" role="status">{cartNotice}</p>}
+        <Link href="/cart" className="ts-pdp-cart-link">
+          Lihat keranjang
+        </Link>
+        {cartNotice && (
+          <p className="ts-pdp-cart-notice" role="status">
+            {cartNotice}
+          </p>
+        )}
       </div>
       <div className="ts-pdp-not-for-sale" role="status">
-        <strong>{checkoutEnabled ? 'Pembayaran QRIS belum tersedia' : 'Checkout belum diaktifkan'}</strong>
+        <strong>
+          {checkoutEnabled
+            ? 'Pembayaran QRIS belum tersedia'
+            : 'Checkout belum diaktifkan'}
+        </strong>
         <p>
           Detail dan harga produk ini berasal dari katalog TeeStock yang telah
-          diverifikasi. {checkoutEnabled
+          diverifikasi.{' '}
+          {checkoutEnabled
             ? 'Kamu dapat membuat pesanan pengambilan mandiri melalui keranjang. Pembayaran tetap menunggu verifikasi manual; QRIS belum tersedia.'
             : 'Kamu dapat menyusun keranjang sekarang. Checkout belum aktif sampai sistem siap; tidak ada pesanan atau pembayaran yang diproses.'}
         </p>
