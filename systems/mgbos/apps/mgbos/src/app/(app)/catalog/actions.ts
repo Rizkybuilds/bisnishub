@@ -51,6 +51,7 @@ export async function saveCatalogProductAction(
             title: p.title,
             collectionName: p.collectionName,
             description: p.description,
+            details: p.details,
             mockupPath: p.mockupPath,
             artworkPath: p.artworkPath,
             rightsStatus: p.rightsStatus,

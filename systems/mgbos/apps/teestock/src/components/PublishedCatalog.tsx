@@ -1,56 +1,40 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { listPublishedProducts } from '../lib/published-catalog.server';
-import { formatIllustrativePrice } from '../data/products';
+import type { StorefrontProduct } from '../lib/storefront-product';
+import { PublishedProductGrid } from './PublishedProductGrid';
 
-export async function PublishedCatalog() {
-  const products = await listPublishedProducts();
+export async function PublishedCatalog({
+  products: supplied,
+  featured = false,
+}: {
+  products?: StorefrontProduct[];
+  featured?: boolean;
+} = {}) {
+  const products = supplied ?? (await listPublishedProducts());
   if (products.length === 0) return null;
   return (
     <section
-      className="ts-public-catalog"
+      className={
+        'ts-public-catalog' + (featured ? ' ts-public-catalog-featured' : '')
+      }
       aria-labelledby="ts-live-catalog-title"
     >
-      <div className="ts-public-kicker">TEESTOCK / PRODUCT CATALOG</div>
+      <div className="ts-public-kicker">TEESTOCK / CURATED RELEASES</div>
       <div className="ts-public-catalog-head">
         <h2 id="ts-live-catalog-title">The collection.</h2>
-        <p>
-          Produk yang sudah lolos kurasi, pengecekan hak penggunaan, dan
-          sampling fisik. Checkout online sedang disiapkan.
-        </p>
+        <div>
+          <p>
+            Desain terpilih, bahan dan ukuran berdasarkan sampel yang sudah
+            diperiksa. Checkout online masih disiapkan.
+          </p>
+          {featured && (
+            <Link href="/shop" className="ts-public-all-products">
+              Lihat semua produk <span aria-hidden="true">↗</span>
+            </Link>
+          )}
+        </div>
       </div>
-      <div className="ts-public-product-grid">
-        {products.map((product) => {
-          const prices = product.variants.map((v) => v.priceIdr);
-          return (
-            <article className="ts-public-product" key={product.slug}>
-              <Link
-                href={'/shop/products/' + product.slug}
-                aria-label={'Lihat detail ' + product.title}
-              >
-                <div className="ts-public-product-image">
-                  <Image
-                    src={product.mockupUrl}
-                    alt={'Mockup ' + product.title}
-                    width={700}
-                    height={840}
-                    unoptimized
-                  />
-                </div>
-                <div className="ts-public-product-meta">
-                  <span>{product.collectionName}</span>
-                  <span>MADE TO ORDER</span>
-                </div>
-                <h3>{product.title}</h3>
-                <p>Mulai {formatIllustrativePrice(Math.min(...prices))}</p>
-                <span className="ts-public-product-link">
-                  Lihat detail produk →
-                </span>
-              </Link>
-            </article>
-          );
-        })}
-      </div>
+      <PublishedProductGrid products={products} compact={featured} />
     </section>
   );
 }

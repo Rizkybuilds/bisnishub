@@ -7,6 +7,7 @@ import type {
   CatalogProductInput,
   CatalogVariantInput,
 } from '@mgbos/validation';
+import { emptyCatalogProductDetails } from '@mgbos/validation';
 import type { CatalogProductRow } from './data';
 import { saveCatalogProductAction, uploadCatalogAssetAction } from './actions';
 
@@ -25,6 +26,7 @@ const emptyEditor = (): Editor => ({
   title: '',
   collectionName: 'TeeStock Selects',
   description: '',
+  details: { ...emptyCatalogProductDetails, sizeChart: [] },
   mockupPath: null,
   artworkPath: null,
   rightsStatus: 'PENDING',
@@ -39,6 +41,11 @@ const fromRow = (row: CatalogProductRow): Editor => ({
   title: row.title,
   collectionName: row.collection_name,
   description: row.description,
+  details: {
+    ...emptyCatalogProductDetails,
+    ...row.details,
+    sizeChart: row.details?.sizeChart ?? [],
+  },
   mockupPath: row.mockup_path,
   artworkPath: row.artwork_path,
   rightsStatus: row.rights_status,
@@ -82,6 +89,45 @@ export function CatalogManager({
       ),
     }));
   };
+  const updateDetail = <K extends keyof Editor['details']>(
+    field: K,
+    value: Editor['details'][K],
+  ) =>
+    setEditor((previous) => ({
+      ...previous,
+      details: { ...previous.details, [field]: value },
+    }));
+  const updateMeasurement = (
+    size: CatalogVariantInput['size'],
+    field: 'widthCm' | 'lengthCm',
+    value: number,
+  ) =>
+    setEditor((previous) => {
+      const original = previous.details.sizeChart.find(
+        (row) => row.size === size,
+      );
+      const updated = {
+        size,
+        widthCm: 0,
+        lengthCm: 0,
+        ...original,
+        [field]: value,
+      };
+      return {
+        ...previous,
+        details: {
+          ...previous.details,
+          sizeChart: [
+            ...previous.details.sizeChart.filter((row) => row.size !== size),
+            updated,
+          ],
+        },
+      };
+    });
+  const offeredSizes = [
+    ...new Set(editor.variants.map((variant) => variant.size)),
+  ];
+
   const imageUrl = editor.mockupPath
     ? storageBase +
       '/storage/v1/object/public/teestock-mockups/' +
@@ -92,6 +138,18 @@ export function CatalogManager({
     editor.sampleStatus === 'PASSED' &&
     !!editor.mockupPath &&
     !!editor.artworkPath &&
+    editor.details.material.trim().length >= 3 &&
+    editor.details.fit.trim().length >= 3 &&
+    editor.details.care.trim().length >= 10 &&
+    editor.details.productionDays >= 1 &&
+    offeredSizes.every((size) => {
+      const measurement = editor.details.sizeChart.find(
+        (row) => row.size === size,
+      );
+      return (
+        !!measurement && measurement.widthCm >= 20 && measurement.lengthCm >= 20
+      );
+    }) &&
     editor.variants.length > 0 &&
     editor.variants.every(
       (v) =>
@@ -469,7 +527,105 @@ export function CatalogManager({
             ))}
           </div>
 
-          <h3>03 / Kelayakan publikasi</h3>
+          <h3>03 / Spesifikasi produk dan panduan ukuran</h3>
+          <p className="ts-muted">
+            Isi berdasarkan sampel fisik yang sudah diperiksa, bukan asumsi.
+            Ukuran dalam sentimeter; lebar dada diukur saat kaos dibentangkan.
+          </p>
+          <div className="ts-fields ts-fields-two ts-product-specs">
+            <label>
+              Material / komposisi kain
+              <input
+                value={editor.details.material}
+                maxLength={160}
+                placeholder="Contoh: 100% cotton combed 24s (setelah diverifikasi)"
+                onChange={(event) =>
+                  updateDetail('material', event.target.value)
+                }
+              />
+            </label>
+            <label>
+              Fit / potongan
+              <input
+                value={editor.details.fit}
+                maxLength={80}
+                placeholder="Contoh: regular fit (hasil sampling)"
+                onChange={(event) => updateDetail('fit', event.target.value)}
+              />
+            </label>
+            <label>
+              Estimasi produksi (hari kerja)
+              <input
+                type="number"
+                min={0}
+                max={45}
+                step={1}
+                value={editor.details.productionDays || ''}
+                onChange={(event) =>
+                  updateDetail('productionDays', Number(event.target.value))
+                }
+              />
+            </label>
+            <label>
+              Petunjuk perawatan
+              <textarea
+                rows={3}
+                maxLength={600}
+                value={editor.details.care}
+                placeholder="Tulis hanya instruksi yang telah diuji pada sampel"
+                onChange={(event) => updateDetail('care', event.target.value)}
+              />
+            </label>
+          </div>
+          <div className="ts-size-chart-editor">
+            <h3>Tabel ukuran (hasil pengukuran sampel)</h3>
+            {offeredSizes.map((size) => {
+              const current = editor.details.sizeChart.find(
+                (row) => row.size === size,
+              );
+              return (
+                <div className="ts-size-row" key={size}>
+                  <strong>{size}</strong>
+                  <label>
+                    Lebar dada (cm)
+                    <input
+                      type="number"
+                      min={20}
+                      max={150}
+                      step={0.5}
+                      value={current?.widthCm || ''}
+                      onChange={(event) =>
+                        updateMeasurement(
+                          size,
+                          'widthCm',
+                          Number(event.target.value),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Panjang badan (cm)
+                    <input
+                      type="number"
+                      min={20}
+                      max={150}
+                      step={0.5}
+                      value={current?.lengthCm || ''}
+                      onChange={(event) =>
+                        updateMeasurement(
+                          size,
+                          'lengthCm',
+                          Number(event.target.value),
+                        )
+                      }
+                    />
+                  </label>
+                </div>
+              );
+            })}
+          </div>
+
+          <h3>04 / Kelayakan publikasi</h3>
           <div className="ts-fields ts-fields-two">
             <label>
               Hak komersial
@@ -523,7 +679,7 @@ export function CatalogManager({
               title={
                 ready
                   ? 'Publikasikan katalog'
-                  : 'Lengkapi hak, sampel, kedua file, dan HPP sebelum publikasi'
+                  : 'Lengkapi hak, sampel, aset, HPP, detail bahan dan tabel ukuran sebelum publikasi'
               }
               onClick={() => void save('PUBLISHED')}
             >

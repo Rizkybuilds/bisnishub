@@ -352,3 +352,61 @@
     flex: 1;
   }
 }
+
+/* F02 — verified specifications and physical size measurements. */
+.ts-product-specs {
+  margin-top: 16px;
+  align-items: start;
+}
+.ts-size-chart-editor {
+  margin-top: 20px;
+  padding: 17px;
+  border: 1px solid #e4e4e4;
+  border-radius: 9px;
+  background: #fafafa;
+}
+.ts-size-chart-editor h3 {
+  margin-top: 0;
+}
+.ts-size-row {
+  display: grid;
+  grid-template-columns: 55px repeat(2, minmax(0, 1fr));
+  gap: 13px;
+  align-items: end;
+  border-top: 1px solid #e1e1e1;
+  padding: 12px 0;
+}
+.ts-size-row strong {
+  font-size: 12px;
+  padding-bottom: 12px;
+}
+.ts-size-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 650;
+  color: #444;
+}
+.ts-size-row input {
+  min-width: 0;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 5px;
+  color: #111;
+}
+.ts-size-row input:focus-visible {
+  outline: 2px solid #111;
+  outline-offset: 2px;
+}
+@media (max-width: 530px) {
+  .ts-size-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ts-size-row strong {
+    grid-column: span 2;
+    padding: 0;
+  }
+}

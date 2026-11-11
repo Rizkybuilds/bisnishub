@@ -41,7 +41,14 @@ select throws_ok(format(
 create temporary table f01_ready as select payload || jsonb_build_object(
   'status','PUBLISHED','rightsStatus','APPROVED','sampleStatus','PASSED',
   'mockupPath', org::text||'/'||brand::text||'/'||gen_random_uuid()::text||'.png',
-  'artworkPath',org::text||'/'||brand::text||'/'||gen_random_uuid()::text||'.pdf'
+  'artworkPath',org::text||'/'||brand::text||'/'||gen_random_uuid()::text||'.pdf',
+  'details', jsonb_build_object(
+    'material','100% cotton after verified sampling',
+    'fit','Regular fit',
+    'care','Wash according to the garment sample test results.',
+    'productionDays',3,
+    'sizeChart',jsonb_build_array(jsonb_build_object('size','L','widthCm',54,'lengthCm',73))
+  )
 ) ready from f01_ctx;
 
 select is((
