@@ -49,7 +49,7 @@ describe('TeeStock S0-A Route & Content Invariant Tests', () => {
         const content = fs.readFileSync(fullPath, 'utf8');
         // Server-only modules may access server credentials. Next.js enforces
         // the import boundary; do not exempt client modules from this check.
-        if (/\\.server\\.tsx?$/.test(file)) {
+        if (/\.server\.tsx?$/.test(file)) {
           expect(content).toMatch(/^import ['"]server-only['"];/);
           expect(content).not.toMatch(/['"]use client['"]/);
           continue;
