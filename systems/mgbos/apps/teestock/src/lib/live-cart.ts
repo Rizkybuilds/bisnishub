@@ -89,7 +89,7 @@ export function addToCart(
     return { lines: original, error: 'Maksimal delapan varian per pesanan.' };
   const requested =
     existing >= 0
-      ? original[existing].quantity + incoming.quantity
+      ? (original[existing]?.quantity ?? 0) + incoming.quantity
       : incoming.quantity;
   if (
     requested > MAX_PER_LINE ||
