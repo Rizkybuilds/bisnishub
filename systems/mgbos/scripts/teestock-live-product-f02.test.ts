@@ -39,17 +39,33 @@ describe('TeeStock F02 public product presentation', () => {
 
   it('requires genuine measurements for every published size', () => {
     expect(isCompleteProductDetails(details, variants)).toBe(true);
-    expect(isCompleteProductDetails({
-      ...details, sizeChart: [details.sizeChart[0]],
-    }, variants)).toBe(false);
-    expect(isCompleteProductDetails({
-      ...details, productionDays: 0,
-    }, variants)).toBe(false);
-    expect(isCompleteProductDetails({
-      ...details, sizeChart: [
-        details.sizeChart[0], details.sizeChart[0],
-      ],
-    }, variants)).toBe(false);
+    expect(
+      isCompleteProductDetails(
+        {
+          ...details,
+          sizeChart: [details.sizeChart[0]],
+        },
+        variants,
+      ),
+    ).toBe(false);
+    expect(
+      isCompleteProductDetails(
+        {
+          ...details,
+          productionDays: 0,
+        },
+        variants,
+      ),
+    ).toBe(false);
+    expect(
+      isCompleteProductDetails(
+        {
+          ...details,
+          sizeChart: [details.sizeChart[0], details.sizeChart[0]],
+        },
+        variants,
+      ),
+    ).toBe(false);
   });
 
   it('does not expose pricing fields from ERP cost records in the public contract', () => {
