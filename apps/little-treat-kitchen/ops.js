@@ -564,7 +564,7 @@ function costingView(){
   "Fee, potongan promo dan biaya tambahan adalah input asumsi owner. Kalkulator ini tidak memotong pembayaran atau mengubah harga transaksi.",
   '<div class="form-grid">'+
    field("Harga jual simulasi (Rp)",inp("lt_sim_price","Harga listing","number",'id="lt-sim-price" value="'+(Number(sim.price)||0)+'" min="0" step="100"'))+
-   field("Fee marketplace (%)",inp("lt_sim_fee","Masukkan fee sesuai kontrak","number",'id="lt-sim-fee" value="'+num(sim.fee)+'" min="0" max="99.99" step="0.01"'))+
+   field("Fee marketplace (%)",inp("lt_sim_fee","Masukkan fee sesuai kontrak","number",'id="lt-sim-fee" value="'+sim.fee+'" min="0" max="99.99" step="0.01"'))+
    field("Biaya tetap per order (Rp)",inp("lt_sim_fixed","Misal biaya layanan","number",'id="lt-sim-fixed" value="'+sim.fixed+'" min="0" step="1"'))+
    field("Diskon ditanggung merchant (Rp)",inp("lt_sim_discount","0","number",'id="lt-sim-discount" value="'+sim.discount+'" min="0" step="1"'))+
    field("Biaya tambahan produksi (Rp)",inp("lt_sim_overhead","Minyak, gas, listrik, dll.","number",'id="lt-sim-overhead" value="'+sim.overhead+'" min="0" step="1"'))+
@@ -713,6 +713,7 @@ document.addEventListener("submit",async e=>{
     if(menuCost(p).actualHpp===null)throw Error("Biaya aktual belum lengkap. Catat penerimaan pembelian untuk setiap komponen BOM dahulu.");
    }
    await req("lt_products",{method:"PATCH",query:"?id=eq."+encodeURIComponent(form.id),body:{price,active},prefer:"return=minimal"});
+   if(s.costing.simProduct===p.id)s.costing.simulation.price=price;
   });
   }else if(id==="ops-bom"){
   await transact(async()=>{
