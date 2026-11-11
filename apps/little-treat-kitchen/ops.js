@@ -164,13 +164,13 @@ function nav(){
  '<div class="side-label">WORKSPACE</div><nav class="nav" aria-label="Menu Kitchen OS">'+sideMenu+'</nav>'+
  '<div class="sidebar-bottom"><span class="sync-note">Data terpusat · Supabase</span>'+
  '<strong>'+esc(s.role.toUpperCase())+'</strong><span class="profile-email">'+esc(s.user?.email||"")+'</span></div></aside>'+
- '<nav class="bottom" aria-label="Navigasi cepat">'+bottomMenu+extraMenu+'</nav>';
+ '<nav class="bottom '+(s.role==="owner"?"owner":"staff")+'" aria-label="Navigasi cepat">'+bottomMenu+extraMenu+'</nav>';
 }
 function wrap(title,desc,body){
  const dateLabel=new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"long",year:"numeric",timeZone:"Asia/Jakarta"}).format(new Date());
  const role=s.role==="owner"?"Pemilik":"Operator";
  const initial=String(s.user?.email||"O").slice(0,1).toUpperCase();
- root.innerHTML='<div class="shell">'+nav()+'<div class="main-wrap">'+
+ root.innerHTML='<div class="shell"><a class="skip-link" href="#ops-main">Lewati navigasi, ke konten utama</a>'+nav()+'<div class="main-wrap">'+
  '<header class="top">'+
  '<div class="mobile-brand"><span class="logo">lt<span>.</span></span><span>little treat.</span></div>'+
  '<div class="title">Kitchen OS <span aria-hidden="true"> / </span> <b>'+esc(title)+'</b></div>'+
