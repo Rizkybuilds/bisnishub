@@ -3,32 +3,56 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import type { CatalogProductInput, CatalogVariantInput } from '@mgbos/validation';
+import type {
+  CatalogProductInput,
+  CatalogVariantInput,
+} from '@mgbos/validation';
 import type { CatalogProductRow } from './data';
 import { saveCatalogProductAction, uploadCatalogAssetAction } from './actions';
 
 type Editor = CatalogProductInput;
 const blankVariant = (): CatalogVariantInput => ({
-  sku: '', size: 'L', color: 'Black', priceIdr: 0, costIdr: 0,
+  sku: '',
+  size: 'L',
+  color: 'Black',
+  priceIdr: 0,
+  costIdr: 0,
 });
 const emptyEditor = (): Editor => ({
-  id: null, expectedVersion: 0, slug: '', title: '', collectionName: 'TeeStock Selects',
-  description: '', mockupPath: null, artworkPath: null, rightsStatus: 'PENDING',
-  sampleStatus: 'PENDING', status: 'DRAFT', variants: [blankVariant()],
+  id: null,
+  expectedVersion: 0,
+  slug: '',
+  title: '',
+  collectionName: 'TeeStock Selects',
+  description: '',
+  mockupPath: null,
+  artworkPath: null,
+  rightsStatus: 'PENDING',
+  sampleStatus: 'PENDING',
+  status: 'DRAFT',
+  variants: [blankVariant()],
 });
 const fromRow = (row: CatalogProductRow): Editor => ({
   id: row.id,
   expectedVersion: row.version,
-  slug: row.slug, title: row.title, collectionName: row.collection_name,
-  description: row.description, mockupPath: row.mockup_path,
-  artworkPath: row.artwork_path, rightsStatus: row.rights_status,
-  sampleStatus: row.sample_status, status: row.status,
+  slug: row.slug,
+  title: row.title,
+  collectionName: row.collection_name,
+  description: row.description,
+  mockupPath: row.mockup_path,
+  artworkPath: row.artwork_path,
+  rightsStatus: row.rights_status,
+  sampleStatus: row.sample_status,
+  status: row.status,
   variants: row.variants,
 });
 
-const formatIdr = (amount: number) => new Intl.NumberFormat('id-ID', {
-  style: 'currency', currency: 'IDR', maximumFractionDigits: 0,
-}).format(amount);
+const formatIdr = (amount: number) =>
+  new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0,
+  }).format(amount);
 
 export function CatalogManager({
   products,
@@ -46,19 +70,33 @@ export function CatalogManager({
 
   const update = <K extends keyof Editor>(field: K, value: Editor[K]) =>
     setEditor((previous) => ({ ...previous, [field]: value }));
-  const updateVariant = (index: number, field: keyof CatalogVariantInput, value: string | number) => {
+  const updateVariant = (
+    index: number,
+    field: keyof CatalogVariantInput,
+    value: string | number,
+  ) => {
     setEditor((previous) => ({
       ...previous,
       variants: previous.variants.map((variant, i) =>
-        i === index ? { ...variant, [field]: value } : variant),
+        i === index ? { ...variant, [field]: value } : variant,
+      ),
     }));
   };
-  const imageUrl = editor.mockupPath ?
-    storageBase + '/storage/v1/object/public/teestock-mockups/' + editor.mockupPath : null;
-  const ready = editor.rightsStatus === 'APPROVED' && editor.sampleStatus === 'PASSED' &&
-    !!editor.mockupPath && !!editor.artworkPath &&
-    editor.variants.length > 0 && editor.variants.every((v) =>
-      v.sku && v.priceIdr > 0 && v.costIdr > 0 && v.costIdr <= v.priceIdr);
+  const imageUrl = editor.mockupPath
+    ? storageBase +
+      '/storage/v1/object/public/teestock-mockups/' +
+      editor.mockupPath
+    : null;
+  const ready =
+    editor.rightsStatus === 'APPROVED' &&
+    editor.sampleStatus === 'PASSED' &&
+    !!editor.mockupPath &&
+    !!editor.artworkPath &&
+    editor.variants.length > 0 &&
+    editor.variants.every(
+      (v) =>
+        v.sku && v.priceIdr > 0 && v.costIdr > 0 && v.costIdr <= v.priceIdr,
+    );
 
   const selectProduct = (row: CatalogProductRow) => {
     setEditor(fromRow(row));
@@ -85,7 +123,11 @@ export function CatalogManager({
         setError(result.error ?? 'Upload gagal.');
       } else {
         update(kind === 'mockup' ? 'mockupPath' : 'artworkPath', result.path);
-        setNotice(kind === 'mockup' ? 'Foto mockup berhasil diunggah.' : 'Artwork privat berhasil diunggah.');
+        setNotice(
+          kind === 'mockup'
+            ? 'Foto mockup berhasil diunggah.'
+            : 'Artwork privat berhasil diunggah.',
+        );
       }
     } catch {
       setError('Upload gagal. Coba lagi.');
@@ -99,18 +141,26 @@ export function CatalogManager({
     setError('');
     setNotice('');
     try {
-      const result = await saveCatalogProductAction({ ...editor, status: nextStatus });
+      const result = await saveCatalogProductAction({
+        ...editor,
+        status: nextStatus,
+      });
       if (!result.id || !result.version) {
         setError(result.error ?? 'Gagal menyimpan produk.');
       } else {
         setEditor((previous) => ({
-          ...previous, id: result.id ?? null,
+          ...previous,
+          id: result.id ?? null,
           expectedVersion: result.version ?? previous.expectedVersion,
           status: nextStatus,
         }));
-        setNotice(nextStatus === 'PUBLISHED'
-          ? 'Produk dipublikasikan. Katalog website akan membaca data terbaru.'
-          : nextStatus === 'ARCHIVED' ? 'Produk diarsipkan.' : 'Draft tersimpan.');
+        setNotice(
+          nextStatus === 'PUBLISHED'
+            ? 'Produk dipublikasikan. Katalog website akan membaca data terbaru.'
+            : nextStatus === 'ARCHIVED'
+              ? 'Produk diarsipkan.'
+              : 'Draft tersimpan.',
+        );
         router.refresh();
       }
     } catch {
@@ -126,9 +176,18 @@ export function CatalogManager({
         <div>
           <p className="ts-kicker">TEESTOCK / COMMERCE</p>
           <h1>Product Catalog</h1>
-          <p className="ts-muted">Dari draft studio menjadi koleksi nyata. Publikasi tidak mengaktifkan checkout.</p>
+          <p className="ts-muted">
+            Dari draft studio menjadi koleksi nyata. Publikasi tidak
+            mengaktifkan checkout.
+          </p>
         </div>
-        <button type="button" className="ts-button ts-button-dark" onClick={clearProduct}>+ Produk baru</button>
+        <button
+          type="button"
+          className="ts-button ts-button-dark"
+          onClick={clearProduct}
+        >
+          + Produk baru
+        </button>
       </div>
 
       <div className="ts-catalog-grid">
@@ -138,57 +197,110 @@ export function CatalogManager({
             <span>{products.length} item</span>
           </div>
           {products.length === 0 ? (
-            <p className="ts-muted ts-empty">Belum ada produk. Buat draft pertama di formulir.</p>
-          ) : products.map((product) => (
-            <button
-              key={product.id}
-              type="button"
-              className={'ts-product-option' + (editor.id === product.id ? ' is-selected' : '')}
-              onClick={() => selectProduct(product)}
-            >
-              <span className="ts-product-option-title">{product.title}</span>
-              <span className="ts-product-option-meta">
-                <span>{product.collection_name}</span>
-                <span className={'ts-status ts-status-' + product.status.toLowerCase()}>
-                  {product.status === 'PUBLISHED' ? 'Published' : product.status === 'ARCHIVED' ? 'Archived' : 'Draft'}
+            <p className="ts-muted ts-empty">
+              Belum ada produk. Buat draft pertama di formulir.
+            </p>
+          ) : (
+            products.map((product) => (
+              <button
+                key={product.id}
+                type="button"
+                className={
+                  'ts-product-option' +
+                  (editor.id === product.id ? ' is-selected' : '')
+                }
+                onClick={() => selectProduct(product)}
+              >
+                <span className="ts-product-option-title">{product.title}</span>
+                <span className="ts-product-option-meta">
+                  <span>{product.collection_name}</span>
+                  <span
+                    className={
+                      'ts-status ts-status-' + product.status.toLowerCase()
+                    }
+                  >
+                    {product.status === 'PUBLISHED'
+                      ? 'Published'
+                      : product.status === 'ARCHIVED'
+                        ? 'Archived'
+                        : 'Draft'}
+                  </span>
                 </span>
-              </span>
-            </button>
-          ))}
+              </button>
+            ))
+          )}
         </aside>
 
-        <section className="ts-catalog-editor" aria-labelledby="catalog-editor-title">
+        <section
+          className="ts-catalog-editor"
+          aria-labelledby="catalog-editor-title"
+        >
           <div className="ts-editor-head">
             <div>
               <p className="ts-kicker">PRODUCT EDITOR</p>
-              <h2 id="catalog-editor-title">{editor.id ? 'Edit produk' : 'Produk baru'}</h2>
+              <h2 id="catalog-editor-title">
+                {editor.id ? 'Edit produk' : 'Produk baru'}
+              </h2>
             </div>
             <span className="ts-status">{editor.status}</span>
           </div>
 
-          {error && <p className="ts-message ts-error" role="alert">{error}</p>}
-          {notice && <p className="ts-message ts-success" role="status">{notice}</p>}
+          {error && (
+            <p className="ts-message ts-error" role="alert">
+              {error}
+            </p>
+          )}
+          {notice && (
+            <p className="ts-message ts-success" role="status">
+              {notice}
+            </p>
+          )}
 
           <div className="ts-fields ts-fields-two">
-            <label>Nama produk
-              <input value={editor.title} maxLength={120} required
-                onChange={(e) => update('title', e.target.value)} placeholder="Everyday Graphic Tee" />
+            <label>
+              Nama produk
+              <input
+                value={editor.title}
+                maxLength={120}
+                required
+                onChange={(e) => update('title', e.target.value)}
+                placeholder="Everyday Graphic Tee"
+              />
             </label>
-            <label>Slug URL
-              <input value={editor.slug} maxLength={80} required
-                onChange={(e) => update('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
-                placeholder="everyday-graphic-tee" />
+            <label>
+              Slug URL
+              <input
+                value={editor.slug}
+                maxLength={80}
+                required
+                onChange={(e) =>
+                  update(
+                    'slug',
+                    e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+                  )
+                }
+                placeholder="everyday-graphic-tee"
+              />
             </label>
           </div>
           <div className="ts-fields">
-            <label>Collection
-              <input value={editor.collectionName} maxLength={80}
-                onChange={(e) => update('collectionName', e.target.value)} />
+            <label>
+              Collection
+              <input
+                value={editor.collectionName}
+                maxLength={80}
+                onChange={(e) => update('collectionName', e.target.value)}
+              />
             </label>
-            <label>Deskripsi dan detail produk
-              <textarea rows={4} maxLength={3000} value={editor.description}
+            <label>
+              Deskripsi dan detail produk
+              <textarea
+                rows={4}
+                maxLength={3000}
+                value={editor.description}
                 onChange={(e) => update('description', e.target.value)}
-                placeholder="Story, bahan, spesifikasi dan estimasi produksi..." />
+                placeholder="Story, bahan, spesifikasi dan estimasi produksi..."
+              />
             </label>
           </div>
 
@@ -196,19 +308,50 @@ export function CatalogManager({
           <div className="ts-asset-grid">
             <label className="ts-asset-upload">
               <strong>Foto mockup publik</strong>
-              {imageUrl && <Image src={imageUrl} width={340} height={280} unoptimized alt="Mockup produk" />}
-              <span>{editor.mockupPath ? 'Ganti foto' : 'Unggah PNG, JPG, atau WebP (maks. 5 MB)'}</span>
-              <input type="file" accept="image/png,image/jpeg,image/webp" disabled={!!uploading || busy}
-                onChange={(e) => { void upload('mockup', e.target.files?.[0]); e.target.value = ''; }} />
+              {imageUrl && (
+                <Image
+                  src={imageUrl}
+                  width={340}
+                  height={280}
+                  unoptimized
+                  alt="Mockup produk"
+                />
+              )}
+              <span>
+                {editor.mockupPath
+                  ? 'Ganti foto'
+                  : 'Unggah PNG, JPG, atau WebP (maks. 5 MB)'}
+              </span>
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                disabled={!!uploading || busy}
+                onChange={(e) => {
+                  void upload('mockup', e.target.files?.[0]);
+                  e.target.value = '';
+                }}
+              />
               {uploading === 'mockup' && <em>Mengunggah...</em>}
             </label>
             <label className="ts-asset-upload">
               <strong>Artwork cetak privat</strong>
-              <span className="ts-asset-icon" aria-hidden="true">↥</span>
-              <span>{editor.artworkPath ? 'File cetak tersimpan — unggah untuk mengganti' :
-                'Unggah artwork PNG/PDF (maks. 20 MB)'}</span>
-              <input type="file" accept="image/png,application/pdf" disabled={!!uploading || busy}
-                onChange={(e) => { void upload('artwork', e.target.files?.[0]); e.target.value = ''; }} />
+              <span className="ts-asset-icon" aria-hidden="true">
+                ↥
+              </span>
+              <span>
+                {editor.artworkPath
+                  ? 'File cetak tersimpan — unggah untuk mengganti'
+                  : 'Unggah artwork PNG/PDF (maks. 20 MB)'}
+              </span>
+              <input
+                type="file"
+                accept="image/png,application/pdf"
+                disabled={!!uploading || busy}
+                onChange={(e) => {
+                  void upload('artwork', e.target.files?.[0]);
+                  e.target.value = '';
+                }}
+              />
               {uploading === 'artwork' && <em>Mengunggah...</em>}
               <small>File artwork tidak dipublikasikan di website.</small>
             </label>
@@ -217,64 +360,185 @@ export function CatalogManager({
           <div className="ts-variant-head">
             <div>
               <h3>02 / Varian dan harga</h3>
-              <p className="ts-muted">MTO (made-to-order). Stok fisik dikelola terpisah di Inventory.</p>
+              <p className="ts-muted">
+                MTO (made-to-order). Stok fisik dikelola terpisah di Inventory.
+              </p>
             </div>
-            <button type="button" className="ts-button ts-button-light"
+            <button
+              type="button"
+              className="ts-button ts-button-light"
               disabled={editor.variants.length >= 40}
-              onClick={() => update('variants', [...editor.variants, blankVariant()])}>+ Varian</button>
+              onClick={() =>
+                update('variants', [...editor.variants, blankVariant()])
+              }
+            >
+              + Varian
+            </button>
           </div>
           <div className="ts-variants">
             {editor.variants.map((variant, index) => (
               <div className="ts-variant" key={index}>
                 <div className="ts-variant-top">
                   <strong>Varian {index + 1}</strong>
-                  <button type="button" disabled={editor.variants.length === 1}
-                    onClick={() => update('variants', editor.variants.filter((_, i) => i !== index))}>Hapus</button>
+                  <button
+                    type="button"
+                    disabled={editor.variants.length === 1}
+                    onClick={() =>
+                      update(
+                        'variants',
+                        editor.variants.filter((_, i) => i !== index),
+                      )
+                    }
+                  >
+                    Hapus
+                  </button>
                 </div>
                 <div className="ts-variant-fields">
-                  <label>SKU<input value={variant.sku} maxLength={40} placeholder="TS-001-BLK-L"
-                    onChange={(e) => updateVariant(index, 'sku', e.target.value.toUpperCase())} /></label>
-                  <label>Ukuran<select value={variant.size}
-                    onChange={(e) => updateVariant(index, 'size', e.target.value)}>
-                    {['S','M','L','XL','XXL'].map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select></label>
-                  <label>Warna<input value={variant.color} maxLength={50}
-                    onChange={(e) => updateVariant(index, 'color', e.target.value)} /></label>
-                  <label>Harga (Rp)<input type="number" min={1} step={1} value={variant.priceIdr || ''}
-                    onChange={(e) => updateVariant(index, 'priceIdr', Number(e.target.value))} /></label>
-                  <label>HPP (Rp)<input type="number" min={0} step={1} value={variant.costIdr || ''}
-                    onChange={(e) => updateVariant(index, 'costIdr', Number(e.target.value))} /></label>
+                  <label>
+                    SKU
+                    <input
+                      value={variant.sku}
+                      maxLength={40}
+                      placeholder="TS-001-BLK-L"
+                      onChange={(e) =>
+                        updateVariant(
+                          index,
+                          'sku',
+                          e.target.value.toUpperCase(),
+                        )
+                      }
+                    />
+                  </label>
+                  <label>
+                    Ukuran
+                    <select
+                      value={variant.size}
+                      onChange={(e) =>
+                        updateVariant(index, 'size', e.target.value)
+                      }
+                    >
+                      {['S', 'M', 'L', 'XL', 'XXL'].map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Warna
+                    <input
+                      value={variant.color}
+                      maxLength={50}
+                      onChange={(e) =>
+                        updateVariant(index, 'color', e.target.value)
+                      }
+                    />
+                  </label>
+                  <label>
+                    Harga (Rp)
+                    <input
+                      type="number"
+                      min={1}
+                      step={1}
+                      value={variant.priceIdr || ''}
+                      onChange={(e) =>
+                        updateVariant(index, 'priceIdr', Number(e.target.value))
+                      }
+                    />
+                  </label>
+                  <label>
+                    HPP (Rp)
+                    <input
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={variant.costIdr || ''}
+                      onChange={(e) =>
+                        updateVariant(index, 'costIdr', Number(e.target.value))
+                      }
+                    />
+                  </label>
                 </div>
-                {variant.priceIdr > 0 && <p className="ts-muted">Margin kotor estimasi: {formatIdr(variant.priceIdr - variant.costIdr)}</p>}
+                {variant.priceIdr > 0 && (
+                  <p className="ts-muted">
+                    Margin kotor estimasi:{' '}
+                    {formatIdr(variant.priceIdr - variant.costIdr)}
+                  </p>
+                )}
               </div>
             ))}
           </div>
 
           <h3>03 / Kelayakan publikasi</h3>
           <div className="ts-fields ts-fields-two">
-            <label>Hak komersial
-              <select value={editor.rightsStatus} onChange={(e) => update('rightsStatus', e.target.value as Editor['rightsStatus'])}>
+            <label>
+              Hak komersial
+              <select
+                value={editor.rightsStatus}
+                onChange={(e) =>
+                  update(
+                    'rightsStatus',
+                    e.target.value as Editor['rightsStatus'],
+                  )
+                }
+              >
                 <option value="PENDING">Belum diverifikasi</option>
                 <option value="APPROVED">Sudah diverifikasi</option>
               </select>
             </label>
-            <label>Sampling & QC fisik
-              <select value={editor.sampleStatus} onChange={(e) => update('sampleStatus', e.target.value as Editor['sampleStatus'])}>
+            <label>
+              Sampling & QC fisik
+              <select
+                value={editor.sampleStatus}
+                onChange={(e) =>
+                  update(
+                    'sampleStatus',
+                    e.target.value as Editor['sampleStatus'],
+                  )
+                }
+              >
                 <option value="PENDING">Belum lolos</option>
                 <option value="PASSED">Lolos sampling</option>
               </select>
             </label>
           </div>
-          <p className="ts-muted">Publikasi hanya menampilkan produk di katalog. Order dan QRIS akan diaktifkan pada fitur berikutnya.</p>
+          <p className="ts-muted">
+            Publikasi hanya menampilkan produk di katalog. Order dan QRIS akan
+            diaktifkan pada fitur berikutnya.
+          </p>
 
           <div className="ts-editor-actions">
-            <button type="button" className="ts-button ts-button-light" disabled={busy || !!uploading}
-              onClick={() => void save('DRAFT')}>{busy ? 'Menyimpan...' : 'Simpan draft'}</button>
-            <button type="button" className="ts-button ts-button-dark" disabled={busy || !!uploading || !ready}
-              title={ready ? 'Publikasikan katalog' : 'Lengkapi hak, sampel, kedua file, dan HPP sebelum publikasi'}
-              onClick={() => void save('PUBLISHED')}>Publikasikan produk</button>
-            {editor.id && <button type="button" className="ts-button ts-button-danger"
-              disabled={busy || !!uploading} onClick={() => void save('ARCHIVED')}>Arsipkan</button>}
+            <button
+              type="button"
+              className="ts-button ts-button-light"
+              disabled={busy || !!uploading}
+              onClick={() => void save('DRAFT')}
+            >
+              {busy ? 'Menyimpan...' : 'Simpan draft'}
+            </button>
+            <button
+              type="button"
+              className="ts-button ts-button-dark"
+              disabled={busy || !!uploading || !ready}
+              title={
+                ready
+                  ? 'Publikasikan katalog'
+                  : 'Lengkapi hak, sampel, kedua file, dan HPP sebelum publikasi'
+              }
+              onClick={() => void save('PUBLISHED')}
+            >
+              Publikasikan produk
+            </button>
+            {editor.id && (
+              <button
+                type="button"
+                className="ts-button ts-button-danger"
+                disabled={busy || !!uploading}
+                onClick={() => void save('ARCHIVED')}
+              >
+                Arsipkan
+              </button>
+            )}
           </div>
         </section>
       </div>
