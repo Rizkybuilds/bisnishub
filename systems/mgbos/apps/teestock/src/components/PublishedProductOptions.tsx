@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import { useLiveCart } from './LiveCartProvider';
 import {
   availableColors,
   availableSizes,
@@ -15,9 +17,13 @@ import type {
 
 export function PublishedProductOptions({
   product,
+  checkoutEnabled,
 }: {
   product: StorefrontProduct;
+  checkoutEnabled: boolean;
 }) {
+  const { add } = useLiveCart();
+  const [cartNotice, setCartNotice] = useState('');
   const variants = product.variants;
   const colors = availableColors(variants);
   const sizes = availableSizes(variants);
@@ -109,12 +115,40 @@ export function PublishedProductOptions({
         </p>
       </div>
 
+      <div className="ts-pdp-cart-actions">
+        <button
+          type="button"
+          className="ts-cart-primary"
+          disabled={!selected}
+          onClick={() => {
+            if (!selected) return;
+            const error = add(product, selected);
+            setCartNotice(error ?? 'Produk ditambahkan ke keranjang.');
+          }}
+        >
+          Tambah ke keranjang <span aria-hidden="true">↗</span>
+        </button>
+        <Link href="/cart" className="ts-pdp-cart-link">
+          Lihat keranjang
+        </Link>
+        {cartNotice && (
+          <p className="ts-pdp-cart-notice" role="status">
+            {cartNotice}
+          </p>
+        )}
+      </div>
       <div className="ts-pdp-not-for-sale" role="status">
-        <strong>Checkout belum tersedia</strong>
+        <strong>
+          {checkoutEnabled
+            ? 'Pembayaran QRIS belum tersedia'
+            : 'Checkout belum diaktifkan'}
+        </strong>
         <p>
           Detail dan harga produk ini berasal dari katalog TeeStock yang telah
-          diverifikasi. Fitur pesanan dan pembayaran QRIS manual sedang
-          dipersiapkan. Halaman ini belum menerima pembelian atau pembayaran.
+          diverifikasi.{' '}
+          {checkoutEnabled
+            ? 'Kamu dapat membuat pesanan pengambilan mandiri melalui keranjang. Pembayaran tetap menunggu verifikasi manual; QRIS belum tersedia.'
+            : 'Kamu dapat menyusun keranjang sekarang. Checkout belum aktif sampai sistem siap; tidak ada pesanan atau pembayaran yang diproses.'}
         </p>
       </div>
 

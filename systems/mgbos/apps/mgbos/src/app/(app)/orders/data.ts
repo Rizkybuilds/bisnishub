@@ -27,6 +27,13 @@ export interface OrderRow {
     legal_name?: string;
     email?: string;
     phone?: string;
+    primary_phone?: string | null;
+    primary_email?: string | null;
+  };
+  request_payload: {
+    source?: string;
+    fulfillment?: string;
+    [key: string]: unknown;
   };
   shipping_address_snapshot: {
     recipient_name: string;
