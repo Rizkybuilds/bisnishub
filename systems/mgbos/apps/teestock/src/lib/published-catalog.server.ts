@@ -23,11 +23,18 @@ type RawProduct = {
   collection_name: string;
   description: string;
   mockup_path: string;
-  variants: Array<{ sku: string; size: string; color: string; priceIdr: number }>;
+  variants: Array<{
+    sku: string;
+    size: string;
+    color: string;
+    priceIdr: number;
+  }>;
 };
 
 function validatePublicPath(value: string): boolean {
-  return /^[0-9a-f-]{36}\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.(png|jpg|webp)$/.test(value);
+  return /^[0-9a-f-]{36}\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.(png|jpg|webp)$/.test(
+    value,
+  );
 }
 
 /**
@@ -35,7 +42,9 @@ function validatePublicPath(value: string): boolean {
  * Uses a trusted server-to-server key and an explicit brand/org filter.
  * When not configured, keep the existing studio preview experience.
  */
-export async function listPublishedProducts(slug?: string): Promise<StorefrontProduct[]> {
+export async function listPublishedProducts(
+  slug?: string,
+): Promise<StorefrontProduct[]> {
   const base = publicEnvironment.NEXT_PUBLIC_SUPABASE_URL;
   const key = serverEnvironment.SUPABASE_SERVICE_ROLE_KEY;
   if (!base || !key) return [];
@@ -49,25 +58,33 @@ export async function listPublishedProducts(slug?: string): Promise<StorefrontPr
     'Accept-Profile': 'app',
   };
   const orgQuery = new URLSearchParams({
-    code: 'eq.' + orgCode, status: 'eq.ACTIVE', select: 'id', limit: '1',
+    code: 'eq.' + orgCode,
+    status: 'eq.ACTIVE',
+    select: 'id',
+    limit: '1',
   });
   try {
     const orgResponse = await fetch(endpoint + '/organizations?' + orgQuery, {
-      headers, cache: 'no-store',
+      headers,
+      cache: 'no-store',
     });
     if (!orgResponse.ok) return [];
-    const orgs = await orgResponse.json() as { id: string }[];
+    const orgs = (await orgResponse.json()) as { id: string }[];
     if (!orgs[0]) return [];
 
     const brandQuery = new URLSearchParams({
-      organization_id: 'eq.' + orgs[0].id, code: 'eq.TS',
-      status: 'eq.ACTIVE', select: 'id', limit: '1',
+      organization_id: 'eq.' + orgs[0].id,
+      code: 'eq.TS',
+      status: 'eq.ACTIVE',
+      select: 'id',
+      limit: '1',
     });
     const brandResponse = await fetch(endpoint + '/brands?' + brandQuery, {
-      headers, cache: 'no-store',
+      headers,
+      cache: 'no-store',
     });
     if (!brandResponse.ok) return [];
-    const brands = await brandResponse.json() as { id: string }[];
+    const brands = (await brandResponse.json()) as { id: string }[];
     if (!brands[0]) return [];
 
     const productQuery = new URLSearchParams({
@@ -79,26 +96,48 @@ export async function listPublishedProducts(slug?: string): Promise<StorefrontPr
       limit: slug ? '1' : '60',
     });
     if (slug) productQuery.set('slug', 'eq.' + slug);
-    const response = await fetch(endpoint + '/teestock_catalog_products?' + productQuery, {
-      headers, cache: 'no-store',
-    });
+    const response = await fetch(
+      endpoint + '/teestock_catalog_products?' + productQuery,
+      {
+        headers,
+        cache: 'no-store',
+      },
+    );
     if (!response.ok) return [];
-    const rows = await response.json() as RawProduct[];
+    const rows = (await response.json()) as RawProduct[];
     return rows.flatMap((row): StorefrontProduct[] => {
-      if (!row.mockup_path || !validatePublicPath(row.mockup_path) ||
-        !Array.isArray(row.variants) || row.variants.length === 0) return [];
+      if (
+        !row.mockup_path ||
+        !validatePublicPath(row.mockup_path) ||
+        !Array.isArray(row.variants) ||
+        row.variants.length === 0
+      )
+        return [];
       const variants = row.variants
-        .filter((variant) => Number.isSafeInteger(variant.priceIdr) && variant.priceIdr > 0)
-        .map(({ sku, size, color, priceIdr }) => ({ sku, size, color, priceIdr }));
+        .filter(
+          (variant) =>
+            Number.isSafeInteger(variant.priceIdr) && variant.priceIdr > 0,
+        )
+        .map(({ sku, size, color, priceIdr }) => ({
+          sku,
+          size,
+          color,
+          priceIdr,
+        }));
       if (!variants.length) return [];
-      return [{
-        slug: row.slug,
-        title: row.title,
-        collectionName: row.collection_name,
-        description: row.description,
-        mockupUrl: base.replace(/\/+$/, '') + '/storage/v1/object/public/teestock-mockups/' + row.mockup_path,
-        variants,
-      }];
+      return [
+        {
+          slug: row.slug,
+          title: row.title,
+          collectionName: row.collection_name,
+          description: row.description,
+          mockupUrl:
+            base.replace(/\/+$/, '') +
+            '/storage/v1/object/public/teestock-mockups/' +
+            row.mockup_path,
+          variants,
+        },
+      ];
     });
   } catch {
     return [];
