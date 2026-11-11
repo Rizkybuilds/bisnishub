@@ -134,4 +134,40 @@ grant execute on function app.confirm_teestock_qris_payment(
   uuid,uuid,uuid,bigint,text,text,boolean
 ) to service_role;
 
+
+-- Prevent the generic payment recorder from allocating a QRIS receipt
+-- to an unpaid TeeStock web invoice without an owner-verified merchant claim.
+create function app.teestock_qris_allocation_guard()
+returns trigger language plpgsql set search_path = '' as $
+declare
+  v_payment app.payments%rowtype;
+begin
+  if exists (
+    select 1 from app.invoices inv
+    join app.orders ord on ord.id = inv.order_id
+    where inv.id = new.invoice_id and inv.organization_id = new.organization_id
+      and ord.request_payload->>'source' = 'TEESTOCK_WEB'
+  ) then
+    select * into v_payment from app.payments
+      where id = new.payment_id and organization_id = new.organization_id;
+    if v_payment.payment_method = 'QRIS' and not exists (
+      select 1 from app.teestock_qris_receipts receipt
+      where receipt.invoice_id = new.invoice_id
+        and receipt.organization_id = new.organization_id
+        and receipt.brand_id = v_payment.brand_id
+        and receipt.merchant_reference = v_payment.reference_number
+        and receipt.amount_idr = v_payment.amount
+        and receipt.verified_by = v_payment.created_by_user_id
+    ) then
+      raise exception 'TeeStock QRIS payment requires verified merchant settlement';
+    end if;
+  end if;
+  return new;
+end;
+$;
+create trigger teestock_qris_allocation_before_insert
+  before insert on app.payment_allocations for each row
+  execute function app.teestock_qris_allocation_guard();
+revoke all on function app.teestock_qris_allocation_guard() from public,anon,authenticated;
+
 commit;
