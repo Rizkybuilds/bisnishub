@@ -56,12 +56,14 @@ describe('TeeStock catalog product contract', () => {
     expect(catalogProductSchema.safeParse(ready).success).toBe(true);
     expect(
       catalogProductSchema.safeParse({
-        ...ready, details: { ...ready.details, sizeChart: [] },
+        ...ready,
+        details: { ...ready.details, sizeChart: [] },
       }).success,
     ).toBe(false);
     expect(
       catalogProductSchema.safeParse({
-        ...ready, details: { ...ready.details, productionDays: 0 },
+        ...ready,
+        details: { ...ready.details, productionDays: 0 },
       }).success,
     ).toBe(false);
     expect(
