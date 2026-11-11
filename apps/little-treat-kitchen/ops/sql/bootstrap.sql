@@ -376,7 +376,7 @@ end $$;
 
 create or replace function public.lt_record_waste(
  p_material_id uuid,p_qty numeric,p_note text default ''
-) returns uuid language plpgsql security definer set search_path='' as $
+) returns uuid language plpgsql security definer set search_path='' as $$
 declare
  v_uid uuid:=auth.uid();v_role text;v_available numeric;v_unit_cost numeric;v_event uuid;
 begin
@@ -394,7 +394,7 @@ begin
  insert into public.lt_waste_events(material_id,qty,cost,note,created_by)
    values (p_material_id,p_qty,round(p_qty*v_unit_cost,2),coalesce(p_note,''),v_uid) returning id into v_event;
  return v_event;
-end $;
+end $$;
 
 create or replace function public.lt_close_day(p_day date,p_note text default '')
 returns jsonb language plpgsql security definer set search_path='' as $$
