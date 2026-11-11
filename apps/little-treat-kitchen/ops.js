@@ -465,6 +465,7 @@ function renderPricingPreview(){
  ' Biaya tenaga kerja, gas, listrik dan penyusutan tidak otomatis masuk HPP; masukkan perkiraan ke Biaya tambahan bila diperlukan. Hasil ini hanya simulasi dan tidak otomatis mengubah harga katalog.</p>';
 }
 function costingGroupMarkup(grp,selectedId){
+ const C=window.LT_COSTING;
  return grp.length?grp.map(g=>{
   const count=g.items.filter(p=>p.active).length;
   return '<div class="lt-collection"><div class="row lt-collection-title">'+
