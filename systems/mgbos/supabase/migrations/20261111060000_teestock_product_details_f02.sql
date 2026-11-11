@@ -97,52 +97,7 @@ begin
       or length(btrim(coalesce(v_details->>'fit',''))) not between 3 and 80
       or length(btrim(coalesce(v_details->>'care',''))) not between 10 and 600
       or jsonb_typeof(v_details->'productionDays') is distinct from 'number'
-      or coalesce(v_details->>'productionDays','') !~ '^[0-9]{1,2}
-    v_rights <> 'APPROVED' or v_sample <> 'PASSED'
-    or v_mockup is null or v_artwork is null
-    or exists (
-      select 1 from jsonb_array_elements(v_variants) item
-      where (item->>'costIdr')::bigint <= 0
-    )
-  ) then raise exception 'Rights, sample, artwork, mockup, and costing required to publish'; end if;
-
-  if p_product is null then
-    if p_expected_version <> 0 then raise exception 'New catalog version must be zero'; end if;
-    insert into app.teestock_catalog_products (
-      organization_id, brand_id, slug, title, collection_name, description,
-      mockup_path, artwork_path, rights_status, sample_status, status,
-      availability_mode, variants, details, created_by, updated_by
-    ) values (
-      p_org, v_brand, p_payload->>'slug', btrim(p_payload->>'title'),
-      btrim(p_payload->>'collectionName'), coalesce(p_payload->>'description',''),
-      v_mockup, v_artwork, v_rights, v_sample, v_status,
-      'MADE_TO_ORDER', v_variants, v_details, p_actor, p_actor
-    ) returning id, version into v_id, v_version;
-  else
-    update app.teestock_catalog_products set
-      slug = p_payload->>'slug',
-      title = btrim(p_payload->>'title'),
-      collection_name = btrim(p_payload->>'collectionName'),
-      description = coalesce(p_payload->>'description',''),
-      mockup_path = v_mockup,
-      artwork_path = v_artwork,
-      rights_status = v_rights,
-      sample_status = v_sample,
-      status = v_status,
-      variants = v_variants,
-      details = v_details,
-      updated_by = p_actor,
-      updated_at = now(),
-      version = version + 1
-    where id = p_product and organization_id = p_org
-      and brand_id = v_brand and version = p_expected_version
-    returning id, version into v_id, v_version;
-    if v_id is null then raise exception 'Catalog record changed or unavailable'; end if;
-  end if;
-  return jsonb_build_object('id', v_id, 'version', v_version);
-end;
-$$;
-
+      or coalesce(v_details->>'productionDays','') !~ '^[0-9]{1,2}$'
       or jsonb_typeof(v_details->'sizeChart') is distinct from 'array'
     then raise exception 'Verified product details required to publish'; end if;
 
@@ -155,97 +110,9 @@ $$;
       where jsonb_typeof(row) is distinct from 'object'
         or coalesce(row->>'size','') not in ('S','M','L','XL','XXL')
         or jsonb_typeof(row->'widthCm') is distinct from 'number'
-        or coalesce(row->>'widthCm','') !~ '^[0-9]{1,3}(\\.[0-9]{1,2})?
-    v_rights <> 'APPROVED' or v_sample <> 'PASSED'
-    or v_mockup is null or v_artwork is null
-    or exists (
-      select 1 from jsonb_array_elements(v_variants) item
-      where (item->>'costIdr')::bigint <= 0
-    )
-  ) then raise exception 'Rights, sample, artwork, mockup, and costing required to publish'; end if;
-
-  if p_product is null then
-    if p_expected_version <> 0 then raise exception 'New catalog version must be zero'; end if;
-    insert into app.teestock_catalog_products (
-      organization_id, brand_id, slug, title, collection_name, description,
-      mockup_path, artwork_path, rights_status, sample_status, status,
-      availability_mode, variants, created_by, updated_by
-    ) values (
-      p_org, v_brand, p_payload->>'slug', btrim(p_payload->>'title'),
-      btrim(p_payload->>'collectionName'), coalesce(p_payload->>'description',''),
-      v_mockup, v_artwork, v_rights, v_sample, v_status,
-      'MADE_TO_ORDER', v_variants, p_actor, p_actor
-    ) returning id, version into v_id, v_version;
-  else
-    update app.teestock_catalog_products set
-      slug = p_payload->>'slug',
-      title = btrim(p_payload->>'title'),
-      collection_name = btrim(p_payload->>'collectionName'),
-      description = coalesce(p_payload->>'description',''),
-      mockup_path = v_mockup,
-      artwork_path = v_artwork,
-      rights_status = v_rights,
-      sample_status = v_sample,
-      status = v_status,
-      variants = v_variants,
-      updated_by = p_actor,
-      updated_at = now(),
-      version = version + 1
-    where id = p_product and organization_id = p_org
-      and brand_id = v_brand and version = p_expected_version
-    returning id, version into v_id, v_version;
-    if v_id is null then raise exception 'Catalog record changed or unavailable'; end if;
-  end if;
-  return jsonb_build_object('id', v_id, 'version', v_version);
-end;
-$$;
-
+        or coalesce(row->>'widthCm','') !~ '^[0-9]{1,3}(\.[0-9]{1,2})?$'
         or jsonb_typeof(row->'lengthCm') is distinct from 'number'
-        or coalesce(row->>'lengthCm','') !~ '^[0-9]{1,3}(\\.[0-9]{1,2})?
-    v_rights <> 'APPROVED' or v_sample <> 'PASSED'
-    or v_mockup is null or v_artwork is null
-    or exists (
-      select 1 from jsonb_array_elements(v_variants) item
-      where (item->>'costIdr')::bigint <= 0
-    )
-  ) then raise exception 'Rights, sample, artwork, mockup, and costing required to publish'; end if;
-
-  if p_product is null then
-    if p_expected_version <> 0 then raise exception 'New catalog version must be zero'; end if;
-    insert into app.teestock_catalog_products (
-      organization_id, brand_id, slug, title, collection_name, description,
-      mockup_path, artwork_path, rights_status, sample_status, status,
-      availability_mode, variants, created_by, updated_by
-    ) values (
-      p_org, v_brand, p_payload->>'slug', btrim(p_payload->>'title'),
-      btrim(p_payload->>'collectionName'), coalesce(p_payload->>'description',''),
-      v_mockup, v_artwork, v_rights, v_sample, v_status,
-      'MADE_TO_ORDER', v_variants, p_actor, p_actor
-    ) returning id, version into v_id, v_version;
-  else
-    update app.teestock_catalog_products set
-      slug = p_payload->>'slug',
-      title = btrim(p_payload->>'title'),
-      collection_name = btrim(p_payload->>'collectionName'),
-      description = coalesce(p_payload->>'description',''),
-      mockup_path = v_mockup,
-      artwork_path = v_artwork,
-      rights_status = v_rights,
-      sample_status = v_sample,
-      status = v_status,
-      variants = v_variants,
-      updated_by = p_actor,
-      updated_at = now(),
-      version = version + 1
-    where id = p_product and organization_id = p_org
-      and brand_id = v_brand and version = p_expected_version
-    returning id, version into v_id, v_version;
-    if v_id is null then raise exception 'Catalog record changed or unavailable'; end if;
-  end if;
-  return jsonb_build_object('id', v_id, 'version', v_version);
-end;
-$$;
-
+        or coalesce(row->>'lengthCm','') !~ '^[0-9]{1,3}(\.[0-9]{1,2})?$'
     ) then raise exception 'Invalid physical measurements'; end if;
     if exists (
       select 1 from jsonb_array_elements(v_details->'sizeChart') row
@@ -279,12 +146,12 @@ $$;
     insert into app.teestock_catalog_products (
       organization_id, brand_id, slug, title, collection_name, description,
       mockup_path, artwork_path, rights_status, sample_status, status,
-      availability_mode, variants, created_by, updated_by
+      availability_mode, variants, details, created_by, updated_by
     ) values (
       p_org, v_brand, p_payload->>'slug', btrim(p_payload->>'title'),
       btrim(p_payload->>'collectionName'), coalesce(p_payload->>'description',''),
       v_mockup, v_artwork, v_rights, v_sample, v_status,
-      'MADE_TO_ORDER', v_variants, p_actor, p_actor
+      'MADE_TO_ORDER', v_variants, v_details, p_actor, p_actor
     ) returning id, version into v_id, v_version;
   else
     update app.teestock_catalog_products set
@@ -298,6 +165,7 @@ $$;
       sample_status = v_sample,
       status = v_status,
       variants = v_variants,
+      details = v_details,
       updated_by = p_actor,
       updated_at = now(),
       version = version + 1
