@@ -1,0 +1,89 @@
+name: TeeStock F03 Supabase Diagnostic Temporary
+on:
+  push:
+    branches: [feat/teestock-cart-guest-checkout-f03]
+permissions:
+  contents: read
+jobs:
+  disposable-db:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: systems/mgbos
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: systems/mgbos/.node-version
+          cache: pnpm
+          cache-dependency-path: systems/mgbos/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Safe Docker environment diagnostics
+        shell: bash
+        run: |
+          docker info --format 'Docker server: {{.ServerVersion}}; CPU: {{.NCPU}}; memory bytes: {{.MemTotal}}'
+          df -h / | tail -1
+      - name: Attempt standard local stack then reduced stack
+        shell: bash
+        run: |
+          set -uo pipefail
+          # Never leak raw Supabase CLI stdout/stderr: output includes local keys.
+          pnpm db:start >/tmp/ts-f03-start.log 2>&1
+          first=$?
+          if [ "$first" -eq 0 ]; then
+            echo "STANDARD_START_OK=true"
+            exit 0
+          fi
+          node - <<'NODE'
+          const fs=require('node:fs');
+          const log=fs.readFileSync('/tmp/ts-f03-start.log','utf8');
+          const tags={
+            docker_network:/network|connection refused|connection reset|timeout|deadline|TLS handshake/i,
+            docker_pull:/pull|download|rate limit|too many requests|429|manifest/i,
+            docker_resource:/no space|memory|OOM|not enough/i,
+            service_health:/unhealthy|health check|container .*exited|dependency failed/i,
+            ports:/port .*allocated|bind .*failed/i,
+            docker_daemon:/docker daemon|cannot connect to the docker|docker.sock/i,
+            cli_error:/error|failed/i,
+          };
+          console.log('STANDARD_START_FAILED=true');
+          for(const [key,re] of Object.entries(tags)) console.log('ERROR_CLASS_'+key+'='+re.test(log));
+          console.log('STDERR_BYTES='+Buffer.byteLength(log));
+          NODE
+          pnpm db:stop >/dev/null 2>&1 || true
+          node_modules/.bin/supabase start --exclude studio,postgres-meta,edge-runtime,logflare,vector,realtime,supavisor,imgproxy --workdir . >/tmp/ts-f03-light.log 2>&1
+          second=$?
+          if [ "$second" -eq 0 ]; then
+            echo "REDUCED_START_OK=true"
+            exit 0
+          fi
+          node - <<'NODE'
+          const fs=require('node:fs');
+          const log=fs.readFileSync('/tmp/ts-f03-light.log','utf8');
+          for(const [name,re] of Object.entries({
+            network:/network|connection refused|connection reset|timeout|deadline|TLS handshake/i,
+            pull:/pull|download|rate limit|too many requests|429|manifest/i,
+            resource:/no space|memory|OOM|not enough/i,
+            health:/unhealthy|health check|container .*exited|dependency failed/i,
+            cli_error:/error|failed/i,
+          })) console.log('LIGHT_ERROR_CLASS_'+name+'='+re.test(log));
+          console.log('LIGHT_LOG_BYTES='+Buffer.byteLength(log));
+          NODE
+          exit 1
+      - name: Apply migrations and run full database test suite
+        shell: bash
+        run: |
+          pnpm db:reset >/tmp/ts-f03-reset.log 2>&1 || {
+            echo "::error::Local DB reset failed; output remains suppressed"
+            exit 1
+          }
+          pnpm db:test
+      - name: Stop disposable database
+        if: always()
+        run: pnpm db:stop >/dev/null 2>&1 || true
