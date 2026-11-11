@@ -13,15 +13,21 @@ export function CartContents() {
       <div className="ts-checkout-heading">
         <span className="ts-public-kicker">TEESTOCK / YOUR EDIT</span>
         <h1>Keranjang.</h1>
-        <p>Produk nyata yang kamu pilih, terpisah dari simulasi desain studio.</p>
+        <p>
+          Produk nyata yang kamu pilih, terpisah dari simulasi desain studio.
+        </p>
       </div>
       {!loaded ? (
-        <p className="ts-muted" role="status">Memuat keranjang…</p>
+        <p className="ts-muted" role="status">
+          Memuat keranjang…
+        </p>
       ) : lines.length === 0 ? (
         <div className="ts-cart-empty">
           <h2>Keranjang masih kosong.</h2>
           <p>Jelajahi koleksi TeeStock untuk memilih desain dan ukuran.</p>
-          <Link href="/shop" className="ts-cart-primary">Lihat koleksi ↗</Link>
+          <Link href="/shop" className="ts-cart-primary">
+            Lihat koleksi ↗
+          </Link>
         </div>
       ) : (
         <div className="ts-cart-layout">
@@ -34,8 +40,12 @@ export function CartContents() {
               <article className="ts-cart-line" key={cartLineKey(line)}>
                 <div className="ts-cart-number">TS</div>
                 <div className="ts-cart-line-body">
-                  <Link href={'/shop/products/' + line.slug}>{line.productTitle}</Link>
-                  <p>{line.color} / {line.size} · {line.sku}</p>
+                  <Link href={'/shop/products/' + line.slug}>
+                    {line.productTitle}
+                  </Link>
+                  <p>
+                    {line.color} / {line.size} · {line.sku}
+                  </p>
                   <strong>{formatProductPrice(line.priceIdr)}</strong>
                   <div className="ts-cart-line-controls">
                     <label>
@@ -43,15 +53,25 @@ export function CartContents() {
                       <select
                         value={line.quantity}
                         onChange={(event) =>
-                          setQuantity(cartLineKey(line), Number(event.target.value))
+                          setQuantity(
+                            cartLineKey(line),
+                            Number(event.target.value),
+                          )
                         }
                       >
-                        {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                          <option key={n} value={n}>{n}</option>
-                        ))}
+                        {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                          (n) => (
+                            <option key={n} value={n}>
+                              {n}
+                            </option>
+                          ),
+                        )}
                       </select>
                     </label>
-                    <button type="button" onClick={() => remove(cartLineKey(line))}>
+                    <button
+                      type="button"
+                      onClick={() => remove(cartLineKey(line))}
+                    >
                       Hapus
                     </button>
                   </div>
@@ -78,13 +98,15 @@ export function CartContents() {
               <strong>{formatProductPrice(subtotal)}</strong>
             </div>
             <p>
-              Harga dan ketersediaan divalidasi ulang saat checkout.
-              Pengiriman kurir belum tersedia pada pilot ini.
+              Harga dan ketersediaan divalidasi ulang saat checkout. Pengiriman
+              kurir belum tersedia pada pilot ini.
             </p>
             <Link href="/checkout" className="ts-cart-primary">
               Lanjut ke data pesanan <span aria-hidden="true">↗</span>
             </Link>
-            <Link href="/shop" className="ts-cart-back">← Lanjut belanja</Link>
+            <Link href="/shop" className="ts-cart-back">
+              ← Lanjut belanja
+            </Link>
           </aside>
         </div>
       )}
