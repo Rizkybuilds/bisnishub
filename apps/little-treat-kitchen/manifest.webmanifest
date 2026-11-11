@@ -1,0 +1,18 @@
+{
+  "name": "Little Treat Kitchen OS",
+  "short_name": "Little Treat",
+  "description": "Panduan resep dan SOP Little Treat untuk operator dapur.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f5f1",
+  "theme_color": "#f7f5f1",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
