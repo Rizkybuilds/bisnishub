@@ -1,5 +1,27 @@
 import { z } from 'zod';
 
+export const catalogProductDetailsSchema = z.object({
+  material: z.string().trim().max(160),
+  fit: z.string().trim().max(80),
+  care: z.string().trim().max(600),
+  productionDays: z.number().int().min(0).max(45),
+  sizeChart: z.array(z.object({
+    size: z.enum(['S', 'M', 'L', 'XL', 'XXL']),
+    widthCm: z.number().min(20).max(150),
+    lengthCm: z.number().min(20).max(150),
+  })).max(5),
+});
+
+export const emptyCatalogProductDetails = {
+  material: '',
+  fit: '',
+  care: '',
+  productionDays: 0,
+  sizeChart: [],
+} as const;
+
+export type CatalogProductDetails = z.infer<typeof catalogProductDetailsSchema>;
+
 export const catalogVariantSchema = z
   .object({
     sku: z.string().regex(/^[A-Z0-9-]{3,40}$/),
@@ -31,6 +53,7 @@ export const catalogProductSchema = z
     title: z.string().trim().min(3).max(120),
     collectionName: z.string().trim().min(2).max(80),
     description: z.string().max(3000),
+    details: catalogProductDetailsSchema.default(emptyCatalogProductDetails),
     mockupPath: mockupPathSchema.nullable(),
     artworkPath: artworkPathSchema.nullable(),
     rightsStatus: z.enum(['PENDING', 'APPROVED']),
@@ -64,7 +87,29 @@ export const catalogProductSchema = z
         path: ['expectedVersion'],
       });
     }
+    const chartSizes = product.details.sizeChart.map((row) => row.size);
+    const requiredSizes = [...new Set(product.variants.map((variant) => variant.size))];
+    if (new Set(chartSizes).size !== chartSizes.length) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Ukuran pada tabel pengukuran tidak boleh duplikat.',
+        path: ['details', 'sizeChart'],
+      });
+    }
     if (product.status === 'PUBLISHED') {
+      if (
+        product.details.material.length < 3 ||
+        product.details.fit.length < 3 ||
+        product.details.care.length < 10 ||
+        product.details.productionDays < 1 ||
+        requiredSizes.some((size) => !chartSizes.includes(size))
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Sebelum publish, lengkapi bahan, fit, perawatan, waktu produksi, dan pengukuran setiap ukuran.',
+          path: ['details'],
+        });
+      }
       if (
         product.rightsStatus !== 'APPROVED' ||
         product.sampleStatus !== 'PASSED' ||
