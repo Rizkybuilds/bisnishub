@@ -75,7 +75,7 @@ export default async function InvoiceDetailPage({
   const qrisAllowed =
     isTeestockWeb &&
     invoice.status === 'ISSUED' &&
-    invoice.amount_paid === '0' &&
+    String(invoice.amount_paid) === '0' &&
     (ctx.session.role.code === 'OWNER' || ctx.session.role.code === 'ADMIN');
 
   const canIssue = hasPermission(ctx.session.role.code, 'invoices:issue');
