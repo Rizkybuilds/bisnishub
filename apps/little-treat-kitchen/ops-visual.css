@@ -329,3 +329,25 @@ button:disabled{opacity:.48}
  .panel{box-shadow:none;break-inside:avoid}
  body{background:white}
 }
+
+/* Focus, responsive operational controls and accessible recipe steps. */
+.skip-link{
+ position:fixed;left:16px;top:-80px;z-index:30;padding:13px 18px;
+ border-radius:0 0 12px 12px;background:var(--lt-dark);color:#fff;font-weight:850;font-size:12px;
+}
+.skip-link:focus{top:0}
+.recipe-search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#ae9c8b;pointer-events:none;line-height:0}
+.recipe-search-icon .nav-icon{width:19px;height:19px}
+#ops-recipe-search{padding-left:43px}
+.recipe-step-label{display:flex;gap:12px;align-items:flex-start;cursor:pointer;flex:1;padding:4px 0}
+.recipe-steps li.completed .recipe-step-number{background:#e3f4e9;color:#287357}
+.recipe-steps li.completed .recipe-step-content{color:#999089}
+.auth-decoration{margin-top:25px}
+.recipe-steps{margin-top:16px}
+@media(min-width:861px){
+ .main .panel:has(.queue-controls){min-height:460px}
+}
+@media(max-width:860px){
+ .bottom.staff{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .bottom.owner{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
