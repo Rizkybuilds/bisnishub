@@ -1,0 +1,54 @@
+name: TeeStock F03 Formatter Export Temporary
+on:
+  push:
+    branches: [feat/teestock-cart-guest-checkout-f03]
+permissions:
+  contents: read
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: systems/mgbos
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: systems/mgbos/.node-version
+      - run: pnpm install --frozen-lockfile
+      - name: Format F03 source and export formatted content
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const { execFileSync } = require('node:child_process');
+          const files = [
+            "apps/teestock/src/components/LiveCartProvider.tsx",
+            "apps/teestock/src/lib/live-cart.ts",
+            "apps/teestock/src/lib/guest-checkout.ts",
+            "apps/teestock/src/lib/checkout.server.ts",
+            "apps/teestock/src/app/checkout/actions.ts",
+            "apps/teestock/src/app/checkout/GuestCheckoutForm.tsx",
+            "apps/teestock/src/app/cart/CartContents.tsx",
+            "apps/teestock/src/app/cart/page.tsx",
+            "apps/teestock/src/app/checkout/page.tsx",
+            "apps/teestock/src/app/cart.css",
+            "apps/teestock/src/app/layout.tsx",
+            "apps/teestock/src/components/Header.tsx",
+            "apps/teestock/src/components/PublishedProductOptions.tsx",
+            "apps/teestock/src/app/shop/products/[slug]/page.tsx",
+            "apps/teestock/src/app/catalog.css",
+            "apps/teestock/src/app/retail.css",
+            "scripts/teestock-cart-checkout-f03.test.ts",
+          ];
+          execFileSync('pnpm', ['exec','prettier','--write', ...files], { stdio: 'inherit' });
+          for (const file of files) {
+            process.stdout.write('F03_FORMAT:' + file + ':' + fs.readFileSync(file).toString('base64') + '\n');
+          }
+          NODE
