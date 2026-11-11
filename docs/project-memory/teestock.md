@@ -72,6 +72,12 @@ Three proposed print-composition mechanisms within the **unapproved** `The Edit`
 - **Evidence reference:** figure/ground principles described by [Desain Grafis Indonesia](https://dgi.or.id/dgi-archive/aplikasi-prinsip-gestalt-pada-media-desain-komunikasi-visual); [Stahls UK](https://www.stahls.co.uk/faq) lists product-specific 300-DPI output and 0.5mm detail guidance. Neither confirms TeeStock supplier behavior or actual DTF sample performance.
 - **Status:** Composition stage is a *creative recommendation only*. Do not approve/finalize artwork, design text, garment dimensions, rights, SKU or sale until founder selects and physical tests pass.
 
+## 3D. QR-004 image-generation brief — PERSISTED 2026-11-11; NOT APPROVED ARTWORK
+
+- Full executable back/front prompt, composition, provisional copy, vendor-specific DTF caveats, typography/transparency hard fails and approval gates: **[QR-004 — The Edit generation brief](teestock-qr-004-the-edit-generation-brief.md)**. Stored in the **unmerged project-memory PR #112 branch** as exploration work; reconcile into canonical Design Lab later. The existence of a prompt does not mean visual art or printable file was created.
+- Research correction: another independent apparel brand already sells a `No Action Required` graphic tee; the phrase `NOT EVERY SIGNAL DESERVES A RESPONSE` is widely used across other media. Those should **not** become TeeStock's distinguishing headline. Copy candidate `NOT EVERYTHING GETS THROUGH` is provisional and requires further market/legal checking; visual mechanism must be the hook.
+- No generated production art, no commitment to a final name, no change to `QR-004` registry states or commercial readiness.
+
 ## 4. Verified engineering snapshot — OBSERVED 2026-11-11, RECHECK LIVE
 
 - **VERIFIED_AT 2026-11-11:** `main` observed at `4dec7fb2db7b2fc9f2a4f9920bf07dce4a0d3f5c`. **This snapshot will become stale; do not describe it as current without a new check.**
