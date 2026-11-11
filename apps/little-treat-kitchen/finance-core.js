@@ -80,6 +80,7 @@
   const pp=data.purchases.filter(x=>!x.voidedAt&&monthOf(x.date)===month);
   const gross=ss.reduce((a,s)=>a+s.gross,0),discount=ss.reduce((a,s)=>a+s.discount,0),refund=ss.reduce((a,s)=>a+s.refund,0);
   const revenue=gross-discount-refund,fees=ss.reduce((a,s)=>a+s.platformFee+s.otherFee,0),cogs=ss.reduce((a,s)=>a+s.cogs,0);
+  const missingHpp=ss.filter(s=>s.cogs===0).length;
   const operational=pp.filter(p=>p.kind==="operating").reduce((a,p)=>a+p.total,0);
   const depreciationMonth=data.purchases.filter(x=>!x.voidedAt&&x.kind==="equipment").reduce((a,x)=>a+depreciation(x,month),0);
   const cashIn=data.sales.filter(x=>!x.voidedAt&&x.payoutDate&&monthOf(x.payoutDate)===month).reduce((a,s)=>a+netPayout(s),0);
