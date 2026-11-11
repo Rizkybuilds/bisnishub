@@ -12,13 +12,13 @@ export const catalogProductDetailsSchema = z.object({
   })).max(5),
 });
 
-export const emptyCatalogProductDetails = {
+export const emptyCatalogProductDetails: CatalogProductDetails = {
   material: '',
   fit: '',
   care: '',
   productionDays: 0,
   sizeChart: [],
-} as const;
+};
 
 export type CatalogProductDetails = z.infer<typeof catalogProductDetailsSchema>;
 
