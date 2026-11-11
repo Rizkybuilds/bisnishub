@@ -509,15 +509,29 @@ function closingView(){
   return '<tr><td>'+esc(c.day)+'</td><td>'+c.orders_completed+'</td><td>'+fmt(c.gross)+'</td><td>'+fmt(contribution)+'</td>'+
   '<td>'+(c.missing_financials>0?'<span class="badge orange">'+c.missing_financials+' belum cocok</span>':'<span class="badge green">Cocok</span>')+'</td></tr>';
  });
+ const payoutRows=s.data.payouts.map(p=>'<tr><td>'+esc(p.received_on)+'</td><td>'+esc(p.channel)+
+   '<small>Referensi: '+esc(p.statement_ref)+'</small></td><td>'+fmt(p.amount)+'</td><td>'+esc(p.note||"—")+'</td></tr>');
+ const payoutToday=s.data.payouts.filter(p=>p.received_on===today).reduce((n,p)=>n+Number(p.amount),0);
+ const payoutPanel=panel("Payout aktual yang sudah diterima",
+   "Catat jumlah yang betul-betul masuk ke rekening/e-wallet sesuai mutasi bank atau laporan pencairan marketplace. Satu transfer boleh mencakup banyak pesanan.",
+   '<form id="ops-payout" class="form-grid">'+
+   field("Platform / sumber",selectInput("channel",[["GoFood","GoFood"],["GrabFood","GrabFood"],["ShopeeFood","ShopeeFood"],["Lainnya","Lainnya"]]))+
+   field("Tanggal uang diterima",inp("received_on","","date",'max="'+today+'" value="'+today+'" required'))+
+   field("Nominal masuk (Rp)",inp("amount","Jumlah sesuai mutasi bank","number",'min="1" step="0.01" required'))+
+   field("Referensi transfer / batch",inp("statement_ref","Nomor pencairan di mutasi bank","text",'minlength="2" maxlength="100" required'))+
+   '<div class="full-row">'+field("Catatan (opsional)",inp("note","Contoh: pencairan gabungan 3 pesanan","text",'maxlength="500"'))+'</div>'+
+   '<div class="full-row actions"><button class="btn" type="submit">Catat payout yang sudah masuk</button></div></form>'+
+   '<div class="notice">Jangan mencatat estimasi payout sebagai uang masuk. Cek mutasi bank dahulu. Nomor referensi yang sama pada platform yang sama hanya boleh dicatat sekali.</div>'+
+   rowsTable(["Tanggal","Platform / referensi","Nominal aktual","Catatan"],payoutRows));
  const assetExpenses=s.data.purchases.filter(p=>p.kind==="equipment"&&p.asset_life_months&&p.service_on);
  const monthlyDep=assetExpenses.reduce((a,p)=>{const start=p.service_on?.slice(0,7);const month=today.slice(0,7);
   if(!start)return a;const n=(Number(month.slice(0,4))-Number(start.slice(0,4)))*12+(Number(month.slice(5,7))-Number(start.slice(5,7)));
   return a+(n>=0&&n<p.asset_life_months?(Number(p.amount)-Number(p.asset_salvage))/p.asset_life_months:0);
  },0);
- return '<div class="notice">Daily closing menghitung pesanan yang sudah diserahkan, HPP dari BOM, biaya platform yang sudah dikonfirmasi, serta biaya operasional pada tanggal tersebut. <b>Hasil masih estimasi, bukan laba bersih atau laporan pajak.</b></div>'+
+ return '<div class="notice">Omzet dan HPP dihitung dari pesanan yang sudah diserahkan. <b>Payout aktual</b> dihitung dari uang yang sudah masuk dan dicatat di bawah, bukan perkiraan dari nilai pesanan. Hasil ini tetap estimasi kontribusi, bukan laba bersih atau laporan pajak.</div>'+
  '<div class="metrics">'+stat("Selesai (terlihat)",handed.length)+stat("Belum verifikasi fee",handed.filter(o=>!s.data.financials.find(f=>f.order_id===o.id)?.fees_confirmed).length)+
- stat("Penyusutan estimasi bulan ini",fmt(monthlyDep),"Belum dialokasikan ke daily closing")+'</div>'+
- panel("Daily Closing","Tutup/rekap kembali hari pilihan setelah cek transaksi dan payout. Catatan ditimpa jika hari itu direkap lagi.",
+ stat("Payout aktual hari ini",fmt(payoutToday),"Dari transaksi pencairan yang dimuat")+stat("Penyusutan estimasi bulan ini",fmt(monthlyDep),"Belum dialokasikan ke daily closing")+'</div>'+
+ payoutPanel+panel("Daily Closing","Tutup/rekap kembali hari pilihan setelah mencocokkan pesanan, biaya dan pencairan nyata. Catatan ditimpa jika hari itu direkap lagi.",
  '<form id="ops-close" class="form-grid">'+field("Tanggal",inp("day","","date",'value="'+today+'" required'))+
  field("Catatan",inp("note","Contoh: selisih cash Rp0","text",'maxlength="500"'))+
  '<div class="full-row actions"><button type="submit" class="btn">Hitung & simpan closing</button></div></form>')+
@@ -592,6 +606,19 @@ document.addEventListener("submit",async e=>{
    if(isStock&&(!Number.isFinite(body.p_qty)||body.p_qty<=0))throw Error("Jumlah bahan perlu diisi.");
    if(isAsset&&(!body.p_life_months||body.p_life_months<1))throw Error("Isi umur manfaat alat.");
    await guardedRpc("purchase","lt_record_purchase_v2",body);
+  });
+ }else if(id==="ops-payout"){
+  if(s.role!=="owner"){setError("Hanya owner yang boleh mencatat payout.");return}
+  await transact(async()=>{
+   const amount=Number(form.amount);
+   if(!Number.isFinite(amount)||amount<=0||amount>999999999999.99)throw Error("Nominal pencairan tidak valid.");
+   if(!form.statement_ref.trim()||form.statement_ref.trim().length<2)throw Error("Masukkan referensi transfer/batch.");
+   if(!form.received_on||form.received_on>dateToday())throw Error("Tanggal pencairan tidak valid.");
+   const body={
+    p_channel:form.channel,p_received_on:form.received_on,p_amount:amount,
+    p_statement_ref:form.statement_ref.trim(),p_note:form.note||""
+   };
+   await guardedRpc("payout","lt_record_payout",body);
   });
  }else if(id==="ops-financial"){
   await transact(async()=>{
