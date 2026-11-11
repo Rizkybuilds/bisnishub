@@ -201,7 +201,7 @@ export default async function Home() {
           </strong>
           <p>
             {publishedProducts.length > 0
-              ? 'Produk yang terverifikasi sudah dapat dijelajahi. Enam desain studio lainnya masih merupakan pratinjau. Checkout dan pembayaran belum tersedia; Build Merch masih dalam Pengembangan.'
+              ? 'Produk yang terverifikasi sudah dapat dijelajahi. Enam desain studio lainnya masih merupakan pratinjau. checkout dan pembayaran belum tersedia; Build Merch masih dalam Pengembangan.'
               : 'Koleksi pilihan TeeStock saat ini berada dalam tahap pratinjau desain studio. Pemesanan komersial mandiri maupun transaksi langsung belum dibuka untuk publik. Build Merch masih dalam Pengembangan.'}
           </p>
         </div>
