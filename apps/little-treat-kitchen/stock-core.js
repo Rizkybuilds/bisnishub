@@ -78,13 +78,14 @@ function addOpening(data,input){
  if((data.stockMoves||[]).some(x=>x.itemId===item.id&&!x.voidedAt))throw Error("Saldo awal hanya boleh dimasukkan satu kali sebelum ada pergerakan untuk barang tersebut.");
  data.stockMoves.push(m);return m;
 }
-function receivePurchase(data,purchase){
+function receivePurchase(data,purchase,receivedDate=null){
  init(data);
  if(!CATS.includes(purchase.kind))return null;
  if(purchase.voidedAt)throw Error("Pembelian batal tidak dapat diterima sebagai stok.");
+ if(receivedDate&&receivedDate<purchase.date)throw Error("Tanggal penerimaan tidak boleh sebelum pembelian.");
  if(data.stockMoves.some(m=>m.linkedPurchaseId===purchase.id&&!m.voidedAt))throw Error("Pembelian ini sudah tercatat masuk stok.");
  const item=findOrCreateItem(data,purchase);
- const m=movement({itemId:item.id,type:"in",date:purchase.date,qty:purchase.qty,
+ const m=movement({itemId:item.id,type:"in",date:receivedDate?date(receivedDate):purchase.date,qty:purchase.qty,
     unitCost:purchase.total/purchase.qty,linkedPurchaseId:purchase.id,note:"Penerimaan dari pembelian "+purchase.name});
  data.stockMoves.push(m);return {item,movement:m};
 }
