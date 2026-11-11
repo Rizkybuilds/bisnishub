@@ -70,7 +70,8 @@ export default async function InvoiceDetailPage({
     ctx,
   );
 
-  const isTeestockWeb = invoice.orders?.request_payload?.source === 'TEESTOCK_WEB';
+  const isTeestockWeb =
+    invoice.orders?.request_payload?.source === 'TEESTOCK_WEB';
   const qrisAllowed =
     isTeestockWeb &&
     invoice.status === 'ISSUED' &&
