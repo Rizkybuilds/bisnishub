@@ -492,7 +492,7 @@ function financeEditor(orderId){
  field("Biaya platform (Rp)",inp("platform_fee","0","number",'value="'+Number(f.platform_fee)+'" min="0" step="1" required'))+
  field("Biaya layanan/pembayaran (Rp)",inp("other_fee","0","number",'value="'+Number(f.other_fee)+'" min="0" step="1" required'))+
  field("Sudah cocok dengan laporan?",selectInput("fees_confirmed",[["false","Belum diverifikasi"],["true","Sudah sesuai laporan"]]))+
- field("Tanggal payout diterima (opsional)",inp("payout_received_at","","date",'value="'+esc(f.payout_received_at||"")+'"'))+
+ field("Informasi payout",'<div class="notice">Catat transfer dana yang benar-benar masuk secara terpisah pada bagian <b>Payout aktual</b> di bawah. Satu pencairan dapat mencakup banyak pesanan.</div>')+
  '<div class="full-row actions"><button type="submit" class="btn">Simpan rekonsiliasi</button></div></form>');
 }
 function closingView(){
@@ -554,11 +554,11 @@ document.addEventListener("submit",async e=>{
  if(!id.startsWith("ops-"))return;
  e.preventDefault();
  const form=Object.fromEntries(new FormData(e.target).entries());
- if(id==="ops-login"){await transact(async()=>{await authLogin(form.email,form.password);await reload()});return}
+ if(id==="ops-login"){await transact(()=>authLogin(form.email,form.password));return}
  if(id==="ops-waste"){
   if(!form.note.trim()){setError("Alasan waste wajib diisi");return}
   if(!confirm("Kurangi stok sebagai waste? Transaksi ini tidak bisa dibatalkan dari UI."))return;
-  await transact(()=>rpc("lt_record_waste",{p_material_id:form.material_id,p_qty:Number(form.qty),p_note:form.note}));return;
+  await transact(()=>guardedRpc("waste","lt_record_waste_v2",{p_material_id:form.material_id,p_qty:Number(form.qty),p_note:form.note}));return;
  }
  if(s.role!=="owner"&&["ops-new-material","ops-edit-product","ops-bom","ops-purchase","ops-financial","ops-close"].includes(id)){setError("Akses owner diperlukan.");return}
  if(id==="ops-new-material"){
@@ -591,13 +591,13 @@ document.addEventListener("submit",async e=>{
    };
    if(isStock&&(!Number.isFinite(body.p_qty)||body.p_qty<=0))throw Error("Jumlah bahan perlu diisi.");
    if(isAsset&&(!body.p_life_months||body.p_life_months<1))throw Error("Isi umur manfaat alat.");
-   await rpc("lt_record_purchase",body);
+   await guardedRpc("purchase","lt_record_purchase_v2",body);
   });
  }else if(id==="ops-financial"){
   await transact(async()=>{
    const f=s.data.financials.find(x=>x.order_id===form.order_id);if(!f)throw Error("Keuangan pesanan tidak ditemukan");
    const body={discount:Number(form.discount),platform_fee:Number(form.platform_fee),other_fee:Number(form.other_fee),
-    fees_confirmed:form.fees_confirmed==="true",payout_received_at:form.payout_received_at||null};
+    fees_confirmed:form.fees_confirmed==="true"};
    if(Object.values(body).slice(0,3).some(x=>x<0||!Number.isFinite(x))||body.discount+body.platform_fee+body.other_fee>Number(f.gross))throw Error("Potongan melebihi omzet.");
    await req("lt_order_financials",{method:"PATCH",query:"?order_id=eq."+encodeURIComponent(form.order_id),body,prefer:"return=minimal"});s.editFinance=null;
   });
@@ -659,10 +659,17 @@ document.addEventListener("click",async e=>{
    const i=Object.fromEntries(new FormData(form).entries());
    await transact(async()=>{
     if(!i.order_ref.trim())throw Error("Isi kode pesanan.");
-    await rpc("lt_create_order",{p_order_ref:i.order_ref.trim(),p_channel:i.channel,p_note:i.note||"",p_lines:s.cart.map(x=>({...x,note:""}))});
+    await guardedRpc("order","lt_create_order_v2",{p_order_ref:i.order_ref.trim(),p_channel:i.channel,p_note:i.note||"",p_lines:s.cart.map(x=>({...x,note:""}))});
     s.cart=[];
    });
   }
+ }
+ const clearOp=e.target.closest("[data-clear-pending]");
+ if(clearOp){
+  const kind=clearOp.dataset.clearPending;
+  if(!["purchase","waste","order","payout"].includes(kind))return;
+  if(!confirm("Pastikan transaksi terkait sudah dicek di riwayat/server sebelum reset ID permintaan. Lanjutkan?"))return;
+  clearPending(kind);s.err="";s.notice="ID permintaan telah direset setelah verifikasi manual. Jangan ulangi transaksi lama tanpa memeriksa riwayat.";render();return;
  }
  const remove=e.target.closest("[data-remove-cart]");
  if(remove){s.cart.splice(Number(remove.dataset.removeCart),1);render();return}
