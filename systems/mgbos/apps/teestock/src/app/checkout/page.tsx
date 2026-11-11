@@ -5,7 +5,8 @@ import '../cart.css';
 
 export const metadata: Metadata = {
   title: 'Guest Checkout — TeeStock',
-  description: 'Pengambilan mandiri dan pembayaran manual, tanpa payment gateway.',
+  description:
+    'Pengambilan mandiri dan pembayaran manual, tanpa payment gateway.',
   robots: { index: false, follow: false },
 };
 
