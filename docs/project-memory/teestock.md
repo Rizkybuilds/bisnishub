@@ -60,6 +60,18 @@ For TeeStock Original concepts, the working art-review rubric is originality/dif
 - **Production and wearer hypotheses for B:** premium black relaxed-boxy tee, ivory/off-white + tiny muted orange accent, back-led asymmetrical layout around 27x32cm subject to physical fit and vendor limits, restrained front identifier, clean vector/300-PPI effective final print, no generic waveform/Wi-Fi/radio icons, no random distressed texture or fragile microline-work. Preflight and print/wash sample required before any commercial claim.
 - **Status:** Founder has **not** approved a final QR-004 art direction, headline, artwork or SKU. The proposed copy is not a trademark-cleared product name. Next step is composition-level exploration and customer preference testing, **not** production or publication.
 
+## 3C. QR-004 The Edit composition development — HYPOTHESIS (2026-11-11)
+
+Three proposed print-composition mechanisms within the **unapproved** `The Edit` art direction (the diagrams are schematic, **no artwork generated**):
+
+- **A — Diagonal Break:** slash/corridor removes printed matter through dense fragments. Strong thumbnail silhouette, risk of cliché sports/hazard graphics.
+- **B — The Selected Column:** offset vertical **unprinted** fabric corridor separates two rhythmically different editorial information masses. Negative space is the focal point, with restrained small selected mark; feels premium and wearable but must avoid looking like a magazine page. **Independent creative recommendation for next artwork study**, not founder approval.
+- **C — The Residual:** spatial reduction from crowding to a single selected signal; energetic but high glitch/dissolve-generic risk.
+- Evaluation recommendation: B over A/C because its physical figure-ground mechanism conveys selective attention without literal antennas/radios, while fitting TeeStock Design-led Everyday. Maintain artwork ID `QR-004`; don't rename collection or assert ready-to-print.
+- **Next study for B:** asymmetrical editorial masses with visible visual hierarchy at full garment and thumbnail size; verify unprinted negative corridor is genuinely transparent, keep ink coverage/brittle details low, and use vendor-confirmed effective line/gap minimums. Compare black relaxed-boxy garment prototype; any proposed copy and front identifier are provisional.
+- **Evidence reference:** figure/ground principles described by [Desain Grafis Indonesia](https://dgi.or.id/dgi-archive/aplikasi-prinsip-gestalt-pada-media-desain-komunikasi-visual); [Stahls UK](https://www.stahls.co.uk/faq) lists product-specific 300-DPI output and 0.5mm detail guidance. Neither confirms TeeStock supplier behavior or actual DTF sample performance.
+- **Status:** Composition stage is a *creative recommendation only*. Do not approve/finalize artwork, design text, garment dimensions, rights, SKU or sale until founder selects and physical tests pass.
+
 ## 4. Verified engineering snapshot — OBSERVED 2026-11-11, RECHECK LIVE
 
 - **VERIFIED_AT 2026-11-11:** `main` observed at `4dec7fb2db7b2fc9f2a4f9920bf07dce4a0d3f5c`. **This snapshot will become stale; do not describe it as current without a new check.**
