@@ -1,0 +1,26 @@
+name: Little Treat Kitchen OS
+on:
+  pull_request:
+    paths:
+      - 'apps/little-treat-kitchen/**'
+      - '.github/workflows/little-treat-kitchen.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  catalog:
+    name: Validate recipe catalog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - name: Validate recipes and JavaScript
+        run: node --test apps/little-treat-kitchen/catalog.test.cjs
