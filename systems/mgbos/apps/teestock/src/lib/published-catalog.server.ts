@@ -81,7 +81,8 @@ export async function listPublishedProducts(
       status: 'eq.PUBLISHED',
       rights_status: 'eq.APPROVED',
       sample_status: 'eq.PASSED',
-      select: 'slug,title,collection_name,description,mockup_path,variants,details',
+      select:
+        'slug,title,collection_name,description,mockup_path,variants,details',
       order: 'updated_at.desc',
       limit: slug ? '1' : '60',
     });
@@ -121,7 +122,8 @@ export async function listPublishedProducts(
           color,
           priceIdr,
         }));
-      if (!variants.length || !isCompleteProductDetails(row.details, variants)) return [];
+      if (!variants.length || !isCompleteProductDetails(row.details, variants))
+        return [];
       return [
         {
           slug: row.slug,
