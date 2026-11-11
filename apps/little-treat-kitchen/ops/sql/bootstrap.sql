@@ -135,8 +135,12 @@ create table if not exists public.lt_daily_closings (
 revoke all on all tables in schema public from anon;
 grant select on public.lt_members, public.lt_products, public.lt_materials, public.lt_bom,
   public.lt_orders, public.lt_order_items, public.lt_stock_moves to authenticated;
-grant select,insert,update on public.lt_material_costs,public.lt_order_financials,public.lt_purchases to authenticated;
-grant select,insert,update,delete on public.lt_products,public.lt_materials,public.lt_bom to authenticated;
+grant select on public.lt_material_costs,public.lt_order_financials,public.lt_purchases to authenticated;
+grant update(discount,platform_fee,other_fee,fees_confirmed,payout_received_at,updated_at)
+  on public.lt_order_financials to authenticated;
+grant select,insert,update,delete on public.lt_products,public.lt_bom to authenticated;
+grant insert on public.lt_materials to authenticated;
+grant update(name,unit,min_stock,active) on public.lt_materials to authenticated;
 grant select on public.lt_daily_closings to authenticated;
 -- No direct UPDATE/INSERT of orders/items/stock moves/closings to authenticated: only validated RPC.
 alter table public.lt_members enable row level security;
@@ -187,9 +191,8 @@ create policy lt_bom_owner_write on public.lt_bom for all to authenticated
 using (exists(select 1 from public.lt_members m where m.user_id=(select auth.uid()) and m.role='owner' and m.active))
 with check (exists(select 1 from public.lt_members m where m.user_id=(select auth.uid()) and m.role='owner' and m.active));
 -- Prevent direct raw stock edits by staff AND owner: only receive or fulfil via RPC.
-revoke update(qty_on_hand) on public.lt_materials from authenticated;
-revoke update(gross,cogs) on public.lt_order_financials from authenticated;
-revoke update(created_by,amount,purchased_on,received_on,material_id,material_qty,kind) on public.lt_purchases from authenticated;
+-- No public API privilege on on_hand, material cost, gross, COGS or purchase rows.
+-- Only validated RPCs modify those fields; staff cannot bypass this via REST.
 -- No direct INSERT/UPDATE stock movements, and no direct INSERT/UPDATE orders.
 
 -- Authenticated RPCs with strict role checks. SECURITY DEFINER required for atomic
@@ -303,6 +306,7 @@ declare
 begin
  select exists(select 1 from public.lt_members where user_id=v_uid and role='owner' and active) into v_owner;
  if not v_owner then raise exception 'Hanya owner'; end if;
+ if p_received_on is not null and p_received_on>(now() at time zone 'Asia/Jakarta')::date then raise exception 'Belum bisa terima stok di masa depan'; end if;
  if p_kind not in ('ingredient','packaging','equipment','operating') or p_amount<=0 or p_amount>100000000000
    or length(trim(coalesce(p_description,''))) not between 1 and 200
    or p_purchased_on is null then raise exception 'Pembelian tidak valid'; end if;
@@ -338,7 +342,8 @@ begin
  if not v_owner then raise exception 'Hanya owner'; end if;
  select * into v_p from public.lt_purchases where id=p_purchase_id for update;
  if not found or v_p.material_id is null or v_p.received_on is not null
-    or p_received_on is null or p_received_on < v_p.purchased_on then
+    or p_received_on is null or p_received_on < v_p.purchased_on
+    or p_received_on>(now() at time zone 'Asia/Jakarta')::date then
    raise exception 'Pembelian tidak dapat diterima'; end if;
  select qty_on_hand into v_qty from public.lt_materials where id=v_p.material_id for update;
  if not found then raise exception 'Bahan tidak ditemukan'; end if;
@@ -362,7 +367,7 @@ declare
 begin
  select exists(select 1 from public.lt_members where user_id=v_uid and role='owner' and active) into v_owner;
  if not v_owner then raise exception 'Hanya owner'; end if;
- if p_day is null or p_day>current_date then raise exception 'Tanggal closing tidak valid'; end if;
+ if p_day is null or p_day>(now() at time zone 'Asia/Jakarta')::date then raise exception 'Tanggal closing tidak valid'; end if;
  select count(*)::integer as cnt,coalesce(sum(f.gross),0) as gross,
    coalesce(sum(f.discount),0) as discounts,coalesce(sum(f.platform_fee),0) as fees,
    coalesce(sum(f.other_fee),0) as other,coalesce(sum(f.cogs),0) as cogs
