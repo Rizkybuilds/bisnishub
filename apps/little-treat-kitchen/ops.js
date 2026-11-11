@@ -39,8 +39,8 @@ const TABS=[
  {id:"closing",label:"Daily Closing",icon:"closing",staff:false}
 ];
 
-const s={session:null,user:null,role:null,tab:"orders",busy:false,err:"",
- data:{products:[],materials:[],bom:[],orders:[],items:[],financials:[],costs:[],purchases:[],closings:[]},
+const s={session:null,user:null,role:null,tab:"orders",busy:false,err:"",notice:"",
+ data:{products:[],materials:[],bom:[],orders:[],items:[],financials:[],costs:[],purchases:[],closings:[],payouts:[]},
  cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all",orderFilter:"active",activeRecipeId:null};
 let notifyTimer;
 function notify(msg){toastEl.textContent=msg;toastEl.classList.add("active");clearTimeout(notifyTimer);notifyTimer=setTimeout(()=>toastEl.classList.remove("active"),3000)}
@@ -54,14 +54,21 @@ function configValid(){
 function base(){return String(CONFIG.url).replace(/\/+$/,"")}
 function headers(auth=true){const h={"apikey":CONFIG.publishableKey,"Content-Type":"application/json","Accept":"application/json"};if(auth&&s.session)h.Authorization="Bearer "+s.session.access_token;return h}
 async function jsonFetch(url,init={},retry=true){
- let resp;try{resp=await fetch(url,init)}catch(e){throw Error("Koneksi internet/Supabase gagal. Periksa jaringan dan coba ulang.")}
+ let resp;try{resp=await fetch(url,init)}catch(e){
+  const error=Error("Tidak bisa terhubung ke server. Periksa jaringan.");
+  error.uncertain=true;throw error;
+ }
  const body=await resp.text();
  let result;try{result=body?JSON.parse(body):null}catch(e){result=body}
  if(resp.status===401&&retry&&s.session?.refresh_token){
    await refreshSession();
    return jsonFetch(url,{...init,headers:{...init.headers,Authorization:"Bearer "+s.session.access_token}},false);
  }
- if(!resp.ok)throw Error((result&&typeof result==="object"&&(result.message||result.msg||result.error_description||result.error))||("Permintaan ditolak ("+resp.status+")"));
+ if(!resp.ok){
+   const error=Error((result&&typeof result==="object"&&(result.message||result.msg||result.error_description||result.error))||("Permintaan ditolak ("+resp.status+")"));
+   error.status=resp.status;throw error;
+ }
+
  return result;
 }
 function saveSession(){if(s.session)sessionStorage.setItem(SK,JSON.stringify(s.session));else sessionStorage.removeItem(SK)}
@@ -116,19 +123,78 @@ async function reload(){
     select("lt_order_financials","?select=*&limit=600"),
     select("lt_material_costs","?select=*&limit=600"),
     select("lt_purchases","?select=*&order=purchased_on.desc&limit=200"),
-    select("lt_daily_closings","?select=*&order=day.desc&limit=90")
+    select("lt_daily_closings","?select=*&order=day.desc&limit=90"),
+    select("lt_payout_receipts","?select=*&order=received_on.desc&limit=300")
    ]);
-   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings]=own;
+   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings,s.data.payouts]=own;
  }else{
-   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings]=[[],[],[],[]];
+   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings,s.data.payouts]=[[],[],[],[],[]];
  }
 }
+// The browser stores ONLY opaque mutation IDs + SHA-256 fingerprints.
+// Never store the form payload, financial numbers, Auth token or password here.
+const PENDING_KEY="lt-v3-pending-operations";
+function pendingOperations(){
+ try{return JSON.parse(sessionStorage.getItem(PENDING_KEY)||"{}")||{}}
+ catch(e){return {}}
+}
+function pendingKey(kind){return (s.user?.id||"unknown")+":"+kind}
+function savePending(map){sessionStorage.setItem(PENDING_KEY,JSON.stringify(map))}
+function clearPending(kind){
+ const map=pendingOperations();delete map[pendingKey(kind)];savePending(map);
+}
+function pendingKinds(){
+ const prefix=(s.user?.id||"unknown")+":";
+ return Object.keys(pendingOperations()).filter(k=>k.startsWith(prefix)).map(k=>k.slice(prefix.length));
+}
+async function guardedRpc(kind,endpoint,body){
+ if(!s.user?.id)throw Error("Akun belum masuk.");
+ if(!crypto?.subtle?.digest||!crypto?.randomUUID)throw Error("Browser belum mendukung pengamanan transaksi. Gunakan Chrome/Firefox terbaru melalui HTTPS.");
+ const bytes=new TextEncoder().encode(JSON.stringify(body));
+ const digest=await crypto.subtle.digest("SHA-256",bytes);
+ const fingerprint=[...new Uint8Array(digest)].map(x=>x.toString(16).padStart(2,"0")).join("");
+ const key=pendingKey(kind);
+ const map=pendingOperations();
+ const existing=map[key];
+ if(existing&&existing.hash!==fingerprint){
+   throw Error("Ada "+kind+" sebelumnya yang hasilnya belum dipastikan. Periksa daftar transaksi dan selesaikan peringatan tersebut sebelum mencatat transaksi berbeda.");
+ }
+ const requestId=existing?.id||crypto.randomUUID();
+ if(!existing){map[key]={hash:fingerprint,id:requestId};savePending(map)}
+ const out=await rpc(endpoint,{...body,p_request_id:requestId});
+ const latest=pendingOperations();if(latest[key]?.id===requestId){delete latest[key];savePending(latest)}
+ return out;
+}
+function pendingNotice(){
+ const kinds=pendingKinds().filter(k=>s.role==="owner"||k==="waste"||k==="order");
+ if(!kinds.length)return "";
+ const names={order:"pesanan",waste:"waste",purchase:"pembelian",payout:"pencairan"};
+ return '<div class="notice" role="status"><b>Ada transaksi yang belum diketahui hasilnya.</b> '+
+ 'Periksa catatan di halaman terkait sebelum memulai transaksi baru. Mengulangi input yang persis sama akan menggunakan ID transaksi yang sama sehingga tidak tercatat dua kali.'+
+ '<div class="actions">'+kinds.map(k=>'<button type="button" class="btn secondary" data-clear-pending="'+esc(k)+'">Sudah diperiksa · reset '+esc(names[k]||k)+'</button>').join("")+'</div></div>';
+}
 async function transact(f){
- if(s.busy)return;
- s.busy=true;s.err="";render();
- try{const out=await f();if(s.session)await reload();render();notify("Berhasil disimpan");return out}
- catch(e){s.err=e.message||String(e);render();return null}
- finally{s.busy=false;render()}
+ if(s.busy)return null;
+ s.busy=true;s.err="";s.notice="";render();
+ let outcome=null,succeeded=false;
+ try{
+   outcome=await f();
+   succeeded=true;
+ }catch(e){
+   s.err=(e.uncertain?"Hasil permintaan belum dapat dipastikan. Cek riwayat sebelum mencoba lagi. Jika mencoba lagi dengan data yang sama, sistem memakai ID permintaan sebelumnya. ":"")+
+     (e.message||String(e));
+ }
+ if(succeeded){
+   // A completed mutation MUST NEVER be presented as failed solely because
+   // the subsequent SELECT/refresh request fails.
+   try{if(s.session)await reload();notify("Transaksi berhasil tersimpan")}
+   catch(e){
+     s.notice="Transaksi sudah tersimpan di database, tetapi data terbaru gagal dimuat. Tekan refresh; jangan masukkan transaksi yang sama lagi.";
+     notify("Tersimpan · pembaruan data tertunda");
+   }
+ }
+ s.busy=false;render();
+ return succeeded?outcome:null;
 }
 function showSetup(){
  root.innerHTML='<div class="auth-screen"><div class="auth-card"><div class="logo">lt<span>.</span></div><h1>Kitchen OS v3</h1><p>Fondasi aplikasi sudah tersedia, tetapi <b>database khusus Little Treat belum dihubungkan</b>. Tidak ada data demo yang akan dianggap sebagai transaksi asli.</p>'+
@@ -181,7 +247,9 @@ function wrap(title,desc,body){
  '<div class="page-intro"><div><div class="eyebrow">LITTLE TREAT / KITCHEN OPERATIONS</div>'+
  '<h1>'+esc(title)+'</h1><p class="lead">'+esc(desc)+'</p></div>'+
  '<div class="page-aside"><strong>'+esc(dateLabel)+'</strong><span>Operasional Little Treat</span></div></div>'+
- (s.err?'<div class="notice error" role="alert"><b>Belum berhasil:</b> '+esc(s.err)+'</div>':"")+body+'</main></div></div>';
+ (s.err?'<div class="notice error" role="alert"><b>Belum berhasil:</b> '+esc(s.err)+'</div>':"")+
+ (s.notice?'<div class="notice good" role="status"><b>Sudah tersimpan:</b> '+esc(s.notice)+'</div>':"")+
+ pendingNotice()+body+'</main></div></div>';
 }
 
 function stat(label,value,sub=""){return '<div class="metric"><small>'+esc(label)+'</small><strong>'+value+'</strong><span>'+esc(sub)+'</span></div>'}
