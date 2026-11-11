@@ -500,6 +500,7 @@ function financeEditor(orderId){
 }
 function closingView(){
  const today=dateToday();
+ const payoutDraft=s.drafts.payout||{};
  const handed=s.data.orders.filter(o=>o.status==="handed_off");
  const recent=handed.slice(0,30).map(o=>{
   const f=s.data.financials.find(x=>x.order_id===o.id);
@@ -518,11 +519,11 @@ function closingView(){
  const payoutPanel=panel("Payout aktual yang sudah diterima",
    "Catat jumlah yang betul-betul masuk ke rekening/e-wallet sesuai mutasi bank atau laporan pencairan marketplace. Satu transfer boleh mencakup banyak pesanan.",
    '<form id="ops-payout" class="form-grid">'+
-   field("Platform / sumber",selectInput("channel",[["GoFood","GoFood"],["GrabFood","GrabFood"],["ShopeeFood","ShopeeFood"],["Lainnya","Lainnya"]]))+
-   field("Tanggal uang diterima",inp("received_on","","date",'max="'+today+'" value="'+today+'" required'))+
-   field("Nominal masuk (Rp)",inp("amount","Jumlah sesuai mutasi bank","number",'min="1" step="0.01" required'))+
-   field("Referensi transfer / batch",inp("statement_ref","Nomor pencairan di mutasi bank","text",'minlength="2" maxlength="100" required'))+
-   '<div class="full-row">'+field("Catatan (opsional)",inp("note","Contoh: pencairan gabungan 3 pesanan","text",'maxlength="500"'))+'</div>'+
+   field("Platform / sumber",selectInput("channel",[["GoFood","GoFood"],["GrabFood","GrabFood"],["ShopeeFood","ShopeeFood"],["Lainnya","Lainnya"]],"",payoutDraft.channel||null))+
+   field("Tanggal uang diterima",inp("received_on","","date",'max="'+today+'" value="'+esc(payoutDraft.received_on||today)+'" required'))+
+   field("Nominal masuk (Rp)",inp("amount","Jumlah sesuai mutasi bank","number",'min="1" step="0.01" value="'+esc(payoutDraft.amount||"")+'" required'))+
+   field("Referensi transfer / batch",inp("statement_ref","Nomor pencairan di mutasi bank","text",'minlength="2" maxlength="100" value="'+esc(payoutDraft.statement_ref||"")+'" required'))+
+   '<div class="full-row">'+field("Catatan (opsional)",inp("note","Contoh: pencairan gabungan 3 pesanan","text",'maxlength="500" value="'+esc(payoutDraft.note||"")+'"'))+'</div>'+
    '<div class="full-row actions"><button class="btn" type="submit">Catat payout yang sudah masuk</button></div></form>'+
    '<div class="notice">Jangan mencatat estimasi payout sebagai uang masuk. Cek mutasi bank dahulu. Nomor referensi yang sama pada platform yang sama hanya boleh dicatat sekali.</div>'+
    rowsTable(["Tanggal","Platform / referensi","Nominal aktual","Catatan"],payoutRows));
