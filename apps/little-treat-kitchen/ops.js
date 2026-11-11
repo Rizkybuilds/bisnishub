@@ -40,8 +40,8 @@ const TABS=[
 ];
 
 const s={session:null,user:null,role:null,tab:"orders",busy:false,err:"",notice:"",
- data:{products:[],materials:[],bom:[],orders:[],items:[],financials:[],costs:[],purchases:[],closings:[],payouts:[]},
- cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all",orderFilter:"active",activeRecipeId:null,drafts:{}};
+ data:{products:[],materials:[],bom:[],orders:[],items:[],financials:[],costs:[],purchases:[],closings:[],payouts:[],quotes:[]},
+ cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all",orderFilter:"active",activeRecipeId:null,drafts:{},costing:{category:"all",query:"",selected:null,quoteMaterial:null,editMaterial:null,simulation:{fee:20,fixed:0,discount:0,overhead:0,target:5000,price:0}}};
 let notifyTimer;
 function notify(msg){toastEl.textContent=msg;toastEl.classList.add("active");clearTimeout(notifyTimer);notifyTimer=setTimeout(()=>toastEl.classList.remove("active"),3000)}
 function setError(msg){s.err=String(msg||"");render()}
@@ -124,11 +124,12 @@ async function reload(){
     select("lt_material_costs","?select=*&limit=600"),
     select("lt_purchases","?select=*&order=purchased_on.desc&limit=200"),
     select("lt_daily_closings","?select=*&order=day.desc&limit=90"),
-    select("lt_payout_receipts","?select=*&order=received_on.desc&limit=300")
+    select("lt_payout_receipts","?select=*&order=received_on.desc&limit=300"),
+    select("lt_material_quotes","?select=*&limit=250")
    ]);
-   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings,s.data.payouts]=own;
+   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings,s.data.payouts,s.data.quotes]=own;
  }else{
-   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings,s.data.payouts]=[[],[],[],[],[]];
+   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings,s.data.payouts,s.data.quotes]=[[],[],[],[],[],[]];
  }
 }
 // The browser stores ONLY opaque mutation IDs + SHA-256 fingerprints.
@@ -438,31 +439,144 @@ function stockView(){
  return '<div class="metrics">'+stat("Jenis bahan",s.data.materials.length)+stat("Perlu dibeli",s.data.materials.filter(m=>Number(m.qty_on_hand)<=Number(m.min_stock)).length)+'</div>'+
  panel("Persediaan real-time","Stok berkurang setelah pesanan dinyatakan siap; stok bertambah saat owner menerima pembelian.",rowsTable(["Nama bahan","Sisa tersedia","Stok minimum","Status"],rows))+wasteForm+add;
 }
+function menuCost(product){
+ return window.LT_COSTING.calculate(product,s.data.bom,s.data.materials,s.data.costs,s.data.quotes);
+}
+function renderPricingPreview(){
+ const holder=document.getElementById("lt-price-preview");if(!holder)return;
+ const id=holder.dataset.productId;
+ const product=s.data.products.find(x=>x.id===id);if(!product)return;
+ const calc=menuCost(product);const base=calc.actualHpp??calc.planningHpp;
+ if(base===null){holder.innerHTML='<div class="notice">HPP belum bisa dihitung. Lengkapi harga beli aktual atau estimasi supplier untuk semua bahan terlebih dahulu.</div>';return}
+ const o=s.costing.simulation;
+ const simulation=window.LT_COSTING.simulate({hpp:base,price:o.price,percentFee:o.fee,
+  flatFee:o.fixed,discount:o.discount,overhead:o.overhead,targetProfit:o.target});
+ if(!simulation){holder.innerHTML='<div class="notice error">Nilai simulasi tidak valid. Persentase fee harus kurang dari 100% dan semua biaya tidak boleh negatif.</div>';return}
+ holder.innerHTML='<div class="lt-metrics-preview">'+
+  '<div><small>HPP bahan/kemasan</small><strong>'+fmt(base)+'</strong></div>'+
+  '<div><small>Penerimaan setelah fee & promo</small><strong>'+fmt(simulation.payout)+'</strong></div>'+
+  '<div><small>Kontribusi per porsi</small><strong class="'+(simulation.contribution<0?"lt-loss":"")+'">'+fmt(simulation.contribution)+'</strong></div>'+
+  '<div><small>Saran harga untuk target laba</small><strong>'+fmt(Math.ceil(simulation.targetPrice/500)*500)+'</strong></div>'+
+ '</div><p class="muted">Imbal hasil saat harga simulasi '+fmt(o.price)+': '+
+ (simulation.margin===null?"—":num(simulation.margin)+"%")+
+ ' dari harga jual. Titik impas '+fmt(simulation.breakeven)+'. '+(calc.actualHpp===null?
+ '<b>PERKIRAAN dari penawaran supplier, bukan HPP riil.</b>':
+ 'HPP bahan berdasarkan rata-rata pembelian yang diterima.')+
+ ' Biaya tenaga kerja, gas, listrik dan penyusutan tidak otomatis masuk HPP; masukkan perkiraan ke Biaya tambahan bila diperlukan. Hasil ini hanya simulasi dan tidak otomatis mengubah harga katalog.</p>';
+}
 function costingView(){
- const prod=s.data.products,materials=s.data.materials,bom=s.data.bom,costs=s.data.costs;
- const costMap=Object.fromEntries(costs.map(x=>[x.material_id,Number(x.avg_cost_per_unit)]));
- const costProduct=p=>bom.filter(b=>b.product_id===p.id).reduce((a,b)=>a+Number(b.qty_per_unit)*(costMap[b.material_id]||0),0);
- const entries=prod.map(p=>'<tr><td><strong>'+esc(p.name)+'</strong><small>'+esc(p.sku)+' · '+esc(p.category)+'</small></td>'+
- '<td>'+fmt(p.price)+'</td><td>'+fmt(costProduct(p))+'</td><td>'+bom.filter(x=>x.product_id===p.id).length+' bahan</td><td>'+(!p.active?'<span class="badge orange">Nonaktif</span>':'<span class="badge green">Aktif</span>')+
- '<button type="button" class="linklike" data-edit-product="'+p.id+'">Atur</button></td></tr>');
- const productOptions=prod.map(p=>[p.id,p.name+" ("+p.sku+")"]);
- const matOptions=materials.map(m=>[m.id,m.name+" / "+m.unit]);
- const current=prod.find(p=>p.id===s.editFinance);
- const edit=current?panel("Atur menu: "+esc(current.name),"Harga harus berdasarkan biaya riil; aktifkan hanya saat BOM dan supplier bahan sudah tersedia.",
- '<form id="ops-edit-product" class="form-grid"><input type="hidden" name="id" value="'+current.id+'"/>'+
- field("Harga jual di aplikasi (Rp)",inp("price","25000","number",'value="'+Number(current.price)+'" min="0" step="100" required'))+
- field("Status",selectInput("active",[["false","Belum dijual"],["true","Aktif — dapat dipesan"]],'id="prod-active"'))+
- '<div class="full-row actions"><button class="btn" type="submit">Simpan harga & status</button></div></form>'):"";
- const bomForm=prod.length&&materials.length?panel("Komposisi HPP per porsi","Contoh: 2 pisang @80 g = 160 g bahan kepok. Air es, kemasan, minyak perlu masuk BOM jika menjadi biaya langsung.",
- '<form id="ops-bom" class="form-grid">'+field("Menu",selectInput("product_id",productOptions))+
- field("Bahan",selectInput("material_id",matOptions))+
- field("Takaran per satu menu",inp("qty_per_unit","Contoh: 160","number",'min="0.001" step="0.001" required'))+
- '<div class="full-row actions"><button type="submit" class="btn">Simpan komposisi</button></div></form>'):"";
- const bomTable=rowsTable(["Menu","Bahan","Takaran","Harga bahan / unit"],bom.map(b=>'<tr><td>'+esc(productName(b.product_id))+'</td><td>'+esc(unitName(b.material_id))+'</td><td>'+num(b.qty_per_unit)+'</td><td>'+fmt(costMap[b.material_id]||0)+'</td></tr>'));
- return '<div class="notice">HPP otomatis dihitung ketika pesanan ditandai <b>Siap</b>, dari BOM × harga rata-rata bahan. Menu tanpa BOM atau bahan yang stoknya kurang akan ditolak oleh database.</div>'+
- panel("Katalog jual & estimasi HPP","Impor katalog 30 resep sebagai nonaktif dengan harga 0, kemudian lengkapi harga, bahan dan komposisi sebelum dijual.",
- '<div class="actions"><button type="button" data-action="import-catalog" class="btn secondary">Impor 30 menu dasar</button></div>'+rowsTable(["Menu","Harga jual","Est. HPP","Komposisi","Status"],entries))+
- edit+bomForm+panel("Detail komposisi aktif","Daftar takaran BOM yang sudah disimpan.",bomTable);
+ if(s.role!=="owner")return '<div class="notice error">Akses HPP hanya untuk pemilik.</div>';
+ const C=window.LT_COSTING;
+ const all=C.sellable(s.data.products);
+ const grp=C.groups(s.data.products,s.costing.query,s.costing.category);
+ const current=all.find(p=>p.id===s.costing.selected)||grp[0]?.items[0]||all[0];
+ const selectedId=current?.id||null;
+ const cost=current?menuCost(current):null;
+ const stats={
+  identities:new Set(all.map(x=>x.recipe_key||x.sku)).size,
+  total:all.length,
+  priced:all.filter(x=>Number(x.price)>0).length,
+  actual:all.filter(x=>menuCost(x).actualHpp!==null).length,
+  active:all.filter(x=>x.active).length
+ };
+ const sourceKind=p=>p.costSource==="actual"?'<span class="badge green">Pembelian aktual</span>':
+  p.costSource==="quote"?'<span class="badge orange">Penawaran supplier</span>':
+  '<span class="badge red">Belum ada harga</span>';
+ const chooser=grp.length?grp.map(g=>{
+  const count=g.items.filter(p=>p.active).length;
+  return '<div class="lt-collection"><div class="row lt-collection-title">'+
+   '<div><strong>'+esc(g.label)+'</strong><small>'+esc(g.key)+' · '+
+   (g.category==="coffee"?"Kopi":g.category==="banana"?"Pisang":"Dimsum")+'</small></div>'+
+   '<span class="badge '+(count?"green":"")+'">'+count+' aktif</span></div>'+
+   '<div class="lt-sku-options">'+g.items.map(p=>{
+    const calc=menuCost(p),ready=calc.actualHpp!==null&&Number(p.price)>0;
+    return '<button type="button" data-cost-item="'+p.id+'" class="lt-sku '+(selectedId===p.id?"selected":"")+
+      '" aria-pressed="'+(selectedId===p.id)+'">'+
+      '<span>'+(C.sizeOf(p)?C.sizeOf(p)+' oz':esc(p.sku))+'</span>'+
+      '<small>'+(p.active?"Aktif":ready?"Siap ditinjau":"Draft")+'</small></button>';
+   }).join("")+'</div></div>';
+  }).join(""):'<div class="empty">Tidak ada menu sesuai pencarian.</div>';
+ const list=panel("Katalog menu","30 resep pokok dengan varian ukuran kopi. Pilih menu untuk melihat komposisi bahan, harga dan simulasi.",
+  '<div class="lt-cost-filters">'+
+  field("Cari menu atau kode",inp("costSearch","Nama menu, K01, P03…","search",'id="lt-cost-search" value="'+esc(s.costing.query)+'"'))+
+  field("Kategori",selectInput("costCategory",[["all","Semua"],["coffee","Kopi"],["banana","Pisang"],["dimsum","Dimsum"]],'id="lt-cost-category"',s.costing.category))+
+  '</div><div class="lt-collection-list" id="lt-cost-list">'+chooser+'</div>');
+ const notice='<div class="notice"><b>Aturan HPP:</b> Harga kosong atau penawaran supplier bukan biaya pembelian riil. Komposisi diambil dari SOP per porsi; tambahan cup, sedotan dan box adalah asumsi operasional yang wajib diverifikasi. Premix, saus racikan, minyak goreng, gas/listrik, tenaga kerja, dan susut perlu biaya produksi aktual tersendiri. Semua varian tetap nonaktif hingga lolos cek.</div>';
+ if(!current)return '<div class="metrics">'+stat("Resep",0)+stat("Varian",0)+'</div>'+notice+list;
+ const quoteById=new Map(s.data.quotes.map(q=>[q.material_id,q]));
+ const actualOK=cost.actualHpp!==null;
+ const planningOK=cost.planningHpp!==null;
+ const costState=current.active?'<span class="badge green">Sedang aktif</span>':
+  actualOK&&Number(current.price)>0?'<span class="badge green">HPP riil tersedia</span>':
+  planningOK?'<span class="badge orange">Estimasi lengkap, belum siap jual</span>':
+  '<span class="badge red">Biaya belum lengkap</span>';
+ const costValue=actualOK?fmt(cost.actualHpp):planningOK?fmt(cost.planningHpp):"Belum tersedia";
+ const missing=cost.missingActual;
+ const quoteAction='<button class="linklike" type="button" data-quote-material="';
+ const parts=cost.parts.map(part=>{
+  const value=part.planningLineCost===null?"—":fmt(part.planningLineCost);
+  return '<tr><td><strong>'+esc(part.name)+'</strong><small>'+
+   num(part.qty)+' '+esc(part.unit)+' × '+(part.costSource==="missing"?"—":fmt(part.actualUnitCost??part.quoteUnitCost))+
+   ' / '+esc(part.unit)+'</small></td>'+
+   '<td>'+sourceKind(part)+'</td><td>'+value+'</td>'+
+   '<td>'+quoteAction+esc(part.material_id)+'">Isi harga</button>'+
+   '<button class="linklike" type="button" data-edit-bom="'+esc(part.material_id)+'">Ubah takaran</button>'+
+   (!current.active?'<button class="linklike lt-text-danger" type="button" data-remove-bom="'+esc(part.material_id)+'">Hapus</button>':"")+'</td></tr>';
+ });
+ const selectedMaterialId=s.costing.quoteMaterial&&cost.parts.some(p=>p.material_id===s.costing.quoteMaterial)?
+  s.costing.quoteMaterial:cost.parts.find(p=>p.costSource!=="actual")?.material_id||cost.parts[0]?.material_id;
+ const material=s.data.materials.find(x=>x.id===selectedMaterialId);
+ const existingQuote=quoteById.get(selectedMaterialId);
+ const quoteForm=material?panel("Isi harga bahan untuk estimasi","Masukkan harga kemasan/satuan yang benar-benar ditawarkan supplier. Ini tidak menambah stok dan tidak mengubah HPP aktual produksi.",
+  '<form id="ops-quote" class="form-grid">'+
+  field("Bahan",selectInput("material_id",cost.parts.map(p=>[p.material_id,p.name+" ("+p.unit+")"]),'id="lt-quote-material"',selectedMaterialId))+
+  field("Supplier / sumber",inp("supplier","Nama toko atau supplier","text",'required maxlength="140" value="'+esc(existingQuote?.supplier||"")+'"'))+
+  field("Harga satu kemasan (Rp)",inp("pack_cost","Total harga dari supplier","number",'min="0.01" step="0.01" required value="'+esc(existingQuote?.pack_cost||"")+'"'))+
+  field("Isi kemasan (dalam "+esc(material.unit)+")",inp("pack_qty","Contoh 1000","number",'min="0.001" step="0.001" required value="'+esc(existingQuote?.pack_qty||"")+'"'))+
+  field("Tanggal cek harga",inp("quote_on","","date",'value="'+esc(existingQuote?.quote_on||dateToday())+'" max="'+dateToday()+'" required'))+
+  field("Referensi / catatan",inp("source_note","Invoice, tautan supplier, atau catatan","text",'maxlength="300" value="'+esc(existingQuote?.source_note||"")+'"'))+
+  '<div class="full-row actions"><button class="btn" type="submit">Simpan estimasi bahan</button></div></form>'+
+  '<div class="notice">Estimasi biaya per '+esc(material.unit)+' = harga satu kemasan ÷ isi kemasan. Untuk mengisi <b>HPP aktual</b>, catat pembelian dan penerimaan fisik barang di halaman Belanja.</div>'):"";
+ const priceForm=panel("Harga jual & status","Harga awal semua menu Rp0. Aktivasi hanya diperbolehkan jika semua komponen BOM memiliki biaya aktual dari penerimaan pembelian.",
+  '<form id="ops-edit-product" class="form-grid"><input type="hidden" name="id" value="'+current.id+'"/>'+
+  field("Harga jual dasar (Rp)",inp("price","Contoh 22000","number",'value="'+Number(current.price)+'" min="0" step="100" required'))+
+  field("Status jual",selectInput("active",[["false","Draft / belum dijual"],["true","Aktif — dapat menerima pesanan"]],'id="prod-active"',String(current.active)))+
+  '<div class="full-row actions"><button class="btn" type="submit">Simpan menu</button></div></form>'+
+  '<div class="notice">'+(missing?missing+' dari '+cost.parts.length+' bahan belum mempunyai biaya pembelian aktual. ':'Biaya aktual bahan sudah tercatat. ')+
+  'Penawaran supplier tidak akan otomatis mengaktifkan produk. Pastikan kemasan, takaran, hasil produksi, serta label diuji sebelum penjualan.</div>');
+ const addBom=s.data.materials.length?panel("Perbaiki komposisi per porsi",
+  "Tambahkan atau sesuaikan takaran bahan. Menu harus nonaktif ketika komposisi diubah.",
+  '<form id="ops-bom" class="form-grid">'+
+   '<input type="hidden" name="product_id" value="'+current.id+'"/>'+
+   field("Pilih bahan",selectInput("material_id",s.data.materials.map(m=>[m.id,m.name+" / "+m.unit]),'id="lt-bom-material"',s.costing.editMaterial||null))+
+   field("Takaran untuk satu porsi",inp("qty_per_unit","Jumlah bahan per menu","number",'min="0.001" step="0.001" required'))+
+   '<div class="full-row actions"><button type="submit" class="btn secondary">Simpan komposisi bahan</button></div></form>'):"";
+ const sim=s.costing.simulation;
+ if(s.costing.simProduct!==current.id){
+  s.costing.simProduct=current.id;s.costing.simulation.price=Number(current.price)||0;
+ }
+ const simulator=panel("Simulasi harga marketplace",
+  "Fee, potongan promo dan biaya tambahan adalah input asumsi owner. Kalkulator ini tidak memotong pembayaran atau mengubah harga transaksi.",
+  '<div class="form-grid">'+
+   field("Harga jual simulasi (Rp)",inp("lt_sim_price","Harga listing","number",'id="lt-sim-price" value="'+(Number(sim.price)||0)+'" min="0" step="100"'))+
+   field("Fee marketplace (%)",inp("lt_sim_fee","Masukkan fee sesuai kontrak","number",'id="lt-sim-fee" value="'+num(sim.fee)+'" min="0" max="99.99" step="0.01"'))+
+   field("Biaya tetap per order (Rp)",inp("lt_sim_fixed","Misal biaya layanan","number",'id="lt-sim-fixed" value="'+sim.fixed+'" min="0" step="1"'))+
+   field("Diskon ditanggung merchant (Rp)",inp("lt_sim_discount","0","number",'id="lt-sim-discount" value="'+sim.discount+'" min="0" step="1"'))+
+   field("Biaya tambahan produksi (Rp)",inp("lt_sim_overhead","Minyak, gas, listrik, dll.","number",'id="lt-sim-overhead" value="'+sim.overhead+'" min="0" step="1"'))+
+   field("Target kontribusi per porsi (Rp)",inp("lt_sim_target","Keuntungan target","number",'id="lt-sim-target" value="'+sim.target+'" min="0" step="100"'))+
+  '</div><div id="lt-price-preview" data-product-id="'+current.id+'"></div>');
+ const detail=panel(esc(current.name),esc(current.sku)+" · HPP per satu porsi · "+cost.parts.length+" komponen",
+  '<div class="row lt-cost-summary">'+costState+
+  '<strong>'+costValue+'</strong></div>'+
+  '<div class="lt-hpp-sub">Biaya '+(actualOK?"aktual dari pembelian":"perencanaan dari data tersedia")+
+   ' • '+(missing?missing+" komponen belum punya harga aktual":"semua komponen punya harga aktual")+'</div>'+
+  rowsTable(["Komponen & takaran","Sumber harga","Biaya / porsi","Aksi"],parts));
+ return '<div class="metrics">'+
+ stat("Resep utama",stats.identities,"16 kopi · 9 pisang · 5 dimsum")+
+ stat("Varian produk",stats.total,"Kopi tersedia 4 ukuran")+
+ stat("HPP riil lengkap",stats.actual,"Dari penerimaan pembelian")+
+ stat("Menu aktif",stats.active,"Harga dan biaya terverifikasi")+'</div>'+
+ notice+'<div class="lt-menu-layout"><div>'+list+'</div><div class="lt-cost-details">'+detail+quoteForm+priceForm+addBom+simulator+'</div></div>';
 }
 function purchasesView(){
  const purchaseDraft=s.drafts.purchase||{};
