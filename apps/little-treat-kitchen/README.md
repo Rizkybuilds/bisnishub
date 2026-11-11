@@ -38,3 +38,17 @@ Authenticated staff access, editable recipes with approval/version history, mult
 - \`Little_Treat_Panduan_Dimsum_Frozen_Han_River_v1.docx\`
 
 Keep these manual references synchronized with updates to \`recipes.js\` during recipe changes.
+
+## Owner-side local shopping and finance (stacked feature PR)
+
+- **Belanja:** purchase plans, realization, ingredient/packaging/equipment/operating expense ledger.
+- **Keuangan:** per-platform sales, gross vs net revenue, deferred payout tracking, manual HPP, operating expenses, equipment straight-line depreciation, estimated profit vs actual cash flow, historical transactions, exports and recovery.
+- Accounting logic and limits: see [FINANCE-MODEL.md](FINANCE-MODEL.md).
+- Finance is **local-only per browser**, not synced and **not protected by employee roles**. Use only on an owner-controlled phone/browser. Export backup JSON regularly. Never present it as a shared staff accounting system.
+- Existing Supabase MGBOS projects were left untouched. Phase 2 should use a separate provisioned Supabase project with Auth/RLS after owner organization selection and authorization.
+
+Run core checks:
+```sh
+node --test apps/little-treat-kitchen/catalog.test.cjs apps/little-treat-kitchen/finance.test.cjs
+```
+
