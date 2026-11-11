@@ -642,7 +642,9 @@ describe('TeeStock Demo Commerce Simulation (NOV15-02)', () => {
       // The demo remains directly accessible and explicitly labeled.
       expect(header).toContain('href="/demo/cart"');
       expect(header).toContain('Keranjang simulasi demo');
-      expect(demoCheckoutPage).toContain('Ini simulasi checkout. Tidak ada pesanan atau pembayaran sungguhan.');
+      expect(demoCheckoutPage.replace(/\s+/g, ' ')).toContain(
+        'Ini simulasi checkout. Tidak ada pesanan atau pembayaran sungguhan.',
+      );
       expect(demoContext).not.toContain('submitGuestCheckoutAction');
 
       // Real retail is deliberately separate, server-gated, and not a payment gateway.
