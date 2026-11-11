@@ -47,6 +47,13 @@ describe('TeeStock S0-A Route & Content Invariant Tests', () => {
       const fullPath = path.join(srcDir, file);
       if (fs.statSync(fullPath).isFile() && /\.(tsx?|css|json)$/.test(file)) {
         const content = fs.readFileSync(fullPath, 'utf8');
+        // Server-only modules may access server credentials. Next.js enforces
+        // the import boundary; do not exempt client modules from this check.
+        if (/\.server\.tsx?$/.test(file)) {
+          expect(content).toMatch(/^import ['"]server-only['"];/);
+          expect(content).not.toMatch(/['"]use client['"]/);
+          continue;
+        }
         expect(content).not.toContain('SUPABASE_SERVICE_ROLE_KEY');
         expect(content).not.toContain('service_role');
         expect(content).not.toContain('SECRET_KEY');

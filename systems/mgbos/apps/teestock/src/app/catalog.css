@@ -1,0 +1,221 @@
+/* Real products are separate from TeeStock editorial concept previews. */
+.ts-public-catalog {
+  width: min(100% - 64px, 1376px);
+  margin: 72px auto 92px;
+  color: #131313;
+}
+.ts-public-kicker {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  font-weight: 800;
+  color: #646464;
+}
+.ts-public-catalog-head {
+  display: flex;
+  gap: 40px;
+  align-items: end;
+  justify-content: space-between;
+  margin: 12px 0 30px;
+}
+.ts-public-catalog-head h2 {
+  font-size: clamp(30px, 5vw, 62px);
+  letter-spacing: -0.07em;
+  line-height: 1.05;
+  margin: 0;
+}
+.ts-public-catalog-head p {
+  font-size: 13px;
+  color: #686868;
+  line-height: 1.65;
+  max-width: 350px;
+  margin: 0;
+}
+.ts-public-product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.ts-public-product {
+  min-width: 0;
+}
+.ts-public-product a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+.ts-public-product a:focus-visible {
+  outline: 3px solid #111;
+  outline-offset: 5px;
+}
+.ts-public-product-image {
+  background: #f4f4f4;
+  overflow: hidden;
+  aspect-ratio: 4/5;
+}
+.ts-public-product-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+.ts-public-product a:hover img {
+  transform: scale(1.025);
+}
+.ts-public-product-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #707070;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 16px 0 6px;
+}
+.ts-public-product h3 {
+  font-size: 20px;
+  letter-spacing: -0.035em;
+  margin: 0 0 8px;
+}
+.ts-public-product p {
+  font-weight: 650;
+  font-size: 13px;
+  margin: 0 0 12px;
+}
+.ts-public-product-link {
+  font-size: 12px;
+  color: #4b4b4b;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.ts-public-detail {
+  padding-top: 32px;
+  padding-bottom: 90px;
+  color: #161616;
+}
+.ts-public-breadcrumb {
+  font-size: 12px;
+  margin: 6px 0 28px;
+  color: #777;
+}
+.ts-public-breadcrumb a {
+  color: #555;
+  text-decoration: underline;
+}
+.ts-public-detail-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(30px, 6vw, 100px);
+}
+.ts-public-detail-media {
+  background: #f4f4f4;
+}
+.ts-public-detail-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.ts-public-detail-media p {
+  padding: 12px 16px;
+  color: #666;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.ts-public-detail-info {
+  padding: 20px 0;
+}
+.ts-public-detail-info h1 {
+  font-size: clamp(32px, 5vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.06em;
+  margin: 15px 0 15px;
+}
+.ts-public-price {
+  font-size: 23px;
+  font-weight: 700;
+  margin: 0 0 28px;
+}
+.ts-public-description {
+  color: #575757;
+  line-height: 1.75;
+  font-size: 14px;
+  white-space: pre-line;
+}
+.ts-public-detail-info h2 {
+  font-size: 14px;
+  margin: 32px 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.ts-public-variant-list {
+  border-top: 1px solid #ddd;
+}
+.ts-public-variant-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid #ddd;
+  padding: 14px 0;
+  font-size: 13px;
+}
+.ts-public-checkout-note {
+  background: #f6f6f6;
+  padding: 20px;
+  margin-top: 28px;
+  border: 1px solid #dedede;
+}
+.ts-public-checkout-note strong {
+  font-size: 14px;
+}
+.ts-public-checkout-note p {
+  line-height: 1.65;
+  font-size: 12px;
+  color: #616161;
+  margin-bottom: 0;
+}
+.ts-public-return {
+  display: inline-block;
+  margin-top: 24px;
+  color: #111;
+  text-underline-offset: 3px;
+  font-size: 13px;
+}
+@media (max-width: 850px) {
+  .ts-public-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ts-public-detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .ts-public-catalog-head {
+    display: block;
+  }
+  .ts-public-catalog-head p {
+    margin-top: 16px;
+  }
+}
+@media (max-width: 580px) {
+  .ts-public-catalog {
+    width: calc(100% - 32px);
+    margin: 45px auto;
+  }
+  .ts-public-product-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .ts-public-detail {
+    width: calc(100% - 32px);
+  }
+  .ts-public-product-meta {
+    flex-wrap: wrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ts-public-product-image img {
+    transition: none;
+  }
+  .ts-public-product a:hover img {
+    transform: none;
+  }
+}

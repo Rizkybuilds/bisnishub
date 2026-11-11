@@ -22,6 +22,13 @@ export const NAVIGATION_GROUPS: readonly NavGroupDef[] = [
     items: [
       { id: 'dashboard', label: 'Dashboard', href: '/dashboard' },
       {
+        id: 'catalog',
+        label: 'Product Catalog',
+        href: '/catalog',
+        brandOnly: 'TS',
+        requiredPermission: 'designs:write',
+      },
+      {
         id: 'designs',
         label: 'Library Desain',
         href: '/designs',
