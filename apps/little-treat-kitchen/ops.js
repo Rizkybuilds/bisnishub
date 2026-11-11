@@ -15,17 +15,33 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const dateToday=()=>new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Jakarta",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
 const PRODUCT_CATEGORIES={coffee:"Kopi",banana:"Pisang",dimsum:"Dimsum",other:"Lainnya"};
 const CHANNELS=["GoFood","GrabFood","ShopeeFood","Langsung","Lainnya"];
+const ICON_PATHS={
+ orders:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3.7h6M9 9h6M9 13h6M9 17h4"/>',
+ recipes:'<path d="M3 5.5A2.5 2.5 0 0 1 5.5 3H12v18H5.5A2.5 2.5 0 0 0 3 23z"/><path d="M21 5.5A2.5 2.5 0 0 0 18.5 3H12v18h6.5a2.5 2.5 0 0 1 2.5 2z"/>',
+ stock:'<path d="m12 2 9 5-9 5-9-5zM3 7v10l9 5 9-5V7M12 12v10"/>',
+ costing:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 8h10M8 12h2m4 0h2m-8 4h2m4 0h2"/>',
+ finance:'<path d="M3 7V5a2 2 0 0 1 2-2h13v4"/><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M16 14h5M16 14h-1"/>',
+ closing:'<path d="M3 3v18h18M7 16l4-5 3 2 5-7"/>',
+ more:'<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+ refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+ logout:'<path d="M10 17l5-5-5-5M15 12H3M12 3h5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-5"/>',
+ shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+ arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>'
+};
+const icon=name=>'<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+(ICON_PATHS[name]||ICON_PATHS.more)+'</svg>';
 const TABS=[
- {id:"orders",label:"Pesanan",icon:"🧾",staff:true},
- {id:"recipes",label:"Resep",icon:"📖",staff:true},
- {id:"stock",label:"Stok",icon:"📦",staff:true},
- {id:"costing",label:"HPP & Menu",icon:"🧮",staff:false},
- {id:"finance",label:"Belanja",icon:"🛒",staff:false},
- {id:"closing",label:"Daily Closing",icon:"📊",staff:false}
+ {id:"orders",label:"Pesanan",icon:"orders",staff:true},
+ {id:"recipes",label:"Resep",icon:"recipes",staff:true},
+ {id:"stock",label:"Stok",icon:"stock",staff:true},
+ {id:"costing",label:"HPP & Menu",icon:"costing",staff:false},
+ {id:"finance",label:"Belanja",icon:"finance",staff:false},
+ {id:"closing",label:"Daily Closing",icon:"closing",staff:false}
 ];
+
 const s={session:null,user:null,role:null,tab:"orders",busy:false,err:"",
  data:{products:[],materials:[],bom:[],orders:[],items:[],financials:[],costs:[],purchases:[],closings:[]},
- cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all"};
+ cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all",orderFilter:"active",activeRecipeId:null};
 let notifyTimer;
 function notify(msg){toastEl.textContent=msg;toastEl.classList.add("active");clearTimeout(notifyTimer);notifyTimer=setTimeout(()=>toastEl.classList.remove("active"),3000)}
 function setError(msg){s.err=String(msg||"");render()}
@@ -120,27 +136,54 @@ function showSetup(){
  '<p>Katalog resep lama tetap tersedia di aplikasi Kitchen OS v2 selama migrasi.</p></div></div>';
 }
 function showLogin(){
- root.innerHTML='<div class="auth-screen"><div class="auth-card"><div class="logo">lt<span>.</span></div><h1>Masuk ke Kitchen OS</h1>'+
- '<p>Gunakan akun yang didaftarkan pemilik. Tidak ada registrasi mandiri bagi karyawan.</p>'+
- (s.err?'<div class="notice error">'+esc(s.err)+'</div>':"")+
- '<form id="ops-login"><label class="field"><span>Email</span><input type="email" name="email" required autocomplete="username" placeholder="email@contoh.com"/></label>'+
- '<label class="field"><span>Password</span><input type="password" name="password" required autocomplete="current-password"/></label>'+
- '<button class="btn full" type="submit" '+(s.busy?"disabled":"")+'>'+(s.busy?"Memproses…":"Masuk")+'</button></form>'+
- '<p class="muted" style="margin-top:20px">Akun belum disiapkan? <a href="./legacy.html">Buka panduan resep v2 sementara</a>. Data keuangan versi lama hanya tersimpan pada browser tempat sebelumnya digunakan.</p></div></div>';
+ root.innerHTML='<div class="auth-screen"><div class="auth-card">'+
+ '<div class="logo">lt<span>.</span></div>'+
+ '<div class="auth-decoration" style="margin-top:25px"><i aria-hidden="true"></i> Little Treat · Kitchen OS</div>'+
+ '<h1>Selamat datang kembali.</h1>'+
+ '<p>Masuk untuk mengelola pesanan, resep dan stok dapur dalam satu tempat. Gunakan akun yang sudah didaftarkan pemilik.</p>'+
+ (s.err?'<div class="notice error" role="alert">'+esc(s.err)+'</div>':"")+
+ '<form id="ops-login">'+
+ field("Email",'<input type="email" name="email" required autocomplete="username" inputmode="email" placeholder="email@contoh.com" />')+
+ field("Kata sandi",'<input type="password" name="password" required autocomplete="current-password" placeholder="Masukkan kata sandi" />')+
+ '<button class="btn full" type="submit" '+(s.busy?"disabled aria-busy=\"true\"":"")+'>'+(s.busy?"Memverifikasi akun…":"Masuk ke Kitchen OS "+icon("arrow"))+'</button></form>'+
+ '<div class="auth-footnote">'+icon("shield")+' Akun dan data operasional disimpan di Supabase khusus Little Treat.</div>'+
+ '<p class="muted" style="margin-top:18px">Butuh resep sebelum login? <a href="./legacy.html">Buka panduan resep lama</a>. Data keuangan lama hanya tersimpan di browser asal.</p>'+
+ '</div></div>';
 }
+
 function nav(){
  const visible=TABS.filter(x=>s.role==="owner"||x.staff);
- const menu=visible.map(x=>'<button type="button" data-tab="'+x.id+'" class="'+(x.id===s.tab?"active":"")+'">'+x.icon+' '+x.label+'</button>').join("");
- return '<aside class="sidebar"><div class="head"><div class="logo">lt<span>.</span></div><div><div class="brand-name">little treat.</div><div class="brand-sub">KITCHEN OS / V3</div></div></div><nav class="nav">'+menu+'</nav>'+
- '<div class="sidebar-bottom">Tersinkron melalui Supabase<br/><strong>'+esc(s.role.toUpperCase())+'</strong> · '+esc(s.user?.email||"")+'</div></aside>'+
- '<nav class="bottom">'+visible.slice(0,5).map(x=>'<button type="button" data-tab="'+x.id+'" class="'+(x.id===s.tab?"active":"")+'">'+x.icon+'<div>'+x.label+'</div></button>').join("")+'</nav>';
+ const primary=s.role==="owner"?["orders","recipes","stock","costing"]:["orders","recipes","stock"];
+ const extra=visible.filter(x=>!primary.includes(x.id));
+ const sideMenu=visible.map(x=>'<button type="button" data-tab="'+x.id+'" class="'+(x.id===s.tab?"active":"")+'" '+(x.id===s.tab?'aria-current="page"':"")+'>'+icon(x.icon)+'<span class="nav-label">'+esc(x.label)+'</span></button>').join("");
+ const bottomMenu=visible.filter(x=>primary.includes(x.id)).map(x=>'<button type="button" data-tab="'+x.id+'" class="'+(x.id===s.tab?"active":"")+'" '+(x.id===s.tab?'aria-current="page"':"")+'>'+icon(x.icon)+'<span>'+esc(x.label)+'</span></button>').join("");
+ const extraMenu=extra.length?'<details class="more-nav '+(extra.some(x=>x.id===s.tab)?"active":"")+'"><summary>'+icon("more")+'<span>Lainnya</span></summary>'+
+ '<div class="more-sheet">'+extra.map(x=>'<button type="button" data-tab="'+x.id+'" class="'+(x.id===s.tab?"active":"")+'">'+icon(x.icon)+' '+esc(x.label)+'</button>').join("")+'</div></details>':"";
+ return '<aside class="sidebar" aria-label="Navigasi utama">'+
+ '<div class="head"><div class="logo">lt<span>.</span></div><div><div class="brand-name">little treat.</div><div class="brand-sub">KITCHEN OPERATIONS</div></div></div>'+
+ '<div class="side-label">WORKSPACE</div><nav class="nav" aria-label="Menu Kitchen OS">'+sideMenu+'</nav>'+
+ '<div class="sidebar-bottom"><span class="sync-note">Data terpusat · Supabase</span>'+
+ '<strong>'+esc(s.role.toUpperCase())+'</strong><span class="profile-email">'+esc(s.user?.email||"")+'</span></div></aside>'+
+ '<nav class="bottom" aria-label="Navigasi cepat">'+bottomMenu+extraMenu+'</nav>';
 }
 function wrap(title,desc,body){
- root.innerHTML='<div class="shell">'+nav()+'<div class="main-wrap"><header class="top"><div class="title">Little Treat / '+esc(title)+'</div>'+
- '<div class="right"><b>'+esc(s.role==="owner"?"Pemilik":"Operator")+'</b><small>'+esc(s.user?.email||"")+'</small><button data-action="reload" class="btn secondary">↻</button><button data-action="logout" class="btn secondary">Keluar</button></div></header>'+
- '<main class="main" id="ops-main"><div class="eyebrow">LITTLE TREAT / OPERATIONS</div><h1>'+esc(title)+'</h1><p class="lead">'+esc(desc)+'</p>'+
- (s.err?'<div class="notice error"><b>Gagal:</b> '+esc(s.err)+'</div>':"")+body+'</main></div></div>';
+ const dateLabel=new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"long",year:"numeric",timeZone:"Asia/Jakarta"}).format(new Date());
+ const role=s.role==="owner"?"Pemilik":"Operator";
+ const initial=String(s.user?.email||"O").slice(0,1).toUpperCase();
+ root.innerHTML='<div class="shell">'+nav()+'<div class="main-wrap">'+
+ '<header class="top">'+
+ '<div class="mobile-brand"><span class="logo">lt<span>.</span></span><span>little treat.</span></div>'+
+ '<div class="title">Kitchen OS <span aria-hidden="true"> / </span> <b>'+esc(title)+'</b></div>'+
+ '<div class="right"><div class="user-chip"><span class="avatar" aria-hidden="true">'+esc(initial)+'</span><div><b>'+esc(role)+'</b><small>'+esc(s.user?.email||"")+'</small></div></div>'+
+ '<button type="button" data-action="reload" class="btn secondary icon-btn" title="Muat data terbaru" aria-label="Muat data terbaru" '+(s.busy?"disabled":"")+'>'+icon("refresh")+'</button>'+
+ '<button type="button" data-action="logout" class="btn secondary icon-btn" title="Keluar akun" aria-label="Keluar akun">'+icon("logout")+'</button></div></header>'+
+ '<main class="main" id="ops-main" '+(s.busy?'aria-busy="true"':'')+'>'+
+ '<div class="page-intro"><div><div class="eyebrow">LITTLE TREAT / KITCHEN OPERATIONS</div>'+
+ '<h1>'+esc(title)+'</h1><p class="lead">'+esc(desc)+'</p></div>'+
+ '<div class="page-aside"><strong>'+esc(dateLabel)+'</strong><span>Operasional Little Treat</span></div></div>'+
+ (s.err?'<div class="notice error" role="alert"><b>Belum berhasil:</b> '+esc(s.err)+'</div>':"")+body+'</main></div></div>';
 }
+
 function stat(label,value,sub=""){return '<div class="metric"><small>'+esc(label)+'</small><strong>'+value+'</strong><span>'+esc(sub)+'</span></div>'}
 function field(label,control,help=""){return '<label class="field"><span>'+label+'</span>'+control+(help?'<small>'+help+'</small>':"")+'</label>'}
 function inp(name,placeholder="",type="text",extra=""){return '<input type="'+type+'" name="'+name+'" placeholder="'+esc(placeholder)+'" '+extra+'/>'}
