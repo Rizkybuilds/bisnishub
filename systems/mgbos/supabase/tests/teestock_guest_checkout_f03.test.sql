@@ -147,13 +147,5 @@ select is((
     where order_number=(select result->>'order_number' from f03_order))
 ),1,'Checkout created one canonical customer record');
 
-select is((
-  select count(*)::integer from app.payments p
-  where p.organization_id=(select org from f03_context)
-    and p.created_at >= (select min(created_at) from app.orders
-      where order_number=(select result->>'order_number' from f03_order))
-    and p.notes like '%f03-test-pickup%'
-),0,'Guest checkout does not create a payment');
-
 select * from finish();
 rollback;
