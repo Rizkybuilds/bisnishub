@@ -138,7 +138,7 @@ grant execute on function app.confirm_teestock_qris_payment(
 -- Prevent the generic payment recorder from allocating a QRIS receipt
 -- to an unpaid TeeStock web invoice without an owner-verified merchant claim.
 create function app.teestock_qris_allocation_guard()
-returns trigger language plpgsql set search_path = '' as $
+returns trigger language plpgsql set search_path = '' as $$
 declare
   v_payment app.payments%rowtype;
 begin
@@ -164,7 +164,7 @@ begin
   end if;
   return new;
 end;
-$;
+$$;
 create trigger teestock_qris_allocation_before_insert
   before insert on app.payment_allocations for each row
   execute function app.teestock_qris_allocation_guard();
