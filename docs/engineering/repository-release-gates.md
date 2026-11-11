@@ -31,6 +31,9 @@ depends_on:
 supersedes: null
 ---
 
+> **Current procedure — 2026-11-11:** [Lean Feature Delivery](lean-feature-delivery.md) is the default for **new, routine** repository changes. The full gate matrix below describes legacy governed packages and elevated-risk tasks when genuinely applicable; it is **not** a required 11-stage approval process for every small feature. Existing GitHub checks, technical integrity and explicit production permissions remain mandatory.
+
+
 # Repository Engineering Release Gates & Integration Standard
 
 ## 1. Purpose
