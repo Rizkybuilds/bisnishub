@@ -348,11 +348,9 @@ document.addEventListener("submit",async e=>{
  const form=Object.fromEntries(new FormData(e.target).entries());
  if(id==="ops-login"){await transact(async()=>{await authLogin(form.email,form.password);await reload()});return}
  if(id==="ops-waste"){
-  await transact(async()=>{
-   if(!form.note.trim())throw Error("Alasan waste wajib diisi");
-   if(!confirm("Kurangi stok sebagai waste? Transaksi ini tidak bisa dibatalkan dari UI."))return;
-   await rpc("lt_record_waste",{p_material_id:form.material_id,p_qty:Number(form.qty),p_note:form.note});
-  });return;
+  if(!form.note.trim()){setError("Alasan waste wajib diisi");return}
+  if(!confirm("Kurangi stok sebagai waste? Transaksi ini tidak bisa dibatalkan dari UI."))return;
+  await transact(()=>rpc("lt_record_waste",{p_material_id:form.material_id,p_qty:Number(form.qty),p_note:form.note}));return;
  }
  if(s.role!=="owner"&&["ops-new-material","ops-edit-product","ops-bom","ops-purchase","ops-financial","ops-close"].includes(id)){setError("Akses owner diperlukan.");return}
  if(id==="ops-new-material"){
@@ -363,7 +361,11 @@ document.addEventListener("submit",async e=>{
    const price=Number(form.price);
    if(!Number.isFinite(price)||price<0)throw Error("Harga tidak valid.");
    const active=form.active==="true";
-   if(active&&(!s.data.bom.some(x=>x.product_id===p.id)||price<=0))throw Error("Lengkapi harga dan komposisi HPP sebelum mengaktifkan menu.");
+   if(active){
+    const lines=s.data.bom.filter(x=>x.product_id===p.id);
+    if(!lines.length||price<=0)throw Error("Lengkapi harga dan komposisi HPP sebelum mengaktifkan menu.");
+    if(lines.some(x=>!s.data.costs.some(c=>c.material_id===x.material_id)))throw Error("Harga beli bahan belum tersedia. Catat pembelian bahan terlebih dahulu.");
+   }
    await req("lt_products",{method:"PATCH",query:"?id=eq."+encodeURIComponent(form.id),body:{price,active},prefer:"return=minimal"});
   });
  }else if(id==="ops-bom"){
