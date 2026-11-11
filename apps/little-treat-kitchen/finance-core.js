@@ -88,7 +88,7 @@
   const pending=data.sales.filter(x=>!x.voidedAt&&!x.payoutDate).reduce((a,s)=>a+netPayout(s),0);
   const assets=data.purchases.filter(x=>x.kind==="equipment"&&!x.voidedAt&&x.date<=month+"-31");
   const assetBook=assets.reduce((a,x)=>a+bookValue(x,month),0);
-  return {month,orderCount:ss.reduce((a,s)=>a+s.orders,0),saleCount:ss.length,gross,discount,refund,revenue,fees,cogs,contribution:revenue-fees-cogs,operational,depreciation:depreciationMonth,profit:revenue-fees-cogs-operational-depreciationMonth,cashIn,cashOut,cashFlow:cashIn-cashOut,pending,assetBook, purchases:pp.length,assets:assets.length};
+  return {month,orderCount:ss.reduce((a,s)=>a+s.orders,0),saleCount:ss.length,gross,discount,refund,revenue,fees,cogs,missingHpp,contribution:revenue-fees-cogs,operational,depreciation:depreciationMonth,profit:revenue-fees-cogs-operational-depreciationMonth,cashIn,cashOut,cashFlow:cashIn-cashOut,pending,assetBook, purchases:pp.length,assets:assets.length};
  }
  function pastMonths(month,n){
   const [y,m]=month.split("-").map(Number);return Array.from({length:n},(_,i)=>{const dt=new Date(Date.UTC(y,m-1-i,1));return dt.toISOString().slice(0,7)});
