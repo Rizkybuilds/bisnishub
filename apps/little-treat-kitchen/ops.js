@@ -39,9 +39,9 @@ const TABS=[
  {id:"closing",label:"Daily Closing",icon:"closing",staff:false}
 ];
 
-const s={session:null,user:null,role:null,tab:"orders",busy:false,err:"",
- data:{products:[],materials:[],bom:[],orders:[],items:[],financials:[],costs:[],purchases:[],closings:[]},
- cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all",orderFilter:"active",activeRecipeId:null};
+const s={session:null,user:null,role:null,tab:"orders",busy:false,err:"",notice:"",
+ data:{products:[],materials:[],bom:[],orders:[],items:[],financials:[],costs:[],purchases:[],closings:[],payouts:[]},
+ cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all",orderFilter:"active",activeRecipeId:null,drafts:{}};
 let notifyTimer;
 function notify(msg){toastEl.textContent=msg;toastEl.classList.add("active");clearTimeout(notifyTimer);notifyTimer=setTimeout(()=>toastEl.classList.remove("active"),3000)}
 function setError(msg){s.err=String(msg||"");render()}
@@ -54,14 +54,21 @@ function configValid(){
 function base(){return String(CONFIG.url).replace(/\/+$/,"")}
 function headers(auth=true){const h={"apikey":CONFIG.publishableKey,"Content-Type":"application/json","Accept":"application/json"};if(auth&&s.session)h.Authorization="Bearer "+s.session.access_token;return h}
 async function jsonFetch(url,init={},retry=true){
- let resp;try{resp=await fetch(url,init)}catch(e){throw Error("Koneksi internet/Supabase gagal. Periksa jaringan dan coba ulang.")}
+ let resp;try{resp=await fetch(url,init)}catch(e){
+  const error=Error("Tidak bisa terhubung ke server. Periksa jaringan.");
+  error.uncertain=true;throw error;
+ }
  const body=await resp.text();
  let result;try{result=body?JSON.parse(body):null}catch(e){result=body}
  if(resp.status===401&&retry&&s.session?.refresh_token){
    await refreshSession();
    return jsonFetch(url,{...init,headers:{...init.headers,Authorization:"Bearer "+s.session.access_token}},false);
  }
- if(!resp.ok)throw Error((result&&typeof result==="object"&&(result.message||result.msg||result.error_description||result.error))||("Permintaan ditolak ("+resp.status+")"));
+ if(!resp.ok){
+   const error=Error((result&&typeof result==="object"&&(result.message||result.msg||result.error_description||result.error))||("Permintaan ditolak ("+resp.status+")"));
+   error.status=resp.status;throw error;
+ }
+
  return result;
 }
 function saveSession(){if(s.session)sessionStorage.setItem(SK,JSON.stringify(s.session));else sessionStorage.removeItem(SK)}
@@ -116,19 +123,78 @@ async function reload(){
     select("lt_order_financials","?select=*&limit=600"),
     select("lt_material_costs","?select=*&limit=600"),
     select("lt_purchases","?select=*&order=purchased_on.desc&limit=200"),
-    select("lt_daily_closings","?select=*&order=day.desc&limit=90")
+    select("lt_daily_closings","?select=*&order=day.desc&limit=90"),
+    select("lt_payout_receipts","?select=*&order=received_on.desc&limit=300")
    ]);
-   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings]=own;
+   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings,s.data.payouts]=own;
  }else{
-   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings]=[[],[],[],[]];
+   [s.data.financials,s.data.costs,s.data.purchases,s.data.closings,s.data.payouts]=[[],[],[],[],[]];
  }
 }
+// The browser stores ONLY opaque mutation IDs + SHA-256 fingerprints.
+// Never store the form payload, financial numbers, Auth token or password here.
+const PENDING_KEY="lt-v3-pending-operations";
+function pendingOperations(){
+ try{return JSON.parse(sessionStorage.getItem(PENDING_KEY)||"{}")||{}}
+ catch(e){return {}}
+}
+function pendingKey(kind){return (s.user?.id||"unknown")+":"+kind}
+function savePending(map){sessionStorage.setItem(PENDING_KEY,JSON.stringify(map))}
+function clearPending(kind){
+ const map=pendingOperations();delete map[pendingKey(kind)];savePending(map);
+}
+function pendingKinds(){
+ const prefix=(s.user?.id||"unknown")+":";
+ return Object.keys(pendingOperations()).filter(k=>k.startsWith(prefix)).map(k=>k.slice(prefix.length));
+}
+async function guardedRpc(kind,endpoint,body){
+ if(!s.user?.id)throw Error("Akun belum masuk.");
+ if(typeof crypto==="undefined"||!crypto.subtle?.digest||!crypto.randomUUID)throw Error("Browser belum mendukung pengamanan transaksi. Gunakan Chrome/Firefox terbaru melalui HTTPS.");
+ const bytes=new TextEncoder().encode(JSON.stringify(body));
+ const digest=await crypto.subtle.digest("SHA-256",bytes);
+ const fingerprint=[...new Uint8Array(digest)].map(x=>x.toString(16).padStart(2,"0")).join("");
+ const key=pendingKey(kind);
+ const map=pendingOperations();
+ const existing=map[key];
+ if(existing&&existing.hash!==fingerprint){
+   throw Error("Ada "+kind+" sebelumnya yang hasilnya belum dipastikan. Periksa daftar transaksi dan selesaikan peringatan tersebut sebelum mencatat transaksi berbeda.");
+ }
+ const requestId=existing?.id||crypto.randomUUID();
+ if(!existing){map[key]={hash:fingerprint,id:requestId};savePending(map)}
+ const out=await rpc(endpoint,{...body,p_request_id:requestId});
+ const latest=pendingOperations();if(latest[key]?.id===requestId){delete latest[key];savePending(latest)}
+ return out;
+}
+function pendingNotice(){
+ const kinds=pendingKinds().filter(k=>s.role==="owner"||k==="waste"||k==="order");
+ if(!kinds.length)return "";
+ const names={order:"pesanan",waste:"waste",purchase:"pembelian",payout:"pencairan"};
+ return '<div class="notice" role="status"><b>Ada transaksi yang belum diketahui hasilnya.</b> '+
+ 'Periksa catatan di halaman terkait sebelum memulai transaksi baru. Mengulangi input yang persis sama akan menggunakan ID transaksi yang sama sehingga tidak tercatat dua kali.'+
+ '<div class="actions">'+kinds.map(k=>'<button type="button" class="btn secondary" data-clear-pending="'+esc(k)+'">Sudah diperiksa · reset '+esc(names[k]||k)+'</button>').join("")+'</div></div>';
+}
 async function transact(f){
- if(s.busy)return;
- s.busy=true;s.err="";render();
- try{const out=await f();if(s.session)await reload();render();notify("Berhasil disimpan");return out}
- catch(e){s.err=e.message||String(e);render();return null}
- finally{s.busy=false;render()}
+ if(s.busy)return null;
+ s.busy=true;s.err="";s.notice="";render();
+ let outcome=null,succeeded=false;
+ try{
+   outcome=await f();
+   succeeded=true;
+ }catch(e){
+   s.err=(e.uncertain?"Hasil permintaan belum dapat dipastikan. Cek riwayat sebelum mencoba lagi. Jika mencoba lagi dengan data yang sama, sistem memakai ID permintaan sebelumnya. ":"")+
+     (e.message||String(e));
+ }
+ if(succeeded){
+   // A completed mutation MUST NEVER be presented as failed solely because
+   // the subsequent SELECT/refresh request fails.
+   try{if(s.session)await reload();notify("Transaksi berhasil tersimpan")}
+   catch(e){
+     s.notice="Transaksi sudah tersimpan di database, tetapi data terbaru gagal dimuat. Tekan refresh; jangan masukkan transaksi yang sama lagi.";
+     notify("Tersimpan · pembaruan data tertunda");
+   }
+ }
+ s.busy=false;render();
+ return succeeded?outcome:null;
 }
 function showSetup(){
  root.innerHTML='<div class="auth-screen"><div class="auth-card"><div class="logo">lt<span>.</span></div><h1>Kitchen OS v3</h1><p>Fondasi aplikasi sudah tersedia, tetapi <b>database khusus Little Treat belum dihubungkan</b>. Tidak ada data demo yang akan dianggap sebagai transaksi asli.</p>'+
@@ -181,14 +247,16 @@ function wrap(title,desc,body){
  '<div class="page-intro"><div><div class="eyebrow">LITTLE TREAT / KITCHEN OPERATIONS</div>'+
  '<h1>'+esc(title)+'</h1><p class="lead">'+esc(desc)+'</p></div>'+
  '<div class="page-aside"><strong>'+esc(dateLabel)+'</strong><span>Operasional Little Treat</span></div></div>'+
- (s.err?'<div class="notice error" role="alert"><b>Belum berhasil:</b> '+esc(s.err)+'</div>':"")+body+'</main></div></div>';
+ (s.err?'<div class="notice error" role="alert"><b>Belum berhasil:</b> '+esc(s.err)+'</div>':"")+
+ (s.notice?'<div class="notice good" role="status"><b>Sudah tersimpan:</b> '+esc(s.notice)+'</div>':"")+
+ pendingNotice()+body+'</main></div></div>';
 }
 
 function stat(label,value,sub=""){return '<div class="metric"><small>'+esc(label)+'</small><strong>'+value+'</strong><span>'+esc(sub)+'</span></div>'}
 function field(label,control,help=""){return '<label class="field"><span>'+label+'</span>'+control+(help?'<small>'+help+'</small>':"")+'</label>'}
 function inp(name,placeholder="",type="text",extra=""){return '<input type="'+type+'" name="'+name+'" placeholder="'+esc(placeholder)+'" '+extra+'/>'}
-function selectInput(name,options,extra=""){
- return '<select name="'+name+'" '+extra+'>'+options.map(([v,l])=>'<option value="'+esc(v)+'">'+esc(l)+'</option>').join("")+'</select>';
+function selectInput(name,options,extra="",selected=null){
+ return '<select name="'+name+'" '+extra+'>'+options.map(([v,l])=>'<option value="'+esc(v)+'" '+(selected!==null&&String(selected)===String(v)?"selected":"")+'>'+esc(l)+'</option>').join("")+'</select>';
 }
 function productName(id){return s.data.products.find(x=>x.id===id)?.name||"Menu tidak ditemukan"}
 function unitName(id){return s.data.materials.find(x=>x.id===id)?.name||"Bahan tidak ditemukan"}
@@ -238,16 +306,17 @@ function ordersView(){
  const activeCount=counts.new+counts.preparing+counts.ready;
  const available=s.data.products.filter(p=>p.active&&Number(p.price)>0);
  const needsCatalog=s.role==="owner"&&s.data.products.length===0;
+ const draft=s.drafts.order||{};
  const onboard=needsCatalog?
  '<div class="notice" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px">'+
  '<span><b>Mulai dari katalog.</b> Impor 30 menu, isi harga serta komposisi HPP, lalu aktifkan menu yang sudah siap dijual.</span>'+
  '<button type="button" class="btn secondary" data-tab="costing">Siapkan menu '+icon("arrow")+'</button></div>':"";
  const form=available.length?'<div class="form-grid">'+
- field("Channel penjualan",selectInput("channel",channelOpts,'id="o-channel"'))+
- field("Kode pesanan",inp("order_ref","Contoh GF-1024","text",'required maxlength="80"'))+
- field("Pilih menu",selectInput("product",available.map(p=>[p.id,p.name+" · "+fmt(p.price)])))+
- field("Jumlah porsi",inp("qty","1","number",'value="1" min="1" max="100" step="1" required'))+
- '<div class="full-row">'+field("Catatan khusus",'<textarea name="note" rows="2" maxlength="500" placeholder="Tanpa saus / catatan driver atau pelanggan"></textarea>')+'</div>'+
+ field("Channel penjualan",selectInput("channel",channelOpts,'id="o-channel"',draft.channel||null))+
+ field("Kode pesanan",inp("order_ref","Contoh GF-1024","text",'required maxlength="80" value="'+esc(draft.order_ref||"")+'"'))+
+ field("Pilih menu",selectInput("product",available.map(p=>[p.id,p.name+" · "+fmt(p.price)]),"",draft.product||null))+
+ field("Jumlah porsi",inp("qty","1","number",'value="'+esc(draft.qty||"1")+'" min="1" max="100" step="1" required'))+
+ '<div class="full-row">'+field("Catatan khusus",'<textarea name="note" rows="2" maxlength="500" placeholder="Tanpa saus / catatan driver atau pelanggan">'+esc(draft.note||"")+'</textarea>')+'</div>'+
  '<div class="full-row actions" style="margin-top:3px"><button class="btn secondary" type="button" data-action="add-cart">+ Tambahkan ke pesanan</button></div></div>':
  '<div class="empty"><h3>Belum ada menu yang dapat dijual</h3><p>'+(s.role==="owner"?"Masuk ke HPP & Menu untuk mengatur harga, komposisi bahan, dan mengaktifkan menu.":"Minta pemilik menyiapkan katalog dan harga sebelum menerima pesanan.")+'</p>'+
  (s.role==="owner"?'<button type="button" class="btn secondary" data-tab="costing">Buka HPP & Menu '+icon("arrow")+'</button>':"")+'</div>';
@@ -354,11 +423,12 @@ function showRecipe(id){
 }
 function stockView(){
  const rows=s.data.materials.map(m=>'<tr><td><strong>'+esc(m.name)+'</strong><small>'+esc(m.unit)+'</small></td><td>'+num(m.qty_on_hand)+' '+esc(m.unit)+'</td><td>'+num(m.min_stock)+'</td><td>'+(Number(m.qty_on_hand)<=Number(m.min_stock)?'<span class="badge orange">Perlu dibeli</span>':'<span class="badge green">Cukup</span>')+'</td></tr>');
+ const wasteDraft=s.drafts.waste||{};
  const wasteForm=s.data.materials.length?panel("Catat bahan rusak / terbuang","Bisa dicatat karyawan. Stok langsung berkurang dan biayanya masuk laporan pemilik, dengan identitas operator.",
 '<form id="ops-waste" class="form-grid">'+
- field("Bahan",selectInput("material_id",s.data.materials.map(m=>[m.id,m.name+" ("+m.unit+", stok "+num(m.qty_on_hand)+")"])))+
- field("Jumlah terbuang",inp("qty","1","number",'min="0.001" step="0.001" required'))+
- field("Alasan",inp("note","Contoh: pisang terlalu matang","text",'maxlength="300" required'))+
+ field("Bahan",selectInput("material_id",s.data.materials.map(m=>[m.id,m.name+" ("+m.unit+", stok "+num(m.qty_on_hand)+")"]),"",wasteDraft.material_id||null))+
+ field("Jumlah terbuang",inp("qty","1","number",'min="0.001" step="0.001" value="'+esc(wasteDraft.qty||"")+'" required'))+
+ field("Alasan",inp("note","Contoh: pisang terlalu matang","text",'maxlength="300" value="'+esc(wasteDraft.note||"")+'" required'))+
  '<div class="full-row actions"><button type="submit" class="btn warn">Catat waste</button></div></form>'):"";
  const add=s.role==="owner"?panel("Daftarkan bahan/kemasan","Satuan gram (g), mililiter (ml), atau satuan buah/kemasan (pcs). Pilih satuan secara konsisten.",
  '<form id="ops-new-material" class="form-grid">'+field("Nama bahan",inp("name","Pisang kepok","text",'required maxlength="140"'))+
@@ -395,21 +465,22 @@ function costingView(){
  edit+bomForm+panel("Detail komposisi aktif","Daftar takaran BOM yang sudah disimpan.",bomTable);
 }
 function purchasesView(){
+ const purchaseDraft=s.drafts.purchase||{};
  const matOptions=[["","— Tidak terhubung stok —"],...s.data.materials.map(m=>[m.id,m.name+" / "+m.unit])];
  const history=s.data.purchases.map(p=>'<tr><td>'+esc(p.purchased_on)+'<strong style="display:block">'+esc(p.description)+'</strong></td><td>'+esc(p.kind)+'</td><td>'+fmt(p.amount)+'</td><td>'+
  (p.material_id&&!p.received_on?'<button data-receive="'+p.id+'" class="btn secondary">Terima barang</button>':p.material_id?'<span class="badge green">Sudah diterima</span>':'—')+'</td></tr>');
  return panel("Catat pembelian dan pengeluaran","Catat belanja bahan, kemasan, alat, atau biaya operasional yang sudah dibayar. Pembelian belum diterima tidak menambah stok.",
  '<form id="ops-purchase" class="form-grid">'+
- field("Tanggal bayar",inp("purchased_on","","date",'value="'+dateToday()+'" required'))+
- field("Kategori",selectInput("kind",[["ingredient","Bahan"],["packaging","Kemasan"],["equipment","Alat / aset"],["operating","Operasional"]],'id="purchase-kind"'))+
- field("Deskripsi",inp("description","Misal: Dimsum frozen isi 50","text",'required maxlength="200"'))+
- field("Total pembayaran (Rp)",inp("amount","100000","number",'min="1" step="1" required'))+
- field("Barang stok (opsional)",selectInput("material_id",matOptions))+
- field("Jumlah dalam satuan barang",inp("material_qty","50","number",'min="0.001" step="0.001"'))+
- field("Sudah diterima?",selectInput("received",[["no","Belum, menunggu dikirim"],["yes","Sudah diterima"]]))+
- field("Masa manfaat alat (bulan)",inp("asset_life_months","36","number",'min="1" max="240"'))+
- field("Nilai sisa alat (Rp)",inp("asset_salvage","0","number",'min="0" value="0" step="1"'))+
- field("Tanggal mulai pakai alat",inp("service_on","","date"))+
+ field("Tanggal bayar",inp("purchased_on","","date",'value="'+esc(purchaseDraft.purchased_on||dateToday())+'" required'))+
+ field("Kategori",selectInput("kind",[["ingredient","Bahan"],["packaging","Kemasan"],["equipment","Alat / aset"],["operating","Operasional"]],'id="purchase-kind"',purchaseDraft.kind||null))+
+ field("Deskripsi",inp("description","Misal: Dimsum frozen isi 50","text",'required maxlength="200" value="'+esc(purchaseDraft.description||"")+'"'))+
+ field("Total pembayaran (Rp)",inp("amount","100000","number",'min="1" step="1" value="'+esc(purchaseDraft.amount||"")+'" required'))+
+ field("Barang stok (opsional)",selectInput("material_id",matOptions,"",purchaseDraft.material_id||null))+
+ field("Jumlah dalam satuan barang",inp("material_qty","50","number",'min="0.001" step="0.001" value="'+esc(purchaseDraft.material_qty||"")+'"'))+
+ field("Sudah diterima?",selectInput("received",[["no","Belum, menunggu dikirim"],["yes","Sudah diterima"]],"",purchaseDraft.received||null))+
+ field("Masa manfaat alat (bulan)",inp("asset_life_months","36","number",'min="1" max="240" value="'+esc(purchaseDraft.asset_life_months||"")+'"'))+
+ field("Nilai sisa alat (Rp)",inp("asset_salvage","0","number",'min="0" value="'+esc(purchaseDraft.asset_salvage||"0")+'" step="1"'))+
+ field("Tanggal mulai pakai alat",inp("service_on","","date",'value="'+esc(purchaseDraft.service_on||"")+'"'))+
  '<div class="full-row actions"><button class="btn" type="submit">Simpan pembayaran</button></div></form>')+
  panel("Riwayat belanja","Untuk pembelian yang baru dibayar, tekan Terima Barang setelah barang ada di dapur.",rowsTable(["Tanggal / item","Kategori","Total","Status stok"],history));
 }
@@ -424,11 +495,12 @@ function financeEditor(orderId){
  field("Biaya platform (Rp)",inp("platform_fee","0","number",'value="'+Number(f.platform_fee)+'" min="0" step="1" required'))+
  field("Biaya layanan/pembayaran (Rp)",inp("other_fee","0","number",'value="'+Number(f.other_fee)+'" min="0" step="1" required'))+
  field("Sudah cocok dengan laporan?",selectInput("fees_confirmed",[["false","Belum diverifikasi"],["true","Sudah sesuai laporan"]]))+
- field("Tanggal payout diterima (opsional)",inp("payout_received_at","","date",'value="'+esc(f.payout_received_at||"")+'"'))+
+ field("Informasi payout",'<div class="notice">Catat transfer dana yang benar-benar masuk secara terpisah pada bagian <b>Payout aktual</b> di bawah. Satu pencairan dapat mencakup banyak pesanan.</div>')+
  '<div class="full-row actions"><button type="submit" class="btn">Simpan rekonsiliasi</button></div></form>');
 }
 function closingView(){
  const today=dateToday();
+ const payoutDraft=s.drafts.payout||{};
  const handed=s.data.orders.filter(o=>o.status==="handed_off");
  const recent=handed.slice(0,30).map(o=>{
   const f=s.data.financials.find(x=>x.order_id===o.id);
@@ -441,15 +513,29 @@ function closingView(){
   return '<tr><td>'+esc(c.day)+'</td><td>'+c.orders_completed+'</td><td>'+fmt(c.gross)+'</td><td>'+fmt(contribution)+'</td>'+
   '<td>'+(c.missing_financials>0?'<span class="badge orange">'+c.missing_financials+' belum cocok</span>':'<span class="badge green">Cocok</span>')+'</td></tr>';
  });
+ const payoutRows=s.data.payouts.map(p=>'<tr><td>'+esc(p.received_on)+'</td><td>'+esc(p.channel)+
+   '<small>Referensi: '+esc(p.statement_ref)+'</small></td><td>'+fmt(p.amount)+'</td><td>'+esc(p.note||"—")+'</td></tr>');
+ const payoutToday=s.data.payouts.filter(p=>p.received_on===today).reduce((n,p)=>n+Number(p.amount),0);
+ const payoutPanel=panel("Payout aktual yang sudah diterima",
+   "Catat jumlah yang betul-betul masuk ke rekening/e-wallet sesuai mutasi bank atau laporan pencairan marketplace. Satu transfer boleh mencakup banyak pesanan.",
+   '<form id="ops-payout" class="form-grid">'+
+   field("Platform / sumber",selectInput("channel",[["GoFood","GoFood"],["GrabFood","GrabFood"],["ShopeeFood","ShopeeFood"],["Lainnya","Lainnya"]],"",payoutDraft.channel||null))+
+   field("Tanggal uang diterima",inp("received_on","","date",'max="'+today+'" value="'+esc(payoutDraft.received_on||today)+'" required'))+
+   field("Nominal masuk (Rp)",inp("amount","Jumlah sesuai mutasi bank","number",'min="1" step="0.01" value="'+esc(payoutDraft.amount||"")+'" required'))+
+   field("Referensi transfer / batch",inp("statement_ref","Nomor pencairan di mutasi bank","text",'minlength="2" maxlength="100" value="'+esc(payoutDraft.statement_ref||"")+'" required'))+
+   '<div class="full-row">'+field("Catatan (opsional)",inp("note","Contoh: pencairan gabungan 3 pesanan","text",'maxlength="500" value="'+esc(payoutDraft.note||"")+'"'))+'</div>'+
+   '<div class="full-row actions"><button class="btn" type="submit">Catat payout yang sudah masuk</button></div></form>'+
+   '<div class="notice">Jangan mencatat estimasi payout sebagai uang masuk. Cek mutasi bank dahulu. Nomor referensi yang sama pada platform yang sama hanya boleh dicatat sekali.</div>'+
+   rowsTable(["Tanggal","Platform / referensi","Nominal aktual","Catatan"],payoutRows));
  const assetExpenses=s.data.purchases.filter(p=>p.kind==="equipment"&&p.asset_life_months&&p.service_on);
  const monthlyDep=assetExpenses.reduce((a,p)=>{const start=p.service_on?.slice(0,7);const month=today.slice(0,7);
   if(!start)return a;const n=(Number(month.slice(0,4))-Number(start.slice(0,4)))*12+(Number(month.slice(5,7))-Number(start.slice(5,7)));
   return a+(n>=0&&n<p.asset_life_months?(Number(p.amount)-Number(p.asset_salvage))/p.asset_life_months:0);
  },0);
- return '<div class="notice">Daily closing menghitung pesanan yang sudah diserahkan, HPP dari BOM, biaya platform yang sudah dikonfirmasi, serta biaya operasional pada tanggal tersebut. <b>Hasil masih estimasi, bukan laba bersih atau laporan pajak.</b></div>'+
+ return '<div class="notice">Omzet dan HPP dihitung dari pesanan yang sudah diserahkan. <b>Payout aktual</b> dihitung dari uang yang sudah masuk dan dicatat di bawah, bukan perkiraan dari nilai pesanan. Hasil ini tetap estimasi kontribusi, bukan laba bersih atau laporan pajak.</div>'+
  '<div class="metrics">'+stat("Selesai (terlihat)",handed.length)+stat("Belum verifikasi fee",handed.filter(o=>!s.data.financials.find(f=>f.order_id===o.id)?.fees_confirmed).length)+
- stat("Penyusutan estimasi bulan ini",fmt(monthlyDep),"Belum dialokasikan ke daily closing")+'</div>'+
- panel("Daily Closing","Tutup/rekap kembali hari pilihan setelah cek transaksi dan payout. Catatan ditimpa jika hari itu direkap lagi.",
+ stat("Payout aktual hari ini",fmt(payoutToday),"Dari transaksi pencairan yang dimuat")+stat("Penyusutan estimasi bulan ini",fmt(monthlyDep),"Belum dialokasikan ke daily closing")+'</div>'+
+ payoutPanel+panel("Daily Closing","Tutup/rekap kembali hari pilihan setelah mencocokkan pesanan, biaya dan pencairan nyata. Catatan ditimpa jika hari itu direkap lagi.",
  '<form id="ops-close" class="form-grid">'+field("Tanggal",inp("day","","date",'value="'+today+'" required'))+
  field("Catatan",inp("note","Contoh: selisih cash Rp0","text",'maxlength="500"'))+
  '<div class="full-row actions"><button type="submit" class="btn">Hitung & simpan closing</button></div></form>')+
@@ -486,11 +572,12 @@ document.addEventListener("submit",async e=>{
  if(!id.startsWith("ops-"))return;
  e.preventDefault();
  const form=Object.fromEntries(new FormData(e.target).entries());
- if(id==="ops-login"){await transact(async()=>{await authLogin(form.email,form.password);await reload()});return}
+ if(id==="ops-login"){await transact(()=>authLogin(form.email,form.password));return}
  if(id==="ops-waste"){
+  s.drafts.waste=form;
   if(!form.note.trim()){setError("Alasan waste wajib diisi");return}
   if(!confirm("Kurangi stok sebagai waste? Transaksi ini tidak bisa dibatalkan dari UI."))return;
-  await transact(()=>rpc("lt_record_waste",{p_material_id:form.material_id,p_qty:Number(form.qty),p_note:form.note}));return;
+  await transact(async()=>{await guardedRpc("waste","lt_record_waste_v2",{p_material_id:form.material_id,p_qty:Number(form.qty),p_note:form.note});s.drafts.waste=null});return;
  }
  if(s.role!=="owner"&&["ops-new-material","ops-edit-product","ops-bom","ops-purchase","ops-financial","ops-close"].includes(id)){setError("Akses owner diperlukan.");return}
  if(id==="ops-new-material"){
@@ -511,6 +598,7 @@ document.addEventListener("submit",async e=>{
  }else if(id==="ops-bom"){
   await transact(()=>req("lt_bom",{method:"POST",query:"?on_conflict=product_id,material_id",body:{product_id:form.product_id,material_id:form.material_id,qty_per_unit:Number(form.qty_per_unit)},prefer:"resolution=merge-duplicates,return=minimal"}));
  }else if(id==="ops-purchase"){
+  s.drafts.purchase=form;
   await transact(async()=>{
    const kind=form.kind;const isStock=["ingredient","packaging"].includes(kind)&&!!form.material_id;
    const isAsset=kind==="equipment";
@@ -523,13 +611,27 @@ document.addEventListener("submit",async e=>{
    };
    if(isStock&&(!Number.isFinite(body.p_qty)||body.p_qty<=0))throw Error("Jumlah bahan perlu diisi.");
    if(isAsset&&(!body.p_life_months||body.p_life_months<1))throw Error("Isi umur manfaat alat.");
-   await rpc("lt_record_purchase",body);
+   await guardedRpc("purchase","lt_record_purchase_v2",body);s.drafts.purchase=null;
+  });
+ }else if(id==="ops-payout"){
+  s.drafts.payout=form;
+  if(s.role!=="owner"){setError("Hanya owner yang boleh mencatat payout.");return}
+  await transact(async()=>{
+   const amount=Number(form.amount);
+   if(!Number.isFinite(amount)||amount<=0||amount>999999999999.99)throw Error("Nominal pencairan tidak valid.");
+   if(!form.statement_ref.trim()||form.statement_ref.trim().length<2)throw Error("Masukkan referensi transfer/batch.");
+   if(!form.received_on||form.received_on>dateToday())throw Error("Tanggal pencairan tidak valid.");
+   const body={
+    p_channel:form.channel,p_received_on:form.received_on,p_amount:amount,
+    p_statement_ref:form.statement_ref.trim(),p_note:form.note||""
+   };
+   await guardedRpc("payout","lt_record_payout",body);s.drafts.payout=null;
   });
  }else if(id==="ops-financial"){
   await transact(async()=>{
    const f=s.data.financials.find(x=>x.order_id===form.order_id);if(!f)throw Error("Keuangan pesanan tidak ditemukan");
    const body={discount:Number(form.discount),platform_fee:Number(form.platform_fee),other_fee:Number(form.other_fee),
-    fees_confirmed:form.fees_confirmed==="true",payout_received_at:form.payout_received_at||null};
+    fees_confirmed:form.fees_confirmed==="true"};
    if(Object.values(body).slice(0,3).some(x=>x<0||!Number.isFinite(x))||body.discount+body.platform_fee+body.other_fee>Number(f.gross))throw Error("Potongan melebihi omzet.");
    await req("lt_order_financials",{method:"PATCH",query:"?order_id=eq."+encodeURIComponent(form.order_id),body,prefer:"return=minimal"});s.editFinance=null;
   });
@@ -574,6 +676,7 @@ document.addEventListener("click",async e=>{
    const form=document.getElementById("ops-new-order");
    if(!form)return;
    const i=Object.fromEntries(new FormData(form).entries());
+   s.drafts.order=i;
    const qty=Number(i.qty);
    if(!i.product||!Number.isInteger(qty)||qty<1||qty>100){notify("Periksa menu dan jumlah");return}
    const found=s.cart.find(x=>x.product_id===i.product);
@@ -589,12 +692,20 @@ document.addEventListener("click",async e=>{
    const form=document.getElementById("ops-new-order");
    if(!form||!s.cart.length)return;
    const i=Object.fromEntries(new FormData(form).entries());
+   s.drafts.order=i;
    await transact(async()=>{
     if(!i.order_ref.trim())throw Error("Isi kode pesanan.");
-    await rpc("lt_create_order",{p_order_ref:i.order_ref.trim(),p_channel:i.channel,p_note:i.note||"",p_lines:s.cart.map(x=>({...x,note:""}))});
-    s.cart=[];
+    await guardedRpc("order","lt_create_order_v2",{p_order_ref:i.order_ref.trim(),p_channel:i.channel,p_note:i.note||"",p_lines:s.cart.map(x=>({...x,note:""}))});
+    s.cart=[];s.drafts.order=null;
    });
   }
+ }
+ const clearOp=e.target.closest("[data-clear-pending]");
+ if(clearOp){
+  const kind=clearOp.dataset.clearPending;
+  if(!["purchase","waste","order","payout"].includes(kind))return;
+  if(!confirm("Pastikan transaksi terkait sudah dicek di riwayat/server sebelum reset ID permintaan. Lanjutkan?"))return;
+  clearPending(kind);s.err="";s.notice="ID permintaan telah direset setelah verifikasi manual. Jangan ulangi transaksi lama tanpa memeriksa riwayat.";render();return;
  }
  const remove=e.target.closest("[data-remove-cart]");
  if(remove){s.cart.splice(Number(remove.dataset.removeCart),1);render();return}
