@@ -2,7 +2,7 @@ import 'server-only';
 import { requireAuth } from '@/lib/session.server';
 import { publicEnvironment } from '@/lib/env.client';
 import { serverEnvironment } from '@/lib/env.server';
-import type { CatalogVariantInput } from '@mgbos/validation';
+import type { CatalogProductDetails, CatalogVariantInput } from '@mgbos/validation';
 
 export interface CatalogProductRow {
   id: string;
@@ -10,6 +10,7 @@ export interface CatalogProductRow {
   title: string;
   collection_name: string;
   description: string;
+  details: CatalogProductDetails;
   mockup_path: string | null;
   artwork_path: string | null;
   rights_status: 'PENDING' | 'APPROVED';
@@ -72,7 +73,7 @@ export async function listCatalogProducts(): Promise<{
     organization_id: 'eq.' + ctx.session.organization.id,
     brand_id: 'eq.' + ctx.brandId,
     select:
-      'id,slug,title,collection_name,description,mockup_path,artwork_path,rights_status,sample_status,status,variants,version,updated_at',
+      'id,slug,title,collection_name,description,details,mockup_path,artwork_path,rights_status,sample_status,status,variants,version,updated_at',
     order: 'updated_at.desc',
     limit: '100',
   });
