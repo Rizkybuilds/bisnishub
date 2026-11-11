@@ -29,22 +29,22 @@ jobs:
           const fs = require('node:fs');
           const { execFileSync } = require('node:child_process');
           const files = [
-          "apps/mgbos/src/app/(app)/catalog/CatalogManager.tsx",
-          "apps/mgbos/src/app/(app)/catalog/actions.ts",
-          "apps/mgbos/src/app/(app)/catalog/catalog.css",
-          "apps/mgbos/src/app/(app)/catalog/data.ts",
-          "apps/teestock/src/app/catalog.css",
-          "apps/teestock/src/app/page.tsx",
-          "apps/teestock/src/app/shop/products/[slug]/page.tsx",
-          "apps/teestock/src/components/PublishedCatalog.tsx",
-          "apps/teestock/src/components/PublishedProductGrid.tsx",
-          "apps/teestock/src/components/PublishedProductOptions.tsx",
-          "apps/teestock/src/lib/published-catalog.server.ts",
-          "apps/teestock/src/lib/storefront-product.ts",
-          "packages/validation/src/catalog.test.ts",
-          "packages/validation/src/catalog.ts",
-          "scripts/teestock-live-product-f02.test.ts"
-];
+            "apps/mgbos/src/app/(app)/catalog/CatalogManager.tsx",
+            "apps/mgbos/src/app/(app)/catalog/actions.ts",
+            "apps/mgbos/src/app/(app)/catalog/catalog.css",
+            "apps/mgbos/src/app/(app)/catalog/data.ts",
+            "apps/teestock/src/app/catalog.css",
+            "apps/teestock/src/app/page.tsx",
+            "apps/teestock/src/app/shop/products/[slug]/page.tsx",
+            "apps/teestock/src/components/PublishedCatalog.tsx",
+            "apps/teestock/src/components/PublishedProductGrid.tsx",
+            "apps/teestock/src/components/PublishedProductOptions.tsx",
+            "apps/teestock/src/lib/published-catalog.server.ts",
+            "apps/teestock/src/lib/storefront-product.ts",
+            "packages/validation/src/catalog.test.ts",
+            "packages/validation/src/catalog.ts",
+            "scripts/teestock-live-product-f02.test.ts",
+          ];
           execFileSync('pnpm', ['exec','prettier','--write', ...files], { stdio: 'inherit' });
           for (const file of files) {
             process.stdout.write('F02_FORMAT:' + file + ':' + fs.readFileSync(file).toString('base64') + '\n');
