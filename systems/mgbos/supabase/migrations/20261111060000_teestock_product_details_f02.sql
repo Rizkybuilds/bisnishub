@@ -86,6 +86,15 @@ begin
     where (item->>'priceIdr')::bigint <= 0
       or (item->>'costIdr')::bigint > (item->>'priceIdr')::bigint
   ) then raise exception 'Invalid variant price or cost'; end if;
+  if v_status = 'PUBLISHED' and (
+    v_rights <> 'APPROVED' or v_sample <> 'PASSED'
+    or v_mockup is null or v_artwork is null
+    or exists (
+      select 1 from jsonb_array_elements(v_variants) item
+      where (item->>'costIdr')::bigint <= 0
+    )
+  ) then raise exception 'Rights, sample, artwork, mockup, and costing required to publish'; end if;
+
   if jsonb_typeof(v_details) is distinct from 'object'
     or length(coalesce(v_details->>'material','')) > 160
     or length(coalesce(v_details->>'fit','')) > 80
@@ -131,15 +140,6 @@ begin
       )
     then raise exception 'Size chart must cover all product variants'; end if;
   end if;
-
-  if v_status = 'PUBLISHED' and (
-    v_rights <> 'APPROVED' or v_sample <> 'PASSED'
-    or v_mockup is null or v_artwork is null
-    or exists (
-      select 1 from jsonb_array_elements(v_variants) item
-      where (item->>'costIdr')::bigint <= 0
-    )
-  ) then raise exception 'Rights, sample, artwork, mockup, and costing required to publish'; end if;
 
   if p_product is null then
     if p_expected_version <> 0 then raise exception 'New catalog version must be zero'; end if;
