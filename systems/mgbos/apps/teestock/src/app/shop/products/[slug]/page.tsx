@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { listPublishedProducts } from '../../../../lib/published-catalog.server';
 import { PublishedProductOptions } from '../../../../components/PublishedProductOptions';
+import { checkoutEnabled } from '../../../../lib/checkout.server';
 import '../../../catalog.css';
 
 type Params = { params: Promise<{ slug: string }> };
@@ -65,7 +66,7 @@ export default async function CatalogProductPage({ params }: Params) {
           </div>
         </div>
         <div className="ts-public-detail-info">
-          <PublishedProductOptions product={product} />
+          <PublishedProductOptions product={product} checkoutEnabled={checkoutEnabled()} />
           <Link href="/shop" className="ts-public-return">
             ← Kembali ke The Edit
           </Link>
