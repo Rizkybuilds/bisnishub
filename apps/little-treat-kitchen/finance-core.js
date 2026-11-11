@@ -83,6 +83,14 @@
   const missingHpp=ss.filter(s=>s.cogs===0).length;
   const operational=pp.filter(p=>p.kind==="operating").reduce((a,p)=>a+p.total,0);
   const depreciationMonth=data.purchases.filter(x=>!x.voidedAt&&x.kind==="equipment").reduce((a,x)=>a+depreciation(x,month),0);
+  const stockApi=(typeof window!=="undefined"?window.LT_STOCK_CORE:(typeof globalThis!=="undefined"?globalThis.LT_STOCK_CORE:null));
+  const wasteCost=stockApi&&Array.isArray(data.stockItems)
+    ? data.stockItems.reduce((sum,item)=>{
+      const year=Number(month.slice(0,4)),m=Number(month.slice(5,7));
+      const end=new Date(Date.UTC(year,m,0)).toISOString().slice(0,10);
+      const prior=new Date(Date.UTC(year,m-1,0)).toISOString().slice(0,10);
+      return sum+stockApi.snapshot(data,item.id,end).wasted-stockApi.snapshot(data,item.id,prior).wasted;
+     },0):0;
   const payoutsReceived=data.sales.filter(x=>!x.voidedAt&&x.payoutDate&&monthOf(x.payoutDate)===month).reduce((a,s)=>a+netPayout(s),0);
   const capitals=(data.capitalEvents||[]).filter(x=>!x.voidedAt&&monthOf(x.date)===month);
   const capitalIn=capitals.filter(x=>x.type==="capital_in").reduce((a,x)=>a+x.amount,0);
@@ -93,7 +101,7 @@
   const pending=data.sales.filter(x=>!x.voidedAt&&!x.payoutDate).reduce((a,s)=>a+netPayout(s),0);
   const assets=data.purchases.filter(x=>x.kind==="equipment"&&!x.voidedAt&&x.date<=month+"-31");
   const assetBook=assets.reduce((a,x)=>a+bookValue(x,month),0);
-  return {month,orderCount:ss.reduce((a,s)=>a+s.orders,0),saleCount:ss.length,gross,discount,refund,revenue,fees,cogs,missingHpp,contribution:revenue-fees-cogs,operational,depreciation:depreciationMonth,profit:revenue-fees-cogs-operational-depreciationMonth,cashIn,cashOut,cashFlow:cashIn-cashOut,payoutsReceived,purchasePayments,capitalIn,ownerDraw,pending,assetBook, purchases:pp.length,assets:assets.length};
+  return {month,orderCount:ss.reduce((a,s)=>a+s.orders,0),saleCount:ss.length,gross,discount,refund,revenue,fees,cogs,missingHpp,contribution:revenue-fees-cogs,operational,depreciation:depreciationMonth,wasteCost,profit:revenue-fees-cogs-operational-depreciationMonth-wasteCost,cashIn,cashOut,cashFlow:cashIn-cashOut,payoutsReceived,purchasePayments,capitalIn,ownerDraw,pending,assetBook, purchases:pp.length,assets:assets.length};
  }
  function pastMonths(month,n){
   const [y,m]=month.split("-").map(Number);return Array.from({length:n},(_,i)=>{const dt=new Date(Date.UTC(y,m-1-i,1));return dt.toISOString().slice(0,7)});
