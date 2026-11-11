@@ -1,6 +1,6 @@
 # LITTLE TREAT KITCHEN OS — OPERATIONAL MVP V3
 
-**State:** implementation staged on a feature branch. Dedicated Supabase project and real user accounts are **NOT yet provisioned**. Nothing in this work has touched the existing MGBOS Supabase databases.
+**State (2026-11-11):** Dedicated Supabase project **ACTIVE_HEALTHY** and v3 schema applied; real owner/staff Auth accounts are **NOT yet provisioned**. Database role tests used synthetic users in ROLLBACK-only transactions. No changes to existing MGBOS databases.
 
 ## Owner-approved scope, 11 November 2026
 
@@ -24,10 +24,10 @@
 
 ## Setup, in strict order
 
-1. Owner selects **Supabase organization** and explicitly approves project creation. Previous account listing has an organization named MGBOS and two *inactive* projects; creating an isolated **Little Treat** project there requires an explicit organization selection. The project cost was most recently quoted at **$0/month**, but must be rechecked before action.
+1. **COMPLETED:** user selected the existing MGBOS organization; creation cost quoted **US$0/month** at provisioning.
 2. Create NEW project in \`ap-southeast-1\` (Singapore) and verify active database. Never reactivate or run migrations on the existing MGBOS projects.
 3. Review and apply \`ops/sql/bootstrap.sql\` to this new project only. Run SQL readback to confirm 12 RLS-enabled tables, grants, and RPC functions, then Supabase security/performance advisors.
-4. Create OWNER account under Supabase Dashboard → Authentication → Users (using a private, owner-chosen password). Copy only the Auth UUID.
+4. **NEXT — owner action required:** create OWNER account under [Supabase Dashboard → Authentication → Users](https://supabase.com/dashboard/project/ujmojkgipvckwdegcoph/auth/users) using an owner-chosen private email/password, or send an invitation through Auth dashboard. Copy only the new Auth User UUID, not the password.
 5. Add account to \`public.lt_members\` through a privileged SQL editor:
    \`\`\`sql
    insert into public.lt_members(user_id,role,active)
@@ -37,7 +37,7 @@
    This must not be exposed as public signup or called through a service_role key in the browser.
 6. Create STAFF accounts one by one and add role \`staff\` using the same SQL with their UID. **Never grant owner merely because an email says so.**
 7. Obtain Supabase **Project URL** and **publishable key** (NOT a secret/service role key). Populate \`ops-config.js\` only after checking the new project ID. The publishable key is browser-public by design; RLS is mandatory.
-8. Configure Supabase Auth Site URL and redirect allowlist to the intended production domain. For email/password login, disable open self-registration; provision staff through the Auth admin UI.
+8. **PENDING deployment acceptance:** configure Supabase Auth Site URL and redirect allowlist for the eventual stable domain. Disable open self-registration; provision staff through the Auth admin UI.
 9. In owner interface, use **Impor 30 menu dasar**. All 30 are imported inactive at zero price, not permitted for sale. Record prices, materials with consistent units (\`g\`, \`ml\`, \`pcs\`), stock purchases, and BOM per product.
 10. Activate only tested products whose BOM and material costs have been provided. Staff log in separately and verify authorization behavior.
 
@@ -78,7 +78,7 @@ Server RLS and explicitly checked RPCs enforce this matrix; hiding UI tabs alone
 7. Purchase paid but not received: cash purchase appears, stock quantity does not increase until receipt RPC.
 8. Record waste and confirm both stock decrement and daily waste expense.
 9. Owner confirms platform statement payout on a different day; Daily Closing shows cash receipts only on payout day.
-10. Verify that Daily Closing warns if any fees are unverified, and that orders still preparing are counted as open.
+10. Verify Daily Closing returns a warning count if fees are unverified, and orders still preparing are counted as open.
 11. Test expired token refresh, disabled membership, sign-out, slow/offline network, and reload between mobile and desktop.
 
 ## Deliberate non-goals and known limitations
@@ -92,3 +92,11 @@ Server RLS and explicitly checked RPCs enforce this matrix; hiding UI tabs alone
 - Existing Kitchen OS v2 is still available as a separate static app during the migration; its local-only finance pages are **not** synchronized with v3.
 
 **Release rule:** no production link, no live sales or real finance entries until project provisioning, RLS integration testing and owner acceptance succeed.
+
+## Verified on isolated project (2026-11-11)
+
+- No leftover fixture rows after synthetic tests: all fixture SQL was inside BEGIN/ROLLBACK.
+- Test matrix: RLS 12/12; six role-checked RPCs unavailable to anon; staff sees orders and material quantities but zero finance, cost or purchase rows even when populated.
+- Restrictive grants: authenticated cannot directly write COGS, stock quantity, order or stock movement tables. Default Supabase grants were detected and explicitly revoked through `little_treat_v3_lockdown_grants`.
+- Functional simulation: owner can record paid-but-unreceived purchase, receive exactly once, create order, atomically deduct stock and calculate HPP, record waste, reconcile and close day. Repeated receipt and READY attempt rejected. Financial payout before handoff rejected by trigger.
+- **Not yet verified:** live browser sign-in with actual Supabase Auth users, staff vs owner on separate phones, production domain settings, all 30 menu BOM inputs, and real supplier/payout reconciliation. No claim of live launch readiness.
