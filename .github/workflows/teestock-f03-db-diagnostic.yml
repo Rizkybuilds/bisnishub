@@ -29,53 +29,45 @@ jobs:
         run: |
           docker info --format 'Docker server: {{.ServerVersion}}; CPU: {{.NCPU}}; memory bytes: {{.MemTotal}}'
           df -h / | tail -1
-      - name: Attempt standard local stack then reduced stack
+      - name: Diagnose reduced stack with credential-safe failure categories
         shell: bash
         run: |
           set +e
-          set -uo pipefail
-          # Never leak raw Supabase CLI stdout/stderr: output includes local keys.
-          pnpm db:start >/tmp/ts-f03-start.log 2>&1
-          first=$?
-          if [ "$first" -eq 0 ]; then
-            echo "STANDARD_START_OK=true"
-            exit 0
-          fi
-          node - <<'NODE'
-          const fs=require('node:fs');
-          const log=fs.readFileSync('/tmp/ts-f03-start.log','utf8');
-          const tags={
-            docker_network:/network|connection refused|connection reset|timeout|deadline|TLS handshake/i,
-            docker_pull:/pull|download|rate limit|too many requests|429|manifest/i,
-            docker_resource:/no space|memory|OOM|not enough/i,
-            service_health:/unhealthy|health check|container .*exited|dependency failed/i,
-            ports:/port .*allocated|bind .*failed/i,
-            docker_daemon:/docker daemon|cannot connect to the docker|docker.sock/i,
-            cli_error:/error|failed/i,
-          };
-          console.log('STANDARD_START_FAILED=true');
-          for(const [key,re] of Object.entries(tags)) console.log('ERROR_CLASS_'+key+'='+re.test(log));
-          console.log('STDERR_BYTES='+Buffer.byteLength(log));
-          NODE
-          pnpm db:stop >/dev/null 2>&1 || true
           node_modules/.bin/supabase start --exclude studio,postgres-meta,edge-runtime,logflare,vector,realtime,supavisor,imgproxy --workdir . >/tmp/ts-f03-light.log 2>&1
-          second=$?
-          if [ "$second" -eq 0 ]; then
-            echo "REDUCED_START_OK=true"
+          result=$?
+          if [ "$result" -eq 0 ]; then
+            echo "REDUCED_SUPABASE_STACK=STARTED"
             exit 0
           fi
           node - <<'NODE'
           const fs=require('node:fs');
-          const log=fs.readFileSync('/tmp/ts-f03-light.log','utf8');
-          for(const [name,re] of Object.entries({
-            network:/network|connection refused|connection reset|timeout|deadline|TLS handshake/i,
-            pull:/pull|download|rate limit|too many requests|429|manifest/i,
-            resource:/no space|memory|OOM|not enough/i,
-            health:/unhealthy|health check|container .*exited|dependency failed/i,
-            cli_error:/error|failed/i,
-          })) console.log('LIGHT_ERROR_CLASS_'+name+'='+re.test(log));
-          console.log('LIGHT_LOG_BYTES='+Buffer.byteLength(log));
+          const s=fs.readFileSync('/tmp/ts-f03-light.log','utf8');
+          const failureKinds={
+            timeout:/context deadline exceeded|i\/o timeout|TLS handshake timeout|timeout awaiting response|timed out/i,
+            dns:/no such host|lookup .*server misbehaving|failed to resolve|temporary failure in name resolution/i,
+            http429:/429|too many requests|rate limit exceeded/i,
+            http403:/403|forbidden|denied|unauthorized|authentication required/i,
+            http502:/502|bad gateway|503|service unavailable/i,
+            registryDockerHub:/registry-1\.docker\.io|auth\.docker\.io/i,
+            registryGHCR:/ghcr\.io/i,
+            registrySupabase:/supabase\.com|public\.ecr\.aws/i,
+            proxy:/proxyconnect|proxy server|HTTPS_PROXY/i,
+            connectionReset:/connection reset by peer|EOF|connection refused|network is unreachable/i,
+            disk:/no space left on device|disk quota exceeded/i,
+            ram:/out of memory|oom-killed|cannot allocate memory/i,
+            containerHealth:/unhealthy|health check failed|container exited/i,
+            imageManifest:/manifest unknown|no matching manifest|failed to pull image|pull access denied/i,
+            dockerDaemon:/cannot connect to the Docker daemon|docker daemon is not running/i,
+            permissions:/permission denied|operation not permitted/i,
+            rpcError:/error|failed/i
+          };
+          for(const [kind,re] of Object.entries(failureKinds)){
+            console.log('SUPABASE_ERROR_CLASS_'+kind+'='+re.test(s));
+          }
+          console.log('SUPABASE_LOG_LENGTH='+s.length);
           NODE
+          echo "CONTAINERS_AFTER_START:"
+          docker ps -a --format '{{.Names}}:{{.Status}}' | sed -n '1,14p'
           exit 1
       - name: Apply migrations and run full database test suite
         shell: bash
