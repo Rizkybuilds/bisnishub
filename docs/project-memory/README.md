@@ -15,7 +15,7 @@
 | --- | --- | --- |
 | TeeStock | [teestock.md](teestock.md) | [Business knowledge](../../bisnis/teestock/README.md), [decision register](../../bisnis/teestock/00-foundation/decision-register.md), [storefront](../../systems/mgbos/apps/teestock/) |
 | MultiGraph / MGBOS | Not yet summarized here; add when next materially discussed | [MGBOS](../../systems/mgbos/README.md), [portfolio knowledge](../../bisnis/) |
-| Little Treat | Not yet summarized here; add when next materially discussed | [Food Ventures](../../bisnis/food-ventures/README.md), [Kitchen OS](../../apps/little-treat-kitchen/) |
+| Little Treat | Not yet summarized here; add when next materially discussed | [Food Ventures](../../bisnis/food-ventures/README.md); [Kitchen OS PR #105](https://github.com/Rizkybuilds/bisnishub/pull/105) was OPEN when checked 2026-11-11—verify status, do not assume it exists on `main` |
 | Other projects | Add a small project file **only when needed** | [Project index](../project-index.md) |
 
 ## Memory policy: selective, not a transcript archive
