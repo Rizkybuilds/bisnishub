@@ -113,8 +113,8 @@ export default async function OrdersPage() {
         <div>
           <h1 style={{ margin: 0 }}>Kontrak Pesanan (Order Contracts)</h1>
           <p style={{ color: '#94a3b8', margin: '4px 0 0' }}>
-            {ctx.session.activeBrand.name} · Komitmen komersial resmi (B2B
-            Kontrak &amp; Penjualan Ritel Langsung POS).
+            {ctx.session.activeBrand.name} · Pesanan B2B, ritel POS, dan
+            pesanan pelanggan TeeStock dari website.
           </p>
         </div>
         {canCreateOrder && brand && (
@@ -127,7 +127,7 @@ export default async function OrdersPage() {
       </div>
 
       <section className="card">
-        <h2>Daftar Pesanan Resmi</h2>
+        <h2>Daftar Pesanan</h2>
 
         {orders.length === 0 ? (
           <div
@@ -207,9 +207,11 @@ export default async function OrdersPage() {
                             }`,
                           }}
                         >
-                          {o.order_type === 'RETAIL_DIRECT'
-                            ? '⚡ Ritel (POS)'
-                            : '🏢 B2B Custom'}
+                          {o.request_payload?.source === 'TEESTOCK_WEB'
+                            ? 'TeeStock Web'
+                            : o.order_type === 'RETAIL_DIRECT'
+                              ? 'Ritel POS'
+                              : 'B2B Custom'}
                         </span>
                       </div>
                     </td>
@@ -217,14 +219,18 @@ export default async function OrdersPage() {
                       <div style={{ fontWeight: 500, color: '#f1f5f9' }}>
                         {o.customer_snapshot.display_name}
                       </div>
-                      {o.customer_snapshot.phone && (
+                      {(o.customer_snapshot.primary_phone ||
+                        o.customer_snapshot.phone) && (
                         <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                          {o.customer_snapshot.phone}
+                          {o.customer_snapshot.primary_phone ||
+                            o.customer_snapshot.phone}
                         </div>
                       )}
                     </td>
                     <td style={{ padding: '12px', color: '#cbd5e1' }}>
-                      {o.shipping_address_snapshot.city ?? '-'}
+                      {o.request_payload?.source === 'TEESTOCK_WEB'
+                        ? 'Ambil di workshop'
+                        : (o.shipping_address_snapshot.city ?? '-')}
                     </td>
                     <td style={{ padding: '12px', color: '#cbd5e1' }}>
                       {rupiah(BigInt(o.subtotal) - BigInt(o.discount_total))}
@@ -266,7 +272,10 @@ export default async function OrdersPage() {
                           fontWeight: 700,
                         }}
                       >
-                        {o.status}
+                        {o.request_payload?.source === 'TEESTOCK_WEB' &&
+                        o.status === 'DRAFT'
+                          ? 'Menunggu pembayaran manual'
+                          : o.status}
                       </span>
                     </td>
                     <td style={{ padding: '12px' }}>
