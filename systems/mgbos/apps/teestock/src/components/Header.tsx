@@ -76,7 +76,11 @@ export function Header() {
             ))}
           </nav>
           <div className="retail-header-actions">
-            <Link href="/cart" className="retail-real-cart-badge" aria-label={"Keranjang produk nyata: " + liveCartCount + " kaos"}>
+            <Link
+              href="/cart"
+              className="retail-real-cart-badge"
+              aria-label={'Keranjang produk nyata: ' + liveCartCount + ' kaos'}
+            >
               Keranjang <span aria-hidden="true">({liveCartCount})</span>
             </Link>
             <Link
@@ -127,7 +131,11 @@ export function Header() {
               {label} <span aria-hidden="true">↗</span>
             </Link>
           ))}
-          <Link href="/cart" className="mobile-nav-link" onClick={() => setOpen(false)}>
+          <Link
+            href="/cart"
+            className="mobile-nav-link"
+            onClick={() => setOpen(false)}
+          >
             Keranjang ({liveCartCount}) <span aria-hidden="true">↗</span>
           </Link>
           <Link
