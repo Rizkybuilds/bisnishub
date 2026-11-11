@@ -1,7 +1,11 @@
 import Link from 'next/link';
 import { ConceptGallery, HeroGarments } from '../components/RetailShowcase';
+import { PublishedCatalog } from '../components/PublishedCatalog';
+import { listPublishedProducts } from '../lib/published-catalog.server';
+import './catalog.css';
 
-export default function Home() {
+export default async function Home() {
+  const publishedProducts = await listPublishedProducts();
   return (
     <div className="retail-home">
       <section
@@ -76,6 +80,7 @@ export default function Home() {
         </div>
       </section>
 
+      <PublishedCatalog featured products={publishedProducts.slice(0, 3)} />
       <section
         className="retail-collection-section retail-wrap"
         id="collection"
@@ -189,11 +194,15 @@ export default function Home() {
       >
         <span className="retail-availability-dot" />
         <div>
-          <strong>Shop (Katalog Ritel) — Pratinjau Kurasi Desain</strong>
+          <strong>
+            {publishedProducts.length > 0
+              ? 'Shop (Katalog Ritel) — Koleksi Terverifikasi'
+              : 'Shop (Katalog Ritel) — Pratinjau Kurasi Desain'}
+          </strong>
           <p>
-            Koleksi pilihan TeeStock saat ini berada dalam tahap pratinjau
-            desain studio. Pemesanan komersial mandiri maupun transaksi langsung
-            belum dibuka untuk publik. Build Merch masih dalam Pengembangan.
+            {publishedProducts.length > 0
+              ? 'Produk yang terverifikasi sudah dapat dijelajahi. Enam desain studio lainnya masih merupakan pratinjau. Checkout dan pembayaran belum tersedia; Build Merch masih dalam Pengembangan.'
+              : 'Koleksi pilihan TeeStock saat ini berada dalam tahap pratinjau desain studio. Pemesanan komersial mandiri maupun transaksi langsung belum dibuka untuk publik. Build Merch masih dalam Pengembangan.'}
           </p>
         </div>
         <Link href="/support/contact">
