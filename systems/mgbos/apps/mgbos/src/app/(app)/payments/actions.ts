@@ -211,7 +211,6 @@ export async function revertPaymentAction(
   }
 }
 
-
 export async function confirmTeestockQrisAction(
   input: unknown,
 ): Promise<PaymentActionResult> {
@@ -256,19 +255,34 @@ export async function confirmTeestockQrisAction(
       } | null;
       const message = error?.message ?? '';
       if (error?.code === '23505') {
-        return { error: 'Referensi transaksi sudah tercatat. Jangan mencatat pembayaran dua kali.' };
+        return {
+          error:
+            'Referensi transaksi sudah tercatat. Jangan mencatat pembayaran dua kali.',
+        };
       }
-      if (message.includes('wholly unpaid') || message.includes('Not an eligible')) {
-        return { error: 'Invoice sudah berubah atau bukan order web TeeStock yang belum lunas. Refresh halaman.' };
+      if (
+        message.includes('wholly unpaid') ||
+        message.includes('Not an eligible')
+      ) {
+        return {
+          error:
+            'Invoice sudah berubah atau bukan order web TeeStock yang belum lunas. Refresh halaman.',
+        };
       }
-      return { error: 'Pembayaran belum bisa dikonfirmasi. Periksa status invoice dan referensi mutasi.' };
+      return {
+        error:
+          'Pembayaran belum bisa dikonfirmasi. Periksa status invoice dan referensi mutasi.',
+      };
     }
     const output = (await response.json()) as {
       payment_id?: string;
       payment_number?: string;
     };
     if (!output.payment_id || !output.payment_number) {
-      return { error: 'Respons konfirmasi tidak lengkap. Periksa ulang di daftar pembayaran.' };
+      return {
+        error:
+          'Respons konfirmasi tidak lengkap. Periksa ulang di daftar pembayaran.',
+      };
     }
     revalidatePath('/payments');
     revalidatePath('/orders');
@@ -281,7 +295,8 @@ export async function confirmTeestockQrisAction(
     };
   } catch {
     return {
-      error: 'Koneksi gagal. Periksa riwayat invoice sebelum mengulang agar tidak terjadi pencatatan ganda.',
+      error:
+        'Koneksi gagal. Periksa riwayat invoice sebelum mengulang agar tidak terjadi pencatatan ganda.',
     };
   }
 }
