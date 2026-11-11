@@ -517,8 +517,33 @@
 }
 
 /* F03: real variant cart affordance, kept separate from demo products. */
-.ts-pdp-cart-actions{margin-top:24px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
-.ts-pdp-cart-actions .ts-cart-primary{max-width:370px}
-.ts-pdp-cart-link{font-size:12px;text-decoration:underline;text-underline-offset:4px;color:#272727}
-.ts-pdp-cart-notice{grid-column:1/-1;color:#2d5e3b;font-size:12px;margin:0}
-@media(max-width:520px){.ts-pdp-cart-actions{grid-template-columns:1fr}.ts-pdp-cart-actions .ts-cart-primary{max-width:none}}
+.ts-pdp-cart-actions {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+.ts-pdp-cart-actions .ts-cart-primary {
+  max-width: 370px;
+}
+.ts-pdp-cart-link {
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: #272727;
+}
+.ts-pdp-cart-notice {
+  grid-column: 1/-1;
+  color: #2d5e3b;
+  font-size: 12px;
+  margin: 0;
+}
+@media (max-width: 520px) {
+  .ts-pdp-cart-actions {
+    grid-template-columns: 1fr;
+  }
+  .ts-pdp-cart-actions .ts-cart-primary {
+    max-width: none;
+  }
+}
