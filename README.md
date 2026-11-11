@@ -18,6 +18,15 @@ Mulai dari [indeks proyek](docs/project-index.md), [aturan direktori](docs/engin
 | Catatan sesi | `catatan/` | Histori, termasuk dokumentasi 27 September |
 | Implementasi retired (TeeStock v1) | [archive](archive/teestock-v1/README.md) | Referensi historis; bukan dependency atau deployment aktif |
 
+## Cara kerja development (ACTIVE — 2026-11-11)
+
+**Default: [Lean Feature Delivery](docs/engineering/lean-feature-delivery.md).**
+Pilih satu fitur → cek kode yang relevan → implementasi langsung melalui GitHub → tes → commit/PR → lanjut fitur berikutnya. Tidak wajib membuat paket governance, kontrak implementasi, atau handoff banyak agent untuk perubahan rutin. ChatGPT dapat menjadi penulis kode langsung ketika terhubung dan mendapat izin.
+
+Tetap pertahankan pemeriksaan CI, keamanan data, batas antar-tenant, migrasi, dan pengamanan transaksi. Perubahan berisiko tinggi serta operasi production memerlukan verifikasi/izin yang sesuai. Dokumen dan alur multi-agent lama tetap tersedia sebagai referensi, bukan syarat untuk memulai fitur biasa.
+
+**Arah pembayaran awal:** gunakan QRIS merchant yang sudah ada dengan verifikasi penerimaan pembayaran secara manual oleh admin; tidak ada auto-payment confirmation. Mekanisme tiga digit unik hanya alat bantu identifikasi dan perlu dipastikan patuh pada aturan QRIS sebelum diterapkan.
+
 ## Menjalankan dan memeriksa
 
 ```sh

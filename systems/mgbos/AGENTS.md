@@ -1,53 +1,33 @@
-# MultiGraph Business OS Engineering Rules
+# MGBOS / TeeStock — Engineering Instructions
 
-Read README, the source index in docs, the relevant specification, state machine, migration and tests before editing.
-MGBOS is a TypeScript modular monolith in a pnpm monorepo. PostgreSQL/Supabase is the business source of truth.
-Next.js is the application layer; packages/domain owns business rules without framework or database imports.
-Use package public exports across boundaries. No cross-package relative imports, circular dependencies or broad generic services.
-Use strict TypeScript. Narrow unknown values; do not bypass checks with any.
+Default workflow: [BisnisHub Lean Feature Delivery](../../docs/engineering/lean-feature-delivery.md). Implement one small, usable feature directly when authorized; no mandatory ATLAS/ORION/Antigravity handoff, planner/auditor role rotation, change package or per-feature documentation packet.
 
-## Business integrity
+## Understand the relevant code
 
-Critical mutations go through authenticated, authorized and validated server commands.
-Never update order, quote, payment, production, QC or shipment state directly from UI or automation.
-Canonical state-machine semantics come from `docs/architecture/business-state-machines.md`, not UI labels or historical/session notes; consult other dedicated canonical MGBOS specifications for their respective semantics and constraints.
-Sent quote versions and historical transaction snapshots are immutable.
-Money uses integer representation, never floating-point arithmetic.
-Business events use the canonical envelope; critical state changes eventually commit with transactional outbox and audit.
-External integrations must be idempotent. AI output is not authoritative business data.
-n8n is orchestration only. No AI provider calls inside domain code.
+MGBOS is a TypeScript modular monolith in `systems/mgbos/`, using pnpm, Next.js and PostgreSQL/Supabase. TeeStock storefront lives in `apps/teestock/`. Read only the relevant existing source, tests, interface and business contracts for the feature. Preserve module boundaries and use package public exports. Keep TypeScript strict; avoid `any`, unneeded dependencies and broad refactors.
 
-## Database and secrets
+## Business integrity — mandatory
 
-Every schema change needs a new migration. Never edit applied migrations or generated database types.
-Use only this workspace's local Supabase commands. Never traverse the legacy Supabase link.
-No remote reset, production schema modification, hard-delete of history or production seeding.
-Use local/test credentials in PR CI; never expose service credentials to browsers.
-Local reset is destructive to this workspace's local data: use it only for reproducibility checks or an explicit local reset request.
-Destructive service-role E2E/concurrency scripts are local-only. They require the explicit one-shot MGBOS_DESTRUCTIVE_LOCAL_E2E=1 acknowledgement. Never bypass the target guard, inject hosted Supabase credentials, or reinterpret a failed guard as permission to run remotely.
+- PostgreSQL/Supabase is business source of truth. Server-side business commands validate authenticated authorization; never trust UI or AI output for important state changes.
+- Keep tenant/organization isolation and RLS. A merchant or customer must not access or mutate unrelated orders or brands.
+- Orders, quotes, invoices/payments, production, QC and shipment must respect existing state transitions and historical immutability. Do not bypass server commands with direct UI writes.
+- Money is represented as integers. Preserve duplicate/idempotency protections, transactional integrity and an audit trail for consequential changes.
+- Initial QRIS checkout direction: existing merchant QRIS and **manual admin confirmation only**. A unique three-digit suffix or uploaded proof is **not** confirmation. Any adjustment of amount requires separate validation against merchant policy, collisions, expiry and margin. Do not integrate gateway/webhook or automate payment confirmation unless explicitly requested.
+- Migrations are additive/versioned as needed; never rewrite applied migrations or generated schema types by hand.
 
-## Scope and verification
+## Environment and safety — mandatory
 
-The historical MGBOS-001 scope was skeletons, tooling, local database infrastructure, docs and CI only; business tables and authentication business flows were excluded from that slice.
-For later slices, read the applicable canonical specification and `docs/engineering/mgbos-*-report.md` before choosing scope. Preserve existing later-slice work; its presence is not acceptance evidence.
-Do not introduce ORM, microservices, Redis, AI SDK or production n8n workflows without an explicit requirement and applicable architecture decision.
-Do not copy the legacy prototype's simulated identity, brand switcher or premature module menus.
-Do not start MGBOS-002 until MGBOS-001 checks, including local database and CI, are verified.
-This foundation gate remains an acceptance requirement for subsequent work. When a prerequisite is unverified, report the missing evidence and limit work to the authorized audit, maintenance or gate remediation; do not infer a waiver from existing code or README status.
-Distinguish implementation, tests defined, tests executed, hosted CI and deployment. Reports record prior evidence; verify current results before claiming a gate passes.
-For application changes, run pnpm check, production smoke tests and applicable database checks. For instruction-only changes, validate scope, references and instruction consistency; do not reset databases or run application deployments for documentation maintenance. PR titles must use `type(scope): description`, and runtime PRs must remain system-scoped under `systems/mgbos/**`. Preflight with `node scripts/governance/check-pr-scope.mjs <base-sha> <head-sha>` from root and `pnpm check` from `systems/mgbos/`. Report failures honestly.
-Critical business rules require tests. Preserve unrelated work. No broad refactors.
-Architecture changes require an ADR and explicit scope. Add dependencies only for a concrete requirement.
+- Use only local/test Supabase credentials under this workspace. Do not traverse legacy root Supabase.
+- No destructive remote DB commands, production schema changes, seeding, deletion of history or use of privileged credentials in client code.
+- Local destructive service-role E2E requires the existing explicit `MGBOS_DESTRUCTIVE_LOCAL_E2E=1` guard and a verified disposable local target. Never bypass guards.
+- Production deploys, live payments and customer-data mutation require separate explicit authorization; code approval alone does not grant it.
 
-## Maintenance and operational readiness
+## Verification scaled to the change
 
-Follow [maintenance policy](docs/engineering/maintenance-policy.md) for all changes and its linked runbooks for release, backup and incident work. These documents do not authorize remote actions or override the local-only database boundary.
-For transaction changes, test authorization, organization isolation, invalid states, money boundaries, duplicate requests, failure atomicity and concurrency where relevant. Test the application command boundary, not only domain functions or SQL.
-Keep implementation, local verification, hosted CI, deployment and operational acceptance as separate evidence states tied to a revision. Fix blockers affecting money, access, data integrity or recovery before expanding the affected flow.
-Before operational use, require verified environment isolation, backup and restore evidence, monitoring ownership and a recovery plan. Written procedures do not prove services are configured.
-Update affected module status and runbooks with each change. Documentation-only maintenance requires link, consistency and focused diff checks, not database mutations or deployments.
+- **Normal UI/feature:** relevant typecheck, targeted tests, build/smoke as applicable, mobile/desktop UX and accessibility where applicable.
+- **Sensitive behavior:** additionally test authorization, organization isolation, invalid states, duplicate requests, money boundaries, failure atomicity and concurrency where applicable.
+- **Migrations/security/production:** verify appropriate migration, security and recovery gates. Do not weaken CI or existing security checks.
+- Clearly distinguish `tested`, `not run`, `merged` and `deployed`. Never claim unverified runtime behavior.
+- Keep changed paths focused; follow GitHub branch protection and PR gates where applicable. Update product docs/runbooks only when behavior, operation or architecture materially changes.
 
-## Agent workflow and governance
-
-Use [agent-system workflow](docs/engineering/agent-system/workflow.md), [role contracts](docs/engineering/agent-system/roles.md), [risk classes](docs/engineering/agent-system/risk-classification.md) and [evidence model](docs/engineering/agent-system/evidence-model.md) for planning, implementation, audit, QA and release preparation.
-Apply the highest relevant risk class. Role changes do not expand permissions; self-review is not independent review. Preserve current Foundation checks and use the separate governance/migration guards in [release gates](docs/engineering/agent-system/release-gates.md). The guards neither authorize remote actions nor replace application/database acceptance evidence.
+Older [agent workflow](docs/engineering/agent-system/workflow.md), [risk documentation](docs/engineering/agent-system/risk-classification.md) and [release gates](docs/engineering/agent-system/release-gates.md) remain technical references and apply to **explicitly resumed legacy packages or elevated work where relevant**; they are not mandatory paperwork for ordinary new feature delivery.
