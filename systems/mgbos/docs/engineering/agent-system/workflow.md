@@ -1,6 +1,3 @@
-
-> **Current default (2026-11-11):** New MGBOS/TeeStock feature work follows [Lean Feature Delivery](../../../../../docs/engineering/lean-feature-delivery.md). The planner → engineer → auditor → QA → release sequence below is a **legacy/elevated-work reference**, not compulsory for routine feature edits. Maintain business/authorization/payment integrity and applicable technical checks.
-
 # Workflow
 
 1. Audit the repository, branch, dirty files and target workspace. MGBOS lives in `systems/mgbos/`; archived `archive/mgbos-vite-prototype/` is legacy Vite and root `supabase` is an obsolete legacy TeeStock junction that must not be traversed. Preserve concurrent work. Use an isolated branch/worktree for implementation; do not share a mutable checkout across writers.
