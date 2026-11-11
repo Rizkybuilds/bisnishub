@@ -1,5 +1,4 @@
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
   addToCart,
@@ -102,15 +101,20 @@ describe('TeeStock F03 guest checkout contract', () => {
 
 describe('TeeStock F03 database migration structure', () => {
   it('keeps one transaction, privileged checkout RPC and both guards', () => {
-    const migration = readFileSync(
-      fileURLToPath(new URL('../supabase/migrations/20261111070000_teestock_guest_checkout_f03.sql', import.meta.url)),
-      'utf8',
+    const migrationPath = new URL(
+      '../supabase/migrations/20261111070000_teestock_guest_checkout_f03.sql',
+      import.meta.url,
     );
+    const migration = readFileSync(migrationPath, 'utf8');
     const count = (needle: string) => migration.split(needle).length - 1;
     expect(count('create function app.create_teestock_guest_order(')).toBe(1);
-    expect(count('create function app.teestock_guest_order_payment_guard()')).toBe(1);
-    expect(count('create function app.teestock_guest_production_guard()')).toBe(1);
-    expect(count('\ncommit;')).toBe(1);
+    expect(
+      count('create function app.teestock_guest_order_payment_guard()'),
+    ).toBe(1);
+    expect(
+      count('create function app.teestock_guest_production_guard()'),
+    ).toBe(1);
+    expect(count('\\ncommit;')).toBe(1);
     expect(migration.trimEnd().endsWith('commit;')).toBe(true);
   });
 });
