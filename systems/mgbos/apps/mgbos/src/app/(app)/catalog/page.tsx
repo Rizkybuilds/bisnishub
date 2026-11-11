@@ -4,7 +4,8 @@ import './catalog.css';
 
 export const metadata = {
   title: 'Product Catalog — TeeStock / MGBOS',
-  description: 'Kelola produk, varian, file mockup, dan status publikasi TeeStock.',
+  description:
+    'Kelola produk, varian, file mockup, dan status publikasi TeeStock.',
 };
 
 export default async function CatalogAdminPage() {
