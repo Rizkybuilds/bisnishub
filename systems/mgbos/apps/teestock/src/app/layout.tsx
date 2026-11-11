@@ -26,11 +26,11 @@ export default function RootLayout({
         </a>
         <DemoCartProvider>
           <LiveCartProvider>
-          <Header />
-          <main id="main-content" className="site-main" tabIndex={-1}>
-            {children}
-          </main>
-          <Footer />
+            <Header />
+            <main id="main-content" className="site-main" tabIndex={-1}>
+              {children}
+            </main>
+            <Footer />
           </LiveCartProvider>
         </DemoCartProvider>
       </body>
