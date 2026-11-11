@@ -8,6 +8,8 @@
   const pages=[
     {id:"menu",name:"Menu & Resep",short:"Menu",icon:"⌕",count:30},
     {id:"prep",name:"Persiapan Stok",short:"Persiapan",icon:"◫",count:D.prep.length},
+    {id:"belanja",name:"Belanja",short:"Belanja",icon:"▣",count:null},
+    {id:"keuangan",name:"Keuangan",short:"Keuangan",icon:"▤",count:null},
     {id:"sop",name:"SOP Harian",short:"SOP",icon:"☷",count:D.ops.length},
     {id:"favorites",name:"Favorit",short:"Favorit",icon:"☆",count:null}
   ];
@@ -25,7 +27,7 @@
   function notify(message){toast.textContent=message;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),2600)}
   function renderNav(){
     document.getElementById("side-nav").innerHTML=pages.map(p=>'<button type="button" class="side-link '+(state.page===p.id?"is-active":"")+'" data-nav="'+p.id+'"><span class="nav-glyph" aria-hidden="true">'+p.icon+'</span><span>'+p.name+'</span>'+(p.count!==null?'<span class="nav-count">'+p.count+'</span>':"")+'</button>').join("");
-    document.getElementById("bottom-nav").innerHTML=pages.map(p=>'<button type="button" class="bottom-item '+(state.page===p.id?"is-active":"")+'" data-nav="'+p.id+'"><span class="nav-glyph" aria-hidden="true">'+p.icon+'</span><span>'+p.short+'</span></button>').join("");
+    document.getElementById("bottom-nav").innerHTML=pages.filter(p=>p.id!=="favorites").map(p=>'<button type="button" class="bottom-item '+(state.page===p.id?"is-active":"")+'" data-nav="'+p.id+'"><span class="nav-glyph" aria-hidden="true">'+p.icon+'</span><span>'+p.short+'</span></button>').join("");
     document.getElementById("breadcrumb-name").textContent=pages.find(p=>p.id===state.page)?.name||"Menu & Resep";
   }
   function dataForPage(){
@@ -70,7 +72,12 @@
     return ["Mau buat menu apa hari ini?","Cari resep lengkap, takaran bahan, ukuran cup, dan langkah yang bisa diikuti satu per satu."];
   }
   function renderPage(){
-    renderNav();const t=pageText();
+    renderNav();
+    if(state.page==="belanja"||state.page==="keuangan"){
+      if(window.LT_FINANCE){window.LT_FINANCE.render(main,state.page);}else{main.textContent="Modul keuangan gagal dimuat. Muat ulang halaman."}
+      return;
+    }
+    const t=pageText();
     main.innerHTML='<section class="hero"><div><div class="eyebrow">LITTLE TREAT / KITCHEN STATION</div><h1>'+t[0]+'</h1><p>'+t[1]+'</p></div><div class="hero-visual" aria-hidden="true">'+(state.page==="menu"?"🍽️":state.page==="prep"?"🥣":state.page==="sop"?"📋":"⭐")+'</div></section>'+
       '<div class="stats"><div class="stat"><small>Menu utama</small><strong>30</strong><span>resep</span></div><div class="stat"><small>Persiapan stok</small><strong>'+D.prep.length+'</strong><span>panduan</span></div><div class="stat"><small>SOP operasional</small><strong>'+D.ops.length+'</strong><span>checklist</span></div></div>'+
       '<div class="controls"><div class="search"><span class="search-icon" aria-hidden="true">⌕</span><input type="search" id="search-menu" autocomplete="off" spellcheck="false" placeholder="Cari menu, bahan, atau kode resep…" aria-label="Cari menu atau bahan" value="'+escapeHTML(state.q)+'"/><button type="button" class="clear-search" data-clear aria-label="Bersihkan pencarian">×</button></div><span class="search-hint">Cari cepat</span></div>'+
