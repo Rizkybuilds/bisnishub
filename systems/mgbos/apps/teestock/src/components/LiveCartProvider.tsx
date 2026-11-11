@@ -46,15 +46,18 @@ export function LiveCartProvider({ children }: { children: ReactNode }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    try {
-      setLines(
-        normalizeCart(JSON.parse(window.localStorage.getItem(KEY) || '[]')),
-      );
-    } catch {
-      setLines([]);
-    } finally {
-      setLoaded(true);
-    }
+    const frame = window.requestAnimationFrame(() => {
+      try {
+        setLines(
+          normalizeCart(JSON.parse(window.localStorage.getItem(KEY) || '[]')),
+        );
+      } catch {
+        setLines([]);
+      } finally {
+        setLoaded(true);
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, []);
   useEffect(() => {
     if (!loaded) return;
