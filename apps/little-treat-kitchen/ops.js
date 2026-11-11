@@ -540,6 +540,17 @@ document.addEventListener("submit",async e=>{
 document.addEventListener("click",async e=>{
  const tab=e.target.closest("[data-tab]");
  if(tab){if(s.role!=="owner"&&!TABS.find(x=>x.id===tab.dataset.tab)?.staff)return;s.tab=tab.dataset.tab;s.err="";s.editFinance=null;render();return}
+ const filter=e.target.closest("[data-order-filter]");
+ if(filter){
+  s.orderFilter=filter.dataset.orderFilter;
+  document.querySelectorAll(".queue-filter").forEach(b=>{
+    const selected=b.dataset.orderFilter===s.orderFilter;
+    b.classList.toggle("active",selected);
+    b.setAttribute("aria-pressed",String(selected));
+  });
+  const list=document.getElementById("ops-order-results");if(list)list.innerHTML=ordersList();
+  return;
+ }
  const b=e.target.closest("[data-action]");
  if(b){
   const action=b.dataset.action;
@@ -594,12 +605,28 @@ document.addEventListener("click",async e=>{
   await transact(()=>rpc("lt_receive_purchase",{p_purchase_id:receive.dataset.receive,p_received_on:dateToday()}));return}
 });
 document.addEventListener("input",e=>{
- if(e.target.id==="ops-recipe-search"){s.recipeSearch=e.target.value;const next=recipesView();const main=document.querySelector("#ops-main");
-   if(main){const current=main.querySelector(".panel");if(current)current.outerHTML=next}}
+ if(e.target.id==="ops-recipe-search"){
+  s.recipeSearch=e.target.value;
+  updateRecipeResults();
+ }
 });
 document.addEventListener("change",e=>{
- if(e.target.id==="ops-cup"){s.recipeSize=e.target.value;const id=modalBody.querySelector("h2")?.textContent;const recipe=DATA.all.find(x=>x.name===id);if(recipe)showRecipe(recipe.id)}
- if(e.target.id==="ops-recipe-category"){s.recipeCategory=e.target.value;render()}
+ if(e.target.id==="ops-cup"){
+  s.recipeSize=e.target.value;
+  if(s.activeRecipeId)showRecipe(s.activeRecipeId);
+ }
+ if(e.target.id==="ops-recipe-category"){
+  s.recipeCategory=e.target.value;
+  updateRecipeResults();
+ }
+ if(e.target.matches("[data-recipe-step]")){
+  const checked=modalBody.querySelectorAll("[data-recipe-step]:checked").length;
+  const total=modalBody.querySelectorAll("[data-recipe-step]").length;
+  e.target.closest("li")?.classList.toggle("completed",e.target.checked);
+  const p=modalBody.querySelector("#recipe-progress");
+  if(p)p.textContent=checked+" / "+total+" selesai";
+  if(checked===total&&total>0)notify("Checklist selesai. Periksa kualitas sebelum menyerahkan pesanan.");
+ }
 });
 modal.addEventListener("click",e=>{if(e.target===modal)modal.close()});
 init();
