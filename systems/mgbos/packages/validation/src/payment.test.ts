@@ -82,21 +82,29 @@ describe('TeeStock F04 owner-verified manual QRIS', () => {
   });
 
   it('blocks missing verification, missing reference, and fake amounts', () => {
-    expect(confirmTeestockQrisSchema.safeParse({
-      ...valid,
-      verifiedBankStatement: false,
-    }).success).toBe(false);
-    expect(confirmTeestockQrisSchema.safeParse({
-      ...valid,
-      referenceNumber: 'abc',
-    }).success).toBe(false);
-    expect(confirmTeestockQrisSchema.safeParse({
-      ...valid,
-      amount: '0',
-    }).success).toBe(false);
-    expect(confirmTeestockQrisSchema.safeParse({
-      ...valid,
-      amount: '175000.99',
-    }).success).toBe(false);
+    expect(
+      confirmTeestockQrisSchema.safeParse({
+        ...valid,
+        verifiedBankStatement: false,
+      }).success,
+    ).toBe(false);
+    expect(
+      confirmTeestockQrisSchema.safeParse({
+        ...valid,
+        referenceNumber: 'abc',
+      }).success,
+    ).toBe(false);
+    expect(
+      confirmTeestockQrisSchema.safeParse({
+        ...valid,
+        amount: '0',
+      }).success,
+    ).toBe(false);
+    expect(
+      confirmTeestockQrisSchema.safeParse({
+        ...valid,
+        amount: '175000.99',
+      }).success,
+    ).toBe(false);
   });
 });
