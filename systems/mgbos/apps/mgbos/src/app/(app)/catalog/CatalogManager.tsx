@@ -92,29 +92,41 @@ export function CatalogManager({
   const updateDetail = <K extends keyof Editor['details']>(
     field: K,
     value: Editor['details'][K],
-  ) => setEditor((previous) => ({
-    ...previous,
-    details: { ...previous.details, [field]: value },
-  }));
+  ) =>
+    setEditor((previous) => ({
+      ...previous,
+      details: { ...previous.details, [field]: value },
+    }));
   const updateMeasurement = (
     size: CatalogVariantInput['size'],
     field: 'widthCm' | 'lengthCm',
     value: number,
-  ) => setEditor((previous) => {
-    const original = previous.details.sizeChart.find((row) => row.size === size);
-    const updated = { size, widthCm: 0, lengthCm: 0, ...original, [field]: value };
-    return {
-      ...previous,
-      details: {
-        ...previous.details,
-        sizeChart: [
-          ...previous.details.sizeChart.filter((row) => row.size !== size),
-          updated,
-        ],
-      },
-    };
-  });
-  const offeredSizes = [...new Set(editor.variants.map((variant) => variant.size))];
+  ) =>
+    setEditor((previous) => {
+      const original = previous.details.sizeChart.find(
+        (row) => row.size === size,
+      );
+      const updated = {
+        size,
+        widthCm: 0,
+        lengthCm: 0,
+        ...original,
+        [field]: value,
+      };
+      return {
+        ...previous,
+        details: {
+          ...previous.details,
+          sizeChart: [
+            ...previous.details.sizeChart.filter((row) => row.size !== size),
+            updated,
+          ],
+        },
+      };
+    });
+  const offeredSizes = [
+    ...new Set(editor.variants.map((variant) => variant.size)),
+  ];
 
   const imageUrl = editor.mockupPath
     ? storageBase +
@@ -131,8 +143,12 @@ export function CatalogManager({
     editor.details.care.trim().length >= 10 &&
     editor.details.productionDays >= 1 &&
     offeredSizes.every((size) => {
-      const measurement = editor.details.sizeChart.find((row) => row.size === size);
-      return !!measurement && measurement.widthCm >= 20 && measurement.lengthCm >= 20;
+      const measurement = editor.details.sizeChart.find(
+        (row) => row.size === size,
+      );
+      return (
+        !!measurement && measurement.widthCm >= 20 && measurement.lengthCm >= 20
+      );
     }) &&
     editor.variants.length > 0 &&
     editor.variants.every(
@@ -513,7 +529,8 @@ export function CatalogManager({
 
           <h3>03 / Spesifikasi produk dan panduan ukuran</h3>
           <p className="ts-muted">
-            Isi berdasarkan sampel fisik yang sudah diperiksa, bukan asumsi. Ukuran dalam sentimeter; lebar dada diukur saat kaos dibentangkan.
+            Isi berdasarkan sampel fisik yang sudah diperiksa, bukan asumsi.
+            Ukuran dalam sentimeter; lebar dada diukur saat kaos dibentangkan.
           </p>
           <div className="ts-fields ts-fields-two ts-product-specs">
             <label>
@@ -522,7 +539,9 @@ export function CatalogManager({
                 value={editor.details.material}
                 maxLength={160}
                 placeholder="Contoh: 100% cotton combed 24s (setelah diverifikasi)"
-                onChange={(event) => updateDetail('material', event.target.value)}
+                onChange={(event) =>
+                  updateDetail('material', event.target.value)
+                }
               />
             </label>
             <label>
@@ -561,7 +580,9 @@ export function CatalogManager({
           <div className="ts-size-chart-editor">
             <h3>Tabel ukuran (hasil pengukuran sampel)</h3>
             {offeredSizes.map((size) => {
-              const current = editor.details.sizeChart.find((row) => row.size === size);
+              const current = editor.details.sizeChart.find(
+                (row) => row.size === size,
+              );
               return (
                 <div className="ts-size-row" key={size}>
                   <strong>{size}</strong>
@@ -574,7 +595,11 @@ export function CatalogManager({
                       step={0.5}
                       value={current?.widthCm || ''}
                       onChange={(event) =>
-                        updateMeasurement(size, 'widthCm', Number(event.target.value))
+                        updateMeasurement(
+                          size,
+                          'widthCm',
+                          Number(event.target.value),
+                        )
                       }
                     />
                   </label>
@@ -587,7 +612,11 @@ export function CatalogManager({
                       step={0.5}
                       value={current?.lengthCm || ''}
                       onChange={(event) =>
-                        updateMeasurement(size, 'lengthCm', Number(event.target.value))
+                        updateMeasurement(
+                          size,
+                          'lengthCm',
+                          Number(event.target.value),
+                        )
                       }
                     />
                   </label>
