@@ -56,7 +56,7 @@ test('unsized coffee templates are hidden from the operator menu',()=>{
   {id:'banana',sku:'P01',recipe_key:'P01',category:'banana',name:'Original Crispy'}
  ];
  const list=C.sellable(products);assert.equal(list.length,5);
- assert.deepEqual(C.groups(products).map(g=>g.key),['K01','P01']);
+ assert.deepEqual(Array.from(C.groups(products),g=>g.key),['K01','P01']);
  assert.deepEqual(Array.from(C.groups(products)[0].items.map(p=>C.sizeOf(p))),[12,14,16,22]);
  assert.equal(C.groups(products,'latte').length,1);
  assert.equal(C.groups(products,'','banana').length,1);
