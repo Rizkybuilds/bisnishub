@@ -205,33 +205,74 @@ function orderDetails(order){
  const lines=s.data.items.filter(x=>x.order_id===order.id);
  return lines.map(x=>esc(productName(x.product_id))+" × "+x.qty).join(" · ")||"Tidak ada item";
 }
+function filteredOrders(){
+ const matches=o=>s.orderFilter==="all" ||
+   (s.orderFilter==="active"&&["new","preparing","ready"].includes(o.status)) ||
+   (s.orderFilter==="ready"&&o.status==="ready") ||
+   (s.orderFilter==="completed"&&o.status==="handed_off");
+ const priority={ready:0,preparing:1,new:2,handed_off:3,cancelled:4};
+ return s.data.orders.filter(matches).slice().sort((a,b)=>{
+   if(s.orderFilter==="active")return priority[a.status]-priority[b.status]||new Date(a.created_at)-new Date(b.created_at);
+   return new Date(b.created_at)-new Date(a.created_at);
+ }).slice(0,80);
+}
+function ordersList(){
+ const orders=filteredOrders();
+ if(!orders.length)return '<div class="empty">'+
+  '<h3>'+({active:"Antrean masih kosong",ready:"Belum ada pesanan siap",completed:"Belum ada pesanan selesai",all:"Belum ada pesanan"})[s.orderFilter]+'</h3>'+
+  '<p>Pesanan akan muncul di sini setelah disimpan atau setelah statusnya berubah. Perbarui data kalau ada pesanan dari perangkat lain.</p></div>';
+ return orders.map(o=>{
+  const buttons=o.status==="new"?'<button data-transition="start" data-id="'+o.id+'" class="btn status-action">'+icon("arrow")+' Mulai buat</button><button data-transition="cancel" data-id="'+o.id+'" class="btn warn">Batalkan</button>':
+   o.status==="preparing"?'<button data-transition="ready" data-id="'+o.id+'" class="btn status-action">QC selesai · Siap '+icon("arrow")+'</button><button data-transition="cancel" data-id="'+o.id+'" class="btn warn">Batalkan</button>':
+   o.status==="ready"?'<button data-transition="handoff" data-id="'+o.id+'" class="btn status-action">Serahkan ke driver '+icon("arrow")+'</button>':"";
+  const time=new Date(o.created_at).toLocaleString("id-ID",{timeZone:"Asia/Jakarta",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+  return '<article class="item order-card status-'+esc(o.status)+'">'+
+   '<div class="row"><div class="order-identity"><strong>'+esc(o.order_ref)+'</strong><small>'+esc(o.channel)+' · '+esc(time)+' WIB</small></div>'+statusBadge(o.status)+'</div>'+
+   '<div class="order-products">'+esc(orderDetails(o))+'</div>'+
+   (o.note?'<div class="order-note">Catatan pelanggan: '+esc(o.note)+'</div>':"")+
+   (buttons?'<div class="actions">'+buttons+'</div>':"")+'</article>';
+ }).join("");
+}
 function ordersView(){
  const counts=Object.fromEntries(["new","preparing","ready","handed_off"].map(k=>[k,s.data.orders.filter(o=>o.status===k).length]));
+ const activeCount=counts.new+counts.preparing+counts.ready;
  const available=s.data.products.filter(p=>p.active&&Number(p.price)>0);
+ const needsCatalog=s.role==="owner"&&s.data.products.length===0;
+ const onboard=needsCatalog?
+ '<div class="notice" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px">'+
+ '<span><b>Mulai dari katalog.</b> Impor 30 menu, isi harga serta komposisi HPP, lalu aktifkan menu yang sudah siap dijual.</span>'+
+ '<button type="button" class="btn secondary" data-tab="costing">Siapkan menu '+icon("arrow")+'</button></div>':"";
  const form=available.length?'<div class="form-grid">'+
- field("Channel",selectInput("channel",channelOpts,'id="o-channel"'))+
- field("Kode pesanan",inp("order_ref","Misal GF-1024","text",'required maxlength="80"'))+
- field("Menu",selectInput("product",available.map(p=>[p.id,p.name+" — "+fmt(p.price)])))+
- field("Jumlah",inp("qty","1","number",'value="1" min="1" max="100" step="1" required'))+
- field("Catatan",'<textarea name="note" rows="2" maxlength="500" placeholder="Catatan pelanggan..."></textarea>')+
- '<div class="actions"><button class="btn" type="button" data-action="add-cart">+ Tambah menu</button></div></div>':
- '<div class="notice">Belum ada menu aktif dengan harga. Pemilik perlu mengaktifkan katalog, harga, bahan, dan resep HPP di tab HPP & Menu.</div>';
- const cartRows=s.cart.map((r,i)=>'<div class="row item"><div><strong>'+esc(productName(r.product_id))+'</strong><br/><small>'+r.qty+' pcs</small></div><button type="button" class="btn warn" data-remove-cart="'+i+'">Hapus</button></div>').join("");
- const orderForm=panel("Pesanan baru","Input manual dari aplikasi delivery atau pesanan langsung. Tidak menarik/membuat transaksi pembayaran otomatis.",
- '<form id="ops-new-order">'+form+'</form>'+
- '<div class="stack" style="margin-top:10px">'+cartRows+'</div>'+
- '<div class="actions"><button class="btn" type="button" data-action="submit-order" '+(!s.cart.length||s.busy?"disabled":"")+'>Simpan pesanan ('+s.cart.length+' menu)</button></div>');
- const orders=s.data.orders.slice(0,80).map(o=>{
-  const buttons=o.status==="new"?'<button data-transition="start" data-id="'+o.id+'" class="btn">Mulai</button><button data-transition="cancel" data-id="'+o.id+'" class="btn warn">Batalkan</button>':
-   o.status==="preparing"?'<button data-transition="ready" data-id="'+o.id+'" class="btn">QC selesai → Siap</button><button data-transition="cancel" data-id="'+o.id+'" class="btn warn">Batalkan</button>':
-   o.status==="ready"?'<button data-transition="handoff" data-id="'+o.id+'" class="btn">Sudah diserahkan</button>':"";
-  return '<div class="item"><div class="row"><div><strong>'+esc(o.order_ref)+'</strong> · <small>'+esc(o.channel)+' · '+new Date(o.created_at).toLocaleString("id-ID")+'</small></div>'+statusBadge(o.status)+'</div>'+
-   '<p class="muted">'+orderDetails(o)+'</p>'+(o.note?'<p class="muted">Catatan: '+esc(o.note)+'</p>':"")+
-   '<div class="actions">'+buttons+'</div></div>';
- }).join("");
- return '<div class="metrics">'+stat("Pesanan baru",counts.new)+stat("Sedang dibuat",counts.preparing)+stat("Siap driver",counts.ready)+stat("Selesai (terlihat)",counts.handed_off)+'</div>'+
- '<div class="two-col">'+orderForm+panel("Antrean & riwayat","Status pesanan diubah manual setelah pekerjaan benar-benar selesai.",
- '<div class="stack">'+(orders||'<div class="empty">Belum ada pesanan.</div>')+'</div>')+'</div>';
+ field("Channel penjualan",selectInput("channel",channelOpts,'id="o-channel"'))+
+ field("Kode pesanan",inp("order_ref","Contoh GF-1024","text",'required maxlength="80"'))+
+ field("Pilih menu",selectInput("product",available.map(p=>[p.id,p.name+" · "+fmt(p.price)])))+
+ field("Jumlah porsi",inp("qty","1","number",'value="1" min="1" max="100" step="1" required'))+
+ '<div class="full-row">'+field("Catatan khusus",'<textarea name="note" rows="2" maxlength="500" placeholder="Tanpa saus / catatan driver atau pelanggan"></textarea>')+'</div>'+
+ '<div class="full-row actions" style="margin-top:3px"><button class="btn secondary" type="button" data-action="add-cart">+ Tambahkan ke pesanan</button></div></div>':
+ '<div class="empty"><h3>Belum ada menu yang dapat dijual</h3><p>'+(s.role==="owner"?"Masuk ke HPP & Menu untuk mengatur harga, komposisi bahan, dan mengaktifkan menu.":"Minta pemilik menyiapkan katalog dan harga sebelum menerima pesanan.")+'</p>'+
+ (s.role==="owner"?'<button type="button" class="btn secondary" data-tab="costing">Buka HPP & Menu '+icon("arrow")+'</button>':"")+'</div>';
+ const cartRows=s.cart.map((r,i)=>'<div class="row item"><div><strong>'+esc(productName(r.product_id))+'</strong><br/><small>'+r.qty+' porsi</small></div>'+
+ '<button type="button" class="btn warn" data-remove-cart="'+i+'" aria-label="Hapus '+esc(productName(r.product_id))+' dari pesanan">Hapus</button></div>').join("");
+ const cartTotal=s.cart.reduce((a,r)=>{
+   const p=s.data.products.find(x=>x.id===r.product_id);return a+(p?Number(p.price)*r.qty:0);
+ },0);
+ const cartHead=s.cart.length?'<div class="row" style="margin-top:20px"><strong style="font-size:13px">Ringkasan pesanan</strong><span class="badge">'+s.cart.reduce((n,r)=>n+r.qty,0)+' porsi</span></div>':"";
+ const cartFoot=s.cart.length?'<div class="row" style="margin:12px 0 0;border-top:1px solid #eee5dc;padding-top:14px"><span class="muted">Estimasi dari harga katalog</span><strong>'+fmt(cartTotal)+'</strong></div>':"";
+ const formPanel=panel("Pesanan baru","Masukkan pesanan dari aplikasi delivery atau penjualan langsung. Pastikan kode pesanan tidak tertukar.",
+ '<form id="ops-new-order">'+form+'</form>'+cartHead+
+ '<div class="stack" style="margin-top:12px">'+cartRows+'</div>'+cartFoot+
+ '<div class="actions"><button class="btn full" type="button" data-action="submit-order" '+(!s.cart.length||s.busy?"disabled":"")+'>Simpan pesanan ('+s.cart.length+' jenis menu) '+icon("arrow")+'</button></div>');
+ const filters=[
+  ["active","Aktif ("+activeCount+")"],["ready","Siap ("+counts.ready+")"],
+  ["completed","Selesai"],["all","Semua"]
+ ];
+ const queue=panel("Antrean dapur","Dahulukan pesanan siap antar, kemudian yang sedang dibuat dan yang baru masuk.",
+ '<div class="queue-controls" role="group" aria-label="Filter status pesanan">'+filters.map(([id,label])=>
+ '<button type="button" class="queue-filter '+(s.orderFilter===id?"active":"")+'" data-order-filter="'+id+'" aria-pressed="'+(s.orderFilter===id)+'">'+esc(label)+'</button>').join("")+'</div>'+
+ '<div class="queue-list" id="ops-order-results" aria-live="polite">'+ordersList()+'</div>');
+ return onboard+'<div class="metrics">'+stat("Pesanan baru",counts.new,"Menunggu dibuat")+stat("Sedang dibuat",counts.preparing,"Dalam proses dapur")+
+ stat("Siap diserahkan",counts.ready,"Menunggu driver")+stat("Selesai (terlihat)",counts.handed_off,"Dari riwayat yang dimuat")+'</div>'+
+ '<div class="two-col">'+formPanel+queue+'</div>';
 }
 function recipesView(){
  const items=DATA.all.filter(x=>["coffee","banana","dimsum"].includes(x.category)&&
