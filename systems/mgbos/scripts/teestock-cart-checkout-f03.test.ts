@@ -60,7 +60,7 @@ describe('TeeStock F03 guest checkout contract', () => {
   it('validates a single pickup order with server-price expectations', () => {
     const result = validateGuestCheckout(request);
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value.items[0].expectedPriceIdr).toBe(169000);
+    if (result.ok) expect(result.value.items[0]?.expectedPriceIdr).toBe(169000);
   });
 
   it('rejects duplicate SKUs, fake customer amounts, and quantity abuse', () => {
