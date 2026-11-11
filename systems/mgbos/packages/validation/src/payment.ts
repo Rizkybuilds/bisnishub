@@ -70,3 +70,25 @@ export const revertPaymentSchema = z.object({
 });
 
 export type RevertPaymentInput = z.infer<typeof revertPaymentSchema>;
+
+/** Owner-confirmed QRIS settlement. The server obtains amount and order identity from the DB. */
+export const confirmTeestockQrisSchema = z.object({
+  invoiceId: z.string().uuid('ID invoice tidak valid'),
+  amount: z.string().regex(/^[1-9][0-9]{0,9}$/, 'Nominal QRIS tidak valid'),
+  merchantName: z.string().trim().min(2).max(100),
+  referenceNumber: z
+    .string()
+    .trim()
+    .min(6)
+    .max(100)
+    .regex(
+      /^[A-Za-z0-9][A-Za-z0-9./:_-]*$/,
+      'Referensi mutasi QRIS tidak valid',
+    ),
+  verifiedBankStatement: z.literal(true, {
+    message: 'Wajib periksa mutasi masuk di aplikasi merchant terlebih dahulu',
+  }),
+});
+export type ConfirmTeestockQrisInput = z.infer<
+  typeof confirmTeestockQrisSchema
+>;

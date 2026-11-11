@@ -11,11 +11,13 @@ import {
 } from '../data';
 import { IssueInvoiceButton, VoidInvoiceButton } from '../InvoiceActionButtons';
 import { RecordPaymentModal } from '../../payments/components';
+import { ConfirmTeestockQrisModal } from '../../payments/ConfirmTeestockQrisModal';
 
 interface InvoiceWithOrder extends InvoiceRow {
   orders?: {
     id: string;
     order_number: string;
+    request_payload?: { source?: string } | null;
   } | null;
 }
 
@@ -44,7 +46,7 @@ export default async function InvoiceDetailPage({
   const ctx = await invoiceContext();
 
   const invoices = await readRows<InvoiceWithOrder>(
-    `invoices?organization_id=eq.${ctx.session.organization.id}&id=eq.${invoiceId}&select=*,orders(id,order_number)&limit=1`,
+    `invoices?organization_id=eq.${ctx.session.organization.id}&id=eq.${invoiceId}&select=*,orders(id,order_number,request_payload)&limit=1`,
     ctx,
   );
 
@@ -67,6 +69,14 @@ export default async function InvoiceDetailPage({
     `payment_allocations?invoice_id=eq.${invoice.id}&select=*,payments(id,payment_number,payment_method,payment_date,status,reference_number)&order=created_at.asc`,
     ctx,
   );
+
+  const isTeestockWeb =
+    invoice.orders?.request_payload?.source === 'TEESTOCK_WEB';
+  const qrisAllowed =
+    isTeestockWeb &&
+    invoice.status === 'ISSUED' &&
+    String(invoice.amount_paid) === '0' &&
+    (ctx.session.role.code === 'OWNER' || ctx.session.role.code === 'ADMIN');
 
   const canIssue = hasPermission(ctx.session.role.code, 'invoices:issue');
   const canVoid = hasPermission(ctx.session.role.code, 'invoices:void');
@@ -360,8 +370,16 @@ export default async function InvoiceDetailPage({
               <h2 style={{ margin: 0 }}>
                 Riwayat Pembayaran &amp; Kas Masuk ({allocations.length})
               </h2>
-              {(invoice.status === 'ISSUED' ||
-                invoice.status === 'PARTIALLY_PAID') &&
+              {qrisAllowed && canRecordPayment && (
+                <ConfirmTeestockQrisModal
+                  invoiceId={invoice.id}
+                  invoiceNumber={invoice.invoice_number}
+                  amountIdr={invoice.balance_due}
+                />
+              )}
+              {!isTeestockWeb &&
+                (invoice.status === 'ISSUED' ||
+                  invoice.status === 'PARTIALLY_PAID') &&
                 canRecordPayment && (
                   <RecordPaymentModal
                     brandId={invoice.brand_id}
@@ -671,8 +689,16 @@ export default async function InvoiceDetailPage({
                   />
                 )}
 
-              {(invoice.status === 'ISSUED' ||
-                invoice.status === 'PARTIALLY_PAID') &&
+              {qrisAllowed && canRecordPayment && (
+                <ConfirmTeestockQrisModal
+                  invoiceId={invoice.id}
+                  invoiceNumber={invoice.invoice_number}
+                  amountIdr={invoice.balance_due}
+                />
+              )}
+              {!isTeestockWeb &&
+                (invoice.status === 'ISSUED' ||
+                  invoice.status === 'PARTIALLY_PAID') &&
                 canRecordPayment && (
                   <RecordPaymentModal
                     brandId={invoice.brand_id}

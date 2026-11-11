@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { checkPermission } from '@mgbos/auth';
 import {
   recordPaymentSchema,
+  confirmTeestockQrisSchema,
   allocateExistingPaymentSchema,
   revertPaymentSchema,
 } from '@mgbos/validation';
@@ -206,6 +207,96 @@ export async function revertPaymentAction(
         err instanceof Error
           ? err.message
           : 'Terjadi kendala sistem tak terduga.',
+    };
+  }
+}
+
+export async function confirmTeestockQrisAction(
+  input: unknown,
+): Promise<PaymentActionResult> {
+  try {
+    const ctx = await paymentContext();
+    const permission = checkPermission(ctx.session, 'payments:record');
+    if (!permission.allowed) return { error: permission.error };
+    if (!['OWNER', 'ADMIN'].includes(ctx.session.role.code)) {
+      return { error: 'Konfirmasi QRIS TeeStock hanya untuk owner/admin.' };
+    }
+    const parsed = confirmTeestockQrisSchema.safeParse(input);
+    if (!parsed.success) {
+      return {
+        error:
+          parsed.error.issues[0]?.message ??
+          'Periksa referensi, nominal, dan persetujuan verifikasi.',
+      };
+    }
+    const d = parsed.data;
+    const response = await fetch(
+      ctx.endpoint + '/rpc/confirm_teestock_qris_payment',
+      {
+        method: 'POST',
+        headers: ctx.headers,
+        cache: 'no-store',
+        body: JSON.stringify({
+          p_org: ctx.session.organization.id,
+          p_actor: ctx.session.user.id,
+          p_invoice: d.invoiceId,
+          p_amount: d.amount,
+          p_merchant_name: d.merchantName,
+          p_merchant_reference: d.referenceNumber,
+          p_verified_bank_statement: true,
+        }),
+      },
+    );
+    if (!response.ok) {
+      // Do not expose DB internals or PII in the browser.
+      const error = (await response.json().catch(() => null)) as {
+        code?: string;
+        message?: string;
+      } | null;
+      const message = error?.message ?? '';
+      if (error?.code === '23505') {
+        return {
+          error:
+            'Referensi transaksi sudah tercatat. Jangan mencatat pembayaran dua kali.',
+        };
+      }
+      if (
+        message.includes('wholly unpaid') ||
+        message.includes('Not an eligible')
+      ) {
+        return {
+          error:
+            'Invoice sudah berubah atau bukan order web TeeStock yang belum lunas. Refresh halaman.',
+        };
+      }
+      return {
+        error:
+          'Pembayaran belum bisa dikonfirmasi. Periksa status invoice dan referensi mutasi.',
+      };
+    }
+    const output = (await response.json()) as {
+      payment_id?: string;
+      payment_number?: string;
+    };
+    if (!output.payment_id || !output.payment_number) {
+      return {
+        error:
+          'Respons konfirmasi tidak lengkap. Periksa ulang di daftar pembayaran.',
+      };
+    }
+    revalidatePath('/payments');
+    revalidatePath('/orders');
+    revalidatePath('/invoices');
+    revalidatePath('/invoices/' + d.invoiceId);
+    return {
+      success: true,
+      paymentId: output.payment_id,
+      paymentNumber: output.payment_number,
+    };
+  } catch {
+    return {
+      error:
+        'Koneksi gagal. Periksa riwayat invoice sebelum mengulang agar tidak terjadi pencatatan ganda.',
     };
   }
 }
