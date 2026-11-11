@@ -82,3 +82,16 @@ test('v2 stock backup validation catches invalid entries',()=>{
  const bad=JSON.parse(JSON.stringify(d));bad.stockMoves[0].qty=-1;
  assert.throws(()=>finance.validateImport(JSON.stringify(bad)));
 });
+
+test('a paid shipment may be received later without changing original cash date',()=>{
+ const d=shared();
+ const p=finance.addPurchase({date:'2026-11-01',kind:'ingredient',name:'Dimsum frozen',qty:50,unit:'pcs',unitPrice:2000});
+ d.purchases.push(p);
+ assert.equal(finance.monthly(d,'2026-11').cashOut,100000);
+ assert.equal(d.stockItems.length,0);
+ const receipt=stock.receivePurchase(d,p,'2026-11-06');
+ assert.equal(receipt.movement.date,'2026-11-06');
+ assert.equal(stock.snapshot(d,receipt.item.id,'2026-11-03').onHand,0);
+ assert.equal(stock.snapshot(d,receipt.item.id,'2026-11-06').onHand,50);
+ assert.throws(()=>stock.receivePurchase(d,p,'2026-11-07'),/sudah tercatat/);
+});
