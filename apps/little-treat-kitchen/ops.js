@@ -464,6 +464,22 @@ function renderPricingPreview(){
  'HPP bahan berdasarkan rata-rata pembelian yang diterima.')+
  ' Biaya tenaga kerja, gas, listrik dan penyusutan tidak otomatis masuk HPP; masukkan perkiraan ke Biaya tambahan bila diperlukan. Hasil ini hanya simulasi dan tidak otomatis mengubah harga katalog.</p>';
 }
+function costingGroupMarkup(grp,selectedId){
+ return grp.length?grp.map(g=>{
+  const count=g.items.filter(p=>p.active).length;
+  return '<div class="lt-collection"><div class="row lt-collection-title">'+
+   '<div><strong>'+esc(g.label)+'</strong><small>'+esc(g.key)+' · '+
+   (g.category==="coffee"?"Kopi":g.category==="banana"?"Pisang":"Dimsum")+'</small></div>'+
+   '<span class="badge '+(count?"green":"")+'">'+count+' aktif</span></div>'+
+   '<div class="lt-sku-options">'+g.items.map(p=>{
+    const calc=menuCost(p),ready=calc.actualHpp!==null&&Number(p.price)>0;
+    return '<button type="button" data-cost-item="'+p.id+'" class="lt-sku '+(selectedId===p.id?"selected":"")+
+      '" aria-pressed="'+(selectedId===p.id)+'">'+
+      '<span>'+(C.sizeOf(p)?C.sizeOf(p)+' oz':esc(p.sku))+'</span>'+
+      '<small>'+(p.active?"Aktif":ready?"Siap ditinjau":"Draft")+'</small></button>';
+   }).join("")+'</div></div>';
+  }).join(""):'<div class="empty">Tidak ada menu sesuai pencarian.</div>';
+}
 function costingView(){
  if(s.role!=="owner")return '<div class="notice error">Akses HPP hanya untuk pemilik.</div>';
  const C=window.LT_COSTING;
@@ -483,20 +499,7 @@ function costingView(){
  const sourceKind=p=>p.costSource==="actual"?'<span class="badge green">Pembelian aktual</span>':
   p.costSource==="quote"?'<span class="badge orange">Penawaran supplier</span>':
   '<span class="badge red">Belum ada harga</span>';
- const chooser=grp.length?grp.map(g=>{
-  const count=g.items.filter(p=>p.active).length;
-  return '<div class="lt-collection"><div class="row lt-collection-title">'+
-   '<div><strong>'+esc(g.label)+'</strong><small>'+esc(g.key)+' · '+
-   (g.category==="coffee"?"Kopi":g.category==="banana"?"Pisang":"Dimsum")+'</small></div>'+
-   '<span class="badge '+(count?"green":"")+'">'+count+' aktif</span></div>'+
-   '<div class="lt-sku-options">'+g.items.map(p=>{
-    const calc=menuCost(p),ready=calc.actualHpp!==null&&Number(p.price)>0;
-    return '<button type="button" data-cost-item="'+p.id+'" class="lt-sku '+(selectedId===p.id?"selected":"")+
-      '" aria-pressed="'+(selectedId===p.id)+'">'+
-      '<span>'+(C.sizeOf(p)?C.sizeOf(p)+' oz':esc(p.sku))+'</span>'+
-      '<small>'+(p.active?"Aktif":ready?"Siap ditinjau":"Draft")+'</small></button>';
-   }).join("")+'</div></div>';
-  }).join(""):'<div class="empty">Tidak ada menu sesuai pencarian.</div>';
+ const chooser=costingGroupMarkup(grp,selectedId);
  const list=panel("Katalog menu","30 resep pokok dengan varian ukuran kopi. Pilih menu untuk melihat komposisi bahan, harga dan simulasi.",
   '<div class="lt-cost-filters">'+
   field("Cari menu atau kode",inp("costSearch","Nama menu, K01, P03…","search",'id="lt-cost-search" value="'+esc(s.costing.query)+'"'))+
@@ -550,7 +553,7 @@ function costingView(){
   '<form id="ops-bom" class="form-grid">'+
    '<input type="hidden" name="product_id" value="'+current.id+'"/>'+
    field("Pilih bahan",selectInput("material_id",s.data.materials.map(m=>[m.id,m.name+" / "+m.unit]),'id="lt-bom-material"',s.costing.editMaterial||null))+
-   field("Takaran untuk satu porsi",inp("qty_per_unit","Jumlah bahan per menu","number",'min="0.001" step="0.001" required'))+
+   field("Takaran untuk satu porsi",inp("qty_per_unit","Jumlah bahan per menu","number",'min="0.001" step="0.001" value="'+esc(s.data.bom.find(b=>b.product_id===current.id&&b.material_id===s.costing.editMaterial)?.qty_per_unit||"")+'" required'))+
    '<div class="full-row actions"><button type="submit" class="btn secondary">Simpan komposisi bahan</button></div></form>'):"";
  const sim=s.costing.simulation;
  if(s.costing.simProduct!==current.id){
@@ -881,6 +884,19 @@ document.addEventListener("input",e=>{
   s.recipeSearch=e.target.value;
   updateRecipeResults();
  }
+ if(e.target.id==="lt-cost-search"){
+  s.costing.query=e.target.value;
+  const groups=window.LT_COSTING.groups(s.data.products,s.costing.query,s.costing.category);
+  const node=document.getElementById("lt-cost-list");
+  if(node)node.innerHTML=costingGroupMarkup(groups,s.costing.selected);
+ }
+ const simInputs={"lt-sim-price":"price","lt-sim-fee":"fee","lt-sim-fixed":"fixed",
+  "lt-sim-discount":"discount","lt-sim-overhead":"overhead","lt-sim-target":"target"};
+ const key=simInputs[e.target.id];
+ if(key){
+  s.costing.simulation[key]=Number(e.target.value);
+  renderPricingPreview();
+ }
 });
 document.addEventListener("change",e=>{
  if(e.target.id==="ops-cup"){
@@ -891,6 +907,14 @@ document.addEventListener("change",e=>{
   s.recipeCategory=e.target.value;
   updateRecipeResults();
  }
+ if(e.target.id==="lt-cost-category"){
+  s.costing.category=e.target.value;
+  const groups=window.LT_COSTING.groups(s.data.products,s.costing.query,s.costing.category);
+  const node=document.getElementById("lt-cost-list");
+  if(node)node.innerHTML=costingGroupMarkup(groups,s.costing.selected);
+ }
+ if(e.target.id==="lt-quote-material"){s.costing.quoteMaterial=e.target.value;render()}
+ if(e.target.id==="lt-bom-material"){s.costing.editMaterial=e.target.value;render()}
  if(e.target.matches("[data-recipe-step]")){
   const checked=modalBody.querySelectorAll("[data-recipe-step]:checked").length;
   const total=modalBody.querySelectorAll("[data-recipe-step]").length;
