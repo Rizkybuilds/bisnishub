@@ -14,14 +14,17 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     return { title: 'Produk tidak ditemukan', robots: { index: false } };
   }
   const [product] = await listPublishedProducts(slug);
-  if (!product) return { title: 'Produk tidak ditemukan', robots: { index: false } };
+  if (!product)
+    return { title: 'Produk tidak ditemukan', robots: { index: false } };
   return {
     title: product.title + ' — TeeStock',
     description: product.description.slice(0, 160),
     openGraph: {
       title: product.title + ' — TeeStock',
       description: product.description.slice(0, 160),
-      images: [{ url: product.mockupUrl, alt: 'Mockup produk ' + product.title }],
+      images: [
+        { url: product.mockupUrl, alt: 'Mockup produk ' + product.title },
+      ],
     },
   };
 }
@@ -50,11 +53,13 @@ export default async function CatalogProductPage({ params }: Params) {
             priority
           />
           <p>
-            Foto mockup produk. Kombinasi warna yang dipilih belum memiliki
-            foto terpisah; lihat label warna dan detail varian sebelum membeli.
+            Foto mockup produk. Kombinasi warna yang dipilih belum memiliki foto
+            terpisah; lihat label warna dan detail varian sebelum membeli.
           </p>
           <div className="ts-public-product-story">
-            <span className="ts-public-kicker">{product.collectionName.toUpperCase()} / TEESTOCK</span>
+            <span className="ts-public-kicker">
+              {product.collectionName.toUpperCase()} / TEESTOCK
+            </span>
             <h2>Behind the design.</h2>
             <p>{product.description}</p>
           </div>
