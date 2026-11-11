@@ -43,7 +43,9 @@ export function ConfirmTeestockQrisModal({
         setError(result.error ?? 'Verifikasi pembayaran gagal.');
       }
     } catch {
-      setError('Koneksi terputus. Periksa riwayat pembayaran sebelum mengulang.');
+      setError(
+        'Koneksi terputus. Periksa riwayat pembayaran sebelum mengulang.',
+      );
     } finally {
       setSending(false);
     }
@@ -68,7 +70,8 @@ export function ConfirmTeestockQrisModal({
         <div
           role="presentation"
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget && !sending) setOpen(false);
+            if (event.target === event.currentTarget && !sending)
+              setOpen(false);
           }}
           style={{
             position: 'fixed',
@@ -96,67 +99,150 @@ export function ConfirmTeestockQrisModal({
               padding: 24,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', gap: 12 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'start',
+                justifyContent: 'space-between',
+                gap: 12,
+              }}
+            >
               <div>
-                <p style={{ margin: 0, color: '#94a3b8', fontSize: 11, letterSpacing: '.16em' }}>
+                <p
+                  style={{
+                    margin: 0,
+                    color: '#94a3b8',
+                    fontSize: 11,
+                    letterSpacing: '.16em',
+                  }}
+                >
                   TEESTOCK / OWNER PAYMENT CHECK
                 </p>
                 <h2 id="teestock-qris-title" style={{ margin: '9px 0 4px' }}>
                   Konfirmasi QRIS Manual
                 </h2>
               </div>
-              <button type="button" aria-label="Tutup"
-                disabled={sending} onClick={() => setOpen(false)}
-                style={{ background: 'transparent', color: '#fff', border: 0, cursor: 'pointer', fontSize: 21 }}>
+              <button
+                type="button"
+                aria-label="Tutup"
+                disabled={sending}
+                onClick={() => setOpen(false)}
+                style={{
+                  background: 'transparent',
+                  color: '#fff',
+                  border: 0,
+                  cursor: 'pointer',
+                  fontSize: 21,
+                }}
+              >
                 ×
               </button>
             </div>
             <p style={{ fontSize: 13, lineHeight: 1.65, color: '#cbd5e1' }}>
-              Hanya klik konfirmasi setelah membuka aplikasi merchant/PJP dan memastikan
-              transaksi benar-benar masuk. Screenshot pelanggan saja bukan bukti pelunasan.
+              Hanya klik konfirmasi setelah membuka aplikasi merchant/PJP dan
+              memastikan transaksi benar-benar masuk. Screenshot pelanggan saja
+              bukan bukti pelunasan.
             </p>
-            <div style={{ padding: 16, background: '#1e293b', border: '1px solid #334155', margin: '18px 0' }}>
-              <span style={{ display: 'block', fontSize: 12, color: '#94a3b8' }}>
+            <div
+              style={{
+                padding: 16,
+                background: '#1e293b',
+                border: '1px solid #334155',
+                margin: '18px 0',
+              }}
+            >
+              <span
+                style={{ display: 'block', fontSize: 12, color: '#94a3b8' }}
+              >
                 Faktur {invoiceNumber}
               </span>
               <strong style={{ display: 'block', fontSize: 25, marginTop: 5 }}>
                 Rp {BigInt(amountIdr).toLocaleString('id-ID')}
               </strong>
-              <span style={{ display: 'block', fontSize: 12, color: '#94a3b8', marginTop: 5 }}>
-                Nominal harus persis sama dengan mutasi masuk. Tanpa biaya kode unik tambahan.
+              <span
+                style={{
+                  display: 'block',
+                  fontSize: 12,
+                  color: '#94a3b8',
+                  marginTop: 5,
+                }}
+              >
+                Nominal harus persis sama dengan mutasi masuk. Tanpa biaya kode
+                unik tambahan.
               </span>
             </div>
             <form onSubmit={(event) => void confirm(event)}>
-              <label style={{ display: 'grid', gap: 7, fontSize: 13, marginBottom: 16 }}>
+              <label
+                style={{
+                  display: 'grid',
+                  gap: 7,
+                  fontSize: 13,
+                  marginBottom: 16,
+                }}
+              >
                 Nama merchant/PJP pada mutasi
                 <input
-                  required minLength={2} maxLength={100}
+                  required
+                  minLength={2}
+                  maxLength={100}
                   value={merchant}
                   onChange={(event) => setMerchant(event.target.value)}
                   placeholder="Nama merchant sesuai laporan"
                   autoComplete="off"
-                  style={{ background: '#fff', border: '1px solid #64748b', color: '#111', padding: 12 }}
+                  style={{
+                    background: '#fff',
+                    border: '1px solid #64748b',
+                    color: '#111',
+                    padding: 12,
+                  }}
                 />
               </label>
-              <label style={{ display: 'grid', gap: 7, fontSize: 13, marginBottom: 19 }}>
+              <label
+                style={{
+                  display: 'grid',
+                  gap: 7,
+                  fontSize: 13,
+                  marginBottom: 19,
+                }}
+              >
                 Referensi transaksi dari mutasi merchant
                 <input
-                  required minLength={6} maxLength={100}
+                  required
+                  minLength={6}
+                  maxLength={100}
                   value={reference}
                   onChange={(event) => setReference(event.target.value)}
                   placeholder="RRN / ID transaksi PJP"
                   autoComplete="off"
-                  style={{ background: '#fff', border: '1px solid #64748b', color: '#111', padding: 12 }}
+                  style={{
+                    background: '#fff',
+                    border: '1px solid #64748b',
+                    color: '#111',
+                    padding: 12,
+                  }}
                 />
               </label>
-              <label style={{ display: 'flex', gap: 11, alignItems: 'start', fontSize: 13, lineHeight: 1.6, marginBottom: 18 }}>
-                <input type="checkbox" required checked={verified}
+              <label
+                style={{
+                  display: 'flex',
+                  gap: 11,
+                  alignItems: 'start',
+                  fontSize: 13,
+                  lineHeight: 1.6,
+                  marginBottom: 18,
+                }}
+              >
+                <input
+                  type="checkbox"
+                  required
+                  checked={verified}
                   onChange={(event) => setVerified(event.target.checked)}
-                  style={{ marginTop: 4, width: 17, height: 17, flexShrink: 0 }} />
+                  style={{ marginTop: 4, width: 17, height: 17, flexShrink: 0 }}
+                />
                 <span>
                   Saya sudah memeriksa mutasi di akun merchant resmi, memastikan
-                  nominal dan referensi transaksi cocok, dan dana benar-benar diterima.
-                  Saya setuju mencatat invoice ini lunas.
+                  nominal dan referensi transaksi cocok, dan dana benar-benar
+                  diterima. Saya setuju mencatat invoice ini lunas.
                 </span>
               </label>
               {error && (
@@ -164,9 +250,21 @@ export function ConfirmTeestockQrisModal({
                   {error}
                 </p>
               )}
-              <button className="btn-primary" type="submit" disabled={!verified || sending}
-                style={{ width: '100%', padding: 13, background: '#166534', borderColor: '#166534', opacity: !verified || sending ? .45 : 1 }}>
-                {sending ? 'Mencocokkan dan mencatat…' : 'Saya verifikasi dana masuk — Catat Lunas'}
+              <button
+                className="btn-primary"
+                type="submit"
+                disabled={!verified || sending}
+                style={{
+                  width: '100%',
+                  padding: 13,
+                  background: '#166534',
+                  borderColor: '#166534',
+                  opacity: !verified || sending ? 0.45 : 1,
+                }}
+              >
+                {sending
+                  ? 'Mencocokkan dan mencatat…'
+                  : 'Saya verifikasi dana masuk — Catat Lunas'}
               </button>
             </form>
           </section>
