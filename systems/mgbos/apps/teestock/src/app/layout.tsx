@@ -4,6 +4,7 @@ import './retail.css';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { DemoCartProvider } from '../features/demo-commerce';
+import { LiveCartProvider } from '../components/LiveCartProvider';
 
 export const metadata: Metadata = {
   title: {
@@ -24,11 +25,13 @@ export default function RootLayout({
           Menuju ke konten utama
         </a>
         <DemoCartProvider>
+          <LiveCartProvider>
           <Header />
           <main id="main-content" className="site-main" tabIndex={-1}>
             {children}
           </main>
           <Footer />
+          </LiveCartProvider>
         </DemoCartProvider>
       </body>
     </html>
