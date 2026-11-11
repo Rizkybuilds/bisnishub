@@ -41,7 +41,7 @@ const TABS=[
 
 const s={session:null,user:null,role:null,tab:"orders",busy:false,err:"",notice:"",
  data:{products:[],materials:[],bom:[],orders:[],items:[],financials:[],costs:[],purchases:[],closings:[],payouts:[],quotes:[]},
- cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all",orderFilter:"active",activeRecipeId:null,drafts:{},costing:{category:"all",query:"",selected:null,quoteMaterial:null,editMaterial:null,simulation:{fee:20,fixed:0,discount:0,overhead:0,target:5000,price:0}}};
+ cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all",orderFilter:"active",activeRecipeId:null,drafts:{},costing:{category:"all",query:"",selected:null,quoteMaterial:null,editMaterial:null,simulation:{fee:0,fixed:0,discount:0,overhead:0,target:0,price:0}}};
 let notifyTimer;
 function notify(msg){toastEl.textContent=msg;toastEl.classList.add("active");clearTimeout(notifyTimer);notifyTimer=setTimeout(()=>toastEl.classList.remove("active"),3000)}
 function setError(msg){s.err=String(msg||"");render()}
@@ -469,7 +469,8 @@ function costingView(){
  const C=window.LT_COSTING;
  const all=C.sellable(s.data.products);
  const grp=C.groups(s.data.products,s.costing.query,s.costing.category);
- const current=all.find(p=>p.id===s.costing.selected)||grp[0]?.items[0]||all[0];
+ const filtered=grp.flatMap(g=>g.items);
+ const current=filtered.find(p=>p.id===s.costing.selected)||filtered[0]||all[0];
  const selectedId=current?.id||null;
  const cost=current?menuCost(current):null;
  const stats={
@@ -671,7 +672,7 @@ function render(){
   finance:["Belanja & aset","Catat pembayaran, barang diterima, dan aset tanpa transaksi otomatis.",purchasesView],
   closing:["Daily Closing","Rekonsiliasi pemasukan dan biaya harian, termasuk payout yang benar-benar cair.",closingView]
  };
- const [title,desc,fn]=pages[s.tab];wrap(title,desc,fn());
+ const [title,desc,fn]=pages[s.tab];wrap(title,desc,fn());if(s.tab==="costing")renderPricingPreview();
 }
 async function init(){
  if(!CONFIG||!configValid()){render();return}
@@ -693,7 +694,7 @@ document.addEventListener("submit",async e=>{
   if(!confirm("Kurangi stok sebagai waste? Transaksi ini tidak bisa dibatalkan dari UI."))return;
   await transact(async()=>{await guardedRpc("waste","lt_record_waste_v2",{p_material_id:form.material_id,p_qty:Number(form.qty),p_note:form.note});s.drafts.waste=null});return;
  }
- if(s.role!=="owner"&&["ops-new-material","ops-edit-product","ops-bom","ops-purchase","ops-financial","ops-close"].includes(id)){setError("Akses owner diperlukan.");return}
+ if(s.role!=="owner"&&["ops-new-material","ops-edit-product","ops-bom","ops-quote","ops-purchase","ops-financial","ops-close"].includes(id)){setError("Akses owner diperlukan.");return}
  if(id==="ops-new-material"){
   await transact(()=>req("lt_materials",{method:"POST",body:{name:form.name,unit:form.unit,min_stock:Number(form.min_stock)},prefer:"return=minimal"}));
  }else if(id==="ops-edit-product"){
@@ -705,12 +706,29 @@ document.addEventListener("submit",async e=>{
    if(active){
     const lines=s.data.bom.filter(x=>x.product_id===p.id);
     if(!lines.length||price<=0)throw Error("Lengkapi harga dan komposisi HPP sebelum mengaktifkan menu.");
-    if(lines.some(x=>!s.data.costs.some(c=>c.material_id===x.material_id)))throw Error("Harga beli bahan belum tersedia. Catat pembelian bahan terlebih dahulu.");
+    if(menuCost(p).actualHpp===null)throw Error("Biaya aktual belum lengkap. Catat penerimaan pembelian untuk setiap komponen BOM dahulu.");
    }
    await req("lt_products",{method:"PATCH",query:"?id=eq."+encodeURIComponent(form.id),body:{price,active},prefer:"return=minimal"});
   });
- }else if(id==="ops-bom"){
-  await transact(()=>req("lt_bom",{method:"POST",query:"?on_conflict=product_id,material_id",body:{product_id:form.product_id,material_id:form.material_id,qty_per_unit:Number(form.qty_per_unit)},prefer:"resolution=merge-duplicates,return=minimal"}));
+  }else if(id==="ops-bom"){
+  await transact(async()=>{
+   const p=s.data.products.find(x=>x.id===form.product_id);
+   if(!p||p.active)throw Error("Nonaktifkan menu sebelum mengubah BOM.");
+   const qty=Number(form.qty_per_unit);
+   if(!Number.isFinite(qty)||qty<=0)throw Error("Takaran bahan harus lebih dari nol.");
+   await req("lt_bom",{method:"POST",query:"?on_conflict=product_id,material_id",body:{product_id:form.product_id,material_id:form.material_id,qty_per_unit:qty},prefer:"resolution=merge-duplicates,return=minimal"});
+   s.costing.editMaterial=null;
+  });
+ }else if(id==="ops-quote"){
+  await transact(async()=>{
+   const cost=Number(form.pack_cost),qty=Number(form.pack_qty);
+   if(!Number.isFinite(cost)||cost<=0||!Number.isFinite(qty)||qty<=0)throw Error("Harga dan isi kemasan wajib lebih dari 0.");
+   if(!form.supplier.trim()||form.supplier.trim().length<2)throw Error("Isi nama supplier.");
+   if(!s.data.materials.some(m=>m.id===form.material_id))throw Error("Bahan tidak ditemukan.");
+   const body={material_id:form.material_id,supplier:form.supplier.trim(),pack_cost:cost,pack_qty:qty,
+    quote_on:form.quote_on,source_note:form.source_note||"",updated_by:s.user.id,updated_at:new Date().toISOString()};
+   await req("lt_material_quotes",{method:"POST",query:"?on_conflict=material_id",body,prefer:"resolution=merge-duplicates,return=minimal"});
+  });
  }else if(id==="ops-purchase"){
   s.drafts.purchase=form;
   await transact(async()=>{
@@ -835,6 +853,21 @@ document.addEventListener("click",async e=>{
   await transact(()=>rpc("lt_transition_order",{p_order_id:transition.dataset.id,p_action:transition.dataset.transition}));return}
  const recipe=e.target.closest("[data-recipe]");
  if(recipe){s.recipeSize="14";showRecipe(recipe.dataset.recipe);return}
+ const costSelect=e.target.closest("[data-cost-item]");
+ if(costSelect){if(s.role!=="owner")return;s.costing.selected=costSelect.dataset.costItem;s.costing.quoteMaterial=null;s.costing.editMaterial=null;render();return}
+ const quoteSelect=e.target.closest("[data-quote-material]");
+ if(quoteSelect){if(s.role!=="owner")return;s.costing.quoteMaterial=quoteSelect.dataset.quoteMaterial;render();return}
+ const bomEdit=e.target.closest("[data-edit-bom]");
+ if(bomEdit){if(s.role!=="owner")return;s.costing.editMaterial=bomEdit.dataset.editBom;render();return}
+ const bomRemove=e.target.closest("[data-remove-bom]");
+ if(bomRemove){
+  if(s.role!=="owner")return;
+  const id=s.costing.selected,mat=bomRemove.dataset.removeBom;
+  const product=s.data.products.find(p=>p.id===id);
+  if(!product||product.active){setError("Nonaktifkan menu sebelum menghapus bahan.");return}
+  if(!confirm("Hapus bahan ini dari komposisi "+product.name+"? Tindakan tidak otomatis dapat dibatalkan."))return;
+  await transact(()=>req("lt_bom",{method:"DELETE",query:"?product_id=eq."+encodeURIComponent(id)+"&material_id=eq."+encodeURIComponent(mat),prefer:"return=minimal"}));return;
+ }
  const edit=e.target.closest("[data-edit-product]");
  if(edit){if(s.role!=="owner")return;s.editFinance=edit.dataset.editProduct;render();const select=document.getElementById("prod-active");if(select){const p=s.data.products.find(x=>x.id===s.editFinance);select.value=p?.active?"true":"false"}return}
  const fin=e.target.closest("[data-finance]");
