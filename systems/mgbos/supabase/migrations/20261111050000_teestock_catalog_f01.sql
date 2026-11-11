@@ -10,8 +10,8 @@ create table app.teestock_catalog_products (
   title text not null check (length(btrim(title)) between 3 and 120),
   collection_name text not null check (length(btrim(collection_name)) between 2 and 80),
   description text not null default '' check (length(description) <= 3000),
-  mockup_path text check (mockup_path is null or (mockup_path ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[0-9a-f-]{36}\\.(png|jpg|webp)$')),
-  artwork_path text check (artwork_path is null or (artwork_path ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[0-9a-f-]{36}\\.(png|pdf)$')),
+  mockup_path text check (mockup_path is null or (mockup_path ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[0-9a-f-]{36}\.(png|jpg|webp)$')),
+  artwork_path text check (artwork_path is null or (artwork_path ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[0-9a-f-]{36}\.(png|pdf)$')),
   rights_status text not null default 'PENDING' check (rights_status in ('PENDING','APPROVED')),
   sample_status text not null default 'PENDING' check (sample_status in ('PENDING','PASSED')),
   status text not null default 'DRAFT' check (status in ('DRAFT','PUBLISHED','ARCHIVED')),
@@ -99,11 +99,15 @@ begin
       raise exception 'Invalid catalog fields';
   end if;
 
-  if v_mockup is not null and v_mockup !~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[0-9a-f-]{36}\\.(png|jpg|webp)$' then
+  if v_mockup is not null and v_mockup !~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[0-9a-f-]{36}\.(png|jpg|webp)$' then
     raise exception 'Invalid mockup path';
   end if;
-  if v_artwork is not null and v_artwork !~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[0-9a-f-]{36}\\.(png|pdf)$' then
+  if v_artwork is not null and v_artwork !~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[0-9a-f-]{36}\.(png|pdf)$' then
     raise exception 'Invalid print artwork path';
+  end if;
+  if (v_mockup is not null and v_mockup not like p_org::text || '/' || v_brand::text || '/%')
+    or (v_artwork is not null and v_artwork not like p_org::text || '/' || v_brand::text || '/%') then
+    raise exception 'Asset belongs to another organization or brand';
   end if;
   if exists (
     select 1 from jsonb_array_elements(v_variants) item
