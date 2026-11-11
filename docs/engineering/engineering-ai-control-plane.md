@@ -39,6 +39,9 @@ implementation_status: PARTIALLY_IMPLEMENTED
 first_system_profile: systems/mgbos/
 ---
 
+> **Current operating decision — 2026-11-11:** [Lean Feature Delivery](lean-feature-delivery.md) is the default for **new feature and bug-fix work**. The multi-role planning, routing, contract, assurance and reflection lifecycle below is **optional for routine work**, and remains a legacy/elevated-risk reference where applicable. This current owner-directed procedural exception does not waive security, authorization, financial integrity, mandatory tests, GitHub protections or explicit production permissions.
+
+
 # BisnisHub Engineering AI Control Plane v1.0
 
 ## 1. Purpose
