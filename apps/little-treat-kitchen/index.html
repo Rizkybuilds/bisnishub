@@ -1,69 +1,24 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#f7f5f1" />
-  <meta name="description" content="Little Treat Kitchen OS — cari resep, bahan, ukuran cup, premix dan SOP operasional." />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="./styles.css" />
-  <link rel="stylesheet" href="./finance.css" />
-  <title>Little Treat Kitchen OS</title>
-  <script src="./recipes.js" defer></script>
-  <script src="./stock-core.js" defer></script>
-  <script src="./finance-core.js" defer></script>
-  <script src="./stock-ui.js" defer></script>
-  <script src="./finance.js" defer></script>
-  <script src="./app.js" defer></script>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#f7f5f1"/>
+<meta name="description" content="Little Treat Kitchen OS v3 — pesanan, resep, stok, HPP dan daily closing terpusat."/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' https://*.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"/>
+<title>Little Treat — Operations v3</title>
+<link rel="canonical" href="./"/>
+<link rel="icon" type="image/svg+xml" href="./icon.svg"/>
+<link rel="stylesheet" href="./ops.css"/>
+<script src="./ops-config.js" defer></script>
+<script src="./recipes.js" defer></script>
+<script src="./ops.js" defer></script>
 </head>
 <body>
-  <div id="app" class="shell">
-    <aside class="sidebar" aria-label="Navigasi">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">lt<span>.</span></div>
-        <div><div class="brand-name">little treat<span>.</span></div><div class="brand-caption">KITCHEN OS</div></div>
-      </div>
-      <div class="side-section">WORKSPACE</div>
-      <nav id="side-nav" class="side-nav"></nav>
-      <div class="sidebar-bottom">
-        <div class="info-dot"><span aria-hidden="true">●</span> Buku resep digital</div>
-        <p>Versi awal • gunakan resep ini bersama SOP cetak dan pemeriksaan batch.</p>
-        <small>Little Treat © 2026</small>
-      </div>
-    </aside>
-    <div class="workspace">
-      <header class="topbar">
-        <div class="mobile-brand"><span class="mini-mark">lt.</span> <span>little treat<span class="brand-period">.</span></span></div>
-        <div class="breadcrumbs"><span>Operations</span><span class="chevron">/</span><strong id="breadcrumb-name">Menu & Resep</strong></div>
-        <div class="top-actions">
-          <span class="live-tag"><i></i> Panduan operasional</span>
-          <button type="button" id="help-button" class="icon-button" aria-label="Buka bantuan" title="Bantuan">?</button>
-        </div>
-      </header>
-      <main id="main" tabindex="-1"></main>
-    </div>
-    <nav id="bottom-nav" class="bottom-nav" aria-label="Navigasi seluler"></nav>
-  </div>
-  <dialog id="recipe-dialog" class="recipe-dialog">
-    <div id="dialog-body"></div>
-  </dialog>
-  <dialog id="help-dialog" class="help-dialog">
-    <div class="help-inner">
-      <div class="dialog-top"><strong>Bantuan operator</strong><button class="close-dialog" data-close="help" aria-label="Tutup">×</button></div>
-      <h2>Cara memakai Kitchen OS</h2>
-      <ol>
-        <li>Pilih <b>Menu & Resep</b>, lalu ketik nama menu atau bahan di pencarian.</li>
-        <li>Buka menu, pilih ukuran cup (untuk kopi), dan jumlah pesanan.</li>
-        <li>Baca daftar bahan dan ikuti langkah dari atas ke bawah. Centang tiap langkah.</li>
-        <li>Gunakan <b>Persiapan</b> untuk premix, saus dan jelly; <b>SOP</b> untuk aturan harian. Gunakan <b>Belanja</b> dan <b>Keuangan</b> untuk pencatatan pada perangkat pemilik.</li>
-      </ol>
-      <p class="help-warning">Resep adalah baseline operasional. Waktu kukus frozen harus mengikuti supplier dan verifikasi suhu inti; tingkat manis alternatif masih perlu standar owner.</p>
-      <p>Data tersimpan sebagai katalog statis; favorit dan checklist hanya tersimpan pada perangkat ini. Tidak ada sinkronisasi antar-HP dan belum ada login.</p>
-    </div>
-  </dialog>
-  <div id="toast" role="status" aria-live="polite" class="toast"></div>
+<div class="app" id="ops-root" aria-live="polite">
+  <div class="boot"><div class="logo">lt<span>.</span></div><p>Memuat Kitchen OS…</p></div>
+</div>
+<dialog id="ops-modal" aria-label="Detail resep"><div id="ops-modal-body"></div><button type="button" data-action="close-modal" class="close">Tutup</button></dialog>
+<div id="ops-toast" role="status" aria-live="polite"></div>
 </body>
 </html>
