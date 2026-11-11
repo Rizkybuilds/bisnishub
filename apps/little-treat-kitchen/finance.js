@@ -57,6 +57,7 @@ function renderPurchases(){
  '<input type="hidden" name="planId" value="'+esc(p?.id||"")+'"/>'+
  field("Tanggal bayar",'<input type="date" name="date" value="'+core.today()+'" required/>')+
  field("Kategori",'<select id="fin-purchase-kind" name="kind">'+catOpts(opt.kind)+'</select>')+
+ field("Status barang",'<select name="received"><option value="yes">Sudah diterima</option><option value="no">Baru dibayar, belum diterima</option></select>',"Untuk bahan dan kemasan: stok bertambah hanya setelah diterima.")+
  field("Nama barang / biaya",textInput("name","Contoh: Dimsum frozen isi 50",true,opt.name))+
  field("Supplier",textInput("supplier","Nama toko / pemasok",false,opt.supplier))+
  field("Jumlah",numInput("qty",opt.qty,'step="0.01" min="0.01" required'))+
@@ -75,9 +76,16 @@ function renderPurchases(){
 }
 function renderPurchaseLog(){
  const list=state.data.purchases.filter(x=>x.date.startsWith(state.month)).slice().sort((a,b)=>b.date.localeCompare(a.date));
- return '<div class="fin-panel"><div class="fin-panel-title"><h2>Riwayat pembelian — '+monthLabel(state.month)+'</h2><p>Transaksi dibatalkan tetap disimpan dalam jejak riwayat.</p></div>'+
- table(["Tanggal / barang","Kategori / pemasok","Total dibayar","Status"],list.map(x=>'<tr class="'+(x.voidedAt?"fin-done":"")+'"><td>'+esc(x.date)+'<strong>'+esc(x.name)+'</strong><small>'+esc(x.qty+" "+x.unit+" @ "+fmt(x.unitPrice))+'</small></td><td>'+badge(tags[x.kind])+'<small>'+esc(x.supplier)+'</small></td><td>'+fmt(x.total)+'</td><td>'+(x.voidedAt?badge("Dibatalkan","urgent"):'<button data-fin-act="void-purchase" data-fin-id="'+esc(x.id)+'" class="fin-link">Batalkan</button>')+'</td></tr>'))+
- '</div>';
+ return '<div class="fin-panel"><div class="fin-panel-title"><h2>Riwayat pembelian — '+monthLabel(state.month)+'</h2><p>Status penerimaan dipisahkan dari pembayaran. Hanya barang yang diterima menambah stok.</p></div>'+
+ table(["Tanggal / barang","Kategori / pemasok","Total dibayar","Status / aksi"],list.map(x=>{
+  const inventory=["ingredient","packaging"].includes(x.kind);
+  const receipt=inventory&&state.data.stockMoves.some(m=>m.linkedPurchaseId===x.id&&!m.voidedAt);
+  const status=x.voidedAt?badge("Dibatalkan","urgent"):inventory?(receipt?badge("Diterima","ok"):badge("Menunggu barang","urgent")):badge("Tercatat");
+  const receiveButton=!x.voidedAt&&inventory&&!receipt?'<button data-fin-act="receive-purchase" data-fin-id="'+esc(x.id)+'" class="fin-link">Terima stok</button>':"";
+  const voidButton=!x.voidedAt?'<button data-fin-act="void-purchase" data-fin-id="'+esc(x.id)+'" class="fin-link danger">Batalkan</button>':"";
+  return '<tr class="'+(x.voidedAt?"fin-done":"")+'"><td>'+esc(x.date)+'<strong>'+esc(x.name)+'</strong><small>'+esc(x.qty+" "+x.unit+" @ "+fmt(x.unitPrice))+'</small></td>'+
+   '<td>'+badge(tags[x.kind])+'<small>'+esc(x.supplier)+'</small></td><td>'+fmt(x.total)+'</td><td>'+status+'<div class="fin-row-actions">'+receiveButton+voidButton+'</div></td></tr>';
+ }))+'</div>';
 }
 function renderDashboard(){
  const m=core.monthly(state.data,state.month),series=core.pastMonths(state.month,6).reverse().map(month=>core.monthly(state.data,month));
@@ -172,7 +180,7 @@ function record(form,type){
  const i=inputs(form);if(type==="plan")state.data.plans.unshift(core.addPlan(i));
  if(type==="purchase"){
   const row=core.addPurchase(i);state.data.purchases.unshift(row);
-  if(row.kind==="ingredient"||row.kind==="packaging")stock.receivePurchase(state.data,row);
+  if((row.kind==="ingredient"||row.kind==="packaging")&&i.received!=="no")stock.receivePurchase(state.data,row);
   if(i.planId){const plan=state.data.plans.find(x=>x.id===i.planId);if(plan){plan.done=true;plan.linkedPurchaseId=row.id;}}
   state.realize=null;
  }
@@ -183,6 +191,15 @@ function handleAction(btn){
  const action=btn.dataset.finAct,id=btn.dataset.finId;
  if(action==="realize"){
   state.realize=id;state.sub.belanja="purchases";rerender();qs("#fin-purchase")?.scrollIntoView({behavior:"smooth",block:"center"});return;
+ }
+ if(action==="receive-purchase"){
+  const purchase=state.data.purchases.find(x=>x.id===id);
+  if(!purchase||purchase.voidedAt)return;
+  const received=prompt("Tanggal barang benar-benar diterima (YYYY-MM-DD):",core.today());
+  if(received===null)return;
+  if(!confirm("Konfirmasi barang "+purchase.name+" sudah diterima dan jumlah cocok?"))return;
+  stock.receivePurchase(state.data,purchase,received);
+  save();rerender();toast("Stok diterima");return;
  }
  if(action==="void-purchase"||action==="void-sale"){
   const reason=prompt("Alasan pembatalan transaksi (wajib):");if(reason===null)return;
