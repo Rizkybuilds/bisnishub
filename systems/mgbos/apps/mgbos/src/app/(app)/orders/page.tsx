@@ -113,8 +113,8 @@ export default async function OrdersPage() {
         <div>
           <h1 style={{ margin: 0 }}>Kontrak Pesanan (Order Contracts)</h1>
           <p style={{ color: '#94a3b8', margin: '4px 0 0' }}>
-            {ctx.session.activeBrand.name} · Pesanan B2B, ritel POS, dan
-            pesanan pelanggan TeeStock dari website.
+            {ctx.session.activeBrand.name} · Pesanan B2B, ritel POS, dan pesanan
+            pelanggan TeeStock dari website.
           </p>
         </div>
         {canCreateOrder && brand && (
