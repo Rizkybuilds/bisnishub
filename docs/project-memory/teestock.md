@@ -40,6 +40,17 @@
 
 For TeeStock Original concepts, the working art-review rubric is originality/differentiation 25, commercial appeal 25, art direction 20, execution 15, DTF printability 15; >=80 is a proposed threshold with rights/major defects as hard fails. This is an internal **creative review**, not proof of customer demand. A 100-artwork/month ambition should not block initial sales.
 
+## 3A. Actual artwork curation audit — OBSERVED 2026-11-11; not founder-approved selection
+
+- **SOURCE SCOPE:** Design Lab evidence was read from the **unmerged** branch `fix/tdl-canonical-registry-reconciliation`, not from `main`. Registry path: `bisnis/teestock/design-lab/05_REGISTRY/`. Recheck the branch and source evidence before using this snapshot.
+- Registry enumerates **15 design candidates** (5 Human Condition, 5 Oddly Ordinary, 5 Quiet Rebellion), **0 with `commercial_status=READY`**. This is registry evidence, not a definitive audit of every creative file outside the repository.
+- **HC-001 — The Dangerous Species:** A real selected raw JPG, crest PNG, print PNG, and mockup files were located in `01_COLLECTIONS/TEESTOCK_ORIGINAL/01_HUMAN_CONDITION/07_ARTWORK_DEVELOPMENT/HC-001_THE-DANGEROUS-SPECIES/`. The selected visual shows a classical philosopher bust and measuring caliper. **INDEPENDENT CREATIVE ASSESSMENT (HYPOTHESIS):** concept is strong but existing Greek/Roman bust artwork is too conventional for a TeeStock hero; rework visual mechanism before selling.
+- **CONFLICT:** HC-001 QA and approval narratives claim `PRODUCTION READY`, whereas reconciled design registry says `IN_DEVELOPMENT`, `IN_REVIEW` rights, `NOT_TESTED` production, `NOT_READY` commercial; `08_PRODUCTION.csv` has no physical test. Earlier historical asset rows refer to a different `TSD-001-001` concept. Do **not** promote production or commercial status.
+- QA arithmetic error: `2px` at `300 PPI` is about **0.169 mm**, not `0.51 mm`. Supplier-specific lineweight and actual print test must be checked; don't assume every fine line passes.
+- **HYPOTHESIS (candidate concept shortlist, not final art):** `QR-004 Unfollow the Noise` and `OO-005 Replying in My Head` merit priority art development; `QR-006 No Audience Required` is a reserve; `OO-001 Social Battery: 1%` is relevant but linguistically crowded; `HC-001` deserves a new art direction with concept preserved. No visual masters or sampling are verified for the other concepts.
+- **SELECTS:** No rights-cleared, individually accepted third-party artwork identified in the source registry or initial Etsy exploration. Etsy digital designs have seller-specific licensing: commercial use may **exclude POD or subcontracted printing**, cap product units, require additional licenses, or prohibit resale under other labels. Purchasing a download or a vague "commercial use" phrase is insufficient. Avoid mass-design clipart bundles as the distinctive first TeeStock assortment. Do not invent approved SKU/designs or attribute originals to TeeStock.
+- **NEXT ACTION:** Inspect and score actual art assets (not concepts only), obtain explicit third-party apparel merchandising rights for Selects, test buyer reactions, sample/QA and then choose the 3 Selects + 1 Originals launch slots already approved as the structure. No product selection approved at this audit stage.
+
 ## 4. Verified engineering snapshot — OBSERVED 2026-11-11, RECHECK LIVE
 
 - **VERIFIED_AT 2026-11-11:** `main` observed at `4dec7fb2db7b2fc9f2a4f9920bf07dce4a0d3f5c`. **This snapshot will become stale; do not describe it as current without a new check.**
