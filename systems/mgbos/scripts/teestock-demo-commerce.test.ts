@@ -633,20 +633,24 @@ describe('TeeStock Demo Commerce Simulation (NOV15-02)', () => {
       expect(normalizedComplete).toContain('Tanpa Pesanan Komersial');
     });
 
-    it('preserves negative routing invariant: real commercial routes remain absent', () => {
+    it('keeps the existing simulation isolated from the feature-gated real checkout', () => {
       const header = read('components/Header.tsx');
-      const home = read('app/page.tsx');
-      const shop = read('app/shop/page.tsx');
+      const realCheckout = read('app/checkout/page.tsx');
+      const server = read('lib/checkout.server.ts');
+      const demoContext = read('features/demo-commerce/context.tsx');
 
-      expect(header).not.toContain('href="/cart"');
-      expect(header).not.toContain('href="/checkout"');
-      expect(home).not.toContain('href="/cart"');
-      expect(home).not.toContain('href="/checkout"');
-      expect(shop).not.toContain('href="/cart"');
-      expect(shop).not.toContain('href="/checkout"');
-
-      // Only /demo/cart is linked in Header
+      // The demo remains directly accessible and explicitly labeled.
       expect(header).toContain('href="/demo/cart"');
+      expect(header).toContain('Keranjang simulasi demo');
+      expect(demoCheckoutPage).toContain('Ini simulasi checkout. Tidak ada pesanan atau pembayaran sungguhan.');
+      expect(demoContext).not.toContain('submitGuestCheckoutAction');
+
+      // Real retail is deliberately separate, server-gated, and not a payment gateway.
+      expect(header).toContain('href="/cart"');
+      expect(realCheckout).toContain('checkoutEnabled()');
+      expect(server).toContain("TEESTOCK_CHECKOUT_ENABLED === 'true'");
+      expect(server).toContain('create_teestock_guest_order');
+      expect(server).not.toContain('create_retail_order');
     });
 
     it('guards /demo/complete against rendering stale completed state when lines are empty', () => {
