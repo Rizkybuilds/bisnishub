@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   recordPaymentSchema,
+  confirmTeestockQrisSchema,
   allocateExistingPaymentSchema,
   revertPaymentSchema,
 } from './payment';
@@ -64,5 +65,38 @@ describe('Payment Validation Schemas (MGBOS-015)', () => {
         reason: 'Salah input rekening pengirim transfer',
       }).success,
     ).toBe(true);
+  });
+});
+
+describe('TeeStock F04 owner-verified manual QRIS', () => {
+  const valid = {
+    invoiceId: '11111111-2222-4333-8444-555555555555',
+    amount: '175000',
+    merchantName: 'TeeStock verified QRIS',
+    referenceNumber: 'RRN-TEST-175000',
+    verifiedBankStatement: true,
+  };
+
+  it('accepts an explicit merchant reconciliation with exact invoice amount', () => {
+    expect(confirmTeestockQrisSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('blocks missing verification, missing reference, and fake amounts', () => {
+    expect(confirmTeestockQrisSchema.safeParse({
+      ...valid,
+      verifiedBankStatement: false,
+    }).success).toBe(false);
+    expect(confirmTeestockQrisSchema.safeParse({
+      ...valid,
+      referenceNumber: 'abc',
+    }).success).toBe(false);
+    expect(confirmTeestockQrisSchema.safeParse({
+      ...valid,
+      amount: '0',
+    }).success).toBe(false);
+    expect(confirmTeestockQrisSchema.safeParse({
+      ...valid,
+      amount: '175000.99',
+    }).success).toBe(false);
   });
 });
