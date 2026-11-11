@@ -2608,3 +2608,9 @@ body:has(.retail-shop) .site-main {
     padding: 24px 14px;
   }
 }
+
+/* Real product cart is distinct from the existing preview simulator. */
+.retail-real-cart-badge{color:#171717;text-decoration:none;font-size:12px;font-weight:750;display:inline-flex;align-items:center;gap:5px;min-height:40px;white-space:nowrap}
+.retail-real-cart-badge:hover{text-decoration:underline;text-underline-offset:4px}
+.retail-real-cart-badge:focus-visible{outline:2px solid #141414;outline-offset:3px}
+@media(max-width:530px){.retail-real-cart-badge{font-size:11px}}
