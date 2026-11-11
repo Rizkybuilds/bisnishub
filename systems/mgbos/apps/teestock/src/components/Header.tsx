@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useDemoCart } from '../features/demo-commerce';
+import { useLiveCart } from './LiveCartProvider';
 
 const links = [
   { href: '/shop', label: 'The Edit' },
@@ -17,6 +18,7 @@ export function Header() {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
   const { summary } = useDemoCart();
+  const { count: liveCartCount } = useLiveCart();
 
   useEffect(() => {
     if (!open) return;
@@ -74,6 +76,9 @@ export function Header() {
             ))}
           </nav>
           <div className="retail-header-actions">
+            <Link href="/cart" className="retail-real-cart-badge" aria-label={"Keranjang produk nyata: " + liveCartCount + " kaos"}>
+              Keranjang <span aria-hidden="true">({liveCartCount})</span>
+            </Link>
             <Link
               href="/demo/cart"
               className="retail-demo-cart-badge"
@@ -122,6 +127,9 @@ export function Header() {
               {label} <span aria-hidden="true">↗</span>
             </Link>
           ))}
+          <Link href="/cart" className="mobile-nav-link" onClick={() => setOpen(false)}>
+            Keranjang ({liveCartCount}) <span aria-hidden="true">↗</span>
+          </Link>
           <Link
             href="/demo/cart"
             className={
