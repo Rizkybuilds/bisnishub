@@ -274,27 +274,82 @@ function ordersView(){
  stat("Siap diserahkan",counts.ready,"Menunggu driver")+stat("Selesai (terlihat)",counts.handed_off,"Dari riwayat yang dimuat")+'</div>'+
  '<div class="two-col">'+formPanel+queue+'</div>';
 }
+function filteredRecipes(){
+ return DATA.all.filter(x=>["coffee","banana","dimsum"].includes(x.category)&&
+  (s.recipeCategory==="all"||x.category===s.recipeCategory)&&
+  (!s.recipeSearch||[x.name,x.id,x.group,...(x.ingredients||[]).map(i=>i.name)]
+    .join(" ").toLocaleLowerCase("id-ID").includes(s.recipeSearch.toLocaleLowerCase("id-ID"))));
+}
+function recipeCards(){
+ const items=filteredRecipes();
+ if(!items.length)return '<div class="empty recipe-list-empty"><h3>Resep tidak ditemukan</h3><p>Coba nama menu lain, jenis bahan, atau ubah kategori.</p></div>';
+ const categoryVisual={coffee:"☕",banana:"🍌",dimsum:"🥟"};
+ return items.map(x=>'<button type="button" class="recipe-card" data-recipe="'+esc(x.id)+'" aria-label="Buka resep '+esc(x.name)+'">'+
+  '<span class="recipe-visual '+esc(x.category)+'" aria-hidden="true">'+categoryVisual[x.category]+'</span>'+
+  '<span class="recipe-id">'+esc(x.id)+' · '+esc(PRODUCT_CATEGORIES[x.category])+'</span>'+
+  '<h3>'+esc(x.name)+'</h3>'+
+  '<span class="recipe-meta"><span>'+esc(x.group||"Resep per porsi")+'</span><span class="recipe-arrow" aria-hidden="true">↗</span></span></button>').join("");
+}
+function updateRecipeResults(){
+ const grid=document.getElementById("ops-recipe-results");
+ const count=document.getElementById("ops-recipe-count");
+ if(grid)grid.innerHTML=recipeCards();
+ if(count)count.textContent=filteredRecipes().length+" resep ditemukan";
+}
 function recipesView(){
- const items=DATA.all.filter(x=>["coffee","banana","dimsum"].includes(x.category)&&
- (s.recipeCategory==="all"||x.category===s.recipeCategory)&&
- (!s.recipeSearch||[x.name,x.id,x.group,...(x.ingredients||[]).map(a=>a.name)].join(" ").toLowerCase().includes(s.recipeSearch.toLowerCase())));
- return panel("Katalog resep dapur","30 menu dan takaran dasar dari Kitchen OS sebelumnya. Waktu masak dimsum mengikuti supplier dan pemeriksaan suhu inti.",
- '<div class="inline-fields">'+field("Cari menu/bahan",inp("recipeSearch","Ketik kopi, pisang, dimsum…","search",'id="ops-recipe-search" value="'+esc(s.recipeSearch)+'"'))+
- field("Kategori",selectInput("recipeCategory",[["all","Semua"],["coffee","Kopi"],["banana","Pisang"],["dimsum","Dimsum"]],'id="ops-recipe-category"'))+'</div>'+
- '<div class="grid">'+items.map(x=>'<button class="item" type="button" data-recipe="'+esc(x.id)+'" style="text-align:left;cursor:pointer"><span class="badge">'+esc(PRODUCT_CATEGORIES[x.category])+'</span><h3>'+esc(x.name)+'</h3><small>'+esc(x.group)+' · Lihat bahan dan langkah ↗</small></button>').join("")+'</div>');
+ return panel("Cari menu dan bahan","Semua resep utama Little Treat tersedia tanpa harus membuka PDF satu per satu. Klik kartu untuk melihat takaran dan langkah.",
+ '<div class="recipe-controls">'+
+ field("Cari berdasarkan menu atau bahan",
+  '<div style="position:relative"><span class="recipe-search-icon" aria-hidden="true">'+icon("search")+'</span>'+
+  inp("recipeSearch","Misalnya: pisang, creamer, dimsum…","search",'id="ops-recipe-search" autocomplete="off" spellcheck="false" value="'+esc(s.recipeSearch)+'" aria-label="Cari resep dan bahan"')+'</div>')+
+ field("Kategori",selectInput("recipeCategory",[["all","Semua menu"],["coffee","Kopi"],["banana","Pisang"],["dimsum","Dimsum"]],'id="ops-recipe-category"'))+'</div>'+
+ '<div class="recipe-results-header"><strong>Katalog menu</strong><small id="ops-recipe-count" aria-live="polite">'+filteredRecipes().length+' resep ditemukan</small></div>'+
+ '<div class="recipe-grid" id="ops-recipe-results">'+recipeCards()+'</div>')+
+ '<div class="notice">Waktu kukus dimsum frozen perlu mengikuti petunjuk supplier dan hasil kalibrasi alat. Resep yang tampil adalah baseline operasional, bukan pengganti pemeriksaan kematangan.</div>';
+}
+function coffeeSteps(r){
+ const names=r.ingredients.map(i=>i.name);
+ const extra=names.filter(n=>!["Kopi instan murni","Air hangat","Susu UHT plain","Es batu"].includes(n));
+ const steps=[
+  "Periksa tiket: nama minuman, ukuran cup dan instruksi pelanggan. Siapkan timbangan, cup, bahan dan es yang bersih.",
+  "Timbang kopi instan dan air hangat sesuai ukuran yang dipilih. Larutkan kopi sampai homogen."
+ ];
+ if(r.kind==="cocoa")steps.push("Campurkan kakao ke sebagian cairan hangat hingga tidak ada gumpalan.");
+ if(extra.length)steps.push("Tambahkan dan ukur bahan pelengkap sesuai tabel: "+extra.join(", ")+". Aduk sampai merata.");
+ if(r.kind==="jelly")steps.push("Masukkan jelly kopi dingin ke cup sebelum menambahkan es.");
+ steps.push("Tuang susu UHT sesuai takaran, aduk hingga merata.");
+ steps.push("Timbang es sesuai resep; tuang campuran minuman ke cup dan tutup/segel rapat.");
+ if(r.kind==="biscuit")steps.push("Kemas biskuit secara terpisah agar tetap renyah saat dikirim.");
+ steps.push("QC: cek ukuran, jumlah cup, instruksi pelanggan, kebocoran, kebersihan tutup dan label.");
+ return steps;
 }
 function showRecipe(id){
  const r=DATA.all.find(x=>x.id===id);if(!r)return;
+ s.activeRecipeId=id;
+ const coffee=r.category==="coffee";
+ const categoryVisual={coffee:"☕",banana:"🍌",dimsum:"🥟",prep:"🥣",sop:"📋"};
  let ingredients="";
- if(r.category==="coffee"){
+ if(coffee){
   const index=["12","14","16","22"].indexOf(s.recipeSize);
   ingredients=r.ingredients.map(i=>'<tr><td>'+esc(i.name)+'</td><td>'+num(i.values[index])+' '+esc(i.unit)+'</td></tr>').join("");
  }else ingredients=(r.ingredients||[]).map(i=>'<tr><td>'+esc(i.name)+'</td><td>'+num(i.value)+' '+esc(i.unit)+'</td></tr>').join("");
- const steps=r.steps||["Timbang kopi dan larutkan dalam air hangat.","Tambahkan sirup, SKM atau creamer sesuai takaran resep.","Masukkan susu UHT dingin, aduk homogen.","Masukkan es sesuai berat, tutup dan segel.","Periksa ukuran cup, rasa, kebocoran dan label sebelum dikirim."];
- modalBody.innerHTML='<h2>'+esc(r.name)+'</h2><p class="muted">'+esc(r.note||r.group||"Resep dapur")+'</p>'+
- (r.category==="coffee"?'<div class="actions"><label class="field">Ukuran cup<select id="ops-cup">'+["12","14","16","22"].map(v=>'<option '+(v===s.recipeSize?"selected":"")+' value="'+v+'">'+v+' oz</option>').join("")+'</select></label></div>':"")+
- '<h3>Bahan per porsi</h3><table class="recipe-ings">'+ingredients+'</table><h3>Langkah</h3><ol class="recipe-steps">'+steps.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol>'+
- (r.warning?'<div class="notice">'+esc(r.warning)+'</div>':"");
+ const steps=r.steps||(coffee?coffeeSteps(r):[]);
+ modalBody.dataset.recipeId=id;
+ modalBody.innerHTML=
+ '<div class="recipe-header"><span class="recipe-visual" aria-hidden="true">'+(categoryVisual[r.category]||"🍴")+'</span>'+
+ '<div><span class="recipe-id">'+esc(r.id)+' · '+esc(PRODUCT_CATEGORIES[r.category]||r.group)+'</span>'+
+ '<h2>'+esc(r.name)+'</h2></div></div>'+
+ '<p class="muted">'+esc(r.note||r.group||"Panduan per porsi")+'</p>'+
+ (coffee?'<div class="actions">'+field("Ukuran cup",'<select id="ops-cup" aria-label="Pilih ukuran cup">'+["12","14","16","22"].map(v=>
+ '<option '+(v===s.recipeSize?"selected":"")+' value="'+v+'">'+v+' oz</option>').join("")+'</select>')+'</div>':"")+
+ '<h3>Bahan & takaran per porsi</h3><table class="recipe-ings"><tbody>'+ingredients+'</tbody></table>'+
+ '<div class="row" style="align-items:center;margin-top:18px"><h3 style="margin:0">Langkah pembuatan</h3>'+
+ '<span class="recipe-progress" id="recipe-progress" aria-live="polite">0 / '+steps.length+' selesai</span></div>'+
+ '<ol class="recipe-steps" style="margin-top:16px">'+steps.map((step,i)=>
+ '<li><span class="recipe-step-number">'+(i+1)+'</span>'+
+ '<label class="recipe-step-label" for="recipe-step-'+i+'"><input class="recipe-step-check" id="recipe-step-'+i+'" type="checkbox" data-recipe-step="'+i+'"/>'+
+ '<span class="recipe-step-content">'+esc(step)+'</span></label></li>').join("")+'</ol>'+
+ (r.warning?'<div class="notice recipe-warning"><strong>Catatan keamanan & kualitas</strong><div>'+esc(r.warning)+'</div></div>':"");
  if(!modal.open)modal.showModal();
 }
 function stockView(){
