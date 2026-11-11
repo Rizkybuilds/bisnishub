@@ -1,6 +1,6 @@
 /* Cache only published static assets. Update version whenever changing the recipe catalog. */
-const CACHE="little-treat-kitchen-20261111-v1";
-const ASSETS=["./","./index.html","./styles.css","./app.js","./recipes.js","./icon.svg","./manifest.webmanifest"];
+const CACHE="little-treat-kitchen-20261111-finance-v2";
+const ASSETS=["./","./index.html","./styles.css","./app.js","./recipes.js","./finance-core.js","./finance.js","./finance.css","./icon.svg","./manifest.webmanifest"];
 self.addEventListener("install",event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",event=>{
