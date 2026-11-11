@@ -41,3 +41,21 @@ Owner/admin may view and reconcile finance; staff may create limited expense/ord
 - Avoid storing customer contact data, card details, marketplace passwords, government IDs or supplier agreements in this MVP.
 - Treat exports as sensitive financial files: keep them under owner control and restrict cloud sharing.
 - Current application source is on a publicly accessible GitHub repository, but local financial entries themselves are not pushed to GitHub or Vercel by this feature.
+
+
+## Addendum v2 — Persediaan, penerimaan belanja, dan modal pemilik
+
+1. **Bayar ≠ terima barang.** Saat membeli bahan/kemasan, tandai apakah sudah diterima. Pembayaran langsung mengurangi arus kas, tetapi stok baru bertambah jika barang benar-benar sampai. Jika belum, tekan **Terima stok** di riwayat pembelian setelah barang datang.
+2. **Master barang** memakai kunci nama + satuan + kategori. Contoh: "Pisang kepok" dalam kg dan pcs adalah barang berbeda; pilih satuan konsisten. Nilai stok estimasi dihitung sebagai moving weighted-average cost dari pembelian/penerimaan.
+3. **Saldo awal** dapat dicatat untuk barang yang sudah dimiliki sebelum aplikasi dipakai. Jangan memasukkan saldo awal barang yang sudah punya transaksi masuk, dan jangan mendobelkan pembelian.
+4. **Pemakaian / waste** mengurangi stok fisik. Waste yang tercatat menjadi beban terpisah dalam estimasi laba bulan terkait. **HPP penjualan harus mengecualikan waste yang sudah dibebankan secara terpisah**, tetapi tetap mencakup bahan yang dipakai untuk menghasilkan barang terjual dan kemasan.
+5. **Modal masuk / prive** menambah atau mengurangi arus kas, tetapi tidak memengaruhi omzet atau laba. Catat setoran awal usaha sebagai modal masuk supaya perubahan kas dapat dipahami.
+6. **Ambang stok** dapat ditetapkan per jenis barang untuk membantu daftar belanja, tidak memesan barang secara otomatis.
+7. **Backup lama** versi 1 dimigrasikan tanpa menghapus transaksi. Stok masa lalu tidak direkonstruksi otomatis dari pembelian historis untuk menghindari penghitungan ganda; mulai dengan saldo awal fisik jika diperlukan.
+
+### Yang sengaja belum otomatis
+- Rekonsiliasi marketplace/QRIS, data pesanan per produk, HPP dari resep, biaya bahan per batch, alokasi tenaga kerja, penyusutan fiskal, hutang/piutang, dan biaya modal.
+- FEFO dan nomor batch, tanggal kedaluwarsa bahan frozen, pengingat persediaan saat pindah shift.
+- Sinkronisasi antar-device, autentikasi karyawan dan pembatasan peran.
+
+**Risiko:** seluruh catatan keuangan masih berada dalam localStorage pada origin preview yang sedang dibuka. Setiap deployment dengan hostname berbeda memiliki penyimpanan berbeda. Selalu ekspor JSON sebelum pindah browser, reset data situs, atau memakai preview baru. Jangan menganggap link preview sebagai layanan akuntansi multi-karyawan yang aman.

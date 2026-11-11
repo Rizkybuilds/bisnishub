@@ -1,10 +1,10 @@
 /* Owner-side finance workspace. Device-local until Supabase Auth/RLS is provisioned. */
 (function(){
 "use strict";
-const core=window.LT_FIN_CORE;
+const core=window.LT_FIN_CORE,stock=window.LT_STOCK_CORE,stockUI=window.LT_STOCK_UI;
 const KEY="little-treat-finance-local-v1";
 const tags={ingredient:"Bahan baku",packaging:"Kemasan",equipment:"Alat / aset",operating:"Biaya operasional"};
-const views={belanja:[["plans","Daftar kebutuhan"],["purchases","Catat pembelian"],["purchaselog","Riwayat belanja"]],keuangan:[["dashboard","Ringkasan"],["sales","Catat penjualan"],["assets","Aset & penyusutan"],["ledger","Riwayat"],["backup","Backup data"]]};
+const views={belanja:[["plans","Daftar kebutuhan"],["purchases","Catat pembelian"],["stock","Stok bahan"],["purchaselog","Riwayat belanja"]],keuangan:[["dashboard","Ringkasan"],["sales","Catat penjualan"],["assets","Aset & penyusutan"],["capital","Modal & prive"],["ledger","Riwayat"],["backup","Backup data"]]};
 const state={view:"belanja",sub:{belanja:"plans",keuangan:"dashboard"},month:core.currentMonth(),data:core.fresh(),invalidStorage:false,realize:null};
 const qs=(s)=>document.querySelector(s);
 const fmt=n=>"Rp "+Math.round(Number(n)||0).toLocaleString("id-ID");
@@ -57,6 +57,7 @@ function renderPurchases(){
  '<input type="hidden" name="planId" value="'+esc(p?.id||"")+'"/>'+
  field("Tanggal bayar",'<input type="date" name="date" value="'+core.today()+'" required/>')+
  field("Kategori",'<select id="fin-purchase-kind" name="kind">'+catOpts(opt.kind)+'</select>')+
+ field("Status barang",'<select name="received"><option value="yes">Sudah diterima</option><option value="no">Baru dibayar, belum diterima</option></select>',"Untuk bahan dan kemasan: stok bertambah hanya setelah diterima.")+
  field("Nama barang / biaya",textInput("name","Contoh: Dimsum frozen isi 50",true,opt.name))+
  field("Supplier",textInput("supplier","Nama toko / pemasok",false,opt.supplier))+
  field("Jumlah",numInput("qty",opt.qty,'step="0.01" min="0.01" required'))+
@@ -75,9 +76,16 @@ function renderPurchases(){
 }
 function renderPurchaseLog(){
  const list=state.data.purchases.filter(x=>x.date.startsWith(state.month)).slice().sort((a,b)=>b.date.localeCompare(a.date));
- return '<div class="fin-panel"><div class="fin-panel-title"><h2>Riwayat pembelian — '+monthLabel(state.month)+'</h2><p>Transaksi dibatalkan tetap disimpan dalam jejak riwayat.</p></div>'+
- table(["Tanggal / barang","Kategori / pemasok","Total dibayar","Status"],list.map(x=>'<tr class="'+(x.voidedAt?"fin-done":"")+'"><td>'+esc(x.date)+'<strong>'+esc(x.name)+'</strong><small>'+esc(x.qty+" "+x.unit+" @ "+fmt(x.unitPrice))+'</small></td><td>'+badge(tags[x.kind])+'<small>'+esc(x.supplier)+'</small></td><td>'+fmt(x.total)+'</td><td>'+(x.voidedAt?badge("Dibatalkan","urgent"):'<button data-fin-act="void-purchase" data-fin-id="'+esc(x.id)+'" class="fin-link">Batalkan</button>')+'</td></tr>'))+
- '</div>';
+ return '<div class="fin-panel"><div class="fin-panel-title"><h2>Riwayat pembelian — '+monthLabel(state.month)+'</h2><p>Status penerimaan dipisahkan dari pembayaran. Hanya barang yang diterima menambah stok.</p></div>'+
+ table(["Tanggal / barang","Kategori / pemasok","Total dibayar","Status / aksi"],list.map(x=>{
+  const inventory=["ingredient","packaging"].includes(x.kind);
+  const receipt=inventory&&state.data.stockMoves.some(m=>m.linkedPurchaseId===x.id&&!m.voidedAt);
+  const status=x.voidedAt?badge("Dibatalkan","urgent"):inventory?(receipt?badge("Diterima","ok"):badge("Menunggu barang","urgent")):badge("Tercatat");
+  const receiveButton=!x.voidedAt&&inventory&&!receipt?'<button data-fin-act="receive-purchase" data-fin-id="'+esc(x.id)+'" class="fin-link">Terima stok</button>':"";
+  const voidButton=!x.voidedAt?'<button data-fin-act="void-purchase" data-fin-id="'+esc(x.id)+'" class="fin-link danger">Batalkan</button>':"";
+  return '<tr class="'+(x.voidedAt?"fin-done":"")+'"><td>'+esc(x.date)+'<strong>'+esc(x.name)+'</strong><small>'+esc(x.qty+" "+x.unit+" @ "+fmt(x.unitPrice))+'</small></td>'+
+   '<td>'+badge(tags[x.kind])+'<small>'+esc(x.supplier)+'</small></td><td>'+fmt(x.total)+'</td><td>'+status+'<div class="fin-row-actions">'+receiveButton+voidButton+'</div></td></tr>';
+ }))+'</div>';
 }
 function renderDashboard(){
  const m=core.monthly(state.data,state.month),series=core.pastMonths(state.month,6).reverse().map(month=>core.monthly(state.data,month));
@@ -87,7 +95,7 @@ function renderDashboard(){
   ["Omzet kotor",fmt(m.gross),m.orderCount+" order"],
   ["Pendapatan bersih",fmt(m.revenue),"setelah diskon merchant & refund"],
   ["Estimasi laba operasional",fmt(m.profit),"setelah HPP, biaya, penyusutan"],
-  ["Arus kas periode",fmt(m.cashFlow),"kas masuk − pembayaran keluar"]
+  ["Arus kas periode",fmt(m.cashFlow),"payout + modal − belanja − prive"]
  ])+'</div>'+
  '<div class="fin-two-columns"><div class="fin-panel"><div class="fin-panel-title"><h2>Tren pendapatan bersih</h2><p>Enam bulan terakhir. Bukan uang kas yang sudah cair.</p></div><div class="fin-chart">'+series.map(x=>'<div class="fin-bar-row"><span>'+esc(x.month.slice(5)+"/"+x.month.slice(2,4))+'</span><div><i style="width:'+Math.max(0,100*x.revenue/max).toFixed(2)+'%"></i></div><strong>'+fmt(x.revenue)+'</strong></div>').join("")+'</div></div>'+
  '<div class="fin-panel"><div class="fin-panel-title"><h2>Omzet per channel</h2><p>Penjualan dari pesanan bulan ini.</p></div>'+
@@ -97,13 +105,16 @@ function renderDashboard(){
   ["Pendapatan setelah diskon & refund",m.revenue],
   ["Potongan platform & biaya pembayaran",-m.fees],
   ["HPP produk terjual (diisi saat penjualan)",-m.cogs],
+  ["Barang rusak/terbuang (berdasarkan stok)",-m.wasteCost],
   ["Biaya operasional bulan ini",-m.operational],
   ["Penyusutan alat bulan ini",-m.depreciation],
   ["Estimasi laba operasional",m.profit],
-  ["Payout penjualan yang benar-benar diterima",m.cashIn],
-  ["Semua pembayaran belanja & alat",-m.cashOut],
-  ["Arus kas periode",m.cashFlow],
- ].map(([title,n],i)=>'<div class="fin-reconcile-row '+([5,8].includes(i)?"strong":"")+'"><span>'+title+'</span><strong>'+fmt(n)+'</strong></div>').join("")+'</div>'+
+  ["Payout penjualan diterima",m.payoutsReceived],
+  ["Setoran modal pemilik",m.capitalIn],
+  ["Pengambilan pribadi / prive",-m.ownerDraw],
+  ["Semua pembayaran belanja & alat",-m.purchasePayments],
+  ["Arus kas periode (termasuk setoran/prive)",m.cashFlow],
+ ].map(([title,n],i)=>'<div class="fin-reconcile-row '+(["Estimasi laba operasional","Arus kas periode"].includes(title)?"strong":"")+'"><span>'+title+'</span><strong>'+fmt(n)+'</strong></div>').join("")+'</div>'+
  '<p class="fin-hint">Payout belum diterima dari semua penjualan: '+fmt(m.pending)+'. Tanpa data HPP yang benar, biaya tenaga kerja, pajak, dan saldo awal kas, laporan ini belum menjadi laporan keuangan lengkap.</p></div>';
 }
 function renderSales(){
@@ -159,8 +170,8 @@ function render(container,view){
  state.view=view;
  if(state.invalidStorage){container.innerHTML=shell("Data keuangan perlu dipulihkan","Data tersimpan tidak dapat dibaca. Tidak ada perubahan otomatis.",domError("Penyimpanan lokal rusak/tidak cocok. Jangan menginput transaksi baru di browser ini sampai dilakukan pemulihan."));return}
  const sub=state.sub[view];let body;
- if(view==="belanja"){body=sub==="plans"?renderPlans():sub==="purchases"?renderPurchases():renderPurchaseLog();container.innerHTML=shell("Belanja & kebutuhan.","Rencanakan bahan, kemasan, alat dan biaya operasional. Pisahkan anggaran dari pembelian aktual.",body)}
- else{body=sub==="dashboard"?renderDashboard():sub==="sales"?renderSales():sub==="assets"?renderAssets():sub==="ledger"?renderLedger():renderBackup();container.innerHTML=shell("Keuangan Little Treat.","Pantau penjualan, payout marketplace, kas keluar, aset dan estimasi laba.",body)}
+ if(view==="belanja"){body=sub==="plans"?renderPlans():sub==="purchases"?renderPurchases():sub==="stock"?stockUI.renderStock(state.data,state.month,core.today()):renderPurchaseLog();container.innerHTML=shell("Belanja & kebutuhan.","Rencanakan bahan, kemasan, alat dan biaya operasional. Pisahkan anggaran dari pembelian aktual.",body)}
+ else{body=sub==="dashboard"?renderDashboard():sub==="sales"?renderSales():sub==="assets"?renderAssets():sub==="capital"?stockUI.renderCapital(state.data,state.month,core.today()):sub==="ledger"?renderLedger():renderBackup();container.innerHTML=shell("Keuangan Little Treat.","Pantau penjualan, payout marketplace, kas keluar, aset dan estimasi laba.",body)}
 }
 function rerender(){const root=qs("#main");if(root&&["belanja","keuangan"].includes(state.view))render(root,state.view)}
 function inputs(form){return Object.fromEntries(new FormData(form).entries())}
@@ -169,6 +180,7 @@ function record(form,type){
  const i=inputs(form);if(type==="plan")state.data.plans.unshift(core.addPlan(i));
  if(type==="purchase"){
   const row=core.addPurchase(i);state.data.purchases.unshift(row);
+  if((row.kind==="ingredient"||row.kind==="packaging")&&i.received!=="no")stock.receivePurchase(state.data,row);
   if(i.planId){const plan=state.data.plans.find(x=>x.id===i.planId);if(plan){plan.done=true;plan.linkedPurchaseId=row.id;}}
   state.realize=null;
  }
@@ -180,10 +192,20 @@ function handleAction(btn){
  if(action==="realize"){
   state.realize=id;state.sub.belanja="purchases";rerender();qs("#fin-purchase")?.scrollIntoView({behavior:"smooth",block:"center"});return;
  }
+ if(action==="receive-purchase"){
+  const purchase=state.data.purchases.find(x=>x.id===id);
+  if(!purchase||purchase.voidedAt)return;
+  const received=prompt("Tanggal barang benar-benar diterima (YYYY-MM-DD):",core.today());
+  if(received===null)return;
+  if(!confirm("Konfirmasi barang "+purchase.name+" sudah diterima dan jumlah cocok?"))return;
+  stock.receivePurchase(state.data,purchase,received);
+  save();rerender();toast("Stok diterima");return;
+ }
  if(action==="void-purchase"||action==="void-sale"){
   const reason=prompt("Alasan pembatalan transaksi (wajib):");if(reason===null)return;
   if(!reason.trim()){toast("Alasan pembatalan wajib diisi.");return}
   if(!confirm("Batalkan transaksi ini? Riwayat asli tetap disimpan."))return;
+  if(action==="void-purchase")stock.voidReceipt(state.data,id,reason);
   core.voidRecord(state.data,action==="void-sale"?"sales":"purchases",id,reason);
   // If a purchase for a shopping plan is cancelled, restore the plan.
   if(action==="void-purchase"){state.data.plans.forEach(x=>{if(x.linkedPurchaseId===id){x.done=false;x.linkedPurchaseId=null}})}
@@ -231,5 +253,6 @@ document.addEventListener("submit",e=>{
 });
 window.addEventListener("storage",e=>{if(e.key===KEY){load();rerender();toast("Data berubah dari tab lain. Periksa transaksi terbaru.")}});
 load();
+stockUI.bind(()=>state.data,save,rerender,toast);
 window.LT_FINANCE={render};
 })();
