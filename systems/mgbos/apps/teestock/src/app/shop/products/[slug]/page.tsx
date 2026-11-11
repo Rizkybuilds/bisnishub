@@ -67,7 +67,10 @@ export default async function CatalogProductPage({ params }: Params) {
           </div>
         </div>
         <div className="ts-public-detail-info">
-          <PublishedProductOptions product={product} checkoutEnabled={checkoutEnabled()} />
+          <PublishedProductOptions
+            product={product}
+            checkoutEnabled={checkoutEnabled()}
+          />
           <Link href="/shop" className="ts-public-return">
             ← Kembali ke The Edit
           </Link>
