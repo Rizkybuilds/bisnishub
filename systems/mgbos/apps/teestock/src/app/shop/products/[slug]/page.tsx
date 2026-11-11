@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { listPublishedProducts } from '../../../../lib/published-catalog.server';
 import { formatIllustrativePrice } from '../../../../data/products';
-import '../../catalog.css';
+import '../../../catalog.css';
 
 type Params = { params: Promise<{ slug: string }> };
 
