@@ -10,6 +10,7 @@ const config: NextConfig = {
   agentRules: false,
   transpilePackages: ['@mgbos/config'],
   poweredByHeader: false,
+  experimental: { serverActions: { bodySizeLimit: '22mb' } },
   turbopack: { root: path.resolve(process.cwd(), '../..') },
 };
 export default config;
