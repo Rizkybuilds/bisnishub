@@ -41,11 +41,15 @@ jobs:
           test -f export-manifest.json
           test -f .github/workflows/ci.yml
           test -f apps/little-treat-kitchen/release-gates.test.cjs
+      - name: Package export with hidden files preserved
+        shell: bash
+        run: |
+          cd "$RUNNER_TEMP"
+          tar -czf bite-boxes-preview.tar.gz bite-boxes-preview
       - name: Upload review-only export artifact (no hosting/deployment)
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: bite-boxes-source-preview
-          path: ${{ runner.temp }}/bite-boxes-preview
-          include-hidden-files: true
+          path: ${{ runner.temp }}/bite-boxes-preview.tar.gz
           retention-days: 7
           if-no-files-found: error
