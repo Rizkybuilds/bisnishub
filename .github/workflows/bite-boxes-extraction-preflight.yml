@@ -1,0 +1,51 @@
+name: Bite Boxes Extraction Preflight
+on:
+  pull_request:
+    paths:
+      - 'scripts/extraction/prepare-bite-boxes.mjs'
+      - '.github/workflows/bite-boxes-extraction-preflight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  portable-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout tracked BisnisHub source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Use Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - name: Build isolated Bite Boxes source preview
+        shell: bash
+        run: node scripts/extraction/prepare-bite-boxes.mjs "$RUNNER_TEMP/bite-boxes-preview"
+      - name: Run Kitchen OS tests in standalone output
+        shell: bash
+        run: |
+          cd "$RUNNER_TEMP/bite-boxes-preview"
+          npm test
+      - name: Check preview does not target production and contains only allowed static assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/bite-boxes-preview"
+          grep -q 'example.invalid' static-preview/ops-config.js
+          if grep -q 'ujmojkgipvckwdegcoph' static-preview/ops-config.js; then
+            echo 'ERROR: preview config points to the live Supabase project' >&2
+            exit 1
+          fi
+          test -f export-manifest.json
+          test -f .github/workflows/ci.yml
+          test -f apps/little-treat-kitchen/release-gates.test.cjs
+      - name: Upload review-only export artifact (no hosting/deployment)
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: bite-boxes-source-preview
+          path: ${{ runner.temp }}/bite-boxes-preview
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
