@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'scripts/extraction/prepare-bite-boxes.mjs'
+      - 'scripts/extraction/build-bite-boxes-history-bundle.sh'
       - '.github/workflows/bite-boxes-extraction-preflight.yml'
   workflow_dispatch:
 permissions:
@@ -16,6 +17,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+          fetch-depth: 0
       - name: Use Node.js 22
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
@@ -41,6 +43,9 @@ jobs:
           test -f export-manifest.json
           test -f .github/workflows/ci.yml
           test -f apps/little-treat-kitchen/release-gates.test.cjs
+      - name: Generate and verify history-bearing Git bundle
+        shell: bash
+        run: bash scripts/extraction/build-bite-boxes-history-bundle.sh "$RUNNER_TEMP/bite-boxes-preview" "$RUNNER_TEMP/bite-boxes-preview/bite-boxes-history.bundle"
       - name: Package export with hidden files preserved
         shell: bash
         run: |
