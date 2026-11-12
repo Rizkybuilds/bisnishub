@@ -1,0 +1,41 @@
+name: Little Treat Kitchen OS
+on:
+  pull_request:
+    paths:
+      - 'apps/little-treat-kitchen/**'
+      - '.github/workflows/little-treat-kitchen.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/little-treat-kitchen/**'
+      - '.github/workflows/little-treat-kitchen.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  catalog:
+    name: Validate Kitchen OS and release bundle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - name: Test operator, finance, database boundary and release assets
+        run: |
+          node --test \
+            apps/little-treat-kitchen/catalog.test.cjs \
+            apps/little-treat-kitchen/finance.test.cjs \
+            apps/little-treat-kitchen/stock.test.cjs \
+            apps/little-treat-kitchen/ops.test.cjs \
+            apps/little-treat-kitchen/ops-ui.test.cjs \
+            apps/little-treat-kitchen/ops-integrity.test.cjs \
+            apps/little-treat-kitchen/menu-costing.test.cjs \
+            apps/little-treat-kitchen/menu-costing-ui.test.cjs \
+            apps/little-treat-kitchen/release-gates.test.cjs
