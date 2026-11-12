@@ -1,0 +1,6 @@
+{
+  "framework": null,
+  "installCommand": "echo 'No install required for static Kitchen OS'",
+  "buildCommand": "echo 'Static Kitchen OS ready'",
+  "outputDirectory": "."
+}
