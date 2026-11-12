@@ -8,9 +8,8 @@ import { useLiveCart } from './LiveCartProvider';
 
 const links = [
   { href: '/shop', label: 'The Edit' },
-  { href: '/custom', label: 'Custom' },
-  { href: '/business', label: 'For Business' },
-  { href: '/support/contact', label: 'Bantuan' },
+  { href: '/shop#studio-studies', label: 'Studio Archive' },
+  { href: '/#retail-story', label: 'Our Point of View' },
 ];
 
 export function Header() {
@@ -42,14 +41,13 @@ export function Header() {
   return (
     <header className="site-header retail-site-header">
       <div className="retail-announcement">
-        TEESTOCK SELECTS <span aria-hidden="true">✳</span> THE NEXT CHAPTER IS
-        TAKING SHAPE
+        AN INDEPENDENT GRAPHIC APPAREL STUDIO <span aria-hidden="true">·</span> OUR FIRST RELEASE IS TAKING SHAPE
       </div>
       <div className="retail-wrap">
         <div className="header-inner retail-header-inner">
           <Link
             href="/"
-            className="brand-logo retail-brand"
+            className="brand-logo retail-brand ts-r1-wordmark"
             aria-label="TeeStock Beranda"
           >
             <span>
@@ -81,7 +79,7 @@ export function Header() {
               className="retail-real-cart-badge"
               aria-label={'Keranjang produk nyata: ' + liveCartCount + ' kaos'}
             >
-              Keranjang <span aria-hidden="true">({liveCartCount})</span>
+              BAG <span aria-hidden="true">({liveCartCount})</span>
             </Link>
             <Link
               href="/demo/cart"
@@ -94,7 +92,7 @@ export function Header() {
               </span>
             </Link>
             <Link className="retail-header-cta" href="/shop">
-              Explore <span aria-hidden="true">↗</span>
+              Discover <span aria-hidden="true">↗</span>
             </Link>
             <button
               ref={toggleRef}
@@ -105,7 +103,7 @@ export function Header() {
               aria-label={open ? 'Tutup navigasi' : 'Buka navigasi'}
               onClick={() => setOpen(!open)}
             >
-              <span aria-hidden="true">{open ? '✕' : '☰'}</span>
+              <span aria-hidden="true">{open ? 'CLOSE ×' : 'MENU +'}</span>
             </button>
           </div>
         </div>
@@ -136,7 +134,7 @@ export function Header() {
             className="mobile-nav-link"
             onClick={() => setOpen(false)}
           >
-            Keranjang ({liveCartCount}) <span aria-hidden="true">↗</span>
+            Bag / Keranjang ({liveCartCount}) <span aria-hidden="true">↗</span>
           </Link>
           <Link
             href="/demo/cart"
