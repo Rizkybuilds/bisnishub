@@ -26,9 +26,14 @@ cleanup() {
   rm -rf "$validate"
 }
 trap cleanup EXIT
-# Git subtree retains the history of this particular path; earlier historical
-# paths are not included. The original BisnisHub repo and history remain intact.
-root_commit="$(git -C "$source_root" subtree split --prefix=systems/little-treat-kitchen HEAD)"
+# Preserve the older PR #117 Little Treat development history before the
+# canonical app was relocated to systems/. Pin the reviewed historical head.
+# The canonical source is still copied from the verified main export below.
+legacy_head="fc493bfbfd641ab1e435cbbe0bda756f7279c4c4"
+if ! git -C "$source_root" cat-file -e "$legacy_head^{commit}" 2>/dev/null; then
+  git -C "$source_root" fetch --no-tags origin "$legacy_head"
+fi
+root_commit="$(git -C "$source_root" subtree split --prefix=apps/little-treat-kitchen "$legacy_head")"
 if [[ -z "$root_commit" ]]; then
   echo "Git subtree did not find Little Treat history" >&2
   exit 1
@@ -40,6 +45,30 @@ while IFS= read -r -d '' relative; do
   mkdir -p "$stage/apps/little-treat-kitchen/$(dirname "$relative")"
   git -C "$stage" mv -- "$relative" "apps/little-treat-kitchen/$relative"
 done < <(git -C "$stage" ls-files -z)
+# All legacy paths must be represented by the canonical manifest. Overlay the
+# current source so historical PR contents cannot roll back fixes in main.
+node - "$stage" "$export_dir" <<'NODE'
+const fs=require('node:fs'),path=require('node:path');
+const [stage,exportDir]=process.argv.slice(2);
+const app=path.join(stage,'apps/little-treat-kitchen');
+const m=JSON.parse(fs.readFileSync(path.join(exportDir,'export-manifest.json'),'utf8'));
+const expected=new Set(m.files.map(f=>f.path.replace('apps/little-treat-kitchen/','')));
+const actual=[];
+const walk=(d,p='')=>{for(const e of fs.readdirSync(d,{withFileTypes:true})){const rel=path.posix.join(p,e.name);
+ if(e.isDirectory())walk(path.join(d,e.name),rel);
+ else if(e.isFile())actual.push(rel);
+ else throw Error('Non-regular file in legacy subtree: '+rel);
+}};
+walk(app);
+for(const name of actual)if(!expected.has(name))throw Error('Unexpected legacy-only path: '+name);
+for(const entry of m.files){
+ const rel=entry.path.replace('apps/little-treat-kitchen/','');
+ const dest=path.join(app,rel);
+ fs.mkdirSync(path.dirname(dest),{recursive:true});
+ fs.copyFileSync(path.join(exportDir,entry.path),dest);
+}
+console.log('Reconciled '+actual.length+' legacy PR files to '+m.files.length+' canonical main files');
+NODE
 node - "$stage" "$export_dir" <<'NODE'
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const [stage,exportDir]=process.argv.slice(2);
@@ -68,5 +97,5 @@ git -C "$stage" bundle verify "$bundle_file" >/dev/null 2>&1
 git clone --quiet --branch "$branch" "$bundle_file" "$validate/clone"
 cd "$validate/clone"
 node --test apps/little-treat-kitchen/*.test.cjs
-echo "History-bearing bundle verified (from systems/little-treat-kitchen/)."
+echo "History-bearing bundle verified (legacy PR #117 source path and canonical main snapshot)."
 echo "No remote repository or production environment modified."
