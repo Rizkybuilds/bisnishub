@@ -1,0 +1,43 @@
+name: TeeStock R1 Format Export Temporary
+on:
+  push:
+    branches: [feat/teestock-editorial-redesign-r1]
+permissions:
+  contents: read
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: systems/mgbos
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: systems/mgbos/.node-version
+      - run: pnpm install --frozen-lockfile
+      - name: Export exact Prettier v3.9.9 formatted R1 source
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs');
+          const {execFileSync}=require('node:child_process');
+          const files=[
+            "apps/teestock/src/app/page.tsx",
+            "apps/teestock/src/app/shop/page.tsx",
+            "apps/teestock/src/components/Header.tsx",
+            "apps/teestock/src/components/Footer.tsx",
+            "apps/teestock/src/app/editorial-r1.css",
+            "apps/teestock/src/app/layout.tsx",
+            "apps/teestock/src/app/shop/products/[slug]/page.tsx",
+            "docs/teestock-editorial-r1.md",
+          ];
+          execFileSync('pnpm',['exec','prettier','--write',...files],{stdio:'inherit'});
+          for (const file of files) console.log('R1_FORMAT:'+file+':'+fs.readFileSync(file).toString('base64'));
+          NODE
