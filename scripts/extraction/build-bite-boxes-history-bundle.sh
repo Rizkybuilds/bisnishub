@@ -84,7 +84,10 @@ NODE
 for file in README.md AGENTS.md package.json .gitignore export-manifest.json; do
   cp "$export_dir/$file" "$stage/$file"
 done
-for dir in .github docs static-preview; do
+# GitHub Actions GITHUB_TOKEN may not push commits introducing workflow files;
+# keep the history bundle free of .github/workflows/, and install CI separately
+# through the authorized GitHub connector after the history is imported.
+for dir in docs static-preview; do
   cp -R "$export_dir/$dir" "$stage/$dir"
 done
 git -C "$stage" add -A
