@@ -100,3 +100,43 @@ Extract KasKita only if it is still actively maintained. Update BisnisHub naviga
 This planning PR **does not** create/delete/rename repositories, merge/close PRs, edit applications, switch production URLs, change Supabase/Vercel/GitHub Pages, expose secrets, apply database migrations, rewrite Git history, relax CI, or grant a release authorization.
 
 Next bounded task: **Wave 0: reconcile the open Little Treat PR stack against `main`, verify existing release baseline, and produce a one-page extraction readiness verdict**. Do not begin Wave 1 until blockers are resolved.
+
+## 7. Wave 0 evidence update (verified 12 November 2026)
+
+### A. Source reconciliation: old PR stack vs the canonical source
+
+Read-only Git tree comparison of Little Treat app files by **relative filename and Git blob SHA** (not commit ancestry). The old branches retain files at `apps/little-treat-kitchen/`; current `main` uses `systems/little-treat-kitchen/`. Git commit-history comparisons show divergence and must **not** be used alone to infer missing application features.
+
+| Open PR branch | App files in branch | Exactly same blobs on `main` | Different content | Files present only on old branch |
+| --- | ---: | ---: | ---: | ---: |
+| #105 Kitchen OS v1 | 10 | 5 | 5 | 0 |
+| #106 Finance v1 | 15 | 8 | 7 | 0 |
+| #108 Operations v2 | 18 | 16 | 2 | 0 |
+| #109 Operational v3 | 28 | 24 | 4 | 0 |
+| #114 UI polish | 30 | 25 | 5 | 0 |
+| #115 WP-01 integrity | 33 | 28 | 5 | 0 |
+| #117 Menu/HPP | **38** | **36** | **2** | **0** |
+
+For latest #117, only `README.md` and `ops.js` differ. The latter difference is a small sign-in helper note: the old PR exposes a link to `legacy.html`, whereas the main version instead instructs the operator to consult the old browser if necessary. Current `main` additionally contains `RELEASE.md` and `release-gates.test.cjs` absent on that branch. **Conclusion: use current `main` as the extraction baseline.** Do not merge, rebase, close or cherry-pick the seven PRs as part of extraction. Review PR discussions independently if they are later closed for housekeeping.
+
+### B. Published code integrity
+
+Public site publication branch `gh-pages` points to `62d95928cf22ae2b645de9d078e9c93e82c7cb5f`. Source branch `main` at `b5f9706054e378d2d078b72a59968d5214958e7d`. The **nine** app assets on `gh-pages` (`icon.svg`, `index.html`, `menu-costing.js`, `ops-config.js`, `ops-visual.css`, `ops.css`, `ops.html`, `ops.js`, `recipes.js`) all have **exactly matching Git blob SHA** to the same-named source files. `gh-pages` also has the expected `.nojekyll` marker. No extra published files were found at the tree root.
+
+The latest observed `main` Little Treat workflow run was **successful** (GitHub Actions run `43137979130`, 2026-11-12 01:57 UTC): both **Validate Kitchen OS and release bundle** and **Verify public GitHub Pages assets** passed. The latter's published asset HTTP probe ran successfully from GitHub Actions. An independent live URL/browser request in this audit environment was **not possible** (tool access/DNS restrictions); do **not** mislabel that as either a verified browser pass or a production outage. Real owner/staff two-device E2E, Supabase production/RLS-state readback, live financial reconciliation and custom-domain/auth redirect checks were not performed.
+
+### C. CI and repository migration readiness
+
+PR #120 at head `4627c3845c240e9a4f1c7eb80b85a4e68872591e` passed Repository Integrity, PR Gate, Agent Governance and MGBOS Foundation. These are **documentation PR checks**, not Kitchen OS end-to-end acceptance of a new hosting target. No repository migrations or deployments have occurred.
+
+| Gate | Result | Scope |
+| --- | --- | --- |
+| Main branch source candidate | **GO** | Use `b5f9706` and `systems/little-treat-kitchen/` for a disposable extraction clone |
+| Old stacked PRs | **QUARANTINE / REVIEW** | No direct merge into current main, no automatic closure |
+| Published build matching source | **GO (static files only)** | All nine files match `gh-pages` SHA |
+| Current GitHub CI / static HTTP smoke | **GO (observed CI)** | Run `43137979130`; not a real device acceptance test |
+| New repo + CI in isolation | **NOT STARTED** | Provision target with explicit visibility and preserve relevant history |
+| Staging / owner-staff login / RLS / operational checks | **NOT VERIFIED** | Requires safe testing and runtime verification |
+| Production URL cutover and retirement of old source | **NO-GO** | Preserve existing public URL until authorized and tested |
+
+**Next action:** create a bounded target-repo extraction plan using current `main`, decide the GitHub repository visibility, retain the existing Little Treat Supabase backend, and test **staging** with a safe configuration. The PR remains draft until this proposal is reviewed. The old `gh-pages` source remains operational and unchanged. GitHub Pages project-site URLs typically depend on repository name, so switching to a new repo without a deliberate URL strategy is not acceptable.
