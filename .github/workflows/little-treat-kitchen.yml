@@ -17,7 +17,7 @@ permissions:
 jobs:
   catalog:
     name: Validate Kitchen OS and release bundle
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -39,3 +39,26 @@ jobs:
             systems/little-treat-kitchen/menu-costing.test.cjs \
             systems/little-treat-kitchen/menu-costing-ui.test.cjs \
             systems/little-treat-kitchen/release-gates.test.cjs
+
+  pages-smoke:
+    name: Verify public GitHub Pages assets
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Probe published root and assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://rizkybuilds.github.io/bisnishub"
+          tmp="$(mktemp)"
+          trap 'rm -f "$tmp"' EXIT
+          for asset in "" "ops.js" "ops-config.js" "recipes.js" "menu-costing.js" "ops.css" "ops-visual.css" "icon.svg"; do
+            url="${base}/${asset}"
+            curl --fail --location --silent --show-error --retry 3 --retry-delay 1 --max-time 15 "$url" -o "$tmp"
+            test -s "$tmp" || { echo "Empty Pages asset: $url"; exit 1; }
+            echo "OK $url"
+            case "$asset" in
+              "") grep -q "Little Treat | Kitchen OS" "$tmp" ;;
+              "ops.js") grep -q "lt_create_order_v2" "$tmp" ;;
+              "ops-config.js") grep -q "sb_publishable_" "$tmp" ;;
+            esac
+          done
