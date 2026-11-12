@@ -157,7 +157,7 @@ export default async function Home() {
           <div className="ts-r1-philosophy-label">
             <span className="ts-r1-kicker">03 / WHAT WE BELIEVE</span>
             <span className="ts-r1-philosophy-index">
-              TEESTOCK® / NOTES ON GETTING DRESSED
+              TEESTOCK / NOTES ON GETTING DRESSED
             </span>
           </div>
           <div className="ts-r1-philosophy-content">

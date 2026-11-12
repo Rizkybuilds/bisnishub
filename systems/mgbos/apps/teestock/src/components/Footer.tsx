@@ -9,9 +9,7 @@ export function Footer() {
             <span className="ts-r1-kicker">
               TEESTOCK / INDEPENDENT APPAREL STUDIO
             </span>
-            <strong className="ts-r1-footer-wordmark">
-              TeeStock<span aria-hidden="true">®</span>
-            </strong>
+            <strong className="ts-r1-footer-wordmark">TeeStock</strong>
             <p>Good design, worn daily. A wardrobe for ideas worth keeping.</p>
           </div>
           <nav className="ts-r1-footer-nav" aria-label="Footer navigation">

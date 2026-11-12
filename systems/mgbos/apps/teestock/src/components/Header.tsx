@@ -53,9 +53,6 @@ export function Header() {
           >
             <span>
               Tee<span className="retail-brand-tight">Stock</span>
-              <span className="retail-brand-star" aria-hidden="true">
-                ✳
-              </span>
             </span>
           </Link>
           <nav className="nav-desktop retail-nav" aria-label="Navigasi Utama">
