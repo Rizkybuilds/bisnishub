@@ -51,5 +51,3 @@ jobs:
         with:
           name: bite-boxes-source-preview
           path: ${{ runner.temp }}/bite-boxes-preview.tar.gz
-          retention-days: 7
-          if-no-files-found: error
