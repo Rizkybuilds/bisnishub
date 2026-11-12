@@ -164,7 +164,7 @@ export default async function Home() {
             <h2 id="r1-philosophy-title">
               A T-shirt is ordinary.
               <br />
-              <em>What you put on it isn't.</em>
+              <em>What you put on it isn&apos;t.</em>
             </h2>
             <p>
               Pakaian sehari-hari nggak harus kehilangan karakter. Kami tertarik
