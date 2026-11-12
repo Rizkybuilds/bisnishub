@@ -6,208 +6,214 @@ import './catalog.css';
 
 export default async function Home() {
   const publishedProducts = await listPublishedProducts();
+
   return (
-    <div className="retail-home">
+    <div className="retail-home ts-r1-page ts-r1-home">
       <section
-        className="retail-hero retail-wrap"
+        className="ts-r1-hero retail-wrap"
         aria-labelledby="retail-hero-heading"
       >
-        <div className="retail-hero-content">
-          <span className="retail-overline">
-            <span className="retail-overline-mark" /> A CURATED APPAREL HOUSE /
-            INDONESIA
-          </span>
-          <h1 id="retail-hero-heading">
-            Everyday
-            <br />
-            <em>wear,</em>
-            <br />
-            extraordinary
-            <br />
-            feeling.
-          </h1>
-          <p className="retail-hero-description">
-            Kaos grafis dengan sudut pandang yang berbeda. Karya terkurasi,
-            siluet yang dipikirkan, dan cerita kecil yang ingin kamu bawa ke
-            mana-mana.
-          </p>
-          <div className="retail-actions">
-            <Link href="/shop" className="retail-action-primary">
-              Jelajahi koleksi <span aria-hidden="true">↗</span>
-            </Link>
-            <Link href="#retail-story" className="retail-action-quiet">
-              Kenali TeeStock <span aria-hidden="true">↓</span>
-            </Link>
+        <div className="ts-r1-hero-copy">
+          <div className="ts-r1-hero-topline">
+            <span className="ts-r1-kicker">
+              TEESTOCK / INDEPENDENT APPAREL STUDIO
+            </span>
+            <span className="ts-r1-hero-issue">ISSUE 001 — INDONESIA</span>
           </div>
-          <div className="retail-hero-footnote">
-            <span>01 / 03 — EDITORIAL PREVIEW</span>
-            <span>
-              SCROLL TO EXPLORE <span aria-hidden="true">↓</span>
+          <div className="ts-r1-hero-main">
+            <p className="ts-r1-eyebrow">A DIFFERENT WAY TO WEAR AN IDEA.</p>
+            <h1 id="retail-hero-heading">
+              Wear your
+              <br />
+              <span>point of view.</span>
+            </h1>
+            <p className="ts-r1-hero-lede">
+              Bukan sekadar gambar di atas kaos. TeeStock mempertemukan gagasan
+              yang layak dibicarakan dengan pakaian yang ingin kamu kenakan lagi
+              dan lagi.
+            </p>
+            <div className="ts-r1-hero-actions">
+              <Link className="ts-r1-button ts-r1-button-dark" href="/shop">
+                Jelajahi koleksi <span aria-hidden="true">↗</span>
+              </Link>
+              <Link className="ts-r1-link" href="#retail-story">
+                Cerita di balik TeeStock <span aria-hidden="true">↘</span>
+              </Link>
+            </div>
+          </div>
+          <div className="ts-r1-hero-bottom">
+            <span>CURATED THOUGHTS / EVERYDAY UNIFORM</span>
+            <span>SCROLL TO DISCOVER ↓</span>
+          </div>
+        </div>
+
+        <div
+          className="ts-r1-hero-editorial"
+          aria-label="Ilustrasi konsep apparel TeeStock, belum merupakan produk untuk dibeli"
+        >
+          <div className="ts-r1-editorial-head">
+            <span>01 / IN THE STUDIO</span>
+            <span>VISUAL STUDY</span>
+          </div>
+          <div className="ts-r1-editorial-art">
+            <span className="ts-r1-editorial-watermark" aria-hidden="true">
+              TS.
+            </span>
+            <HeroGarments />
+          </div>
+          <div className="ts-r1-editorial-foot">
+            <div>
+              <strong>Considered essentials.</strong>
+              <span>An exploration of form, graphics &amp; everyday wear.</span>
+            </div>
+            <span className="ts-r1-editorial-status">
+              NOT FOR SALE / CONCEPT ONLY
             </span>
           </div>
         </div>
-        <div
-          className="retail-hero-art"
-          aria-label="Ilustrasi konsep kaos TeeStock, bukan foto barang jual"
-        >
-          <div className="retail-hero-ring" />
-          <HeroGarments />
-          <div className="retail-hero-roundel">
-            <span>TEESTOCK</span>
-            <strong>
-              WEAR YOUR
-              <br />
-              OWN STORY.
-            </strong>
-            <span>EST. IN PROGRESS</span>
-          </div>
-          <span className="retail-hero-art-note">
-            STUDY NO. 001 / ILLUSTRATIVE ONLY
+      </section>
+
+      <div className="ts-r1-facts" aria-label="Arah kreatif TeeStock">
+        <div className="retail-wrap">
+          <span>DESIGN-LED APPAREL</span>
+          <span aria-hidden="true" className="ts-r1-facts-dot">
+            •
           </span>
+          <span>ORIGINAL &amp; CURATED</span>
+          <span aria-hidden="true" className="ts-r1-facts-dot">
+            •
+          </span>
+          <span>MADE WITH INTENTION</span>
         </div>
-      </section>
+      </div>
 
-      <section className="retail-ticker" aria-label="Nilai TeeStock">
-        <div className="retail-ticker-inner">
-          <span>MAKE IT YOURS</span>
-          <span aria-hidden="true">✳</span>
-          <span>DESIGN WITH INTENTION</span>
-          <span aria-hidden="true">✳</span>
-          <span>EVERYDAY, YOUR WAY</span>
-          <span aria-hidden="true">✳</span>
-          <span>TEESTOCK SELECTS</span>
-          <span aria-hidden="true">✳</span>
-        </div>
-      </section>
-
-      <PublishedCatalog featured products={publishedProducts.slice(0, 3)} />
-      <section
-        className="retail-collection-section retail-wrap"
-        id="collection"
-        aria-labelledby="retail-collection-heading"
-      >
-        <div className="retail-section-heading">
+      {publishedProducts.length > 0 ? (
+        <section
+          className="ts-r1-live-section retail-wrap"
+          id="releases"
+          aria-label="Produk TeeStock terverifikasi"
+        >
+          <PublishedCatalog featured products={publishedProducts.slice(0, 3)} />
+        </section>
+      ) : (
+        <section
+          className="ts-r1-release-note retail-wrap"
+          id="releases"
+          aria-labelledby="r1-release-heading"
+        >
           <div>
-            <span className="retail-overline">THE EDIT / PREVIEW 001</span>
-            <h2 id="retail-collection-heading">
-              Made to <em>feel</em> like you.
+            <span className="ts-r1-kicker">01 / THE RELEASE</span>
+            <h2 id="r1-release-heading">Good pieces take time.</h2>
+          </div>
+          <div className="ts-r1-release-description">
+            <p>
+              Koleksi komersial sedang melalui kurasi, pemeriksaan hak desain,
+              dan pengujian sampel. Kami tidak menampilkan produk sebagai siap
+              jual sebelum informasinya terverifikasi.
+            </p>
+            <span className="ts-r1-status-line">
+              <span aria-hidden="true" /> Pratinjau Kurasi Desain — belum dibuka
+            </span>
+          </div>
+        </section>
+      )}
+
+      <section
+        className="ts-r1-studio retail-wrap"
+        id="studio-studies"
+        aria-labelledby="r1-studio-heading"
+      >
+        <div className="ts-r1-section-top">
+          <span className="ts-r1-kicker">02 / WORK IN PROGRESS</span>
+          <span>THE STUDIO ARCHIVE — 001 TO 006</span>
+        </div>
+        <div className="ts-r1-section-heading">
+          <div>
+            <h2 id="r1-studio-heading">
+              The thinking
+              <br />
+              behind the tee.
             </h2>
           </div>
-          <p>
-            Eksplorasi gaya visual TeeStock. Pilih warna, intip detail dan
-            temukan arah koleksi yang sedang dikembangkan.
-          </p>
+          <div className="ts-r1-section-aside">
+            <p>
+              Sebelum menjadi produk, setiap ide punya ruang untuk diuji. Ini
+              enam studi visual awal, bukan barang yang tersedia untuk dibeli.
+            </p>
+            <Link className="ts-r1-inline-link" href="/shop#studio-studies">
+              Masuk ke studio archive <span aria-hidden="true">↗</span>
+            </Link>
+          </div>
         </div>
         <ConceptGallery compact />
       </section>
 
       <section
-        className="retail-story-section"
+        className="ts-r1-philosophy"
         id="retail-story"
-        aria-labelledby="retail-story-heading"
+        aria-labelledby="r1-philosophy-title"
       >
-        <div className="retail-wrap retail-story-grid">
-          <div className="retail-story-art">
-            <span className="retail-story-stamp">MORE THAN A BLANK CANVAS</span>
-            <div className="retail-story-shape">
-              <span>
-                TS<span className="retail-story-star">✳</span>
-              </span>
+        <div className="retail-wrap ts-r1-philosophy-grid">
+          <div className="ts-r1-philosophy-label">
+            <span className="ts-r1-kicker">03 / WHAT WE BELIEVE</span>
+            <span className="ts-r1-philosophy-index">
+              TEESTOCK / NOTES ON GETTING DRESSED
+            </span>
+          </div>
+          <div className="ts-r1-philosophy-content">
+            <h2 id="r1-philosophy-title">
+              A T-shirt is ordinary.
+              <br />
+              <em>What you put on it isn&apos;t.</em>
+            </h2>
+            <p>
+              Pakaian sehari-hari nggak harus kehilangan karakter. Kami tertarik
+              pada ide yang punya makna, humor, atau sudut pandang berbeda —
+              lalu mencari cara paling sederhana untuk membawanya ke dalam
+              keseharian.
+            </p>
+            <div className="ts-r1-principles">
+              <div>
+                <span>01</span>
+                <strong>Concept first.</strong>
+                <p>Sebuah desain harus punya alasan untuk ada.</p>
+              </div>
+              <div>
+                <span>02</span>
+                <strong>Wearability matters.</strong>
+                <p>Pesan kuat tetap harus nyaman dipakai sehari-hari.</p>
+              </div>
+              <div>
+                <span>03</span>
+                <strong>Quality is earned.</strong>
+                <p>Bahan, print, dan ukuran diverifikasi sebelum rilis.</p>
+              </div>
             </div>
-            <span className="retail-story-side">
-              CURATED / CONSIDERED / EVERYDAY
-            </span>
-          </div>
-          <div className="retail-story-content">
-            <span className="retail-overline">NOT JUST ANOTHER TEE</span>
-            <h2 id="retail-story-heading">
-              Simple things.
-              <br />
-              <em>Big feelings.</em>
-            </h2>
-            <p>
-              TeeStock lahir dari keyakinan bahwa pakaian sehari-hari bisa
-              terasa personal. Tidak harus berlebihan. Tidak harus mengikuti
-              semua tren. Cukup dipilih dengan baik dan dipakai dengan percaya
-              diri.
-            </p>
-            <p>
-              Di sini, kurasi desain dan perhatian pada kualitas garmen berjalan
-              berdampingan. Dari ide visual hingga detail produk, semuanya
-              dibuat lebih mudah untuk dijelajahi.
-            </p>
-            <Link href="/shop" className="retail-text-link">
-              Explore the edit <span aria-hidden="true">↗</span>
-            </Link>
           </div>
         </div>
       </section>
 
       <section
-        className="retail-paths-section retail-wrap"
-        aria-labelledby="retail-paths-heading"
+        className="ts-r1-outro retail-wrap"
+        aria-labelledby="r1-outro-heading"
       >
-        <div className="retail-section-heading retail-paths-heading">
-          <div>
-            <span className="retail-overline">BEYOND THE COLLECTION</span>
-            <h2 id="retail-paths-heading">
-              Your idea, <em>our canvas.</em>
-            </h2>
-          </div>
-          <p>
-            Selain koleksi pilihan, kami juga menyiapkan pengalaman untuk karya
-            personal dan kebutuhan apparel organisasi.
-          </p>
-        </div>
-        <div className="retail-paths-grid">
-          <Link href="/custom" className="retail-path-card retail-path-custom">
-            <span>01 / CUSTOM APPAREL</span>
-            <strong>
-              Make it
-              <br />
-              <em>personal.</em>
-            </strong>
-            <span className="retail-path-bottom">
-              Eksplorasi layanan custom <span aria-hidden="true">↗</span>
-            </span>
-          </Link>
-          <Link
-            href="/business"
-            className="retail-path-card retail-path-business"
-          >
-            <span>02 / FOR BUSINESS</span>
-            <strong>
-              Wear it
-              <br />
-              <em>together.</em>
-            </strong>
-            <span className="retail-path-bottom">
-              Solusi untuk tim & organisasi <span aria-hidden="true">↗</span>
-            </span>
-          </Link>
-        </div>
-      </section>
-
-      <section
-        className="retail-availability retail-wrap"
-        aria-label="Informasi kesiapan katalog"
-      >
-        <span className="retail-availability-dot" />
         <div>
-          <strong>
-            {publishedProducts.length > 0
-              ? 'Shop (Katalog Ritel) — Koleksi Terverifikasi'
-              : 'Shop (Katalog Ritel) — Pratinjau Kurasi Desain'}
-          </strong>
-          <p>
-            {publishedProducts.length > 0
-              ? 'Produk yang terverifikasi sudah dapat dijelajahi. Enam desain studio lainnya masih merupakan pratinjau. checkout dan pembayaran belum tersedia; Build Merch masih dalam Pengembangan.'
-              : 'Koleksi pilihan TeeStock saat ini berada dalam tahap pratinjau desain studio. Pemesanan komersial mandiri maupun transaksi langsung belum dibuka untuk publik. Build Merch masih dalam Pengembangan.'}
-          </p>
+          <span className="ts-r1-kicker">NO NOISE. JUST A POINT OF VIEW.</span>
+          <h2 id="r1-outro-heading">
+            The next piece
+            <br />
+            starts with an idea.
+          </h2>
         </div>
-        <Link href="/support/contact">
-          Informasi layanan <span aria-hidden="true">↗</span>
-        </Link>
+        <div className="ts-r1-outro-action">
+          <p>
+            Lihat koleksi, temukan studi desain, atau ikuti perkembangan
+            TeeStock sebelum koleksi pertama dirilis.
+          </p>
+          <Link className="ts-r1-button ts-r1-button-light" href="/shop">
+            Explore The Edit <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
       </section>
     </div>
   );
