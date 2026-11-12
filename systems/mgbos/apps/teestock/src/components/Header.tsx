@@ -41,7 +41,8 @@ export function Header() {
   return (
     <header className="site-header retail-site-header">
       <div className="retail-announcement">
-        AN INDEPENDENT GRAPHIC APPAREL STUDIO <span aria-hidden="true">·</span> OUR FIRST RELEASE IS TAKING SHAPE
+        AN INDEPENDENT GRAPHIC APPAREL STUDIO <span aria-hidden="true">·</span>{' '}
+        OUR FIRST RELEASE IS TAKING SHAPE
       </div>
       <div className="retail-wrap">
         <div className="header-inner retail-header-inner">

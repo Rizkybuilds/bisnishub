@@ -21,7 +21,7 @@ Editorial retail design that reads like a serious clothing label: purposeful mon
 
 - Notion: simple navigational hierarchy, whitespace, clean typography and predictable controls.
 - OpenClothing (owner reference): a sharp retail-first fashion sensibility; page-level specifics unverified due to restricted readable page access.
-- 21st.dev: use high-quality interaction patterns *selectively*, not widget accumulation.
+- 21st.dev: use high-quality interaction patterns _selectively_, not widget accumulation.
 - Minimal fashion retail: generous item photography and magazine-grade composition rather than a noisy collection of micro-components.
 
 ## Review gates
