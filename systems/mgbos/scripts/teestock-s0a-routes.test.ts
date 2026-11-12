@@ -83,24 +83,26 @@ describe('TeeStock S0-A Route & Content Invariant Tests', () => {
     expect(contactPage).not.toContain('tombol inert');
   });
 
-  it('ensures Shop indicates design preview status and Build Merch remains in development without unverified checkout', () => {
+  it('keeps commercial releases separate from unpublished studio studies without unverified ordering claims', () => {
     const homePage = fs.readFileSync(
       path.join(teestockAppDir, 'src/app/page.tsx'),
       'utf8',
     );
 
-    // Shop availability & ordering status
-    expect(homePage).toContain('Shop (Katalog Ritel)');
+    // The approved catalog and illustrative concepts have distinct paths.
+    expect(homePage).toContain('publishedProducts.length > 0');
+    expect(homePage).toContain('<PublishedCatalog');
+    expect(homePage).toContain('<ConceptGallery compact />');
+    expect(homePage).toContain('NOT FOR SALE / CONCEPT ONLY');
     expect(homePage).toContain('Pratinjau Kurasi Desain');
+    expect(homePage).toContain('pemeriksaan hak desain');
+
+    // A polished redesign may not turn studies into live checkout offers.
     expect(homePage).not.toContain('Pemesanan Terbuka via WhatsApp');
     expect(homePage).not.toContain('Beli Sekarang');
     expect(homePage).not.toContain('Checkout');
     expect(homePage).not.toContain('/checkout');
     expect(homePage).not.toContain('/cart');
-
-    // Build Merch is marked in development
-    expect(homePage).toContain('Pengembangan');
-    expect(homePage).toContain('Build Merch');
   });
 
   it('preserves /custom-atelier deep link with integration banner and navigation to /custom', () => {
