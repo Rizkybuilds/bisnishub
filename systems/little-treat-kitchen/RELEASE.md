@@ -3,7 +3,7 @@
 The GitHub Pages site **at the repository root** is the operator app:
 https://rizkybuilds.github.io/bisnishub/
 
-Source of truth: `main:apps/little-treat-kitchen/`. Production:
+Source of truth: `main:systems/little-treat-kitchen/`. Production:
 `gh-pages:/`. No Vercel deployment is required.
 
 ## Exact GitHub Pages allowlist

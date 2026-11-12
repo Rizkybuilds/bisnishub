@@ -1,7 +1,7 @@
 # Little Treat Kitchen OS v3 — Canonical Source
 
 **Production UI:** https://rizkybuilds.github.io/bisnishub/  
-**Source:** `main/apps/little-treat-kitchen/`  
+**Source:** `main/systems/little-treat-kitchen/`  
 **Publication branch:** `gh-pages` (root directory).  
 **Backend:** dedicated Supabase project `little-treat-kitchen`. Never use the MGBOS database.
 
@@ -25,7 +25,7 @@ See [RELEASE.md](RELEASE.md) for the **allowlisted** static files used in the Gi
 ### Tests
 
 ```sh
-node --test apps/little-treat-kitchen/catalog.test.cjs apps/little-treat-kitchen/finance.test.cjs apps/little-treat-kitchen/stock.test.cjs apps/little-treat-kitchen/ops.test.cjs apps/little-treat-kitchen/ops-ui.test.cjs apps/little-treat-kitchen/ops-integrity.test.cjs apps/little-treat-kitchen/menu-costing.test.cjs apps/little-treat-kitchen/menu-costing-ui.test.cjs apps/little-treat-kitchen/release-gates.test.cjs
+node --test systems/little-treat-kitchen/catalog.test.cjs systems/little-treat-kitchen/finance.test.cjs systems/little-treat-kitchen/stock.test.cjs systems/little-treat-kitchen/ops.test.cjs systems/little-treat-kitchen/ops-ui.test.cjs systems/little-treat-kitchen/ops-integrity.test.cjs systems/little-treat-kitchen/menu-costing.test.cjs systems/little-treat-kitchen/menu-costing-ui.test.cjs systems/little-treat-kitchen/release-gates.test.cjs
 ```
 
 Before sales, confirm dimsum supplier status/cooking calibration, recipe gramation, allergens, packaging, cost inputs and real two-phone owner/staff flow. Production entries must remain authentic, never invent test purchases or orders.

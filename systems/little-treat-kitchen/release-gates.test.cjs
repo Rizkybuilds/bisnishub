@@ -1,5 +1,5 @@
 // P0 release gate for the static Little Treat Kitchen OS bundle.
-// Run: node --test apps/little-treat-kitchen/release-gates.test.cjs
+// Run: node --test systems/little-treat-kitchen/release-gates.test.cjs
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');

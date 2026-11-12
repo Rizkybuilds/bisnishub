@@ -2,12 +2,12 @@ name: Little Treat Kitchen OS
 on:
   pull_request:
     paths:
-      - 'apps/little-treat-kitchen/**'
+      - 'systems/little-treat-kitchen/**'
       - '.github/workflows/little-treat-kitchen.yml'
   push:
     branches: [main]
     paths:
-      - 'apps/little-treat-kitchen/**'
+      - 'systems/little-treat-kitchen/**'
       - '.github/workflows/little-treat-kitchen.yml'
   workflow_dispatch:
 
@@ -30,12 +30,12 @@ jobs:
       - name: Test operator, finance, database boundary and release assets
         run: |
           node --test \
-            apps/little-treat-kitchen/catalog.test.cjs \
-            apps/little-treat-kitchen/finance.test.cjs \
-            apps/little-treat-kitchen/stock.test.cjs \
-            apps/little-treat-kitchen/ops.test.cjs \
-            apps/little-treat-kitchen/ops-ui.test.cjs \
-            apps/little-treat-kitchen/ops-integrity.test.cjs \
-            apps/little-treat-kitchen/menu-costing.test.cjs \
-            apps/little-treat-kitchen/menu-costing-ui.test.cjs \
-            apps/little-treat-kitchen/release-gates.test.cjs
+            systems/little-treat-kitchen/catalog.test.cjs \
+            systems/little-treat-kitchen/finance.test.cjs \
+            systems/little-treat-kitchen/stock.test.cjs \
+            systems/little-treat-kitchen/ops.test.cjs \
+            systems/little-treat-kitchen/ops-ui.test.cjs \
+            systems/little-treat-kitchen/ops-integrity.test.cjs \
+            systems/little-treat-kitchen/menu-costing.test.cjs \
+            systems/little-treat-kitchen/menu-costing-ui.test.cjs \
+            systems/little-treat-kitchen/release-gates.test.cjs
