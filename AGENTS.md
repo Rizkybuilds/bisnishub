@@ -4,6 +4,10 @@
 
 Build **one useful feature at a time**. ChatGPT can inspect, edit and commit directly through GitHub when connected and authorized. Antigravity, ATLAS, ORION, formal multi-agent routing and long governance handoffs are **optional**, not prerequisites.
 
+## Lean project memory (when relevant)
+
+For BisnisHub/TeeStock/MultiGraph/Little Treat discussions or work, read [the project-memory index](docs/project-memory/README.md) and **only** the relevant project snapshot before planning. Cross-check dated notes against live GitHub, canonical business documents and runtime evidence; a memory note is not permission for deployment or payment activation. After a **material founder decision** or verified lesson, update the corresponding brief memory with date, status and a source pointer when GitHub writing is authorized. Do not commit every chat turn or store private information in this public repository. This retrieval habit does not mean GitHub is automatically read or updated without an active connected session.
+
 ## Start here
 
 1. Identify the target project and read relevant code, README, tests and nearby instructions. [Project index](docs/project-index.md) and [repository layout](docs/engineering/repository-layout.md) help locate files.
