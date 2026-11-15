@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import './retail.css';
+import './editorial-r1.css';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { DemoCartProvider } from '../features/demo-commerce';

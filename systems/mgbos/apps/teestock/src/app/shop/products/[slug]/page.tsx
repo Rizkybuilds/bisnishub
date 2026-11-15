@@ -38,7 +38,7 @@ export default async function CatalogProductPage({ params }: Params) {
   if (!product) notFound();
 
   return (
-    <article className="ts-public-detail retail-wrap">
+    <article className="ts-public-detail retail-wrap ts-r1-pdp">
       <nav className="ts-public-breadcrumb" aria-label="Breadcrumb">
         <Link href="/">Beranda</Link> <span aria-hidden="true">/</span>{' '}
         <Link href="/shop">The Edit</Link> <span aria-hidden="true">/</span>{' '}
