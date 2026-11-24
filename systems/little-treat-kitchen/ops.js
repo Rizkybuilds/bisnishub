@@ -41,7 +41,7 @@ const TABS=[
 
 const s={session:null,user:null,role:null,tab:"orders",busy:false,err:"",notice:"",
  data:{products:[],materials:[],bom:[],orders:[],items:[],financials:[],costs:[],purchases:[],closings:[],payouts:[],quotes:[]},
- cart:[],editFinance:null,recipeSize:"14",recipeSearch:"",recipeCategory:"all",orderFilter:"active",activeRecipeId:null,drafts:{},costing:{category:"all",query:"",selected:null,quoteMaterial:null,editMaterial:null,simulation:{fee:0,fixed:0,discount:0,overhead:0,target:0,price:0}}};
+ cart:[],editFinance:null,recipeSize:"14",recipeSugar:"normal",recipeMode:"rd",recipeSearch:"",recipeCategory:"all",orderFilter:"active",activeRecipeId:null,drafts:{},costing:{category:"all",query:"",selected:null,quoteMaterial:null,editMaterial:null,simulation:{fee:0,fixed:0,discount:0,overhead:0,target:0,price:0}}};
 let notifyTimer;
 function notify(msg){toastEl.textContent=msg;toastEl.classList.add("active");clearTimeout(notifyTimer);notifyTimer=setTimeout(()=>toastEl.classList.remove("active"),3000)}
 function setError(msg){s.err=String(msg||"");render()}
@@ -393,25 +393,55 @@ function coffeeSteps(r){
  steps.push("QC: cek ukuran, jumlah cup, instruksi pelanggan, kebocoran, kebersihan tutup dan label.");
  return steps;
 }
+// R&D V1 candidates; intentionally separate from live BOM and legacy recipes.
+const BARISTA_RD=[[3,205,0,0,16],[3,170,30,6,16],[3.5,175,20,0,25,"aren"],[4,170,20,0,22,"aren"],[3,150,40,6,25,"aren"],[3.5,175,15,0,6,"simple","Susu kental manis",24,"g"],[3,170,25,0,6,"simple","Sirup butterscotch GKC",20,"ml"],[3,165,30,4,6,"simple","Sirup vanilla GKC",18,"ml"],[3,180,15,0,6,"simple","Sirup hazelnut GKC",20,"ml"],[3,175,20,0,6,"simple","Sirup salted caramel",20,"ml"],[3,175,20,0,6,"simple","Saus cokelat manis",25,"g","Kakao tanpa gula",3],[3.5,180,20,0,24,"simple","Kakao tanpa gula",8,"g"],[3,170,20,0,20,"aren","Sirup pandan",8,"ml"],[3,175,20,0,25,"aren","Kayu manis bubuk",0.2,"g"],[3,160,25,0,12,"simple","Biskuit remuk",12,"g"],[3,160,15,0,14,"simple","Coffee jelly",50,"g"]];
+function baristaFormula(id,size,level){
+ const d=BARISTA_RD[Number(id.slice(1))-1],factor=({"14":1,"16":1.15,"22":1.57})[size],ratio=({less:0.5,normal:1,more:1.5})[level];
+ if(!d||!factor||!ratio)return null;
+ const [coffee,milk,evap,cream,sugar,type,flavor,dose,unit,extra,extraDose]=d;
+ const ml=x=>Math.round(x*factor), g=x=>Math.round(x*factor*10)/10;
+ const sweet=Math.round(sugar*factor*ratio);
+ const rows=[["Nescafé Classic",g(coffee),"g"],["Air panas",({"14":30,"16":35,"22":50})[size],"ml"],["Susu UHT Full Cream",ml(milk)+ml(sugar)-sweet,"ml"]];
+ if(evap)rows.push(["Susu evaporasi",ml(evap),"ml"]);
+ if(cream)rows.push(["Krimer bubuk",g(cream),"g"]);
+ if(dose)rows.push([flavor,unit==="ml"?ml(dose):g(dose),unit]);
+ if(extraDose)rows.push([extra,g(extraDose),"g"]);
+ rows.push([type==="aren"?"Gula aren cair":"Simple syrup 1:1",sweet,"ml"],["Es batu",ml(id==="K16"?110:150),"g"]);
+ return rows;
+}
+function baristaSteps(id,rows){
+ const line=x=>x[1]+" "+x[2]+" "+x[0];
+ const additions=rows.slice(3,-2).filter(x=>!["Susu evaporasi","Coffee jelly","Biskuit remuk"].includes(x[0]));
+ return ["Baca tiket, cuci tangan, siapkan cup dan timbang dengan fungsi TARE.",
+ "Larutkan "+line(rows[0])+" dalam "+line(rows[1])+" (75–85°C). Aduk sampai larut.",
+ "Masukkan "+[...additions,rows[rows.length-2]].map(line).join(", ")+". Aduk hingga homogen; kakao dan krimer harus bebas gumpalan.",
+ "Masukkan "+rows.filter(x=>x[0]==="Coffee jelly").map(line).join("")+(id==="K16"?" lalu ":"")+line(rows[rows.length-1])+" ke cup. Tuang "+rows.filter(x=>x[0]==="Susu UHT Full Cream"||x[0]==="Susu evaporasi").map(line).join(" dan ")+".",
+ "Tuang campuran kopi, aduk perlahan. "+(id==="K15"?"Kemas "+line(rows.find(x=>x[0]==="Biskuit remuk"))+" terpisah. ":"")+"Periksa volume, segel dan label. Jangan menambah bahan tanpa takaran."];
+}
 function showRecipe(id){
  const r=DATA.all.find(x=>x.id===id);if(!r)return;
  s.activeRecipeId=id;
  const coffee=r.category==="coffee";
  const categoryVisual={coffee:"☕",banana:"🍌",dimsum:"🥟",prep:"🥣",sop:"📋"};
+ const candidate=coffee&&s.recipeMode==="rd";
+ const rd=candidate?baristaFormula(id,s.recipeSize,s.recipeSugar):null;
  let ingredients="";
- if(coffee){
+ if(rd){ingredients=rd.map(i=>'<tr><td>'+esc(i[0])+'</td><td>'+num(i[1])+' '+esc(i[2])+'</td></tr>').join("");}
+ else if(coffee){
   const index=["12","14","16","22"].indexOf(s.recipeSize);
   ingredients=r.ingredients.map(i=>'<tr><td>'+esc(i.name)+'</td><td>'+num(i.values[index])+' '+esc(i.unit)+'</td></tr>').join("");
  }else ingredients=(r.ingredients||[]).map(i=>'<tr><td>'+esc(i.name)+'</td><td>'+num(i.value)+' '+esc(i.unit)+'</td></tr>').join("");
- const steps=r.steps||(coffee?coffeeSteps(r):[]);
+ const steps=rd?baristaSteps(id,rd):r.steps||(coffee?coffeeSteps(r):[]);
  modalBody.dataset.recipeId=id;
  modalBody.innerHTML=
  '<div class="recipe-header"><span class="recipe-visual" aria-hidden="true">'+(categoryVisual[r.category]||"🍴")+'</span>'+
  '<div><span class="recipe-id">'+esc(r.id)+' · '+esc(PRODUCT_CATEGORIES[r.category]||r.group)+'</span>'+
- '<h2>'+esc(r.name)+'</h2></div></div>'+
+ '<h2>'+esc(candidate&&id==="K01"?"Original Latte":r.name)+'</h2></div></div>'+
  '<p class="muted">'+esc(r.note||r.group||"Panduan per porsi")+'</p>'+
- (coffee?'<div class="actions">'+field("Ukuran cup",'<select id="ops-cup" aria-label="Pilih ukuran cup">'+["12","14","16","22"].map(v=>
+ (coffee?'<div class="actions">'+field("Ukuran cup",'<select id="ops-cup" aria-label="Pilih ukuran cup">'+(candidate?["14","16","22"]:["12","14","16","22"]).map(v=>
  '<option '+(v===s.recipeSize?"selected":"")+' value="'+v+'">'+v+' oz</option>').join("")+'</select>')+'</div>':"")+
+ (coffee?'<div class="actions">'+field("Versi resep",'<select id="ops-recipe-mode"><option value="rd" '+(candidate?"selected":"")+'>R&D V1 — formula uji</option><option value="legacy" '+(!candidate?"selected":"")+'>Resep lama</option></select>')+(candidate?field("Tingkat gula",'<select id="ops-sugar">'+[["less","Less"],["normal","Normal"],["more","More"]].map(([v,label])=>'<option value="'+v+'" '+(s.recipeSugar===v?"selected":"")+'>'+label+'</option>').join("")+'</select>'):"")+'</div>':"")+
+ (candidate?'<div class="notice"><strong>Formula uji — belum disahkan.</strong> Less/Normal/More mengatur pemanis tambahan, bukan total gula. Kalibrasi cup, rasa dan kafein. HPP dan stok masih memakai BOM lama; jangan gunakan sebagai resep penjualan final.</div>':"")+
  '<h3>Bahan & takaran per porsi</h3><table class="recipe-ings"><tbody>'+ingredients+'</tbody></table>'+
  '<div class="row" style="align-items:center;margin-top:18px"><h3 style="margin:0">Langkah pembuatan</h3>'+
  '<span class="recipe-progress" id="recipe-progress" aria-live="polite">0 / '+steps.length+' selesai</span></div>'+
@@ -857,7 +887,7 @@ document.addEventListener("click",async e=>{
   if(!confirm(copy[transition.dataset.transition]||"Lanjutkan tahap pesanan ini?"))return;
   await transact(()=>rpc("lt_transition_order",{p_order_id:transition.dataset.id,p_action:transition.dataset.transition}));return}
  const recipe=e.target.closest("[data-recipe]");
- if(recipe){s.recipeSize="14";showRecipe(recipe.dataset.recipe);return}
+ if(recipe){s.recipeSize="14";s.recipeSugar="normal";s.recipeMode="rd";showRecipe(recipe.dataset.recipe);return}
  const costSelect=e.target.closest("[data-cost-item]");
  if(costSelect){if(s.role!=="owner")return;s.costing.selected=costSelect.dataset.costItem;s.costing.quoteMaterial=null;s.costing.editMaterial=null;render();return}
  const quoteSelect=e.target.closest("[data-quote-material]");
@@ -901,6 +931,8 @@ document.addEventListener("input",e=>{
  }
 });
 document.addEventListener("change",e=>{
+ if(e.target.id==="ops-sugar"){s.recipeSugar=e.target.value;if(s.activeRecipeId)showRecipe(s.activeRecipeId);}
+ if(e.target.id==="ops-recipe-mode"){s.recipeMode=e.target.value;if(s.recipeSize==="12")s.recipeSize="14";if(s.activeRecipeId)showRecipe(s.activeRecipeId);}
  if(e.target.id==="ops-cup"){
   s.recipeSize=e.target.value;
   if(s.activeRecipeId)showRecipe(s.activeRecipeId);
