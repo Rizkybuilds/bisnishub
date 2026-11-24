@@ -130,3 +130,25 @@ test('public SVG is not necessary; no external CDN needed for nav icons',()=>{
  assert.match(js,/aria-hidden="true"/);
  assert.doesNotMatch(read('ops.html'),/cdn\.|unpkg|jsdelivr/);
 });
+
+test('barista R&D supports 144 combinations and preserves legacy mode',async()=>{
+ const ui=await boot('owner');
+ const click=ui.events.get('click'),change=ui.events.get('change');
+ const body=ui.getElementById('ops-modal-body');
+ for(let i=1;i<=16;i++){
+  click({target:{closest:s=>s==='[data-recipe]'?{dataset:{recipe:'K'+String(i).padStart(2,'0')}}:null}});
+  for(const size of ['14','16','22']){
+   change({target:{id:'ops-cup',value:size,matches:()=>false}});
+   for(const level of ['less','normal','more']){
+    change({target:{id:'ops-sugar',value:level,matches:()=>false}});
+    assert.match(body.innerHTML,/Formula uji/);
+    assert.match(body.innerHTML,/Nescafé Classic/);
+    assert.doesNotMatch(body.innerHTML,/NaN|undefined/);
+    assert.match(body.innerHTML,new RegExp('value="'+level+'" selected'));
+   }
+  }
+ }
+ change({target:{id:'ops-recipe-mode',value:'legacy',matches:()=>false}});
+ assert.match(body.innerHTML,/12 oz/);
+ assert.doesNotMatch(body.innerHTML,/id="ops-sugar"/);
+});
